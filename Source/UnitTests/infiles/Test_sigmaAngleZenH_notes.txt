@@ -1,0 +1,13 @@
+Hi Mark,
+
+See the attached files for a calculation with LGC. I did a calculation and I changed the sigma for the horizontal and vertical angles from 20.0cc to 440.0cc in steps of 20.0cc.
+
+The values in the output file are partly negative and a large part of the *.err makes no sense any more. I think the angle values have been reduced from 0-400 to +-200.0 which is not adequat in this case as the values are 400.0cc and not 400.0 grades.
+
+If I put exactly 400.0cc it's reduced to 0.0cc as sigma and that gives a singular matrix. It's the case for *ANGL, *ZENH and I expect also for *ZENI.
+
+I used the version LGC++ v1.08.01  August 2008 for the calculation. Perhaps you already knew this effect and Boris did some changes on this...
+
+Best regards,
+
+	Dirk

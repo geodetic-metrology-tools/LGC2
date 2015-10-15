@@ -1,0 +1,26 @@
+include_directories (
+	${TUT_INCLUDE_PATH}
+)
+
+##### This will correspond to one VS project!
+set(UnitTests_HEADERS
+	${LGC_INCLUDE_PATH}/FileTester.h
+)
+
+set(UnitTests_SOURCES
+	FileTester.cpp
+	# testLevelling.cpp
+	main.cpp
+)
+
+add_executable(UnitTests ${UnitTests_SOURCES}) 
+
+target_link_libraries(	UnitTests 
+	${LGC_SUBPROJECTS}
+	${LSALGO_LIBRARIES}
+	${PROJECTFRAMEWORK_LIBRARIES}
+	Measurements
+	${SPATIAL_LIBRARIES}
+)
+
+file(COPY infiles DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

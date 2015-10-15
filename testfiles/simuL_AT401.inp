@@ -1,0 +1,370 @@
+*TITR
+Simulation réseau près des lowbeta
+*SIMU    10
+*SOBS 
+*OLOC
+*FAUT
+*PRES
+*PUNC EE
+*HIST
+*CALA
+LHC____MBXW____A4L5A   24.928066   -65.316766   21.441040
+*PDOR
+LHC____GISP__UPS4L5_
+*POIN
+LHC____MBXW____C4L5E   24.503227   -73.040406   21.370760
+LHC____MBXW____C4L5S   24.503204   -71.160549   21.347550
+LHC____MBXW____B4L5E   24.503155   -68.774739   21.318090
+LHC____MBXW____B4L5S   24.503132   -66.894882   21.294880
+LHC____MBXW____A4L5E   24.503083   -64.509072   21.265420
+LHC____MBXW____A4L5S   24.503060   -62.629215   21.242210
+LHC____MQXA_____3L5B   24.929051   -50.538163   21.257150
+LHC____MQXA_____3L5D   24.083195   -50.534783   21.266520
+%LHC____MQXA_____3L5S   24.833889   -50.027349   21.283750
+%LHC____MQXA_____3L5T   24.184017   -50.024742   21.293020
+LHC____MQXA_____3L5A   24.928972   -54.727792   21.310730
+%LHC____MQXA_____3L5E   24.833451   -54.216567   21.335610
+LHC____MQXB____B2L5A   24.929570   -45.084707   21.192250
+%LHC____MQXB____B2L5E   24.827861   -44.572775   21.221560
+LHC____MQXB____B2L5C   24.927652   -40.548434   21.135840
+%LHC____MQXB____B2L5M   24.828493   -40.037635   21.166800
+LHC____MQXB____B2L5B   24.927349   -36.008436   21.078800
+LHC____MQXB____B2L5D   24.078830   -36.005511   21.084920
+%LHC____MQXB____B2L5S   24.827839   -35.497544   21.108580
+%LHC____MQXB____B2L5T   24.178940   -35.494608   21.111840
+LHC____MQXA_____1L5A   24.933094   -30.757629   21.010020
+LHC____MQXA_____1L5E   24.832125   -30.237517   21.038250
+LHC____MQXA_____1L5D   24.084020   -26.555334   20.970280
+LHC____MQXA_____1L5B   24.933189   -26.554508   20.955500
+%LHC____MQXA_____1L5T   24.184389   -26.044073   20.997680
+%LHC____MQXA_____1L5S   24.834462   -26.044259   20.987080
+LHC____GISB__UPS2L5_   13.400949   -45.085806   21.191330
+LHC____GISB__UPS1L5_   13.402965   -30.758628   21.005640
+LHC____GISP__UPS4L5_   13.399810   -65.316815   21.457750
+%STL__1L   27.280001   -31.925876   19.640000
+STL__2L   27.327649   -46.041390   19.000000
+STL__3L   28.534885   -57.390072   19.900000
+STL__4L   27.124508   -69.810250   20.000000
+STL__5L   10.048898   -69.159451   20.200000
+%LHC____MQML_____5L5E   24.771417   -200.524348   22.994620
+%LHC____MQML_____5L5S   24.769621   -196.819417   22.947880
+%LHC____MQY______4L5E   24.768272   -172.514002   22.647910
+%LHC____MQY______4L5S   24.767081   -168.049184   22.592610
+LHC____MBRC_____4L5E   24.767465   -163.730893   22.543610
+LHC____MBRC_____4L5S   24.764604   -156.546150   22.455720
+*VZ
+LHC____GISB__UX551L_   14.39715	-26.9625	21.45110
+STN_1_______________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_2_______________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_5_______________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   AT401
+%stl2R
+*DMES   .05   .05
+STL__2L 	STL__3L
+STL__2L 	STL__4L
+%STL__2L 	LHC____MQXA_____1L5S
+STL__2L 	LHC____MQXA_____1L5E
+%STL__2L 	LHC____MQXA_____1L5T
+STL__2L 	LHC____MQXA_____1L5A
+STL__2L 	LHC____MQXA_____1L5B
+STL__2L 	LHC____MQXA_____1L5D
+%STL__2L 	LHC____MQXA_____3L5E
+%STL__2L 	LHC____MQXA_____3L5S
+%STL__2L 	LHC____MQXA_____3L5T
+STL__2L 	LHC____MQXA_____3L5A
+STL__2L 	LHC____MQXA_____3L5B
+STL__2L 	LHC____MQXA_____3L5D
+%STL__2L 	LHC____MQXB____B2L5E
+%STL__2L 	LHC____MQXB____B2L5S
+%STL__2L 	LHC____MQXB____B2L5T
+STL__2L 	LHC____MQXB____B2L5A
+STL__2L 	LHC____MQXB____B2L5B
+STL__2L 	LHC____MQXB____B2L5C
+STL__2L 	LHC____MQXB____B2L5D
+STL__2L		LHC____MBXW____A4L5A
+STL__2L		LHC____MBXW____A4L5E
+STL__2L		LHC____MBXW____A4L5S
+STL__2L		LHC____MBXW____B4L5E
+STL__2L		LHC____MBXW____B4L5S
+*ZENH	 2
+STL__2L 	STL__3L
+STL__2L 	STL__4L
+%STL__2L 	LHC____MQXA_____1L5S
+STL__2L 	LHC____MQXA_____1L5E
+%STL__2L 	LHC____MQXA_____1L5T
+STL__2L 	LHC____MQXA_____1L5A
+STL__2L 	LHC____MQXA_____1L5B
+STL__2L 	LHC____MQXA_____1L5D
+%STL__2L 	LHC____MQXA_____3L5E
+%STL__2L 	LHC____MQXA_____3L5S
+%STL__2L 	LHC____MQXA_____3L5T
+STL__2L 	LHC____MQXA_____3L5A
+STL__2L 	LHC____MQXA_____3L5B
+STL__2L 	LHC____MQXA_____3L5D
+%STL__2L 	LHC____MQXB____B2L5E
+%STL__2L 	LHC____MQXB____B2L5S
+%STL__2L 	LHC____MQXB____B2L5T
+STL__2L 	LHC____MQXB____B2L5A
+STL__2L 	LHC____MQXB____B2L5B
+STL__2L 	LHC____MQXB____B2L5C
+STL__2L 	LHC____MQXB____B2L5D
+STL__2L		LHC____MBXW____A4L5A
+STL__2L		LHC____MBXW____A4L5E
+STL__2L		LHC____MBXW____A4L5S
+STL__2L		LHC____MBXW____B4L5E
+STL__2L		LHC____MBXW____B4L5S
+*ANGL   1.5 
+STL__2L 	STL__3L
+STL__2L 	STL__4L
+%STL__2L 	LHC____MQXA_____1L5S
+STL__2L 	LHC____MQXA_____1L5E
+%STL__2L 	LHC____MQXA_____1L5T
+STL__2L 	LHC____MQXA_____1L5A
+STL__2L 	LHC____MQXA_____1L5B
+STL__2L 	LHC____MQXA_____1L5D
+%STL__2L 	LHC____MQXA_____3L5E
+%STL__2L 	LHC____MQXA_____3L5S
+%STL__2L 	LHC____MQXA_____3L5T
+STL__2L 	LHC____MQXA_____3L5A
+STL__2L 	LHC____MQXA_____3L5B
+STL__2L 	LHC____MQXA_____3L5D
+%STL__2L 	LHC____MQXB____B2L5E
+%STL__2L 	LHC____MQXB____B2L5S
+%STL__2L 	LHC____MQXB____B2L5T
+STL__2L 	LHC____MQXB____B2L5A
+STL__2L 	LHC____MQXB____B2L5B
+STL__2L 	LHC____MQXB____B2L5C
+STL__2L 	LHC____MQXB____B2L5D
+STL__2L		LHC____MBXW____A4L5A
+STL__2L		LHC____MBXW____A4L5E
+STL__2L		LHC____MBXW____A4L5S
+STL__2L		LHC____MBXW____B4L5E
+STL__2L		LHC____MBXW____B4L5S
+%stl3L
+*DMES   .05   .05
+STL__3L		STL__2L
+STL__3L		STL__4L
+%STL__3L		LHC____MQXA_____1L5S
+STL__3L 	LHC____MQXA_____1L5E
+STL__3L 	LHC____MQXA_____1L5A
+%STL__3L		LHC____MQXA_____1L5T
+%STL__3L		LHC____MQXA_____1L5B
+STL__3L		LHC____MQXA_____1L5D
+%STL__3L		LHC____MQXA_____3L5E
+%STL__3L		LHC____MQXA_____3L5S
+%STL__3L		LHC____MQXA_____3L5T
+STL__3L		LHC____MQXA_____3L5A
+STL__3L		LHC____MQXA_____3L5B
+STL__3L		LHC____MQXA_____3L5D
+%STL__3L		LHC____MQXB____B2L5E
+%STL__3L		LHC____MQXB____B2L5S
+%STL__3L		LHC____MQXB____B2L5T
+STL__3L		LHC____MQXB____B2L5A
+STL__3L		LHC____MQXB____B2L5B
+STL__3L		LHC____MQXB____B2L5C
+STL__3L		LHC____MQXB____B2L5D
+STL__3L		LHC____MBXW____A4L5A
+STL__3L		LHC____MBXW____A4L5E
+STL__3L		LHC____MBXW____A4L5S
+STL__3L		LHC____MBXW____B4L5E
+STL__3L		LHC____MBXW____B4L5S
+*ZENH	 2
+STL__3L		STL__2L
+STL__3L		STL__4L
+%STL__3L		LHC____MQXA_____1L5S
+STL__3L 	LHC____MQXA_____1L5E
+STL__3L 	LHC____MQXA_____1L5A
+%STL__3L		LHC____MQXA_____1L5T
+%STL__3L		LHC____MQXA_____1L5B
+STL__3L		LHC____MQXA_____1L5D
+%STL__3L		LHC____MQXA_____3L5E
+%STL__3L		LHC____MQXA_____3L5S
+%STL__3L		LHC____MQXA_____3L5T
+STL__3L		LHC____MQXA_____3L5A
+STL__3L		LHC____MQXA_____3L5B
+STL__3L		LHC____MQXA_____3L5D
+%STL__3L		LHC____MQXB____B2L5E
+%STL__3L		LHC____MQXB____B2L5S
+%STL__3L		LHC____MQXB____B2L5T
+STL__3L		LHC____MQXB____B2L5A
+STL__3L		LHC____MQXB____B2L5B
+STL__3L		LHC____MQXB____B2L5C
+STL__3L		LHC____MQXB____B2L5D
+STL__3L		LHC____MBXW____A4L5A
+STL__3L		LHC____MBXW____A4L5E
+STL__3L		LHC____MBXW____A4L5S
+STL__3L		LHC____MBXW____B4L5E
+STL__3L		LHC____MBXW____B4L5S
+*ANGL   1.5 
+STL__3L		STL__2L
+STL__3L		STL__4L
+%STL__3L		LHC____MQXA_____1L5S
+STL__3L 	LHC____MQXA_____1L5E
+STL__3L 	LHC____MQXA_____1L5A
+%STL__3L		LHC____MQXA_____1L5T
+%STL__3L		LHC____MQXA_____1L5B
+STL__3L		LHC____MQXA_____1L5D
+%STL__3L		LHC____MQXA_____3L5E
+%STL__3L		LHC____MQXA_____3L5S
+%STL__3L		LHC____MQXA_____3L5T
+STL__3L		LHC____MQXA_____3L5A
+STL__3L		LHC____MQXA_____3L5B
+STL__3L		LHC____MQXA_____3L5D
+%STL__3L		LHC____MQXB____B2L5E
+%STL__3L		LHC____MQXB____B2L5S
+%STL__3L		LHC____MQXB____B2L5T
+STL__3L		LHC____MQXB____B2L5A
+STL__3L		LHC____MQXB____B2L5B
+STL__3L		LHC____MQXB____B2L5C
+STL__3L		LHC____MQXB____B2L5D
+STL__3L		LHC____MBXW____A4L5A
+STL__3L		LHC____MBXW____A4L5E
+STL__3L		LHC____MBXW____A4L5S
+STL__3L		LHC____MBXW____B4L5E
+STL__3L		LHC____MBXW____B4L5S
+%stl4R
+*DMES   .05   .05
+STL__4L		STL__2L
+STL__4L		STL__3L
+STL__4L		STL__5L
+%STL__4L		LHC____MQXA_____3L5E
+%STL__4L		LHC____MQXA_____3L5S
+%STL__4L		LHC____MQXA_____3L5T
+STL__4L		LHC____MQXA_____3L5A
+STL__4L		LHC____MQXA_____3L5B
+STL__4L		LHC____MQXA_____3L5D
+%STL__4L		LHC____MQXB____B2L5E
+%STL__4L		LHC____MQXB____B2L5S
+%STL__4L		LHC____MQXB____B2L5T
+STL__4L		LHC____MQXB____B2L5A
+STL__4L		LHC____MQXB____B2L5B
+STL__4L		LHC____MQXB____B2L5C
+STL__4L		LHC____MQXB____B2L5D
+STL__4L		LHC____MBXW____A4L5A
+STL__4L		LHC____MBXW____A4L5E
+STL__4L		LHC____MBXW____A4L5S
+STL__4L		LHC____MBXW____A4L5A
+STL__4L		LHC____MBXW____B4L5E
+STL__4L		LHC____MBXW____B4L5S
+STL__4L		LHC____MBXW____C4L5E
+STL__4L		LHC____MBXW____C4L5S
+STL__4L		LHC____MBRC_____4L5S
+STL__4L		LHC____MBRC_____4L5E
+*ZENH	 2
+STL__4L		STL__2L
+STL__4L		STL__3L
+STL__4L		STL__5L
+%STL__4L		LHC____MQXA_____3L5E
+%STL__4L		LHC____MQXA_____3L5S
+%STL__4L		LHC____MQXA_____3L5T
+STL__4L		LHC____MQXA_____3L5A
+STL__4L		LHC____MQXA_____3L5B
+STL__4L		LHC____MQXA_____3L5D
+%STL__4L		LHC____MQXB____B2L5E
+%STL__4L		LHC____MQXB____B2L5S
+%STL__4L		LHC____MQXB____B2L5T
+STL__4L		LHC____MQXB____B2L5A
+STL__4L		LHC____MQXB____B2L5B
+STL__4L		LHC____MQXB____B2L5C
+STL__4L		LHC____MQXB____B2L5D
+STL__4L		LHC____MBXW____A4L5A
+STL__4L		LHC____MBXW____A4L5E
+STL__4L		LHC____MBXW____A4L5S
+STL__4L		LHC____MBXW____A4L5A
+STL__4L		LHC____MBXW____B4L5E
+STL__4L		LHC____MBXW____B4L5S
+STL__4L		LHC____MBXW____C4L5E
+STL__4L		LHC____MBXW____C4L5S
+STL__4L		LHC____MBRC_____4L5S
+STL__4L		LHC____MBRC_____4L5E
+*ANGL   1.5 
+STL__4L		STL__2L
+STL__4L		STL__3L
+STL__4L		STL__5L
+%STL__4L		LHC____MQXA_____3L5E
+%STL__4L		LHC____MQXA_____3L5S
+%STL__4L		LHC____MQXA_____3L5T
+STL__4L		LHC____MQXA_____3L5A
+STL__4L		LHC____MQXA_____3L5B
+STL__4L		LHC____MQXA_____3L5D
+%STL__4L		LHC____MQXB____B2L5E
+%STL__4L		LHC____MQXB____B2L5S
+%STL__4L		LHC____MQXB____B2L5T
+STL__4L		LHC____MQXB____B2L5A
+STL__4L		LHC____MQXB____B2L5B
+STL__4L		LHC____MQXB____B2L5C
+STL__4L		LHC____MQXB____B2L5D
+STL__4L		LHC____MBXW____A4L5A
+STL__4L		LHC____MBXW____A4L5E
+STL__4L		LHC____MBXW____A4L5S
+STL__4L		LHC____MBXW____A4L5A
+STL__4L		LHC____MBXW____B4L5E
+STL__4L		LHC____MBXW____B4L5S
+STL__4L		LHC____MBXW____C4L5E
+STL__4L		LHC____MBXW____C4L5S
+STL__4L		LHC____MBRC_____4L5S
+STL__4L		LHC____MBRC_____4L5E
+%st5R
+*DMES   .05   .05
+STL__5L		STL__4L
+STL__5L		LHC____GISP__UPS4L5_
+STL__5L		LHC____GISB__UPS1L5_
+STL__5L		LHC____GISB__UPS2L5_
+STL__5L		LHC____MBXW____A4L5A
+*ZENH	 2
+STL__5L		STL__4L
+STL__5L		LHC____GISP__UPS4L5_
+STL__5L		LHC____GISB__UPS1L5_
+STL__5L		LHC____GISB__UPS2L5_
+STL__5L		LHC____MBXW____A4L5A
+*ANGL   1.5
+STL__5L		STL__4L
+STL__5L		LHC____GISP__UPS4L5_
+STL__5L		LHC____GISB__UPS1L5_
+STL__5L		LHC____GISB__UPS2L5_
+STL__5L		LHC____MBXW____A4L5A
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Distances fidu vers points A et B
+*DMES   0.05
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   offsets issus de la fidu
+*ECHO   0.05
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Mesures HLS
+*DVER   .007
+STN_1_______________   LHC____MQXA_____3L5A             $1# HLS, n°1 -31-DEC-2012 23:59:59
+STN_1_______________   LHC____MQXA_____3L5B             $2# HLS, n°1 -31-DEC-2012 23:59:59
+STN_1_______________   LHC____MQXA_____3L5D             $3# HLS, n°1 -31-DEC-2012 23:59:59
+STN_1_______________   LHC____MQXB____B2L5A             $4# HLS, n°1 -31-DEC-2012 23:59:59
+STN_1_______________   LHC____MQXB____B2L5C             $5# HLS, n°1 -31-DEC-2012 23:59:59
+STN_1_______________   LHC____MQXB____B2L5B             $6# HLS, n°1 -31-DEC-2012 23:59:59
+STN_2_______________   LHC____MQXB____B2L5B             $7# HLS, n°2 -31-DEC-2012 23:59:59
+STN_2_______________   LHC____MQXB____B2L5D             $8# HLS, n°2 -31-DEC-2012 23:59:59
+STN_2_______________   LHC____MQXA_____1L5A             $9# HLS, n°2 -31-DEC-2012 23:59:59
+STN_2_______________   LHC____MQXA_____1L5D             $10# HLS, n°2 -31-DEC-2012 23:59:59
+STN_2_______________   LHC____MQXA_____1L5B             $11# HLS, n°2 -31-DEC-2012 23:59:59
+STN_2_______________   LHC____GISB__UX551L_             $12# HLS, n°2 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXA_____3L5A      .008   $26# WPS, n°5 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXA_____3L5B      .008   $27# WPS, n°5 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXB____B2L5A      .008   $28# WPS, n°5 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXB____B2L5B      .008   $35# LOAD, n°6 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXB____B2L5B      .008   $29# WPS, n°5 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXA_____1L5A      .008   $30# WPS, n°5 -31-DEC-2012 23:59:59
+STN_5_______________   LHC____MQXA_____1L5B      .008   $31# WPS, n°5 -31-DEC-2012 23:59:59
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   Mesures DOMS et WPS
+*DMES   .1   .1
+LHC____MQXA_____1L5B   LHC____GISB__UPS1L5_                     \.040894   .0505   $55# distance spatiale doms -31-DEC-2012 23:59:59
+LHC____MQXB____B2L5B   LHC____GISB__UPS2L5_                     \.049062   .0505   $57# distance spatiale doms -31-DEC-2012 23:59:59
+LHC____MBXW____A4L5A   LHC____GISP__UPS4L5_                     \.0655   .0505   $53# distance spatiale doms -31-DEC-2012 23:59:59
+LHC____MBXW____A4L5A   LHC____MQXA_____3L5B   .1   .1   $999999# distance spatiale réelles selon Géoïde CG2000_N
+LHC____MBXW____A4L5A   LHC____MQXA_____3L5A   .1   .1   $999999# distance spatiale réelles selon Géoïde CG2000_N
+LHC____MBXW____A4L5A   LHC____MQXB____B2L5B   .1   .1   $999999# distance spatiale réelles selon Géoïde CG2000_N
+LHC____MBXW____A4L5A   LHC____MQXB____B2L5A   .1   .1   $999999# distance spatiale réelles selon Géoïde CG2000_N
+LHC____MBXW____A4L5A   LHC____MQXA_____1L5B   .1   .1   $999999# distance spatiale réelles selon Géoïde CG2000_N
+LHC____MBXW____A4L5A   LHC____MQXA_____1L5A   .1   .1   $999999# distance spatiale réelles selon Géoïde CG2000_N
+*ANGL   5
+LHC____GISP__UPS4L5_   LHC____MBXW____A4L5A   $999999# angle calcule selon coord. réelles Géoïde CG2000_N
+*ECHO   .005
+LHC____MQXA_____1L5A   LHC____MQXA_____1L5B   LHC____MBXW____A4L5A            $47# offset- fil n°9
+LHC____MQXA_____1L5A   LHC____MQXB____B2L5A   LHC____MBXW____A4L5A            $48# offset- fil n°9
+LHC____MQXA_____1L5A   LHC____MQXB____B2L5B   LHC____MBXW____A4L5A            $49# offset- fil n°9
+LHC____MQXA_____1L5A   LHC____MQXA_____3L5A   LHC____MBXW____A4L5A            $50# offset- fil n°9
+LHC____MQXA_____1L5A   LHC____MQXA_____3L5B   LHC____MBXW____A4L5A            $51# offset- fil n°9
+*END

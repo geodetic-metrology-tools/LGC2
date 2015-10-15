@@ -1,0 +1,243 @@
+*TITR
+Fichier d'input créé le 19-DEC-2013
+Opération n° 11666, Survey initiale plani Quads TI8
+*RS2K
+*HIST
+*PUNC   OUT1
+*FAUT     .01     .10
+*CALA
+LHC____MQY_____A5R8S     4406.11439     4844.42507      332.23757   $23490.049    514544   coordonnées théoriques au 19-DEC-2013
+LHC____MQM______6R8S     4378.89346     4777.91814      332.49878   $23561.911    513379   coordonnées théoriques au 05-DEC-2013
+LHC____MQM_____A7R8E     4368.70921     4753.04439      332.59963   $23588.789    513380   coordonnées théoriques au 19-DEC-2013
+LHC____MQM_____A7R8S     4366.93618     4748.71344      332.61652   $23593.469    513382   coordonnées théoriques au 05-DEC-2013
+LHC____MB______A8R8E     4365.04561     4744.11388      332.63086   $23598.443    199991   coordonnées théoriques au 19-DEC-2013
+LHC____MB______A8R8T     4361.41995     4733.92492      332.66560   $23609.245    202449   coordonnées théoriques au 19-DEC-2013
+LHC____MB______A8R8S     4360.93000     4734.12750      332.66986   $23609.244    201220   coordonnées théoriques au 05-DEC-2013
+LHC____MB______B8R8S     4354.89925     4719.67661      332.72949   $23624.904    201221   coordonnées théoriques au 19-DEC-2013
+LHC____MQML_____8R8E     4353.25052     4715.75994      332.74745   $23629.154    511741   coordonnées théoriques au 19-DEC-2013
+LHC____MQML_____8R8S     4351.81459     4712.34403      332.76234   $23632.859    511742   coordonnées théoriques au 19-DEC-2013
+LHC____MBRC_____4R8E     4425.75901     4892.41689      332.05049   $23438.192    511729   coordonnées théoriques au 05-DEC-2013
+LHC____MBRC_____4R8S     4423.03728     4885.76745      332.07649   $23445.377    511731   coordonnées théoriques au 05-DEC-2013
+LHC____MQY_____B4R8E     4421.51146     4882.02451      332.09195   $23449.418    514485   coordonnées théoriques au 05-DEC-2013
+LHC____MQY_____B4R8S     4418.63314     4874.99145      332.11953   $23457.018    514483   coordonnées théoriques au 05-DEC-2013
+LHC____MQY_____A5R8E     4408.99459     4851.45871      332.21199   $23482.448    514541   coordonnées théoriques au 05-DEC-2013
+LHC____MQM______6R8E     4381.77486     4784.95278      332.47197   $23554.309    513376   coordonnées théoriques au 19-DEC-2013
+LHC____MQM_____A7R8T     4367.42726     4748.51275      332.60945   $23593.469    513381   coordonnées théoriques au 19-DEC-2013
+LHC____MB______B8R8E     4359.06557     4729.63875      332.68917   $23614.106    199992   coordonnées théoriques au 19-DEC-2013
+*POIN
+LHC.B2_MSIA____A6R8E     4399.17471     4826.51415      332.10132   $23509.100    514992   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIA____A6R8S     4398.37915     4824.57069      332.10646   $23511.200    514993   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIA____B6R8E     4397.48887     4822.39586      332.11221   $23513.550    514994   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIA____B6R8S     4396.69330     4820.45240      332.11735   $23515.650    514995   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIB____A6R8E     4395.80303     4818.27758      332.12311   $23518.000    514996   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIB____A6R8S     4395.00747     4816.33413      332.12827   $23520.100    514997   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIB____B6R8E     4394.11718     4814.15930      332.13402   $23522.450    514998   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIB____B6R8S     4393.32161     4812.21585      332.13917   $23524.550    514999   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIB____C6R8E     4392.43133     4810.04101      332.14493   $23526.900    515000   coordonnées théoriques au 19-DEC-2013
+LHC.B2_MSIB____C6R8S     4391.63577     4808.09756      332.15008   $23529.000    515001   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88104E     4385.93224     4793.05581      332.02631   $2610.472    254196   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88104S     4386.02416     4793.28829      332.02569   $2610.722    254217   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88115E     4387.83109     4797.87306      332.01990   $2615.650    505230   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88115S     4387.92301     4798.10555      332.01929   $2615.900    505234   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88116E     4388.07597     4798.49241      332.01829   $2616.316    505231   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88116S     4388.16789     4798.72490      332.01769   $2616.566    505235   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88117E     4388.32085     4799.11174      332.01671   $2616.982    505232   coordonnées théoriques au 19-DEC-2013
+TI8____MCIAV__88117S     4388.41277     4799.34423      332.01613   $2617.232    505236   coordonnées théoriques au 19-DEC-2013
+TI8____MQID___87900E     4361.07436     4730.47293      332.35321   $2543.132    249844   coordonnées théoriques au 19-DEC-2013
+TI8____MQID___87900S     4361.40528     4731.30988      332.35098   $2544.032    249886   coordonnées théoriques au 19-DEC-2013
+TI8____MQIF___88000E     4373.43104     4761.72525      332.26999   $2576.739    253566   coordonnées théoriques au 19-DEC-2013
+TI8____MQIF___88000S     4373.76196     4762.56220      332.26776   $2577.639    253607   coordonnées théoriques au 19-DEC-2013
+TI8____MQID___88100E     4385.16905     4791.41282      332.19110   $2608.663    249845   coordonnées théoriques au 19-DEC-2013
+TI8____MQID___88100S     4385.49997     4792.24977      332.18888   $2609.563    249887   coordonnées théoriques au 19-DEC-2013
+TI8____MBIAH__87833E     4350.45618     4702.75159      332.53749   $2513.445    254088   coordonnées théoriques au 19-DEC-2013
+TI8____MBIAH__87833S     4351.40959     4705.33315      332.53065   $2516.197    254095   coordonnées théoriques au 19-DEC-2013
+TI8____MBIAH__87850E     4353.32329     4710.45958      332.51704   $2521.669    254090   coordonnées théoriques au 19-DEC-2013
+TI8____MBIAH__87850S     4354.29474     4713.03440      332.51020   $2524.421    254097   coordonnées théoriques au 19-DEC-2013
+TI8____MBIAH__87883E     4359.21896     4725.81442      332.47620   $2538.117    254094   coordonnées théoriques au 19-DEC-2013
+TI8____MBIAH__87883S     4360.22635     4728.37540      332.46938   $2540.869    254101   coordonnées théoriques au 19-DEC-2013
+*ZENI   5
+%station n°227680
+LHC____MQM______6R8E   TI8____MQID___88100E    104.45600           /.07   $902820# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MQID___88100S    103.98710           /.07   $902819# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88104E    103.32840           /.27   $902821# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88104S    103.24400           /.27   $902822# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88115E    103.04530           /.07   $902823# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88115S    102.99590           /.07   $902824# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88116E    102.91690           /.07   $902825# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88116S    102.87190           /.07   $902826# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88117E    102.79900           /.07   $902827# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88117S    102.75710           /.07   $902828# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC____MQY_____A5R8S    100.46070           /.07   $902808# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____A6R8E    100.84980           /.07   $902809# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____A6R8S    100.88370           /.07   $902810# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____B6R8E    100.92590           /.07   $902811# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____B6R8S    100.96810           /.07   $902812# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____A6R8E    101.02090           /.07   $902813# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____A6R8S    101.07420           /.07   $902814# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____B6R8E    101.14200           /.07   $902815# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____B6R8S    101.21180           /.07   $902816# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____C6R8E    101.30290           /.07   $902817# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____C6R8S    101.39880           /.07   $902818# station n°227680 -06-DEC-2013
+*ZENI   5
+%station n°227681
+LHC____MQM_____A7R8T   TI8____MBIAH__87850E    100.50510           /.07   $902864# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87850S    100.55370           /.07   $902865# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87883E    100.95900           /.07   $902866# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87883S    101.10360           /.07   $902867# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQID___87900E    101.62080           /.07   $902872# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQID___87900S    101.70880           /.07   $902873# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQIF___88000E    102.50020           /.07   $902868# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQIF___88000S    102.36350           /.07   $902869# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQM_____A7R8E    103.25080           /.07   $902863# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MB______B8R8E    100.46670           /.07   $902870# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MB______B8R8S    100.08260           /.14   $902871# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQML_____8R8E    100.04040           /.14   $902874# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQML_____8R8S    100.01220           /.14   $902875# station n°227681 -06-DEC-2013
+*ZENI   5
+%station n°227682
+LHC____MB______B8R8E   TI8____MBIAH__87833E    100.86060           /.07   $902904# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87833S    100.97040           /.07   $902905# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87850E    101.27840           /.07   $902902# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87850S    101.50700           /.07   $902903# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87883E    107.34420           /.07   $902906# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87883S    116.34970           /.07   $902907# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MQID___87900E    116.23570           /.07   $902908# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MQID___87900S    112.44430           /.07   $902909# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______A8R8E    101.17590           /.07   $902911# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______A8R8T    103.31260           /.07   $902912# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______B8R8S    101.12380           /.07   $902910# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MQML_____8R8E    100.72980           /.07   $902913# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MQML_____8R8S    100.53470           /.07   $902914# station n°227682 -06-DEC-2013
+*DTHE   .5   .5
+LHC____MQM______6R8E   TI8____MQID___88100E      7.31618                   \.07   $902841# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MQID___88100S      8.21003                   \.07   $902840# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88104E      9.12061                   \.27   $902842# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88104S      9.36903                   \.27   $902843# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88115E     14.28645                   \.07   $902844# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88115S     14.53577                   \.07   $902845# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88116E     14.95046                   \.07   $902846# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88116S     15.19981                   \.07   $902847# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88117E     15.61486                   \.07   $902848# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88117S     15.86423                   \.07   $902849# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC____MQY_____A5R8S     64.26225                   \.07   $902829# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____A6R8E     45.06177                   \.07   $902830# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____A6R8S     42.96039                   \.07   $902831# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____B6R8E     40.61214                   \.07   $902832# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____B6R8S     38.51162                   \.07   $902833# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____A6R8E     36.16204                   \.07   $902834# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____A6R8S     34.06224                   \.07   $902835# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____B6R8E     31.71305                   \.07   $902836# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____B6R8S     29.61321                   \.07   $902837# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____C6R8E     27.26447                   \.07   $902838# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____C6R8S     25.16433                   \.07   $902839# station n°227680 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87850E     40.58441                   \.07   $902877# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87850S     37.83216                   \.07   $902878# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87883E     24.13938                   \.07   $902879# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87883S     21.38959                   \.07   $902880# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQID___87900E     19.13213                   \.07   $902885# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQID___87900S     18.23285                   \.07   $902886# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQIF___88000E     14.52404                   \.07   $902881# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQIF___88000S     15.42234                   \.07   $902882# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQM_____A7R8E      4.71558                   \.07   $902876# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MB______B8R8E     20.64326                   \.07   $902883# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MB______B8R8S     31.43942                   \.14   $902884# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQML_____8R8E     35.68918                   \.14   $902887# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQML_____8R8S     39.39418                   \.14   $902888# station n°227681 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87833E     28.23634                   \.07   $902917# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87833S     25.48643                   \.07   $902918# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87850E     20.02565                   \.07   $902915# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87850S     17.28180                   \.07   $902916# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87883E      3.85356                   \.07   $902919# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87883S      1.77406                   \.07   $902920# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MQID___87900E      2.24672                   \.07   $902921# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MQID___87900S      2.93008                   \.07   $902922# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______A8R8E     15.66423                   \.07   $902924# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______A8R8T      4.89656                   \.07   $902925# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______B8R8S     10.80020                   \.07   $902923# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MQML_____8R8E     15.04949                   \.07   $902926# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MQML_____8R8S     18.75437                   \.07   $902927# station n°227682 -06-DEC-2013
+*DMES   .5   .5
+LHC____MBRC_____4R8E   LHC____MBRC_____4R8S      7.18497   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MBRC_____4R8S   LHC____MQY_____B4R8E      4.04203   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQY_____B4R8E   LHC____MQY_____B4R8S      7.59932   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQY_____B4R8S   LHC____MQY_____A5R8E     25.43035   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQY_____A5R8E   LHC____MQY_____A5R8S      7.60056   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQY_____A5R8S   LHC____MQM______6R8E     64.26071   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQM______6R8E   LHC____MQM______6R8S      7.60195   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQM______6R8S   LHC____MQM_____A7R8E     26.87816   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQM_____A7R8E   LHC____MQM_____A7R8S      4.67987   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQM_____A7R8S   LHC____MB______A8R8E      4.97298   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MB______A8R8E   LHC____MB______A8R8S     10.80130   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MB______A8R8S   LHC____MB______B8R8E      4.86060   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MB______B8R8E   LHC____MB______B8R8S     10.79836   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MB______B8R8S   LHC____MQML_____8R8E      4.24959   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+LHC____MQML_____8R8E   LHC____MQML_____8R8S      3.70548   .1   .1   $999999# distance spatiale théorique selon Géoïde CG2000_N
+*ANGL   5
+%station n°227680
+LHC____MQM______6R8E   TI8____MQID___88100E      6.07100           $902799# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MQID___88100S      5.32190           $902798# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88104E      5.45300           $902800# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88104S      5.28630           $902801# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88115E      3.17720           $902802# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88115S      3.10960           $902803# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88116E      3.00170           $902804# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88116S      2.94020           $902805# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88117E      2.84140           $902806# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   TI8____MCIAV__88117S      2.78480           $902807# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC____MQY_____A5R8S       .00000           $902787# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____A6R8E       .51150           $902788# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____A6R8S       .53610           $902789# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____B6R8E       .56690           $902790# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIA____B6R8S       .59750           $902791# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____A6R8E       .63680           $902792# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____A6R8S       .67550           $902793# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____B6R8E       .72510           $902794# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____B6R8S       .77630           $902795# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____C6R8E       .84260           $902796# station n°227680 -06-DEC-2013
+LHC____MQM______6R8E   LHC.B2_MSIB____C6R8S       .91210           $902797# station n°227680 -06-DEC-2013
+*ANGL   5
+%station n°227681
+LHC____MQM_____A7R8T   TI8____MBIAH__87850E    205.05030           $902851# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87850S    205.02340           $902852# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87883E    204.54530           $902853# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MBIAH__87883S    204.31740           $902854# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQID___87900E    204.01220           $902859# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQID___87900S    203.89360           $902860# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQIF___88000E      9.60450           $902855# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   TI8____MQIF___88000S      9.41900           $902856# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQM_____A7R8E       .00000           $902850# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MB______B8R8E    209.00380           $902857# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MB______B8R8S    208.54630           $902858# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQML_____8R8E    208.45950           $902861# station n°227681 -06-DEC-2013
+LHC____MQM_____A7R8T   LHC____MQML_____8R8S    208.39630           $902862# station n°227681 -06-DEC-2013
+*ANGL   5
+%station n°227682
+LHC____MB______B8R8E   TI8____MBIAH__87833E      1.20790           $902891# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87833S       .90600           $902892# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87850E       .00000           $902889# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87850S    399.29230           $902890# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87883E    378.93420           $902893# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MBIAH__87883S    334.21650           $902894# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MQID___87900E    256.43430           $902895# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   TI8____MQID___87900S    241.99230           $902896# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______A8R8E    206.42120           $902898# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______A8R8T    213.45740           $902899# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MB______B8R8S      6.69630           $902897# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MQML_____8R8E      6.73820           $902900# station n°227682 -06-DEC-2013
+LHC____MB______B8R8E   LHC____MQML_____8R8S      6.75310           $902901# station n°227682 -06-DEC-2013
+*ECHO   .1
+LHC____MBRC_____4R8E   LHC____MBRC_____4R8S   LHC____MQML_____8R8S       .00797           $902044# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQY_____B4R8E   LHC____MQML_____8R8S       .01838           $902045# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQY_____B4R8S   LHC____MQML_____8R8S       .02706           $902046# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQY_____A5R8E   LHC____MQML_____8R8S       .05015           $902047# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQY_____A5R8S   LHC____MQML_____8R8S       .05760           $902048# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQM______6R8E   LHC____MQML_____8R8S       .13346           $902049# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQM______6R8S   LHC____MQML_____8R8S       .14014           $902050# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQM_____A7R8E   LHC____MQML_____8R8S       .16770           $902051# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQM_____A7R8S   LHC____MQML_____8R8S       .17276           $902052# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MB______A8R8E   LHC____MQML_____8R8S       .17107           $902053# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MB______A8R8S   LHC____MQML_____8R8S       .15736           $902054# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MB______B8R8E   LHC____MQML_____8R8S       .13777           $902055# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MB______B8R8S   LHC____MQML_____8R8S       .06794           $902056# offset- fil n°227568 -05-DEC-2013
+LHC____MBRC_____4R8E   LHC____MQML_____8R8E   LHC____MQML_____8R8S       .03072           $902057# offset- fil n°227568 -05-DEC-2013
+*END

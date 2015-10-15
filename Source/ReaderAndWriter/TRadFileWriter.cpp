@@ -1,0 +1,88 @@
+////////////////////////////////////////////////////////////////////
+// TRadFileWriter.cpp :Implementation file
+// Write an LGC RAD file - a summary of the radial offset constraints
+// Creates a file from the calculation results and sends the appropriate messages
+//
+// Copyright 2003-2008 M.Jones, CERN, EST/SU. All rights reserved.
+/////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////
+// other forward declarations
+#include	"TRadFileWriter.h"
+#include	"TLGCProject.h"
+#include	"TLGCDataSet.h"
+#include	"LSCalcDataSet.h"
+#include	"TSeparatedFormatTStream.h"
+#include	"TRadialOffsetCnstrConverter.h"
+/////////////////////////////////////////////////////////////////////
+
+//ClassImp(TRadFileWriter)
+
+
+//////////////////////////////////////////////////////////////////////
+// Definitions and Initialisations
+//////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+//constructor / destructor
+/////////////////////////////////////////////////////////////////////////////
+TRadFileWriter::TRadFileWriter() : TAFileWriter()
+{//default constructor
+}
+
+
+TRadFileWriter::TRadFileWriter(TAStreamFormatter* stream, const TLGCProject* project) : TAFileWriter(stream, project)
+{//constructor
+}
+
+
+TRadFileWriter::~TRadFileWriter()
+{//destructor
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MEMBER PUBLIC FUNCTIONS
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+void	TRadFileWriter::writeFile(TLGCDataSet* ds, LSCalcDataSet* LSds)
+{//Write file if there no error in the project
+	string error = "";
+	init(ds, LSds, error);
+
+	if( (ds->getRadOffCnstrDimension()) != 0 )
+	{writeRadOffCnstr();}
+	
+	return;
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//PRIVATE FUNCTIONS : RADIAL CONSTRAINT
+//////////////////////////////////////////////////////////////////////////////////
+void	TRadFileWriter::writeRadOffCnstr()
+{
+	//List
+	LSRadOffCnstrConstIter	cnstrIt, endCnstrIt;
+	cnstrIt					= getLSCalcDataSet()->beginLSRadOffCnstr();
+	endCnstrIt				= getLSCalcDataSet()->endLSRadOffCnstr();
+
+
+	TAStreamFormatter* stream =	getStream();
+
+	TRadialOffsetCnstrConverter converter (*stream);
+
+	while(cnstrIt != endCnstrIt)
+	{//write results
+		converter.writeRadData(cnstrIt);
+		cnstrIt++;
+	}
+	return;
+}
+
+
+////////////////////////////////////////////////////////
+//END
+////////////////////////////////////////////////////////

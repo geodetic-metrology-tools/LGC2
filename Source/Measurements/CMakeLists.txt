@@ -1,0 +1,71 @@
+# Create a variable containing all .cpp files:
+set(Measurement_SOURCES 
+    T2DOffsetMeasurement.cpp
+    T2DOffsetROM.cpp
+    TAFreeInstrumentStation.cpp
+    TAInstrumentStation.cpp
+    TALineMeasurement.cpp
+    TAMeasurement.cpp
+    TAngleConstants.cpp
+    TAObjectMeasurement.cpp
+    TAPlaneMeasurement.cpp
+    TAPointMeasurement.cpp
+    TARoundOfMeas.cpp
+    TAUnreferencedROM.cpp
+    TDistConstants.cpp
+    TDistMeasStation.cpp
+    TGyroOrientationROM.cpp
+    THorAngleMeasurement.cpp
+    THorAngleROM.cpp
+    THorizontalDistMeas.cpp
+    THorizontalDistROM.cpp
+    TLevelStation.cpp
+    TOffsetToSpaLineMeasurement.cpp
+    TOffsetToTheoPlaneMeasurement.cpp
+    TOffsetToVerLineMeasurement.cpp
+    TOffsetToVerPlaneMeasurement.cpp
+    TOrientationCnstr.cpp
+    TRadialOffsetCnstr.cpp
+    TSpatialDistMeasurement.cpp
+    TSpatialDistROM.cpp
+    TTheodoliteStation.cpp
+    TVerticalDistMeasurement.cpp
+    TVerticalDistROM.cpp
+    TWireToWireDistMeas.cpp
+    TWorkingConstants.cpp
+    TWorkingConstraints.cpp
+    TWorkingStations.cpp
+    TWPSMeasurement.cpp
+    TWPSStation.cpp
+    TWTWDistStation.cpp
+    TZenithDistMeasurement.cpp
+    TZenithDistROM.cpp
+)
+
+# Create a variable containing all .h files:
+set(Measurement_HEADERS 
+    ${LGC_INCLUDE_PATH}/TDistMeasStation.h
+    ${LGC_INCLUDE_PATH}/TGyroOrientationROM.h
+    ${LGC_INCLUDE_PATH}/THorAngleMeasurement.h
+    ${LGC_INCLUDE_PATH}/THorAngleROM.h
+    ${LGC_INCLUDE_PATH}/THorizontalDistMeas.h
+    ${LGC_INCLUDE_PATH}/THorizontalDistROM.h
+    ${LGC_INCLUDE_PATH}/TLevelStation.h
+    ${LGC_INCLUDE_PATH}/TOffsetToSpaLineMeasurement.h
+    ${LGC_INCLUDE_PATH}/TOffsetToTheoPlaneMeasurement.h
+    ${LGC_INCLUDE_PATH}/TOffsetToVerLineMeasurement.h
+    ${LGC_INCLUDE_PATH}/TOffsetToVerPlaneMeasurement.h
+    ${LGC_INCLUDE_PATH}/TSpatialDistMeasurement.h
+    ${LGC_INCLUDE_PATH}/TSpatialDistROM.h
+    ${LGC_INCLUDE_PATH}/TTheodoliteStation.h
+    ${LGC_INCLUDE_PATH}/TVerticalDistMeasurement.h
+    ${LGC_INCLUDE_PATH}/TVerticalDistROM.h
+    ${LGC_INCLUDE_PATH}/TWorkingConstants.h
+    ${LGC_INCLUDE_PATH}/TWorkingConstraints.h
+    ${LGC_INCLUDE_PATH}/TWorkingStations.h
+    ${LGC_INCLUDE_PATH}/TZenithDistMeasurement.h
+    ${LGC_INCLUDE_PATH}/TZenithDistROM.h
+)
+
+# Create a static library from sources:
+add_library(Measurements STATIC ${Measurement_HEADERS} ${Measurement_SOURCES})

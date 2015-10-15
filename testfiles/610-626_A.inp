@@ -1,0 +1,348 @@
+*TITR
+Fichier d'input créé le 24-OCT-2013
+Opération n° 11619, Lissage SSS
+*OLOC
+*HIST
+*ALLFIXED
+*PUNC   OUT1
+*FAUT     .01     .10
+*CALA
+SPS____QF_____61010E   0   0      402.63989   $6079.684     89597   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61010S   0   0      402.63987   $6082.531     89598   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____61110E   0   0      402.63961   $6111.681     89615   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____61110S   0   0      402.63958   $6114.527     89616   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61210E   0   0      402.63930   $6143.679     89633   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61210S   0   0      402.63928   $6146.523     89634   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____61310E   0   0      402.63897   $6175.677     89651   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____61310S   0   0      402.63894   $6178.520     89652   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61410E   0   0      402.63862   $6207.674     89669   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61410S   0   0      402.63859   $6210.520     89670   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____61510E   0   0      402.63831   $6239.672     89698   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____61510S   0   0      402.63828   $6242.516     89700   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61610E   0   0      402.63801   $6271.670    502258   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____61610S   0   0      402.63798   $6274.515    502257   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62010E   0   0      402.63799   $6399.661     89859   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62010S   0   0      402.63802   $6402.508     89860   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____62110E   0   0      402.63829   $6431.658     89875   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____62110S   0   0      402.63832   $6434.504     89876   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62210E   0   0      402.63861   $6463.656     89901   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62210S   0   0      402.63864   $6466.502     89902   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____62310E   0   0      402.63896   $6495.654     89919   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____62310S   0   0      402.63900   $6498.498     89920   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62410E   0   0      402.63930   $6527.651     89937   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62410S   0   0      402.63932   $6530.494     89938   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____62510E   0   0      402.63960   $6559.649     89955   coordonnées théoriques au 24-OCT-2013
+SPS____QD_____62510S   0   0      402.63963   $6562.497     89956   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62610E   0   0      402.63988   $6591.647     89973   coordonnées théoriques au 24-OCT-2013
+SPS____QF_____62610S   0   0      402.63991   $6594.489     89974   coordonnées théoriques au 24-OCT-2013
+SPS____QDA____61910E   0   0      402.72075   $6367.673     89828   coordonnées théoriques au 24-OCT-2013
+SPS____QDA____61910S   0   0      402.72076   $6370.499     89830   coordonnées théoriques au 24-OCT-2013
+%*VZ
+SPS____BTV____61003E   0   0      402.53191   $6077.860    204608   coordonnées théoriques au 24-OCT-2013
+SPS____BTV____61003S   0   0      402.53191   $6078.244    204611   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61008E   0   0      402.70989   $6079.206     89595   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61008S   0   0      402.70988   $6079.456     89596   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____61105E   0   0      402.70962   $6110.434    159966   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____61105S   0   0      402.70962   $6110.694    160018   coordonnées théoriques au 24-OCT-2013
+SPS____BPCN___61108E   0   0      402.70962   $6111.154     89613   coordonnées théoriques au 24-OCT-2013
+SPS____BPCN___61108S   0   0      402.70961   $6111.454     89614   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____61205E   0   0      402.70932   $6142.430    204797   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____61205S   0   0      402.70932   $6142.690    204849   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61208E   0   0      402.70930   $6143.201     89631   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61208S   0   0      402.70930   $6143.451     89632   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___61303E   0   0      402.63299   $6173.815     89643   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___61303S   0   0      402.63299   $6173.968     89644   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____61305E   0   0      402.70899   $6174.430    159967   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____61305S   0   0      402.70898   $6174.690    160019   coordonnées théoriques au 24-OCT-2013
+SPS____BPCN___61308E   0   0      402.70899   $6175.150     89649   coordonnées théoriques au 24-OCT-2013
+SPS____BPCN___61308S   0   0      402.70898   $6175.450     89650   coordonnées théoriques au 24-OCT-2013
+SPS____MPSH___61402E   0   0      402.46664   $6205.583    506253   coordonnées théoriques au 24-OCT-2013
+SPS____MPSH___61402S   0   0      402.46664   $6206.157    506254   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____61405E   0   0      402.70863   $6206.426    204798   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____61405S   0   0      402.70863   $6206.686    204850   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61408E   0   0      402.70862   $6207.196     89667   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61408S   0   0      402.70862   $6207.446     89668   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___61503E   0   0      402.63233   $6237.815     89689   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___61503S   0   0      402.63233   $6238.210     89690   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____61505E   0   0      402.70832   $6238.427    206593   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____61505S   0   0      402.70832   $6238.687    206594   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____61508E   0   0      402.70831   $6239.194     89695   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____61508S   0   0      402.70832   $6239.444     89696   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61608E   0   0      402.70801   $6271.192    508710   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____61608S   0   0      402.70801   $6271.442    508711   coordonnées théoriques au 24-OCT-2013
+SPS____BPCE___61931E   0   0      402.70778   $6371.289    508291   coordonnées théoriques au 24-OCT-2013
+SPS____BPCE___61931S   0   0      402.70777   $6371.589    508292   coordonnées théoriques au 24-OCT-2013
+SPS____MDVA___61932E   0   0      402.70777   $6372.011     89833   coordonnées théoriques au 24-OCT-2013
+SPS____MDVA___61932S   0   0      402.70778   $6372.336     89834   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____62005E   0   0      402.70797   $6398.412    204799   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____62005S   0   0      402.70798   $6398.672    204851   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62008E   0   0      402.70798   $6399.183     89857   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62008S   0   0      402.70798   $6399.433     89858   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___62103E   0   0      402.63228   $6429.816     89869   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___62103S   0   0      402.63229   $6430.211     89870   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____62108E   0   0      402.70830   $6431.180     89873   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____62108S   0   0      402.70830   $6431.430     89874   coordonnées théoriques au 24-OCT-2013
+SPS____MPSH___62199E   0   0      402.46658   $6460.559    502295   coordonnées théoriques au 24-OCT-2013
+SPS____MPSH___62199S   0   0      402.46658   $6461.133    502296   coordonnées théoriques au 24-OCT-2013
+SPS____LOF____62202E   0   0      402.70859   $6461.705     89893   coordonnées théoriques au 24-OCT-2013
+SPS____LOF____62202S   0   0      402.70859   $6461.965     89894   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62208E   0   0      402.70861   $6463.178     89899   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62208S   0   0      402.70861   $6463.428     89900   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___62303E   0   0      402.63294   $6493.797     89911   coordonnées théoriques au 24-OCT-2013
+SPS____MPSV___62303S   0   0      402.63294   $6494.192     89912   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____62305E   0   0      402.70895   $6494.409    159968   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____62305S   0   0      402.70895   $6494.669    160020   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____62308E   0   0      402.70896   $6495.176     89917   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____62308S   0   0      402.70897   $6495.426     89918   coordonnées théoriques au 24-OCT-2013
+SPS____LSE____62402E   0   0      402.63927   $6525.602    204864   coordonnées théoriques au 24-OCT-2013
+SPS____LSE____62402S   0   0      402.63927   $6526.115    204873   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____62405E   0   0      402.70928   $6526.403    204800   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____62405S   0   0      402.70929   $6526.663    204852   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62408E   0   0      402.70929   $6527.173     89935   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62408S   0   0      402.70930   $6527.423     89936   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____62505E   0   0      402.70959   $6558.402    159969   coordonnées théoriques au 24-OCT-2013
+SPS____LSD____62505S   0   0      402.70959   $6558.662    160021   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____62508E   0   0      402.70959   $6559.171     89953   coordonnées théoriques au 24-OCT-2013
+SPS____BPV____62508S   0   0      402.70959   $6559.421     89954   coordonnées théoriques au 24-OCT-2013
+SPS____LOF____62602E   0   0      402.70986   $6589.696     89965   coordonnées théoriques au 24-OCT-2013
+SPS____LOF____62602S   0   0      402.70986   $6589.956     89966   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____62605E   0   0      402.70987   $6590.398    204801   coordonnées théoriques au 24-OCT-2013
+SPS____LSF____62605S   0   0      402.70987   $6590.658    204853   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62608E   0   0      402.70988   $6591.169     89971   coordonnées théoriques au 24-OCT-2013
+SPS____BPH____62608S   0   0      402.70988   $6591.419     89972   coordonnées théoriques au 24-OCT-2013
+STN_225461__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225430__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225300__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225359__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225364__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225307__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225494__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225444__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225452__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225314__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225297__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225437__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225441__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225490__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225427__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225368__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225502__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225506__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225510__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225318__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225355__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225375__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225434__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225448__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225311__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225322__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225373__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225304__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225457__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+STN_225499__________   0   0      400.00000   $1000.000   9999999   Station de nivellement
+*DVER   .1
+STN_225297__________   SPS____BTV____61003E      -.37419           /0      $890657# dénivelée mesurée,aller n°225297 - -17-OCT-2013 10:24:00 - distance niveau mire : 0 m
+STN_225297__________   SPS____BTV____61003S      -.37434           /0      $890658# dénivelée mesurée,aller n°225297 - -17-OCT-2013 10:24:00 - distance niveau mire : 0 m
+STN_225297__________   SPS____BPH____61008E      -.19627           /0      $890659# dénivelée mesurée,aller n°225297 - -17-OCT-2013 10:24:00 - distance niveau mire : 0 m
+STN_225297__________   SPS____BPH____61008S      -.19624           /0      $890660# dénivelée mesurée,aller n°225297 - -17-OCT-2013 10:24:00 - distance niveau mire : 0 m
+STN_225297__________   SPS____QF_____61010E      -.26629           /0      $890655# dénivelée mesurée,aller n°225297 - -17-OCT-2013 10:24:00 - distance niveau mire : 0 m
+STN_225297__________   SPS____QF_____61010S      -.26621           /0      $890656# dénivelée mesurée,aller n°225297 - -17-OCT-2013 10:24:00 - distance niveau mire : 0 m
+STN_225300__________   SPS____BTV____61003E      -.22940           /0      $890665# dénivelée mesurée,aller n°225300 - -17-OCT-2013 11:41:36 - distance niveau mire : 0 m
+STN_225300__________   SPS____BTV____61003S      -.22956           /0      $890666# dénivelée mesurée,aller n°225300 - -17-OCT-2013 11:41:36 - distance niveau mire : 0 m
+STN_225300__________   SPS____BPH____61008E      -.05150           /0      $890667# dénivelée mesurée,aller n°225300 - -17-OCT-2013 11:41:36 - distance niveau mire : 0 m
+STN_225300__________   SPS____BPH____61008S      -.05148           /0      $890668# dénivelée mesurée,aller n°225300 - -17-OCT-2013 11:41:36 - distance niveau mire : 0 m
+STN_225300__________   SPS____QF_____61010E      -.12151           /0      $890663# dénivelée mesurée,aller n°225300 - -17-OCT-2013 11:41:36 - distance niveau mire : 0 m
+STN_225300__________   SPS____QF_____61010S      -.12147           /0      $890664# dénivelée mesurée,aller n°225300 - -17-OCT-2013 11:41:36 - distance niveau mire : 0 m
+STN_225304__________   SPS____LSD____61105E      -.17871           /0      $890691# dénivelée mesurée,aller n°225304 - -17-OCT-2013 11:25:41 - distance niveau mire : 0 m
+STN_225304__________   SPS____LSD____61105S      -.17870           /0      $890692# dénivelée mesurée,aller n°225304 - -17-OCT-2013 11:25:41 - distance niveau mire : 0 m
+STN_225304__________   SPS____BPCN___61108E      -.17875           /0      $890693# dénivelée mesurée,aller n°225304 - -17-OCT-2013 11:25:41 - distance niveau mire : 0 m
+STN_225304__________   SPS____BPCN___61108S      -.17864           /0      $890694# dénivelée mesurée,aller n°225304 - -17-OCT-2013 11:25:41 - distance niveau mire : 0 m
+STN_225304__________   SPS____QD_____61110E      -.24862           /0      $890689# dénivelée mesurée,aller n°225304 - -17-OCT-2013 11:25:41 - distance niveau mire : 0 m
+STN_225304__________   SPS____QD_____61110S      -.24880           /0      $890690# dénivelée mesurée,aller n°225304 - -17-OCT-2013 11:25:41 - distance niveau mire : 0 m
+STN_225307__________   SPS____LSD____61105E      -.17290           /0      $890699# dénivelée mesurée,aller n°225307 - -17-OCT-2013 11:28:11 - distance niveau mire : 0 m
+STN_225307__________   SPS____LSD____61105S      -.17288           /0      $890700# dénivelée mesurée,aller n°225307 - -17-OCT-2013 11:28:11 - distance niveau mire : 0 m
+STN_225307__________   SPS____BPCN___61108E      -.17292           /0      $890701# dénivelée mesurée,aller n°225307 - -17-OCT-2013 11:28:11 - distance niveau mire : 0 m
+STN_225307__________   SPS____BPCN___61108S      -.17280           /0      $890702# dénivelée mesurée,aller n°225307 - -17-OCT-2013 11:28:11 - distance niveau mire : 0 m
+STN_225307__________   SPS____QD_____61110E      -.24282           /0      $890697# dénivelée mesurée,aller n°225307 - -17-OCT-2013 11:28:11 - distance niveau mire : 0 m
+STN_225307__________   SPS____QD_____61110S      -.24294           /0      $890698# dénivelée mesurée,aller n°225307 - -17-OCT-2013 11:28:11 - distance niveau mire : 0 m
+STN_225311__________   SPS____LSF____61205E      -.23093           /0      $890725# dénivelée mesurée,aller n°225311 - -17-OCT-2013 15:32:23 - distance niveau mire : 0 m
+STN_225311__________   SPS____LSF____61205S      -.23099           /0      $890726# dénivelée mesurée,aller n°225311 - -17-OCT-2013 15:32:23 - distance niveau mire : 0 m
+STN_225311__________   SPS____BPH____61208E      -.23096           /0      $890727# dénivelée mesurée,aller n°225311 - -17-OCT-2013 15:32:23 - distance niveau mire : 0 m
+STN_225311__________   SPS____BPH____61208S      -.23092           /0      $890728# dénivelée mesurée,aller n°225311 - -17-OCT-2013 15:32:23 - distance niveau mire : 0 m
+STN_225311__________   SPS____QF_____61210E      -.30102           /0      $890723# dénivelée mesurée,aller n°225311 - -17-OCT-2013 15:32:23 - distance niveau mire : 0 m
+STN_225311__________   SPS____QF_____61210S      -.30102           /0      $890724# dénivelée mesurée,aller n°225311 - -17-OCT-2013 15:32:23 - distance niveau mire : 0 m
+STN_225314__________   SPS____LSF____61205E      -.21653           /0      $890733# dénivelée mesurée,aller n°225314 - -17-OCT-2013 15:34:31 - distance niveau mire : 0 m
+STN_225314__________   SPS____LSF____61205S      -.21664           /0      $890734# dénivelée mesurée,aller n°225314 - -17-OCT-2013 15:34:31 - distance niveau mire : 0 m
+STN_225314__________   SPS____BPH____61208E      -.21660           /0      $890735# dénivelée mesurée,aller n°225314 - -17-OCT-2013 15:34:31 - distance niveau mire : 0 m
+STN_225314__________   SPS____BPH____61208S      -.21656           /0      $890736# dénivelée mesurée,aller n°225314 - -17-OCT-2013 15:34:31 - distance niveau mire : 0 m
+STN_225314__________   SPS____QF_____61210E      -.28664           /0      $890731# dénivelée mesurée,aller n°225314 - -17-OCT-2013 15:34:31 - distance niveau mire : 0 m
+STN_225314__________   SPS____QF_____61210S      -.28665           /0      $890732# dénivelée mesurée,aller n°225314 - -17-OCT-2013 15:34:31 - distance niveau mire : 0 m
+STN_225318__________   SPS____MPSV___61303E      -.30109           /0      $890765# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____MPSV___61303S      -.30096           /0      $890766# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____LSD____61305E      -.22510           /0      $890767# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____LSD____61305S      -.22502           /0      $890768# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____BPCN___61308E      -.22508           /0      $890769# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____BPCN___61308S      -.22504           /0      $890770# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____QD_____61310E      -.29510           /0      $890763# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225318__________   SPS____QD_____61310S      -.29508           /0      $890764# dénivelée mesurée,aller n°225318 - -17-OCT-2013 16:38:49 - distance niveau mire : 0 m
+STN_225322__________   SPS____MPSV___61303E      -.28616           /0      $890776# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____MPSV___61303S      -.28605           /0      $890777# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____LSD____61305E      -.21012           /0      $890778# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____LSD____61305S      -.21002           /0      $890779# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____BPCN___61308E      -.21010           /0      $890780# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____BPCN___61308S      -.21004           /0      $890781# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____QD_____61310E      -.28009           /0      $890774# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225322__________   SPS____QD_____61310S      -.28009           /0      $890775# dénivelée mesurée,aller n°225322 - -17-OCT-2013 16:41:51 - distance niveau mire : 0 m
+STN_225355__________   SPS____MPSV___61503E      -.16483           /0      $890994# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____MPSV___61503S      -.16481           /0      $890995# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____LSD____61505E      -.08873           /0      $890996# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____LSD____61505S      -.08880           /0      $890997# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____BPV____61508E      -.08886           /0      $890998# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____BPV____61508S      -.08886           /0      $890999# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____QD_____61510E      -.15890           /0      $890992# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225355__________   SPS____QD_____61510S      -.15880           /0      $890993# dénivelée mesurée,aller n°225355 - -18-OCT-2013 16:14:23 - distance niveau mire : 0 m
+STN_225359__________   SPS____MPSV___61503E      -.17990           /0      $891005# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____MPSV___61503S      -.17988           /0      $891006# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____LSD____61505E      -.10388           /0      $891007# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____LSD____61505S      -.10393           /0      $891008# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____BPV____61508E      -.10402           /0      $891009# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____BPV____61508S      -.10401           /0      $891010# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____QD_____61510E      -.17401           /0      $891003# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225359__________   SPS____QD_____61510S      -.17392           /0      $891004# dénivelée mesurée,aller n°225359 - -18-OCT-2013 16:17:48 - distance niveau mire : 0 m
+STN_225364__________   SPS____MPSH___61402E      -.32878           /0      $891040# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____MPSH___61402S      -.32887           /0      $891041# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____LSF____61405E      -.08680           /0      $891042# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____LSF____61405S      -.08687           /0      $891043# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____BPH____61408E      -.08690           /0      $891044# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____BPH____61408S      -.08681           /0      $891045# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____QF_____61410E      -.15691           /0      $891038# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225364__________   SPS____QF_____61410S      -.15690           /0      $891039# dénivelée mesurée,aller n°225364 - -18-OCT-2013 15:17:47 - distance niveau mire : 0 m
+STN_225368__________   SPS____MPSH___61402E      -.32125           /0      $891051# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____MPSH___61402S      -.32132           /0      $891052# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____LSF____61405E      -.07919           /0      $891053# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____LSF____61405S      -.07931           /0      $891054# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____BPH____61408E      -.07930           /0      $891055# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____BPH____61408S      -.07923           /0      $891056# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____QF_____61410E      -.14930           /0      $891049# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225368__________   SPS____QF_____61410S      -.14928           /0      $891050# dénivelée mesurée,aller n°225368 - -18-OCT-2013 15:21:19 - distance niveau mire : 0 m
+STN_225373__________   SPS____BPH____61608E      -.11226           /0      $891074# dénivelée mesurée,aller n°225373 - -18-OCT-2013 16:34:56 - distance niveau mire : 0 m
+STN_225373__________   SPS____BPH____61608S      -.11233           /0      $891075# dénivelée mesurée,aller n°225373 - -18-OCT-2013 16:34:56 - distance niveau mire : 0 m
+STN_225373__________   SPS____QF_____61610E      -.18230           /0      $891072# dénivelée mesurée,aller n°225373 - -18-OCT-2013 16:34:56 - distance niveau mire : 0 m
+STN_225373__________   SPS____QF_____61610S      -.18230           /0      $891073# dénivelée mesurée,aller n°225373 - -18-OCT-2013 16:34:56 - distance niveau mire : 0 m
+STN_225375__________   SPS____BPH____61608E      -.10288           /0      $891079# dénivelée mesurée,aller n°225375 - -18-OCT-2013 16:37:50 - distance niveau mire : 0 m
+STN_225375__________   SPS____BPH____61608S      -.10286           /0      $891080# dénivelée mesurée,aller n°225375 - -18-OCT-2013 16:37:50 - distance niveau mire : 0 m
+STN_225375__________   SPS____QF_____61610E      -.17279           /0      $891077# dénivelée mesurée,aller n°225375 - -18-OCT-2013 16:37:50 - distance niveau mire : 0 m
+STN_225375__________   SPS____QF_____61610S      -.17278           /0      $891078# dénivelée mesurée,aller n°225375 - -18-OCT-2013 16:37:50 - distance niveau mire : 0 m
+STN_225427__________   SPS____LSF____62005E      -.18490           /0      $891522# dénivelée mesurée,aller n°225427 - -21-OCT-2013 11:47:35 - distance niveau mire : 0 m
+STN_225427__________   SPS____LSF____62005S      -.18488           /0      $891523# dénivelée mesurée,aller n°225427 - -21-OCT-2013 11:47:35 - distance niveau mire : 0 m
+STN_225427__________   SPS____BPH____62008E      -.18492           /0      $891524# dénivelée mesurée,aller n°225427 - -21-OCT-2013 11:47:35 - distance niveau mire : 0 m
+STN_225427__________   SPS____BPH____62008S      -.18492           /0      $891525# dénivelée mesurée,aller n°225427 - -21-OCT-2013 11:47:35 - distance niveau mire : 0 m
+STN_225427__________   SPS____QF_____62010E      -.25491           /0      $891520# dénivelée mesurée,aller n°225427 - -21-OCT-2013 11:47:35 - distance niveau mire : 0 m
+STN_225427__________   SPS____QF_____62010S      -.25488           /0      $891521# dénivelée mesurée,aller n°225427 - -21-OCT-2013 11:47:35 - distance niveau mire : 0 m
+STN_225430__________   SPS____LSF____62005E      -.16611           /0      $891530# dénivelée mesurée,aller n°225430 - -21-OCT-2013 11:49:47 - distance niveau mire : 0 m
+STN_225430__________   SPS____LSF____62005S      -.16612           /0      $891531# dénivelée mesurée,aller n°225430 - -21-OCT-2013 11:49:47 - distance niveau mire : 0 m
+STN_225430__________   SPS____BPH____62008E      -.16618           /0      $891532# dénivelée mesurée,aller n°225430 - -21-OCT-2013 11:49:47 - distance niveau mire : 0 m
+STN_225430__________   SPS____BPH____62008S      -.16620           /0      $891533# dénivelée mesurée,aller n°225430 - -21-OCT-2013 11:49:47 - distance niveau mire : 0 m
+STN_225430__________   SPS____QF_____62010E      -.23614           /0      $891528# dénivelée mesurée,aller n°225430 - -21-OCT-2013 11:49:47 - distance niveau mire : 0 m
+STN_225430__________   SPS____QF_____62010S      -.23609           /0      $891529# dénivelée mesurée,aller n°225430 - -21-OCT-2013 11:49:47 - distance niveau mire : 0 m
+STN_225434__________   SPS____QDA____61910E      -.17202           /0      $891554# dénivelée mesurée,aller n°225434 - -21-OCT-2013 15:59:42 - distance niveau mire : 0 m
+STN_225434__________   SPS____QDA____61910S      -.17229           /0      $891555# dénivelée mesurée,aller n°225434 - -21-OCT-2013 15:59:42 - distance niveau mire : 0 m
+STN_225434__________   SPS____BPCE___61931E      -.18509           /0      $891556# dénivelée mesurée,aller n°225434 - -21-OCT-2013 15:59:42 - distance niveau mire : 0 m
+STN_225434__________   SPS____BPCE___61931S      -.18521           /0      $891557# dénivelée mesurée,aller n°225434 - -21-OCT-2013 15:59:42 - distance niveau mire : 0 m
+STN_225434__________   SPS____MDVA___61932E      -.18515           /0      $891558# dénivelée mesurée,aller n°225434 - -21-OCT-2013 15:59:42 - distance niveau mire : 0 m
+STN_225434__________   SPS____MDVA___61932S      -.18515           /0      $891559# dénivelée mesurée,aller n°225434 - -21-OCT-2013 15:59:42 - distance niveau mire : 0 m
+STN_225437__________   SPS____QDA____61910E      -.16005           /0      $891562# dénivelée mesurée,aller n°225437 - -21-OCT-2013 16:02:58 - distance niveau mire : 0 m
+STN_225437__________   SPS____QDA____61910S      -.16030           /0      $891563# dénivelée mesurée,aller n°225437 - -21-OCT-2013 16:02:58 - distance niveau mire : 0 m
+STN_225437__________   SPS____BPCE___61931E      -.17312           /0      $891564# dénivelée mesurée,aller n°225437 - -21-OCT-2013 16:02:58 - distance niveau mire : 0 m
+STN_225437__________   SPS____BPCE___61931S      -.17325           /0      $891565# dénivelée mesurée,aller n°225437 - -21-OCT-2013 16:02:58 - distance niveau mire : 0 m
+STN_225437__________   SPS____MDVA___61932E      -.17320           /0      $891566# dénivelée mesurée,aller n°225437 - -21-OCT-2013 16:02:58 - distance niveau mire : 0 m
+STN_225437__________   SPS____MDVA___61932S      -.17320           /0      $891567# dénivelée mesurée,aller n°225437 - -21-OCT-2013 16:02:58 - distance niveau mire : 0 m
+STN_225441__________   SPS____MPSV___62103E      -.29730           /0      $891590# dénivelée mesurée,aller n°225441 - -22-OCT-2013 11:22:55 - distance niveau mire : 0 m
+STN_225441__________   SPS____MPSV___62103S      -.29729           /0      $891591# dénivelée mesurée,aller n°225441 - -22-OCT-2013 11:22:55 - distance niveau mire : 0 m
+STN_225441__________   SPS____BPV____62108E      -.22140           /0      $891592# dénivelée mesurée,aller n°225441 - -22-OCT-2013 11:22:55 - distance niveau mire : 0 m
+STN_225441__________   SPS____BPV____62108S      -.22129           /0      $891593# dénivelée mesurée,aller n°225441 - -22-OCT-2013 11:22:55 - distance niveau mire : 0 m
+STN_225441__________   SPS____QD_____62110E      -.29130           /0      $891588# dénivelée mesurée,aller n°225441 - -22-OCT-2013 11:22:55 - distance niveau mire : 0 m
+STN_225441__________   SPS____QD_____62110S      -.29127           /0      $891589# dénivelée mesurée,aller n°225441 - -22-OCT-2013 11:22:55 - distance niveau mire : 0 m
+STN_225444__________   SPS____MPSV___62103E      -.28660           /0      $891598# dénivelée mesurée,aller n°225444 - -22-OCT-2013 11:26:32 - distance niveau mire : 0 m
+STN_225444__________   SPS____MPSV___62103S      -.28660           /0      $891599# dénivelée mesurée,aller n°225444 - -22-OCT-2013 11:26:32 - distance niveau mire : 0 m
+STN_225444__________   SPS____BPV____62108E      -.21073           /0      $891600# dénivelée mesurée,aller n°225444 - -22-OCT-2013 11:26:32 - distance niveau mire : 0 m
+STN_225444__________   SPS____BPV____62108S      -.21061           /0      $891601# dénivelée mesurée,aller n°225444 - -22-OCT-2013 11:26:32 - distance niveau mire : 0 m
+STN_225444__________   SPS____QD_____62110E      -.28062           /0      $891596# dénivelée mesurée,aller n°225444 - -22-OCT-2013 11:26:32 - distance niveau mire : 0 m
+STN_225444__________   SPS____QD_____62110S      -.28058           /0      $891597# dénivelée mesurée,aller n°225444 - -22-OCT-2013 11:26:32 - distance niveau mire : 0 m
+STN_225448__________   SPS____MPSH___62199E      -.35231           /0      $891630# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____MPSH___62199S      -.35225           /0      $891631# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____LOF____62202E      -.11015           /0      $891632# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____LOF____62202S      -.11026           /0      $891633# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____BPH____62208E      -.11012           /0      $891634# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____BPH____62208S      -.11014           /0      $891635# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____QF_____62210E      -.18017           /0      $891628# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225448__________   SPS____QF_____62210S      -.18010           /0      $891629# dénivelée mesurée,aller n°225448 - -22-OCT-2013 15:39:48 - distance niveau mire : 0 m
+STN_225452__________   SPS____MPSH___62199E      -.33442           /0      $891641# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____MPSH___62199S      -.33437           /0      $891642# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____LOF____62202E      -.09230           /0      $891643# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____LOF____62202S      -.09237           /0      $891644# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____BPH____62208E      -.09224           /0      $891645# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____BPH____62208S      -.09229           /0      $891646# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____QF_____62210E      -.16232           /0      $891639# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225452__________   SPS____QF_____62210S      -.16228           /0      $891640# dénivelée mesurée,aller n°225452 - -22-OCT-2013 15:43:01 - distance niveau mire : 0 m
+STN_225457__________   SPS____MPSV___62303E      -.21326           /0      $891676# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____MPSV___62303S      -.21330           /0      $891677# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____LSD____62305E      -.13728           /0      $891678# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____LSD____62305S      -.13719           /0      $891679# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____BPV____62308E      -.13721           /0      $891680# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____BPV____62308S      -.13721           /0      $891681# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____QD_____62310E      -.20724           /0      $891674# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225457__________   SPS____QD_____62310S      -.20712           /0      $891675# dénivelée mesurée,aller n°225457 - -22-OCT-2013 16:51:03 - distance niveau mire : 0 m
+STN_225461__________   SPS____MPSV___62303E      -.20488           /0      $891687# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____MPSV___62303S      -.20493           /0      $891688# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____LSD____62305E      -.12885           /0      $891689# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____LSD____62305S      -.12880           /0      $891690# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____BPV____62308E      -.12879           /0      $891691# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____BPV____62308S      -.12881           /0      $891692# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____QD_____62310E      -.19884           /0      $891685# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225461__________   SPS____QD_____62310S      -.19880           /0      $891686# dénivelée mesurée,aller n°225461 - -22-OCT-2013 16:53:29 - distance niveau mire : 0 m
+STN_225490__________   SPS____LSE____62402E      -.20343           /0      $891929# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____LSE____62402S      -.20337           /0      $891930# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____LSF____62405E      -.13335           /0      $891931# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____LSF____62405S      -.13345           /0      $891932# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____BPH____62408E      -.13338           /0      $891933# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____BPH____62408S      -.13341           /0      $891934# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____QF_____62410E      -.20341           /0      $891927# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225490__________   SPS____QF_____62410S      -.20341           /0      $891928# dénivelée mesurée,aller n°225490 - -23-OCT-2013 11:18:27 - distance niveau mire : 0 m
+STN_225494__________   SPS____LSE____62402E      -.19321           /0      $891940# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____LSE____62402S      -.19317           /0      $891941# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____LSF____62405E      -.12313           /0      $891942# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____LSF____62405S      -.12319           /0      $891943# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____BPH____62408E      -.12316           /0      $891944# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____BPH____62408S      -.12315           /0      $891945# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____QF_____62410E      -.19315           /0      $891938# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225494__________   SPS____QF_____62410S      -.19315           /0      $891939# dénivelée mesurée,aller n°225494 - -23-OCT-2013 11:21:31 - distance niveau mire : 0 m
+STN_225499__________   SPS____LSD____62505E      -.13908           /0      $891969# dénivelée mesurée,aller n°225499 - -23-OCT-2013 15:18:20 - distance niveau mire : 0 m
+STN_225499__________   SPS____LSD____62505S      -.13906           /0      $891970# dénivelée mesurée,aller n°225499 - -23-OCT-2013 15:18:20 - distance niveau mire : 0 m
+STN_225499__________   SPS____BPV____62508E      -.13901           /0      $891971# dénivelée mesurée,aller n°225499 - -23-OCT-2013 15:18:20 - distance niveau mire : 0 m
+STN_225499__________   SPS____BPV____62508S      -.13896           /0      $891972# dénivelée mesurée,aller n°225499 - -23-OCT-2013 15:18:20 - distance niveau mire : 0 m
+STN_225499__________   SPS____QD_____62510E      -.20900           /0      $891967# dénivelée mesurée,aller n°225499 - -23-OCT-2013 15:18:20 - distance niveau mire : 0 m
+STN_225499__________   SPS____QD_____62510S      -.20903           /0      $891968# dénivelée mesurée,aller n°225499 - -23-OCT-2013 15:18:20 - distance niveau mire : 0 m
+STN_225502__________   SPS____LSD____62505E      -.12216           /0      $891977# dénivelée mesurée,aller n°225502 - -23-OCT-2013 15:21:12 - distance niveau mire : 0 m
+STN_225502__________   SPS____LSD____62505S      -.12212           /0      $891978# dénivelée mesurée,aller n°225502 - -23-OCT-2013 15:21:12 - distance niveau mire : 0 m
+STN_225502__________   SPS____BPV____62508E      -.12210           /0      $891979# dénivelée mesurée,aller n°225502 - -23-OCT-2013 15:21:12 - distance niveau mire : 0 m
+STN_225502__________   SPS____BPV____62508S      -.12203           /0      $891980# dénivelée mesurée,aller n°225502 - -23-OCT-2013 15:21:12 - distance niveau mire : 0 m
+STN_225502__________   SPS____QD_____62510E      -.19213           /0      $891975# dénivelée mesurée,aller n°225502 - -23-OCT-2013 15:21:12 - distance niveau mire : 0 m
+STN_225502__________   SPS____QD_____62510S      -.19213           /0      $891976# dénivelée mesurée,aller n°225502 - -23-OCT-2013 15:21:12 - distance niveau mire : 0 m
+STN_225506__________   SPS____LOF____62602E      -.13709           /0      $892009# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____LOF____62602S      -.13709           /0      $892010# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____LSF____62605E      -.13698           /0      $892011# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____LSF____62605S      -.13708           /0      $892012# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____BPH____62608E      -.13706           /0      $892013# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____BPH____62608S      -.13708           /0      $892014# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____QF_____62610E      -.20710           /0      $892007# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225506__________   SPS____QF_____62610S      -.20702           /0      $892008# dénivelée mesurée,aller n°225506 - -23-OCT-2013 16:55:37 - distance niveau mire : 0 m
+STN_225510__________   SPS____LOF____62602E      -.12333           /0      $892020# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____LOF____62602S      -.12336           /0      $892021# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____LSF____62605E      -.12324           /0      $892022# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____LSF____62605S      -.12337           /0      $892023# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____BPH____62608E      -.12333           /0      $892024# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____BPH____62608S      -.12338           /0      $892025# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____QF_____62610E      -.19337           /0      $892018# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+STN_225510__________   SPS____QF_____62610S      -.19330           /0      $892019# dénivelée mesurée,aller n°225510 - -23-OCT-2013 16:59:16 - distance niveau mire : 0 m
+*END

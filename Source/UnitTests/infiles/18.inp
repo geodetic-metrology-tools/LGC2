@@ -1,0 +1,1663 @@
+*TITR
+Fichier d'input créé le 16-JAN-2003
+Opération n° 8879, TI2 - Réseau - Automne 2002 - Ecartométrie
+Opération n° 8880, TI2 - Réseau - Automne 2002 - Mékomètre
+Opération n° 8881, TI2 - Réseau - Automne 2002 - Gyroscope
+Opération n° 8882, TI2 - Réseau - Automne 2002 - TDA5005
+*SPHE
+*MICR
+*PUNC   
+*APRI
+*PREC    7
+*FAUT
+*CALA
+GGPSO__4L237_     -894.21965     2648.64787      401.84345   $3201.586    177314   coordonnées au 23-SEP-2002
+*VXY
+QFA____61610E     2173.60655     2627.93473      402.72100   $6271.680     89716   coordonnées théoriques au 23-SEP-2002
+QFA____61610S     2171.03995     2626.75206      402.72097   $6274.506     89718   coordonnées théoriques au 23-SEP-2002
+QDA____61710E     2144.54566     2614.54378      402.72076   $6303.677     89750   coordonnées théoriques au 23-SEP-2002
+QDA____61710S     2141.97838     2613.36080      402.72074   $6306.504     89752   coordonnées théoriques au 23-SEP-2002
+QFA____61810E     2115.48477     2601.15282      402.72067   $6335.675     89794   coordonnées théoriques au 23-SEP-2002
+QFA____61810S     2112.91741     2599.96980      402.72067   $6338.502     89796   coordonnées théoriques au 23-SEP-2002
+QDA____61910E     2086.42388     2587.76187      402.72075   $6367.673     89828   coordonnées théoriques au 23-SEP-2002
+QDA____61910S     2083.85704     2586.57909      402.72076   $6370.499     89830   coordonnées théoriques au 23-SEP-2002
+QF_____62010E     2057.37208     2574.37508      402.63799   $6399.661     89859   coordonnées théoriques au 23-SEP-2002
+QF_____62010S     2054.78566     2573.18329      402.63802   $6402.508     89860   coordonnées théoriques au 23-SEP-2002
+QD_____62110E     2028.09691     2561.46417      402.63829   $6431.658     89875   coordonnées théoriques au 23-SEP-2002
+QD_____62110S     2025.47395     2560.36135      402.63832   $6434.504     89876   coordonnées théoriques au 23-SEP-2002
+QF_____62210E     1998.45765     2549.40896      402.63861   $6463.656     89901   coordonnées théoriques au 23-SEP-2002
+%QF_____62210S     1995.81563     2548.35027      402.63864   $6466.502     89902   coordonnées théoriques au 23-SEP-2002
+QTLD__610100E     2072.76114     2581.04949      402.68282   $11.906    116011   coordonnées théoriques au 23-SEP-2002
+QTLD__610100S     2070.22902     2579.85435      402.68283   $14.706    116012   coordonnées théoriques au 23-SEP-2002
+QTLF__610200E     2040.64227     2565.91541      402.68301   $47.412    116017   coordonnées théoriques au 23-SEP-2002
+QTLF__610200S     2038.10926     2564.72216      402.68303   $50.212    116018   coordonnées théoriques au 23-SEP-2002
+QTLD__610300E     2000.49839     2547.03657      402.68352   $91.773    116047   coordonnées théoriques au 23-SEP-2002
+QTLD__610300S     1997.96448     2545.84523      402.68356   $94.573    116048   coordonnées théoriques au 23-SEP-2002
+QTLF__610400E     1970.42922     2532.89929      402.69869   $125.000    116069   coordonnées théoriques au 23-SEP-2002
+QTLF__610400S     1967.89531     2531.70795      402.70016   $127.800    116070   coordonnées théoriques au 23-SEP-2002
+QTLD__610500E     1935.53577     2516.99872      402.99284   $163.361    116083   coordonnées théoriques au 23-SEP-2002
+QTLD__610500S     1932.98333     2515.84987      403.06486   $166.161    116084   coordonnées théoriques au 23-SEP-2002
+QTLF__610600E     1905.28202     2503.52912      404.20715   $196.510    116101   coordonnées théoriques au 23-SEP-2002
+QTLF__610600S     1902.71237     2502.42335      404.32617   $199.310    116102   coordonnées théoriques au 23-SEP-2002
+QTLF__670000E     1867.03439     2487.53383      405.97116   $238.006    197652   coordonnées théoriques au 23-SEP-2002
+QTLF__670000S     1864.43950     2486.48867      406.09020   $240.806    197653   coordonnées théoriques au 23-SEP-2002
+QTLD__670100E     1821.57388     2469.22327      408.05685   $287.059    190182   coordonnées théoriques au 23-SEP-2002
+QTLD__670100S     1818.97899     2468.17811      408.17591   $289.859    190184   coordonnées théoriques au 23-SEP-2002
+QTLD__670200E     1805.07273     2462.48695      408.82080   $304.899    190183   coordonnées théoriques au 23-SEP-2002
+QTLD__670200S     1802.48973     2461.41296      408.94187   $307.699    190185   coordonnées théoriques au 23-SEP-2002
+QTR___670300E     1800.46023     2460.56912      409.03699   $309.899    190194   coordonnées théoriques au 23-SEP-2002
+QTR___670300S     1797.87723     2459.49513      409.15806   $312.699    190196   coordonnées théoriques au 23-SEP-2002
+QTR___670305E     1796.77023     2459.03485      409.20993   $313.899    190195   coordonnées théoriques au 23-SEP-2002
+QTR___670305S     1794.18723     2457.96086      409.33100   $316.699    190197   coordonnées théoriques au 23-SEP-2002
+QNL____12031E     1756.21356     2442.47242      411.11104   $53.950    190060   coordonnées théoriques au 23-SEP-2002
+QNL____12031S     1753.62610     2441.43579      411.23169   $56.740    190062   coordonnées théoriques au 23-SEP-2002
+QNL____12040E     1748.05147     2439.20239      411.49164   $62.751    190061   coordonnées théoriques au 23-SEP-2002
+GGPSO__20434_     1747.61902     2432.58313      409.93339   $367.644    242535   coordonnées au 31-JAN-2003
+GGPSO__20526_     1720.03335     2420.89024      411.34364   $397.649    242536   coordonnées au 31-JAN-2003
+GGPSO__20628_     1692.65293     2408.69503      412.61284   $427.653    242537   coordonnées au 31-JAN-2003
+GGPSO__20727_     1665.23612     2396.53431      413.28606   $457.650    242538   coordonnées au 31-JAN-2003
+GGPSO__20827_     1637.82692     2384.33586      413.32677   $487.652    242539   coordonnées au 31-JAN-2003
+GGPSO__20926_     1610.45420     2372.13898      412.85681   $517.650    242540   coordonnées au 31-JAN-2003
+GGPSO__21026_     1583.02501     2359.97084      412.29529   $547.650    242541   coordonnées au 31-JAN-2003
+GGPSO__21126_     1555.62019     2347.77971      411.72089   $577.650    242542   coordonnées au 31-JAN-2003
+GGPSO__21225_     1528.23336     2335.59866      411.18487   $607.650    242543   coordonnées au 31-JAN-2003 
+GGPSO__21325_     1500.81413     2323.41942      410.61148   $637.650    242544   coordonnées au 31-JAN-2003
+GGPSO__21425_     1473.40458     2311.23431      410.08047   $667.650    242545   coordonnées au 31-JAN-2003
+GGPSO__21524_     1445.96832     2299.04624      409.49400   $697.650    242546   coordonnées au 31-JAN-2003
+GGPSO__21624_     1418.53923     2286.83380      408.93538   $727.650    242547   coordonnées au 31-JAN-2003
+GGPSO__21724_     1391.11837     2274.62787      408.40194   $757.650    242548   coordonnées au 31-JAN-2003
+GGPSO__21824_     1363.70842     2262.44701      407.84563   $787.650    242549   coordonnées au 31-JAN-2003
+GGPSO__21923_     1336.29268     2250.26081      407.29835   $817.650    242550   coordonnées au 31-JAN-2003
+GGPSO__22023_     1308.91307     2238.07417      406.73112   $847.650    242551   coordonnées au 31-JAN-2003
+GGPSO__22123_     1281.47899     2225.88769      406.18431   $877.650    242552   coordonnées au 31-JAN-2003
+GGPSO__22222_     1253.78016     2214.30825      405.62907   $907.650    242553   coordonnées au 31-JAN-2003
+GGPSO__22322_     1226.00716     2202.94408      405.05990   $937.650    242554   coordonnées au 31-JAN-2003
+GGPSO__22422_     1198.24968     2191.58894      404.51734   $967.650    242555   coordonnées au 31-JAN-2003
+GGPSO__22521_     1170.47432     2180.21879      403.97812   $997.650    242556   coordonnées au 31-JAN-2003
+GGPSO__22621_     1142.71056     2168.83947      403.42215   $1027.650    242557   coordonnées au 31-JAN-2003
+GGPSO__22721_     1114.91169     2157.47284      402.84596   $1057.650    242558   coordonnées au 31-JAN-2003
+GGPSO__22821_     1087.13493     2146.19775      402.31410   $1087.650    242559   coordonnées au 31-JAN-2003
+GGPSO__22920_     1059.13884     2135.35793      401.75987   $1117.650    242560   coordonnées au 31-JAN-2003
+GGPSO__23020_     1031.04450     2124.90566      401.20594   $1147.650    242561   coordonnées au 31-JAN-2003
+GGPSO__23120_     1002.76595     2114.88861      400.64353   $1177.650    242562   coordonnées au 31-JAN-2003
+GGPSO__23219_      974.30113     2105.36223      400.09485   $1207.650    242563   coordonnées au 31-JAN-2003
+GGPSO__23319_      945.56813     2096.67212      399.55035   $1237.650    242564   coordonnées au 31-JAN-2003
+GGPSO__23419_      916.59832     2088.79221      399.00228   $1267.650    242565   coordonnées au 31-JAN-2003
+GGPSO__23518_      887.47381     2081.80624      398.44305   $1297.650    242566   coordonnées au 31-JAN-2003
+GGPSO__23618_      858.10954     2075.69193      397.89116   $1327.650    242567   coordonnées au 31-JAN-2003
+GGPSO__23718_      828.53396     2070.44666      397.33512   $1357.650    242568   coordonnées au 31-JAN-2003
+GGPSO__23818_      798.86808     2066.04735      396.79367   $1387.650    242569   coordonnées au 31-JAN-2003
+GGPSO__23917_      769.09292     2062.58424      396.25823   $1417.650    242570   coordonnées au 31-JAN-2003
+GGPSO__24017_      739.19273     2059.95291      395.67296   $1447.650    242571   coordonnées au 31-JAN-2003
+GGPSO__24217_      678.89093     2057.29485      394.57741   $1508.672    242213   coordonnées au 31-JAN-2003
+GGPSO__24317_      648.82942     2057.33851      394.03160   $1538.672    242214   coordonnées au 31-JAN-2003
+GGPSO__24417_      618.85707     2058.28435      393.47751   $1568.702    242215   coordonnées au 31-JAN-2003
+GGPSO__24516_      588.96699     2060.10595      392.93581   $1598.702    242216   coordonnées au 31-JAN-2003
+GGPSO__24616_      559.11572     2062.79984      392.37862   $1628.670    242217   coordonnées au 31-JAN-2003
+GGPSO__24716_      528.74212     2066.47331      391.81801   $1658.672    242218   coordonnées au 31-JAN-2003
+GGPSO__24816_      498.91758     2071.00404      391.26291   $1688.672    242219   coordonnées au 31-JAN-2003
+GGPSO__24915_      469.41096     2076.38436      390.72485   $1718.672    242220   coordonnées au 31-JAN-2003
+GGPSO__25015_      440.10881     2082.58961      390.18415   $1748.672    242221   coordonnées au 31-JAN-2003
+GGPSO__25115_      410.96810     2089.68630      389.62465   $1778.702    242222   coordonnées au 31-JAN-2003
+GGPSO__25214_      382.05057     2097.66837      389.07350   $1808.702    242223   coordonnées au 31-JAN-2003
+GGPSO__25314_      353.43757     2106.43289      388.52311   $1838.672    242224   coordonnées au 31-JAN-2003
+GGPSO__25414_      325.00530     2116.01705      387.97609   $1868.672    242225   coordonnées au 31-JAN-2003
+GGPSO__25513_      296.78136     2126.11378      387.42597   $1898.672    242226   coordonnées au 31-JAN-2003
+GGPSO__25613_      268.70623     2136.61948      386.87205   $1928.672    242227   coordonnées au 31-JAN-2003
+GGPSO__25713_      240.76366     2147.55438      386.32768   $1958.672    242228   coordonnées au 31-JAN-2003
+GGPSO__25813_      212.94729     2158.86023      385.76713   $1988.672    242229   coordonnées au 31-JAN-2003
+GGPSO__25912_      185.29129     2170.20785      385.22881   $2018.672    242230   coordonnées au 31-JAN-2003
+GGPSO__26012_      157.61548     2181.91410      384.67746   $2048.672    242231   coordonnées au 31-JAN-2003
+GGPSO__26112_      130.18557     2194.08736      384.12415   $2078.672    242232   coordonnées au 31-JAN-2003
+GGPSO__26211_      102.74179     2206.25063      383.57138   $2108.672    242153   coordonnées au 31-JAN-2003
+GGPSO__26311_       75.38806     2218.46277      383.03754   $2138.002    242173   coordonnées au 31-JAN-2003
+GGPSO__26410_       48.01568     2230.67050      382.51710   $2168.002    242174   coordonnées au 31-JAN-2003
+GGPSO__26510_       20.58248     2242.80671      382.47592   $2198.002    242175   coordonnées au 31-JAN-2003
+GGPSO__26609_       -6.86683     2255.02920      382.55834   $2228.002    242176   coordonnées au 31-JAN-2003
+GGPSO__26709_      -34.23758     2267.24222      382.65426   $2258.002    242177   coordonnées au 31-JAN-2003
+GGPSO__26809_      -61.63040     2279.44839      382.74464   $2288.002    242178   coordonnées au 31-JAN-2003
+GGPSO__26909_      -89.03960     2291.62209      383.31899   $2318.002    242179   coordonnées au 31-JAN-2003
+GGPSO__27008_     -116.44948     2303.85576      384.04918   $2348.002    242180   coordonnées au 31-JAN-2003
+GGPSO__27108_     -143.86928     2316.02452      384.77021   $2378.002    242181   coordonnées au 31-JAN-2003
+GGPSO__27208_     -171.26979     2328.21819      385.48685   $2408.002    242182   coordonnées au 31-JAN-2003
+GGPSO__27307_     -198.69191     2340.40874      386.19869   $2438.002    242183   coordonnées au 31-JAN-2003
+GGPSO__27407_     -226.07047     2352.57081      386.93684   $2468.002    242184   coordonnées au 31-JAN-2003
+GGPSO__27507_     -253.51101     2364.82003      387.65326   $2498.002    242185   coordonnées au 31-JAN-2003
+GGPSO__27606_     -280.86072     2376.98420      388.36408   $2528.002    242186   coordonnées au 31-JAN-2003
+GGPSO__27706_     -308.17549     2389.10568      389.07602   $2558.002    242187   coordonnées au 31-JAN-2003
+GGPSO__27806_     -335.63587     2401.22942      389.80179   $2588.002    242188   coordonnées au 31-JAN-2003
+GGPSO__27906_     -363.00798     2413.40245      390.53420   $2618.002    242189   coordonnées au 31-JAN-2003
+GGPSO__28005_     -390.39877     2425.58929      391.23815   $2648.002    242190   coordonnées au 31-JAN-2003
+GGPSO__28105_     -417.76680     2437.87672      391.96117   $2678.002    242191   coordonnées au 31-JAN-2003
+GGPSO__28205_     -445.17910     2450.06951      392.69064   $2708.002    242192   coordonnées au 31-JAN-2003
+GGPSO__28304_     -472.53775     2462.26204      393.40408   $2738.002    242193   coordonnées au 31-JAN-2003
+GGPSO__28404_     -499.90457     2474.44233      394.12806   $2768.002    242194   coordonnées au 31-JAN-2003
+GGPSO__28504_     -527.16919     2486.57367      394.82572   $2798.672    242195   coordonnées au 31-JAN-2003
+GGPSO__28604_     -554.42622     2498.69415      395.55199   $2828.672    242196   coordonnées au 31-JAN-2003
+GGPSO__28704_     -581.84161     2510.86072      396.27191   $2858.672    242197   coordonnées au 31-JAN-2003
+GGPSO__28804_     -608.80150     2522.86782      396.87428   $2888.672    242198   coordonnées au 31-JAN-2003
+GGPSO__28903_     -636.21307     2535.04036      397.46033   $2918.672    242199   coordonnées au 31-JAN-2003
+GGPSO__29003_     -663.57270     2547.23629      398.03897   $2948.672    242200   coordonnées au 31-JAN-2003
+GGPSO__29103_     -690.98725     2559.37578      398.62705   $2978.672    242201   coordonnées au 31-JAN-2003
+GGPSO__29145_     -718.62893     2571.07139      399.35582   $3008.670    242203   coordonnées au 31-JAN-2003
+ALESOL_____1_     1748.05569     2437.23704      409.86681   $1.000    242586   coordonnées au 31-JAN-2003
+TRIPOD_____1_     1791.88717     2452.91243      409.09490   $1.000    242588   coordonnées au 31-JAN-2003
+ALESOL_____2_     1748.82389     2443.00110      409.76096   $2.000    242587   coordonnées au 31-JAN-2003
+TRIPOD_____2_     1787.09114     2457.28482      409.21149   $2.000    242589   coordonnées au 31-JAN-2003
+ALESOL_____7_     1734.55458     2437.14437      409.98723   $7.000    197602   coordonnées au 31-JAN-2003
+TRIPOD_____4_     2014.00980     2550.89590      402.08739   $.000    242923   coordonnées au 17-JAN-2003
+TRIPOD_____3_     1930.99160     2513.84710      402.71755   $.000    242922   coordonnées au 17-JAN-2003
+POT_____6070_     1824.68202     2466.65093      407.96037   $6070.000    190448   coordonnées au 17-JAN-2003
+TC________61_     1756.27310     2445.93858      409.34699   $61.000    190450   coordonnées au 17-JAN-2003
+TC________62_     1792.95416     2460.47878      407.65874   $62.000    190468   coordonnées au 17-JAN-2003
+TC________67_     1769.89370     2451.12574      408.71694   $67.000    197603   coordonnées au 17-JAN-2003
+TC________68_     1782.78096     2456.25764      408.12041   $68.000    191276   coordonnées au 17-JAN-2003
+GGPSO___19L2_     -210.98621     2417.77590      391.86634   $2479.215    176657   coordonnées au 17-JAN-2003
+GGPSO___18L2_     -262.93604     2430.28094      392.62962   $2532.667    176658   coordonnées au 17-JAN-2003
+GGPSO___17L2_     -314.68960     2443.57260      393.38546   $2586.119    176659   coordonnées au 17-JAN-2003
+GGPSO___16L2_     -366.23260     2457.65387      394.13636   $2639.569    176660   coordonnées au 17-JAN-2003
+GGPSO___15L2_     -417.67984     2472.57311      394.89706   $2693.155    176661   coordonnées au 17-JAN-2003
+GGPSO___14L2_     -468.63557     2488.18874      395.65994   $2746.468    176662   coordonnées au 17-JAN-2003
+GGPSO___13L2_     -519.48047     2504.61976      396.40908   $2799.920    176663   coordonnées au 17-JAN-2003
+GGPSO_12L220_     -570.06432     2521.84232      397.15546   $2853.374    176664   coordonnées au 17-JAN-2003
+GGPSO_12L203_     -601.61439     2533.00794      397.62192   $2886.855    178354   coordonnées au 17-JAN-2003
+GGPSO___11L2_     -633.29305     2544.50854      398.09048   $2920.562    176611   coordonnées au 17-JAN-2003
+GGPSO___10L2_     -670.07764     2558.19880      398.63868   $2959.824    176612   coordonnées au 17-JAN-2003
+GGPSO____9L2_     -708.19787     2572.78909      399.21722   $3000.653    176613   coordonnées au 17-JAN-2003
+GGPSO__8L204_     -759.04042     2593.01173      399.83105   $3055.392    177318   coordonnées au 17-JAN-2003
+GGPSO__6L230_     -794.82505     2607.95649      400.37661   $3094.174    177317   coordonnées au 17-JAN-2003
+GGPSO__6L216_     -822.04806     2619.09468      400.77555   $3123.590    177316   coordonnées au 17-JAN-2003
+GGPSO__6L202_     -846.11972     2628.94502      401.13336   $3149.602    177315   coordonnées au 17-JAN-2003
+GGPSO__4L217_     -931.22282     2663.80420      402.39245   $3241.576    177313   coordonnées au 17-JAN-2003
+GGPSO__4L209_     -945.11166     2669.47600      402.59337   $3256.579    177312   coordonnées au 17-JAN-2003
+GGPSO__4L202_     -958.17471     2674.83173      402.80164   $3270.699    177311   coordonnées au 17-JAN-2003
+GGPSO____3L2_     -970.38143     2679.83235      402.98570   $3283.891    177310   coordonnées au 17-JAN-2003
+*RADI   0.2
+QFA____61610S    272.5114   
+QDA____61710E    272.5114   
+QDA____61710S    272.5114   
+QFA____61810E    272.5114   
+QFA____61810S    272.5114   
+QDA____61910E    272.5114   
+QDA____61910E    172.5114   
+QDA____61910S    272.5114   
+QTLD__610100E    271.9257   
+QTLD__610100S    271.9257   
+QF_____62010E    272.5114   
+QF_____62010S    272.5114   
+QTLF__610200E    271.9730   
+QTLF__610200S    271.9730   
+QD_____62110E    274.6619   
+QD_____62110S    274.6619   
+QTLD__610300E    272.0211   
+QTLD__610300S    272.0211   
+QF_____62210E    275.7372   
+%%QF_____62210S    275.7372   
+QTLF__610400S    272.0211   
+QTLD__610500E    273.0750   
+QTLD__610500S    273.0750   
+QTLF__610600E    274.1298   
+QTLF__610600S    274.1298   
+QTLF__670000E    275.6238   
+QTLF__670000S    275.6238   
+QTLD__670100E    275.6238   
+QTLD__670100S    275.6238   
+QTLD__670200E    274.9144   
+QTLD__670200S    274.9144   
+QTR___670300E    274.9144   0.4   
+QTR___670300S    274.9144   0.4   
+QTR___670305E    274.9144   0.6
+QTR___670305S    274.9144   0.6
+QNL____12031E    275.7413   1.0
+QNL____12031S    275.7413   1.0
+QNL____12040E    275.7413   1.0
+GGPSO___19L2_               314.0548          0.4
+GGPSO___18L2_               315.0382          0.4
+GGPSO___17L2_               316.0042          0.4
+GGPSO___16L2_               316.9778          0.4
+GGPSO___15L2_               317.9685          0.4
+GGPSO___14L2_                318.931          0.4
+GGPSO___13L2_               319.8986          0.4
+GGPSO_12L220_               320.8916          0.4
+GGPSO_12L203_               321.6544          0.4
+%GGPSO___11L2_               322.1699          0.4
+%GGPSO___10L2_               322.6822          0.4
+%GGPSO____9L2_               323.2712          0.4
+%GGPSO__8L204_               324.1002          0.4
+%GGPSO__6L230_               324.7381          0.4
+GGPSO__6L216_               324.7381          0.4
+GGPSO__6L202_               324.7381          0.4
+GGPSO__4L237_               324.7381          0.4
+GGPSO__4L217_               324.7381          0.4
+GGPSO__4L209_               324.7381          0.4
+GGPSO__4L202_               324.7381          0.4
+GGPSO____3L2_               324.7381          0.4
+*EREL
+GGPSO__20434_   GGPSO__20727_    
+GGPSO__20434_   ALESOL_____2_     
+GGPSO__20434_   GGPSO__20526_    
+GGPSO__20434_   GGPSO__20628_    
+GGPSO__20727_   GGPSO__20526_    
+GGPSO__20727_   GGPSO__20628_   
+GGPSO__20727_   GGPSO__20827_   
+GGPSO__20727_   GGPSO__20926_   
+GGPSO__20727_   GGPSO__21026_   
+GGPSO__20727_   GGPSO__20434_   
+GGPSO__21026_   GGPSO__21225_    
+GGPSO__21026_   GGPSO__21325_  
+GGPSO__21026_   GGPSO__20827_   
+GGPSO__21026_   GGPSO__20926_    
+GGPSO__21026_   GGPSO__21126_    
+GGPSO__21026_   GGPSO__20727_   
+GGPSO__21325_   GGPSO__21026_     
+GGPSO__21325_   GGPSO__21126_   
+GGPSO__21325_   GGPSO__21225_    
+GGPSO__21325_   GGPSO__21425_    
+GGPSO__21325_   GGPSO__21524_     
+GGPSO__21325_   GGPSO__21624_     
+GGPSO__21624_   GGPSO__21325_     
+GGPSO__21624_   GGPSO__21425_     
+GGPSO__21624_   GGPSO__21524_     
+GGPSO__21624_   GGPSO__21724_    
+*DMES   .2   .2
+GGPSO__20434_   GGPSO__20727_     89.98709                   \.2   .2   $319776# distance spatiale mékomètre
+GGPSO__20434_   ALESOL_____2_     10.48781                   \0   .07   $319779# distance spatiale mékomètre
+GGPSO__20434_   GGPSO__20526_     29.99450                   \0   0   $319777# distance spatiale mékomètre
+GGPSO__20434_   GGPSO__20628_     59.99224                   \0   0   $319778# distance spatiale mékomètre
+GGPSO__20727_   GGPSO__20526_     59.99760                   \.15   .15   $319770# distance spatiale mékomètre
+GGPSO__20727_   GGPSO__20628_     30.00028                   \.15   .15   $319771# distance spatiale mékomètre
+GGPSO__20727_   GGPSO__20827_     30.00118                   \.15   .15   $319772# distance spatiale mékomètre
+GGPSO__20727_   GGPSO__20926_     59.96980                   \.15   .15   $319773# distance spatiale mékomètre
+GGPSO__20727_   GGPSO__21026_     89.98072                   \.15   .15   $319774# distance spatiale mékomètre
+GGPSO__20727_   GGPSO__20434_     89.98692                   \.2   .2   $319775# distance spatiale mékomètre
+GGPSO__21026_   GGPSO__21225_     59.97810                   \0   0   $319764# distance spatiale mékomètre
+GGPSO__21026_   GGPSO__21325_     89.98598                   \0   0   $319765# distance spatiale mékomètre
+GGPSO__21026_   GGPSO__20827_     59.98315                   \0   0   $319766# distance spatiale mékomètre
+GGPSO__21026_   GGPSO__20926_     30.01235                   \0   0   $319767# distance spatiale mékomètre
+GGPSO__21026_   GGPSO__21126_     29.99965                   \0   0   $319768# distance spatiale mékomètre
+GGPSO__21026_   GGPSO__20727_     89.98075                   \.15   .15   $319769# distance spatiale mékomètre
+GGPSO__21325_   GGPSO__21026_     89.98602                   \0   0   $319758# distance spatiale mékomètre
+GGPSO__21325_   GGPSO__21126_     59.98636                   \0   0   $319759# distance spatiale mékomètre
+GGPSO__21325_   GGPSO__21225_     30.00801                   \0   0   $319760# distance spatiale mékomètre
+GGPSO__21325_   GGPSO__21425_     30.00071                   \0   0   $319761# distance spatiale mékomètre
+GGPSO__21325_   GGPSO__21524_     60.02806                   \0   0   $319762# distance spatiale mékomètre
+GGPSO__21325_   GGPSO__21624_     90.05832                   \0   0   $319763# distance spatiale mékomètre
+GGPSO__21624_   GGPSO__21325_     90.05826                   \0   0   $319752# distance spatiale mékomètre
+GGPSO__21624_   GGPSO__21425_     60.05753                   \0   0   $319753# distance spatiale mékomètre
+GGPSO__21624_   GGPSO__21524_     30.03019                   \0   0   $319754# distance spatiale mékomètre
+GGPSO__21624_   GGPSO__21724_     30.01959                   \0   0   $319755# distance spatiale mékomètre
+GGPSO__21624_   GGPSO__21824_     60.01943                   \0   0   $319756# distance spatiale mékomètre
+GGPSO__21624_   GGPSO__21923_     90.02646                   \0   0   $319757# distance spatiale mékomètre
+GGPSO__21923_   GGPSO__21624_     90.02661                   \0   0   $319746# distance spatiale mékomètre
+GGPSO__21923_   GGPSO__21724_     60.00699                   \0   0   $319747# distance spatiale mékomètre
+GGPSO__21923_   GGPSO__21824_     30.00717                   \0   0   $319748# distance spatiale mékomètre
+GGPSO__21923_   GGPSO__22023_     29.97467                   \0   0   $319749# distance spatiale mékomètre
+GGPSO__21923_   GGPSO__22123_     59.99859                   \0   0   $319750# distance spatiale mékomètre
+GGPSO__21923_   GGPSO__22222_     90.02061                   \0   0   $319751# distance spatiale mékomètre
+GGPSO__22222_   GGPSO__21923_     90.02074                   \0   0   $319740# distance spatiale mékomètre
+GGPSO__22222_   GGPSO__22023_     60.04734                   \0   0   $319741# distance spatiale mékomètre
+GGPSO__22222_   GGPSO__22123_     30.02695                   \0   0   $319742# distance spatiale mékomètre
+GGPSO__22222_   GGPSO__22322_     30.01345                   \0   0   $319743# distance spatiale mékomètre
+GGPSO__22222_   GGPSO__22422_     60.00874                   \0   0   $319744# distance spatiale mékomètre
+GGPSO__22222_   GGPSO__22521_     90.02614                   \0   0   $319745# distance spatiale mékomètre
+GGPSO__22521_   GGPSO__22222_     90.02618                   \0   0   $319734# distance spatiale mékomètre
+GGPSO__22521_   GGPSO__22322_     60.01260                   \0   0   $319735# distance spatiale mékomètre
+GGPSO__22521_   GGPSO__22422_     30.01743                   \0   0   $319736# distance spatiale mékomètre
+GGPSO__22521_   GGPSO__22621_     30.01043                   \0   0   $319737# distance spatiale mékomètre
+GGPSO__22521_   GGPSO__22721_     60.04900                   \0   0   $319738# distance spatiale mékomètre
+GGPSO__22521_   GGPSO__22821_     90.03168                   \0   0   $319739# distance spatiale mékomètre
+GGPSO__22821_   GGPSO__22521_     90.03165                   \0   0   $319728# distance spatiale mékomètre
+GGPSO__22821_   GGPSO__22621_     60.02112                   \0   0   $319729# distance spatiale mékomètre
+GGPSO__22821_   GGPSO__22721_     29.98268                   \0   0   $319730# distance spatiale mékomètre
+GGPSO__22821_   GGPSO__22920_     30.02658                   \0   0   $319731# distance spatiale mékomètre
+GGPSO__22821_   GGPSO__23020_     60.00612                   \0   0   $319732# distance spatiale mékomètre
+GGPSO__22821_   GGPSO__23120_     90.00675                   \0   0   $319733# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__22821_     90.00680                   \0   0   $319721# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__22920_     59.98469                   \0   0   $319722# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__23020_     30.00567                   \0   0   $319723# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__23219_     30.02167                   \0   0   $319724# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__23319_     60.03879                   \0   0   $319725# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__23419_     90.04790                   \0   0   $319726# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__23518_    119.96532                   \0   0   $319727# distance spatiale mékomètre
+GGPSO__23120_   GGPSO__23518_    119.96523                   \0   0   $320326# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23120_    119.96502                   \0   0   $319713# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23219_     89.98125                   \0   0   $319714# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23319_     59.97669                   \0   0   $319715# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23419_     29.95592                   \0   0   $319716# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23818_     90.01155                   \0   0   $319717# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23917_    119.95162                   \0   0   $319718# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23618_     29.99927                   \0   0   $319719# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23718_     60.03499                   \0   0   $319720# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23120_    119.96517                   \0   0   $320325# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23219_     89.98144                   \0   0   $320324# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23319_     59.97661                   \0   0   $320323# distance spatiale mékomètre
+GGPSO__23518_   GGPSO__23917_    119.95167                   \0   0   $320322# distance spatiale mékomètre
+GGPSO__23917_   GGPSO__23518_    119.95160                   \0   0   $319080# distance spatiale mékomètre
+GGPSO__23917_   GGPSO__23818_     29.98066                   \0   0   $319077# distance spatiale mékomètre
+GGPSO__23917_   GGPSO__24017_     30.02156                   \0   0   $319076# distance spatiale mékomètre
+GGPSO__23917_   GGPSO__24217_     90.37289                   \0   0   $319075# distance spatiale mékomètre
+GGPSO__23917_   GGPSO__23618_     89.99164                   \0   0   $320320# distance spatiale mékomètre
+GGPSO__23917_   GGPSO__23718_     59.96865                   \0   0   $320321# distance spatiale mékomètre
+GGPSO__24217_   GGPSO__23917_     90.37280                   \0   0   $319074# distance spatiale mékomètre
+GGPSO__24217_   GGPSO__24317_     30.06667                   \0   0   $319073# distance spatiale mékomètre
+GGPSO__24217_   GGPSO__24417_     60.05228                   \0   0   $319072# distance spatiale mékomètre
+GGPSO__24217_   GGPSO__24516_     89.98319                   \0   0   $319071# distance spatiale mékomètre
+GGPSO__24217_   GGPSO__24616_    119.92220                   \0   0   $319070# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24317_     89.89527                   \0   0   $317554# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24417_     59.92190                   \0   0   $317555# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24516_     29.97773                   \0   0   $317556# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24716_     30.60013                   \0   0   $317557# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24816_     60.76511                   \0   0   $317558# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24915_     90.74288                   \0   0   $317559# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24217_    119.92228                   \0   0   $319069# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24317_     89.89535                   \0   0   $319068# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__24915_     90.74295                   \0   0   $319067# distance spatiale mékomètre
+GGPSO__24616_   GGPSO__25015_    120.66148                   \0   0   $319066# distance spatiale mékomètre
+GGPSO__24915_   GGPSO__24616_     90.74288                   \0   0   $317560# distance spatiale mékomètre
+GGPSO__24915_   GGPSO__24716_     60.16340                   \0   0   $317561# distance spatiale mékomètre
+GGPSO__24915_   GGPSO__24816_     29.99803                   \0   0   $317562# distance spatiale mékomètre
+GGPSO__24915_   GGPSO__25015_     29.95703                   \0   0   $317563# distance spatiale mékomètre
+GGPSO__24915_   GGPSO__25115_     59.94790                   \0   0   $317564# distance spatiale mékomètre
+GGPSO__24915_   GGPSO__25214_     89.93127                   \0   0   $317565# distance spatiale mékomètre
+GGPSO__25214_   GGPSO__24915_     89.93137                   \0   0   $317566# distance spatiale mékomètre
+GGPSO__25214_   GGPSO__25015_     59.99490                   \0   0   $317567# distance spatiale mékomètre
+GGPSO__25214_   GGPSO__25115_     30.00413                   \0   0   $317568# distance spatiale mékomètre
+GGPSO__25214_   GGPSO__25314_     29.93043                   \0   0   $317569# distance spatiale mékomètre
+GGPSO__25214_   GGPSO__25414_     59.93390                   \0   0   $317570# distance spatiale mékomètre
+GGPSO__25214_   GGPSO__25513_     89.90417                   \0   0   $317571# distance spatiale mékomètre
+GGPSO__25513_   GGPSO__25214_     89.90412                   \0   0   $317572# distance spatiale mékomètre
+GGPSO__25513_   GGPSO__25314_     59.98747                   \0   0   $317573# distance spatiale mékomètre
+GGPSO__25513_   GGPSO__25414_     29.98071                   \0   0   $317574# distance spatiale mékomètre
+GGPSO__25513_   GGPSO__25613_     29.98161                   \0   0   $317575# distance spatiale mékomètre
+GGPSO__25513_   GGPSO__25713_     59.99097                   \0   0   $317576# distance spatiale mékomètre
+GGPSO__25513_   GGPSO__25813_     90.01832                   \0   0   $317577# distance spatiale mékomètre
+GGPSO__25813_   GGPSO__25513_     90.01841                   \0   0   $317578# distance spatiale mékomètre
+GGPSO__25813_   GGPSO__25613_     60.04136                   \0   0   $317579# distance spatiale mékomètre
+GGPSO__25813_   GGPSO__25713_     30.03151                   \0   0   $317580# distance spatiale mékomètre
+GGPSO__25813_   GGPSO__25912_     29.89851                   \0   0   $317581# distance spatiale mékomètre
+GGPSO__25813_   GGPSO__26012_     59.95256                   \0   0   $317582# distance spatiale mékomètre
+GGPSO__25813_   GGPSO__26112_     89.96231                   \0   0   $317583# distance spatiale mékomètre
+GGPSO__26112_   GGPSO__25813_     89.96230                   \0   0   $317584# distance spatiale mékomètre
+GGPSO__26112_   GGPSO__25912_     60.06766                   \0   0   $317585# distance spatiale mékomètre
+GGPSO__26112_   GGPSO__26012_     30.01500                   \0   0   $317586# distance spatiale mékomètre
+GGPSO__26112_   GGPSO__26211_     30.02370                   \0   0   $317587# distance spatiale mékomètre
+GGPSO__26112_   GGPSO__26311_     59.98455                   \0   0   $317588# distance spatiale mékomètre
+GGPSO__26112_   GGPSO__26410_     89.96040                   \0   0   $317589# distance spatiale mékomètre
+GGPSO__26410_   GGPSO__26112_     89.96035                   \0   0   $317590# distance spatiale mékomètre
+GGPSO__26410_   GGPSO__26211_     59.93679                   \0   0   $317591# distance spatiale mékomètre
+GGPSO__26410_   GGPSO__26311_     29.97592                   \0   0   $317592# distance spatiale mékomètre
+GGPSO__26410_   GGPSO__26510_     29.99792                   \0   0   $317593# distance spatiale mékomètre
+GGPSO__26410_   GGPSO__26609_     60.04529                   \0   0   $317594# distance spatiale mékomètre
+GGPSO__26410_   GGPSO__26709_     90.01716                   \0   0   $317595# distance spatiale mékomètre
+GGPSO__26709_   GGPSO__26410_     90.01718                   \0   0   $317596# distance spatiale mékomètre
+GGPSO__26709_   GGPSO__26510_     60.01970                   \0   0   $317597# distance spatiale mékomètre
+GGPSO__26709_   GGPSO__26609_     29.97203                   \0   0   $317598# distance spatiale mékomètre
+GGPSO__26709_   GGPSO__26809_     29.98933                   \0   0   $317599# distance spatiale mékomètre
+GGPSO__26709_   GGPSO__26909_     59.98380                   \0   0   $317600# distance spatiale mékomètre
+GGPSO__26709_   GGPSO__27008_     90.00668                   \0   0   $317601# distance spatiale mékomètre
+GGPSO__27008_   GGPSO__26709_     90.00679                   \0   0   $317602# distance spatiale mékomètre
+GGPSO__27008_   GGPSO__26809_     60.02081                   \0   0   $317603# distance spatiale mékomètre
+GGPSO__27008_   GGPSO__26909_     30.02473                   \0   0   $317604# distance spatiale mékomètre
+GGPSO__27008_   GGPSO__27108_     30.00713                   \0   0   $317605# distance spatiale mékomètre
+GGPSO__27008_   GGPSO__27208_     60.00671                   \0   0   $317606# distance spatiale mékomètre
+GGPSO__27008_   GGPSO__27307_     90.02469                   \0   0   $317607# distance spatiale mékomètre
+GGPSO__27307_   GGPSO__27008_     90.02465                   \0   0   $317653# distance spatiale mékomètre
+GGPSO__27307_   GGPSO__27108_     60.01742                   \0   0   $317654# distance spatiale mékomètre
+GGPSO__27307_   GGPSO__27208_     30.01788                   \0   0   $317655# distance spatiale mékomètre
+GGPSO__27307_   GGPSO__27407_     29.96718                   \0   0   $317656# distance spatiale mékomètre
+GGPSO__27307_   GGPSO__27507_     60.02582                   \0   0   $317657# distance spatiale mékomètre
+GGPSO__27307_   GGPSO__27606_     89.96685                   \0   0   $317658# distance spatiale mékomètre
+GGPSO__27606_   GGPSO__27307_     89.96685                   \0   0   $317659# distance spatiale mékomètre
+GGPSO__27606_   GGPSO__27407_     59.99972                   \0   0   $317660# distance spatiale mékomètre
+GGPSO__27606_   GGPSO__27507_     29.94098                   \0   0   $317661# distance spatiale mékomètre
+GGPSO__27606_   GGPSO__27706_     29.89178                   \0   0   $317662# distance spatiale mékomètre
+GGPSO__27606_   GGPSO__27806_     59.91792                   \0   0   $317663# distance spatiale mékomètre
+GGPSO__27606_   GGPSO__27906_     89.88345                   \0   0   $317664# distance spatiale mékomètre
+GGPSO___17L2_   GGPSO___19L2_    106.87443                   \0   0   $317078# distance spatiale mékomètre
+GGPSO___17L2_   GGPSO___18L2_     53.43849                   \0   0   $317077# distance spatiale mékomètre
+GGPSO___17L2_   GGPSO___16L2_     53.43680                   \0   0   $317076# distance spatiale mékomètre
+GGPSO___17L2_   GGPSO___15L2_    107.00555                   \0   0   $317075# distance spatiale mékomètre
+GGPSO__27906_   GGPSO__27606_     89.88347                   \0   0   $317665# distance spatiale mékomètre
+GGPSO__27906_   GGPSO__27706_     59.99163                   \0   0   $317666# distance spatiale mékomètre
+GGPSO__27906_   GGPSO__27806_     29.96559                   \0   0   $317667# distance spatiale mékomètre
+GGPSO__27906_   GGPSO__28005_     29.98759                   \0   0   $317668# distance spatiale mékomètre
+GGPSO__27906_   GGPSO__28105_     59.99573                   \0   0   $317669# distance spatiale mékomètre
+GGPSO__27906_   GGPSO__28205_     90.00597                   \0   0   $317670# distance spatiale mékomètre
+GGPSO___15L2_   GGPSO___17L2_    107.00569                   \0   0   $317074# distance spatiale mékomètre
+GGPSO___15L2_   GGPSO___16L2_     53.57203                   \0   0   $317073# distance spatiale mékomètre
+GGPSO___15L2_   GGPSO___14L2_     53.30023                   \0   0   $317072# distance spatiale mékomètre
+GGPSO___15L2_   GGPSO___13L2_    106.73621                   \0   0   $317071# distance spatiale mékomètre
+GGPSO__28205_   GGPSO__27906_     90.00601                   \0   0   $317671# distance spatiale mékomètre
+GGPSO__28205_   GGPSO__28005_     60.01845                   \0   0   $317672# distance spatiale mékomètre
+GGPSO__28205_   GGPSO__28105_     30.01020                   \0   0   $317673# distance spatiale mékomètre
+GGPSO__28205_   GGPSO__28304_     29.96070                   \0   0   $317674# distance spatiale mékomètre
+GGPSO__28205_   GGPSO__28404_     59.92425                   \0   0   $317675# distance spatiale mékomètre
+GGPSO__28205_   GGPSO__28504_     89.77380                   \0   0   $317676# distance spatiale mékomètre
+GGPSO__28504_   GGPSO__28205_     89.77396                   \0   0   $317677# distance spatiale mékomètre
+GGPSO__28504_   GGPSO__28304_     59.81309                   \0   0   $317678# distance spatiale mékomètre
+GGPSO__28504_   GGPSO__28404_     29.84962                   \0   0   $317679# distance spatiale mékomètre
+GGPSO__28504_   GGPSO__28604_     29.83892                   \0   0   $317680# distance spatiale mékomètre
+GGPSO__28504_   GGPSO__28704_     59.84109                   \0   0   $317681# distance spatiale mékomètre
+GGPSO__28504_   GGPSO__28804_     89.35965                   \0   0   $317682# distance spatiale mékomètre
+GGPSO___13L2_   GGPSO___15L2_    106.73611                   \0   0   $317070# distance spatiale mékomètre
+GGPSO___13L2_   GGPSO___14L2_     53.43893                   \0   0   $317069# distance spatiale mékomètre
+GGPSO___13L2_   GGPSO_12L220_     53.44044                   \0   0   $317068# distance spatiale mékomètre
+GGPSO___13L2_   GGPSO_12L203_     86.90979                   \0   0   $317067# distance spatiale mékomètre
+GGPSO_12L203_   GGPSO___13L2_     86.90974                   \0   0   $317066# distance spatiale mékomètre
+GGPSO_12L203_   GGPSO_12L220_     33.47082                   \0   0   $317065# distance spatiale mékomètre
+GGPSO_12L203_   GGPSO___11L2_     33.70474                   \0   0   $317064# distance spatiale mékomètre
+GGPSO_12L203_   GGPSO___10L2_     72.95742                   \0   0   $317063# distance spatiale mékomètre
+GGPSO__28804_   GGPSO__28504_     89.35971                   \0   0   $317683# distance spatiale mékomètre
+GGPSO__28804_   GGPSO__28604_     59.52082                   \0   0   $317684# distance spatiale mékomètre
+GGPSO__28804_   GGPSO__28704_     29.51873                   \0   0   $317685# distance spatiale mékomètre
+GGPSO__28804_   GGPSO__28903_     29.99824                   \0   0   $317686# distance spatiale mékomètre
+GGPSO__28804_   GGPSO__29003_     59.95843                   \0   0   $317687# distance spatiale mékomètre
+GGPSO__28804_   GGPSO__29103_     89.94592                   \0   0   $317688# distance spatiale mékomètre
+GGPSO___10L2_   GGPSO_12L203_     72.95757                   \0   0   $317062# distance spatiale mékomètre
+GGPSO___10L2_   GGPSO___11L2_     39.25326                   \0   0   $317061# distance spatiale mékomètre
+GGPSO___10L2_   GGPSO____9L2_     40.82050                   \0   0   $317060# distance spatiale mékomètre
+GGPSO___10L2_   GGPSO__8L204_     95.53880                   \0   0   $317059# distance spatiale mékomètre
+GGPSO__29103_   GGPSO__28804_     89.94594                   \0   0   $317689# distance spatiale mékomètre
+GGPSO__29103_   GGPSO__28903_     59.94775                   \0   0   $317690# distance spatiale mékomètre
+GGPSO__29103_   GGPSO__29003_     29.98765                   \0   0   $317691# distance spatiale mékomètre
+GGPSO__29103_   GGPSO__29145_     30.02265                   \0   0   $317692# distance spatiale mékomètre
+GGPSO__29103_   GGPSO__8L204_     75.92061                   \0   0   $317693# distance spatiale mékomètre
+GGPSO__8L204_   GGPSO___10L2_     95.53881                   \0   0   $317056# distance spatiale mékomètre
+GGPSO__8L204_   GGPSO__29103_     75.92047                   \0   0   $317058# distance spatiale mékomètre
+GGPSO__8L204_   GGPSO____9L2_     54.72026                   \0   0   $317055# distance spatiale mékomètre
+GGPSO__8L204_   GGPSO__29145_     45.98521                   \0   0   $317057# distance spatiale mékomètre
+GGPSO__8L204_   GGPSO__6L230_     38.78347                   \0   0   $317054# distance spatiale mékomètre
+GGPSO__8L204_   GGPSO__6L216_     68.19932                   \0   0   $317053# distance spatiale mékomètre
+GGPSO__6L216_   GGPSO__8L204_     68.19929                   \0   0   $317052# distance spatiale mékomètre
+GGPSO__6L216_   GGPSO__6L230_     29.41618                   \0   0   $317051# distance spatiale mékomètre
+GGPSO__6L216_   GGPSO__6L202_     26.01122                   \0   0   $317050# distance spatiale mékomètre
+GGPSO__6L216_   GGPSO__4L237_     77.99496                   \0   0   $317049# distance spatiale mékomètre
+GGPSO__4L237_   GGPSO__6L216_     77.99498                   \0   0   $317048# distance spatiale mékomètre
+GGPSO__4L237_   GGPSO__6L202_     51.98380                   \0   0   $317047# distance spatiale mékomètre
+GGPSO__4L237_   GGPSO__4L217_     39.98998                   \0   0   $317046# distance spatiale mékomètre
+GGPSO__4L237_   GGPSO__4L209_     54.99365                   \0   0   $317045# distance spatiale mékomètre
+GGPSO__4L237_   GGPSO__4L202_     69.11361                   \0   0   $317044# distance spatiale mékomètre
+GGPSO__4L237_   GGPSO____3L2_     82.30615                   \0   0   $317043# distance spatiale mékomètre
+TRIPOD_____3_   TRIPOD_____4_     90.91539       0.5   0.5      C      \.2596   .07   $323732# station n°133287
+TRIPOD_____3_   QTLF__610400E     43.80005       0.5   0.5            \.2596   .07   $323733# station n°133287
+TRIPOD_____3_   QTLF__610400S     41.00022       0.5   0.5            \.2596   .07   $323734# station n°133287
+%TRIPOD_____3_   QTLD__610500E      5.52661       5.5   0.5            \.2596   .07   $323735# station n°133287
+%TRIPOD_____3_   QTLD__610500S      2.82513       5.5   0.5            \.2596   .07   $323736# station n°133287
+TRIPOD_____3_   QTLF__610600E     27.73687       0.5   0.5            \.2596   .07   $323737# station n°133287
+TRIPOD_____3_   QTLF__610600S     30.53606       0.5   0.5            \.2596   .07   $323738# station n°133287
+TRIPOD_____3_   QTLF__670000E     69.23378       0.5   0.5            \.2596   .17   $323739# station n°133287
+TRIPOD_____4_   TRIPOD_____3_     90.91287       0.5   0.5            \.2596   .07   $323770# station n°133288
+TRIPOD_____4_   QTLF__610200E     30.57226       0.5   0.5            \.2596   .07   $323776# station n°133288
+TRIPOD_____4_   QTLF__610200S     27.78106       0.5   0.5            \.2596   .07   $323775# station n°133288
+TRIPOD_____4_   QTLD__610300E     14.06411       0.5   0.5            \.2596   .07   $323774# station n°133288
+TRIPOD_____4_   QTLD__610300S     16.83258       0.5   0.5            \.2596   .07   $323773# station n°133288
+TRIPOD_____4_   QTLD__610500E     85.49137       0.5   0.5            \.2596   .07   $323772# station n°133288
+TRIPOD_____4_   QTLD__610500S     88.29052       0.5   0.5            \.2596   .07   $323771# station n°133288
+TRIPOD_____4_   QDA____61910E     81.25772       0.5   0.5            \.2596   .07   $323784# station n°133288
+TRIPOD_____4_   QDA____61910S     78.43362       0.5   0.5            \.2596   .07   $323783# station n°133288
+TRIPOD_____4_   QF_____62010E     49.31013       0.5   0.5            \.2596   .07   $323782# station n°133288
+TRIPOD_____4_   QF_____62010S     46.46838       0.5   0.5            \.2596   .07   $323781# station n°133288
+TRIPOD_____4_   QD_____62110E     17.61273       0.5   0.5            \.2596   .07   $323780# station n°133288
+TRIPOD_____4_   QD_____62110S     14.86987       0.5   0.5            \.2596   .07   $323779# station n°133288
+TRIPOD_____4_   QF_____62210E     15.63692       0.5   0.5            \.2596   .07   $323778# station n°133288
+%%TRIPOD_____4_   QF_____62210S     18.38469       0.5   0.5            \.2596   .07   $323777# station n°133288
+TRIPOD_____1_   ALESOL_____1_     46.55372       0.5   0.5            \.2596   .07   $320753# station n°132639
+TRIPOD_____1_   TRIPOD_____2_      6.49033       0.5   0.5            \.2596   .07   $320754# station n°132639
+TRIPOD_____1_   QTLF__670000E     82.80167       0.5   0.5            \.2596   .07   $320755# station n°132639
+TRIPOD_____1_   QTLF__670000S     80.00523       0.5   0.5            \.2596   .07   $320756# station n°132639
+TRIPOD_____1_   QTLD__670100E     33.89149       0.5   0.5            \.2596   .07   $320757# station n°132639
+TRIPOD_____1_   QTLD__670100S     31.11352       0.5   0.5            \.2596   .07   $320758# station n°132639
+ALESOL_____1_   TRIPOD_____1_     46.55964       0.5   0.5            \.2596   .07   $320875# station n°132657
+ALESOL_____1_   ALESOL_____2_      5.82283       0.5   0.5            \.2596   .07   $320876# station n°132657
+ALESOL_____1_   QNL____12031S      7.07159       0.5   0.5            \.2596   .07   $320879# station n°132657
+ALESOL_____1_   TC________61_     11.97831       1.0   0.5            \.2596   .15   $320877# station n°132657
+ALESOL_____1_   GGPSO__20434_      4.67850       0.5   0.5            \.2596   0   $320878# station n°132657
+TRIPOD_____2_   ALESOL_____2_     40.84744       0.5   0.5            \.2596   .07   $320788# station n°132640
+TRIPOD_____2_   ALESOL_____7_     56.26752       0.5   0.5            \.2596   .07   $320787# station n°132640
+TRIPOD_____2_   TC________61_     32.84718       1.0   0.5            \.2596   .15   $320789# station n°132640
+TRIPOD_____2_   TC________62_      6.87407       1.0   0.5            \.2596   .15   $320796# station n°132640
+TRIPOD_____2_   TC________67_     18.28398       1.0   0.5            \.2596   .15   $320790# station n°132640
+TRIPOD_____2_   TC________68_      4.59728       1.0   0.5            \.2596   .15   $320791# station n°132640
+TRIPOD_____2_   QTLF__670000E     85.53979       0.5   0.5            \.2596   .07   $320792# station n°132640
+TRIPOD_____2_   QTLF__670000S     82.74057       0.5   0.5            \.2596   .07   $320793# station n°132640
+TRIPOD_____2_   QTLD__670100E     36.51269       0.5   0.5            \.2596   .07   $320794# station n°132640
+TRIPOD_____2_   QTLD__670100S     33.71667       0.5   0.5            \.2596   .07   $320795# station n°132640
+TRIPOD_____2_   QTLD__670200S     15.94700       0.5   0.5            \.2596   .07   $320797# station n°132640
+TRIPOD_____2_   QTR___670300S     11.00617       0.5   0.5            \.2596   .07   $320798# station n°132640
+TRIPOD_____2_   QTR___670305E      9.83549       0.5   0.5            \.2596   .07   $320799# station n°132640
+TRIPOD_____2_   QTR___670305S      7.12640       0.5   0.5            \.2596   .07   $320800# station n°132640
+ALESOL_____2_   ALESOL_____1_      5.81563       0.5   0.5            \.2596   .07   $321359# station n°132779
+ALESOL_____2_   TRIPOD_____2_     40.85257       0.5   0.5            \.2596   .07   $321352# station n°132779
+ALESOL_____2_   ALESOL_____7_     15.42461       0.5   0.5            \.2596   .07   $321361# station n°132779
+ALESOL_____2_   QNL____12031E      7.49813       0.5   0.5            \.2596   .07   $321357# station n°132779
+ALESOL_____2_   TC________61_      8.01814       1.0   0.5            \.2596   .15   $321356# station n°132779
+ALESOL_____2_   TC________62_     47.50994       1.0   0.5            \.2596   .15   $321353# station n°132779
+ALESOL_____2_   QNL____12040E      4.17235       0.5   0.5            \.2596   .07   $321358# station n°132779
+ALESOL_____2_   TC________67_     22.60505       1.0   0.5            \.2596   .15   $321355# station n°132779
+ALESOL_____2_   TC________68_     36.48861       1.0   0.5            \.2596   .15   $321354# station n°132779
+ALESOL_____2_   GGPSO__20434_     10.48809       0.5   0.5            \.2596   0   $321360# station n°132779
+QTLF__670000E   TRIPOD_____1_     82.78737       0.5   0.5            \.2596   .07   $320845# station n°132655
+QTLF__670000E   TRIPOD_____2_     85.52571       0.5   0.5            \.2596   .07   $320841# station n°132655
+QTLF__670000E   QTLD__670100E     49.05220       0.5   0.5            \.2596   .22   $320842# station n°132655
+QTLF__670000E   QTLD__670100S     51.85191       0.5   0.5            \.2596   .22   $320843# station n°132655
+QTLF__670000E   QTLD__670200E     66.89042       0.5   0.5            \.2596   .22   $320844# station n°132655
+QTLF__670000E   POT_____6070_     47.25524       0.5   0.5            \.2596   0   $320846# station n°132655
+QTLF__670000E   TRIPOD_____3_     69.24217       0.5   0.5            \.2596   .17   $323715# station n°133286
+QTLF__670000E   TRIPOD_____1_     82.78753       0.5   0.5            \.2596   .07   $323705# station n°133286
+QTLF__670000E   TRIPOD_____2_     85.52535       0.5   0.5            \.2596   .07   $323706# station n°133286
+QTLF__670000E   QTLD__670100E     49.04579       0.5   0.5            \.2596   .07   $323714# station n°133286
+QTLF__670000E   QTLD__670100S     51.84557       0.5   0.5            \.2596   .07   $323713# station n°133286
+QTLF__670000E   QTLD__670200E     66.88378       0.5   0.5            \.2596   .07   $323712# station n°133286
+QTLF__670000E   QTLD__670200S     69.68383       0.5   0.5            \.2596   .07   $323711# station n°133286
+QTLF__670000E   QTR___670300E     71.88831       0.5   0.5            \.2596   .07   $323710# station n°133286
+QTLF__670000E   QTR___670300S     74.69099       0.5   0.5            \.2596   .14   $323709# station n°133286
+QTLF__670000E   QTR___670305E     75.89187       0.5   0.5            \.2596   .27   $323708# station n°133286
+QTLF__670000E   QTR___670305S     78.68315       0.5   0.5            \.2596   .07   $323707# station n°133286
+QTLD__670100E   TRIPOD_____1_     33.87992       0.5   0.5            \.2596   .07   $320863# station n°132656
+QTLD__670100E   TRIPOD_____2_     36.50073       0.5   0.5            \.2596   .07   $320862# station n°132656
+QTLD__670100E   QTLF__670000E     49.05529       0.5   0.5            \.2596   .22   $320859# station n°132656
+QTLD__670100E   QTLF__670000S     46.25521       0.5   0.5            \.2596   .22   $320860# station n°132656
+QTLD__670100E   QTLD__670200E     17.83166       0.5   0.5            \.2596   .07   $320861# station n°132656
+QTLD__670100E   POT_____6070_      4.04605       0.5   0.5            \.2596   0   $320864# station n°132656
+GGPSO__20434_   ALESOL_____1_      4.89506       5.5   0.5            \1.4564   .07   $320275# station n°132532
+GGPSO__20434_   ALESOL_____2_     10.60295       5.5   0.5            \1.4564   .07   $320276# station n°132532
+GGPSO__20434_   QNL____12040E      6.63567       5.5   0.5            \1.4564   .07   $320277# station n°132532
+GGPSO__20434_   GGPSO__20628_     59.94485       0.5   0.5            \1.4564   0   $320273# station n°132532
+GGPSO__20434_   GGPSO__20727_     89.94629       0.5   0.5            \1.4564   .08   $320274# station n°132532
+GGPSO__20434_   ALESOL_____1_      4.89517       5.5   0.5            \1.4564   .07   $320318# station n°132539
+GGPSO__20434_   ALESOL_____2_     10.60276       5.5   0.5            \1.4564   .07   $320319# station n°132539
+GGPSO__20434_   QNL____12040E      6.63567       5.5   0.5            \1.4564   .07   $320317# station n°132539
+GGPSO__20434_   GGPSO__20628_     59.94501       0.5   0.5            \1.4564   0   $320315# station n°132539
+GGPSO__20434_   GGPSO__20727_     89.94628       0.5   0.5            \1.4564   .08   $320316# station n°132539
+GGPSO__20434_   GGPSO__20526_     29.96155       0.5   0.5            \1.4564   0   $320704# station n°132636
+GGPSO__20434_   GGPSO__20727_     89.94741       0.5   0.5            \1.4564   .13   $320703# station n°132636
+GGPSO__20727_   GGPSO__20434_     90.05277       0.5   0.5            \1.4564   0   $320254# station n°132531
+GGPSO__20727_   GGPSO__20526_     60.06244       0.5   0.5            \1.4564   0   $320255# station n°132531
+GGPSO__20727_   GGPSO__20628_     30.06826       0.5   0.5            \1.4564   0   $320256# station n°132531
+GGPSO__20727_   GGPSO__20827_     30.03456       0.5   0.5            \1.4564   0   $320257# station n°132531
+GGPSO__20727_   GGPSO__20926_     59.99782       0.5   0.5            \1.4564   0   $320258# station n°132531
+GGPSO__20727_   GGPSO__21026_     90.00815       0.5   0.5            \1.4564   0   $320259# station n°132531
+GGPSO__21026_   GGPSO__20727_     89.97549       0.5   0.5            \1.4564   .15   $320236# station n°132530
+GGPSO__21026_   GGPSO__20827_     59.97578       0.5   0.5            \1.4564   0   $320237# station n°132530
+GGPSO__21026_   GGPSO__20926_     30.02034       0.5   0.5            \1.4564   0   $320238# station n°132530
+GGPSO__21026_   GGPSO__21126_     30.06265       0.5   0.5            \1.4564   0   $320239# station n°132530
+GGPSO__21026_   GGPSO__21225_     60.02261       0.5   0.5            \1.4564   0   $320240# station n°132530
+GGPSO__21026_   GGPSO__21325_     90.02471       0.5   0.5            \1.4564   0   $320241# station n°132530
+GGPSO__21325_   GGPSO__21026_     89.97024       0.5   0.5            \1.4564   0   $320218# station n°132529
+GGPSO__21325_   GGPSO__21126_     59.97696       0.5   0.5            \1.4564   0   $320219# station n°132529
+GGPSO__21325_   GGPSO__21225_     30.01542       0.5   0.5            \1.4564   0   $320220# station n°132529
+GGPSO__21325_   GGPSO__21425_     30.06173       0.5   0.5            \1.4564   0   $320221# station n°132529
+GGPSO__21325_   GGPSO__21524_     60.07299       0.5   0.5            \1.4564   0   $320222# station n°132529
+GGPSO__21325_   GGPSO__21624_     90.09680       0.5   0.5            \1.4564   0   $320223# station n°132529
+GGPSO__21624_   GGPSO__21325_     90.04250       0.5   0.5            \1.4564   0   $320200# station n°132528
+GGPSO__21624_   GGPSO__21425_     60.04743       0.5   0.5            \1.4564   0   $320201# station n°132528
+GGPSO__21624_   GGPSO__21524_     30.03851       0.5   0.5            \1.4564   0   $320202# station n°132528
+GGPSO__21624_   GGPSO__21724_     30.08051       0.5   0.5            \1.4564   0   $320203# station n°132528
+GGPSO__21624_   GGPSO__21824_     60.06344       0.5   0.5            \1.4564   0   $320204# station n°132528
+GGPSO__21624_   GGPSO__21923_     90.06441       0.5   0.5            \1.4564   0   $320205# station n°132528
+GGPSO__21923_   GGPSO__21624_     90.01167       0.5   0.5            \1.4564   0   $320182# station n°132527
+GGPSO__21923_   GGPSO__21724_     59.99771       0.5   0.5            \1.4564   0   $320183# station n°132527
+GGPSO__21923_   GGPSO__21824_     30.01579       0.5   0.5            \1.4564   0   $320184# station n°132527
+GGPSO__21923_   GGPSO__22023_     30.03740       0.5   0.5            \1.4564   0   $320185# station n°132527
+GGPSO__21923_   GGPSO__22123_     60.04332       0.5   0.5            \1.4564   0   $320186# station n°132527
+GGPSO__21923_   GGPSO__22222_     90.05909       0.5   0.5            \1.4564   0   $320187# station n°132527
+GGPSO__22222_   GGPSO__21923_     90.00518       0.5   0.5            \1.4564   0   $320164# station n°132526
+GGPSO__22222_   GGPSO__22023_     60.03809       0.5   0.5            \1.4564   0   $320165# station n°132526
+GGPSO__22222_   GGPSO__22123_     30.03514       0.5   0.5            \1.4564   0   $320166# station n°132526
+GGPSO__22222_   GGPSO__22322_     30.07624       0.5   0.5            \1.4564   0   $320167# station n°132526
+GGPSO__22222_   GGPSO__22422_     60.05350       0.5   0.5            \1.4564   0   $320168# station n°132526
+GGPSO__22222_   GGPSO__22521_     90.06440       0.5   0.5            \1.4564   0   $320169# station n°132526
+GGPSO__22521_   GGPSO__22222_     90.01092       0.5   0.5            \1.4564   0   $320146# station n°132525
+GGPSO__22521_   GGPSO__22322_     60.00384       0.5   0.5            \1.4564   0   $320147# station n°132525
+GGPSO__22521_   GGPSO__22422_     30.02652       0.5   0.5            \1.4564   0   $320148# station n°132525
+GGPSO__22521_   GGPSO__22621_     30.07262       0.5   0.5            \1.4564   0   $320149# station n°132525
+GGPSO__22521_   GGPSO__22721_     60.09377       0.5   0.5            \1.4564   0   $320150# station n°132525
+GGPSO__22521_   GGPSO__22821_     90.06975       0.5   0.5            \1.4564   0   $320151# station n°132525
+GGPSO__22821_   GGPSO__22521_     90.01605       0.5   0.5            \1.4564   0   $320128# station n°132524
+GGPSO__22821_   GGPSO__22621_     60.01199       0.5   0.5            \1.4564   0   $320129# station n°132524
+GGPSO__22821_   GGPSO__22721_     29.99219       0.5   0.5            \1.4564   0   $320130# station n°132524
+GGPSO__22821_   GGPSO__22920_     30.08840       0.5   0.5            \1.4564   0   $320131# station n°132524
+GGPSO__22821_   GGPSO__23020_     60.05051       0.5   0.5            \1.4564   0   $320132# station n°132524
+GGPSO__22821_   GGPSO__23120_     90.04517       0.5   0.5            \1.4564   0   $320133# station n°132524
+GGPSO__23120_   GGPSO__22821_     89.99108       0.5   0.5            \1.4564   0   $320110# station n°132523
+GGPSO__23120_   GGPSO__22920_     59.97494       0.5   0.5            \1.4564   0   $320111# station n°132523
+GGPSO__23120_   GGPSO__23020_     30.01337       0.5   0.5            \1.4564   0   $320112# station n°132523
+GGPSO__23120_   GGPSO__23219_     30.08328       0.5   0.5            \1.4564   0   $320113# station n°132523
+GGPSO__23120_   GGPSO__23319_     60.08247       0.5   0.5            \1.4564   0   $320114# station n°132523
+GGPSO__23120_   GGPSO__23419_     90.08572       0.5   0.5            \1.4564   0   $320115# station n°132523
+GGPSO__23120_   GGPSO__23518_    120.00026       0.5   0.5            \1.4564   0   $320109# station n°132523
+GGPSO__23518_   GGPSO__23120_    119.94694       0.5   0.5            \1.4564   0   $320087# station n°132522
+GGPSO__23518_   GGPSO__23219_     89.96588       0.5   0.5            \1.4564   0   $320088# station n°132522
+GGPSO__23518_   GGPSO__23319_     59.96708       0.5   0.5            \1.4564   0   $320089# station n°132522
+GGPSO__23518_   GGPSO__23419_     29.96404       0.5   0.5            \1.4564   0   $320090# station n°132522
+GGPSO__23518_   GGPSO__23618_     30.06095       0.5   0.5            \1.4564   0   $320091# station n°132522
+GGPSO__23518_   GGPSO__23718_     60.07922       0.5   0.5            \1.4564   0   $320092# station n°132522
+GGPSO__23518_   GGPSO__23818_     90.04962       0.5   0.5            \1.4564   0   $320093# station n°132522
+GGPSO__23518_   GGPSO__23917_    119.98634       0.5   0.5            \1.4564   0   $320094# station n°132522
+GGPSO__23917_   GGPSO__23518_    119.93381       0.5   0.5            \1.4564   0   $319060# station n°132197
+GGPSO__23917_   GGPSO__23818_     29.99008       0.5   0.5            \1.4564   0   $319063# station n°132197
+GGPSO__23917_   GGPSO__24017_     30.08509       0.5   0.5            \1.4564   0   $319064# station n°132197
+GGPSO__23917_   GGPSO__24217_     90.41139       0.5   0.5            \1.4564   0   $319065# station n°132197
+GGPSO__23917_   GGPSO__23518_    119.93366       0.5   0.5            \1.4564   0   $320066# station n°132521
+GGPSO__23917_   GGPSO__23618_     89.97653       0.5   0.5            \1.4564   0   $320067# station n°132521
+GGPSO__23917_   GGPSO__23718_     59.96004       0.5   0.5            \1.4564   0   $320068# station n°132521
+GGPSO__23917_   GGPSO__23818_     29.99002       0.5   0.5            \1.4564   0   $320069# station n°132521
+GGPSO__23917_   GGPSO__24017_     30.08503       0.5   0.5            \1.4564   0   $320070# station n°132521
+GGPSO__24217_   GGPSO__23917_     90.35760       0.5   0.5            \1.4564   0   $319044# station n°132196
+GGPSO__24217_   GGPSO__24317_     30.12814       0.5   0.5            \1.4564   0   $319045# station n°132196
+GGPSO__24217_   GGPSO__24417_     60.09659       0.5   0.5            \1.4564   0   $319046# station n°132196
+GGPSO__24217_   GGPSO__24516_     90.02126       0.5   0.5            \1.4564   0   $319047# station n°132196
+GGPSO__24217_   GGPSO__24616_    119.95747       0.5   0.5            \1.4564   0   $319043# station n°132196
+GGPSO__24217_   GGPSO__24317_     30.12807       0.5   0.5            \1.4564   0   $326321# station n°133375
+GGPSO__24217_   GGPSO__24417_     60.09654       0.5   0.5            \1.4564   0   $326322# station n°133375
+GGPSO__24217_   GGPSO__24516_     90.02134       0.5   0.5            \1.4564   0   $326323# station n°133375
+GGPSO__24217_   GGPSO__24616_    119.95738       0.5   0.5            \1.4564   0   $326320# station n°133375
+GGPSO__24616_   GGPSO__24317_     89.88020       0.5   0.5            \1.4564   0   $317548# station n°131777
+GGPSO__24616_   GGPSO__24417_     59.91310       0.5   0.5            \1.4564   0   $317549# station n°131777
+GGPSO__24616_   GGPSO__24516_     29.98645       0.5   0.5            \1.4564   0   $317550# station n°131777
+GGPSO__24616_   GGPSO__24716_     30.66133       0.5   0.5            \1.4564   0   $317551# station n°131777
+GGPSO__24616_   GGPSO__24816_     60.80910       0.5   0.5            \1.4564   0   $317552# station n°131777
+GGPSO__24616_   GGPSO__24915_     90.78088       0.5   0.5            \1.4564   0   $317553# station n°131777
+GGPSO__24616_   GGPSO__24217_    119.90460       0.5   0.5            \1.4564   0   $326287# station n°133373
+GGPSO__24616_   GGPSO__24317_     89.88065       0.5   0.5            \1.4564   0   $326288# station n°133373
+GGPSO__24616_   GGPSO__24417_     59.91370       0.5   0.5            \1.4564   0   $326289# station n°133373
+GGPSO__24616_   GGPSO__24516_     29.98640       0.5   0.5            \1.4564   0   $326290# station n°133373
+GGPSO__24616_   GGPSO__24716_     30.66178       0.5   0.5            \1.4564   0   $326291# station n°133373
+GGPSO__24616_   GGPSO__24816_     60.80950       0.5   0.5            \1.4564   0   $326292# station n°133373
+GGPSO__24616_   GGPSO__24915_     90.78133       0.5   0.5            \1.4564   0   $326293# station n°133373
+GGPSO__24915_   GGPSO__24616_     90.72818       0.5   0.5            \1.4564   0   $317530# station n°131776
+GGPSO__24915_   GGPSO__24716_     60.15477       0.5   0.5            \1.4564   0   $317531# station n°131776
+GGPSO__24915_   GGPSO__24816_     30.00745       0.5   0.5            \1.4564   0   $317532# station n°131776
+GGPSO__24915_   GGPSO__25015_     30.01865       0.5   0.5            \1.4564   0   $317533# station n°131776
+GGPSO__24915_   GGPSO__25115_     59.99233       0.5   0.5            \1.4564   0   $317534# station n°131776
+GGPSO__24915_   GGPSO__25214_     89.96953       0.5   0.5            \1.4564   0   $317535# station n°131776
+GGPSO__24915_   GGPSO__24616_     90.72849       0.5   0.5            \1.4564   0   $326306# station n°133374
+GGPSO__24915_   GGPSO__24716_     60.15447       0.5   0.5            \1.4564   0   $326307# station n°133374
+GGPSO__24915_   GGPSO__24816_     30.00745       0.5   0.5            \1.4564   0   $326308# station n°133374
+GGPSO__24915_   GGPSO__25015_     30.01846       0.5   0.5            \1.4564   0   $326309# station n°133374
+GGPSO__24915_   GGPSO__25115_     59.99213       0.5   0.5            \1.4564   0   $326310# station n°133374
+GGPSO__24915_   GGPSO__25214_     89.96953       0.5   0.5            \1.4564   0   $326311# station n°133374
+GGPSO__25214_   GGPSO__24915_     89.91621       0.5   0.5            \1.4564   0   $317512# station n°131775
+GGPSO__25214_   GGPSO__25015_     59.98583       0.5   0.5            \1.4564   0   $317513# station n°131775
+GGPSO__25214_   GGPSO__25115_     30.01275       0.5   0.5            \1.4564   0   $317514# station n°131775
+GGPSO__25214_   GGPSO__25314_     29.99265       0.5   0.5            \1.4564   0   $317515# station n°131775
+GGPSO__25214_   GGPSO__25414_     59.97822       0.5   0.5            \1.4564   0   $317516# station n°131775
+GGPSO__25214_   GGPSO__25513_     89.94222       0.5   0.5            \1.4564   0   $317517# station n°131775
+GGPSO__25513_   GGPSO__25214_     89.88918       0.5   0.5            \1.4564   0   $317494# station n°131774
+GGPSO__25513_   GGPSO__25314_     59.97867       0.5   0.5            \1.4564   0   $317495# station n°131774
+GGPSO__25513_   GGPSO__25414_     29.98968       0.5   0.5            \1.4564   0   $317496# station n°131774
+GGPSO__25513_   GGPSO__25613_     30.04389       0.5   0.5            \1.4564   0   $317497# station n°131774
+GGPSO__25513_   GGPSO__25713_     60.03519       0.5   0.5            \1.4564   0   $317498# station n°131774
+GGPSO__25513_   GGPSO__25813_     90.05656       0.5   0.5            \1.4564   0   $317499# station n°131774
+GGPSO__25813_   GGPSO__25513_     90.00324       0.5   0.5            \1.4564   0   $317476# station n°131773
+GGPSO__25813_   GGPSO__25613_     60.03220       0.5   0.5            \1.4564   0   $317477# station n°131773
+GGPSO__25813_   GGPSO__25713_     30.03979       0.5   0.5            \1.4564   0   $317478# station n°131773
+GGPSO__25813_   GGPSO__25912_     29.96018       0.5   0.5            \1.4564   0   $317479# station n°131773
+GGPSO__25813_   GGPSO__26012_     59.99679       0.5   0.5            \1.4564   0   $317480# station n°131773
+GGPSO__25813_   GGPSO__26112_     90.00044       0.5   0.5            \1.4564   0   $317481# station n°131773
+GGPSO__26112_   GGPSO__25813_     89.94752       0.5   0.5            \1.4564   0   $317458# station n°131772
+GGPSO__26112_   GGPSO__25912_     60.05882       0.5   0.5            \1.4564   0   $317459# station n°131772
+GGPSO__26112_   GGPSO__26012_     30.02390       0.5   0.5            \1.4564   0   $317460# station n°131772
+GGPSO__26112_   GGPSO__26211_     30.08560       0.5   0.5            \1.4564   0   $317461# station n°131772
+GGPSO__26112_   GGPSO__26311_     60.02850       0.5   0.5            \1.4564   0   $317462# station n°131772
+GGPSO__26112_   GGPSO__26410_     89.99775       0.5   0.5            \1.4564   0   $317463# station n°131772
+GGPSO__26410_   GGPSO__26112_     89.94605       0.5   0.5            \1.4564   0   $317440# station n°131771
+GGPSO__26410_   GGPSO__26211_     59.92919       0.5   0.5            \1.4564   0   $317441# station n°131771
+GGPSO__26410_   GGPSO__26311_     29.98610       0.5   0.5            \1.4564   0   $317442# station n°131771
+GGPSO__26410_   GGPSO__26510_     30.03501       0.5   0.5            \1.4564   0   $317443# station n°131771
+GGPSO__26410_   GGPSO__26609_     60.06193       0.5   0.5            \1.4564   0   $317444# station n°131771
+GGPSO__26410_   GGPSO__26709_     90.02639       0.5   0.5            \1.4564   0   $317445# station n°131771
+GGPSO__26709_   GGPSO__26410_     90.03098       0.5   0.5            \1.4564   0   $317422# station n°131770
+GGPSO__26709_   GGPSO__26510_     60.04172       0.5   0.5            \1.4564   0   $317423# station n°131770
+GGPSO__26709_   GGPSO__26609_     30.01209       0.5   0.5            \1.4564   0   $317424# station n°131770
+GGPSO__26709_   GGPSO__26809_     30.02059       0.5   0.5            \1.4564   0   $317425# station n°131770
+GGPSO__26709_   GGPSO__26909_     59.98551       0.5   0.5            \1.4564   0   $317426# station n°131770
+GGPSO__26709_   GGPSO__27008_     89.99586       0.5   0.5            \1.4564   0   $317427# station n°131770
+GGPSO__27008_   GGPSO__26709_     90.04089       0.5   0.5            \1.4564   0   $317404# station n°131769
+GGPSO__27008_   GGPSO__26809_     60.07043       0.5   0.5            \1.4564   0   $317405# station n°131769
+GGPSO__27008_   GGPSO__26909_     30.09542       0.5   0.5            \1.4564   0   $317406# station n°131769
+GGPSO__27008_   GGPSO__27108_     30.00750       0.5   0.5            \1.4564   0   $317407# station n°131769
+GGPSO__27008_   GGPSO__27208_     59.98951       0.5   0.5            \1.4564   0   $317408# station n°131769
+GGPSO__27008_   GGPSO__27307_     90.00138       0.5   0.5            \1.4564   0   $317409# station n°131769
+GGPSO__27307_   GGPSO__27008_     90.07100       0.5   0.5            \1.4564   0   $317386# station n°131768
+GGPSO__27307_   GGPSO__27108_     60.06993       0.5   0.5            \1.4564   0   $317387# station n°131768
+GGPSO__27307_   GGPSO__27208_     30.08780       0.5   0.5            \1.4564   0   $317388# station n°131768
+GGPSO__27307_   GGPSO__27407_     29.96669       0.5   0.5            \1.4564   0   $317389# station n°131768
+GGPSO__27307_   GGPSO__27507_     60.00831       0.5   0.5            \1.4564   0   $317390# station n°131768
+GGPSO__27307_   GGPSO__27606_     89.94344       0.5   0.5            \1.4564   0   $317391# station n°131768
+GGPSO__27606_   GGPSO__27307_     90.01352       0.5   0.5            \1.4564   0   $317368# station n°131767
+GGPSO__27606_   GGPSO__27407_     60.05203       0.5   0.5            \1.4564   0   $317369# station n°131767
+GGPSO__27606_   GGPSO__27507_     30.01104       0.5   0.5            \1.4564   0   $317370# station n°131767
+GGPSO__27606_   GGPSO__27706_     29.89253       0.5   0.5            \1.4564   0   $317371# station n°131767
+GGPSO__27606_   GGPSO__27806_     59.90067       0.5   0.5            \1.4564   0   $317372# station n°131767
+GGPSO__27606_   GGPSO__27906_     89.85976       0.5   0.5            \1.4564   0   $317373# station n°131767
+GGPSO___17L2_   GGPSO___19L2_    106.90487       0.5   0.5            \1.4564   0   $317169# station n°131754
+GGPSO___17L2_   GGPSO___18L2_     53.47892       0.5   0.5            \1.4564   0   $317170# station n°131754
+GGPSO___17L2_   GGPSO___16L2_     53.43611       0.5   0.5            \1.4564   0   $317171# station n°131754
+GGPSO___17L2_   GGPSO___15L2_    106.99466       0.5   0.5            \1.4564   0   $317172# station n°131754
+GGPSO__27906_   GGPSO__27606_     89.93023       0.5   0.5            \1.4564   0   $317350# station n°131766
+GGPSO__27906_   GGPSO__27706_     60.04484       0.5   0.5            \1.4564   0   $317351# station n°131766
+GGPSO__27906_   GGPSO__27806_     30.03637       0.5   0.5            \1.4564   0   $317352# station n°131766
+GGPSO__27906_   GGPSO__28005_     29.98876       0.5   0.5            \1.4564   0   $317353# station n°131766
+GGPSO__27906_   GGPSO__28105_     59.97892       0.5   0.5            \1.4564   0   $317354# station n°131766
+GGPSO__27906_   GGPSO__28205_     89.98265       0.5   0.5            \1.4564   0   $317355# station n°131766
+GGPSO___15L2_   GGPSO___17L2_    107.03582       0.5   0.5            \1.4564   0   $317181# station n°131755
+GGPSO___15L2_   GGPSO___16L2_     53.61245       0.5   0.5            \1.4564   0   $317182# station n°131755
+GGPSO___15L2_   GGPSO___14L2_     53.29907       0.5   0.5            \1.4564   0   $317183# station n°131755
+%GGPSO___15L2_   GGPSO___13L2_    106.72457       0.5   0.5            \1.4564   0   $317184# station n°131755
+GGPSO__28205_   GGPSO__27906_     90.05261       0.5   0.5            \1.4564   0   $317332# station n°131765
+GGPSO__28205_   GGPSO__28005_     60.07128       0.5   0.5            \1.4564   0   $317333# station n°131765
+GGPSO__28205_   GGPSO__28105_     30.08088       0.5   0.5            \1.4564   0   $317334# station n°131765
+GGPSO__28205_   GGPSO__28304_     29.96167       0.5   0.5            \1.4564   0   $317335# station n°131765
+GGPSO__28205_   GGPSO__28404_     59.90702       0.5   0.5            \1.4564   0   $317336# station n°131765
+GGPSO__28205_   GGPSO__28504_     89.75079       0.5   0.5            \1.4564   0   $317337# station n°131765
+GGPSO__28504_   GGPSO__28205_     89.81988       0.5   0.5            \1.4564   0   $317314# station n°131764
+GGPSO__28504_   GGPSO__28304_     59.86539       0.5   0.5            \1.4564   0   $317315# station n°131764
+GGPSO__28504_   GGPSO__28404_     29.91915       0.5   0.5            \1.4564   0   $317316# station n°131764
+GGPSO__28504_   GGPSO__28604_     29.83923       0.5   0.5            \1.4564   0   $317317# station n°131764
+GGPSO__28504_   GGPSO__28704_     59.82387       0.5   0.5            \1.4564   0   $317318# station n°131764
+GGPSO__28504_   GGPSO__28804_     89.33797       0.5   0.5            \1.4564   0   $317319# station n°131764
+GGPSO___13L2_   GGPSO___15L2_    106.76620       0.5   0.5            \1.4564   0   $317193# station n°131756
+GGPSO___13L2_   GGPSO___14L2_     53.47932       0.5   0.5            \1.4564   0   $317194# station n°131756
+GGPSO___13L2_   GGPSO_12L220_     53.43981       0.5   0.5            \1.4564   0   $317195# station n°131756
+GGPSO___13L2_   GGPSO_12L203_     86.90092       0.5   0.5            \1.4564   0   $317196# station n°131756
+GGPSO_12L203_   GGPSO___13L2_     86.94209       0.5   0.5            \1.4564   0   $317205# station n°131757
+GGPSO_12L203_   GGPSO_12L220_     33.52282       0.5   0.5            \1.4564   0   $317206# station n°131757
+GGPSO_12L203_   GGPSO___11L2_     33.71572       0.5   0.5            \1.4564   0   $317207# station n°131757
+GGPSO_12L203_   GGPSO___10L2_     72.95129       0.5   0.5            \1.4564   0   $317208# station n°131757
+GGPSO__28804_   GGPSO__28504_     89.40457       0.5   0.5            \1.4564   0   $317296# station n°131763
+GGPSO__28804_   GGPSO__28604_     59.57089       0.5   0.5            \1.4564   0   $317297# station n°131763
+GGPSO__28804_   GGPSO__28704_     29.58430       0.5   0.5            \1.4564   0   $317298# station n°131763
+GGPSO__28804_   GGPSO__28903_     30.00526       0.5   0.5            \1.4564   0   $317299# station n°131763
+GGPSO__28804_   GGPSO__29003_     59.94771       0.5   0.5            \1.4564   0   $317300# station n°131763
+GGPSO__28804_   GGPSO__29103_     89.92913       0.5   0.5            \1.4564   0   $317301# station n°131763
+GGPSO___10L2_   GGPSO_12L203_     72.99243       0.5   0.5            \1.4564   0   $317217# station n°131758
+GGPSO___10L2_   GGPSO___11L2_     39.30072       0.5   0.5            \1.4564   0   $317218# station n°131758
+GGPSO___10L2_   GGPSO____9L2_     40.82585       0.5   0.5            \1.4564   0   $317219# station n°131758
+GGPSO___10L2_   GGPSO__8L204_     95.53095       0.5   0.5            \1.4564   0   $317220# station n°131758
+GGPSO__29103_   GGPSO__28804_     89.98571       0.5   0.5            \1.4564   0   $317279# station n°131762
+GGPSO__29103_   GGPSO__28903_     59.99367       0.5   0.5            \1.4564   0   $317280# station n°131762
+GGPSO__29103_   GGPSO__29003_     30.05139       0.5   0.5            \1.4564   0   $317281# station n°131762
+GGPSO__29103_   GGPSO__29145_     30.02289       0.5   0.5            \1.4564   0   $317282# station n°131762
+GGPSO__29103_   GGPSO__8L204_     75.91140       0.5   0.5            \1.4564   0   $317283# station n°131762
+GGPSO__8L204_   GGPSO___10L2_     95.56788       0.5   0.5            \1.4564   0   $317233# station n°131759
+GGPSO__8L204_   GGPSO__29103_     75.95771       0.5   0.5            \1.4564   0   $317238# station n°131759
+GGPSO__8L204_   GGPSO____9L2_     54.75628       0.5   0.5            \1.4564   0   $317234# station n°131759
+GGPSO__8L204_   GGPSO__29145_     46.02351       0.5   0.5            \1.4564   0   $317237# station n°131759
+GGPSO__8L204_   GGPSO__6L230_     38.79036       0.5   0.5            \1.4564   0   $317235# station n°131759
+GGPSO__8L204_   GGPSO__6L216_     68.19437       0.5   0.5            \1.4564   0   $317236# station n°131759
+GGPSO__6L216_   GGPSO__8L204_     68.23496       0.5   0.5            \1.4564   0   $317247# station n°131760
+GGPSO__6L216_   GGPSO__6L230_     29.47211       0.5   0.5            \1.4564   0   $317248# station n°131760
+GGPSO__6L216_   GGPSO__6L202_     26.03205       0.5   0.5            \1.4564   0   $317249# station n°131760
+GGPSO__6L216_   GGPSO__4L237_     77.98842       0.5   0.5            \1.4564   0   $317250# station n°131760
+GGPSO__4L237_   GGPSO__6L216_     78.02852       0.5   0.5            \1.4564   0   $317263# station n°131761
+GGPSO__4L237_   GGPSO__6L202_     52.02415       0.5   0.5            \1.4564   0   $317264# station n°131761
+GGPSO__4L237_   GGPSO__4L217_     39.99666       0.5   0.5            \1.4564   0   $317265# station n°131761
+GGPSO__4L237_   GGPSO__4L209_     54.99312       0.5   0.5            \1.4564   0   $317266# station n°131761
+GGPSO__4L237_   GGPSO__4L202_     69.10868       0.5   0.5            \1.4564   0   $317267# station n°131761
+GGPSO__4L237_   GGPSO____3L2_     82.29870       0.5   0.5            \1.4564   0   $317268# station n°131761
+QDA____61910E   TRIPOD_____4_     81.26055       0.5   0.5            \.2596   .07   $323893# station n°133293
+QDA____61910E   QTLD__610100E     15.22629       0.5   0.5            \.2596   .07   $323889# station n°133293
+QDA____61910E   QTLD__610100S     18.02556       0.5   0.5            \.2596   .07   $323890# station n°133293
+QDA____61910E   QTLF__610200E     50.73234       0.5   0.5            \.2596   .07   $323891# station n°133293
+QDA____61910E   QTLF__610200S     53.53209       0.5   0.5            \.2596   .07   $323892# station n°133293
+QDA____61910E   QTLD__610300E     95.09106       0.5   0.5            \.2596   .07   $323894# station n°133293
+QDA____61910E   QTLD__610300S     97.89104       0.5   0.5            \.2596   .07   $323895# station n°133293
+QDA____61910E   QFA____61610E     95.99618       0.5   0.5            \.2596   .07   $323877# station n°133293
+QDA____61910E   QFA____61610S     93.16980       0.5   0.5            \.2596   .07   $323878# station n°133293
+QDA____61910E   QDA____61710E     63.99735       0.5   0.5            \.2596   .07   $323879# station n°133293
+QDA____61910E   QDA____61710S     61.17043       0.5   0.5            \.2596   .07   $323880# station n°133293
+QDA____61910E   QFA____61810E     32.00044       0.5   0.5            \.2596   .07   $323881# station n°133293
+QDA____61910E   QFA____61810S     29.17387       0.5   0.5            \.2596   .07   $323882# station n°133293
+QDA____61910E   QF_____62010E     31.98974       0.5   0.5            \.2596   .07   $323883# station n°133293
+QDA____61910E   QF_____62010S     34.83779       0.5   0.5            \.2596   .07   $323884# station n°133293
+QDA____61910E   QD_____62110E     63.98404       0.5   0.5            \.2596   .07   $323885# station n°133293
+QDA____61910E   QD_____62110S     66.82883       0.5   0.5            \.2596   .07   $323886# station n°133293
+QDA____61910E   QF_____62210E     95.96767       0.5   0.5            \.2596   .07   $323887# station n°133293
+%%QDA____61910E   QF_____62210S     98.81278       0.5   0.5            \.2596   .07   $323888# station n°133293
+*ANGL   5
+%station n°131754
+GGPSO___17L2_   GGPSO___19L2_       .00000           $317161# station n°131754
+GGPSO___17L2_   GGPSO___18L2_       .48320           $317162# station n°131754
+GGPSO___17L2_   GGPSO___16L2_    201.45720           $317163# station n°131754
+GGPSO___17L2_   GGPSO___15L2_    201.95290           $317164# station n°131754
+%station n°131755
+GGPSO___15L2_   GGPSO___17L2_       .00000           $317173# station n°131755
+GGPSO___15L2_   GGPSO___16L2_       .49540           $317174# station n°131755
+GGPSO___15L2_   GGPSO___14L2_    201.45730           $317175# station n°131755
+GGPSO___15L2_   GGPSO___13L2_    201.94150           $317176# station n°131755
+%station n°131756
+GGPSO___13L2_   GGPSO___15L2_       .00000           $317185# station n°131756
+GGPSO___13L2_   GGPSO___14L2_       .48320           $317186# station n°131756
+GGPSO___13L2_   GGPSO_12L220_    201.47660           $317187# station n°131756
+GGPSO___13L2_   GGPSO_12L203_    201.77040           $317188# station n°131756
+%station n°131757
+GGPSO_12L203_   GGPSO___13L2_       .00000           $317197# station n°131757
+GGPSO_12L203_   GGPSO_12L220_       .46930           $317198# station n°131757
+GGPSO_12L203_   GGPSO___11L2_    200.98500           $317199# station n°131757
+GGPSO_12L203_   GGPSO___10L2_    201.25980           $317200# station n°131757
+%station n°131758
+GGPSO___10L2_   GGPSO_12L203_       .00000           $317209# station n°131758
+GGPSO___10L2_   GGPSO___11L2_       .23650           $317210# station n°131758
+GGPSO___10L2_   GGPSO____9L2_    200.82490           $317211# station n°131758
+GGPSO___10L2_   GGPSO__8L204_    201.29990           $317212# station n°131758
+%station n°131759
+GGPSO__8L204_   GGPSO___10L2_       .00000           $317221# station n°131759
+GGPSO__8L204_   GGPSO__29103_      5.47780           $317226# station n°131759
+GGPSO__8L204_   GGPSO____9L2_       .35450           $317222# station n°131759
+GGPSO__8L204_   GGPSO__29145_      7.91940           $317225# station n°131759
+GGPSO__8L204_   GGPSO__6L230_    201.44020           $317223# station n°131759
+GGPSO__8L204_   GGPSO__6L216_    201.24080           $317224# station n°131759
+%station n°131760
+GGPSO__6L216_   GGPSO__8L204_       .00000           $317239# station n°131760
+GGPSO__6L216_   GGPSO__6L230_    399.73750           $317240# station n°131760
+GGPSO__6L216_   GGPSO__6L202_    199.74050           $317241# station n°131760
+GGPSO__6L216_   GGPSO__4L237_    199.75560           $317242# station n°131760
+%station n°131761
+GGPSO__4L237_   GGPSO__6L216_       .00000           $317251# station n°131761
+GGPSO__4L237_   GGPSO__6L202_       .00790           $317252# station n°131761
+GGPSO__4L237_   GGPSO__4L217_    200.00630           $317253# station n°131761
+GGPSO__4L237_   GGPSO__4L209_    199.98790           $317254# station n°131761
+GGPSO__4L237_   GGPSO__4L202_    199.99600           $317255# station n°131761
+GGPSO__4L237_   GGPSO____3L2_    199.99820           $317256# station n°131761
+%station n°131762
+GGPSO__29103_   GGPSO__28804_       .00000           $317269# station n°131762
+GGPSO__29103_   GGPSO__28903_       .00390           $317270# station n°131762
+GGPSO__29103_   GGPSO__29003_    399.92620           $317271# station n°131762
+GGPSO__29103_   GGPSO__29145_    198.86910           $317272# station n°131762
+GGPSO__29103_   GGPSO__8L204_    202.61130           $317273# station n°131762
+%station n°131763
+GGPSO__28804_   GGPSO__28504_       .00000           $317284# station n°131763
+GGPSO__28804_   GGPSO__28604_    399.99810           $317285# station n°131763
+GGPSO__28804_   GGPSO__28704_       .04110           $317286# station n°131763
+GGPSO__28804_   GGPSO__28903_    199.97120           $317287# station n°131763
+GGPSO__28804_   GGPSO__29003_    200.01620           $317288# station n°131763
+GGPSO__28804_   GGPSO__29103_    199.97840           $317289# station n°131763
+%station n°131764
+GGPSO__28504_   GGPSO__28205_       .00000           $317302# station n°131764
+GGPSO__28504_   GGPSO__28304_    399.98850           $317303# station n°131764
+GGPSO__28504_   GGPSO__28404_    399.98480           $317304# station n°131764
+GGPSO__28504_   GGPSO__28604_    199.97100           $317305# station n°131764
+GGPSO__28504_   GGPSO__28704_    199.94690           $317306# station n°131764
+GGPSO__28504_   GGPSO__28804_    199.96670           $317307# station n°131764
+%station n°131765
+GGPSO__28205_   GGPSO__27906_       .00000           $317320# station n°131765
+GGPSO__28205_   GGPSO__28005_       .03470           $317321# station n°131765
+GGPSO__28205_   GGPSO__28105_    399.92440           $317322# station n°131765
+GGPSO__28205_   GGPSO__28304_    199.96960           $317323# station n°131765
+GGPSO__28205_   GGPSO__28404_    199.95380           $317324# station n°131765
+GGPSO__28205_   GGPSO__28504_    199.94640           $317325# station n°131765
+%station n°131766
+GGPSO__27906_   GGPSO__27606_       .00000           $317338# station n°131766
+GGPSO__27906_   GGPSO__27706_    399.98820           $317339# station n°131766
+GGPSO__27906_   GGPSO__27806_       .07460           $317340# station n°131766
+GGPSO__27906_   GGPSO__28005_    200.08470           $317341# station n°131766
+GGPSO__27906_   GGPSO__28105_    200.19160           $317342# station n°131766
+GGPSO__27906_   GGPSO__28205_    200.15390           $317343# station n°131766
+%station n°131767
+GGPSO__27606_   GGPSO__27307_       .00000           $317356# station n°131767
+GGPSO__27606_   GGPSO__27407_       .02400           $317357# station n°131767
+GGPSO__27606_   GGPSO__27507_    399.98090           $317358# station n°131767
+GGPSO__27606_   GGPSO__27706_    199.92840           $317359# station n°131767
+GGPSO__27606_   GGPSO__27806_    199.86730           $317360# station n°131767
+GGPSO__27606_   GGPSO__27906_    199.90440           $317361# station n°131767
+%station n°131768
+GGPSO__27307_   GGPSO__27008_       .00000           $317374# station n°131768
+GGPSO__27307_   GGPSO__27108_       .01740           $317375# station n°131768
+GGPSO__27307_   GGPSO__27208_       .00530           $317376# station n°131768
+GGPSO__27307_   GGPSO__27407_    199.98660           $317377# station n°131768
+GGPSO__27307_   GGPSO__27507_    200.04440           $317378# station n°131768
+GGPSO__27307_   GGPSO__27606_    200.03470           $317379# station n°131768
+%station n°131769
+GGPSO__27008_   GGPSO__26709_       .00000           $317392# station n°131769
+GGPSO__27008_   GGPSO__26809_    399.99390           $317393# station n°131769
+GGPSO__27008_   GGPSO__26909_       .05230           $317394# station n°131769
+GGPSO__27008_   GGPSO__27108_    199.91710           $317395# station n°131769
+GGPSO__27008_   GGPSO__27208_    199.94950           $317396# station n°131769
+GGPSO__27008_   GGPSO__27307_    199.95200           $317397# station n°131769
+%station n°131770
+GGPSO__26709_   GGPSO__26410_       .00000           $317410# station n°131770
+GGPSO__26709_   GGPSO__26510_       .05910           $317411# station n°131770
+%GGPSO__26709_   GGPSO__26609_       .08590           $317412# station n°131770
+GGPSO__26709_   GGPSO__26809_    200.05070           $317413# station n°131770
+GGPSO__26709_   GGPSO__26909_    200.01210           $317414# station n°131770
+GGPSO__26709_   GGPSO__27008_    200.03830           $317415# station n°131770
+%station n°131771
+GGPSO__26410_   GGPSO__26112_       .00000           $317428# station n°131771
+GGPSO__26410_   GGPSO__26211_       .05310           $317429# station n°131771
+GGPSO__26410_   GGPSO__26311_       .04200           $317430# station n°131771
+GGPSO__26410_   GGPSO__26510_    199.85080           $317431# station n°131771
+%GGPSO__26410_   GGPSO__26609_    199.92570           $317432# station n°131771
+GGPSO__26410_   GGPSO__26709_    199.96860           $317433# station n°131771
+%station n°131772
+GGPSO__26112_   GGPSO__25813_       .00000           $317446# station n°131772
+GGPSO__26112_   GGPSO__25912_       .41350           $317447# station n°131772
+GGPSO__26112_   GGPSO__26012_       .97110           $317448# station n°131772
+GGPSO__26112_   GGPSO__26211_    200.94110           $317449# station n°131772
+GGPSO__26112_   GGPSO__26311_    201.02620           $317450# station n°131772
+GGPSO__26112_   GGPSO__26410_    201.04720           $317451# station n°131772
+%station n°131773
+GGPSO__25813_   GGPSO__25513_       .00000           $317464# station n°131773
+GGPSO__25813_   GGPSO__25613_       .45510           $317465# station n°131773
+GGPSO__25813_   GGPSO__25713_       .86990           $317466# station n°131773
+GGPSO__25813_   GGPSO__25912_    201.08150           $317467# station n°131773
+GGPSO__25813_   GGPSO__26012_    201.42580           $317468# station n°131773
+GGPSO__25813_   GGPSO__26112_    201.91180           $317469# station n°131773
+%station n°131774
+GGPSO__25513_   GGPSO__25214_       .00000           $317482# station n°131774
+GGPSO__25513_   GGPSO__25314_       .78580           $317483# station n°131774
+GGPSO__25513_   GGPSO__25414_      1.37240           $317484# station n°131774
+GGPSO__25513_   GGPSO__25613_    202.29680           $317485# station n°131774
+GGPSO__25513_   GGPSO__25713_    202.77310           $317486# station n°131774
+GGPSO__25513_   GGPSO__25813_    203.20830           $317487# station n°131774
+%station n°131775
+GGPSO__25214_   GGPSO__24915_       .00000           $317500# station n°131775
+%GGPSO__25214_   GGPSO__25015_       .96190           $317501# station n°131775
+GGPSO__25214_   GGPSO__25115_      1.93190           $317502# station n°131775
+GGPSO__25214_   GGPSO__25314_    203.71030           $317503# station n°131775
+GGPSO__25214_   GGPSO__25414_    204.59850           $317504# station n°131775
+GGPSO__25214_   GGPSO__25513_    205.28480           $317505# station n°131775
+%station n°131777
+GGPSO__24616_   GGPSO__24317_       .00000           $317536# station n°131777
+GGPSO__24616_   GGPSO__24417_       .93230           $317537# station n°131777
+GGPSO__24616_   GGPSO__24516_      1.85920           $317538# station n°131777
+GGPSO__24616_   GGPSO__24716_    203.79230           $317539# station n°131777
+GGPSO__24616_   GGPSO__24816_    204.75290           $317540# station n°131777
+GGPSO__24616_   GGPSO__24915_    205.69770           $317541# station n°131777
+%station n°131776
+GGPSO__24915_   GGPSO__24616_       .00000           $317518# station n°131776
+GGPSO__24915_   GGPSO__24716_       .96930           $317519# station n°131776
+GGPSO__24915_   GGPSO__24816_      1.91440           $317520# station n°131776
+%GGPSO__24915_   GGPSO__25015_    203.72010           $317521# station n°131776
+GGPSO__24915_   GGPSO__25115_    204.67980           $317522# station n°131776
+GGPSO__24915_   GGPSO__25214_    205.64630           $317523# station n°131776
+%station n°132195
+GGPSO__24616_   GGPSO__24217_       .00000           $319009# station n°132195
+GGPSO__24616_   GGPSO__24317_       .94650           $319010# station n°132195
+GGPSO__24616_   GGPSO__24417_      1.87860           $319011# station n°132195
+GGPSO__24616_   GGPSO__24516_      2.80520           $319012# station n°132195
+GGPSO__24616_   GGPSO__24716_    204.73810           $319013# station n°132195
+GGPSO__24616_   GGPSO__24816_    205.69890           $319014# station n°132195
+GGPSO__24616_   GGPSO__24915_    206.64370           $319015# station n°132195
+GGPSO__24616_   GGPSO__25015_    207.56650           $319016# station n°132195
+%station n°132197
+GGPSO__23917_   GGPSO__23518_       .00000           $319048# station n°132197
+GGPSO__23917_   GGPSO__23818_      2.87500           $319051# station n°132197
+GGPSO__23917_   GGPSO__24017_    204.65940           $319052# station n°132197
+GGPSO__23917_   GGPSO__24217_    206.51730           $319053# station n°132197
+%station n°132196
+%GGPSO__24217_   GGPSO__23917_    193.34290           $319034# station n°132196
+GGPSO__24217_   GGPSO__24317_    397.16850           $319035# station n°132196
+GGPSO__24217_   GGPSO__24417_    398.12510           $319036# station n°132196
+GGPSO__24217_   GGPSO__24516_    399.06550           $319037# station n°132196
+GGPSO__24217_   GGPSO__24616_       .00000           $319033# station n°132196
+%station n°132521
+GGPSO__23917_   GGPSO__23518_       .00000           $320056# station n°132521
+GGPSO__23917_   GGPSO__23618_       .93990           $320057# station n°132521
+GGPSO__23917_   GGPSO__23718_      1.87450           $320058# station n°132521
+GGPSO__23917_   GGPSO__23818_      2.87490           $320059# station n°132521
+GGPSO__23917_   GGPSO__24017_    204.65940           $320060# station n°132521
+%station n°132522
+%GGPSO__23518_   GGPSO__23120_       .00000           $320071# station n°132522
+%GGPSO__23518_   GGPSO__23219_       .92390           $320072# station n°132522
+%GGPSO__23518_   GGPSO__23319_      1.84040           $320073# station n°132522
+GGPSO__23518_   GGPSO__23419_      2.80060           $320074# station n°132522
+GGPSO__23518_   GGPSO__23618_    204.71880           $320075# station n°132522
+GGPSO__23518_   GGPSO__23718_    205.66640           $320076# station n°132522
+GGPSO__23518_   GGPSO__23818_    206.58190           $320077# station n°132522
+GGPSO__23518_   GGPSO__23917_    207.53920           $320078# station n°132522
+%station n°132523
+GGPSO__23120_   GGPSO__22821_    195.16880           $320096# station n°132523
+GGPSO__23120_   GGPSO__22920_    195.61670           $320097# station n°132523
+GGPSO__23120_   GGPSO__23020_    196.11730           $320098# station n°132523
+GGPSO__23120_   GGPSO__23219_    397.23080           $320099# station n°132523
+GGPSO__23120_   GGPSO__23319_    398.16150           $320100# station n°132523
+GGPSO__23120_   GGPSO__23419_    399.06860           $320101# station n°132523
+GGPSO__23120_   GGPSO__23518_       .00000           $320095# station n°132523
+%station n°132524
+GGPSO__22821_   GGPSO__22521_       .00000           $320116# station n°132524
+GGPSO__22821_   GGPSO__22621_       .04450           $320117# station n°132524
+%GGPSO__22821_   GGPSO__22721_       .12470           $320118# station n°132524
+GGPSO__22821_   GGPSO__22920_    201.15700           $320119# station n°132524
+GGPSO__22821_   GGPSO__23020_    201.57800           $320120# station n°132524
+GGPSO__22821_   GGPSO__23120_    202.05210           $320121# station n°132524
+%station n°132525
+GGPSO__22521_   GGPSO__22222_       .00000           $320134# station n°132525
+GGPSO__22521_   GGPSO__22322_    399.99970           $320135# station n°132525
+%GGPSO__22521_   GGPSO__22422_    399.99060           $320136# station n°132525
+GGPSO__22521_   GGPSO__22621_    199.96610           $320137# station n°132525
+GGPSO__22521_   GGPSO__22721_    199.99250           $320138# station n°132525
+GGPSO__22521_   GGPSO__22821_    200.05460           $320139# station n°132525
+%station n°132526
+GGPSO__22222_   GGPSO__21923_       .00000           $320152# station n°132526
+GGPSO__22222_   GGPSO__22023_       .24930           $320153# station n°132526
+GGPSO__22222_   GGPSO__22123_       .95130           $320154# station n°132526
+GGPSO__22222_   GGPSO__22322_    201.43390           $320155# station n°132526
+GGPSO__22222_   GGPSO__22422_    201.43630           $320156# station n°132526
+GGPSO__22222_   GGPSO__22521_    201.43250           $320157# station n°132526
+%station n°132527
+GGPSO__21923_   GGPSO__21624_       .00000           $320170# station n°132527
+GGPSO__21923_   GGPSO__21724_       .01230           $320171# station n°132527
+GGPSO__21923_   GGPSO__21824_       .00990           $320172# station n°132527
+GGPSO__21923_   GGPSO__22023_    199.97890           $320173# station n°132527
+GGPSO__21923_   GGPSO__22123_    200.00180           $320174# station n°132527
+GGPSO__21923_   GGPSO__22222_    200.47800           $320175# station n°132527
+%station n°132528
+GGPSO__21624_   GGPSO__21325_       .00000           $320188# station n°132528
+GGPSO__21624_   GGPSO__21425_    399.99680           $320189# station n°132528
+GGPSO__21624_   GGPSO__21524_    399.96970           $320190# station n°132528
+%GGPSO__21624_   GGPSO__21724_    199.97650           $320191# station n°132528
+GGPSO__21624_   GGPSO__21824_    199.99510           $320192# station n°132528
+GGPSO__21624_   GGPSO__21923_    199.99980           $320193# station n°132528
+%station n°132529
+GGPSO__21325_   GGPSO__21026_       .00000           $320206# station n°132529
+GGPSO__21325_   GGPSO__21126_       .00670           $320207# station n°132529
+GGPSO__21325_   GGPSO__21225_       .02250           $320208# station n°132529
+GGPSO__21325_   GGPSO__21425_    200.00340           $320209# station n°132529
+GGPSO__21325_   GGPSO__21524_    200.01170           $320210# station n°132529
+GGPSO__21325_   GGPSO__21624_    199.99660           $320211# station n°132529
+%station n°132530
+GGPSO__21026_   GGPSO__20727_       .00000           $320224# station n°132530
+GGPSO__21026_   GGPSO__20827_       .00740           $320225# station n°132530
+GGPSO__21026_   GGPSO__20926_       .06010           $320226# station n°132530
+GGPSO__21026_   GGPSO__21126_    199.99410           $320227# station n°132530
+GGPSO__21026_   GGPSO__21225_    199.99640           $320228# station n°132530
+GGPSO__21026_   GGPSO__21325_    200.00750           $320229# station n°132530
+%station n°132532
+GGPSO__20434_   ALESOL_____1_    132.21580           $320263# station n°132532
+GGPSO__20434_   ALESOL_____2_    133.59010           $320264# station n°132532
+GGPSO__20434_   QNL____12040E    130.37680           $320265# station n°132532
+GGPSO__20434_   GGPSO__20628_       .15980           $320261# station n°132532
+GGPSO__20434_   GGPSO__20727_       .00000           $320262# station n°132532
+%station n°132531
+GGPSO__20727_   GGPSO__20434_       .00000           $320242# station n°132531
+GGPSO__20727_   GGPSO__20526_    399.63190           $320243# station n°132531
+GGPSO__20727_   GGPSO__20628_    399.68050           $320244# station n°132531
+GGPSO__20727_   GGPSO__20827_    199.60110           $320245# station n°132531
+GGPSO__20727_   GGPSO__20926_    199.58690           $320246# station n°132531
+GGPSO__20727_   GGPSO__21026_    199.61660           $320247# station n°132531
+%station n°132539
+GGPSO__20434_   ALESOL_____1_    132.21570           $320306# station n°132539
+GGPSO__20434_   ALESOL_____2_    133.59030           $320307# station n°132539
+GGPSO__20434_   QNL____12040E    130.37690           $320305# station n°132539
+GGPSO__20434_   GGPSO__20628_       .15940           $320303# station n°132539
+GGPSO__20434_   GGPSO__20727_       .00000           $320304# station n°132539
+%station n°132637
+ALESOL_____1_   TRIPOD_____1_       .00000           $320705# station n°132637
+ALESOL_____1_   ALESOL_____2_    330.29970           $320706# station n°132637
+ALESOL_____1_   TC________61_    370.03770     10.0      $320708# station n°132637
+ALESOL_____1_   GGPSO__20434_    127.82080           $320707# station n°132637
+%station n°132636
+%GGPSO__20434_   GGPSO__20526_       .73470           $320700# station n°132636
+%GGPSO__20434_   GGPSO__20727_       .00000           $320699# station n°132636
+%station n°132638
+ALESOL_____2_   ALESOL_____1_    131.17810           $320718# station n°132638
+ALESOL_____2_   TRIPOD_____2_       .00000           $320717# station n°132638
+ALESOL_____2_   QNL____12031E     27.31130           $320721# station n°132638
+ALESOL_____2_   TC________61_    398.84570     10.0      $320719# station n°132638
+%ALESOL_____2_   QNL____12040E    135.57550           $320722# station n°132638
+ALESOL_____2_   TC________67_    399.31560     10.0      $320723# station n°132638
+ALESOL_____2_   TC________68_    399.04780     10.0      $320724# station n°132638
+ALESOL_____2_   GGPSO__20434_    130.07210           $320720# station n°132638
+%station n°132639
+TRIPOD_____1_   ALESOL_____1_       .00000           $320741# station n°132639
+TRIPOD_____1_   TRIPOD_____2_     68.92600           $320742# station n°132639
+TRIPOD_____1_   QTLF__670000E    194.38060           $320743# station n°132639
+TRIPOD_____1_   QTLF__670000S    194.27200           $320744# station n°132639
+TRIPOD_____1_   QTLD__670100E    189.88120           $320745# station n°132639
+TRIPOD_____1_   QTLD__670100S    189.19820           $320746# station n°132639
+%station n°132640
+TRIPOD_____2_   ALESOL_____2_       .56200           $320760# station n°132640
+TRIPOD_____2_   ALESOL_____7_       .00000           $320759# station n°132640
+TRIPOD_____2_   TC________61_       .84260      10.0     $320761# station n°132640
+TRIPOD_____2_   TC________62_    191.53830      10.0     $320768# station n°132640
+TRIPOD_____2_   TC________67_      1.40580      10.0     $320762# station n°132640
+TRIPOD_____2_   TC________68_      8.39290      10.0     $320763# station n°132640
+TRIPOD_____2_   QTLF__670000E    200.27710           $320764# station n°132640
+TRIPOD_____2_   QTLF__670000S    200.32300           $320765# station n°132640
+TRIPOD_____2_   QTLD__670100E    202.08800           $320766# station n°132640
+TRIPOD_____2_   QTLD__670100S    202.35030           $320767# station n°132640
+TRIPOD_____2_   QTLD__670200S    206.63130           $320769# station n°132640
+TRIPOD_____2_   QTR___670300S    210.44110           $320770# station n°132640
+TRIPOD_____2_   QTR___670305E    211.91690           $320771# station n°132640
+TRIPOD_____2_   QTR___670305S    217.25610           $320772# station n°132640
+%station n°132655
+QTLF__670000E   TRIPOD_____1_    395.54350           $320833# station n°132655
+QTLF__670000E   TRIPOD_____2_       .00000           $320829# station n°132655
+QTLF__670000E   QTLD__670100E    398.65190           $320830# station n°132655
+QTLF__670000E   QTLD__670100S    398.65180           $320831# station n°132655
+QTLF__670000E   QTLD__670200E    398.57320           $320832# station n°132655
+QTLF__670000E   POT_____6070_    393.86940           $320834# station n°132655
+%station n°132656
+QTLD__670100E   TRIPOD_____1_    192.39220           $320851# station n°132656
+QTLD__670100E   TRIPOD_____2_    203.15860           $320850# station n°132656
+QTLD__670100E   QTLF__670000E       .00000           $320847# station n°132656
+QTLD__670100E   QTLF__670000S    399.99980           $320848# station n°132656
+QTLD__670100E   QTLD__670200E    199.70460           $320849# station n°132656
+QTLD__670100E   POT_____6070_     68.41260           $320852# station n°132656
+%station n°132657
+ALESOL_____1_   TRIPOD_____1_       .00000           $320865# station n°132657
+ALESOL_____1_   ALESOL_____2_    330.29880           $320866# station n°132657
+ALESOL_____1_   QNL____12031S    380.74400           $320869# station n°132657
+ALESOL_____1_   TC________61_    370.03660      10.0     $320867# station n°132657
+ALESOL_____1_   GGPSO__20434_    127.82000           $320868# station n°132657
+%station n°132779
+ALESOL_____2_   ALESOL_____1_    131.17660           $321339# station n°132779
+ALESOL_____2_   TRIPOD_____2_       .00000           $321332# station n°132779
+ALESOL_____2_   ALESOL_____7_    197.94750           $321341# station n°132779
+ALESOL_____2_   QNL____12031E     27.30950           $321337# station n°132779
+ALESOL_____2_   TC________61_    398.84560      10.0     $321336# station n°132779
+ALESOL_____2_   TC________62_    398.73560      10.0     $321333# station n°132779
+ALESOL_____2_   QNL____12040E    135.57180           $321338# station n°132779
+ALESOL_____2_   TC________67_    399.31530      10.0     $321335# station n°132779
+ALESOL_____2_   TC________68_    399.04780      10.0     $321334# station n°132779
+ALESOL_____2_   GGPSO__20434_    130.07120           $321340# station n°132779
+%station n°133286
+%QTLF__670000E   TRIPOD_____3_    202.63540           $323693# station n°133286
+QTLF__670000E   TRIPOD_____1_       .00000           $323683# station n°133286
+QTLF__670000E   TRIPOD_____2_      4.45580           $323684# station n°133286
+QTLF__670000E   QTLD__670100E      3.10810           $323692# station n°133286
+QTLF__670000E   QTLD__670100S      3.10780           $323691# station n°133286
+QTLF__670000E   QTLD__670200E      3.02940           $323690# station n°133286
+QTLF__670000E   QTLD__670200S      3.00390           $323689# station n°133286
+QTLF__670000E   QTR___670300E      2.98560           $323688# station n°133286
+QTLF__670000E   QTR___670300S      2.96360           $323687# station n°133286
+QTLF__670000E   QTR___670305E      2.95490           $323686# station n°133286
+QTLF__670000E   QTR___670305S      2.93540           $323685# station n°133286
+%station n°133287
+%TRIPOD_____3_   TRIPOD_____4_       .00000           $323716# station n°133287
+TRIPOD_____3_   QTLF__610400E    398.06660           $323717# station n°133287
+TRIPOD_____3_   QTLF__610400S    398.02030           $323718# station n°133287
+%TRIPOD_____3_   QTLD__610500E    388.09150           $323719# station n°133287
+%TRIPOD_____3_   QTLD__610500S    376.48510           $323720# station n°133287
+TRIPOD_____3_   QTLF__610600E    202.42140           $323721# station n°133287
+TRIPOD_____3_   QTLF__610600S    202.27750           $323722# station n°133287
+%TRIPOD_____3_   QTLF__670000E    201.87130           $323723# station n°133287
+%station n°133288
+TRIPOD_____4_   TRIPOD_____3_       .00000           $323740# station n°133288
+TRIPOD_____4_   QTLF__610200E    194.00540           $323746# station n°133288
+TRIPOD_____4_   QTLF__610200S    193.53400           $323745# station n°133288
+%TRIPOD_____4_   QTLD__610300E      9.03720           $323744# station n°133288
+%TRIPOD_____4_   QTLD__610300S      7.33100           $323743# station n°133288
+TRIPOD_____4_   QTLD__610500E       .76500           $323742# station n°133288
+TRIPOD_____4_   QTLD__610500S       .73420           $323741# station n°133288
+TRIPOD_____4_   QDA____61910E    196.73010           $323754# station n°133288
+TRIPOD_____4_   QDA____61910S    196.63980           $323753# station n°133288
+TRIPOD_____4_   QF_____62010E    195.10970           $323752# station n°133288
+TRIPOD_____4_   QF_____62010S    194.85750           $323751# station n°133288
+%TRIPOD_____4_   QD_____62110E    185.70050           $323750# station n°133288
+%TRIPOD_____4_   QD_____62110S    182.72800           $323749# station n°133288
+%TRIPOD_____4_   QF_____62210E     20.68330           $323748# station n°133288
+%TRIPOD_____4_   QF_____62210S     17.90050           $323747# station n°133288
+%station n°133293
+QDA____61910E   TRIPOD_____4_    197.50300           $323855# station n°133293
+QDA____61910E   QTLD__610100E    198.41650           $323851# station n°133293
+QDA____61910E   QTLD__610100S    198.57120           $323852# station n°133293
+QDA____61910E   QTLF__610200E    199.14380           $323853# station n°133293
+QDA____61910E   QTLF__610200S    199.16040           $323854# station n°133293
+QDA____61910E   QTLD__610300E    199.31160           $323856# station n°133293
+QDA____61910E   QTLD__610300S    199.31720           $323857# station n°133293
+QDA____61910E   QFA____61610E       .00000           $323839# station n°133293
+QDA____61910E   QFA____61610S       .00040           $323840# station n°133293
+QDA____61910E   QDA____61710E       .00000           $323841# station n°133293
+QDA____61910E   QDA____61710S       .00010           $323842# station n°133293
+QDA____61910E   QFA____61810E       .00090           $323843# station n°133293
+QDA____61910E   QFA____61810S       .00130           $323844# station n°133293
+QDA____61910E   QF_____62010E    200.00010           $323845# station n°133293
+QDA____61910E   QF_____62010S    200.00000           $323846# station n°133293
+QDA____61910E   QD_____62110E    200.52420           $323847# station n°133293
+QDA____61910E   QD_____62110S    200.59350           $323848# station n°133293
+QDA____61910E   QF_____62210E    201.31520           $323849# station n°133293
+%QDA____61910E   QF_____62210S    201.37010           $323850# station n°133293
+%station n°133373
+GGPSO__24616_   GGPSO__24217_       .00000           $326273# station n°133373
+GGPSO__24616_   GGPSO__24317_       .94690           $326274# station n°133373
+GGPSO__24616_   GGPSO__24417_      1.87900           $326275# station n°133373
+GGPSO__24616_   GGPSO__24516_      2.80540           $326276# station n°133373
+GGPSO__24616_   GGPSO__24716_    204.73850           $326277# station n°133373
+GGPSO__24616_   GGPSO__24816_    205.69910           $326278# station n°133373
+GGPSO__24616_   GGPSO__24915_    206.64360           $326279# station n°133373
+%station n°133374
+GGPSO__24915_   GGPSO__24616_       .00000           $326294# station n°133374
+GGPSO__24915_   GGPSO__24716_       .96860           $326295# station n°133374
+GGPSO__24915_   GGPSO__24816_      1.91450           $326296# station n°133374
+%GGPSO__24915_   GGPSO__25015_    203.71850           $326297# station n°133374
+GGPSO__24915_   GGPSO__25115_    204.67900           $326298# station n°133374
+GGPSO__24915_   GGPSO__25214_    205.64590           $326299# station n°133374
+%station n°133375
+GGPSO__24217_   GGPSO__24317_    397.16810           $326313# station n°133375
+GGPSO__24217_   GGPSO__24417_    398.12520           $326314# station n°133375
+GGPSO__24217_   GGPSO__24516_    399.06570           $326315# station n°133375
+GGPSO__24217_   GGPSO__24616_       .00000           $326312# station n°133375
+*ECHO   0.1
+GGPSO__20434_   GGPSO__20526_   GGPSO__20628_      -.27123           $319577# offset
+*END
+GGPSO__20434_   GGPSO__20526_   GGPSO__20628_      -.27127           $319578# offset
+GGPSO__20827_   GGPSO__20926_   GGPSO__21126_       .02255           $320825# offset
+GGPSO__20827_   GGPSO__20926_   GGPSO__21126_       .02243           $320827# offset
+GGPSO__20827_   GGPSO__21026_   GGPSO__21126_      -.00416           $319574# offset
+GGPSO__20827_   GGPSO__21026_   GGPSO__21126_      -.00416           $320826# offset
+GGPSO__20827_   GGPSO__21026_   GGPSO__21126_      -.00423           $320828# offset
+GGPSO__20926_   GGPSO__21026_   GGPSO__21225_      -.01996           $320823# offset
+GGPSO__20926_   GGPSO__21126_   GGPSO__21225_      -.00907           $320824# offset
+GGPSO__21026_   GGPSO__21126_   GGPSO__21325_       .00622           $319569# offset
+GGPSO__21026_   GGPSO__21225_   GGPSO__21325_       .01054           $319570# offset
+GGPSO__21126_   GGPSO__21225_   GGPSO__21425_       .00677           $319567# offset
+GGPSO__21126_   GGPSO__21325_   GGPSO__21425_      -.00131           $319568# offset
+GGPSO__21225_   GGPSO__21325_   GGPSO__21524_      -.00350           $319565# offset
+GGPSO__21225_   GGPSO__21425_   GGPSO__21524_       .00241           $319566# offset
+GGPSO__21325_   GGPSO__21425_   GGPSO__21624_      -.00298           $319563# offset
+GGPSO__21325_   GGPSO__21524_   GGPSO__21624_      -.01402           $319564# offset
+GGPSO__21425_   GGPSO__21524_   GGPSO__21724_      -.01585           $319561# offset
+GGPSO__21425_   GGPSO__21624_   GGPSO__21724_      -.00665           $319562# offset
+GGPSO__21524_   GGPSO__21624_   GGPSO__21824_       .00795           $319559# offset
+GGPSO__21524_   GGPSO__21724_   GGPSO__21824_       .01322           $319560# offset
+GGPSO__21624_   GGPSO__21724_   GGPSO__21923_       .01145           $319557# offset
+GGPSO__21624_   GGPSO__21824_   GGPSO__21923_       .00459           $319558# offset
+GGPSO__21724_   GGPSO__21824_   GGPSO__22023_      -.00675           $319555# offset
+GGPSO__21724_   GGPSO__21923_   GGPSO__22023_      -.01088           $319556# offset
+GGPSO__21824_   GGPSO__21923_   GGPSO__22123_      -.00265           $319553# offset
+GGPSO__21824_   GGPSO__22023_   GGPSO__22123_       .00989           $319554# offset
+GGPSO__21923_   GGPSO__22023_   GGPSO__22222_       .23543           $319551# offset
+GGPSO__21923_   GGPSO__22123_   GGPSO__22222_       .44881           $319552# offset
+GGPSO__22023_   GGPSO__22123_   GGPSO__22322_       .51727           $319549# offset
+GGPSO__22023_   GGPSO__22222_   GGPSO__22322_       .37227           $319550# offset
+GGPSO__22123_   GGPSO__22222_   GGPSO__22422_       .15229           $319547# offset
+GGPSO__22123_   GGPSO__22322_   GGPSO__22422_       .07745           $319548# offset
+GGPSO__22222_   GGPSO__22322_   GGPSO__22521_      -.00067           $319545# offset
+GGPSO__22222_   GGPSO__22422_   GGPSO__22521_      -.00389           $319546# offset
+GGPSO__22322_   GGPSO__22422_   GGPSO__22621_      -.00906           $319543# offset
+GGPSO__22322_   GGPSO__22521_   GGPSO__22621_      -.01094           $319544# offset
+GGPSO__22422_   GGPSO__22521_   GGPSO__22721_      -.00025           $320813# offset
+GGPSO__22422_   GGPSO__22621_   GGPSO__22721_       .01241           $320814# offset
+GGPSO__22521_   GGPSO__22621_   GGPSO__22821_       .04220           $319539# offset
+GGPSO__22521_   GGPSO__22621_   GGPSO__22821_       .04222           $320815# offset
+GGPSO__22521_   GGPSO__22721_   GGPSO__22821_       .05928           $320816# offset
+GGPSO__22621_   GGPSO__22721_   GGPSO__22920_       .21311           $320817# offset
+GGPSO__22621_   GGPSO__22821_   GGPSO__22920_       .34931           $320818# offset
+GGPSO__22721_   GGPSO__22821_   GGPSO__23020_       .45573           $320819# offset
+GGPSO__22721_   GGPSO__22920_   GGPSO__23020_       .42639           $320820# offset
+GGPSO__22821_   GGPSO__22920_   GGPSO__23120_       .42248           $320821# offset
+GGPSO__22821_   GGPSO__23020_   GGPSO__23120_       .44731           $319534# offset
+GGPSO__22821_   GGPSO__23020_   GGPSO__23120_       .44720           $320822# offset
+GGPSO__22920_   GGPSO__23020_   GGPSO__23219_       .48957           $320811# offset
+GGPSO__22920_   GGPSO__23120_   GGPSO__23219_       .50717           $320812# offset
+GGPSO__23020_   GGPSO__23120_   GGPSO__23319_       .64229           $319529# offset
+GGPSO__23020_   GGPSO__23219_   GGPSO__23319_       .76042           $319530# offset
+GGPSO__23120_   GGPSO__23219_   GGPSO__23419_       .86687           $319527# offset
+GGPSO__23120_   GGPSO__23319_   GGPSO__23419_       .85548           $319528# offset
+GGPSO__23219_   GGPSO__23319_   GGPSO__23518_       .86380           $319525# offset
+GGPSO__23219_   GGPSO__23419_   GGPSO__23518_       .88364           $319526# offset
+GGPSO__23319_   GGPSO__23419_   GGPSO__23618_       .90475           $320809# offset
+GGPSO__23319_   GGPSO__23518_   GGPSO__23618_       .90427           $320810# offset
+GGPSO__23419_   GGPSO__23518_   GGPSO__23718_       .89955           $320807# offset
+GGPSO__23419_   GGPSO__23618_   GGPSO__23718_       .89674           $320808# offset
+GGPSO__23518_   GGPSO__23618_   GGPSO__23818_       .87813           $320805# offset
+GGPSO__23518_   GGPSO__23718_   GGPSO__23818_       .86343           $320806# offset
+GGPSO__23618_   GGPSO__23718_   GGPSO__23917_       .88090           $320803# offset
+GGPSO__23618_   GGPSO__23818_   GGPSO__23917_       .91149           $320804# offset
+GGPSO__23718_   GGPSO__23818_   GGPSO__24017_       .90878           $320801# offset
+%GGPSO__23718_   GGPSO__23917_   GGPSO__24017_       .87502           $320802# offset
+GGPSO__23917_   GGPSO__24017_   GGPSO__24217_       .87657           $319081# offset
+GGPSO__23917_   GGPSO__24017_   GGPSO__24217_       .87657           $319082# offset
+GGPSO__24217_   GGPSO__24317_   GGPSO__24516_       .89567           $318097# offset
+GGPSO__24217_   GGPSO__24417_   GGPSO__24516_       .88669           $318096# offset
+GGPSO__24317_   GGPSO__24417_   GGPSO__24616_       .87718           $318095# offset
+GGPSO__24317_   GGPSO__24516_   GGPSO__24616_       .87507           $318094# offset
+GGPSO__24417_   GGPSO__24516_   GGPSO__24716_       .89092           $318093# offset
+GGPSO__24417_   GGPSO__24516_   GGPSO__24716_       .89092           $318131# offset
+GGPSO__24417_   GGPSO__24616_   GGPSO__24716_       .90958           $318130# offset
+GGPSO__24516_   GGPSO__24616_   GGPSO__24816_       .91217           $318091# offset
+GGPSO__24516_   GGPSO__24716_   GGPSO__24816_       .91457           $318090# offset
+GGPSO__24616_   GGPSO__24716_   GGPSO__24915_       .91576           $318089# offset
+GGPSO__24616_   GGPSO__24816_   GGPSO__24915_       .90168           $318088# offset
+GGPSO__24716_   GGPSO__24816_   GGPSO__25015_       .87784           $318087# offset
+GGPSO__24716_   GGPSO__24915_   GGPSO__25015_       .86304           $318086# offset
+GGPSO__24816_   GGPSO__24915_   GGPSO__25115_       .86810           $318085# offset
+GGPSO__24816_   GGPSO__25015_   GGPSO__25115_       .88673           $318084# offset
+GGPSO__24915_   GGPSO__25015_   GGPSO__25214_       .90722           $318083# offset
+GGPSO__24915_   GGPSO__25115_   GGPSO__25214_       .91015           $318082# offset
+GGPSO__25015_   GGPSO__25115_   GGPSO__25314_       .88691           $318081# offset
+GGPSO__25015_   GGPSO__25214_   GGPSO__25314_       .86101           $318080# offset
+GGPSO__25115_   GGPSO__25214_   GGPSO__25414_       .83707           $318079# offset
+GGPSO__25115_   GGPSO__25314_   GGPSO__25414_       .83685           $318078# offset
+GGPSO__25214_   GGPSO__25314_   GGPSO__25513_       .74051           $318077# offset
+GGPSO__25214_   GGPSO__25414_   GGPSO__25513_       .64637           $318076# offset
+GGPSO__25314_   GGPSO__25414_   GGPSO__25613_       .51353           $318075# offset
+GGPSO__25314_   GGPSO__25513_   GGPSO__25613_       .47437           $318074# offset
+GGPSO__25414_   GGPSO__25513_   GGPSO__25713_       .43958           $318073# offset
+GGPSO__25414_   GGPSO__25613_   GGPSO__25713_       .44400           $318072# offset
+GGPSO__25513_   GGPSO__25613_   GGPSO__25813_       .42914           $318071# offset
+GGPSO__25513_   GGPSO__25713_   GGPSO__25813_       .41022           $318070# offset
+GGPSO__25613_   GGPSO__25713_   GGPSO__25912_       .29376           $318069# offset
+GGPSO__25613_   GGPSO__25813_   GGPSO__25912_       .19611           $318068# offset
+GGPSO__25713_   GGPSO__25813_   GGPSO__26012_       .17447           $318067# offset
+GGPSO__25713_   GGPSO__25912_   GGPSO__26012_       .24919           $318066# offset
+GGPSO__25813_   GGPSO__25912_   GGPSO__26112_       .39012           $318065# offset
+GGPSO__25813_   GGPSO__26012_   GGPSO__26112_       .45808           $318064# offset
+GGPSO__25912_   GGPSO__26012_   GGPSO__26211_       .34602           $318063# offset
+GGPSO__25912_   GGPSO__26112_   GGPSO__26211_       .16558           $318062# offset
+GGPSO__26012_   GGPSO__26112_   GGPSO__26311_       .01718           $318061# offset
+GGPSO__26012_   GGPSO__26211_   GGPSO__26311_       .04922           $318060# offset
+GGPSO__26112_   GGPSO__26211_   GGPSO__26410_       .05030           $318059# offset
+GGPSO__26112_   GGPSO__26311_   GGPSO__26410_       .01932           $318058# offset
+GGPSO__26211_   GGPSO__26311_   GGPSO__26510_      -.03786           $318057# offset
+GGPSO__26211_   GGPSO__26410_   GGPSO__26510_      -.06389           $318056# offset
+GGPSO__26311_   GGPSO__26410_   GGPSO__26609_      -.03597           $318055# offset
+GGPSO__26311_   GGPSO__26510_   GGPSO__26609_       .01825           $318054# offset
+GGPSO__26410_   GGPSO__26510_   GGPSO__26709_       .05595           $318053# offset
+GGPSO__26410_   GGPSO__26609_   GGPSO__26709_       .03958           $318052# offset
+GGPSO__26510_   GGPSO__26609_   GGPSO__26809_       .01053           $318051# offset
+GGPSO__26510_   GGPSO__26709_   GGPSO__26809_      -.00239           $318050# offset
+GGPSO__26609_   GGPSO__26709_   GGPSO__26909_      -.02220           $318049# offset
+GGPSO__26609_   GGPSO__26809_   GGPSO__26909_      -.02928           $318048# offset
+GGPSO__26709_   GGPSO__26809_   GGPSO__27008_      -.00606           $318047# offset
+GGPSO__26709_   GGPSO__26909_   GGPSO__27008_       .02424           $318046# offset
+GGPSO__26809_   GGPSO__26909_   GGPSO__27108_       .01515           $318033# offset
+GGPSO__26809_   GGPSO__27008_   GGPSO__27108_      -.02396           $318032# offset
+GGPSO__26909_   GGPSO__27008_   GGPSO__27208_      -.03206           $318035# offset
+GGPSO__26909_   GGPSO__27108_   GGPSO__27208_      -.00074           $318034# offset
+GGPSO__27008_   GGPSO__27108_   GGPSO__27307_       .01652           $318037# offset
+GGPSO__27008_   GGPSO__27208_   GGPSO__27307_       .00250           $318036# offset
+GGPSO__27108_   GGPSO__27208_   GGPSO__27407_      -.01062           $318039# offset
+GGPSO__27108_   GGPSO__27307_   GGPSO__27407_      -.00935           $318038# offset
+GGPSO__27208_   GGPSO__27307_   GGPSO__27507_       .01267           $318041# offset
+GGPSO__27208_   GGPSO__27407_   GGPSO__27507_       .03350           $318040# offset
+GGPSO__27307_   GGPSO__27407_   GGPSO__27606_       .02264           $318043# offset
+GGPSO__27307_   GGPSO__27507_   GGPSO__27606_      -.00901           $318042# offset
+GGPSO__27407_   GGPSO__27507_   GGPSO__27706_      -.03544           $318045# offset
+GGPSO__27407_   GGPSO__27507_   GGPSO__27706_      -.03552           $318099# offset
+GGPSO__27407_   GGPSO__27606_   GGPSO__27706_      -.03011           $318044# offset
+GGPSO__27407_   GGPSO__27606_   GGPSO__27706_      -.03020           $318098# offset
+GGPSO__27507_   GGPSO__27606_   GGPSO__27806_      -.03556           $318101# offset
+GGPSO__27507_   GGPSO__27706_   GGPSO__27806_      -.04624           $318100# offset
+GGPSO__27606_   GGPSO__27706_   GGPSO__27906_      -.01105           $318103# offset
+GGPSO__27606_   GGPSO__27806_   GGPSO__27906_       .03482           $318102# offset
+GGPSO__27706_   GGPSO__27806_   GGPSO__28005_       .05564           $318105# offset
+GGPSO__27706_   GGPSO__27906_   GGPSO__28005_       .03030           $318104# offset
+GGPSO__27806_   GGPSO__27906_   GGPSO__28105_       .03700           $318107# offset
+GGPSO__27806_   GGPSO__28005_   GGPSO__28105_       .06918           $318106# offset
+GGPSO__27906_   GGPSO__28005_   GGPSO__28205_       .03253           $318109# offset
+GGPSO__27906_   GGPSO__28105_   GGPSO__28205_      -.03600           $318108# offset
+GGPSO__28005_   GGPSO__28105_   GGPSO__28304_      -.06243           $318111# offset
+GGPSO__28005_   GGPSO__28205_   GGPSO__28304_      -.02029           $318110# offset
+GGPSO__28105_   GGPSO__28205_   GGPSO__28404_       .00948           $318113# offset
+GGPSO__28105_   GGPSO__28304_   GGPSO__28404_      -.00245           $318112# offset
+GGPSO__28205_   GGPSO__28304_   GGPSO__28504_      -.01070           $318115# offset
+GGPSO__28205_   GGPSO__28404_   GGPSO__28504_      -.00692           $318114# offset
+GGPSO__28304_   GGPSO__28404_   GGPSO__28604_      -.00441           $318117# offset
+GGPSO__28304_   GGPSO__28504_   GGPSO__28604_      -.00570           $318116# offset
+GGPSO__28404_   GGPSO__28504_   GGPSO__28704_      -.01198           $318119# offset
+GGPSO__28404_   GGPSO__28604_   GGPSO__28704_      -.01703           $318118# offset
+GGPSO__28504_   GGPSO__28604_   GGPSO__28804_      -.00176           $318121# offset
+GGPSO__28504_   GGPSO__28704_   GGPSO__28804_       .01880           $318120# offset
+GGPSO__28604_   GGPSO__28704_   GGPSO__28903_       .01543           $318123# offset
+GGPSO__28604_   GGPSO__28804_   GGPSO__28903_      -.00840           $318122# offset
+GGPSO__28704_   GGPSO__28804_   GGPSO__29003_      -.00743           $318125# offset
+GGPSO__28704_   GGPSO__28903_   GGPSO__29003_       .01744           $318124# offset
+GGPSO__28804_   GGPSO__28903_   GGPSO__29103_       .00374           $318127# offset
+GGPSO__28804_   GGPSO__29003_   GGPSO__29103_      -.03509           $318126# offset
+GGPSO__28903_   GGPSO__29003_   GGPSO__29145_      -.21510           $318129# offset
+GGPSO__28903_   GGPSO__29103_   GGPSO__29145_      -.35625           $318128# offset
+*END
+*ORIE   35
+ALESOL_____1_   TRIPOD_____1_     78.13950         /-0.0040      $321699# nord n°1
+ALESOL_____1_   TRIPOD_____1_     78.13740               $321700# nord n°2
+ALESOL_____1_   TRIPOD_____1_     78.13830               $321701# nord n°3
+ALESOL_____7_   ALESOL_____2_     75.20580               $321683# nord n°1
+ALESOL_____7_   TRIPOD_____2_     76.69520               $321686# nord n°1
+ALESOL_____7_   ALESOL_____2_     75.20780               $321687# nord n°2
+ALESOL_____7_   TRIPOD_____2_     76.69570               $321690# nord n°2
+ALESOL_____7_   ALESOL_____2_     75.20780               $321691# nord n°3
+ALESOL_____7_   TRIPOD_____2_     76.69610               $321694# nord n°3
+ALESOL_____7_   ALESOL_____2_     75.20820               $321695# nord n°4
+ALESOL_____7_   TRIPOD_____2_     76.69640               $321698# nord n°4
+%ALESOL_____7_   TC________61_     75.51240        35       $321684# nord n°1
+ALESOL_____7_   TC________61_     75.51440        35       $321688# nord n°2
+ALESOL_____7_   TC________61_     75.51420        35       $321692# nord n°3
+ALESOL_____7_   TC________61_     75.51410        35       $321696# nord n°4
+%ALESOL_____7_   TC________68_     75.97810        35       $321685# nord n°1
+ALESOL_____7_   TC________68_     75.97960        35       $321689# nord n°2
+ALESOL_____7_   TC________68_     75.97980        35       $321693# nord n°3
+ALESOL_____7_   TC________68_     75.97950        35       $321697# nord n°4
+GGPSO__20434_   GGPSO__20727_    273.73480     /0.0075      $321702# nord n°1
+GGPSO__20434_   GGPSO__20727_    273.73700           $321704# nord n°2
+GGPSO__20434_   GGPSO__20727_    273.73630           $321706# nord n°3
+GGPSO__20434_   ALESOL_____2_      7.32630           $321703# nord n°1
+GGPSO__20434_   ALESOL_____2_      7.32830           $321705# nord n°2
+GGPSO__20434_   ALESOL_____2_      7.32850           $321707# nord n°3
+GGPSO__20727_   GGPSO__20434_     73.73890           $321678# nord n°1
+GGPSO__20727_   GGPSO__20434_     73.73840           $321680# nord n°2
+GGPSO__20727_   GGPSO__20434_     73.73700           $321682# nord n°3
+GGPSO__20727_   GGPSO__21026_    273.35480           $321677# nord n°1
+GGPSO__20727_   GGPSO__21026_    273.35400           $321679# nord n°2
+GGPSO__20727_   GGPSO__21026_    273.35240           $321681# nord n°3
+GGPSO__21026_   GGPSO__20727_     73.35090           $321668# nord n°1
+GGPSO__21026_   GGPSO__20727_     73.35000           $321670# nord n°2
+GGPSO__21026_   GGPSO__20727_     73.35550           $321672# nord n°3
+GGPSO__21026_   GGPSO__20727_     73.35430           $321674# nord n°4
+GGPSO__21026_   GGPSO__20727_     73.35080           $321676# nord n°5
+GGPSO__21026_   GGPSO__21325_    273.35740           $321667# nord n°1
+GGPSO__21026_   GGPSO__21325_    273.35680           $321669# nord n°2
+GGPSO__21026_   GGPSO__21325_    273.36130           $321671# nord n°3
+GGPSO__21026_   GGPSO__21325_    273.36080           $321673# nord n°4
+GGPSO__21026_   GGPSO__21325_    273.35740           $321675# nord n°5
+GGPSO__21325_   GGPSO__21026_     73.36120           $321662# nord n°2
+GGPSO__21325_   GGPSO__21026_     73.36140           $321664# nord n°3
+GGPSO__21325_   GGPSO__21026_     73.35990           $321666# nord n°4
+GGPSO__21325_   GGPSO__21624_    273.35680           $321661# nord n°2
+GGPSO__21325_   GGPSO__21624_    273.35720           $321663# nord n°3
+GGPSO__21325_   GGPSO__21624_    273.35530           $321665# nord n°4
+GGPSO__21624_   GGPSO__21325_     73.35360           $321654# nord n°1
+GGPSO__21624_   GGPSO__21325_     73.35450           $321656# nord n°2
+GGPSO__21624_   GGPSO__21325_     73.35710           $321658# nord n°3
+GGPSO__21624_   GGPSO__21325_     73.35600           $321660# nord n°4
+GGPSO__21624_   GGPSO__21923_    273.35310           $321653# nord n°1
+GGPSO__21624_   GGPSO__21923_    273.35410           $321655# nord n°2
+GGPSO__21624_   GGPSO__21923_    273.35600           $321657# nord n°3
+GGPSO__21624_   GGPSO__21923_    273.35470           $321659# nord n°4
+GGPSO__21923_   GGPSO__21624_     73.35290           $321648# nord n°1
+GGPSO__21923_   GGPSO__21624_     73.35360           $321650# nord n°2
+GGPSO__21923_   GGPSO__21624_     73.35300           $321652# nord n°3
+GGPSO__21923_   GGPSO__22222_    273.82970           $321647# nord n°1
+GGPSO__21923_   GGPSO__22222_    273.83100           $321649# nord n°2
+GGPSO__21923_   GGPSO__22222_    273.83040           $321651# nord n°3
+GGPSO__22222_   GGPSO__21923_     73.83020           $321640# nord n°1
+GGPSO__22222_   GGPSO__21923_     73.82920           $321642# nord n°2
+GGPSO__22222_   GGPSO__21923_     73.83350           $321644# nord n°3
+GGPSO__22222_   GGPSO__21923_     73.83350           $321646# nord n°4
+GGPSO__22222_   GGPSO__22521_    275.26180           $321639# nord n°1
+GGPSO__22222_   GGPSO__22521_    275.26080           $321641# nord n°2
+GGPSO__22222_   GGPSO__22521_    275.26580           $321643# nord n°3
+GGPSO__22222_   GGPSO__22521_    275.26540           $321645# nord n°4
+GGPSO__22521_   GGPSO__22222_     75.26380           $321634# nord n°1
+GGPSO__22521_   GGPSO__22222_     75.26220           $321636# nord n°2
+GGPSO__22521_   GGPSO__22222_     75.26190           $321638# nord n°3
+GGPSO__22521_   GGPSO__22821_    275.31780           $321633# nord n°1
+GGPSO__22521_   GGPSO__22821_    275.31720           $321635# nord n°2
+GGPSO__22521_   GGPSO__22821_    275.31730           $321637# nord n°3
+GGPSO__22821_   GGPSO__22521_     75.31800           $321628# nord n°1
+GGPSO__22821_   GGPSO__22521_     75.31790           $321630# nord n°2
+GGPSO__22821_   GGPSO__22521_     75.31980           $321632# nord n°3
+GGPSO__22821_   GGPSO__23120_    277.37020           $321627# nord n°1
+GGPSO__22821_   GGPSO__23120_    277.37010           $321629# nord n°2
+GGPSO__22821_   GGPSO__23120_    277.37140           $321631# nord n°3
+GGPSO__23120_   GGPSO__22821_     77.36820           $321620# nord n°1
+GGPSO__23120_   GGPSO__22821_     77.37040           $321622# nord n°2
+GGPSO__23120_   GGPSO__22821_     77.37030           $321624# nord n°3
+GGPSO__23120_   GGPSO__22821_     77.36950           $321626# nord n°4
+GGPSO__23120_   GGPSO__23518_    282.19780           $321619# nord n°1
+GGPSO__23120_   GGPSO__23518_    282.20160           $321621# nord n°2
+GGPSO__23120_   GGPSO__23518_    282.20140           $321623# nord n°3
+GGPSO__23120_   GGPSO__23518_    282.20010           $321625# nord n°4
+GGPSO__23518_   GGPSO__23120_     82.19770           $321612# nord n°1
+GGPSO__23518_   GGPSO__23120_     82.19940           $321614# nord n°2
+GGPSO__23518_   GGPSO__23120_     82.19950           $321616# nord n°3
+GGPSO__23518_   GGPSO__23120_     82.19900           $321618# nord n°4
+GGPSO__23518_   GGPSO__23917_    289.73730           $321611# nord n°1
+GGPSO__23518_   GGPSO__23917_    289.73870           $321613# nord n°2
+GGPSO__23518_   GGPSO__23917_    289.73890           $321615# nord n°3
+GGPSO__23518_   GGPSO__23917_    289.73880           $321617# nord n°4
+GGPSO__23917_   GGPSO__23518_     89.73910           $321602# nord n°1
+GGPSO__23917_   GGPSO__23518_     89.74080           $321604# nord n°2
+GGPSO__23917_   GGPSO__23518_     89.74230           $321606# nord n°3
+GGPSO__23917_   GGPSO__23518_     89.74150           $321608# nord n°1
+GGPSO__23917_   GGPSO__23518_     89.73780           $321610# nord n°2
+GGPSO__23917_   GGPSO__24217_    296.25660           $321601# nord n°1
+GGPSO__23917_   GGPSO__24217_    296.25830           $321603# nord n°2
+GGPSO__23917_   GGPSO__24217_    296.25950           $321605# nord n°3
+GGPSO__23917_   GGPSO__24217_    296.25780           $321607# nord n°1
+GGPSO__23917_   GGPSO__24217_    296.25500           $321609# nord n°2
+GGPSO__24217_   GGPSO__23917_     96.25800           $321592# nord n°1
+GGPSO__24217_   GGPSO__23917_     96.25720           $321594# nord n°2
+GGPSO__24217_   GGPSO__23917_     96.26000           $321596# nord n°3
+GGPSO__24217_   GGPSO__23917_     96.25880           $321598# nord n°4
+GGPSO__24217_   GGPSO__23917_     96.25900           $321600# nord n°5
+GGPSO__24217_   GGPSO__24616_    302.91650           $321591# nord n°1
+GGPSO__24217_   GGPSO__24616_    302.91640           $321593# nord n°2
+GGPSO__24217_   GGPSO__24616_    302.91860           $321595# nord n°3
+GGPSO__24217_   GGPSO__24616_    302.91790           $321597# nord n°4
+GGPSO__24217_   GGPSO__24616_    302.91830           $321599# nord n°5
+GGPSO__24616_   GGPSO__24217_    102.91390           $321580# nord n°1
+GGPSO__24616_   GGPSO__24217_    102.91600           $321582# nord n°2
+GGPSO__24616_   GGPSO__24217_    102.91540           $321584# nord n°3
+GGPSO__24616_   GGPSO__24915_    309.55740           $321579# nord n°1
+GGPSO__24616_   GGPSO__24915_    309.55880           $321581# nord n°2
+GGPSO__24616_   GGPSO__24915_    309.55880           $321583# nord n°3
+GGPSO__24915_   GGPSO__24616_    109.56210           $321570# nord n°1
+GGPSO__24915_   GGPSO__24616_    109.55870           $321572# nord n°2
+GGPSO__24915_   GGPSO__24616_    109.55950           $321574# nord n°3
+GGPSO__24915_   GGPSO__24616_    109.55920           $321576# nord n°4
+GGPSO__24915_   GGPSO__24616_    109.55960           $321578# nord n°5
+GGPSO__24915_   GGPSO__25214_    315.20840           $321569# nord n°1
+GGPSO__24915_   GGPSO__25214_    315.20420           $321571# nord n°2
+GGPSO__24915_   GGPSO__25214_    315.20580           $321573# nord n°3
+GGPSO__24915_   GGPSO__25214_    315.20520           $321575# nord n°4
+GGPSO__24915_   GGPSO__25214_    315.20540           $321577# nord n°5
+GGPSO__25214_   GGPSO__24915_    115.20830           $321564# nord n°1
+GGPSO__25214_   GGPSO__24915_    115.20770           $321566# nord n°2
+GGPSO__25214_   GGPSO__24915_    115.20710           $321568# nord n°3
+GGPSO__25214_   GGPSO__25513_    320.49210           $321563# nord n°1
+GGPSO__25214_   GGPSO__25513_    320.49170           $321565# nord n°2
+GGPSO__25214_   GGPSO__25513_    320.49100           $321567# nord n°3
+GGPSO__25513_   GGPSO__25214_    120.49120           $321558# nord n°1
+GGPSO__25513_   GGPSO__25214_    120.49040           $321560# nord n°2
+GGPSO__25513_   GGPSO__25214_    120.49260           $321562# nord n°3
+GGPSO__25513_   GGPSO__25813_    323.69940           $321557# nord n°1
+GGPSO__25513_   GGPSO__25813_    323.69870           $321559# nord n°2
+GGPSO__25513_   GGPSO__25813_    323.70120           $321561# nord n°3
+GGPSO__25813_   GGPSO__25513_    123.70110           $321552# nord n°1
+GGPSO__25813_   GGPSO__25513_    123.70070           $321554# nord n°2
+GGPSO__25813_   GGPSO__25513_    123.70070           $321556# nord n°3
+GGPSO__25813_   GGPSO__26112_    325.61220           $321551# nord n°1
+GGPSO__25813_   GGPSO__26112_    325.61230           $321553# nord n°2
+GGPSO__25813_   GGPSO__26112_    325.61200           $321555# nord n°3
+GGPSO__26112_   GGPSO__25813_    125.61180           $321546# nord n°1
+GGPSO__26112_   GGPSO__25813_    125.61060           $321548# nord n°2
+GGPSO__26112_   GGPSO__25813_    125.61070           $321550# nord n°3
+GGPSO__26112_   GGPSO__26410_    326.65950           $321545# nord n°1
+GGPSO__26112_   GGPSO__26410_    326.65800           $321547# nord n°2
+GGPSO__26112_   GGPSO__26410_    326.65830           $321549# nord n°3
+GGPSO__26410_   GGPSO__26112_    126.66140           $321524# nord n°1
+GGPSO__26410_   GGPSO__26112_    126.66200           $321526# nord n°2
+GGPSO__26410_   GGPSO__26112_    126.65920           $321540# nord n°1
+GGPSO__26410_   GGPSO__26112_    126.66190           $321542# nord n°2
+GGPSO__26410_   GGPSO__26112_    126.65940           $321544# nord n°3
+GGPSO__26410_   GGPSO__26709_    326.62920           $321523# nord n°1
+GGPSO__26410_   GGPSO__26709_    326.63020           $321525# nord n°2
+GGPSO__26410_   GGPSO__26709_    326.62750           $321539# nord n°1
+GGPSO__26410_   GGPSO__26709_    326.63000           $321541# nord n°2
+GGPSO__26410_   GGPSO__26709_    326.62750           $321543# nord n°3
+GGPSO__26709_   GGPSO__26410_    126.63140           $321516# nord n°1
+GGPSO__26709_   GGPSO__26410_    126.62750           $321518# nord n°2
+GGPSO__26709_   GGPSO__26410_    126.62700           $321520# nord n°3
+GGPSO__26709_   GGPSO__26410_    126.62760           $321522# nord n°4
+GGPSO__26709_   GGPSO__27008_    326.67050           $321515# nord n°1
+GGPSO__26709_   GGPSO__27008_    326.66640           $321517# nord n°2
+GGPSO__26709_   GGPSO__27008_    326.66590           $321519# nord n°3
+GGPSO__26709_   GGPSO__27008_    326.66690           $321521# nord n°4
+GGPSO__27008_   GGPSO__26709_    126.66710           $321510# nord n°1
+GGPSO__27008_   GGPSO__26709_    126.66910           $321512# nord n°2
+GGPSO__27008_   GGPSO__26709_    126.66760           $321514# nord n°3
+GGPSO__27008_   GGPSO__27307_    326.61950           $321509# nord n°1
+GGPSO__27008_   GGPSO__27307_    326.62140           $321511# nord n°2
+GGPSO__27008_   GGPSO__27307_    326.61990           $321513# nord n°3
+GGPSO__27307_   GGPSO__27008_    126.62070           $321502# nord n°1
+GGPSO__27307_   GGPSO__27008_    126.62180           $321504# nord n°2
+GGPSO__27307_   GGPSO__27008_    126.61930           $321506# nord n°3
+GGPSO__27307_   GGPSO__27008_    126.61970           $321508# nord n°4
+GGPSO__27307_   GGPSO__27606_    326.65620           $321501# nord n°1
+GGPSO__27307_   GGPSO__27606_    326.65720           $321503# nord n°2
+GGPSO__27307_   GGPSO__27606_    326.65410           $321505# nord n°3
+GGPSO__27307_   GGPSO__27606_    326.65450           $321507# nord n°4
+GGPSO__27606_   GGPSO__27307_    126.65590           $321496# nord n°1
+GGPSO__27606_   GGPSO__27307_    126.65540           $321498# nord n°2
+GGPSO__27606_   GGPSO__27307_    126.65590           $321500# nord n°3
+GGPSO__27606_   GGPSO__27906_    326.56080           $321495# nord n°1
+GGPSO__27606_   GGPSO__27906_    326.55960           $321497# nord n°2
+GGPSO__27606_   GGPSO__27906_    326.56050           $321499# nord n°3
+GGPSO__27906_   GGPSO__27606_    126.56220           $321490# nord n°1
+GGPSO__27906_   GGPSO__27606_    126.56160           $321492# nord n°2
+GGPSO__27906_   GGPSO__27606_    126.56210           $321494# nord n°3
+GGPSO__27906_   GGPSO__28205_    326.71600           $321489# nord n°1
+GGPSO__27906_   GGPSO__28205_    326.71560           $321491# nord n°2
+GGPSO__27906_   GGPSO__28205_    326.71600           $321493# nord n°3
+GGPSO__28205_   GGPSO__27906_    126.71430           $321484# nord n°1
+GGPSO__28205_   GGPSO__27906_    126.71630           $321486# nord n°2
+GGPSO__28205_   GGPSO__27906_    126.71650           $321488# nord n°3
+GGPSO__28205_   GGPSO__28504_    326.66060           $321483# nord n°1
+GGPSO__28205_   GGPSO__28504_    326.66340           $321485# nord n°2
+GGPSO__28205_   GGPSO__28504_    326.66300           $321487# nord n°3
+GGPSO__28504_   GGPSO__28205_    126.66190           $321478# nord n°2
+GGPSO__28504_   GGPSO__28205_    126.66230           $321480# nord n°3
+GGPSO__28504_   GGPSO__28205_    126.66120           $321482# nord n°4
+GGPSO__28504_   GGPSO__28804_    326.62850           $321477# nord n°2
+GGPSO__28504_   GGPSO__28804_    326.62940           $321479# nord n°3
+GGPSO__28504_   GGPSO__28804_    326.62810           $321481# nord n°4
+GGPSO__28804_   GGPSO__28504_    126.62870           $321449# nord n°1
+GGPSO__28804_   GGPSO__28504_    126.62920           $321451# nord n°2
+GGPSO__28804_   GGPSO__28504_    126.62790           $321453# nord n°3
+GGPSO__28804_   GGPSO__28504_    126.62840           $321527# nord n°1
+GGPSO__28804_   GGPSO__28504_    126.62690           $321529# nord n°2
+GGPSO__28804_   GGPSO__28504_    126.62780           $321531# nord n°3
+GGPSO__28804_   GGPSO__28504_    126.62770           $321533# nord n°1
+GGPSO__28804_   GGPSO__28504_    126.62540           $321535# nord n°2
+GGPSO__28804_   GGPSO__28504_    126.62720           $321537# nord n°3
+GGPSO__28804_   GGPSO__28504_    126.62760           $321585# nord n°1
+GGPSO__28804_   GGPSO__28504_    126.62760           $321587# nord n°2
+GGPSO__28804_   GGPSO__28504_    126.62880           $321589# nord n°3
+GGPSO__28804_   GGPSO__29103_    326.60780           $321450# nord n°1
+GGPSO__28804_   GGPSO__29103_    326.60840           $321452# nord n°2
+GGPSO__28804_   GGPSO__29103_    326.60680           $321454# nord n°3
+GGPSO__28804_   GGPSO__29103_    326.60750           $321528# nord n°1
+GGPSO__28804_   GGPSO__29103_    326.60540           $321530# nord n°2
+GGPSO__28804_   GGPSO__29103_    326.60670           $321532# nord n°3
+GGPSO__28804_   GGPSO__29103_    326.60620           $321534# nord n°1
+GGPSO__28804_   GGPSO__29103_    326.60410           $321536# nord n°2
+GGPSO__28804_   GGPSO__29103_    326.60550           $321538# nord n°3
+GGPSO__28804_   GGPSO__29103_    326.60620           $321586# nord n°1
+GGPSO__28804_   GGPSO__29103_    326.60580           $321588# nord n°2
+GGPSO__28804_   GGPSO__29103_    326.60740           $321590# nord n°3
+GGPSO__29103_   GGPSO__28804_    126.60890           $321455# nord n°1
+GGPSO__29103_   GGPSO__28804_    126.60760           $321457# nord n°2
+GGPSO__29103_   GGPSO__28804_    126.61030           $321459# nord n°3
+GGPSO__29103_   GGPSO__8L204_    329.22010           $321456# nord n°1
+GGPSO__29103_   GGPSO__8L204_    329.21880           $321458# nord n°2
+GGPSO__29103_   GGPSO__8L204_    329.22160           $321460# nord n°3
+%GGPSO__6L216_   GGPSO___10L2_    124.26210     /0.0040      $321462# nord n°1
+GGPSO__6L216_   GGPSO___10L2_    124.25850     /0.0040      $321465# nord n°2
+GGPSO__6L216_   GGPSO___10L2_    124.25870           $321468# nord n°3
+GGPSO__6L216_   GGPSO___10L2_    124.25930           $321475# nord n°1
+%GGPSO__6L216_   GGPSO__8L204_    124.98620           $321463# nord n°1
+GGPSO__6L216_   GGPSO__8L204_    124.98230           $321466# nord n°2
+GGPSO__6L216_   GGPSO__8L204_    124.98240           $321469# nord n°3
+GGPSO__6L216_   GGPSO__8L204_    124.98270           $321476# nord n°1
+%GGPSO__6L216_   GGPSO____3L2_    324.74050           $321461# nord n°1
+GGPSO__6L216_   GGPSO____3L2_    324.73670           $321464# nord n°2
+GGPSO__6L216_   GGPSO____3L2_    324.73680           $321467# nord n°3
+GGPSO__6L216_   GGPSO____3L2_    324.73670           $321474# nord n°1
+%GGPSO____3L2_   GGPSO__6L216_    124.73930           $321470# nord n°1
+GGPSO____3L2_   GGPSO__6L216_    124.73500           $321471# nord n°2
+GGPSO____3L2_   GGPSO__6L216_    124.73560           $321472# nord n°3
+GGPSO____3L2_   GGPSO__6L216_    124.73530           $321473# nord n°4
+

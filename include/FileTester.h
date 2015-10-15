@@ -1,0 +1,5 @@
+
+namespace FileTester {
+
+	void runTestFiles();
+}
