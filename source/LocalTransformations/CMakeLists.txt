@@ -9,6 +9,9 @@ set(LocalTransformations_HEADERS
 	TInverseTransformation.h
 	TDerivativeTransformation.h
 	TLOR2LOR.h
+	TCCS2CGRFTransformation.h
+	TCGRF2LGTransformation.h
+	TILG2ILATransformation.h
 )
 
 # Create a variable containing all .cpp files:
@@ -18,6 +21,9 @@ set(LocalTransformations_SOURCES
 	TInverseTransformation.cpp
 	TDerivativeTransformation.cpp
 	TLOR2LOR.cpp
+	TCCS2CGRFTransformation.cpp
+	TCGRF2LGTransformation.cpp
+	TILG2ILATransformation.cpp
 )
 
 # Create a static library from sources:
