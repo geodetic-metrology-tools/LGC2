@@ -1,0 +1,81 @@
+*TITR
+Any number of lines for a title
+
+*OLOC # options should be as before
+*PUNC
+
+*POIN # points as before
+P2	0.0	0.0	0.0
+P3	1	1	1
+P4	2	2	2
+*CALA
+P1	0	0	0
+
+*INSTR 	% list of instruments
+% instrID  defaultTargetID   instrHt    sigmaInstrHt  sigmaInstrCentering  constAngl
+*POLAR   Theo1  T1   0.19345    0.05  0.05  0.0
+% targetID    sigmaAngl   sigmaZenD   sigmaDSpt   ppmDSpt   distCorrectionKnown    %distCorrectionValue    sigmaDCorr    sigmaTargetCentering   targetHt    sigmaTargetHt
+T1   5.0  5.0  0.5  0.5  true  0.0  0.2  0.05  0.0  0.05
+T2   10.0  10.0  1.0  1.0  false  0.0  0.2  0.05  0.0  0.05
+*POLAR   LTD1  ccr1.5   0.0    0.00  0.00  0.0
+ccr1.5   10.0  10.0  0.03  0.03  true  0.0  0.0  0.00  0.0  0.01
+
+*LEVEL   Niv1  Staff1   	  	% instrID  defaultscaleID   
+% targetID    sigmaDSpt   ppmDSpt   distCorrectionValue   sigmaDCorr    sigmaTargetCentering targetHt    %sigmaTargetHt 
+Staff1   0.01  0.01  0.07   0.0   0.05   0.00  0.05
+
+% targetID   sigmaDSpt   ppmDSpt   distCorrectionValue   sigmaDCorr    sigmaInstrCentering
+*SCALE   Regle15   1.0  0.0  0.0   0.0  0.5
+*SCALE   Ecarto1   0.05  0.01  0.01   0.001  0.5
+
+*TSTN	P1   Theo1        		% instrument height unknown, default target, and instrument parameters used
+ 	*V0                         	% whitespace is insignificant
+		*ANGL	                        		%s.e. and other parameters from instr/target pair	
+		P2	100	OBSE  15	 % specific obs s.e. set
+		P3	200
+		P2	101			% this will no longer give an error, repeat obs allowed
+		*ECTH	200   Regle15      		% s.e. and other parameters from instr or scale
+		P2	0.05
+	*V0                            	% these have a different V0 to those above
+		*ANGL	20
+		P2	99
+		P3	201
+		P2	100          	 % this will no longer give an error
+
+*TSTN	P2    Theo1       IHFIX		% instrument height known, default value used
+	*V0        ACST     10.0       	% hz. Angle const set to 10 cc
+		*ZEND
+		P1	100
+		P3	200
+		*PLR3D		
+		P1   100  100  10       TH 0.07      	% HA ZD DI, target height different for this observation
+* TSTN	P4	LTD1    ROT3D     	% 3D orientation to calculate, IH fixed to 0.0
+	*V0
+		*PLR3D		
+		P1   100   100   10
+		P2   101   101   11
+		P3   202   102   12
+* TSTN	P1	Theo1           		% 3D orientation to calculate, IH fixed to 0.0
+	*V0
+		*ZEND	
+		P2	100      OBSE  10   	% specific obs s.e. set
+		*DIST	
+		P2	10				% uses default target
+		P3	20	TRGT T2		% new target and default parameters for the target
+		P4	30				%  uses the same target as the one above
+		*PLR3D					% uses default target again
+		P2   100   100   10   TRGT   T2   ZSE  8    	% new target and default parameters for the target	 
+P3   200   200   20			%  uses the same target as the one above
+* TSTN	P2	Theo1      IHFIX     IH  0.19    		% instrument height fixed and value set
+*V0
+		*DIST	
+		P1	10	OBSE 1.0   PPM  1.0   	% specific error data set
+		P3	20	
+		P4	20 
+* TSTN	P3	Theo 1    IHFIX    TRGT  T2       	% target set to be T2
+	*V0
+		*DIST  	
+		P1	10	
+*ECHO 	  Ecarto1				% new stretched wire with each keyword
+	P3	0.25
+*END

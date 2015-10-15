@@ -1,0 +1,78 @@
+#include "TLSCalcRelativeError.h"
+
+// constructor taking 2 lscalc pos. vector iterator
+TLSCalcRelativeError::TLSCalcRelativeError(int id, LSPosVecIter pt1,LSPosVecIter pt2):
+fPoint1(pt1), fPoint2(pt2) {
+
+	fSigmaL = TLength(LITERAL(0.0));
+	fSigmaR = TLength(LITERAL(0.0));
+	fSigmaZ = TLength(LITERAL(0.0));
+	fSigmaG = TAngle(LITERAL(0.0));
+	fSigmaV = TAngle(LITERAL(0.0));
+
+	observationID = id;
+}
+
+// copy constructor
+TLSCalcRelativeError::TLSCalcRelativeError(const TLSCalcRelativeError& source) {
+
+	fPoint1 = source.fPoint1;
+	fPoint2 = source.fPoint2;
+
+	fSigmaL = source.fSigmaL;
+	fSigmaR = source.fSigmaR;
+	fSigmaZ = source.fSigmaZ;
+	fSigmaG = source.fSigmaG;
+	fSigmaV = source.fSigmaV;
+}
+// destructor
+TLSCalcRelativeError::~TLSCalcRelativeError() {
+}
+
+/* copy assignment operator: not implemented
+TLSCalcRelativeError& TLSCalcRelativeError::operator=(const TLSCalcRelativeError& right) {
+}*/
+
+// overloaded equality operator
+bool TLSCalcRelativeError::operator==(const TLSCalcRelativeError& right) const {
+
+	if ((fPoint1 == right.fPoint1) && (fPoint2 == right.fPoint2))
+		return true;
+	else
+		return false;
+}
+/////////////////////////
+// SETTINGS
+////////////////////////
+
+// sets the error in orientation
+void TLSCalcRelativeError::setSigmaG(TAngle sg) {
+
+	fSigmaG = sg;
+	return;
+}
+// sets the longitudinal error
+void TLSCalcRelativeError::setSigmaL(TLength sl) {
+
+	fSigmaL = sl;
+	return;
+}
+// sets the radial error
+void TLSCalcRelativeError::setSigmaR(TLength sr) {
+
+	fSigmaR = sr;
+	return;
+}
+
+// sets the error in the vertical angle
+void TLSCalcRelativeError::setSigmaV(TAngle sv) {
+
+	fSigmaV = sv;
+	return;
+}
+// sets the error in the height difference 
+void TLSCalcRelativeError::setSigmaZ(TLength sz) {
+
+	fSigmaZ = sz;
+	return;
+}
