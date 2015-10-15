@@ -1,4 +1,7 @@
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/LGCProject
+					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/Measurments)
 
 # Create a variable containing all .h files:
 set(LGCProjectData_HEADERS 	

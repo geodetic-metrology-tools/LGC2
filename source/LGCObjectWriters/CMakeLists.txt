@@ -1,4 +1,6 @@
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/Measurments
+					${CMAKE_SOURCE_DIR}/LGCProjectData)
 
 # Create a variable containing all .cpp files:
 set(LGCObjectWriters_SOURCES

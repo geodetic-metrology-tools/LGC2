@@ -1,4 +1,5 @@
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/LGCProject)
 
 # Create a variable containing all .h files:
 set(LocalTransformations_HEADERS 

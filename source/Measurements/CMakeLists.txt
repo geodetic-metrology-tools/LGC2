@@ -1,4 +1,8 @@
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/LGCProjectData
+					${CMAKE_SOURCE_DIR}/LGCProject
+					${CMAKE_SOURCE_DIR}/LGCObjectWriters
+					${CMAKE_SOURCE_DIR}/AdjustableObjects)
 
 set(MEASUREMENTS_HEADERS
 	TMeasurements.h

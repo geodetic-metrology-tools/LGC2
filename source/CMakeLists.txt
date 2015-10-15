@@ -68,7 +68,7 @@ message("    Using MinGW")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")
 ENDIF(MINGW)
 
-INCLUDE(${SURVEYLIB_ROOT}/source/SubLibraries.cmake)
+INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 include_directories (
 	${LGC2_INCLUDE_PATH}

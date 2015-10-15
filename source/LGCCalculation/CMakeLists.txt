@@ -1,4 +1,5 @@
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/AdjustableObjects)
 
 # Create a variable containing all .h files:
 set(LGCCalculation_HEADERS 	
