@@ -1,0 +1,40 @@
+#ifndef _READERS_READER_H_
+#define _READERS_READER_H_
+
+#include "ReaderBase.h"
+#include "TLGCData.h"
+
+class TAKeyWord;
+
+/*! 
+	\ingroup InputFileReader
+	\brief Class responsible for the reading process.
+*/
+class TReader {
+	public:
+		TReader(std::shared_ptr<TLGCData> project);
+
+		/**
+			\brief Reads the input file and extracts options, instruments, points, frames and measurements into the TLGCData class 
+			that was passed in the constructor.
+
+			\return TRUE if no error occurred during reading the file, FALSE otherwise.
+
+			If the keyword *FRAME is not used the tree will only consist of a root node.
+		*/
+		bool read(std::istream& lgcStream);
+
+		/// Splits a line into its tokens, removing blank characters
+		static std::vector<std::string> const tokenizeLGCfileString(const std::string& str);
+
+	private:
+		/// All keyword handler objects.
+		std::vector< std::unique_ptr<TAKeyWord> > finterpreters;
+
+		/// The reference to the project passed in the constructor is stored
+		TLGCData& project;
+		
+		/// Not asignable, contains reference
+		TReader& operator=(const TReader&);
+};
+#endif

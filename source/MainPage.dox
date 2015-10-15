@@ -1,0 +1,16 @@
+/**
+\mainpage The LGC2 project
+
+  \brief A major update of the LGC (C++ version 1), provides extended functionalities required for the HIE-Isolde project and more. 
+ 
+   The new features are documented in the EDMS document number: 1465539.
+   
+   LGC2 User Guide can be found on: https://wikis.web.cern.ch/wikis/display/SUS/LGC2+User+Guide
+
+   Main shifts: 
+	- Complex (adjustable) objects introduced (planes, lines, transformations). 
+	- Mathematical observations models described in terms of these complex objects and therefore have been reformulated, new measurement types introduced.
+	- Introduced camera instrument and camera measurements.
+	- Hierarchy of local frames has been added.
+	- New input file format.
+*/

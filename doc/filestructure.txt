@@ -1,0 +1,29 @@
+Defaults.h
+	containing constants to adjust the behavior centrally
+	
+Global.h
+	Useful definitions and very short utility functions
+	
+Legacy.h
+	contains wrapper classes to use existing classes more convieniently
+	
+	
+TLGCApp.h
+	Entry point to construct an application
+	
+TLGCConfig.h
+	Containing the object view of the data file
+	
+LGCReaderObjects.h
+	Implementation of the objects that parse actual infile lines
+	
+LGCReader.h
+	Class that uses reader objects to fill options, points and observation 
+	by using the parse objects
+	
+AdjustableObjects.h
+	Defines points by now but will include planes and lines
+	
+TInstrumentData.h
+	Stores the instrument data objects that are used in the options class
+	
