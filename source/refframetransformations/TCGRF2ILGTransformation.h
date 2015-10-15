@@ -1,0 +1,84 @@
+//  TCGRF2ILGTransformation.h
+#ifndef SU_CGRF_2_ILG_TRANSFORMATION
+#define SU_CGRF_2_ILG_TRANSFORMATION
+
+#include  "TTransformation.h"
+
+/*!
+	The transformation between the CGRF and a local geodetic system.
+
+	Origin of the LG system is expected to be in CGRF, geodetic cartesian coordinates.
+*/
+class  TCGRF2ILGTransformation 
+{
+public:
+	/**@name Constructors and Destructors */
+	//@{
+		/*! 
+			Constructor
+				\param[in] ILGorigin  Origin of the local geodetic system in CGRF, geodetic cartesian coordinates.
+		*/
+		TCGRF2ILGTransformation(TPositionVector& ILGorigin);
+
+		/*! 
+			Constructor. Creates an uninitialized object.
+		*/
+		TCGRF2ILGTransformation();
+
+		/// Destructor
+		~TCGRF2ILGTransformation();
+	//@}
+
+	/**@name Initialisation */
+	//@{
+
+		/// Initialise / reinitialise an existing transformation by passing an origin of the local geodetic frame
+		void  initialise(TPositionVector& ILGorigin);
+	//@}
+
+	/**@name Transformations */
+	//@{
+		/// transform a position vector
+		bool						transform( TPositionVector& pv ) const;
+
+		/// transform a free vector
+		bool						transform( TFreeVector& fv ) const;
+
+		/// transform a rotation matrix
+		bool						transform( TRotationMatrix& rmx ) const;
+
+		/// inverse transformation of a position vector, (ILG -> CGRF) 
+		bool						transformInverse( TPositionVector& pv ) const;
+
+		/// inverse transformation of a free vector, (ILG -> CGRF)
+		bool						transformInverse( TFreeVector& fv ) const;
+
+		/// inverse transformation of a rotation matrix, (ILG -> CGRF)
+		bool						transformInverse( TRotationMatrix& rmx ) const;	
+	//@}
+
+	/**@name Access methods */
+	//@{
+		/// Returns THelmertTransformation of this transformation (CGRF-> ILG) 
+		TTransformation		getTransformer() const { return fTransform; }
+
+		/// Returns THelmertTransformation of inverse of this transformation (ILG -> CGRF)
+		TTransformation      getInverseTransformer() const {return fTransform.getInversedTransformation();}
+
+		///Returns origin of the local geodetic system
+		TPositionVector				getLGSOrigin() const{return fILGOrigin;}		
+	//@}
+
+
+private:
+	TTransformation		fTransform;
+	TPositionVector				fILGOrigin;
+
+	// Initialise the transformation using the parameters of the two reference frames
+	virtual  void  initialise();
+
+	//Tells whether the transformation is initialized
+	bool fInitialised;
+};
+
+#endif // TCGRF2ILGTransformation.h

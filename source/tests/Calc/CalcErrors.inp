@@ -1,0 +1,69 @@
+		
+		HIMAS TEST FILE.
+		
+		*RS2K
+		*LEP
+		
+		*ALLFIXED
+		*SIMU   10   OBS 
+		*NODUP
+
+		*INSTR
+		*POLAR TS1 T1 0 0 0 0
+		T1  5.0  5.0  0.5  0.5  1  0.0  0.2  0.05  0.0  0.05 
+
+		*FRAME P0 0 50 0  0 0 0 1.0 ty tz rx ry rz
+			*POIN
+			PPP1 10 10 10
+			PPP2 10 10 10 SX 1
+			*CALA\n
+			P3C 10 10
+			P4C 10 30 10
+			P5C 10 60 10
+			P6C 10 90 10
+			*TSTN P3C TS1
+			  *V0
+				*PLR3D\n
+					P8C  1 2
+			*TSTN P4C TS1
+			  *V0
+				*PLR3D
+					P9C  1 2 3
+			*TSTN P5C TS1
+			  *V0
+				*PLR3D
+					P10C 1 2 3
+			*TSTN P6C TS1
+			  *V0
+				*PLR3D
+					P11C 1 2 3
+
+			 *FRAME P2 20 30 40  38.19718634205 31.83098861838 25.4647908947 1.0 ty tz rx ry rz
+				 *CALA
+			   	 P12C 10 10 
+		     *ENDFRAME
+		*ENDFRAME
+
+		*FRAME P1 100 50 0  0 0 0 1.0 ty ty rx ry rz
+		*CALA
+		P8C  100 10 10
+		P9C  100 30 10
+		P10C 100 60 10
+		P11C 100 90 10
+			*TSTN P8C TS1
+			  *V0
+				*PLR3D
+					P3C  1 2 3
+			*TSTN P9C TS1
+			  *V0
+				*PLR3D
+					P4C  1 2 3
+			*TSTN P10C TS1
+			  *V0
+				*PLR3D
+					P5C 1 2 3
+			*TSTN P11C TS1
+			  *V0
+				*PLR3D
+					P6C 1 2 3
+		

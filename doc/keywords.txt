@@ -1,0 +1,144 @@
+Options:
+				"TITR: Every file must start with this keyword. Everything until the next keyword is interpreted as the title.\n"
+				"There must be no entries after the the keyword. Example:\n\n"
+				"    *TITR\n"
+				"    Survey operation No. 458\n\n"
+				"    Blank lines and special characters except comment characters can be used.\n"
+				
+				
+				"ALLFIXED: When introduced, the program will run as if all points were listed "
+				"under CALA - that is being fixed in all dimensions. \n\n"
+				"The output file is in the same format, except having an average V0 for\n "
+				"all rounds of measurements under the horizontal angles and the offset\n "
+				"to theodolite planes, and an average instrument height for the spatial\n "
+				"distance and zenith distance rounds of measurements. "
+				
+				"Simulate the network to gain insight into its error behavior before taking measurements.\n"
+				"If NOBS or no option is specified, no measurement values are expected in the \n"
+				"measurement lines, only station and target are specified.\n"
+				"Measurement values are allowed but ignored if OBS is applied\n"
+				"Usage:\n"
+				"    *SIMU <int: Number of Observations> [NOBS|OBS]\n"
+				"Examples:\n"
+				"    *SIMU 10 \n"
+				"    *SIMU 10 NOBS\n"
+
+Points are all the same:				
+				"The point is introduced as a " + lockstate + " point into the adjustment.\n"
+				"Comments above the line and after the line are stored to recreate them in the output.\n"
+				"Lines after the keyword are considered as Point entries with a name, 3 coodinates (X,Y,H) and optional comments.\n"
+				"Example: \n"
+				"    *"+ key + "\n"
+				"    P1 100.2 300.4 50.1 \n"
+				"    %The next line is a special point\n"
+				"    P2 200.2 300.4 50.1 $ DB Comment\n"
+
+INSTRUMENTS:
+				"INSTR serves as a section definition and indicates that \n"
+				"definitions of instruments follow, it implies that at least one \n"
+				"of the following keywords follows: \n"
+				"    *POLAR\n"
+				"    *EDM\n"
+				"    *LEVEL\n"
+				"    *SCALE\n"
+				
+				"POLAR can occur multiple times and defines an instrument \n"
+				"that takes polar measurements, e.g. a total station.\n"
+				"It must be placed in the *INSTR section.\n"
+				"It takes some arguments and is followed by N lines of taget definitions.\n"
+				"Usage:\n"
+				"    *POLAR A B C D E F\n"
+				"     G H I J K L M N O P Q\n"
+				"----------\n"
+				" A: str: instrument ID\n"
+				" B: str: default target\n"
+				" C: flt: instrument height\n"
+				" D: flt: sigma of the instrument height\n"
+				" E: flt: sigma of the instrument centering\n"
+				" F: flt: a known constant angle of the instrument ???\n"
+				"----------\n"
+				" G: str: target ID that is described in this line\n"
+				" H: flt: sigma of the measured angle for this target\n"
+				" I: flt: sigma of the measured zenith distance for this target\n"
+				" J: flt: sigma of the measured spatial distance for this target\n"
+				" K: flt: PPM value for distance measurements\n"
+				" L: bol: Determines if the correction value for the distance is used\n"
+				" M: flt: correction value for distance measurements\n"
+				" N: flt: sigma of the distance correction value\n"
+				" O: flt: sigma of the target centering\n"
+				" P: flt: target height\n"
+				" Q: flt: sigma of the target height\n"
+				" \n"
+				" !! TODO: Units of the parameters !!\n"
+				" \n"
+				"Example: \n"
+				"    *POLAR   Theo1  T1   0.19345    0.05  0.05  0.0\n"
+				"        T1   5.0  5.0  0.5  0.5  true  0.0  0.2  0.05  0.0  0.05\n"
+				"        T2   10.0  10.0  1.0  1.0  false  0.0  0.2  0.05  0.0  0.05\n"
+				
+
+MEASUREMENTS:
+
+				"V0 defines a new round of measurements, this implies that the instrument unknowns are recalculated.\n"
+				"It accepts a redefinition of the default target ID and the constant angle:\n"
+				"USAGE:\n"
+				"    *V0 [TRGT] [ACST]\n"
+				"----------\n"
+				" TRGT<str>: updated default traget ID\n"
+				" ACST<flt>: overrides constant angle value\n"
+				
+				
+				"TSTN (Total Station) defines the measurements of a total station from a certain point.\n"
+				"It is a single line command that accepts no further lines except the following keyword *V0.\n"
+				"USAGE:\n"
+				"    *TSTN A B [ ROT3D | [ IHFIX | IH [IHSE] ]] [TRGT] [ICSE]\n"
+				"----------\n"
+				" A: str:   Point ID on which the station is positioned\n"
+				" B: str:   Instrument ID of the total station\n"
+				" ROT3D:    This positioning introduces three unknown orientation parameters\n"
+				" IHFIX:    The instrument height will be fixed\n"
+				" IH<flt>   Redefine the default instrument height\n"
+				" IHSE<flt> Define the sigma of the instrument height, optional to IH\n"
+				" TRGT<str> Change the default target ID\n"
+				" ICSE<flt> Redefine the default target centering sigma\n"
+				" \n"
+				" EXAMPLES:\n"
+				" *TSTN	P1  Theo1\n"
+				" *TSTN	P2  Theo1  IHFIX IH 0.19\n"
+				"* TSTN	P4	 LTD1  ROT3D\n"
+				Open Questions:
+					If the instrument height is fixed and no height is given, is an instrument height of 0 assumed?
+
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    IMGPT 
+Image coordinates from a BCAM module or a standard camera. The coordinates are assumed to be in the XY-plane of the current local frame. For a BCAM, the transformation parameters to this frame fixed 
+
+USAGE:
+    *IMGPT
+    A B [SX C] [SY D]
+    
+    
+    B   C [TRGT D]  [OBSE E]  [PPM F]  [TCSE G]
+    -----
+    

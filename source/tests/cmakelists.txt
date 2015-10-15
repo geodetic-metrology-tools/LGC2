@@ -1,0 +1,37 @@
+include_directories(${CMAKE_SOURCE_DIR})
+
+set(tests_SOURCES
+	testReaders.cpp
+	testGlobals.cpp
+	testsTransformationClasses.cpp
+	#testLSCalculation.cpp
+	testInputFileComplex.cpp
+	testInputFileComplex_2TSTN.cpp
+	testComplexSUBFRAME.cpp
+	testGeodeticTransformations.cpp
+	testTLOR2LOR.cpp
+	testComplexMLA.cpp
+	testCAM.cpp
+	testNonTSTNmeas.cpp
+	testMixingObservation.cpp
+	main.cpp
+)
+
+set(tests_INPUT
+	input.h
+	contributionsGeneratorTest.h
+	inpMatrFillerTest.h
+	SubFrameTest.h
+	testComplexMLA.h
+	testComplexROOT.h
+	testComplexSUBFRAME.h
+	testComplexROOT_2TSTN.h
+	TestUnitTransfo.h
+	testNonTSTNmeas.h
+	testCAM.h
+	testMixingObservation.h
+)
+
+add_executable(tests ${tests_INPUT} ${tests_SOURCES})
+
+target_link_libraries(tests Readers LGCRoot CalcElements ProjectData Converters LGCConverters FiltersAndFormats StreamFormatters Writers LSCalculation MathematicalConcepts AffineTransformations ContributionsGenerators ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects Measurements)

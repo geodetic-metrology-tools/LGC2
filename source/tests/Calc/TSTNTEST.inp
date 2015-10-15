@@ -1,0 +1,46 @@
+*TITR
+		Testing Input Matrices Filler.
+		*OLOC
+		*FAUT
+
+		*INSTR
+		*POLAR TS1 T1 0.0 0.1 0.1 0
+		T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 
+
+		*CALA
+			STN  0 0 0
+			REF  100 0 0
+
+		*POIN
+			PT  0 100 0
+			PT2  100 100 0
+
+		*TSTN STN TS1 IHFIX
+		  *V0
+			*ANGL 
+				PT2 60
+				REF 110
+				PT  10
+			*ZEND
+				PT2 100
+				REF 100
+				PT  100
+			*DIST
+				PT2 141.421356237
+				REF 100
+				PT  100
+
+		*TSTN PT2 TS1 IHFIX
+		  *V0
+			*ANGL 
+				STN 240
+				REF 190
+				PT  290
+			*ZEND
+				STN 100
+				REF 100
+				PT  100
+			*DIST
+				STN 141.421356237
+				REF 100
+				PT  100
