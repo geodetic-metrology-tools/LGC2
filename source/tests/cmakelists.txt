@@ -1,0 +1,33 @@
+include_directories(${CMAKE_SOURCE_DIR})
+
+set(tests_SOURCES
+	testReaders
+	testGlobals
+	testsTransformationClasses
+	#testLSCalculation
+	testInputFileComplex
+	testInputFileComplex_Quentin
+	testComplexSUBFRAME
+	testGeodeticTransformations
+	testTLOR2LOR
+	testComplexMLA
+	testInputMatricesForDIR3D
+	main
+)
+
+set(tests_INPUT
+	input.h
+	contributionsGeneratorTest.h
+	inpMatrFillerTest.h
+	SubFrameTest.h
+	testComplexMLA.h
+	testComplexROOT.h
+	testComplexSUBFRAME.h
+	testComplexROOT_Quentin.h
+	TestUnitTransfo.h
+	testSimpleROOTForDIR3D.h
+)
+
+add_executable(tests ${tests_INPUT} ${tests_SOURCES})
+
+target_link_libraries(tests Readers LGCRoot CalcElements ProjectData Converters LGCConverters FiltersAndFormats StreamFormatters Writers LSCalculation MathematicalConcepts AffineTransformations ContributionsGenerators ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects Measurements)

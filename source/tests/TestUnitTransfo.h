@@ -1,0 +1,185 @@
+#ifndef _LGC_TESTS_UNITTRANSFO_H
+#define _LGC_TESTS_UNITTRANSFO_H
+
+namespace LGCTestTransfo {
+	char const *const testTransformations=
+		"*TITR\n"
+		"TEST TREE AND TRANSFO\n"
+		"*OLOC\n"
+
+		"*INSTR\n"
+		"*POLAR TS1 T1 0.0 0.1 0.1 0\n"
+		"T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 \n"
+		"*POLAR TS2 T1 0.0 0.1 0.1 0\n"
+		"T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 \n"
+
+		"*CALA\n"
+			"STN  0 0 0\n"
+			"STN2 100 100 0\n"
+			"STN3 -100 100 0\n"
+
+		"*POIN\n"
+			"PT  0 100 0\n"
+
+		"*FRAME FREF2 -100.0 0.0 0.0 0.0 0.0 300.0 1\n"
+		"*CALA\n"
+			"REF2  0 0 0\n"
+			"P3  -100.0 0.0 0.0\n"
+			"P4  -100.0 -200.0 0.0\n"
+			"*FRAME FPT2 -100.0 -100.0 0.0 0.0 0.0 0.0 1\n"
+				"*POIN\n"
+				"PT2  0.0 0.0 0.0 SX 10.0 SY 10.0 SZ 10.0\n"
+			"*ENDFRAME\n"
+		"*ENDFRAME\n"
+
+		"*FRAME FREF 100.0 0.0 0.0 0.0 0.0 0.0 1\n"
+		"*CALA\n"
+			"REF  0.0 0.0 0.0\n"
+
+		"*TSTN STN TS1 IHFIX\n"
+		  "*V0\n"
+			"*ANGL\n"
+				"REF      100.00103 \n"
+				"REF2      299.99951\n"
+				"PT        0.00020  \n"
+				"PT2      200.00005 \n"
+				"P3      349.99985  \n"
+				"P4      149.99958  \n"
+			"*ZEND\n"
+				"REF       99.99994 \n"
+				"REF2      100.00053\n"
+				"PT      100.00083  \n"
+				"PT2       99.99974 \n"
+				"P3      100.00005  \n"
+				"P4       99.99941  \n"		
+			"*DIST\n"
+				"REF      100.00066  \n"
+				"REF2       99.99942 \n"
+				"PT      100.00037   \n"
+				"PT2      100.00052  \n"
+				"P3      141.42096   \n"
+				"P4      141.42105   \n"
+
+		"*TSTN STN2 TS2 IHFIX\n"
+		  "*V0\n"
+			"*ANGL\n"
+				"REF      199.99977 \n"
+				"REF2      270.48360\n"
+				"STN      250.00036 \n"
+				"PT      300.00057  \n"
+				"PT2      229.51595 \n"
+				"P3      299.99983  \n"
+			"*ZEND\n"
+				"REF      100.00038 \n"
+				"REF2      100.00033\n"
+				"STN       99.99987 \n"
+				"PT       99.99984  \n"
+				"PT2      100.00016 \n"
+			    "P3       99.99997  \n"
+			"*DIST\n"
+				"REF      100.00032 \n"
+				"REF2      223.60663\n"
+				"STN      141.42177 \n"
+				"PT       99.99995  \n"
+				"PT2      223.60741 \n"
+				"P3      200.00059  \n"
+			
+		"*TSTN STN3 TS2 IHFIX\n"
+		  "*V0\n"
+			"*DIST\n"
+				"REF      223.60680 \n"
+				"REF2      100.00006\n"
+				"STN2      282.84304\n"
+				"PT      223.60721  \n"
+				"PT2      100.00071 \n"
+				"P3      200.00079  \n"
+				"P4      200.00113  \n"
+			"*ANGL\n"
+				"REF       70.48228 \n"
+				"REF2      399.99964\n"
+				"STN2       49.99969\n"
+				"PT       29.51667  \n"
+				"PT2       99.99929 \n"
+				"P3        0.00027  \n"
+				"P4      100.00116  \n"
+			"*ZEND\n"
+				"REF       99.99951 \n"
+				"REF2      100.00027\n"
+				"STN2      100.00025\n"
+				"PT       99.99953  \n"
+				"PT2       99.99994 \n"
+				"P3       99.99989  \n"
+				"P4       99.99997  \n"
+		"*ENDFRAME\n"
+		;
+
+
+		char const *const testTransformationsComplex=
+		"*TITR\n"
+		"TEST COMPLEX TRANSFORMATION CHAIN\n"
+		"*OLOC\n"
+
+		"*CALA\n"
+			"STN  0 0 0\n"
+			"STN2 100 100 0\n"
+			"STN3 -100 100 0\n"
+
+		"*POIN\n"
+			"PT  0 100 0\n"
+
+		"*FRAME FREF2 150.0 9758.0 -160.0 32.0 5.0 -148.0 2.0\n"
+			"*CALA\n"
+			"REF2  0 0 0\n"
+			"*FRAME FPT2 -606.0 -1291.0 -1.0 77.0 -56.0 195.0 1.0\n"
+				"*POIN\n"
+				"PT2  -10.597132 0.005198 4.55658 SX 10.0 SY 10.0 SZ 10.0\n"
+			"*ENDFRAME\n"
+		"*ENDFRAME\n"
+
+		"*FRAME FREF 6.0 -191.0 1561.0 3.0 -201 19 1.005\n"
+		"*CALA\n"
+			"REF  0.0 0.0 0.0\n"
+
+		
+		"*ENDFRAME\n"
+		;
+
+
+
+		char const *const testTransformationsWithScale=
+		"*TITR\n"
+		"TEST TREE AND TRANSFO\n"
+		"*OLOC\n"
+
+		"*INSTR\n"
+		"*POLAR TS1 T1 0.0 0.1 0.1 0\n"
+		"T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 \n"
+		"*POLAR TS2 T1 0.0 0.1 0.1 0\n"
+		"T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 \n"
+
+		"*CALA\n"
+			"STN  0 0 0\n"
+			"STN2 100 100 0\n"
+			"STN3 -100 100 0\n"
+
+		"*POIN\n"
+			"PT  0 100 0\n"
+
+		"*FRAME FREF2 -100.0 0.0 0.0 0.0 0.0 300.0 2\n"
+		"*CALA\n"
+			"REF2  0 0 0\n"
+			"P3  -100.0 0.0 0.0\n"
+			"P4  -100.0 -200.0 0.0\n"
+			"*FRAME FPT2 -100.0 -100.0 0.0 0.0 0.0 0.0 4\n"
+				"*POIN\n"
+				"PT2  0.0 0.0 0.0 SX 10.0 SY 10.0 SZ 10.0\n"
+			"*ENDFRAME\n"
+		"*ENDFRAME\n"
+
+		"*FRAME FREF 100.0 0.0 0.0 0.0 0.0 0.0 16\n"
+		"*CALA\n"
+			"REF  0.0 0.0 0.0\n"
+		"*ENDFRAME\n"
+		;
+	}
+#endif
