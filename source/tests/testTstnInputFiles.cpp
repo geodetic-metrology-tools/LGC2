@@ -97,9 +97,9 @@ namespace tut
 
 			const TLGCData& dataset = calcul.getData();
 			TPositionVector PTest = dataset.getPoints().getObject("PT").getEstimatedValue();
-			ensure_equals("Pt x coordinate should match",PTest.getX().getValue(), 0, 1e-12);
-			ensure_equals("Pt y coordinate should match",PTest.getY().getValue(), 100, 1e-12);
-			ensure_equals("Pt z coordinate should match",PTest.getZ().getValue(), 0, 1e-12);
+         ensure_equals("Pt x coordinate should match", PTest.getX().getMetresValue(), 0, 1e-12);
+         ensure_equals("Pt y coordinate should match", PTest.getY().getMetresValue(), 100, 1e-12);
+         ensure_equals("Pt z coordinate should match", PTest.getZ().getMetresValue(), 0, 1e-12);
 			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
 
 			std::vector<double> Outputv0;
@@ -192,9 +192,9 @@ namespace tut
 
 			const TLGCData& dataset = calcul.getData();
 			TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-			ensure_equals("Pt x coordinate should match",Pt.getX().getValue(), 0, 1e-12);
-			ensure_equals("Pt y coordinate should match",Pt.getY().getValue(), 100, 1e-12);
-			ensure_equals("Pt z coordinate should match",Pt.getZ().getValue(), 0, 1e-12);
+         ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
+         ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
+         ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
 			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
 
 			std::vector<double> Outputv0;
@@ -295,14 +295,14 @@ namespace tut
 
 			const TLGCData& dataset = calcul.getData();
 			TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-			ensure_equals("Pt x coordinate should match",Pt.getX().getValue(), 0, 1e-12);
-			ensure_equals("Pt y coordinate should match",Pt.getY().getValue(), 100, 1e-12);
-			ensure_equals("Pt z coordinate should match",Pt.getZ().getValue(), 0, 1e-12);
+         ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
+         ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
+         ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
 
 			TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
-			ensure_equals("Pt2 x coordinate should match",PT2.getX().getValue(), 100, 1e-9);
-			ensure_equals("Pt2 y coordinate should match",PT2.getY().getValue(), 100, 1e-9);
-			ensure_equals("Pt2 z coordinate should match",PT2.getZ().getValue(), 0, 1e-9);
+         ensure_equals("Pt2 x coordinate should match", PT2.getX().getMetresValue(), 100, 1e-9);
+         ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
+         ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
 
 			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
 
@@ -397,9 +397,9 @@ namespace tut
 
 				const TLGCData& dataset = calcul.getData();
 				TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-				ensure_equals("Pt x coordinate should match",Pt.getX().getValue(), 0, 1e-12);
-				ensure_equals("Pt y coordinate should match",Pt.getY().getValue(), 100, 1e-12);
-				ensure_equals("Pt z coordinate should match",Pt.getZ().getValue(), 0, 1e-12);
+				ensure_equals("Pt x coordinate should match",Pt.getX().getMetresValue(), 0, 1e-12);
+				ensure_equals("Pt y coordinate should match",Pt.getY().getMetresValue(), 100, 1e-12);
+				ensure_equals("Pt z coordinate should match",Pt.getZ().getMetresValue(), 0, 1e-12);
 				TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
 
 				std::vector<double> Outputv0;
@@ -503,14 +503,14 @@ namespace tut
 					const TLGCData& dataset = calcul.getData();
 
 					TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-					ensure_equals("Pt x coordinate should match",Pt.getX().getValue(), 0, 1e-12);
-					ensure_equals("Pt y coordinate should match",Pt.getY().getValue(), 100, 1e-12);
-					ensure_equals("Pt z coordinate should match",Pt.getZ().getValue(), 0, 1e-12);
+					ensure_equals("Pt x coordinate should match",Pt.getX().getMetresValue(), 0, 1e-12);
+					ensure_equals("Pt y coordinate should match",Pt.getY().getMetresValue(), 100, 1e-12);
+					ensure_equals("Pt z coordinate should match",Pt.getZ().getMetresValue(), 0, 1e-12);
 
 					TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
-					ensure_equals("Pt2 x coordinate should match",PT2.getX().getValue(), 100, 1e-9);
-					ensure_equals("Pt2 y coordinate should match",PT2.getY().getValue(), 100, 1e-9);
-					ensure_equals("Pt2 z coordinate should match",PT2.getZ().getValue(), 0, 1e-9);
+					ensure_equals("Pt2 x coordinate should match",PT2.getX().getMetresValue(), 100, 1e-9);
+					ensure_equals("Pt2 y coordinate should match",PT2.getY().getMetresValue(), 100, 1e-9);
+					ensure_equals("Pt2 z coordinate should match",PT2.getZ().getMetresValue(), 0, 1e-9);
 
 					TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
 					
@@ -556,9 +556,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 
-		ensure_equals("Pt x coordinate should match",PT.getX().getValue(), 0, 1e-12);
-		ensure_equals("Pt y coordinate should match",PT.getY().getValue(), 100, 1e-12);
-		ensure_equals("Pt z coordinate should match",PT.getZ().getValue(), 0, 1e-12);
+		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 0, 1e-12);
+		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 100, 1e-12);
+		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 0, 1e-12);
 
 		TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
         ensure_equals("V0 calculation should match for total station ST2",V0Calc, 199, 1e-8); 

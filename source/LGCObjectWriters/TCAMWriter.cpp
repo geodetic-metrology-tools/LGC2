@@ -132,13 +132,13 @@ void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 //X component
 		//write the observed X vector component
 		stream->setLengthUnits(TLength::kMetres); //it is unitless, decide what to use
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getX().getValue());
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getX().getMetresValue());
 
 		//write the sigma X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaX * LGC::M2MM); /*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated X vector component
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getX().getValue() + ItUVD.getXCompVectorResidual());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getX().getMetresValue() + ItUVD.getXCompVectorResidual());
 
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.getXCompVectorResidual()* LGC::M2MM);/*Unitless, delete or replace with appropriate conversion*/
@@ -146,13 +146,13 @@ void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 //Y vector component
 		//write the observed Y vector component
 		stream->setLengthUnits(TLength::kMetres); //it is unitless, decide what to use
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getY().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getY().getMetresValue());
 
 		//write the sigma Y vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaY * LGC::M2MM); /*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated Y vector component
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getY().getValue() + ItUVD.getYCompVectorResidual());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getY().getMetresValue() + ItUVD.getYCompVectorResidual());
 
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.getYCompVectorResidual()* LGC::M2MM);/*Unitless, delete or replace with appropriate conversion*/
@@ -206,13 +206,13 @@ void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
 //X component
 		//write the observed X vector component
 		stream->setLengthUnits(TLength::kMetres); //it is unitless, decide what to use
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getX().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getX().getMetresValue());
 
 		//write the sigma X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaX* LGC::M2MM);/*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated X vector component
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getX().getValue() + ItUVEC.getXCompVectorResidual());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getX().getMetresValue() + ItUVEC.getXCompVectorResidual());
 
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getXCompVectorResidual()* LGC::M2MM);/*Unitless, delete or replace with appropriate conversion*/
@@ -220,13 +220,13 @@ void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
 //Y vector component
 		//write the observed Y vector component
 		stream->setLengthUnits(TLength::kMetres); //it is unitless, decide what to use
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getY().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getY().getMetresValue());
 
 		//write the sigma Y vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaY* LGC::M2MM);/*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated Y vector component
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getY().getValue() + ItUVEC.getYCompVectorResidual());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getY().getMetresValue() + ItUVEC.getYCompVectorResidual());
 
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getYCompVectorResidual()* LGC::M2MM);/*Unitless, delete or replace with appropriate conversion*/
@@ -384,7 +384,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		(*stream).writeStringLeft(nameWidth, "");
 
 		//get the observed i component
-		(*stream).writeDouble(obsWidth, lengthPrecision,ItUvec.getVectorValue().getX().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUvec.getVectorValue().getX().getMetresValue());
 		//get the sigma of i component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaX* LGC::M2MM);
 		//get the residual
@@ -403,7 +403,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		index = index + 1;
 
 		//get the observed j component
-		(*stream).writeDouble(obsWidth, lengthPrecision,ItUvec.getVectorValue().getY().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUvec.getVectorValue().getY().getMetresValue());
 		//get the sigma of j component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaY* LGC::M2MM);
 		//get the residual
@@ -446,7 +446,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		(*stream).writeStringLeft(nameWidth, "");
 
 		//get the observed i component
-		(*stream).writeDouble(obsWidth, lengthPrecision,ItUvd.getVectorValue().getX().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUvd.getVectorValue().getX().getMetresValue());
 		//get the sigma of i component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaX* LGC::M2MM);
 		//get the residual
@@ -464,7 +464,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		(*stream).writeStringLeft(nameWidth, "");
 
 		//get the observed j component
-		(*stream).writeDouble(obsWidth, lengthPrecision,ItUvd.getVectorValue().getY().getValue());
+      (*stream).writeDouble(obsWidth, lengthPrecision, ItUvd.getVectorValue().getY().getMetresValue());
 		//get the sigma of j component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaY* LGC::M2MM);
 		//get the residual

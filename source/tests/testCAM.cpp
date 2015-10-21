@@ -50,9 +50,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
  	}
 
 	template<>
@@ -79,9 +79,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
  	}
 
 	template<>
@@ -108,9 +108,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 		
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -143,9 +143,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -178,9 +178,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -212,9 +212,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -247,9 +247,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -282,9 +282,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2 = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2 x coordinate should match",P2.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2 y coordinate should match",P2.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2 z coordinate should match",P2.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2 x coordinate should match",P2.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2 y coordinate should match",P2.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2 z coordinate should match",P2.getZ().getMetresValue(), 100.0  , 1e-7);
 	}
 
 	template<>
@@ -311,9 +311,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2 = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2 x coordinate should match",P2.getX().getValue(), 0.0  , 1e-7);
-		ensure_equals("P2 y coordinate should match",P2.getY().getValue(), 0.0, 1e-7);
-		ensure_equals("P2 z coordinate should match",P2.getZ().getValue(), 0.0  , 1e-7);
+		ensure_equals("P2 x coordinate should match",P2.getX().getMetresValue(), 0.0  , 1e-7);
+		ensure_equals("P2 y coordinate should match",P2.getY().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("P2 z coordinate should match",P2.getZ().getMetresValue(), 0.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -345,9 +345,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2 = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2 x coordinate should match",P2.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2 y coordinate should match",P2.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2 z coordinate should match",P2.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2 x coordinate should match",P2.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2 y coordinate should match",P2.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2 z coordinate should match",P2.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -379,9 +379,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2 = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2 x coordinate should match",P2.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2 y coordinate should match",P2.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2 z coordinate should match",P2.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2 x coordinate should match",P2.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2 y coordinate should match",P2.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2 z coordinate should match",P2.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -418,9 +418,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
  	}
 
 	template<>
@@ -447,9 +447,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -481,9 +481,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -516,9 +516,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -551,9 +551,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -586,9 +586,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
  	}
 
 #if 0
@@ -616,9 +616,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 0.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 0.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 0.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 0.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 0.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -650,9 +650,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -683,9 +683,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector P2VAR = dataset.getPoints().getObject("P2VAR").getEstimatedValue();
-		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getValue(), 100.0  , 1e-7);
-		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getValue(), 100.0, 1e-7);
-		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR x coordinate should match",P2VAR.getX().getMetresValue(), 100.0  , 1e-7);
+		ensure_equals("P2VAR y coordinate should match",P2VAR.getY().getMetresValue(), 100.0, 1e-7);
+		ensure_equals("P2VAR z coordinate should match",P2VAR.getZ().getMetresValue(), 100.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;

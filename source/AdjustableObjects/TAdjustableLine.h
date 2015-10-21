@@ -90,7 +90,7 @@ public:
 		/// Returns a constant reference on the covariances of the line's vector 
 		const TFreeVector&		getLineVectorCovariances() const {return fLineVectorCovariance;}
 		
-		virtual bool isInitialized() const { return !isnan(fPointProvisionalValue.getX().getValue());}
+      virtual bool isInitialized() const { return !isnan(fPointProvisionalValue.getX().getMetresValue()); }
 
 		/*!
 			\brief Returns The number of unknowns for this line.

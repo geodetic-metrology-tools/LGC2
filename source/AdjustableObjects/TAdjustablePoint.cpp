@@ -68,9 +68,9 @@ TReal TAdjustablePoint::getStandDev(int d)const{
 
 TLength	TAdjustablePoint::getErrorEllMajorAxis() const
 {
-	TReal vxy = getXYCovar().getValue();
-	TReal sx2 = powq(getXEstPrecision().getValue(), 2) ;
-	TReal sy2 = powq(getYEstPrecision().getValue(), 2) ;
+	TReal vxy = getXYCovar();
+	TReal sx2 = powq(getXEstPrecision(), 2) ;
+	TReal sy2 = powq(getYEstPrecision(), 2) ;
 	TReal gdAxe = (LITERAL(1.0)/sqrtq(LITERAL(2.0))) * sqrtq( sx2 + sy2 + sqrtq( powq((sy2 - sx2), 2) + (LITERAL(4.0) * vxy * vxy) ) );
 	
 	TLength res;
@@ -80,9 +80,9 @@ TLength	TAdjustablePoint::getErrorEllMajorAxis() const
 
 TLength		TAdjustablePoint::getErrorEllMinorAxis() const
 {
-	TReal vxy = getXYCovar().getValue();
-	TReal sx2 = powq(getXEstPrecision().getValue(), 2) ;
-	TReal sy2 = powq(getYEstPrecision().getValue(), 2) ;
+	TReal vxy = getXYCovar();
+	TReal sx2 = powq(getXEstPrecision(), 2) ;
+	TReal sy2 = powq(getYEstPrecision(), 2) ;
 	TReal ptAxe = (LITERAL(1.0)/sqrtq(LITERAL(2.0))) * sqrtq( sx2 + sy2 - sqrtq( powq((sy2 - sx2), 2) + (LITERAL(4.0) * vxy *vxy) ) );
 	
 	TLength res;
@@ -112,9 +112,9 @@ TAngle TAdjustablePoint::getErrorEllGis() const
 TAdjustablePoint::ErrorEllipsoid TAdjustablePoint::getErrorEllipsoid() const {
 	Eigen::Matrix3d m;
 
-	m << pow2(getXEstPrecision().getValue()),     getXYCovar().getValue(),     getXZCovar().getValue(),
-             getXYCovar().getValue(),  pow2(getYEstPrecision().getValue()),    getYZCovar().getValue(),
-		     getXZCovar().getValue(),      getYZCovar().getValue(), pow2(getZEstPrecision().getValue());
+	m << pow2(getXEstPrecision()), getXYCovar(), getXZCovar(), getXYCovar(), 
+        pow2(getYEstPrecision()), getYZCovar(), getXZCovar(), getYZCovar(), 
+        pow2(getZEstPrecision());
 
 	Eigen::EigenSolver<Eigen::Matrix3d> ev(m);
 	
@@ -153,18 +153,18 @@ void TAdjustablePoint::setCorrection(int idx, TReal value) {
 	for (int i = 0; i < 3; i++){
 		if (uidx[i] == idx) {
 			if (i == 0 ){
-				fCorrection.setX(value);
-				fEstimatedValue.setX(fEstimatedValue.getX()+value);
+            fCorrection.setX(TLength(value));
+            fEstimatedValue.setX(fEstimatedValue.getX() + TLength(value));
 				fXValueSet = true;
 			}
 			else if(i == 1){
-				fCorrection.setY(value);
-				fEstimatedValue.setY(fEstimatedValue.getY()+value);
+            fCorrection.setY(TLength(value));
+            fEstimatedValue.setY(fEstimatedValue.getY() + TLength(value));
 				fYValueSet = true;
 			}
 			else{
-				fCorrection.setZ(value);
-				fEstimatedValue.setZ(fEstimatedValue.getZ()+value);
+            fCorrection.setZ(TLength(value));
+            fEstimatedValue.setZ(fEstimatedValue.getZ() + TLength(value));
 			}
 
 			//If H value is fixed and all variables were set in this step, we need to make transformation: X1Y1Z1 -> X1Y1H0 --> X1Y1Z0new
@@ -187,13 +187,13 @@ void	TAdjustablePoint::setEstimatedPrecision(int idx, TReal value){
 	for (int i = 0; i < 3; i++){
 		if (uidx[i] == idx) {
 			if (i == 0 ){
-				fEstimatedPrecision.setX(value);
+            fEstimatedPrecision.setX(TLength(value));
 			}
 			else if(i == 1){
-				fEstimatedPrecision.setY(value);
+            fEstimatedPrecision.setY(TLength(value));
 			}
 			else{
-				fEstimatedPrecision.setZ(value);
+            fEstimatedPrecision.setZ(TLength(value));
 			}
 			return;
 		}
@@ -204,7 +204,7 @@ void	TAdjustablePoint::setEstimatedPrecision(int idx, TReal value){
 /*! Sets the XY covariance after calculation */
 void	TAdjustablePoint::setXYEstimatedCovariance(TReal value){
 	if (!fixedState[0] && !fixedState[1])
-		fCovariance.setX(value);
+      fCovariance.setX(TLength(value));
 	else
 		throw std::logic_error("Point must be variable in both X and Y.");
 	
@@ -213,7 +213,7 @@ void	TAdjustablePoint::setXYEstimatedCovariance(TReal value){
 /*! Sets the YZ covariance after calculation  */
 void	TAdjustablePoint::setYZEstimatedCovariance(TReal value){
 	if (!fixedState[1] && !fixedState[2])
-		fCovariance.setY(value);
+		fCovariance.setY(TLength(value));
 	else
 		throw std::logic_error("Point must be variable in both Y and Z.");
 }
@@ -223,7 +223,7 @@ void	TAdjustablePoint::setYZEstimatedCovariance(TReal value){
 */
 void	TAdjustablePoint::setXZEstimatedCovariance(TReal value){
 	if (!fixedState[0] && !fixedState[2])
-		fCovariance.setZ(value);
+      fCovariance.setZ(TLength(value));
 	else
 		throw std::logic_error("Point must be variable in both X and Z.");
 }
@@ -339,5 +339,5 @@ TReal TAdjustablePoint::getHEstValue() const{
 	else if (fReferential == TLGCRefFrame::ERefs::kLEP)
 		TXYH2CCS::CCS2XYHg1985Machine(pvEst);
 
-	return pvEst.getH().getValue();
+	return pvEst.getH().getMetresValue();
 }

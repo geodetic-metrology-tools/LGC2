@@ -85,9 +85,9 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	//second line
 	(*stream)<<TABs1;
 	(*stream).writeStringLeft(nameWidth,echorom.fMeasuredPlane->getReferencePoint()->getName()); //Reference point
-	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0).getValue());
-	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1).getValue());
-	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2).getValue());
+	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream)<<endl<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 
@@ -152,9 +152,9 @@ void TSCALEWriter::writeECHOSIMUResults(const  TECHOROM& echorom)
 	//second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth,echorom.fMeasuredPlane->getReferencePoint()->getName()); //Reference point
-	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0).getValue());
-	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1).getValue());
-	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2).getValue());
+	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeDouble(obsWidth,obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream)<<endl<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 

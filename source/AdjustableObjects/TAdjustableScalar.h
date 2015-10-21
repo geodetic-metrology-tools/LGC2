@@ -34,7 +34,7 @@ public:
 	/*!@name Access methods*/
 	//@{
 		/// Returns the provisional value of the scalar. 
-		inline TScalar 	getProvisionalValue() const {return fProvisionalValue;}
+		inline TScalar getProvisionalValue() const {return fProvisionalValue;}
 
 		/// Returns the correction value of the scalar. 
 		inline TScalar	getCorrection() const {	return fCorrection;}

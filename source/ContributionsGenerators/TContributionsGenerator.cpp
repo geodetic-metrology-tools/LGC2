@@ -48,9 +48,9 @@ void TContributionsGenerator::transformPointsToMLASystem(std::string originName,
 			fLastStationPtName = originName;
 		}
 		transform2MLA(additPointPos);
-		originOfMLAPos.setX(0.0);
-		originOfMLAPos.setY(0.0);
-		originOfMLAPos.setZ(0.0);
+		originOfMLAPos.setX(TLength(0.0));
+      originOfMLAPos.setY(TLength(0.0));
+      originOfMLAPos.setZ(TLength(0.0));
 }
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- TSTN measurements
@@ -83,13 +83,13 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(const TTSTN& 
 		fMLAused = false;
 
 // Prepare coefficients (a,b,c) for the points and the transformations contributions
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
-	TReal zSt = stationPos.getZ().getValue();
+	TReal xSt = stationPos.getX().getMetresValue();
+   TReal ySt = stationPos.getY().getMetresValue();
+   TReal zSt = stationPos.getZ().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
-	TReal zTg = targetPos.getZ().getValue();
+   TReal xTg = targetPos.getX().getMetresValue();
+   TReal yTg = targetPos.getY().getMetresValue();
+   TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = dist.target.targetHt;
 	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getValue();
@@ -152,11 +152,11 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(const TTSTN& station,
 	else
 		fMLAused = false;
 
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
+	TReal xSt = stationPos.getX().getMetresValue();
+   TReal ySt = stationPos.getY().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
+   TReal xTg = targetPos.getX().getMetresValue();
+   TReal yTg = targetPos.getY().getMetresValue();
 
 	//Calculated measurement value
 	LGC::TAngle calcMeas = LGC::TAngle::atan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst;  //ACST is the constant orientation of the instrument
@@ -211,13 +211,13 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(const TTSTN& station,
 
 // Prepare coefficients (a,b,c) for the points and the transformations contributions
 	//PARAMETERS IN LOCAL INSTRUMENT SYTEM
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
-	TReal zSt = stationPos.getZ().getValue();
+   TReal xSt = stationPos.getX().getMetresValue();
+   TReal ySt = stationPos.getY().getMetresValue();
+   TReal zSt = stationPos.getZ().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
-	TReal zTg = targetPos.getZ().getValue();
+   TReal xTg = targetPos.getX().getMetresValue();
+   TReal yTg = targetPos.getY().getMetresValue();
+   TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = zend.target.targetHt;
 	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getValue();
@@ -334,17 +334,17 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 	TReal sinPhi = plr3D.getAngle(kZEND).sin();
 	TReal cosPhi = plr3D.getAngle(kZEND).cos();
 
-	TReal dX = targetPos.getX().getValue() - stationPos.getX().getValue();
-	TReal dY = targetPos.getY().getValue() - stationPos.getY().getValue();
-	TReal dZ = targetPos.getZ().getValue() + plr3D.target.targetHt - stationPos.getZ().getValue() -  station.instrumentHeightAdjustable->getEstimatedValue().getValue();
+   TReal dX = targetPos.getX().getMetresValue() - stationPos.getX().getMetresValue();
+   TReal dY = targetPos.getY().getMetresValue() - stationPos.getY().getMetresValue();
+   TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue().getValue();
 
-	TReal dist2 = pow2q(dist(stationPos.getX().getValue(), stationPos.getY().getValue(), targetPos.getX().getValue(), targetPos.getY().getValue()));
+   TReal dist2 = pow2q(dist(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue()));
 	TReal distance3D = sqrt(pow2q(dX) + pow2q(dY)+pow2q(dZ));
 	TReal c = (1.0 / (distance3D * sinPhi)) - powq(dZ,2)/(powq(distance3D,3) * sinPhi);
 
 	//Contribution to be returned
 	PLR3DContrib contrib = {coordContribStation, coordContribTarget, stationTransfContributions,  targetTransfContributions, 
-	{line1AMat.getZ().getValue(), line2AMat.getZ().getValue(), line3AMat.getZ().getValue()},//Instrument height contribution
+   {line1AMat.getZ().getMetresValue(), line2AMat.getZ().getMetresValue(), line3AMat.getZ().getMetresValue()},//Instrument height contribution
 	//V0 contribution for a first, second and third equation
 	{-(-sinV0*cosRy*dX + (-cosV0*cosRx-sinV0*sinRx*sinRy)*dY + (cosV0*sinRx-sinV0*cosRx*sinRy)*dZ),
 	 -(cosV0*cosRy*dX + (-sinV0*cosRx+cosV0*sinRx*sinRy)*dY + (sinV0*sinRx+cosV0*cosRx*sinRy)*dZ), 
@@ -425,11 +425,11 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(const TTSTN& station, 
 	else
 		fMLAused = false;
 
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
+   TReal xSt = stationPos.getX().getMetresValue();
+   TReal ySt = stationPos.getY().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
+   TReal xTg = targetPos.getX().getMetresValue();
+   TReal yTg = targetPos.getY().getMetresValue();
 
 	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue().getValue();
 
@@ -482,13 +482,13 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 	else
 		fMLAused = false;
 /////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
-	TReal zSt = stationPos.getZ().getValue();
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
-	TReal zTg = targetPos.getZ().getValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = dspt.target.targetHt;
 	TReal hInst = edmST.instrument.instrHeight;
@@ -554,11 +554,11 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const TAdjustable
 	else
 		fMLAused = false;
 
-	TReal xSt = staffPos.getX().getValue();
-	TReal ySt = staffPos.getY().getValue();
+	TReal xSt = staffPos.getX().getMetresValue();
+	TReal ySt = staffPos.getY().getMetresValue();
 
-	TReal xTg = refPointPos.getX().getValue();
-	TReal yTg = refPointPos.getY().getValue();
+	TReal xTg = refPointPos.getX().getMetresValue();
+	TReal yTg = refPointPos.getY().getMetresValue();
 
 	calcMeas = dist(xSt, ySt, xTg, yTg);
 
@@ -606,8 +606,8 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 	else
 		fMLAused = false;
 
-	TReal dTg = sqrtq(pow2q(staffPosition.getX().getValue() - referencePoint.getX().getValue()) + pow2q(staffPosition.getY().getValue() - referencePoint.getY().getValue())); 
-	TReal calcMeas = referencePoint.getZ().getValue() - staffPosition.getZ().getValue() + dRef - cdz - dTg*tanq(collAngl);
+	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue()) + pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue())); 
+	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg*tanq(collAngl);
 
 	//Station can be defined anywhere, get point contributions and transformations contributions
 	TFreeVector staffContrib = getPointContributions(staffPTLor2RootTrafo, 0, 0, -1);
@@ -652,13 +652,13 @@ ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, con
 	else
 		fMLAused = false;
 
-	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX() ).getValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getValue() + dRef - cEcVp;
+	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX() ).getMetresValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue() + dRef - cEcVp;
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
 	TFreeVector stationContrib = getPointContributions(stationPTLor2RootTrafo,  -cosq(theta), sinq(theta), 0.0);
 	addTransformationsContributions(stationPTLor2RootTrafo, echo.targetPos->getEstimatedValue(),  -cosq(theta), sinq(theta), 0.0, stationTransfContributions);
 	
-	TReal thetaContrib = sinq(theta)*(stationPoint.getX() - referencePoint.getX()).getValue() + cosq(theta)*(stationPoint.getY() - referencePoint.getY()).getValue();
+	TReal thetaContrib = sinq(theta)*(stationPoint.getX() - referencePoint.getX()).getMetresValue() + cosq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue();
 
 	TReal refPtDistContrib = 1.0;
 	TReal obsVariance = pow2q(echo.target.sigmaD + echo.getDistance()/1000*echo.target.ppmD) + pow2q(echo.target.sigmaInstrCentering);
@@ -717,19 +717,19 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 		/*IMPORTANT ENABLE CGRF, APPLIES IN POINT AND TRANSFORMATION CONTRIBUTIONS*/
 		fCGRFused = true;
 		//Calculating the distance meas
-		dh = target.getH().getValue() - station.getH().getValue() - dver.getDistanceCorrection();
+		dh = target.getH().getMetresValue() - station.getH().getMetresValue() - dver.getDistanceCorrection();
 
 	}
 	else{ /*OLOC = Calculated as XYZ, simple case*/
 		fCGRFused = false;
-		dh = target.getZ().getValue() - station.getZ().getValue() - dver.getDistanceCorrection();
+		dh = target.getZ().getMetresValue() - station.getZ().getMetresValue() - dver.getDistanceCorrection();
 		
 	}
 	
-	TFreeVector stationContrib = getPointContributions(stLor2RootTrafo,stationC.getX().getValue(),stationC.getY().getValue(),stationC.getZ().getValue());
+	TFreeVector stationContrib = getPointContributions(stLor2RootTrafo,stationC.getX().getMetresValue(),stationC.getY().getMetresValue(),stationC.getZ().getMetresValue());
 	addTransformationsContributions(stLor2RootTrafo,stationLOR,0,0,-1,stationTransfContributions);
 	
-	TFreeVector targetContrib = getPointContributions(tgLor2RootTrafo, targetC.getX().getValue(),targetC.getY().getValue(),targetC.getZ().getValue());
+	TFreeVector targetContrib = getPointContributions(tgLor2RootTrafo, targetC.getX().getMetresValue(),targetC.getY().getMetresValue(),targetC.getZ().getMetresValue());
 	addTransformationsContributions(tgLor2RootTrafo,targetLOR, 0, 0, 1, targetTransfContributions);
 
 	DVERContrib dverC =  { dh, stationContrib, targetContrib, stationTransfContributions, targetTransfContributions, pow2q( dver.getObservedStDev())};
@@ -747,14 +747,14 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 	tg2stTrafo.transform(targetPos);	
 
 	const TFreeVector& unitVec = uvec.getVectorValue(); // observed vector (X and Y), Z is not observed
-	TReal i = unitVec.getX().getValue();
-	TReal j = unitVec.getY().getValue();
-	TReal k = unitVec.getZ().getValue();
+	TReal i = unitVec.getX().getMetresValue();
+	TReal j = unitVec.getY().getMetresValue();
+	TReal k = unitVec.getZ().getMetresValue();
 
 	const TPositionVector& instrEstimValue = camera.instrumentPos->getEstimatedValue();
-	TReal dx = targetPos.getX().getValue() - instrEstimValue.getX().getValue();
-	TReal dy = targetPos.getY().getValue() - instrEstimValue.getY().getValue();
-	TReal dz = targetPos.getZ().getValue() - instrEstimValue.getZ().getValue();
+	TReal dx = targetPos.getX().getMetresValue() - instrEstimValue.getX().getMetresValue();
+	TReal dy = targetPos.getY().getMetresValue() - instrEstimValue.getY().getMetresValue();
+	TReal dz = targetPos.getZ().getMetresValue() - instrEstimValue.getZ().getMetresValue();
 
 	TFreeVector stFirstEqContrib(-k/dz, 
 						  0.0, 
@@ -765,13 +765,13 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 						  k*(dy/pow2q(dz)), TCoordSysFactory::k3DCartesian);
 
 
-	TFreeVector tgFirstEqContrib(k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToX0().getZ().getValue() + (1/dz)*tg2stTrafo.partDerivWRespToX0().getX().getValue()), 
-						  k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToY0().getZ().getValue() + (1/dz)*tg2stTrafo.partDerivWRespToY0().getX().getValue()), 
-						  k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToZ0().getZ().getValue() + (1/dz)*tg2stTrafo.partDerivWRespToZ0().getX().getValue()), TCoordSysFactory::k3DCartesian);
+	TFreeVector tgFirstEqContrib(k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToX0().getX().getMetresValue()), 
+						  k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToY0().getX().getMetresValue()), 
+						  k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToZ0().getX().getMetresValue()), TCoordSysFactory::k3DCartesian);
 
-	TFreeVector tgSecondEqContrib(k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToX0().getZ().getValue() + (1/dz)*tg2stTrafo.partDerivWRespToX0().getY().getValue()), 
-						  k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToY0().getZ().getValue() + (1/dz)*tg2stTrafo.partDerivWRespToY0().getY().getValue()), 
-						  k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToZ0().getZ().getValue() + (1/dz)*tg2stTrafo.partDerivWRespToZ0().getY().getValue()), TCoordSysFactory::k3DCartesian);
+	TFreeVector tgSecondEqContrib(k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToX0().getY().getMetresValue()), 
+						  k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToY0().getY().getMetresValue()), 
+						  k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToZ0().getY().getMetresValue()), TCoordSysFactory::k3DCartesian);
 
 
 //Fill transformation contributions
@@ -795,23 +795,23 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 		TFreeVector scalePD = tg2stTrafo.partialDerivativesScale(transformationName, targetPos);
 
 		TransformationContrib firstEqContrib = {
-			TFreeVector(k*(-(1/pow2q(dz))*omegaPD.getZ().getValue()*dx + (1/dz)*omegaPD.getX().getValue()), 
-						  k*(-(1/pow2q(dz))*phiPD.getZ().getValue()*dx + (1/dz)*phiPD.getX().getValue()), 
-						  k*(-(1/pow2q(dz))*kappaPD.getZ().getValue()*dx + (1/dz)*kappaPD.getX().getValue()), TCoordSysFactory::k3DCartesian),
-			TFreeVector(k*((-1/pow2q(dz))*trans1PD.getZ().getValue()*dx + (1/dz)*trans1PD.getX().getValue()), 
-						  k*(-(1/pow2q(dz))*trans2PD.getZ().getValue()*dx + (1/dz)*trans2PD.getX().getValue()), 
-						  k*(-(1/pow2q(dz))*trans3PD.getZ().getValue()*dx + (1/dz)*trans3PD.getX().getValue()), TCoordSysFactory::k3DCartesian),
-				k*(-(1/pow2q(dz))*scalePD.getZ().getValue()*dx + (1/dz)*scalePD.getX().getValue())
+			TFreeVector(k*(-(1/pow2q(dz))*omegaPD.getZ().getMetresValue()*dx + (1/dz)*omegaPD.getX().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*phiPD.getZ().getMetresValue()*dx + (1/dz)*phiPD.getX().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*kappaPD.getZ().getMetresValue()*dx + (1/dz)*kappaPD.getX().getMetresValue()), TCoordSysFactory::k3DCartesian),
+			TFreeVector(k*((-1/pow2q(dz))*trans1PD.getZ().getMetresValue()*dx + (1/dz)*trans1PD.getX().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*trans2PD.getZ().getMetresValue()*dx + (1/dz)*trans2PD.getX().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*trans3PD.getZ().getMetresValue()*dx + (1/dz)*trans3PD.getX().getMetresValue()), TCoordSysFactory::k3DCartesian),
+				k*(-(1/pow2q(dz))*scalePD.getZ().getMetresValue()*dx + (1/dz)*scalePD.getX().getMetresValue())
 		};
 
 		TransformationContrib secondEqContrib = {
-			TFreeVector(k*(-(1/pow2q(dz))*omegaPD.getZ().getValue()*dy + (1/dz)*omegaPD.getY().getValue()), 
-						  k*(-(1/pow2q(dz))*phiPD.getZ().getValue()*dy + (1/dz)*phiPD.getY().getValue()), 
-						 k*(-(1/pow2q(dz))*kappaPD.getZ().getValue()*dy + (1/dz)*kappaPD.getY().getValue()), TCoordSysFactory::k3DCartesian),
-			TFreeVector(k*(-(1/pow2q(dz))*trans1PD.getZ().getValue()*dy + (1/dz)*trans1PD.getY().getValue()), 
-						  k*(-(1/pow2q(dz))*trans2PD.getZ().getValue()*dy + (1/dz)*trans2PD.getY().getValue()), 
-						  k*(-(1/pow2q(dz))*trans3PD.getZ().getValue()*dy + (1/dz)*trans3PD.getY().getValue()), TCoordSysFactory::k3DCartesian),
-						k*(-(1/pow2q(dz))*scalePD.getZ().getValue()*dy + (1/dz)*scalePD.getY().getValue())
+			TFreeVector(k*(-(1/pow2q(dz))*omegaPD.getZ().getMetresValue()*dy + (1/dz)*omegaPD.getY().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*phiPD.getZ().getMetresValue()*dy + (1/dz)*phiPD.getY().getMetresValue()), 
+						 k*(-(1/pow2q(dz))*kappaPD.getZ().getMetresValue()*dy + (1/dz)*kappaPD.getY().getMetresValue()), TCoordSysFactory::k3DCartesian),
+			TFreeVector(k*(-(1/pow2q(dz))*trans1PD.getZ().getMetresValue()*dy + (1/dz)*trans1PD.getY().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*trans2PD.getZ().getMetresValue()*dy + (1/dz)*trans2PD.getY().getMetresValue()), 
+						  k*(-(1/pow2q(dz))*trans3PD.getZ().getMetresValue()*dy + (1/dz)*trans3PD.getY().getMetresValue()), TCoordSysFactory::k3DCartesian),
+						k*(-(1/pow2q(dz))*scalePD.getZ().getMetresValue()*dy + (1/dz)*scalePD.getY().getMetresValue())
 		};
 
 		TransformationContrib2D trafoContrib = {firstEqContrib, secondEqContrib};
@@ -849,13 +849,13 @@ UVDContrib	TContributionsGenerator::getUVDContrib(const TCAM& camera, const TUVD
 	addUVDTgTransfContributionsCamera(tg2stTrafo,  uvd.targetPos->getEstimatedValue(), targetTransfContributions);
 
 	TReal sDist = uvd.getDistance(); //measured distance
-	TReal i = uvd.getVectorValue().getX().getValue(); // X component
-	TReal j = uvd.getVectorValue().getY().getValue(); // Y component
-	TReal k = uvd.getVectorValue().getZ().getValue(); // Z component
+	TReal i = uvd.getVectorValue().getX().getMetresValue(); // X component
+	TReal j = uvd.getVectorValue().getY().getMetresValue(); // Y component
+	TReal k = uvd.getVectorValue().getZ().getMetresValue(); // Z component
 
-	TReal dx = targetPos.getX().getValue() - camera.instrumentPos->getEstimatedValue().getX().getValue();
-	TReal dy = targetPos.getY().getValue() - camera.instrumentPos->getEstimatedValue().getY().getValue();
-	TReal dz = targetPos.getZ().getValue() - camera.instrumentPos->getEstimatedValue().getZ().getValue();
+	TReal dx = targetPos.getX().getMetresValue() - camera.instrumentPos->getEstimatedValue().getX().getMetresValue();
+	TReal dy = targetPos.getY().getMetresValue() - camera.instrumentPos->getEstimatedValue().getY().getMetresValue();
+	TReal dz = targetPos.getZ().getMetresValue() - camera.instrumentPos->getEstimatedValue().getZ().getMetresValue();
 
 	UVDContrib contrib = {coordContribStation, coordContribTarget, targetTransfContributions, 
 		{sDist,0.0, 0.0}, // i
@@ -968,9 +968,9 @@ TFreeVector TContributionsGenerator::getPointContributions(const TLOR2LOR& lorTr
 		fccs2cgrf.transform(derZ0);
 	}
 
-	TReal xContrib = a * derX0.getX().getValue() + b * derX0.getY().getValue() + c* derX0.getZ().getValue();
-	TReal yContrib = a * derY0.getX().getValue() + b * derY0.getY().getValue() + c* derY0.getZ().getValue();
-	TReal zContrib = a * derZ0.getX().getValue() + b * derZ0.getY().getValue() + c* derZ0.getZ().getValue();
+	TReal xContrib = a * derX0.getX().getMetresValue() + b * derX0.getY().getMetresValue() + c* derX0.getZ().getMetresValue();
+	TReal yContrib = a * derY0.getX().getMetresValue() + b * derY0.getY().getMetresValue() + c* derY0.getZ().getMetresValue();
+	TReal zContrib = a * derZ0.getX().getMetresValue() + b * derZ0.getY().getMetresValue() + c* derZ0.getZ().getMetresValue();
 	
 	return TFreeVector(xContrib, yContrib, zContrib, TCoordSysFactory::k3DCartesian); //Contribution of the point's coordinates
 }
@@ -1016,15 +1016,15 @@ void TContributionsGenerator::addTransformationsContributions(const TLOR2LOR& tr
 				fccs2cgrf.transform(scalePD);
 			}
 
-			omegaContrib = a * omegaPD.getX().getValue() + b * omegaPD.getY().getValue() + c * omegaPD.getZ().getValue();
-			phiContrib = a * phiPD.getX().getValue() + b * phiPD.getY().getValue() + c * phiPD.getZ().getValue();
-			kappaContrib = a * kappaPD.getX().getValue() + b * kappaPD.getY().getValue() + c * kappaPD.getZ().getValue();
+			omegaContrib = a * omegaPD.getX().getMetresValue() + b * omegaPD.getY().getMetresValue() + c * omegaPD.getZ().getMetresValue();
+			phiContrib = a * phiPD.getX().getMetresValue() + b * phiPD.getY().getMetresValue() + c * phiPD.getZ().getMetresValue();
+			kappaContrib = a * kappaPD.getX().getMetresValue() + b * kappaPD.getY().getMetresValue() + c * kappaPD.getZ().getMetresValue();
 
-			trans1Contrib = a * trans1PD.getX().getValue() + b * trans1PD.getY().getValue() + c * trans1PD.getZ().getValue();
-			trans2Contrib = a * trans2PD.getX().getValue() + b * trans2PD.getY().getValue() + c * trans2PD.getZ().getValue();
-			trans3Contrib = a * trans3PD.getX().getValue() + b * trans3PD.getY().getValue() + c * trans3PD.getZ().getValue();
+			trans1Contrib = a * trans1PD.getX().getMetresValue() + b * trans1PD.getY().getMetresValue() + c * trans1PD.getZ().getMetresValue();
+			trans2Contrib = a * trans2PD.getX().getMetresValue() + b * trans2PD.getY().getMetresValue() + c * trans2PD.getZ().getMetresValue();
+			trans3Contrib = a * trans3PD.getX().getMetresValue() + b * trans3PD.getY().getMetresValue() + c * trans3PD.getZ().getMetresValue();
 
-			scaleContrib = a * scalePD.getX().getValue() + b * scalePD.getY().getValue() + c * scalePD.getZ().getValue();
+			scaleContrib = a * scalePD.getX().getMetresValue() + b * scalePD.getY().getMetresValue() + c * scalePD.getZ().getMetresValue();
 
 			TransformationContrib trContrib = {TFreeVector(omegaContrib, phiContrib, kappaContrib, TCoordSysFactory::k3DCartesian), TFreeVector(trans1Contrib,trans2Contrib,trans3Contrib,TCoordSysFactory::k3DCartesian),scaleContrib};
 			transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib> (*it->adjTrafo, trContrib));
@@ -1143,17 +1143,17 @@ void TContributionsGenerator::addUVDTgTransfContributionsCamera(const TLOR2LOR& 
 			scaleDeriv = transformations.partialDerivativesScale(transformationName, pointPos);
 
 
-			TransformationContrib firstEqContrib = {TFreeVector(-omegaDerivative.getX().getValue(),-phiDerivative.getX().getValue(), -kappaDerivative.getX().getValue(),TCoordSysFactory::k3DCartesian),
-													TFreeVector(- t1Derivative.getX().getValue(), -t2Derivative.getX().getValue(), -t3Derivative.getX().getValue(),TCoordSysFactory::k3DCartesian),
-													- scaleDeriv.getX().getValue()};
+			TransformationContrib firstEqContrib = {TFreeVector(-omegaDerivative.getX().getMetresValue(),-phiDerivative.getX().getMetresValue(), -kappaDerivative.getX().getMetresValue(),TCoordSysFactory::k3DCartesian),
+													TFreeVector(- t1Derivative.getX().getMetresValue(), -t2Derivative.getX().getMetresValue(), -t3Derivative.getX().getMetresValue(),TCoordSysFactory::k3DCartesian),
+													- scaleDeriv.getX().getMetresValue()};
 
-			TransformationContrib secondEqContrib = {TFreeVector(-  omegaDerivative.getY().getValue(), -  phiDerivative.getY().getValue(), - kappaDerivative.getY().getValue(),TCoordSysFactory::k3DCartesian),
-													TFreeVector(- t1Derivative.getY().getValue(), - t2Derivative.getY().getValue(), - t3Derivative.getY().getValue(),TCoordSysFactory::k3DCartesian),
-													-  scaleDeriv.getY().getValue()};
+			TransformationContrib secondEqContrib = {TFreeVector(-  omegaDerivative.getY().getMetresValue(), -  phiDerivative.getY().getMetresValue(), - kappaDerivative.getY().getMetresValue(),TCoordSysFactory::k3DCartesian),
+													TFreeVector(- t1Derivative.getY().getMetresValue(), - t2Derivative.getY().getMetresValue(), - t3Derivative.getY().getMetresValue(),TCoordSysFactory::k3DCartesian),
+													-  scaleDeriv.getY().getMetresValue()};
 
-			TransformationContrib thirdEqContrib = {TFreeVector(- omegaDerivative.getZ().getValue(), - phiDerivative.getZ().getValue(), -  kappaDerivative.getZ().getValue(),TCoordSysFactory::k3DCartesian),
-													TFreeVector(- t1Derivative.getZ().getValue(), - t2Derivative.getZ().getValue(), -  t3Derivative.getZ().getValue(),TCoordSysFactory::k3DCartesian),
-													- scaleDeriv.getZ().getValue()};
+			TransformationContrib thirdEqContrib = {TFreeVector(- omegaDerivative.getZ().getMetresValue(), - phiDerivative.getZ().getMetresValue(), -  kappaDerivative.getZ().getMetresValue(),TCoordSysFactory::k3DCartesian),
+													TFreeVector(- t1Derivative.getZ().getMetresValue(), - t2Derivative.getZ().getMetresValue(), -  t3Derivative.getZ().getMetresValue(),TCoordSysFactory::k3DCartesian),
+													- scaleDeriv.getZ().getMetresValue()};
 
 			TransformationContrib3D trContrib = {firstEqContrib, secondEqContrib, thirdEqContrib};
 
@@ -1181,11 +1181,11 @@ TReal TContributionsGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN
 	else
 		fMLAused = false;
 
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
 
 	return (LGC::TAngle::atan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst).rad(); 
 }
@@ -1207,12 +1207,12 @@ TReal TContributionsGenerator::getZENDCalcMeas(const TTSTN& station, const TAdju
 	else
 		fMLAused = false;
 
-	TReal distance3D = dist3D(stationPos.getX(),  stationPos.getY(),  stationPos.getZ()+station.instrumentHeightAdjustable->getEstimatedValue(), 
-					   targetPos.getX(), targetPos.getY(), targetPos.getZ()+targetHt);
+   TReal distance3D = dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue().getValue(),
+      targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), targetPos.getZ().getMetresValue() + targetHt);
 	if (distance3D < nullLimit)
 		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
 
-	return (LGC::TAngle::acos(((targetPos.getZ()+targetHt - stationPos.getZ() - station.instrumentHeightAdjustable->getEstimatedValue())/distance3D).getValue())).rad();
+   return (LGC::TAngle::acos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue().getValue) / distance3D).getMetresValue())).rad();
 }
 
 
@@ -1232,8 +1232,8 @@ TReal TContributionsGenerator::getDISTCalcMeas(const TTSTN& station, const TAdju
 	else
 		fMLAused = false;
 
-	return (dist3D(stationPos.getX(), stationPos.getY(), (stationPos.getZ() + station.instrumentHeightAdjustable->getEstimatedValue()), 
-			targetPos.getX(),  targetPos.getY().getValue(), (targetPos.getZ() + targetHt)) - distanceCorr);
+   return (dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue().getValue()),
+      targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), (targetPos.getZ().getMetresValue() + targetHt)) - distanceCorr);
 }
 
 
@@ -1254,7 +1254,7 @@ TReal TContributionsGenerator::getDHORCalcMeas(const TTSTN& station, const TLINE
 	else
 		fMLAused = false;
 
-	TReal D = dist(stationPos.getX().getValue(), stationPos.getY().getValue(),  targetPos.getX().getValue(), targetPos.getY().getValue());
+	TReal D = dist(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(),  targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue());
 	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue().getValue();
 	return D - cte;
 }
@@ -1278,7 +1278,7 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 	TReal cEcVp = echo.target.distCorrectionValue; 
 	TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getValue(); 
 
-	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX() ).getValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getValue() + dRef - cEcVp;
+	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX() ).getMetresValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue() + dRef - cEcVp;
 
 	return calcMeas;
 }
@@ -1304,8 +1304,8 @@ TReal	TContributionsGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const T
 	TReal cdz = dlev.target.distCorrectionValue; //distance of the target correction value
 	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getValue(); 
 
-	TReal dTg = sqrtq(pow2q(staffPosition.getX().getValue() - referencePoint.getX().getValue()) + pow2q(staffPosition.getY().getValue() - referencePoint.getY().getValue())); 
-	TReal calcMeas = referencePoint.getZ().getValue() - staffPosition.getZ().getValue() + dRef - cdz - dTg*tanq(collAngl);
+	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue()) + pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue())); 
+	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg*tanq(collAngl);
 	return calcMeas;
 }
 
@@ -1327,8 +1327,8 @@ TReal	TContributionsGenerator::getDSPTCalcMeas(const TEDM& edmST, const TDSPT& d
 
 	TReal cst = dspt.target.distCorrectionAdjustable->getEstimatedValue().getValue();
 
-	TReal D = dist3D(stationPos.getX().getValue(), stationPos.getY().getValue(), (stationPos.getZ().getValue() + edmST.instrument.instrHeight), 
-				targetPos.getX().getValue(), targetPos.getY().getValue(), (targetPos.getZ().getValue() + dspt.target.targetHt));
+	TReal D = dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + edmST.instrument.instrHeight), 
+				targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), (targetPos.getZ().getMetresValue() + dspt.target.targetHt));
 
 	return D - cst;
 }
@@ -1350,7 +1350,7 @@ TReal	TContributionsGenerator::getHorDistCalcMeas(const TAdjustablePoint* refere
 	else
 		fMLAused = false;
 
-	return dist(staffPos.getX().getValue(), staffPos.getY().getValue(), refPointPos.getX().getValue(), refPointPos.getY().getValue());
+	return dist(staffPos.getX().getMetresValue(), staffPos.getY().getMetresValue(), refPointPos.getX().getMetresValue(), refPointPos.getY().getMetresValue());
 }
 
 
@@ -1363,14 +1363,14 @@ TFreeVector TContributionsGenerator::getUVECCalcMeas(const TCAM& camera, const T
 
 	const TPositionVector& cameraPos =  camera.instrumentPos->getEstimatedValue();
 
-	TFreeVector deltaStTg((targetPos.getX() - cameraPos.getX()).getValue(),
-						(targetPos.getY() - cameraPos.getY()).getValue(),
-						targetPos.getZ().getValue() - cameraPos.getZ().getValue(),
+	TFreeVector deltaStTg((targetPos.getX() - cameraPos.getX()).getMetresValue(),
+						(targetPos.getY() - cameraPos.getY()).getMetresValue(),
+						targetPos.getZ().getMetresValue() - cameraPos.getZ().getMetresValue(),
 						TCoordSysFactory::k3DCartesian);
 	
 	// s - Distance
-	TScalar sDist = deltaStTg.length();
-	return TFreeVector((deltaStTg.getX()/sDist).getValue(), (deltaStTg.getY()/sDist).getValue(), (deltaStTg.getZ()/sDist).getValue(), TCoordSysFactory::k3DCartesian);
+	TLength sDist = deltaStTg.length();
+	return TFreeVector((deltaStTg.getX()/sDist), (deltaStTg.getY()/sDist), (deltaStTg.getZ()/sDist), TCoordSysFactory::k3DCartesian);
 }
 
 
@@ -1383,15 +1383,15 @@ UVDCalcMeas TContributionsGenerator::getUVDCalcMeas(const TCAM& camera, const TU
 
 	const TPositionVector& cameraPos =  camera.instrumentPos->getEstimatedValue();
 
-	TFreeVector deltaStTg((targetPos.getX() - cameraPos.getX()).getValue(),
-						(targetPos.getY() - cameraPos.getY()).getValue(),
-						targetPos.getZ().getValue() - cameraPos.getZ().getValue(),
+	TFreeVector deltaStTg((targetPos.getX() - cameraPos.getX()).getMetresValue(),
+						(targetPos.getY() - cameraPos.getY()).getMetresValue(),
+						targetPos.getZ().getMetresValue() - cameraPos.getZ().getMetresValue(),
 						TCoordSysFactory::k3DCartesian);
 	
 	// s - Distance
-	TScalar sDist = deltaStTg.length();
-	TFreeVector vectCalcMeas((deltaStTg.getX()/sDist).getValue(), (deltaStTg.getY()/sDist).getValue(), (deltaStTg.getZ()/sDist).getValue(), TCoordSysFactory::k3DCartesian);
-	UVDCalcMeas calMeas = {vectCalcMeas,sDist.getValue()};
+	TLength sDist = deltaStTg.length();
+	TFreeVector vectCalcMeas((deltaStTg.getX()/sDist), (deltaStTg.getY()/sDist), (deltaStTg.getZ()/sDist), TCoordSysFactory::k3DCartesian);
+	UVDCalcMeas calMeas = {vectCalcMeas,sDist.getMetresValue()};
 	return calMeas;
 }
 
@@ -1435,17 +1435,17 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const
 	else
 		fMLAused = false;
 /////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
-	TReal xSt = stationPos.getX().getValue();
-	TReal ySt = stationPos.getY().getValue();
-	TReal zSt = stationPos.getZ().getValue();
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
 
-	TReal xTg = targetPos.getX().getValue();
-	TReal yTg = targetPos.getY().getValue();
-	TReal zTg = targetPos.getZ().getValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = dist.target.targetHt;
-	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getValue();
-	TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getMetresValue();
+	TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue().getMetresValue();
 
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 

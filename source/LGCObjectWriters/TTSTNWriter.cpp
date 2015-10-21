@@ -161,9 +161,9 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSLAngle()<<(separator);
 
 		//write the offset		
-		TReal dist =sqrt( pow2(ItPLR3D.targetPos->getEstValue(0).getValue() - instrPos->getEstValue(0).getValue())+
-			pow2(ItPLR3D.targetPos->getEstValue(1).getValue() - instrPos->getEstValue(1).getValue())+
-			pow2(ItPLR3D.targetPos->getEstValue(2).getValue() - instrPos->getEstValue(2).getValue()));
+		TReal dist =sqrt( pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
+			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
+			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).rad()*dist*LGC::M2MM);
 
 		//write the residual/sigma ANGL
@@ -220,7 +220,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual() * LGC::M2MM); 
 
 		//write the sensibility		
-		TReal dz= ItPLR3D.targetPos->getEstValue(2).getValue() + ItPLR3D.target.targetHt - instrPos->getEstValue(2).getValue() - instr.instrHeight;
+		TReal dz= ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
 		if (ItPLR3D.target.distCorrectionUnknown)
 		{
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue().getValue()));
@@ -389,9 +389,9 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 		(*stream)<<ItANGL.getAngleResidual().getSLAngle()<<(separator);
 		
 		//write the offset	
-		TReal dist =sqrt( pow2(ItANGL.targetPos->getEstValue(0).getValue() - instrPos->getEstValue(0).getValue())+
-			pow2(ItANGL.targetPos->getEstValue(1).getValue() - instrPos->getEstValue(1).getValue())+
-			pow2(ItANGL.targetPos->getEstValue(2).getValue() - instrPos->getEstValue(2).getValue()));
+		TReal dist =sqrt( pow2(ItANGL.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
+			pow2(ItANGL.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
+			pow2(ItANGL.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
 		(*stream).writeDouble(obsResWidth, angleResPrecicion, ItANGL.getAngleResidual().rad()*dist*LGC::M2MM);
 		//write the residual/sigma
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -460,9 +460,9 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 		(*stream)<<ItZEND.getAngleResidual().getSLAngle()<<(separator);
 
 		//write the offset	
-		TReal dist =sqrt( pow2(ItZEND.targetPos->getEstValue(0).getValue() - instrPos->getEstValue(0).getValue())+
-			pow2(ItZEND.targetPos->getEstValue(1).getValue() - instrPos->getEstValue(1).getValue())+
-			pow2(ItZEND.targetPos->getEstValue(2).getValue() - instrPos->getEstValue(2).getValue()));
+		TReal dist =sqrt( pow2(ItZEND.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
+			pow2(ItZEND.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
+			pow2(ItZEND.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().rad()*dist*LGC::M2MM);
 
 		//write the residual/sigma
@@ -517,7 +517,7 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual() * LGC::M2MM);//Output value in meters [mm], stored in [m]
 		
 		//write the sensibility	
-		TReal dz= ItDIST.targetPos->getEstValue(2).getValue() + ItDIST.target.targetHt - instrPos->getEstValue(2).getValue() - instr.instrHeight;
+		TReal dz= ItDIST.targetPos->getEstValue(2) + ItDIST.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
 		if (ItDIST.target.distCorrectionUnknown)
 		{
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual() + ItDIST.target.distCorrectionAdjustable->getEstimatedValue().getValue()));

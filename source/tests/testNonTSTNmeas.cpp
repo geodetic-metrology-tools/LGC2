@@ -51,9 +51,9 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("PT x coordinate should match",PT.getX().getValue(), 0  , 1e-7);
-		ensure_equals("PT y coordinate should match",PT.getY().getValue(), 0, 1e-7);
-		ensure_equals("PT z coordinate should match",PT.getZ().getValue(), 100.0  , 1e-7);
+		ensure_equals("PT x coordinate should match",PT.getX().getMetresValue(), 0  , 1e-7);
+		ensure_equals("PT y coordinate should match",PT.getY().getMetresValue(), 0, 1e-7);
+		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 100.0  , 1e-7);
  	}
 
 //----------------------------- DLEV --------------------------------//
@@ -85,8 +85,8 @@ namespace tut
 		ensure_equals("Reference point distance should be 100", plane1.getRefPtDistEstimatedValue().getValue(), -100.0, 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("PT x coordinate should match",PT.getX().getValue(), 0.0  , 1e-7);
-		ensure_equals("PT z coordinate should match",PT.getZ().getValue(), 50.0  , 1e-7);
+		ensure_equals("PT x coordinate should match",PT.getX().getMetresValue(), 0.0  , 1e-7);
+		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
  	}
 
 
@@ -118,7 +118,7 @@ namespace tut
 		TPositionVector PTxyH = PT;
 		TXYH2CCS::CCS2XYHg2000Machine(PTxyH);
 		/*Compared to LGC1 result (there is not distance from the reference point)*/
-		ensure_equals("(Point z coordinate - reference point distance) should match", PTxyH.getH().getValue() - plane1.getRefPtDistEstimatedValue().getValue(), 100.0000001, 1e-7);
+		ensure_equals("(Point z coordinate - reference point distance) should match", PTxyH.getH().getMetresValue() - plane1.getRefPtDistEstimatedValue().getValue(), 100.0000001, 1e-7);
 
  	}
 
@@ -151,12 +151,12 @@ namespace tut
 		ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getValue(), -14.0 , 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("PT z coordinate should match",PT.getZ().getValue(), 50.0  , 1e-7);
+		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
 
 		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line16").getEstimatedValue();
-		ensure_equals("PT x coordinate should match",PTRP.getX().getValue(), 40  , 1e-7);
-		ensure_equals("PT y coordinate should match",PTRP.getY().getValue(), 34.0  , 1e-7);
-		ensure_equals("PT z coordinate should match",PTRP.getZ().getValue(), 114.0  , 1e-7);
+		ensure_equals("PT x coordinate should match",PTRP.getX().getMetresValue(), 40  , 1e-7);
+		ensure_equals("PT y coordinate should match",PTRP.getY().getMetresValue(), 34.0  , 1e-7);
+		ensure_equals("PT z coordinate should match",PTRP.getZ().getMetresValue(), 114.0  , 1e-7);
  	}
 
 
@@ -188,12 +188,12 @@ namespace tut
 		ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getValue(), -74.0 , 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("PT z coordinate should match",PT.getZ().getValue(), 50.0  , 1e-7);
+		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
 
 		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line20").getEstimatedValue();
-		ensure_equals("PT x coordinate should match",PTRP.getX().getValue(), 40  , 1e-7);
-		ensure_equals("PT y coordinate should match",PTRP.getY().getValue(), 34.0  , 1e-7);
-		ensure_equals("PT z coordinate should match",PTRP.getZ().getValue(), 174.0  , 1e-7);
+		ensure_equals("PT x coordinate should match",PTRP.getX().getMetresValue(), 40  , 1e-7);
+		ensure_equals("PT y coordinate should match",PTRP.getY().getMetresValue(), 34.0  , 1e-7);
+		ensure_equals("PT z coordinate should match",PTRP.getZ().getMetresValue(), 174.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -226,15 +226,15 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector PT = dataset.getPoints().getObject("pt0").getEstimatedValue();
-		ensure_equals("PT0 z coordinate should match",PT.getZ().getValue(), 10.0  , 1e-7);
+		ensure_equals("PT0 z coordinate should match",PT.getZ().getMetresValue(), 10.0  , 1e-7);
 		TPositionVector PT1 = dataset.getPoints().getObject("pt1").getEstimatedValue();
-		ensure_equals("PT1 z coordinate should match",PT1.getZ().getValue(), 50.0  , 1e-7);
+		ensure_equals("PT1 z coordinate should match",PT1.getZ().getMetresValue(), 50.0  , 1e-7);
 		TPositionVector PT2 = dataset.getPoints().getObject("pt2").getEstimatedValue();
-		ensure_equals("PT2 z coordinate should match",PT2.getZ().getValue(), 20.0  , 1e-7);
+		ensure_equals("PT2 z coordinate should match",PT2.getZ().getMetresValue(), 20.0  , 1e-7);
 		TPositionVector PT3 = dataset.getPoints().getObject("pt3").getEstimatedValue();
-		ensure_equals("PT3 z coordinate should match",PT3.getZ().getValue(), 0.0  , 1e-7);
+		ensure_equals("PT3 z coordinate should match",PT3.getZ().getMetresValue(), 0.0  , 1e-7);
 		TPositionVector PT4 = dataset.getPoints().getObject("pt4").getEstimatedValue();
-		ensure_equals("PT4 z coordinate should match",PT4.getZ().getValue(), 10.0  , 1e-7);
+		ensure_equals("PT4 z coordinate should match",PT4.getZ().getMetresValue(), 10.0  , 1e-7);
 
  	}
 
@@ -262,15 +262,15 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		TPositionVector PT = dataset.getPoints().getObject("pt0").getEstimatedValue();
-		ensure_equals("PT0 z coordinate should match",PT.getZ().getValue(), 10.0  , 1e-7);
+		ensure_equals("PT0 z coordinate should match",PT.getZ().getMetresValue(), 10.0  , 1e-7);
 		TPositionVector PT1 = dataset.getPoints().getObject("pt1").getEstimatedValue();
-		ensure_equals("PT1 z coordinate should match",PT1.getZ().getValue(), 50.0  , 1e-7);
+		ensure_equals("PT1 z coordinate should match",PT1.getZ().getMetresValue(), 50.0  , 1e-7);
 		TPositionVector PT2 = dataset.getPoints().getObject("pt2").getEstimatedValue();
-		ensure_equals("PT2 z coordinate should match",PT2.getZ().getValue(), 20.0  , 1e-7);
+		ensure_equals("PT2 z coordinate should match",PT2.getZ().getMetresValue(), 20.0  , 1e-7);
 		TPositionVector PT3 = dataset.getPoints().getObject("pt3").getEstimatedValue();
-		ensure_equals("PT3 z coordinate should match",PT3.getZ().getValue(), 0.0  , 1e-7);
+		ensure_equals("PT3 z coordinate should match",PT3.getZ().getMetresValue(), 0.0  , 1e-7);
 		TPositionVector PT4 = dataset.getPoints().getObject("pt4").getEstimatedValue();
-		ensure_equals("PT4 z coordinate should match",PT4.getZ().getValue(), 10.0  , 1e-7);
+		ensure_equals("PT4 z coordinate should match",PT4.getZ().getMetresValue(), 10.0  , 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -305,20 +305,20 @@ namespace tut
 		TPositionVector PT = dataset.getPoints().getObject("pt1").getEstimatedValue();
 
 		TXYH2CCS::CCS2XYHg2000Machine(PT);
-		ensure_equals("PT1 x coordinate should match",PT.getX().getValue(), -978.6772806  , 1e-7);
-		ensure_equals("PT1 h coordinate should match",PT.getH().getValue(), 469.8346234  , 1e-7);
+		ensure_equals("PT1 x coordinate should match",PT.getX().getMetresValue(), -978.6772806  , 1e-7);
+		ensure_equals("PT1 h coordinate should match",PT.getH().getMetresValue(), 469.8346234  , 1e-7);
 
 		TPositionVector PT2 = dataset.getPoints().getObject("pt2").getEstimatedValue();
 		TXYH2CCS::CCS2XYHg2000Machine(PT2);
-		ensure_equals("PT2 h coordinate should match",PT2.getH().getValue(), 439.8353643  , 1e-7);
+		ensure_equals("PT2 h coordinate should match",PT2.getH().getMetresValue(), 439.8353643  , 1e-7);
 
 		TPositionVector PT3 = dataset.getPoints().getObject("pt3").getEstimatedValue();
 		TXYH2CCS::CCS2XYHg2000Machine(PT3);
-		ensure_equals("PT3 h coordinate should match",PT3.getH().getValue(), 419.8369359  , 1e-7);
+		ensure_equals("PT3 h coordinate should match",PT3.getH().getMetresValue(), 419.8369359  , 1e-7);
 
 		TPositionVector PT4 = dataset.getPoints().getObject("pt4").getEstimatedValue();
 		TXYH2CCS::CCS2XYHg2000Machine(PT4);
-		ensure_equals("PT4 h coordinate should match",PT4.getH().getValue(), 429.8388728  , 1e-7);
+		ensure_equals("PT4 h coordinate should match",PT4.getH().getMetresValue(), 429.8388728  , 1e-7);
 
 
  	}
@@ -355,22 +355,22 @@ namespace tut
 		V0 = 399.9999208  => we expected here 0.02349 gon
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match",PT.getX().getValue(), -934.3289435  , 1e-7);
-		ensure_equals("Pt y coordinate should match",PT.getY().getValue(), 10514.1302755, 1e-7);
-		ensure_equals("Pt z coordinate should match",PT.getZ().getValue(), 2413.7946543   , 1e-7);
+		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3289435  , 1e-7);
+		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.1302755, 1e-7);
+		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.7946543   , 1e-7);
 		//sigma are store in m in lgc2
-		ensure_equals("Pt sx should match",dataset.getPoints().getObject("PT").getXEstPrecision().getValue(), 0.00063  , 1e-5);
-		ensure_equals("Pt sy should match",dataset.getPoints().getObject("PT").getYEstPrecision().getValue(), 0.00104, 1e-5);
-		ensure_equals("Pt sz should match",dataset.getPoints().getObject("PT").getZEstPrecision().getValue(), 0.00007  , 1e-5);
+		ensure_equals("Pt sx should match",dataset.getPoints().getObject("PT").getXEstPrecision(), 0.00063  , 1e-5);
+		ensure_equals("Pt sy should match",dataset.getPoints().getObject("PT").getYEstPrecision(), 0.00104, 1e-5);
+		ensure_equals("Pt sz should match",dataset.getPoints().getObject("PT").getZEstPrecision(), 0.00007  , 1e-5);
 
 		TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match",PT2.getX().getValue(), -895.6502606, 1e-7);
-		ensure_equals("Pt y coordinate should match",PT2.getY().getValue(), 10421.8383549, 1e-7);
-		ensure_equals("Pt z coordinate should match",PT2.getZ().getValue(), 2413.0328245  , 1e-7);
+		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), -895.6502606, 1e-7);
+		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 10421.8383549, 1e-7);
+		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2413.0328245  , 1e-7);
 		//sigma are store in m in lgc2
-		ensure_equals("PT2 sx should match",dataset.getPoints().getObject("PT2").getXEstPrecision().getValue(), 0.00075  , 1e-5);
-		ensure_equals("PT2 sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision().getValue(), 0.00147, 1e-5);
-		ensure_equals("PT2 sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision().getValue(), 0.00007  , 1e-5);
+		ensure_equals("PT2 sx should match",dataset.getPoints().getObject("PT2").getXEstPrecision(), 0.00075  , 1e-5);
+		ensure_equals("PT2 sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision(), 0.00147, 1e-5);
+		ensure_equals("PT2 sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision(), 0.00007  , 1e-5);
 		
 		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
 				//ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 0.02349, 1e-5);

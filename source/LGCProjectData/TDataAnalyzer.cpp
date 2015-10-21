@@ -56,9 +56,9 @@ bool TDataAnalyzer::dataConsistent(){
 					TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(),"Target2ROOT");
 					transformation.transform(targetPos);
 
-					referencePoint[0] += targetPos.getX().getValue();
-					referencePoint[1] += targetPos.getY().getValue();
-					referencePoint[2] += targetPos.getZ().getValue();
+               referencePoint[0] += targetPos.getX().getMetresValue();
+               referencePoint[1] += targetPos.getY().getMetresValue();
+               referencePoint[2] += targetPos.getZ().getMetresValue();
 				}
 				int numberOfMeasurements = itLEVEL->measDLEV.size();
 				if(numberOfMeasurements>0){
@@ -86,9 +86,9 @@ bool TDataAnalyzer::dataConsistent(){
 					TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(),"Target2ROOT");
 					transformation.transform(stationPos);
 
-					referencePoint[0] += stationPos.getX().getValue();
-					referencePoint[1] += stationPos.getY().getValue();
-					referencePoint[2] += stationPos.getZ().getValue();
+					referencePoint[0] += stationPos.getX().getMetresValue();
+               referencePoint[1] += stationPos.getY().getMetresValue();
+               referencePoint[2] += stationPos.getZ().getMetresValue();
 
 					if (! fData.getConfig().sim.isActive())
 						initialRefPtDistance += itECHOMeas->getDistance();
@@ -110,7 +110,7 @@ bool TDataAnalyzer::dataConsistent(){
 					const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
 					const TPositionVector& lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
 
-					TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getValue() - firstPoint.getX().getValue(),lastPoint.getY().getValue() - firstPoint.getY().getValue());
+               TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
 
 					itECHO->fMeasuredPlane->initialize(&rp,TScalar(initialRefPtDistance), LGC::TAngle(LGC::TAngle::EUnits::kRadians , thetaLineVectorAngle), 
 							LGC::TAngle(LGC::TAngle::EUnits::kRadians , M_PI_2), false, true);

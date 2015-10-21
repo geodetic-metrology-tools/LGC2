@@ -94,14 +94,13 @@ void	TSimPointSummary::addNewResValue(const TFreeVector& res)
 {
 	fSumRes += res;
 	
-	fSumRes2.setX( fSumRes2.getX() + TScalar(powq(res.getX().getValue(),2)) );
-	fSumRes2.setY( fSumRes2.getY() + TScalar(powq(res.getY().getValue(),2)) );
-	fSumRes2.setZ( fSumRes2.getZ() + TScalar(powq(res.getZ().getValue(),2)) );
+   fSumRes2.setX(fSumRes2.getX() + TLength(powq(res.getX().getMetresValue(), 2)));
+   fSumRes2.setY(fSumRes2.getY() + TLength(powq(res.getY().getMetresValue(), 2)));
+   fSumRes2.setZ(fSumRes2.getZ() + TLength(powq(res.getZ().getMetresValue(), 2)));
 
 	if (fFirstSim == true)
 	{
-		fResMin = fSumRes;
-		fResMax = fSumRes;
+      fResMin = fResMax = fSumRes;
 		fFirstSim = false;
 	}
 	else

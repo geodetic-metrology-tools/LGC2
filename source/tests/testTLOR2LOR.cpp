@@ -208,15 +208,15 @@ namespace tut
 
 		trFPT2ToFREF.transform(PT2);
 
-		ensure_equals("X-Coordinates should match",PT2.getX().getValue(), -100.0,1e-8);
-		ensure_equals("Y-Coordinates should match",PT2.getY().getValue(), -100.0,1e-8);
-		ensure_equals("Z-Coordinates should match",PT2.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",PT2.getX().getMetresValue(), -100.0,1e-8);
+		ensure_equals("Y-Coordinates should match",PT2.getY().getMetresValue(), -100.0,1e-8);
+		ensure_equals("Z-Coordinates should match",PT2.getZ().getMetresValue(), 0.0,1e-8);
 
 		trFREFToFPT2.transform(PT2);
 
-		ensure_equals("X-Coordinates should match",PT2.getX().getValue(), 0.0,1e-8);
-		ensure_equals("Y-Coordinates should match",PT2.getY().getValue(), 0.0,1e-8);
-		ensure_equals("Z-Coordinates should match",PT2.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",PT2.getX().getMetresValue(), 0.0,1e-8);
+		ensure_equals("Y-Coordinates should match",PT2.getY().getMetresValue(), 0.0,1e-8);
+		ensure_equals("Z-Coordinates should match",PT2.getZ().getMetresValue(), 0.0,1e-8);
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		TLOR2LOR ROOT2FPT2(tree,"ROOT","FPT2","ROOT2FPT2");
@@ -225,14 +225,14 @@ namespace tut
 		TPositionVector STN2 = proj->getPoints().getObject("STN2").getEstimatedValue();
 
 		ROOT2FPT2.transform(STN2);
-		ensure_equals("X-Coordinates should match",STN2.getX().getValue(), 200.0,1e-8);
-		ensure_equals("Y-Coordinates should match",STN2.getY().getValue(), -100.0,1e-8);
-		ensure_equals("Z-Coordinates should match",STN2.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",STN2.getX().getMetresValue(), 200.0,1e-8);
+		ensure_equals("Y-Coordinates should match",STN2.getY().getMetresValue(), -100.0,1e-8);
+		ensure_equals("Z-Coordinates should match",STN2.getZ().getMetresValue(), 0.0,1e-8);
 
 		FPT22ROOT.transform(STN2);
-		ensure_equals("X-Coordinates should match",STN2.getX().getValue(), 100.0,1e-8);
-		ensure_equals("Y-Coordinates should match",STN2.getY().getValue(), 100.0,1e-8);
-		ensure_equals("Z-Coordinates should match",STN2.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",STN2.getX().getMetresValue(), 100.0,1e-8);
+		ensure_equals("Y-Coordinates should match",STN2.getY().getMetresValue(), 100.0,1e-8);
+		ensure_equals("Z-Coordinates should match",STN2.getZ().getMetresValue(), 0.0,1e-8);
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		TLOR2LOR FREF22ROOT(tree,"FREF2","ROOT","FREF22ROOT");
@@ -241,14 +241,14 @@ namespace tut
 		TPositionVector P4 = proj->getPoints().getObject("P4").getEstimatedValue();
 
 		FREF22ROOT.transform(P4);
-		ensure_equals("X-Coordinates should match",P4.getX().getValue(), 100.0,1e-8);
-		ensure_equals("Y-Coordinates should match",P4.getY().getValue(), -100.0,1e-8);
-		ensure_equals("Z-Coordinates should match",P4.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",P4.getX().getMetresValue(), 100.0,1e-8);
+		ensure_equals("Y-Coordinates should match",P4.getY().getMetresValue(), -100.0,1e-8);
+		ensure_equals("Z-Coordinates should match",P4.getZ().getMetresValue(), 0.0,1e-8);
 
 		ROOT2FREF2.transform(P4);
-		ensure_equals("X-Coordinates should match",P4.getX().getValue(), -100.0,1e-8);
-		ensure_equals("Y-Coordinates should match",P4.getY().getValue(), -200.0,1e-8);
-		ensure_equals("Z-Coordinates should match",P4.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",P4.getX().getMetresValue(), -100.0,1e-8);
+		ensure_equals("Y-Coordinates should match",P4.getY().getMetresValue(), -200.0,1e-8);
+		ensure_equals("Z-Coordinates should match",P4.getZ().getMetresValue(), 0.0,1e-8);
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		TLOR2LOR FREF2FREF2(tree,"FREF","FREF2","FREF2FREF2");
@@ -257,14 +257,14 @@ namespace tut
 		TPositionVector REF = proj->getPoints().getObject("REF").getEstimatedValue();
 
 		FREF2FREF2.transform(REF);
-		ensure_equals("X-Coordinates should match",REF.getX().getValue(), 0.0,1e-8);
-		ensure_equals("Y-Coordinates should match",REF.getY().getValue(), -200.0,1e-8);
-		ensure_equals("Z-Coordinates should match",REF.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",REF.getX().getMetresValue(), 0.0,1e-8);
+		ensure_equals("Y-Coordinates should match",REF.getY().getMetresValue(), -200.0,1e-8);
+		ensure_equals("Z-Coordinates should match",REF.getZ().getMetresValue(), 0.0,1e-8);
 
 		FREF22FREF.transform(REF);
-		ensure_equals("X-Coordinates should match",REF.getX().getValue(), 0.0,1e-8);
-		ensure_equals("Y-Coordinates should match",REF.getY().getValue(), 0.0,1e-8);
-		ensure_equals("Z-Coordinates should match",REF.getZ().getValue(), 0.0,1e-8);
+		ensure_equals("X-Coordinates should match",REF.getX().getMetresValue(), 0.0,1e-8);
+		ensure_equals("Y-Coordinates should match",REF.getY().getMetresValue(), 0.0,1e-8);
+		ensure_equals("Z-Coordinates should match",REF.getZ().getMetresValue(), 0.0,1e-8);
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////// Composition which leads to an identity transformation on another tree //////////////////////////
@@ -283,14 +283,14 @@ namespace tut
 
 		transform1.transform(p);
 
-		ensure_equals("Coordinates should match",p.getX().getValue(), 50.0,1e-8);
-		ensure_equals("Coordinates should match",p.getY().getValue(), 60.0,1e-8);
-		ensure_equals("Coordinates should match",p.getZ().getValue(), 70.0,1e-8);
+		ensure_equals("Coordinates should match",p.getX().getMetresValue(), 50.0,1e-8);
+		ensure_equals("Coordinates should match",p.getY().getMetresValue(), 60.0,1e-8);
+		ensure_equals("Coordinates should match",p.getZ().getMetresValue(), 70.0,1e-8);
 
 		transform2.transform(p);
-		ensure_equals("Coordinates should match",p.getX().getValue(), 50.0,1e-8);
-		ensure_equals("Coordinates should match",p.getY().getValue(), 60.0,1e-8);
-		ensure_equals("Coordinates should match",p.getZ().getValue(), 70.0,1e-8);
+		ensure_equals("Coordinates should match",p.getX().getMetresValue(), 50.0,1e-8);
+		ensure_equals("Coordinates should match",p.getY().getMetresValue(), 60.0,1e-8);
+		ensure_equals("Coordinates should match",p.getZ().getMetresValue(), 70.0,1e-8);
 	}
 
 	// Test for complicated tree FPT2 to FREF THROUGH FREF2
@@ -339,15 +339,15 @@ namespace tut
 
 		trFPT2ToFREF.transform(PT2);
 
-		ensure_equals("X-Coordinates should match",PT2.getX().getValue(), -5918.80943889599348,1e-8);
-		ensure_equals("Y-Coordinates should match",PT2.getY().getValue(), 9549.57566059768396,1e-8);
-		ensure_equals("Z-Coordinates should match",PT2.getZ().getValue(), 1412.73892333231424,1e-8);
+		ensure_equals("X-Coordinates should match",PT2.getX().getMetresValue(), -5918.80943889599348,1e-8);
+		ensure_equals("Y-Coordinates should match",PT2.getY().getMetresValue(), 9549.57566059768396,1e-8);
+		ensure_equals("Z-Coordinates should match",PT2.getZ().getMetresValue(), 1412.73892333231424,1e-8);
 
 		trFREFToFPT2.transform(PT2);
 
-		ensure_equals("X-Coordinates should match",PT2.getX().getValue(), -1.05971319999987e+001,1e-8);
-		ensure_equals("Y-Coordinates should match",PT2.getY().getValue(), 5.19800000031410e-003,1e-8);
-		ensure_equals("Z-Coordinates should match",PT2.getZ().getValue(), 4.55657999999895e+000,1e-8);
+		ensure_equals("X-Coordinates should match",PT2.getX().getMetresValue(), -1.05971319999987e+001,1e-8);
+		ensure_equals("Y-Coordinates should match",PT2.getY().getMetresValue(), 5.19800000031410e-003,1e-8);
+		ensure_equals("Z-Coordinates should match",PT2.getZ().getMetresValue(), 4.55657999999895e+000,1e-8);
 	}
 
 
@@ -370,27 +370,27 @@ namespace tut
 //////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		TLOR2LOR FREF22ROOT(tree,"FREF2","ROOT","FREF22ROOT");
 		TFreeVector pDX0 = FREF22ROOT.partDerivWRespToX0();
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0.getY().getValue(),2,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0.getY().getMetresValue(),2,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 X0 should match",FREF22ROOT.partDerivWRespToX0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",FREF22ROOT.partDerivWRespToX0(1),2,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",FREF22ROOT.partDerivWRespToX0(2), 0,1e-8);
 
 		TFreeVector pDY0 = FREF22ROOT.partDerivWRespToY0();
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0.getX().getValue(), -2,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0.getX().getMetresValue(), -2,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 Y0 should match",FREF22ROOT.partDerivWRespToY0(0), -2,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",FREF22ROOT.partDerivWRespToY0(1), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",FREF22ROOT.partDerivWRespToY0(2), 0,1e-8);
 
 		TFreeVector pDZ0 = FREF22ROOT.partDerivWRespToZ0();
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0.getZ().getValue(), 2,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0.getZ().getMetresValue(), 2,1e-8);
 
 		ensure_equals("Partial deriv wr2 Z0 should match",FREF22ROOT.partDerivWRespToZ0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Z0 should match",FREF22ROOT.partDerivWRespToZ0(1), 0,1e-8);
@@ -399,27 +399,27 @@ namespace tut
 //////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		TLOR2LOR ROOT2FREF2(tree,"ROOT","FREF2","ROOT2FREF2");
 		TFreeVector pDX0RF = ROOT2FREF2.partDerivWRespToX0();
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0RF.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0RF.getY().getValue(),-0.5,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0RF.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0RF.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0RF.getY().getMetresValue(),-0.5,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0RF.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 X0 should match",ROOT2FREF2.partDerivWRespToX0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",ROOT2FREF2.partDerivWRespToX0(1),-0.5,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",ROOT2FREF2.partDerivWRespToX0(2), 0,1e-8);
 
 		TFreeVector pDY0RF = ROOT2FREF2.partDerivWRespToY0();
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0RF.getX().getValue(), 0.5,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0RF.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0RF.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0RF.getX().getMetresValue(), 0.5,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0RF.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0RF.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 Y0 should match",ROOT2FREF2.partDerivWRespToY0(0), 0.5,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",ROOT2FREF2.partDerivWRespToY0(1), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",ROOT2FREF2.partDerivWRespToY0(2), 0,1e-8);
 
 		TFreeVector pDZ0RF = ROOT2FREF2.partDerivWRespToZ0();
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0RF.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0RF.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0RF.getZ().getValue(), 0.5,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0RF.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0RF.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0RF.getZ().getMetresValue(), 0.5,1e-8);
 
 		ensure_equals("Partial deriv wr2 Z0 should match",ROOT2FREF2.partDerivWRespToZ0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Z0 should match",ROOT2FREF2.partDerivWRespToZ0(1), 0,1e-8);
@@ -428,27 +428,27 @@ namespace tut
 		TLOR2LOR FPT2ToFREF(tree,"FPT2","FREF","FPT2FREF");
 			
 		TFreeVector pDX0FPTF = FPT2ToFREF.partDerivWRespToX0();
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0FPTF.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0FPTF.getY().getValue(),0.5,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0FPTF.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0FPTF.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0FPTF.getY().getMetresValue(),0.5,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0FPTF.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 X0 should match",FPT2ToFREF.partDerivWRespToX0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",FPT2ToFREF.partDerivWRespToX0(1), 0.5,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",FPT2ToFREF.partDerivWRespToX0(2), 0,1e-8);
 
 		TFreeVector pDY0FPTF = FPT2ToFREF.partDerivWRespToY0();
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FPTF.getX().getValue(), -0.5,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FPTF.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FPTF.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FPTF.getX().getMetresValue(), -0.5,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FPTF.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FPTF.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 Y0 should match",FPT2ToFREF.partDerivWRespToY0(0), -0.5,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",FPT2ToFREF.partDerivWRespToY0(1), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",FPT2ToFREF.partDerivWRespToY0(2), 0,1e-8);
 			
 		TFreeVector pDZ0FFPT = FPT2ToFREF.partDerivWRespToZ0();
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT.getZ().getValue(), 0.5,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT.getZ().getMetresValue(), 0.5,1e-8);
 
 		ensure_equals("Partial deriv wr2 Z0 should match",FPT2ToFREF.partDerivWRespToZ0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Z0 should match",FPT2ToFREF.partDerivWRespToZ0(1),0,1e-8);
@@ -457,27 +457,27 @@ namespace tut
 		TLOR2LOR FREFToFPT2(tree,"FREF","FPT2","FREFFPT2");
 
 		TFreeVector pDX0FFPT2 = FREFToFPT2.partDerivWRespToX0();
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0FFPT2.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0FFPT2.getY().getValue(),-2,1e-8);
-		ensure_equals("Partial deriv wr2 X0 should match",pDX0FFPT2.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0FFPT2.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0FFPT2.getY().getMetresValue(),-2,1e-8);
+		ensure_equals("Partial deriv wr2 X0 should match",pDX0FFPT2.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 X0 should match",FREFToFPT2.partDerivWRespToX0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",FREFToFPT2.partDerivWRespToX0(1), -2,1e-8);
 		ensure_equals("Partial deriv wr2 X0 should match",FREFToFPT2.partDerivWRespToX0(2), 0,1e-8);
 
 		TFreeVector pDY0FFPT2  = FREFToFPT2.partDerivWRespToY0();
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FFPT2.getX().getValue(), 2,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FFPT2.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FFPT2.getZ().getValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FFPT2.getX().getMetresValue(), 2,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FFPT2.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Y0 should match",pDY0FFPT2.getZ().getMetresValue(), 0,1e-8);
 
 		ensure_equals("Partial deriv wr2 Y0 should match",FREFToFPT2.partDerivWRespToY0(0), 2,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",FREFToFPT2.partDerivWRespToY0(1), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Y0 should match",FREFToFPT2.partDerivWRespToY0(2), 0,1e-8);
 			
 		TFreeVector pDZ0FFPT2  = FREFToFPT2.partDerivWRespToZ0();
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT2.getX().getValue(), 0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT2.getY().getValue(),0,1e-8);
-		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT2.getZ().getValue(), 2,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT2.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT2.getY().getMetresValue(),0,1e-8);
+		ensure_equals("Partial deriv wr2 Z0 should match",pDZ0FFPT2.getZ().getMetresValue(), 2,1e-8);
 
 		ensure_equals("Partial deriv wr2 Z0 should match",FREFToFPT2.partDerivWRespToZ0(0), 0,1e-8);
 		ensure_equals("Partial deriv wr2 Z0 should match",FREFToFPT2.partDerivWRespToZ0(1),0,1e-8);
@@ -505,20 +505,20 @@ namespace tut
 
 
 		TFreeVector pd = FPT2ToROOT.partialDerivativesTranslation("FREF2", p, 0);
-		ensure_equals("PD (0) should match",pd.getX().getValue(), 1,1e-8);
-		ensure_equals("PD (1) should match",pd.getY().getValue(),0,1e-8);
-		ensure_equals("PD (2) should match",pd.getZ().getValue(), 0,1e-8);
+		ensure_equals("PD (0) should match",pd.getX().getMetresValue(), 1,1e-8);
+		ensure_equals("PD (1) should match",pd.getY().getMetresValue(),0,1e-8);
+		ensure_equals("PD (2) should match",pd.getZ().getMetresValue(), 0,1e-8);
 
 		TFreeVector pd2 = FPT2ToROOT.partialDerivativesTranslation("FREF2", p, 1);
-		ensure_equals("PD (0) should match",pd2.getX().getValue(), 0,1e-8);
-		ensure_equals("PD (1) should match",pd2.getY().getValue(),1,1e-8);
-		ensure_equals("PD (2) should match",pd2.getZ().getValue(), 0,1e-8);
+		ensure_equals("PD (0) should match",pd2.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("PD (1) should match",pd2.getY().getMetresValue(),1,1e-8);
+		ensure_equals("PD (2) should match",pd2.getZ().getMetresValue(), 0,1e-8);
 
 
 		TFreeVector pd3 = FPT2ToROOT.partialDerivativesTranslation("FREF2", p, 2);
-		ensure_equals("PD (0) should match",pd3.getX().getValue(), 0,1e-8);
-		ensure_equals("PD (1) should match",pd3.getY().getValue(),0,1e-8);
-		ensure_equals("PD (2) should match",pd3.getZ().getValue(), 1,1e-8);
+		ensure_equals("PD (0) should match",pd3.getX().getMetresValue(), 0,1e-8);
+		ensure_equals("PD (1) should match",pd3.getY().getMetresValue(),0,1e-8);
+		ensure_equals("PD (2) should match",pd3.getZ().getMetresValue(), 1,1e-8);
 	}
 
 //Change the value in the partial derivatives with respect to rotations
@@ -543,20 +543,20 @@ namespace tut
 
 
 			TFreeVector pdOmega = FPT2ToFREF.partialDerivativesAngle("FREF2", p, 0);
-			ensure_equals("PD (0) should match",pdOmega.getX().getValue(), 0,1e-8);
-			ensure_equals("PD (1) should match",pdOmega.getY().getValue(),70,1e-8);
-			ensure_equals("PD (2) should match",pdOmega.getZ().getValue(), 50,1e-8);
+			ensure_equals("PD (0) should match",pdOmega.getX().getMetresValue(), 0,1e-8);
+			ensure_equals("PD (1) should match",pdOmega.getY().getMetresValue(),70,1e-8);
+			ensure_equals("PD (2) should match",pdOmega.getZ().getMetresValue(), 50,1e-8);
 			
 			TFreeVector pdPhi = FPT2ToFREF.partialDerivativesAngle("FREF2", p, 1);
-			ensure_equals("PD (0) should match",pdPhi.getX().getValue(), -70,1e-8);
-			ensure_equals("PD (1) should match",pdPhi.getY().getValue(),0,1e-8);
-			ensure_equals("PD (2) should match",pdPhi.getZ().getValue(), 40,1e-8);
+			ensure_equals("PD (0) should match",pdPhi.getX().getMetresValue(), -70,1e-8);
+			ensure_equals("PD (1) should match",pdPhi.getY().getMetresValue(),0,1e-8);
+			ensure_equals("PD (2) should match",pdPhi.getZ().getMetresValue(), 40,1e-8);
 
 
 			TFreeVector pdKappa = FPT2ToFREF.partialDerivativesAngle("FREF2", p, 2);
-			ensure_equals("PD (0) should match",pdKappa.getX().getValue(), -50,1e-8);
-			ensure_equals("PD (1) should match",pdKappa.getY().getValue(),-40,1e-8);
-			ensure_equals("PD (2) should match",pdKappa.getZ().getValue(), 0,1e-8);
+			ensure_equals("PD (0) should match",pdKappa.getX().getMetresValue(), -50,1e-8);
+			ensure_equals("PD (1) should match",pdKappa.getY().getMetresValue(),-40,1e-8);
+			ensure_equals("PD (2) should match",pdKappa.getZ().getMetresValue(), 0,1e-8);
 
 			//Testing with scales included
 		}

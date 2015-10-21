@@ -85,9 +85,9 @@ void TLEVELWriter::writeLEVELData(const TLEVEL& fLevel)
 	(*stream)<<TABs;
 	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeDouble(obsWidth,obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0).getValue());
-	(*stream).writeDouble(obsWidth,obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1).getValue());
-	(*stream).writeDouble(obsWidth,obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2).getValue());
+   (*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+   (*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+   (*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream)<<endl<<endl;
 }
 

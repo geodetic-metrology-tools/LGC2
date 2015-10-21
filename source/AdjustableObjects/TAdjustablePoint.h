@@ -126,25 +126,25 @@ public:
 
 			\param[in] idxCoordinate Allowed values are 0(X), 1(Y) and 2(Z) of the coordinate we want to access.
 		*/
-		inline TScalar	getEstValue(int idxCoordinate) const {
+		inline TReal	getEstValue(int idxCoordinate) const {
 			assert3D(idxCoordinate);
 			if(idxCoordinate == 0)
-				return fEstimatedValue.getX();
+				return fEstimatedValue.getX().getMetresValue();
 			else if(idxCoordinate == 1)
-				return fEstimatedValue.getY();
+            return fEstimatedValue.getY().getMetresValue();
 			else
-				return fEstimatedValue.getZ();
+            return fEstimatedValue.getZ().getMetresValue();
 		}
 // If these methods are needed, must be rewritten, because Estimated value and Provisional value can be in different reference systems (2DH and 3DCartesian)/
 
 		/// Returns the estimated DX of TAdjustablePoint
-		inline TScalar				getDXValue() const {return (fEstimatedValue.getX()-fProvisionalValue.getX());}
+      inline TReal getDXValue() const { return (fEstimatedValue.getX().getMetresValue() - fProvisionalValue.getX().getMetresValue()); }
 
 		/// Returns the estimated DY of TAdjustablePoint
-		inline TScalar				getDYValue() const {return (fEstimatedValue.getY()-fProvisionalValue.getY());}
+      inline TReal getDYValue() const { return (fEstimatedValue.getY().getMetresValue() - fProvisionalValue.getY().getMetresValue()); }
 
 		/// Returns the estimated DZ of TAdjustablePoint
-		inline TScalar				getDZValue() const {return (fEstimatedValue.getZ()-fProvisionalValue.getZ());}
+      inline TReal getDZValue() const { return (fEstimatedValue.getZ().getMetresValue() - fProvisionalValue.getZ().getMetresValue()); }
 
 //This necessary when the provisional value stored is defined in XYH.
 #if 0
@@ -162,26 +162,26 @@ public:
 #endif
 
 		/// Returns the estimated XY covariance
-		inline TScalar				getXYCovar() const {return fCovariance.getX();}
+      inline TReal getXYCovar() const { return fCovariance.getX().getMetresValue(); }
 
 		/// Returns the estimated YZ covariance
-		inline TScalar				getYZCovar() const {return fCovariance.getY();}
+      inline TReal getYZCovar() const { return fCovariance.getY().getMetresValue(); }
 
 		/// Returns the estimated XZ covariance
-		inline TScalar				getXZCovar() const {return fCovariance.getZ();}
+      inline TReal getXZCovar() const { return fCovariance.getZ().getMetresValue(); }
 
 
 		/// Returns the estimated X estimated precision
-		inline TScalar				getXEstPrecision() const {return fEstimatedPrecision.getX();}
+      inline TReal getXEstPrecision() const { return fEstimatedPrecision.getX().getMetresValue(); }
 
 		/// Returns the estimated Y estimated precision
-		inline TScalar				getYEstPrecision() const {return fEstimatedPrecision.getY();}
+      inline TReal getYEstPrecision() const { return fEstimatedPrecision.getY().getMetresValue(); }
 
 		/// Returns the estimated Z estimated precision
-		inline TScalar				getZEstPrecision() const {return fEstimatedPrecision.getZ();}
+      inline TReal getZEstPrecision() const { return fEstimatedPrecision.getZ().getMetresValue(); }
 
 		/// Returns iterator to the position in the tree.
-		TDataTreeIterator			getFrameTreePosition() const{return fFramePosition;};
+		TDataTreeIterator	getFrameTreePosition() const{return fFramePosition;};
 
 		/*!
 			\brief Returns The boolean result of the query.
@@ -221,7 +221,7 @@ public:
 		inline TLGCRefFrame::ERefs getReferenceFrame() const {return fReferential;}
 
 		/// \see TAdjustableObject::isInitialized
-		inline virtual bool isInitialized() const { return !isnan(fProvisionalValue.getX().getValue());}
+		inline virtual bool isInitialized() const { return !isnan(fProvisionalValue.getX().getMetresValue());}
 
 		/// Returns Boolean value telling if the standard deviations were assigned to the point.
 		inline bool hasStandDeviations() const{return !isnan( fStandardDeviations[0]);} 
@@ -242,10 +242,10 @@ public:
 
 			\throws Throws a logic_error if the adjusted point does not contain required index.
 		*/
-		virtual void setCorrection(int idx, TReal value);
+      virtual void setCorrection(int idx, TReal value);
 
 		/// Sets the estimated precision after calculation
-		virtual void setEstimatedPrecision(int idx, TReal value);
+      virtual void setEstimatedPrecision(int idx, TReal value);
 
 		/// Sets the XY covariance after calculation
 		void	setXYEstimatedCovariance(TReal value);

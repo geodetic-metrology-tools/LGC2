@@ -165,11 +165,11 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive){
 			TFreeVector vectorMeasurement(std::stor(tokens.at(1)),std::stor(tokens.at(2)),std::stor(tokens.at(3)),TCoordSysFactory::k3DCartesian);
 
-			if(isZero(vectorMeasurement.getZ().getValue()))
+			if(isZero(vectorMeasurement.getZ().getMetresValue()))
 				throw std::runtime_error("Input of UVEC measurement is not correct: "
 										 "Z coordinate of the unit vector can not be ZERO or close to it.");
 
-			TReal vectorLength = vectorMeasurement.length().getValue();
+         TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
 			if(!((1-lengthTolerance)<vectorLength && (1+lengthTolerance)>vectorLength)) //If vectorLength is not 1 with a given tolerance
 				throw std::runtime_error("UVEC measurement input values are not correct: "
@@ -239,11 +239,11 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive) {
 			TFreeVector vectorMeasurement(std::stor(tokens.at(1)),std::stor(tokens.at(2)),std::stor(tokens.at(3)),TCoordSysFactory::k3DCartesian);
 
-			if(isZero(vectorMeasurement.getZ().getValue()))
+         if(isZero(vectorMeasurement.getZ().getMetresValue()))
 				throw std::runtime_error("UVD measurement input values are not correct: "
 										 "Z coordinate of the unit vector can not be ZERO or close to it.");
 
-			TReal vectorLength = vectorMeasurement.length().getValue();
+         TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
 			if(!((1-lengthTolerance)<vectorLength && (1+lengthTolerance)>vectorLength)) //If vectorLength is not 1 with a given tolerance
 				throw std::runtime_error("UVD measurement input values are not correct: "

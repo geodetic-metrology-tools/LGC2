@@ -84,10 +84,10 @@ bool  TILG2ILATransformation::transformInverse( TRotationMatrix& rmx ) const
 void TILG2ILATransformation::initialiseEllips()
 {
 	/*Ask reference frame factory for a CCS2CGRF transformation.*/
-	auto pCCS2CGRF (TRefSystemFactory::getRefSystemFactory()->getCCS2CGRFTransformation());
+	auto pCCS2CGRF = TCCS2CGRFTransformation();
 	//Transform copy of origin given in CCS into CGRF (geodetic cartisian)
 	TPositionVector fOrigin2 = fOrigin;
-	pCCS2CGRF->transform(fOrigin2);
+	pCCS2CGRF.transform(fOrigin2);
 
 	TReal fOriginX = fOrigin2.getX().getValue();
 	TReal fOriginY = fOrigin2.getY().getValue();
@@ -121,10 +121,10 @@ void TILG2ILATransformation::initialiseEllips()
 void TILG2ILATransformation::initialiseSphere()
 {
 	/*Ask reference frame factory for a CCS2CGRF transformation.*/
-	auto pCCS2CGRF (TRefSystemFactory::getRefSystemFactory()->getCCS2CGRFTransformation());
+	auto pCCS2CGRF = TCCS2CGRFTransformation();
 	//Transform copy of origin given in CCS into CGRF (geodetic cartisian)
 	TPositionVector fOrigin2 = fOrigin;
-	pCCS2CGRF->transform(fOrigin2);
+	pCCS2CGRF.transform(fOrigin2);
 
 	TReal fOriginX = fOrigin2.getX().getValue();
 	TReal fOriginY = fOrigin2.getY().getValue();

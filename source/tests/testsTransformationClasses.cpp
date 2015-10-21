@@ -165,9 +165,9 @@ namespace tut
 		double y_expected = directTransfo.getMmatrixIJPosition(1,0)*10 + directTransfo.getMmatrixIJPosition(1,1)*3.0 + directTransfo.getMmatrixIJPosition(1,2)*-1.0 + directTransfo.getMmatrixIJPosition(1,3)*1;
 		double z_expected = directTransfo.getMmatrixIJPosition(2,0)*10 + directTransfo.getMmatrixIJPosition(2,1)*3.0 + directTransfo.getMmatrixIJPosition(2,2)*-1.0 + directTransfo.getMmatrixIJPosition(2,3)*1;
 
-		ensure_distance("vector_to_transform(0)", vector_to_transform.getX().getValue(), x_expected, 1e-6);
-		ensure_distance("vector_to_transform(1)", vector_to_transform.getY().getValue(), y_expected, 1e-6);
-		ensure_distance("vector_to_transform(2)", vector_to_transform.getZ().getValue(), z_expected, 1e-6);
+      ensure_distance("vector_to_transform(0)", vector_to_transform.getX().getMetresValue(), x_expected, 1e-6);
+      ensure_distance("vector_to_transform(1)", vector_to_transform.getY().getMetresValue(), y_expected, 1e-6);
+      ensure_distance("vector_to_transform(2)", vector_to_transform.getZ().getMetresValue(), z_expected, 1e-6);
 	}
 	
 	// Test inverse transformation
@@ -246,9 +246,9 @@ namespace tut
 		dirInv.transform(vector_to_transform);
 
 		//Test if p_root has the correct coordinate
-		ensure_distance("X component must match reference", vector_to_transform.getX().getValue(), 10.0, 1e-6);
-		ensure_distance("Y component must match reference", vector_to_transform.getY().getValue(), 10.0, 1e-6);
-		ensure_distance("Z component must match reference", vector_to_transform.getZ().getValue(), 10.0, 1e-6);
+      ensure_distance("X component must match reference", vector_to_transform.getX().getMetresValue(), 10.0, 1e-6);
+      ensure_distance("Y component must match reference", vector_to_transform.getY().getMetresValue(), 10.0, 1e-6);
+      ensure_distance("Z component must match reference", vector_to_transform.getZ().getMetresValue(), 10.0, 1e-6);
 	}
 
 	// Test inv * his direct transformation
@@ -283,9 +283,9 @@ namespace tut
 		
 
 		//Test if p_root has the correct coordinate
-		ensure_distance("X component must match reference", vector_to_transform.getX().getValue(), 0.0, 1e-6);
-		ensure_distance("Y component must match reference", vector_to_transform.getY().getValue(), 20.0, 1e-6);
-		ensure_distance("Z component must match reference", vector_to_transform.getZ().getValue(), 0.0, 1e-6);
+		ensure_distance("X component must match reference", vector_to_transform.getX().getMetresValue(), 0.0, 1e-6);
+		ensure_distance("Y component must match reference", vector_to_transform.getY().getMetresValue(), 20.0, 1e-6);
+		ensure_distance("Z component must match reference", vector_to_transform.getZ().getMetresValue(), 0.0, 1e-6);
 	}
 
 	// Test direct transformation with scale
@@ -344,9 +344,9 @@ namespace tut
 		*/
 
 		TPositionVector p_root2(20.0, 20.0, 20.0,k3DCartesian);
-		ensure_distance("X component must match reference", vector_to_transform.getX().getValue(), p_root2.getX().getValue(), 1e-6);
-		ensure_distance("Y component must match reference", vector_to_transform.getY().getValue(), p_root2.getY().getValue(), 1e-6);
-		ensure_distance("Z component must match reference", vector_to_transform.getZ().getValue(), p_root2.getZ().getValue(), 1e-6);
+		ensure_distance("X component must match reference", vector_to_transform.getX().getMetresValue(), p_root2.getX().getMetresValue(), 1e-6);
+		ensure_distance("Y component must match reference", vector_to_transform.getY().getMetresValue(), p_root2.getY().getMetresValue(), 1e-6);
+		ensure_distance("Z component must match reference", vector_to_transform.getZ().getMetresValue(), p_root2.getZ().getMetresValue(), 1e-6);
 	}
 
 	// Test inverse transformation with scale
@@ -398,9 +398,9 @@ namespace tut
 		ensure_distance("m(2,2)", invTransfo.getMmatrixIJPosition(2,2), phicos*omegacos, 1e-6);
 		ensure_distance("m(2,3)", invTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX - (phicos*omegasin)*param1.tY - (phicos*omegacos)*param1.tZ, 1e-6);
 
-		ensure_distance("X component must match reference", vector_to_transform.getX().getValue(), p_subF.getX().getValue(), 1e-6);
-		ensure_distance("Y component must match reference", vector_to_transform.getY().getValue(), p_subF.getY().getValue(), 1e-6);
-		ensure_distance("Z component must match reference", vector_to_transform.getZ().getValue(), p_subF.getZ().getValue(), 1e-6);
+		ensure_distance("X component must match reference", vector_to_transform.getX().getMetresValue(), p_subF.getX().getMetresValue(), 1e-6);
+		ensure_distance("Y component must match reference", vector_to_transform.getY().getMetresValue(), p_subF.getY().getMetresValue(), 1e-6);
+		ensure_distance("Z component must match reference", vector_to_transform.getZ().getMetresValue(), p_subF.getZ().getMetresValue(), 1e-6);
 	}
 
 	// Test direct * his inverse transformation with scale

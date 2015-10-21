@@ -225,9 +225,9 @@ namespace tut
 			const TAdjustablePoint& pt0 = proj.getPoints().getObject("P0");
 
 			
-			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getX().getValue(), 1.0);
-			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getY().getValue(), 2.0);
-			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getH().getValue(), 3.0);
+			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getX().getMetresValue(), 1.0);
+         ensure_equals("Point coords must match input", pt0.getProvisionalValue().getY().getMetresValue(), 2.0);
+         ensure_equals("Point coords must match input", pt0.getProvisionalValue().getH().getMetresValue(), 3.0);
 			ensure("Lock state must match", pt0.isFixed());
 			ensure_equals("Must be in the right frame", pt0.getFrameTreePosition()->get()->frame.getName(), "ROOT");
 
@@ -615,7 +615,7 @@ namespace tut
 			dspt.parse(TReader::tokenizeLGCfileString( "*DSPT P1 DM1 IH 60 IHSE 61 ICSE 62"), -1);
 			dspt.parse(TReader::tokenizeLGCfileString( "P2 63 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), -1);
 			ensure_equals("Instrument height updated DSPT",proj.getCurrentNode().measurements.fEDM.back().instrument.instrHeight , 60.0);
-			ensure_equals("Instrument height updated DSPT",proj.getCurrentNode().measurements.fEDM.back().instrumentPos->getProvisionalValue().getX().getValue() , 1.0);
+         ensure_equals("Instrument height updated DSPT", proj.getCurrentNode().measurements.fEDM.back().instrumentPos->getProvisionalValue().getX().getMetresValue(), 1.0);
 
 
 			ensure_equals("DPST default target from instrument section",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET1");
@@ -645,8 +645,8 @@ namespace tut
 			dver.parse(TReader::tokenizeLGCfileString( "*DVER"), -1);
 			dver.parse(TReader::tokenizeLGCfileString( "P2 P3 2.0 OBSE 0.01"), -1);
 			const auto& dverM(proj.getCurrentNode().measurements.fDVER.back());
-			ensure_equals("Point coordinates should match", dverM.station->getProvisionalValue().getX().getValue(),1);
-			ensure_equals("Point coordinates should match", dverM.targetPos->getProvisionalValue().getX().getValue(),1);
+         ensure_equals("Point coordinates should match", dverM.station->getProvisionalValue().getX().getMetresValue(), 1);
+			ensure_equals("Point coordinates should match", dverM.targetPos->getProvisionalValue().getX().getMetresValue(),1);
 			ensure_equals("Point coordinates should match", dverM.getObservedStDev(), 0.01 * MM2M);
 
 			//
