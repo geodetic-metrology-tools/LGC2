@@ -71,7 +71,7 @@ ENDIF(MINGW)
 INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 include_directories (
-	${LGC2_INCLUDE_PATH}
+	${CMAKE_SOURCE_DIR}/LGCProject
 	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcElements
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcParams
@@ -116,7 +116,7 @@ include_directories(SYSTEM  ${TUT_INCLUDE_PATH} ${EIGEN_INCLUDE_PATH})
 
 add_subdirectory(AdjustableObjects)
 add_subdirectory(LSCalculation)
-add_subdirectory(readers)
+add_subdirectory(Readers)
 add_subdirectory(tests)
 add_subdirectory(ContributionsGenerators)
 add_subdirectory(Measurements)

@@ -1,10 +1,10 @@
 #include "TILG2ILATransformation.h"
-#include<Eigen/Dense>
+#include <Eigen/Dense>
 #include "GeodeticConstants.h"
 #include "TRefSystemFactory.h"
 #include "TGraphLocalAstronomicalRF.h"
 #include "TCernGridGeoid.h"
-#include  "TCCS2CGRFTransformation.h"
+#include "TCCS2CGRFTransformation.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

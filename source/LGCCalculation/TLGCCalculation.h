@@ -1,6 +1,7 @@
 #ifndef TLGC_CALCULATION
 #define TLGC_CALCULATION
 
+#include <memory>
 #include "TALSComputer.h"
 #include "TResSimFileWriter.h"
 

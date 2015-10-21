@@ -1,6 +1,7 @@
 #ifndef TCONTRIBUTION_GENERATOR_H
 #define TCONTRIBUTION_GENERATOR_H
 
+#include "TCCS2CGRFTransformation.h"
 #include "TCGRF2LGTransformation.h"
 #include "TILG2ILATransformation.h"
 #include "ContributionStructures.h"

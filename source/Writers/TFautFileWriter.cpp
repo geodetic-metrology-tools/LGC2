@@ -9,7 +9,7 @@
 #include	"TLGCData.h"
 #include	"TScalar.h"
 #include	"TSeparatedFormatTStream.h"
-#include    "TLGCApp.h"
+#include "TLGCApp.h"
 #include "TFRAMEWriter.h"
 
 

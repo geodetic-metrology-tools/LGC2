@@ -2,7 +2,7 @@
 #define _TTSTN_H_
 
 #include <Global.h>
-#include <TInstrumentData.h>
+#include "TInstrumentData.h"
 #include "MeasDef.h"
 
 class  TLGCObsSummary;

@@ -1,6 +1,7 @@
 #ifndef LS_INPUT_MATRICES_FILLER
 #define LS_INPUT_MATRICES_FILLER
 
+#include <Vector>
 #include "TContributionsGenerator.h"
 #include "Global.h"
 

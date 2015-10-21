@@ -1,4 +1,11 @@
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/LGCObjectWriters
+					${CMAKE_SOURCE_DIR}/LGCProject
+					${CMAKE_SOURCE_DIR}/LGCProjectData
+					${CMAKE_SOURCE_DIR}/LocalTransformations
+					${CMAKE_SOURCE_DIR}/Measurements)
+
 # Create a variable containing all .cpp files:
 set(Writers_SOURCES
 	TAFileWriter.cpp

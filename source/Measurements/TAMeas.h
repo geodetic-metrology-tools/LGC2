@@ -1,7 +1,7 @@
 #ifndef _TA_ANGLE_MEAS_H_
 #define _TA_ANGLE_MEAS_H_
 
-#include <TInstrumentData.h>
+#include "TInstrumentData.h"
 #include <array>
 #include <TFreeVector.h>
 #include "UEOIndices.h"
