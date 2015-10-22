@@ -191,7 +191,7 @@ void    TResultsFileWriter::writeDataSummary()
  
     (*stream)<<"DATA SET - GENERAL INFO:" << endl<<endl;
     (*stream)<<"\tFRAMES defined:" << endl;
-    (*stream)<<"\t \t NOMBRE =\t"<< fProjectData->getNumberOfFrames() << endl << endl;
+    (*stream)<<"\t \t NOMBRE =\t"<< int(fProjectData->getNumberOfFrames()) << endl << endl;
  
     if(fProjectData->getPoints().numObjects()>0)
         writeAdjustableObjGeneralInfo("POINTS", fProjectData->getPoints().numObjects(), fProjectData->getPoints().numUnknowns());

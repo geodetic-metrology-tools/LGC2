@@ -661,7 +661,7 @@ namespace tut
 			ensure_equals("Instrument ID should match", levelRound.instrument.ID,"LI1");
 			ensure_equals("Default staff ID should match", levelRound.instrument.defStaffID,"ST2");
 			ensure_equals("Reference point given, plane should be initialized", levelRound.fMeasuredPlane->isInitialized(),true);
-			ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue(),0.0);
+         ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue().getMetresValue(), 0.0);
 
 			auto& firstDLEVMeasurement(levelRound.measDLEV[0]);
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement.targetPos->getName(),"P1");

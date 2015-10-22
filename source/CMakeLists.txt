@@ -129,19 +129,19 @@ add_subdirectory(LGCCalculation)
 add_subdirectory(Writers)
 add_subdirectory(LGCObjectWriters)
 
-include_directories(${CMAKE_SOURCE_DIR})
+#include_directories(${CMAKE_SOURCE_DIR})
 
-add_executable(LGC main.cpp)
+#add_executable(LGC main.cpp)
 
-target_link_libraries(LGC LGCProject LGCProjectData LGCCalculation Readers AdjustableObjects LocalTransformations CalcElements ProjectData LGCObjectWriters StreamFormatters FiltersAndFormats Converters ContributionsGenerators AffineTransformations LSCalculation MathematicalConcepts Measurements Writers ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
+#target_link_libraries(LGCProject LGCProjectData LGCCalculation Readers AdjustableObjects LocalTransformations CalcElements ProjectData LGCObjectWriters StreamFormatters FiltersAndFormats Converters ContributionsGenerators AffineTransformations LSCalculation MathematicalConcepts Measurements Writers ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
 
 # INSTALL for creation of the LGC2 installer
-install(TARGETS LGC DESTINATION "." COMPONENT application)
-install(FILES
-		"${VCREDIST_INSTALLER_PATH}"
-		DESTINATION "."
-		COMPONENT application
-	)
+#install(TARGETS LGCProject DESTINATION "." COMPONENT application)
+#install(FILES
+#		"${VCREDIST_INSTALLER_PATH}"
+#		DESTINATION "."
+#		COMPONENT application
+#	)
 	
 #copy test files for unit tests
 if(UNIX)

@@ -70,7 +70,7 @@ bool TDataAnalyzer::dataConsistent(){
 						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
 						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
 
-						itLEVEL->fMeasuredPlane->initialize(&rp,TScalar(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
+						itLEVEL->fMeasuredPlane->initialize(&rp,TLength(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
 															LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), true, true);
 				}
 				else
@@ -112,7 +112,7 @@ bool TDataAnalyzer::dataConsistent(){
 
                TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
 
-					itECHO->fMeasuredPlane->initialize(&rp,TScalar(initialRefPtDistance), LGC::TAngle(LGC::TAngle::EUnits::kRadians , thetaLineVectorAngle), 
+					itECHO->fMeasuredPlane->initialize(&rp,TLength(initialRefPtDistance), LGC::TAngle(LGC::TAngle::EUnits::kRadians , thetaLineVectorAngle), 
 							LGC::TAngle(LGC::TAngle::EUnits::kRadians , M_PI_2), false, true);
 				}
 				else

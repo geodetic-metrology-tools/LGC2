@@ -6,7 +6,7 @@ include_directories(${CMAKE_SOURCE_DIR}
 					${CMAKE_SOURCE_DIR}/Measurements
 					${CMAKE_SOURCE_DIR}/LGCObjectWriters
 					${CMAKE_SOURCE_DIR}/LocalTransformations
-					${CMAKE_SOURCE_DIR}/readers
+					${CMAKE_SOURCE_DIR}/Readers
 					${CMAKE_SOURCE_DIR}/Writers)
 
 # Create a variable containing all .h files:

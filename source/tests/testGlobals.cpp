@@ -165,9 +165,9 @@ namespace tut
 
 		pH.setEstimatedPrecision(5, 0.1);
 		pH.setEstimatedPrecision(6, 0.2);
-      ensure_equals("Estimated precision should match", pH.getXEstPrecision(), 0.1);
-      ensure_equals("Estimated precision should match", pH.getYEstPrecision(), 0.2);
-      ensure_equals("Estimated precision should match", pH.getZEstPrecision(), 0.0);
+      ensure_equals("Estimated precision should match", pH.getXEstPrecision().getMetresValue(), 0.1);
+      ensure_equals("Estimated precision should match", pH.getYEstPrecision().getMetresValue(), 0.2);
+      ensure_equals("Estimated precision should match", pH.getZEstPrecision().getMetresValue(), 0.0);
 
 		pH.setXYEstimatedCovariance(0.01);
 		EXPECT_FAIL(pH.setYZEstimatedCovariance(0.02));

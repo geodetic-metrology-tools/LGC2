@@ -830,9 +830,9 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										coordResWidth,
 										coordResPrecision,
 										separator,
-										pt->getXEstPrecision()*LGC::M2MM,
-										pt->getYEstPrecision()*LGC::M2MM,
-										pt->getZEstPrecision()*LGC::M2MM,
+                              pt->getXEstPrecision().getMMetresValue(),
+                              pt->getYEstPrecision().getMMetresValue(),
+                              pt->getZEstPrecision().getMMetresValue(),
 										"");/*sigma*/
 
 		//Write DX, DY, DZ difference between provisional and estimated value
@@ -840,9 +840,9 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										coordResWidth,
 										coordResPrecision,
 										separator,
-										(estimatedValue.getX() - provisionalValue.getX()) *LGC::M2MM,
-										(estimatedValue.getY() - provisionalValue.getY()) *LGC::M2MM,
-										(estimatedValue.getZ() - provisionalValue.getZ()) *LGC::M2MM,
+										(estimatedValue.getX() - provisionalValue.getX()).getMMetresValue(),
+                              (estimatedValue.getY() - provisionalValue.getY()).getMMetresValue(),
+                              (estimatedValue.getZ() - provisionalValue.getZ()).getMMetresValue(),
 										"");/*offset*/
 	}
 	else{//It is ROOT

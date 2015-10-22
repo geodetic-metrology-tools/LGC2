@@ -5,7 +5,9 @@ include_directories(${CMAKE_SOURCE_DIR}
 					${CMAKE_SOURCE_DIR}/LGCProject
 					${CMAKE_SOURCE_DIR}/LGCProjectData
 					${CMAKE_SOURCE_DIR}/LocalTransformations
-					${CMAKE_SOURCE_DIR}/Measurements)
+					${CMAKE_SOURCE_DIR}/Measurements
+					${CMAKE_SOURCE_DIR}/Writers
+					)
 
 # Create a variable containing all .cpp files:
 set(Writers_SOURCES

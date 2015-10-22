@@ -936,7 +936,7 @@ bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatri
 			}
 
 			if(frame.hasScaleStandDev()){
-				TReal variance = pow2(frame.getScaleStandDev().getValue());
+				TReal variance = pow2(frame.getScaleStandDev());
 				if(variance < nullLimit){
 					fillOK = false;
 					outputMessages << TFileLogger::e_logType::LOG_ERROR <<  "Standard deviation assigned to a scale of a frame: " + frame.getName() + " is too small, causes zero division"; 

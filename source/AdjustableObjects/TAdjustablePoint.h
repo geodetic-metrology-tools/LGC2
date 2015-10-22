@@ -169,13 +169,13 @@ public:
 
 
 		/// Returns the estimated X estimated precision
-      inline TReal getXEstPrecision() const { return fEstimatedPrecision.getX().getMetresValue(); }
+      inline TLength getXEstPrecision() const { return fEstimatedPrecision.getX(); }
 
 		/// Returns the estimated Y estimated precision
-      inline TReal getYEstPrecision() const { return fEstimatedPrecision.getY().getMetresValue(); }
+      inline TLength getYEstPrecision() const { return fEstimatedPrecision.getY(); }
 
 		/// Returns the estimated Z estimated precision
-      inline TReal getZEstPrecision() const { return fEstimatedPrecision.getZ().getMetresValue(); }
+      inline TLength getZEstPrecision() const { return fEstimatedPrecision.getZ(); }
 
 		/// Returns iterator to the position in the tree.
 		TDataTreeIterator	getFrameTreePosition() const{return fFramePosition;};
@@ -276,9 +276,9 @@ public:
 
 private:
 
-	TPositionVector			fProvisionalValue; /*!< point's provisional value */
+	TPositionVector		fProvisionalValue; /*!< point's provisional value */
 	TFreeVector				fCorrection; /*!< point's correction after calculation  */
-	TPositionVector			fEstimatedValue; /*!< point's estimated value after calculation */
+	TPositionVector		fEstimatedValue; /*!< point's estimated value after calculation */
 	TFreeVector				fEstimatedPrecision; /*!< point's estimated precision after calculation */
 	TFreeVector				fCovariance; /*!< point's covariance */	
 
