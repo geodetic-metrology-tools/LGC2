@@ -82,7 +82,7 @@ namespace tut
 
 		const TAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
 
-		ensure_equals("Reference point distance should be 100", plane1.getRefPtDistEstimatedValue().getValue(), -100.0, 1e-7);
+		ensure_equals("Reference point distance should be 100", plane1.getRefPtDistEstimatedValue().getMetresValue(), -100.0, 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT x coordinate should match",PT.getX().getMetresValue(), 0.0  , 1e-7);
@@ -118,7 +118,7 @@ namespace tut
 		TPositionVector PTxyH = PT;
 		TXYH2CCS::CCS2XYHg2000Machine(PTxyH);
 		/*Compared to LGC1 result (there is not distance from the reference point)*/
-		ensure_equals("(Point z coordinate - reference point distance) should match", PTxyH.getH().getMetresValue() - plane1.getRefPtDistEstimatedValue().getValue(), 100.0000001, 1e-7);
+		ensure_equals("(Point z coordinate - reference point distance) should match", PTxyH.getH().getMetresValue() - plane1.getRefPtDistEstimatedValue().getMetresValue(), 100.0000001, 1e-7);
 
  	}
 
@@ -148,7 +148,7 @@ namespace tut
 
 		const TAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
 
-		ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getValue(), -14.0 , 1e-7);
+      ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
@@ -185,7 +185,7 @@ namespace tut
 
 		const TAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
 
-		ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getValue(), -74.0 , 1e-7);
+      ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getMetresValue(), -74.0, 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
@@ -401,7 +401,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match",dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getValue(), -120,1e-8);
+      ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
 		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().gon(), 0,1e-8);
 
  	}
@@ -430,7 +430,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match",dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getValue(), 130,1e-8);
+      ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
 		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().gon(), 0,1e-8);
 
  	}
@@ -458,7 +458,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match",dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getValue(), -70.710678118654752,1e-8);
+      ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
 		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().gon(), 50,1e-8);
 
  	}

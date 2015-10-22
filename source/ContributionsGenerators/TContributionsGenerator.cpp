@@ -92,8 +92,8 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(const TTSTN& 
    TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = dist.target.targetHt;
-	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getValue();
-	TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue();
+	TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue();
 
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
@@ -220,7 +220,7 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(const TTSTN& station,
    TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = zend.target.targetHt;
-	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getValue();
+	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue();
 
 	TReal dx = xTg-xSt;
 	TReal dy = yTg-ySt;
@@ -327,7 +327,7 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 	addTransformationsContributions3D(tgLor2RootTrafo, tgPointInLOR, line1AMat,  line2AMat,  line3AMat, targetTransfContributions);
 
 
-	TReal sDistPlusCs = plr3D.getDistance() + plr3D.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal sDistPlusCs = plr3D.getDistance() + plr3D.target.distCorrectionAdjustable->getEstimatedValue();
 	TReal sinTheta = plr3D.getAngle(kANGL).sin();
 	TReal cosTheta = plr3D.getAngle(kANGL).cos();
 
@@ -336,7 +336,7 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 
    TReal dX = targetPos.getX().getMetresValue() - stationPos.getX().getMetresValue();
    TReal dY = targetPos.getY().getMetresValue() - stationPos.getY().getMetresValue();
-   TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue().getValue();
+   TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue();
 
    TReal dist2 = pow2q(dist(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue()));
 	TReal distance3D = sqrt(pow2q(dX) + pow2q(dY)+pow2q(dZ));
@@ -431,7 +431,7 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(const TTSTN& station, 
    TReal xTg = targetPos.getX().getMetresValue();
    TReal yTg = targetPos.getY().getMetresValue();
 
-	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue();
 
 	TReal D = dist(xSt, ySt, xTg, yTg);
 
@@ -492,7 +492,7 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 
 	TReal hTg = dspt.target.targetHt;
 	TReal hInst = edmST.instrument.instrHeight;
-	TReal cst = dspt.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal cst = dspt.target.distCorrectionAdjustable->getEstimatedValue();
 
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
@@ -588,7 +588,7 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const TAdjustable
 DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, const TDLEV& dlev){
 	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().rad(); //collimination angle in rads
 	TReal cdz = dlev.target.distCorrectionValue; //distance correction value
-	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getValue(); //Distance of the reference point from the plane
+	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(); //Distance of the reference point from the plane
 
 	TPositionVector referencePoint = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 	const TLOR2LOR& refPTLor2RootTrafo = getLORTransformation(levelInstr.fMeasuredPlane->getReferencePoint()->getFrameTreePosition(), fTree->begin()); 
@@ -633,7 +633,7 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, const TECHO& echo){
 	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().rad(); // Theta angle of the plane
 	TReal cEcVp = echo.target.distCorrectionValue; //distance of the target correction value
-	TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getValue();  // distance of the reference point from the plane
+   TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();  // distance of the reference point from the plane
 
 	TPositionVector stationPoint= echo.targetPos->getEstimatedValue();
 
@@ -1207,12 +1207,12 @@ TReal TContributionsGenerator::getZENDCalcMeas(const TTSTN& station, const TAdju
 	else
 		fMLAused = false;
 
-   TReal distance3D = dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue().getValue(),
+   TReal distance3D = dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue(),
       targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), targetPos.getZ().getMetresValue() + targetHt);
 	if (distance3D < nullLimit)
 		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
 
-   return (LGC::TAngle::acos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue().getValue) / distance3D).getMetresValue())).rad();
+   return (LGC::TAngle::acos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue()) / distance3D))).rad();
 }
 
 
@@ -1232,7 +1232,7 @@ TReal TContributionsGenerator::getDISTCalcMeas(const TTSTN& station, const TAdju
 	else
 		fMLAused = false;
 
-   return (dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue().getValue()),
+   return (dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue()),
       targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), (targetPos.getZ().getMetresValue() + targetHt)) - distanceCorr);
 }
 
@@ -1255,7 +1255,7 @@ TReal TContributionsGenerator::getDHORCalcMeas(const TTSTN& station, const TLINE
 		fMLAused = false;
 
 	TReal D = dist(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(),  targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue());
-	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue();
 	return D - cte;
 }
 
@@ -1276,7 +1276,7 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 
 	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().rad(); 
 	TReal cEcVp = echo.target.distCorrectionValue; 
-	TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getValue(); 
+   TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
 
 	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX() ).getMetresValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue() + dRef - cEcVp;
 
@@ -1302,7 +1302,7 @@ TReal	TContributionsGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const T
 
 	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().rad(); //collimination angle in rads
 	TReal cdz = dlev.target.distCorrectionValue; //distance of the target correction value
-	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getValue(); 
+   TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
 
 	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue()) + pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue())); 
 	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg*tanq(collAngl);
@@ -1325,7 +1325,7 @@ TReal	TContributionsGenerator::getDSPTCalcMeas(const TEDM& edmST, const TDSPT& d
 	else
 		fMLAused = false;
 
-	TReal cst = dspt.target.distCorrectionAdjustable->getEstimatedValue().getValue();
+	TReal cst = dspt.target.distCorrectionAdjustable->getEstimatedValue();
 
 	TReal D = dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + edmST.instrument.instrHeight), 
 				targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), (targetPos.getZ().getMetresValue() + dspt.target.targetHt));

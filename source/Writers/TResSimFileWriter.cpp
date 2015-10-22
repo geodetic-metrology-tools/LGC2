@@ -388,15 +388,15 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	TFreeVector deltaMin = simPt.getMinRes();
 	TFreeVector deltaSigma = simPt.getSumRes2();
 
-	TReal sigmadx(sqrtq((deltaSigma.getX().getValue()
-		-powq(deltaMoy.getX().getValue()*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmady(sqrtq((deltaSigma.getY().getValue()
-			-powq(deltaMoy.getY().getValue()*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmadz(sqrtq((deltaSigma.getZ().getValue()
-			-powq(deltaMoy.getZ().getValue()*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sx(simPt.getAdjustablePoint()->getXEstPrecision().getValue());
-	TReal sy(simPt.getAdjustablePoint()->getYEstPrecision().getValue());
-	TReal sz(simPt.getAdjustablePoint()->getZEstPrecision().getValue());
+	TReal sigmadx(sqrtq((deltaSigma.getX().getMetresValue()
+		-powq(deltaMoy.getX().getMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sigmady(sqrtq((deltaSigma.getY().getMetresValue()
+			-powq(deltaMoy.getY().getMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sigmadz(sqrtq((deltaSigma.getZ().getMetresValue()
+			-powq(deltaMoy.getZ().getMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sx(simPt.getAdjustablePoint()->getXEstPrecision());
+	TReal sy(simPt.getAdjustablePoint()->getYEstPrecision());
+	TReal sz(simPt.getAdjustablePoint()->getZEstPrecision());
 
 	stream->setWidthFormat(coordResWidth);
 	stream->setPrecisionFormat(coordResPrecision);
@@ -406,9 +406,9 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	if(!simPt.getAdjustablePoint()->isFixed())
 	{
 		(*stream).writeString(5,"MAX");
-		writeDouble(coordResWidth, precisionMM, deltaMax.getX().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMax.getX().getMetresValue() * LGC::M2MM);
 		(*stream).writeString(7,"MOYEN");
-		writeDouble(coordResWidth, precisionMM, deltaMoy.getX().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMoy.getX().getMetresValue() * LGC::M2MM);
 	}
 	else
 	{
@@ -422,9 +422,9 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	if(!simPt.getAdjustablePoint()->isFixed())
 	{
 		(*stream).writeString(5,"MAX");
-		writeDouble(coordResWidth, precisionMM, deltaMax.getY().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMax.getY().getMetresValue() * LGC::M2MM);
 		(*stream).writeString(7,"MOYEN");
-		writeDouble(coordResWidth, precisionMM, deltaMoy.getY().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMoy.getY().getMetresValue() * LGC::M2MM);
 	}
 	else
 	{
@@ -438,9 +438,9 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	if(!simPt.getAdjustablePoint()->isFixed())
 	{
 		(*stream).writeString(5,"MAX");
-		writeDouble(coordResWidth, precisionMM, deltaMax.getZ().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMax.getZ().getMetresValue() * LGC::M2MM);
 		(*stream).writeString(7,"MOYEN");
-		writeDouble(coordResWidth, precisionMM, deltaMoy.getZ().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMoy.getZ().getMetresValue() * LGC::M2MM);
 	}
 	else
 	{
@@ -487,7 +487,7 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	if(!simPt.getAdjustablePoint()->isFixed())
 	{
 		(*stream).writeString(5,"MIN");
-		writeDouble(coordResWidth, precisionMM, deltaMin.getX().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMin.getX().getMetresValue() * LGC::M2MM);
 		(*stream).writeString(7,"SIGMA");
 		writeDouble(coordResWidth, precisionMM, sigmadx * LGC::M2MM);
 	}
@@ -503,7 +503,7 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	if(!simPt.getAdjustablePoint()->isFixed())
 	{
 		(*stream).writeString(5,"MIN");
-		writeDouble(coordResWidth, precisionMM, deltaMin.getY().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMin.getY().getMetresValue() * LGC::M2MM);
 		(*stream).writeString(7,"SIGMA");
 		writeDouble(coordResWidth, precisionMM, sigmady * LGC::M2MM);
 	}
@@ -519,7 +519,7 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 	if(!simPt.getAdjustablePoint()->isFixed())
 	{
 		(*stream).writeString(5,"MIN");
-		writeDouble(coordResWidth, precisionMM, deltaMin.getZ().getValue() * LGC::M2MM);
+		writeDouble(coordResWidth, precisionMM, deltaMin.getZ().getMetresValue() * LGC::M2MM);
 		(*stream).writeString(7,"SIGMA");
 		writeDouble(coordResWidth, precisionMM, sigmadz * LGC::M2MM);
 	}
@@ -628,7 +628,7 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 	TReal srx(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(0).cc());
 	TReal sry(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(1).cc());
 	TReal srz(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(2).cc());
-	TReal sscl(simFr.getAdjustableTransformation()->getEstimatedPrecisionScale().getValue());
+	TReal sscl(simFr.getAdjustableTransformation()->getEstimatedPrecisionScale());
 
 	stream->setWidthFormat(coordResWidth);
 	stream->setPrecisionFormat(coordResPrecision);

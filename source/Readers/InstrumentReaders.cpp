@@ -60,17 +60,17 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
 						std::stor(tokens.at(1)) * CC2RAD, // given in cc, transform to rad
 						std::stor(tokens.at(2)) * CC2RAD, // given in cc, transform to rad
 						std::stor(tokens.at(3)) * MM2M, // conversion from mili-metres to metres
-					    std::stor(tokens.at(4)) * MM2M, // conversion from mili-metres to metres
+					   std::stor(tokens.at(4)) * MM2M, // conversion from mili-metres to metres
 						std::stoi(tokens[5]) != 0,
 						std::stor(tokens[6]),
 						std::stor(tokens[7]) * MM2M, // conversion from mili-metres to metres
-					    std::stor(tokens[8]) * MM2M, // conversion from mili-metres to metres
+					   std::stor(tokens[8]) * MM2M, // conversion from mili-metres to metres
 						std::stor(tokens[9]),
 						std::stor(tokens[10])* MM2M // conversion from mili-metres to metres
 		};
 
 		// Add adjustable scalar into a global collection and store a pointer
-		t.distCorrectionAdjustable = &fscalars.addObject(TAdjustableScalar(TScalar(std::stor(tokens[6])),std::stoi(tokens[5])==0, currentStation + tokens.at(0)));
+		t.distCorrectionAdjustable = &fscalars.addObject(TAdjustableScalar(std::stor(tokens[6]),std::stoi(tokens[5])==0, currentStation + tokens.at(0)));
 
 		// store the new target
 		targets[tokens.at(0)] = t;
@@ -186,7 +186,7 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
 		};
 	
 		// Add adjustable scalar into a global collection and store a pointer
-		t.distCorrectionAdjustable = &fscalars.addObject(TAdjustableScalar(TScalar(std::stor(tokens[4])), std::stoi(tokens[3]) == 0, currentStation + tokens.at(0)));
+		t.distCorrectionAdjustable = &fscalars.addObject(TAdjustableScalar(std::stor(tokens[4]), std::stoi(tokens[3]) == 0, currentStation + tokens.at(0)));
 
 		// store the new target
 		targets[tokens.at(0)] = t;

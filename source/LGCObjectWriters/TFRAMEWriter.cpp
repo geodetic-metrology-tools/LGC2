@@ -259,14 +259,14 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 
 	(*stream).writeString(obsWidth,	"");
 	if(node.frame.hasScaleStandDev())
-		(*stream).writeDouble(obsResWidth, lengthResidualPrecision,node.frame.getScaleStandDev().getValue()); //*LGC::M2MM????
+		(*stream).writeDouble(obsResWidth, lengthResidualPrecision,node.frame.getScaleStandDev()); //*LGC::M2MM????
 	else
 		(*stream).writeString(obsResWidth,	""); 
 	
 
 
 	if(!node.frame.isScaleFixed()){
-		(*stream).writeDouble(obsWidth, lengthPrecision,node.frame.getEstimatedPrecisionScale().getValue());
+		(*stream).writeDouble(obsWidth, lengthPrecision,node.frame.getEstimatedPrecisionScale());
 		(*stream).writeString(obsWidth,	"FALSE");
 	}
 	else{
@@ -868,7 +868,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 			TPositionVector forHCalc(estimatedValue);
 			transfXYZ2XYH(forHCalc, globalRef);
 
-			writeDouble(coordWidth,coordPrecision, forHCalc.getH().getValue());
+			writeDouble(coordWidth,coordPrecision, forHCalc.getH().getMetresValue());
 			(*stream)<<separator;
 		}
 

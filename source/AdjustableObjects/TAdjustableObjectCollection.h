@@ -1,7 +1,6 @@
 #ifndef TADJUSTABLE_OBJECT_COLLECTION
 #define TADJUSTABLE_OBJECT_COLLECTION
 
-
 #include "TAdjustableLine.h"
 #include "TAdjustablePlane.h"
 #include "TAdjustablePoint.h"

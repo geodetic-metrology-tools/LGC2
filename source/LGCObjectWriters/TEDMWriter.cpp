@@ -161,10 +161,10 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual() * LGC::M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the sensibility
-		TReal dz= ItDSPT.targetPos->getEstValue(2).getValue() + ItDSPT.target.targetHt - instrPos->getEstValue(2).getValue() - instr.instrHeight;
+		TReal dz= ItDSPT.targetPos->getEstValue(2) + ItDSPT.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
 		if (ItDSPT.target.distCorrectionUnknown)
 		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDSPT.getDistance() + ItDSPT.getDistanceResidual() + ItDSPT.target.distCorrectionAdjustable->getEstimatedValue().getValue()));
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDSPT.getDistance() + ItDSPT.getDistanceResidual() + ItDSPT.target.distCorrectionAdjustable->getEstimatedValue()));
 		}else{
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDSPT.getDistance() + ItDSPT.getDistanceResidual()));
 		}

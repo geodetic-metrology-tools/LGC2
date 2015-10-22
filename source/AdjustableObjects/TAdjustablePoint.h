@@ -8,10 +8,6 @@
 #include "TSpatialStatus.h"
 #include "Global.h"
 
-#ifndef isnan
-#define isnan(x) ((x)!=(x))
-#endif
-
 /*! 
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a point represented by a TPositionVector class.

@@ -253,8 +253,8 @@ void	TSimulationCalculation::getUVDSimValues(TCAM& camera){
 
 
 		/*Simulate the values*/
-		calcMeas.fMeasuredVector.setX( getSimulatedValue(calcMeas.fMeasuredVector.getX().getValue(),itUVD->target.sigmaX));
-		calcMeas.fMeasuredVector.setY( getSimulatedValue(calcMeas.fMeasuredVector.getY().getValue(),itUVD->target.sigmaY));
+		calcMeas.fMeasuredVector.setX( TLength(getSimulatedValue(calcMeas.fMeasuredVector.getX().getMetresValue(),itUVD->target.sigmaX)));
+      calcMeas.fMeasuredVector.setY( TLength(getSimulatedValue(calcMeas.fMeasuredVector.getY().getMetresValue(),itUVD->target.sigmaY)));
 		calcMeas.fsDistance = getSimulatedValue(calcMeas.fsDistance,itUVD->target.sigmaDist);
 
 		/* Probably needs to norm!!! -- the simulation random error could make it no to be unit, ENSURE about that!!! */
@@ -272,8 +272,8 @@ void	TSimulationCalculation::getUVECSimValues(TCAM& camera){
 		calcMeas = fCg.getUVECCalcMeas(camera, *itUVEC);
 
 		/*Simulate the values*/
-		calcMeas.setX( getSimulatedValue(calcMeas.getX().getValue(),itUVEC->target.sigmaX));
-		calcMeas.setY( getSimulatedValue(calcMeas.getY().getValue(),itUVEC->target.sigmaY));
+      calcMeas.setX( TLength(getSimulatedValue(calcMeas.getX().getMetresValue(), itUVEC->target.sigmaX)));
+      calcMeas.setY( TLength(getSimulatedValue(calcMeas.getY().getMetresValue(), itUVEC->target.sigmaY)));
 
 		/* Probably needs to norm!!! -- the simulation random error could make it no to be unit, ENSURE about that!!! */
 		calcMeas.normalize();
@@ -286,7 +286,7 @@ void	TSimulationCalculation::getPLR3DSimValues(const TTSTN& station,const TTSTN:
 	for(auto itPLR3D(plr3D.begin()); itPLR3D != plr3D.end(); ++itPLR3D){
 		TReal calcValTheta = fCg.getANGLCalcMeas(station,rom,itPLR3D->targetPos);
 		TReal calcValPhi = fCg.getZENDCalcMeas(station,itPLR3D->targetPos,itPLR3D->target.targetHt);
-		TReal calcValDist = fCg.getDISTCalcMeas(station,itPLR3D->targetPos,itPLR3D->target.targetHt, itPLR3D->target.distCorrectionAdjustable->getEstimatedValue().getValue());
+		TReal calcValDist = fCg.getDISTCalcMeas(station,itPLR3D->targetPos,itPLR3D->target.targetHt, itPLR3D->target.distCorrectionAdjustable->getEstimatedValue());
 
 		TReal sigmaTheta = itPLR3D->target.sigmaAngl;
 		TReal sigmaPhi = itPLR3D->target.sigmaZenD;
@@ -318,7 +318,7 @@ void	TSimulationCalculation::getZENDSimValues(const TTSTN& station, std::vector<
 
 void	TSimulationCalculation::getDISTSimValues(const TTSTN& station, std::vector<TLINE>& dist){
 		for(auto itDIST(dist.begin()); itDIST != dist.end(); ++itDIST){
-			TReal calcVal = fCg.getDISTCalcMeas(station, itDIST->targetPos, itDIST->target.targetHt, itDIST->target.distCorrectionAdjustable->getEstimatedValue().getValue());
+			TReal calcVal = fCg.getDISTCalcMeas(station, itDIST->targetPos, itDIST->target.targetHt, itDIST->target.distCorrectionAdjustable->getEstimatedValue());
 			TReal sigma = itDIST->target.sigmaDist;
 			itDIST->setDistance(getSimulatedValue(calcVal, sigma));
 		}

@@ -161,7 +161,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 			const LGC::TAngle& getRotationStandDev(int d)const;
 
 			/// Returns the standard deviations of the scale factor.
-			const TScalar& getScaleStandDev()const;
+			TReal getScaleStandDev()const;
 
 			/// Returns TRUE if at least one component of the transformation has standard deviation, FLASE otherwise.
 			bool hasStandDev(); 
@@ -185,7 +185,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 			const TLength& getEstimatedPrecisionTransl(int d)const;
 
 			/// Returns the estimated precision of the scale factor
-			const TScalar& getEstimatedPrecisionScale()const;
+         TReal getEstimatedPrecisionScale()const;
 
 
 			/// Returns XY translation covariance
@@ -358,7 +358,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 
 		TLength		    fTransStandDev[3]; //Standard deviations of translations
 		LGC::TAngle		fRotStandDev[3];  //Standard deviations of rotations 
-		TScalar			fScaleStandDev; //Standard deviations of a scale
+		TReal			fScaleStandDev; //Standard deviations of a scale
 
 		int uidx_rot[3];  // Unknown indices of rotation
 		int uidx_trans[3]; // Unknown indices of translation
@@ -370,7 +370,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		//Estimated precisons of transformation parametres
 		LGC::TAngle	 fEstPrecisionRotation[3];  /*!<Estimated precision of the rotation. */
 		TLength		 fEstPrecisionTranslation[3];  /*!<Estimated precision of the translation. */
-		TScalar	     fEstPrecisionScale;  /*!<Estimated precision of the scale factor. */
+		TReal	       fEstPrecisionScale;  /*!<Estimated precision of the scale factor. */
 
 		LGC::TAngle	 fCovarianceRotation[3];  /*!<Covariance of the rotation  XY, YZ, XZ */
      	TLength		 fCovarianceTranslation[3];  /*!<Covariance of the translation XY, YZ, XZ  */

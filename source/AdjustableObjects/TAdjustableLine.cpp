@@ -93,19 +93,22 @@ void TAdjustableLine::setFirstUidx(int idx) {
 }
 
 void TAdjustableLine::setCorrection(int idx, TReal value) {
+
+   TLength val(value);
+
 	for (int i = 0; i < 3; i++){
 		if (uidx_point[i] == idx) {
 			if (i == 0 ){
-				fPointCorrection.setX(value);
-				fPointEstimatedValue.setX(fPointEstimatedValue.getX()+value);
+            fPointCorrection.setX(val);
+            fPointEstimatedValue.setX(fPointEstimatedValue.getX() + val);
 			}
 			else if(i == 1){
-				fPointCorrection.setY(value);
-				fPointEstimatedValue.setY(fPointEstimatedValue.getY()+value);
+            fPointCorrection.setY(val);
+            fPointEstimatedValue.setY(fPointEstimatedValue.getY() + val);
 			}
 			else{
-				fPointCorrection.setZ(value);
-				fPointEstimatedValue.setZ(fPointEstimatedValue.getZ()+value);
+            fPointCorrection.setZ(val);
+            fPointEstimatedValue.setZ(fPointEstimatedValue.getZ() + val);
 			}
 			return;
 			}
@@ -113,16 +116,16 @@ void TAdjustableLine::setCorrection(int idx, TReal value) {
 	for (int i = 0; i < 3; i++){
 		if (uidx_lineVector[i] == idx) {
 			if (i == 0 ){
-				fLineVectorCorrection.setX(value);
-				fLineVectorEstimatedValue.setX(fLineVectorEstimatedValue.getX()+value);
+            fLineVectorCorrection.setX(val);
+            fLineVectorEstimatedValue.setX(fLineVectorEstimatedValue.getX() + val);
 			}
 			else if(i == 1){
-				fLineVectorCorrection.setY(value);
-				fLineVectorEstimatedValue.setY(fLineVectorEstimatedValue.getY()+value);
+            fLineVectorCorrection.setY(val);
+            fLineVectorEstimatedValue.setY(fLineVectorEstimatedValue.getY() + val);
 			}
 			else{
-				fLineVectorCorrection.setZ(value);
-				fLineVectorEstimatedValue.setZ(fLineVectorEstimatedValue.getZ()+value);
+            fLineVectorCorrection.setZ(val);
+            fLineVectorEstimatedValue.setZ(fLineVectorEstimatedValue.getZ() + val);
 			}
 			return;
 		}
@@ -131,7 +134,7 @@ void TAdjustableLine::setCorrection(int idx, TReal value) {
 }
 
 /*! Sets the estimated precision after calculation to a line's point.*/
-void	TAdjustableLine::setPointEstimatedPrecision(int idx, TReal value){
+void	TAdjustableLine::setPointEstimatedPrecision(int idx, TLength value){
 	for (int i = 0; i < 3; i++)
 		if (uidx_point[i] == idx) {
 			if (i == 0 ){
@@ -150,16 +153,18 @@ void	TAdjustableLine::setPointEstimatedPrecision(int idx, TReal value){
 
 /*! Sets the estimated precision after calculation to a line's point.*/
 void	TAdjustableLine::setLineVectorEstimatedPrecision(int idx, TReal value){
-	for (int i = 0; i < 3; i++)
+   TLength val(value);
+   
+   for (int i = 0; i < 3; i++)
 		if (uidx_lineVector[i] == idx) {
 			if (i == 0 ){
-				fLineVectorEstimatedPrecision.setX(value);
+            fLineVectorEstimatedPrecision.setX(val);
 			}
 			else if(i == 1){
-				fLineVectorEstimatedPrecision.setY(value);
+            fLineVectorEstimatedPrecision.setY(val);
 			}
 			else{
-				fLineVectorEstimatedPrecision.setZ(value);
+            fLineVectorEstimatedPrecision.setZ(val);
 			}
 			return;
 		}

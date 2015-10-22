@@ -5,27 +5,22 @@
 #include "TVAdjustableObject.h"
 #include "TScalar.h"
 
-#ifndef isnan
-#define isnan(x) ((x)!=(x))
-#endif
-
 /*! 
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a Scalar object.
 */
-class TAdjustableScalar : public TVAdjustableObject{
+class TAdjustableScalar : public TVAdjustableObject {
 public:
 	/*!@name Constructor */
 	//@{
 		/*!
 			\brief Constructs an TAdjustableScalar based on an existing TScalar value, state (fixed or variable) and its name. 
 		
-			\param[in] scalValue A reference to a scalar that will be adjusted. The scalar will be copied 
-							so the pointed-to object is no longer needed after construction.
+			\param[in] scalValue A scalar that will be adjusted. 
 			\param[in] isFixed The scalar will be excluded from the adjustment if set to TRUE, i.e. fixed scalar.
 			\param[in] name Name of the adjustable scalar.
 		*/
-		TAdjustableScalar(const TScalar& scalValue, bool isFixed, const std::string& name);
+		TAdjustableScalar(TReal scalValue, bool isFixed, const std::string& name);
 
 		/// Create an unitialized scalar. 
 		static TAdjustableScalar createUninitialized(const std::string& name);
@@ -34,16 +29,16 @@ public:
 	/*!@name Access methods*/
 	//@{
 		/// Returns the provisional value of the scalar. 
-		inline TScalar getProvisionalValue() const {return fProvisionalValue;}
+      inline TReal getProvisionalValue() const { return fProvisionalValue; }
 
 		/// Returns the correction value of the scalar. 
-		inline TScalar	getCorrection() const {	return fCorrection;}
+      inline TReal getCorrection() const { return fCorrection; }
 
 		// Returns the estimated value of the scalar. 
-		inline TScalar	getEstimatedValue() const {	return fEstimatedValue;}
+      inline TReal getEstimatedValue() const { return fEstimatedValue; }
 			
 		/// Returns the estimated precision of the scalar. 
-		inline TScalar	getEstimatedPrecision() const {	return fEstimatedPrecision;}
+      inline TReal getEstimatedPrecision() const { return fEstimatedPrecision; }
 
 		/*!
 			\brief Returns The number of unknowns of this scalar.
@@ -79,10 +74,10 @@ public:
 		}
 
 		/// Returns the estimated variance.
-		inline TReal getVariance() const{ return powq(fEstimatedPrecision.getValue(), 2);}
+		inline TReal getVariance() const{ return powq(fEstimatedPrecision, 2);}
 
 		/// Returns the estimated precision.
-		inline TScalar	getEstPrecision() const {return fEstimatedPrecision;}
+      inline TReal getEstPrecision() const { return fEstimatedPrecision; }
 
 		/// Returns Name of the scalar.
 		inline virtual const std::string& getName() const { return fName;}
@@ -90,7 +85,7 @@ public:
 		/*! 
 			\see TAdjustableObject::isInitialized
 		*/
-		inline virtual bool isInitialized() const { return !isnan(fProvisionalValue.getValue());}
+		inline virtual bool isInitialized() const { return !isnan(fProvisionalValue);}
 
 	//@}
 
@@ -125,10 +120,10 @@ public:
 
 private:
 
-	TScalar					fProvisionalValue; /*!< Scalar's provisional value. */
-	TScalar					fCorrection; /*!< Scalar's correction after calculation.  */
-	TScalar					fEstimatedValue; /*!< Scalar's estimated value after calculation. */
-	TScalar					fEstimatedPrecision;  /*!<Scalar's estimated precision after calculation. */
+   TReal					fProvisionalValue; /*!< Scalar's provisional value. */
+   TReal					fCorrection; /*!< Scalar's correction after calculation.  */
+   TReal					fEstimatedValue; /*!< Scalar's estimated value after calculation. */
+   TReal					fEstimatedPrecision;  /*!<Scalar's estimated precision after calculation. */
 
 	bool isScalarFixed; /*!< Tells if scalar is excluded from the adjustment, i.e. fixed*/
 	int  uidx;	/*!< Position of the scalar in LS input matrix (column)*/

@@ -223,7 +223,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		TReal dz= ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
 		if (ItPLR3D.target.distCorrectionUnknown)
 		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue().getValue()));
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue()));
 		}else{
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()));
 		}
@@ -520,7 +520,7 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 		TReal dz= ItDIST.targetPos->getEstValue(2) + ItDIST.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
 		if (ItDIST.target.distCorrectionUnknown)
 		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual() + ItDIST.target.distCorrectionAdjustable->getEstimatedValue().getValue()));
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual() + ItDIST.target.distCorrectionAdjustable->getEstimatedValue()));
 		}else{
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual()));
 		}
@@ -1123,7 +1123,7 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 		(*stream).writeDouble(obsWidth, lengthResPrecision, tstn.instrument.instrHeight); 
 	}
 	else{
-		(*stream).writeDouble(obsWidth, lengthResPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue().getValue()); 
+		(*stream).writeDouble(obsWidth, lengthResPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue()); 
 	}
 
 

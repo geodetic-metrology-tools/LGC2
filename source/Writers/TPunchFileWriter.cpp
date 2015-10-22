@@ -525,7 +525,7 @@ void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
 		transfo.transform(estimatedValue);
 	}
 
-	TAStreamFormatter* stream = getStream();
+   TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
@@ -568,7 +568,7 @@ void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 	(*stream).width(1);
 	(*stream)<<"";
 	converter.writeName(point_int_root.getName(), nameWidth);
-	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point_int_root);
+   converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point_int_root.getXEstPrecision(), point_int_root.getYEstPrecision(), point_int_root.getHEstValue());
 	(*stream)<<endl;
 	return;
 }
@@ -758,11 +758,11 @@ void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 
 	(*stream).writeString(nameWidth, (point_int_root.getName()));
 
-	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getX().getValue());
+	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getX().getMetresValue());
 	(*stream)<<separator;
-	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getY().getValue());
+   writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getY().getMetresValue());
 	(*stream)<<separator;
-	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getZ().getValue());
+   writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getZ().getMetresValue());
 	(*stream)<<separator;
 	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getHEstValue());
 	(*stream)<<separator;
@@ -781,8 +781,8 @@ void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
 	(*stream).width(1);
 	(*stream)<<"";
 	converter.writeName(point.getName(), nameWidth);
-	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point);
-	converter.writeN( coordWidth, getCoordPrecision(), TLength::kMetres, point);
+	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getXEstPrecision(), point.getYEstPrecision(), point.getHEstValue());
+	//converter.writeN( coordWidth, getCoordPrecision(), TLength::kMetres, point);
 	(*stream)<<endl;
 	
 	return;
@@ -799,7 +799,7 @@ void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
 	(*stream).width(1);
 	(*stream)<<"";
 	converter.writeName(point.getName(), nameWidth);
-	converter.writeXYZandH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point);
+	//converter.writeXYZandH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point);
 	//converter.writeN( coordWidth, getCoordPrecision(), TLength::kMetres, point);
 	(*stream)<<endl;
 

@@ -92,10 +92,10 @@ const LGC::TAngle& TAdjustableHelmertTransformation::getRotationStandDev(int d) 
 	throw std::runtime_error("Standard deviations of the rotation's component not assigned");
 }
 
-const TScalar& TAdjustableHelmertTransformation::getScaleStandDev()const{
-	if(!fScaleStandDev.isNull())
-		return fScaleStandDev;
-	throw std::runtime_error("Standard deviations of the scale not assigned");
+TReal TAdjustableHelmertTransformation::getScaleStandDev()const{
+	if(isnan(fScaleStandDev))
+      throw std::runtime_error("Standard deviations of the scale not assigned");
+	return fScaleStandDev;
 }
 
 bool TAdjustableHelmertTransformation::hasRotationStandDev(int d) const{
@@ -109,12 +109,12 @@ bool TAdjustableHelmertTransformation::hasTranslStandDev(int d)const{
 }
 
 bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
-	return !fScaleStandDev.isNull();
+   return !isnan(fScaleStandDev);
 }
 
 bool TAdjustableHelmertTransformation::hasStandDev(){
 	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || !fRotStandDev[0].getSLAngle().isNull() || !fRotStandDev[1].getSLAngle().isNull()
-		|| !fRotStandDev[2].getSLAngle().isNull() || !fScaleStandDev.isNull());
+      || !fRotStandDev[2].getSLAngle().isNull() || !isnan(fScaleStandDev));
 }
 
 void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {
@@ -204,27 +204,27 @@ const TLength& TAdjustableHelmertTransformation::getEstimatedPrecisionTransl(int
 
 }
 
-const TScalar& TAdjustableHelmertTransformation::getEstimatedPrecisionScale() const{
-	if(fEstPrecisionScale.isNull())
+TReal TAdjustableHelmertTransformation::getEstimatedPrecisionScale() const{
+	if(isnan(fEstPrecisionScale))
 		throw std::logic_error("No scale precision assigned");
 	return fEstPrecisionScale;
 }
 
 
-const TLength&			TAdjustableHelmertTransformation::getXYCovarTransl() const{
+const TLength&	TAdjustableHelmertTransformation::getXYCovarTransl() const{
 	if(fCovarianceTranslation[0].isNull())
 		throw std::logic_error("No XY covariance assigned.");
 	return fCovarianceTranslation[0];
 }
 
-const TLength&				TAdjustableHelmertTransformation::getYZCovarTransl() const{
+const TLength&	TAdjustableHelmertTransformation::getYZCovarTransl() const{
 	if(fCovarianceTranslation[1].isNull())
 		throw std::logic_error("No YZ covariance assigned.");
 	return fCovarianceTranslation[1];
 }
 
 
-const TLength&				TAdjustableHelmertTransformation::getXZCovarTransl() const{
+const TLength&	TAdjustableHelmertTransformation::getXZCovarTransl() const{
 	if(fCovarianceTranslation[2].isNull())
 		throw std::logic_error("No XZ covariance assigned.");
 	return fCovarianceTranslation[2];
@@ -240,20 +240,20 @@ bool TAdjustableHelmertTransformation::isRotationFixed(int d) const {
 	return fixedRotations[d]; 
 }
 
-const LGC::TAngle&		TAdjustableHelmertTransformation::getXYCovarRot() const{
+const LGC::TAngle& TAdjustableHelmertTransformation::getXYCovarRot() const{
 		if(fCovarianceRotation[0].getSLAngle().isNull())
 		throw std::logic_error("No XY covariance assigned.");
 	return fCovarianceRotation[0];
 }
 
 
-const LGC::TAngle&		TAdjustableHelmertTransformation::getYZCovarRot() const{
+const LGC::TAngle& TAdjustableHelmertTransformation::getYZCovarRot() const{
 		if(fCovarianceRotation[1].getSLAngle().isNull())
 		throw std::logic_error("No YZ covariance assigned.");
 	return fCovarianceRotation[1];
 }
 
-const LGC::TAngle&		TAdjustableHelmertTransformation::getXZCovarRot() const{
+const LGC::TAngle& TAdjustableHelmertTransformation::getXZCovarRot() const{
 		if(fCovarianceRotation[2].getSLAngle().isNull())
 		throw std::logic_error("No XZ covariance assigned.");
 	return fCovarianceRotation[2];
@@ -287,7 +287,7 @@ void TAdjustableHelmertTransformation::setRotationStandDev(int d, LGC::TAngle st
 }
 
 void TAdjustableHelmertTransformation::setScaleStandDev(TReal stDev){
-	fScaleStandDev.setValue(stDev);
+	fScaleStandDev = stDev;
 }
 
 
@@ -367,7 +367,7 @@ void	TAdjustableHelmertTransformation::setXZRotationCovariance(TReal value){
 
 void	TAdjustableHelmertTransformation::setEstimatedPrecision(int idx, TReal value){
 	if (uidx_scale == idx){
-		fEstPrecisionScale.setValue(value);
+		fEstPrecisionScale = value;
 		return;
 	}
 
@@ -455,7 +455,7 @@ void TAdjustableHelmertTransformation::reInitialise(){
 	fCovarianceRotation[1].set(LGC::TAngle::EUnits::kRadians,0.0);
 	fCovarianceRotation[2].set(LGC::TAngle::EUnits::kRadians,0.0);
 
-	fEstPrecisionScale.setValue(0.0);
+	fEstPrecisionScale = 0.0;
 
 	fEstPrecisionTranslation[0].setMetresValue(0.0);
 	fEstPrecisionTranslation[1].setMetresValue(0.0);

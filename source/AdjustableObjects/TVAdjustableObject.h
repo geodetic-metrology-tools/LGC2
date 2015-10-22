@@ -4,6 +4,10 @@
 #include <string>
 #include "Defaults.h"
 
+#ifndef isnan
+#define isnan(x) ((x)!=(x))
+#endif
+
 /*! 
 	\ingroup AdjustableObjects
 	\brief A pure virtual class which is an interface for all the adjustable objects.

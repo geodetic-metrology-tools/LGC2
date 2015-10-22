@@ -160,7 +160,7 @@ bool TTransformation::transform(TPositionVector& pv) const{
 
 	//If status is not null and vector is in a 3d cart. coordinates.
 	if(pv.getStatus()!=kNull && pv.getCoordSys() == k3DCart){
-		Eigen::Vector4d pTemp(pv.getX().getValue(), pv.getY().getValue(), pv.getZ().getValue(),1.0);
+      Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
 	
 		//Transform
 		Eigen::Vector4d pResult = *(fTransM) * pTemp;
@@ -173,9 +173,9 @@ bool TTransformation::transform(TPositionVector& pv) const{
 		}
 
 		//Transform point in homogeneus coordinates back to cartesian coordinates.
-		pv.setX(pResult[0]/pResult[3]);
-		pv.setY(pResult[1]/pResult[3]);
-		pv.setZ(pResult[2]/pResult[3]);
+		pv.setX(TLength(pResult[0]/pResult[3]));
+      pv.setY(TLength(pResult[1]/pResult[3]));
+      pv.setZ(TLength(pResult[2]/pResult[3]));
 		result = true;
 	}
 	else{
@@ -194,7 +194,7 @@ bool TTransformation::transform(TFreeVector& fv) const{
 
 	//If status is not null and vector is in a 3d cart. coordinates.
 	if(fv.getStatus()!=kNull && fv.getCoordSys()==k3DCart){
-		Eigen::Vector4d pTemp(fv.getX().getValue() ,fv.getY().getValue(),fv.getZ().getValue(),1.0);
+      Eigen::Vector4d pTemp(fv.getX().getMetresValue(), fv.getY().getMetresValue(), fv.getZ().getMetresValue(), 1.0);
 	
 		//TFreeVector is not affected by translation
 		mat(0,3) = 0;
@@ -212,9 +212,9 @@ bool TTransformation::transform(TFreeVector& fv) const{
 		}
 
 		//Transform point in homogeneus coordinates to cartesian coordinates
-		fv.setX(pResult[0]/pResult[3]);
-		fv.setY(pResult[1]/pResult[3]);
-		fv.setZ(pResult[2]/pResult[3]);
+		fv.setX(TLength(pResult[0]/pResult[3]));
+      fv.setY(TLength(pResult[1]/pResult[3]));
+      fv.setZ(TLength(pResult[2]/pResult[3]));
 		result = true;
 	}
 	else{

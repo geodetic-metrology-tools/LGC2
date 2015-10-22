@@ -57,30 +57,7 @@ namespace std
 {
 	/// string to real
 	inline TReal stor(const std::string& s) {
-
-#if 0 // OS_WINDOWS
-// If stod function works both on Linux & Windows, it'll replace the current code
-
-		const char *_Ptr = s.c_str();
-		const char *_Last = _Ptr+s.length()-1;
-		errno = 0;
-		char *_Eptr;
-		double _Ans = _CSTD strtod(_Ptr, &_Eptr);
-		
-		if (_Ptr == _Eptr)
-			throw std::invalid_argument("Invalid argument: cannot convert " + s + 
-			                            " to real value.");
-		if (_Eptr <= _Last)
-			throw std::invalid_argument("Could not convert " + s + " to a floating point number.");
-		if (errno == ERANGE)
-			throw std::out_of_range("Out of range: cannot convert " + s + 
-			                        " to real value.");
-		return (_Ans);
-#else
-
-	return TReal(std::stod(s));
-
-#endif
+	   return TReal(std::stod(s));
 	}
 };
 

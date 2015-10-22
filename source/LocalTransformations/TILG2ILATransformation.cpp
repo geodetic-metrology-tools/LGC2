@@ -89,9 +89,9 @@ void TILG2ILATransformation::initialiseEllips()
 	TPositionVector fOrigin2 = fOrigin;
 	pCCS2CGRF.transform(fOrigin2);
 
-	TReal fOriginX = fOrigin2.getX().getValue();
-	TReal fOriginY = fOrigin2.getY().getValue();
-	TReal fOriginZ = fOrigin2.getZ().getValue();
+	TReal fOriginX = fOrigin2.getX().getMetresValue();
+   TReal fOriginY = fOrigin2.getY().getMetresValue();
+   TReal fOriginZ = fOrigin2.getZ().getMetresValue();
 	TReal squareSemiMajor = SemiMajorAxisGRS80*SemiMajorAxisGRS80;
 	TReal squareSemiMinor = SemiMinorAxisGRS80*SemiMinorAxisGRS80;
 
@@ -126,9 +126,9 @@ void TILG2ILATransformation::initialiseSphere()
 	TPositionVector fOrigin2 = fOrigin;
 	pCCS2CGRF.transform(fOrigin2);
 
-	TReal fOriginX = fOrigin2.getX().getValue();
-	TReal fOriginY = fOrigin2.getY().getValue();
-	TReal fOriginZ = fOrigin2.getZ().getValue();
+   TReal fOriginX = fOrigin2.getX().getMetresValue();
+   TReal fOriginY = fOrigin2.getY().getMetresValue();
+   TReal fOriginZ = fOrigin2.getZ().getMetresValue();
 
 	TReal XYdistance = sqrt(fOriginX*fOriginX+fOriginY*fOriginY);
 	//Transform from geodetic cartesian coordinates to a geodetic ellipsoidal coordinates using non-iterative algorithm

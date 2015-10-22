@@ -2,7 +2,7 @@
 #include "TAdjustablePlane.h"
 #include "TAdjustablePoint.h"
 
-TAdjustablePlane::TAdjustablePlane(const TAdjustablePoint* referencePoint, const TScalar& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name)
+TAdjustablePlane::TAdjustablePlane(const TAdjustablePoint* referencePoint, const TLength& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name)
 	:
 	fName(name),
 	fReferencePoint(referencePoint),
@@ -35,12 +35,12 @@ TAdjustablePlane::TAdjustablePlane(const TAdjustablePoint* referencePoint, const
 {}
 
 TAdjustablePlane TAdjustablePlane::createUninitialized(const std::string& name){
-	TAdjustablePlane ap(0, TScalar(NO_VALf), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,NO_VALf), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,NO_VALf), true, true, name);
+   TAdjustablePlane ap(0, TLength(NO_VALf), LGC::TAngle(LGC::TAngle::EUnits::kRadians, NO_VALf), LGC::TAngle(LGC::TAngle::EUnits::kRadians, NO_VALf), true, true, name);
 	ap.fInitialized = false;
 	return ap;
 }
 
-void TAdjustablePlane::initialize(const TAdjustablePoint* referencePoint, const TScalar& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed){
+void TAdjustablePlane::initialize(const TAdjustablePoint* referencePoint, const TLength& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed){
 	fReferencePoint = referencePoint;
 
 	fProvValRefPtDist = refPointDistance;
@@ -73,9 +73,10 @@ void TAdjustablePlane::setFirstUidx(int idx) {
 }
 
 void TAdjustablePlane::setCorrection(int idx, TReal value){
-	if (uidx_rpDistance == idx){
-		fCorrectionRefPtDist = value;
-		fEstValRefPointDist += value;
+	
+   if (uidx_rpDistance == idx){
+      fCorrectionRefPtDist = TLength(value);
+      fEstValRefPointDist += TLength(value);
 	}
 	else if  (uidx_Theta == idx){
 		fCorrectionTheta.set(LGC::TAngle::kRadians, value);
@@ -91,7 +92,7 @@ void TAdjustablePlane::setCorrection(int idx, TReal value){
 
 void	TAdjustablePlane::setEstimatedPrecision(int idx, TReal value){
 	if (uidx_rpDistance == idx)
-		fEstPrecisionRefPtDist.setValue(value);
+      fEstPrecisionRefPtDist = TLength(value);
 	else if (uidx_Theta == idx)
 		fEstPrecisionTheta.set(LGC::TAngle::kRadians, value);
 	else if (uidx_Phi == idx)
@@ -102,8 +103,8 @@ void	TAdjustablePlane::setEstimatedPrecision(int idx, TReal value){
 
 void TAdjustablePlane::reInitialise(){
 	fEstValRefPointDist = fProvValRefPtDist;
-	fCorrectionRefPtDist.setValue(0.0);
-	fEstPrecisionRefPtDist.setValue(0.0);
+   fCorrectionRefPtDist = TLength(0.0);
+   fEstPrecisionRefPtDist = TLength(0.0);
 
 	fEstValTheta = fProvValTheta;
 	fCorrectionTheta.set(LGC::TAngle::EUnits::kRadians,0.0);

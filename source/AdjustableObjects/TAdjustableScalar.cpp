@@ -1,7 +1,7 @@
 #include "TAdjustableScalar.h"
 #include "Global.h"
 
-TAdjustableScalar::TAdjustableScalar(const TScalar& scalValue, bool isFixed, const std::string& name):
+TAdjustableScalar::TAdjustableScalar(TReal scalValue, bool isFixed, const std::string& name) :
 fName(name),
 isScalarFixed(isFixed),
 fProvisionalValue(scalValue),
@@ -12,8 +12,7 @@ uidx(-1)
 {}
 
 TAdjustableScalar TAdjustableScalar::createUninitialized(const std::string& name){
-	TAdjustableScalar as(TScalar(NO_VALf), true, name);
-	return as;
+	return TAdjustableScalar (NO_VALf, true, name);
 }
 
 void TAdjustableScalar::setFirstUidx(int idx)  {
@@ -39,6 +38,6 @@ void	TAdjustableScalar::setEstimatedPrecision(int idx, TReal ep) {
 }
 
 void TAdjustableScalar::reInitialise(){
-	fCorrection.setValue(0.0);
-	fEstimatedPrecision.setValue(0.0);
+	fCorrection = 0.0;
+	fEstimatedPrecision = 0.0;
 }

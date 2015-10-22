@@ -7,11 +7,6 @@
 #include "TPositionVector.h"
 #include "TFreeVector.h"
 
-#ifndef isnan
-#define isnan(x) ((x)!=(x))
-#endif
-
-
 ///////////////////////////
 /// IMPLEMENTATION OF THIS CLASS IS NOT FINISHED, NEEDS REVIEW BEFORE IT IS USED!!!!!!!!!!
 ///////////////////////////
@@ -35,7 +30,7 @@ public:
 			\param[in] lineVectorFixedState Lock state of the line vector.
 			\param[in] name Name of the adjustable line.
 		*/
-	//In this case point on a line is fixed, therefore we can ommit pointLockState and set it inside to fixed
+	   //In this case point on a line is fixed, therefore we can ommit pointLockState and set it inside to fixed
 		TAdjustableLine(const TPositionVector& pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& pointFixedState, const std::bitset<3>& lineVectorFixedState, const std::string& name);
 
 		/*!
@@ -53,10 +48,11 @@ public:
 		
 		/// Create an unitialized line. 
 		static TAdjustableLine createUninitialized(const std::string& name);
-	//@}
+	   
+      //@}
 
-	/*!@name Access methods*/
-	//@{
+	   /*!@name Access methods*/
+	   //@{
 
 		/// Returns a constant reference on the provisional value of the point on the line
 		const TPositionVector&	getPointProvisionalValue() const { return fPointProvisionalValue;}
@@ -85,10 +81,10 @@ public:
 		const TFreeVector&	getLineVectorEstimatedValue() const { return fLineVectorEstimatedValue;}
 
 		/// Returns a constant reference on the estimated precision of the line's vector 
-		const TFreeVector&		getLineVectorEstimatedPrecision() const { return fLineVectorEstimatedPrecision;}
+		const TFreeVector&	getLineVectorEstimatedPrecision() const { return fLineVectorEstimatedPrecision;}
 
 		/// Returns a constant reference on the covariances of the line's vector 
-		const TFreeVector&		getLineVectorCovariances() const {return fLineVectorCovariance;}
+		const TFreeVector&	getLineVectorCovariances() const {return fLineVectorCovariance;}
 		
       virtual bool isInitialized() const { return !isnan(fPointProvisionalValue.getX().getMetresValue()); }
 
@@ -115,7 +111,7 @@ public:
 
 			\throws Throws a logic_error if no component of the line is variable, i.e. a fixed line.
 		*/
-			virtual int getLastUidx() const;
+		virtual int getLastUidx() const;
 
 		/// Returns Name of the transformation.
 		virtual const std::string& getName() const { return fName;}
@@ -136,20 +132,20 @@ public:
 		/*! 
 			See \ref TVAdjustableObject::setCorrection
 		*/
-		virtual void setCorrection(int idx, TReal value);
+      virtual void setCorrection(int idx, TReal value);
 
 		/// Sets the estimated precision after calculation to a line's point
-		void	setPointEstimatedPrecision(int idx, TReal value);
+      void setPointEstimatedPrecision(int idx, TLength value);
 
 		/// Sets the estimated precision after calculation to a line's point
-		void	setLineVectorEstimatedPrecision(int idx, TReal value);
+      void setLineVectorEstimatedPrecision(int idx, TReal value);
 
 		//THIS IS NOT YET CONSISTENT with other, WILL BE IMPLEMENTED WHEN []OPERATOR FOR TFreeVector and TPositionVector is implemented
 		/// Sets the covariance after calculation to a line's point
-		void	setPointEstimatedCovariance(TFreeVector cov) {fPointCovariance = cov; return; }
+		void setPointEstimatedCovariance(TFreeVector cov) {fPointCovariance = cov; return; }
 
 		/// Sets the covariance after calculation to a line's vector
-		void	setLineVectEstimatedPointCovariance(TFreeVector cov) {fLineVectorCovariance = cov; return; }
+		void setLineVectEstimatedPointCovariance(TFreeVector cov) {fLineVectorCovariance = cov; return; }
 
 		void reInitialise();
 	//@}
@@ -160,9 +156,9 @@ private:
 	TPositionVector			fReferencePointPosition; /*!< position of the Reference point (fixed)*/
 
 	//Line point is only being adjusted if there is associated Reference Point Position, otherwise it is fixed.
-	TPositionVector			fPointProvisionalValue; /*!< position's provisional value */
+	TPositionVector		fPointProvisionalValue; /*!< position's provisional value */
 	TFreeVector				fPointCorrection; /*!< position's correction after calculation  */
-	TPositionVector			fPointEstimatedValue; /*!< position's estimated value after calculation */
+	TPositionVector		fPointEstimatedValue; /*!< position's estimated value after calculation */
 	TFreeVector				fPointEstimatedPrecision; /*!< position's estimated precision after calculation */
 	TFreeVector				fPointCovariance; 
 

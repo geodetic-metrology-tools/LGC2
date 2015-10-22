@@ -75,9 +75,9 @@ bool  TCGRF2LGTransformation::transformInverse( TRotationMatrix& rmx ) const
 
 void  TCGRF2LGTransformation::initialiseEllipsoid()
 {
-	TReal fOriginX = fILGOrigin.getX().getValue();
-	TReal fOriginY = fILGOrigin.getY().getValue();
-	TReal fOriginZ = fILGOrigin.getZ().getValue();
+   TReal fOriginX = fILGOrigin.getX().getMetresValue();
+   TReal fOriginY = fILGOrigin.getY().getMetresValue();
+   TReal fOriginZ = fILGOrigin.getZ().getMetresValue();
 
 	TReal squareSemiMajor = SemiMajorAxisGRS80*SemiMajorAxisGRS80;
 	TReal squareSemiMinor = SemiMinorAxisGRS80*SemiMinorAxisGRS80;
@@ -119,9 +119,9 @@ void  TCGRF2LGTransformation::initialiseEllipsoid()
 
 void  TCGRF2LGTransformation::initialiseSphere()
 {
-	TReal fOriginX = fILGOrigin.getX().getValue();
-	TReal fOriginY = fILGOrigin.getY().getValue();
-	TReal fOriginZ = fILGOrigin.getZ().getValue();
+   TReal fOriginX = fILGOrigin.getX().getMetresValue();
+   TReal fOriginY = fILGOrigin.getY().getMetresValue();
+   TReal fOriginZ = fILGOrigin.getZ().getMetresValue();
 
 	TReal XYdistance = sqrt(fOriginX*fOriginX+fOriginY*fOriginY);
 

@@ -100,8 +100,8 @@ namespace tut
 		ensure_equals("First uidx", mmm.getLastUidx(), 6);
 
 		mmm.setCorrection(5,2.0);
-		ensure_equals("Correction", mmm.getLineVectorCorrection().getY().getValue(), 2.0);
-		ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getValue(), 4.0);
+		ensure_equals("Correction", mmm.getLineVectorCorrection().getY().getMetresValue(), 2.0);
+      ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getMetresValue(), 4.0);
 		
 		std::bitset<3> point2;
 		std::bitset<3> line2;
@@ -119,17 +119,17 @@ namespace tut
 		p.setFirstUidx(3);
 		ensure_equals("Last uidx is on 4th position", p.getLastUidx(), 4);
 		p.setCorrection(3,1.0);
-		ensure_equals("Last uidx is on 4th position", p.getCorrection().getY().getValue(), 1.0);
-		ensure_equals("Last uidx is on 4th position", p.getEstimatedValue().getY().getValue(), 3.0);
+		ensure_equals("Last uidx is on 4th position", p.getCorrection().getY().getMetresValue(), 1.0);
+      ensure_equals("Last uidx is on 4th position", p.getEstimatedValue().getY().getMetresValue(), 3.0);
 
 
 		TPositionVector position2(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k2DPlusH);
-		TAdjustablePoint pH(position2, false, false, true, "pointH1",TLGCRefFrame::ERefs::kRS2K, iter);
+		TAdjustablePoint pH(position2, false, false, true, "pointH1",TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
 		pH.setFirstUidx(5);
 		ensure_equals("Reference system of provisional value should match", pH.getProvisionalValue().getCoordSys(), TCoordSysFactory::ECoordSys::k2DPlusH);
-		ensure_equals("Provisional value should match", pH.getProvisionalValue().getX().getValue(), 1.0);
-		ensure_equals("Provisional value should match", pH.getProvisionalValue().getY().getValue(), 2.0);
-		ensure_equals("Provisional value should match", pH.getProvisionalValue().getH().getValue(), 3.0);
+      ensure_equals("Provisional value should match", pH.getProvisionalValue().getX().getMetresValue(), 1.0);
+      ensure_equals("Provisional value should match", pH.getProvisionalValue().getY().getMetresValue(), 2.0);
+      ensure_equals("Provisional value should match", pH.getProvisionalValue().getH().getMetresValue(), 3.0);
 
 		ensure_equals("Reference system of estimated value should match", pH.getEstimatedValue().getCoordSys(), TCoordSysFactory::ECoordSys::k3DCartesian);
 		ensure_equals("2 unknowns introduced", pH.getNumUnkn(), 2);
@@ -138,9 +138,9 @@ namespace tut
 		ensure_equals("First uidx should match", pH.getFirstUidx(), 5);
 		ensure_equals("Last uidx should match", pH.getLastUidx(), 6);
 		ensure_equals("Last uidx should match", pH.getName(), "pointH1");
-		ensure_equals("Estimated values should match",pH.getEstimatedValue().getX().getValue(), 1.0);
-		ensure_equals("Estimated values should match",pH.getEstimatedValue().getY().getValue(), 2.0);
-		ensure_equals("Estimated values should match",pH.getEstimatedValue().getZ().getValue(), 2002.34689402122, 1e-8);
+      ensure_equals("Estimated values should match", pH.getEstimatedValue().getX().getMetresValue(), 1.0);
+      ensure_equals("Estimated values should match", pH.getEstimatedValue().getY().getMetresValue(), 2.0);
+      ensure_equals("Estimated values should match", pH.getEstimatedValue().getZ().getMetresValue(), 2002.34689402122, 1e-8);
 
 		ensure_equals("Coordinates fixed state should match",pH.isCoordinateFixed(0), false);
 		ensure_equals("Coordinates fixed state should match",pH.isCoordinateFixed(1), false);
@@ -159,20 +159,20 @@ namespace tut
 		pH.setCorrection(5, 150);
 		pH.setCorrection(6, 2000);
 
-		ensure_equals("Estimated values should match",pH.getEstimatedValue().getX().getValue(), 151);
-		ensure_equals("Estimated values should match",pH.getEstimatedValue().getY().getValue(), 2002);
-		ensure_equals("Estimated value of Z(H is fixed) have to change, because it depends on X a Y which has changed",pH.getEstimatedValue().getZ().getValue(), 2002.73661251304, 1e-8);
+		ensure_equals("Estimated values should match",pH.getEstimatedValue().getX().getMetresValue(), 151);
+		ensure_equals("Estimated values should match",pH.getEstimatedValue().getY().getMetresValue(), 2002);
+		ensure_equals("Estimated value of Z(H is fixed) have to change, because it depends on X a Y which has changed",pH.getEstimatedValue().getZ().getMetresValue(), 2002.73661251304, 1e-8);
 
 		pH.setEstimatedPrecision(5, 0.1);
 		pH.setEstimatedPrecision(6, 0.2);
-		ensure_equals("Estimated precision should match", pH.getXEstPrecision().getValue(), 0.1);
-		ensure_equals("Estimated precision should match", pH.getYEstPrecision().getValue(), 0.2);
-		ensure_equals("Estimated precision should match", pH.getZEstPrecision().getValue(), 0.0);
+      ensure_equals("Estimated precision should match", pH.getXEstPrecision(), 0.1);
+      ensure_equals("Estimated precision should match", pH.getYEstPrecision(), 0.2);
+      ensure_equals("Estimated precision should match", pH.getZEstPrecision(), 0.0);
 
 		pH.setXYEstimatedCovariance(0.01);
 		EXPECT_FAIL(pH.setYZEstimatedCovariance(0.02));
 		EXPECT_FAIL(pH.setXZEstimatedCovariance(0.02));
-		ensure_equals("Covariance should match", pH.getXYCovar().getValue(), 0.01);
+		ensure_equals("Covariance should match", pH.getXYCovar(), 0.01);
 
 		ensure_equals("Reference frame should match", pH.getReferenceFrame(), TLGCRefFrame::ERefs::kRS2K);
 		ensure_equals("Point is initialized", pH.isInitialized(), true);
@@ -191,14 +191,13 @@ namespace tut
 		ensure_equals("Point is not initialized", unit.isInitialized(), false);
 
 		//////////////////////// Testing TAdjustableScalar ////////////////////////
-		TScalar scalar(TReal(2.0));
-		TAdjustableScalar adjScalar(scalar, false, "adjscl");
+      TAdjustableScalar adjScalar(TReal(2.0), false, "adjscl");
 		adjScalar.setFirstUidx(2);
 
-		ensure_equals("Provisional value should match", adjScalar.getProvisionalValue().getValue(), 2.0);
-		ensure_equals("Correction should match", adjScalar.getCorrection().getValue(), 0.0);
-		ensure_equals("Estimated value should match", adjScalar.getEstimatedValue().getValue(), 2.0);
-		ensure_equals("Estimated precision should match", adjScalar.getEstimatedPrecision().getValue(), 0.0);
+		ensure_equals("Provisional value should match", adjScalar.getProvisionalValue(), 2.0);
+		ensure_equals("Correction should match", adjScalar.getCorrection(), 0.0);
+		ensure_equals("Estimated value should match", adjScalar.getEstimatedValue(), 2.0);
+		ensure_equals("Estimated precision should match", adjScalar.getEstimatedPrecision(), 0.0);
 		ensure_equals("Number of unknowns should match", adjScalar.getNumUnkn(), 1);
 		ensure_equals("Scalar is variable", adjScalar.isFixed(), false);
 		ensure_equals("Scalar first index is 2", adjScalar.getFirstUidx(), 2);
@@ -208,12 +207,12 @@ namespace tut
 
 		adjScalar.setCorrection(2,0.5);
 		adjScalar.setEstimatedPrecision(2,0.01);
-		ensure_equals("Correction should match", adjScalar.getCorrection().getValue(), 0.5);
-		ensure_equals("New estimated value should match", adjScalar.getEstimatedValue().getValue(), 2.5);
+		ensure_equals("Correction should match", adjScalar.getCorrection(), 0.5);
+		ensure_equals("New estimated value should match", adjScalar.getEstimatedValue(), 2.5);
 		EXPECT_FAIL(adjScalar.setCorrection(3,0.5));
 		EXPECT_FAIL(adjScalar.setEstimatedPrecision(3,0.01));
 
-		ensure_equals("Correction should match", adjScalar.getEstimatedPrecision().getValue(), 0.01);
+		ensure_equals("Correction should match", adjScalar.getEstimatedPrecision(), 0.01);
 
 
 		//Testing TAdjustablePlane
@@ -249,8 +248,8 @@ namespace tut
 		r.read(infile);
 
 		ensure_equals("One instrument defined", proj5->getInstruments().fPOLAR.size(),1);
-		ensure_equals("Provisional value of the pair should match", proj5->getScalars().getObject("TS1T1").getProvisionalValue().getValue(),2.0);
-		ensure_equals("Dist. correction is 2.0",(*proj5->getInstruments().fPOLAR["TS1"].targets["T1"].distCorrectionAdjustable).getProvisionalValue().getValue(),2.0);	
+		ensure_equals("Provisional value of the pair should match", proj5->getScalars().getObject("TS1T1").getProvisionalValue(),2.0);
+		ensure_equals("Dist. correction is 2.0",(*proj5->getInstruments().fPOLAR["TS1"].targets["T1"].distCorrectionAdjustable).getProvisionalValue(),2.0);	
 		ensure_equals("2 adjustable scalars expected",proj5->getScalars().numObjects(), 9);
 	}
 

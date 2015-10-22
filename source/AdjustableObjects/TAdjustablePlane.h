@@ -8,7 +8,6 @@
 
 class TAdjustablePoint;
 
-
 /*! 
 	\brief Adds adjustable information to a plane.
 
@@ -32,13 +31,13 @@ public:
 
 			\note Reference point distance (refPointDistance) is always variable, this object therefore introduces from 1 up to 3 unknowns (up to 2 for the two angle THETA and PHI + 1 RP distance). Reference point is adjusted separately from the TAdjustablePoint object independently on the plane.
 		*/
-	   TAdjustablePlane(const TAdjustablePoint* referencePoint, const TScalar& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name);
+      TAdjustablePlane(const TAdjustablePoint* referencePoint, const TLength& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name);
 
 		/// Create an unitialized plane. 
 		static TAdjustablePlane createUninitialized(const std::string& name);
 
 		/// See the constructor definition.
-		void initialize(const TAdjustablePoint* referencePoint, const TScalar& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed);
+      void initialize(const TAdjustablePoint* referencePoint, const TLength& refPointDistance, const LGC::TAngle& theta, const LGC::TAngle& phi, bool thetaFixed, bool phiFixed);
 		//@}
 
 	/*!@name Access methods*/
@@ -70,16 +69,16 @@ public:
 
 
 		/// Returns a constant reference on the provisional value of the reference point distance. 
-		inline const TScalar& 		getRefPtDistProvisionalValue() const {return fProvValRefPtDist;}
+      inline const TLength& 		getRefPtDistProvisionalValue() const { return fProvValRefPtDist; }
 
 		/// Returns a constant reference on the correction value of the reference point distance. 
-		inline const TScalar&		getRefPtDistCorrection() const {return fCorrectionRefPtDist;}
+      inline const TLength&		getRefPtDistCorrection() const { return fCorrectionRefPtDist; }
 
 		/// Returns a constant reference on the estimated value of the reference point distance. 
-		inline const TScalar&		getRefPtDistEstimatedValue() const {	return fEstValRefPointDist;}
+      inline const TLength&		getRefPtDistEstimatedValue() const { return fEstValRefPointDist; }
 			
 		/// Returns a constant reference on the estimated precision of the reference point distance. 
-		inline const TScalar&		getRefPDistEstimatedPrecision() const {	return fEstPrecisionRefPtDist;}
+      inline const TLength&		getRefPDistEstimatedPrecision() const { return fEstPrecisionRefPtDist; }
 
 		/// Returns pointer to the Reference point position. 
 		const TAdjustablePoint*		getReferencePoint() const {return fReferencePoint;}
@@ -196,22 +195,22 @@ private:
 	const TAdjustablePoint*		fReferencePoint; /*!< Reference point*/
 
 	//Reference point distance definition
-	TScalar					fProvValRefPtDist; /*!< Provisional value of the reference point distance. */
-	TScalar					fCorrectionRefPtDist; /*!< Correction of the reference point distance.  */
-	TScalar					fEstValRefPointDist; /*!< Estimated value of the reference point distance. */
-	TScalar					fEstPrecisionRefPtDist;  /*!<Estimated precision of the reference point distance. */
+   TLength					fProvValRefPtDist; /*!< Provisional value of the reference point distance. */
+   TLength					fCorrectionRefPtDist; /*!< Correction of the reference point distance.  */
+   TLength					fEstValRefPointDist; /*!< Estimated value of the reference point distance. */
+   TLength					fEstPrecisionRefPtDist;  /*!<Estimated precision of the reference point distance. */
 
 	//Definition of the plane normal vector angles
-	LGC::TAngle				fProvValTheta; /*!< Provisional value of the Theta angle. */
-	LGC::TAngle				fCorrectionTheta; /*!< Correction of the normal vector of the Theta angle. */
-	LGC::TAngle				fEstValTheta; /*!< Estimated value of the Theta angle. */
-	LGC::TAngle				fEstPrecisionTheta;  /*!<Estimated precision of the Theta angle. */
+	LGC::TAngle			fProvValTheta; /*!< Provisional value of the Theta angle. */
+	LGC::TAngle			fCorrectionTheta; /*!< Correction of the normal vector of the Theta angle. */
+	LGC::TAngle			fEstValTheta; /*!< Estimated value of the Theta angle. */
+	LGC::TAngle			fEstPrecisionTheta;  /*!<Estimated precision of the Theta angle. */
 
 
-	LGC::TAngle				fProvValPhi; /*!< Provisional value of the Phi angle. */
-	LGC::TAngle				fCorrectionPhi; /*!< Correction of the Phi angle. */
-	LGC::TAngle				fEstValPhi; /*!< Estimated value of the Phi angle. */
-	LGC::TAngle				fEstPrecisionPhi;  /*!<Estimated precision of the Phi angle. */
+	LGC::TAngle			fProvValPhi; /*!< Provisional value of the Phi angle. */
+	LGC::TAngle			fCorrectionPhi; /*!< Correction of the Phi angle. */
+	LGC::TAngle			fEstValPhi; /*!< Estimated value of the Phi angle. */
+	LGC::TAngle			fEstPrecisionPhi;  /*!<Estimated precision of the Phi angle. */
 
 	bool  fThetaFixed;	/*!< Tells if Theta is fixed or not (TRUE means fixed).*/
 	bool  fPhiFixed;	/*!< Tells if Phi is fixed or not (TRUE means fixed).*/

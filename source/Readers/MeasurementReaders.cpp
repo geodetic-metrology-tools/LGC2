@@ -72,7 +72,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
 	instrument.sigmaInstrCentering = opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering); //value given in mili-meters [mm], returned value in meters [m]
 
-	tstn.instrumentHeightAdjustable = &fscalars.addObject(TAdjustableScalar(TScalar(instrument.instrHeight),instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn.instrument.ID + to_string(nofTSTN)));
+	tstn.instrumentHeightAdjustable = &fscalars.addObject(TAdjustableScalar(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn.instrument.ID + to_string(nofTSTN)));
 
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);
@@ -755,7 +755,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 				throw std::runtime_error("Point" +  rpName + "used as reference point in DLEV measurement, must be declared before used");
 
 			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			fplanes.addObject(TAdjustablePlane(&fpoints.getObject(rpName), TScalar(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
+			fplanes.addObject(TAdjustablePlane(&fpoints.getObject(rpName), TLength(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
 						LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), true, true, name));
 		}
 		else

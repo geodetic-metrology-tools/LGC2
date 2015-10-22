@@ -26,7 +26,7 @@ TFreeVector TDerivativeTransformation::transform(const TPositionVector & pv) con
 	//If status is not null and vector is in a 3d cart. coordinates.
 	if(pv.getStatus()!= TANumericValue::EStatus::kNull && pv.getCoordSys() == TCoordSysFactory::ECoordSys::k3DCartesian)
 	{
-		Eigen::Vector4d pTemp(pv.getX().getValue(), pv.getY().getValue(), pv.getZ().getValue(),1.0);
+      Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
 	
 		//Transform
 		Eigen::Vector4d pResult = *fTransM * pTemp;

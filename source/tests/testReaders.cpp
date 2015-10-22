@@ -340,7 +340,7 @@ namespace tut
 			ensure_equals(pt1.targetHt, 8); 
 			ensure_equals(pt1.sigmaTargetHt, 9*MM2M); 
 			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-			ensure_equals(pt1.distCorrectionAdjustable->getProvisionalValue().getValue(), 5);
+			ensure_equals(pt1.distCorrectionAdjustable->getProvisionalValue(), 5);
 
 			const TInstrumentData::TPOLAR::TTarget& pt2(instr.getDevice(ts1.targets, "PT2"));
 			ensure_equals(pt2.ID, "PT2"); 
@@ -356,7 +356,7 @@ namespace tut
 			ensure_equals(pt2.targetHt, 18); 
 			ensure_equals(pt2.sigmaTargetHt, 19*MM2M); 
 			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-			ensure_equals(pt2.distCorrectionAdjustable->getProvisionalValue().getValue(), 15);
+			ensure_equals(pt2.distCorrectionAdjustable->getProvisionalValue(), 15);
 
 			//
 			// EDM with targets
@@ -383,7 +383,7 @@ namespace tut
 			ensure_equals(dt1.targetHt, 6); 
 			ensure_equals(dt1.sigmaTargetHt, 7 * MM2M); 
 			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-			ensure_equals(dt1.distCorrectionAdjustable->getProvisionalValue().getValue(), 3);
+			ensure_equals(dt1.distCorrectionAdjustable->getProvisionalValue(), 3);
 
 			const TInstrumentData::TEDM::TTarget& dt2(instr.getDevice(dm1.targets, "ET2"));
 			ensure_equals(dt2.ID, "ET2"); 
@@ -396,7 +396,7 @@ namespace tut
 			ensure_equals(dt2.sigmaTargetCentering, 15 * MM2M); 
 			ensure_equals(dt2.targetHt, 16); 
 			ensure_equals(dt2.sigmaTargetHt, 17 * MM2M); 
-			ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue().getValue(), 13);
+			ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
 
 			//
 			// Leveling with staffs
@@ -463,7 +463,7 @@ namespace tut
 			v0.parse(TReader::tokenizeLGCfileString("*V0 TRGT PT9 ACST 66"), -1);
 			ensure_equals("Default target in thisTSTN should not be affected", ts1.instrument.defTarget, "PT2");
 			ensure_equals("In this ROM, default target should be updated", ts1.roms.back().defaultTarget->ID, "PT9");
-			ensure_equals("Adjustable distance correction should be valid and unchanged", ts1.roms.back().defaultTarget->distCorrectionAdjustable->getProvisionalValue().getValue(), 5.0);
+			ensure_equals("Adjustable distance correction should be valid and unchanged", ts1.roms.back().defaultTarget->distCorrectionAdjustable->getProvisionalValue(), 5.0);
 
 			ensure_distance(proj.getCurrentNode().measurements.fTSTN.back().roms.back().acst.gon(), 66.0, 1e-8);
 
@@ -638,7 +638,7 @@ namespace tut
 			ensure_equals(dsptmeas.target.targetHt, 66);
 			ensure_equals(dsptmeas.target.sigmaTargetHt, 67 * MM2M);
 			ensure_equals(dsptmeas.target.sigmaTargetCentering, 68 * MM2M);
-			ensure_equals("Adjustable distance correction should be valid and unchanged", dsptmeas.target.distCorrectionAdjustable->getProvisionalValue().getValue(), 3.0);
+			ensure_equals("Adjustable distance correction should be valid and unchanged", dsptmeas.target.distCorrectionAdjustable->getProvisionalValue(), 3.0);
 			//
 			// DVER
 			TKeyDVER dver(proj);
@@ -661,7 +661,7 @@ namespace tut
 			ensure_equals("Instrument ID should match", levelRound.instrument.ID,"LI1");
 			ensure_equals("Default staff ID should match", levelRound.instrument.defStaffID,"ST2");
 			ensure_equals("Reference point given, plane should be initialized", levelRound.fMeasuredPlane->isInitialized(),true);
-			ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue().getValue(),0.0);
+			ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue(),0.0);
 
 			auto& firstDLEVMeasurement(levelRound.measDLEV[0]);
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement.targetPos->getName(),"P1");
@@ -697,7 +697,7 @@ namespace tut
 			EXPECT_FAIL(currentNodeIter->get()->frame.getTranslationStandDev(1));
 
 
-			EXPECT_FAIL(ensure_equals("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev().getValue()*LGC::M2MM, 5));
+			EXPECT_FAIL(ensure_equals("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev()*LGC::M2MM, 5));
 		}
 
 //NEEDS TO BE REWRITTEN to take into account the modifications!
