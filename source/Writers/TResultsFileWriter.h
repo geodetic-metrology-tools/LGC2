@@ -2,7 +2,7 @@
 #define SU_TResultsFileWriter
 
 #include "TAFileWriter.h"
-#include "TLGCRefFrame.h"
+#include "TRefSystemFactory.h"
 #include "TTSTNWriter.h"
 #include "TSpatialStatus.h"
 
@@ -101,7 +101,7 @@ private:
 
 		/// number of each point's type and observation's type
 
-	void transfUsingGeoid(TPositionVector& pv, const TLGCRefFrame::ERefs& rf);
+	void transfUsingGeoid(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf);
 
 
 		size_t							fNumberOfPoints;

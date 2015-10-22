@@ -191,7 +191,7 @@ void    TResultsFileWriter::writeDataSummary()
  
     (*stream)<<"DATA SET - GENERAL INFO:" << endl<<endl;
     (*stream)<<"\tFRAMES defined:" << endl;
-    (*stream)<<"\t \t NOMBRE =\t" << int(fProjectData->getNumberOfFrames()) << endl << endl;
+    (*stream)<<"\t \t NOMBRE =\t"<< fProjectData->getNumberOfFrames() << endl << endl;
  
     if(fProjectData->getPoints().numObjects()>0)
         writeAdjustableObjGeneralInfo("POINTS", fProjectData->getPoints().numObjects(), fProjectData->getPoints().numUnknowns());
@@ -531,12 +531,12 @@ void    TResultsFileWriter::writeFramesResults()
 }
  
  
-void TResultsFileWriter::transfUsingGeoid(TPositionVector& pv, const TLGCRefFrame::ERefs& rf){
-        if(rf == TLGCRefFrame::ERefs::kSPHE)
+void TResultsFileWriter::transfUsingGeoid(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf){
+        if(rf == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
             TXYH2CCS::CCS2XYHs(pv);
-        else if(rf == TLGCRefFrame::ERefs::kRS2K)
+        else if(rf == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
             TXYH2CCS::CCS2XYHg2000Machine(pv);
-        else if (rf == TLGCRefFrame::ERefs::kLEP)
+        else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
             TXYH2CCS::CCS2XYHg1985Machine(pv);
 }
  

@@ -12,6 +12,7 @@
 #include "TPointConverter.h"
 #include "TLGCApp.h"
 #include "TAStreamFormatter.h"
+#include "TRefSystemFactory.h"
 #include <TLOR2LOR.h>
 
 /////////////////////////////////////////////////////////////////////////////
@@ -578,7 +579,7 @@ void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type());
+	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
@@ -651,7 +652,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 void TPunchFileWriter::writeXYZErrorEllSigZDeltaData(TAdjustablePoint const& point)
 {	
 	TAStreamFormatter* stream = getStream();
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type());
+	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();

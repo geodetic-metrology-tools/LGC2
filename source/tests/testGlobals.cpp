@@ -152,7 +152,7 @@ namespace tut
 
 
 		EXPECT_FAIL(pH.getStandDev(0));
-		ensure_equals("Reference frame should match",pH.getReferenceFrame(), TLGCRefFrame::ERefs::kRS2K);
+		ensure_equals("Reference frame should match",pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 		ensure_equals("Point is initialized",pH.isInitialized(), true);
 		ensure_equals("No standard deviations",pH.hasStandDeviations(), false);
 
@@ -174,7 +174,7 @@ namespace tut
 		EXPECT_FAIL(pH.setXZEstimatedCovariance(0.02));
 		ensure_equals("Covariance should match", pH.getXYCovar(), 0.01);
 
-		ensure_equals("Reference frame should match", pH.getReferenceFrame(), TLGCRefFrame::ERefs::kRS2K);
+		ensure_equals("Reference frame should match", pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 		ensure_equals("Point is initialized", pH.isInitialized(), true);
 		ensure_equals("No standard deviations", pH.hasStandDeviations(), false);
 

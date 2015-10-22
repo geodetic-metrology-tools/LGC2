@@ -644,7 +644,6 @@ ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, con
 	i.e. no transformation to ROOT required and no contribution required for its coordinates.*/
 	TPositionVector referencePoint = echoROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 
-	const std::string& rpName = echoROM.fMeasuredPlane->getReferencePoint()->getName();
 	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem( echoROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
 		fMLAused = true;

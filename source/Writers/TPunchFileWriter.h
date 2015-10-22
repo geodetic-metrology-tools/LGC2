@@ -3,9 +3,7 @@
 
 
 #include "TAFileWriter.h"
-#include "TLGCRefFrame.h"
 #include "TLGCConfig.h"
-
 #include "TTSTNWriter.h"
 class	TAStreamFormatter;
 

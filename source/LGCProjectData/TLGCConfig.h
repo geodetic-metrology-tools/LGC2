@@ -188,7 +188,7 @@ struct TLGCConfig
 	TSimulation   sim;
 	/// See \ref FautDetect
 	TFautDetect   faut;
-	/// See \ref TLGCRefFrame
+	/// See \ref TRefSystemFactory
 	TRefSystemFactory::ERefFrame referential;
 	
 	/// Sets all points to be fixed points in spite of their configuration
