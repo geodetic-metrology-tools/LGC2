@@ -15,7 +15,6 @@ set(LGCProjectData_HEADERS
 	TTreeEntry.h
 	TLSConstraintIdentifier.h
 	TLGCStatistic.h
-	TLGCRefFrame.h
 	TLGCData.h
 	TLGCConfig.h
 	TInstrumentData.h

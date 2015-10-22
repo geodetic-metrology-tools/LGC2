@@ -21,8 +21,8 @@ void TKeyTITR::parse(const std::vector<std::string>& tokens, int) {
 void TKeyOLOC::parse(const std::vector<std::string>&, int) 
 {
 	// nothing to parse, using local cartesion coordinate system
-	if(fconfig.referential.type() == TLGCRefFrame::kNONE)
-		fconfig.referential = TLGCRefFrame(TLGCRefFrame::kOLOC);
+	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+		fconfig.referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -30,8 +30,8 @@ void TKeyOLOC::parse(const std::vector<std::string>&, int)
 void TKeyRS2K::parse(const std::vector<std::string>&, int) 
 {
 	// nothing to parse, using grid geoid
-		if(fconfig.referential.type() == TLGCRefFrame::kNONE)
-			fconfig.referential = TLGCRefFrame(TLGCRefFrame::kRS2K);
+		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+			fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg00Machine;
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -39,8 +39,8 @@ void TKeyRS2K::parse(const std::vector<std::string>&, int)
 void TKeyLEP::parse(const std::vector<std::string>&, int) 
 {
 	// nothing to parse, using parabolic ellipsoid
-		if(fconfig.referential.type() == TLGCRefFrame::kNONE)
-			fconfig.referential = TLGCRefFrame(TLGCRefFrame::kLEP);
+		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+			fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -48,8 +48,8 @@ void TKeyLEP::parse(const std::vector<std::string>&, int)
 
 void TKeySPHE::parse(const std::vector<std::string>&, int) {
 	// nothing to parse, using spherical reference frame
-		if(fconfig.referential.type() == TLGCRefFrame::kNONE)
-			fconfig.referential = TLGCRefFrame(TLGCRefFrame::kSPHE);
+		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+			fconfig.referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }

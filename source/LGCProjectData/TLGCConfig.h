@@ -1,7 +1,8 @@
 #ifndef _LGCOPTIONS_H_
 #define _LGCOPTIONS_H_
 
-#include "TLGCRefFrame.h"
+#include "TRefSystemFactory.h"
+#include "Global.h"
 
 /*!
 	\ingroup LGCProjectData
@@ -188,7 +189,7 @@ struct TLGCConfig
 	/// See \ref FautDetect
 	TFautDetect   faut;
 	/// See \ref TLGCRefFrame
-	TLGCRefFrame referential;
+	TRefSystemFactory::ERefFrame referential;
 	
 	/// Sets all points to be fixed points in spite of their configuration
 	TBinaryOption allfixed;

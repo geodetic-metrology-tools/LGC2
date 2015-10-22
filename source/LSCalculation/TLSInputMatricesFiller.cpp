@@ -11,7 +11,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCTOR / DESTRUCTOR
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree* tree, const TLGCRefFrame::ERefs& referentiel): fCGenerator(tree, referentiel)
+TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel): fCGenerator(tree, referentiel)
 {}
 
 

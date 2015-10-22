@@ -12,7 +12,7 @@
 
 TSimulationCalculation::TSimulationCalculation(TLGCData& data, int maxIter, TReal convCrit) : 
 	fData(data), fMaxIterations(maxIter), fConvCriteria(convCrit), 
-	fCg(&data.getTree(), data.getConfig().referential.typeRef())
+	fCg(&data.getTree(), data.getConfig().referential)
 {
 	/*Initialize the point summaries list*/
 	for (auto& point : fData.getPoints()){
@@ -87,7 +87,7 @@ void TSimulationCalculation::updateResValues(){
 	TFreeVector res(TCoordSysFactory::k3DCartesian);
 	for (auto& pointSummary : fPointSummaries){
 		TDataTreeIterator root = fData.getTree().begin();
-		TLGCRefFrame::ERefs globalRef = fData.getConfig().referential.type();
+		TRefSystemFactory::ERefFrame globalRef = fData.getConfig().referential;
 		const TAdjustablePoint* point = pointSummary.getAdjustablePoint();
 
 		TPositionVector provisionalValue = point->getProvisionalValue();
@@ -100,12 +100,12 @@ void TSimulationCalculation::updateResValues(){
 			transfo.transform(estimatedValue);
 		}
 		else{
-			if(globalRef!=TLGCRefFrame::kOLOC){
-				if(globalRef == TLGCRefFrame::ERefs::kSPHE)
+			if(globalRef!=TRefSystemFactory::ERefFrame::kLocalRefFrame){
+				if(globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 					TXYH2CCS::CCS2XYHs(provisionalValue);
-				else if(globalRef == TLGCRefFrame::ERefs::kRS2K)
+				else if(globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 					TXYH2CCS::CCS2XYHg2000Machine(provisionalValue);
-				else if (globalRef == TLGCRefFrame::ERefs::kLEP)
+				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 					TXYH2CCS::CCS2XYHg1985Machine(provisionalValue);
 			}
 		}
@@ -142,7 +142,7 @@ bool	TSimulationCalculation::processSimCalculation()
 
 void TSimulationCalculation::simulateValues()
 {//generate simulated values
-	TContributionsGenerator cg(&fData.getTree(), fData.getConfig().referential.type());
+	TContributionsGenerator cg(&fData.getTree(), fData.getConfig().referential);
 
 	//Tteration through the tree nodes
 	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++){		

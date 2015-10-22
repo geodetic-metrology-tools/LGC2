@@ -354,15 +354,25 @@ void TFRAMEWriter::writePointType(const std::list<AdjPointIter>& lop, TDataTreeI
 		//We want to write header only if we find out, that at least one point is defined in the particular sub-frame.
 		bool headerWritten = false;	
 
+		string fReferentialName;
+		if(fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+			fReferentialName = "SPHE";
+		else if(fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			fReferentialName = "RS2K";
+		else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			fReferentialName = "LEP";
+		else
+			fReferentialName = "OLOC";
+
 		if(!localNode)
-			writeResultsPtsHeader(type, lop.size(), fProjectData->getConfig().referential.typeName(), localNode);
+			writeResultsPtsHeader(type, lop.size(), fReferentialName, localNode);
 
 		for(auto it(lop.begin()); it != lop.end(); ++it){
 			if(localNode){
 				AdjPointIter pIt = *it;
 				if(pIt->getFrameTreePosition() == frameIt){ // If the point was defined in this FRAME
 					if(!headerWritten){
-						writeResultsPtsHeader(type, lop.size(), fProjectData->getConfig().referential.typeName(), localNode);
+						writeResultsPtsHeader(type, lop.size(), fReferentialName, localNode);
 						headerWritten = true;
 					}
 					writeResultsPtsData(*it, localNode);
@@ -700,7 +710,7 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 {
 	TAStreamFormatter*	stream = getStream();
 	//TPointConverter converter (stream, getRefFrameForH());
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type()); 
+	TPointConverter converter (stream, fProjectData->getConfig().referential); 
 
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
@@ -837,7 +847,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	}
 	else{//It is ROOT
 		TDataTreeIterator root = fProjectData->getTree().begin();
-		TLGCRefFrame::ERefs globalRef = fProjectData->getConfig().referential.type();
+		TRefSystemFactory::ERefFrame globalRef = fProjectData->getConfig().referential;
 
 
 		//If point is defined in a sub-frame
@@ -848,13 +858,13 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		}
 		else{
 			/*If ROOT and not OLOC -> provisional is XYH, needs to be transformed to XYZ*/
-			if(globalRef!=TLGCRefFrame::kOLOC)
+			if(globalRef!=TRefSystemFactory::ERefFrame::kLocalRefFrame)
 				transfXYH2XYZ(provisionalValue, globalRef);
 		}
 
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
-		if(globalRef!=TLGCRefFrame::kOLOC){
+		if(globalRef!=TRefSystemFactory::ERefFrame::kLocalRefFrame){
 			TPositionVector forHCalc(estimatedValue);
 			transfXYZ2XYH(forHCalc, globalRef);
 
@@ -894,20 +904,20 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 }
 
 
-void TFRAMEWriter::transfXYH2XYZ(TPositionVector& pv, const TLGCRefFrame::ERefs& rf){
-		if(rf == TLGCRefFrame::ERefs::kSPHE)
+void TFRAMEWriter::transfXYH2XYZ(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf){
+		if(rf == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 			TXYH2CCS::XYHs2CCS(pv);
-		else if(rf == TLGCRefFrame::ERefs::kRS2K)
+		else if(rf == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 			TXYH2CCS::XYHg2000Machine2CCS(pv);
-		else if (rf == TLGCRefFrame::ERefs::kLEP)
+		else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::XYHg1985Machine2CCS(pv);
 }
 
-void TFRAMEWriter::transfXYZ2XYH(TPositionVector& pv, const TLGCRefFrame::ERefs& rf){
-		if(rf == TLGCRefFrame::ERefs::kSPHE)
+void TFRAMEWriter::transfXYZ2XYH(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf){
+		if(rf == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 			TXYH2CCS::CCS2XYHs(pv);
-		else if(rf == TLGCRefFrame::ERefs::kRS2K)
+		else if(rf == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 			TXYH2CCS::CCS2XYHg2000Machine(pv);
-		else if (rf == TLGCRefFrame::ERefs::kLEP)
+		else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::CCS2XYHg1985Machine(pv);
 }

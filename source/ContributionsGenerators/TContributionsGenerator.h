@@ -5,7 +5,7 @@
 #include "TCGRF2LGTransformation.h"
 #include "TILG2ILATransformation.h"
 #include "ContributionStructures.h"
-#include "TLGCRefFrame.h"
+#include "TRefSystemFactory.h"
 #include "TTSTN.h"
 #include "TLOR2LOR.h"
 
@@ -33,7 +33,7 @@ public:
 			\param[in] tree A tree of local object reference frames.
 			\param[in] refFrame A reference frame used in the project.
 		*/
-		TContributionsGenerator(const TDataTree* tree, const TLGCRefFrame::ERefs& refFrame);
+		TContributionsGenerator(const TDataTree* tree, const TRefSystemFactory::ERefFrame& refFrame);
 	//@}
 
 	/*! 
@@ -150,7 +150,7 @@ private:
 	const TDataTree* fTree;
 
 	//Reference to the reference frame used (Stored in the TLGCData configuration)
-	const TLGCRefFrame::ERefs& fRefFrame;
+	const TRefSystemFactory::ERefFrame fRefFrame;
 
 	//Geoid model used, determined by the fRefFrame
 	TRefSystemFactory::EGeoid fGeoidModel;

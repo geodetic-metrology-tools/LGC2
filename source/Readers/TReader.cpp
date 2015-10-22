@@ -359,7 +359,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 	if(!isReferenceSystemDefined) {
 		// Define OLOC as default
-		project.getConfig().referential = TLGCRefFrame(TLGCRefFrame::kOLOC);
+		project.getConfig().referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
 
 		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
 	}

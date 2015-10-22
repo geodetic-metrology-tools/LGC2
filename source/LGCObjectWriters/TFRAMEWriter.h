@@ -72,10 +72,10 @@ private:
 		///Writes points of the same type
 		void writePointType(const std::list<AdjPointIter>& lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type, bool localNode);
 		///Transofmation needed if necessary to transform to MLA system
-		void transfXYH2XYZ(TPositionVector& pv, const TLGCRefFrame::ERefs& rf);
+		void transfXYH2XYZ(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf);
 
 		///Transofmation needed if necessary to transform to MLA system
-		void transfXYZ2XYH(TPositionVector& pv, const TLGCRefFrame::ERefs& rf);
+		void transfXYZ2XYH(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf);
 
 		/// Project data
 		const TLGCData* fProjectData; 

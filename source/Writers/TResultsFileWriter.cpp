@@ -456,7 +456,7 @@ void    TResultsFileWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatial
 {
     TAStreamFormatter*    stream = getStream();
     //TPointConverter converter (stream, getRefFrameForH());
-    TPointConverter converter (stream, fProjectData->getConfig().referential.type()); //WHATEVER FOR NOW!!!!!!!!!!!!!! CHAGE!!!!!!!!
+    TPointConverter converter (stream, fProjectData->getConfig().referential); //WHATEVER FOR NOW!!!!!!!!!!!!!! CHAGE!!!!!!!!
  
     int                    nameWidth = getNameWidth();
     int                    coordWidth = getCoordWidth();

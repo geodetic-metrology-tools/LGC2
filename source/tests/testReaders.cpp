@@ -91,19 +91,19 @@ namespace tut
 			TKeyOLOC r1(proj);
 
 			r1.parse(empty, -1);
-			ensure("Refsystem must be OLOC", cfg.referential.type() == TLGCRefFrame::kOLOC);
+			ensure("Refsystem must be OLOC", cfg.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame);
 			TKeyRS2K r2(proj);
-			cfg.referential = TLGCRefFrame::kNONE;
+			cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 			r2.parse(empty, -1);
-			ensure("Refsystem must be RS2K", cfg.referential.type() == TLGCRefFrame::kRS2K);
+			ensure("Refsystem must be RS2K", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 			TKeySPHE r3(proj);
-			cfg.referential = TLGCRefFrame::kNONE;
+			cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 			r3.parse(empty, -1);
-			ensure("Refsystem must be SPHE", cfg.referential.type() == TLGCRefFrame::kSPHE);
+			ensure("Refsystem must be SPHE", cfg.referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS);
 			TKeyLEP r4(proj);
-			cfg.referential = TLGCRefFrame::kNONE;
+			cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 			r4.parse(empty, -1);
-			ensure("Refsystem must be LEP", cfg.referential.type() == TLGCRefFrame::kLEP);
+			ensure("Refsystem must be LEP", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine);
 
 
 			// calc options
@@ -216,7 +216,7 @@ namespace tut
 		
 		try {
 			// set points to be in LEP reference frame
-			cfg.referential = TLGCRefFrame::kLEP;
+			cfg.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
 
 			TKeyCALA pr1(proj);
 			

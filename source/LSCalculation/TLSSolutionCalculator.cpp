@@ -15,7 +15,7 @@ bool	TLSSolutionCalculator::iterate2Solution(TLGCData& data, int fMaxIterations,
 
 	std::unique_ptr<TALSComputer> computer;
 
-	std::unique_ptr<TLSInputMatricesFiller> matrFiller( new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential.type()));
+	std::unique_ptr<TLSInputMatricesFiller> matrFiller( new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
 
 	std::unique_ptr<TLSResultsMatricesExtractor> extractor(new TLSResultsMatricesExtractor(&data));

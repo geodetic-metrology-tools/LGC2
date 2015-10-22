@@ -8,7 +8,6 @@
 
 // other forward declarations
 #include "TLGCData.h"
-//#include "TSeparatedFormatTStream.h"
 #include "TPunchFileWriter.h"
 #include "TPointConverter.h"
 #include "TLGCApp.h"
@@ -527,7 +526,7 @@ void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
 	}
 
 	TAStreamFormatter* stream = getStream();
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type());
+	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	string separator = stream->getSeparator();
@@ -561,7 +560,7 @@ void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 														point.getFrameTreePosition());
 
 	TAStreamFormatter* stream = getStream();
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type());
+	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	string separator = stream->getSeparator();
@@ -774,7 +773,7 @@ void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type());
+	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	string separator = stream->getSeparator();
@@ -792,7 +791,7 @@ void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
 void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
-	TPointConverter converter (stream, fProjectData->getConfig().referential.type());
+	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	string separator = stream->getSeparator();

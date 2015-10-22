@@ -68,7 +68,7 @@ bool TDataAnalyzer::dataConsistent(){
 
 					TAdjustablePoint& rp =
 						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
-						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential.type(), fTree.begin()));
+						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
 
 						itLEVEL->fMeasuredPlane->initialize(&rp,TScalar(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
 															LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), true, true);
@@ -104,7 +104,7 @@ bool TDataAnalyzer::dataConsistent(){
 					/*Fixed reference point for the ECHO measurement*/
 					TAdjustablePoint& rp =
 						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
-						true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential.type(), fTree.begin()));
+						true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
 
 					/*Calculation of the initial approximation value for the theta angle of the plane.*/
 					const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();

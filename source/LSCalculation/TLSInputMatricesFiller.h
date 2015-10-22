@@ -30,7 +30,7 @@ public :
 			\param[in] tree Tree of local object reference frames.
 			\param[in] referentiel Global reference frame of the project.
 		*/
-		TLSInputMatricesFiller(const TDataTree* tree, const TLGCRefFrame::ERefs& referentiel);
+		TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel);
 
 		/// Destructor 
 		 ~TLSInputMatricesFiller();

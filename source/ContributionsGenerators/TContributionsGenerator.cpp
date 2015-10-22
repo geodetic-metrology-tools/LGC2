@@ -12,19 +12,19 @@
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////
-TContributionsGenerator::TContributionsGenerator(const TDataTree* tree, const TLGCRefFrame::ERefs& refFrame): fTree(tree), fRefFrame(refFrame),
+TContributionsGenerator::TContributionsGenerator(const TDataTree* tree, const TRefSystemFactory::ERefFrame& refFrame): fTree(tree), fRefFrame(refFrame),
 fMLAused(false),fCGRFused(false), fIsSphere(false)
 {
 	fLastStationPtName = ""; //No point can have empty name
 
-	if(refFrame == TLGCRefFrame::ERefs::kSPHE){
+	if(refFrame == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS){
 		fIsSphere = true;
 		fGeoidModel= TRefSystemFactory::EGeoid::kCGSphere; 
 		fccs2cgrf.reInitialize(false); //Implicitly the ccs2cgrf transformation uses ellipsoidal CGRF, if SPHE is used, a SPHE CGRF (cgrfs) shoud be used
 	}
-	else if(refFrame == TLGCRefFrame::ERefs::kRS2K)
+	else if(refFrame == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 		fGeoidModel= TRefSystemFactory::EGeoid::kCG2000Machine;
-	else if(refFrame == TLGCRefFrame::ERefs::kLEP)
+	else if(refFrame == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 		fGeoidModel= TRefSystemFactory::EGeoid::kCG1985Machine;	
 	else
 		fGeoidModel = TRefSystemFactory::EGeoid::kNoGeoid;
@@ -75,7 +75,7 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(const TTSTN& 
 	stLor2RootTrafo.transform(stationPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -145,7 +145,7 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(const TTSTN& station,
 	stLor2RootTrafo.transform(stationPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -202,7 +202,7 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(const TTSTN& station,
 	stLor2RootTrafo.transform(stationPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -277,7 +277,7 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 	stLor2RootTrafo.transform(stationPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -418,7 +418,7 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(const TTSTN& station, 
 	stLor2RootTrafo.transform(stationPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -475,7 +475,7 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(edmST.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(edmST.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -547,7 +547,7 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const TAdjustable
 	refPTLor2RootTrafo.transform(staffPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(dhor.targetPos->getName(), staffPos, refPointPos);
 		fMLAused = true;
 	}
@@ -599,7 +599,7 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 	staffPTLor2RootTrafo.transform(staffPosition);
 
 	// If not OLOC => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem( levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, staffPosition);
 		fMLAused = true;
 	}
@@ -645,7 +645,7 @@ ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, con
 	TPositionVector referencePoint = echoROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 
 	const std::string& rpName = echoROM.fMeasuredPlane->getReferencePoint()->getName();
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem( echoROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
 		fMLAused = true;
 	}
@@ -695,22 +695,22 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 
 	TReal  dh = 0.0;
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){  /*Needs to be calculated in CGRF.*/
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){  /*Needs to be calculated in CGRF.*/
 		set2MLATransformation(station);	
 		transformMLA2CGRF(stationC); // transform to CGRF
 
 		set2MLATransformation(target);
 		transformMLA2CGRF(targetC);  // transform to CGRF
 
-		if(fRefFrame == TLGCRefFrame::ERefs::kSPHE){
+		if(fRefFrame == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS){
 			TXYH2CCS::CCS2XYHs(station);
 			TXYH2CCS::CCS2XYHs(target);
 		}
-		else if(fRefFrame == TLGCRefFrame::ERefs::kRS2K){
+		else if(fRefFrame == TRefSystemFactory::ERefFrame::kCernXYHg00Machine){
 			TXYH2CCS::CCS2XYHg2000Machine(station);
 			TXYH2CCS::CCS2XYHg2000Machine(target);
 		}
-		else if (fRefFrame == TLGCRefFrame::ERefs::kLEP){
+		else if (fRefFrame == TRefSystemFactory::ERefFrame::kCernXYHg85Machine){
 			TXYH2CCS::CCS2XYHg1985Machine(station);
 			TXYH2CCS::CCS2XYHg1985Machine(target);
 		}
@@ -1174,7 +1174,7 @@ TReal TContributionsGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); // Transform station to ROOT 
 	stLor2RootTrafo.transform(stationPos);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -1200,7 +1200,7 @@ TReal TContributionsGenerator::getZENDCalcMeas(const TTSTN& station, const TAdju
 	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(targetAdjPoint->getFrameTreePosition(), fTree->begin()); 
 	tgLor2RootTrafo.transform(targetPos);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -1225,7 +1225,7 @@ TReal TContributionsGenerator::getDISTCalcMeas(const TTSTN& station, const TAdju
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -1247,7 +1247,7 @@ TReal TContributionsGenerator::getDHORCalcMeas(const TTSTN& station, const TLINE
 	tgLor2RootTrafo.transform(targetPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		transformPointsToMLASystem(station.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -1267,7 +1267,7 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 	/*Reference point is always defined in ROOT and is fixed, i.e. no transformation to ROOT required and no contribution required for its coordinates.*/
 	TPositionVector referencePoint = echoROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem( echoROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
 		fMLAused = true;
 	}
@@ -1293,7 +1293,7 @@ TReal	TContributionsGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const T
 	const TLOR2LOR& staffPTLor2RootTrafo = getLORTransformation(dlev.targetPos->getFrameTreePosition(), fTree->begin()); 
 	staffPTLor2RootTrafo.transform(staffPosition);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem( levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, staffPosition);
 		fMLAused = true;
 	}
@@ -1318,7 +1318,7 @@ TReal	TContributionsGenerator::getDSPTCalcMeas(const TEDM& edmST, const TDSPT& d
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(edmST.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(edmST.instrumentPos->getName(), stationPos, targetPos);
 		fMLAused = true;
 	}
@@ -1343,7 +1343,7 @@ TReal	TContributionsGenerator::getHorDistCalcMeas(const TAdjustablePoint* refere
 	const TLOR2LOR& staffPTLor2RootTrafo = getLORTransformation( dhor.targetPos->getFrameTreePosition(), fTree->begin()); 
 	staffPTLor2RootTrafo.transform(staffPos);
 
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(dhor.targetPos->getName(), staffPos, refPointPos);
 		fMLAused = true;
 	}
@@ -1422,7 +1422,7 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const
 	stLor2RootTrafo.transform(stationPos);
 
 	//If not OLOC used and station can not rotate freely => contributions calculated in MLA of the instrument (station)
-	if(fRefFrame != TLGCRefFrame::ERefs::kOLOC && station.rot3D != true){
+	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
 		//If stationed point is different than in the previous call of Cotrib. Gener., or if MLA system was not used in the previous call => set a new origin of the CCS2MLA transformation
 		if (!(fLastStationPtName == station.instrumentPos->getName()) || !fMLAused){
 			set2MLATransformation(stationPos);

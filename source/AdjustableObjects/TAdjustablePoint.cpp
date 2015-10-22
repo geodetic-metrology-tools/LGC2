@@ -1,6 +1,5 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
-
 #include "TAdjustablePoint.h"
 #include "TXYH2CCS.h"
 
@@ -17,13 +16,13 @@ fEstimatedValue(fProvisionalValue),
 fEstimatedPrecision(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fCovariance(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fHfixed(false),
-fReferential(TLGCRefFrame::ERefs::kNONE),
+fReferential(TRefSystemFactory::ERefFrame::kNotInGraph),
 fSpatialStatus(TSpatialStatus::kUnknown)
 {
 	setDefaults(true, true, true);
 }
 
-TAdjustablePoint::TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TLGCRefFrame::ERefs referential, TDataTreeIterator positionInTree):
+TAdjustablePoint::TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree):
 fName(name),
 fProvisionalValue(pos),
 fCorrection(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
@@ -36,11 +35,11 @@ fHfixed(false),
 fSpatialStatus(TSpatialStatus::kUnknown)
 {
 	if(pos.getCoordSys() == TCoordSysFactory::k2DPlusH ){ // If position is given in 2D + H system
-		if(fReferential == TLGCRefFrame::ERefs::kSPHE)
+		if(fReferential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 			TXYH2CCS::XYHs2CCS(fEstimatedValue);
-		else if(fReferential == TLGCRefFrame::ERefs::kRS2K)
+		else if(fReferential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 			TXYH2CCS::XYHg2000Machine2CCS(fEstimatedValue);
-		else if (fReferential == TLGCRefFrame::ERefs::kLEP)
+		else if (fReferential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::XYHg1985Machine2CCS(fEstimatedValue);
 
 		//If referential is a 2D+H system and H is fixed, than set fHfixed to TRUE, because we need to resetting original H when setting contributions
@@ -265,11 +264,11 @@ void TAdjustablePoint::reInitialise(){
 
 	/*If the provisional value was in XYH, transform the estimated value into XYZ*/
 	if(fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH ){ // If position is given in 2D + H system
-		if(fReferential == TLGCRefFrame::ERefs::kSPHE)
+		if(fReferential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 			TXYH2CCS::XYHs2CCS(fEstimatedValue);
-		else if(fReferential == TLGCRefFrame::ERefs::kRS2K)
+		else if(fReferential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 			TXYH2CCS::XYHg2000Machine2CCS(fEstimatedValue);
-		else if (fReferential == TLGCRefFrame::ERefs::kLEP)
+		else if (fReferential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::XYHg1985Machine2CCS(fEstimatedValue);
 	}
 
@@ -319,24 +318,24 @@ void TAdjustablePoint::transformEstimatedValue(){
 	//Set original H value and calculate Z0star for next iteration.
 	fEstimatedValue.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
 	fEstimatedValue.setH(fProvisionalValue.getH());
-	if(fReferential == TLGCRefFrame::ERefs::kSPHE)
+	if(fReferential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		TXYH2CCS::XYHs2CCS(fEstimatedValue);
-	else if(fReferential == TLGCRefFrame::ERefs::kRS2K)
+	else if(fReferential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 		TXYH2CCS::XYHg2000Machine2CCS(fEstimatedValue);
-	else if (fReferential == TLGCRefFrame::ERefs::kLEP)
+	else if (fReferential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 		TXYH2CCS::XYHg1985Machine2CCS(fEstimatedValue);
 }
 
 TReal TAdjustablePoint::getHEstValue() const{
-	if(fReferential == TLGCRefFrame::kOLOC)
+	if(fReferential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		throw std::runtime_error("Point is defined in local system, no geoid assigned.");
 
 	TPositionVector pvEst = fEstimatedValue;
-	if(fReferential == TLGCRefFrame::ERefs::kSPHE)
+	if(fReferential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		TXYH2CCS::CCS2XYHs(pvEst);
-	else if(fReferential == TLGCRefFrame::ERefs::kRS2K)
+	else if(fReferential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 		TXYH2CCS::CCS2XYHg2000Machine(pvEst);
-	else if (fReferential == TLGCRefFrame::ERefs::kLEP)
+	else if (fReferential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 		TXYH2CCS::CCS2XYHg1985Machine(pvEst);
 
 	return pvEst.getH().getMetresValue();

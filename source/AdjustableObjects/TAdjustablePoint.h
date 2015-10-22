@@ -2,10 +2,11 @@
 #define TADJUSTABLE_POINT
 
 #include "TVAdjustableObject.h"
-#include "TLGCRefFrame.h"
+#include "TRefSystemFactory.h"
 #include "TPositionVector.h"
 #include "TFreeVector.h"
 #include "TSpatialStatus.h"
+#include "Global.h"
 
 #ifndef isnan
 #define isnan(x) ((x)!=(x))
@@ -43,7 +44,7 @@ public:
 			\param[in] referential Reference frame used (OLOC, RS2K, LEP, SPHE).
 			\param[in] positionInTree iterator on the local object reference frame in which the point is defined.
 		*/
-		TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TLGCRefFrame::ERefs referential, TDataTreeIterator positionInTree);
+		TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree);
 
 		/// Create an unitialized point. 
 		static TAdjustablePoint createUninitialized(const std::string& name);
@@ -218,7 +219,7 @@ public:
 		TReal getStandDev(int d) const;
 
 		/// Returns reference frame of the point 
-		inline TLGCRefFrame::ERefs getReferenceFrame() const {return fReferential;}
+		inline TRefSystemFactory::ERefFrame getReferenceFrame() const {return fReferential;}
 
 		/// \see TAdjustableObject::isInitialized
 		inline virtual bool isInitialized() const { return !isnan(fProvisionalValue.getX().getMetresValue());}
@@ -285,7 +286,7 @@ private:
 	TFreeVector				fEstimatedPrecision; /*!< point's estimated precision after calculation */
 	TFreeVector				fCovariance; /*!< point's covariance */	
 
-	TLGCRefFrame::ERefs fReferential; /*!< Reference frame of the point */
+	TRefSystemFactory::ERefFrame fReferential; /*!< Reference frame of the point */
 
 	std::string fName; /*!< Name of the adjustable point. */
 

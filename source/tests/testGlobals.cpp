@@ -7,23 +7,16 @@
 //Input test files
 
 #include "contributionsGeneratorTest.h"
-
 #include <TLGCData.h>
 #include <TLOR2LOR.h>
-
 #include <TReader.h>
 #include <AdjObjectsReader.h>
-
 #include <TAdjustableObjectCollection.h>
-
 #include <TXYH2CCS.h>
 #include <TLGCCalculation.h>
-
 #include "TLSInputMatricesFiller.h"
 #include "TLSInputMatrices.h"
 #include "TLSResultsMatricesExtractor.h"
-#include "TAffineTransformFactory.h"
-
 #include "testTLOR2LOR.h"
 
 
@@ -120,7 +113,7 @@ namespace tut
 
 		//////////////////////// Testing TAdjustablePoint ////////////////////////
 		TDataTreeIterator iter;
-		TAdjustablePoint p(position1,true,false,false,"point1",TLGCRefFrame::ERefs::kOLOC, iter);
+		TAdjustablePoint p(position1,true,false,false,"point1",TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 		ensure_equals("Number of unknowns should match", p.getNumUnkn(), 2);
 		ensure_equals("Point is initialized", p.isInitialized(), true);
 		p.setFirstUidx(3);
@@ -240,7 +233,7 @@ namespace tut
 		//Measurements are tested more properly in testReaders -- Testing measurement input -- 
 		TPositionVector posit(1.0,1.0,1.0,TCoordSysFactory::ECoordSys::k3DCartesian);
 		TDataTreeIterator iter;
-		const TAdjustablePoint pos(posit, false, false, false, "point", TLGCRefFrame::ERefs::kOLOC, iter);
+		const TAdjustablePoint pos(posit, false, false, false, "point", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 	
 #ifdef __linux__
 		const TInstrumentData::TPOLAR instrument{};
