@@ -12,6 +12,7 @@ namespace LGC {
 
 		\note Should be moved to SurveyLib!
 	*/
+   /*
 	class TAngle {
 		public:
 			/// Avaliable units to represent angles
@@ -109,7 +110,7 @@ namespace LGC {
 			struct D;
 			std::unique_ptr<D> d;
 	};
-
+*/
 }
 
 #endif

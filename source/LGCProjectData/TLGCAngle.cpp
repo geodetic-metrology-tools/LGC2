@@ -1,6 +1,8 @@
 #include "TLGCAngle.h"
 #include "Global.h"
 
+/*
+
 LGC::TAngle::~TAngle() {}
 
 struct LGC::TAngle::D {
@@ -191,3 +193,5 @@ void LGC::TAngle::set(EUnits unit, TReal v) {
 TReal LGC::TAngle::raw() {
 	return d->a.getRadiansValue();
 }
+
+*/
