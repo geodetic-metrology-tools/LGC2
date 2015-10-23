@@ -159,7 +159,7 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(const TTSTN& station,
    TReal yTg = targetPos.getY().getMetresValue();
 
 	//Calculated measurement value
-	LGC::TAngle calcMeas = LGC::TAngle::atan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst;  //ACST is the constant orientation of the instrument
+	TAngle calcMeas = TAngle::aTan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst;  //ACST is the constant orientation of the instrument
 
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
@@ -230,10 +230,10 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(const TTSTN& station,
 	if (distance3D < nullLimit)
 		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
 
-	LGC::TAngle calcMeas = LGC::TAngle::acos((zTg - zSt - hInst + hTg)/distance3D);
+	TAngle calcMeas = TAngle::aCos((zTg - zSt - hInst + hTg)/distance3D);
 	
 	//We are taking the currently calculated value not the measured one (zend.getAngle().rad()), do not know what is better to take
-	TReal sinPhi = sinq(calcMeas.rad());
+	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
 	if (sinPhi < nullLimit)
 		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (sinV).");
@@ -290,12 +290,12 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 	if(station.rot3D){ //If station can rotate freely get the rotation values
 		if(station.rotX == nullptr || station.rotY == nullptr)
 			throw std::runtime_error("TContributionGenerator::getPolar3DContrib station can rotate freely, but rotation angles are NULL.");
-		Rx = station.rotX->getEstimatedValue().rad();
-		Ry = station.rotY->getEstimatedValue().rad();
+		Rx = station.rotX->getEstimatedValue().getRadiansValue();
+		Ry = station.rotY->getEstimatedValue().getRadiansValue();
 	}
 
-	TReal sinV0 = (rom.v0->getEstimatedValue() - rom.acst).sin();
-	TReal cosV0 = (rom.v0->getEstimatedValue() - rom.acst).cos();
+	TReal sinV0 = (rom.v0->getEstimatedValue() - rom.acst).sine();
+	TReal cosV0 = (rom.v0->getEstimatedValue() - rom.acst).cosine();
 
 	TReal sinRx = sinq(Rx);
 	TReal cosRx = cosq(Rx);
@@ -328,11 +328,11 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 
 
 	TReal sDistPlusCs = plr3D.getDistance() + plr3D.target.distCorrectionAdjustable->getEstimatedValue();
-	TReal sinTheta = plr3D.getAngle(kANGL).sin();
-	TReal cosTheta = plr3D.getAngle(kANGL).cos();
+	TReal sinTheta = plr3D.getAngle(kANGL).sine();
+	TReal cosTheta = plr3D.getAngle(kANGL).cosine();
 
-	TReal sinPhi = plr3D.getAngle(kZEND).sin();
-	TReal cosPhi = plr3D.getAngle(kZEND).cos();
+	TReal sinPhi = plr3D.getAngle(kZEND).sine();
+	TReal cosPhi = plr3D.getAngle(kZEND).cosine();
 
    TReal dX = targetPos.getX().getMetresValue() - stationPos.getX().getMetresValue();
    TReal dY = targetPos.getY().getMetresValue() - stationPos.getY().getMetresValue();
@@ -586,7 +586,7 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const TAdjustable
 
 //DLEV contributions
 DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, const TDLEV& dlev){
-	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().rad(); //collimination angle in rads
+	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); //collimination angle in rads
 	TReal cdz = dlev.target.distCorrectionValue; //distance correction value
 	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(); //Distance of the reference point from the plane
 
@@ -631,7 +631,7 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 
 //ECHO contribution
 ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, const TECHO& echo){
-	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().rad(); // Theta angle of the plane
+	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); // Theta angle of the plane
 	TReal cEcVp = echo.target.distCorrectionValue; //distance of the target correction value
    TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();  // distance of the reference point from the plane
 
@@ -1186,7 +1186,7 @@ TReal TContributionsGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN
 	TReal xTg = targetPos.getX().getMetresValue();
 	TReal yTg = targetPos.getY().getMetresValue();
 
-	return (LGC::TAngle::atan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst).rad(); 
+	return (TAngle::aTan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst).getRadiansValue(); 
 }
 
 
@@ -1211,7 +1211,7 @@ TReal TContributionsGenerator::getZENDCalcMeas(const TTSTN& station, const TAdju
 	if (distance3D < nullLimit)
 		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
 
-   return (LGC::TAngle::acos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue()) / distance3D))).rad();
+	return (TAngle::aCos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue()) / distance3D))).getRadiansValue();
 }
 
 
@@ -1273,7 +1273,7 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 	else
 		fMLAused = false;
 
-	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().rad(); 
+	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); 
 	TReal cEcVp = echo.target.distCorrectionValue; 
    TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
 
@@ -1299,7 +1299,7 @@ TReal	TContributionsGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const T
 	else
 		fMLAused = false;
 
-	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().rad(); //collimination angle in rads
+	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); //collimination angle in rads
 	TReal cdz = dlev.target.distCorrectionValue; //distance of the target correction value
    TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
 

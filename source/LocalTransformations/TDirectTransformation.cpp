@@ -27,24 +27,24 @@ void TDirectTransformation::setTranslationPart(const TReal tx, const TReal ty, c
 	m(2,3) = tz/scl;
 }
 
-void TDirectTransformation::setRotationPart(const LGC::TAngle& rx, const LGC::TAngle& ry, const LGC::TAngle& rz){
+void TDirectTransformation::setRotationPart(const TAngle& rx, const TAngle& ry, const TAngle& rz){
 	auto& m(*(fTransM));
-	TReal omegacos = rx.cos();
+	TReal omegacos = rx.cosine();
 	zerofy(omegacos);
 
-	TReal omegasin = rx.sin();
+	TReal omegasin = rx.sine();
 	zerofy(omegasin);
 
-	TReal phicos = ry.cos();
+	TReal phicos = ry.cosine();
 	zerofy(phicos);
 
-	TReal phisin = ry.sin();
+	TReal phisin = ry.sine();
 	zerofy(phisin);
 
-	TReal kappacos = rz.cos();
+	TReal kappacos = rz.cosine();
 	zerofy(kappacos);
 
-	TReal kappasin = rz.sin();
+	TReal kappasin = rz.sine();
 	zerofy(kappasin);
 
 	m(0,0)  =  kappacos*phicos;
@@ -77,10 +77,9 @@ void TDirectTransformation::setTransformParam(const TransformParameters& params)
 
 
 void TDirectTransformation::setIdentityTransformation(){
-	auto rad(LGC::TAngle::EUnits::kRadians);
-	fParameters.omega.set(rad,0);
-	fParameters.phi.set(rad,0);
-	fParameters.kappa.set(rad,0);
+	fParameters.omega.setRadiansValue(0);
+	fParameters.phi.setRadiansValue(0);
+	fParameters.kappa.setRadiansValue(0);
 
 	fParameters.tX = 0;
 	fParameters.tY = 0;
@@ -94,19 +93,17 @@ void TDirectTransformation::setIdentityTransformation(){
 }
 
 void TDirectTransformation::setRotationTransformation(TReal rx, TReal ry, TReal rz){
-	auto rad(LGC::TAngle::EUnits::kRadians);
-	fParameters.omega.set(rad,rx);
-	fParameters.phi.set(rad,ry);
-	fParameters.kappa.set(rad,rz);
+	fParameters.omega.setRadiansValue(rx);
+	fParameters.phi.setRadiansValue(ry);
+	fParameters.kappa.setRadiansValue(rz);
 
 	this->setRotationPart(fParameters.omega, fParameters.phi, fParameters.kappa);
 }
 
 void TDirectTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TReal rx, TReal ry, TReal rz, TReal scale){
-	auto rad(LGC::TAngle::EUnits::kRadians);
-	fParameters.omega.set(rad,rx);
-	fParameters.phi.set(rad,ry);
-	fParameters.kappa.set(rad,rz);
+	fParameters.omega.setRadiansValue(rx);
+	fParameters.phi.setRadiansValue(ry);
+	fParameters.kappa.setRadiansValue(rz);
 
 	fParameters.tX = tx;
 	fParameters.tY = ty;
@@ -123,8 +120,8 @@ TReal TDirectTransformation::getScaleFactor() const{
 	return fParameters.scale;
 }
 
-const LGC::TAngle& TDirectTransformation::getAngle(int axis) const{
-	LGC::TAngle ang(LGC::TAngle::kRadians, NO_VALf);
+const TAngle& TDirectTransformation::getAngle(int axis) const{
+	TAngle ang(NO_VALf, TAngle::kRadians);
 	assert3D(axis);
 
 		if(axis == 0)
@@ -152,22 +149,22 @@ TDerivativeTransformation TDirectTransformation::differentiatedTransformationAng
 	Eigen::Matrix4d m;
 	m.setZero();
 
-	TReal omegaCos = fParameters.omega.cos();
+	TReal omegaCos = fParameters.omega.cosine();
 	zerofy(omegaCos);
 
-	TReal omegaSin = fParameters.omega.sin();
+	TReal omegaSin = fParameters.omega.sine();
 	zerofy(omegaSin);
 
-	TReal phiCos = fParameters.phi.cos();
+	TReal phiCos = fParameters.phi.cosine();
 	zerofy(phiCos);
 
-	TReal phiSin = fParameters.phi.sin();
+	TReal phiSin = fParameters.phi.sine();
 	zerofy(phiSin);
 
-	TReal kappaCos = fParameters.kappa.cos();
+	TReal kappaCos = fParameters.kappa.cosine();
 	zerofy(kappaCos);
 
-	TReal kappaSin = fParameters.kappa.sin();
+	TReal kappaSin = fParameters.kappa.sine();
 	zerofy(kappaSin);
 
 	switch (angle) {
@@ -246,7 +243,7 @@ bool TDirectTransformation::transform(TRotationMatrix& rm) const{
 	if(rm.getStatus()!=kNull && rm.getCoordSys()==k3DCart){
 
 		//(TRotationMatrix is not affected by translation and scaling), just multiplication of rotation matrices.
-		TRotationMatrix transformation(TRotationMatrix::ERotationType::kRzyx, getAngle(0).rad(), getAngle(1).rad(), getAngle(2).rad());
+		TRotationMatrix transformation(TRotationMatrix::ERotationType::kRzyx, getAngle(0).getRadiansValue(), getAngle(1).getRadiansValue(), getAngle(2).getRadiansValue());
 		//Transform
 		rm = transformation * rm;	
 		result = true;

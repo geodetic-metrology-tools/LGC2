@@ -2,18 +2,18 @@
 #include "TAdjustableAngle.h"
 #include "Global.h"
 
-TAdjustableAngle::TAdjustableAngle(const LGC::TAngle& angleValue, bool isFixed, const std::string& name):
+TAdjustableAngle::TAdjustableAngle(const TAngle& angleValue, bool isFixed, const std::string& name):
 fName(name),
 ifFixed(isFixed),
 fProvisionalValue(angleValue),
-fCorrection(LGC::TAngle::EUnits::kRadians, 0.0),
+fCorrection(0.0, TAngle::EUnits::kRadians),
 fEstimatedValue(angleValue),
-fEstimatedPrecision(LGC::TAngle::EUnits::kRadians,0.0),
+fEstimatedPrecision(0.0, TAngle::EUnits::kRadians),
 uidx(-1)
 {}
 
 TAdjustableAngle TAdjustableAngle::createUninitialized(const std::string& name){
-	TAdjustableAngle as(LGC::TAngle(LGC::TAngle::EUnits::kRadians ,NO_VALf), true, name);
+	TAdjustableAngle as(TAngle(NO_VALf,TAngle::EUnits::kRadians), true, name);
 	return as;
 }
 
@@ -25,8 +25,8 @@ void TAdjustableAngle::setFirstUidx(int idx) {
 
 void TAdjustableAngle::setCorrection(int idx, TReal value) {
 	if (uidx == idx){
-		fCorrection.set(LGC::TAngle::kRadians, value);
-		fEstimatedValue.set(LGC::TAngle::kRadians, fEstimatedValue.rad() + value);
+		fCorrection.setRadiansValue(value);
+		fEstimatedValue.setRadiansValue(fEstimatedValue.getRadiansValue() + value);
 	}
 	else
 		throw std::logic_error("Invalid unknown index in parameter access.");
@@ -34,12 +34,12 @@ void TAdjustableAngle::setCorrection(int idx, TReal value) {
 
 void TAdjustableAngle::setEstimatedPrecision(int idx, TReal ep) {
 	if (uidx == idx)
-		fEstimatedPrecision.set(LGC::TAngle::kRadians, ep);
+		fEstimatedPrecision.setRadiansValue(ep);
 	else
 		throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
 void TAdjustableAngle::reInitialise(){
-	fEstimatedPrecision.set(LGC::TAngle::EUnits::kRadians, 0.0);
-	fCorrection.set(LGC::TAngle::EUnits::kRadians, 0.0);
+	fEstimatedPrecision.setRadiansValue(0.0);
+	fCorrection.setRadiansValue(0.0);
 }

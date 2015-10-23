@@ -36,7 +36,7 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 	if (opts.has("RZ") || opts.has("SRZ")) rotations.set(2,0);
 	if (opts.has("SCL")|| opts.has("SSCL")) scale.set(0,0);
 
-	const auto gon(LGC::TAngle::kGons);
+	const auto gon(TAngle::kGons);
 	TransformParameters transfParam;
 	transfParam.tX = std::stor(tokens[3]); // Translation along X
 	// Create adjustable helmert transformation
@@ -51,9 +51,9 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 				std::stor(tokens[3]), // Translation along X
 				std::stor(tokens[4]), // Translation along Y
 				std::stor(tokens[5]), // Translation along Z
-				LGC::TAngle(gon, std::stor(tokens[6])), // Rotation around X
-				LGC::TAngle(gon, std::stor(tokens[7])), // Rotation around Y
-				LGC::TAngle(gon, std::stor(tokens[8])), // Rotation around Z
+				TAngle(std::stor(tokens[6]), gon), // Rotation around X
+				TAngle(std::stor(tokens[7]), gon), // Rotation around Y
+				TAngle(std::stor(tokens[8]), gon), // Rotation around Z
 				std::stor(tokens[9]) // SCALE factor
 		);
 
@@ -65,9 +65,9 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 		if(opts.has("STX")) adjTrafo.setTranslationStandDev(X, opts.getParamR("STX") * MM2M); //Value given in mili-metres, but stored in metres
 		if(opts.has("STY")) adjTrafo.setTranslationStandDev(Y, opts.getParamR("STY") * MM2M); //Value given in mili-metres, but stored in metres
 		if(opts.has("STZ")) adjTrafo.setTranslationStandDev(Z, opts.getParamR("STZ") * MM2M); //Value given in mili-metres, but stored in metres
-		if(opts.has("SRX")) adjTrafo.setRotationStandDev(X, LGC::TAngle(LGC::TAngle::kCC, opts.getParamR("SRX"))); //Value given in cc, stored in angle object
-		if(opts.has("SRY")) adjTrafo.setRotationStandDev(Y, LGC::TAngle(LGC::TAngle::kCC, opts.getParamR("SRY")));  //Value given in cc, stored in angle object
-		if(opts.has("SRZ")) adjTrafo.setRotationStandDev(Z, LGC::TAngle(LGC::TAngle::kCC, opts.getParamR("SRZ")));  //Value given in cc, stored in angle object
+		if(opts.has("SRX")) adjTrafo.setRotationStandDev(X, TAngle(opts.getParamR("SRX"), TAngle::kCCs)); //Value given in cc, stored in angle object
+		if(opts.has("SRY")) adjTrafo.setRotationStandDev(Y, TAngle(opts.getParamR("SRY"), TAngle::kCCs));  //Value given in cc, stored in angle object
+		if(opts.has("SRZ")) adjTrafo.setRotationStandDev(Z, TAngle(opts.getParamR("SRZ"), TAngle::kCCs));  //Value given in cc, stored in angle object
 		if(opts.has("SSCL")) adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M); //Value given in mili-metres, stored in metres
 	}
 

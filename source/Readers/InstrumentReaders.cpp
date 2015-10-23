@@ -119,8 +119,8 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, int) {
 				
 		TInstrumentData::TCAMD::TTarget t = {
 					    tokens.at(0),
-						std::stor(tokens.at(1))  * VECCONV  /**CC2RAD*/, // unitless ???????
-						std::stor(tokens.at(2))  * VECCONV  /**CC2RAD*/, // unitless ??????
+						std::stor(tokens.at(1))  * VECCONV , // unitless 
+						std::stor(tokens.at(2))  * VECCONV , // unitless 
 						std::stor(tokens.at(3)) * MM2M, // conversion from mili-metres to metres
 					    std::stor(tokens.at(4)) * MM2M, // conversion from mili-metres to metres
 		};
@@ -225,7 +225,7 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, int){
 
 		currentStation = tokens.at(2);
 
-		l.collAngleAdjustable = &fangles.addObject(TAdjustableAngle( LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens[5])), std::stoi(tokens[4]) == 0, currentStation + "CollANGLE"));
+		l.collAngleAdjustable = &fangles.addObject(TAdjustableAngle( TAngle(std::stor(tokens[5]), TAngle::kGons), std::stoi(tokens[4]) == 0, currentStation + "CollANGLE"));
 		// store the new station
 		station.insert(std::make_pair(tokens.at(2), l));
 	}

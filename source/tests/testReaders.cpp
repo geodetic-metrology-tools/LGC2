@@ -411,7 +411,7 @@ namespace tut
 			ensure_equals(ls1.collAngleUnknown, false);
 			ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
 			ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
-			ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().deg(), 90);
+			ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
 			const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
 			ensure_equals(lt1.ID, "ST1"); 
 			ensure_equals(lt1.sigmaD, 1 * MM2M); 
@@ -465,7 +465,7 @@ namespace tut
 			ensure_equals("In this ROM, default target should be updated", ts1.roms.back().defaultTarget->ID, "PT9");
 			ensure_equals("Adjustable distance correction should be valid and unchanged", ts1.roms.back().defaultTarget->distCorrectionAdjustable->getProvisionalValue(), 5.0);
 
-			ensure_distance(proj.getCurrentNode().measurements.fTSTN.back().roms.back().acst.gon(), 66.0, 1e-8);
+			ensure_distance(proj.getCurrentNode().measurements.fTSTN.back().roms.back().acst.getGonsValue(), 66.0, 1e-8);
 
 			// Add one of each POLAR measurement to this ROM
 			//
@@ -477,8 +477,8 @@ namespace tut
 			ensure_equals("Target of this measurement taken implicitly from *PLR3D", ts1.roms.back().measPLR3D.back().target.ID, "PT8");
 
 			const auto& plrmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measPLR3D.back());
-			ensure_distance(plrmeas.getAngle(kANGL).gon(), 1.0, 1e-8);
-			ensure_distance(plrmeas.getAngle(kZEND).gon(), 2.0, 1e-8);
+			ensure_distance(plrmeas.getAngle(kANGL).getGonsValue(), 1.0, 1e-8);
+			ensure_distance(plrmeas.getAngle(kZEND).getGonsValue(), 2.0, 1e-8);
 			ensure_distance(plrmeas.getDistance(), 3.0, 1e-8);
 			ensure_equals(plrmeas.target.ID, "PT8");
 			ensure_equals(plrmeas.target.targetHt, 11);
@@ -511,7 +511,7 @@ namespace tut
 			ensure_equals("ANGL target of this measurement updated", ts1.roms.back().measANGL.back().target.ID, "PT7");
 
 			const auto& angmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measANGL.back());
-			ensure_distance(angmeas.getAngle().gon(), 88.0, 1e-8);
+			ensure_distance(angmeas.getAngle().getGonsValue(), 88.0, 1e-8);
 			ensure_equals(angmeas.target.sigmaAngl, 21 * CC2RAD);
 			ensure_equals(angmeas.target.sigmaTargetCentering, 22 * MM2M);
 			//
@@ -552,7 +552,7 @@ namespace tut
 			ecth.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"),-1);
 			const auto& ecthmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
 			ensure_equals(ecthmeas.stationedPoint->getName(), "P2");
-			ensure_equals(ecthmeas.obsHorAngle.gon(), 1);
+			ensure_equals(ecthmeas.obsHorAngle.getGonsValue(), 1);
 			ensure_equals(ecthmeas.scaleInstr.ID, "SC1");
 			ensure_equals(ecthmeas.scaleInstr.sigmaD, 0.01 * MM2M);
 			ensure_equals(ecthmeas.scaleInstr.ppmD, 0.1 * MM2M);

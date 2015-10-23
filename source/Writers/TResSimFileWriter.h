@@ -43,7 +43,7 @@ public:
 			virtual void    writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu);
 
 			/// Write a final TABLE which summarises FRAME statistics.
-			virtual void    writeSimFramesSummary(const string &projTitle, const std::list<TSimFrameSummary>& dataSum, int numbOfSimu);
+			virtual void    writeSimFramesSummary(const std::list<TSimFrameSummary>& dataSum, int numbOfSimu);
 		//@}
 
 
@@ -73,7 +73,7 @@ private:
 
 			\param[in] objectType  e.g. frame, DTX, DTY, DTZ, DRX, DRY, DRZ, DSCALE, STX, STY, STZ...
 		*/
-		void writeSimFRAMEDescription(int i);
+		void writeSimFRAMEDescription();
 
 		 /// Write point data from simualtions
 		void	writeSimPointData(const TSimPointSummary& simPt, const int i);

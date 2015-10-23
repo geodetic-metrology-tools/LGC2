@@ -70,8 +70,8 @@ bool TDataAnalyzer::dataConsistent(){
 						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
 						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
 
-						itLEVEL->fMeasuredPlane->initialize(&rp,TLength(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
-															LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), true, true);
+						itLEVEL->fMeasuredPlane->initialize(&rp,TLength(0.0), TAngle(0.0, TAngle::EUnits::kRadians), 
+															TAngle(0.0, TAngle::EUnits::kRadians), true, true);
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found."; 
@@ -112,8 +112,8 @@ bool TDataAnalyzer::dataConsistent(){
 
                TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
 
-					itECHO->fMeasuredPlane->initialize(&rp,TLength(initialRefPtDistance), LGC::TAngle(LGC::TAngle::EUnits::kRadians , thetaLineVectorAngle), 
-							LGC::TAngle(LGC::TAngle::EUnits::kRadians , M_PI_2), false, true);
+					itECHO->fMeasuredPlane->initialize(&rp,TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), 
+							TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *DLEV keyword, but no measurement found."; 

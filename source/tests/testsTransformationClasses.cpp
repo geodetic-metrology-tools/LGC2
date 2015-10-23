@@ -121,14 +121,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test of direct transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 		
 		TDirectTransformation directTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -136,12 +136,12 @@ namespace tut
 
 		directTransfo.setTransformParam(param1);
 		
-		TReal kappacos = param1.kappa.cos();
-		TReal kappasin = param1.kappa.sin();
-		TReal phicos = param1.phi.cos();
-		TReal phisin = param1.phi.sin();
-		TReal omegacos = param1.omega.cos();
-		TReal omegasin = param1.omega.sin();
+		TReal kappacos = param1.kappa.cosine();
+		TReal kappasin = param1.kappa.sine();
+		TReal phicos = param1.phi.cosine();
+		TReal phisin = param1.phi.sine();
+		TReal omegacos = param1.omega.cosine();
+		TReal omegasin = param1.omega.sine();
 
 		//Test if the matrix is well completed
 		ensure_distance("m(0,0)", directTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
@@ -178,14 +178,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test  inverse transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -194,12 +194,12 @@ namespace tut
 		invTransfo.setTransformParam(param1);
 
 		//Test if the matrix is well completed
-		TReal kappacos = param1.kappa.cos();
-		TReal kappasin = param1.kappa.sin();
-		TReal phicos = param1.phi.cos();
-		TReal phisin = param1.phi.sin();
-		TReal omegacos = param1.omega.cos();
-		TReal omegasin = param1.omega.sin();
+		TReal kappacos = param1.kappa.cosine();
+		TReal kappasin = param1.kappa.sine();
+		TReal phicos = param1.phi.cosine();
+		TReal phisin = param1.phi.sine();
+		TReal omegacos = param1.omega.cosine();
+		TReal omegasin = param1.omega.sine();
 
 		ensure_distance("m(0,0)", invTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", invTransfo.getMmatrixIJPosition(0,1), kappacos*phisin*omegasin-kappasin*omegacos, 1e-6);
@@ -223,15 +223,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test direct * his inverse transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		TDirectTransformation dirTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -259,15 +259,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test inv * his direct transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 		
 		TInverseTransformation invTransfo;
 		TDirectTransformation dirTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -296,15 +296,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test of direct transformation with scale");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 		TPositionVector vector_to_transform(5.0, 15.0, 5.0,k3DCartesian);
 
 		TDirectTransformation directTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -316,12 +316,12 @@ namespace tut
 		directTransfo.TTransformation::transform(vector_to_transform);
 
 		//Test if the matrix is well completed
-		TReal kappacos = param1.kappa.cos();
-		TReal kappasin = param1.kappa.sin();
-		TReal phicos = param1.phi.cos();
-		TReal phisin = param1.phi.sin();
-		TReal omegacos = param1.omega.cos();
-		TReal omegasin = param1.omega.sin();
+		TReal kappacos = param1.kappa.cosine();
+		TReal kappasin = param1.kappa.sine();
+		TReal phicos = param1.phi.cosine();
+		TReal phisin = param1.phi.sine();
+		TReal omegacos = param1.omega.cosine();
+		TReal omegasin = param1.omega.sine();
 
 		ensure_distance("m(0,0)", directTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", directTransfo.getMmatrixIJPosition(0,1), kappasin*phicos, 1e-6);
@@ -357,16 +357,16 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test  inverse transformation with scale");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 		TPositionVector vector_to_transform(20.0, 20.0, 20.0,k3DCartesian);
 		TPositionVector p_subF(5.0, 15.0, 5.0,k3DCartesian);
 
 		TInverseTransformation invTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -378,12 +378,12 @@ namespace tut
 		invTransfo.TTransformation::transform(vector_to_transform);
 
 		//Test if the matrix is well completed
-		TReal kappacos = param1.kappa.cos();
-		TReal kappasin = param1.kappa.sin();
-		TReal phicos = param1.phi.cos();
-		TReal phisin = param1.phi.sin();
-		TReal omegacos = param1.omega.cos();
-		TReal omegasin = param1.omega.sin();
+		TReal kappacos = param1.kappa.cosine();
+		TReal kappasin = param1.kappa.sine();
+		TReal phicos = param1.phi.cosine();
+		TReal phisin = param1.phi.sine();
+		TReal omegacos = param1.omega.cosine();
+		TReal omegasin = param1.omega.sine();
 
 		ensure_distance("m(0,0)", invTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", invTransfo.getMmatrixIJPosition(0,1), kappacos*phisin*omegasin-kappasin*omegacos, 1e-6);
@@ -411,15 +411,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Test direct * his inverse transformation with scale");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		TDirectTransformation dirTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -456,15 +456,15 @@ namespace tut
 	{
 		using namespace LGC;
 		set_test_name("Test inv * his direct transformation with scale");
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		TDirectTransformation dirTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -489,14 +489,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Rotation partial derivative for a direct transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TDirectTransformation dirTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -509,12 +509,12 @@ namespace tut
 		TDerivativeTransformation rot2 = dirTransfo.differentiatedTransformationAngle(2);
 
 		//Test if the matrix is well completed
-		TReal kappaCos = param1.kappa.cos();
-		TReal kappaSin = param1.kappa.sin();
-		TReal phiCos = param1.phi.cos();
-		TReal phiSin = param1.phi.sin();
-		TReal omegaCos = param1.omega.cos();
-		TReal omegaSin = param1.omega.sin();
+		TReal kappaCos = param1.kappa.cosine();
+		TReal kappaSin = param1.kappa.sine();
+		TReal phiCos = param1.phi.cosine();
+		TReal phiSin = param1.phi.sine();
+		TReal omegaCos = param1.omega.cosine();
+		TReal omegaSin = param1.omega.sine();
 
 		// rot around X axis
 		Eigen::Matrix4d rotX;
@@ -570,14 +570,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Translation partial derivative for a direct transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TDirectTransformation dirTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -634,15 +634,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Scale factor partial derivative for a direct transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TDirectTransformation directTransfo;
 		TDerivativeTransformation diffScale;
 
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -680,14 +680,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Rotation partial derivative for an inverse transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -700,12 +700,12 @@ namespace tut
 		TDerivativeTransformation rot2 = invTransfo.differentiatedTransformationAngle(2);
 
 		//Test if the matrix is well completed
-		TReal kappaCos = param1.kappa.cos();
-		TReal kappaSin = param1.kappa.sin();
-		TReal phiCos = param1.phi.cos();
-		TReal phiSin = param1.phi.sin();
-		TReal omegaCos = param1.omega.cos();
-		TReal omegaSin = param1.omega.sin();
+		TReal kappaCos = param1.kappa.cosine();
+		TReal kappaSin = param1.kappa.sine();
+		TReal phiCos = param1.phi.cosine();
+		TReal phiSin = param1.phi.sine();
+		TReal omegaCos = param1.omega.cosine();
+		TReal omegaSin = param1.omega.sine();
 
 		// rot around X axis
 		Eigen::Matrix4d rotX;
@@ -766,14 +766,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing translation partial derivative for an inverse transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -785,12 +785,12 @@ namespace tut
 		TDerivativeTransformation transl2 = invTransfo.differentiatedTransformationTranslation(2);
 
 		//Test if the matrix is well completed
-		TReal kappaCos = param1.kappa.cos();
-		TReal kappaSin = param1.kappa.sin();
-		TReal phiCos = param1.phi.cos();
-		TReal phiSin = param1.phi.sin();
-		TReal omegaCos = param1.omega.cos();
-		TReal omegaSin = param1.omega.sin();
+		TReal kappaCos = param1.kappa.cosine();
+		TReal kappaSin = param1.kappa.sine();
+		TReal phiCos = param1.phi.cosine();
+		TReal phiSin = param1.phi.sine();
+		TReal omegaCos = param1.omega.cosine();
+		TReal omegaSin = param1.omega.sine();
 
 		// translation around X axis
 		ensure_distance(" transl0 -> m(0,0) ", transl0.getMmatrixIJPosition(0,0), 0.0, 1e-6);
@@ -837,15 +837,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing scale factor partial derivative for an inverse transformation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TInverseTransformation invTransfo;
 		TDerivativeTransformation derivTransfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 200.0);
-		param1.phi = LGC::TAngle(GON, -100.0);
-		param1.kappa = LGC::TAngle(GON, 100.0);
+		param1.omega = TAngle(200.0, GON);
+		param1.phi = TAngle(-100.0, GON);
+		param1.kappa = TAngle(100.0, GON);
 		param1.tX = 10.0;
 		param1.tY = 10.0;
 		param1.tZ = -10.0;
@@ -855,12 +855,12 @@ namespace tut
 		derivTransfo=invTransfo.differentiatedTransformationScaleFactor();
 
 		//Test if the matrix is well completed
-		TReal kappacos = param1.kappa.cos();
-		TReal kappasin = param1.kappa.sin();
-		TReal phicos = param1.phi.cos();
-		TReal phisin = param1.phi.sin();
-		TReal omegacos = param1.omega.cos();
-		TReal omegasin = param1.omega.sin();
+		TReal kappacos = param1.kappa.cosine();
+		TReal kappasin = param1.kappa.sine();
+		TReal phicos = param1.phi.cosine();
+		TReal phisin = param1.phi.sine();
+		TReal omegacos = param1.omega.cosine();
+		TReal omegasin = param1.omega.sine();
 
 		//Test if the matrix is well completed
 		ensure_distance("m(0,0)", derivTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
@@ -890,14 +890,14 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing direct trafo with translation");
 
-		auto GON(LGC::TAngle::kGons);		
+		auto GON(TAngle::kGons);		
 
 		TDirectTransformation transfo;
 		
 		TransformParameters param1;
-		param1.omega = LGC::TAngle(GON, 0);
-		param1.phi = LGC::TAngle(GON, 0);
-		param1.kappa = LGC::TAngle(GON, 0);
+		param1.omega = TAngle(0, GON);
+		param1.phi = TAngle(0, GON);
+		param1.kappa = TAngle(0, GON);
 		param1.tX = 200.0;
 		param1.tY = 0.0;
 		param1.tZ = 0.0;
@@ -909,9 +909,9 @@ namespace tut
 		TInverseTransformation transfoInv;
 		
 		TransformParameters param2;
-		param2.omega = LGC::TAngle(GON, 0);
-		param2.phi = LGC::TAngle(GON, 0);
-		param2.kappa = LGC::TAngle(GON, 0);
+		param2.omega = TAngle(0, GON);
+		param2.phi = TAngle(0, GON);
+		param2.kappa = TAngle(0, GON);
 		param2.tX = 0.0;
 		param2.tY = 100.0;
 		param2.tZ = 0.0;

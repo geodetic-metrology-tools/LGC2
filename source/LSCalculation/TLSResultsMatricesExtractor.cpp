@@ -131,7 +131,7 @@ void TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices
 void TLSResultsMatricesExtractor::extractAngleObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>& anglMeas){
 	MatrixIndex i = anglMeas.getFirstObservationIndex();
 	if ( i < rm.getResidualsVctr()->size() ) {
-		LGC::TAngle res(LGC::TAngle::kRadians, rm.getResidualsVctrElmt(i));
+		TAngle res(rm.getResidualsVctrElmt(i), TAngle::kRadians);
 		anglMeas.setAngleResidual(res);
 	}
 	else
@@ -157,7 +157,7 @@ void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices& rm, T
 void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles,  2>& plr3DMeas){
 	MatrixIndex ANGLidx = plr3DMeas.getFirstObservationIndex();
 	if ( ANGLidx < rm.getResidualsVctr()->size() ) {
-		LGC::TAngle res(LGC::TAngle::kRadians, rm.getResidualsVctrElmt(ANGLidx));
+		TAngle res(rm.getResidualsVctrElmt(ANGLidx), TAngle::kRadians);
 		plr3DMeas.setAngleResidual(res, kANGL);
 	}
 	else
@@ -165,7 +165,7 @@ void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, 
 
 	MatrixIndex ZENDidx = plr3DMeas.getFirstObservationIndex() + 1;
 	if ( ZENDidx < rm.getResidualsVctr()->size() ) {
-		LGC::TAngle res(LGC::TAngle::kRadians, rm.getResidualsVctrElmt(ZENDidx));
+		TAngle res(rm.getResidualsVctrElmt(ZENDidx), TAngle::kRadians);
 		plr3DMeas.setAngleResidual(res, kZEND);
 	}
 	else

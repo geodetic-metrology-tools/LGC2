@@ -247,7 +247,7 @@ class TKeyECTH : public TAMeasurementKey {
 		virtual void parse(const std::vector<std::string>& tokens, int line); 
 	
 	private:
-		LGC::TAngle fObservedAngle;
+		TAngle fObservedAngle;
 		std::string fScaleInstID;
 
 };

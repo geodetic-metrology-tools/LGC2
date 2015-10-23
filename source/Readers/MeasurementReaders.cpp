@@ -62,8 +62,8 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 	tstn.rot3D = opts.has("ROT3D");
 	//If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
 	if (tstn.rot3D){
-		tstn.rotX = &proj.getAngles().addObject(TAdjustableAngle(LGC::TAngle(LGC::TAngle::kGons, 0.0), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
-		tstn.rotY = &proj.getAngles().addObject(TAdjustableAngle(LGC::TAngle(LGC::TAngle::kGons, 0.0), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
+		tstn.rotX = &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
+		tstn.rotY = &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
 		//If ROT3D used, instrument height is fixed and is equal to 0
 		instrumentHeightFixed = true;
 		instrument.instrHeight = 0.0;
@@ -274,13 +274,13 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, int)
 	//Prepare a name of an adjustable angle (V0) = Frame name + V0 + numberOfAngle
 	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
-	TTSTN::TROM rom (tgt, &proj.getAngles().addObject(TAdjustableAngle(LGC::TAngle(LGC::TAngle::kGons, 0.0), false, angleName)));
+	TTSTN::TROM rom (tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))
-		rom.acst.set(LGC::TAngle::kGons, opts.getParamR("ACST"));	//Value in the input file given in GON
+		rom.acst.setGonsValue(opts.getParamR("ACST"));	//Value in the input file given in GON
 	else
-		rom.acst.set(LGC::TAngle::kRadians, stn.constAngle); // Value stored in RAD
+		rom.acst.setRadiansValue(stn.constAngle); // Value stored in RAD
 				
 	// Add the ROM
 	proj.getCurrentNode().measurements.fTSTN.back().roms.emplace_back(rom);
@@ -343,8 +343,8 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 		proj.setCombinedCaseCalcUsed();   //PLR3D measurement processed, need to use Combined Case LS calculation
 
 		if (!fSIMUActive) { //Store value if it is not a simulation
-			plr.setAngle(LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens.at(1))),kANGL);
-			plr.setAngle(LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens.at(2))),kZEND);
+			plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons),kANGL);
+			plr.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons),kZEND);
 			plr.setDistance(std::stor(tokens.at(3)));
 		}
 		//Ad this PLR3D measurement to TSTN's ROM 
@@ -400,7 +400,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 		proj.addToMeasurementNum(TMeasurementsGlobal::kANGL);
 
 		if (!fSIMUActive)
-			angl.setAngle(LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens.at(1))));
+			angl.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
 		getROM().measANGL.emplace_back(angl);
 	}
@@ -455,7 +455,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 		proj.addToMeasurementNum(TMeasurementsGlobal::kZEND);
 
 		if (!fSIMUActive)
-			zend.setAngle(LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens.at(1))));
+			zend.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
 		getROM().measZEND.emplace_back(zend);
 	}
@@ -524,7 +524,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 			throw std::runtime_error("An ECTH measurement must have two 2 entries: "
 									 "The observed horizontal angle defining the reference plane and ID of a SCALE instrument.");
 	
-		fObservedAngle = LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens.at(2)));
+		fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
 		fScaleInstID =  tokens.at(3);
 	}
 	else{
@@ -755,8 +755,8 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 				throw std::runtime_error("Point" +  rpName + "used as reference point in DLEV measurement, must be declared before used");
 
 			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			fplanes.addObject(TAdjustablePlane(&fpoints.getObject(rpName), TLength(0.0), LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), 
-						LGC::TAngle(LGC::TAngle::EUnits::kRadians ,0.0), true, true, name));
+			fplanes.addObject(TAdjustablePlane(&fpoints.getObject(rpName), TLength(0.0), TAngle(0.0, TAngle::kRadians), 
+						TAngle(0.0, TAngle::kRadians), true, true, name));
 		}
 		else
 			fplanes.addObject(TAdjustablePlane::createUninitialized(name));
@@ -898,9 +898,9 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		instrument.sigmaInstrCentering = opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering); //value given in mili-meters [mm], returned value in meters [m]
 
 		if (opts.has("CST"))
-			orieROM.fConstantAngle.set(LGC::TAngle::kGons, opts.getParamR("CST"));	// Value in the input file given in GONs, store it
+			orieROM.fConstantAngle.setGonsValue(opts.getParamR("CST"));	// Value in the input file given in GONs, store it
 		else
-			orieROM.fConstantAngle.set(LGC::TAngle::kRadians, instrument.constAngle); // Value stored in radians, set the default one from the instrument definition
+			orieROM.fConstantAngle.setRadiansValue(instrument.constAngle); // Value stored in radians, set the default one from the instrument definition
 
 		proj.getCurrentNode().measurements.fORIE.emplace_back(orieROM); //add new round of measurement
 	}
@@ -945,7 +945,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		proj.addToMeasurementNum(TMeasurementsGlobal::kORIE);
 
 		if (!fSIMUActive)
-			orie.setAngle(LGC::TAngle(LGC::TAngle::kGons, std::stor(tokens.at(1))));
+			orie.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
 		proj.getCurrentNode().measurements.fORIE.back().measORIE.emplace_back(orie);
 	}

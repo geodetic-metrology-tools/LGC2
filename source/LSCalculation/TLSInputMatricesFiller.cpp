@@ -230,7 +230,7 @@ void  TLSInputMatricesFiller::addHorAngContributions(const TTSTN::TROM& rom, con
 		}
 
 		// Add Misclosure vector's contribution 
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * ( meas->getAngle() - contributions.fCalcMeas).rad());
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * ( meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
 
 		// Add weight unknown matrix element
 		if(contributions.fObsVariance < nullLimit)
@@ -284,7 +284,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& 
 		}
 
 		// Add Misclosure vector values
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * ( meas->getAngle() - contributions.fCalcMeas).rad());
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * ( meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
 
 		// Add weight unknown matrix element
 		if(contributions.fObsVariance < nullLimit)
@@ -915,7 +915,7 @@ bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatri
 		if(frame.hasStandDev()){
 			for(int i = 0;i<3;i++){
 				if(frame.hasRotationStandDev(i)){
-					TReal variance = pow2(frame.getRotationStandDev(i).rad());
+					TReal variance = pow2(frame.getRotationStandDev(i).getRadiansValue());
 					if(variance < nullLimit){
 						fillOK = false;
 						outputMessages << TFileLogger::e_logType::LOG_ERROR <<  "Standard deviation assigned to a rotation of a frame: " + frame.getName() + " is too small, causes zero division"; 

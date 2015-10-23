@@ -47,7 +47,7 @@ struct TORIEROM {
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getORIEObsSummary() const;
 
-		LGC::TAngle		fConstantAngle;
+		TAngle		fConstantAngle;
 
 		/// Line of the measurement definition
 		int  line;
@@ -57,7 +57,7 @@ struct TORIEROM {
 			instrumentPos(&pos),
 			instrument(instrument),
 			line(NO_VALi),
-			fConstantAngle(LGC::TAngle::EUnits::kGons, 0.0)
+			fConstantAngle(0.0, TAngle::EUnits::kGons)
 			{}
 };
 

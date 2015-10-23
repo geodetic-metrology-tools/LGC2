@@ -41,41 +41,6 @@ namespace
 
 namespace tut
 {
-	// Test LGC::TAngle
-	template<>
-	template<>
-	void object::test<1>()
-	{
-		using namespace LGC;
-		set_test_name("Testing Angle class");
-		const LGC::TAngle::EUnits kDeg(LGC::TAngle::kDegrees);
-		const TReal prec(1e-12);
-		
-		LGC::TAngle a0(kDeg, 0);
-		LGC::TAngle a30(kDeg, 30);
-		LGC::TAngle a60(kDeg, 60);
-		LGC::TAngle a90(kDeg, 90);
-		LGC::TAngle a120(kDeg, 120);
-		
-		ensure("Equal angles must be equal compared", a30 == a30);
-		ensure("Unequal angles must be unequal when compared", a0 != a60);
-		
-		ensure("30 must be smaller than 90", a30 < a90);
-		ensure("60 must be greater than 30", a60 > a30);
-		
-		LGC::TAngle c30p60e90(a30+a60);
-		//ensure_distance("Raw value of 30+60 must be -PI/2", c30p60e90.raw(), r90, prec);
-		ensure_distance("90 degrees calculated: sin must be 1.0", c30p60e90.sin(), 1.0, prec);
-		ensure_distance("90 degrees calculated: cos must be 0.0", c30p60e90.cos(), 0.0, prec);
-		ensure_distance("90 degrees calculated: rad value must be PI/2", c30p60e90.rad(), PI_2, prec);
-		ensure_distance("90 degrees calculated: deg value must be 90",  c30p60e90.deg(),  90.0, prec);
-		ensure_distance("90 degrees calculated: gon value must be 100", c30p60e90.gon(), 100.0, prec);
-		ensure_distance("90 degrees calculated: cc  value must be 100e4", c30p60e90.cc(), 100.0e4, 10.0);
-		
-		LGC::TAngle c30m60e90(a90-a60);
-		//ensure_distance("Raw value of 90-60 must be -5/6*PI", c30m60e90.raw(), r30, 1e-4);
-	}
-
 		// Test adjustable objects
 	template<>
 	template<>

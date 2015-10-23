@@ -158,7 +158,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 
 				\param[in] d Allowed values are 0(X), 1(Y) and 2(Z) of the rotation's component.
 			*/
-			const LGC::TAngle& getRotationStandDev(int d)const;
+			const TAngle& getRotationStandDev(int d)const;
 
 			/// Returns the standard deviations of the scale factor.
 			TReal getScaleStandDev()const;
@@ -179,7 +179,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 			bool hasScaleStandDev()const;
 
 			/// Returns the estimated precision of the dth rotation
-			const LGC::TAngle& getEstimatedPrecisionRot(int d)const;
+			const TAngle& getEstimatedPrecisionRot(int d)const;
 
 			/// Returns the estimated precision of the dth translation
 			const TLength& getEstimatedPrecisionTransl(int d)const;
@@ -199,13 +199,13 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 
 
 			/// Returns XY rotation covariance
-			const LGC::TAngle&			getXYCovarRot() const;
+			const TAngle&			getXYCovarRot() const;
 
 			/// Returnss YZ rotation covariance
-			const LGC::TAngle&			getYZCovarRot() const;
+			const TAngle&			getYZCovarRot() const;
 
 			/// Returns XZ rotation covariance
-			const LGC::TAngle&			getXZCovarRot() const;
+			const TAngle&			getXZCovarRot() const;
 	
 		//@}
 
@@ -240,7 +240,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 				\param[in] d Allowed values are 0(X), 1(Y) and 2(Z) of the rotation's component.
 				\param[in] stDev Standard deviation.
 			*/ 
-			void setRotationStandDev(int d, LGC::TAngle stDev);
+			void setRotationStandDev(int d, TAngle stDev);
 
 
 		    /*!
@@ -299,7 +299,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		//@}
 
 		/// Sets the rotation parameters
-		void setParam(const LGC::TAngle& rx, const LGC::TAngle& ry, const LGC::TAngle& rz);
+		void setParam(const TAngle& rx, const TAngle& ry, const TAngle& rz);
 		/// Sets the translation parameters
 		void setParam(const TReal tx, const TReal ty, const TReal tz);
 		/// Sets the scale parameters
@@ -314,12 +314,12 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 
 			scl -- scale factor
 		*/
-		void setParam(const TReal tx, const TReal ty, const TReal tz, const LGC::TAngle& rx, const LGC::TAngle& ry, const LGC::TAngle& rz, const TReal scl);
+		void setParam(const TReal tx, const TReal ty, const TReal tz, const TAngle& rx, const TAngle& ry, const TAngle& rz, const TReal scl);
 		
 		/// Sets the translation correction
 		void setTranslationCorrection (int idx, TReal value);
 		/// Sets the rotation correction
-		void setRotationCorrection (int idx, const LGC::TAngle& value);
+		void setRotationCorrection (int idx, const TAngle& value);
 		/// Sets the scale correction
 		void setScaleCorrection (TReal value);
 		
@@ -337,9 +337,9 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		/// Returns the called provisional translation i (X [0], Y [1], Z [3])
 		TReal getProvTranslation(int axis) const;
 		/// Returns the called estimated rotation i (X [0], Y [1], Z [3])
-		const LGC::TAngle& getEstRotation(int axis) const;
+		const TAngle& getEstRotation(int axis) const;
 		/// Returns the called provisional rotation i (X [0], Y [1], Z [3])
-		const LGC::TAngle& getProvRotation(int axis) const;
+		const TAngle& getProvRotation(int axis) const;
 		
 	private:
 
@@ -357,7 +357,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		std::bitset<1> fixedScale; // Scale fixed state
 
 		TLength		    fTransStandDev[3]; //Standard deviations of translations
-		LGC::TAngle		fRotStandDev[3];  //Standard deviations of rotations 
+		TAngle		fRotStandDev[3];  //Standard deviations of rotations 
 		TReal			fScaleStandDev; //Standard deviations of a scale
 
 		int uidx_rot[3];  // Unknown indices of rotation
@@ -368,11 +368,11 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		void setDefaultsParams();
 
 		//Estimated precisons of transformation parametres
-		LGC::TAngle	 fEstPrecisionRotation[3];  /*!<Estimated precision of the rotation. */
+		TAngle	 fEstPrecisionRotation[3];  /*!<Estimated precision of the rotation. */
 		TLength		 fEstPrecisionTranslation[3];  /*!<Estimated precision of the translation. */
 		TReal	       fEstPrecisionScale;  /*!<Estimated precision of the scale factor. */
 
-		LGC::TAngle	 fCovarianceRotation[3];  /*!<Covariance of the rotation  XY, YZ, XZ */
+		TAngle	 fCovarianceRotation[3];  /*!<Covariance of the rotation  XY, YZ, XZ */
      	TLength		 fCovarianceTranslation[3];  /*!<Covariance of the translation XY, YZ, XZ  */
 };
 

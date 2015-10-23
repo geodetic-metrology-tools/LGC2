@@ -12,7 +12,7 @@ TLGCObsSummary  TECHOROM::getECHOObsSummary() const{
 TLGCObsSummary  TORIEROM::getORIEObsSummary() const{
 	TLGCObsSummary summary;
 	for(auto const& ItORIE: measORIE)
-		summary.addNewResidual(ItORIE.getAngleResidual().cc());
+		summary.addNewResidual(ItORIE.getAngleResidual().getSignedCCValue());
 	return summary;	
 }
 

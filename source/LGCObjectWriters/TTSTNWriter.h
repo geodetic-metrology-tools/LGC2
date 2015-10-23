@@ -3,7 +3,7 @@
 
 #include "TTSTN.h"
 #include "TObservationWriter.h"
-#include "TLGCAngle.h"
+#include "TAngle.h"
 
 /*!
 	\ingroup LGCObjectWriters
@@ -75,10 +75,10 @@ private:
 
 	/*!@name Results */
 	//@{
-		void writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const LGC::TAngle& V);
+		void writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const TAngle& V);
 		void writeZENDResults(const std::vector<TZEND>& measZEND, const TAdjustablePoint* instrPos);
 		void writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos);
-		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const LGC::TAngle& V);
+		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const TAngle& V);
 	//	void writeDIRResults(const std::vector<TDIR3D>& measDIR);
 		void writeDHORResults(const std::vector<TLINE>& measDHOR);
 		void writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos);

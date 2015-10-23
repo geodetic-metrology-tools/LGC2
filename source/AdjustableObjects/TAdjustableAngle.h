@@ -1,12 +1,12 @@
 #ifndef TADJUSTABLE_ANGLE
 #define TADJUSTABLE_ANGLE
 
-#include "TLGCAngle.h"
+#include "TAngle.h"
 #include "TVAdjustableObject.h"
 
 /*! 
 	\ingroup AdjustableObjects
-	\brief Class providing adjustable related information for a LGC::TAngle class.
+	\brief Class providing adjustable related information for a TAngle class.
 */
 class TAdjustableAngle: public TVAdjustableObject{
 public:
@@ -14,14 +14,14 @@ public:
 	/*!@name Constructors */
 	//@{
 		/*!
-			\brief Constructs an TAdjustableAngle based on an existing LGC::TAngle value.
+			\brief Constructs an TAdjustableAngle based on an existing TAngle value.
 		
 			\param[in] angleValue A reference to an angle that will be adjusted. The angle will be copied 
 								  so the pointed-to object is no longer needed after construction.
 			\param[in] isFixed The angle will be excluded from the adjustment if set to TRUE, i.e. fixed angle.
 			\param[in] name Name of the adjustable angle.
 		*/
-		TAdjustableAngle(const LGC::TAngle& angleValue, bool isFixed, const std::string& name);
+		TAdjustableAngle(const TAngle& angleValue, bool isFixed, const std::string& name);
 	//@}
 		/// Create an unitialized angle, the angle is by default fixed and has no NO_VALf inside.
 		static TAdjustableAngle createUninitialized(const std::string& name);
@@ -29,16 +29,16 @@ public:
 	/*!@name Access methods*/
 	//@{
 		/// Returns a constant reference on the provisional value of the angle. 
-		inline const LGC::TAngle& 	getProvisionalValue() const {return fProvisionalValue;}
+		inline const TAngle& 	getProvisionalValue() const {return fProvisionalValue;}
 
 		/// Returns a constant reference on the correction value. 
-		inline const LGC::TAngle&	getCorrection() const {	return fCorrection;}
+		inline const TAngle&	getCorrection() const {	return fCorrection;}
 
 		/// Returns a constant reference on the estimated value of the angle. 
-		inline const LGC::TAngle&	getEstimatedValue() const {	return fEstimatedValue;}
+		inline const TAngle&	getEstimatedValue() const {	return fEstimatedValue;}
 			
 		/// Returns a constant reference on the estimated precision of the angle. 
-		inline const LGC::TAngle&	getEstimatedPrecision() const {	return fEstimatedPrecision;}
+		inline const TAngle&	getEstimatedPrecision() const {	return fEstimatedPrecision;}
 
 
 		/*!
@@ -110,10 +110,10 @@ public:
 	//@}
 
 private:
-	LGC::TAngle					fProvisionalValue; /*!< Angle provisional value. */
-	LGC::TAngle					fCorrection; /*!< Angle correction after calculation.  */
-	LGC::TAngle					fEstimatedValue; /*!< Angle estimated value after calculation. */
-	LGC::TAngle					fEstimatedPrecision;  /*!< Angle estimated precision after calculation. */
+	TAngle					fProvisionalValue; /*!< Angle provisional value. */
+	TAngle					fCorrection; /*!< Angle correction after calculation.  */
+	TAngle					fEstimatedValue; /*!< Angle estimated value after calculation. */
+	TAngle					fEstimatedPrecision;  /*!< Angle estimated precision after calculation. */
 
 	bool ifFixed; /*!< Tells if the angle is excluded from the adjustment, TRUE = fixed*/
 	int  uidx;	/*!< Index of the angle in LS input matrix (unknown) */

@@ -22,7 +22,7 @@ public:
 	/*!@name Access methods */
 	//@{
 		TReal getScaleFactor() const;
-		const LGC::TAngle& getAngle(int axis) const;
+		const TAngle& getAngle(int axis) const;
 		TReal getTranslation(int axis) const;
 		const TransformParameters& getTransformParam() const {return fParameters;}
 
@@ -54,7 +54,7 @@ private:
 
 	void setIdentityParams();
 	void setTranslationPart(const TReal tx, const TReal ty, const TReal tz);
-	void setRotationPart(const LGC::TAngle& rx, const LGC::TAngle& ry, const LGC::TAngle& rz);
+	void setRotationPart(const TAngle& rx, const TAngle& ry, const TAngle& rz);
 	void setScaleFactor(TReal scale);
 	
 };

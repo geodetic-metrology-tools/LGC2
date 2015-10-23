@@ -109,7 +109,7 @@ class TECTH /*: public TAScalarMeas< ... >*/
 		std::string eolcomment;
 
 		/// Observed horizontal angle defining the reference plane
-		LGC::TAngle obsHorAngle;	
+		TAngle obsHorAngle;	
 
 		/// Point on which the SCALE instrument is positioned 
 		const TAdjustablePoint* stationedPoint;
@@ -117,7 +117,7 @@ class TECTH /*: public TAScalarMeas< ... >*/
 		/*!@name Constructors */
 		//@{
 			///See TAScalarMeas , is initialized with a single value
-			TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  LGC::TAngle obsHorAngle, TReal v);
+			TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  TAngle obsHorAngle, TReal v);
 		//@}
 
 		/*!@name Access methods*/

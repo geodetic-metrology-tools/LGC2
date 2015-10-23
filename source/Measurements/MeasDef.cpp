@@ -19,7 +19,7 @@ TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarge
 ///////////////////////////////////////////////////////////
 //////Offset measurements
 ///////////////////////////////////////////////////////////
-TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  LGC::TAngle obsHorAngle, TReal v) :   
+TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  TAngle obsHorAngle, TReal v) :   
 				stationedPoint(&stationedPoint), 
 				scaleInstr(scaleInstr),
 				obsHorAngle(obsHorAngle),

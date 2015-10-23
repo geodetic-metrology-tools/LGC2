@@ -23,7 +23,7 @@ void TTSTNWriter::writeTSTNResults(const TTSTN& tstn){
 
 	for(auto const ItRoms : tstn.roms)
 	{
-		const LGC::TAngle& V0 = ItRoms.v0->getEstimatedValue();
+		const TAngle& V0 = ItRoms.v0->getEstimatedValue();
 
 		//Write definition of ROM
 		writeV0Header();
@@ -111,7 +111,7 @@ void TTSTNWriter::writeTSTNResultsSIMU(const TTSTN& tstn){
 }
 
 //RESULTS
-void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const LGC::TAngle& V)
+void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const TAngle& V)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -140,7 +140,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< ItPLR3D.getAngle(EPLR3DAngles::kANGL).getSLAngle() <<(separator);	
+		(*stream)<< ItPLR3D.getAngle(EPLR3DAngles::kANGL).getGonsValue() <<(separator);	
 
 		//write the sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -152,32 +152,32 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<(ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL)).getSLAngle() + V.getSLAngle() <<(separator);
+		(*stream)<<(ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL)).getGonsValue() + V.getGonsValue() <<(separator);
 
 		//write the residual ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSLAngle()<<(separator);
+		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getGonsValue()<<(separator);
 
 		//write the offset		
 		TReal dist =sqrt( pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
 			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
 			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).rad()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*LGC::M2MM);
 
 		//write the residual/sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(2);
-		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSLAngle()/TAngle(ItPLR3D.target.sigmaAngl)<<(separator);
+		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getGonsValue()/TAngle(ItPLR3D.target.sigmaAngl).getGonsValue()<<(separator);
 
 //ZEND
 		//write the observed ZEND
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< ItPLR3D.getAngle(EPLR3DAngles::kZEND).getSLAngle() <<(separator);	
+		(*stream)<< ItPLR3D.getAngle(EPLR3DAngles::kZEND).getGonsValue() <<(separator);	
 
 		//write the sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -189,22 +189,22 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<(ItPLR3D.getAngle(EPLR3DAngles::kZEND) + ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND)).getSLAngle()<<(separator);
+		(*stream)<<(ItPLR3D.getAngle(EPLR3DAngles::kZEND) + ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND)).getGonsValue()<<(separator);
 
 		//write the residual ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSLAngle()<<(separator);
+		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getGonsValue()<<(separator);
 
 		//write the offset	
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).rad()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*LGC::M2MM);
 
 		//write the residual/sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(2);
-		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSLAngle()/TAngle(ItPLR3D.target.sigmaAngl)<<(separator);
+		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getGonsValue()/TAngle(ItPLR3D.target.sigmaAngl).getGonsValue()<<(separator);
 
 //DIST 
 		//write the observed distance
@@ -291,7 +291,7 @@ void TTSTNWriter::writeDIRResults(const std::vector<TDIR3D>& measDIR3D)
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< ItDIR3D.getAngle(EPLR3DAngles::kANGL).getSLAngle() <<(separator);	
+		(*stream)<< ItDIR3D.getAngle(EPLR3DAngles::kANGL).getGonsValue() <<(separator);	
 
 		//write the sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -303,20 +303,20 @@ void TTSTNWriter::writeDIRResults(const std::vector<TDIR3D>& measDIR3D)
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<(ItDIR3D.getAngle(EPLR3DAngles::kANGL) + ItDIR3D.getAngleResidual(EPLR3DAngles::kANGL)).getSLAngle()<<(separator);
+		(*stream)<<(ItDIR3D.getAngle(EPLR3DAngles::kANGL) + ItDIR3D.getAngleResidual(EPLR3DAngles::kANGL)).getGonsValue()<<(separator);
 
 		//write the residual ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<ItDIR3D.getAngleResidual(EPLR3DAngles::kANGL).getSLAngle()<<(separator);
+		(*stream)<<ItDIR3D.getAngleResidual(EPLR3DAngles::kANGL).getGonsValue()<<(separator);
 
 //ZEND
 		//write the observed ZEND
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< ItDIR3D.getAngle(EPLR3DAngles::kZEND).getSLAngle() <<(separator);	
+		(*stream)<< ItDIR3D.getAngle(EPLR3DAngles::kZEND).getGonsValue() <<(separator);	
 
 		//write the sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -328,20 +328,20 @@ void TTSTNWriter::writeDIRResults(const std::vector<TDIR3D>& measDIR3D)
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<(ItDIR3D.getAngle(EPLR3DAngles::kZEND) + ItDIR3D.getAngleResidual(EPLR3DAngles::kZEND)).getSLAngle()<<(separator);
+		(*stream)<<(ItDIR3D.getAngle(EPLR3DAngles::kZEND) + ItDIR3D.getAngleResidual(EPLR3DAngles::kZEND)).getGonsValue()<<(separator);
 
 		//write the residual ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<ItDIR3D.getAngleResidual(EPLR3DAngles::kZEND).getSLAngle()<<(separator);
+		(*stream)<<ItDIR3D.getAngleResidual(EPLR3DAngles::kZEND).getGonsValue()<<(separator);
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
 }
 #endif
 
-void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const LGC::TAngle& V)
+void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const TAngle& V)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -368,7 +368,7 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< (ItANGL.getAngle().getSLAngle()) <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		(*stream)<< (ItANGL.getAngle().getGonsValue()) <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 		//write the sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -380,24 +380,24 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<(ItANGL.getAngle() + ItANGL.getAngleResidual() + V).getSLAngle() <<(separator);
+		(*stream)<<(ItANGL.getAngle() + ItANGL.getAngleResidual() + V).getGonsValue() <<(separator);
 
 		//write the residual
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItANGL.getAngleResidual().getSLAngle()<<(separator);
+		(*stream)<<ItANGL.getAngleResidual().getGonsValue()<<(separator);
 		
 		//write the offset	
 		TReal dist =sqrt( pow2(ItANGL.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
 			pow2(ItANGL.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
 			pow2(ItANGL.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, angleResPrecicion, ItANGL.getAngleResidual().rad()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, angleResPrecicion, ItANGL.getAngleResidual().getRadiansValue()*dist*LGC::M2MM);
 		//write the residual/sigma
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(2);
-		(*stream)<<(ItANGL.getAngleResidual().getSLAngle()/TAngle(ItANGL.target.sigmaAngl))<<(separator);
+		(*stream)<<(ItANGL.getAngleResidual().getGonsValue()/TAngle(ItANGL.target.sigmaAngl).getGonsValue())<<(separator);
 		
 		//write TARGET ID
 		(*stream).writeString(nameWidth, ItANGL.target.ID);
@@ -439,7 +439,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< (ItZEND.getAngle().getSLAngle()) <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		(*stream)<< (ItZEND.getAngle().getGonsValue()) <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 		//write the sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -451,25 +451,25 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<<(ItZEND.getAngle() + ItZEND.getAngleResidual()).getSLAngle()<<(separator);
+		(*stream)<<(ItZEND.getAngle() + ItZEND.getAngleResidual()).getGonsValue()<<(separator);
 
 		//write the residual
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItZEND.getAngleResidual().getSLAngle()<<(separator);
+		(*stream)<<ItZEND.getAngleResidual().getGonsValue()<<(separator);
 
 		//write the offset	
 		TReal dist =sqrt( pow2(ItZEND.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
 			pow2(ItZEND.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
 			pow2(ItZEND.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().rad()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*LGC::M2MM);
 
 		//write the residual/sigma
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(2);
-		(*stream)<<ItZEND.getAngleResidual().getSLAngle()/TAngle(ItZEND.target.sigmaZenD)<<(separator);
+		(*stream)<<ItZEND.getAngleResidual().getGonsValue()/TAngle(ItZEND.target.sigmaZenD).getGonsValue()<<(separator);
 		
 		//write TARGET ID
 		(*stream).writeString(nameWidth, ItZEND.target.ID);
@@ -612,7 +612,6 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 		int					obsWidth = getObsWidth();
 		int					obsResWidth = getObsResWidth();
 		int					anglePrecision = getAnglePrecision();
-		int					angleResPrecicion = getAngleResidualPrecision();
 		int					lengthResidualPrecision = getLengthResidualPrecision();
 		int					lengthPrecision =	getLengthPrecision();
 		string				separator = getSeparator();
@@ -626,7 +625,7 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 			stream->setAngleUnits(TAngle::kGons);
 			stream->setWidthFormat(obsWidth);
 			stream->setPrecisionFormat(anglePrecision);
-			(*stream)<< ItECTH.obsHorAngle.gon() <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+			(*stream)<< ItECTH.obsHorAngle.getGonsValue() <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 
 			//write Point
@@ -1090,12 +1089,12 @@ void TTSTNWriter::writeV0Data(const TTSTN::TROM& rom){
 	stream->setAngleUnits(TAngle::kGons);
 	stream->setWidthFormat(obsWidth);
 	stream->setPrecisionFormat(anglePrecision);
-	(*stream)<<rom.acst.getSLAngle()<<(separator); // Constant orientation (ACST)
+	(*stream)<<rom.acst.getGonsValue()<<(separator); // Constant orientation (ACST)
 
-	(*stream)<<rom.v0->getEstimatedValue().getSLAngle()<<(separator); // V0 calculated angle
+	(*stream)<<rom.v0->getEstimatedValue().getGonsValue()<<(separator); // V0 calculated angle
 	stream->setAngleUnits(TAngle::k100MicroGons);
 	stream->setPrecisionFormat(anglePrecision);
-	(*stream)<<rom.v0->getEstimatedPrecision().getSLAngle()<<(separator); // V0 estimated precision
+	(*stream)<<rom.v0->getEstimatedPrecision().getGonsValue()<<(separator); // V0 estimated precision
 
 	(*stream)<<endl<<endl;
 }
@@ -1133,15 +1132,15 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 	if(tstn.rot3D){
 		(*stream).writeString(obsWidth, "TRUE");
 		//write the ROTX
-		(*stream)<<(tstn.rotX->getEstimatedValue().getSLAngle())<<(separator);
+		(*stream)<<(tstn.rotX->getEstimatedValue().getGonsValue())<<(separator);
 		//write the ROTY
-		(*stream)<<(tstn.rotY->getEstimatedValue().getSLAngle())<<(separator);
+		(*stream)<<(tstn.rotY->getEstimatedValue().getGonsValue())<<(separator);
 
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResidualPrecision);
-		(*stream)<<(tstn.rotX->getEstimatedPrecision().getSLAngle())<<(separator);
-		(*stream)<<(tstn.rotY->getEstimatedPrecision().getSLAngle())<<(separator);
+		(*stream)<<(tstn.rotX->getEstimatedPrecision().getGonsValue())<<(separator);
+		(*stream)<<(tstn.rotY->getEstimatedPrecision().getGonsValue())<<(separator);
 		(*stream)<<endl;
 	}
 	else
@@ -1217,7 +1216,7 @@ void	TTSTNWriter::writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< (ItANGL.getAngle().getSLAngle()) <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		(*stream)<< (ItANGL.getAngle().getGonsValue()) <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 		//write the sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -1229,7 +1228,7 @@ void	TTSTNWriter::writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItANGL.getAngleResidual().getSLAngle()<<(separator);
+		(*stream)<<ItANGL.getAngleResidual().getGonsValue()<<(separator);
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();
@@ -1263,7 +1262,7 @@ void	TTSTNWriter::writeZENDReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< (ItZEND.getAngle().getSLAngle()) <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		(*stream)<< (ItZEND.getAngle().getGonsValue()) <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 		//write the sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -1275,7 +1274,7 @@ void	TTSTNWriter::writeZENDReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItZEND.getAngleResidual().getSLAngle()<<(separator);
+		(*stream)<<ItZEND.getAngleResidual().getGonsValue()<<(separator);
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();
@@ -1353,7 +1352,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< (ItPLR.getAngle(EPLR3DAngles::kANGL).getSLAngle()) <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		(*stream)<< (ItPLR.getAngle(EPLR3DAngles::kANGL).getGonsValue()) <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 		//write the sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -1365,7 +1364,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItPLR.getAngleResidual(EPLR3DAngles::kANGL).getSLAngle()<<(separator);
+		(*stream)<<ItPLR.getAngleResidual(EPLR3DAngles::kANGL).getGonsValue()<<(separator);
 
 		writeReliability(index, stat);
 //----------------------- ZEND ------------------------------------//
@@ -1380,7 +1379,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 		stream->setAngleUnits(TAngle::kGons);
 		stream->setWidthFormat(obsWidth);
 		stream->setPrecisionFormat(anglePrecision);
-		(*stream)<< (ItPLR.getAngle(EPLR3DAngles::kZEND).getSLAngle()) <<(separator);	//We ge LGC::TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		(*stream)<< (ItPLR.getAngle(EPLR3DAngles::kZEND).getGonsValue()) <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 		//write the sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -1392,7 +1391,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
 		stream->setPrecisionFormat(angleResPrecicion);
-		(*stream)<<ItPLR.getAngleResidual(EPLR3DAngles::kZEND).getSLAngle()<<(separator);
+		(*stream)<<ItPLR.getAngleResidual(EPLR3DAngles::kZEND).getGonsValue()<<(separator);
 
 		writeReliability(index+1, stat);
 //----------------------- DIST ------------------------------------//

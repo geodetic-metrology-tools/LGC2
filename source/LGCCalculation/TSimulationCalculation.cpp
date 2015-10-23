@@ -72,7 +72,7 @@ bool	TSimulationCalculation::computeSimulatedResults(std::shared_ptr<TResSimFile
 
 		//Write out the 2 tables in the end
 		fileWriter->writeSimPointsSummary(fData.getConfig().title, fPointSummaries, numOfSimMade);
-		fileWriter->writeSimFramesSummary(fData.getConfig().title, fFrameSummaries, numOfSimMade);
+		fileWriter->writeSimFramesSummary(fFrameSummaries, numOfSimMade);
 
 	}
 	catch(std::exception const& excp) {
@@ -292,8 +292,8 @@ void	TSimulationCalculation::getPLR3DSimValues(const TTSTN& station,const TTSTN:
 		TReal sigmaPhi = itPLR3D->target.sigmaZenD;
 		TReal sigmaDist = itPLR3D->target.sigmaDist;
 
-		itPLR3D->setAngle(LGC::TAngle(LGC::TAngle::kRadians, getSimulatedValue(calcValTheta, sigmaTheta)),EPLR3DAngles::kANGL);
-		itPLR3D->setAngle(LGC::TAngle(LGC::TAngle::kRadians, getSimulatedValue(calcValPhi, sigmaPhi)),EPLR3DAngles::kZEND);
+		itPLR3D->setAngle(TAngle(getSimulatedValue(calcValTheta, sigmaTheta), TAngle::EUnits::kRadians),EPLR3DAngles::kANGL);
+		itPLR3D->setAngle(TAngle(getSimulatedValue(calcValPhi, sigmaPhi), TAngle::EUnits::kRadians),EPLR3DAngles::kZEND);
 		itPLR3D->setDistance(getSimulatedValue(calcValDist, sigmaDist));
 	}
 }
@@ -303,7 +303,7 @@ void	TSimulationCalculation::getANGLSimValues(const TTSTN& station,const TTSTN::
 			TReal calcVal = fCg.getANGLCalcMeas(station, rom, itANGL->targetPos);
 			TReal sigma = itANGL->target.sigmaAngl;
 
-			itANGL->setAngle(LGC::TAngle(LGC::TAngle::kRadians, getSimulatedValue(calcVal, sigma)));
+			itANGL->setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 		}
 }
 
@@ -312,7 +312,7 @@ void	TSimulationCalculation::getZENDSimValues(const TTSTN& station, std::vector<
 			TReal calcVal = fCg.getZENDCalcMeas(station, itZEND->targetPos, itZEND->target.targetHt);
 			TReal sigma = itZEND->target.sigmaZenD;
 
-			itZEND->setAngle(LGC::TAngle(LGC::TAngle::kRadians, getSimulatedValue(calcVal, sigma)));
+			itZEND->setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 		}
 }
 

@@ -4,14 +4,14 @@
 TLGCObsSummary TTSTN::TROM::getANGLObsSummary() const{
 	TLGCObsSummary summary;
 	for(std::vector<TANGL>::const_iterator ItANGL = measANGL.begin() ; ItANGL!=measANGL.end() ; ItANGL++)//auto const& ItANGL: measANGL)
-		summary.addNewResidual(ItANGL->getAngleResidual().cc());
+		summary.addNewResidual(ItANGL->getAngleResidual().getSignedCCValue());
 	return summary;	
 }
 
 TLGCObsSummary TTSTN::TROM::getZENDObsSummary() const{
 	TLGCObsSummary summary;
 	for(std::vector<TZEND>::const_iterator ItZEND = measZEND.begin() ; ItZEND!=measZEND.end() ; ItZEND++)//auto const& ItZEND: measZEND)
-		summary.addNewResidual(ItZEND->getAngleResidual().cc());
+		summary.addNewResidual(ItZEND->getAngleResidual().getSignedCCValue());
 	return summary;	
 }
 
@@ -41,8 +41,8 @@ TPOLARObsSummary TTSTN::TROM::getPLR3DObsSummary()const{
 
 	for(std::vector<TPLR3D>::const_iterator ItPLR3D = measPLR3D.begin() ; ItPLR3D!=measPLR3D.end() ; ItPLR3D++) {//auto const& ItPLR3D: measPLR3D)
 		summary.distObsSum.addNewResidual(ItPLR3D->getDistanceResidual()*LGC::M2MM);
-		summary.anglObsSum.addNewResidual(ItPLR3D->getAngleResidual(EPLR3DAngles::kANGL).cc());
-		summary.zendObsSum.addNewResidual(ItPLR3D->getAngleResidual(EPLR3DAngles::kZEND).cc());
+		summary.anglObsSum.addNewResidual(ItPLR3D->getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
+		summary.zendObsSum.addNewResidual(ItPLR3D->getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
 	}
 	return summary;	
 }

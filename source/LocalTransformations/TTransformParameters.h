@@ -1,16 +1,16 @@
 #ifndef TTRANSFORMATION_PARAMETERS
 #define TTRANSFORMATION_PARAMETERS
 
-#include "TLGCAngle.h"
+#include "TAngle.h"
 
 /*!
 	\ingroup LocalTransformations
 	\brief Structure which stores parameters of an helmert transformation.
 */
 struct TransformParameters{
-	LGC::TAngle omega; //!< Rotation about the X axis
-	LGC::TAngle phi;  //!< Rotation about the Y axis
-	LGC::TAngle kappa; //!< Rotation about the Z axis 
+	TAngle omega; //!< Rotation about the X axis
+	TAngle phi;  //!< Rotation about the Y axis
+	TAngle kappa; //!< Rotation about the Z axis 
 
 	TReal tX; //!< Translation about the X axis in meters [m]
 	TReal tY; //!< Translation about the Y axis in meters [m]
@@ -18,7 +18,7 @@ struct TransformParameters{
 	
 	TReal scale; //!< The unitless scale factor
 
-	TransformParameters() : omega(LGC::TAngle()), phi(LGC::TAngle()), kappa(LGC::TAngle()), tX(TReal(0.0)), tY(TReal(0.0)), tZ(TReal(0.0)), scale(TReal(1.0)) {};
+	TransformParameters() : omega(TAngle(0.0)), phi(TAngle(0.0)), kappa(TAngle(0.0)), tX(TReal(0.0)), tY(TReal(0.0)), tZ(TReal(0.0)), scale(TReal(1.0)) {};
 
 	/// Overlading  comparition operator for TransformParameters
 	bool operator==(const TransformParameters& p) {
@@ -81,7 +81,7 @@ struct TransformParameters{
 
 	/// Sets the parameters to their identity
 	void setIdentity() {
-		omega = phi = kappa = LGC::TAngle();
+		omega = phi = kappa = TAngle(0.0);
 		tX = tY = tZ = TReal(0.0);
 		scale = TReal(1.0);
 	}

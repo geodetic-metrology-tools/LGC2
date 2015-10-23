@@ -85,9 +85,9 @@ const TLength& TAdjustableHelmertTransformation::getTranslationStandDev(int d) c
 	throw std::runtime_error("Standard deviations of the translation's component not assigned");
 }
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getRotationStandDev(int d) const{
+const TAngle& TAdjustableHelmertTransformation::getRotationStandDev(int d) const{
 	assert3D(d);
-	if(!fRotStandDev[d].getSLAngle().isNull())
+	if(!fRotStandDev[d].getGonsValue().isNull())
 		return fRotStandDev[d];
 	throw std::runtime_error("Standard deviations of the rotation's component not assigned");
 }
@@ -100,7 +100,7 @@ TReal TAdjustableHelmertTransformation::getScaleStandDev()const{
 
 bool TAdjustableHelmertTransformation::hasRotationStandDev(int d) const{
 	assert3D(d);
-	return !fRotStandDev[d].getSLAngle().isNull();
+	return !fRotStandDev[d].getGonsValue().isNull();
 }
 
 bool TAdjustableHelmertTransformation::hasTranslStandDev(int d)const{
@@ -113,8 +113,8 @@ bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
 }
 
 bool TAdjustableHelmertTransformation::hasStandDev(){
-	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || !fRotStandDev[0].getSLAngle().isNull() || !fRotStandDev[1].getSLAngle().isNull()
-      || !fRotStandDev[2].getSLAngle().isNull() || !isnan(fScaleStandDev));
+	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || !fRotStandDev[0].getGonsValue().isNull() || !fRotStandDev[1].getGonsValue().isNull()
+      || !fRotStandDev[2].getGonsValue().isNull() || !isnan(fScaleStandDev));
 }
 
 void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {
@@ -126,7 +126,7 @@ void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {
 
 	for (int i = 0; i < 3; i++)
 		if (uidx_rot[i] == idx) {
-			setRotationCorrection(i,LGC::TAngle(LGC::TAngle::kRadians, value));
+			setRotationCorrection(i,TAngle(value, TAngle::kRadians));
 			return;
 		}
 
@@ -138,7 +138,7 @@ void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {
 	throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
-void TAdjustableHelmertTransformation::setParam(const LGC::TAngle& rx, const LGC::TAngle& ry, const LGC::TAngle& rz){
+void TAdjustableHelmertTransformation::setParam(const TAngle& rx, const TAngle& ry, const TAngle& rz){
 	fEstParameter.omega = fProvParameter.omega = rx;
 	fEstParameter.phi = fProvParameter.phi = ry;
 	fEstParameter.kappa = fProvParameter.kappa = rz;
@@ -154,7 +154,7 @@ void TAdjustableHelmertTransformation::setParam(const TReal scl){
 	fEstParameter.scale = fProvParameter.scale = scl;
 }
 
-void TAdjustableHelmertTransformation::setParam(const TReal tx, const TReal ty, const TReal tz, const LGC::TAngle& rx, const LGC::TAngle& ry, const LGC::TAngle& rz, const TReal scl){ 
+void TAdjustableHelmertTransformation::setParam(const TReal tx, const TReal ty, const TReal tz, const TAngle& rx, const TAngle& ry, const TAngle& rz, const TReal scl){ 
 	setParam(rx, ry, rz);
 	setParam(tx, ty, tz);
 	setParam(scl);
@@ -172,7 +172,7 @@ void TAdjustableHelmertTransformation::setTranslationCorrection (int idx, TReal 
 	return;
 }
 
-void TAdjustableHelmertTransformation::setRotationCorrection (int idx, const LGC::TAngle& value){
+void TAdjustableHelmertTransformation::setRotationCorrection (int idx, const TAngle& value){
 	if (idx == 0)
 		fEstParameter.omega = fEstParameter.omega + value;
 	else if (idx == 1)
@@ -190,8 +190,8 @@ void TAdjustableHelmertTransformation::setScaleCorrection (TReal value){
 }
 
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getEstimatedPrecisionRot(int d)const{
-	if(fEstPrecisionRotation[d].getSLAngle().isNull())
+const TAngle& TAdjustableHelmertTransformation::getEstimatedPrecisionRot(int d)const{
+	if(fEstPrecisionRotation[d].getGonsValue().isNull())
 		throw std::logic_error("No rotation precision assigned");
 	return fEstPrecisionRotation[d];
 
@@ -240,21 +240,21 @@ bool TAdjustableHelmertTransformation::isRotationFixed(int d) const {
 	return fixedRotations[d]; 
 }
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getXYCovarRot() const{
-		if(fCovarianceRotation[0].getSLAngle().isNull())
+const TAngle& TAdjustableHelmertTransformation::getXYCovarRot() const{
+		if(fCovarianceRotation[0].getGonsValue().isNull())
 		throw std::logic_error("No XY covariance assigned.");
 	return fCovarianceRotation[0];
 }
 
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getYZCovarRot() const{
-		if(fCovarianceRotation[1].getSLAngle().isNull())
+const TAngle& TAdjustableHelmertTransformation::getYZCovarRot() const{
+		if(fCovarianceRotation[1].getGonsValue().isNull())
 		throw std::logic_error("No YZ covariance assigned.");
 	return fCovarianceRotation[1];
 }
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getXZCovarRot() const{
-		if(fCovarianceRotation[2].getSLAngle().isNull())
+const TAngle& TAdjustableHelmertTransformation::getXZCovarRot() const{
+		if(fCovarianceRotation[2].getGonsValue().isNull())
 		throw std::logic_error("No XZ covariance assigned.");
 	return fCovarianceRotation[2];
 }
@@ -281,7 +281,7 @@ void TAdjustableHelmertTransformation::setTranslationStandDev(int d, TReal stDev
 	fTransStandDev[d].setMetresValue(stDev);
 }
 
-void TAdjustableHelmertTransformation::setRotationStandDev(int d, LGC::TAngle stDev){
+void TAdjustableHelmertTransformation::setRotationStandDev(int d, TAngle stDev){
 	assert3D(d);
 	fRotStandDev[d] = stDev;
 }
@@ -304,17 +304,17 @@ void TAdjustableHelmertTransformation::setDefaults(){
 }
 
 void TAdjustableHelmertTransformation::setDefaultsParams(){
-		fProvParameter.omega.set(LGC::TAngle::EUnits::kRadians,0);
-		fProvParameter.phi.set(LGC::TAngle::EUnits::kRadians,0);
-		fProvParameter.kappa.set(LGC::TAngle::EUnits::kRadians,0);
+		fProvParameter.omega.setRadiansValue(0.0);
+		fProvParameter.phi.setRadiansValue(0.0);
+		fProvParameter.kappa.setRadiansValue(0.0);
 		fProvParameter.tX = 0.0;
 		fProvParameter.tY = 0.0;
 		fProvParameter.tZ = 0.0;
 		fProvParameter.scale = 1;
 
-		fEstParameter.omega.set(LGC::TAngle::EUnits::kRadians,0);
-		fEstParameter.phi.set(LGC::TAngle::EUnits::kRadians,0);
-		fEstParameter.kappa.set(LGC::TAngle::EUnits::kRadians,0);
+		fEstParameter.omega.setRadiansValue(0.0);
+		fEstParameter.phi.setRadiansValue(0.0);
+		fEstParameter.kappa.setRadiansValue(0.0);
 		fEstParameter.tX = 0.0;
 		fEstParameter.tY = 0.0;
 		fEstParameter.tZ = 0.0;
@@ -346,21 +346,21 @@ void	TAdjustableHelmertTransformation::setXZTranslationCovariance(TReal value){
 
 void	TAdjustableHelmertTransformation::setXYRotationCovariance(TReal value){
 	if (!fixedRotations[0] && !fixedRotations[1])
-		fCovarianceRotation[0].set(LGC::TAngle::kRadians, value);
+		fCovarianceRotation[0].setRadiansValue(value);
 	else
 		throw std::logic_error("TAdjustableHelmertTransformation::setXYRotationCovariance, rotation must be variable in both X and Y.");
 }
 
 void	TAdjustableHelmertTransformation::setYZRotationCovariance(TReal value){
 	if (!fixedRotations[1] && !fixedRotations[2])
-		fCovarianceRotation[1].set(LGC::TAngle::kRadians, value);
+		fCovarianceRotation[1].setRadiansValue(value);
 	else
 		throw std::logic_error("TAdjustablePlane::setYZRotationCovariance, rotation must be variable in both Y and Z.");
 }
 
 void	TAdjustableHelmertTransformation::setXZRotationCovariance(TReal value){
 	if (!fixedRotations[0] && !fixedRotations[2])
-		fCovarianceRotation[2].set(LGC::TAngle::kRadians, value);
+		fCovarianceRotation[2].setRadiansValue(value);
 	else
 		throw std::logic_error("TAdjustablePlane::setXZRotationCovariance, rotation must be variable in both X and Z.");
 }
@@ -374,11 +374,11 @@ void	TAdjustableHelmertTransformation::setEstimatedPrecision(int idx, TReal valu
 	for (int i = 0; i < 3; i++){
 		if (uidx_rot[i] == idx) {
 			if (i == 0 ){
-				fEstPrecisionRotation[0].set(LGC::TAngle::kRadians, value);}
+				fEstPrecisionRotation[0].setRadiansValue(value);}
 			else if(i == 1){
-				fEstPrecisionRotation[1].set(LGC::TAngle::kRadians, value);}
+				fEstPrecisionRotation[1].setRadiansValue(value);}
 			else{
-				fEstPrecisionRotation[2].set(LGC::TAngle::kRadians, value);}
+				fEstPrecisionRotation[2].setRadiansValue(value);}
 			return;
 		}
 		if (uidx_trans[i] == idx) {
@@ -417,8 +417,8 @@ TReal TAdjustableHelmertTransformation::getProvTranslation(int axis) const{
 		return fProvParameter.tZ;
 }
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getEstRotation(int axis) const{
-	LGC::TAngle ang(LGC::TAngle::kRadians, NO_VALf);
+const TAngle& TAdjustableHelmertTransformation::getEstRotation(int axis) const{
+	TAngle ang(NO_VALf, TAngle::kRadians);
 	assert3D(axis);
 
 		if(axis == 0)
@@ -430,8 +430,8 @@ const LGC::TAngle& TAdjustableHelmertTransformation::getEstRotation(int axis) co
 }
 
 
-const LGC::TAngle& TAdjustableHelmertTransformation::getProvRotation(int axis) const{
-	LGC::TAngle ang(LGC::TAngle::kRadians, NO_VALf);
+const TAngle& TAdjustableHelmertTransformation::getProvRotation(int axis) const{
+	TAngle ang(NO_VALf, TAngle::kRadians);
 	assert3D(axis);
 
 		if(axis == 0)
@@ -451,9 +451,9 @@ void TAdjustableHelmertTransformation::reInitialise(){
 	fCovarianceTranslation[1].setMetresValue(0.0);
 	fCovarianceTranslation[2].setMetresValue(0.0);
 
-	fCovarianceRotation[0].set(LGC::TAngle::EUnits::kRadians,0.0);
-	fCovarianceRotation[1].set(LGC::TAngle::EUnits::kRadians,0.0);
-	fCovarianceRotation[2].set(LGC::TAngle::EUnits::kRadians,0.0);
+	fCovarianceRotation[0].setRadiansValue(0.0);
+	fCovarianceRotation[1].setRadiansValue(0.0);
+	fCovarianceRotation[2].setRadiansValue(0.0);
 
 	fEstPrecisionScale = 0.0;
 
@@ -461,7 +461,7 @@ void TAdjustableHelmertTransformation::reInitialise(){
 	fEstPrecisionTranslation[1].setMetresValue(0.0);
 	fEstPrecisionTranslation[2].setMetresValue(0.0);
 
-	fEstPrecisionRotation[0].set(LGC::TAngle::EUnits::kRadians, 0.0);
-	fEstPrecisionRotation[1].set(LGC::TAngle::EUnits::kRadians, 0.0);
-	fEstPrecisionRotation[2].set(LGC::TAngle::EUnits::kRadians, 0.0);
+	fEstPrecisionRotation[0].setRadiansValue(0.0);
+	fEstPrecisionRotation[1].setRadiansValue(0.0);
+	fEstPrecisionRotation[2].setRadiansValue(0.0);
 }

@@ -204,7 +204,7 @@ void TResSimFileWriter::writeSimTableDescription(const string &projTitle, const 
 	stream->setSeparator(origSepar);
 }
 
-void TResSimFileWriter::writeSimFRAMEDescription(int numbOfSimu){
+void TResSimFileWriter::writeSimFRAMEDescription(){
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
 	string origSepar = stream->getSeparator();
@@ -355,8 +355,8 @@ void	TResSimFileWriter::writeSimPointsSummary(const string &projTitle, const std
 
 }
 
-void TResSimFileWriter::writeSimFramesSummary(const string &projTitle, const std::list<TSimFrameSummary>& dataSum, int numbOfSimu){
-	writeSimFRAMEDescription(numbOfSimu);
+void TResSimFileWriter::writeSimFramesSummary(const std::list<TSimFrameSummary>& dataSum, int numbOfSimu){
+	writeSimFRAMEDescription();
 
 	for (auto& frameSummary : dataSum){
 		writeSimFRAMEData(frameSummary, numbOfSimu);
@@ -613,21 +613,21 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 			-powq(deltaMoy.tY*i,2)/i)*(LITERAL(1.0)/i)));
 	TReal sigmadtz(sqrtq((deltaSigma.tZ
 			-powq(deltaMoy.tZ*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmadrx(sqrtq((deltaSigma.omega.cc()
-		-powq(deltaMoy.omega.cc() *i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmadry(sqrtq((deltaSigma.phi.cc()
-			-powq(deltaMoy.phi.cc()*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmadrz(sqrtq((deltaSigma.kappa.cc()
-			-powq(deltaMoy.kappa.cc()*i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sigmadrx(sqrtq((deltaSigma.omega.getSignedCCValue()
+		-powq(deltaMoy.omega.getSignedCCValue() *i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sigmadry(sqrtq((deltaSigma.phi.getSignedCCValue()
+			-powq(deltaMoy.phi.getSignedCCValue()*i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sigmadrz(sqrtq((deltaSigma.kappa.getSignedCCValue()
+			-powq(deltaMoy.kappa.getSignedCCValue()*i,2)/i)*(LITERAL(1.0)/i)));
 	TReal sigmadscl(sqrtq((deltaSigma.scale
 			-powq(deltaMoy.scale*i,2)/i)*(LITERAL(1.0)/i)));
 
 	TReal stx(simFr.getAdjustableTransformation()->getEstimatedPrecisionTransl(0).getMetresValue()); //Because sigmadtX are in M
 	TReal sty(simFr.getAdjustableTransformation()->getEstimatedPrecisionTransl(1).getMetresValue());
 	TReal stz(simFr.getAdjustableTransformation()->getEstimatedPrecisionTransl(2).getMetresValue());
-	TReal srx(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(0).cc());
-	TReal sry(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(1).cc());
-	TReal srz(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(2).cc());
+	TReal srx(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(0).getSignedCCValue());
+	TReal sry(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(1).getSignedCCValue());
+	TReal srz(simFr.getAdjustableTransformation()->getEstimatedPrecisionRot(2).getSignedCCValue());
 	TReal sscl(simFr.getAdjustableTransformation()->getEstimatedPrecisionScale());
 
 	stream->setWidthFormat(coordResWidth);
@@ -689,9 +689,9 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(0))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.omega.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMax.omega.getSignedCCValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.omega.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMoy.omega.getSignedCCValue());
 		}
 		else
 		{
@@ -704,9 +704,9 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(1))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.phi.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMax.phi.getSignedCCValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.phi.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMoy.phi.getSignedCCValue());
 		}
 		else
 		{
@@ -719,9 +719,9 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(2))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.kappa.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMax.kappa.getSignedCCValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.kappa.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMoy.kappa.getSignedCCValue());
 		}
 		else
 		{
@@ -860,7 +860,7 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(0))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.omega.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMin.omega.getSignedCCValue());
 			(*stream).writeString(7,"SIGMA");
 			writeDouble(coordResWidth, precisionMM, sigmadrx);
 		}
@@ -875,7 +875,7 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(1))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.phi.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMin.phi.getSignedCCValue());
 			(*stream).writeString(7,"SIGMA");
 			writeDouble(coordResWidth, precisionMM, sigmadry);
 		}
@@ -890,7 +890,7 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(2))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.kappa.cc());
+			writeDouble(coordResWidth, precisionMM, deltaMin.kappa.getSignedCCValue());
 			(*stream).writeString(7,"SIGMA");
 			writeDouble(coordResWidth, precisionMM, sigmadrz);
 		}

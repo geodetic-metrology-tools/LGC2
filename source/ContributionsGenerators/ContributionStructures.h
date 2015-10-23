@@ -6,7 +6,7 @@
    \ingroup ContributionsGenerators
 
    	In this header file, structures holding contributions for every observation type are kept.
-	Distances and positions are treated in METERS [m], angles, if LGC::TAngle class is not used, are treated in RADIANS [rad].
+	Distances and positions are treated in METERS [m], angles, if TAngle class is not used, are treated in RADIANS [rad].
 	
 */
 #include "TFreeVector.h"
@@ -81,7 +81,7 @@ struct DistMeasContrib{
 	\brief Contributions used for both the TANGL and the TZEND measurement types made by a total station (TTSTN).
 */
 struct AnglMeasContrib{
-	LGC::TAngle	fCalcMeas;
+	TAngle	fCalcMeas;
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
 

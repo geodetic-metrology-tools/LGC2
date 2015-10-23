@@ -281,21 +281,21 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR: "); 
-			(*stream)<<node.frame.getXYCovarRot().getSLAngle()<<(separator);
+			(*stream)<<node.frame.getXYCovarRot().getGonsValue()<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(1) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR: "); 
-			(*stream)<<node.frame.getYZCovarRot().getSLAngle()<<(separator);
+			(*stream)<<node.frame.getYZCovarRot().getGonsValue()<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR: "); 
-			(*stream)<<node.frame.getXZCovarRot().getSLAngle()<<(separator);
+			(*stream)<<node.frame.getXZCovarRot().getGonsValue()<<(separator);
 		}
 		
 		(*stream)<<endl;
@@ -443,10 +443,10 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 	//Write initial and calculated value
 	(*stream).writeString(obsWidth,	"(GON)");
 	
-	(*stream)<<frameDef.getProvRotation(rot).getSLAngle()<<(separator); 
+	(*stream)<<frameDef.getProvRotation(rot).getGonsValue()<<(separator); 
 
 	if(!frameDef.isRotationFixed(rot)){
-		(*stream)<<frameDef.getEstRotation(rot).getSLAngle()<<(separator); 
+		(*stream)<<frameDef.getEstRotation(rot).getGonsValue()<<(separator); 
 	}
 	else{
 		(*stream).writeString(obsWidth,	""); 
@@ -459,14 +459,14 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 
 	//Write the initial standard deviation, if specified in the input file
 	if(frameDef.hasRotationStandDev(rot))
-		(*stream)<<frameDef.getRotationStandDev(rot).getSLAngle()<<(separator);  
+		(*stream)<<frameDef.getRotationStandDev(rot).getGonsValue()<<(separator);  
 	
 	else
 		(*stream).writeString(obsResWidth,	""); 
 	
 	//Write the standard deviation after calculation if rotation is variable and the status (fixed or variable)
 	if(!frameDef.isRotationFixed(rot)){
-		(*stream)<<frameDef.getEstimatedPrecisionRot(rot).getSLAngle()<<(separator);
+		(*stream)<<frameDef.getEstimatedPrecisionRot(rot).getGonsValue()<<(separator);
 		(*stream).writeString(obsWidth,	"FALSE");
 	}
 	else{

@@ -100,7 +100,7 @@ namespace tut
          ensure_equals("Pt x coordinate should match", PTest.getX().getMetresValue(), 0, 1e-12);
          ensure_equals("Pt y coordinate should match", PTest.getY().getMetresValue(), 100, 1e-12);
          ensure_equals("Pt z coordinate should match", PTest.getZ().getMetresValue(), 0, 1e-12);
-			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		 TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -195,7 +195,7 @@ namespace tut
          ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
          ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
          ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
-			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		 TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -304,7 +304,7 @@ namespace tut
          ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
          ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
 
-			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		 TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -400,7 +400,7 @@ namespace tut
 				ensure_equals("Pt x coordinate should match",Pt.getX().getMetresValue(), 0, 1e-12);
 				ensure_equals("Pt y coordinate should match",Pt.getY().getMetresValue(), 100, 1e-12);
 				ensure_equals("Pt z coordinate should match",Pt.getZ().getMetresValue(), 0, 1e-12);
-				TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+				TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 
 				std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -512,7 +512,7 @@ namespace tut
 					ensure_equals("Pt2 y coordinate should match",PT2.getY().getMetresValue(), 100, 1e-9);
 					ensure_equals("Pt2 z coordinate should match",PT2.getZ().getMetresValue(), 0, 1e-9);
 
-					TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+					TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 					
 					std::vector<double> Outputv0;
 					Outputv0.push_back(0);
@@ -560,7 +560,7 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 100, 1e-12);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 0, 1e-12);
 
-		TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST2",V0Calc, 199, 1e-8); 
 	}
 }

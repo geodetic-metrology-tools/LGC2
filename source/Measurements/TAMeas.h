@@ -115,12 +115,12 @@ class TAScalarMeas : public TAMeas<TTarget>
 		/// Typed container of real valued (distance) measurements.
 		std::array<TReal, numDistances> distances; 
 		/// Typed container of angle valued measurements.
-		std::array<LGC::TAngle, numAngles> angles;
+		std::array<TAngle, numAngles> angles;
 			
 		/// Typed container of real valued measurement residuals. Stored in meters [m].
 		std::array<TReal, numDistances> distancesResiduals;
 		/// Typed container of angle valued measurements residuals.
-		std::array<LGC::TAngle, numAngles> anglesResiduals; 
+		std::array<TAngle, numAngles> anglesResiduals; 
 
 	public:				
 		/*!
@@ -160,7 +160,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 			/// Returns an angle value for a given ID
-			const LGC::TAngle& getAngle(TEnumAngle id=kValue) const {
+			const TAngle& getAngle(TEnumAngle id=kValue) const {
 				return angles[id];
 			}
 
@@ -170,7 +170,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 			/// Returns residual of the observed angle
-			const LGC::TAngle& getAngleResidual(TEnumAngle id=kValue) const {
+			const TAngle& getAngleResidual(TEnumAngle id=kValue) const {
 				return anglesResiduals[id];
 			}
 		//@}
@@ -184,7 +184,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 
 
 			/// Sets an angle value
-			void setAngle(const LGC::TAngle& a, TEnumAngle id=kValue) {
+			void setAngle(const TAngle& a, TEnumAngle id=kValue) {
 				angles[id] = a;
 			}
 
@@ -194,7 +194,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 			/// Sets a residual of observed angle
-			void setAngleResidual(const LGC::TAngle& a, TEnumAngle id=kValue) {
+			void setAngleResidual(const TAngle& a, TEnumAngle id=kValue) {
 				anglesResiduals[id] = a;
 			}
 		//@}

@@ -23,7 +23,7 @@ struct TTSTN {
 			The ROM keeps the measurements which can be made by the TSTN in vectors.
 		*/
 		struct TROM {
-			LGC::TAngle acst; ///< constant angle/orientation of the station, defaults to zero.
+			TAngle acst; ///< constant angle/orientation of the station, defaults to zero.
 
 			TAdjustableAngle* v0; ///< V0 angle/orientation, defaults to zero, to be calculated during the LS calculation, always variable.
 
@@ -80,7 +80,7 @@ struct TTSTN {
 
 			/// Each ROM has a default target that is inherited to the measurements
 			TROM(const TInstrumentData::TPOLAR::TTarget& defTarget, TAdjustableAngle* v0):
-				defaultTarget(&defTarget), v0(v0), acst(LGC::TAngle::EUnits::kGons, 0.0){}
+				defaultTarget(&defTarget), v0(v0), acst(0.0, TAngle::EUnits::kGons){}
 
 		};
 
