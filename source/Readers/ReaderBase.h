@@ -150,21 +150,21 @@ class TOptionHelper {
 		inline TReal getParamRmm2m(const std::string& opt, TReal def= 0.0) const {
 			if (! has(opt)) return def;
 
-			return (std::stor(getParam(opt)) * LGC::MM2M);
+			return (std::stor(getParam(opt)) * MM2M);
 		}
 
 		/// extract an option as a real (floating point) number with a default value, string value given in cc, returned value is in radians [rad]
 		inline TReal getParamRcc2rad(const std::string& opt, TReal def= 0.0) const {
 			if (! has(opt)) return def;
 
-			return (std::stor(getParam(opt)) * LGC::CC2RAD);
+			return (std::stor(getParam(opt)) * CC2RAD);
 		}
 
 		/// extract an option as a real (floating point) number with a default value, string value given in gradians [gon], returned value is in radians [rad]
 		inline TReal getParamRgon2rad(const std::string& opt, TReal def= 0.0) const {
 			if (! has(opt)) return def;
 
-			return (std::stor(getParam(opt)) * LGC::GON2RAD);
+			return (std::stor(getParam(opt)) * GON2RAD);
 		}
 
 		/// extract an option as an integer number with a default value

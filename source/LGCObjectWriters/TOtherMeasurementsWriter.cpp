@@ -46,9 +46,9 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDver.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDver.getObservedStDev()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDver.getObservedStDev()* M2MM);
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDver.getDistanceResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDver.getDistanceResidual()* M2MM);
 
 
 		writeReliability(index, stat);
@@ -57,7 +57,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 	return;
 }
 
-void TOtherMeasurentWriter::writeDVERResultsHeader(int nOObs)
+void TOtherMeasurentWriter::writeDVERResultsHeader()
 {
 TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -111,7 +111,7 @@ TAStreamFormatter*	stream = getStream();
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), fDVER.size());
 	(*stream)<<endl;
 
-	writeDVERResultsHeader(fDVER.size()); // write the title line for the observations
+	writeDVERResultsHeader(); // write the title line for the observations
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence
@@ -129,20 +129,20 @@ TAStreamFormatter*	stream = getStream();
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDVER.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getObservedStDev() * LGC::M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getObservedStDev() * M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDVER.getDistance() + ItDVER.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual() * LGC::M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual() * M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the residual/sigam
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual()/ItDVER.getObservedStDev());//Output value in meters [mm], stored in [m]
 		(*stream)<<endl;
 
 		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(ItDVER.getDistanceResidual()*LGC::M2MM);
+		summary.addNewResidual(ItDVER.getDistanceResidual()*M2MM);
 	}
 	(*stream)<<endl;
 	

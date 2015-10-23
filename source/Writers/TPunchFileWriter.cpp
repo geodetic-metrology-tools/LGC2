@@ -605,7 +605,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 									coordResWidth,
 									pre,
 									separator,
-									double(powq(point.getXEstPrecision()*LGC::M2MM,2)),
+									double(powq(point.getXEstPrecision()*M2MM,2)),
 									point.getYEstPrecision(),
 									posVecIterator->getZVar(),
 									"XXX");

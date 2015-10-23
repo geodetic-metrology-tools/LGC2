@@ -259,7 +259,7 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 
 	(*stream).writeString(obsWidth,	"");
 	if(node.frame.hasScaleStandDev())
-		(*stream).writeDouble(obsResWidth, lengthResidualPrecision,node.frame.getScaleStandDev()); //*LGC::M2MM????
+		(*stream).writeDouble(obsResWidth, lengthResidualPrecision,node.frame.getScaleStandDev()); //*M2MM????
 	else
 		(*stream).writeString(obsResWidth,	""); 
 	
@@ -878,9 +878,9 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										coordResWidth,
 										coordResPrecision,
 										separator,
-										pt->getXEstPrecision()*LGC::M2MM,
-										pt->getYEstPrecision()*LGC::M2MM,
-										pt->getZEstPrecision()*LGC::M2MM,
+										pt->getXEstPrecision()*M2MM,
+										pt->getYEstPrecision()*M2MM,
+										pt->getZEstPrecision()*M2MM,
 										"");/*sigma*/
 		}
 		else{
@@ -894,9 +894,9 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										coordResWidth,
 										coordResPrecision,
 										separator,
-										(estimatedValue.getX() - provisionalValue.getX())*LGC::M2MM,
-										(estimatedValue.getY() - provisionalValue.getY())*LGC::M2MM,
-										(estimatedValue.getZ() - provisionalValue.getZ())*LGC::M2MM,
+										(estimatedValue.getX() - provisionalValue.getX())*M2MM,
+										(estimatedValue.getY() - provisionalValue.getY())*M2MM,
+										(estimatedValue.getZ() - provisionalValue.getZ())*M2MM,
 											"");/*offset*/
 	}
 

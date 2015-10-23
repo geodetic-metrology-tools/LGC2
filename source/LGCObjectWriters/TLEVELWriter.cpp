@@ -123,7 +123,7 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 		//estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistanceResidual() + ItDlev.getDistance());
 		//residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()* M2MM);
 		//residual/sima
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()/ItDlev.target.sigmaD);
 
@@ -133,11 +133,11 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 			// mesured dhor
 			(*stream).writeDouble(obsWidth, lengthPrecision,ItDlev.dhor.get()->getDistance()); 
 			//sigma Dhor
-			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDHORSigma()* LGC::M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDHORSigma()* M2MM);
 			//estimated offset
 			(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.dhor.get()->getDistanceResidual() + ItDlev.dhor.get()->getDistance());
 			//residual
-			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDistanceResidual()* LGC::M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDistanceResidual()* M2MM);
 			//res/sigma
 			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDistanceResidual()/ItDlev.dhor.get()->getDHORSigma());
 		}
@@ -250,9 +250,9 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStat
 			//get the observed distance
 			(*stream).writeDouble(obsWidth, lengthPrecision,ItDhor.dhor->getDistance());
 			//get the standard deviation
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDHORSigma()* LGC::M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDHORSigma()* M2MM);
 			//get the residual
-			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.dhor->getDistanceResidual()* LGC::M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.dhor->getDistanceResidual()* M2MM);
 
 			writeReliability(index, stat);
 			(*stream).setDataSpacing();
@@ -293,7 +293,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		//get the standard deviation
       (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaD.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDLEV.getDistanceResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDLEV.getDistanceResidual()* M2MM);
 
 
 		writeReliability(index, stat);

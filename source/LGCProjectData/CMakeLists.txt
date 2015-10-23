@@ -18,7 +18,6 @@ set(LGCProjectData_HEADERS
 	TLGCData.h
 	TLGCConfig.h
 	TInstrumentData.h
-	#TLGCAngle.h
 	TDataAnalyzer.h
 	TFileLogger.h
 )
@@ -27,7 +26,6 @@ set(LGCProjectData_HEADERS
 set(LGCProjectData_SOURCES
 	TLGCStatistic.cpp
 	TLGCData.cpp
-	#TLGCAngle.cpp
 	TDataAnalyzer.cpp
 	TFileLogger.cpp
 )

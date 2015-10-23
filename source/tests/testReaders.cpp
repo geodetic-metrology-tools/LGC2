@@ -267,9 +267,9 @@ namespace tut
 			poin1.parse(TReader::tokenizeLGCfileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), -1);
 			ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
 
-			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * LGC::MM2M); //Values are stored in metres
-			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * LGC::MM2M ); //Values are stored in metres
-			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * LGC::MM2M); //Values are stored in metres
+			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); //Values are stored in metres
+			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M ); //Values are stored in metres
+			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); //Values are stored in metres
 		} catch (exception& e) {
 			ensure("Unexpected execption while testing reader: " + string(e.what()) + "\n", 0);
 		}
@@ -697,7 +697,7 @@ namespace tut
 			EXPECT_FAIL(currentNodeIter->get()->frame.getTranslationStandDev(1));
 
 
-			EXPECT_FAIL(ensure_equals("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev()*LGC::M2MM, 5));
+			EXPECT_FAIL(ensure_equals("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev()*M2MM, 5));
 		}
 
 //NEEDS TO BE REWRITTEN to take into account the modifications!

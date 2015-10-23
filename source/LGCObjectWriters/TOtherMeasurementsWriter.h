@@ -28,7 +28,7 @@ public:
 	/*!@name Headers */
 	//@{
 		/// Write DVER results header
-		void writeDVERResultsHeader(int nOObs);
+		void writeDVERResultsHeader();
 	//@}
 
 	/*!@name Results */

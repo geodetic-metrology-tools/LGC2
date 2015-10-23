@@ -23,7 +23,7 @@ public:
 	/*!@name Headers */
 	//@{
 		/// Write the result header for ECHO 
-		void writeECHOResultsHeader(int nOObs);
+		void writeECHOResultsHeader();
 		/// Write the result header for ECSP 
 		void writeECSPResultsHeader();
 		/// Write the result header for ECVE 

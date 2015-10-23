@@ -7,7 +7,7 @@ TUVDObsSummary TCAM::getUVDObsSummary()const{
 	for(std::vector<TUVD>::const_iterator ItUVD = measUVD.begin() ; ItUVD!=measUVD.end() ; ItUVD++) {//auto const& ItUVD: measUVD){
 		summary.xVectorCompObsSum.addNewResidual(ItUVD->getXCompVectorResidual() * LGC::VECCONVINV);
 		summary.yVectorCompObsSum.addNewResidual(ItUVD->getYCompVectorResidual() * LGC::VECCONVINV); 
-		summary.distObsSum.addNewResidual(ItUVD->getDistanceResidual() * LGC::M2MM);
+		summary.distObsSum.addNewResidual(ItUVD->getDistanceResidual() * M2MM);
 	}
 	return summary;	
 }

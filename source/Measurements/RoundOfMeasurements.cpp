@@ -5,7 +5,7 @@
 TLGCObsSummary  TECHOROM::getECHOObsSummary() const{
 	TLGCObsSummary summary;
 	for(auto const& ItECHOROM: measECHO)
-		summary.addNewResidual(ItECHOROM.getDistanceResidual()*LGC::M2MM);
+		summary.addNewResidual(ItECHOROM.getDistanceResidual()*M2MM);
 	return summary;	
 }
 

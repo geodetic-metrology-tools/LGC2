@@ -164,7 +164,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		TReal dist =sqrt( pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
 			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
 			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma ANGL
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -198,7 +198,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		(*stream)<<ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getGonsValue()<<(separator);
 
 		//write the offset	
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma ZEND
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -211,13 +211,13 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance()); //Write value in meters [m]
 
 		//write the sigma, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance()/1000)* LGC::M2MM); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance()/1000)* M2MM); 
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()); 
 
 		//write the residual, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual() * LGC::M2MM); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual() * M2MM); 
 
 		//write the sensibility		
 		TReal dz= ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
@@ -243,7 +243,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 			//write the distance cste sigma (TScalar in (MM))
 			stream->setWidthFormat(obsResWidth);
 			stream->setPrecisionFormat(lengthResPrecision); //Output value is in [mm], lower the precision by 3
-			(*stream)<<ItPLR3D.target.distCorrectionAdjustable->getEstimatedPrecision()*LGC::M2MM<<separator;	//MM2M on scalar
+			(*stream)<<ItPLR3D.target.distCorrectionAdjustable->getEstimatedPrecision()*M2MM<<separator;	//MM2M on scalar
 		}
 		else{
 			//write the distance cste (TLength (M))
@@ -392,7 +392,7 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 		TReal dist =sqrt( pow2(ItANGL.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
 			pow2(ItANGL.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
 			pow2(ItANGL.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, angleResPrecicion, ItANGL.getAngleResidual().getRadiansValue()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, angleResPrecicion, ItANGL.getAngleResidual().getRadiansValue()*dist*M2MM);
 		//write the residual/sigma
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setWidthFormat(obsResWidth);
@@ -463,7 +463,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 		TReal dist =sqrt( pow2(ItZEND.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
 			pow2(ItZEND.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
 			pow2(ItZEND.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -508,13 +508,13 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.target.sigmaDist +ItDIST.target.ppmDist*ItDIST.getDistance()/1000)* LGC::M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.target.sigmaDist +ItDIST.target.ppmDist*ItDIST.getDistance()/1000)* M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance() + ItDIST.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual() * LGC::M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual() * M2MM);//Output value in meters [mm], stored in [m]
 		
 		//write the sensibility	
 		TReal dz= ItDIST.targetPos->getEstValue(2) + ItDIST.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
@@ -537,7 +537,7 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 			//write the distance cste sigma )
 			stream->setWidthFormat(obsResWidth);
 			stream->setPrecisionFormat(lengthResPrecision);
-			(*stream)<<ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision()*LGC::M2MM<<separator;	//MM2M on scalar
+			(*stream)<<ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision()*M2MM<<separator;	//MM2M on scalar
 		} else {
 			//write the distance cste
 			stream->setWidthFormat(obsWidth);
@@ -584,13 +584,13 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DHOR
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDHOR.target.sigmaDist + ItDHOR.target.ppmDist*ItDHOR.getDistance()/1000)* LGC::M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDHOR.target.sigmaDist + ItDHOR.target.ppmDist*ItDHOR.getDistance()/1000)*M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the estimated DHOR
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance() + ItDHOR.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.getDistanceResidual() * LGC::M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.getDistanceResidual() * M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the residual/SIGMA
 		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() /ItDHOR.target.sigmaDist );
@@ -652,7 +652,7 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 			stream->setWidthFormat(obsResWidth);
 			stream->setLengthUnits(TLength::kMillimetres);
 			stream->setPrecisionFormat(lengthResidualPrecision);
-			(*stream)<<ItECTH.getMeasuredValueResidual()*LGC::M2MM<<(separator);
+			(*stream)<<ItECTH.getMeasuredValueResidual()*M2MM<<(separator);
 
 			//write the offset / sigma (TDouble (MM))
 			stream->setPrecisionFormat(2);
@@ -1312,7 +1312,7 @@ void	TTSTNWriter::writeDISTReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		//get the standard deviation
       (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDist.target.sigmaDist.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual()* M2MM);
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();
@@ -1407,7 +1407,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 		//get the standard deviation
       (*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR.target.sigmaDist.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItPLR.getDistanceResidual(ESingleValue::kValue)* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItPLR.getDistanceResidual(ESingleValue::kValue)* M2MM);
 
 		writeReliability(index+2, stat);
 		(*stream).setDataSpacing();
@@ -1445,7 +1445,7 @@ void	TTSTNWriter::writeDHORReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		//get the standard deviation
       (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.target.sigmaDist.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual()* M2MM);
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();
@@ -1483,7 +1483,7 @@ void	TTSTNWriter::writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		//get the sigma
       (*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.scaleInstr.sigmaD.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getMeasuredValueResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getMeasuredValueResidual()* M2MM);
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();

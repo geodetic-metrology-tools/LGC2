@@ -13,7 +13,7 @@ TSCALEWriter::TSCALEWriter(TAStreamFormatter& stream): TObservationWriter(stream
 TSCALEWriter::~TSCALEWriter(){}
 
 //Results
-void TSCALEWriter::writeECHOResultsHeader(int nOObs)
+void TSCALEWriter::writeECHOResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -95,7 +95,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	this->writeObsTitle(TABs3 + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), echorom.measECHO.size());
 	(*stream)<<endl;
 	
-	writeECHOResultsHeader(echorom.measECHO.size()); // write the title line for the observations
+	writeECHOResultsHeader(); // write the title line for the observations
 
 	for(auto const& ItECHO : echorom.measECHO)
 	{
@@ -113,7 +113,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance() + ItECHO.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual() * LGC::M2MM);//Output value in milimeters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual() * M2MM);//Output value in milimeters [mm], stored in [m]
 
 		//write the residual/sigam
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual()/ItECHO.target.sigmaD);//Output value in meters [m], stored in [m]
@@ -220,7 +220,7 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 		//get the standard deviation
       (*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaD.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcho.getDistanceResidual()* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcho.getDistanceResidual()* M2MM);
 
 
 		writeReliability(index, stat);
