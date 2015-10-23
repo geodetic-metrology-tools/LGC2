@@ -39,8 +39,8 @@ void TKeyRS2K::parse(const std::vector<std::string>&, int)
 void TKeyLEP::parse(const std::vector<std::string>&, int) 
 {
 	// nothing to parse, using parabolic ellipsoid
-		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
-			fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
+	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+		fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -48,8 +48,8 @@ void TKeyLEP::parse(const std::vector<std::string>&, int)
 
 void TKeySPHE::parse(const std::vector<std::string>&, int) {
 	// nothing to parse, using spherical reference frame
-		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
-			fconfig.referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
+	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+		fconfig.referential = TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }

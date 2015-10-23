@@ -102,7 +102,6 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	// reference frames
 	finterpreters.emplace_back(UPK(new TKeyOLOC(project)));
 	finterpreters.emplace_back(UPK(new TKeyRS2K(project)));
-	finterpreters.emplace_back(UPK(new TKeyRS2K(project)));
 	finterpreters.emplace_back(UPK(new TKeyLEP(project)));
 	finterpreters.emplace_back(UPK(new TKeySPHE(project)));
 

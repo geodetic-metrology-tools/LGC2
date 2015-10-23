@@ -210,6 +210,8 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumUVD = 0;
 	fMeasInfo.fNumECHO = 0;
 	fMeasInfo.fNumORIE = 0;
+
+	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 }
 
 void TLGCData::reInitForSIMU(){

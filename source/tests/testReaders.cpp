@@ -41,21 +41,21 @@ namespace tut
 	{
 		set_test_name("Reading title");
 
-		TPositionVector a(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
-		TAngle angleA = a.getLambdaEllipsoid();
-		TAngle angleA2 = a.getPhiEllipsoid();
-		a*=2;
-		TAngle angleAsecond = a.getLambdaEllipsoid();
-		TAngle angleA2second = a.getPhiEllipsoid();
+		//TPositionVector a(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
+		//TAngle angleA = a.getLambdaEllipsoid();
+		//TAngle angleA2 = a.getPhiEllipsoid();
+		//a*=2;
+		//TAngle angleAsecond = a.getLambdaEllipsoid();
+		//TAngle angleA2second = a.getPhiEllipsoid();
+		//
+		//TFreeVector fv(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
+		//TPositionVector pv(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
 
-		TFreeVector fv(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
-		TPositionVector pv(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
-
-		TLength len1(5);
-		TLength len2(5);
-		TReal rn1 = 5;
-		TReal rn2 = 5;
-		TReal rn3 = rn1/rn2;
+		//TLength len1(5);
+		//TLength len2(5);
+		//TReal rn1 = 5;
+		//TReal rn2 = 5;
+		//TReal rn3 = rn1/rn2;
 
 		
 		std::shared_ptr<TLGCData> projShared (new TLGCData);
