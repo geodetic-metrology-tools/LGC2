@@ -81,9 +81,9 @@ void	TSimFrameSummary::addNewResValue(const TransformParameters& res)
 	
 	/*ENSURE THAT THIS OPERATION WITH ANGLE SQURE PRECISION IS CORRECT, WE NEED REALLY JUST A DOUBLE WHERE WE CAN SUM IT!!!!!!!!!!!!!!!!*/
 	/* IT ONLY MAKES SENSE IF WE ASK LATER FOR THE RADIANS VALUE WHERE THE ACTUAL SUM IS, ASKING FOR GONS e.g. WILL RETURN VALUE WHERE THE 2PI is USED!!!!!!*/
-	fSumRes2.omega = fSumRes2.omega + res.omega*res.omega;
-	fSumRes2.phi = fSumRes2.phi + res.phi*res.phi;
-	fSumRes2.kappa = fSumRes2.kappa + res.kappa*res.kappa;
+	fSumRes2.omega.setRadiansValue(fSumRes2.omega.getRadiansValue() + res.omega.getRadiansValue()  *res.omega.getRadiansValue());
+	fSumRes2.phi.setRadiansValue(fSumRes2.phi.getRadiansValue() + res.phi.getRadiansValue() * res.phi.getRadiansValue());
+	fSumRes2.kappa.setRadiansValue(fSumRes2.kappa.getRadiansValue() + res.kappa.getRadiansValue()  *res.kappa.getRadiansValue());
 
 	if (fFirstSim == true)
 	{

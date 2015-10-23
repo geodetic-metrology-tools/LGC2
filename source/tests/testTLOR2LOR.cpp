@@ -82,12 +82,11 @@ namespace tut
 		const Eigen::Matrix4d&  mm2 = tCh[1].trafo->getMatrix();
 
 		TDirectTransformation dTM;
-		auto GON(LGC::TAngle::kGons);			
-		//TransformParameters param = {LGC::TAngle(GON,38.19718634205),LGC::TAngle(GON,31.83098861838),LGC::TAngle(GON,25.4647908947	),80,90,100,1};
+		auto GON(TAngle::kGons);			
 		TransformParameters param;
-		param.omega = LGC::TAngle(GON,38.19718634205);
-		param.phi = LGC::TAngle(GON,31.83098861838);
-		param.kappa = LGC::TAngle(GON,25.4647908947);
+		param.omega = TAngle(38.19718634205, GON);
+		param.phi = TAngle(31.83098861838, GON);
+		param.kappa = TAngle(25.4647908947, GON);
 
 		param.tX = 80;
 		param.tY = 90;

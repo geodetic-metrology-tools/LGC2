@@ -56,10 +56,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 0.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390 /*10*/, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().gon();
+		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10 /*390*/, 1e-8);
 	}
 
@@ -96,10 +96,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 0.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
                 ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 200, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().gon();
+				TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
                 ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 
 	}
@@ -139,10 +139,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 1.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390 /*10*/, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().gon();
+		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10 /*390*/, 1e-8);
 	}
 
@@ -178,10 +178,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 1.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
                 ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().gon();
+				TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
                 ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 

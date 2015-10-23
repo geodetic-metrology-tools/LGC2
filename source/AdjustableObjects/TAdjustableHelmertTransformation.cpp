@@ -87,7 +87,7 @@ const TLength& TAdjustableHelmertTransformation::getTranslationStandDev(int d) c
 
 const TAngle& TAdjustableHelmertTransformation::getRotationStandDev(int d) const{
 	assert3D(d);
-	if(!fRotStandDev[d].getGonsValue().isNull())
+	if(fRotStandDev[d].getGonsValue()!=NO_VALf)
 		return fRotStandDev[d];
 	throw std::runtime_error("Standard deviations of the rotation's component not assigned");
 }
@@ -100,7 +100,7 @@ TReal TAdjustableHelmertTransformation::getScaleStandDev()const{
 
 bool TAdjustableHelmertTransformation::hasRotationStandDev(int d) const{
 	assert3D(d);
-	return !fRotStandDev[d].getGonsValue().isNull();
+	return fRotStandDev[d].getGonsValue()!=NO_VALf;
 }
 
 bool TAdjustableHelmertTransformation::hasTranslStandDev(int d)const{
@@ -113,8 +113,8 @@ bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
 }
 
 bool TAdjustableHelmertTransformation::hasStandDev(){
-	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || !fRotStandDev[0].getGonsValue().isNull() || !fRotStandDev[1].getGonsValue().isNull()
-      || !fRotStandDev[2].getGonsValue().isNull() || !isnan(fScaleStandDev));
+	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || fRotStandDev[0].getGonsValue()!=NO_VALf || fRotStandDev[1].getGonsValue()!=NO_VALf
+      || fRotStandDev[2].getGonsValue()!=NO_VALf || !isnan(fScaleStandDev));
 }
 
 void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {
@@ -191,7 +191,7 @@ void TAdjustableHelmertTransformation::setScaleCorrection (TReal value){
 
 
 const TAngle& TAdjustableHelmertTransformation::getEstimatedPrecisionRot(int d)const{
-	if(fEstPrecisionRotation[d].getGonsValue().isNull())
+	if(fEstPrecisionRotation[d].getGonsValue()==NO_VALf)
 		throw std::logic_error("No rotation precision assigned");
 	return fEstPrecisionRotation[d];
 
@@ -241,20 +241,20 @@ bool TAdjustableHelmertTransformation::isRotationFixed(int d) const {
 }
 
 const TAngle& TAdjustableHelmertTransformation::getXYCovarRot() const{
-		if(fCovarianceRotation[0].getGonsValue().isNull())
+		if(fCovarianceRotation[0].getGonsValue()==NO_VALf)
 		throw std::logic_error("No XY covariance assigned.");
 	return fCovarianceRotation[0];
 }
 
 
 const TAngle& TAdjustableHelmertTransformation::getYZCovarRot() const{
-		if(fCovarianceRotation[1].getGonsValue().isNull())
+		if(fCovarianceRotation[1].getGonsValue()==NO_VALf)
 		throw std::logic_error("No YZ covariance assigned.");
 	return fCovarianceRotation[1];
 }
 
 const TAngle& TAdjustableHelmertTransformation::getXZCovarRot() const{
-		if(fCovarianceRotation[2].getGonsValue().isNull())
+		if(fCovarianceRotation[2].getGonsValue()==NO_VALf)
 		throw std::logic_error("No XZ covariance assigned.");
 	return fCovarianceRotation[2];
 }

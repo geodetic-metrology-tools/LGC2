@@ -372,7 +372,7 @@ namespace tut
 		ensure_equals("PT2 sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision(), 0.00147, 1e-5);
 		ensure_equals("PT2 sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision(), 0.00007  , 1e-5);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
+		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 				//ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 0.02349, 1e-5);
 	}
 
@@ -402,7 +402,7 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
       ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
-		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().gon(), 0,1e-8);
+	  ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
 
  	}
 
@@ -431,7 +431,7 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
       ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
-		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().gon(), 0,1e-8);
+	  ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
 
  	}
 
@@ -459,7 +459,7 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
       ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
-		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().gon(), 50,1e-8);
+	  ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 50,1e-8);
 
  	}
 }
