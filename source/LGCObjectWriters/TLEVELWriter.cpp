@@ -119,7 +119,7 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 		// mesured offset
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDlev.getDistance()); 
 		//sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.target.sigmaD* LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.target.sigmaD.getMMetresValue());
 		//estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistanceResidual() + ItDlev.getDistance());
 		//residual
@@ -291,7 +291,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDLEV.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaD* LGC::M2MM);
+      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaD.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDLEV.getDistanceResidual()* LGC::M2MM);
 

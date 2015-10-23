@@ -38,12 +38,12 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
 		checkInstrument(8, polInstruments, tokens);
 
 		const TInstrumentData::TPOLAR p = {
-						tokens.at(2),
-						tokens.at(3),
-			std::stor(tokens.at(4)),	
-			std::stor(tokens[5])* MM2M, //conversion from mili-metres to metres
-			std::stor(tokens[6])* MM2M, //conversion from mili-metres to metres
-			std::stor(tokens[7])* GON2RAD //conversion from gons to rads
+						 tokens.at(2),
+						 tokens.at(3),
+                   TLength(std::stor(tokens.at(4))),
+                   TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres), //conversion from mili-metres to metres
+                   TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres), //conversion from mili-metres to metres
+                   TAngle(std::stor(tokens[7]), TAngle::EUnits::kGons)//conversion from gons to rads
 		};
 
 		// store the new station
@@ -57,16 +57,16 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
 				
 		TInstrumentData::TPOLAR::TTarget t = {
 					    tokens.at(0),
-						std::stor(tokens.at(1)) * CC2RAD, // given in cc, transform to rad
-						std::stor(tokens.at(2)) * CC2RAD, // given in cc, transform to rad
-						std::stor(tokens.at(3)) * MM2M, // conversion from mili-metres to metres
-					   std::stor(tokens.at(4)) * MM2M, // conversion from mili-metres to metres
-						std::stoi(tokens[5]) != 0,
-						std::stor(tokens[6]),
-						std::stor(tokens[7]) * MM2M, // conversion from mili-metres to metres
-					   std::stor(tokens[8]) * MM2M, // conversion from mili-metres to metres
-						std::stor(tokens[9]),
-						std::stor(tokens[10])* MM2M // conversion from mili-metres to metres
+                   TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kCCs), // given in cc, transform to rad
+                   TAngle(std::stor(tokens.at(2)), TAngle::EUnits::kCCs), // given in cc, transform to rad
+                   TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+                   TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+                   std::stor(tokens[5]) != 0.0,
+                   TLength(std::stor(tokens[6])),
+                   TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+                   TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+                   TLength(std::stor(tokens[9])),
+                   TLength(std::stor(tokens[10]), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
 		};
 
 		// Add adjustable scalar into a global collection and store a pointer
@@ -121,8 +121,8 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, int) {
 					    tokens.at(0),
 						std::stor(tokens.at(1))  * VECCONV , // unitless 
 						std::stor(tokens.at(2))  * VECCONV , // unitless 
-						std::stor(tokens.at(3)) * MM2M, // conversion from mili-metres to metres
-					    std::stor(tokens.at(4)) * MM2M, // conversion from mili-metres to metres
+                  TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+                  TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
 		};
 
 		// store the new target
@@ -159,9 +159,9 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
 		const TInstrumentData::TEDM e = {
 				      tokens.at(2),
 				      tokens.at(3),
-			std::stor(tokens.at(4)),
-			std::stor(tokens[5]) * MM2M,
-			std::stor(tokens[6]) * MM2M
+                  TLength(std::stor(tokens.at(4))),
+                  TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
+                  TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres)
 		};
 
 		// store the new station
@@ -174,15 +174,15 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
 		checkTarget(9, targets, tokens);	
 
 		TInstrumentData::TEDM::TTarget t = {
-			          tokens.at(0),
-			std::stor(tokens.at(1)) * MM2M,
-			std::stor(tokens.at(2)) * MM2M,
-			std::stoi(tokens.at(3)) != 0,
-			std::stor(tokens.at(4)),
-			std::stor(tokens[5]) * MM2M,
-			std::stor(tokens[6]) * MM2M,
-			std::stor(tokens[7]),
-			std::stor(tokens[8]) * MM2M,
+                  tokens.at(0),
+                  TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
+                  TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
+                  std::stoi(tokens.at(3)) != 0,
+                  TLength(stor(tokens.at(4))),
+                  TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
+                  TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
+                  TLength(std::stor(tokens[7])),
+                  TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres),
 		};
 	
 		// Add adjustable scalar into a global collection and store a pointer
@@ -217,10 +217,10 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, int){
 		checkInstrument(6, station, tokens);
 
 		TInstrumentData::TLEVEL l = {
-				      tokens.at(2),
-				      tokens.at(3),
-					  std::stoi(tokens.at(4)) != 0,
-					  std::stor(tokens[5]) * GON2RAD
+         tokens.at(2),
+         tokens.at(3),
+         std::stoi(tokens.at(4)) != 0,
+         TAngle(std::stor(tokens[5]), TAngle::EUnits::kGons)
 		};
 
 		currentStation = tokens.at(2);
@@ -236,12 +236,12 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, int){
 
 		const TInstrumentData::TLEVEL::TTarget t = {
 			          tokens.at(0),
-			std::stor(tokens.at(1)) * MM2M,
-			std::stor(tokens.at(2)) * MM2M,
-			std::stor(tokens.at(3)),
-			std::stor(tokens.at(4)) * MM2M,
-			std::stor(tokens[5]),
-			std::stor(tokens[6]) * MM2M,
+			TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
+         TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
+         TLength(std::stor(tokens.at(3))),
+         TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
+         TLength(std::stor(tokens[5])),
+         TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
 		};
 
 		// store the new target
@@ -272,11 +272,11 @@ void TKeySCALE::parse(const std::vector<std::string>& tokens, int) {
 
 	const TInstrumentData::TSCALE s = {
 					tokens.at(2),
-		std::stor(tokens.at(3)) * MM2M,
-		std::stor(tokens.at(4)) * MM2M,
-		std::stor(tokens[5]),
-		std::stor(tokens[6]) * MM2M,
-		std::stor(tokens[7]) * MM2M
+               TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
+               TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
+               TLength(std::stor(tokens[5])),
+               TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
+               TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres)
 	};
 
 	// store the new scale

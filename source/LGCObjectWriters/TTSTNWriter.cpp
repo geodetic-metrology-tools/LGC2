@@ -640,7 +640,7 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 			stream->setLengthUnits(TLength::kMillimetres);
 			stream->setWidthFormat(obsResWidth);
 			stream->setPrecisionFormat(lengthResidualPrecision);
-			(*stream)<<ItECTH.scaleInstr.sigmaD * LGC::M2MM<<(separator);
+         (*stream) << ItECTH.scaleInstr.sigmaD.getMMetresValue() << (separator);
 
 			//write the estimated offset
 			stream->setLengthUnits(TLength::kMetres);
@@ -1310,7 +1310,7 @@ void	TTSTNWriter::writeDISTReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDist.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDist.target.sigmaDist * LGC::M2MM);
+      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDist.target.sigmaDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual()* LGC::M2MM);
 
@@ -1405,7 +1405,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 		//get the observed 3rd equation
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItPLR.getDistance(ESingleValue::kValue));
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR.target.sigmaDist* LGC::M2MM);
+      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR.target.sigmaDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItPLR.getDistanceResidual(ESingleValue::kValue)* LGC::M2MM);
 
@@ -1443,7 +1443,7 @@ void	TTSTNWriter::writeDHORReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		//get the observed DHOR
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDhor.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.target.sigmaDist* LGC::M2MM);
+      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.target.sigmaDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual()* LGC::M2MM);
 
@@ -1481,7 +1481,7 @@ void	TTSTNWriter::writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcth.getMeasuredOffsetValue());
 		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.scaleInstr.sigmaD* LGC::M2MM);
+      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.scaleInstr.sigmaD.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getMeasuredValueResidual()* LGC::M2MM);
 

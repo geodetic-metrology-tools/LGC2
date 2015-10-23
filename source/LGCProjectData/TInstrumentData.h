@@ -18,23 +18,23 @@ class TInstrumentData {
 		struct TPOLAR {
 			std::string ID;
 			std::string defTarget;
-			TReal instrHeight; // meters [m]
-			TReal sigmaInstrHeight; // [m]
-			TReal sigmaInstrCentering; // [m]
-			TReal constAngle; // [rad]
+			TLength instrHeight;          // [m]
+         TLength sigmaInstrHeight;     // [m]
+         TLength sigmaInstrCentering;  // [m]
+			TAngle constAngle;            // [rad]
 						
 			struct TTarget {
 				std::string ID;
-				TReal sigmaAngl;	// [rad]
-				TReal sigmaZenD;	// [rad]
-				TReal sigmaDist;	// [m]
-				TReal ppmDist;		// [m]
+            TAngle sigmaAngl;	            // [rad]
+            TAngle sigmaZenD;	            // [rad]
+            TLength sigmaDist;	         // [m]
+            TLength ppmDist;		         // [m]
 				bool  distCorrectionUnknown;
-				TReal distCorrectionValue; //[m]
-				TReal sigmaDCorr;   // [m]
-				TReal sigmaTargetCentering; //[m]
-				TReal targetHt;  // [m]
-				TReal sigmaTargetHt; // [m]
+            TLength distCorrectionValue;  // [m]
+            TLength sigmaDCorr;           // [m]
+            TLength sigmaTargetCentering; // [m]
+            TLength targetHt;             // [m]
+            TLength sigmaTargetHt;        // [m]
 				TAdjustableScalar* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
 			};
 
@@ -49,10 +49,10 @@ class TInstrumentData {
 						
 			struct TTarget {
 				std::string ID;
-				TReal sigmaX;	// [] unitless
-				TReal sigmaY;	// [] unitless
-				TReal sigmaDist;	// [m]
-				TReal sigmaTargetCentering; //[m]
+				TReal sigmaX;	               // [] unitless
+				TReal sigmaY;	               // [] unitless
+            TLength sigmaDist;	         // [m]
+            TLength sigmaTargetCentering; // [m]
 			};
 
 			/// allows the lookup of targets for this total station based on the target ID.
@@ -62,20 +62,20 @@ class TInstrumentData {
 		struct TEDM {
 			std::string ID;
 			std::string defTarget;
-			TReal instrHeight; //[m]
-			TReal sigmaInstrHeight; // [m]
-			TReal sigmaInstrCentering; // [m]
+			TLength instrHeight;         // [m]
+         TLength sigmaInstrHeight;    // [m]
+         TLength sigmaInstrCentering; // [m]
 
 			struct TTarget {
 				std::string ID;
-				TReal sigmaDSpt; //[m] sigma of the distance
-				TReal ppmDSpt; //[m]
+            TLength sigmaDSpt;            // [m] sigma of the distance
+            TLength ppmDSpt;              // [m]
 				bool  distCorrectionUnknown;
-				TReal distCorrectionValue; //[m]
-				TReal sigmaDCorr; //[m]
-				TReal sigmaTargetCentering; //[m]
-				TReal targetHt; //[m]
-				TReal sigmaTargetHt; //[m]
+            TLength distCorrectionValue;  // [m]
+            TLength sigmaDCorr;           // [m]
+            TLength sigmaTargetCentering; // [m]
+            TLength targetHt;             // [m]
+            TLength sigmaTargetHt;        // [m]
 				TAdjustableScalar* distCorrectionAdjustable;
 			};
 			
@@ -87,17 +87,17 @@ class TInstrumentData {
 			std::string ID;
 			std::string defStaffID;
 			bool collAngleUnknown;
-			TReal collAngleValue; //[rad]
+         TAngle collAngleValue;           // [rad]
 			TAdjustableAngle* collAngleAdjustable;
 
 			struct TTarget {
 				std::string ID;
-				TReal sigmaD; //[m]
-				TReal ppmD; //[m]
-				TReal distCorrectionValue; //[m]
-				TReal sigmaDCorr; //[m]
-				TReal staffHt;  // i.e vertical offset of the staff = staff height [m]
-				TReal sigmaStaffHt; // standard deviation of the vertical offset of the staff [m]
+            TLength sigmaD;               // [m]
+            TLength ppmD;                 // [m]
+            TLength distCorrectionValue;  // [m]
+            TLength sigmaDCorr;           // [m]
+            TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
+            TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
 			};
 			
 			/// allows the lookup of targets for this leveling station based on the target ID.
@@ -106,11 +106,11 @@ class TInstrumentData {
 
 		struct TSCALE {
 			std::string ID;
-			TReal sigmaD; // [m]
-			TReal ppmD; // [m]
-			TReal distCorrectionValue; // [m]
-			TReal sigmaDCorr; // [m]
-			TReal sigmaInstrCentering; // [m]
+         TLength sigmaD;               // [m]
+         TLength ppmD;                 // [m]
+         TLength distCorrectionValue;  // [m]
+         TLength sigmaDCorr;           // [m]
+         TLength sigmaInstrCentering;  // [m]
 		};
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.

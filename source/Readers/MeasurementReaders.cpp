@@ -55,22 +55,22 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 	bool instrumentHeightFixed = opts.has("IHFIX");
 	// Look for optional "IH" and "IHSE" flags only if the "IHFIX" flag used, ignore otherwise
 	if(instrumentHeightFixed){
-		instrument.instrHeight         = opts.getParamR("IH",   instrument.instrHeight);
-		instrument.sigmaInstrHeight    = opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight); //value given in mili-meters [mm], returned value in meters [m]
+		instrument.instrHeight      = TLength(opts.getParamR("IH",   instrument.instrHeight));
+      instrument.sigmaInstrHeight = TLength(opts.getParamR("IHSE", instrument.sigmaInstrHeight), TLength::EUnits::kMillimetres);; //value given in mili-meters [mm], returned value in meters [m]
 	}
 
 	tstn.rot3D = opts.has("ROT3D");
 	//If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
 	if (tstn.rot3D){
-		tstn.rotX = &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
-		tstn.rotY = &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
+		tstn.rotX = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
+		tstn.rotY = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
 		//If ROT3D used, instrument height is fixed and is equal to 0
 		instrumentHeightFixed = true;
-		instrument.instrHeight = 0.0;
+		instrument.instrHeight = TLength(0.0);
 	}
 
 	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
-	instrument.sigmaInstrCentering = opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering); //value given in mili-meters [mm], returned value in meters [m]
+	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
 
 	tstn.instrumentHeightAdjustable = &fscalars.addObject(TAdjustableScalar(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn.instrument.ID + to_string(nofTSTN)));
 
@@ -139,7 +139,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		auto tgt(finstruments.getDevice(camera.instrument.targets, currentTarget));	//If not found throws exception, that the target was not found
 		
-	    tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering);
+      tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 
 		// optionally change target sigmas
 		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX );
@@ -217,8 +217,8 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 		// optionally change target sigmas
 		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX);
 		tgt.sigmaY = opts.getParamRmm2m("YSE", tgt.sigmaY);
-		tgt.sigmaDist = opts.getParamRmm2m("DSE", tgt.sigmaDist);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering);
+		tgt.sigmaDist = TLength(opts.getParamR("DSE", tgt.sigmaDist), TLength::EUnits::kMillimetres);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 		// set measurement value
 		TUVD uvd(obspt, tgt);
 		uvd.line = line;
@@ -315,15 +315,15 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 		
 		// set optional target modifications
-		tgt.targetHt             = opts.getParamR("TH",   tgt.targetHt);
-		tgt.sigmaTargetHt        = opts.getParamRmm2m("THSE", tgt.sigmaTargetHt);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering);
+		tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
+      tgt.sigmaTargetHt        = TLength(opts.getParamR("THSE", tgt.sigmaTargetHt), TLength::EUnits::kMillimetres);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 	
 		// optionally change target sigmas
-		tgt.sigmaAngl = opts.getParamRcc2rad("ASE", tgt.sigmaAngl);
-		tgt.sigmaZenD = opts.getParamRcc2rad("ZSE", tgt.sigmaZenD);
-		tgt.sigmaDist = opts.getParamRmm2m("DSE", tgt.sigmaDist);
-		tgt.ppmDist   = opts.getParamRmm2m("PPM", tgt.ppmDist);
+		tgt.sigmaAngl = TAngle(opts.getParamR("ASE", tgt.sigmaAngl), TAngle::EUnits::kCCs);
+      tgt.sigmaZenD = TAngle(opts.getParamR("ZSE", tgt.sigmaZenD), TAngle::EUnits::kCCs);
+      tgt.sigmaDist = TLength(opts.getParamR("DSE", tgt.sigmaDist), TLength::EUnits::kMillimetres);
+      tgt.ppmDist   = TLength(opts.getParamR("PPM", tgt.ppmDist), TLength::EUnits::kMillimetres);
 		
 		// set measurement values
 		TPLR3D plr(obspt, tgt);
@@ -380,8 +380,8 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 		
-		tgt.sigmaAngl = opts.getParamRcc2rad("OBSE",  tgt.sigmaAngl);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE",  tgt.sigmaTargetCentering);
+      tgt.sigmaAngl = TAngle(opts.getParamR("OBSE", tgt.sigmaAngl), TAngle::EUnits::kCCs);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 		
 		// set measurement value
 		TANGL angl(obspt, tgt);
@@ -434,10 +434,10 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 		
 		// set optional target modifications
-		tgt.sigmaZenD            = opts.getParamRcc2rad("OBSE", tgt.sigmaZenD);
-		tgt.targetHt             = opts.getParamR("TH",   tgt.targetHt);
-		tgt.sigmaTargetHt        = opts.getParamRmm2m("THSE", tgt.sigmaTargetHt);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering);
+      tgt.sigmaZenD            = TAngle(opts.getParamR("OBSE", tgt.sigmaZenD), TAngle::EUnits::kCCs);
+		tgt.targetHt             = TLength(opts.getParamR("TH",   tgt.targetHt));
+      tgt.sigmaTargetHt        = TLength(opts.getParamR("THSE", tgt.sigmaTargetHt), TLength::EUnits::kMillimetres);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 
 		// set measurement value
 		TZEND zend(obspt, tgt);
@@ -486,11 +486,11 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 		
-		tgt.sigmaDist     = opts.getParamRmm2m("OBSE",   tgt.sigmaDist);
-		tgt.ppmDist       = opts.getParamRmm2m("PPM",    tgt.ppmDist);
-		tgt.targetHt      = opts.getParamR("TH",     tgt.targetHt);
-		tgt.sigmaTargetHt        = opts.getParamRmm2m("THSE",   tgt.sigmaTargetHt);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE",   tgt.sigmaTargetCentering);
+      tgt.sigmaDist            = TLength(opts.getParamR("OBSE", tgt.sigmaDist), TLength::EUnits::kMillimetres);
+      tgt.ppmDist              = TLength(opts.getParamR("PPM", tgt.ppmDist), TLength::EUnits::kMillimetres);
+      tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
+      tgt.sigmaTargetHt        = TLength(opts.getParamR("THSE", tgt.sigmaTargetHt), TLength::EUnits::kMillimetres);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 
 		// Store  the measured value
 		getROM().measDIST.emplace_back(
@@ -544,9 +544,9 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified instrument and update it
 	    auto scaleInstr(finstruments.getDevice(finstruments.fSCALE, fScaleInstID));
 
-	   scaleInstr.sigmaD  = opts.getParamRmm2m("OBSE", scaleInstr.sigmaD);
-	   scaleInstr.ppmD  = opts.getParamRmm2m("PPM", scaleInstr.ppmD);
-	   scaleInstr.sigmaInstrCentering  = opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering);
+       scaleInstr.sigmaD              = TLength(opts.getParamR("OBSE", scaleInstr.sigmaD), TLength::EUnits::kMillimetres);
+       scaleInstr.ppmD                = TLength(opts.getParamR("PPM", scaleInstr.ppmD), TLength::EUnits::kMillimetres);
+       scaleInstr.sigmaInstrCentering = TLength(opts.getParamR("ICSE", scaleInstr.sigmaInstrCentering), TLength::EUnits::kMillimetres);
 	    
 
 	   // Store  the measured value
@@ -594,9 +594,9 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 
-		tgt.sigmaDist = opts.getParamRmm2m("OBSE",   tgt.sigmaDist);
-		tgt.ppmDist   = opts.getParamRmm2m("PPM",    tgt.ppmDist);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering);
+      tgt.sigmaDist = TLength(opts.getParamR("OBSE", tgt.sigmaDist), TLength::EUnits::kMillimetres);
+      tgt.ppmDist = TLength(opts.getParamR("PPM", tgt.ppmDist), TLength::EUnits::kMillimetres);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 
 		// Store the measured value
 		getROM().measDHOR.emplace_back(
@@ -643,10 +643,10 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 		// get a reference to modify the default values for this station
 		auto& instrument(edm.instrument);
 		
-		instrument.defTarget   = opts.getParamS("TRGT", instrument.defTarget);
-		instrument.instrHeight = opts.getParamR("IH",   instrument.instrHeight);
-		instrument.sigmaInstrHeight    = opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight);
-		instrument.sigmaInstrCentering = opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering);
+		instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
+      instrument.instrHeight         = TLength(opts.getParamR("IH", instrument.instrHeight));
+      instrument.sigmaInstrHeight    = TLength(opts.getParamR("IHSE", instrument.sigmaInstrHeight), TLength::EUnits::kMillimetres);
+      instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres);
 
 		proj.getCurrentNode().measurements.fEDM.emplace_back(edm);
 		proj.getCurrentNode().measurements.fEDM.back().line = line;
@@ -668,11 +668,11 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		TInstrumentData::TEDM::TTarget tgt(finstruments.getDevice(instrument.targets, instrument.defTarget));
 		
-		tgt.sigmaDSpt     = opts.getParamRmm2m("OBSE", tgt.sigmaDSpt);
-		tgt.ppmDSpt       = opts.getParamRmm2m("PPM",  tgt.ppmDSpt);
-		tgt.targetHt      = opts.getParamR("TH",   tgt.targetHt);
-		tgt.sigmaTargetHt       = opts.getParamRmm2m("THSE", tgt.sigmaTargetHt);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering);
+      tgt.sigmaDSpt = TLength(opts.getParamR("OBSE", tgt.sigmaDSpt), TLength::EUnits::kMillimetres);
+      tgt.ppmDSpt = TLength(opts.getParamR("PPM", tgt.ppmDSpt), TLength::EUnits::kMillimetres);
+      tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
+      tgt.sigmaTargetHt = TLength(opts.getParamR("THSE", tgt.sigmaTargetHt), TLength::EUnits::kMillimetres);
+      tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE", tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
@@ -778,10 +778,10 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 
 		TInstrumentData::TLEVEL::TTarget tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, levelGrOfMeas.instrument.defStaffID);
 
-		tgt.sigmaD = opts.getParamRmm2m("OBSE", tgt.sigmaD);
-		tgt.ppmD = opts.getParamRmm2m("PPM", tgt.ppmD);
-		tgt.staffHt = opts.getParamR("TH", tgt.staffHt); //Vertical offset of the staff == height
-		tgt.sigmaStaffHt = opts.getParamRmm2m("THSE", tgt.sigmaStaffHt);
+      tgt.sigmaD       = TLength(opts.getParamR("OBSE", tgt.sigmaD), TLength::EUnits::kMillimetres);
+      tgt.ppmD         = TLength(opts.getParamR("PPM", tgt.ppmD), TLength::EUnits::kMillimetres);
+      tgt.staffHt      = TLength(opts.getParamR("TH", tgt.staffHt)); //Vertical offset of the staff == height
+      tgt.sigmaStaffHt = TLength(opts.getParamR("THSE", tgt.sigmaStaffHt), TLength::EUnits::kMillimetres);
 
 		// Store  the dlev measured value
 		TDLEV dlev(tgtfPoint, tgt,  fSIMUActive ? NO_VALf :std::stor(tokens.at(1)));
@@ -854,9 +854,9 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 
 		TInstrumentData::TSCALE instr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
 
-		instr.sigmaD = opts.getParamRmm2m("OBSE", instr.sigmaD);
-		instr.ppmD = opts.getParamRmm2m("PPM", instr.ppmD);
-		instr.sigmaInstrCentering = opts.getParamR("ICSE ", instr.sigmaInstrCentering);
+      instr.sigmaD = TLength(opts.getParamR("OBSE", instr.sigmaD), TLength::EUnits::kMillimetres);
+      instr.ppmD = TLength(opts.getParamR("PPM", instr.ppmD), TLength::EUnits::kMillimetres);
+      instr.sigmaInstrCentering = TLength(opts.getParamR("ICSE ", instr.sigmaInstrCentering));
 		
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, fSIMUActive ? NO_VALf :std::stor(tokens.at(1)));
@@ -895,7 +895,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 
 		instrument.defTarget  = opts.getParamS("TRGT", instrument.defTarget);
 
-		instrument.sigmaInstrCentering = opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering); //value given in mili-meters [mm], returned value in meters [m]
+      instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
 
 		if (opts.has("CST"))
 			orieROM.fConstantAngle.setGonsValue(opts.getParamR("CST"));	// Value in the input file given in GONs, store it
@@ -923,8 +923,8 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		TInstrumentData::TPOLAR::TTarget tgt(finstruments.getDevice(instrument.targets, instrument.defTarget));
 		
-		tgt.sigmaAngl = opts.getParamRcc2rad("OBSE",  tgt.sigmaAngl);
-		tgt.sigmaTargetCentering = opts.getParamRmm2m("TCSE",  tgt.sigmaTargetCentering);
+		tgt.sigmaAngl = TAngle(opts.getParamR("OBSE",  tgt.sigmaAngl), TAngle::EUnits::kCCs);
+		tgt.sigmaTargetCentering = TLength(opts.getParamR("TCSE",  tgt.sigmaTargetCentering), TLength::EUnits::kMillimetres);
 		
 		// set measurement value
 		TORIE orie(obspt,tgt);

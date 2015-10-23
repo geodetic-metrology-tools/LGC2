@@ -163,7 +163,7 @@ void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 
 		//write the sigma DIST
 		//Output sigmadist, Output value in meters [mm], stored in [m], lower the precision because it of the m2mm conversion
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaDist * LGC::M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaDist.getMMetresValue());
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getDistance() + ItUVD.getDistanceResidual());
@@ -484,7 +484,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItUvd.getDistance());
 		//get the sigma of dist component
-		(*stream).writeDouble(obsResWidth,lengthResPrecision, ItUvd.target.sigmaDist* LGC::M2MM);
+      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getDistanceResidual()* LGC::M2MM);
 

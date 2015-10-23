@@ -13,6 +13,7 @@
 #include "Defaults.h"
 #include "tree.h"
 #include "Quad.h"
+#include "TLength.h"
 
 
 #define assert3D(x) assert((x) >= 0 && (x) < 3)
