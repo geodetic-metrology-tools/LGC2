@@ -15,26 +15,49 @@
 */
 class TInstrumentData {
 	public:
-		struct TPOLAR {
+		class TPOLAR {
+		public:
+			TPOLAR(){}
+			TPOLAR(const TPOLAR& par)
+			{
+				*this = par;
+			}
+
+			TPOLAR& operator=(const TPOLAR& par)
+			{
+				ID = par.ID;
+				defTarget = par.defTarget;
+				instrHeight = par.instrHeight;
+				sigmaInstrHeight = par.sigmaInstrHeight;
+				sigmaInstrCentering = par.sigmaInstrCentering;
+				constAngle = par.constAngle;
+				for(auto const& target : par.targets)
+					targets.emplace(target);
+
+				return *this;
+			}
+
 			std::string ID;
 			std::string defTarget;
 			TLength instrHeight;          // [m]
-         TLength sigmaInstrHeight;     // [m]
-         TLength sigmaInstrCentering;  // [m]
+			TReal sigmaInstrHeight;     // [m]
+			TLength sigmaInstrCentering;  // [m]
 			TAngle constAngle;            // [rad]
-						
+
+					
 			struct TTarget {
+
 				std::string ID;
-            TAngle sigmaAngl;	            // [rad]
-            TAngle sigmaZenD;	            // [rad]
-            TLength sigmaDist;	         // [m]
-            TLength ppmDist;		         // [m]
+				TAngle sigmaAngl;	            // [rad]
+				TAngle sigmaZenD;	            // [rad]
+				TLength sigmaDist;	         // [m]
+				TLength ppmDist;		         // [m]
 				bool  distCorrectionUnknown;
-            TLength distCorrectionValue;  // [m]
-            TLength sigmaDCorr;           // [m]
-            TLength sigmaTargetCentering; // [m]
-            TLength targetHt;             // [m]
-            TLength sigmaTargetHt;        // [m]
+				TLength distCorrectionValue;  // [m]
+				TLength sigmaDCorr;           // [m]
+				TLength sigmaTargetCentering; // [m]
+				TLength targetHt;             // [m]
+				TLength sigmaTargetHt;        // [m]
 				TAdjustableScalar* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
 			};
 

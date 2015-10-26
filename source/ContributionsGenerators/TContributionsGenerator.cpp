@@ -159,7 +159,7 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(const TTSTN& station,
    TReal yTg = targetPos.getY().getMetresValue();
 
 	//Calculated measurement value
-	TAngle calcMeas = TAngle::aTan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst;  //ACST is the constant orientation of the instrument
+   TAngle calcMeas = TAngle::aTan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst;  //ACST is the constant orientation of the instrument
 
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
@@ -184,7 +184,7 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(const TTSTN& station,
 	addTransformationsContributions(tgLor2RootTrafo, angl.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(angl.target.sigmaAngl) + (1.0/pow2q(dist2)) * (pow2q(station.instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
+	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0/pow2q(dist2)) * (pow2q(station.instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
 
 	AnglMeasContrib  contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance};
 	return contrib;
@@ -257,7 +257,7 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(const TTSTN& station,
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
 	addTransformationsContributions(tgLor2RootTrafo, zend.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
-	TReal variance = pow2q(zend.target.sigmaZenD) + (((pow2q(dx) + pow2q(dy))*pow2q(dz))/(powq(distance3D,6)*pow2q(sinPhi))) * 
+	TReal variance = pow2q(zend.target.sigmaZenD.getRadiansValue()) + (((pow2q(dx) + pow2q(dy))*pow2q(dz))/(powq(distance3D,6)*pow2q(sinPhi))) * 
 					(pow2q(station.instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering)) +
 					 pow2q(-c) * (pow2q(station.instrument.sigmaInstrHeight) + pow2q(zend.target.sigmaTargetHt));
 
@@ -383,9 +383,9 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(const TTSTN& station, co
 
 	//Variance calcualtion
 	// ANGL
-	contrib.fObsVariance[0] = pow2q(plr3D.target.sigmaAngl) + (1.0/pow2q(dist2)) * (pow2q(station.instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering));
+	contrib.fObsVariance[0] = pow2q(plr3D.target.sigmaAngl.getRadiansValue()) + (1.0/pow2q(dist2)) * (pow2q(station.instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering));
 	// ZEND
-	contrib.fObsVariance[1] = pow2q(plr3D.target.sigmaZenD) + (((pow2q(dX) + pow2q(dY))*pow2q(dZ))/(powq(distance3D,6)*pow2q(sinPhi))) * 
+	contrib.fObsVariance[1] = pow2q(plr3D.target.sigmaZenD.getRadiansValue()) + (((pow2q(dX) + pow2q(dY))*pow2q(dZ))/(powq(distance3D,6)*pow2q(sinPhi))) * 
 					(pow2q(station.instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering)) +
 					 pow2q(-c) * (pow2q(station.instrument.sigmaInstrHeight) + pow2q(plr3D.target.sigmaTargetHt));
 	// DIST

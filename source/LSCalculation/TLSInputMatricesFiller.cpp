@@ -35,7 +35,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 		//If weight unknown matrix should be filled
 		if(fillWeightUnkn)
 			fillOK = fillOK && fillWeightUnkMtrx(projData, matrices);
-	
+
 		//Itteration through the nodes of the tree
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++){		
 

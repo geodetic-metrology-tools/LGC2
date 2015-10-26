@@ -484,8 +484,8 @@ namespace tut
 			ensure_equals(plrmeas.target.targetHt, 11);
 			ensure_equals(plrmeas.target.sigmaTargetHt, 12* MM2M);
 			ensure_equals(plrmeas.target.sigmaTargetCentering, 13* MM2M);
-			ensure_equals(plrmeas.target.sigmaAngl, 14 * CC2RAD);
-			ensure_equals(plrmeas.target.sigmaZenD, 15 * CC2RAD);
+			ensure_equals(plrmeas.target.sigmaAngl.getRadiansValue(), 14 * CC2RAD);
+			ensure_equals(plrmeas.target.sigmaZenD.getRadiansValue(), 15 * CC2RAD);
 			ensure_equals(plrmeas.target.sigmaDist, 16* MM2M);
 			ensure_equals(plrmeas.target.ppmDist, 17* MM2M);
 
@@ -512,7 +512,7 @@ namespace tut
 
 			const auto& angmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measANGL.back());
 			ensure_distance(angmeas.getAngle().getGonsValue(), 88.0, 1e-8);
-			ensure_equals(angmeas.target.sigmaAngl, 21 * CC2RAD);
+			ensure_equals(angmeas.target.sigmaAngl.getRadiansValue(), 21 * CC2RAD);
 			ensure_equals(angmeas.target.sigmaTargetCentering, 22 * MM2M);
 			//
 			// ZEND
@@ -522,7 +522,7 @@ namespace tut
 			ensure_equals("Target of this measurement taken from *ZEND",  ts1.roms.back().measZEND.back().target.ID, "PT8");
 			const auto& zendmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measZEND.back());
 			ensure_equals(zendmeas.targetPos->getName(), "P2");
-			ensure_equals(zendmeas.target.sigmaZenD, 31 * CC2RAD);
+			ensure_equals(zendmeas.target.sigmaZenD.getRadiansValue(), 31 * CC2RAD);
 			ensure_equals(zendmeas.target.targetHt, 32);
 			ensure_equals(zendmeas.target.sigmaTargetHt, 33 * MM2M);
 			ensure_equals(zendmeas.target.sigmaTargetCentering, 34 * MM2M);
@@ -568,7 +568,7 @@ namespace tut
 			ecth.parse(TReader::tokenizeLGCfileString("P2 0.9"),-1);
 			const auto& ecthmeas3(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
 			ensure_equals("This takes current instrument from previous",ecthmeas3.scaleInstr.ID, "SC2");
-			ensure_equals("Has default values", ecthmeas3.scaleInstr.sigmaInstrCentering, 5 * MM2M);
+			ensure_equals("Has default values", ecthmeas3.scaleInstr.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
 			// DHOR
 			TKeyDHOR dhor(proj);
@@ -615,7 +615,7 @@ namespace tut
 			dspt.parse(TReader::tokenizeLGCfileString( "*DSPT P1 DM1 IH 60 IHSE 61 ICSE 62"), -1);
 			dspt.parse(TReader::tokenizeLGCfileString( "P2 63 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), -1);
 			ensure_equals("Instrument height updated DSPT",proj.getCurrentNode().measurements.fEDM.back().instrument.instrHeight , 60.0);
-         ensure_equals("Instrument height updated DSPT", proj.getCurrentNode().measurements.fEDM.back().instrumentPos->getProvisionalValue().getX().getMetresValue(), 1.0);
+			ensure_equals("Instrument height updated DSPT", proj.getCurrentNode().measurements.fEDM.back().instrumentPos->getProvisionalValue().getX().getMetresValue(), 1.0);
 
 
 			ensure_equals("DPST default target from instrument section",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET1");
@@ -645,7 +645,7 @@ namespace tut
 			dver.parse(TReader::tokenizeLGCfileString( "*DVER"), -1);
 			dver.parse(TReader::tokenizeLGCfileString( "P2 P3 2.0 OBSE 0.01"), -1);
 			const auto& dverM(proj.getCurrentNode().measurements.fDVER.back());
-         ensure_equals("Point coordinates should match", dverM.station->getProvisionalValue().getX().getMetresValue(), 1);
+			ensure_equals("Point coordinates should match", dverM.station->getProvisionalValue().getX().getMetresValue(), 1);
 			ensure_equals("Point coordinates should match", dverM.targetPos->getProvisionalValue().getX().getMetresValue(),1);
 			ensure_equals("Point coordinates should match", dverM.getObservedStDev(), 0.01 * MM2M);
 
@@ -661,7 +661,7 @@ namespace tut
 			ensure_equals("Instrument ID should match", levelRound.instrument.ID,"LI1");
 			ensure_equals("Default staff ID should match", levelRound.instrument.defStaffID,"ST2");
 			ensure_equals("Reference point given, plane should be initialized", levelRound.fMeasuredPlane->isInitialized(),true);
-         ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue().getMetresValue(), 0.0);
+			ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue().getMetresValue(), 0.0);
 
 			auto& firstDLEVMeasurement(levelRound.measDLEV[0]);
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement.targetPos->getName(),"P1");
@@ -673,7 +673,7 @@ namespace tut
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(),"P3");
 			ensure_equals("Measured vertical distance should match", firstDLEVMeasurement2.getDistance(),6);
 			ensure_equals("Target should be overidden", firstDLEVMeasurement2.target.ID,"ST2");
-			ensure_equals("Target's ppm value should be default", firstDLEVMeasurement2.target.ppmD, 2.0 * MM2M);
+			ensure_equals("Target's ppm value should be default", firstDLEVMeasurement2.target.ppmD, 1e-8, 2.0 * MM2M);
 
 			dlev.parse(TReader::tokenizeLGCfileString( "*DLEV LI1"), -1);
 			const auto& levelRound2(proj.getCurrentNode().measurements.fLEVEL.back());

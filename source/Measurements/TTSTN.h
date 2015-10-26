@@ -86,7 +86,7 @@ struct TTSTN {
 
 
 		/// The instrument that is used on this station
-		TInstrumentData::TPOLAR     instrument;
+		TInstrumentData::TPOLAR instrument;
 
 		/// The point on which the instrument resides
 		const TAdjustablePoint* instrumentPos; 
@@ -123,7 +123,8 @@ struct TTSTN {
 			instrumentHeightAdjustable(nullptr),
 			rotX(nullptr),
 			rotY(nullptr)
-			{}
+
+		{}
 	};
 
 #endif

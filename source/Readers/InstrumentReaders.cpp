@@ -37,14 +37,13 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
 		auto& polInstruments(finstruments.fPOLAR);
 		checkInstrument(8, polInstruments, tokens);
 
-		const TInstrumentData::TPOLAR p = {
-						 tokens.at(2),
-						 tokens.at(3),
-                   TLength(std::stor(tokens.at(4))),
-                   TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres), //conversion from mili-metres to metres
-                   TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres), //conversion from mili-metres to metres
-                   TAngle(std::stor(tokens[7]), TAngle::EUnits::kGons)//conversion from gons to rads
-		};
+		TInstrumentData::TPOLAR p;
+		p.ID = tokens.at(2);
+		p.defTarget = tokens.at(3);
+		p.instrHeight = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
+		p.sigmaInstrHeight = TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres);
+		p.sigmaInstrCentering =  TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres);
+		p.constAngle = TAngle(std::stor(tokens[7]), TAngle::EUnits::kGons);
 
 		// store the new station
 		polInstruments.insert(std::make_pair(tokens.at(2), p));
@@ -62,10 +61,10 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
                    TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
                    TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
                    std::stor(tokens[5]) != 0.0,
-                   TLength(std::stor(tokens[6])),
+				   TLength(std::stor(tokens[6]), TLength::EUnits::kMetres),
                    TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
                    TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
-                   TLength(std::stor(tokens[9])),
+				   TLength(std::stor(tokens[9]), TLength::EUnits::kMetres),
                    TLength(std::stor(tokens[10]), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
 		};
 
@@ -159,7 +158,7 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
 		const TInstrumentData::TEDM e = {
 				      tokens.at(2),
 				      tokens.at(3),
-                  TLength(std::stor(tokens.at(4))),
+                  TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres),
                   TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
                   TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres)
 		};
@@ -178,10 +177,10 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
                   TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
                   TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
                   std::stoi(tokens.at(3)) != 0,
-                  TLength(stor(tokens.at(4))),
+                  TLength(stor(tokens.at(4)), TLength::EUnits::kMetres),
                   TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
                   TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
-                  TLength(std::stor(tokens[7])),
+                  TLength(std::stor(tokens[7]), TLength::EUnits::kMetres),
                   TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres),
 		};
 	
@@ -238,9 +237,9 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, int){
 			          tokens.at(0),
 			TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
          TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
-         TLength(std::stor(tokens.at(3))),
+         TLength(std::stor(tokens.at(3)), TLength::EUnits::kMetres),
          TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
-         TLength(std::stor(tokens[5])),
+         TLength(std::stor(tokens[5]), TLength::EUnits::kMetres),
          TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
 		};
 
@@ -274,7 +273,7 @@ void TKeySCALE::parse(const std::vector<std::string>& tokens, int) {
 					tokens.at(2),
                TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
                TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
-               TLength(std::stor(tokens[5])),
+               TLength(std::stor(tokens[5]), TLength::EUnits::kMetres),
                TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
                TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres)
 	};

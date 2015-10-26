@@ -43,6 +43,8 @@ bool	TLSSolutionCalculator::iterate2Solution(TLGCData& data, int fMaxIterations,
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr.get());
 
+		inputMtr->saveMatricesToFile(fNumberOfIterations);
+
 		if (fillOK)
 		{
 			// compute solution 
