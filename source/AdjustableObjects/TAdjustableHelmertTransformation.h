@@ -15,12 +15,16 @@
 class TAdjustableHelmertTransformation : public TVAdjustableObject { 
 	public:
 
-		TAdjustableHelmertTransformation();
 
 		/*!@name Construction */
 		//@{	
 			/*!
-				\brief Creates an adjustable transfromation based on the TransformParameters structure. 
+				\brief Creates an adjustable transformation based on the TransformParameters structure.
+			*/
+			TAdjustableHelmertTransformation();
+
+			/*!
+				\brief Creates an adjustable transformation based on the TransformParameters structure. 
 
 				\param[in] transfParam A reference to the transformation parameters that will be adjusted. The object will be copied so the poited-to object is no longer needed after construction.
 				\param[in] fixedTranslations Bitset telling if the particular translation is fixed or variable.
@@ -32,7 +36,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 
 
 			/*!
-				\brief Creates an adjustable identity transfromation. setParam() method should be use to set-up provisional values after the construction.
+				\brief Creates an adjustable identity transformation. setParam() method should be use to set-up provisional values after the construction.
 
 				\param[in] fixedTranslations Bitset telling if the particular translation is fixed or variable.
 				\param[in] fixedRotations    Bitset telling if the particular rotation is fixed or variable.
