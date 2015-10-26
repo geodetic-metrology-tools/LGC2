@@ -87,20 +87,20 @@ const TLength& TAdjustableHelmertTransformation::getTranslationStandDev(int d) c
 
 const TAngle& TAdjustableHelmertTransformation::getRotationStandDev(int d) const{
 	assert3D(d);
-	if(fRotStandDev[d].getGonsValue()!=NO_VALf)
+	if(!fRotStandDev[d].isNull())
 		return fRotStandDev[d];
 	throw std::runtime_error("Standard deviations of the rotation's component not assigned");
 }
 
 TReal TAdjustableHelmertTransformation::getScaleStandDev()const{
-	if(isnan(fScaleStandDev))
+	if(!isnan(fScaleStandDev))
       throw std::runtime_error("Standard deviations of the scale not assigned");
 	return fScaleStandDev;
 }
 
 bool TAdjustableHelmertTransformation::hasRotationStandDev(int d) const{
 	assert3D(d);
-	return fRotStandDev[d].getGonsValue()!=NO_VALf;
+	return !fRotStandDev[d].isNull();
 }
 
 bool TAdjustableHelmertTransformation::hasTranslStandDev(int d)const{
@@ -113,8 +113,8 @@ bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
 }
 
 bool TAdjustableHelmertTransformation::hasStandDev(){
-	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || fRotStandDev[0].getGonsValue()!=NO_VALf || fRotStandDev[1].getGonsValue()!=NO_VALf
-      || fRotStandDev[2].getGonsValue()!=NO_VALf || !isnan(fScaleStandDev));
+	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || !fRotStandDev[0].isNull() || !fRotStandDev[1].isNull()
+      || !fRotStandDev[2].isNull() || !isnan(fScaleStandDev));
 }
 
 void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {

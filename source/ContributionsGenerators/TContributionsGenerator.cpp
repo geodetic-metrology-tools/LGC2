@@ -13,7 +13,7 @@
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////
 TContributionsGenerator::TContributionsGenerator(const TDataTree* tree, const TRefSystemFactory::ERefFrame& refFrame): fTree(tree), fRefFrame(refFrame),
-fMLAused(false),fCGRFused(false), fIsSphere(false)
+fMLAused(false),fCGRFused(false), fIsSphere(false), fccs2cgrf()
 {
 	fLastStationPtName = ""; //No point can have empty name
 
