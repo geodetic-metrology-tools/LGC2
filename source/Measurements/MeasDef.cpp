@@ -10,10 +10,10 @@ TPLR3D::TPLR3D(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt
 TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt): 
 				TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt) {}
 
-TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TReal v) : 
+TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v) :
 				TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v) {}
 
-TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TReal v) :
+TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v) :
 				TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(pos, tgt, v), dhorSigma(NO_VALf) {}
 
 ///////////////////////////////////////////////////////////
@@ -32,14 +32,14 @@ TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE sca
 ///////////////////////////////////////////////////////////
 //////Levelling measurements
 ///////////////////////////////////////////////////////////
-TDVER::TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TReal obsVal) : 
+TDVER::TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TLength obsVal) :
 	TAScalarMeas<int>(target, 0, obsVal),
 	station(&station),
 	fSigmaObsVal(0.0001), /*0.1 mm*/
 	fDistanceCorrection(0.0)
 	{}
 
-TDLEV::TDLEV(const TAdjustablePoint& targetPos, TInstrumentData::TLEVEL::TTarget target, TReal measValue) :
+TDLEV::TDLEV(const TAdjustablePoint& targetPos, TInstrumentData::TLEVEL::TTarget target, TLength measValue) :
 			TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(targetPos, target, measValue),
 			dhor(nullptr)
 	{}

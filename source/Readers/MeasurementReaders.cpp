@@ -250,7 +250,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 										 "Given vector is not a unit vector.");
 
 			uvd.setVectorMeasurement(vectorMeasurement);
-			uvd.setDistance(std::stor(tokens.at(4)));
+			uvd.setDistance(TLength(std::stor(tokens.at(4))));
 		}
 
 		proj.setCombinedCaseCalcUsed();
@@ -345,7 +345,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive) { //Store value if it is not a simulation
 			plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons),kANGL);
 			plr.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons),kZEND);
-			plr.setDistance(std::stor(tokens.at(3)));
+			plr.setDistance(TLength(std::stor(tokens.at(3))));
 		}
 		//Ad this PLR3D measurement to TSTN's ROM 
 		getROM().measPLR3D.emplace_back(plr);
@@ -494,7 +494,7 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		getROM().measDIST.emplace_back(
-			TLINE(obspt, tgt, fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))
+         TLINE(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
 		);
 
 		//get a reference to the inserted measurement
@@ -600,7 +600,7 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store the measured value
 		getROM().measDHOR.emplace_back(
-			TLINE(obspt, tgt, fSIMUActive ?  NO_VALf : std::stor(tokens.at(1)))
+         TLINE(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
 		);
 
 		//get a reference to the inserted measurement
@@ -676,7 +676,7 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
-			TDSPT(obspt, tgt, fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))
+         TDSPT(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
 		);
 
 		//get a reference to the inserted measurement
@@ -712,13 +712,13 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fDVER.emplace_back(
-			TDVER(fpoints.getObject(tokens.at(0)), fpoints.getObject(tokens.at(1)), fSIMUActive ? NO_VALf : std::stor(tokens.at(2)))
+         TDVER(fpoints.getObject(tokens.at(0)), fpoints.getObject(tokens.at(1)), TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))))
 			);
 
 		auto& dver(proj.getCurrentNode().measurements.fDVER.back());
 
-		dver.setObservedStDev(opts.getParamRmm2m("OBSE", proj.getCurrentNode().measurements.fDVER.back().getObservedStDev()));
-		dver.setDistanceCorrection(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection()));
+      dver.setObservedStDev(TLength(opts.getParamRmm2m("OBSE", proj.getCurrentNode().measurements.fDVER.back().getObservedStDev())));
+      dver.setDistanceCorrection(TLength(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection())));
 
 		dver.line = line;
 		//If last token starts with a comment character, store it as a end of line comment
@@ -784,21 +784,21 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
       tgt.sigmaStaffHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaStaffHt));
 
 		// Store  the dlev measured value
-		TDLEV dlev(tgtfPoint, tgt,  fSIMUActive ? NO_VALf :std::stor(tokens.at(1)));
+      TDLEV dlev(tgtfPoint, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
 
 		// Store  the dhor measured value if keyword is used
 		if (opts.has("DHOR"))
 		{
 			if(fSIMUActive)
-				dlev.dhor = std::make_shared<TDLEV::TDHOR> (TDLEV::TDHOR(tgtfPoint, tgt, NO_VALf));
+            dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(NO_VALf)));
 			else
-				 //If horizontal distance is given, DHOR measurement is introduced.
-			    dlev.dhor = std::make_shared<TDLEV::TDHOR> (TDLEV::TDHOR(tgtfPoint, tgt, opts.getParamR("DHOR",  NO_VALf)));
+			   //If horizontal distance is given, DHOR measurement is introduced.
+            dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(opts.getParamR("DHOR", NO_VALf))));
 
 			dlev.dhor->line = line;
 			TReal horDistSigma  = opts.getParamRmm2m("DSE",  NO_VALf);
 			if(!isnan(horDistSigma))
-				dlev.dhor->setDHORSigma(horDistSigma);
+            dlev.dhor->setDHORSigma(TLength(horDistSigma));
 			else
 				throw std::runtime_error("If DHOR distance is provided, standard deviation (DSE) needs to be assigned!");
 
@@ -836,7 +836,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 		TECHOROM echoRom(fplanes.back());
 
 		echoRom.line = line;
-
+      
 		proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement
 
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
@@ -859,7 +859,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
       instr.sigmaInstrCentering = TLength(opts.getParamR("ICSE ", instr.sigmaInstrCentering));
 		
 		// Store  the measured value
-		TECHO echo(stationPoint, instr, fSIMUActive ? NO_VALf :std::stor(tokens.at(1)));
+      TECHO echo(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
 		echo.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		echo.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 

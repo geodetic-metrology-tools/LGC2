@@ -149,7 +149,7 @@ class TLOR2LOR{
 		inline TTransformation* getTransformation() {return &transfo;};
 
 		/// Returns Total number of transformations on the path.
-		inline int getNumberOfTransformations(){return transformationChain.size();}
+		inline int getNumberOfTransformations(){return int(transformationChain.size());}
 
 		/// Returns Returns the transformation chain of the transformation, containing also the adjustable information.
 		inline const std::vector<TransformAndParams>& getTransformationChain() const{return transformationChain;}

@@ -141,7 +141,7 @@ void TLSResultsMatricesExtractor::extractAngleObs(const TLSResultsMatrices& rm, 
 void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget>& distanceMeas){
 	MatrixIndex i = distanceMeas.getFirstObservationIndex();
 	if ( i < rm.getResidualsVctr()->size() ) 
-		distanceMeas.setDistanceResidual(rm.getResidualsVctrElmt(i));
+		distanceMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(i)));
 	else
 		throw std::runtime_error("Distance observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
@@ -149,7 +149,7 @@ void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices& rm, T
 void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TEDM::TTarget>& distanceMeas){
 	MatrixIndex i = distanceMeas.getFirstObservationIndex();
 	if ( i < rm.getResidualsVctr()->size() ) 
-		distanceMeas.setDistanceResidual(rm.getResidualsVctrElmt(i));
+      distanceMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(i)));
 	else
 		throw std::runtime_error("Distance observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
@@ -173,7 +173,7 @@ void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, 
 
 	MatrixIndex DISTidx = plr3DMeas.getFirstObservationIndex() + 2;
 	if ( DISTidx < rm.getResidualsVctr()->size() ) 
-		plr3DMeas.setDistanceResidual(rm.getResidualsVctrElmt(DISTidx));
+      plr3DMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(DISTidx)));
 	else
 		throw std::runtime_error("PLR3D observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
@@ -193,7 +193,7 @@ void TLSResultsMatricesExtractor::extractUVDObs(const TLSResultsMatrices& rm, TU
 
 	MatrixIndex sDistIDX = uvdMeas.getFirstObservationIndex() + 2;
 	if ( sDistIDX < rm.getResidualsVctr()->size() ) 
-		uvdMeas.setDistanceResidual(rm.getResidualsVctrElmt(sDistIDX));
+		uvdMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(sDistIDX)));
 	else
 		throw std::runtime_error("UVD observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
@@ -218,14 +218,14 @@ void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices& rm, 
 	for(auto itDLEV(levelMeas.measDLEV.begin()); itDLEV != levelMeas.measDLEV.end(); ++itDLEV){
 		MatrixIndex obsUidx = itDLEV->getFirstObservationIndex();
 		if ( obsUidx < rm.getResidualsVctr()->size() ) 
-			itDLEV->setDistanceResidual(rm.getResidualsVctrElmt(obsUidx));
+         itDLEV->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 			throw std::runtime_error("DHOR observation under DLEV, problem during extraction residuals: observation index exceeds matrix dimensions");
 
 		if(itDLEV->dhor){ //If it is not nullptr
 			obsUidx = itDLEV->dhor->getFirstObservationIndex();
 			if ( obsUidx < rm.getResidualsVctr()->size() ) 
-				itDLEV->dhor->setDistanceResidual(rm.getResidualsVctrElmt(obsUidx));
+            itDLEV->dhor->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 			else
 				throw std::runtime_error("DLEV observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 		}
@@ -237,7 +237,7 @@ void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm
 	for(auto itECHO(levelMeas.measECHO.begin()); itECHO != levelMeas.measECHO.end(); ++itECHO){
 		MatrixIndex obsUidx = itECHO->getFirstObservationIndex();
 		if ( obsUidx < rm.getResidualsVctr()->size() ) 
-			itECHO->setDistanceResidual(rm.getResidualsVctrElmt(obsUidx));
+         itECHO->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 			throw std::runtime_error("ECHO observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
@@ -247,7 +247,7 @@ void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, s
 	for(auto itDVER(dver.begin()); itDVER != dver.end(); ++itDVER){
 		MatrixIndex obsUidx = itDVER->getFirstObservationIndex();
 		if ( obsUidx < rm.getResidualsVctr()->size() ) 
-			itDVER->setDistanceResidual(rm.getResidualsVctrElmt(obsUidx));
+         itDVER->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 			throw std::runtime_error("ECHO observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}

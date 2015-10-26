@@ -113,12 +113,12 @@ class TAScalarMeas : public TAMeas<TTarget>
 {
 	protected:
 		/// Typed container of real valued (distance) measurements.
-		std::array<TReal, numDistances> distances; 
+		std::array<TLength, numDistances> distances; 
 		/// Typed container of angle valued measurements.
 		std::array<TAngle, numAngles> angles;
 			
 		/// Typed container of real valued measurement residuals. Stored in meters [m].
-		std::array<TReal, numDistances> distancesResiduals;
+      std::array<TLength, numDistances> distancesResiduals;
 		/// Typed container of angle valued measurements residuals.
 		std::array<TAngle, numAngles> anglesResiduals; 
 
@@ -133,7 +133,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			TAMeas<TTarget>(targetPos, tgt)
 		{
 			for (int i = 0; i < numDistances; i++)
-				distances[i] = NO_VALf;
+				distances[i] = TLength();
 		}
 
 		/*!
@@ -143,7 +143,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			\param tgt The observed target. A copy of the target is made to store it.
 			\param value The measured value.
 		*/
-		TAScalarMeas(const TAdjustablePoint& targetPos, TTarget tgt, TReal value) :
+      TAScalarMeas(const TAdjustablePoint& targetPos, TTarget tgt, TLength value) :
 			TAMeas<TTarget>(targetPos, tgt)
 		{
 			static_assert(numDistances==1, "This works only for single distance values.");
@@ -178,7 +178,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 		/*!@name Setting methods */
 		//@{
 			/// Sets a distance value
-			void setDistance(TReal v, TEnumDistance id=kValue) {
+			void setDistance(TLength v, TEnumDistance id=kValue) {
 				distances[id] = v;
 			}
 
@@ -189,7 +189,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 			/// Sets a residual of observed distance
-			void setDistanceResidual(TReal v, TEnumDistance id=kValue) {
+         void setDistanceResidual(TLength v, TEnumDistance id = kValue) {
 				distancesResiduals[id] = v;
 			}
 

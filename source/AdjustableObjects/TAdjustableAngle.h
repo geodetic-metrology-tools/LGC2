@@ -35,10 +35,10 @@ public:
 		inline const TAngle&	getCorrection() const {	return fCorrection;}
 
 		/// Returns a constant reference on the estimated value of the angle. 
-		inline const TAngle&	getEstimatedValue() const {	return fEstimatedValue;}
+		inline const TAngle&	getEstimatedValue() const { return fEstimatedValue;}
 			
 		/// Returns a constant reference on the estimated precision of the angle. 
-		inline const TAngle&	getEstimatedPrecision() const {	return fEstimatedPrecision;}
+		inline const TAngle&	getEstimatedPrecision() const { return fEstimatedPrecision;}
 
 
 		/*!

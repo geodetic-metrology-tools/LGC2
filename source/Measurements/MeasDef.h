@@ -85,7 +85,7 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 		TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt);
 
 		/// See TAScalarMeas , is initialized with a single value
-		TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TReal v);
+      TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v);
 
 		/// Returns the last LS-matrices equation index of this measurement
 		inline MatrixIndex getLastEquationIndex(){return getFirstEquationIndex();}
@@ -148,7 +148,7 @@ class TECTH /*: public TAScalarMeas< ... >*/
 			inline void setFirstObservationIndex(MatrixIndex fObsIdx){fFirstEquationIndex = fObsIdx;}
 
 			///Sets the residual of the measured offset value
-			inline void setMeasuredValueResidual(TReal resVal){residualOffset = resVal;}
+         inline void setMeasuredValueResidual(TLength resVal){ residualOffset = resVal; }
 		//@}
 
 	private:
@@ -159,10 +159,10 @@ class TECTH /*: public TAScalarMeas< ... >*/
 		MatrixIndex fFirstObservationIndex;
 
 		///Measured offset value
-		TReal measuredOffset;
+		TLength measuredOffset;
 
 		///Residual of the measured value
-		TReal residualOffset;		
+      TLength residualOffset;
 };
 ///////////////////////////////////////////////////////////////////////////
 // TEDM 
@@ -177,7 +177,7 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 		//@{
 			TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt) : 
 				TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt) {}
-			TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt, TReal v) : 
+         TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt, TLength v) :
 				TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v) {}
 		//@}
 
@@ -198,7 +198,7 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 		//@{
 			TECHO(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr) : 
 				TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
-			TECHO(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TReal v) : 
+         TECHO(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
 				TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 		//@}
 
@@ -227,7 +227,7 @@ class TDVER  : public TAScalarMeas<int>{
 
 	/*!@name Constructors */
 	//@{
-		TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TReal obsVal);
+      TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TLength obsVal);
 	//@}
 
 	/*!@name Access methods*/
@@ -245,17 +245,17 @@ class TDVER  : public TAScalarMeas<int>{
 	/*!@name Settings */
 	//@{
 		/// Returns the observed value.*/
-		inline void setDistanceCorrection(TReal distCorr) {fDistanceCorrection = distCorr;}
+      inline void setDistanceCorrection(TLength distCorr) { fDistanceCorrection = distCorr; }
 
 		/// Sets standard deviation of the observed value
-		inline void setObservedStDev(TReal stDev){ fSigmaObsVal = stDev;}
+      inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
 	//@}
 
 	private:
 		// The distance correction
-		TReal fDistanceCorrection;
+      TLength fDistanceCorrection;
 		// Standard deviation of the observed value
-		TReal fSigmaObsVal;
+		TLength fSigmaObsVal;
 };
 
 /*! 
@@ -269,7 +269,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 			public:
 
 				/// See TAScalarMeas , is initialized with a single value
-				TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TReal v);
+            TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v);
 
 				~TDHOR(){}
 
@@ -280,18 +280,18 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				inline TReal getDHORSigma() const{return dhorSigma;}
 
 				/// Stes DHOR sigma
-				inline void setDHORSigma(TReal sigma){dhorSigma = sigma;}
+            inline void setDHORSigma(TLength sigma){ dhorSigma = sigma; }
 
 			private:
 				/*Optinal horizontal distance sigma which can be assigned to a DHOR measurement inside DLEV.*/
-				TReal dhorSigma;
+				TLength dhorSigma;
 		};
 
 		virtual ~TDLEV(){}
 
 		/*!@name Constructor*/
 		//@{
-			TDLEV(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget target, TReal measValue);
+      TDLEV(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget target, TLength measValue);
 		//@}
 
 		/*!@name Access methods*/
@@ -310,8 +310,8 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 	\brief  Gyro-Theodolite Azimuth (ORIE), also used for PDOR, which is also an ORIE measurement.
 */
 class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget, 
-			                ENoValues, 0,
-							ESingleValue, 1> 
+			                         ENoValues, 0,
+							             ESingleValue, 1> 
 {
 	public:
 		/*!@name Constructor*/

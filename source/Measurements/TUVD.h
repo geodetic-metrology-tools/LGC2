@@ -23,22 +23,22 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 		inline MatrixIndex getLastObservationIndex() {return getFirstObservationIndex() + 2;}
 
 		/// Sets the new distance 
-		void setDistance(TReal dist) {sdist = dist;}
+      void setDistance(TLength dist) { sdist = dist; }
+
+      /// Sets the distance residual 
+      void setDistanceResidual(TLength sDistRes) { sdistResidual = sDistRes; }
 
 		/// Returns the measured distance 
-		TReal getDistance() const {return sdist;}
+      TLength getDistance() const { return sdist; }
 
 		/// Returns the distance residual 
-		TReal getDistanceResidual() const {return sdistResidual;}
-
-		/// Sets the distance residual 
-		void setDistanceResidual(TReal sDistRes) {sdistResidual = sDistRes;}
+      TLength getDistanceResidual() const { return sdistResidual; }
 
 	private:
 		// distance of the target
-		TReal sdist;
+      TLength sdist;
 
 		// distance residual of the target
-		TReal sdistResidual;
+      TLength sdistResidual;
 };
 #endif
