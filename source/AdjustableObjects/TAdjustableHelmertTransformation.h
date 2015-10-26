@@ -15,6 +15,8 @@
 class TAdjustableHelmertTransformation : public TVAdjustableObject { 
 	public:
 
+		TAdjustableHelmertTransformation();
+
 		/*!@name Construction */
 		//@{	
 			/*!

@@ -1,6 +1,17 @@
 #include "TAdjustableHelmertTransformation.h"
 #include "Global.h"
 
+TAdjustableHelmertTransformation::TAdjustableHelmertTransformation() {
+	
+	fixedTranslations = bitset<3>();
+	fixedRotations = bitset<3>();
+	fixedScale = bitset<1>();
+	name = "";
+
+	setDefaults();
+	setDefaultsParams();
+}
+
 TAdjustableHelmertTransformation::TAdjustableHelmertTransformation(const std::bitset<3>& fixedTranslations, const std::bitset<3>& fixedRotations, const std::bitset<1>& fixedScale, const string& name) :
 	fixedTranslations(fixedTranslations),
 	fixedRotations(fixedRotations),
@@ -8,8 +19,8 @@ TAdjustableHelmertTransformation::TAdjustableHelmertTransformation(const std::bi
 	name(name)
 {	
 	setDefaults();
+	setDefaultsParams();
 }
-
 
 TAdjustableHelmertTransformation::TAdjustableHelmertTransformation(const TransformParameters& transfParam, const std::bitset<3>& fixedTranslations, const std::bitset<3>& fixedRotations, const std::bitset<1>& fixedScale, const string& name) :
 	fixedTranslations(fixedTranslations),
@@ -292,6 +303,11 @@ void TAdjustableHelmertTransformation::setScaleStandDev(TReal stDev){
 
 
 void TAdjustableHelmertTransformation::setDefaults(){
+
+		fRotStandDev[0] = fRotStandDev[1] = fRotStandDev[2] = TAngle();
+		fTransStandDev[0] = fTransStandDev[1] = fTransStandDev[2] = TLength(); 
+		fScaleStandDev = NO_VALf;
+
 		uidx_rot[0] = -1;
 		uidx_rot[1] = -1;
 		uidx_rot[2] = -1;
