@@ -20,7 +20,6 @@ set(MEASUREMENTS_HEADERS
 	TLGCObsSummary.h
 	MeasDef.h
 	RoundOfMeasurements.h
-	QuantileFunctions.h
 )
 
 set(MEASUREMENTS_SOURCES
@@ -31,7 +30,6 @@ set(MEASUREMENTS_SOURCES
 	TLEVEL.cpp
 	TEDM.cpp
 	RoundOfMeasurements.cpp
-	QuantileFunctions.cpp
 )
 
 add_library(Measurements STATIC ${MEASUREMENTS_HEADERS} ${MEASUREMENTS_SOURCES} )
