@@ -19,13 +19,10 @@ int main( int argc,  char *argv[]){
 	std::string inputFilePath;
 	std::string outputFilePath;
 
-	bool optionUsed = false;
-
 	for (int i=0 ; i<argc ; i++)
 	{
 		if(argv[i][0] == '-')
 		{
-			int retVal = 0;
 			switch (argv[i][1])
 			{
 				// run command line interface

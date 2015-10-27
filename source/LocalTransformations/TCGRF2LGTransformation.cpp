@@ -127,7 +127,6 @@ void  TCGRF2LGTransformation::initialiseSphere()
 
 	//Transform from geodetic cartesian coordinates to a geodetic ellipsoidal coordinates using non-iterative algorithm
 	TReal lambdaLGO = atan(fOriginY/fOriginX);
-	TReal eDashSquared = 0.0;
 	TReal phiLGO = atan(fOriginZ/XYdistance);
 
 	TReal sinLambdaL = sin(lambdaLGO);

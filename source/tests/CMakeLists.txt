@@ -24,7 +24,6 @@ set(tests_SOURCES
 	testCAM.cpp
 	testNonTSTNmeas.cpp
 	testMixingObservation.cpp
-	testMathis.cpp
 	testAppExecution.cpp
 	main.cpp
 	simulationTests.cpp

@@ -608,57 +608,60 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos)
 {   
 	TAStreamFormatter*	stream = getStream();
-		int					nameWidth = getNameWidth();
-		int					obsWidth = getObsWidth();
-		int					obsResWidth = getObsResWidth();
-		int					anglePrecision = getAnglePrecision();
-		int					lengthResidualPrecision = getLengthResidualPrecision();
-		int					lengthPrecision =	getLengthPrecision();
-		string				separator = getSeparator();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					lengthResidualPrecision = getLengthResidualPrecision();
+	int					lengthPrecision =	getLengthPrecision();
+	string				separator = getSeparator();
+
+
+	writeECTHResultsHeader(measECTH.size());
 
 	//For each DHOR measurement of the station
-		for(auto const& ItECTH : measECTH)
-		{
+	for(auto const& ItECTH : measECTH)
+	{
 
-			//write plane (station + azimut)
-			(*stream).writeStringLeft(nameWidth, instrPos->getName());
-			stream->setAngleUnits(TAngle::kGons);
-			stream->setWidthFormat(obsWidth);
-			stream->setPrecisionFormat(anglePrecision);
-			(*stream)<< ItECTH.obsHorAngle.getGonsValue() <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
+		//write plane (station + azimut)
+		(*stream).writeStringLeft(nameWidth, instrPos->getName());
+		stream->setAngleUnits(TAngle::kGons);
+		stream->setWidthFormat(obsWidth);
+		stream->setPrecisionFormat(anglePrecision);
+		(*stream)<< ItECTH.obsHorAngle.getGonsValue() <<(separator);	//We ge TAngle not TAngle can not format... At least make it TAngle to apply width fromat and precision format....
 
 
-			//write Point
-			(*stream).writeStringLeft(nameWidth, ItECTH.stationedPoint->getName());
+		//write Point
+		(*stream).writeStringLeft(nameWidth, ItECTH.stationedPoint->getName());
 
-			//write the observed offset
-			stream->setLengthUnits(TLength::kMetres);
-			stream->setWidthFormat(obsWidth);
-			stream->setPrecisionFormat(lengthPrecision);
-			(*stream)<<ItECTH.getMeasuredOffsetValue()<<(separator);
-			//write the sigma
-			stream->setLengthUnits(TLength::kMillimetres);
-			stream->setWidthFormat(obsResWidth);
-			stream->setPrecisionFormat(lengthResidualPrecision);
-         (*stream) << ItECTH.scaleInstr.sigmaD.getMMetresValue() << (separator);
+		//write the observed offset
+		stream->setLengthUnits(TLength::kMetres);
+		stream->setWidthFormat(obsWidth);
+		stream->setPrecisionFormat(lengthPrecision);
+		(*stream)<<ItECTH.getMeasuredOffsetValue()<<(separator);
+		//write the sigma
+		stream->setLengthUnits(TLength::kMillimetres);
+		stream->setWidthFormat(obsResWidth);
+		stream->setPrecisionFormat(lengthResidualPrecision);
+        (*stream) << ItECTH.scaleInstr.sigmaD.getMMetresValue() << (separator);
 
-			//write the estimated offset
-			stream->setLengthUnits(TLength::kMetres);
-			stream->setWidthFormat(obsWidth);
-			stream->setPrecisionFormat(lengthPrecision);
-			(*stream)<<(ItECTH.getMeasuredOffsetValue()+ItECTH.getMeasuredValueResidual())<<(separator);
-			
-			//write the offset (mm) after calculation
-			stream->setWidthFormat(obsResWidth);
-			stream->setLengthUnits(TLength::kMillimetres);
-			stream->setPrecisionFormat(lengthResidualPrecision);
-			(*stream)<<ItECTH.getMeasuredValueResidual()*M2MM<<(separator);
+		//write the estimated offset
+		stream->setLengthUnits(TLength::kMetres);
+		stream->setWidthFormat(obsWidth);
+		stream->setPrecisionFormat(lengthPrecision);
+		(*stream)<<(ItECTH.getMeasuredOffsetValue()+ItECTH.getMeasuredValueResidual())<<(separator);
+		
+		//write the offset (mm) after calculation
+		stream->setWidthFormat(obsResWidth);
+		stream->setLengthUnits(TLength::kMillimetres);
+		stream->setPrecisionFormat(lengthResidualPrecision);
+		(*stream)<<ItECTH.getMeasuredValueResidual()*M2MM<<(separator);
 
-			//write the offset / sigma (TDouble (MM))
-			stream->setPrecisionFormat(2);
-			(*stream)<<(ItECTH.getMeasuredValueResidual()/ItECTH.scaleInstr.sigmaD)<<separator;
+		//write the offset / sigma (TDouble (MM))
+		stream->setPrecisionFormat(2);
+		(*stream)<<(ItECTH.getMeasuredValueResidual()/ItECTH.scaleInstr.sigmaD)<<separator;
 
-		}
+	}
 	return;
 }
 
@@ -969,7 +972,11 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
 
+	//summuray
+	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECTH), nOObs);
+	(*stream)<<endl;
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream).writeStringLeft(nameWidth,	"PLANE"); //station

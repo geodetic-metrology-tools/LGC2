@@ -44,7 +44,7 @@ namespace tut
 		// Test adjustable objects
 	template<>
 	template<>
-	void object::test<2>()
+	void object::test<1>()
 	{
 		using namespace LGC;
 		set_test_name("Testing Adjustable objects");
@@ -189,7 +189,7 @@ namespace tut
 	// Test measurments
 	template<>
 	template<>
-	void object::test<3>()
+	void object::test<2>()
 	{
 		std::shared_ptr<TLGCData> proj5(new TLGCData);
 		using namespace LGC;

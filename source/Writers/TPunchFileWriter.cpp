@@ -794,7 +794,7 @@ void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
-	int					coordWidth = getCoordWidth();
+	//int					coordWidth = getCoordWidth();
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);

@@ -63,4 +63,17 @@ namespace tut
 					    getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "TSTNTEST.out");
 		ensure_equals( "Execution should work", proj.exec(), true);
 	}
+
+	template<>
+	template<>
+	void object::test<3>()
+	{
+		//Test if the whole application runs
+		using namespace LGC;
+		set_test_name("Testing TLGCApp class and nam file reader");
+
+		TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "DVER.inp", 
+					    getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "DVER.out");
+		ensure_equals( "Execution should work", proj.exec(), true);
+	}
 };
