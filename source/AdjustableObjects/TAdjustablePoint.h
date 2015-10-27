@@ -53,7 +53,7 @@ public:
 		inline const TPositionVector&	getProvisionalValue() const {return fProvisionalValue;}
 
 		/// Returns a constant reference on the correction value of the point
-		inline const TFreeVector&		getCorrection() const {	return fCorrection;}
+		inline const TLength&		getCorrection(int i) const {	return fCorrection[i];}
 
 		/// Returns a constant reference on the estimated value of the point
 		inline const TPositionVector&	getEstimatedValue() const {	return fEstimatedValue;}
@@ -123,25 +123,25 @@ public:
 
 			\param[in] idxCoordinate Allowed values are 0(X), 1(Y) and 2(Z) of the coordinate we want to access.
 		*/
-		inline TReal	getEstValue(int idxCoordinate) const {
+		inline TLength	getEstValue(int idxCoordinate) const {
 			assert3D(idxCoordinate);
 			if(idxCoordinate == 0)
-				return fEstimatedValue.getX().getMetresValue();
+				return fEstimatedValue.getX();
 			else if(idxCoordinate == 1)
-            return fEstimatedValue.getY().getMetresValue();
+            return fEstimatedValue.getY();
 			else
-            return fEstimatedValue.getZ().getMetresValue();
+            return fEstimatedValue.getZ();
 		}
 // If these methods are needed, must be rewritten, because Estimated value and Provisional value can be in different reference systems (2DH and 3DCartesian)/
 
 		/// Returns the estimated DX of TAdjustablePoint
-      inline TReal getDXValue() const { return (fEstimatedValue.getX().getMetresValue() - fProvisionalValue.getX().getMetresValue()); }
+		inline TLength getDXValue() const { return (fEstimatedValue.getX() - fProvisionalValue.getX()); }
 
 		/// Returns the estimated DY of TAdjustablePoint
-      inline TReal getDYValue() const { return (fEstimatedValue.getY().getMetresValue() - fProvisionalValue.getY().getMetresValue()); }
+      inline TLength getDYValue() const { return (fEstimatedValue.getY() - fProvisionalValue.getY()); }
 
 		/// Returns the estimated DZ of TAdjustablePoint
-      inline TReal getDZValue() const { return (fEstimatedValue.getZ().getMetresValue() - fProvisionalValue.getZ().getMetresValue()); }
+      inline TLength getDZValue() const { return (fEstimatedValue.getZ() - fProvisionalValue.getZ()); }
 
 
 		/// Returns the estimated XY covariance
@@ -155,13 +155,13 @@ public:
 
 
 		/// Returns the estimated X estimated precision
-      inline TLength getXEstPrecision() const { return fEstimatedPrecision.getX(); }
+      inline TLength getXEstPrecision() const { return fEstimatedPrecision[0]; }
 
 		/// Returns the estimated Y estimated precision
-      inline TLength getYEstPrecision() const { return fEstimatedPrecision.getY(); }
+      inline TLength getYEstPrecision() const { return fEstimatedPrecision[1]; }
 
 		/// Returns the estimated Z estimated precision
-      inline TLength getZEstPrecision() const { return fEstimatedPrecision.getZ(); }
+      inline TLength getZEstPrecision() const { return fEstimatedPrecision[2]; }
 
 		/// Returns iterator to the position in the tree.
 		TDataTreeIterator	getFrameTreePosition() const{return fFramePosition;};
@@ -263,9 +263,9 @@ public:
 private:
 
 	TPositionVector		fProvisionalValue; /*!< point's provisional value */
-	TFreeVector				fCorrection; /*!< point's correction after calculation  */
+	TLength				fCorrection[3]; /*!< point's correction after calculation  */
 	TPositionVector		fEstimatedValue; /*!< point's estimated value after calculation */
-	TFreeVector				fEstimatedPrecision; /*!< point's estimated precision after calculation */
+	TLength				fEstimatedPrecision[3]; /*!< point's estimated precision after calculation */
 	TFreeVector				fCovariance; /*!< point's covariance */	
 
 	TRefSystemFactory::ERefFrame fReferential; /*!< Reference frame of the point */

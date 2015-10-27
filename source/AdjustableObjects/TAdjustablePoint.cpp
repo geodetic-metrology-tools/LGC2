@@ -11,9 +11,7 @@
 TAdjustablePoint::TAdjustablePoint(const std::string& name):
 fName(name),
 fProvisionalValue(NO_VALf,  NO_VALf,  NO_VALf,TCoordSysFactory::k3DCartesian),
-fCorrection(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fEstimatedValue(fProvisionalValue),
-fEstimatedPrecision(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fCovariance(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fHfixed(false),
 fReferential(TRefSystemFactory::ERefFrame::kNotInGraph),
@@ -25,9 +23,7 @@ fSpatialStatus(TSpatialStatus::kUnknown)
 TAdjustablePoint::TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree):
 fName(name),
 fProvisionalValue(pos),
-fCorrection(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fEstimatedValue(fProvisionalValue),
-fEstimatedPrecision(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fCovariance(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian),
 fFramePosition(positionInTree),
 fReferential(referential),
@@ -152,17 +148,17 @@ void TAdjustablePoint::setCorrection(int idx, TReal value) {
 	for (int i = 0; i < 3; i++){
 		if (uidx[i] == idx) {
 			if (i == 0 ){
-            fCorrection.setX(TLength(value));
+            fCorrection[i]=(TLength(value));
             fEstimatedValue.setX(fEstimatedValue.getX() + TLength(value));
 				fXValueSet = true;
 			}
 			else if(i == 1){
-            fCorrection.setY(TLength(value));
+            fCorrection[i]=(TLength(value));
             fEstimatedValue.setY(fEstimatedValue.getY() + TLength(value));
 				fYValueSet = true;
 			}
 			else{
-            fCorrection.setZ(TLength(value));
+            fCorrection[2]=(TLength(value));
             fEstimatedValue.setZ(fEstimatedValue.getZ() + TLength(value));
 			}
 
@@ -186,13 +182,13 @@ void	TAdjustablePoint::setEstimatedPrecision(int idx, TReal value){
 	for (int i = 0; i < 3; i++){
 		if (uidx[i] == idx) {
 			if (i == 0 ){
-            fEstimatedPrecision.setX(TLength(value));
+            fEstimatedPrecision[i]=TLength(value);
 			}
 			else if(i == 1){
-            fEstimatedPrecision.setY(TLength(value));
+            fEstimatedPrecision[i]=TLength(value);
 			}
 			else{
-            fEstimatedPrecision.setZ(TLength(value));
+            fEstimatedPrecision[2]=TLength(value);
 			}
 			return;
 		}
@@ -259,7 +255,7 @@ void TAdjustablePoint::setStandardDeviations(TReal stDevX, TReal stDevY, TReal s
 
 void TAdjustablePoint::reInitialise(){
 	TFreeVector zeroVec(LITERAL(0.0),LITERAL(0.0),LITERAL(0.0),TCoordSysFactory::k3DCartesian);
-	fCorrection = zeroVec;
+	fCorrection[0] = fCorrection[1] = fCorrection[2] =TLength(0.0);
 	fEstimatedValue = fProvisionalValue;
 
 	/*If the provisional value was in XYH, transform the estimated value into XYZ*/
@@ -272,7 +268,8 @@ void TAdjustablePoint::reInitialise(){
 			TXYH2CCS::XYHg1985Machine2CCS(fEstimatedValue);
 	}
 
-	fEstimatedPrecision = zeroVec;
+	fEstimatedPrecision[0] = fEstimatedPrecision[1] = fEstimatedPrecision[2] = TLength(0.0);
+
 	fCovariance = zeroVec;
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -294,6 +291,14 @@ void TAdjustablePoint::setDefaults(bool lx, bool ly, bool lz) {
 	fStandardDeviations[0] = NO_VALf;
 	fStandardDeviations[1] = NO_VALf;
 	fStandardDeviations[2] = NO_VALf;
+
+	fCorrection[0] = TLength(0.0);
+	fCorrection[1] = TLength(0.0);
+	fCorrection[2] = TLength(0.0);
+
+	fEstimatedPrecision[0] = TLength(0.0);
+	fEstimatedPrecision[1] = TLength(0.0);
+	fEstimatedPrecision[2] = TLength(0.0);
 
 	if (lx && ly && lz)
 		fSpatialStatus = TSpatialStatus::kCala;

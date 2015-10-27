@@ -66,7 +66,7 @@ namespace tut
 
 		mmm.setCorrection(5,2.0);
 		ensure_equals("Correction", mmm.getLineVectorCorrection().getY().getMetresValue(), 2.0);
-      ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getMetresValue(), 4.0);
+		ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getMetresValue(), 4.0);
 		
 		std::bitset<3> point2;
 		std::bitset<3> line2;
@@ -84,17 +84,17 @@ namespace tut
 		p.setFirstUidx(3);
 		ensure_equals("Last uidx is on 4th position", p.getLastUidx(), 4);
 		p.setCorrection(3,1.0);
-		ensure_equals("Last uidx is on 4th position", p.getCorrection().getY().getMetresValue(), 1.0);
-      ensure_equals("Last uidx is on 4th position", p.getEstimatedValue().getY().getMetresValue(), 3.0);
+		ensure_equals("Last uidx is on 4th position", p.getCorrection(1).getMetresValue(), 1.0);
+		ensure_equals("Last uidx is on 4th position", p.getEstimatedValue().getY().getMetresValue(), 3.0);
 
 
 		TPositionVector position2(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k2DPlusH);
 		TAdjustablePoint pH(position2, false, false, true, "pointH1",TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
 		pH.setFirstUidx(5);
 		ensure_equals("Reference system of provisional value should match", pH.getProvisionalValue().getCoordSys(), TCoordSysFactory::ECoordSys::k2DPlusH);
-      ensure_equals("Provisional value should match", pH.getProvisionalValue().getX().getMetresValue(), 1.0);
-      ensure_equals("Provisional value should match", pH.getProvisionalValue().getY().getMetresValue(), 2.0);
-      ensure_equals("Provisional value should match", pH.getProvisionalValue().getH().getMetresValue(), 3.0);
+		ensure_equals("Provisional value should match", pH.getProvisionalValue().getX().getMetresValue(), 1.0);
+		ensure_equals("Provisional value should match", pH.getProvisionalValue().getY().getMetresValue(), 2.0);
+		ensure_equals("Provisional value should match", pH.getProvisionalValue().getH().getMetresValue(), 3.0);
 
 		ensure_equals("Reference system of estimated value should match", pH.getEstimatedValue().getCoordSys(), TCoordSysFactory::ECoordSys::k3DCartesian);
 		ensure_equals("2 unknowns introduced", pH.getNumUnkn(), 2);
@@ -103,9 +103,9 @@ namespace tut
 		ensure_equals("First uidx should match", pH.getFirstUidx(), 5);
 		ensure_equals("Last uidx should match", pH.getLastUidx(), 6);
 		ensure_equals("Last uidx should match", pH.getName(), "pointH1");
-      ensure_equals("Estimated values should match", pH.getEstimatedValue().getX().getMetresValue(), 1.0);
-      ensure_equals("Estimated values should match", pH.getEstimatedValue().getY().getMetresValue(), 2.0);
-      ensure_equals("Estimated values should match", pH.getEstimatedValue().getZ().getMetresValue(), 2002.34689402122, 1e-8);
+		ensure_equals("Estimated values should match", pH.getEstimatedValue().getX().getMetresValue(), 1.0);
+		ensure_equals("Estimated values should match", pH.getEstimatedValue().getY().getMetresValue(), 2.0);
+		ensure_equals("Estimated values should match", pH.getEstimatedValue().getZ().getMetresValue(), 2002.34689402122, 1e-8);
 
 		ensure_equals("Coordinates fixed state should match",pH.isCoordinateFixed(0), false);
 		ensure_equals("Coordinates fixed state should match",pH.isCoordinateFixed(1), false);
@@ -130,9 +130,9 @@ namespace tut
 
 		pH.setEstimatedPrecision(5, 0.1);
 		pH.setEstimatedPrecision(6, 0.2);
-      ensure_equals("Estimated precision should match", pH.getXEstPrecision().getMetresValue(), 0.1);
-      ensure_equals("Estimated precision should match", pH.getYEstPrecision().getMetresValue(), 0.2);
-      ensure_equals("Estimated precision should match", pH.getZEstPrecision().getMetresValue(), 0.0);
+		ensure_equals("Estimated precision should match", pH.getXEstPrecision().getMetresValue(), 0.1);
+		ensure_equals("Estimated precision should match", pH.getYEstPrecision().getMetresValue(), 0.2);
+		ensure_equals("Estimated precision should match", pH.getZEstPrecision().getMetresValue(), 0.0);
 
 		pH.setXYEstimatedCovariance(0.01);
 		EXPECT_FAIL(pH.setYZEstimatedCovariance(0.02));
