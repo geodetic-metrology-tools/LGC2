@@ -44,7 +44,7 @@ TFRAMEWriter::~TFRAMEWriter(){}
 void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
-	stream->setTreeDepth(frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+   stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
@@ -90,7 +90,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
-	stream->setTreeDepth(frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+   stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	/*Do we want to write out FRAMES only if there is any measurement inside or summarize it each time??? (some parameters can be variable)*/
 	/*Now: If there is at least one measurement or if it is a ROOT node, then write it!*/
@@ -133,7 +133,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	TEDMWriter edmWriter(*stream);
 	TOtherMeasurentWriter dverWriter(*stream);
 
-	stream->setTreeDepth(frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+   stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
@@ -365,14 +365,14 @@ void TFRAMEWriter::writePointType(const std::list<AdjPointIter>& lop, TDataTreeI
 			fReferentialName = "OLOC";
 
 		if(!localNode)
-			writeResultsPtsHeader(type, lop.size(), fReferentialName, localNode);
+         writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
 
 		for(auto it(lop.begin()); it != lop.end(); ++it){
 			if(localNode){
 				AdjPointIter pIt = *it;
 				if(pIt->getFrameTreePosition() == frameIt){ // If the point was defined in this FRAME
 					if(!headerWritten){
-						writeResultsPtsHeader(type, lop.size(), fReferentialName, localNode);
+						writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
 						headerWritten = true;
 					}
 					writeResultsPtsData(*it, localNode);

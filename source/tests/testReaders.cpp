@@ -479,7 +479,7 @@ namespace tut
 			const auto& plrmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measPLR3D.back());
 			ensure_distance(plrmeas.getAngle(kANGL).getGonsValue(), 1.0, 1e-8);
 			ensure_distance(plrmeas.getAngle(kZEND).getGonsValue(), 2.0, 1e-8);
-			ensure_distance(plrmeas.getDistance(), 3.0, 1e-8);
+			ensure_distance(plrmeas.getDistance().getMetresValue(), 3.0, 1e-8);
 			ensure_equals(plrmeas.target.ID, "PT8");
 			ensure_equals(plrmeas.target.targetHt, 11);
 			ensure_equals(plrmeas.target.sigmaTargetHt, 12* MM2M);

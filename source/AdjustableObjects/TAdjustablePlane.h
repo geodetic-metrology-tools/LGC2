@@ -3,7 +3,7 @@
 
 #include "TVAdjustableObject.h"
 #include "TAngle.h"
-#include "TScalar.h"
+#include "TLength.h"
 #include <bitset>
 
 class TAdjustablePoint;
@@ -11,7 +11,7 @@ class TAdjustablePoint;
 /*! 
 	\brief Adds adjustable information to a plane.
 
-	Plane is defined throught a Reference Point (TAdjustablePoint), distance of this Reference point (TScalar) from the plane and two angles (TAngle) defining the normal vector of the plane.
+	Plane is defined throught a Reference Point (TAdjustablePoint), distance of this Reference point (TLength) from the plane and two angles (TAngle) defining the normal vector of the plane.
 */
 class TAdjustablePlane : public TVAdjustableObject{
 public:
@@ -195,22 +195,22 @@ private:
 	const TAdjustablePoint*		fReferencePoint; /*!< Reference point*/
 
 	//Reference point distance definition
-   TLength					fProvValRefPtDist; /*!< Provisional value of the reference point distance. */
-   TLength					fCorrectionRefPtDist; /*!< Correction of the reference point distance.  */
-   TLength					fEstValRefPointDist; /*!< Estimated value of the reference point distance. */
-   TLength					fEstPrecisionRefPtDist;  /*!<Estimated precision of the reference point distance. */
+   TLength	fProvValRefPtDist; /*!< Provisional value of the reference point distance. */
+   TLength	fCorrectionRefPtDist; /*!< Correction of the reference point distance.  */
+   TLength	fEstValRefPointDist; /*!< Estimated value of the reference point distance. */
+   TLength	fEstPrecisionRefPtDist;  /*!<Estimated precision of the reference point distance. */
 
 	//Definition of the plane normal vector angles
-	TAngle			fProvValTheta; /*!< Provisional value of the Theta angle. */
-	TAngle			fCorrectionTheta; /*!< Correction of the normal vector of the Theta angle. */
-	TAngle			fEstValTheta; /*!< Estimated value of the Theta angle. */
-	TAngle			fEstPrecisionTheta;  /*!<Estimated precision of the Theta angle. */
+	TAngle	fProvValTheta; /*!< Provisional value of the Theta angle. */
+	TAngle	fCorrectionTheta; /*!< Correction of the normal vector of the Theta angle. */
+	TAngle	fEstValTheta; /*!< Estimated value of the Theta angle. */
+	TAngle	fEstPrecisionTheta;  /*!<Estimated precision of the Theta angle. */
 
 
-	TAngle			fProvValPhi; /*!< Provisional value of the Phi angle. */
-	TAngle			fCorrectionPhi; /*!< Correction of the Phi angle. */
-	TAngle			fEstValPhi; /*!< Estimated value of the Phi angle. */
-	TAngle			fEstPrecisionPhi;  /*!<Estimated precision of the Phi angle. */
+	TAngle	fProvValPhi; /*!< Provisional value of the Phi angle. */
+	TAngle	fCorrectionPhi; /*!< Correction of the Phi angle. */
+	TAngle	fEstValPhi; /*!< Estimated value of the Phi angle. */
+	TAngle	fEstPrecisionPhi;  /*!<Estimated precision of the Phi angle. */
 
 	bool  fThetaFixed;	/*!< Tells if Theta is fixed or not (TRUE means fixed).*/
 	bool  fPhiFixed;	/*!< Tells if Phi is fixed or not (TRUE means fixed).*/

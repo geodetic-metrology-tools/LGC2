@@ -5,7 +5,6 @@
 #include "TTransformParameters.h"
 #include <bitset>
 #include "TLength.h"
-#include "TScalar.h"
 
 /*! 
 	\ingroup AdjustableObjects

@@ -143,20 +143,6 @@ public:
 		/// Returns the estimated DZ of TAdjustablePoint
       inline TReal getDZValue() const { return (fEstimatedValue.getZ().getMetresValue() - fProvisionalValue.getZ().getMetresValue()); }
 
-//This necessary when the provisional value stored is defined in XYH.
-#if 0
-		/*!Compute and return the estimated H coordinate of TAdjustablePoint (this object is always in CCS)*/
-		TScalar				getHEstValue(const ERefFrame	refFrame) const;
-
-		/*!Compute and return the estimated H coordinate of TAdjustablePoint (this object is always in CCS)*/
-		TScalar				getHProvValue(const ERefFrame	refFrame) const;
-
-		/*!Compute and return the estimated H coordinate of TAdjustablePoint (this object is always in CCS)*/
-		TScalar				getDHValue(const ERefFrame	refFrame) const {return getHEstValue(refFrame) - getHProvValue(refFrame);}
-
-		/*!Compute and return the estimated N */
-		TLength				getNEstValue(const EGeoid	geo) const;
-#endif
 
 		/// Returns the estimated XY covariance
       inline TReal getXYCovar() const { return fCovariance.getX().getMetresValue(); }

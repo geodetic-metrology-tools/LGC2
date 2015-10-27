@@ -127,7 +127,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 	//Reset the length residual precision for MM values
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writePLRResultsHeader(measPLR3D.size()); // write the title line for the observations
+   writePLRResultsHeader((int)measPLR3D.size()); // write the title line for the observations
 	for(auto const& ItPLR3D: measPLR3D)
 	{
 		(*stream)<<TABs;
@@ -357,7 +357,7 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 	//Reset the length residual precision for MM values
 	//int angleResPrecicion = angleResidualPrecicion > 5 ? (angleResidualPrecicion - 5) : 0;
 
-	writeANGLResultsHeader(measANGL.size()); // write the title line for the observations
+   writeANGLResultsHeader((int)measANGL.size()); // write the title line for the observations
 	for(auto const& ItANGL : measANGL)
 	{
 		(*stream)<<TABs;
@@ -428,7 +428,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 	//Reset the length residual precision for MM values
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeZENDResultsHeader(measZEND.size()); // write the title line for the observations
+   writeZENDResultsHeader((int)measZEND.size()); // write the title line for the observations
 	for(auto const& ItZEND : measZEND)
 	{
 		(*stream)<<TABs;
@@ -497,7 +497,7 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 	//Reset the length residual precision for MM values
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeDISTResultsHeader(measDIST.size()); // write the title line for the observations
+   writeDISTResultsHeader((int)measDIST.size()); // write the title line for the observations
 	for(auto const& ItDIST : measDIST)
 	{
 		(*stream)<<TABs;
@@ -572,7 +572,7 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 	//Reset the length residual precision for MM values
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeDHORResultsHeader(measDHOR.size()); // write the title line for the observations
+   writeDHORResultsHeader((int)measDHOR.size()); // write the title line for the observations
 	for(auto const& ItDHOR : measDHOR)
 	{
 		(*stream)<<TABs;
@@ -617,7 +617,7 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 	string				separator = getSeparator();
 
 
-	writeECTHResultsHeader(measECTH.size());
+   writeECTHResultsHeader((int)measECTH.size());
 
 	//For each DHOR measurement of the station
 	for(auto const& ItECTH : measECTH)

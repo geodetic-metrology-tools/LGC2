@@ -112,7 +112,7 @@ void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 	//Reset the length residual precision for MM values
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeUVDResultsHeader(measUVD.size()); // write the title line for the observations
+   writeUVDResultsHeader((int)measUVD.size()); // write the title line for the observations
 	for(auto const& ItUVD: measUVD)
 	{
 		(*stream)<<TABs;
@@ -190,7 +190,7 @@ void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
 	//Reset the length residual precision for MM values
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeUVECResultsHeader(measUVEC.size()); // write the title line for the observations
+   writeUVECResultsHeader((int)measUVEC.size()); // write the title line for the observations
 	for(auto const& ItUVEC: measUVEC)
 	{
 		(*stream)<<TABs;

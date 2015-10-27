@@ -60,7 +60,7 @@ bool TDataAnalyzer::dataConsistent(){
                referencePoint[1] += targetPos.getY().getMetresValue();
                referencePoint[2] += targetPos.getZ().getMetresValue();
 				}
-				int numberOfMeasurements = itLEVEL->measDLEV.size();
+				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
 				if(numberOfMeasurements>0){
 					referencePoint[0] /=numberOfMeasurements;
 					referencePoint[1] /=numberOfMeasurements;
@@ -93,7 +93,7 @@ bool TDataAnalyzer::dataConsistent(){
 					if (! fData.getConfig().sim.isActive())
 						initialRefPtDistance += itECHOMeas->getDistance();
 				}
-				int numberOfMeasurements = itECHO->measECHO.size();
+				int numberOfMeasurements = (int)itECHO->measECHO.size();
 				if(numberOfMeasurements>0){
 					referencePoint[0] /=numberOfMeasurements;
 					referencePoint[1] /=numberOfMeasurements;

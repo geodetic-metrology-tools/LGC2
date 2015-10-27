@@ -92,7 +92,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	///////////////////////////////////////////////////////////////////////////////////
 
 	//data summury
-	this->writeObsTitle(TABs3 + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), echorom.measECHO.size());
+   this->writeObsTitle(TABs3 + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 	(*stream)<<endl;
 	
 	writeECHOResultsHeader(); // write the title line for the observations
@@ -137,7 +137,7 @@ void TSCALEWriter::writeECHOSIMUResults(const  TECHOROM& echorom)
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), echorom.measECHO.size());
+   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 	(*stream)<<endl;
 
 	///////////////////////////////////////////////////////////////////////////////////

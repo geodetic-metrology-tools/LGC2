@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 #include "TVAdjustableObject.h"
-#include "TScalar.h"
+#include "Global.h"
 
 /*! 
 	\ingroup AdjustableObjects
@@ -14,7 +14,7 @@ public:
 	/*!@name Constructor */
 	//@{
 		/*!
-			\brief Constructs an TAdjustableScalar based on an existing TScalar value, state (fixed or variable) and its name. 
+			\brief Constructs an TAdjustableScalar based on an existing scalar value, state (fixed or variable) and its name. 
 		
 			\param[in] scalValue A scalar that will be adjusted. 
 			\param[in] isFixed The scalar will be excluded from the adjustment if set to TRUE, i.e. fixed scalar.

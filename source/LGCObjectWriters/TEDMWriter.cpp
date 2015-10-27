@@ -17,7 +17,7 @@ void TEDMWriter::writeEDMResults(const TEDM& fEdm)
 	writeEDMHeader(fEdm);
 	writeEDMData(fEdm);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), fEdm.measDSPT.size());
+   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
 	(*stream)<<endl;
 
 	if(fEdm.measDSPT.size() > 0){	
@@ -36,7 +36,7 @@ void TEDMWriter::writeEDMSIMUResults(const TEDM& fEdm)
 	writeEDMHeader(fEdm);
 	writeEDMData(fEdm);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), fEdm.measDSPT.size());
+   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
 	(*stream)<<endl;
 
 	if(fEdm.measDSPT.size() > 0){	
@@ -140,7 +140,7 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 	//Precision fro MM value
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeDSPTResultsHeader(measDSPT.size()); // write the title line for the observations
+   writeDSPTResultsHeader((int)measDSPT.size()); // write the title line for the observations
 	for(auto const& ItDSPT : measDSPT)
 	{
 		(*stream)<<TABs;

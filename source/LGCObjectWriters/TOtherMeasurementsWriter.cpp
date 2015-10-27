@@ -108,7 +108,7 @@ TAStreamFormatter*	stream = getStream();
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), fDVER.size());
+   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), (int)fDVER.size());
 	(*stream)<<endl;
 
 	writeDVERResultsHeader(); // write the title line for the observations

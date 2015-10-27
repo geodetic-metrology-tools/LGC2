@@ -105,7 +105,7 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 	//Precision fro MM value
 	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
-	writeDLEVResultsHeader(measDLEV.size());
+   writeDLEVResultsHeader((int)measDLEV.size());
 
 	//For each DHOR measurement of the station
 	for(auto const& ItDlev : measDLEV)
