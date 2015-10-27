@@ -2,6 +2,7 @@
 #define TTRANSFORMATION_PARAMETERS
 
 #include "TAngle.h"
+#include "TLength.h"
 
 /*!
 	\ingroup LocalTransformations
@@ -12,13 +13,13 @@ struct TransformParameters{
 	TAngle phi;  //!< Rotation about the Y axis
 	TAngle kappa; //!< Rotation about the Z axis 
 
-	TReal tX; //!< Translation about the X axis in meters [m]
-	TReal tY; //!< Translation about the Y axis in meters [m]
-	TReal tZ; //!< Translation about the Z axis in meters [m]
+	TLength tX; //!< Translation about the X axis in meters [m]
+	TLength tY; //!< Translation about the Y axis in meters [m]
+	TLength tZ; //!< Translation about the Z axis in meters [m]
 	
 	TReal scale; //!< The unitless scale factor
 
-	TransformParameters() : omega(TAngle(0.0)), phi(TAngle(0.0)), kappa(TAngle(0.0)), tX(TReal(0.0)), tY(TReal(0.0)), tZ(TReal(0.0)), scale(TReal(1.0)) {};
+	TransformParameters() : omega(TAngle(0.0)), phi(TAngle(0.0)), kappa(TAngle(0.0)), tX(TLength(0.0)), tY(TLength(0.0)), tZ(TLength(0.0)), scale(TReal(1.0)) {};
 
 	/// Overlading  comparition operator for TransformParameters
 	bool operator==(const TransformParameters& p) {
@@ -82,7 +83,7 @@ struct TransformParameters{
 	/// Sets the parameters to their identity
 	void setIdentity() {
 		omega = phi = kappa = TAngle(0.0);
-		tX = tY = tZ = TReal(0.0);
+		tX = tY = tZ = TLength(0.0);
 		scale = TReal(1.0);
 	}
 };

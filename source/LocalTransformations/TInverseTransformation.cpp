@@ -95,9 +95,9 @@ void TInverseTransformation::setIdentityTransformation(){
 	fParameters.phi.setRadiansValue(0);
 	fParameters.kappa.setRadiansValue(0);
 
-	fParameters.tX = 0;
-	fParameters.tY = 0;
-	fParameters.tZ = 0;
+	fParameters.tX = TLength(0.0);
+	fParameters.tY = TLength(0.0);
+	fParameters.tZ = TLength(0.0);
 
 	fParameters.scale = 1.0;
 
@@ -119,9 +119,9 @@ void TInverseTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TRe
 	fParameters.phi.setRadiansValue(ry);
 	fParameters.kappa.setRadiansValue(rz);
 
-	fParameters.tX = tx;
-	fParameters.tY = ty;
-	fParameters.tZ = tz;
+	fParameters.tX = TLength(tx);
+	fParameters.tY = TLength(ty);
+	fParameters.tZ = TLength(tz);
 
 	fParameters.scale = scale;
 

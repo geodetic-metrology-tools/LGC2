@@ -77,7 +77,7 @@ public:
 		inline TReal getVariance() const{ return powq(fEstimatedPrecision, 2);}
 
 		/// Returns the estimated precision.
-      inline TReal getEstPrecision() const { return fEstimatedPrecision; }
+       inline TReal getEstPrecision() const { return fEstimatedPrecision; }
 
 		/// Returns Name of the scalar.
 		inline virtual const std::string& getName() const { return fName;}

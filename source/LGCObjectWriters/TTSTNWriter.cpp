@@ -211,13 +211,13 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance()); //Write value in meters [m]
 
 		//write the sigma, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance()/1000)* M2MM); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance()/1000)*M2MM); 
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()); 
 
 		//write the residual, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual() * M2MM); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual().getMMetresValue()); 
 
 		//write the sensibility		
 		TReal dz= ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;

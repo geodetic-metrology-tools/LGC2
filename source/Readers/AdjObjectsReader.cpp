@@ -38,7 +38,7 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 
 	const auto gon(TAngle::kGons);
 	TransformParameters transfParam;
-	transfParam.tX = std::stor(tokens[3]); // Translation along X
+	transfParam.tX = TLength(std::stor(tokens[3])); // Translation along X
 	// Create adjustable helmert transformation
 	TAdjustableHelmertTransformation adjTrafo = TAdjustableHelmertTransformation( // Wrapper containing adjustable related information
 			translations, // Bits telling which of the translations are fixed
@@ -48,9 +48,9 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 		);
 
 	adjTrafo.setParam(    // The transformation itself
-				std::stor(tokens[3]), // Translation along X
-				std::stor(tokens[4]), // Translation along Y
-				std::stor(tokens[5]), // Translation along Z
+				TLength(std::stor(tokens[3])), // Translation along X
+				TLength(std::stor(tokens[4])), // Translation along Y
+				TLength(std::stor(tokens[5])), // Translation along Z
 				TAngle(std::stor(tokens[6]), gon), // Rotation around X
 				TAngle(std::stor(tokens[7]), gon), // Rotation around Y
 				TAngle(std::stor(tokens[8]), gon), // Rotation around Z
@@ -62,9 +62,9 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 			
 	//If at least one of these options is used, create FRAME measurement
 	if(opts.has("STX") || opts.has("STY") || opts.has("STZ") || opts.has("SRX") || opts.has("SRY") || opts.has("SRZ") || opts.has("SSCL") ){
-		if(opts.has("STX")) adjTrafo.setTranslationStandDev(X, opts.getParamR("STX") * MM2M); //Value given in mili-metres, but stored in metres
-		if(opts.has("STY")) adjTrafo.setTranslationStandDev(Y, opts.getParamR("STY") * MM2M); //Value given in mili-metres, but stored in metres
-		if(opts.has("STZ")) adjTrafo.setTranslationStandDev(Z, opts.getParamR("STZ") * MM2M); //Value given in mili-metres, but stored in metres
+		if(opts.has("STX")) adjTrafo.setTranslationStandDev(X, TLength(opts.getParamR("STX") , TLength::EUnits::kMillimetres)); //Value given in mili-metres, but stored in metres
+		if(opts.has("STY")) adjTrafo.setTranslationStandDev(Y, TLength(opts.getParamR("STY") , TLength::EUnits::kMillimetres)); //Value given in mili-metres, but stored in metres
+		if(opts.has("STZ")) adjTrafo.setTranslationStandDev(Z, TLength(opts.getParamR("STZ") , TLength::EUnits::kMillimetres)); //Value given in mili-metres, but stored in metres
 		if(opts.has("SRX")) adjTrafo.setRotationStandDev(X, TAngle(opts.getParamR("SRX"), TAngle::kCCs)); //Value given in cc, stored in angle object
 		if(opts.has("SRY")) adjTrafo.setRotationStandDev(Y, TAngle(opts.getParamR("SRY"), TAngle::kCCs));  //Value given in cc, stored in angle object
 		if(opts.has("SRZ")) adjTrafo.setRotationStandDev(Z, TAngle(opts.getParamR("SRZ"), TAngle::kCCs));  //Value given in cc, stored in angle object

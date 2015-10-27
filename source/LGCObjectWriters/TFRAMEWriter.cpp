@@ -280,22 +280,22 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(1))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR: "); 
-			(*stream)<<node.frame.getXYCovarRot().getGonsValue()<<(separator);
+			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR (GON²): "); 
+			(*stream)<<node.frame.getXYCovarRot()*RAD2GON<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(1) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR: "); 
-			(*stream)<<node.frame.getYZCovarRot().getGonsValue()<<(separator);
+			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR (GON²): "); 
+			(*stream)<<node.frame.getYZCovarRot()*RAD2GON<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR: "); 
-			(*stream)<<node.frame.getXZCovarRot().getGonsValue()<<(separator);
+			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR (GON²): "); 
+			(*stream)<<node.frame.getXZCovarRot()*RAD2GON<<(separator);
 		}
 		
 		(*stream)<<endl;
@@ -303,21 +303,21 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(1))
 		{		
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "XY TRANS. COVAR: "); 
+			(*stream).writeStringLeft(nameWidth, "XY TRANS. COVAR (m²): "); 
 			(*stream)<<node.frame.getXYCovarTransl()<<(separator);
 		}
 
 		if (!node.frame.isTranslationFixed(1) && !node.frame.isTranslationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "YZ TRANS. COVAR: "); 
+			(*stream).writeStringLeft(nameWidth, "YZ TRANS. COVAR (m²): "); 
 			(*stream)<<node.frame.getYZCovarTransl()<<(separator);
 		}
 	
 		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth,  "XZ TRANS. COVAR: "); 
+			(*stream).writeStringLeft(nameWidth,  "XZ TRANS. COVAR (m²): "); 
 			(*stream)<<node.frame.getXZCovarTransl()<<(separator);
 		}
 	}

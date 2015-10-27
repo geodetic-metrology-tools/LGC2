@@ -608,11 +608,11 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 	TransformParameters deltaSigma = simFr.getSumRes2();
 
 	TReal sigmadtx(sqrtq((deltaSigma.tX
-		-powq(deltaMoy.tX*i,2)/i)*(LITERAL(1.0)/i)));
+		-powq(deltaMoy.tX.getMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
 	TReal sigmadty(sqrtq((deltaSigma.tY
-			-powq(deltaMoy.tY*i,2)/i)*(LITERAL(1.0)/i)));
+			-powq(deltaMoy.tY.getMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
 	TReal sigmadtz(sqrtq((deltaSigma.tZ
-			-powq(deltaMoy.tZ*i,2)/i)*(LITERAL(1.0)/i)));
+			-powq(deltaMoy.tZ.getMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
 	TReal sigmadrx(sqrtq((deltaSigma.omega.getSignedCCValue()
 		-powq(deltaMoy.omega.getSignedCCValue() *i,2)/i)*(LITERAL(1.0)/i)));
 	TReal sigmadry(sqrtq((deltaSigma.phi.getSignedCCValue()

@@ -131,7 +131,7 @@ bool TAdjustableHelmertTransformation::hasStandDev(){
 void TAdjustableHelmertTransformation::setCorrection(int idx, TReal value) {
 	for (int i = 0; i < 3; i++)
 		if (uidx_trans[i] == idx) {
-			setTranslationCorrection (i, value);
+			setTranslationCorrection (i, TLength(value));
 			return;
 		}
 
@@ -155,7 +155,7 @@ void TAdjustableHelmertTransformation::setParam(const TAngle& rx, const TAngle& 
 	fEstParameter.kappa = fProvParameter.kappa = rz;
 }
 
-void TAdjustableHelmertTransformation::setParam(const TReal tx, const TReal ty, const TReal tz){
+void TAdjustableHelmertTransformation::setParam(const TLength tx, const TLength ty, const TLength tz){
 	fEstParameter.tX = fProvParameter.tX = tx;
 	fEstParameter.tY = fProvParameter.tY = ty;
 	fEstParameter.tZ = fProvParameter.tZ = tz;
@@ -165,13 +165,13 @@ void TAdjustableHelmertTransformation::setParam(const TReal scl){
 	fEstParameter.scale = fProvParameter.scale = scl;
 }
 
-void TAdjustableHelmertTransformation::setParam(const TReal tx, const TReal ty, const TReal tz, const TAngle& rx, const TAngle& ry, const TAngle& rz, const TReal scl){ 
+void TAdjustableHelmertTransformation::setParam(const TLength tx, const TLength ty, const TLength tz, const TAngle& rx, const TAngle& ry, const TAngle& rz, const TReal scl){ 
 	setParam(rx, ry, rz);
 	setParam(tx, ty, tz);
 	setParam(scl);
 }
 
-void TAdjustableHelmertTransformation::setTranslationCorrection (int idx, TReal value){
+void TAdjustableHelmertTransformation::setTranslationCorrection (int idx, TLength value){
 	if (idx == 0)
 		fEstParameter.tX = fEstParameter.tX + value;
 	else if (idx == 1)
@@ -222,21 +222,21 @@ TReal TAdjustableHelmertTransformation::getEstimatedPrecisionScale() const{
 }
 
 
-const TLength&	TAdjustableHelmertTransformation::getXYCovarTransl() const{
-	if(fCovarianceTranslation[0].isNull())
+const TReal&	TAdjustableHelmertTransformation::getXYCovarTransl() const{
+	if(fCovarianceTranslation[0]==NO_VALf)
 		throw std::logic_error("No XY covariance assigned.");
 	return fCovarianceTranslation[0];
 }
 
-const TLength&	TAdjustableHelmertTransformation::getYZCovarTransl() const{
-	if(fCovarianceTranslation[1].isNull())
+const TReal&	TAdjustableHelmertTransformation::getYZCovarTransl() const{
+	if(fCovarianceTranslation[1]==NO_VALf)
 		throw std::logic_error("No YZ covariance assigned.");
 	return fCovarianceTranslation[1];
 }
 
 
-const TLength&	TAdjustableHelmertTransformation::getXZCovarTransl() const{
-	if(fCovarianceTranslation[2].isNull())
+const TReal&	TAdjustableHelmertTransformation::getXZCovarTransl() const{
+	if(fCovarianceTranslation[2]==NO_VALf)
 		throw std::logic_error("No XZ covariance assigned.");
 	return fCovarianceTranslation[2];
 }
@@ -251,21 +251,21 @@ bool TAdjustableHelmertTransformation::isRotationFixed(int d) const {
 	return fixedRotations[d]; 
 }
 
-const TAngle& TAdjustableHelmertTransformation::getXYCovarRot() const{
-		if(fCovarianceRotation[0].getGonsValue()==NO_VALf)
+const TReal& TAdjustableHelmertTransformation::getXYCovarRot() const{
+		if(fCovarianceRotation[0]==NO_VALf)
 		throw std::logic_error("No XY covariance assigned.");
 	return fCovarianceRotation[0];
 }
 
 
-const TAngle& TAdjustableHelmertTransformation::getYZCovarRot() const{
-		if(fCovarianceRotation[1].getGonsValue()==NO_VALf)
+const TReal& TAdjustableHelmertTransformation::getYZCovarRot() const{
+		if(fCovarianceRotation[1]==NO_VALf)
 		throw std::logic_error("No YZ covariance assigned.");
 	return fCovarianceRotation[1];
 }
 
-const TAngle& TAdjustableHelmertTransformation::getXZCovarRot() const{
-		if(fCovarianceRotation[2].getGonsValue()==NO_VALf)
+const TReal& TAdjustableHelmertTransformation::getXZCovarRot() const{
+		if(fCovarianceRotation[2]==NO_VALf)
 		throw std::logic_error("No XZ covariance assigned.");
 	return fCovarianceRotation[2];
 }
@@ -287,7 +287,7 @@ void TAdjustableHelmertTransformation::setFirstUidx(int idx) {
 		uidx_scale = idx++;
 }
 
-void TAdjustableHelmertTransformation::setTranslationStandDev(int d, TReal stDev){
+void TAdjustableHelmertTransformation::setTranslationStandDev(int d, TLength stDev){
 	assert3D(d);
 	fTransStandDev[d].setMetresValue(stDev);
 }
@@ -323,38 +323,38 @@ void TAdjustableHelmertTransformation::setDefaultsParams(){
 		fProvParameter.omega.setRadiansValue(0.0);
 		fProvParameter.phi.setRadiansValue(0.0);
 		fProvParameter.kappa.setRadiansValue(0.0);
-		fProvParameter.tX = 0.0;
-		fProvParameter.tY = 0.0;
-		fProvParameter.tZ = 0.0;
+		fProvParameter.tX = TLength(0.0);
+		fProvParameter.tY = TLength(0.0);
+		fProvParameter.tZ = TLength(0.0);
 		fProvParameter.scale = 1;
 
 		fEstParameter.omega.setRadiansValue(0.0);
 		fEstParameter.phi.setRadiansValue(0.0);
 		fEstParameter.kappa.setRadiansValue(0.0);
-		fEstParameter.tX = 0.0;
-		fEstParameter.tY = 0.0;
-		fEstParameter.tZ = 0.0;
+		fEstParameter.tX = TLength(0.0);
+		fEstParameter.tY = TLength(0.0);
+		fEstParameter.tZ = TLength(0.0);
 		fEstParameter.scale = 1;
 }
 
 
 void	TAdjustableHelmertTransformation::setXYTranslationCovariance(TReal value){
 	if (!fixedTranslations[0] && !fixedTranslations[1])
-		fCovarianceTranslation[0].setMetresValue(value);
+		fCovarianceTranslation[0] = value;
 	else
 		throw std::logic_error("TAdjustableHelmertTransformation::setXYTranslationCovariance, translation must be variable in both X and Y.");
 }
 
 void	TAdjustableHelmertTransformation::setYZTranslationCovariance(TReal value){
 	if (!fixedTranslations[1] && !fixedTranslations[2])
-		fCovarianceTranslation[1].setMetresValue(value);
+		fCovarianceTranslation[1] = value;
 	else
 		throw std::logic_error("TAdjustablePlane::setYZTranslationCovariance, translation must be variable in both Y and Z.");
 }
 
 void	TAdjustableHelmertTransformation::setXZTranslationCovariance(TReal value){
 	if (!fixedTranslations[0] && !fixedTranslations[2])
-		fCovarianceTranslation[2].setMetresValue(value);
+		fCovarianceTranslation[2] = value;
 	else
 		throw std::logic_error("TAdjustablePlane::setXZTranslationCovariance, translation must be variable in both X and Z.");
 }
@@ -362,21 +362,21 @@ void	TAdjustableHelmertTransformation::setXZTranslationCovariance(TReal value){
 
 void	TAdjustableHelmertTransformation::setXYRotationCovariance(TReal value){
 	if (!fixedRotations[0] && !fixedRotations[1])
-		fCovarianceRotation[0].setRadiansValue(value);
+		fCovarianceRotation[0] = value;
 	else
 		throw std::logic_error("TAdjustableHelmertTransformation::setXYRotationCovariance, rotation must be variable in both X and Y.");
 }
 
 void	TAdjustableHelmertTransformation::setYZRotationCovariance(TReal value){
 	if (!fixedRotations[1] && !fixedRotations[2])
-		fCovarianceRotation[1].setRadiansValue(value);
+		fCovarianceRotation[1] = value;
 	else
 		throw std::logic_error("TAdjustablePlane::setYZRotationCovariance, rotation must be variable in both Y and Z.");
 }
 
 void	TAdjustableHelmertTransformation::setXZRotationCovariance(TReal value){
 	if (!fixedRotations[0] && !fixedRotations[2])
-		fCovarianceRotation[2].setRadiansValue(value);
+		fCovarianceRotation[2] = value;
 	else
 		throw std::logic_error("TAdjustablePlane::setXZRotationCovariance, rotation must be variable in both X and Z.");
 }
@@ -412,7 +412,7 @@ void	TAdjustableHelmertTransformation::setEstimatedPrecision(int idx, TReal valu
 }
 
 
-TReal TAdjustableHelmertTransformation::getEstTranslation(int axis) const{
+TLength TAdjustableHelmertTransformation::getEstTranslation(int axis) const{
 	assert3D(axis);
 	if(axis == 0)
 		return fEstParameter.tX;
@@ -423,7 +423,7 @@ TReal TAdjustableHelmertTransformation::getEstTranslation(int axis) const{
 }
 
 
-TReal TAdjustableHelmertTransformation::getProvTranslation(int axis) const{
+TLength TAdjustableHelmertTransformation::getProvTranslation(int axis) const{
 	assert3D(axis);
 	if(axis == 0)
 		return fProvParameter.tX;
@@ -463,15 +463,15 @@ void TAdjustableHelmertTransformation::reInitialise(){
 	setParam(fProvParameter.omega, fProvParameter.phi, fProvParameter.kappa);
 	setParam(fProvParameter.scale);
 
-	fCovarianceTranslation[0].setMetresValue(0.0);
-	fCovarianceTranslation[1].setMetresValue(0.0);
-	fCovarianceTranslation[2].setMetresValue(0.0);
+	fCovarianceTranslation[0] = NO_VALf;
+	fCovarianceTranslation[1] = NO_VALf;
+	fCovarianceTranslation[2] = NO_VALf;
 
-	fCovarianceRotation[0].setRadiansValue(0.0);
-	fCovarianceRotation[1].setRadiansValue(0.0);
-	fCovarianceRotation[2].setRadiansValue(0.0);
+	fCovarianceRotation[0] = NO_VALf;
+	fCovarianceRotation[1] = NO_VALf;
+	fCovarianceRotation[2] = NO_VALf;
 
-	fEstPrecisionScale = 0.0;
+	fEstPrecisionScale = NO_VALf;
 
 	fEstPrecisionTranslation[0].setMetresValue(0.0);
 	fEstPrecisionTranslation[1].setMetresValue(0.0);

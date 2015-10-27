@@ -88,9 +88,9 @@ namespace tut
 		param.phi = TAngle(31.83098861838, GON);
 		param.kappa = TAngle(25.4647908947, GON);
 
-		param.tX = 80;
-		param.tY = 90;
-		param.tZ = 100;
+		param.tX = TLength(80);
+		param.tY = TLength(90);
+		param.tZ = TLength(100);
 
 
 		dTM.setTransformParam(param);

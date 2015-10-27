@@ -190,27 +190,27 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 			const TLength& getEstimatedPrecisionTransl(int d)const;
 
 			/// Returns the estimated precision of the scale factor
-         TReal getEstimatedPrecisionScale()const;
+			TReal getEstimatedPrecisionScale()const;
 
 
 			/// Returns XY translation covariance
-			const TLength&				getXYCovarTransl() const;
+			const TReal&				getXYCovarTransl() const;
 
 			/// Returns YZ translation covariance
-			const TLength&				getYZCovarTransl() const;
+			const TReal&				getYZCovarTransl() const;
 
 			/// Returns XZ translation covariance
-			const TLength&				getXZCovarTransl() const;
+			const TReal&				getXZCovarTransl() const;
 
 
 			/// Returns XY rotation covariance
-			const TAngle&			getXYCovarRot() const;
+			const TReal&			getXYCovarRot() const;
 
 			/// Returnss YZ rotation covariance
-			const TAngle&			getYZCovarRot() const;
+			const TReal&			getYZCovarRot() const;
 
 			/// Returns XZ rotation covariance
-			const TAngle&			getXZCovarRot() const;
+			const TReal&			getXZCovarRot() const;
 	
 		//@}
 
@@ -237,7 +237,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 				\param[in] d Allowed values are 0(X), 1(Y) and 2(Z) of the translation's component.
 				\param[in] stDev Standard deviation.
 			*/ 
-			void setTranslationStandDev(int d, TReal stDev);
+			void setTranslationStandDev(int d, TLength stDev);
 
 			/*!
 				\brief Sets a standard deviation of a rotation component.
@@ -306,7 +306,7 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		/// Sets the rotation parameters
 		void setParam(const TAngle& rx, const TAngle& ry, const TAngle& rz);
 		/// Sets the translation parameters
-		void setParam(const TReal tx, const TReal ty, const TReal tz);
+		void setParam(const TLength tx, const TLength ty, const TLength tz);
 		/// Sets the scale parameters
 		void setParam(const TReal scl);
 
@@ -319,10 +319,10 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 
 			scl -- scale factor
 		*/
-		void setParam(const TReal tx, const TReal ty, const TReal tz, const TAngle& rx, const TAngle& ry, const TAngle& rz, const TReal scl);
+		void setParam(const TLength tx, const TLength ty, const TLength tz, const TAngle& rx, const TAngle& ry, const TAngle& rz, const TReal scl);
 		
 		/// Sets the translation correction
-		void setTranslationCorrection (int idx, TReal value);
+		void setTranslationCorrection (int idx, TLength value);
 		/// Sets the rotation correction
 		void setRotationCorrection (int idx, const TAngle& value);
 		/// Sets the scale correction
@@ -338,9 +338,9 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		/// Returns the called provisional scale
 		inline TReal getProvScale () const {return fProvParameter.scale;}
 		/// Returns the called estimated translation i (X [0], Y [1], Z [3])
-		TReal getEstTranslation(int axis) const;
+		TLength getEstTranslation(int axis) const;
 		/// Returns the called provisional translation i (X [0], Y [1], Z [3])
-		TReal getProvTranslation(int axis) const;
+		TLength getProvTranslation(int axis) const;
 		/// Returns the called estimated rotation i (X [0], Y [1], Z [3])
 		const TAngle& getEstRotation(int axis) const;
 		/// Returns the called provisional rotation i (X [0], Y [1], Z [3])
@@ -377,8 +377,8 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		TLength		 fEstPrecisionTranslation[3];  /*!<Estimated precision of the translation. */
 		TReal	       fEstPrecisionScale;  /*!<Estimated precision of the scale factor. */
 
-		TAngle	 fCovarianceRotation[3];  /*!<Covariance of the rotation  XY, YZ, XZ */
-     	TLength		 fCovarianceTranslation[3];  /*!<Covariance of the translation XY, YZ, XZ  */
+		TReal	 fCovarianceRotation[3];  /*!<Covariance of the rotation  XY, YZ, XZ */
+     	TReal		 fCovarianceTranslation[3];  /*!<Covariance of the translation XY, YZ, XZ  */
 };
 
 #endif //TADJUSTABLE_HELMERT_TRANSFORMATION

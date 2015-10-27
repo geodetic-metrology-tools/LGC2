@@ -129,9 +129,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 1;
 
 		directTransfo.setTransformParam(param1);
@@ -186,9 +186,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 1;
 
 		invTransfo.setTransformParam(param1);
@@ -204,15 +204,15 @@ namespace tut
 		ensure_distance("m(0,0)", invTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", invTransfo.getMmatrixIJPosition(0,1), kappacos*phisin*omegasin-kappasin*omegacos, 1e-6);
 		ensure_distance("m(0,2)", invTransfo.getMmatrixIJPosition(0,2), kappacos*phisin*omegacos+kappasin*omegasin, 1e-6);
-		ensure_distance("m(0,3)", invTransfo.getMmatrixIJPosition(0,3), -(kappacos*phicos)*param1.tX - (kappacos*phisin*omegasin-kappasin*omegacos)*param1.tY - (kappacos*phisin*omegacos+kappasin*omegasin)*param1.tZ, 1e-6);
+		ensure_distance("m(0,3)", invTransfo.getMmatrixIJPosition(0,3), -(kappacos*phicos)*param1.tX.getMetresValue() - (kappacos*phisin*omegasin-kappasin*omegacos)*param1.tY.getMetresValue() - (kappacos*phisin*omegacos+kappasin*omegasin)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(1,0)", invTransfo.getMmatrixIJPosition(1,0), kappasin*phicos, 1e-6);
 		ensure_distance("m(1,1)", invTransfo.getMmatrixIJPosition(1,1), kappasin*phisin*omegasin+kappacos*omegacos, 1e-6);
 		ensure_distance("m(1,2)", invTransfo.getMmatrixIJPosition(1,2), kappasin*phisin*omegacos-kappacos*omegasin, 1e-6);
-		ensure_distance("m(1,3)", invTransfo.getMmatrixIJPosition(1,3), -(kappasin*phicos)*param1.tX - (kappasin*phisin*omegasin+kappacos*omegacos)*param1.tZ - (kappasin*phisin*omegacos-kappacos*omegasin)*param1.tZ, 1e-6);
+		ensure_distance("m(1,3)", invTransfo.getMmatrixIJPosition(1,3), -(kappasin*phicos)*param1.tX.getMetresValue() - (kappasin*phisin*omegasin+kappacos*omegacos)*param1.tZ.getMetresValue() - (kappasin*phisin*omegacos-kappacos*omegasin)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(2,0)", invTransfo.getMmatrixIJPosition(2,0), -phisin, 1e-6);
 		ensure_distance("m(2,1)", invTransfo.getMmatrixIJPosition(2,1), phicos*omegasin, 1e-6);
 		ensure_distance("m(2,2)", invTransfo.getMmatrixIJPosition(2,2), phicos*omegacos, 1e-6);
-		ensure_distance("m(2,3)", invTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX - (phicos*omegasin)*param1.tY - (phicos*omegacos)*param1.tZ, 1e-6);
+		ensure_distance("m(2,3)", invTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX.getMetresValue() - (phicos*omegasin)*param1.tY.getMetresValue() - (phicos*omegacos)*param1.tZ.getMetresValue(), 1e-6);
 	}
 
 	// Test direct * his inverse transformation
@@ -232,9 +232,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 1;
 
 		invTransfo.setTransformParam(param1);
@@ -268,9 +268,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 1;
 
 		invTransfo.setTransformParam(param1);
@@ -305,9 +305,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		directTransfo.setTransformParam(param1);
@@ -326,15 +326,15 @@ namespace tut
 		ensure_distance("m(0,0)", directTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", directTransfo.getMmatrixIJPosition(0,1), kappasin*phicos, 1e-6);
 		ensure_distance("m(0,2)", directTransfo.getMmatrixIJPosition(0,2), -phisin, 1e-6);
-		ensure_distance("m(0,3)", directTransfo.getMmatrixIJPosition(0,3), param1.tX/param1.scale, 1e-6);
+		ensure_distance("m(0,3)", directTransfo.getMmatrixIJPosition(0,3), param1.tX.getMetresValue()/param1.scale, 1e-6);
 		ensure_distance("m(1,0)", directTransfo.getMmatrixIJPosition(1,0), kappacos*phisin*omegasin-kappasin*omegacos, 1e-6);
 		ensure_distance("m(1,1)", directTransfo.getMmatrixIJPosition(1,1), kappasin*phisin*omegasin+kappacos*omegacos, 1e-6);
 		ensure_distance("m(1,2)", directTransfo.getMmatrixIJPosition(1,2), phicos*omegasin, 1e-6);
-		ensure_distance("m(1,3)", directTransfo.getMmatrixIJPosition(1,3), param1.tY/param1.scale, 1e-6);
+		ensure_distance("m(1,3)", directTransfo.getMmatrixIJPosition(1,3), param1.tY.getMetresValue()/param1.scale, 1e-6);
 		ensure_distance("m(2,0)", directTransfo.getMmatrixIJPosition(2,0), kappacos*phisin*omegacos+kappasin*omegasin, 1e-6);
 		ensure_distance("m(2,1)", directTransfo.getMmatrixIJPosition(2,1), kappasin*phisin*omegacos-kappacos*omegasin, 1e-6);
 		ensure_distance("m(2,2)", directTransfo.getMmatrixIJPosition(2,2), phicos*omegacos, 1e-6);
-		ensure_distance("m(2,3)", directTransfo.getMmatrixIJPosition(2,3), param1.tZ/param1.scale, 1e-6);
+		ensure_distance("m(2,3)", directTransfo.getMmatrixIJPosition(2,3), param1.tZ.getMetresValue()/param1.scale, 1e-6);
 		
 		
 		//Test if p_root has the correct coordinate
@@ -367,9 +367,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		invTransfo.setTransformParam(param1);
@@ -388,15 +388,15 @@ namespace tut
 		ensure_distance("m(0,0)", invTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", invTransfo.getMmatrixIJPosition(0,1), kappacos*phisin*omegasin-kappasin*omegacos, 1e-6);
 		ensure_distance("m(0,2)", invTransfo.getMmatrixIJPosition(0,2), kappacos*phisin*omegacos+kappasin*omegasin, 1e-6);
-		ensure_distance("m(0,3)", invTransfo.getMmatrixIJPosition(0,3), -(kappacos*phicos)*param1.tX - (kappacos*phisin*omegasin-kappasin*omegacos)*param1.tY - (kappacos*phisin*omegacos+kappasin*omegasin)*param1.tZ, 1e-6);
+		ensure_distance("m(0,3)", invTransfo.getMmatrixIJPosition(0,3), -(kappacos*phicos)*param1.tX.getMetresValue() - (kappacos*phisin*omegasin-kappasin*omegacos)*param1.tY.getMetresValue() - (kappacos*phisin*omegacos+kappasin*omegasin)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(1,0)", invTransfo.getMmatrixIJPosition(1,0), kappasin*phicos, 1e-6);
 		ensure_distance("m(1,1)", invTransfo.getMmatrixIJPosition(1,1), kappasin*phisin*omegasin+kappacos*omegacos, 1e-6);
 		ensure_distance("m(1,2)", invTransfo.getMmatrixIJPosition(1,2), kappasin*phisin*omegacos-kappacos*omegasin, 1e-6);
-		ensure_distance("m(1,3)", invTransfo.getMmatrixIJPosition(1,3), -(kappasin*phicos)*param1.tX - (kappasin*phisin*omegasin+kappacos*omegacos)*param1.tY - (kappasin*phisin*omegacos-kappacos*omegasin)*param1.tZ, 1e-6);
+		ensure_distance("m(1,3)", invTransfo.getMmatrixIJPosition(1,3), -(kappasin*phicos)*param1.tX.getMetresValue() - (kappasin*phisin*omegasin+kappacos*omegacos)*param1.tY.getMetresValue() - (kappasin*phisin*omegacos-kappacos*omegasin)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(2,0)", invTransfo.getMmatrixIJPosition(2,0), -phisin, 1e-6);
 		ensure_distance("m(2,1)", invTransfo.getMmatrixIJPosition(2,1), phicos*omegasin, 1e-6);
 		ensure_distance("m(2,2)", invTransfo.getMmatrixIJPosition(2,2), phicos*omegacos, 1e-6);
-		ensure_distance("m(2,3)", invTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX - (phicos*omegasin)*param1.tY - (phicos*omegacos)*param1.tZ, 1e-6);
+		ensure_distance("m(2,3)", invTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX.getMetresValue() - (phicos*omegasin)*param1.tY.getMetresValue() - (phicos*omegacos)*param1.tZ.getMetresValue(), 1e-6);
 
 		ensure_distance("X component must match reference", vector_to_transform.getX().getMetresValue(), p_subF.getX().getMetresValue(), 1e-6);
 		ensure_distance("Y component must match reference", vector_to_transform.getY().getMetresValue(), p_subF.getY().getMetresValue(), 1e-6);
@@ -420,9 +420,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		invTransfo.setTransformParam(param1);
@@ -465,9 +465,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		invTransfo.setTransformParam(param1);
@@ -497,9 +497,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		dirTransfo.setTransformParam(param1);
@@ -578,9 +578,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		dirTransfo.setTransformParam(param1);
@@ -643,9 +643,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		directTransfo.setTransformParam(param1);
@@ -688,9 +688,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		invTransfo.setTransformParam(param1);
@@ -774,9 +774,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		invTransfo.setTransformParam(param1);
@@ -846,9 +846,9 @@ namespace tut
 		param1.omega = TAngle(200.0, GON);
 		param1.phi = TAngle(-100.0, GON);
 		param1.kappa = TAngle(100.0, GON);
-		param1.tX = 10.0;
-		param1.tY = 10.0;
-		param1.tZ = -10.0;
+		param1.tX = TLength(10.0);
+		param1.tY = TLength(10.0);
+		param1.tZ = TLength(-10.0);
 		param1.scale = 2;
 
 		invTransfo.setTransformParam(param1);
@@ -866,15 +866,15 @@ namespace tut
 		ensure_distance("m(0,0)", derivTransfo.getMmatrixIJPosition(0,0), kappacos*phicos, 1e-6);
 		ensure_distance("m(0,1)", derivTransfo.getMmatrixIJPosition(0,1), kappacos*phisin*omegasin-kappasin*omegacos, 1e-6);
 		ensure_distance("m(0,2)", derivTransfo.getMmatrixIJPosition(0,2), kappacos*phisin*omegacos+kappasin*omegasin, 1e-6);
-		ensure_distance("m(0,3)", derivTransfo.getMmatrixIJPosition(0,3), -(kappacos*phicos)*param1.tX - (kappacos*phisin*omegasin-kappasin*omegacos)*param1.tY - (kappacos*phisin*omegacos+kappasin*omegasin)*param1.tZ, 1e-6);
+		ensure_distance("m(0,3)", derivTransfo.getMmatrixIJPosition(0,3), -(kappacos*phicos)*param1.tX.getMetresValue() - (kappacos*phisin*omegasin-kappasin*omegacos)*param1.tY.getMetresValue() - (kappacos*phisin*omegacos+kappasin*omegasin)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(1,0)", derivTransfo.getMmatrixIJPosition(1,0), kappasin*phicos, 1e-6);
 		ensure_distance("m(1,1)", derivTransfo.getMmatrixIJPosition(1,1),  kappasin*phisin*omegasin+kappacos*omegacos, 1e-6);
 		ensure_distance("m(1,2)", derivTransfo.getMmatrixIJPosition(1,2), kappasin*phisin*omegacos-kappacos*omegasin, 1e-6);
-		ensure_distance("m(1,3)", derivTransfo.getMmatrixIJPosition(1,3), -(kappasin*phicos)*param1.tX - (kappasin*phisin*omegasin+kappacos*omegacos)*param1.tY - (kappasin*phisin*omegacos-kappacos*omegasin)*param1.tZ, 1e-6);
+		ensure_distance("m(1,3)", derivTransfo.getMmatrixIJPosition(1,3), -(kappasin*phicos)*param1.tX.getMetresValue() - (kappasin*phisin*omegasin+kappacos*omegacos)*param1.tY.getMetresValue() - (kappasin*phisin*omegacos-kappacos*omegasin)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(2,0)", derivTransfo.getMmatrixIJPosition(2,0), -phisin, 1e-6);
 		ensure_distance("m(2,1)", derivTransfo.getMmatrixIJPosition(2,1), phicos*omegasin, 1e-6);
 		ensure_distance("m(2,2)", derivTransfo.getMmatrixIJPosition(2,2), phicos*omegacos, 1e-6);
-		ensure_distance("m(2,3)", derivTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX - (phicos*omegasin)*param1.tY - (phicos*omegacos)*param1.tZ, 1e-6);
+		ensure_distance("m(2,3)", derivTransfo.getMmatrixIJPosition(2,3), -(-phisin)*param1.tX.getMetresValue() - (phicos*omegasin)*param1.tY.getMetresValue() - (phicos*omegacos)*param1.tZ.getMetresValue(), 1e-6);
 		ensure_distance("m(2,0)", derivTransfo.getMmatrixIJPosition(3,0), 0.0, 1e-6);
 		ensure_distance("m(2,1)", derivTransfo.getMmatrixIJPosition(3,1), 0.0, 1e-6);
 		ensure_distance("m(2,2)", derivTransfo.getMmatrixIJPosition(3,2), 0.0, 1e-6);
@@ -898,9 +898,9 @@ namespace tut
 		param1.omega = TAngle(0, GON);
 		param1.phi = TAngle(0, GON);
 		param1.kappa = TAngle(0, GON);
-		param1.tX = 200.0;
-		param1.tY = 0.0;
-		param1.tZ = 0.0;
+		param1.tX = TLength(200.0);
+		param1.tY = TLength(0.0);
+		param1.tZ = TLength(0.0);
 		param1.scale = 1;
 
 		transfo.setTransformParam(param1);
@@ -912,9 +912,9 @@ namespace tut
 		param2.omega = TAngle(0, GON);
 		param2.phi = TAngle(0, GON);
 		param2.kappa = TAngle(0, GON);
-		param2.tX = 0.0;
-		param2.tY = 100.0;
-		param2.tZ = 0.0;
+		param2.tX = TLength(0.0);
+		param2.tY = TLength(100.0);
+		param2.tZ = TLength(0.0);
 		param2.scale = 1;
 
 		transfoInv.setTransformParam(param2);
