@@ -135,7 +135,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 
 void    TLGCStatistic::calcOverall(TVector* fZ)
 {
-	int nbUnk = fZ->size();
+	int nbUnk = (int)fZ->size();
 	int i = 0;
 	while (i<nbUnk)
 	{

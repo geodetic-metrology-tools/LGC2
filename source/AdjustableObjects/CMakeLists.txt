@@ -16,6 +16,7 @@ set(ADJUSTABLE_HEADERS
 	TAdjustableAngle.h
 	TAdjustablePlane.h
 	TAdjustableScalar.h
+	TAdjustableLength.h
 	TAdjustableObjectCollection.h
 )
 
@@ -26,6 +27,7 @@ set(ADJUSTABLE_SOURCES
 	TAdjustableAngle.cpp
 	TAdjustablePlane.cpp
 	TAdjustableScalar.cpp
+	TAdjustableLength.cpp
 )
 
 add_library(AdjustableObjects STATIC ${ADJUSTABLE_HEADERS} ${ADJUSTABLE_SOURCES} )

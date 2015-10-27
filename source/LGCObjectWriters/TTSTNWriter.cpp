@@ -240,7 +240,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 			stream->setPrecisionFormat(lengthPrecision);
 			(*stream)<<ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue()<<separator;
 
-			//write the distance cste sigma (TScalar in (MM))
+			//write the distance cste sigma (TReal in (MM))
 			stream->setWidthFormat(obsResWidth);
 			stream->setPrecisionFormat(lengthResPrecision); //Output value is in [mm], lower the precision by 3
 			(*stream)<<ItPLR3D.target.distCorrectionAdjustable->getEstimatedPrecision()*M2MM<<separator;	//MM2M on scalar

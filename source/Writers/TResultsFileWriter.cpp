@@ -194,18 +194,18 @@ void    TResultsFileWriter::writeDataSummary()
     (*stream)<<"\t \t NOMBRE =\t"<< int(fProjectData->getNumberOfFrames()) << endl << endl;
  
     if(fProjectData->getPoints().numObjects()>0)
-        writeAdjustableObjGeneralInfo("POINTS", fProjectData->getPoints().numObjects(), fProjectData->getPoints().numUnknowns());
+       writeAdjustableObjGeneralInfo("POINTS", (int)fProjectData->getPoints().numObjects(), (int)fProjectData->getPoints().numUnknowns());
     if(fProjectData->getLines().numObjects()>0)
-        writeAdjustableObjGeneralInfo("LINES", fProjectData->getLines().numObjects(), fProjectData->getLines().numUnknowns());
+       writeAdjustableObjGeneralInfo("LINES", (int)fProjectData->getLines().numObjects(), (int)fProjectData->getLines().numUnknowns());
  
     if(fProjectData->getPlanes().numObjects()>0)
-        writeAdjustableObjGeneralInfo("PLANES", fProjectData->getPlanes().numObjects(), fProjectData->getPlanes().numUnknowns());
+       writeAdjustableObjGeneralInfo("PLANES", (int)fProjectData->getPlanes().numObjects(), (int)fProjectData->getPlanes().numUnknowns());
  
     if(fProjectData->getAngles().numObjects()>0)
-        writeAdjustableObjGeneralInfo("ANGLES", fProjectData->getAngles().numObjects(), fProjectData->getAngles().numUnknowns());
+       writeAdjustableObjGeneralInfo("ANGLES", (int)fProjectData->getAngles().numObjects(), (int)fProjectData->getAngles().numUnknowns());
  
     if(fProjectData->getScalars().numObjects()>0)
-        writeAdjustableObjGeneralInfo("SCALARS", fProjectData->getScalars().numObjects(), fProjectData->getScalars().numUnknowns());
+       writeAdjustableObjGeneralInfo("SCALARS", (int)fProjectData->getScalars().numObjects(), (int)fProjectData->getScalars().numUnknowns());
  
     (*stream)<<endl<<endl;
  

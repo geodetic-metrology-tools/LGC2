@@ -3,18 +3,17 @@
 #include "Global.h"
 
 TAdjustableAngle::TAdjustableAngle(const TAngle& angleValue, bool isFixed, const std::string& name):
-fName(name),
-ifFixed(isFixed),
-fProvisionalValue(angleValue),
-fCorrection(0.0, TAngle::EUnits::kRadians),
-fEstimatedValue(angleValue),
-fEstimatedPrecision(0.0, TAngle::EUnits::kRadians),
-uidx(-1)
+   fName(name),
+   ifFixed(isFixed),
+   fProvisionalValue(angleValue),
+   fCorrection(0.0),
+   fEstimatedValue(angleValue),
+   fEstimatedPrecision(0.0),
+   uidx(-1)
 {}
 
 TAdjustableAngle TAdjustableAngle::createUninitialized(const std::string& name){
-	TAdjustableAngle as(TAngle(NO_VALf,TAngle::EUnits::kRadians), true, name);
-	return as;
+	return TAdjustableAngle(TAngle(NO_VALf), true, name);
 }
 
 void TAdjustableAngle::setFirstUidx(int idx) {
