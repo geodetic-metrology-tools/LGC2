@@ -155,7 +155,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 		/*!@name Access methods*/
 		//@{
 			/// Returns a distance value for a given ID
-			TReal getDistance(TEnumDistance id=kValue) const {
+			TLength getDistance(TEnumDistance id=kValue) const {
 				return distances[id];
 			}
 
@@ -165,7 +165,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 			/// Returns a residual of observed distances
-			TReal getDistanceResidual(TEnumDistance id=kValue) const {
+			TLength getDistanceResidual(TEnumDistance id=kValue) const {
 				return distancesResiduals[id];
 			}
 

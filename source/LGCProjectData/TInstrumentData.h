@@ -40,7 +40,7 @@ class TInstrumentData {
 			std::string ID;
 			std::string defTarget;
 			TLength instrHeight;          // [m]
-			TReal sigmaInstrHeight;     // [m]
+			TLength sigmaInstrHeight;     // [m]
 			TLength sigmaInstrCentering;  // [m]
 			TAngle constAngle;            // [rad]
 
@@ -110,7 +110,7 @@ class TInstrumentData {
 			std::string ID;
 			std::string defStaffID;
 			bool collAngleUnknown;
-         TAngle collAngleValue;           // [rad]
+			TAngle collAngleValue;           // [rad]
 			TAdjustableAngle* collAngleAdjustable;
 
 			struct TTarget {
@@ -128,7 +128,7 @@ class TInstrumentData {
 		};
 
 		struct TSCALE {
-			std::string ID;
+		 std::string ID;
          TLength sigmaD;               // [m]
          TLength ppmD;                 // [m]
          TLength distCorrectionValue;  // [m]

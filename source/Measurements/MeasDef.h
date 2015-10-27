@@ -133,10 +133,10 @@ class TECTH /*: public TAScalarMeas< ... >*/
 			inline MatrixIndex getFirstObservationIndex() const {return fFirstEquationIndex;}
 
 			///Returns measured offset value
-			inline TReal getMeasuredOffsetValue() const{return measuredOffset;}
+			inline TLength getMeasuredOffsetValue() const{return measuredOffset;}
 
 			///Returns residual of the measured offset value
-			inline TReal getMeasuredValueResidual() const{return residualOffset;}
+			inline TLength getMeasuredValueResidual() const{return residualOffset;}
 		//@}
 
 		/*!@name Settings */
@@ -162,7 +162,7 @@ class TECTH /*: public TAScalarMeas< ... >*/
 		TLength measuredOffset;
 
 		///Residual of the measured value
-      TLength residualOffset;
+		TLength residualOffset;
 };
 ///////////////////////////////////////////////////////////////////////////
 // TEDM 
@@ -235,10 +235,10 @@ class TDVER  : public TAScalarMeas<int>{
 		inline MatrixIndex getLastEquationIndex(){return getFirstEquationIndex();}
 
 		/// Returns the observed value.
-		inline TReal getDistanceCorrection() const {return fDistanceCorrection;}
+		inline TLength getDistanceCorrection() const {return fDistanceCorrection;}
 		
 		/// Returns standard deviation of the observed value
-		inline TReal getObservedStDev() const { return fSigmaObsVal;}
+		inline TLength getObservedStDev() const { return fSigmaObsVal;}
 	//@}
 
 
@@ -253,7 +253,7 @@ class TDVER  : public TAScalarMeas<int>{
 
 	private:
 		// The distance correction
-      TLength fDistanceCorrection;
+		TLength fDistanceCorrection;
 		// Standard deviation of the observed value
 		TLength fSigmaObsVal;
 };
@@ -277,7 +277,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				inline MatrixIndex getLastEquationIndex(){return getFirstEquationIndex();}
 
 				/// Returns the DHOR sigma
-				inline TReal getDHORSigma() const{return dhorSigma;}
+				inline TLength getDHORSigma() const{return dhorSigma;}
 
 				/// Stes DHOR sigma
             inline void setDHORSigma(TLength sigma){ dhorSigma = sigma; }
