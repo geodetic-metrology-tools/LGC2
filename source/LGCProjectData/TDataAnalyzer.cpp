@@ -153,17 +153,16 @@ bool TDataAnalyzer::dataConsistent(){
 
 	}
 
-
-	//Run through scalar collection and check whether all objects were initialized, assign unknown indices
-	for (auto& scalar : fData.getScalars()){		
-		if(!scalar.isInitialized()){
+	//Run through length collection and check whether all objects were initialized, assign unknown indices
+	for (auto& length : fData.getLength()){		
+		if(!length.isInitialized()){
 			consistent = false;
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Scalar: " + scalar.getName() + " is not initialized!"; 
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Length: " + length.getName() + " is not initialized!"; 
 		}
 
-		if(!scalar.isFixed()){
-			scalar.setFirstUidx(lastUidx);
-			lastUidx = scalar.getLastUidx() + 1;
+		if(!length.isFixed()){
+			length.setFirstUidx(lastUidx);
+			lastUidx = length.getLastUidx() + 1;
 		}
 	}
 

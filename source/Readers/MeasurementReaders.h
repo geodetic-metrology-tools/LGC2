@@ -20,7 +20,7 @@ class TAMeasurementKey : public TAKeyWord {
 	protected:
 		TAdjustablePointCollection const    &fpoints;
 		const TInstrumentData   &finstruments;
-		TAdjustableScalarCollection&fscalars;
+		TAdjustableLengthCollection&flengths;
 		TAdjustableAngleCollection& fangles;
 		TAdjustablePlaneCollection& fplanes;
 		const bool& fSIMUActive;

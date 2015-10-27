@@ -204,8 +204,8 @@ void    TResultsFileWriter::writeDataSummary()
     if(fProjectData->getAngles().numObjects()>0)
        writeAdjustableObjGeneralInfo("ANGLES", (int)fProjectData->getAngles().numObjects(), (int)fProjectData->getAngles().numUnknowns());
  
-    if(fProjectData->getScalars().numObjects()>0)
-       writeAdjustableObjGeneralInfo("SCALARS", (int)fProjectData->getScalars().numObjects(), (int)fProjectData->getScalars().numUnknowns());
+    if(fProjectData->getLength().numObjects()>0)
+       writeAdjustableObjGeneralInfo("LENGTHS", (int)fProjectData->getLength().numObjects(), (int)fProjectData->getLength().numUnknowns());
  
     (*stream)<<endl<<endl;
  

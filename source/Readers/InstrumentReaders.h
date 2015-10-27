@@ -53,7 +53,7 @@ class TAInstrumentKey : public TAKeyWord {
 	protected:
 		std::string currentStation; /*!< Name of the current station. */
 		TInstrumentData& finstruments; /*!< Instrument data. */
-		TAdjustableScalarCollection  &fscalars; /*!< Collection of all the adjustable scalars. */
+		TAdjustableLengthCollection  &flengths; /*!< Collection of all the adjustable scalars. */
 		TAdjustableAngleCollection  &fangles; /*!<  Collection of all the adjustable angles. */
 
 	private:

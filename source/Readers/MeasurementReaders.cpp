@@ -11,7 +11,7 @@ TAMeasurementKey::TAMeasurementKey(TLGCData& project, const std::string& key) :
 			TAKeyWord(key, project),
 			fpoints(project.getPoints()),
 			finstruments(project.getInstruments()),
-			fscalars(project.getScalars()),
+			flengths(project.getLength()),
 			fangles(project.getAngles()),
 			fplanes(project.getPlanes()),
 			fSIMUActive(project.getConfig().sim.isActiveRef())
@@ -72,7 +72,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
 	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
 
-	tstn.instrumentHeightAdjustable = &fscalars.addObject(TAdjustableScalar(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn.instrument.ID + to_string(nofTSTN)));
+	tstn.instrumentHeightAdjustable = &flengths.addObject(TAdjustableLength(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn.instrument.ID + to_string(nofTSTN)));
 
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);

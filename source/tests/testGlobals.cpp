@@ -156,32 +156,30 @@ namespace tut
 		ensure_equals("Point is not initialized", unit.isInitialized(), false);
 
 		//////////////////////// Testing TAdjustableScalar ////////////////////////
-      TAdjustableScalar adjScalar(TReal(2.0), false, "adjscl");
-		adjScalar.setFirstUidx(2);
 
-		ensure_equals("Provisional value should match", adjScalar.getProvisionalValue(), 2.0);
-		ensure_equals("Correction should match", adjScalar.getCorrection(), 0.0);
-		ensure_equals("Estimated value should match", adjScalar.getEstimatedValue(), 2.0);
-		ensure_equals("Estimated precision should match", adjScalar.getEstimatedPrecision(), 0.0);
-		ensure_equals("Number of unknowns should match", adjScalar.getNumUnkn(), 1);
-		ensure_equals("Scalar is variable", adjScalar.isFixed(), false);
-		ensure_equals("Scalar first index is 2", adjScalar.getFirstUidx(), 2);
-		ensure_equals("Scalar last index is 2", adjScalar.getLastUidx(), 2);
-		ensure_equals("Name should match", adjScalar.getName(), "adjscl");
-		ensure_equals("Name should match", adjScalar.isInitialized(), true);
+		//Testing TAdjustableLength
+		TAdjustableLength adjLength(TLength(2.0),false, "adjlen");
+		adjLength.setFirstUidx(2);
 
-		adjScalar.setCorrection(2,0.5);
-		adjScalar.setEstimatedPrecision(2,0.01);
-		ensure_equals("Correction should match", adjScalar.getCorrection(), 0.5);
-		ensure_equals("New estimated value should match", adjScalar.getEstimatedValue(), 2.5);
-		EXPECT_FAIL(adjScalar.setCorrection(3,0.5));
-		EXPECT_FAIL(adjScalar.setEstimatedPrecision(3,0.01));
+		ensure_equals("Provisional value should match", adjLength.getProvisionalValue(), 2.0);
+		ensure_equals("Correction should match", adjLength.getCorrection(), 0.0);
+		ensure_equals("Estimated value should match", adjLength.getEstimatedValue(), 2.0);
+		ensure_equals("Estimated precision should match", adjLength.getEstimatedPrecision(), 0.0);
+		ensure_equals("Number of unknowns should match", adjLength.getNumUnkn(), 1);
+		ensure_equals("Scalar is variable", adjLength.isFixed(), false);
+		ensure_equals("Scalar first index is 2", adjLength.getFirstUidx(), 2);
+		ensure_equals("Scalar last index is 2", adjLength.getLastUidx(), 2);
+		ensure_equals("Name should match", adjLength.getName(), "adjlen");
+		ensure_equals("Name should match", adjLength.isInitialized(), true);
 
-		ensure_equals("Correction should match", adjScalar.getEstimatedPrecision(), 0.01);
+		adjLength.setCorrection(2,0.5);
+		adjLength.setEstimatedPrecision(2,0.01);
+		ensure_equals("Correction should match", adjLength.getCorrection(), 0.5);
+		ensure_equals("New estimated value should match", adjLength.getEstimatedValue(), 2.5);
+		EXPECT_FAIL(adjLength.setCorrection(3,0.5));
+		EXPECT_FAIL(adjLength.setEstimatedPrecision(3,0.01));
 
-
-		//Testing TAdjustablePlane
-
+		ensure_equals("Correction should match", adjLength.getEstimatedPrecision(), 0.01);
 
 		//Testing TAdjustableAngle
 	}
@@ -213,9 +211,9 @@ namespace tut
 		r.read(infile);
 
 		ensure_equals("One instrument defined", proj5->getInstruments().fPOLAR.size(),1);
-		ensure_equals("Provisional value of the pair should match", proj5->getScalars().getObject("TS1T1").getProvisionalValue(),2.0);
+		ensure_equals("Provisional value of the pair should match", proj5->getLength().getObject("TS1T1").getProvisionalValue(),2.0);
 		ensure_equals("Dist. correction is 2.0",(*proj5->getInstruments().fPOLAR["TS1"].targets["T1"].distCorrectionAdjustable).getProvisionalValue(),2.0);	
-		ensure_equals("2 adjustable scalars expected",proj5->getScalars().numObjects(), 9);
+		ensure_equals("2 adjustable scalars expected",proj5->getLength().numObjects(), 9);
 	}
 
 }

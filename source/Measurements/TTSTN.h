@@ -92,7 +92,7 @@ struct TTSTN {
 		const TAdjustablePoint* instrumentPos; 
 
 		/// Adjustable instrument height, the height can be fixed or variable
-		const TAdjustableScalar* instrumentHeightAdjustable;
+		const TAdjustableLength* instrumentHeightAdjustable;
 
 		/// Tells whether the instrument is be able to rotate freely in all three dimensions
 		bool rot3D;

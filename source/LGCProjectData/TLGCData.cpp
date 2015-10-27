@@ -223,9 +223,9 @@ void TLGCData::reInitForSIMU(){
 
 	for (auto& angle : angles)
 		angle.reInitialise();
-
-	for (auto& scalar : scalars)
-		scalar.reInitialise();
+	
+	for (auto& length : lengths)
+		length.reInitialise();
 
 	/*
 		Add for LINE when IMPLEMENTED!!!!!!!!

@@ -4,7 +4,7 @@
 TAInstrumentKey::TAInstrumentKey(TLGCData& project, const std::string& key) : 
 	TAKeyWord(key, project),
 	finstruments(project.getInstruments()), 
-	fscalars(project.getScalars()), 
+	flengths(project.getLength()), 
 	fangles(project.getAngles()) 
 	{}
 
@@ -69,7 +69,7 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
 		};
 
 		// Add adjustable scalar into a global collection and store a pointer
-		t.distCorrectionAdjustable = &fscalars.addObject(TAdjustableScalar(std::stor(tokens[6]),std::stoi(tokens[5])==0, currentStation + tokens.at(0)));
+		t.distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(std::stor(tokens[6])),std::stoi(tokens[5])==0, currentStation + tokens.at(0)));
 
 		// store the new target
 		targets[tokens.at(0)] = t;
@@ -185,7 +185,7 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
 		};
 	
 		// Add adjustable scalar into a global collection and store a pointer
-		t.distCorrectionAdjustable = &fscalars.addObject(TAdjustableScalar(std::stor(tokens[4]), std::stoi(tokens[3]) == 0, currentStation + tokens.at(0)));
+		t.distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(std::stor(tokens[4])), std::stoi(tokens[3]) == 0, currentStation + tokens.at(0)));
 
 		// store the new target
 		targets[tokens.at(0)] = t;

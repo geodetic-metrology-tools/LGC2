@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Global.h"
-#include "TAdjustableScalar.h"
+#include "TAdjustableLength.h"
 #include "TAdjustableAngle.h"
 
 /*!
@@ -58,7 +58,7 @@ class TInstrumentData {
 				TLength sigmaTargetCentering; // [m]
 				TLength targetHt;             // [m]
 				TLength sigmaTargetHt;        // [m]
-				TAdjustableScalar* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
+				TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
 			};
 
 			/// allows the lookup of targets for this total station based on the target ID.
@@ -99,7 +99,7 @@ class TInstrumentData {
             TLength sigmaTargetCentering; // [m]
             TLength targetHt;             // [m]
             TLength sigmaTargetHt;        // [m]
-				TAdjustableScalar* distCorrectionAdjustable;
+			TAdjustableLength* distCorrectionAdjustable;
 			};
 			
 			/// allows the lookup of targets for this distance meter based on the target ID.

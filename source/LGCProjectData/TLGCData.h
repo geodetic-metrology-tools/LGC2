@@ -107,10 +107,10 @@ public:
 		TAdjustableAngleCollection& getAngles() {return angles;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable angles
 		TAdjustableAngleCollection const& getAngles() const {return angles;}
-		/// Returns the vector/ collection of all the adjustable scalars
-		TAdjustableScalarCollection& getScalars() {return scalars;}
-		/// Returns a contant reference of the vector/ collection of all the adjustable scalars
-		TAdjustableScalarCollection const& getScalars() const {return scalars;}
+		/// Returns the vector/ collection of all the adjustable lengths
+		TAdjustableLengthCollection& getLength() {return lengths;}
+		/// Returns a contant reference of the vector/ collection of all the adjustable lengths
+		TAdjustableLengthCollection const& getLength() const {return lengths;}
 
 	
 		/// Returns the instruments defined
@@ -208,8 +208,8 @@ private:
 		TAdjustablePlaneCollection planes;
 		/// Adjustable angles are collected globally
 		TAdjustableAngleCollection angles;
-		/// Adjustable scalars are collected globally
-		TAdjustableScalarCollection scalars;
+		/// Adjustable lengths are collected globally
+		TAdjustableLengthCollection lengths;
 	//@}
 	
 	/// Represents the hierachical structure of the file and stores the measurements

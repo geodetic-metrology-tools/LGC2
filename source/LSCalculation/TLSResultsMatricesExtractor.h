@@ -58,7 +58,7 @@ private:
 	//@{
 		bool extractPointParams(const TLSResultsMatrices& rm, const TReal convCrit);
 		bool extractAngleParams(const TLSResultsMatrices& rm, const TReal convCrit);
-		bool extractScalarParams(const TLSResultsMatrices& rm, const TReal convCrit);
+		bool extractLengthParams(const TLSResultsMatrices& rm, const TReal convCrit);
 		bool extractPlaneParams(const TLSResultsMatrices& rm, const TReal convCrit);
 		bool extractTransformationParams(const TLSResultsMatrices& rm, const TReal convCrit);
 		bool extractLineParams(const TLSResultsMatrices& rm, const TReal convCrit);  //Not yet implemented, LINE not used so far
@@ -68,7 +68,7 @@ private:
 	//@{
 		void extractPointVarCovar(const TLSResultsMatrices& rm);
 		void extractAngleVar(const TLSResultsMatrices& rm);
-		void extractScalarVar(const TLSResultsMatrices& rm);
+		void extractLengthVar(const TLSResultsMatrices& rm);
 		void extractPlaneVarCovar(const TLSResultsMatrices& rm);
 		void extractTransformationVarCovar(const TLSResultsMatrices& rm);
 		void extractLineVarCovar(const TLSResultsMatrices& rm);  //Not yet implemented

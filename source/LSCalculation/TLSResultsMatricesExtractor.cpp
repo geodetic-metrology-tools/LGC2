@@ -23,11 +23,11 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 		bool pt = extractPointParams(rm, convCrit);
 		bool angl = extractAngleParams(rm, convCrit);
 		bool pln = extractPlaneParams(rm, convCrit);
-		bool scl = extractScalarParams(rm, convCrit);
+		bool len = extractLengthParams(rm, convCrit);
 		bool trf = extractTransformationParams(rm, convCrit);
 		//bool ln = extractLineParams(rm, convCrit);
 
-		if ( (pt && angl && pln && scl && trf) || fDataSet->getConfig().allfixed.isActive() )
+		if ( (pt && angl && pln && trf && len) || fDataSet->getConfig().allfixed.isActive() )
 			fLastIteration = true;
 
 	}
@@ -116,7 +116,7 @@ void TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices
 {
 	extractPointVarCovar(rm);
 	extractAngleVar(rm);
-	extractScalarVar(rm);
+	extractLengthVar(rm);
 	extractPlaneVarCovar(rm);
 	extractTransformationVarCovar(rm);
 }
@@ -336,24 +336,23 @@ bool TLSResultsMatricesExtractor::extractPlaneParams(const TLSResultsMatrices& r
 }
 	
 
-bool TLSResultsMatricesExtractor::extractScalarParams(const TLSResultsMatrices& rm, const TReal convCrit){
+bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices& rm, const TReal convCrit){
 	bool critNotExceeded = true;
-	for (auto& scalar : fDataSet->getScalars()){
-		if(!scalar.isFixed()){
-				MatrixIndex unknIdx = scalar.getFirstUidx();	//first=last only one unknown fo angle class
+	for (auto& length : fDataSet->getLength()){
+		if(!length.isFixed()){
+				MatrixIndex unknIdx = length.getFirstUidx();	//first=last only one unknown fo angle class
 
 				if (unknIdx >= rm.getSolutionVctr()->size())
-					throw std::runtime_error("Unknown index of a scalar: " + scalar.getName() + " exceeds matrix dimensions!");
+					throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
 
 				TReal	correction = rm.getSolutionVctrElmt(unknIdx);
-				scalar.setCorrection(unknIdx, correction);
+				length.setCorrection(unknIdx, correction);
 				if ( fabsq(correction) > convCrit )
 					critNotExceeded = false;			
 		}
 	}
 	return critNotExceeded;
 }
-
 
 bool TLSResultsMatricesExtractor::extractTransformationParams(const TLSResultsMatrices& rm, const TReal convCrit){
 	bool critNotExceeded = true;
@@ -441,15 +440,15 @@ void TLSResultsMatricesExtractor::extractAngleVar(const TLSResultsMatrices& rm)
 	}
 }
 
-void TLSResultsMatricesExtractor::extractScalarVar(const TLSResultsMatrices& rm)
+void TLSResultsMatricesExtractor::extractLengthVar(const TLSResultsMatrices& rm)
 {
-	for (auto& scalar : fDataSet->getScalars()){
-		if(!scalar.isFixed()){
+	for (auto& length : fDataSet->getLength()){
+		if(!length.isFixed()){
 			//Filling standard deviations (estimated precision)
-			int unknIdx = scalar.getFirstUidx(); 
+			int unknIdx = length.getFirstUidx(); 
 			if (unknIdx >= rm.getUnkCovarMtrx()->rows())
-				throw std::runtime_error("Unknown index of a scalar: " + scalar.getName() + " exceeds matrix dimensions!");
-			scalar.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx,unknIdx))); //Set estimated precision in METRES
+				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
+			length.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx,unknIdx))); //Set estimated precision in METRES
 		}
 	}
 }
