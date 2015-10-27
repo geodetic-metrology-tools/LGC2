@@ -58,7 +58,7 @@ std::vector<std::string> const TReader::tokenizeLGCfileString(const std::string&
 
 		do {
 			if (state == STATE_DELIM) {
-				if (! isDelim(str[end], INPUT_SEPERATOR_CHARS, delimlen+1)) {
+				if (! isDelim(str[end], INPUT_SEPERATOR_CHARS, (int)delimlen+1)) {
 					start = end;
 					state = STATE_TOKEN;
 				}
@@ -69,7 +69,7 @@ std::vector<std::string> const TReader::tokenizeLGCfileString(const std::string&
 				else if (inString&& str[end] == '\"') 
 					inString = false;
 				// the nul-character is a delimiter: reason for delimlen+1
-				if (!inString && isDelim(str[end], INPUT_SEPERATOR_CHARS, delimlen+1)) {
+            if(!inString && isDelim(str[end], INPUT_SEPERATOR_CHARS, (int)delimlen + 1)) {
 					result.push_back(std::move(str.substr(start, end-start)));
 					state = STATE_DELIM;
 				}
@@ -81,7 +81,7 @@ std::vector<std::string> const TReader::tokenizeLGCfileString(const std::string&
 			}
 			if (state == STATE_TOKEN || state == STATE_DELIM) {
 				// check for comment
-				if (isDelim(str[end], INPUT_COMMENT_CHARS, commentslen)) {
+            if(isDelim(str[end], INPUT_COMMENT_CHARS, (int)commentslen)) {
 					start = end;
 					end = length;
 					result.push_back(std::move(str.substr(start, end-start)));

@@ -8,6 +8,7 @@
 class TAdjustableScalar;
 class TAdjustableHelmertTransformation;
 class TAdjustableAngle;
+class TAdjustableLength;
 
 /*! 
 	\ingroup AdjustableObjects
@@ -141,9 +142,9 @@ class TAdjustableObjectCollection {
 
 		/// Returns The  object position in the collection by its name
 		typename std::list<T>::iterator findObject(const std::string& objName) {
-            for(auto it = objects.begin() ; it != objects.end() ;it++)
+         for(auto it = objects.begin() ; it != objects.end() ;it++)
 				if( (*it).getName() == objName)
-                    return it;
+               return it;
             return objects.end();
 		}
 
@@ -159,6 +160,7 @@ typedef TAdjustableObjectCollection<TAdjustablePoint> TAdjustablePointCollection
 typedef TAdjustableObjectCollection<TAdjustableLine> TAdjustableLineCollection;
 typedef TAdjustableObjectCollection<TAdjustablePlane> TAdjustablePlaneCollection;
 typedef TAdjustableObjectCollection<TAdjustableAngle> TAdjustableAngleCollection;
+typedef TAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollection;
 typedef TAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;
 
 typedef std::list<TAdjustablePoint>::const_iterator AdjPointIter;

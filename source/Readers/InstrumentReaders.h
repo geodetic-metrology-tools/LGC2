@@ -11,7 +11,7 @@ namespace {
 	template<typename T>
 	void checkInstrument(int expectedTokens, T stations,
 		                 const std::vector<std::string>& tokens) {
-		int numTokens = tokens.size();
+      int numTokens = (int)tokens.size();
 
 		if(numTokens != expectedTokens)
 			throw std::runtime_error("Keyword *" + tokens.at(1) + " expects " + std::to_string(expectedTokens-2) + " parameters.");
@@ -23,7 +23,7 @@ namespace {
 	template<typename T>
 	void checkTarget(int expectedTokens, T targets,
 		             const std::vector<std::string>& tokens) {
-		int numTokens = tokens.size();
+      int numTokens = (int)tokens.size();
 
 		if(numTokens != expectedTokens)
 			throw std::runtime_error("This target type expects " + std::to_string(expectedTokens) +  " parameters.");
