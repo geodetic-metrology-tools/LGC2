@@ -162,7 +162,6 @@ typedef TAdjustableObjectCollection<TAdjustablePlane> TAdjustablePlaneCollection
 typedef TAdjustableObjectCollection<TAdjustableAngle> TAdjustableAngleCollection;
 typedef TAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollection;
 typedef TAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;
-typedef TAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollection;
 
 typedef std::list<TAdjustablePoint>::const_iterator AdjPointIter;
 

@@ -8,7 +8,6 @@
  
 #include <ctime>
 #include "TLGCData.h"
-#include "TScalar.h"
 #include "TSeparatedFormatTStream.h"
 #include "TResultsFileWriter.h"
 #include "TPointConverter.h"
