@@ -1,5 +1,5 @@
 #include "TAdjustableScalar.h"
-#include "Global.h"
+#include "TConstants.h"
 
 TAdjustableScalar::TAdjustableScalar(TReal scalValue, bool isFixed, const std::string& name) :
 fName(name),

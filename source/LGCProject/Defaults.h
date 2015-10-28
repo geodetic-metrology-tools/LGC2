@@ -39,18 +39,8 @@ static const char* const INPUT_COMMENT_CHARS = "%$#";
  *  \addtogroup ConstantsDefaults
  *  @{ 
  */
-
-/*!@name Global default values*/
-//@{
-
-static const TReal NO_VALf = std::numeric_limits<TReal>::quiet_NaN(); //!< marks uninitialized or unused float/real values
-
-static const int NO_VALi = std::numeric_limits<int>::quiet_NaN(); //!< marks uninitialized or unused integer values
-
-static const TReal EPSILON = std::numeric_limits<TReal>::min();  //!< Smallest value of a real value, used for fuzzy comparison
-
-static const TReal nullLimit = 1e-15;  //!< Limit below which a number is to small and treated as zero.
-//@}
+	static const TReal EPSILON = std::numeric_limits<TReal>::min();  //!< Smallest value of a real value, used for fuzzy comparison
+	static const TReal nullLimit = 1e-15;  //!< Limit below which a number is to small and treated as zero.
 
 /*! @} End of Doxygen Groups*/
 

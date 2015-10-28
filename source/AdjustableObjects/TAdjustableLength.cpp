@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include "TAdjustableLength.h"
-#include "Global.h"
+#include "TConstants.h"
 
 TAdjustableLength::TAdjustableLength(const TLength& angleValue, bool isFixed, const std::string& name) :
    fName(name),
