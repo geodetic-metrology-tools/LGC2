@@ -942,7 +942,7 @@ const TLOR2LOR& TContributionsGenerator::getLORTransformation(TDataTreeIterator 
 	//If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
 	if(trIndex == -1){
 		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName  + destinationFrameName));
-		trIndex = fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
+		trIndex = (int)fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
 	}
 	std::list<TLOR2LOR>::iterator it = fLORTrafo.begin();
     std::advance(it, trIndex);

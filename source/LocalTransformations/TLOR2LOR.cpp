@@ -267,8 +267,8 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 	    std::vector<int> fToID = fToNode.node->data.get()->ID;	
 
 		//Length of the ID indicates the depth of particular node (fFromID.size() = depth+1)
-		int depthFrom = fFromID.size();
-		int depthTo = fToID.size();
+		int depthFrom = (int)fFromID.size();
+      int depthTo = (int)fToID.size();
 
 		int smallerDepth = depthFrom < depthTo ? depthFrom : depthTo;
 		fTurningPointLocated = false;
@@ -362,7 +362,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 				currentNode = currentNode.node->parent; // Move up
 			}
 			//Transformation DOWN has to be pushed to the 'transformationChain' in opposite order to connect the chain correctly
-			for(int i = transformationChainDown.size()-1; i>=0; i--)
+			for(size_t i = transformationChainDown.size()-1; i>=0; i--)
 				transformationChain.push_back(transformationChainDown[i]);			
 		}
 		//If turningPoint was not found it means that one of these frames is subset of the second (treated in this else)
@@ -398,7 +398,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 					currentNode = currentNode.node->parent; //Move up
 				}
 				//Transformation down has to be pushed in the right order
-				for(int i = transformationChainDown.size()-1; i>=0; i--)
+				for(size_t i = transformationChainDown.size()-1; i>=0; i--)
 					transformationChain.push_back(transformationChainDown[i]);	
 			}
 		}
@@ -410,14 +410,14 @@ void TLOR2LOR::updateTransformation()
 {
 	// Establish the transformation between the 2 LORs
 	transfo.setIdentityTransformation(); 
-	for(int i = transformationChain.size() - 1;i >= 0;i--)
+	for(size_t i = transformationChain.size() - 1;i >= 0;i--)
 		transfo *= *transformationChain[i].trafo;
 }
 
  TTransformation TLOR2LOR::getCumulativeBegin(int positionInChain) const{
 	TTransformation cumulativTransformationBegin; //Identity transformation
 
-	for (int i = transformationChain.size()-1; i>positionInChain ; i--)
+	for (size_t i = transformationChain.size()-1; i>positionInChain ; i--)
 		cumulativTransformationBegin *= *transformationChain[i].trafo;
 
 	return cumulativTransformationBegin;

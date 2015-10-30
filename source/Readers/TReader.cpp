@@ -285,7 +285,7 @@ bool TReader::read(std::istream& lgcStream) {
 	lgcStream.putback('*');
 
 	// add the newline characters in the title to the linecount
-	nline += count(line.cbegin(), line.cend(), '\n');
+	nline += (int)count(line.cbegin(), line.cend(), '\n');
 	nline++;
 
 	// read the rest of the file
