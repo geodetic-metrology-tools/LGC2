@@ -362,7 +362,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 				currentNode = currentNode.node->parent; // Move up
 			}
 			//Transformation DOWN has to be pushed to the 'transformationChain' in opposite order to connect the chain correctly
-			for(size_t i = transformationChainDown.size()-1; i>=0; i--)
+			for(int i = (int)transformationChainDown.size()-1; i>=0; i--)
 				transformationChain.push_back(transformationChainDown[i]);			
 		}
 		//If turningPoint was not found it means that one of these frames is subset of the second (treated in this else)
@@ -398,7 +398,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 					currentNode = currentNode.node->parent; //Move up
 				}
 				//Transformation down has to be pushed in the right order
-				for(size_t i = transformationChainDown.size()-1; i>=0; i--)
+				for(int i = (int)transformationChainDown.size()-1; i>=0; i--)
 					transformationChain.push_back(transformationChainDown[i]);	
 			}
 		}
@@ -410,14 +410,14 @@ void TLOR2LOR::updateTransformation()
 {
 	// Establish the transformation between the 2 LORs
 	transfo.setIdentityTransformation(); 
-	for(size_t i = transformationChain.size() - 1;i >= 0;i--)
+	for(int i = (int)transformationChain.size() - 1;i >= 0;i--)
 		transfo *= *transformationChain[i].trafo;
 }
 
  TTransformation TLOR2LOR::getCumulativeBegin(int positionInChain) const{
 	TTransformation cumulativTransformationBegin; //Identity transformation
 
-	for (size_t i = transformationChain.size()-1; i>positionInChain ; i--)
+   for(int i = (int)transformationChain.size() - 1; i>positionInChain; i--)
 		cumulativTransformationBegin *= *transformationChain[i].trafo;
 
 	return cumulativTransformationBegin;
