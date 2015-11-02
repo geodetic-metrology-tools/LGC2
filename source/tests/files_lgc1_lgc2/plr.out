@@ -1,0 +1,148 @@
+
+
+                          ****               ******              *****           ***********                                     
+                          ****            ************        ***********        ***********                                     
+                          ****           *****     ****      *****    ****              ****                                     
+                          ****          ****        ****    ****       ****             ****                                     
+                          ****          ****                ****                        ****                                     
+                          ****          ****                ****                 ***********                                     
+ ***********************  ****          ****      *******   ****                 ***********    ***********************             
+ ***********************  ****          ****      *******   ****                 ****            ***********************             
+                          ****          ****       ******   ****       ****      ****                                            
+                          ***********    ****     **** **    ****     ****       ****                                            
+                          ***********     ***********         ***********        ***********                                     
+                          ***********        *****               *****           ***********                                     
+
+
+
+*********************************************************************************************************************************** 
+
+
+
+LGC2 v2.0.0, version was not compiled against SurveyLib, compiled on Sep 22 2015
+Copyright 2015, CERN SU. All rights reserved.
+*********************************************************************************************************************************** 
+Testing PLR3D measurements.
+
+CALCUL DU 22 September 2015 16:09:32
+*********************************************************************************************************************************** 
+
+
+
+DATA SET - GENERAL INFO:
+
+	FRAMES defined:
+	 	 NOMBRE =	1
+
+	POINTS defined:
+	 	 NOMBRE =	4
+
+	Unknowns introduced by POINTS:
+	 	 NOMBRE =	6
+
+	ANGLES defined:
+	 	 NOMBRE =	1
+
+	Unknowns introduced by ANGLES:
+	 	 NOMBRE =	1
+
+	SCALARS defined:
+	 	 NOMBRE =	2
+
+	Unknowns introduced by SCALARS:
+	 	 NOMBRE =	0
+
+
+
+POINTS SUMMARY:
+            LECTURE DES POINTS DE CALAGE
++        OK :
+
+            NOMBRE=    2
+
+
+            LECTURE DES POINTS VARIABLES EN XYZ
++        OK :
+
+            NOMBRE=    2
+
+
+MEASUREMENTS SUMMARY:
+             LECTURE DES POLAR3D
++        OK :
+
+             NOMBRE=    3
+
+
+*** FIN DE FICHIER ***
+
+             NOMBRE D'OBSERVATIONS =  9
+
+             NOMBRE D'INCONNUES =     7
+
+             NUMBER OF ITERATIONS =     2
+
+
+
+
+SIGMA ZERO A POSTERIORI =0.2845750, VALEUR CRITIQUE = ( 0.15912,  1.92065)
+
+LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
+
+
+
+FRAME	ROOT  ID(1)   
+
+
+	POINTS DE CALAGE   (NB. = 2,  REFERENTIEL = LOCAL )
+
+	SFP          NOM               X                Y                Z         SX         SY         SZ         DX         DY         DZ    
+	                              (M)              (M)              (M)       (MM)       (MM)       (MM)       (MM)       (MM)       (MM)   
+
+	             STN        0.0000000        0.0000000        0.0000000                                                                     
+	             REF      100.0000000        0.0000000        0.0000000                                                                     
+
+
+	POINTS VARIABLE EN XYZ   (NB. = 2,  REFERENTIEL = LOCAL )
+
+	SFP          NOM               X                Y                Z         SX         SY         SZ         DX         DY         DZ    
+	                              (M)              (M)              (M)       (MM)       (MM)       (MM)       (MM)       (MM)       (MM)   
+
+	             PT2      100.0002037       99.9999800       -0.0010243     1.1839     1.1839     1.1152     0.2037    -0.0200    -1.0243   
+	              PT       -0.0010521       99.9995687        0.0015705     1.1107     0.5590     0.7917    -1.0521    -0.4313     1.5705   
+
+SFP = Sub-Frame Point; * = TRUE
+
+
+	TOTAL STATION INSTRUMENT: TS1   
+	POSITION           H_INSTR           ROT3D   
+	                       (M)                   
+	STN                 0.0000           FALSE   
+
+		ROM                   ACST              V0             SV0   
+		                       GON             GON              CC   
+		                 0.0000000     399.9998795           5.000   
+
+			POLAR3D   (NB. = 3 )   
+
+			POSITION           OBSANGL      SANGL        CALCANGL    RESANGL      ECART        RES         OBSZEND      SZEND        CALCZEND    RESZEND      ECART        RES         OBSDIST      SDIST        CALCDIST    RESDIST      SENSI        RES           CONST     SCONST         TRGT          H_TRGT   
+			                     (GON)       (CC)           (GON)       (CC)       (MM)       /SIG           (GON)       (CC)           (GON)       (CC)       (MM)       /SIG             (M)       (MM)             (M)       (MM)    (MM/CM)       /SIG             (M)       (MM)                          (M)   
+			PT2             50.0001917      5.000      50.0000712      0.000     0.0000       0.00     100.0004611      5.000     100.0004611     -0.000    -0.0000      -0.00     141.4214861     0.5707     141.4214861     0.0000    -0.0001       0.00       0.0000000      FIXED           T1       0.0000000   
+			REF            100.0001205      5.000     100.0000000     -0.000    -0.0000      -0.00     100.0002025      5.000     100.0000000     -2.025    -0.3181      -0.40     100.0000132     0.5500     100.0000000    -0.0132     0.0000      -0.03       0.0000000      FIXED           T1       0.0000000   
+			PT             399.9994507      5.000     399.9993302      0.000     0.0000       0.00      99.9990002      5.000      99.9990002     -0.000    -0.0000      -0.00      99.9995687     0.5500      99.9995687    -0.0000     0.0002      -0.00       0.0000000      FIXED           T1       0.0000000   
+
+			ANGL
+			RESIDU MOYEN =   -0.0000    CC :  LIMITES DE CONFIANCE A 95.0 = (-0.0000, 0.0000)
+			ECART-TYPE   =    0.0000    CC :  LIMITES DE CONFIANCE A 95.0 = (0.0000, 0.0000)   
+
+
+			ZEND
+			RESIDU MOYEN =   -0.6750    CC :  LIMITES DE CONFIANCE A 95.0 = (-2.9043, 2.9043)
+			ECART-TYPE   =    1.1691    CC :  LIMITES DE CONFIANCE A 95.0 = (0.6087, 7.3477)   
+
+
+			DIST
+			RESIDU MOYEN =  -0.00440    MM :  LIMITES DE CONFIANCE A 95.0 = (-0.01893, 0.01893)
+			ECART-TYPE   =   0.00762    MM :  LIMITES DE CONFIANCE A 95.0 = (0.00397, 0.04790)   
+
+
