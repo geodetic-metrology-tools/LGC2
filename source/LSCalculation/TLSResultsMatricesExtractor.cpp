@@ -101,6 +101,10 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			for(auto itECHO(itTree.node->data->measurements.fECHO.begin()); itECHO != itTree.node->data->measurements.fECHO.end(); ++itECHO)
 				extractECHOROMObs(rm, *itECHO);
 
+			//In every node iterate through the ORIEROM's measurements
+			for (auto itORIE(itTree.node->data->measurements.fORIE.begin()); itORIE != itTree.node->data->measurements.fORIE.end(); ++itORIE)
+				extractORIEROMObs(rm, *itORIE);
+
 			//Extract vertical distance DVER residuals
 			extractDVERObs(rm, itTree.node->data->measurements.fDVER);
 		}
@@ -233,13 +237,23 @@ void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices& rm, 
 
 }
 
-void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& levelMeas){
-	for(auto itECHO(levelMeas.measECHO.begin()); itECHO != levelMeas.measECHO.end(); ++itECHO){
+void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& echoMeas){
+	for (auto itECHO(echoMeas.measECHO.begin()); itECHO != echoMeas.measECHO.end(); ++itECHO){
 		MatrixIndex obsUidx = itECHO->getFirstObservationIndex();
 		if ( obsUidx < rm.getResidualsVctr()->size() ) 
          itECHO->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 			throw std::runtime_error("ECHO observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+	}
+}
+
+void TLSResultsMatricesExtractor::extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas){
+	for (auto& itORIE:orieMeas.measORIE){
+		MatrixIndex obsUidx = itORIE.getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVctr()->size())
+			itORIE.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx),TAngle::EUnits::kRadians));
+		else
+			throw std::runtime_error("ORIE observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
 }
 

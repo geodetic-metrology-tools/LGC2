@@ -9,6 +9,7 @@ class TUVD;
 class TUVEC;
 struct TLEVEL;
 struct TECHOROM;
+struct TORIEROM;
 /*!
 	\ingroup LSCalculation
 	\brief  Class responsible for extracting the results from the matrices and updating the appropriate member data of the 
@@ -99,7 +100,10 @@ private:
 		void extractLEVELObs(const TLSResultsMatrices& rm, TLEVEL& levelMeas);
 
 		/// Sets the ECHO measurement residual.
-		void extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& levelMeas);
+		void extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& echoMeas);
+
+		/// Sets the ORIE measurement residual.
+		void extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas);
 
 		/// Sets the DSPT measurement residual.
 		void extractDSPTObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TEDM::TTarget>& distanceMeas);

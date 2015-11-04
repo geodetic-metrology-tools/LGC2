@@ -222,6 +222,7 @@ private:
 
 		//Transform a position vector into a LA system
 		void transform2LA(TPositionVector& pv);
+		void transform2LAInverse(TFreeVector& pv);
 
 		// Name of the last processed point which was used as the origin of the MLA.
 		// If a transformation to MLA is needed, we firstly compare the name of the new origin point with this name.

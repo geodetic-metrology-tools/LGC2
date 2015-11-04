@@ -742,16 +742,15 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(orie.targetPos->getFrameTreePosition(), fTree->begin()); //Transformation from "TARGET FRAME" to "ROOT"
 	tgLor2RootTrafo.transform(targetPos);
 	
-
 	TPositionVector stationPos = orieROM.instrumentPos->getEstimatedValue();
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(orieROM.instrumentPos->getFrameTreePosition(), fTree->begin()); //Transformation from "STATION FRAME" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 	
-	//transform2LA(stationPos);
-	//transform2LA(targetPos);
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(orieROM.instrumentPos->getName(), stationPos, targetPos);
+		transform2LA(stationPos);
+		transform2LA(targetPos);	
 		fMLAused = true;
 	}
 	else
@@ -778,21 +777,29 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	TReal v0Contrib = 0.0; //no V0 parameter for a gyro theodolithe
 	TReal hiContrib = 0.0; // no contribution for the instrument height
 
+	TFreeVector abc(a, b, c, TCoordSysFactory::k3DCartesian);
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		transform2LAInverse(abc);
+	
+
 	//Station can be defined anywhere, get point contributions and transformations contributions
-	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, a, b, c);
+	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, abc.getX().getMetresValue(), abc.getY().getMetresValue(), abc.getZ().getMetresValue());
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
-	addTransformationsContributions(stLor2RootTrafo, orieROM.instrumentPos->getEstimatedValue(), a, b, c, stationTransfContributions);
+	addTransformationsContributions(stLor2RootTrafo, orieROM.instrumentPos->getEstimatedValue(), abc.getX().getMetresValue(), abc.getY().getMetresValue(), abc.getZ().getMetresValue(), stationTransfContributions);
 
 	//Target can be defined anywhere, get point contributions and transformations contributions
-	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, -a, -b, -c);
+	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, -abc.getX().getMetresValue(), -abc.getY().getMetresValue(), -abc.getZ().getMetresValue());
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
-	addTransformationsContributions(tgLor2RootTrafo, orie.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
+	addTransformationsContributions(tgLor2RootTrafo, orie.targetPos->getEstimatedValue(), -abc.getX().getMetresValue(), -abc.getY().getMetresValue(), -abc.getZ().getMetresValue(), targetTransfContributions);
 
 	// Variance calculation
 	TReal variance = pow2q(orie.target.sigmaAngl.getRadiansValue()) + (1.0 / pow2q(dist2)) * (pow2q(orieROM.instrument.sigmaInstrCentering) + pow2q(orie.target.sigmaTargetCentering));
 
 	AnglMeasContrib  contrib = { calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance };
 	return contrib;
+
+	
 }
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
@@ -953,6 +960,13 @@ void TContributionsGenerator::transform2LA(TPositionVector& pv){
 	fcgrf2ilg.transform(pv);
 	filg2ila.transform(pv);
 }
+
+void TContributionsGenerator::transform2LAInverse(TFreeVector& pv){
+	filg2ila.transformInverse(pv);
+	fcgrf2ilg.transformInverse(pv);
+	fccs2cgrf.transformInverse(pv);
+}
+
 // used only for the dver measurements
 void TContributionsGenerator::transformMLA2CGRF(TFreeVector& fv){
 	TTransformation ILA2MILA;

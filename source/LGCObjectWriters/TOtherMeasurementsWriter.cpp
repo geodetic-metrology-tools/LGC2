@@ -69,7 +69,7 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& f
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResidualPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResidualPrecision = max(getAngleResidualPrecision() - 4, 0);
 	string				separator = getSeparator();
 
 
@@ -232,7 +232,7 @@ void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, co
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					angleResidualPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResidualPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(3);

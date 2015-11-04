@@ -118,7 +118,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(3);
@@ -230,7 +230,7 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(3);
@@ -280,7 +280,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(3);
@@ -954,7 +954,7 @@ void	TTSTNWriter::writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatisti
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 
 	for(auto const& ItANGL : measANGL)
 	{
@@ -992,7 +992,7 @@ void	TTSTNWriter::writeZENDReliabilityData(const  TTSTN& tstn, const TLGCStatist
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 
 	for(auto const& ItZEND : measZEND)
 	{
@@ -1064,7 +1064,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 
 	for(auto const& ItPLR : measPLR3D)
 	{
