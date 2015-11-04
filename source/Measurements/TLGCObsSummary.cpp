@@ -175,7 +175,7 @@ TReal		TLGCObsSummary::getMeanLoLimit()
 	if( dof > 0 )
 	{
 		// initialise some parameters
-		prob = LITERAL(0.975); /*(95+(100-95)/2)/100*/
+		prob = LITERAL(0.975); 
 		var = getVariance();
 
 		// calculated the confidence limits from the Student T distribution
@@ -201,7 +201,7 @@ TReal		TLGCObsSummary::getMeanHiLimit()
 	if( dof > 0 )
 	{
 		// initialise some parameters
-		prob = LITERAL(0.975); /*(95+(100-95)/2)/100*/
+		prob = LITERAL(0.975); 
 		var = getVariance();
 
 		// calculated the confidence limits from the Student T distribution
@@ -244,7 +244,7 @@ TReal		TLGCObsSummary::getVarLoLimit()
 	if( dof > 0 )
 	{
 		// initialise some parameters
-		prob = LITERAL(0.975); /*(95+(100-95)/2)/100*/
+		prob = LITERAL(0.975); 
 		var = getVariance();
 
 		// chi test coefficients
@@ -271,7 +271,7 @@ TReal		TLGCObsSummary::getVarHiLimit()
 	if( dof > 0 )
 	{
 		// initialise some parameters
-		prob = LITERAL(0.975); /*(95+(100-95)/2)/100*/
+		prob = LITERAL(0.975); 
 		var = getVariance();
 
 		// chi test coefficients

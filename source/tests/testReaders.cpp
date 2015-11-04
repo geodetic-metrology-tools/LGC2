@@ -131,7 +131,7 @@ namespace tut
 			c4.parse(TReader::tokenizeLGCfileString("*PDOR P1 0.31"), -1);
 			ensure("PDOR must be ON now", cfg.pdor.isActive());
 			ensure("PDOR Point name must match input", cfg.pdor.fptname == "P1");
-			ensure_distance("PDOR gisement must match input", cfg.pdor.fgis, 0.31, 1e-6);
+			ensure_equals("PDOR gisement must match input", cfg.pdor.fgis, 0.31, 1e-6);
 			
 #if 0
 			// Commented because we need the measurements for following tests, but works!

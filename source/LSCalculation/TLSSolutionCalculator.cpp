@@ -22,11 +22,11 @@ bool	TLSSolutionCalculator::iterate2Solution(TLGCData& data, int fMaxIterations,
 	std::unique_ptr<TLSResultsMatrices> resultMatrices(new TLSResultsMatrices(data.fUEOIndices));
 
 	if(data.isCombinedCaseUsed())
-			computer.reset(new TLSCombinedMtdComputer());
-		else if(data.hasStandDeviations())
-			computer.reset(new TLSWeightedUnkMtdComputer());
-		else
-			computer.reset(new TLSParametricMtdComputer());
+		computer.reset(new TLSCombinedMtdComputer());
+	else if(data.hasStandDeviations())
+		computer.reset(new TLSWeightedUnkMtdComputer());
+	else
+		computer.reset(new TLSParametricMtdComputer());
 
 
 	bool lastIteration = false;
@@ -38,8 +38,11 @@ bool	TLSSolutionCalculator::iterate2Solution(TLGCData& data, int fMaxIterations,
 	while(!lastIteration && fNumberOfIterations < fMaxIterations)
 	{
 		bool fillOK = false;
-		if(fNumberOfIterations == 0)//First iteration, fill also the weight unknown matrix.
+		if (fNumberOfIterations == 0)//First iteration, fill also the weight unknown matrix.
+		{
 			fillOK = matrFiller->fillMatrices(&data, true, inputMtr.get());
+			inputMtr->saveMatricesToFile(0);
+		}
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr.get());
 

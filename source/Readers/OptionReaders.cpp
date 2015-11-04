@@ -80,7 +80,7 @@ void TKeyPDOR::parse(const std::vector<std::string>& tokens, int) {
 	if (numtok == 3)
 		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(2));
 	else if (numtok == 4)
-		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(2), std::stor(tokens.at(3)));
+		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kGons));
 	else
 		throw std::runtime_error("Keyword *PDOR takes either one or two arguments "
 		                         "(Point name and optinal bearing), not " + std::to_string(numtok) + ".");

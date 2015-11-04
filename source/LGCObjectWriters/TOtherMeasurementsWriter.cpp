@@ -11,12 +11,21 @@ TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream): TObserv
 TOtherMeasurentWriter::~TOtherMeasurentWriter()
 {}
 
+//------------------ Reliability header---------------------------------------------------------------------------
 void	TOtherMeasurentWriter::writeDVERReliabilityHeader()
 {
 this->TObservationWriter::writeReliabilityHeader("POINT 1","POINT 2", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
+void	TOtherMeasurentWriter::writeORIEReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("STATION", "POINT", "", "OBSERVATION", "GON", "CC");
+	return;
+}
+
+
+//------------------ Reliability data---------------------------------------------------------------------------
 void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
@@ -24,11 +33,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
-	string				separator = getSeparator();
-
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 
 	//For each ECHO measurement of the station
 	for(auto const& ItDver : fDVER)
@@ -46,9 +51,9 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDver.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDver.getObservedStDev()* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDver.getObservedStDev().getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDver.getDistanceResidual()* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDver.getDistanceResidual().getMMetresValue());
 
 
 		writeReliability(index, stat);
@@ -57,6 +62,45 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 	return;
 }
 
+void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const TAdjustablePoint& instPos)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResidualPrecision = max(getAngleResidualPrecision() - 3, 0);
+	string				separator = getSeparator();
+
+
+	//For each orie measurement of the station
+	for (auto const& ItORIE : fORIE)
+	{
+		// Observation index to take the right value in the statistic vector
+		int index = ItORIE.getFirstObservationIndex();
+
+		// get Point 1 of the line or the linenumber?
+		(*stream).writeStringLeft(nameWidth, instPos.getName());
+		//get Tg point
+		(*stream).writeStringLeft(nameWidth, ItORIE.targetPos->getName());
+		// get Point 3
+		(*stream).writeStringLeft(nameWidth, "");
+
+		//get the observed ORIE
+		(*stream).writeDouble(obsWidth, anglePrecision, ItORIE.getAngle().getGonsValue());
+		//write the sigma ORIE
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
+		//get the residual
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
+
+
+		writeReliability(index, stat);
+		(*stream).setDataSpacing();
+	}
+	return;
+}
+
+//------------------ Result header---------------------------------------------------------------------------
 void TOtherMeasurentWriter::writeDVERResultsHeader()
 {
 TAStreamFormatter*	stream = getStream();
@@ -93,19 +137,51 @@ TAStreamFormatter*	stream = getStream();
 	(*stream)<<endl;
 }
 
+void TOtherMeasurentWriter::writeORIEResultsHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "STATION"); //Position of the inst
+	(*stream).writeStringLeft(nameWidth, "POINT"); //Position of the scale
+	(*stream).writeString(obsWidth, "OBSERVE"); //observed orie
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
+	(*stream).writeString(obsWidth, "CALCULE"); //estimated orie 
+	(*stream).writeString(obsResWidth, "RESIDU"); //residual
+	(*stream).writeString(obsResWidth, "RES/SIG");//residu/sigma
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //Position of the inst 
+	(*stream).writeStringLeft(nameWidth, ""); //Position of the scale
+	(*stream).writeString(obsWidth, "(GON)"); //observed orie
+	(*stream).writeString(obsResWidth, "(CC)"); //sigma observed value
+	(*stream).writeString(obsWidth, "(GON)"); //estimated orie
+	(*stream).writeString(obsResWidth, "(CC)"); //residual
+	(*stream).writeString(obsResWidth, "");    //residu/sigma
+
+	(*stream) << endl;
+}
+//------------------ Result data---------------------------------------------------------------------------
 void TOtherMeasurentWriter::writeDVERResults(const std::vector<TDVER>& fDVER)
 {
 TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
-	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
 	//first line
    this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), (int)fDVER.size());
@@ -129,23 +205,101 @@ TAStreamFormatter*	stream = getStream();
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDVER.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getObservedStDev() * M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getObservedStDev().getMMetresValue());//Output value in meters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDVER.getDistance() + ItDVER.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual() * M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual().getMMetresValue());//Output value in meters [mm], stored in [m]
 
 		//write the residual/sigam
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual()/ItDVER.getObservedStDev());//Output value in meters [mm], stored in [m]
 		(*stream)<<endl;
 
 		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(ItDVER.getDistanceResidual()*M2MM);
+		summary.addNewResidual(ItDVER.getDistanceResidual().getMMetresValue());
 	}
 	(*stream)<<endl;
 	
 	//for output residual mean and the standart deviation of the residuals
 	writeDistanceResultsSummary(summary, TABs);
+}
+
+void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					angleResidualPrecision = max(getAngleResidualPrecision() - 3, 0);
+	int					anglePrecision = getAnglePrecision();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	//first line
+	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kORIE), (int)fORIE.size());
+	(*stream) << endl;
+
+	writeORIEResultsHeader(); // write the title line for the observations
+
+	//for output residual mean and the standart deviation of the residuals
+	// directly calculate here due to the instrument absence
+	TLGCObsSummary summary;
+
+	for (auto const& ItORIE : fORIE)
+	{
+		(*stream) << TABs;
+		//write INST POSITION
+		(*stream).writeStringLeft(nameWidth, instPos.getName());
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItORIE.targetPos->getName());
+
+		//write the observed ORIE
+		(*stream).writeDouble(obsWidth, anglePrecision, ItORIE.getAngle().getGonsValue());
+
+		//write the sigma ORIE
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
+
+		//write the estimated ORIE
+		(*stream).writeDouble(obsWidth, anglePrecision, ItORIE.getAngle().getGonsValue() + ItORIE.getAngleResidual().getGonsValue());
+
+		//write the residual
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
+
+		//write the resi/sigma
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue() / ItORIE.target.sigmaAngl.getSignedCCValue());
+		(*stream) << endl;
+
+		//for output residual mean and the standart deviation of the residuals
+		summary.addNewResidual(ItORIE.getAngleResidual().getSignedCCValue());
+	}
+	(*stream) << endl;
+
+	//for output residual mean and the standart deviation of the residuals
+	writeDistanceResultsSummary(summary, TABs);
+}
+
+void TOtherMeasurentWriter::writeDVERSIMUResults(const std::vector<TDVER>& fDVER)
+{
+	TAStreamFormatter*	stream = getStream();
+	//Third hierarchy level from local FRAME
+	std::string        TABs = stream->getCurrSpaceExtended(3);
+
+		if (!fDVER.empty()){
+			(*stream) << TABs << "DVER" << endl;
+			//writeDistanceResultsSummary(fDVER, TABs);
+		}
+}
+
+void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)
+{
+	TAStreamFormatter*	stream = getStream();
+	//Third hierarchy level from local FRAME
+	std::string        TABs = stream->getCurrSpaceExtended(3);
+
+	//Write definition of ROM
+	(*stream) << TABs << "ORIE" << endl;
+	writeAngleResultsSummary(fOrieRom.getORIEObsSummary(), TABs);
 }

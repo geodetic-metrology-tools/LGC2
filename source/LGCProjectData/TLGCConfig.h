@@ -99,7 +99,7 @@ struct TLGCConfig
 			/// Point name of the the orientation point
 			std::string fptname;
 			/// Constant gisement of the result
-			TReal fgis;
+			TAngle fgis;
 			
 			/// There is no orientation point for the adjustment
 			TPDOR() : TBinaryOption() {}
@@ -109,7 +109,7 @@ struct TLGCConfig
 				\param ptname The name of the orientation point as it is given in the points section
 				\param gisement Constant gisement of the solution
 			*/
-			TPDOR(const std::string& ptname, TReal gisement = 0.0) :
+			TPDOR(const std::string& ptname, TAngle gisement = TAngle(0.0)) :
 				TBinaryOption(true),
 				fptname(ptname),
 				fgis(gisement) {}

@@ -23,7 +23,6 @@ class TLSSolutionCalculator{
 
 		/// Returns number of iterations made
 		int		getNumberOfIterations() {return fNumberOfIterations;}
-		//bool	S0APosterioriUsed(){return fS0APosterioriVariances;}
 
 	private:
 		int		 fNumberOfIterations;

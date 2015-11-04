@@ -12,6 +12,7 @@ class  TPLR3D;
 class  TDIR3D;
 class  TLINE;
 struct TECHOROM;
+struct TORIEROM;
 
 /*! 
 	\ingroup LSCalculation
@@ -89,7 +90,10 @@ private:
 		void  addDVERContribution(const std::vector<TDVER>& dverMeas, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ECHO measurement. 
-		void addECHOContributions(const TECHOROM& levelSt, TLSInputMatrices*  matrices);
+		void addECHOContributions(const TECHOROM& echoRom, TLSInputMatrices*  matrices);
+
+		/// Add the design matrices contributions for the ORIE measurement. 
+		void addORIEContributions(const TORIEROM& orieRom, TLSInputMatrices*  matrices);
 	//@}
 
 

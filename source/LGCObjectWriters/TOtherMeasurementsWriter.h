@@ -5,6 +5,7 @@
 // Forward declarations
 #include "TObservationWriter.h"
 #include "MeasDef.h"
+#include "RoundOfMeasurements.h"
 ////////////////////////////////////////////////////////////////
 
 
@@ -19,23 +20,30 @@ public:
 	/// Destructor
 	virtual ~TOtherMeasurentWriter();
 
-	/// Write reliability header for DVER
+	/// Write reliability header 
 	void	writeDVERReliabilityHeader();
+	void	writeORIEReliabilityHeader();
 
-	/// Write reliability data for DVER
+	/// Write reliability data
 	void	writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
+	void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const TAdjustablePoint& instPos);
 
 	/*!@name Headers */
 	//@{
-		/// Write DVER results header
+		/// Write results header
 		void writeDVERResultsHeader();
+		void writeORIEResultsHeader();
 	//@}
 
 	/*!@name Results */
 	//@{
-		/// Write DVER results data
+		/// Write results data
 		void writeDVERResults(const std::vector<TDVER>& fDVER);
+		void writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos);
+		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);
+		void writeORIESIMUResults(const TORIEROM& fOrieRom);
 	//@}
+
 
 };
 

@@ -47,18 +47,19 @@ struct TORIEROM {
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getORIEObsSummary() const;
 
-		TAngle		fConstantAngle;
+		TAngle fConstantAngle;
 
 		/// Line of the measurement definition
 		int  line;
 
 		/// the station attribute is a copy of the parameter to override defaults
-		TORIEROM( const TAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
+		TORIEROM(const TAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
 			instrumentPos(&pos),
 			instrument(instrument),
 			line(NO_VALi),
 			fConstantAngle(0.0, TAngle::EUnits::kGons)
-			{}
+		{
+		}
 };
 
 #endif

@@ -583,7 +583,6 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const TAdjustable
 	return contrib;
 }
 
-
 //DLEV contributions
 DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, const TDLEV& dlev){
 	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); //collimination angle in rads
@@ -627,7 +626,6 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 	DLEVContrib dlevContrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, fRefPtDistCont, collAngleContrib, variance};
 	return dlevContrib;
 }
-
 
 //ECHO contribution
 ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, const TECHO& echo){
@@ -736,6 +734,66 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 	return dverC;
 }
 
+
+//Gyro contributions
+AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM, const TORIE& orie){
+	//Transform TARGET and STATION in a LOCAL ASTRONOMICAL FRAME
+	TPositionVector targetPos = orie.targetPos->getEstimatedValue();
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(orie.targetPos->getFrameTreePosition(), fTree->begin()); //Transformation from "TARGET FRAME" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+	
+
+	TPositionVector stationPos = orieROM.instrumentPos->getEstimatedValue();
+	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(orieROM.instrumentPos->getFrameTreePosition(), fTree->begin()); //Transformation from "STATION FRAME" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+	
+	//transform2LA(stationPos);
+	//transform2LA(targetPos);
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(orieROM.instrumentPos->getName(), stationPos, targetPos);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+
+	//Calculated measurement value
+	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - orieROM.fConstantAngle;
+
+	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
+	if (dist2 < nullLimit)
+		throw std::logic_error("TContributionGenerator::getHorAnglContrib: Division by zero because observation points have identical coordinates.");
+
+	TReal a, b, c; //station's contributions coefficients (negative values of these give the target coefficients)		
+	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; //xSt coefficient
+	b = (xTg - xSt) / dist2; //ySt coefficient
+	c = 0.0; //zSt coefficient
+
+	TReal v0Contrib = 0.0; //no V0 parameter for a gyro theodolithe
+	TReal hiContrib = 0.0; // no contribution for the instrument height
+
+	//Station can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, a, b, c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	addTransformationsContributions(stLor2RootTrafo, orieROM.instrumentPos->getEstimatedValue(), a, b, c, stationTransfContributions);
+
+	//Target can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, -a, -b, -c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
+	addTransformationsContributions(tgLor2RootTrafo, orie.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
+
+	// Variance calculation
+	TReal variance = pow2q(orie.target.sigmaAngl.getRadiansValue()) + (1.0 / pow2q(dist2)) * (pow2q(orieROM.instrument.sigmaInstrCentering) + pow2q(orie.target.sigmaTargetCentering));
+
+	AnglMeasContrib  contrib = { calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance };
+	return contrib;
+}
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
 UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TUVEC& uvec){
@@ -890,6 +948,11 @@ void TContributionsGenerator::transform2MLA(TFreeVector& fv){
 	ILA2MILA.transform(fv);
 }
 
+void TContributionsGenerator::transform2LA(TPositionVector& pv){
+	fccs2cgrf.transform(pv);
+	fcgrf2ilg.transform(pv);
+	filg2ila.transform(pv);
+}
 // used only for the dver measurements
 void TContributionsGenerator::transformMLA2CGRF(TFreeVector& fv){
 	TTransformation ILA2MILA;
@@ -1394,7 +1457,28 @@ UVDCalcMeas TContributionsGenerator::getUVDCalcMeas(const TCAM& camera, const TU
 	return calMeas;
 }
 
+TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie){
+	//Transform TARGET and STATION in a LOCAL ASTRONOMICAL FRAME
+	TPositionVector targetPos = orie.targetPos->getEstimatedValue();
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(orie.targetPos->getFrameTreePosition(), fTree->begin()); //Transformation from "TARGET FRAME" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+	transform2LA(targetPos);
 
+	TPositionVector stationPos = orieROM.instrumentPos->getEstimatedValue();
+	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(orieROM.instrumentPos->getFrameTreePosition(), fTree->begin()); //Transformation from "STATION FRAME" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+	transform2LA(stationPos);
+
+
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+
+	//Calculated measurement value
+	return(TAngle::aTan2((xTg - xSt), (yTg - ySt)) - orieROM.fConstantAngle);
+}
 
 //The ECTH implementation is not yet finished
 #if 0

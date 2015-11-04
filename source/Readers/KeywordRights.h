@@ -29,6 +29,7 @@ namespace {
 #define ORIE "ORIE"
 #define CALA "CALA"
 #define POIN "POIN"
+#define PDOR "PDOR"
 #define VXY "VXY"
 #define VXZ "VXZ"
 #define VYZ "VYZ"
@@ -73,24 +74,25 @@ const int nb_allowed_ecve		= 11;
 const int nb_allowed_orie		= 11;
 const int nb_allowed_cala		= 17;
 const int nb_allowed_poin		= 17;
+const int nb_allowed_pdor       = 17;
 const int nb_allowed_vxy		= 17;
 const int nb_allowed_vxz		= 17;
 const int nb_allowed_vyz		= 17;
 const int nb_allowed_vz			= 17;
-const int nb_allowed_polar		= 21;
-const int nb_allowed_camd		= 21;
-const int nb_allowed_edm		= 21;
-const int nb_allowed_level		= 21;
-const int nb_allowed_scale		= 21;
-const int nb_allowed_oloc		= 12;
-const int nb_allowed_rs2k		= 12;
-const int nb_allowed_lep		= 12;
-const int nb_allowed_sphe		= 12;
-const int nb_allowed_faut		= 16;
-const int nb_allowed_apri		= 16;
-const int nb_allowed_punc		= 16;
-const int nb_allowed_prec		= 16;
-const int nb_allowed_simu		= 16;
+const int nb_allowed_polar		= 22;
+const int nb_allowed_camd		= 22;
+const int nb_allowed_edm		= 22;
+const int nb_allowed_level		= 22;
+const int nb_allowed_scale		= 22;
+const int nb_allowed_oloc		= 13;
+const int nb_allowed_rs2k		= 13;
+const int nb_allowed_lep		= 13;
+const int nb_allowed_sphe		= 13;
+const int nb_allowed_faut		= 17;
+const int nb_allowed_apri		= 17;
+const int nb_allowed_punc		= 17;
+const int nb_allowed_prec		= 17;
+const int nb_allowed_simu		= 17;
 const int nb_allowed_instr		= 5;
 const int nb_allowed_frame		= 6;
 const int nb_allowed_ef			= 18;
@@ -126,23 +128,24 @@ const char* allowed_VXY[nb_allowed_vxy]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, E
 const char* allowed_VXZ[nb_allowed_vxz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY,	  VYZ, VZ, FRAME, ENDFRAME, END};
 const char* allowed_VYZ[nb_allowed_vyz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ,	   VZ, FRAME, ENDFRAME, END};
 const char* allowed_VZ[nb_allowed_vz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ,	   FRAME, ENDFRAME, END};
+const char* allowed_PDOR[nb_allowed_pdor]   = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END };
 //Instruments
-const char* allowed_POLAR[nb_allowed_polar]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
-const char* allowed_CAMD[nb_allowed_camd]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
-const char* allowed_EDM[nb_allowed_edm]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
-const char* allowed_LEVEL[nb_allowed_level]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
-const char* allowed_SCALE[nb_allowed_scale]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
+const char* allowed_POLAR[nb_allowed_polar]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
+const char* allowed_CAMD[nb_allowed_camd]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
+const char* allowed_EDM[nb_allowed_edm]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
+const char* allowed_LEVEL[nb_allowed_level]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
+const char* allowed_SCALE[nb_allowed_scale]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
 // Reference systems
-const char* allowed_OLOC[nb_allowed_oloc]	= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ};
-const char* allowed_RS2K[nb_allowed_rs2k]	= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ};
-const char* allowed_LEP[nb_allowed_lep]		= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ};
-const char* allowed_SPHE[nb_allowed_sphe]	= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ};
+const char* allowed_OLOC[nb_allowed_oloc]	= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR};
+const char* allowed_RS2K[nb_allowed_rs2k]	= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR};
+const char* allowed_LEP[nb_allowed_lep]		= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR};
+const char* allowed_SPHE[nb_allowed_sphe]	= {APRI, SIMU, PREC, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR};
 // Options
-const char* allowed_FAUT[nb_allowed_faut]	= {APRI, SIMU, PREC,       PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME};
-const char* allowed_APRI[nb_allowed_apri]	= {      SIMU, PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME};
-const char* allowed_PUNC[nb_allowed_punc]	= {APRI, SIMU, PREC, FAUT,       CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME};
-const char* allowed_PREC[nb_allowed_prec]	= {APRI, SIMU,       FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME};
-const char* allowed_SIMU[nb_allowed_simu]	= {APRI,       PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME};
+const char* allowed_FAUT[nb_allowed_faut]	= {APRI, SIMU, PREC,       PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR};
+const char* allowed_APRI[nb_allowed_apri]	= {      SIMU, PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR};
+const char* allowed_PUNC[nb_allowed_punc]	= {APRI, SIMU, PREC, FAUT,       CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR};
+const char* allowed_PREC[nb_allowed_prec]	= {APRI, SIMU,       FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR};
+const char* allowed_SIMU[nb_allowed_simu]	= {APRI,       PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR};
 // Others
 const char* allowed_INSTR[nb_allowed_instr]	= {POLAR, CAMD, EDM, LEVEL, SCALE};
 const char* allowed_FRAME[nb_allowed_frame]	= {CAM, DSPT, CALA, POIN, FRAME, ENDFRAME};

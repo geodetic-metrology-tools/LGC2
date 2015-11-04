@@ -51,7 +51,6 @@ void TEDMWriter::writeEDMHeader(const TEDM& fEdm)
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	////////////////////////////////////////////////////////////
@@ -73,19 +72,14 @@ void TEDMWriter::writeEDMData(const TEDM& fEdm)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					lengthPrecision =	getLengthPrecision();
-	string				separator = getSeparator();
-	std::string        TABs = stream->getCurrSpaceExtended(1);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream)<<TABs;
 	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
 	(*stream).writeStringLeft(nameWidth, fEdm.instrumentPos->getName());
 
 	//write the instrument height
-	stream->setLengthUnits(TLength::kMetres);
-	stream->setWidthFormat(obsWidth);
-	stream->setPrecisionFormat(lengthPrecision);
-	(*stream).writeDouble(obsWidth, lengthPrecision, fEdm.instrument.instrHeight);//Output value in meters [m], stored in [m]
-		
+	(*stream).writeDouble(obsWidth, lengthPrecision, fEdm.instrument.instrHeight);		
 	(*stream)<<endl<<endl;
 }
 
@@ -95,7 +89,7 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
 
 	////////////////////////////////////////////////////////////
 	//first line
@@ -132,15 +126,11 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
-	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
-
-   writeDSPTResultsHeader((int)measDSPT.size()); // write the title line for the observations
+    writeDSPTResultsHeader((int)measDSPT.size()); // write the title line for the observations
 	for(auto const& ItDSPT : measDSPT)
 	{
 		(*stream)<<TABs;
@@ -152,10 +142,10 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DSPT
-      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaDSpt.getMMetresValue());//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaDSpt.getMMetresValue());//Output value in meters [mm], stored in [m]
 
 		//write the estimated DSPT
-	  (*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance() + ItDSPT.getDistanceResidual());//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance() + ItDSPT.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual().getMMetresValue());//Output value in meters [mm], stored in [m]
@@ -173,9 +163,6 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual()/ItDSPT.target.sigmaDSpt);
 
 		//write the target height
-		stream->setLengthUnits(TLength::kMetres);
-		stream->setWidthFormat(obsWidth);
-		stream->setPrecisionFormat(lengthPrecision);
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.target.targetHt);//Output value in meters [m], stored in [m]
 		(*stream)<<endl;
 	}
@@ -191,11 +178,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
-	string				separator = getSeparator();
-
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 
 	//For each DSPT measurement of the station
 	for(auto const& ItDspt : fEdm.measDSPT)
@@ -213,7 +196,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDspt.getDistance());
 		//get the standard deviation
-      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDspt.target.sigmaDSpt.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDspt.target.sigmaDSpt.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 

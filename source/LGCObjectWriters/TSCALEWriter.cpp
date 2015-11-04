@@ -61,14 +61,11 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
-	string				separator = getSeparator();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
 	std::string         TABs3 = stream->getCurrSpaceExtended(3);
 
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
 	//first line
 	(*stream)<<TABs1<<"ECHO MEASUREMENTS"<<endl;
@@ -107,15 +104,15 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance() + ItECHO.getDistanceResidual());//Output value in meters [m], stored in [m]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual() * M2MM);//Output value in milimeters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
-		//write the residual/sigam
+		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual()/ItECHO.target.sigmaD);//Output value in meters [m], stored in [m]
 
 		//write the scale ID
@@ -196,11 +193,8 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
-	string				separator = getSeparator();
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
 
 	//For each ECHO measurement of the station
 	for(auto const& ItEcho : measECHO)
@@ -218,10 +212,9 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcho.getDistance());
 		//get the standard deviation
-      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaD.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcho.getDistanceResidual()* M2MM);
-
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.getDistanceResidual().getMMetresValue());
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();

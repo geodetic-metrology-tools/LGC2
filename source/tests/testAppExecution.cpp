@@ -72,8 +72,45 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "DVER.inp", 
-					    getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "DVER.out");
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "FautFile.inp",
+			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "FautFile.out");
+		ensure_equals("Execution should work", proj.exec(), true);
+	}
+	template<>
+	template<>
+	void object::test<4>()
+	{
+		//Test if the whole application runs
+		using namespace LGC;
+		set_test_name("Testing TLGCApp class and nam file reader");
+
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "FautCam.inp",
+			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "FautCam.out");
+		ensure_equals("Execution should work", proj.exec(), true);
+	}
+	template<>
+	template<>
+	void object::test<5>()
+	{
+		//Test if the whole application runs
+		using namespace LGC;
+		set_test_name("Testing TLGCApp class and nam file reader");
+
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "DVER.inp",
+			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "DVER.out");
+		ensure_equals("Execution should work", proj.exec(), true);
+	}
+
+	template<>
+	template<>
+	void object::test<13>()
+	{
+		//Test if the whole application runs
+		using namespace LGC;
+		set_test_name("Testing TLGCApp class and nam file reader");
+
+		TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "test-orie.lgc2", 
+					    getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "test-orie.out");
 		ensure_equals( "Execution should work", proj.exec(), true);
 	}
 };

@@ -44,7 +44,7 @@ TFRAMEWriter::~TFRAMEWriter(){}
 void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
-   stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
@@ -65,32 +65,35 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TEDMWriter edmWriter(*stream);
 	TSCALEWriter scaleWriter(*stream);
 	TLEVELWriter levelWriter(*stream);
-	TOtherMeasurentWriter dverWriter(*stream);
+	TOtherMeasurentWriter otherMeasWriter(*stream);
 
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
-			tstnWriter.writeTSTNResults(*itTSTN);
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+		tstnWriter.writeTSTNResults(itTSTN);
 
-	for(auto itCAM(frameIt->get()->measurements.fCAM.begin()); itCAM != frameIt->get()->measurements.fCAM.end(); ++itCAM)
-			camWriter.writeCAMResults(*itCAM);
+	for(auto& itCAM:frameIt->get()->measurements.fCAM)
+		camWriter.writeCAMResults(itCAM);
 
-	for(auto itLEVEL(frameIt->get()->measurements.fLEVEL.begin()); itLEVEL != frameIt->get()->measurements.fLEVEL.end(); ++itLEVEL)
-			levelWriter.writeLEVELResults(*itLEVEL);
+	for(auto& itLEVEL:frameIt->get()->measurements.fLEVEL)
+		levelWriter.writeLEVELResults(itLEVEL);
 
 	//No instrument for DVER, so no loop to have each instrument.
 	if (! frameIt->get()->measurements.fDVER.empty())
-		dverWriter.writeDVERResults(frameIt->get()->measurements.fDVER);
+		otherMeasWriter.writeDVERResults(frameIt->get()->measurements.fDVER);
 
-	for(auto itEDM(frameIt->get()->measurements.fEDM.begin()); itEDM != frameIt->get()->measurements.fEDM.end(); ++itEDM)
-			edmWriter.writeEDMResults(*itEDM);
+	for (auto& itORIE:frameIt->get()->measurements.fORIE)
+		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
 
-	for(auto itECHO(frameIt->get()->measurements.fECHO.begin()); itECHO != frameIt->get()->measurements.fECHO.end(); ++itECHO)
-			scaleWriter.writeECHOResults(*itECHO);
+	for(auto& itEDM:frameIt->get()->measurements.fEDM)
+		edmWriter.writeEDMResults(itEDM);
+
+	for(auto& itECHO:frameIt->get()->measurements.fECHO)
+		scaleWriter.writeECHOResults(itECHO);
 }
 
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
-   stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	/*Do we want to write out FRAMES only if there is any measurement inside or summarize it each time??? (some parameters can be variable)*/
 	/*Now: If there is at least one measurement or if it is a ROOT node, then write it!*/
@@ -109,31 +112,38 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		TEDMWriter edmWriter(*stream);
 		TSCALEWriter scaleWriter(*stream);
 		TLEVELWriter levelWriter(*stream);
+		TOtherMeasurentWriter otherMeasWriter(*stream);
 
+		for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+			tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
-		for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
-			tstnWriter.writeTSTNResultsSIMU(*itTSTN);
+		for(auto& itCAM:frameIt->get()->measurements.fCAM)
+			camWriter.writeCAMResultsSIMU(itCAM);
 
-		for(auto itCAM(frameIt->get()->measurements.fCAM.begin()); itCAM != frameIt->get()->measurements.fCAM.end(); ++itCAM)
-			camWriter.writeCAMResultsSIMU(*itCAM);
+		for (auto& itLEVEL: frameIt->get()->measurements.fLEVEL)
+			levelWriter.writeLEVELSIMUResults(itLEVEL);
 
-		for(auto itLEVEL(frameIt->get()->measurements.fLEVEL.begin()); itLEVEL != frameIt->get()->measurements.fLEVEL.end(); ++itLEVEL)
-			levelWriter.writeLEVELSIMUResults(*itLEVEL);
-
-		for(auto itEDM(frameIt->get()->measurements.fEDM.begin()); itEDM != frameIt->get()->measurements.fEDM.end(); ++itEDM)
-			edmWriter.writeEDMSIMUResults(*itEDM);
+		for(auto& itEDM:frameIt->get()->measurements.fEDM)
+			edmWriter.writeEDMSIMUResults(itEDM);
 		
-		for(auto itECHO(frameIt->get()->measurements.fECHO.begin()); itECHO != frameIt->get()->measurements.fECHO.end(); ++itECHO)
-			scaleWriter.writeECHOSIMUResults(*itECHO);
+		for(auto& itECHO:frameIt->get()->measurements.fECHO)
+			scaleWriter.writeECHOSIMUResults(itECHO);
+
+		//No instrument for DVER, so no loop to have each instrument.
+		if (!frameIt->get()->measurements.fDVER.empty())
+			otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
+
+		for (auto& itORIE : frameIt->get()->measurements.fORIE)
+			otherMeasWriter.writeORIESIMUResults(itORIE);
 	}
 }
 
 void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	TEDMWriter edmWriter(*stream);
-	TOtherMeasurentWriter dverWriter(*stream);
+	TOtherMeasurentWriter otherMeasWriter(*stream);
 
-   stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
@@ -148,13 +158,13 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	if (! frameIt->get()->measurements.fDVER.empty())
 	{
 		(*stream)<<"DVER observations"<<endl;
-		dverWriter.writeDVERReliabilityHeader();
-		dverWriter.writeDVERReliabilityData(frameIt->get()->measurements.fDVER, fProjectData->getStatistics());
+		otherMeasWriter.writeDVERReliabilityHeader();
+		otherMeasWriter.writeDVERReliabilityData(frameIt->get()->measurements.fDVER, fProjectData->getStatistics());
 	}
 
-	
+
 	bool  EDMheaderWritten = false;
-	for(auto itEDM(frameIt->get()->measurements.fEDM.begin()); itEDM != frameIt->get()->measurements.fEDM.end(); ++itEDM)
+	for(auto& itEDM:frameIt->get()->measurements.fEDM)
 	{
 		if (!EDMheaderWritten)
 		{
@@ -162,10 +172,20 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 			edmWriter.writeReliabilityHeader();
 			EDMheaderWritten = true;
 		}
-		edmWriter.writeReliabilityData(*itEDM, fProjectData->getStatistics());
+		edmWriter.writeReliabilityData(itEDM, fProjectData->getStatistics());
 	}
 
-
+	bool  ORIEheaderWritten = false;
+	for (auto& itORIE:frameIt->get()->measurements.fORIE)
+	{
+		if (!ORIEheaderWritten)
+		{
+			(*stream) << "ORIE observations" << endl;
+			otherMeasWriter.writeORIEReliabilityHeader();
+			ORIEheaderWritten = true;
+		}
+		otherMeasWriter.writeORIEReliabilityData(itORIE.measORIE, fProjectData->getStatistics(), *itORIE.instrumentPos);
+	}
 }
 
 void TFRAMEWriter::writeFRAMEHeader(const std::string& name, const std::vector<int>& ID){
@@ -392,7 +412,8 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision =	getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+	int					lengthResPrecision = getLengthResidualPrecision();
+
 	//Write initial and calculated value
 	(*stream).writeString(obsWidth,	"(M)"); 
 	(*stream).writeDouble(obsWidth, lengthPrecision, frameDef.getProvTranslation(transl));
@@ -404,20 +425,16 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 		(*stream).writeString(obsWidth,	""); 
 	}
 
-	stream->setLengthUnits(TLength::kMillimetres);
-	stream->setPrecisionFormat(lengthResidualPrecision);
-	stream->setWidthFormat(obsResWidth);
-
 	(*stream).writeString(obsWidth,	"(MM)");
 	//Write the initial standard deviation, if specified in the input file
 	if(frameDef.hasTranslStandDev(transl))
-		(*stream)<<frameDef.getTranslationStandDev(transl)<<(separator); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, frameDef.getTranslationStandDev(transl).getMMetresValue());
 	else
 		(*stream).writeString(obsResWidth,	""); 
 
 	//Write the standard deviation after calculation if translation is variable and the status (fixed or variable)
 	if(!frameDef.isTranslationFixed(transl)){
-		(*stream)<<frameDef.getEstimatedPrecisionTransl(transl)<<(separator); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, frameDef.getEstimatedPrecisionTransl(transl).getMMetresValue());
 		(*stream).writeString(obsWidth,	"FALSE");
 	}
 	else{
@@ -431,42 +448,35 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation& frameDef, int rot){
 	assert3D(rot);
 	TAStreamFormatter*	stream = getStream();
-	string				separator = getSeparator();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
 	int					angleResidualPrecision = getAngleResidualPrecision();
 
-	stream->setAngleUnits(TAngle::kGons);
-	stream->setPrecisionFormat(anglePrecision);
-	stream->setWidthFormat(obsWidth);
 	//Write initial and calculated value
 	(*stream).writeString(obsWidth,	"(GON)");
 	
-	(*stream)<<frameDef.getProvRotation(rot).getGonsValue()<<(separator); 
+	(*stream).writeDouble(obsWidth, anglePrecision, frameDef.getProvRotation(rot).getGonsValue());
 
 	if(!frameDef.isRotationFixed(rot)){
-		(*stream)<<frameDef.getEstRotation(rot).getGonsValue()<<(separator); 
+		(*stream).writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(rot).getGonsValue());
 	}
 	else{
 		(*stream).writeString(obsWidth,	""); 
 	}
 
 	(*stream).writeString(obsWidth,	"(CC)");
-	stream->setAngleUnits(TAngle::k100MicroGons);
-	stream->setPrecisionFormat(angleResidualPrecision);
-	stream->setWidthFormat(obsResWidth);
 
 	//Write the initial standard deviation, if specified in the input file
 	if(frameDef.hasRotationStandDev(rot))
-		(*stream)<<frameDef.getRotationStandDev(rot).getGonsValue()<<(separator);  
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, frameDef.getRotationStandDev(rot).getSignedCCValue());
 	
 	else
 		(*stream).writeString(obsResWidth,	""); 
 	
 	//Write the standard deviation after calculation if rotation is variable and the status (fixed or variable)
 	if(!frameDef.isRotationFixed(rot)){
-		(*stream)<<frameDef.getEstimatedPrecisionRot(rot).getGonsValue()<<(separator);
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, frameDef.getEstimatedPrecisionRot(rot).getSignedCCValue());
 		(*stream).writeString(obsWidth,	"FALSE");
 	}
 	else{
@@ -689,7 +699,7 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 				
 			if (isecho==false)
 			{
-				(*stream)<<"DLEV observations"<<endl;
+				(*stream)<<"ECHO observations"<<endl;
 				scaleWriter.writeECHOReliabilityHeader();
 				isecho = true;
 			}
@@ -878,9 +888,9 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										coordResWidth,
 										coordResPrecision,
 										separator,
-										pt->getXEstPrecision()*M2MM,
-										pt->getYEstPrecision()*M2MM,
-										pt->getZEstPrecision()*M2MM,
+										pt->getXEstPrecision().getMMetresValue(),
+										pt->getYEstPrecision().getMMetresValue(),
+										pt->getZEstPrecision().getMMetresValue(),
 										"");/*sigma*/
 		}
 		else{
@@ -894,9 +904,9 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										coordResWidth,
 										coordResPrecision,
 										separator,
-										(estimatedValue.getX() - provisionalValue.getX())*M2MM,
-										(estimatedValue.getY() - provisionalValue.getY())*M2MM,
-										(estimatedValue.getZ() - provisionalValue.getZ())*M2MM,
+										(estimatedValue.getX().getMMetresValue() - provisionalValue.getX().getMMetresValue()),
+										(estimatedValue.getY().getMMetresValue() - provisionalValue.getY().getMMetresValue()),
+										(estimatedValue.getZ().getMMetresValue() - provisionalValue.getZ().getMMetresValue()),
 											"");/*offset*/
 	}
 

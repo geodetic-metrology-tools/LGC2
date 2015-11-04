@@ -156,25 +156,24 @@ void TSimulationCalculation::simulateValues()
 					getZENDSimValues(*itTSTN, itROM->measZEND); //Fill contribution to a ZEND measurement
 					getDISTSimValues(*itTSTN, itROM->measDIST); //Fill contribution to a DIST measurement
 					getDHORSimValues(*itTSTN, itROM->measDHOR); //Fill contribution to a DHOR measurement
+					//getECTHSimValues(*itTSTN, itROM->measECTH); //Fill contribution to a DHOR measurement
 
-#if 0
-					addHorDistContributions(*itDHOR, *itTSTN, matrices); //Fill contribution to a DHOR measurement
-#endif
 			}
 		}
 
 		//In every node iterate through camera's (CAM) measurements
 		for(auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM){
-					getUVDSimValues(*itCAM);
+			for (auto& itUVD : itCAM->measUVD)
+				getUVDSimValues(*itCAM);
 
-			for(auto itUVEC(itCAM->measUVEC.begin()); itUVEC != itCAM->measUVEC.end(); ++itUVEC)
-					getUVECSimValues(*itCAM);
+			for(auto& itUVEC:itCAM->measUVEC)
+				getUVECSimValues(*itCAM);
 		}
 
 		//In every node iterate through the EDM's measurements
 		for(auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
 			//Iterate through DPST measurements
-			for(auto itDPST(itEDM->measDSPT.begin()); itDPST != itEDM->measDSPT.end(); ++itDPST){	
+			for(auto& itDPST:itEDM->measDSPT){	
 				getDSPTSimValues(*itEDM, itEDM->measDSPT);
 			}
 		}
@@ -185,20 +184,22 @@ void TSimulationCalculation::simulateValues()
 			getDLEVSimValues(*itLEVEL, itLEVEL->measDLEV);
 			if (itLEVEL->hasDHOR)
 			{
-				for (auto itDHOR(itLEVEL->measDLEV.begin()); itDHOR != itLEVEL->measDLEV.end(); ++itDHOR)
+				for (auto& itDHOR:itLEVEL->measDLEV)
 				{
-					if (itDHOR->dhor)
-						getHorDistSimValues(itLEVEL->fMeasuredPlane->getReferencePoint(), *itDHOR->dhor.get());
+					if (itDHOR.dhor)
+						getHorDistSimValues(itLEVEL->fMeasuredPlane->getReferencePoint(), *itDHOR.dhor.get());
 				}
 			}
 		}
 
 
-		//In every node iterate through the LEVEL's measurements
-		for(auto itECHO(itTree.node->data->measurements.fECHO.begin()); itECHO != itTree.node->data->measurements.fECHO.end(); ++itECHO)
-			getECHOSimValues(*itECHO, itECHO->measECHO);
+		//In every node iterate through the ECHO's measurements
+		for(auto& itECHO:itTree.node->data->measurements.fECHO)
+			getECHOSimValues(itECHO, itECHO.measECHO);
 
-
+		//In every node iterate through the ORIE's measurements
+		for (auto& itORIE:itTree.node->data->measurements.fORIE)
+			getORIESimValues(itORIE, itORIE.measORIE);
 
 		//for(auto itDVER(itTree.node->data->measurements.fDVER.begin()); itDVER != itTree.node->data->measurements.fDVER.end(); ++itDVER)
 		//	getDVERSimValue(*itDVER, matrices);
@@ -236,6 +237,14 @@ void TSimulationCalculation::getECHOSimValues(const TECHOROM& echoROM, std::vect
 			TReal sigma = itECHO->target.sigmaD;
          itECHO->setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 		}
+}
+
+void	TSimulationCalculation::getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie){
+	for (auto& itORIE:orie){
+		TReal calcVal = fCg.getORIECalcMeas(orieROM, itORIE);
+		TReal sigma = itORIE.target.sigmaAngl;
+		itORIE.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
+	}
 }
 
 /*DHOR made in DLEV measurement, different from the DHOR obs.*/

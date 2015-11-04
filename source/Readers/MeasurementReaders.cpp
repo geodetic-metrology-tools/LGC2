@@ -872,12 +872,8 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 		echoROMLatest.measECHO.emplace_back(echo);
 	}
 }
-/*
-void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
-{
-}
-*/
-#if  1
+
+
 void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 {
 
@@ -950,4 +946,3 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		proj.getCurrentNode().measurements.fORIE.back().measORIE.emplace_back(orie);
 	}
 }
-#endif

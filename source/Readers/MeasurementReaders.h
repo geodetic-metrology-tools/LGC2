@@ -360,7 +360,7 @@ class TKeyORIE : public TAMeasurementKey {
 	public:
 		/// Constructor, the list of allowed keywords is filled
 		TKeyORIE(TLGCData& project, int nb_allowed_keywords = nb_allowed_orie, const char** keywords = allowed_ORIE) : 
-		TAMeasurementKey(project, ECHO)
+		TAMeasurementKey(project, ORIE)
 		{
 			for(int i(0) ; i< nb_allowed_keywords ; i++)
 				allowed_keywords.emplace_back(keywords[i]);

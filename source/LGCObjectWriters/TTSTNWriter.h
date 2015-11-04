@@ -68,7 +68,6 @@ private:
 		void writeZENDResultsHeader(int nOObs);
 		void writeDISTResultsHeader(int nOObs);
 		void writePLRResultsHeader(int nOObs);
-		//void writeDIRResultsHeader(int nOObs);
 		void writeDHORResultsHeader(int nOObs);
 		void writeECTHResultsHeader(int nOObs);
 	//@}
@@ -79,7 +78,6 @@ private:
 		void writeZENDResults(const std::vector<TZEND>& measZEND, const TAdjustablePoint* instrPos);
 		void writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos);
 		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const TAngle& V);
-	//	void writeDIRResults(const std::vector<TDIR3D>& measDIR);
 		void writeDHORResults(const std::vector<TLINE>& measDHOR);
 		void writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos);
 	//@}

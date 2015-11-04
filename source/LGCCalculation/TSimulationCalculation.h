@@ -8,13 +8,12 @@
 #include "TContributionsGenerator.h"
 #include "TLGCStatistic.h"
 
-class TLGCData;
-class TPLR3D;
-class TDIR3D;
-class TLINE;
 class TLSResultsMatricesExtractor;
 class TLSInputMatricesFiller;
 class TLSInputMatrices;
+class TLGCData;
+class TPLR3D;
+class TLINE;
 
 /*! 
 	\ingroup LGCCalculation
@@ -64,10 +63,12 @@ private:
 			void	getZENDSimValues(const TTSTN& station,std::vector<TZEND>& zend);
 			void	getDISTSimValues(const TTSTN& station,std::vector<TLINE>& dist);
 			void	getDHORSimValues(const TTSTN& station,std::vector<TLINE>& dhor);
+			//void	getECTHSimValues(const TTSTN& station, std::vector<TLINE>& dhor);
 
 			void	getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& dlev);
 			void	getDSPTSimValues(const TEDM& edmST, std::vector<TDSPT>& dspt);
 			void    getECHOSimValues(const TECHOROM& echoROM, std::vector<TECHO>& echo);
+			void    getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie);
 			/*DHOR made in DLEV measurement, different from the DHOR obs.*/
 			void	getHorDistSimValues(const TAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);
 

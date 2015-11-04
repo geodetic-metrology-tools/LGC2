@@ -14,6 +14,7 @@ void TLEVELWriter::writeLEVELResults(const TLEVEL& fLevel)
 {
 	TAStreamFormatter*	stream = getStream();
 	std::string        TABs = stream->getCurrSpaceExtended(3);
+	
 	writeLEVELHeader(fLevel);
 	writeLEVELData(fLevel);
 
@@ -36,6 +37,7 @@ void TLEVELWriter::writeLEVELSIMUResults(const TLEVEL& fLevel)
 {
 	TAStreamFormatter*	stream = getStream();
 	std::string        TABs = stream->getCurrSpaceExtended(3);
+	
 	writeLEVELHeader(fLevel);
 	writeLEVELData(fLevel);
 
@@ -79,15 +81,14 @@ void TLEVELWriter::writeLEVELData(const TLEVEL& fLevel)
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream)<<TABs;
 	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
-   (*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-   (*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-   (*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream)<<endl<<endl;
 }
 
@@ -98,14 +99,10 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
-	string				separator = getSeparator();
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
-
-   writeDLEVResultsHeader((int)measDLEV.size());
+	writeDLEVResultsHeader((int)measDLEV.size());
 
 	//For each DHOR measurement of the station
 	for(auto const& ItDlev : measDLEV)
@@ -123,7 +120,7 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 		//estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistanceResidual() + ItDlev.getDistance());
 		//residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual().getMMetresValue());
 		//residual/sima
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()/ItDlev.target.sigmaD);
 
@@ -133,11 +130,11 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 			// mesured dhor
 			(*stream).writeDouble(obsWidth, lengthPrecision,ItDlev.dhor.get()->getDistance()); 
 			//sigma Dhor
-			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDHORSigma()* M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDHORSigma().getMMetresValue());
 			//estimated offset
 			(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.dhor.get()->getDistanceResidual() + ItDlev.dhor.get()->getDistance());
 			//residual
-			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDistanceResidual()* M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDistanceResidual().getMMetresValue());
 			//res/sigma
 			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.dhor.get()->getDistanceResidual()/ItDlev.dhor.get()->getDHORSigma());
 		}
@@ -169,7 +166,6 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
 
@@ -225,11 +221,7 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStat
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
-	string				separator = getSeparator();
-
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 
 	//For each station
 	for(auto const& ItDhor : fLevel.measDLEV)
@@ -250,9 +242,9 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStat
 			//get the observed distance
 			(*stream).writeDouble(obsWidth, lengthPrecision,ItDhor.dhor->getDistance());
 			//get the standard deviation
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDHORSigma()* M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDHORSigma().getMMetresValue());
 			//get the residual
-			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.dhor->getDistanceResidual()* M2MM);
+			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.dhor->getDistanceResidual().getMMetresValue());
 
 			writeReliability(index, stat);
 			(*stream).setDataSpacing();
@@ -269,11 +261,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
-	string				separator = getSeparator();
-
-	//Precision fro MM value
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
+	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 
 	//For each DLEV measurement of the station
 	for(auto const& ItDLEV : fLevel.measDLEV)
@@ -291,9 +279,9 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDLEV.getDistance());
 		//get the standard deviation
-      (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaD.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDLEV.getDistanceResidual()* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDLEV.getDistanceResidual().getMMetresValue());
 
 
 		writeReliability(index, stat);

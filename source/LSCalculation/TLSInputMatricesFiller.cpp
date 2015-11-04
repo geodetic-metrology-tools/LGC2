@@ -42,33 +42,37 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 			//In every node iterate through the Total station measurements (TSTN)
 			for(auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN){
 				//In every TSTN iterate through ROMS and add contributions for every observation type
-				for(auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM){
-					addPLR3DContributions(*itROM, *itTSTN, matrices); //Process all the PLR3D measurement in this ROM
-					addHorAngContributions(*itROM, *itTSTN, matrices); //Process all the ANGL measurement in this ROM
-					addSpaDistContributions(itROM->measDIST, *itTSTN, matrices);  
-					addZenDistContributions(itROM->measZEND, *itTSTN, matrices);
-					addHorDistContributions(itROM->measDHOR, *itTSTN, matrices);
+				for(auto& itROM:itTSTN->roms){
+					addPLR3DContributions(itROM, *itTSTN, matrices); //Process all the PLR3D measurement in this ROM
+					addHorAngContributions(itROM, *itTSTN, matrices); //Process all the ANGL measurement in this ROM
+					addSpaDistContributions(itROM.measDIST, *itTSTN, matrices);  
+					addZenDistContributions(itROM.measZEND, *itTSTN, matrices);
+					addHorDistContributions(itROM.measDHOR, *itTSTN, matrices);
 
 				}
 			}
 
 			//In every node iterate through camera (TCAM) measurements
-			for(auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM){
-				addUVDContribution(*itCAM, matrices);
-				addUVECContribution(*itCAM, matrices);
+			for(auto& itCAM:itTree.node->data->measurements.fCAM){
+				addUVDContribution(itCAM, matrices);
+				addUVECContribution(itCAM, matrices);
 			}
 
 			//In every node iterate through the EDM (TEDM) measurements
-			for(auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
-					addDSPTContribution(itEDM->measDSPT, *itEDM, matrices);
+			for(auto& itEDM:itTree.node->data->measurements.fEDM)
+					addDSPTContribution(itEDM.measDSPT, itEDM, matrices);
 
 			//In every node iterate through the LEVEL measurements
-			for(auto itLEVEL(itTree.node->data->measurements.fLEVEL.begin()); itLEVEL != itTree.node->data->measurements.fLEVEL.end(); ++itLEVEL)
-				addLevelStContributions(*itLEVEL, matrices);
+			for(auto& itLEVEL:itTree.node->data->measurements.fLEVEL)
+				addLevelStContributions(itLEVEL, matrices);
 
 			//In every node iterate through the LEVEL measurements
-			for(auto itECHO(itTree.node->data->measurements.fECHO.begin()); itECHO != itTree.node->data->measurements.fECHO.end(); ++itECHO)
-				addECHOContributions(*itECHO, matrices);
+			for(auto& itECHO:itTree.node->data->measurements.fECHO)
+				addECHOContributions(itECHO, matrices);
+
+			//In every node iterate through the LEVEL measurements
+			for (auto& itORIE:itTree.node->data->measurements.fORIE)
+				addORIEContributions(itORIE, matrices);
 
 			addDVERContribution(itTree.node->data->measurements.fDVER, matrices);
 		}
@@ -457,8 +461,62 @@ void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLS
 	}
 }
 
+void  TLSInputMatricesFiller::addORIEContributions(const TORIEROM& orieROM, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	AnglMeasContrib contributions;
 
-/*Add ECHOROM contributions*/
+	for (auto& meas:orieROM.measORIE){
+		eqIdx = meas.getFirstEquationIndex();
+		obsIdx = meas.getFirstObservationIndex();
+
+		contributions = fCGenerator.getOrieContrib(orieROM, meas); //Get the observation contribution
+
+		// Add station contributions 
+		if (!orieROM.instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*orieROM.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+
+		// Add target contributions
+		if (!meas.targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas.targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+
+		// Add contributions of transformations parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Adding contributions of STATION transformation's parameters 
+		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform){
+			if (!itStTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
+		}
+
+		// Adding contributions of TARGET transformation's parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Add Misclosure vector's contribution 
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas.getAngle() - contributions.fCalcMeas).getRadiansValue());
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal angle (ANGL) measurement.");
+	}
+}
+
 void  TLSInputMatricesFiller::addECHOContributions(const TECHOROM& echoROM, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	ECHOContrib contributions;

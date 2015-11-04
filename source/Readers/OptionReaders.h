@@ -127,7 +127,11 @@ class TKeyNODUP : public TAOptionKey {
 class TKeyPDOR : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyPDOR(TLGCData& project) : TAOptionKey(project, "PDOR") {}
+		TKeyPDOR(TLGCData& project, int nb_allowed_keywords = nb_allowed_pdor, const char** keywords = allowed_PDOR) : TAOptionKey(project, PDOR) 
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+		}
 
 		///Tokenize and initialize options for the calculation
 		virtual void parse(const std::vector<std::string>& tokens, int);

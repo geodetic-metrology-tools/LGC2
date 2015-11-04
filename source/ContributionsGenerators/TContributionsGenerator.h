@@ -12,6 +12,7 @@
 struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
+struct TORIEROM;
 class TUVEC;
 class TUVD;
 struct TCAM;
@@ -103,6 +104,9 @@ public:
 		///  Returns the horizontal distance measurement contribution (RDHOR), made as a part of DLEV measurement
 		HorDistContribLEVEL	getHorDistContrib(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
+		/// Returns contribution for the Gyro-Theodolithe measurement (TORIE)
+		AnglMeasContrib	getOrieContrib(const TORIEROM& orieROM, const TORIE& orie);
+
 	//@}
 
 
@@ -120,6 +124,15 @@ public:
 		/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
 		TReal getDHORCalcMeas(const TTSTN& station, const TLINE& dhor);
 
+		///  Returns the TPLR3D calculated measurement values
+		PLR3DCalcMeas getPLR3DCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+
+		/// Returns the the TUVEC measurement calculaded measurement value
+		TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
+
+		/// Returns the TUVD measurement calculaded measurement value
+		UVDCalcMeas getUVDCalcMeas(const TCAM& camera, const TUVD& uvec);
+
 		/// Returns the TDLEV measurement calculated meas in meters [m]
 		TReal getDLEVCalcMeas(const TLEVEL& levelST, const TDLEV& dlev);
 
@@ -132,14 +145,8 @@ public:
 		/// Returns the TDHOR measurement calculated meas in meters [m]
 		TReal	getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
-		/// Returns the the TUVEC measurement calculaded measurement value
-		TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
-
-		/// Returns the TUVD measurement calculaded measurement value
-		UVDCalcMeas getUVDCalcMeas(const TCAM& camera, const TUVD& uvec);
-
-		///  Returns the TPLR3D calculated measurement values
-		PLR3DCalcMeas getPLR3DCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+		/// Returns the the ORIE measurement calculated meas in RADIANS [rad]
+		TReal getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie);
 
 	//@}
 private:
@@ -212,6 +219,9 @@ private:
 		void transform2MLA(TPositionVector& pv);
 		//Transform a free vector into a MLA system
 		void transform2MLA(TFreeVector& pv);
+
+		//Transform a position vector into a LA system
+		void transform2LA(TPositionVector& pv);
 
 		// Name of the last processed point which was used as the origin of the MLA.
 		// If a transformation to MLA is needed, we firstly compare the name of the new origin point with this name.
