@@ -719,7 +719,6 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const string &refSys, bool localFRAME)
 {
 	TAStreamFormatter*	stream = getStream();
-	//TPointConverter converter (stream, getRefFrameForH());
 	TPointConverter converter (stream, fProjectData->getConfig().referential); 
 
 	int					nameWidth = getNameWidth();
@@ -759,7 +758,11 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream).writeString( coordWidth,"Y ");//Y
 	(*stream).writeString( coordWidth,"Z ");//Z
 
-	if(!localFRAME && !converter.isInLocalSystem())
+	bool systemWithH = (fProjectData->getConfig().referential==TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS ||
+		fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine||
+		fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine);
+
+	if(!localFRAME && systemWithH)
 	{
 		(*stream).writeString( coordWidth,"H ");//H
 	}
@@ -784,7 +787,7 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream).writeString( coordWidth,		"(M)");//Y units
 	(*stream).writeString( coordWidth,		"(M)");//Z units
 
-	if(!localFRAME && !converter.isInLocalSystem())
+	if (!localFRAME && systemWithH)
 	{
 		(*stream).writeString( coordWidth,		"(M)");//H units
 	}
@@ -832,7 +835,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	TPositionVector provisionalValue = pt->getProvisionalValue();
 
 	if(localFRAME){ //Means that it is not ROOT!!!!!!
-		//Write point coordinates XYZ because it is a local frame
+		//Write point coordinates XYZ or H because it is a local frame
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
 		//Write point's estimated precision after calculation

@@ -163,19 +163,17 @@ void TSimulationCalculation::simulateValues()
 
 		//In every node iterate through camera's (CAM) measurements
 		for(auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM){
-			for (auto& itUVD : itCAM->measUVD)
+			if (! itCAM->measUVD.empty())
 				getUVDSimValues(*itCAM);
-
-			for(auto& itUVEC:itCAM->measUVEC)
+			if (!itCAM->measUVEC.empty())
 				getUVECSimValues(*itCAM);
 		}
 
 		//In every node iterate through the EDM's measurements
 		for(auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
 			//Iterate through DPST measurements
-			for(auto& itDPST:itEDM->measDSPT){	
+			if(!itEDM->measDSPT.empty())	
 				getDSPTSimValues(*itEDM, itEDM->measDSPT);
-			}
 		}
 
 		//In every node iterate through the LEVEL's measurements

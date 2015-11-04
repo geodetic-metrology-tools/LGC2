@@ -56,9 +56,6 @@ protected:
 
 			///  Write a given measurement data summary of the LGC input data
 			void	writeMeasDataSummary(const string, const int);
-			
-			///  Write distance measurement data summary of the LGC input data
-			void	writeDistMeasDataSummary(const string, const int, const bool) ;
 
 			/// Write a summary of the LGC calculation data parameters
 			void	writeCalcDataSummary();
@@ -68,18 +65,9 @@ protected:
 
 			/// Write sigma0 a posteriori from a calc record
 			void	writeSigmaAPosteriori(const TLGCData&);
-									
-			///  Write calculated point results
-			void	writePointsResults();
 
 			///  Write the observation results
 			void	writeFramesResults();
-
-			///  Write an observation table title
-			void	writeObsTitle(const string&, const int);
-
-			///  Write horizontal angle observation results 
-			void writeHorAng();
 
 
 
@@ -87,12 +75,6 @@ protected:
 			/// Write general information about the adjustable objects
 			void writeAdjustableObjGeneralInfo(const std::string adjObjName, const int numAdj, const int numUnkn);
 		//@}
-private:
-
-		void	writeResultsPtsHeader(  const TSpatialStatus::ESpatialStatus status,
-										const int ptNumber, const string &refSys);
-
-		void	writeResultsPtsData(const TAdjustablePoint* pt);
 
 private:
 

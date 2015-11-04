@@ -451,71 +451,7 @@ void    TResultsFileWriter::writeSigmaAPosteriori(const TLGCData& data)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //HEADER
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void    TResultsFileWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const string &refSys)
-{
-    TAStreamFormatter*    stream = getStream();
-    //TPointConverter converter (stream, getRefFrameForH());
-    TPointConverter converter (stream, fProjectData->getConfig().referential); //WHATEVER FOR NOW!!!!!!!!!!!!!! CHAGE!!!!!!!!
- 
-    int                    nameWidth = getNameWidth();
-    int                    coordWidth = getCoordWidth();
-    int                    coordResWidth = getCoordResWidth();
-    string                separator = getSeparator();
- 
-    string title ="";
-    if(status == TSpatialStatus::kCala)
-        { title = "POINTS DE CALAGE";}
-    if(status == TSpatialStatus::kVx)
-        { title = "POINTS VARIABLE EN X UNIQUEMENT";}
-    if(status == TSpatialStatus::kVy)
-        { title = "POINTS VARIABLE EN Y UNIQUEMENT";}
-    if(status == TSpatialStatus::kVz)
-        { title = "POINTS VARIABLE EN Z UNIQUEMENT";}
-    if(status == TSpatialStatus::kVxy)
-        { title = "POINTS INVARIABLE EN Z";}
-    if(status == TSpatialStatus::kVxz)
-        { title = "POINTS INVARIABLE EN Y";}
-    if(status == TSpatialStatus::kVyz)
-        { title = "POINTS INVARIABLE EN X";}
-    if(status == TSpatialStatus::kVxyz)
-        { title = "POINTS VARIABLE EN XYZ";}
- 
-    (*stream)<<title<<separator<< "(NB. = " << ptNumber << ",  REFERENTIEL = " << refSys << " )"<<endl<<endl;
- 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    //First line
-    (*stream).writeString( nameWidth,        "NOM");//Nom
-    (*stream).writeString( coordWidth,        "X ");//X
-    (*stream).writeString( coordWidth,        "Y ");//Y
-    (*stream).writeString( coordWidth,        "Z ");//Z
-    if(!converter.isInLocalSystem())
-    {
-        (*stream).writeString( coordWidth,        "H(G)");//H
-    }
-    (*stream).writeString( coordResWidth,    "DX ");//X offset  
-    (*stream).writeString( coordResWidth,    "DY ");//Y offset  
-    (*stream).writeString( coordResWidth,    "DZ ");//Z offset
-    (*stream)<<endl;
- 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    //second line : units
-    (*stream).writeString( nameWidth ,        "");//Nom
-    (*stream).writeString( coordWidth,        "(M)");//X units
-    (*stream).writeString( coordWidth,        "(M)");//Y units
-    (*stream).writeString( coordWidth,        "(M)");//Z units
-    if(!converter.isInLocalSystem())
-    {
-        (*stream).writeString( coordWidth,        "(M)");//H units
-    }
-    (*stream).writeString( coordResWidth,    "(MM)");//X offset units
-    (*stream).writeString( coordResWidth,    "(MM)");//Y offset units
-    (*stream).writeString( coordResWidth,    "(MM)");// Z offset units
-    (*stream)<<endl<<endl;
- 
-    return;
-}
- 
- 
+
  
 //Write the observations results
 void    TResultsFileWriter::writeFramesResults()

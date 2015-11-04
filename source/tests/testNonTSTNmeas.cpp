@@ -490,8 +490,8 @@ namespace tut
 
 
 	    /* LGC1 results:
-		TU1 - 4.46537  0.11649 - 0.19923    0.17    0.08    0.18
-		TU2 - 4.46346  3.39302 - 0.19813    0.17    0.07    0.18
+		TU1 - 4.46537  0.11649 -0.19923    0.17    0.08    0.18
+		TU2 - 4.46346  3.39302 -0.19813    0.17    0.07    0.18
 		 
 		ORIE: ALES3  AUX1         130.16873     1.0   130.16873     0.0    0.00     0.0         7.8
 		*/
@@ -499,7 +499,7 @@ namespace tut
 		TPositionVector TU1 = dataset.getPoints().getObject("TU1").getEstimatedValue();
 		ensure_equals("TU1 x coordinate should match", TU1.getX().getMetresValue(), -4.46537, 1e-5);
 		ensure_equals("TU1 y coordinate should match", TU1.getY().getMetresValue(), 0.11649, 1e-5);
-		ensure_equals("TU1 z coordinate should match", TU1.getZ().getMetresValue(), 0.19923, 1e-5);
+		ensure_equals("TU1 z coordinate should match", TU1.getZ().getMetresValue(), -0.19923, 1e-5);
 		ensure_equals("TU1 Sx should match", dataset.getPoints().getObject("TU1").getXEstPrecision().getMMetresValue(), 0.17, 1e-2);
 		ensure_equals("TU1 Sy should match", dataset.getPoints().getObject("TU1").getYEstPrecision().getMMetresValue(), 0.08, 1e-2);
 		ensure_equals("TU1 Sz should match", dataset.getPoints().getObject("TU1").getZEstPrecision().getMMetresValue(), 0.18, 1e-2);
@@ -507,6 +507,6 @@ namespace tut
 		TPositionVector TU2 = dataset.getPoints().getObject("TU2").getEstimatedValue();
 		ensure_equals("TU2 x coordinate should match", TU2.getX().getMetresValue(), -4.46346, 1e-5);
 		ensure_equals("TU2 y coordinate should match", TU2.getY().getMetresValue(), 3.39302, 1e-5);
-		ensure_equals("TU2 z coordinate should match", TU2.getZ().getMetresValue(), 0.19813, 1e-5);
+		ensure_equals("TU2 z coordinate should match", TU2.getZ().getMetresValue(), -0.19813, 1e-5);
 	}
 }
