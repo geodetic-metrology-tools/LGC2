@@ -71,6 +71,7 @@ ENDIF(MINGW)
 INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 include_directories (
+	SYSTEM
 	${CMAKE_SOURCE_DIR}/LGCProject
 	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcElements
@@ -87,32 +88,10 @@ include_directories (
 	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialMeasurments
 	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialObj
 	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialSystems
+	${TUT_INCLUDE_PATH}
+	${EIGEN_INCLUDE_PATH}
 )
 
-# Check for external libraries
-SET(CMAKE_REQUIRED_INCLUDES ${TUT_INCLUDE_PATH})
-CHECK_INCLUDE_FILE_CXX("tut.h" HAVE_TUT_H)
-SET(CMAKE_REQUIRED_INCLUDES "")
-# SET(CMAKE_REQUIRED_INCLUDES ${EIGEN_INCLUDE_PATH})
-# CHECK_INCLUDE_FILE_CXX("eigen/Core" HAVE_EIGEN_H)
-# SET(CMAKE_REQUIRED_INCLUDES "")
-
-# IF(NOT HAVE_EIGEN_H)
-    # MESSAGE(FATAL_ERROR "[ERROR] Cannot find eigen/Core. Set EIGEN_INCLUDE_PATH")
-# ELSE()
-    # MESSAGE(STATUS "[STATUS] Found eigen/Core")
-# ENDIF()
-#IF(NOT HAVE_TUT_H)
-#    MESSAGE(FATAL_ERROR "[ERROR] Cannot find tut.h. Set TUT_INCLUDE_PATH")
-#ELSE()
-#    MESSAGE(STATUS "[STATUS] Found tut.h")
-#ENDIF()
-#LINK SurveyLib projects
-#INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
-#INCLUDE("${CMAKE_SOURCE_DIR}/CPack.cmake") #LGC INSTALLER: Description of properties and options
-
-
-include_directories(SYSTEM  ${TUT_INCLUDE_PATH} ${EIGEN_INCLUDE_PATH})
 
 add_subdirectory(AdjustableObjects)
 add_subdirectory(LSCalculation)
@@ -124,25 +103,10 @@ add_subdirectory(LocalTransformations)
 add_subdirectory(LGCProject)
 add_subdirectory(LGCProjectData)
 add_subdirectory(LGCCalculation)
-
-#Writers related projects
 add_subdirectory(Writers)
 add_subdirectory(LGCObjectWriters)
 
-#include_directories(${CMAKE_SOURCE_DIR})
 
-#add_executable(LGC main.cpp)
-
-#target_link_libraries(LGCProject LGCProjectData LGCCalculation Readers AdjustableObjects LocalTransformations CalcElements ProjectData LGCObjectWriters StreamFormatters FiltersAndFormats Converters ContributionsGenerators AffineTransformations LSCalculation MathematicalConcepts Measurements Writers ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
-
-# INSTALL for creation of the LGC2 installer
-#install(TARGETS LGCProject DESTINATION "." COMPONENT application)
-#install(FILES
-#		"${VCREDIST_INSTALLER_PATH}"
-#		DESTINATION "."
-#		COMPONENT application
-#	)
-	
 #copy test files for unit tests
 if(UNIX)
 	execute_process(COMMAND copy_test_files_for_UnitTests.sh
