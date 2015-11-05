@@ -749,8 +749,8 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(orieROM.instrumentPos->getName(), stationPos, targetPos);
-		transform2LA(stationPos);
-		transform2LA(targetPos);	
+		transformMLA2LA(stationPos);
+		transformMLA2LA(targetPos);	
 		fMLAused = true;
 	}
 	else
@@ -780,7 +780,7 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	TFreeVector abc(a, b, c, TCoordSysFactory::k3DCartesian);
 
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-		transform2LAInverse(abc);
+		transformMLA2LAInverse(abc);
 	
 
 	//Station can be defined anywhere, get point contributions and transformations contributions
@@ -951,20 +951,32 @@ void TContributionsGenerator::transform2MLA(TFreeVector& fv){
 	fcgrf2ilg.transform(fv);
 	filg2ila.transform(fv);
 	TTransformation ILA2MILA;
-	ILA2MILA.setRotationTransformation(0.0,0.0, -0.5934254894331); //Rotation of 37.77864 about Z-axis
-	ILA2MILA.transform(fv);
+	if (!fIsSphere)
+		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
+	else
+		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
+	transformMLA2LAInverse(fv);
 }
 
-void TContributionsGenerator::transform2LA(TPositionVector& pv){
-	fccs2cgrf.transform(pv);
-	fcgrf2ilg.transform(pv);
-	filg2ila.transform(pv);
+// used only for the orie measurements
+void TContributionsGenerator::transformMLA2LA(TPositionVector& pv){
+	TTransformation MILA2ILA;
+	if (!fIsSphere)
+		MILA2ILA.setRotationTransformation(0.0, 0.0, 0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
+	else
+		MILA2ILA.setRotationTransformation(0.0, 0.0, 0.5934254894331 + 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
+	MILA2ILA.transform(pv);
+	
 }
 
-void TContributionsGenerator::transform2LAInverse(TFreeVector& pv){
-	filg2ila.transformInverse(pv);
-	fcgrf2ilg.transformInverse(pv);
-	fccs2cgrf.transformInverse(pv);
+// used only for the orie measurements
+void TContributionsGenerator::transformMLA2LAInverse(TFreeVector& pv){
+	TTransformation ILA2MILA;
+	if (!fIsSphere)
+		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
+	else
+		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
+	ILA2MILA.transform(pv);
 }
 
 // used only for the dver measurements
@@ -1476,12 +1488,20 @@ TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TO
 	TPositionVector targetPos = orie.targetPos->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(orie.targetPos->getFrameTreePosition(), fTree->begin()); //Transformation from "TARGET FRAME" to "ROOT"
 	tgLor2RootTrafo.transform(targetPos);
-	transform2LA(targetPos);
 
 	TPositionVector stationPos = orieROM.instrumentPos->getEstimatedValue();
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(orieROM.instrumentPos->getFrameTreePosition(), fTree->begin()); //Transformation from "STATION FRAME" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
-	transform2LA(stationPos);
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(orieROM.instrumentPos->getName(), stationPos, targetPos);
+		transformMLA2LA(stationPos);
+		transformMLA2LA(targetPos);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
 
 
 	TReal xSt = stationPos.getX().getMetresValue();

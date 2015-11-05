@@ -209,29 +209,31 @@ private:
 		TCGRF2LGTransformation fcgrf2ilg;
 		TILG2ILATransformation  filg2ila;
 
-		//Sets new origin of the transformation to MLA system
+		///Sets new origin of the transformation to MLA system
 		void set2MLATransformation (TPositionVector originInCCS);
 		
-		//Transform a free vector fromo a MLA system to CGRF - used only for the dver measurements
+		///Transform a free vector fromo a MLA system to CGRF - used only for the dver measurements
 		void transformMLA2CGRF(TFreeVector& fv);
 
-		//Transform a position vector into a MLA system
+		///Transform a position vector into a MLA system
 		void transform2MLA(TPositionVector& pv);
-		//Transform a free vector into a MLA system
+		///Transform a free vector into a MLA system
 		void transform2MLA(TFreeVector& pv);
 
-		//Transform a position vector into a LA system
-		void transform2LA(TPositionVector& pv);
-		void transform2LAInverse(TFreeVector& pv);
+		///Transform a position vector from a MLA into a LA system - use for ORIE measurements
+		void transformMLA2LA(TPositionVector& pv);
 
-		// Name of the last processed point which was used as the origin of the MLA.
+		///Transform a position vector from a LA into a MLA system - use for ORIE measurements
+		void transformMLA2LAInverse(TFreeVector& pv);
+
+		/// Name of the last processed point which was used as the origin of the MLA.
 		// If a transformation to MLA is needed, we firstly compare the name of the new origin point with this name.
 		// If they are the same it means that the MLA transformation which is currently initialized does not need to be re-initialized.
 		std::string     fLastStationPtName;
 
-		//Tells whether last processed contribution was  made in the Modified Local Astronomical (MLA) system 
+		///Tells whether last processed contribution was  made in the Modified Local Astronomical (MLA) system 
 		bool			fMLAused;
-		//Tells whether last processed contribution was  made in the CGRF system 
+		///Tells whether last processed contribution was  made in the CGRF system 
 		bool			fCGRFused; /*for DVER*/
 
 		bool fIsSphere;
