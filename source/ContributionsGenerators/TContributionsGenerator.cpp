@@ -950,11 +950,7 @@ void TContributionsGenerator::transform2MLA(TFreeVector& fv){
 	fccs2cgrf.transform(fv);
 	fcgrf2ilg.transform(fv);
 	filg2ila.transform(fv);
-	TTransformation ILA2MILA;
-	if (!fIsSphere)
-		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
-	else
-		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
+
 	transformMLA2LAInverse(fv);
 }
 
