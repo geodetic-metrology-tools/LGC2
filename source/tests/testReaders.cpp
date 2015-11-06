@@ -40,23 +40,6 @@ namespace tut
 	void object::test<1>()
 	{
 		set_test_name("Reading title");
-
-		//TPositionVector a(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
-		//TAngle angleA = a.getLambdaEllipsoid();
-		//TAngle angleA2 = a.getPhiEllipsoid();
-		//a*=2;
-		//TAngle angleAsecond = a.getLambdaEllipsoid();
-		//TAngle angleA2second = a.getPhiEllipsoid();
-		//
-		//TFreeVector fv(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
-		//TPositionVector pv(5,6,7,TCoordSysFactory::ECoordSys::kGeodetic);
-
-		//TLength len1(5);
-		//TLength len2(5);
-		//TReal rn1 = 5;
-		//TReal rn2 = 5;
-		//TReal rn3 = rn1/rn2;
-
 		
 		std::shared_ptr<TLGCData> projShared (new TLGCData);
 		
@@ -448,6 +431,7 @@ namespace tut
 		{
 			set_test_name("Testing measurement input");
 			using namespace LGC;
+			TInstrumentData& instr(proj.getInstruments());
 
 			// add a total station
 			TKeyTSTN tstn(proj);
@@ -551,24 +535,24 @@ namespace tut
 			ecth.parse(TReader::tokenizeLGCfileString( "*ECTH 1 SC1"), -1);
 			ecth.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"),-1);
 			const auto& ecthmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
-			ensure_equals(ecthmeas.stationedPoint->getName(), "P2");
+			ensure_equals(ecthmeas.targetPos->getName(), "P2");
 			ensure_equals(ecthmeas.obsHorAngle.getGonsValue(), 1);
-			ensure_equals(ecthmeas.scaleInstr.ID, "SC1");
-			ensure_equals(ecthmeas.scaleInstr.sigmaD, 0.01 * MM2M);
-			ensure_equals(ecthmeas.scaleInstr.ppmD, 0.1 * MM2M);
-			ensure_equals(ecthmeas.scaleInstr.sigmaInstrCentering, 0.5 * MM2M);
-			ensure_equals(ecthmeas.getMeasuredOffsetValue(), 1.1);
+			ensure_equals(ecthmeas.target.ID, "SC1");
+			ensure_equals(ecthmeas.target.sigmaD, 0.01 * MM2M);
+			ensure_equals(ecthmeas.target.ppmD, 0.1 * MM2M);
+			ensure_equals(ecthmeas.target.sigmaInstrCentering, 0.5 * MM2M);
+			ensure_equals(ecthmeas.getDistance(), 1.1);
 			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE,"SC1").sigmaInstrCentering, 5 * MM2M);
 
 			ecth.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"),-1);
 			const auto& ecthmeas2(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
-			ensure_equals(ecthmeas2.scaleInstr.ID, "SC2");
-			ensure_equals(ecthmeas2.getMeasuredOffsetValue(), 0.9);
+			ensure_equals(ecthmeas2.target.ID, "SC2");
+			ensure_equals(ecthmeas2.getDistance(), 0.9);
 
 			ecth.parse(TReader::tokenizeLGCfileString("P2 0.9"),-1);
 			const auto& ecthmeas3(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
-			ensure_equals("This takes current instrument from previous",ecthmeas3.scaleInstr.ID, "SC2");
-			ensure_equals("Has default values", ecthmeas3.scaleInstr.sigmaInstrCentering, 1e-8, 5 * MM2M);
+			ensure_equals("This takes current instrument from previous", ecthmeas3.target.ID, "SC2");
+			ensure_equals("Has default values", ecthmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
 			// DHOR
 			TKeyDHOR dhor(proj);

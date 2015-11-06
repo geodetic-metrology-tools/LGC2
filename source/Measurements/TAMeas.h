@@ -73,7 +73,7 @@ class TAMeas {
 			MatrixIndex getFirstObservationIndex ()const{return fFirstObservationIndex;}
 
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
-			virtual MatrixIndex getLastEquationIndex() = 0;
+			virtual MatrixIndex getLastEquationIndex() const = 0;
 
 		//@}
 
@@ -189,7 +189,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 			/// Sets a residual of observed distance
-         void setDistanceResidual(TLength v, TEnumDistance id = kValue) {
+			void setDistanceResidual(TLength v, TEnumDistance id = kValue) {
 				distancesResiduals[id] = v;
 			}
 

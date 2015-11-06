@@ -55,7 +55,7 @@ namespace {
 #define TITR "TITR"
 
 const int nb_allowed_tstn		= 1;
-const int nb_allowed_v0			= 4;
+const int nb_allowed_v0			= 6;
 const int nb_allowed_plr3d		= 18;
 const int nb_allowed_angl		= 18;
 const int nb_allowed_zend		= 18;
@@ -102,7 +102,7 @@ const int nb_allowed_titr		= 4;
 
 //TSTN measurments
 const char* allowed_TSTN[nb_allowed_tstn]	= {V0};
-const char* allowed_V0[nb_allowed_v0]		= {PLR3D, ANGL, ZEND, DIST};
+const char* allowed_V0[nb_allowed_v0]		= {PLR3D, ANGL, ZEND, DIST, DHOR, ECTH,};
 const char* allowed_PLR3D[nb_allowed_plr3d]	= {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, FRAME, ENDFRAME, END};
 const char* allowed_ANGL[nb_allowed_angl]	= {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, FRAME, ENDFRAME, END};
 const char* allowed_ZEND[nb_allowed_zend]	= {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ESCP, ECVE, ORIE, FRAME, ENDFRAME, END};

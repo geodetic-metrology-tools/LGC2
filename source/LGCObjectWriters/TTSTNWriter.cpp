@@ -450,30 +450,31 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 	{
 		(*stream) << TABs;
 
-		//write plane (station + azimut)
-		(*stream).writeStringLeft(nameWidth, instrPos->getName());
+		//write Point
+		(*stream).writeStringLeft(nameWidth, ItECTH.targetPos->getName());
+
+		//write azimut
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.obsHorAngle.getGonsValue());
 
-		//write Point
-		(*stream).writeStringLeft(nameWidth, ItECTH.stationedPoint->getName());
-
 		//write the observed offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECTH.getMeasuredOffsetValue());
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECTH.getDistance());
 		
 		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.scaleInstr.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaD.getMMetresValue());
 
 		//write the estimated offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECTH.getMeasuredOffsetValue() + ItECTH.getMeasuredValueResidual()));
+		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECTH.getDistance() + ItECTH.getDistanceResidual()));
 		
 		//write the offset (mm) after calculation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.getMeasuredValueResidual().getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.getDistanceResidual().getMMetresValue());
 
 		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECTH.getMeasuredValueResidual() / ItECTH.scaleInstr.sigmaD));
+		(*stream).writeDouble(obsResWidth, 2, (ItECTH.getDistanceResidual() / ItECTH.target.sigmaD));
 
+		(*stream) << endl;
 	}
-	return;
+	(*stream) << endl;
+
 }
 
 
@@ -738,11 +739,13 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	//summuray
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECTH), nOObs);
 	(*stream)<<endl;
+
+	
 	////////////////////////////////////////////////////////////
 	//first line
-	(*stream).writeStringLeft(nameWidth,	"PLANE"); //station
-	(*stream).writeStringLeft(obsWidth,	""); //azimut
-	(*stream).writeStringLeft(nameWidth,	"POINT"); //second point's Name
+	(*stream) << TABs;
+	(*stream).writeString(nameWidth,	"POINT"); //second point's Name
+	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
 	(*stream).writeString(obsWidth,	"OBSERVE"); //mesured ECTH
 	(*stream).writeString(obsResWidth,	"SIGMA"); //sigma ECTH
 	(*stream).writeString(obsWidth,	"CALCULE"); //estimated ECTH
@@ -752,29 +755,16 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
-	(*stream).writeString(nameWidth,	"STATION"); //station
-	(*stream).writeString(obsWidth,	"AZIMUT"); //azimut
-	(*stream).writeString(nameWidth,	""); //second point's Name
-	(*stream).writeString(obsWidth,	"ECTH"); //mesured ECTH
-	(*stream).writeString(obsResWidth,	"MM"); //sigma ECTH
-	(*stream).writeString(obsWidth,	"ECTH"); //estimated ECTH
-	(*stream).writeString(obsResWidth,	"MM"); //offset ECTH
-	(*stream).writeString(obsResWidth,	""); //offset/sigma
-	(*stream)<<endl;
-	
-
-	///////////////////////////////////////////////////////////////////////////////////
-	//third line
+	(*stream) << TABs;
 	(*stream).writeString(nameWidth,	""); //station
-	(*stream).writeString(obsWidth,	"GON"); //azimut
-	(*stream).writeString(nameWidth,	""); //second point's Name
-	(*stream).writeString(obsWidth,	"M"); //mesured ECTH
-	(*stream).writeString(obsResWidth,	""); //sigma ECTH
-	(*stream).writeString(obsWidth,	"M"); //estimated ECTH
-	(*stream).writeString(obsResWidth,	""); //offset ECTH
+	(*stream).writeString(obsWidth,	"(GON)"); //azimut
+	(*stream).writeString(obsWidth,	"(M)"); //mesured ECTH
+	(*stream).writeString(obsResWidth,	"(MM)"); //sigma ECTH
+	(*stream).writeString(obsWidth,	"(M)"); //estimated ECTH
+	(*stream).writeString(obsResWidth,	"(MM)"); //offset ECTH
 	(*stream).writeString(obsResWidth,	""); //offset/sigma
 	(*stream)<<endl;
-	return;
+
 }
 
 void TTSTNWriter::writeTSTNHeader(const TTSTN& tstn){
@@ -866,14 +856,9 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResidualPrecision = getAngleResidualPrecision();
-	int					lengthPrecision = getLengthPrecision();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision()-4, 0);
+	int					lengthPrecision = max(getLengthPrecision()-3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	//Reset the length and angle residual precision for MM and CC values
-	int lengthResPrecision = lengthResidualPrecision > 3 ? (lengthResidualPrecision - 3) : 0;
-	int angleResPrecision = angleResidualPrecision > 3 ? (angleResidualPrecision - 3) : 0;
 
 	(*stream)<<TABs;
 	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
@@ -881,10 +866,10 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 
 	//write INSTRUMENT HEIGHT
 	if(tstn.instrumentHeightAdjustable->isFixed()){
-		(*stream).writeDouble(obsWidth, lengthResPrecision, tstn.instrument.instrHeight); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn.instrument.instrHeight); 
 	}
 	else{
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue()); 
+		(*stream).writeDouble(obsResWidth, lengthPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue()); 
 	}
 
 
@@ -1175,16 +1160,16 @@ void	TTSTNWriter::writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		// get reference point to the plane
 		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
 		//get Tg point
-		(*stream).writeStringLeft(nameWidth, ItEcth.stationedPoint->getName());
+		(*stream).writeStringLeft(nameWidth, ItEcth.targetPos->getName());
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
 
 		//get the observed DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcth.getMeasuredOffsetValue());
+		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcth.getDistance());
 		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.scaleInstr.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.target.sigmaD.getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getMeasuredValueResidual().getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getDistanceResidual().getMMetresValue());
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();

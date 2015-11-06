@@ -17,10 +17,10 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 		{}
 
 		/// Returns the last LS-matrices equation index of this measurement 
-		inline MatrixIndex getLastEquationIndex() {return getFirstEquationIndex() + 2;}
+		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex() + 2;}
 
 		/// Returns the last observation index of this measurement 
-		inline MatrixIndex getLastObservationIndex() {return getFirstObservationIndex() + 2;}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex() + 2;}
 
 		/// Sets the new distance 
       void setDistance(TLength dist) { sdist = dist; }

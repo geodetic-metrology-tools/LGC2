@@ -651,9 +651,9 @@ namespace tut
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2342.4312257  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 4436.2170829, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2401.7613528  , 1e-7);
-		ensure_equals("sx should match",dataset.getPoints().getObject("PT").getXEstPrecision()*M2MM, 0.0873  , 1e-4);
-		ensure_equals("sy should match",dataset.getPoints().getObject("PT").getYEstPrecision()*M2MM, 0.1060, 1e-4);
-		ensure_equals("sz should match",dataset.getPoints().getObject("PT").getZEstPrecision()*M2MM, 0.0995  , 1e-4);
+		ensure_equals("sx should match",dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(), 0.0873  , 1e-4);
+		ensure_equals("sy should match",dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.1060, 1e-4);
+		ensure_equals("sz should match",dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.0995  , 1e-4);
 		
 	}
 
@@ -686,9 +686,9 @@ namespace tut
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2342.43121  , 1e-5);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 4436.21706, 1e-5);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2401.76261  , 1e-5);
-		ensure_equals("sx should match",dataset.getPoints().getObject("PT").getXEstPrecision()*M2MM,  0.84  , 1e-2);
-		ensure_equals("sy should match",dataset.getPoints().getObject("PT").getYEstPrecision()*M2MM, 0.69, 1e-2);
-		ensure_equals("sz should match",dataset.getPoints().getObject("PT").getZEstPrecision()*M2MM, 0.79  , 1e-2);
+		ensure_equals("sx should match",dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(),  0.84  , 1e-2);
+		ensure_equals("sy should match",dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.69, 1e-2);
+		ensure_equals("sz should match",dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.79  , 1e-2);
 
 	}
 
@@ -722,16 +722,16 @@ namespace tut
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2342.4312653  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 4436.2168464, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2401.7610521  , 1e-7);
-		ensure_equals("sx should match",dataset.getPoints().getObject("PT").getXEstPrecision()*M2MM,  0.6895  , 2e-4);
-		ensure_equals("sy should match",dataset.getPoints().getObject("PT").getYEstPrecision()*M2MM, 0.8369, 2e-4);
-		ensure_equals("sz should match",dataset.getPoints().getObject("PT").getZEstPrecision()*M2MM, 0.7854 , 2e-4);
+		ensure_equals("sx should match",dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(),  0.6895  , 2e-4);
+		ensure_equals("sy should match",dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.8369, 2e-4);
+		ensure_equals("sz should match",dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.7854 , 2e-4);
 
 		TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
 		ensure_equals("PT2 x coordinate should match",PT2.getX().getMetresValue(), 2283.7024001  , 1e-7);
 		ensure_equals("PT2 y coordinate should match",PT2.getY().getMetresValue(), 4353.5635281, 1e-7);
 		ensure_equals("PT2 z coordinate should match",PT2.getZ().getMetresValue(), 2401.7945077  , 1e-7);
-		ensure_equals("sx should match",dataset.getPoints().getObject("PT2").getXEstPrecision()*M2MM,  0.3537 , 2e-4);
-		ensure_equals("sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision()*M2MM, 0.3537, 2e-4);
-		ensure_equals("sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision()*M2MM, 0.0111 , 2e-4);
+		ensure_equals("sx should match",dataset.getPoints().getObject("PT2").getXEstPrecision().getMMetresValue(),  0.3537 , 2e-4);
+		ensure_equals("sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision().getMMetresValue(), 0.3537, 2e-4);
+		ensure_equals("sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision().getMMetresValue(), 0.0111 , 2e-4);
 	}
 }

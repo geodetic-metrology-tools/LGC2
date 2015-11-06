@@ -17,10 +17,10 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 		{}
 
 		/// Returns the last equation index of this measurement (UVEC introduces 2 equations). 
-		inline MatrixIndex getLastEquationIndex() {return getFirstEquationIndex() + 1;}
+		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex() + 1;}
 
 		/// Returns the last observation index of this measurement (UVEC introduces 2 equations). 
-		inline MatrixIndex getLastObservationIndex() {return getFirstObservationIndex() + 1;}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex() + 1;}
 
 };
 #endif

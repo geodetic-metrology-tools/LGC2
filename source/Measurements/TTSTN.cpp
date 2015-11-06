@@ -32,7 +32,7 @@ TLGCObsSummary  TTSTN::TROM::getDHORObsSummary() const{
 TLGCObsSummary  TTSTN::TROM::getECTHObsSummary() const{
 	TLGCObsSummary summary;
 	for(std::vector<TECTH>::const_iterator ItECTH = measECTH.begin() ; ItECTH!=measECTH.end() ; ItECTH++)//auto const& ItDHOR: measDHOR)
-		summary.addNewResidual(ItECTH->getMeasuredValueResidual().getMMetresValue());
+		summary.addNewResidual(ItECTH->getDistanceResidual().getMMetresValue());
 	return summary;	
 }
 

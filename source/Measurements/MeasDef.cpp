@@ -19,15 +19,10 @@ TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarge
 ///////////////////////////////////////////////////////////
 //////Offset measurements
 ///////////////////////////////////////////////////////////
-TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  TAngle obsHorAngle, TReal v) :   
-				stationedPoint(&stationedPoint), 
-				scaleInstr(scaleInstr),
-				obsHorAngle(obsHorAngle),
-				measuredOffset(v),
-				line(NO_VALi),
-				residualOffset(NO_VALf),
-				fFirstEquationIndex(NO_VALi)
-				{}
+TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TLength v) : 
+	TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v),
+	obsHorAngle(obsHorAngle)
+	{}
 
 ///////////////////////////////////////////////////////////
 //////Levelling measurements

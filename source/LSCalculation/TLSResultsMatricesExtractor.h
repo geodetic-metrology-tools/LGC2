@@ -81,7 +81,7 @@ private:
 		/// Sets the angle measurement residual (ANGL or ZEND).
 		void extractAngleObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>& anglMeas);
 
-		/// Sets the distance measurement residual (DIST, DHOR).
+		/// Sets the distance measurement residual for a TSTN (DIST, DHOR).
 		void extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget>& distanceMeas);
 
 		/// Sets the PLR3D measurement residual.
@@ -110,6 +110,10 @@ private:
 
 		/// Sets the DVER measurement residual.
 		void extractDVERObs(const TLSResultsMatrices& rm, std::vector<TDVER>& dver);
+
+		/// Sets the distance measurement residual for a SCALE (ECTH, ECVE, ECSP).
+		void extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TSCALE>& scaleMeas);
+
 	//@}
 
 

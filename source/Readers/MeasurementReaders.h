@@ -114,7 +114,6 @@ class TKeyUVEC : public TAMeasurementKey {
 		virtual void parse(const std::vector<std::string>& tokens, int line);
 };
 
-
 class TKeyUVD : public TAMeasurementKey {
 	public:
 		/// Constructor, the list of allowed keywords is filled
@@ -132,8 +131,6 @@ class TKeyUVD : public TAMeasurementKey {
 		*/
 		virtual void parse(const std::vector<std::string>& tokens, int line);
 };
-
-
 
 ///////////////////////
 ///////////////////////

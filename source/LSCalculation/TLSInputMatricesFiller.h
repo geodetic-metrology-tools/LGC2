@@ -75,13 +75,16 @@ private:
 		void  addZenDistContributions(const std::vector<TZEND>& zendMeas, const TTSTN& station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the hor. dist. observations 
 		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, const TTSTN& station, TLSInputMatrices*  matrices);
-		/// Add the design matrices contributions for the Levelling station, contatining a DLEV and dlev's DHOR measurements.
-		void  addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices);
+		/// Add the design matrices contributions for the ecth observations 
+		void  addECTHContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
 
 		/// Add CAMERA UVEC observation
 		void addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices);
 		/// Add CAMERA UVD observation
 		void addUVDContribution(const TCAM& camera, TLSInputMatrices*  matrices);
+
+		/// Add the design matrices contributions for the Levelling station, contatining a DLEV and dlev's DHOR measurements.
+		void  addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the DSPT measurement (spatial measurement done be electronic distance meter) 
 		void  addDSPTContribution(const std::vector<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices);

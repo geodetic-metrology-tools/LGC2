@@ -526,6 +526,9 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 	
 		fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
 		fScaleInstID =  tokens.at(3);
+
+		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 	}
 	else{
 		if (tokens.size() < 2 && !fSIMUActive)
@@ -537,20 +540,17 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 		// look up the stationed point
 		const auto& stPoint(fpoints.getObject(tokens.at(0)));
 	   
-		//If SCALE used => update current SCALE instrument
-	   if(opts.has("SCALE"))
-		  fScaleInstID = opts.getParam("SCALE");
 
-		// get a copy of  the specified instrument and update it
-	    auto scaleInstr(finstruments.getDevice(finstruments.fSCALE, fScaleInstID));
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
+		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
 
-       scaleInstr.sigmaD              = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
-       scaleInstr.ppmD                = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
-       scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
-	    
+		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
+		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
+		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
 
 	   // Store  the measured value
-	   getROM().measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
+	   getROM().measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
 
 	   //get a reference to the inserted measurement
 	   auto& ecth(getROM().measECTH.back());

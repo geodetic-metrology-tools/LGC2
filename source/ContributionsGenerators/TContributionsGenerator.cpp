@@ -47,10 +47,10 @@ void TContributionsGenerator::transformPointsToMLASystem(std::string originName,
 			set2MLATransformation(originOfMLAPos);
 			fLastStationPtName = originName;
 		}
-		transform2MLA(additPointPos);
-		originOfMLAPos.setX(TLength(0.0));
-      originOfMLAPos.setY(TLength(0.0));
-      originOfMLAPos.setZ(TLength(0.0));
+	transform2MLA(additPointPos);
+	originOfMLAPos.setX(TLength(0.0));
+    originOfMLAPos.setY(TLength(0.0));
+    originOfMLAPos.setZ(TLength(0.0));
 }
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- TSTN measurements
@@ -462,9 +462,73 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(const TTSTN& station, 
 	return contrib;
 }
 
+
+//ECTH Contribution
+ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth){
+	/*
+	CONTRIBUTION IS CALCULATED EITHER IN ROOT OR IN MLA OF THE STATION (Total station)
+	*/
+	
+	///////////////////Transform TARGET and STATION from their's LOR either to ROOT or to MLA of the station///////////////////////////////
+	TPositionVector stationPos = ecth.targetPos->getEstimatedValue(); //position of the TSTN
+	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(ecth.targetPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+
+	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
+		transformPointsToMLASystem(ecth.targetPos->getName(), stationPos, targetPos);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+
+	
+	TAngle theta = ecth.obsHorAngle;
+	TAngle Vo = rom.v0->getEstimatedValue();
+	TReal a, b, c;   //station's contributions coefficients (negative values of these give target's coefficients)
+	a = -cos(theta + Vo);  // xSt coefficient
+	b = sin(theta + Vo);  //ySt coefficient
+	c = 0.0;  //zSt coefficient
+
+	TReal calcMeas = a*(xSt - xTg)+b*(ySt - yTg) - ecth.target.distCorrectionValue.getMetresValue();
+
+	TReal V0Contrib = b*(xSt - xTg) - a*(ySt - yTg); //contribution for the V0 parameter
+	TReal distCorrection = -1.0;
+
+	//Station can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, -a, -b, -c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	addTransformationsContributions(stLor2RootTrafo, ecth.targetPos->getEstimatedValue(), -a, -b, -c, stationTransfContributions);
+
+	//Target can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, a, b, c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
+	addTransformationsContributions(tgLor2RootTrafo, station.instrumentPos->getEstimatedValue(), a, b, c, targetTransfContributions);
+
+	// Variance calculation
+	TReal varM = pow2q(ecth.target.sigmaD + ecth.getDistance() / 1000 * ecth.target.ppmD);
+	TReal variance = varM + (pow2q(cos(theta + Vo)) + pow2q(sin(theta + Vo)))*pow2q(ecth.target.sigmaInstrCentering);
+
+	ECTHContrib	contrib = { calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance };
+	return contrib;
+}
+
+
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- individual measurements
 //////////////////////////////////////////////////////////////////////
+
 // Spatial distance made by an EDM
 DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const TDSPT& dspt){
 	TPositionVector targetPos = dspt.targetPos->getEstimatedValue();
@@ -801,8 +865,11 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 
 	
 }
+
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
+//////////////////////////////////////////////////////////////////////
+
 UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TUVEC& uvec){
 	fMLAused = false;  // TCAM measurements are never in MLA
 
@@ -951,7 +1018,12 @@ void TContributionsGenerator::transform2MLA(TFreeVector& fv){
 	fcgrf2ilg.transform(fv);
 	filg2ila.transform(fv);
 
-	transformMLA2LAInverse(fv);
+	TTransformation ILA2MILA;
+	if (!fIsSphere)
+		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
+	else
+		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
+	ILA2MILA.transform(fv);
 }
 
 // used only for the orie measurements
@@ -1274,7 +1346,6 @@ TReal TContributionsGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN
 	return (TAngle::aTan2((xTg - xSt),(yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst).getRadiansValue(); 
 }
 
-
 TReal TContributionsGenerator::getZENDCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt){
 	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
@@ -1299,7 +1370,6 @@ TReal TContributionsGenerator::getZENDCalcMeas(const TTSTN& station, const TAdju
 	return (TAngle::aCos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue()) / distance3D))).getRadiansValue();
 }
 
-
 TReal TContributionsGenerator::getDISTCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr){
 	TPositionVector targetPos = targetAdjPoint->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(targetAdjPoint->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
@@ -1319,7 +1389,6 @@ TReal TContributionsGenerator::getDISTCalcMeas(const TTSTN& station, const TAdju
    return (dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue()),
       targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), (targetPos.getZ().getMetresValue() + targetHt)) - distanceCorr);
 }
-
 
 TReal TContributionsGenerator::getDHORCalcMeas(const TTSTN& station, const TLINE& dhor){
 	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
@@ -1343,28 +1412,45 @@ TReal TContributionsGenerator::getDHORCalcMeas(const TTSTN& station, const TLINE
 	return D - cte;
 }
 
-TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TECHO& echo){
-	TPositionVector stationPoint= echo.targetPos->getEstimatedValue();
-	const TLOR2LOR& stationPTLor2RootTrafo = getLORTransformation(echo.targetPos->getFrameTreePosition(), fTree->begin()); 
-	stationPTLor2RootTrafo.transform(stationPoint);
+TReal	 TContributionsGenerator::getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth)
+{
+	TPositionVector targetPos = ecth.targetPos->getEstimatedValue();
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(ecth.targetPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
 
-	/*Reference point is always defined in ROOT and is fixed, i.e. no transformation to ROOT required and no contribution required for its coordinates.*/
-	TPositionVector referencePoint = echoROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
+	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
+	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
 
-	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
-		transformPointsToMLASystem( echoROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
+	//If not OLOC used and station can not rotate freely => contributions calculated in MLA of the instrument (station)
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
+		//If stationed point is different than in the previous call of Cotrib. Gener., or if MLA system was not used in the previous call => set a new origin of the CCS2MLA transformation
+		if (!(fLastStationPtName == station.instrumentPos->getName()) || !fMLAused){
+			set2MLATransformation(stationPos);
+			fLastStationPtName = station.instrumentPos->getName();
+		}
 		fMLAused = true;
+		transform2MLA(targetPos);
+		stationPos = TPositionVector(0.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian); //local astronomical system of the station, station's position is the origin of this system, i.e. ( 0 , 0, 0 )  
 	}
 	else
 		fMLAused = false;
+	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
 
-	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); 
-	TReal cEcVp = echo.target.distCorrectionValue; 
-   TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
 
-	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX() ).getMetresValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue() + dRef - cEcVp;
 
-	return calcMeas;
+	TAngle theta = ecth.obsHorAngle;
+	TAngle Vo = rom.v0->getEstimatedValue();
+	TReal a, b, c;   //station's contributions coefficients (negative values of these give target's coefficients)
+	a = -cos(theta + Vo);  // xSt coefficient
+	b = sin(theta + Vo);  //ySt coefficient
+	c = 0.0;  //zSt coefficient
+
+	return -a*(xSt - xTg) + b*(ySt - yTg) - ecth.getDistance().getMetresValue();
 }
 
 
@@ -1393,6 +1479,26 @@ TReal	TContributionsGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const T
 	return calcMeas;
 }
 
+TReal	TContributionsGenerator::getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor){
+	TPositionVector refPointPos = referencePoint->getEstimatedValue();  // Reference point is the 'target'.
+	const TLOR2LOR& refPTLor2RootTrafo = getLORTransformation(referencePoint->getFrameTreePosition(), fTree->begin());
+	refPTLor2RootTrafo.transform(refPointPos);
+
+	TPositionVector staffPos = dhor.targetPos->getEstimatedValue();   // Levelling staff is the 'station', can be defined anywhere in the tree.
+	const TLOR2LOR& staffPTLor2RootTrafo = getLORTransformation(dhor.targetPos->getFrameTreePosition(), fTree->begin());
+	staffPTLor2RootTrafo.transform(staffPos);
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(dhor.targetPos->getName(), staffPos, refPointPos);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	return dist(staffPos.getX().getMetresValue(), staffPos.getY().getMetresValue(), refPointPos.getX().getMetresValue(), refPointPos.getY().getMetresValue());
+}
+
+
 TReal	TContributionsGenerator::getDSPTCalcMeas(const TEDM& edmST, const TDSPT& dspt){
 	TPositionVector targetPos = dspt.targetPos->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(dspt.targetPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
@@ -1417,24 +1523,28 @@ TReal	TContributionsGenerator::getDSPTCalcMeas(const TEDM& edmST, const TDSPT& d
 	return D - cst;
 }
 
+TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TECHO& echo){
+	TPositionVector stationPoint = echo.targetPos->getEstimatedValue();
+	const TLOR2LOR& stationPTLor2RootTrafo = getLORTransformation(echo.targetPos->getFrameTreePosition(), fTree->begin());
+	stationPTLor2RootTrafo.transform(stationPoint);
 
-TReal	TContributionsGenerator::getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor){
-	TPositionVector refPointPos = referencePoint->getEstimatedValue();  // Reference point is the 'target'.
-	const TLOR2LOR& refPTLor2RootTrafo = getLORTransformation(referencePoint->getFrameTreePosition(), fTree->begin()); 
-	refPTLor2RootTrafo.transform(refPointPos);
+	/*Reference point is always defined in ROOT and is fixed, i.e. no transformation to ROOT required and no contribution required for its coordinates.*/
+	TPositionVector referencePoint = echoROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 
-	TPositionVector staffPos = dhor.targetPos->getEstimatedValue();   // Levelling staff is the 'station', can be defined anywhere in the tree.
-	const TLOR2LOR& staffPTLor2RootTrafo = getLORTransformation( dhor.targetPos->getFrameTreePosition(), fTree->begin()); 
-	staffPTLor2RootTrafo.transform(staffPos);
-
-	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
-		transformPointsToMLASystem(dhor.targetPos->getName(), staffPos, refPointPos);
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(echoROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
 		fMLAused = true;
 	}
 	else
 		fMLAused = false;
 
-	return dist(staffPos.getX().getMetresValue(), staffPos.getY().getMetresValue(), refPointPos.getX().getMetresValue(), refPointPos.getY().getMetresValue());
+	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue();
+	TReal cEcVp = echo.target.distCorrectionValue;
+	TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
+
+	TReal calcMeas = -cosq(theta)*(stationPoint.getX() - referencePoint.getX()).getMetresValue() + sinq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue() + dRef - cEcVp;
+
+	return calcMeas;
 }
 
 
@@ -1457,7 +1567,6 @@ TFreeVector TContributionsGenerator::getUVECCalcMeas(const TCAM& camera, const T
 	return TFreeVector((deltaStTg.getX()/sDist), (deltaStTg.getY()/sDist), (deltaStTg.getZ()/sDist), TCoordSysFactory::k3DCartesian);
 }
 
-
 UVDCalcMeas TContributionsGenerator::getUVDCalcMeas(const TCAM& camera, const TUVD& uvd){
 	fMLAused = false;
 	//Transformation from target into camera LOR
@@ -1478,6 +1587,7 @@ UVDCalcMeas TContributionsGenerator::getUVDCalcMeas(const TCAM& camera, const TU
 	UVDCalcMeas calMeas = {vectCalcMeas,sDist.getMetresValue()};
 	return calMeas;
 }
+
 
 TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie){
 	//Transform TARGET and STATION in a LOCAL ASTRONOMICAL FRAME
@@ -1510,88 +1620,3 @@ TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TO
 	return(TAngle::aTan2((xTg - xSt), (yTg - ySt)) - orieROM.fConstantAngle);
 }
 
-//The ECTH implementation is not yet finished
-#if 0
-/*ECTH*/
-ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth){
-	/*
-		CONTRIBUTION IS CALCULATED EITHER IN ROOT OR IN MLA OF THE STATION (Total station)
-		There is the point where the Total station resides, which is defining the plane. And then there are stations with SCALE instrument,
-		which are measuring this plane
-	*/
-	/*Contribnutions to be returned*/
-	TReal calcMeas, distCorrection, variance;
-	TFreeVector coordContribTSTNPt(TCoordSysFactory::k3DCartesian);
-	TFreeVector scaleStationPtContrib(TCoordSysFactory::k3DCartesian);
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
-///////////////////Transform TARGET and STATION from their's LOR either to ROOT or to MLA of the station///////////////////////////////
-	TPositionVector targetPos = dist.targetPos->getEstimatedValue();
-	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(dist.targetPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
-	tgLor2RootTrafo.transform(targetPos);
-
-	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
-	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
-	stLor2RootTrafo.transform(stationPos);
-
-	//If not OLOC used and station can not rotate freely => contributions calculated in MLA of the instrument (station)
-	if(fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
-		//If stationed point is different than in the previous call of Cotrib. Gener., or if MLA system was not used in the previous call => set a new origin of the CCS2MLA transformation
-		if (!(fLastStationPtName == station.instrumentPos->getName()) || !fMLAused){
-			set2MLATransformation(stationPos);
-			fLastStationPtName = station.instrumentPos->getName();
-		}
-		fMLAused = true;
-		transform2MLA(targetPos);
-		stationPos = TPositionVector(0.0, 0.0, 0.0,TCoordSysFactory::k3DCartesian); //local astronomical system of the station, station's position is the origin of this system, i.e. ( 0 , 0, 0 )  
-	}
-	else
-		fMLAused = false;
-/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
-	TReal xSt = stationPos.getX().getMetresValue();
-	TReal ySt = stationPos.getY().getMetresValue();
-	TReal zSt = stationPos.getZ().getMetresValue();
-
-	TReal xTg = targetPos.getX().getMetresValue();
-	TReal yTg = targetPos.getY().getMetresValue();
-	TReal zTg = targetPos.getZ().getMetresValue();
-
-	TReal hTg = dist.target.targetHt;
-	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue().getMetresValue();
-	TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue().getMetresValue();
-
-	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
-
-	if (D < nullLimit)
-		throw std::logic_error("TContributionGenerator::getSpatialDistanceContrib: Division by zero because observation points have identical coordinates.");
-
-	TReal a,b,c;   //station's contributions coefficients (negative values of these give target's coefficients)		 
-	a = (xSt -xTg)/D;  // xSt coefficient
-	b = (ySt - yTg)/D;  //ySt coefficient
-	c = (zSt + hInst - zTg - hTg)/D;  //zSt coefficient
-
-	calcMeas = D - cst;
-	hiContrib = c; //instrument height contribution
-
-	//Station can be defined anywhere, get point contributions and transformations contributions
-	coordContribStation = getPointContributions(stLor2RootTrafo, a, b, c);
-	addTransformationsContributions(stLor2RootTrafo, station.instrumentPos->getEstimatedValue(), a, b, c, stationTransfContributions);
-
-	//Target can be defined anywhere, get point contributions and transformations contributions
-	coordContribTarget = getPointContributions(tgLor2RootTrafo, -a, -b, -c);
-	addTransformationsContributions(tgLor2RootTrafo, dist.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
-
-	distCorrection =  - 1.0;
-
-	// Variance calculation
-	TReal varM = pow2q(dist.target.sigmaDist + dist.getDistance()/1000 * dist.target.ppmDist);
-	TReal varInstHeight = pow2q(station.instrument.sigmaInstrHeight);
-	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
-	TReal varInstCent = pow2q(station.instrument.sigmaInstrCentering);
-	TReal varTgCent = pow2q(dist.target.sigmaTargetCentering);
-	variance = varM + pow2q((zTg - zSt + hTg - hInst)/D) * (varInstHeight +  varTgHeight) + ((pow2q(yTg - ySt) + pow2q(xSt - xTg))/pow2q(D)) * (varInstCent + varTgCent);
-
-	DistMeasContrib  contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, distCorrection, variance};
-	return contrib;
-}
-#endif

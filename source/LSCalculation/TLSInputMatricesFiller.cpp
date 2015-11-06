@@ -48,7 +48,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 					addSpaDistContributions(itROM.measDIST, *itTSTN, matrices);  
 					addZenDistContributions(itROM.measZEND, *itTSTN, matrices);
 					addHorDistContributions(itROM.measDHOR, *itTSTN, matrices);
-
+					addECTHContributions(itROM, *itTSTN, matrices);
 				}
 			}
 
@@ -360,6 +360,59 @@ bool isProcessOK = true;
 	}
 }
 
+void TLSInputMatricesFiller::addECTHContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	ECTHContrib contributions;
+
+	for (auto& meas:rom.measECTH){
+		eqIdx = meas.getFirstEquationIndex();
+		obsIdx = meas.getFirstObservationIndex();
+		
+		contributions = fCGenerator.getECTHContrib(station, rom, meas); //Get the observation contribution
+
+		// Add station's contributions into a first design matrix
+		if (!station.instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fTSTNPtContrib, eqIdx, matrices);
+
+		// Add target contributions into a first design matrix
+		if (!meas.targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas.targetPos, contributions.fScaleStationPtContrib, eqIdx, matrices);
+
+		// Add V0 contribution
+		if (!rom.v0->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom.v0->getFirstUidx(), contributions.fV0Contrib);
+
+		// Adding contributions for STATION transformations parameters 
+		for (auto& itStTransform:contributions.fTSTNPtTransformContrib){
+			if (!itStTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, eqIdx, matrices);
+		}
+
+		// Adding contributions for TARGET transformations parameters 
+		for (auto& itTgTransform:contributions.fStTransformContrib){
+			if (!itTgTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform.first, itTgTransform.second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas.getDistance() - contributions.fCalcMeas));
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling ECTH contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
+	}
+}
 
 void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices){
 	DLEVContrib contributions;
@@ -559,6 +612,111 @@ void  TLSInputMatricesFiller::addECHOContributions(const TECHOROM& echoROM, TLSI
 			throw std::runtime_error("Error occurred during filling input design matrices of ECHO.");
 	}
 }
+
+void  TLSInputMatricesFiller::addDSPTContribution(const std::vector<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	DistMeasContrib contributions;
+
+	for (auto meas(dsptMeas.begin()); meas != dsptMeas.end(); ++meas){
+		eqIdx = meas->getFirstEquationIndex();
+		obsIdx = meas->getFirstObservationIndex();
+
+		contributions = fCGenerator.getDSPTContrib(edmST, *meas); //Get the observation contribution
+
+		// Add station's contributions into a first design matrix
+		if (!edmST.instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*edmST.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+
+		// Add target's contributions into a first design matrix
+		if (!meas->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+
+		// Adding Distance correction contribution
+		if (!meas->target.distCorrectionAdjustable->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
+
+		// Adding contributions for TARGET transformations parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Adding contributions for STATION transformations parameters 
+		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform){
+			if (!itStTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getDistance() - contributions.fCalcMeas));
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling DSPT contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of DSPT measurement occurred.");
+	}
+}
+
+void  TLSInputMatricesFiller::addDVERContribution(const std::vector<TDVER>& dverMeas, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	DVERContrib contributions;
+
+	for (auto meas(dverMeas.begin()); meas != dverMeas.end(); ++meas){
+		eqIdx = meas->getFirstEquationIndex();
+		obsIdx = meas->getFirstObservationIndex();
+
+		contributions = fCGenerator.getDVERContrib(*meas); //Get the observation contribution
+
+		// Add station contributions into a first design matrix
+		if (!meas->station->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fStCoordContrib, eqIdx, matrices);
+
+		// Add target contributions into a first design matrix
+		if (!meas->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+
+		// Adding contributions for TARGET transformations parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Adding contributions for STATION transformations parameters 
+		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform){
+			if (!itStTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getDistance() - contributions.fCalcMeas));
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling DVER contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of DVER measurement occurred.");
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -807,112 +965,6 @@ void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMat
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of UVEC measurement occurred.");
-	}
-}
-
-
-void  TLSInputMatricesFiller::addDSPTContribution(const std::vector<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices){
-	bool isProcessOK = true; 
-	MatrixIndex eqIdx = -1;
-	MatrixIndex obsIdx = -1;
-	DistMeasContrib contributions;
-
-	for(auto meas(dsptMeas.begin()); meas != dsptMeas.end(); ++meas){
-		eqIdx = meas->getFirstEquationIndex(); 
-		obsIdx = meas->getFirstObservationIndex();
-
-		contributions = fCGenerator.getDSPTContrib(edmST, *meas); //Get the observation contribution
-
-		// Add station's contributions into a first design matrix
-		if(!edmST.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*edmST.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
-
-		// Add target's contributions into a first design matrix
-		if(!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
-
-		// Adding Distance correction contribution
-		if(!meas->target.distCorrectionAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
-
-		// Adding contributions for TARGET transformations parameters 
-		for(auto itTgTransform( contributions.fTgTransformContrib.begin()); itTgTransform !=  contributions.fTgTransformContrib.end(); ++itTgTransform){
-			if(!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
-		// Adding contributions for STATION transformations parameters 
-		for(auto itStTransform( contributions.fStTransformContrib.begin()); itStTransform !=  contributions.fStTransformContrib.end(); ++itStTransform){
-			if(!itStTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
-		}
-
-		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx,  -1.0 * (meas->getDistance() - contributions.fCalcMeas));
-
-		// Add weight unknown matrix element
-		if(contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling DSPT contribution, variance is zero or too small, can not set weight matrix element.");
-		else{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0/contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
-		}
-
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
-
-		if(!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of DSPT measurement occurred.");
-	}
-}
-
-
-void  TLSInputMatricesFiller::addDVERContribution(const std::vector<TDVER>& dverMeas, TLSInputMatrices*  matrices){
-	bool isProcessOK = true; 
-	MatrixIndex eqIdx = -1;
-	MatrixIndex obsIdx = -1;
-	DVERContrib contributions;
-
-	for(auto meas(dverMeas.begin()); meas != dverMeas.end(); ++meas){
-		eqIdx = meas->getFirstEquationIndex(); 
-		obsIdx = meas->getFirstObservationIndex();
-
-		contributions = fCGenerator.getDVERContrib(*meas); //Get the observation contribution
-
-		// Add station contributions into a first design matrix
-		if(!meas->station->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fStCoordContrib, eqIdx, matrices);
-
-		// Add target contributions into a first design matrix
-		if(!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
-
-		// Adding contributions for TARGET transformations parameters 
-		for(auto itTgTransform( contributions.fTgTransformContrib.begin()); itTgTransform !=  contributions.fTgTransformContrib.end(); ++itTgTransform){
-			if(!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
-		// Adding contributions for STATION transformations parameters 
-		for(auto itStTransform( contributions.fStTransformContrib.begin()); itStTransform !=  contributions.fStTransformContrib.end(); ++itStTransform){
-			if(!itStTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
-		}
-
-		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx,  -1.0 * (meas->getDistance() - contributions.fCalcMeas));
-
-		// Add weight unknown matrix element
-		if(contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling DVER contribution, variance is zero or too small, can not set weight matrix element.");
-		else{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0/contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
-		}
-
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
-
-		if(!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of DVER measurement occurred.");
 	}
 }
 

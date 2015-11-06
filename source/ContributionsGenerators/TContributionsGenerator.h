@@ -127,6 +127,9 @@ public:
 		///  Returns the TPLR3D calculated measurement values
 		PLR3DCalcMeas getPLR3DCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
+		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
+		TReal	 getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
+
 		/// Returns the the TUVEC measurement calculaded measurement value
 		TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
 

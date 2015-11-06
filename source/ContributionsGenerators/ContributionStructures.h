@@ -197,7 +197,6 @@ struct ECTHContrib{
 	TFreeVector	fTSTNPtContrib; /*Reference point for the PLANE*/
 	TFreeVector	fScaleStationPtContrib;
 
-	TReal		fThetaContrib; // [rad]
 	TReal		fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
 
 	TReal		fDistanceCorrectionContrib; 

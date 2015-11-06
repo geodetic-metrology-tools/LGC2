@@ -27,6 +27,7 @@ set(tests_SOURCES
 	testAppExecution.cpp
 	main.cpp
 	simulationTests.cpp
+	tests_with_ScaleInstr.cpp
 )
 
 set(tests_INPUT
@@ -38,6 +39,7 @@ set(tests_INPUT
 	testCAM.h
 	testMixingObservation.h
 	testDVER.h
+	tests_with_ScaleInstr.h
 )
 
 add_executable(tests ${tests_INPUT} ${tests_SOURCES})
