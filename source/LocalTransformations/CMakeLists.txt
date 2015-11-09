@@ -19,6 +19,7 @@ set(LocalTransformations_HEADERS
 	TCCS2CGRFTransformation.h
 	TCGRF2LGTransformation.h
 	TILG2ILATransformation.h
+	TLA2MLATransformation.h
 )
 
 # Create a variable containing all .cpp files:
@@ -31,6 +32,7 @@ set(LocalTransformations_SOURCES
 	TCCS2CGRFTransformation.cpp
 	TCGRF2LGTransformation.cpp
 	TILG2ILATransformation.cpp
+	TLA2MLATransformation.cpp
 )
 
 # Create a static library from sources:

@@ -465,18 +465,15 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(const TTSTN& station, 
 
 //ECTH Contribution
 ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth){
-	/*
-	CONTRIBUTION IS CALCULATED EITHER IN ROOT OR IN MLA OF THE STATION (Total station)
-	*/
-	
 	///////////////////Transform TARGET and STATION from their's LOR either to ROOT or to MLA of the station///////////////////////////////
+	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+
 	TPositionVector stationPos = ecth.targetPos->getEstimatedValue(); //position of the TSTN
 	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(ecth.targetPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 
-	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
-	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
-	tgLor2RootTrafo.transform(targetPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
@@ -799,7 +796,7 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 }
 
 
-//Gyro contributions
+//ORIE contributions
 AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM, const TORIE& orie){
 	//Transform TARGET and STATION in a LOCAL ASTRONOMICAL FRAME
 	TPositionVector targetPos = orie.targetPos->getEstimatedValue();
@@ -813,8 +810,8 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(orieROM.instrumentPos->getName(), stationPos, targetPos);
-		transformMLA2LA(stationPos);
-		transformMLA2LA(targetPos);	
+		fla2mla.transformInverse(stationPos);
+		fla2mla.transformInverse(targetPos);
 		fMLAused = true;
 	}
 	else
@@ -844,7 +841,7 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	TFreeVector abc(a, b, c, TCoordSysFactory::k3DCartesian);
 
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-		transformMLA2LAInverse(abc);
+		fla2mla.transform(abc);
 	
 
 	//Station can be defined anywhere, get point contributions and transformations contributions
@@ -1005,59 +1002,21 @@ void TContributionsGenerator::transform2MLA(TPositionVector& pv){
 	fccs2cgrf.transform(pv);
 	fcgrf2ilg.transform(pv);
 	filg2ila.transform(pv);
-	TTransformation ILA2MILA;
-	if (!fIsSphere)
-		ILA2MILA.setRotationTransformation(0.0,0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
-	else
-		ILA2MILA.setRotationTransformation(0.0,0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
-	ILA2MILA.transform(pv);
+	fla2mla.transform(pv);
 }
 
 void TContributionsGenerator::transform2MLA(TFreeVector& fv){
 	fccs2cgrf.transform(fv);
 	fcgrf2ilg.transform(fv);
 	filg2ila.transform(fv);
-
-	TTransformation ILA2MILA;
-	if (!fIsSphere)
-		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
-	else
-		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
-	ILA2MILA.transform(fv);
-}
-
-// used only for the orie measurements
-void TContributionsGenerator::transformMLA2LA(TPositionVector& pv){
-	TTransformation MILA2ILA;
-	if (!fIsSphere)
-		MILA2ILA.setRotationTransformation(0.0, 0.0, 0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
-	else
-		MILA2ILA.setRotationTransformation(0.0, 0.0, 0.5934254894331 + 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
-	MILA2ILA.transform(pv);
-	
-}
-
-// used only for the orie measurements
-void TContributionsGenerator::transformMLA2LAInverse(TFreeVector& pv){
-	TTransformation ILA2MILA;
-	if (!fIsSphere)
-		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331); //Rotation of -37.77864gons about Z-axis (Azimut of Y axis for the MLA)
-	else
-		ILA2MILA.setRotationTransformation(0.0, 0.0, -0.5934254894331 - 0.00025507972476); //For the sphere a correction of 0.01623887931 gons is apply to the azimut
-	ILA2MILA.transform(pv);
+	fla2mla.transform(fv);
 }
 
 // used only for the dver measurements
 void TContributionsGenerator::transformMLA2CGRF(TFreeVector& fv){
-	TTransformation ILA2MILA;
-	ILA2MILA.setRotationTransformation(0.0,0.0, -0.5934254894331); //Rotation of 37.77864 about Z-axis
-	TTransformation otherSense = ILA2MILA.getInversedTransformation();
-	otherSense.transform(fv);
-
+	fla2mla.transformInverse(fv);
 	filg2ila.transformInverse(fv);
 	fcgrf2ilg.transformInverse(fv);
-
-	/*fccs2cgrf.transformInverse(fv);*/
 }
 
 
@@ -1082,6 +1041,8 @@ void	TContributionsGenerator::set2MLATransformation(TPositionVector originInCCS)
 	fcgrf2ilg = TCGRF2LGTransformation(originInCCS, fIsSphere);
 	//Use origin CCS position as an origin of the Local Astronomical system
 	filg2ila = TILG2ILATransformation(statPosCCS, fGeoidModel);
+	//Use origin CCS position as an origin of the Local Astronomical system
+	fla2mla = TLA2MLATransformation(statPosCCS, fGeoidModel, TAngle(0.0),TAngle(0.0));
 }
 
 TLOR2LOR TContributionsGenerator::getIdentityTransformation(){
@@ -1602,8 +1563,8 @@ TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TO
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
 		transformPointsToMLASystem(orieROM.instrumentPos->getName(), stationPos, targetPos);
-		transformMLA2LA(stationPos);
-		transformMLA2LA(targetPos);
+		fla2mla.transformInverse(stationPos);
+		fla2mla.transformInverse(targetPos);
 		fMLAused = true;
 	}
 	else

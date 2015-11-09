@@ -2,7 +2,6 @@
 #include <Eigen/Dense>
 #include "GeodeticConstants.h"
 #include "TRefSystemFactory.h"
-#include "TGraphLocalAstronomicalRF.h"
 #include "TCernGridGeoid.h"
 #include "TCCS2CGRFTransformation.h"
 

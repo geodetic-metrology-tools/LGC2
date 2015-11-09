@@ -46,16 +46,16 @@ namespace tut
 		ensure_equals("Calculation successful", succesCalc, true);
 		const TLGCData& dataset = calcul.getData();
 		/*
-		PT           -934.3064584  10514.0644940   2413.6284609    419.8436591
-		V0 stn = 64.7326793  -> -64.7326793 expected here
+		PT -934.3064584  10514.0644940   2413.6284609    419.8436591   0.0000   0.0000   0.0000
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3064584  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.0644940, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.6284609  , 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(), 0.0, 1e-3);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.00, 1e-3);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.0, 1e-3);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-				ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 400-335.2429785108, 1e-7);
 	}
 
 	template<>
@@ -80,17 +80,15 @@ namespace tut
 		ensure_equals("Calculation successful", succesCalc, true);
 		const TLGCData& dataset = calcul.getData();
 		/*
-		PT           -934.3064591  10514.0644960   2413.6299912    419.8451894
-		V0 = 84.7326810  -> -84.7326810 expected here
+		PT          -934.3064591  10514.0644960   2413.6299912    419.8451894   0.9079   0.5924   0.7854
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3064591  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.0644960, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.6299912  , 1e-7);
-
-		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 400-315.24220290, 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(), 0.9079, 1e-3);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.5924, 1e-3);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.7854, 1e-3);
 
 	}
 
@@ -117,26 +115,25 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 		/*
-		PT           -934.3064587  10514.0644950   2413.6292260    419.8444242
-		PT2          -895.6505693  10421.8381262   2413.7674914    419.8444088
-		V0 stn = 84.7326810  -> -84.7326810 expected here
-		V0 stn2 = 64.7326793  -> -64.7326793 expected here
+		PT           -934.3064587  10514.0644950   2413.6292260    419.8444242  0.4455   0.4541   0.5554 
+		PT2          -895.6505693  10421.8381262   2413.7674914    419.8444088  0.7033   1.3076   1.1107
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3064587  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.0644950, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.6292260  , 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(), 0.4455, 1e-3);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.4541, 1e-3);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.5554, 1e-3);
 
 		TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), -895.6505693, 2e-7);
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 10421.8381262, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2413.7674914  , 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT2").getXEstPrecision().getMMetresValue(), 0.7033, 1e-3);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT2").getYEstPrecision().getMMetresValue(), 1.3076, 1e-3);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT2").getZEstPrecision().getMMetresValue(), 1.1107, 1e-3);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 400-335.2429784952, 1e-7);
-
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 400-315.242202908, 1e-7);
 }
 	
 //--------------------------------------- RS2K ----------------------------------------------//
@@ -166,7 +163,6 @@ namespace tut
 		/*              X            Y            Z              H
 		PT           2000.0000000   2197.7926500   2433.6600000    433.6599885
 		PT2          2100.0000000   2197.7926500   2433.6600000    433.6606406
-		V0 = 10 gon  -> 390 expected here
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2000.0  , 1e-7);
@@ -178,8 +174,6 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 2197.79265, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2433.66  , 1e-7);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 10, 1e-7);
 	}
 
 	template<>
@@ -208,7 +202,6 @@ namespace tut
 		/*              X            Y            Z              H
 		PT           2000.0000000   2197.7926500   2433.6600000    433.6599885
 		PT2          2100.0000000   2197.7926500   2433.6600000    433.6606406
-		V0 = 10 gon  -> 390 expected here
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2000.0  , 1e-7);
@@ -220,8 +213,6 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 2197.79265, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2433.66  , 1e-7);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 10, 1e-7);
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
@@ -255,7 +246,6 @@ namespace tut
 		// Results with LGC1
 		/*              X            Y            Z              H
 		PT           2000.0000000   2197.7926500   2433.6615137    433.6615022
-		V0 = 0 gon -> 400 expected here
 		*/
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
@@ -263,9 +253,7 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 2197.79265, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2433.6615137  , 1e-7);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 400-399.99858529277, 1e-8); //THIS IS THE ACTUAL ANGLE WE GET, PROBABLY CORRECT
-	}
+}
 
 	template<>
 	template<>
@@ -293,26 +281,26 @@ namespace tut
 		ensure_equals("Calculation successful", succesCalc, true);
 		const TLGCData& dataset = calcul.getData();
 		/*
-		PT           2000.0000000   2197.7926500   2433.6607569    433.6607454		
-		PT2          2100.0000000   2197.7926500   2433.6600000    433.6606406
-		V0 stn = 390  -> 10 expected here
-		V0 stn2 = 10  -> 390 expected here
+		PT           2000.0000000   2197.7926500   2433.6607569    433.6607454		0.46    0.44    0.56 
+		PT2          2100.0000000   2197.7926500   2433.6600000    433.6606406      1.05    1.05    1.11
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2000.0  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 2197.79265, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2433.6607569  , 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(), 0.46, 1e-2);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.44, 1e-2);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.56, 1e-2);
+
 
 		TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), 2100.00, 1e-7);
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 2197.79265, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2433.66  , 1e-7);
-		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 390, 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT2").getXEstPrecision().getMMetresValue(), 1.05, 1e-2);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT2").getYEstPrecision().getMMetresValue(), 1.05, 1e-2);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT2").getZEstPrecision().getMMetresValue(), 1.11, 1e-2);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 400-389.99858528908, 1e-8); //THIS IS THE ACTUAL ANGLE WE GET, PROBABLY CORRECT
 	}
 
 	//To P5  STN = MQXA_1R5E
@@ -343,7 +331,7 @@ namespace tut
 		/*              X            Y            Z              H
 		PT            -934.3064569  10514.0644906   2413.6295663    419.8346279
 		PT2           -895.6505724  10421.8381202   2413.7681720    419.8353888
-		V0 = 84.7326819 gon  -> -84.7326819 expected here
+
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3064569  , 1e-7);
@@ -355,8 +343,6 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 10421.8381202, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2413.7681720  , 1e-7);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 400-315.243752968, 1e-7);
 	}
 
 	template<>
@@ -386,7 +372,6 @@ namespace tut
 		// Results with LGC1
 		/*              X            Y            Z              H
 		PT           -934.3064575  10514.0644926   2413.6310942    419.8361559
-		V0 = 74.7326836 gon -> -74.7326836 expected here
 		*/
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
@@ -394,8 +379,7 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.0644926, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.6310942  , 1e-7);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 400-325.24296668, 1e-8);
+
 	}
 
 	template<>
@@ -420,27 +404,27 @@ namespace tut
 		ensure_equals("Calculation successful", succesCalc, true);
 		const TLGCData& dataset = calcul.getData();
 		/*
-		PT           -934.3064572  10514.0644916   2413.6303302    419.8353919		
-		PT2          -895.6505724  10421.8381202   2413.7681720    419.8353888
-		V0 stn = 64.7326819  -> -64.7326819 expected here
-		V0 stn2 = 84.7326836  -> -84.7326836 expected here
+		PT           -934.3064572  10514.0644916   2413.6303302    419.8353919   0.45    0.45    0.56		
+		PT2          -895.6505724  10421.8381202   2413.7681720    419.8353888   0.70    1.31    1.11
+
 		*/
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3064572  , 1e-7);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.0644916, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.6303302  , 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT").getXEstPrecision().getMMetresValue(), 0.45, 1e-2);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT").getYEstPrecision().getMMetresValue(), 0.45, 1e-2);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT").getZEstPrecision().getMMetresValue(), 0.56, 1e-2);
 
 		TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), -895.6505724, 1e-7);
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 10421.8381202, 1e-7);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2413.7681720  , 1e-7);
-		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 400-335.24375296, 1e-7);
+		ensure_equals("sx should match", dataset.getPoints().getObject("PT2").getXEstPrecision().getMMetresValue(), 0.70, 1e-2);
+		ensure_equals("sy should match", dataset.getPoints().getObject("PT2").getYEstPrecision().getMMetresValue(), 1.31, 1e-2);
+		ensure_equals("sz should match", dataset.getPoints().getObject("PT2").getZEstPrecision().getMMetresValue(), 1.11, 1e-2);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 400-315.24296668, 1e-8); //THIS IS THE ACTUAL ANGLE WE GET, PROBABLY CORRECT
-	}
+}
 
 	
 
@@ -478,8 +462,6 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 2197.79265, 1e-8);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2433.66  , 1e-8);
 		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 390, 1e-8);
 	}
 
 
@@ -511,9 +493,7 @@ namespace tut
 		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), 2100.00, 1e-8);
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 2197.79265, 1e-8);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2433.66  , 1e-8);
-		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-        ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 390, 1e-8);
+
 	}
 
 	template<>
@@ -544,9 +524,6 @@ namespace tut
 		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), 2100.00, 1e-8);
 		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 2197.79265, 1e-8);
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2433.66  , 1e-8);
-		
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-                ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 390, 1e-8);
 
 		
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
@@ -580,9 +557,7 @@ namespace tut
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 2000.0  , 1e-8);
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 2197.79265, 1e-8);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2433.66  , 1e-8);*/
-	/*	
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().gon();
-                ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 399.99858529277, 1e-8);*/
+
 	}
 
 

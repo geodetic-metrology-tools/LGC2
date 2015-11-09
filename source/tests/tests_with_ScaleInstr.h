@@ -236,7 +236,7 @@ namespace TestScaleInstr {
 		"*V0										   \n"
 		"*ANGL										   \n"
 		"R   100									   \n"
-		"* DIST										   \n"
+		"*DIST										   \n"
 		"AS1   25.02179								   \n"
 		"BS1   50.04160								   \n"
 		"CS1   100.04544							   \n"
