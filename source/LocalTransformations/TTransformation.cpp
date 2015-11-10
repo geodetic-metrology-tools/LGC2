@@ -159,8 +159,9 @@ bool TTransformation::transform(TPositionVector& pv) const{
 	bool result = false;
 
 	//If status is not null and vector is in a 3d cart. coordinates.
-	if(pv.getStatus()!=kNull && pv.getCoordSys() == k3DCart){
-      Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
+	if(pv.getStatus()!=kNull && pv.getCoordSys() == k3DCart)
+	{
+		Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
 	
 		//Transform
 		Eigen::Vector4d pResult = *(fTransM) * pTemp;
@@ -168,14 +169,13 @@ bool TTransformation::transform(TPositionVector& pv) const{
 		//pResult is a result of the point transformation in homogeneus coordinates
 		//If w (scale) coordinate is 0, than it is a point at infinity.
 		zerofy(pResult[3]);
-		if(pResult[3] == 0.0){
+		if(pResult[3] == 0.0)
 			throw std::runtime_error("Transformed TPositionVector is a point at infinity");
-		}
 
 		//Transform point in homogeneus coordinates back to cartesian coordinates.
 		pv.setX(TLength(pResult[0]/pResult[3]));
-      pv.setY(TLength(pResult[1]/pResult[3]));
-      pv.setZ(TLength(pResult[2]/pResult[3]));
+		pv.setY(TLength(pResult[1]/pResult[3]));
+		pv.setZ(TLength(pResult[2]/pResult[3]));
 		result = true;
 	}
 	else{

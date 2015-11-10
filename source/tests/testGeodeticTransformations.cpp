@@ -44,11 +44,11 @@ namespace tut
 		ensure_distance("Y0 coordinate of P0 in CCS must match",p.getY().getMetresValue(), 2097.79265,1e-8);
 		ensure_distance("Z0 coordinate of P0 in CCS must match",p.getZ().getMetresValue(),2433.66000,1e-8);
 
-		TPositionVector p2(0.0, 0.0, 0.0,TCoordSysFactory::k3DCartesian);
+		TPositionVector p2(0.0, 1.0, 0.0,TCoordSysFactory::k3DCartesian);
 		toCGRF.transform(p2);
-		ensure_distance("X0 coordinate of P1 in CGRF must match",p2.getX().getMetresValue(),4394470.39636727,1e-8);
-		ensure_distance("Y0 coordinate of P1 in CGRF must match",p2.getY().getMetresValue(),462839.500477364,1e-8);
-		ensure_distance("Z0 coordinate of P1 in CGRF must match",p2.getZ().getMetresValue(),4581271.38035491,1e-8);
+		ensure_distance("X0 coordinate of P1 in CGRF must match", p2.getX().getMetresValue(), 4394469.74208725, 1e-8);
+		ensure_distance("Y0 coordinate of P1 in CGRF must match", p2.getY().getMetresValue(), 462839.9934779, 1e-8);
+		ensure_distance("Z0 coordinate of P1 in CGRF must match", p2.getZ().getMetresValue(), 4581271.95382516, 1e-8);
 
 		//Inverse transformation should lead to the original point
 		toCGRF.transformIverse(p2);
@@ -101,11 +101,12 @@ namespace tut
 		ensure_distance("Y0 coordinate of P0 in CGRF must match",p.getY().getMetresValue(),465785.056735627,1e-8);
 		ensure_distance("Z0 coordinate of P0 in CGRF must match",p.getZ().getMetresValue(),4583458.22601372,1e-8);
 
-		TPositionVector p2(4394473.59536092, 462845.401137905, 4581271.91655842,TCoordSysFactory::k3DCartesian);
-		toILG.transform(p2);
-		ensure_distance("X0 coordinate of P2 in CGRF must match",p2.getX().getMetresValue(),-2825.6236229666,1e-8);
-		ensure_distance("Y0 coordinate of P2 in CGRF must match",p2.getY().getMetresValue(),-623.100199187882,1e-8);
-		ensure_distance("Z0 coordinate of P2 in CGRF must match",p2.getZ().getMetresValue(),-2430.6421078521,1e-8);
+		TCGRF2LGTransformation toILG2(TPositionVector(3025,3000.3,2450.8577816, TCoordSysFactory::k3DCartesian), false);
+		TPositionVector p2(4394469.74208725, 462839.9934779, 4581271.95382516, TCoordSysFactory::k3DCartesian);
+		toILG2.transform(p2);
+		ensure_distance("X0 coordinate of P2 in CGRF must match", p2.getX().getMetresValue(), -4184.69288969163, 1e-8);
+		ensure_distance("Y0 coordinate of P2 in CGRF must match", p2.getY().getMetresValue(), -793.923764354876, 1e-8);
+		ensure_distance("Z0 coordinate of P2 in CGRF must match", p2.getZ().getMetresValue(), -2451.76667547924, 1e-8);
 
 		TPositionVector p3(4394470.39636727,462839.500477364,4581271.38035491,TCoordSysFactory::k3DCartesian);
 		toILG.transform(p3);

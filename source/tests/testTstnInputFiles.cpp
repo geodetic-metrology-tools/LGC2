@@ -6,9 +6,11 @@
 
 
 #include <TLGCData.h>
+#include <TLGCApp.h>
 #include <readers/TReader.h>
 #include "tests_TSTN_OLOC.h"
 #include "TLGCCalculation.h"
+#include "Utils.h"
 #include <vector>
 #include <ctime>
 
@@ -562,6 +564,17 @@ namespace tut
 
 		TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST2",V0Calc, 199, 1e-8); 
+	}
+
+	template<>
+	template<>
+	void object::test<8>()
+	{
+		set_test_name("ECTH Test");
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testECTH.lgc2",
+					 getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testECTH.out");
+
+		proj.exec();
 	}
 }
 #endif

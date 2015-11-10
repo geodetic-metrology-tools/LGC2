@@ -59,15 +59,10 @@ bool  TLA2MLATransformation::transformInverse(TFreeVector& fv) const
 //////////////////////////////////////////////////////////////////////
 void TLA2MLATransformation::initialise()
 {
-	bool isSphere;
-	if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-		isSphere = true;
-	else
-		isSphere = false;
-
+	bool isSphere = (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere);
 
 	/*Ask reference frame factory for a CCS2CGRF, CGRF2LG and LG2LA transformation.*/
-	auto pCCS2CGRF = TCCS2CGRFTransformation(isSphere);
+	auto pCCS2CGRF = TCCS2CGRFTransformation(!isSphere);
 	auto pCGRF2LG = TCGRF2LGTransformation(fOrigin, isSphere);
 	auto pLG2LA = TILG2ILATransformation(fOrigin, fGeoidModel);
 

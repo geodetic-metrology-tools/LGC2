@@ -62,19 +62,19 @@ public:
 	/**@name Access methods */
 	//@{
 		/// Returns THelmertTransformation of this transformation (CGRF-> ILG) 
-		TTransformation		getTransformer() const { return fTransform; }
+		TTransformation	getTransformer() const { return fTransform; }
 
 		/// Returns THelmertTransformation of inverse of this transformation (ILG -> CGRF)
-		TTransformation      getInverseTransformer() const {return fTransform.getInversedTransformation();}
+		TTransformation getInverseTransformer() const {return fTransform.getInversedTransformation();}
 
 		///Returns origin of the local geodetic system
-		TPositionVector				getLGSOrigin() const{return fILGOrigin;}		
+		TPositionVector	getLGSOrigin() const{return fILGOrigin;}		
 	//@}
 
 
 private:
 	TTransformation		fTransform;
-	TPositionVector				fILGOrigin;
+	TPositionVector		fILGOrigin;
 
 	// Initialise the transformation using the parameters of the two reference frames
 	virtual  void  initialiseEllipsoid();
