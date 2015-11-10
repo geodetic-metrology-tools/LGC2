@@ -1042,7 +1042,7 @@ void	TContributionsGenerator::set2MLATransformation(TPositionVector originInCCS)
 	//Use origin CCS position as an origin of the Local Astronomical system
 	filg2ila = TILG2ILATransformation(statPosCCS, fGeoidModel);
 	//Use origin CCS position as an origin of the Local Astronomical system
-	fla2mla = TLA2MLATransformation(statPosCCS, TAngle(0.0),TAngle(0.0));
+	fla2mla = TLA2MLATransformation(statPosCCS, fGeoidModel, TAngle(0.0), TAngle(0.0));
 }
 
 TLOR2LOR TContributionsGenerator::getIdentityTransformation(){

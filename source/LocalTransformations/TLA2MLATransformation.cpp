@@ -11,14 +11,14 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-TLA2MLATransformation::TLA2MLATransformation(TPositionVector& origin, TAngle gis, TAngle slope)
-	: fOrigin(origin), fBearing(gis), fSlope(slope), fInitialised(true)
+TLA2MLATransformation::TLA2MLATransformation(TPositionVector& origin, TRefSystemFactory::EGeoid geoidModel, TAngle gis, TAngle slope)
+	: fOrigin(origin), fBearing(gis), fSlope(slope), fGeoidModel(geoidModel), fInitialised(true)
 {
 	initialise();
 }
 
 TLA2MLATransformation::TLA2MLATransformation()
-	: fOrigin(TCoordSysFactory::k3DCartesian), fBearing(0.0), fSlope(0.0), fInitialised(false)
+	: fOrigin(TCoordSysFactory::k3DCartesian), fGeoidModel(TRefSystemFactory::EGeoid::kNoGeoid), fBearing(0.0), fSlope(0.0), fInitialised(false)
 {
 }
 
@@ -59,14 +59,18 @@ bool  TLA2MLATransformation::transformInverse(TFreeVector& fv) const
 //////////////////////////////////////////////////////////////////////
 void TLA2MLATransformation::initialise()
 {
-	/*Ask reference frame factory for a CCS2CGRF, CGRF2LG and LG2LA transformation.*/
-	auto pCCS2CGRF = TCCS2CGRFTransformation();
-	auto pCGRF2LG = TCGRF2LGTransformation();
-	auto pLG2LA = TILG2ILATransformation();
+	bool isSphere;
+	if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
+		isSphere = true;
+	else
+		isSphere = false;
 
-	//Transform copy of origin given in CCS into CGRF (geodetic cartisian)
-	TPositionVector fOrigin2 = fOrigin;
-	pCCS2CGRF.transform(fOrigin2);
+
+	/*Ask reference frame factory for a CCS2CGRF, CGRF2LG and LG2LA transformation.*/
+	auto pCCS2CGRF = TCCS2CGRFTransformation(isSphere);
+	auto pCGRF2LG = TCGRF2LGTransformation(fOrigin, isSphere);
+	auto pLG2LA = TILG2ILATransformation(fOrigin, fGeoidModel);
+
 
 	//Transform a unit vector from CCS to LA
 	TPositionVector unitY(fSlope.cosine()*fBearing.sine(),

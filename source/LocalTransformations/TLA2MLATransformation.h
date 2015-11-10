@@ -19,7 +19,7 @@ public:
 	\param[in] origin Origin of the LG and LA system, expected to be in the CCS.
 	\param[in] geoidModel The geoid model used for this transformation.
 	*/
-	TLA2MLATransformation(TPositionVector& origin, TAngle gis, TAngle slope);
+	TLA2MLATransformation(TPositionVector& origin, TRefSystemFactory::EGeoid geoidModel, TAngle gis, TAngle slope);
 
 	/*!
 	Constructor. Creates an uninitialized object.
@@ -59,11 +59,14 @@ public:
 	///Returns origin of the local geodetic system and local astronomical system
 	TPositionVector	            getOrigin() const { return fOrigin; }
 
+	///Returns the geoid model used
+	TRefSystemFactory::EGeoid	getGeoidModel() const { return fGeoidModel; }
 	//@}
 
 private:
 	TTransformation		fTransform;
 	TPositionVector				fOrigin;
+	TRefSystemFactory::EGeoid   fGeoidModel;
 	TAngle fBearing, fSlope;
 
 	bool fInitialised;
