@@ -11,14 +11,14 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-TLA2MLATransformation::TLA2MLATransformation(TPositionVector& origin, TRefSystemFactory::EGeoid geoidModel, TAngle gis, TAngle slope)
-	: fOrigin(origin), fGeoidModel(geoidModel),fBearing(gis), fSlope(slope), fInitialised(true)
+TLA2MLATransformation::TLA2MLATransformation(TPositionVector& origin, TAngle gis, TAngle slope)
+	: fOrigin(origin), fBearing(gis), fSlope(slope), fInitialised(true)
 {
 	initialise();
 }
 
 TLA2MLATransformation::TLA2MLATransformation()
-	: fOrigin(TCoordSysFactory::k3DCartesian), fGeoidModel(TRefSystemFactory::EGeoid::kNoGeoid), fBearing(0.0), fSlope(0.0), fInitialised(false)
+	: fOrigin(TCoordSysFactory::k3DCartesian), fBearing(0.0), fSlope(0.0), fInitialised(false)
 {
 }
 

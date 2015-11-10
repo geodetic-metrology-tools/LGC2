@@ -501,7 +501,7 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const
 	TReal calcMeas = a*(xSt - xTg)+b*(ySt - yTg) - ecth.target.distCorrectionValue.getMetresValue();
 
 	TReal V0Contrib = b*(xSt - xTg) - a*(ySt - yTg); //contribution for the V0 parameter
-	TReal distCorrection = -1.0;
+	TReal distCorrection = -1.0;  //Not use for the moment, because it is not adjustable.
 
 	//Station can be defined anywhere, get point contributions and transformations contributions
 	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, -a, -b, -c);
@@ -1042,7 +1042,7 @@ void	TContributionsGenerator::set2MLATransformation(TPositionVector originInCCS)
 	//Use origin CCS position as an origin of the Local Astronomical system
 	filg2ila = TILG2ILATransformation(statPosCCS, fGeoidModel);
 	//Use origin CCS position as an origin of the Local Astronomical system
-	fla2mla = TLA2MLATransformation(statPosCCS, fGeoidModel, TAngle(0.0),TAngle(0.0));
+	fla2mla = TLA2MLATransformation(statPosCCS, TAngle(0.0),TAngle(0.0));
 }
 
 TLOR2LOR TContributionsGenerator::getIdentityTransformation(){
