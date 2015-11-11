@@ -16,10 +16,10 @@ public:
 		/// Constructors
 
 		/*Uses either ellipsoid CGRF or Sphere CGRF*/
-		TCCS2CGRFTransformation(bool isEllipsoid = true);
+	TCCS2CGRFTransformation(bool fIsSphere = false);
 
 		/*Resets the transformation, sets either ellipsoid or spere CGRF*/
-		void reInitialize (bool isEllipsoid);
+	void reInitialize(bool fIsSphere);
 
 		/// Destructor
 		~TCCS2CGRFTransformation();
@@ -29,48 +29,42 @@ public:
 	/**@name Transformations */
 	//@{
 		/// transform a position vector from CCS to CGRF
-		bool						transform( TPositionVector& pv ) const;
+		bool transform( TPositionVector& pv ) const;
 
 		/// transform a free vector from CCS to CGRF
-		bool						transform( TFreeVector& fv ) const;
+		bool transform( TFreeVector& fv ) const;
 
 		TPositionVector getTransformedPt( const TPositionVector& pv ) const;
 
-
-		/// transform a rotation matrix  from CCS to CGRF
-		bool						transform( TRotationMatrix& rmx ) const;
-
 		/// inverse transformation of a position vector, from CGRF to CCS
-		bool						transformIverse( TPositionVector& pv ) const;
+		bool transformIverse( TPositionVector& pv ) const;
 
 		TPositionVector  getTransformedPtInverse( const TPositionVector& pv ) const;
 
 		/// inverse transformation of a free vector, from CGRF to CCS
-		bool						transformInverse( TFreeVector& fv ) const;
+		bool transformInverse( TFreeVector& fv ) const;
 
-		/// inverse transformation of a rotation matrix, from CGRF to CCS
-		bool						transformInverse( TRotationMatrix& rmx ) const;
 	//@}
 
 	/**@name Access methods */
 	//@{
 		/// Returns THelmertTransformation of this transformation (CCS -> CGRF) 
-		TTransformation				getTransformer() const { return fTransform; }
+		TTransformation getTransformer() const { return fTransform; }
 
 		/// Returns THelmertTransformation of inverse of this transformation (CGRF -> CCS)
-		TTransformation              getInverseTransformer() const {return fTransform.getInversedTransformation();}
+		TTransformation getInverseTransformer() const {return fTransform.getInversedTransformation();}
 
-		inline bool                       isCGRFEllipsoid() {return fIsEllipsoid;}
-		inline bool                       isCGRFSphere() {return !fIsEllipsoid;}
+		inline bool isCGRFEllipsoid() { return !fIsSphere; }
+		inline bool isCGRFSphere() { return fIsSphere; }
 	//@}
 
 
 private:
 
-	TTransformation		fTransform;
+	TTransformation fTransform;
 
-	/*For ellispoid transformation different transformation is applied than foe Sphere*/
-	bool		        fIsEllipsoid;
+	/*For ellispoid transformation different transformation is applied than for Sphere*/
+	bool fIsSphere;
 
 	/// Initialise the transformation
 	//void  initialise();

@@ -4,37 +4,34 @@
 #include "TRefSystemFactory.h"
 #include "TCernGridGeoid.h"
 #include "TCCS2CGRFTransformation.h"
+#include "TCGRF2LGTransformation.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 TILG2ILATransformation::TILG2ILATransformation(TPositionVector& origin, TRefSystemFactory::EGeoid geoidModel )
-	: fOrigin(origin), fGeoidModel(geoidModel), fInitialised(true)
+	: fOrigin(origin), originInCGRF(TCoordSysFactory::k3DCartesian),fGeoidModel(geoidModel), fInitialised(false)
 {	
-	if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-		initialiseSphere();
-	else
-		initialiseEllips();
+	bool isSphere = (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere);
+
+	//transform the origin of the LA in LG
+	auto pCCS2CGRF = TCCS2CGRFTransformation(isSphere);
+	auto pCGRF2LG = TCGRF2LGTransformation(origin, isSphere);
+	pCCS2CGRF.transform(fOrigin);
+	originInCGRF = fOrigin;
+	pCGRF2LG.transform(fOrigin); //origin in LG is (0 0 0)
+
+	initialise();
 }
 
 TILG2ILATransformation::TILG2ILATransformation()
-	: fOrigin(TCoordSysFactory::k3DCartesian),fGeoidModel(TRefSystemFactory::EGeoid::kNoGeoid), fInitialised(false)
+	: fOrigin(TCoordSysFactory::k3DCartesian), originInCGRF(TCoordSysFactory::k3DCartesian), fGeoidModel(TRefSystemFactory::EGeoid::kNoGeoid), fInitialised(false)
 {
 }
 
 TILG2ILATransformation::~TILG2ILATransformation()
 {//destructor
-}
-
-
-void  TILG2ILATransformation::initialise(TPositionVector& origin, TRefSystemFactory::EGeoid geoidModel){
-	fOrigin = origin;
-	fGeoidModel = geoidModel;
-	if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-		initialiseSphere();
-	else
-		initialiseEllips();
 }
 
 
@@ -46,106 +43,53 @@ bool  TILG2ILATransformation::transform( TPositionVector& pv ) const
 	return fInitialised ? fTransform.transform(pv) : fInitialised;
 }
 
-
 bool  TILG2ILATransformation::transform( TFreeVector& fv ) const
 {// transform a free vector
 	return fInitialised ? fTransform.transform(fv) : fInitialised;
 }
-
-#if 0
-bool  TILG2ILATransformation::transform( TRotationMatrix& rmx ) const
-{// transform a rotation matrix
-	return fInitialised ? fTransform.transform(rmx) : fInitialised;
-}
-#endif
 
 bool  TILG2ILATransformation::transformInverse( TPositionVector& pv ) const
 {// transform a position vector
 	return fInitialised ? fTransform.getInversedTransformation().transform(pv) : fInitialised;
 }
 
-
 bool  TILG2ILATransformation::transformInverse( TFreeVector& fv ) const
 {// inverse transformation of a free vector
 	return fInitialised ? fTransform.getInversedTransformation().transform(fv) : fInitialised;
 }
 
-#if 0
-bool  TILG2ILATransformation::transformInverse( TRotationMatrix& rmx ) const
-{// inverse transformation of a rotation matrix
-	return fInitialised ? fTransform.getInversedTransformation().transform(rmx) : fInitialised;
-}
-#endif
-
 //////////////////////////////////////////////////////////////////////
 //PRIVATE METHODS
 //////////////////////////////////////////////////////////////////////
-void TILG2ILATransformation::initialiseEllips()
+void TILG2ILATransformation::initialise()
 {
-	/*Ask reference frame factory for a CCS2CGRF transformation.*/
-	auto pCCS2CGRF = TCCS2CGRFTransformation();
-	//Transform copy of origin given in CCS into CGRF (geodetic cartisian)
-	TPositionVector fOrigin2 = fOrigin;
-	pCCS2CGRF.transform(fOrigin2);
-
-	TReal fOriginX = fOrigin2.getX().getMetresValue();
-   TReal fOriginY = fOrigin2.getY().getMetresValue();
-   TReal fOriginZ = fOrigin2.getZ().getMetresValue();
-	TReal squareSemiMajor = SemiMajorAxisGRS80*SemiMajorAxisGRS80;
-	TReal squareSemiMinor = SemiMinorAxisGRS80*SemiMinorAxisGRS80;
-
-	TReal XYdistance = sqrt(fOriginX*fOriginX+fOriginY*fOriginY);
-	//Transform from geodetic cartesian coordinates to a geodetic ellipsoidal coordinates using non-iterative algorithm
-	TReal upsilon = atan((fOriginZ*SemiMajorAxisGRS80)/(XYdistance*SemiMinorAxisGRS80));
-	TReal eDashSquared = (squareSemiMajor-squareSemiMinor)/(squareSemiMinor);
-	TReal phiLGO = atan((fOriginZ+eDashSquared*SemiMinorAxisGRS80*pow((sin(upsilon)),3))/(XYdistance - eccentrGRS80*SemiMajorAxisGRS80*pow((cos(upsilon)),3)));
 
 	//Get appropriate geoid model and get Xi, Eta and DAlpha values
 	TAGeoidModel* geoidModel = TRefSystemFactory::getRefSystemFactory()->getGeoid(fGeoidModel);
-	TReal Xi = geoidModel->getXi(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCCS),fOrigin)).getRadiansValue();
-	TReal Eta = geoidModel->getEta(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCCS),fOrigin)).getRadiansValue();
-	TReal DAlpha = Eta * tanq(phiLGO);
+	TReal Xi = geoidModel->getXi(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCGRF), originInCGRF)).getRadiansValue();
+	TReal Eta = geoidModel->getEta(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCGRF), originInCGRF)).getRadiansValue();
+	TReal DAlpha = geoidModel->getDAlpha(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCGRF), originInCGRF)).getRadiansValue();
 	
-	//Filling the transformation matrix
-	fTransform.setMatrixIJPosition(0,1, DAlpha);
-	fTransform.setMatrixIJPosition(0,2, -Eta);
+	TReal cosXi = cos(-Xi);
+	TReal sinXi = sin(-Xi);
+	TReal cosEta = cos(Eta);
+	TReal sinEta = sin(Eta);
+	TReal cosDA = cos(DAlpha);
+	TReal sinDA = sin(DAlpha);
 
-	fTransform.setMatrixIJPosition(1,0, -DAlpha);
-	fTransform.setMatrixIJPosition(1,2, -Xi);
+	//Filling the transformation matrix  inverse of Pxy * Rz(dA) * Ry(-Xi) *Rx(eta)*Pxy
+	fTransform.setMatrixIJPosition(0,0, cosDA*cosEta - sinDA*sinEta*sinXi);
+	fTransform.setMatrixIJPosition(0,1, sinDA*cosEta + cosDA*sinEta*sinXi);
+	fTransform.setMatrixIJPosition(0,2, -cosXi*sinEta);
 
-	fTransform.setMatrixIJPosition(2,0, Eta);
-	fTransform.setMatrixIJPosition(2,1, Xi);
+	fTransform.setMatrixIJPosition(1, 0, -sinDA*cosXi);
+	fTransform.setMatrixIJPosition(1, 1, cosDA*cosXi);
+	fTransform.setMatrixIJPosition(1, 2, sinXi);
+
+	fTransform.setMatrixIJPosition(2, 0, cosDA*sinEta+sinDA*sinXi*cosEta);
+	fTransform.setMatrixIJPosition(2, 1, sinDA*sinEta - cosDA*sinXi*cosEta);
+	fTransform.setMatrixIJPosition(2, 2, cosXi*cosEta);
+
+	fInitialised = true;
 }
 	
-void TILG2ILATransformation::initialiseSphere()
-{
-	/*Ask reference frame factory for a CCS2CGRF transformation.*/
-	auto pCCS2CGRF = TCCS2CGRFTransformation();
-	//Transform copy of origin given in CCS into CGRF (geodetic cartisian)
-	TPositionVector fOrigin2 = fOrigin;
-	pCCS2CGRF.transform(fOrigin2);
-
-   TReal fOriginX = fOrigin2.getX().getMetresValue();
-   TReal fOriginY = fOrigin2.getY().getMetresValue();
-   TReal fOriginZ = fOrigin2.getZ().getMetresValue();
-
-	TReal XYdistance = sqrt(fOriginX*fOriginX+fOriginY*fOriginY);
-	//Transform from geodetic cartesian coordinates to a geodetic ellipsoidal coordinates using non-iterative algorithm
-	TReal phiLGO = atan(fOriginZ/XYdistance);
-
-	//Get appropriate geoid model and get Xi, Eta and DAlpha values
-	TAGeoidModel* geoidModel = TRefSystemFactory::getRefSystemFactory()->getGeoid(fGeoidModel);
-	TReal Xi = geoidModel->getXi(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCCS),fOrigin)).getRadiansValue();
-	TReal Eta = geoidModel->getEta(TSpatialPosition(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::ERefFrame::kCCS),fOrigin)).getRadiansValue();
-	TReal DAlpha = Eta * tanq(phiLGO);
-	
-	//Filling the transformation matrix
-	fTransform.setMatrixIJPosition(0,1, DAlpha);
-	fTransform.setMatrixIJPosition(0,2, -Eta);
-
-	fTransform.setMatrixIJPosition(1,0, -DAlpha);
-	fTransform.setMatrixIJPosition(1,2, -Xi);
-
-	fTransform.setMatrixIJPosition(2,0, Eta);
-	fTransform.setMatrixIJPosition(2,1, Xi);
-}

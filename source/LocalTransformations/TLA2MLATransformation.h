@@ -34,38 +34,38 @@ public:
 	/**@name Transformations */
 	//@{
 	/// transform a position vector
-	bool						transform(TPositionVector& pv) const;
+	bool transform(TPositionVector& pv) const;
 
 	/// transform a free vector
-	bool						transform(TFreeVector& fv) const;
+	bool transform(TFreeVector& fv) const;
 
 
 	/// inverse transformation of a position vector
-	bool						transformInverse(TPositionVector& pv) const;
+	bool transformInverse(TPositionVector& pv) const;
 
 	/// inverse transformation of a free vector
-	bool						transformInverse(TFreeVector& fv) const;
+	bool transformInverse(TFreeVector& fv) const;
 
 	//@}
 
 	/*!@name Access methods*/
 	//@{
 	/// Returns THelmertTransformation of this transformation (LA-> MLA) 
-	TTransformation		getTransformer() const { return fTransform; }
+	TTransformation getTransformer() const { return fTransform; }
 
 	/// Returns THelmertTransformation of inverse of this transformation (MLA -> LA)
-	TTransformation      getInverseTransformer() const { return fTransform.getInversedTransformation(); }
+	TTransformation getInverseTransformer() const { return fTransform.getInversedTransformation(); }
 
 	///Returns origin of the local geodetic system and local astronomical system
-	TPositionVector	            getOrigin() const { return fOrigin; }
+	TPositionVector getOrigin() const { return fOrigin; }
 
 	///Returns the geoid model used
-	TRefSystemFactory::EGeoid	getGeoidModel() const { return fGeoidModel; }
+	TRefSystemFactory::EGeoid getGeoidModel() const { return fGeoidModel; }
 	//@}
 
 private:
-	TTransformation		fTransform;
-	TPositionVector				fOrigin;
+	TTransformation fTransform;
+	TPositionVector fOrigin;
 	TRefSystemFactory::EGeoid   fGeoidModel;
 	TAngle fBearing, fSlope;
 

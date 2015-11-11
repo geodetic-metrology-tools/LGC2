@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////
 
 TLA2MLATransformation::TLA2MLATransformation(TPositionVector& origin, TRefSystemFactory::EGeoid geoidModel, TAngle gis, TAngle slope)
-	: fOrigin(origin), fBearing(gis), fSlope(slope), fGeoidModel(geoidModel), fInitialised(true)
+	: fOrigin(origin), fBearing(gis), fSlope(slope), fGeoidModel(geoidModel), fInitialised(false)
 {
 	initialise();
 }
@@ -62,13 +62,13 @@ void TLA2MLATransformation::initialise()
 	bool isSphere = (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere);
 
 	/*Ask reference frame factory for a CCS2CGRF, CGRF2LG and LG2LA transformation.*/
-	auto pCCS2CGRF = TCCS2CGRFTransformation(!isSphere);
+	auto pCCS2CGRF = TCCS2CGRFTransformation(isSphere);
 	auto pCGRF2LG = TCGRF2LGTransformation(fOrigin, isSphere);
 	auto pLG2LA = TILG2ILATransformation(fOrigin, fGeoidModel);
 
 
 	//Transform a unit vector from CCS to LA
-	TPositionVector unitY(fSlope.cosine()*fBearing.sine(),
+	TFreeVector unitY(fSlope.cosine()*fBearing.sine(),
 		fSlope.cosine()*fBearing.cosine(),
 		fSlope.sine(),
 		TCoordSysFactory::k3DCartesian);
@@ -79,5 +79,7 @@ void TLA2MLATransformation::initialise()
 	//
 	TAngle Az(atan2(unitY.getY(), unitY.getX()));
 	fTransform.setRotationTransformation(0.0, 0.0, -Az);
+
+	fInitialised = true; 
 
 }

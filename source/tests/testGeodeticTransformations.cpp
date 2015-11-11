@@ -30,7 +30,7 @@ namespace tut
 	{
 		using namespace LGC;
 		set_test_name("Testing TCCS2CGRFTransformation class");
-		TCCS2CGRFTransformation toCGRF(true); //uses ellipsoid
+		TCCS2CGRFTransformation toCGRF(false); //uses ellipsoid
 
 		TPositionVector p(2000.00000, 2097.79265, 2433.66000,TCoordSysFactory::k3DCartesian);
 		toCGRF.transform(p);
@@ -44,17 +44,17 @@ namespace tut
 		ensure_distance("Y0 coordinate of P0 in CCS must match",p.getY().getMetresValue(), 2097.79265,1e-8);
 		ensure_distance("Z0 coordinate of P0 in CCS must match",p.getZ().getMetresValue(),2433.66000,1e-8);
 
-		TPositionVector p2(0.0, 1.0, 0.0,TCoordSysFactory::k3DCartesian);
+		TPositionVector p2(-1026.53292000015, 10475.4085800003, 2413.63802000013, TCoordSysFactory::k3DCartesian);  //h=419.833838109769
 		toCGRF.transform(p2);
-		ensure_distance("X0 coordinate of P1 in CGRF must match", p2.getX().getMetresValue(), 4394469.74208725, 1e-8);
-		ensure_distance("Y0 coordinate of P1 in CGRF must match", p2.getY().getMetresValue(), 462839.9934779, 1e-8);
-		ensure_distance("Z0 coordinate of P1 in CGRF must match", p2.getZ().getMetresValue(), 4581271.95382516, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getX().getMetresValue(), 4388954.29688504, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getY().getMetresValue(), 467289.853669467, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getZ().getMetresValue(), 4589418.80977854, 1e-8);
 
 		//Inverse transformation should lead to the original point
 		toCGRF.transformIverse(p2);
-		ensure_distance("X0 coordinate of P1 in CCS must match",p2.getX().getMetresValue(),0.0,1e-8);
-		ensure_distance("Y0 coordinate of P1 in CCS must match",p2.getY().getMetresValue(),0.0,1e-8);
-		ensure_distance("Z0 coordinate of P1 in CCS must match",p2.getZ().getMetresValue(),0.0,1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CCS must match", p2.getX().getMetresValue(), -1026.53292000015, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CCS must match", p2.getY().getMetresValue(), 10475.4085800003, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CCS must match", p2.getZ().getMetresValue(), 2413.63802000013, 1e-8);
 
 		TPositionVector p3(5.9134567891,1.1234879528,3.0178921478,TCoordSysFactory::k3DCartesian);
 		toCGRF.transform(p3);
@@ -63,19 +63,29 @@ namespace tut
 		ensure_distance("Z0 coordinate of P2 in CGRF must match",p3.getZ().getMetresValue(),4581271.91655842,1e-8);
 
 
-		toCGRF.reInitialize(false); //uses sphere
-		TPositionVector p4(2000.00000, 2097.79265, 2433.66000,TCoordSysFactory::k3DCartesian);
-		toCGRF.transform(p4);
+		toCGRF.reInitialize(true); //uses sphere
+		toCGRF.transform(p);
 
-		ensure_distance("X0 coordinate of P0 in CGRF must match", p4.getX().getMetresValue(), 4382812.29940346, 1e-8);
-		ensure_distance("Y0 coordinate of P0 in CGRF must match", p4.getY().getMetresValue(), 464451.086722263, 1e-8);
-		ensure_distance("Z0 coordinate of P0 in CGRF must match", p4.getZ().getMetresValue(), 4601131.20981681, 1e-8);
+		ensure_distance("X0 coordinate of P0 in CGRFs must match", p.getX().getMetresValue(), 4382812.29940346, 1e-8);
+		ensure_distance("Y0 coordinate of P0 in CGRFs must match", p.getY().getMetresValue(), 464451.086722263, 1e-8);
+		ensure_distance("Z0 coordinate of P0 in CGRFs must match", p.getZ().getMetresValue(), 4601131.20981681, 1e-8);
 
-		toCGRF.transformIverse(p4);
+		toCGRF.transformIverse(p);
 
-		ensure_distance("X0 coordinate of P0 in CCS must match",p4.getX().getMetresValue(), 2000.00000,1e-8);
-		ensure_distance("Y0 coordinate of P0 in CCS must match",p4.getY().getMetresValue(), 2097.79265,1e-8);
-		ensure_distance("Z0 coordinate of P0 in CCS must match",p4.getZ().getMetresValue(), 2433.66000,1e-8);
+		ensure_distance("X0 coordinate of P0 in CCS must match",p.getX().getMetresValue(), 2000.00000,1e-8);
+		ensure_distance("Y0 coordinate of P0 in CCS must match",p.getY().getMetresValue(), 2097.79265,1e-8);
+		ensure_distance("Z0 coordinate of P0 in CCS must match",p.getZ().getMetresValue(), 2433.66000,1e-8);
+
+		toCGRF.transform(p2);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRFs must match", p2.getX().getMetresValue(), 4376366.23250677, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRFs must match", p2.getY().getMetresValue(), 465955.883656103, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRFs must match", p2.getZ().getMetresValue(), 4607091.79358163, 1e-8);
+
+		//Inverse transformation should lead to the original point
+		toCGRF.transformIverse(p2);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CCS must match", p2.getX().getMetresValue(), -1026.53292000015, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CCS must match", p2.getY().getMetresValue(), 10475.4085800003, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CCS must match", p2.getZ().getMetresValue(), 2413.63802000013, 1e-8);
 	}
 
 	template<>
@@ -85,34 +95,82 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TCGRF2LGTransformation class");
 
-		//Origin of the local geodetic system in the CGRF
-		TPositionVector originCCS(4395400.36378173, 465785.056735627, 4583458.22601372,TCoordSysFactory::k3DCartesian);
+		//Origin of the local geodetic system in the CGRF at P0
+		TPositionVector originCCS(2000.00000, 2097.79265, 2433.66000, TCoordSysFactory::k3DCartesian);
 		TCGRF2LGTransformation toILG(originCCS, false);
-
+		
 		TPositionVector p(4395400.36378173, 465785.056735627, 4583458.22601372,TCoordSysFactory::k3DCartesian);
 		toILG.transform(p);
-		ensure_distance("X0 coordinate of P0 in ISG must match",p.getX().getMetresValue(),0.0,1e-8);
-		ensure_distance("Y0 coordinate of P0 in ISG must match",p.getY().getMetresValue(),0.0,1e-8);
-		ensure_distance("Z0 coordinate of P0 in ISG must match",p.getZ().getMetresValue(),0.0,1e-8);
+		ensure_distance("X0 coordinate of P0 in LG must match",p.getX().getMetresValue(),0.0,1e-8);
+		ensure_distance("Y0 coordinate of P0 in LG must match",p.getY().getMetresValue(),0.0,1e-8);
+		ensure_distance("Z0 coordinate of P0 in LG must match",p.getZ().getMetresValue(),0.0,1e-8);
 
 		//Inverse transformation should lead to the original point
 		toILG.transformInverse(p);
-		ensure_distance("X0 coordinate of P0 in CGRF must match",p.getX().getMetresValue(),4395400.36378173,1e-8);
-		ensure_distance("Y0 coordinate of P0 in CGRF must match",p.getY().getMetresValue(),465785.056735627,1e-8);
-		ensure_distance("Z0 coordinate of P0 in CGRF must match",p.getZ().getMetresValue(),4583458.22601372,1e-8);
+		ensure_distance("X0 coordinate of P0 in CGRF must match", p.getX().getMetresValue(), 4395400.36378173, 1e-8);
+		ensure_distance("Y0 coordinate of P0 in CGRF must match", p.getY().getMetresValue(), 465785.056735627, 1e-8);
+		ensure_distance("Z0 coordinate of P0 in CGRF must match", p.getZ().getMetresValue(), 4583458.22601372, 1e-8);
 
-		TCGRF2LGTransformation toILG2(TPositionVector(3025,3000.3,2450.8577816, TCoordSysFactory::k3DCartesian), false);
-		TPositionVector p2(4394469.74208725, 462839.9934779, 4581271.95382516, TCoordSysFactory::k3DCartesian);
+		//To point 5
+		TPositionVector p2(4388954.29688504, 467289.853669467, 4589418.80977854, TCoordSysFactory::k3DCartesian);
+		toILG.transform(p2);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2.getX().getMetresValue(), 2175.71085853853, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2.getY().getMetresValue(), 8637.7446388872, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2.getZ().getMetresValue(), -20.0219800545765, 1e-7);
+
+		//Inverse transformation should lead to the original point
+		toILG.transformInverse(p2);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getX().getMetresValue(), 4388954.29688504, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getY().getMetresValue(), 467289.853669467, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getZ().getMetresValue(), 4589418.80977854, 1e-7);
+
+
+		// Origin not at P0
+		TPositionVector origin2(-1026.53292000015, 10475.4085800003, 2413.63802000013, TCoordSysFactory::k3DCartesian);
+		TCGRF2LGTransformation toILG2(origin2, false);
+		toILG2.transform(p);
+		ensure_distance("X0 coordinate of P0 in LG must match", p.getX().getMetresValue(), -2178.79224525759, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in LG must match", p.getY().getMetresValue(), -8636.98779438108, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in LG must match", p.getZ().getMetresValue(), 7.566891260789820, 1e-7);
+		toILG2.transformInverse(p);
+		ensure_distance("X0 coordinate of P0 in CGRF must match", p.getX().getMetresValue(), 4395400.36378173, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in CGRF must match", p.getY().getMetresValue(), 465785.056735627, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in CGRF must match", p.getZ().getMetresValue(), 4583458.22601372, 1e-7);
+
+		//To point 5
 		toILG2.transform(p2);
-		ensure_distance("X0 coordinate of P2 in CGRF must match", p2.getX().getMetresValue(), -4184.69288969163, 1e-8);
-		ensure_distance("Y0 coordinate of P2 in CGRF must match", p2.getY().getMetresValue(), -793.923764354876, 1e-8);
-		ensure_distance("Z0 coordinate of P2 in CGRF must match", p2.getZ().getMetresValue(), -2451.76667547924, 1e-8);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2.getX().getMetresValue(),0.0 , 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2.getY().getMetresValue(),0.0 , 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2.getZ().getMetresValue(),0.0 , 1e-7);
+		toILG2.transformInverse(p2);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getX().getMetresValue(), 4388954.29688504, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getY().getMetresValue(), 467289.853669467, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRF must match", p2.getZ().getMetresValue(), 4589418.80977854, 1e-7);
 
-		TPositionVector p3(4394470.39636727,462839.500477364,4581271.38035491,TCoordSysFactory::k3DCartesian);
-		toILG.transform(p3);
-		ensure_distance("X0 coordinate of P3 in LG must match",p3.getX().getMetresValue(),-2831.15431514712,1e-8);
-		ensure_distance("Y0 coordinate of P3 in LG must match",p3.getY().getMetresValue(),-620.724774934958,1e-8);
-		ensure_distance("Z0 coordinate of P3 in LG must match",p3.getZ().getMetresValue(),-2433.65999999975  ,1e-8);
+		//if we are using sphere
+		// Origin not at P0
+		TPositionVector origin3(-1026.53292000015, 10475.4085800003, 2413.63802000013, TCoordSysFactory::k3DCartesian);
+		TCGRF2LGTransformation toILG3(origin3, true);
+		TPositionVector ps(4382812.29940346, 464451.086722263, 4601131.20981681, TCoordSysFactory::k3DCartesian);
+		toILG3.transform(ps);
+		ensure_distance("X0 coordinate of P0 in LG must match", ps.getX().getMetresValue(), -2178.80110724816, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in LG must match", ps.getY().getMetresValue(), -8636.98555715803, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in LG must match", ps.getZ().getMetresValue(), 7.56879428475168, 1e-7);
+		toILG3.transformInverse(ps);
+		ensure_distance("X0 coordinate of P0 in CGRFs must match", ps.getX().getMetresValue(), 4382812.29940346, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in CGRFs must match", ps.getY().getMetresValue(), 464451.086722263, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in CGRFs must match", ps.getZ().getMetresValue(), 4601131.20981681, 1e-7);
+
+		//To point 5
+		TPositionVector p2s(4376366.23250677, 465955.883656103, 4607091.79358163, TCoordSysFactory::k3DCartesian);
+		toILG3.transform(p2s);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2s.getX().getMetresValue(), 0.0, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2s.getY().getMetresValue(), 0.0, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in LG must match", p2s.getZ().getMetresValue(), 0.0, 1e-7);
+		toILG3.transformInverse(p2s);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRFs must match", p2s.getX().getMetresValue(), 4376366.23250677, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRFs must match", p2s.getY().getMetresValue(), 465955.883656103, 1e-7);
+		ensure_distance("MQXA_1R5E coordinate of P1 in CGRFs must match", p2s.getZ().getMetresValue(), 4607091.79358163, 1e-7);
 	}
 
 	template<>
@@ -120,85 +178,92 @@ namespace tut
 	void object::test<3>()
 	{
 		using namespace LGC;
-		set_test_name("Testing TISG2ILATransformation class");
+		set_test_name("Testing TLG2LATransformation class");
 
 		//Origin of the LG and LA system in the CCS
-		TPositionVector origin(1900, 2000, 2500,TCoordSysFactory::k3DCartesian);
+		TPositionVector origin(-1026.53292000015, 10475.4085800003, 2413.63802000013, TCoordSysFactory::k3DCartesian);
 
 		//CG2000Machine
-		TPositionVector p2(2700.0, 650.0, 2450.0,TCoordSysFactory::k3DCartesian);
-		TILG2ILATransformation toILA(origin,TRefSystemFactory::EGeoid::kCG2000Machine);
+		TPositionVector p(-2178.79224525759, -8636.98779438108, 7.566891260789820, TCoordSysFactory::k3DCartesian);
+		TPositionVector p2(0.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian);
+
+		TILG2ILATransformation toILA(origin, TRefSystemFactory::EGeoid::kCG2000Machine);
+		toILA.transform(p);
+		ensure_distance("LG2LA X-coordinate should be equal", p.getX().getMetresValue(), -2178.91036336503, 1e-8);
+		ensure_distance("LG2LA Y-coordinate should be equal", p.getY().getMetresValue(), -8636.95792050725, 1e-8);
+		ensure_distance("LG2LA Z-coordinate should be equal", p.getZ().getMetresValue(), 7.65336091143967, 1e-8);
+		toILA.transformInverse(p);
+		ensure_distance("Inverse transformation should lead to the original point X", p.getX().getMetresValue(), -2178.79224525759, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Y", p.getY().getMetresValue(), -8636.98779438108, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Z", p.getZ().getMetresValue(), 7.566891260789820, 1e-8);
 		toILA.transform(p2);
-		ensure_distance(" LG2LA X-coordinate should be equal", p2.getX().getMetresValue(), 2699.99936001302,1e-8);
-		ensure_distance("LG2LA Y-coordinate should be equal", p2.getY().getMetresValue(),649.999404985115,1e-8);
-		ensure_distance("LG2LA Z-coordinate should be equal", p2.getZ().getMetresValue(),2450.00086315287,1e-8);
+		ensure_distance("LG2LA X-coordinate should be equal", p2.getX().getMetresValue(), 0.0,1e-8);
+		ensure_distance("LG2LA Y-coordinate should be equal", p2.getY().getMetresValue(), 0.0,1e-8);
+		ensure_distance("LG2LA Z-coordinate should be equal", p2.getZ().getMetresValue(), 0.0,1e-8);
 		toILA.transformInverse(p2);
-		ensure_distance("Inverse transformation should lead to the original point X", p2.getX().getMetresValue(), 2700.0,1e-8);
-		ensure_distance("Inverse transformation should lead to the original point Y", p2.getY().getMetresValue(),650.0,1e-8);
-		ensure_distance("Inverse transformation should lead to the original point Z", p2.getZ().getMetresValue(),2450.0,1e-8);
+		ensure_distance("Inverse transformation should lead to the original point X", p2.getX().getMetresValue(), 0.0, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Y", p2.getY().getMetresValue(), 0.0, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Z", p2.getZ().getMetresValue(), 0.0, 1e-8);
 
-		//CG1985Machine
-		TPositionVector p3(2700.0, 650.0, 2450.0,TCoordSysFactory::k3DCartesian);	
+		//CG1985Machine	
 		TILG2ILATransformation toILA2(origin,TRefSystemFactory::EGeoid::kCG1985Machine);
-		toILA2.transform(p3);
-		ensure_distance(" LG2LA X-coordinate should be equal", p3.getX().getMetresValue(), 2699.99946056365,1e-8);
-		ensure_distance("LG2LA Y-coordinate should be equal", p3.getY().getMetresValue(),650.000213846347,1e-8);
-		ensure_distance("LG2LA Z-coordinate should be equal", p3.getZ().getMetresValue(),2450.00053774631,1e-8);
-		toILA2.transformInverse(p3);
-		ensure_distance("Inverse transformation should lead to the original point X", p3.getX().getMetresValue(), 2700.0,1e-8);
-		ensure_distance("Inverse transformation should lead to the original point Y", p3.getY().getMetresValue(),650.0,1e-8);
-		ensure_distance("Inverse transformation should lead to the original point Z", p3.getZ().getMetresValue(),2450.0,1e-8);
+		toILA2.transform(p);
+		ensure_distance("LG2LA X-coordinate should be equal", p.getX().getMetresValue(), -2179.01597572789, 1e-8);
+		ensure_distance("LG2LA Y-coordinate should be equal", p.getY().getMetresValue(), -8636.93131395841, 1e-8);
+		ensure_distance("LG2LA Z-coordinate should be equal", p.getZ().getMetresValue(), 7.61062501169382, 1e-8);
+		toILA2.transformInverse(p);
+		ensure_distance("Inverse transformation should lead to the original point X", p.getX().getMetresValue(), -2178.79224525759, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Y", p.getY().getMetresValue(), -8636.98779438108, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Z", p.getZ().getMetresValue(), 7.566891260789820, 1e-8);
 
-		//sphere
-		TPositionVector p4(2700.0, 650.0, 2450.0, TCoordSysFactory::k3DCartesian);
+		//sphere  (no transformation in sphere LA=LG)
 		TILG2ILATransformation toILA3(origin, TRefSystemFactory::EGeoid::kCGSphere);
-		toILA3.transform(p4);
-		ensure_distance(" LG2LA X-coordinate should be equal", p4.getX().getMetresValue(), 2700.0, 1e-8);
-		ensure_distance("LG2LA Y-coordinate should be equal", p4.getY().getMetresValue(), 650.0, 1e-8);
-		ensure_distance("LG2LA Z-coordinate should be equal", p4.getZ().getMetresValue(), 2450.0, 1e-8);
-		toILA3.transformInverse(p4);
-		ensure_distance("Inverse transformation should lead to the original point X", p4.getX().getMetresValue(), 2700.0, 1e-8);
-		ensure_distance("Inverse transformation should lead to the original point Y", p4.getY().getMetresValue(), 650.0, 1e-8);
-		ensure_distance("Inverse transformation should lead to the original point Z", p4.getZ().getMetresValue(), 2450.0, 1e-8);
+		toILA3.transform(p);
+		ensure_distance("LG2LA X-coordinate should be equal", p.getX().getMetresValue(), -2178.79224525759, 1e-8);
+		ensure_distance("LG2LA Y-coordinate should be equal", p.getY().getMetresValue(), -8636.98779438108, 1e-8);
+		ensure_distance("LG2LA Z-coordinate should be equal", p.getZ().getMetresValue(), 7.566891260789820, 1e-8);
+		toILA3.transformInverse(p);
+		ensure_distance("Inverse transformation should lead to the original point X", p.getX().getMetresValue(), -2178.79224525759, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Y", p.getY().getMetresValue(), -8636.98779438108, 1e-8);
+		ensure_distance("Inverse transformation should lead to the original point Z", p.getZ().getMetresValue(), 7.566891260789820, 1e-8);
 	}
+
 
 	template<>
 	template<>
 	void object::test<4>()
 	{
 		using namespace LGC;
-		set_test_name("Testing transformation from CCS to a Instrument Local Astronomical");
+		set_test_name("Testing successive transformation class");
 
-		TCCS2CGRFTransformation toCGRF;
+		//Originin the CCS
+		TPositionVector origin(-1026.53292000015, 10475.4085800003, 2413.63802000013, TCoordSysFactory::k3DCartesian);
+		TPositionVector p(2000.00000, 2097.79265, 2433.66000, TCoordSysFactory::k3DCartesian);
 
-		//Origin of the LG and LA system in the CCS
-		TPositionVector originCCS(1000, 1000, 1000,TCoordSysFactory::k3DCartesian);
-		TPositionVector origin(1000,1000, 1000,TCoordSysFactory::k3DCartesian);
-		toCGRF.transform(origin);
+		TCCS2CGRFTransformation toCGRF(false); //uses ellipsoid
+		toCGRF.transform(p);
+		ensure_equals("X0 coordinate of P0 in CGRF must match", p.getX().getMetresValue(), 4395400.36378173, 1e-8);
+		ensure_equals("Y0 coordinate of P0 in CGRF must match", p.getY().getMetresValue(), 465785.056735627, 1e-8);
+		ensure_equals("Z0 coordinate of P0 in CGRF must match", p.getZ().getMetresValue(), 4583458.22601372, 1e-8);
+
 		TCGRF2LGTransformation toILG(origin, false);
-		TILG2ILATransformation toILA(originCCS,TRefSystemFactory::EGeoid::kCG2000Machine);
-		//82.9161404299426
+		toILG.transform(p);
+		ensure_equals("X0 coordinate of P0 in LG must match", p.getX().getMetresValue(), -2178.79224525759, 1e-7);
+		ensure_equals("Y0 coordinate of P0 in LG must match", p.getY().getMetresValue(), -8636.98779438108, 1e-7);
+		ensure_equals("Z0 coordinate of P0 in LG must match", p.getZ().getMetresValue(), 7.566891260789820, 1e-7);
 
-		TPositionVector p2(1100, 1000, 1000,TCoordSysFactory::k3DCartesian);
-		toCGRF.transform(p2);
-		toILG.transform(p2);
-		toILA.transform(p2);
+		TILG2ILATransformation toILA(origin, TRefSystemFactory::EGeoid::kCG2000Machine);
+		toILA.transform(p);
+		ensure_equals("X0 coordinate of P0 in LA should be equal", p.getX().getMetresValue(), -2178.91036336503, 1e-8);
+		ensure_equals("Y0 coordinate of P0 in LA should be equal", p.getY().getMetresValue(), -8636.95792050725, 1e-8);
+		ensure_equals("Z0 coordinate of P0 in LA should be equal", p.getZ().getMetresValue(), 7.65336091143967, 1e-8);
 
-		ensure_distance("X-coordinate should be equal", p2.getX().getMetresValue(), 82.9161404299426,1e-9);
-		ensure_distance("Y-coordinate should be equal", p2.getY().getMetresValue(), -55.9009249696545,1e-9);
-		ensure_distance("Z-coordinate should be equal", p2.getZ().getMetresValue(), -0.0156127427608507,1e-8);
-
-
-		TPositionVector p3(1100, 1100, 1100,TCoordSysFactory::k3DCartesian);
-		toCGRF.transform(p3);
-		toILG.transform(p3);
-		toILA.transform(p3);
-
-		ensure_distance("X-coordinate should be equal", p3.getX().getMetresValue(), 138.839579558267,1e-9);
-		ensure_distance("Y-coordinate should be equal", p3.getY().getMetresValue(), 27.0206854988607,1e-9);
-		ensure_distance("Z-coordinate should be equal", p3.getZ().getMetresValue(), 99.9672631579586,1e-8);
+		//TLA2MLATransformation toMLA(origin, TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(0.0), TAngle(0.0));
+		//toMLA.transform(p);
+		//ensure_equals("X0 coordinate of P0 in MLA should be equal", p.getX().getMetresValue(), 3026.54176942626, 1e-8);
+		//ensure_equals("Y0 coordinate of P0 in MLA should be equal", p.getY().getMetresValue(), -8377.63316277997, 1e-8);
+		//ensure_equals("Z0 coordinate of P0 in MLA should be equal", p.getZ().getMetresValue(), 7.65336091143967, 1e-8);
 	}
-
 
 	template<>
 	template<>
@@ -241,8 +306,15 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLA2MLATransformation class");
 
-		TPositionVector p(-20.8903160236016, 13.7359693104267, -1.0000542759957, TCoordSysFactory::k3DCartesian); //3000  3000  2449.8616566
+		TPositionVector p(3000.0, 3000.0, 2449.8616566, TCoordSysFactory::k3DCartesian); 
 		TPositionVector origin(3025, 3000.3, 2450.8577816, TCoordSysFactory::k3DCartesian);
+		TCCS2CGRFTransformation toCGRF(false); //uses ellipsoid
+		toCGRF.transform(p);
+		TCGRF2LGTransformation toILG(origin, false);
+		toILG.transform(p);
+		TILG2ILATransformation toILA(origin, TRefSystemFactory::EGeoid::kCG2000Machine);
+		toILA.transform(p);
+
 		TLA2MLATransformation fLA2MLA(origin, TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(0.0), TAngle(0.0));
 		fLA2MLA.transform(p);
 		ensure_distance("X0 coordinate of P0 in MLA must match", p.getX().getMetresValue(), -24.9998448080709, 1e-8);

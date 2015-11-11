@@ -6,9 +6,9 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-TCCS2CGRFTransformation::TCCS2CGRFTransformation(bool isEllipsoid): fIsEllipsoid(isEllipsoid)
+TCCS2CGRFTransformation::TCCS2CGRFTransformation(bool isSphere) : fIsSphere(isSphere)
 {	
-	if (fIsEllipsoid)
+	if (!fIsSphere)
 		initialiseEllipsoid();
 	else
 		initialiseSphere();
@@ -18,9 +18,9 @@ TCCS2CGRFTransformation::~TCCS2CGRFTransformation()
 {//destructor
 }
 
-void TCCS2CGRFTransformation::reInitialize (bool isEllipsoid){
-	fIsEllipsoid = isEllipsoid;
-	if (isEllipsoid)
+void TCCS2CGRFTransformation::reInitialize (bool isSphere){
+	fIsSphere = isSphere;
+	if (!fIsSphere)
 		initialiseEllipsoid();
 	else
 		initialiseSphere();
@@ -34,12 +34,10 @@ bool  TCCS2CGRFTransformation::transform( TPositionVector& pv ) const
 	return fTransform.transform(pv);
 }
 
-
 bool  TCCS2CGRFTransformation::transform( TFreeVector& fv ) const
 {// transform a free vector
 	return fTransform.transform(fv);
 }
-
 
 TPositionVector  TCCS2CGRFTransformation::getTransformedPt( const TPositionVector& pv ) const
 {// transform a position vector
@@ -47,14 +45,6 @@ TPositionVector  TCCS2CGRFTransformation::getTransformedPt( const TPositionVecto
 	fTransform.transform(result);
 	return result;
 }
-
-
-#if 0
-bool  TCCS2CGRFTransformation::transform( TRotationMatrix& rmx ) const
-{// transform a Rotation Matrix
-	return fTransform.transform(rmx);
-}
-#endif
 
 bool  TCCS2CGRFTransformation::transformIverse( TPositionVector& pv ) const
 {// inverse transformation of a position vector, i.e. CGRF -> CCS transformation
@@ -68,18 +58,11 @@ TPositionVector  TCCS2CGRFTransformation::getTransformedPtInverse( const TPositi
 	return result;
 }
 
-
 bool  TCCS2CGRFTransformation::transformInverse( TFreeVector& fv ) const
 {// inverse transformation of a transform a free vector, i.e. CGRF -> CCS transformation
 	return fTransform.getInversedTransformation().transform(fv);
 }
 
-#if 0
-bool  TCCS2CGRFTransformation::transformInverse( TRotationMatrix& rmx ) const
-{// inverse transformation of a transform a Rotation Matrix, i.e. CGRF -> CCS transformation
-	return fTransform.getInversedTransformation().transform(rmx);
-}
-#endif
 
 //////////////////////////////////////////////////////////////////////
 //Private methods
