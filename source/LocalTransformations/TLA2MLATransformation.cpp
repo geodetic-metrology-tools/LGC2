@@ -77,7 +77,7 @@ void TLA2MLATransformation::initialise()
 	pLG2LA.transform(unitY);
 
 	//
-	TAngle Az(atan2(unitY.getY(), unitY.getX()));
+	TAngle Az(atan2(unitY.getX(), unitY.getY()));
 	fTransform.setRotationTransformation(0.0, 0.0, -Az);
 
 	fInitialised = true; 

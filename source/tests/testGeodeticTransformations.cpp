@@ -258,11 +258,11 @@ namespace tut
 		ensure_equals("Y0 coordinate of P0 in LA should be equal", p.getY().getMetresValue(), -8636.95792050725, 1e-8);
 		ensure_equals("Z0 coordinate of P0 in LA should be equal", p.getZ().getMetresValue(), 7.65336091143967, 1e-8);
 
-		//TLA2MLATransformation toMLA(origin, TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(0.0), TAngle(0.0));
-		//toMLA.transform(p);
-		//ensure_equals("X0 coordinate of P0 in MLA should be equal", p.getX().getMetresValue(), 3026.54176942626, 1e-8);
-		//ensure_equals("Y0 coordinate of P0 in MLA should be equal", p.getY().getMetresValue(), -8377.63316277997, 1e-8);
-		//ensure_equals("Z0 coordinate of P0 in MLA should be equal", p.getZ().getMetresValue(), 7.65336091143967, 1e-8);
+		TLA2MLATransformation toMLA(origin, TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(0.0), TAngle(0.0));
+		toMLA.transform(p);
+		ensure_equals("X0 coordinate of P0 in MLA should be equal", p.getX().getMetresValue(), 3026.54176942626, 1e-8);
+		ensure_equals("Y0 coordinate of P0 in MLA should be equal", p.getY().getMetresValue(), -8377.63316277997, 1e-8);
+		ensure_equals("Z0 coordinate of P0 in MLA should be equal", p.getZ().getMetresValue(), 7.65336091143967, 1e-8);
 	}
 
 	template<>
@@ -317,27 +317,27 @@ namespace tut
 
 		TLA2MLATransformation fLA2MLA(origin, TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(0.0), TAngle(0.0));
 		fLA2MLA.transform(p);
-		ensure_distance("X0 coordinate of P0 in MLA must match", p.getX().getMetresValue(), -24.9998448080709, 1e-8);
-		ensure_distance("Y0 coordinate of P0 in MLA must match", p.getY().getMetresValue(), -0.299857904969592, 1e-8);
-		ensure_distance("Z0 coordinate of P0 in MLA must match", p.getZ().getMetresValue(), -1.00005429952316, 1e-8);
+		ensure_distance("X0 coordinate of P0 in MLA must match", p.getX().getMetresValue(), -24.9998448080709, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in MLA must match", p.getY().getMetresValue(), -0.299857904969592, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in MLA must match", p.getZ().getMetresValue(), -1.00005429952316, 1e-7);
 
 		//Inverse should lead to the original point
 		fLA2MLA.transformInverse(p);
-		ensure_distance("X0 coordinate of P0 in LA must match", p.getX().getMetresValue(), 20.8903160236016, 1e-8);
-		ensure_distance("Y0 coordinate of P0 in LA must match", p.getY().getMetresValue(), 13.7359693104267, 1e-8);
-		ensure_distance("Z0 coordinate of P0 in LA must match", p.getZ().getMetresValue(), -1.0000542759957, 1e-8);
+		ensure_distance("X0 coordinate of P0 in LA must match", p.getX().getMetresValue(), -20.890316023601, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in LA must match", p.getY().getMetresValue(), 13.735969310426, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in LA must match", p.getZ().getMetresValue(), -1.0000542759957, 1e-7);
 
 
-		TLA2MLATransformation fLA2MLA2(origin,TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(10.0, TAngle::EUnits::kGons), TAngle(-5.0, TAngle::EUnits::kGons));
+		TLA2MLATransformation fLA2MLA2(origin,TRefSystemFactory::EGeoid::kCG2000Machine, TAngle(10.0, TAngle::EUnits::kGons), TAngle(-5.0, TAngle::EUnits::kRadians));
 		fLA2MLA2.transform(p);
-		ensure_distance("X0 coordinate of P0 in MLA must match", p.getX().getMetresValue(), -24.6470134236698, 1e-8);
-		ensure_distance("Y0 coordinate of P0 in MLA must match", p.getY().getMetresValue(), -4.19605582472899, 1e-8);
-		ensure_distance("Z0 coordinate of P0 in MLA must match", p.getZ().getMetresValue(), -1.00005429952316, 1e-8);
+		ensure_distance("X0 coordinate of P0 in MLA must match", p.getX().getMetresValue(), -24.6470134480399, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in MLA must match", p.getY().getMetresValue(), -4.19605583316872, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in MLA must match", p.getZ().getMetresValue(), -1.00005429952316, 1e-7);
 
 		//Inverse should lead to the original point
 		fLA2MLA2.transformInverse(p);
-		ensure_distance("X0 coordinate of P0 in LA must match", p.getX().getMetresValue(), 20.8903160236016, 1e-8);
-		ensure_distance("Y0 coordinate of P0 in LA must match", p.getY().getMetresValue(), 13.7359693104267, 1e-8);
-		ensure_distance("Z0 coordinate of P0 in LA must match", p.getZ().getMetresValue(), 1.0000542759957, 1e-8);
+		ensure_distance("X0 coordinate of P0 in LA must match", p.getX().getMetresValue(), -20.8903160236016, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in LA must match", p.getY().getMetresValue(), 13.7359693104267, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in LA must match", p.getZ().getMetresValue(), -1.0000542759957, 1e-7);
 	}
 }
