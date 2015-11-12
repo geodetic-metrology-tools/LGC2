@@ -132,19 +132,141 @@ namespace tut
 		*/
 
 		//We check only 2 points, which are choose with not particular meaning
-		//TPositionVector BS1 = dataset.getPoints().getObject("BS1").getEstimatedValue();
-		//ensure_equals("BS1 x coordinate should match", BS1.getX().getMetresValue(), 3050.0003269, 1e-7);
-		//ensure_equals("BS1 y coordinate should match", BS1.getY().getMetresValue(), 3000.4003066, 1e-7);
-		//ensure_equals("BS1 z coordinate should match", BS1.getZ().getMetresValue(), 2451.8527088, 1e-7);
-		//ensure_equals("BS1 Sx should match", dataset.getPoints().getObject("BS1").getXEstPrecision().getMMetresValue(), 0.0094, 1e-4);
-		//ensure_equals("BS1 Sy should match", dataset.getPoints().getObject("BS1").getYEstPrecision().getMMetresValue(), 0.1421, 1e-4);
-		//
-		//TPositionVector FS3 = dataset.getPoints().getObject("FS3").getEstimatedValue();
-		//ensure_equals("FS3 x coordinate should match", FS3.getX().getMetresValue(), 2969.3831801, 1e-7);
-		//ensure_equals("FS3 y coordinate should match", FS3.getY().getMetresValue(), 3095.1978658, 1e-7);
-		//ensure_equals("FS3 z coordinate should match", FS3.getZ().getMetresValue(), 2446.8507507, 1e-7);
-		//ensure_equals("FS3 Sx should match", dataset.getPoints().getObject("FS3").getXEstPrecision().getMMetresValue(), 0.1602, 1e-4);
-		//ensure_equals("FS3 Sy should match", dataset.getPoints().getObject("FS3").getYEstPrecision().getMMetresValue(), 0.0523, 1e-4);
+		TPositionVector BS1 = dataset.getPoints().getObject("BS1").getEstimatedValue();
+		ensure_equals("BS1 x coordinate should match", BS1.getX().getMetresValue(), 3050.0003269, 1e-7);
+		ensure_equals("BS1 y coordinate should match", BS1.getY().getMetresValue(), 3000.4003066, 1e-7);
+		ensure_equals("BS1 z coordinate should match", BS1.getZ().getMetresValue(), 2451.8527088, 1e-7);
+		ensure_equals("BS1 Sx should match", dataset.getPoints().getObject("BS1").getXEstPrecision().getMMetresValue(), 0.0094, 1e-4);
+		ensure_equals("BS1 Sy should match", dataset.getPoints().getObject("BS1").getYEstPrecision().getMMetresValue(), 0.1421, 1e-4);
+		
+		TPositionVector FS3 = dataset.getPoints().getObject("FS3").getEstimatedValue();
+		ensure_equals("FS3 x coordinate should match", FS3.getX().getMetresValue(), 2969.3831801, 1e-7);
+		ensure_equals("FS3 y coordinate should match", FS3.getY().getMetresValue(), 3095.1978658, 1e-7);
+		ensure_equals("FS3 z coordinate should match", FS3.getZ().getMetresValue(), 2446.8507507, 1e-7);
+		ensure_equals("FS3 Sx should match", dataset.getPoints().getObject("FS3").getXEstPrecision().getMMetresValue(), 0.1602, 1e-4);
+		ensure_equals("FS3 Sy should match", dataset.getPoints().getObject("FS3").getYEstPrecision().getMMetresValue(), 0.0523, 1e-4);
+
+	}
+
+	template<>
+	template<>
+	void object::test<3>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECTH measurement in RS2K");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECTH.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecth_RS2K);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		AS1          3025.0001525   3000.3001421   2450.8577815   0.0095   0.1348            0.1525   0.1421
+		BS1          3050.0003269   3000.4003043   2451.8538404   0.0094   0.1421            0.3269   0.3043
+		CS1          3100.0004759   3000.3004267   2452.8457177   0.0094   0.1682            0.4759   0.4267
+		DS1          3025.0001525   2999.7001420   2450.8578665   0.0095   0.1348            0.1525 -599.8580
+		ES1          3050.0003070   2999.6002741   2451.8539538   0.0094   0.1421            0.3070 -799.7259
+		FS1          3100.0004860   2999.7004264   2452.8458027   0.0094   0.1682            0.4860 -599.5736
+		AS2          2985.5482162   2979.5983681   2450.8666871   0.1102   0.0783            0.1422   0.1281
+		BS2          2970.9346973   2959.3142848   2451.8716283   0.1158   0.0830            0.3533   0.2488
+		CS2          2941.4646143   2918.9223591   2452.8812311   0.1365   0.0988            0.4343   0.3941
+		DS2          2985.0624902   2979.9507891   2448.8667107   0.1083   0.0809          -485.5838 352.5491
+		ES2          2970.3160898   2959.8243224   2446.8716501   0.1144   0.0848          -618.2542 510.2864
+		FS2          2940.9792186   2919.2750506   2452.8812548   0.1359   0.0996          -484.9614 353.0856
+		AS3          2992.0841900   3023.7157194   2450.8594460   0.1279   0.0436          7021.5260 3666.6304
+		BS3          2984.2638991   3047.4610681   2451.8571190   0.1349   0.0456          13976.7681 7245.3321
+		CS3          2968.9084491   3095.0445300   2452.8521155   0.1599   0.0531          27929.6791 14319.1660
+		DS3          2992.5597406   3023.8689736   2448.8593522   0.1287   0.0411          7497.0766 3819.8846
+		ES3          2984.9292905   3047.6761444   2447.8569876   0.1355   0.0438          14642.1595 7460.4084
+		FS3          2969.3831792   3095.1978699   2446.8520216   0.1602   0.0523          28404.4092 14472.5059
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector BS1 = dataset.getPoints().getObject("BS1").getEstimatedValue();
+		ensure_equals("BS1 x coordinate should match", BS1.getX().getMetresValue(), 3050.0003269, 1e-7);
+		ensure_equals("BS1 y coordinate should match", BS1.getY().getMetresValue(), 3000.4003043, 1e-7);
+		ensure_equals("BS1 z coordinate should match", BS1.getZ().getMetresValue(), 2451.8538404, 1e-7);
+		ensure_equals("BS1 Sx should match", dataset.getPoints().getObject("BS1").getXEstPrecision().getMMetresValue(), 0.0094, 1e-4);
+		ensure_equals("BS1 Sy should match", dataset.getPoints().getObject("BS1").getYEstPrecision().getMMetresValue(), 0.1421, 1e-4);
+
+		TPositionVector FS3 = dataset.getPoints().getObject("FS3").getEstimatedValue();
+		ensure_equals("FS3 x coordinate should match", FS3.getX().getMetresValue(), 2969.3831792, 1e-7);
+		ensure_equals("FS3 y coordinate should match", FS3.getY().getMetresValue(), 3095.1978699, 1e-7);
+		ensure_equals("FS3 z coordinate should match", FS3.getZ().getMetresValue(), 2446.8520216, 1e-7);
+		ensure_equals("FS3 Sx should match", dataset.getPoints().getObject("FS3").getXEstPrecision().getMMetresValue(), 0.1602, 1e-4);
+		ensure_equals("FS3 Sy should match", dataset.getPoints().getObject("FS3").getYEstPrecision().getMMetresValue(), 0.0523, 1e-4);
+
+	}
+
+	template<>
+	template<>
+	void object::test<4>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECTH measurement in SPHE");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECTH.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecth_SPHE);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		AS1          3025.0001581   3000.3001417   2450.8544226   0.0095   0.1348            0.1581   0.1417
+		BS1          3050.0003382   3000.4003034   2451.8503375   0.0094   0.1421            0.3382   0.3034
+		CS1          3100.0004934   3000.3004252   2452.8419156   0.0094   0.1682            0.4934   0.4252
+		DS1          3025.0001581   2999.7001416   2450.8545076   0.0095   0.1348            0.1581 -599.8584
+		ES1          3050.0003183   2999.6002732   2451.8504508   0.0094   0.1421            0.3183 -799.7268
+		FS1          3100.0005034   2999.7004249   2452.8420006   0.0094   0.1682            0.5034 -599.5751
+		AS2          2985.5482217   2979.5983680   2450.8635460   0.1102   0.0783            0.1477   0.1280
+		BS2          2970.9347082   2959.3142847   2451.8685647   0.1158   0.0830            0.3642   0.2487
+		CS2          2941.4646304   2918.9223590   2452.8783211   0.1365   0.0988            0.4504   0.3940
+		DS2          2985.0624847   2979.9507892   2448.8635723   0.1083   0.0809          -485.5893 352.5492
+		ES2          2970.3160736   2959.8243226   2446.8685899   0.1144   0.0848          -618.2704 510.2866
+		FS2          2940.9792347   2919.2750505   2452.8783473   0.1359   0.0996          -484.9453 353.0855
+		AS3          2992.0841952   3023.7157191   2450.8562731   0.1279   0.0436          7021.5312 3666.6301
+		BS3          2984.2639093   3047.4610677   2451.8539910   0.1349   0.0456          13976.7783 7245.3317
+		CS3          2968.9084640   3095.0445293   2452.8490746   0.1599   0.0531          27929.6940 14319.1653
+		DS3          2992.5597354   3023.8689738   2448.8561767   0.1287   0.0411          7497.0714 3819.8848
+		ES3          2984.9292802   3047.6761448   2447.8538560   0.1355   0.0438          14642.1492 7460.4088
+		FS3          2969.3831642   3095.1978707   2446.8489783   0.1602   0.0523          28404.3942 14472.5067
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector BS1 = dataset.getPoints().getObject("BS1").getEstimatedValue();
+		ensure_equals("BS1 x coordinate should match", BS1.getX().getMetresValue(), 3050.0003382, 1e-7);
+		ensure_equals("BS1 y coordinate should match", BS1.getY().getMetresValue(), 3000.4003034, 1e-7);
+		ensure_equals("BS1 z coordinate should match", BS1.getZ().getMetresValue(), 2451.8503375, 1e-7);
+		ensure_equals("BS1 Sx should match", dataset.getPoints().getObject("BS1").getXEstPrecision().getMMetresValue(), 0.0094, 1e-4);
+		ensure_equals("BS1 Sy should match", dataset.getPoints().getObject("BS1").getYEstPrecision().getMMetresValue(), 0.1421, 1e-4);
+
+		TPositionVector FS3 = dataset.getPoints().getObject("FS3").getEstimatedValue();
+		ensure_equals("FS3 x coordinate should match", FS3.getX().getMetresValue(), 2969.3831642, 1e-7);
+		ensure_equals("FS3 y coordinate should match", FS3.getY().getMetresValue(), 3095.1978707, 1e-7);
+		ensure_equals("FS3 z coordinate should match", FS3.getZ().getMetresValue(), 2446.8489783, 1e-7);
+		ensure_equals("FS3 Sx should match", dataset.getPoints().getObject("FS3").getXEstPrecision().getMMetresValue(), 0.1602, 1e-4);
+		ensure_equals("FS3 Sy should match", dataset.getPoints().getObject("FS3").getYEstPrecision().getMMetresValue(), 0.0523, 1e-4);
 
 	}
 }
