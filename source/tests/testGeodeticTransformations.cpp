@@ -304,7 +304,7 @@ namespace tut
 	void object::test<6>()
 	{
 		using namespace LGC;
-		set_test_name("Testing TLA2MLATransformation class");
+		set_test_name("Testing TLA2MLATransformation class with ellipsoid");
 
 		TPositionVector p(3000.0, 3000.0, 2449.8616566, TCoordSysFactory::k3DCartesian); 
 		TPositionVector origin(3025, 3000.3, 2450.8577816, TCoordSysFactory::k3DCartesian);
@@ -339,5 +339,35 @@ namespace tut
 		ensure_distance("X0 coordinate of P0 in LA must match", p.getX().getMetresValue(), -20.8903160236016, 1e-7);
 		ensure_distance("Y0 coordinate of P0 in LA must match", p.getY().getMetresValue(), 13.7359693104267, 1e-7);
 		ensure_distance("Z0 coordinate of P0 in LA must match", p.getZ().getMetresValue(), -1.0000542759957, 1e-7);
+	}
+
+	template<>
+	template<>
+	void object::test<7>()
+	{
+		using namespace LGC;
+		set_test_name("Testing TLA2MLATransformation class with sphere");
+
+		TPositionVector p(3000.0, 3000.0, 2449.8616566, TCoordSysFactory::k3DCartesian);
+		TPositionVector origin(3025, 3000.3, 2450.8577816, TCoordSysFactory::k3DCartesian);
+		TCCS2CGRFTransformation toCGRF(true); //uses ellipsoid
+		toCGRF.transform(p);
+		TCGRF2LGTransformation toILG(origin, true);
+		toILG.transform(p);
+		TILG2ILATransformation toILA(origin, TRefSystemFactory::EGeoid::kCGSphere);
+		toILA.transform(p);
+
+		TLA2MLATransformation fLA2MLA(origin, TRefSystemFactory::EGeoid::kCGSphere, TAngle(0.0), TAngle(0.0));
+		fLA2MLA.transform(p);
+		ensure_distance("X0 coordinate of P0 in MLA must match", p.getX().getMetresValue(), -24.9998394260523, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in MLA must match", p.getY().getMetresValue(), -0.29985832751021, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in MLA must match", p.getZ().getMetresValue(), -1.00018931852648, 1e-7);
+
+		//Inverse should lead to the original point
+		fLA2MLA.transformInverse(p);
+		ensure_distance("X0 coordinate of P0 in LA must match", p.getX().getMetresValue(), -20.8902510188546, 1e-7);
+		ensure_distance("Y0 coordinate of P0 in LA must match", p.getY().getMetresValue(), 13.7360583397938, 1e-7);
+		ensure_distance("Z0 coordinate of P0 in LA must match", p.getZ().getMetresValue(), -1.00018931852648, 1e-7);
+
 	}
 }

@@ -1033,6 +1033,7 @@ int TContributionsGenerator::getTransformationIndex(const std::string& transfNam
 
 // Set a new origin of LA system, initialize the transformation
 void	TContributionsGenerator::set2MLATransformation(TPositionVector originInCCS){
+	fccs2cgrf.reInitialize(fIsSphere);
 	//Use origin CGRF position as an origin of the Local Geodetic system
 	fcgrf2ilg = TCGRF2LGTransformation(originInCCS, fIsSphere);
 	//Use origin CCS position as an origin of the Local Astronomical system
