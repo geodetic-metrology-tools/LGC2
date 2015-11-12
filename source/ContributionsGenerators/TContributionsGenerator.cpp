@@ -20,7 +20,7 @@ fMLAused(false),fCGRFused(false), fIsSphere(false), fccs2cgrf()
 	if(refFrame == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS){
 		fIsSphere = true;
 		fGeoidModel= TRefSystemFactory::EGeoid::kCGSphere; 
-		fccs2cgrf.reInitialize(false); //Implicitly the ccs2cgrf transformation uses ellipsoidal CGRF, if SPHE is used, a SPHE CGRF (cgrfs) shoud be used
+		fccs2cgrf.reInitialize(fIsSphere); //Implicitly the ccs2cgrf transformation uses ellipsoidal CGRF, if SPHE is used, a SPHE CGRF (cgrfs) shoud be used
 	}
 	else if(refFrame == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 		fGeoidModel= TRefSystemFactory::EGeoid::kCG2000Machine;
@@ -1033,7 +1033,6 @@ int TContributionsGenerator::getTransformationIndex(const std::string& transfNam
 
 // Set a new origin of LA system, initialize the transformation
 void	TContributionsGenerator::set2MLATransformation(TPositionVector originInCCS){
-	fccs2cgrf.reInitialize(fIsSphere);
 	//Use origin CGRF position as an origin of the Local Geodetic system
 	fcgrf2ilg = TCGRF2LGTransformation(originInCCS, fIsSphere);
 	//Use origin CCS position as an origin of the Local Astronomical system
