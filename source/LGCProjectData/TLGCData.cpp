@@ -141,6 +141,12 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kECHO:
 			fMeasInfo.fNumECHO++;
 			break;
+		case TMeasurementsGlobal::kECSP:
+			fMeasInfo.fNumECSP++;
+			break;
+		case TMeasurementsGlobal::kECVE:
+			fMeasInfo.fNumECVE++;
+			break;
 		case TMeasurementsGlobal::kORIE:
 			fMeasInfo.fNumORIE++;
 			break;
@@ -174,6 +180,10 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumUVD;
 	case TMeasurementsGlobal::kECHO :
 		return fMeasInfo.fNumECHO;
+	case TMeasurementsGlobal::kECSP:
+		return fMeasInfo.fNumECSP;
+	case TMeasurementsGlobal::kECVE:
+		return fMeasInfo.fNumECVE;
 	case TMeasurementsGlobal::kORIE :
 		return fMeasInfo.fNumORIE;
 	default:
@@ -209,6 +219,8 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumUVEC = 0;
 	fMeasInfo.fNumUVD = 0;
 	fMeasInfo.fNumECHO = 0;
+	fMeasInfo.fNumECSP = 0;
+	fMeasInfo.fNumECVE = 0;
 	fMeasInfo.fNumORIE = 0;
 
 	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;

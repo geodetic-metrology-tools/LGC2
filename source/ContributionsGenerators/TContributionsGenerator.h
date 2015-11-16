@@ -13,6 +13,8 @@
 struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
+struct TECVEROM;
+struct TECSPROM;
 struct TORIEROM;
 class TUVEC;
 class TUVD;
@@ -68,7 +70,7 @@ public:
 		HorDistContrib	getHorDistContrib(const TTSTN& station, const TLINE& dhor);
 
 		/// Returns contribution for the TPLR3D measurement.
-		PLR3DContrib	getPolar3DContrib(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+		PLR3DContrib getPolar3DContrib(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
@@ -98,6 +100,12 @@ public:
 
 		///  Returns the contribution for offset to a vertical plane (TECHO)
 		ECHOContrib	getECHOContrib(const TECHOROM& echoROM, const TECHO& echo);
+
+		///  Returns the contribution for offset to a spatial plane (TECSP)
+		ScaleMeasContrib getECSPContrib(const TECSPROM& ecspROM, const TECSP& ecsp);
+
+		///  Returns the contribution for offset to a vertical line (TECVE)
+		ScaleMeasContrib getECVEContrib(const TECVEROM& ecveROM, const TECVE& ecve);
 
 		///  Returns the contribution for a free spatial distance measurement (TDSPT) made by EDM instrument
 		DistMeasContrib	getDSPTContrib(const TEDM& edmST, const TDSPT& dspt);
@@ -146,11 +154,20 @@ public:
 		/// Returns the TECHO measurement calculated meas in meters [m]
 		TReal getECHOCalcMeas(const TECHOROM& echoROM, const TECHO& echo);
 
+		///  Returns the TECSP measurement calculated meas in meters [m]
+		TReal getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp);
+
+		///  Returns TECVE measurement calculated meas in meters [m]
+		TReal getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve);
+
 		/// Returns the TDHOR measurement calculated meas in meters [m]
 		TReal	getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
 		/// Returns the the ORIE measurement calculated meas in RADIANS [rad]
 		TReal getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie);
+
+		/// Returns the the DVER measurement calculated meas in meter [m]
+		TReal	getDVERCalcMeas(const TDVER& dver);
 
 	//@}
 private:

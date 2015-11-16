@@ -66,9 +66,17 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 			for(auto& itLEVEL:itTree.node->data->measurements.fLEVEL)
 				addLevelStContributions(itLEVEL, matrices);
 
-			//In every node iterate through the LEVEL measurements
+			//In every node iterate through the ECHO measurements
 			for(auto& itECHO:itTree.node->data->measurements.fECHO)
 				addECHOContributions(itECHO, matrices);
+
+			//In every node iterate through the ECSP measurements
+			//for (auto& itECSP : itTree.node->data->measurements.fECSP)
+			//	addECSPContributions(itECSP, matrices);
+
+			//In every node iterate through the ECVE measurements
+			for (auto& itECVE : itTree.node->data->measurements.fECVE)
+				addECVEContributions(itECVE, matrices);
 
 			//In every node iterate through the LEVEL measurements
 			for (auto& itORIE:itTree.node->data->measurements.fORIE)
@@ -610,6 +618,55 @@ void  TLSInputMatricesFiller::addECHOContributions(const TECHOROM& echoROM, TLSI
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of ECHO.");
+	}
+}
+
+void  TLSInputMatricesFiller::addECVEContributions(const TECVEROM& ecveROM, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	ScaleMeasContrib contributions;
+	for (auto itECVE(ecveROM.measECVE.begin()); itECVE != ecveROM.measECVE.end(); ++itECVE){
+		MatrixIndex eqIdx = itECVE->getFirstEquationIndex();
+		MatrixIndex obsIdx = itECVE->getFirstObservationIndex();
+
+		contributions = fCGenerator.getECVEContrib(ecveROM, *itECVE); //Get the observation contribution
+
+		
+		// Add point on the line contributions
+		if (!ecveROM.fMeasuredLine->getLinePoint()->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*ecveROM.fMeasuredLine->getLinePoint(), contributions.fPointLineContrib, eqIdx, matrices);
+
+
+		// Adding contributions of the point on the line transformation's parameters 
+		for (auto itRefPTTransform(contributions.fPtLineTransformContrib.begin()); itRefPTTransform != contributions.fPtLineTransformContrib.end(); ++itRefPTTransform){
+			if (!itRefPTTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itRefPTTransform->first, itRefPTTransform->second, eqIdx, matrices);
+		}
+
+		// Add station's contributions
+		if (!itECVE->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*itECVE->targetPos, contributions.fStationContrib, eqIdx, matrices); /*'Target' in ECHO means station, there is no real target in ECHO.*/
+
+		// Adding contributions for STATION transformation parameters 
+		for (auto itStationTransform(contributions.fStTransformContrib.begin()); itStationTransform != contributions.fStTransformContrib.end(); ++itStationTransform){
+			if (!itStationTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStationTransform->first, itStationTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECVE->getDistance() - contributions.fCalcMeas));
+
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling ECVE contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		// Adding the contribution to the second design matrix
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error occurred during filling input design matrices of ECVE.");
 	}
 }
 

@@ -569,38 +569,12 @@ namespace tut
 			
 			// non-TSTN measurements
 
-#if 0 
-			//Need to be rewritten for the new observation types i.e. camera's UVEC and UVD instead of PLR3D and DIR3D
-			TKeyCAM cam(proj);
-			cam.parse(TReader::tokenizeLGCfileString( "*CAM P1 TS1 ROT3D TRGT PT2 ICSE 33"), -1);
-
-			TKeyPLR3D plrC(proj);
-			const auto& cam1(proj.getCurrentNode().measurements.fCAM.back());
-
-			plrC.parse(TReader::tokenizeLGCfileString( "*PLR3D TRGT PT8"), -1);
-			plrC.parse(TReader::tokenizeLGCfileString( "P2 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), -1);
-			ensure_equals("Target of this measurement should be updated",  cam1.measPLR3D.back().target.ID, "PT8");
-			plr.parse(TReader::tokenizeLGCfileString( "P3 1 2 3 TRGT PT2 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), -1);
-			ensure_equals("Target of this measurement should be updated",  cam1.measPLR3D.back().target.ID, "PT2");
-			TKeyZEND zenC(proj);
-			EXPECT_FAIL(zenC.parse(TReader::tokenizeLGCfileString( "*ZEND TRGT PT8"), -1));
-			EXPECT_FAIL(zenC.parse(TReader::tokenizeLGCfileString( "P2 22 OBSE 31 TH 32 THSE 33 TCSE 34"), -1));
-
-			TKeyDIR3D dir3DC(proj);
-			dir3DC.parse(TReader::tokenizeLGCfileString( "*DIR3D TRGT PT7"), -1);
-			dir3D.parse(TReader::tokenizeLGCfileString( "P2 1 2 TH 20 THSE 18 TCSE 23 ASE 15"), -1);
-			ensure_equals("Target of this measurement should be updated",  cam1.measDIR3D.back().target.ID, "PT7");
-
-			ensure_equals("One CAM measurement defined", proj.getCurrentNode().measurements.fCAM.size(),1);
-			ensure_equals("2 PLR3D measurements in this CAM", proj.getCurrentNode().measurements.fCAM.back().measPLR3D.size(),2);
-#endif
 			// DSPT
 			TKeyDSPT dspt(proj);
 			dspt.parse(TReader::tokenizeLGCfileString( "*DSPT P1 DM1 IH 60 IHSE 61 ICSE 62"), -1);
 			dspt.parse(TReader::tokenizeLGCfileString( "P2 63 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), -1);
 			ensure_equals("Instrument height updated DSPT",proj.getCurrentNode().measurements.fEDM.back().instrument.instrHeight , 60.0);
 			ensure_equals("Instrument height updated DSPT", proj.getCurrentNode().measurements.fEDM.back().instrumentPos->getProvisionalValue().getX().getMetresValue(), 1.0);
-
 
 			ensure_equals("DPST default target from instrument section",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET1");
 			dspt.parse(TReader::tokenizeLGCfileString( "P2 63 TRGT ET2 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), -1);
@@ -662,6 +636,54 @@ namespace tut
 			dlev.parse(TReader::tokenizeLGCfileString( "*DLEV LI1"), -1);
 			const auto& levelRound2(proj.getCurrentNode().measurements.fLEVEL.back());
 			ensure_equals("Reference point given, plane should not be initialized", levelRound2.fMeasuredPlane->isInitialized(),false);
+			//
+			// ECSP
+			TKeyECSP ecsp(proj);
+			ecsp.parse(TReader::tokenizeLGCfileString("*ECSP SC1"), -1);
+			ecsp.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
+			const auto& ecspmeas(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
+			ensure_equals(ecspmeas.targetPos->getName(), "P2");
+			ensure_equals(ecspmeas.target.ID, "SC1");
+			ensure_equals(ecspmeas.target.sigmaD, 0.01 * MM2M);
+			ensure_equals(ecspmeas.target.ppmD, 0.1 * MM2M);
+			ensure_equals(ecspmeas.target.sigmaInstrCentering, 0.5 * MM2M);
+			ensure_equals(ecspmeas.getDistance(), 1.1);
+			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
+
+			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
+			const auto& ecspmeas2(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
+			ensure_equals(ecspmeas2.target.ID, "SC2");
+			ensure_equals(ecspmeas2.getDistance(), 0.9);
+
+			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9"), -1);
+			const auto& ecspmeas3(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
+			ensure_equals("This takes current instrument from previous", ecspmeas3.target.ID, "SC2");
+			ensure_equals("Has default values", ecspmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
+
+			//
+			// ECVE
+			TKeyECVE ecve(proj);
+			ecve.parse(TReader::tokenizeLGCfileString("*ECVE SC1 PtLine P2"), -1);
+			ecve.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
+			const auto& ecvemeas(proj.getCurrentNode().measurements.fECVE.back().measECVE.back());
+			ensure_equals(ecvemeas.targetPos->getName(), "P2");
+			ensure_equals(ecvemeas.target.ID, "SC1");
+			ensure_equals(ecvemeas.target.sigmaD, 0.01 * MM2M);
+			ensure_equals(ecvemeas.target.ppmD, 0.1 * MM2M);
+			ensure_equals(ecvemeas.target.sigmaInstrCentering, 0.5 * MM2M);
+			ensure_equals(ecvemeas.getDistance(), 1.1);
+			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
+
+			ecve.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
+			const auto& ecvemeas2(proj.getCurrentNode().measurements.fECVE.back().measECVE.back());
+			ensure_equals(ecvemeas2.target.ID, "SC2");
+			ensure_equals(ecvemeas2.getDistance(), 0.9);
+
+			ecve.parse(TReader::tokenizeLGCfileString("P2 0.9"), -1);
+			const auto& ecvemeas3(proj.getCurrentNode().measurements.fECVE.back().measECVE.back());
+			ensure_equals("This takes current instrument from previous", ecvemeas3.target.ID, "SC2");
+			ensure_equals("Has default values", ecvemeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
+			
 
 			////////////////////////////////////
 			//Testing FRAME measurements
@@ -684,122 +706,4 @@ namespace tut
 			EXPECT_FAIL(ensure_equals("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev()*M2MM, 5));
 		}
 
-//NEEDS TO BE REWRITTEN to take into account the modifications!
-#if 0
-		typedef TDataTree::iterator TDataTreeIter;
-
-		template<>
-		template<>
-		void object::test<6>()
-		{
-				//Read file
-				set_test_name("Testing HIMAS input file");
-
-				std::shared_ptr<TLGCData> proj2;
-				TReader r(proj2);
-				proj2->getFileLogger().setOutputfileLocation("fileOut.log");
-
-				stringstream infile(LGCTestInput::platesfile);
-				r.read(infile);
-
-				TDataAnalyzer analyzer(proj2);
-				bool consistent = analyzer.dataConsistent();
-				ensure_equals("Data should be consistent", consistent, true); //Check consistent method assign unknown indices to adjustables and initialize adjustable in DLEV
-			
-				//Testing global information about project
-
-				//Title should match
-		    	ensure("Title should match", proj2.cfg.title=="HIMAS TEST FILE.\n");
-				//Only one instrument defined (POLAR)
-				ensure_equals("One POLAR instrument", proj2.instruments.fPOLAR.size(),1);
-				ensure_equals("One LEVEL instrument", proj2.instruments.fLEVEL.size(),1);
-				ensure_equals("No other instrument than POLAR amd LEVEL were defined", proj2.instruments.fEDM.size()+proj2.instruments.fSCALE.size(),0);
-				//12 points defined in the input file + 1 point defined implicitly as a part of DLEV measurement (reference point)
-				ensure_equals("Total number of defined points should be 13:", proj2.getPoints().numObjects(),13);
-				//Ensure that specific point is defined
-				ensure("Point P3C should exist", proj2.getPoints().doesObjectExist("P3C"));
-
-				//Testing tree structure
-				auto rp(proj2.getTree().begin().node->data.get()->measurements.fLEVEL[0].fMeasuredPlane->getReferencePoint()->getEstimatedValue());
-
-				ensure_equals("Calculated reference point coordinates should match", rp.getX().getValue(),10);
-				ensure_equals("Calculated reference point coordinates should match", rp.getY().getValue(),(double)100/3);
-				TPositionVector a (0,10,10,TCoordSysFactory::ECoordSys::k2DPlusH);
-				TPositionVector b (10,30,10,TCoordSysFactory::ECoordSys::k2DPlusH);
-				TPositionVector c (20,60,10,TCoordSysFactory::ECoordSys::k2DPlusH);
-				TXYH2CCS::XYHs2CCS(a);
-				TXYH2CCS::XYHs2CCS(b);
-				TXYH2CCS::XYHs2CCS(c);
-				ensure_equals("Calculated reference point coordinates should match",rp.getZ().getValue(), ( (a.getZ().getValue() + b.getZ().getValue() + c.getZ().getValue())/3));
-
-				//There should be 4 nodes in the tree (3 nodes defined through *FRAME keyword + 1 which defines origin)
-				ensure_equals(proj2.getTree().size(),4);
-				//Max depth of the tree is 2
-				ensure_equals(proj2.getTree().max_depth(),2);
-
-				TDataTreeIter pos,begin,end;
-				begin = proj2.getTree().begin();
-				end = proj2.getTree().end();
-
-				//First node
-				auto& n(*(begin->get()));
-				ensure_equals(n.measurements.fTSTN.size(),0);
-				ensure_equals(n.measurements.fLEVEL.size(),1);
-				pos = begin;
-				pos++;
-				//Second node
-				auto& n2(*(pos->get()));
-				ensure_equals(n2.measurements.fTSTN.size(),4);
-
-		
-				//Can not access the values
-				const TAdjustablePoint* point = n2.measurements.fTSTN[0].roms[0].measPLR3D[0].targetPos;
-				ensure_equals("PLR3D measurement target position should match", point->getName(),"P8C");
-
-				pos++;
-				//Third node
-				auto& n3(*(pos->get()));
-				ensure_equals(n3.measurements.fTSTN.size(),0);
-				
-				ensure_equals(n3.frame.getName(),"P2");
-				ensure_distance(n3.frame.getTranslation(0), 20.0, 1e-8);
-				ensure_distance(n3.frame.getTranslation(1), 30.0, 1e-8);
-				ensure_distance(n3.frame.getTranslation(2), 40.0, 1e-8);
-
-				ensure_distance(n3.frame.getAngle(0).rad(), 0.6, 1e-8);
-				ensure_distance(n3.frame.getAngle(1).rad(), 0.5, 1e-8);
-				ensure_distance(n3.frame.getAngle(2).rad(), 0.4, 1e-8);
-
-				pos++;
-				//Fourth node
-				auto& n4(*(pos->get()));
-				ensure_equals(n4.measurements.fTSTN.size(),4);
-
-
-				//Testing that number of all adjustable objects, unknowns, equations,... match
-				TDataAnalyzer an(proj2);
-				an.dataConsistent(); //asssign unknown indices
-
-				//10 scalars in total, 1 for every TSTN instrument height = 8; 1 for every target of *POLAR ( if on 6th position FALSE(0) then variable, fixed otherwise) = 2x
-				ensure_equals("Number of scalars should match", proj2.scalars.numObjects(), 10);
-				ensure_equals("Number of scalars unknowns should match", proj2.scalars.numUnknowns(), 9);
-
-				//12 points defined, 4 defined under POIN with SX,SY,SZ associated, 3 VXY, others are CALA + 1xpoint in DLEV which is VXY = 2*1 = 2
-				ensure_equals("Number of points unknowns should match", proj2.getPoints().numUnknowns(), 20);
-
-				//8 angles defined, one for every v0, and all of them are variable 
-				ensure_equals("Number of angles should match", proj2.angles.numObjects(), 9);
-				//Collimination angle in LEVEL instrument is set to be fixed, therefore does not introduce unknown
-				ensure_equals("Number of angle's unknowns should match", proj2.angles.numUnknowns(), 8);
-
-				//Overall
-				ensure_equals("Total number of unknows", proj2.fUEOIndices.UIndex, 53);
-//				ensure_equals("Total number of unknows introduced with sigma should match", proj2.fUEOIndices.UwSIndex, 18);
-//				ensure_equals("Total number of unknows introduced should match", proj2.fUEOIndices.UIndex + proj2.fUEOIndices.UwSIndex, 54);
-
-				// 9*PLR3D = 27 ,1*DIST=1, 4 points defined under , 1 , DLEV(3x) = 1*1+2*2=5  ,27+1+5 = 33
-				ensure_equals("Total number of equations should match", proj2.fUEOIndices.EIndex,34);
-				ensure_equals("Total number of observations should match", proj2.fUEOIndices.OIndex,34);
-		}
-#endif
 }

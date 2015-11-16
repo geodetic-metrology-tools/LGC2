@@ -25,6 +25,7 @@ namespace
 
 namespace tut
 {
+	//----------------------------- ECTH --------------------------------//
 	template<>
 	template<>
 	void object::test<1>()
@@ -268,5 +269,253 @@ namespace tut
 		ensure_equals("FS3 Sx should match", dataset.getPoints().getObject("FS3").getXEstPrecision().getMMetresValue(), 0.1602, 1e-4);
 		ensure_equals("FS3 Sy should match", dataset.getPoints().getObject("FS3").getYEstPrecision().getMMetresValue(), 0.0523, 1e-4);
 
+	}
+
+	//----------------------------- ECVE --------------------------------//
+	template<>
+	template<>
+	void object::test<5>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECVE measurement in OLOC");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecve_OLOC_PtLine);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		C1   2058.7785255   2180.9016976    450.0000212   0.4644   0.3643           -0.0045  -0.0024
+		D1   2088.1677910   2221.3525452    450.0010136   1.0183   0.7650            0.0010  -0.0048
+		E1   2117.5570742   2261.8034171    450.0023975   1.6934   1.2531            0.0242   0.0171
+		F1   2146.9463397   2302.2542647    450.0041728   2.4721   1.8170            0.0297   0.0147
+		G1   2176.3356346   2342.7051527    450.0063395   3.3424   2.4478            0.0546   0.0527
+		H1   2205.7249002   2383.1560003    450.0088976   4.2957   3.1391            0.0602   0.0503
+		I1   2235.1141657   2423.6068480    450.0118471   5.3252   3.8861            0.0657   0.0480
+		J1   2264.5034547   2464.0577279    450.0151880   6.4258   4.6848            0.0947   0.0779
+		K1   2293.8927203   2504.5085755    450.0189202   7.5932   5.5322            0.0903   0.0755
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector D1 = dataset.getPoints().getObject("D1").getEstimatedValue();
+		ensure_equals("D1 x coordinate should match", D1.getX().getMetresValue(), 2088.1677910, 1e-7);
+		ensure_equals("D1 y coordinate should match", D1.getY().getMetresValue(), 2221.3525452, 1e-7);
+		ensure_equals("D1 z coordinate should match", D1.getZ().getMetresValue(), 450.0010136, 1e-7);
+		ensure_equals("D1 Sx should match", dataset.getPoints().getObject("D1").getXEstPrecision().getMMetresValue(), 1.0183, 1e-4);
+		ensure_equals("D1 Sy should match", dataset.getPoints().getObject("D1").getYEstPrecision().getMMetresValue(), 0.7650, 1e-4);
+
+		TPositionVector I1 = dataset.getPoints().getObject("I1").getEstimatedValue();
+		ensure_equals("I1 x coordinate should match", I1.getX().getMetresValue(), 2235.1141657, 1e-7);
+		ensure_equals("I1 y coordinate should match", I1.getY().getMetresValue(), 2423.6068480, 1e-7);
+		ensure_equals("I1 z coordinate should match", I1.getZ().getMetresValue(), 450.0118471, 1e-7);
+		ensure_equals("I1 Sx should match", dataset.getPoints().getObject("I1").getXEstPrecision().getMMetresValue(), 5.3252, 1e-4);
+		ensure_equals("I1 Sy should match", dataset.getPoints().getObject("I1").getYEstPrecision().getMMetresValue(), 3.8861, 1e-4);
+
+	}
+
+	template<>
+	template<>
+	void object::test<6>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECVE measurement in RS2K");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecve_RS2K_PtLine);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		C1   2058.7785255   2180.9016976   2450.0000769   0.4644   0.3643           -0.0045  -0.0024
+		D1   2088.1677911   2221.3525452   2450.0001195   1.0183   0.7650            0.0011  -0.0048
+		E1   2117.5570742   2261.8034171   2450.0001649   1.6934   1.2531            0.0242   0.0171
+		F1   2146.9463398   2302.2542648   2450.0002131   2.4721   1.8170            0.0298   0.0148
+		G1   2176.3356347   2342.7051529   2450.0002638   3.3424   2.4478            0.0547   0.0529
+		H1   2205.7249003   2383.1560005   2450.0003172   4.2957   3.1391            0.0603   0.0505
+		I1   2235.1141659   2423.6068482   2450.0003730   5.3252   3.8861            0.0659   0.0482
+		J1   2264.5034550   2464.0577283   2450.0004313   6.4258   4.6848            0.0950   0.0783
+		K1   2293.8927206   2504.5085760   2450.0004919   7.5932   5.5322            0.0906   0.0760
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector D1 = dataset.getPoints().getObject("D1").getEstimatedValue();
+		ensure_equals("D1 x coordinate should match", D1.getX().getMetresValue(), 2088.1677911, 1e-7);
+		ensure_equals("D1 y coordinate should match", D1.getY().getMetresValue(), 2221.3525452, 1e-7);
+		ensure_equals("D1 z coordinate should match", D1.getZ().getMetresValue(), 2450.0001195, 1e-7);
+		ensure_equals("D1 Sx should match", dataset.getPoints().getObject("D1").getXEstPrecision().getMMetresValue(), 1.0183, 1e-4);
+		ensure_equals("D1 Sy should match", dataset.getPoints().getObject("D1").getYEstPrecision().getMMetresValue(), 0.7650, 1e-4);
+
+		TPositionVector I1 = dataset.getPoints().getObject("I1").getEstimatedValue();
+		ensure_equals("I1 x coordinate should match", I1.getX().getMetresValue(), 2235.1141659, 1e-7);
+		ensure_equals("I1 y coordinate should match", I1.getY().getMetresValue(), 2423.6068482, 1e-7);
+		ensure_equals("I1 z coordinate should match", I1.getZ().getMetresValue(), 2450.0003730, 1e-7);
+		ensure_equals("I1 Sx should match", dataset.getPoints().getObject("I1").getXEstPrecision().getMMetresValue(), 5.3252, 1e-4);
+		ensure_equals("I1 Sy should match", dataset.getPoints().getObject("I1").getYEstPrecision().getMMetresValue(), 3.8861, 1e-4);
+
+	}
+
+	template<>
+	template<>
+	void object::test<7>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECVE measurement in LEP");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecve_LEP_PtLine);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		C1   2058.7785255   2180.9016976   2450.0000022   0.4644   0.3643           -0.0045  -0.0024
+		D1   2088.1677911   2221.3525452   2450.0000050   1.0183   0.7650            0.0011  -0.0048
+		E1   2117.5570742   2261.8034171   2450.0000091   1.6934   1.2531            0.0242   0.0171
+		F1   2146.9463398   2302.2542648   2450.0000145   2.4721   1.8170            0.0298   0.0148
+		G1   2176.3356347   2342.7051529   2450.0000210   3.3424   2.4478            0.0547   0.0529
+		H1   2205.7249003   2383.1560005   2450.0000288   4.2957   3.1391            0.0603   0.0505
+		I1   2235.1141659   2423.6068482   2450.0000378   5.3252   3.8861            0.0659   0.0482
+		J1   2264.5034550   2464.0577283   2450.0000481   6.4258   4.6848            0.0950   0.0783
+		K1   2293.8927206   2504.5085760   2450.0000594   7.5932   5.5322            0.0906   0.0760
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector D1 = dataset.getPoints().getObject("D1").getEstimatedValue();
+		ensure_equals("D1 x coordinate should match", D1.getX().getMetresValue(), 2088.1677911, 1e-7);
+		ensure_equals("D1 y coordinate should match", D1.getY().getMetresValue(), 2221.3525452, 1e-7);
+		ensure_equals("D1 z coordinate should match", D1.getZ().getMetresValue(), 2450.0000050, 1e-7);
+		ensure_equals("D1 Sx should match", dataset.getPoints().getObject("D1").getXEstPrecision().getMMetresValue(), 1.0183, 1e-4);
+		ensure_equals("D1 Sy should match", dataset.getPoints().getObject("D1").getYEstPrecision().getMMetresValue(), 0.7650, 1e-4);
+		
+		TPositionVector I1 = dataset.getPoints().getObject("I1").getEstimatedValue();
+		ensure_equals("I1 x coordinate should match", I1.getX().getMetresValue(), 2235.1141659, 1e-7);
+		ensure_equals("I1 y coordinate should match", I1.getY().getMetresValue(), 2423.6068482, 1e-7);
+		ensure_equals("I1 z coordinate should match", I1.getZ().getMetresValue(), 2450.0000378, 1e-7);
+		ensure_equals("I1 Sx should match", dataset.getPoints().getObject("I1").getXEstPrecision().getMMetresValue(), 5.3252, 1e-4);
+		ensure_equals("I1 Sy should match", dataset.getPoints().getObject("I1").getYEstPrecision().getMMetresValue(), 3.8861, 1e-4);
+
+	}
+
+	template<>
+	template<>
+	void object::test<8>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECVE measurement in SPHE");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecve_SPHE_PtLine);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		C1   2058.7785255   2180.9016976   2449.9999980   0.4644   0.3643           -0.0045  -0.0024
+		D1   2088.1677911   2221.3525452   2449.9999955   1.0183   0.7650            0.0011  -0.0048
+		E1   2117.5570742   2261.8034171   2449.9999921   1.6934   1.2531            0.0242   0.0171
+		F1   2146.9463398   2302.2542648   2449.9999877   2.4721   1.8170            0.0298   0.0148
+		G1   2176.3356347   2342.7051529   2449.9999823   3.3424   2.4478            0.0547   0.0529
+		H1   2205.7249003   2383.1560005   2449.9999759   4.2957   3.1391            0.0603   0.0505
+		I1   2235.1141659   2423.6068482   2449.9999686   5.3252   3.8861            0.0659   0.0482
+		J1   2264.5034550   2464.0577283   2449.9999603   6.4258   4.6848            0.0950   0.0783
+		K1   2293.8927206   2504.5085760   2449.9999509   7.5932   5.5322            0.0906   0.0760
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector D1 = dataset.getPoints().getObject("D1").getEstimatedValue();
+		ensure_equals("D1 x coordinate should match", D1.getX().getMetresValue(), 2088.1677911, 1e-7);
+		ensure_equals("D1 y coordinate should match", D1.getY().getMetresValue(), 2221.3525452, 1e-7);
+		ensure_equals("D1 z coordinate should match", D1.getZ().getMetresValue(), 2449.9999955, 1e-7);
+		ensure_equals("D1 Sx should match", dataset.getPoints().getObject("D1").getXEstPrecision().getMMetresValue(), 1.0183, 1e-4);
+		ensure_equals("D1 Sy should match", dataset.getPoints().getObject("D1").getYEstPrecision().getMMetresValue(), 0.7650, 1e-4);
+		
+		TPositionVector I1 = dataset.getPoints().getObject("I1").getEstimatedValue();
+		ensure_equals("I1 x coordinate should match", I1.getX().getMetresValue(), 2235.1141659, 1e-7);
+		ensure_equals("I1 y coordinate should match", I1.getY().getMetresValue(), 2423.6068482, 1e-7);
+		ensure_equals("I1 z coordinate should match", I1.getZ().getMetresValue(), 2449.9999686, 1e-7);
+		ensure_equals("I1 Sx should match", dataset.getPoints().getObject("I1").getXEstPrecision().getMMetresValue(), 5.3252, 1e-4);
+		ensure_equals("I1 Sy should match", dataset.getPoints().getObject("I1").getYEstPrecision().getMMetresValue(), 3.8861, 1e-4);
+	}
+
+	template<>
+	template<>
+	void object::test<9>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECVE measurement in OLOC");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecve_OLOC);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY 
+		STN        0.0000000       -0.0000000        0.0000000 
+		ECVE_line24        0.0000295       -0.0000295       60.0000000
+		*/
+
+		//
+		TPositionVector STN = dataset.getPoints().getObject("STN").getEstimatedValue();
+		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 0.0, 1e-7);
+
+		//the point on the line is the mean of all the measured points at the beginning and Z is fixed
+		ensure_equals("ECVE_line24 x coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getX().getMetresValue(), 20.0, 1e-7);
+		ensure_equals("ECVE_line24 y coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getY().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("ECVE_line24 z coordinate should match", dataset.getPoints().getObject("ECVE_line24").getEstimatedValue().getZ().getMetresValue(), 60.0, 1e-7);
 	}
 }

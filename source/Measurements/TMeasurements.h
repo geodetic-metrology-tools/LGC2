@@ -13,10 +13,13 @@
 struct TMeasurements {
 	/// All total station measurements in the order in which they appeared in the input file
 	std::vector<TTSTN>  fTSTN;
+
 	/// All electronic distance measurements in the order in which they appeared in the input file
 	std::vector<TEDM>   fEDM;
+
 	/// All leveling measurements in the order in which they appeared in the input file
 	std::vector<TLEVEL> fLEVEL;
+
 	/// All measurements made by cameras in the order in which they appeared in the input file
 	std::vector<TCAM> fCAM;
 
@@ -28,6 +31,12 @@ struct TMeasurements {
 
 	/// All ECHO measurements in which they appeared in the input file
 	std::vector<TECHOROM> fECHO;
+
+	/// All ECSP measurements in which they appeared in the input file
+	std::vector<TECSPROM> fECSP;
+
+	/// All ECVE measurements in which they appeared in the input file
+	std::vector<TECVEROM> fECVE;
 
 };
 

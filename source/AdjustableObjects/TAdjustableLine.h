@@ -4,6 +4,7 @@
 #include <bitset>
 
 #include "TVAdjustableObject.h"
+#include "TAdjustablePoint.h"
 #include "TPositionVector.h"
 #include "TFreeVector.h"
 
@@ -26,12 +27,11 @@ public:
 			
 			\param[in] pointOnALine Known (e.g. measured) point on a line.
 			\param[in] lineVect Line vector, i.e. vector parallel with the line.
-			\param[in] pointFixedState Lock state of the point.
 			\param[in] lineVectorFixedState Lock state of the line vector.
 			\param[in] name Name of the adjustable line.
 		*/
 	   //In this case point on a line is fixed, therefore we can ommit pointLockState and set it inside to fixed
-		TAdjustableLine(const TPositionVector& pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& pointFixedState, const std::bitset<3>& lineVectorFixedState, const std::string& name);
+	TAdjustableLine(const TAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name);
 
 		/*!
 			\brief Constructs an TAdjustableLine based on a reference point, point on a line and line vector.
@@ -39,37 +39,24 @@ public:
 			\param[in] pointOnALine Known (e.g. measured) point of line.
 			\param[in] referencePoint Reference point for the Point on a line.
 			\param[in] lineVect Line vector, i.e. vector parallel with the line.
-			\param[in] pointFixedState Lock state of the point.
 			\param[in] lineVectorFixedState Lock state of the line vector.
 			\param[in] name Name of the adjustable line.
 		*/
-		TAdjustableLine(const TPositionVector& pointOnALine,const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& pointFixedState, const std::bitset<3>& lineVectorFixedState, const std::string& name);
+		TAdjustableLine(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name);
 	
 		
 		/// Create an unitialized line. 
 		static TAdjustableLine createUninitialized(const std::string& name);
-	   
-      //@}
+
+		/// initialize the line. 
+		void initialize(const TAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
+		/// initialize the line.
+		void initialize(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
+      
+		//@}
 
 	   /*!@name Access methods*/
 	   //@{
-
-		/// Returns a constant reference on the provisional value of the point on the line
-		const TPositionVector&	getPointProvisionalValue() const { return fPointProvisionalValue;}
-
-		/// Returns a constant reference on the correction value of the line's point
-		const TFreeVector&		getPointCorrection() const { return fPointCorrection;}
-
-		/// Returns a constant reference on the estimated value for the point on the line
-		const TPositionVector&	getPointEstimatedValue() const { return fPointEstimatedValue;}
-
-		/// Returns a constant reference on the estimated precision of the line's point.
-		const TFreeVector&		getPointEstimatedPrecision() const { return fPointEstimatedPrecision;}
-
-		/// Returns a constant reference on the covariance element of the line's point. 
-		const TFreeVector&		getPointCovariances() const {return fPointCovariance;}
-	
-
 		
 		/// Returns a constant reference on the provisional value of the line's vector 
 		const TFreeVector&	getLineVectorProvisionalValue() const {return fLineVectorProvisionalValue;}
@@ -85,8 +72,14 @@ public:
 
 		/// Returns a constant reference on the covariances of the line's vector 
 		const TFreeVector&	getLineVectorCovariances() const {return fLineVectorCovariance;}
+
+		/// Returns a constant pointer on the line point
+		const TAdjustablePoint* getLinePoint() const { return fLinePoint; }
 		
-      virtual bool isInitialized() const { return !isnan(fPointProvisionalValue.getX().getMetresValue()); }
+		/// Returns a constant reference on the reference point 
+		const TPositionVector& getReferencePoint() const { return fReferencePointPosition; }
+		
+      virtual bool isInitialized() const { return fInit; }
 
 		/*!
 			\brief Returns The number of unknowns for this line.
@@ -97,7 +90,7 @@ public:
 		virtual int getNumUnkn() const;
 
 		/// See \ref TVAdjustableObject::isFixed
-		virtual bool isFixed() const { return (fixedStatePoint.all() && fixedStateLineVector.all());}
+		virtual bool isFixed() const { return(fixedStateLineVector.all());}
 
 		/*! 
 			See \ref TVAdjustableObject::getFirstUidx
@@ -135,14 +128,7 @@ public:
       virtual void setCorrection(int idx, TReal value);
 
 		/// Sets the estimated precision after calculation to a line's point
-      void setPointEstimatedPrecision(int idx, TLength value);
-
-		/// Sets the estimated precision after calculation to a line's point
       void setLineVectorEstimatedPrecision(int idx, TReal value);
-
-		//THIS IS NOT YET CONSISTENT with other, WILL BE IMPLEMENTED WHEN []OPERATOR FOR TFreeVector and TPositionVector is implemented
-		/// Sets the covariance after calculation to a line's point
-		void setPointEstimatedCovariance(TFreeVector cov) {fPointCovariance = cov; return; }
 
 		/// Sets the covariance after calculation to a line's vector
 		void setLineVectEstimatedPointCovariance(TFreeVector cov) {fLineVectorCovariance = cov; return; }
@@ -153,14 +139,8 @@ public:
 
 private:
 
-	TPositionVector			fReferencePointPosition; /*!< position of the Reference point (fixed)*/
-
-	//Line point is only being adjusted if there is associated Reference Point Position, otherwise it is fixed.
-	TPositionVector		fPointProvisionalValue; /*!< position's provisional value */
-	TFreeVector				fPointCorrection; /*!< position's correction after calculation  */
-	TPositionVector		fPointEstimatedValue; /*!< position's estimated value after calculation */
-	TFreeVector				fPointEstimatedPrecision; /*!< position's estimated precision after calculation */
-	TFreeVector				fPointCovariance; 
+	TPositionVector fReferencePointPosition; /*!< position of the Reference point (fixed)*/
+	const TAdjustablePoint* fLinePoint;	//Line point is only being adjusted if there is associated Reference Point Position, otherwise it is fixed. 
 
 	//Definition of line vector
 	TFreeVector				fLineVectorProvisionalValue;
@@ -169,14 +149,13 @@ private:
 	TFreeVector				fLineVectorEstimatedPrecision; 
 	TFreeVector				fLineVectorCovariance; 
 
-	std::bitset<3> fixedStatePoint;	/*!< Tells which element of the point will be adjusted.*/
 	std::bitset<3> fixedStateLineVector; /*!< Tells which element of the line vector will be adjusted.*/
 
-	int uidx_point[3]; /*!< Position of the point elements in the LS input matrix (column).*/
 	int uidx_lineVector[3]; /*!< Position of the line vector's elements in the LS input matrix (column).*/
 
 	std::string fName; /*!< Name of the adjustable line */
 
 	void setDefaults();
+	bool fInit;
 };
 #endif //TADJUSTABLE_LINE_N

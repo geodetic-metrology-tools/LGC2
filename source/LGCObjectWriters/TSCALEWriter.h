@@ -4,6 +4,8 @@
 #include "TObservationWriter.h"
 #include "MeasDef.h"
 struct TECHOROM;
+struct TECSPROM;
+struct TECVEROM;
 class TLGCStatistic;
 
 /*!
@@ -22,12 +24,7 @@ public:
 
 	/*!@name Headers */
 	//@{
-		/// Write the result header for ECHO 
-		void writeECHOResultsHeader();
-		/// Write the result header for ECSP 
-		void writeECSPResultsHeader();
-		/// Write the result header for ECVE 
-		void writeECVEResultsHeader();
+		
 
 		/// Write reliability header for ECHO 
 		void	writeECHOReliabilityHeader();
@@ -44,17 +41,21 @@ public:
 		/// Write the simulated result data for ECHO 
 		void writeECHOSIMUResults(const  TECHOROM& echorom);
 		/// Write the result data for ECSP 
-		void writeECSPResults();
+		void writeECSPResults(const TECSPROM& ecsprom);
 		/// Write the result data for ECVE 
-		void writeECVEResults();
+		void writeECVEResults(const TECVEROM& ecverom);
 
 		/// Write reliability data for ECHO 
 		void	writeECHOReliabilityData(const  TECHOROM& echorom, const TLGCStatistic& stat, const std::vector<TECHO> measECHO);
 		/// Write reliability data for ECVE
-		void	writeECVEReliabilityData();
+		void	writeECVEReliabilityData(const TECVEROM& ecverom, const TLGCStatistic& stat, const std::vector<TECVE> measECVE);
 		/// Write reliability data for ECSP
-		void	writeECSPReliabilityData();
+		void	writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::vector<TECSP> measECSP);
 	//@}
+
+private:
+	/// Write the result header for ECHO ECSP and ECVE
+	void writeSCALEResultsHeader();
 
 };
 

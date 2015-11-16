@@ -1,6 +1,7 @@
 #include "TDataAnalyzer.h"
 #include "TLOR2LOR.h"
 #include "TLGCData.h"
+#include <bitset>
 
 TDataAnalyzer::TDataAnalyzer(TLGCData& dat) : fData(dat), fStandDevUsed(false)
 {}
@@ -87,8 +88,8 @@ bool TDataAnalyzer::dataConsistent(){
 					transformation.transform(stationPos);
 
 					referencePoint[0] += stationPos.getX().getMetresValue();
-               referencePoint[1] += stationPos.getY().getMetresValue();
-               referencePoint[2] += stationPos.getZ().getMetresValue();
+					referencePoint[1] += stationPos.getY().getMetresValue();
+					referencePoint[2] += stationPos.getZ().getMetresValue();
 
 					if (! fData.getConfig().sim.isActive())
 						initialRefPtDistance += itECHOMeas->getDistance();
@@ -110,13 +111,44 @@ bool TDataAnalyzer::dataConsistent(){
 					const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
 					const TPositionVector& lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
 
-               TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+					TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
 
 					itECHO->fMeasuredPlane->initialize(&rp,TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), 
 							TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
 				}
 				else
-					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *DLEV keyword, but no measurement found."; 
+					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found."; 
+		}
+
+
+		//If Reference point was not provided to a ECVE measurement, adjustable plane which is measured needs to be initialized
+		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){
+			if (!itECVE->fMeasuredLine->isInitialized()){
+				TReal referencePoint[3] = { 0, 0, 0 };
+				for (auto itECVEMeas(itECVE->measECVE.begin()); itECVEMeas != itECVE->measECVE.end(); ++itECVEMeas){
+					TPositionVector targetPos = itECVEMeas->targetPos->getEstimatedValue();
+					TLOR2LOR transformation(itECVEMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+					transformation.transform(targetPos);
+
+					referencePoint[0] += targetPos.getX().getMetresValue();
+					referencePoint[1] += targetPos.getY().getMetresValue();
+					referencePoint[2] += targetPos.getZ().getMetresValue();
+				}
+				int numberOfMeasurements = (int)itECVE->measECVE.size();
+				if (numberOfMeasurements > 0){
+					referencePoint[0] /= numberOfMeasurements;
+					referencePoint[1] /= numberOfMeasurements;
+					referencePoint[2] /= numberOfMeasurements;
+
+					TAdjustablePoint& rp =
+						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+						false, false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
+
+					itECVE->fMeasuredLine->initialize(&rp, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111));
+				}
+				else
+					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
+			}
 		}
 
 	}

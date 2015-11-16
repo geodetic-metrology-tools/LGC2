@@ -86,24 +86,31 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			//In every node iterate through the EDM's measurements
 			for(auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
 				//Iterate through DPST measurements
-				for(auto itDPST(itEDM->measDSPT.begin()); itDPST != itEDM->measDSPT.end(); ++itDPST){	
-					extractDSPTObs(rm, *itDPST);
+				for(auto& itDPST:itEDM->measDSPT){	
+					extractDSPTObs(rm, itDPST);
 				}
 			}
 			
 
 			//In every node iterate through the LEVEL's measurements
-			for(auto itLEVEL(itTree.node->data->measurements.fLEVEL.begin()); itLEVEL != itTree.node->data->measurements.fLEVEL.end(); ++itLEVEL)
-				extractLEVELObs(rm, *itLEVEL);
-
+			for(auto& itLEVEL:itTree.node->data->measurements.fLEVEL)
+				extractLEVELObs(rm, itLEVEL);
 
 			//In every node iterate through the ECHOROM's measurements
-			for(auto itECHO(itTree.node->data->measurements.fECHO.begin()); itECHO != itTree.node->data->measurements.fECHO.end(); ++itECHO)
-				extractECHOROMObs(rm, *itECHO);
+			for(auto& itECHO:itTree.node->data->measurements.fECHO)
+				extractECHOROMObs(rm, itECHO);
+
+			//In every node iterate through the ECSPROM's measurements
+			for (auto& itECSP:itTree.node->data->measurements.fECSP)
+				extractECSPROMObs(rm, itECSP);
+
+			//In every node iterate through the ECVEROM's measurements
+			for (auto& itECVE:itTree.node->data->measurements.fECVE)
+				extractECVEROMObs(rm, itECVE);
 
 			//In every node iterate through the ORIEROM's measurements
-			for (auto itORIE(itTree.node->data->measurements.fORIE.begin()); itORIE != itTree.node->data->measurements.fORIE.end(); ++itORIE)
-				extractORIEROMObs(rm, *itORIE);
+			for (auto& itORIE:itTree.node->data->measurements.fORIE)
+				extractORIEROMObs(rm, itORIE);
 
 			//Extract vertical distance DVER residuals
 			extractDVERObs(rm, itTree.node->data->measurements.fDVER);
@@ -255,6 +262,26 @@ void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm
 	}
 }
 
+void TLSResultsMatricesExtractor::extractECSPROMObs(const TLSResultsMatrices& rm, TECSPROM& ecspMeas){
+	for (auto& itECSP:ecspMeas.measECSP){
+		MatrixIndex obsUidx = itECSP.getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVctr()->size())
+			itECSP.setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
+		else
+			throw std::runtime_error("ECSP observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+	}
+}
+
+void TLSResultsMatricesExtractor::extractECVEROMObs(const TLSResultsMatrices& rm, TECVEROM& ecveMeas){
+	for (auto& itECVE:ecveMeas.measECVE){
+		MatrixIndex obsUidx = itECVE.getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVctr()->size())
+			itECVE.setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
+		else
+			throw std::runtime_error("ECVE observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+	}
+}
+
 void TLSResultsMatricesExtractor::extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas){
 	for (auto& itORIE:orieMeas.measORIE){
 		MatrixIndex obsUidx = itORIE.getFirstObservationIndex();
@@ -357,6 +384,24 @@ bool TLSResultsMatricesExtractor::extractPlaneParams(const TLSResultsMatrices& r
 	return critNotExceeded;
 }
 	
+bool TLSResultsMatricesExtractor::extractLineParams(const TLSResultsMatrices& rm, const TReal convCrit){
+	bool critNotExceeded = true;
+
+	for (auto& line : fDataSet->getLines()){
+		if (!line.isFixed()){
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++){
+				if (unknIdx >= rm.getSolutionVctr()->size())
+					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
+
+				TReal	correction = rm.getSolutionVctrElmt(unknIdx);
+				line.setCorrection(unknIdx, correction);
+				if (fabsq(correction) > convCrit)
+					critNotExceeded = false;
+			}
+		}
+	}
+	return critNotExceeded;
+}
 
 bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices& rm, const TReal convCrit){
 	bool critNotExceeded = true;
@@ -492,6 +537,22 @@ void TLSResultsMatricesExtractor::extractPlaneVarCovar(const TLSResultsMatrices&
 	}
 }
 
+void TLSResultsMatricesExtractor::extractLineVarCovar(const TLSResultsMatrices& rm){
+	for (auto& line : fDataSet->getLines()){
+		if (!line.isFixed()){
+			//Filling standard deviations (estimated precision)
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); ++unknIdx){
+				if (unknIdx >= rm.getUnkCovarMtrx()->rows())
+					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
+
+				TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx));
+				line.setLineVectorEstimatedPrecision(unknIdx, sigma); //Store standard deviations in meters (reference point distance ) or radians (angles)
+			}
+
+			/* Eventually store covarinace between angles if needed in the future.*/
+		}
+	}
+}
 
 void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResultsMatrices& rm){
 	for (auto it(fDataSet->getTree().begin()); it != fDataSet->getTree().end(); ++it){	

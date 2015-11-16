@@ -12,6 +12,8 @@ class  TPLR3D;
 class  TDIR3D;
 class  TLINE;
 struct TECHOROM;
+struct TECSPROM;
+struct TECVEROM;
 struct TORIEROM;
 
 /*! 
@@ -94,6 +96,12 @@ private:
 
 		/// Add the design matrices contributions for the ECHO measurement. 
 		void addECHOContributions(const TECHOROM& echoRom, TLSInputMatrices*  matrices);
+
+		/// Add the design matrices contributions for the ECSP measurement. 
+		void addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices);
+
+		/// Add the design matrices contributions for the ECVE measurement. 
+		void addECVEContributions(const TECVEROM& ecveRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ORIE measurement. 
 		void addORIEContributions(const TORIEROM& orieRom, TLSInputMatrices*  matrices);

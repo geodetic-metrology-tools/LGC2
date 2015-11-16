@@ -217,8 +217,8 @@ namespace TestROOT {
 		"*TSTN STN TS1 IHFIX\n"
 		  "*V0\n"
 		  	"*PLR3D\n"
-				"REF  451 100  141.421356237\n"  //Does not work for -200, i.e. 50
-				"PT 501 100 100  \n"  //Does not work for -200, i.e. 100
+				"REF  451 100  141.421356237\n"  
+				"PT 501 100 100  \n"  
 					;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// DHOR and ECTH measurement

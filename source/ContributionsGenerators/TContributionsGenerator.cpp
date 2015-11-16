@@ -692,7 +692,7 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, const TECHO& echo){
 	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); // Theta angle of the plane
 	TReal cEcVp = echo.target.distCorrectionValue; //distance of the target correction value
-   TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();  // distance of the reference point from the plane
+	TReal dRef = echoROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();  // distance of the reference point from the plane
 
 	TPositionVector stationPoint= echo.targetPos->getEstimatedValue();
 
@@ -724,6 +724,92 @@ ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, con
 	ECHOContrib echoContrib = {calcMeas, stationContrib, thetaContrib, refPtDistContrib, stationTransfContributions, obsVariance};
 	return echoContrib;
 }
+
+//ECVE contribution
+ScaleMeasContrib TContributionsGenerator::getECVEContrib(const TECVEROM& ecveROM, const TECVE& ecve){
+	TReal cEcVp = ecve.target.distCorrectionValue; //distance of the target correction value
+	TPositionVector stationPoint = ecve.targetPos->getEstimatedValue();
+
+	const TLOR2LOR& stationPTLor2RootTrafo = getLORTransformation(ecve.targetPos->getFrameTreePosition(), fTree->begin());
+	stationPTLor2RootTrafo.transform(stationPoint);
+
+	/*Reference point is always defined in ROOT and is fixed (it is implicitly defined),
+	i.e. no transformation to ROOT required and no contribution required for its coordinates.*/
+	TPositionVector linePoint = ecveROM.fMeasuredLine->getLinePoint()->getEstimatedValue();
+	const TLOR2LOR& linePTLor2RootTrafo = getLORTransformation(ecveROM.fMeasuredLine->getLinePoint()->getFrameTreePosition(), fTree->begin());
+	linePTLor2RootTrafo.transform(linePoint);
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(ecveROM.fMeasuredLine->getName(), linePoint, stationPoint);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	TReal D = sqrt(pow2(linePoint.getX() - stationPoint.getX()) + pow2(linePoint.getY() - stationPoint.getY()));
+	TReal calcMeas = D - cEcVp;
+	
+	//coefficient's contribution for the station
+	TReal a = -(linePoint.getX() - stationPoint.getX())/D;
+	TReal b = -(linePoint.getY() - stationPoint.getY()) / D;
+	TReal c = 0.0;
+
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	TFreeVector stationContrib = getPointContributions(stationPTLor2RootTrafo, a, b, c);
+	addTransformationsContributions(stationPTLor2RootTrafo, ecve.targetPos->getEstimatedValue(), a, b, c, stationTransfContributions);
+
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> pointLineTransfContributions;
+	TFreeVector pointLineContrib = getPointContributions(linePTLor2RootTrafo, -a, -b, -c);
+	addTransformationsContributions(linePTLor2RootTrafo, ecve.targetPos->getEstimatedValue(), -a, -b, -c, pointLineTransfContributions);
+	
+	TReal linePointContrib = -1.0;
+
+	TReal obsVariance = pow2q(ecve.target.sigmaD + ecve.getDistance() / 1000 * ecve.target.ppmD) + pow2q(ecve.target.sigmaInstrCentering);
+	
+	ScaleMeasContrib ecspContrib = { calcMeas, stationContrib, pointLineContrib, stationTransfContributions, pointLineTransfContributions, obsVariance };
+	return ecspContrib;
+}
+
+
+/*
+//ECSP contribution
+ScaleMeasContrib TContributionsGenerator::getECSPContrib(const TECSPROM& ecspROM, const TECSP& ecsp){
+	TReal cEcVp = ecsp.target.distCorrectionValue; //distance of the target correction value
+	TReal dRef = ecspROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();  // distance of the reference point from the plane
+	TReal theta = ecspROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); // Theta angle of the plane
+	TReal phi = ecspROM.fMeasuredPlane->getPhiEstimatedValue().getRadiansValue(); // Phi angle of the plane
+
+	TPositionVector stationPoint = ecsp.targetPos->getEstimatedValue();
+
+	const TLOR2LOR& stationPTLor2RootTrafo = getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fTree->begin());
+	stationPTLor2RootTrafo.transform(stationPoint);
+
+	//Reference point is always defined in ROOT and is fixed (it is implicitly defined),
+	//i.e. no transformation to ROOT required and no contribution required for its coordinates.
+	TPositionVector referencePoint = ecspROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(ecspROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	//TReal calcMeas = -cEcVp;
+	//
+	//std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	//TFreeVector stationContrib = getPointContributions(stationPTLor2RootTrafo, -cosq(theta), sinq(theta), 0.0);
+	//addTransformationsContributions(stationPTLor2RootTrafo, echo.targetPos->getEstimatedValue(), -cosq(theta), sinq(theta), 0.0, stationTransfContributions);
+	//
+	//TReal thetaContrib = sinq(theta)*(stationPoint.getX() - referencePoint.getX()).getMetresValue() + cosq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue();
+	//
+	//TReal refPtDistContrib = 1.0;
+	//TReal obsVariance = pow2q(echo.target.sigmaD + echo.getDistance() / 1000 * echo.target.ppmD) + pow2q(echo.target.sigmaInstrCentering);
+	//
+	//ScaleMeasContrib ecspContrib = { calcMeas, stationContrib, refPtDistContrib, stationTransfContributions, obsVariance };
+	//return ecspContrib;
+}
+*/
 
 //DVER contributions
 DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
@@ -794,7 +880,6 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 	
 	return dverC;
 }
-
 
 //ORIE contributions
 AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM, const TORIE& orie){
@@ -1504,6 +1589,15 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 	return calcMeas;
 }
 
+TReal TContributionsGenerator::getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp)
+{
+	return 0;
+}
+
+TReal TContributionsGenerator::getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve)
+{
+	return 0;
+}
 
 TFreeVector TContributionsGenerator::getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec){
 	fMLAused = false;
@@ -1577,3 +1671,57 @@ TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TO
 	return(TAngle::aTan2((xTg - xSt), (yTg - ySt)) - orieROM.fConstantAngle);
 }
 
+TReal	TContributionsGenerator::getDVERCalcMeas(const TDVER& dver){
+	fMLAused = false;
+	auto k3D = TCoordSysFactory::k3DCartesian;
+	/*Contribution if OLOC used, otherwise going to be rewritten*/
+	TFreeVector stationC(0, 0, -1, k3D);
+	TFreeVector targetC(0, 0, 1, k3D);
+
+	TPositionVector station(dver.station->getEstimatedValue());
+	TPositionVector target(dver.targetPos->getEstimatedValue());
+	TPositionVector stationLOR = station;
+	TPositionVector targetLOR = target;
+
+	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(dver.station->getFrameTreePosition(), fTree->begin()); //Station's position frame
+	stLor2RootTrafo.transform(station); //Transform to ROOT(CCS)
+
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(dver.targetPos->getFrameTreePosition(), fTree->begin()); //Station's position frame
+	tgLor2RootTrafo.transform(target); //Transform to ROOT(CCS)
+
+
+	TPositionVector stationCCS = station;
+	TPositionVector targetCCS = target;
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){  
+		
+		/*Needs to be calculated in CGRF.*/
+		set2MLATransformation(station);
+		transformMLA2CGRF(stationC); // transform to CGRF
+
+		set2MLATransformation(target);
+		transformMLA2CGRF(targetC);  // transform to CGRF
+
+		if (fRefFrame == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS){
+			TXYH2CCS::CCS2XYHs(station);
+			TXYH2CCS::CCS2XYHs(target);
+		}
+		else if (fRefFrame == TRefSystemFactory::ERefFrame::kCernXYHg00Machine){
+			TXYH2CCS::CCS2XYHg2000Machine(station);
+			TXYH2CCS::CCS2XYHg2000Machine(target);
+		}
+		else if (fRefFrame == TRefSystemFactory::ERefFrame::kCernXYHg85Machine){
+			TXYH2CCS::CCS2XYHg1985Machine(station);
+			TXYH2CCS::CCS2XYHg1985Machine(target);
+		}
+		//Calculating the distance meas
+		fCGRFused = true;
+		return target.getH().getMetresValue() - station.getH().getMetresValue() - dver.getDistanceCorrection();
+
+	}
+	else{ /*OLOC = Calculated as XYZ, simple case*/
+		fCGRFused = false;
+		return target.getZ().getMetresValue() - station.getZ().getMetresValue() - dver.getDistanceCorrection();
+
+	}
+}

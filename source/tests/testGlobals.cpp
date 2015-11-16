@@ -49,36 +49,35 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing Adjustable objects");
 		TPositionVector position1(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k3DCartesian);
+		TDataTreeIterator iter;
+		TAdjustablePoint p(position1, true, false, false, "point1", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 		TFreeVector ll(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k3DCartesian);
 
 		
 		//////////////////////// Testing TAdjustableLine ////////////////////////
-		std::bitset<3> point;
-		point.set(0);
 		std::bitset<3> line;
 		line.set(0);
-		TAdjustableLine mmm(position1, ll, point, line, "line1");
-		ensure_equals("Number of unknowns should match", mmm.getNumUnkn(), 4);
+		TAdjustableLine mmm(&p, ll, line, "line1");
+		ensure_equals("Number of unknowns should match", mmm.getNumUnkn(), 2);
 		ensure_equals("Line is not fixed", mmm.isFixed(), false);
 		mmm.setFirstUidx(3);
 		ensure_equals("First uidx", mmm.getFirstUidx(), 3);
-		ensure_equals("First uidx", mmm.getLastUidx(), 6);
+		ensure_equals("First uidx", mmm.getLastUidx(), 4); //the line vector (3 => x, y,z)
 
-		mmm.setCorrection(5,2.0);
+		mmm.setCorrection(3,2.0);
 		ensure_equals("Correction", mmm.getLineVectorCorrection().getY().getMetresValue(), 2.0);
 		ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getMetresValue(), 4.0);
 		
-		std::bitset<3> point2;
 		std::bitset<3> line2;
-		TAdjustableLine mmm2(position1, ll, point2, line2, "line2");
+		TAdjustableLine mmm2(&p, ll, line2, "line2");
 		ensure_equals("Line is not fixed", mmm2.isFixed(), false);
 
 		TAdjustableLine unita = mmm2.createUninitialized("cop");
 		ensure_equals("Point is not initialized", unita.isInitialized(), false);
 
 		//////////////////////// Testing TAdjustablePoint ////////////////////////
-		TDataTreeIterator iter;
-		TAdjustablePoint p(position1,true,false,false,"point1",TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
+		//TDataTreeIterator iter;
+		//TAdjustablePoint p(position1,true,false,false,"point1",TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 		ensure_equals("Number of unknowns should match", p.getNumUnkn(), 2);
 		ensure_equals("Point is initialized", p.isInitialized(), true);
 		p.setFirstUidx(3);

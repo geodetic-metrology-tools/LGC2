@@ -9,6 +9,8 @@ class TUVD;
 class TUVEC;
 struct TLEVEL;
 struct TECHOROM;
+struct TECSPROM;
+struct TECVEROM;
 struct TORIEROM;
 /*!
 	\ingroup LSCalculation
@@ -62,7 +64,7 @@ private:
 		bool extractLengthParams(const TLSResultsMatrices& rm, const TReal convCrit);
 		bool extractPlaneParams(const TLSResultsMatrices& rm, const TReal convCrit);
 		bool extractTransformationParams(const TLSResultsMatrices& rm, const TReal convCrit);
-		bool extractLineParams(const TLSResultsMatrices& rm, const TReal convCrit);  //Not yet implemented, LINE not used so far
+		bool extractLineParams(const TLSResultsMatrices& rm, const TReal convCrit);
 	//@}
 
 	/*!@name Methods responsible for final extraction of variances covariances in order to be filled into the adjustable objects. */
@@ -72,7 +74,7 @@ private:
 		void extractLengthVar(const TLSResultsMatrices& rm);
 		void extractPlaneVarCovar(const TLSResultsMatrices& rm);
 		void extractTransformationVarCovar(const TLSResultsMatrices& rm);
-		void extractLineVarCovar(const TLSResultsMatrices& rm);  //Not yet implemented
+		void extractLineVarCovar(const TLSResultsMatrices& rm);
 	//@}
 
 	/*!@name Methods relative to the measurements, responsible for extracting residuals.*/
@@ -101,6 +103,12 @@ private:
 
 		/// Sets the ECHO measurement residual.
 		void extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& echoMeas);
+
+		/// Sets the ECHO measurement residual.
+		void extractECSPROMObs(const TLSResultsMatrices& rm, TECSPROM& ecspMeas);
+
+		/// Sets the ECHO measurement residual.
+		void extractECVEROMObs(const TLSResultsMatrices& rm, TECVEROM& ecveMeas);
 
 		/// Sets the ORIE measurement residual.
 		void extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas);

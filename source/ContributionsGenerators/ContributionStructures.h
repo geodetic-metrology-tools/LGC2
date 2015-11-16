@@ -188,6 +188,25 @@ struct ECHOContrib{
 };
 
 /*!
+\ingroup ContributionsGenerators
+
+\brief Contributions for the TECSP measurement.
+*/
+struct ScaleMeasContrib{
+	TReal		fCalcMeas;
+	TFreeVector	fStationContrib;
+	TFreeVector	fPointLineContrib;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECHO measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECHO measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fPtLineTransformContrib;
+
+	TReal		fObsVariance;
+};
+
+
+/*!
 	\ingroup ContributionsGenerators
 
 	\brief Contributions for the TECTH measurement.

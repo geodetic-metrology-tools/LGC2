@@ -1,4 +1,5 @@
 #include "MeasDef.h"
+#include "TAdjustablePlane.h"
 
 class TLGCObsSummary;
 

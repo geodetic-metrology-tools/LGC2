@@ -2,6 +2,8 @@
 #define Round_Of_Measurements
 
 #include "MeasDef.h"
+#include "TAdjustablePlane.h"
+#include "TAdjustableLine.h"
 class TLGCObsSummary;
 
 /*!
@@ -27,6 +29,56 @@ struct TECHOROM {
 			fMeasuredPlane(&measPlane),
 			line(NO_VALi)
 			{}
+};
+
+/*!
+\ingroup Measurements
+\brief This class represents a round of ECSP (TECSP) measurements, which are measuring a single Plane.
+*/
+struct TECSPROM {
+
+	/// All ECHO measurements, measuring the 'fmeasuredPlane'
+	std::vector<TECSP> measECSP;
+
+	//Measured vertical plane
+	TAdjustablePlane* fMeasuredPlane;
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	TLGCObsSummary getECSPObsSummary() const;
+
+	/// Line of the measurement definition
+	int  line;
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TECSPROM(TAdjustablePlane& measPlane) :
+		fMeasuredPlane(&measPlane),
+		line(NO_VALi)
+	{}
+};
+
+/*!
+\ingroup Measurements
+\brief This class represents a round of ECVE (TECVE) measurements, which are measuring a single Plane.
+*/
+struct TECVEROM {
+
+	/// All ECHO measurements, measuring the 'fmeasuredPlane'
+	std::vector<TECVE> measECVE;
+
+	//Measured vertical plane
+	TAdjustableLine* fMeasuredLine;
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	TLGCObsSummary getECVEObsSummary() const;
+
+	/// Line of the measurement definition
+	int  line;
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TECVEROM(TAdjustableLine& measLine) :
+		fMeasuredLine(&measLine),
+		line(NO_VALi)
+	{}
 };
 
 /*!

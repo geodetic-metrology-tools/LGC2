@@ -4,6 +4,7 @@
 #include <Global.h>
 #include "TInstrumentData.h"
 #include "MeasDef.h"
+#include "TAdjustableAngle.h"
 
 class  TLGCObsSummary;
 struct TPOLARObsSummary;

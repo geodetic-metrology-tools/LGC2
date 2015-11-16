@@ -230,7 +230,7 @@ struct TLGCConfig
 		If a new LGC file should be written, SIM must be active
 
 	*/
-	void checkSanity();
+	void checkSanity();  //empty
 };
 
 

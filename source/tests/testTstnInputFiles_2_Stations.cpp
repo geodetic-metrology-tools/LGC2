@@ -57,10 +57,10 @@ namespace tut
 
 
 		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390 /*10*/, 1e-8);
+		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
 		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10 /*390*/, 1e-8);
+		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 
 	// Test Plr3D, with z in the same plane
@@ -140,10 +140,10 @@ namespace tut
 
 
 		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390 /*10*/, 1e-8);
+		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
 		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10 /*390*/, 1e-8);
+		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 
 	// Test Plr3D, with z in a different plane

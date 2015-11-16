@@ -14,6 +14,7 @@ TAMeasurementKey::TAMeasurementKey(TLGCData& project, const std::string& key) :
 			flengths(project.getLength()),
 			fangles(project.getAngles()),
 			fplanes(project.getPlanes()),
+			flines(project.getLines()),
 			fSIMUActive(project.getConfig().sim.isActiveRef())
 			{}
 
@@ -527,7 +528,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 		fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
 		fScaleInstID =  tokens.at(3);
 
-		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
+		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 	}
 	else{
@@ -854,12 +855,12 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 
 		TInstrumentData::TSCALE instr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
 
-      instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
-      instr.ppmD = TLength(opts.getParamRmm2m("PPM", instr.ppmD));
-      instr.sigmaInstrCentering = TLength(opts.getParamR("ICSE ", instr.sigmaInstrCentering));
+		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
+		instr.ppmD = TLength(opts.getParamRmm2m("PPM", instr.ppmD));
+		instr.sigmaInstrCentering = TLength(opts.getParamR("ICSE ", instr.sigmaInstrCentering));
 		
 		// Store  the measured value
-      TECHO echo(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
+		TECHO echo(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
 		echo.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		echo.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 
@@ -873,6 +874,133 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
+void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline) {
+		// look up station point
+		if (tokens.size() < 3)
+			throw std::runtime_error("An ECSP measurement must have 1 entries: "
+			"The ID of a SCALE instrument.");
+
+		const std::string& name = "ECSPPLANE" + std::to_string(proj.getCurrentNode().measurements.fECSP.size()); //name of the measured adjustable plane
+
+		fplanes.addObject(TAdjustablePlane::createUninitialized(name)); //The plane will be initialized in TDataAnalyzer class, when checked for consistency
+		TECSPROM ecspRom(fplanes.back());
+
+		ecspRom.line = line;
+
+		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
+
+		//The SCALE instrument is only the default one used, it is not stored in TECSPROM because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
+	}
+	else{
+		if (tokens.size() < 2 && !fSIMUActive)
+			throw std::runtime_error("An ECSP measurement must have at least 2 entries: "
+			"The stationned point and the measured distance.");
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		// look up the stationed point
+		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+
+
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
+		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+
+		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
+		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
+		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
+
+		// Store  the measured value
+		
+		TECSP ecsp(stationPoint, scaleInstr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
+		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+
+		ecsp.line = line;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kECSP);
+		TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
+		ecspROMLatest.measECSP.emplace_back(ecsp);
+
+	}
+}
+
+void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline) {
+		// look up station point
+		if (tokens.size() < 3)
+			throw std::runtime_error("An ECVE measurement must have 1 entries: "
+			"The ID of a SCALE instrument.");
+
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		const std::string& name = "ECVELINE" + std::to_string(proj.getCurrentNode().measurements.fECVE.size()); //name of the measured adjustable line
+
+		if (opts.has("PtLine")){
+			std::string  rpName = opts.getParamS("PtLine", "NULL");
+
+			if (!fpoints.doesObjectExist(rpName))
+				throw std::runtime_error("Point" + rpName + "used as reference point in ECVE measurement, must be declared before used");
+
+			/*The pointLine is known (ref point = point on the line)*/
+			flines.addObject(TAdjustableLine(&fpoints.getObject(rpName), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
+		}
+		else
+			flines.addObject(TAdjustableLine::createUninitialized(name));
+
+
+		 //The line will be initialized in TDataAnalyzer class, when checked for consistency
+		TECVEROM ecveRom(flines.back());
+
+		ecveRom.line = line;
+
+		proj.getCurrentNode().measurements.fECVE.emplace_back(ecveRom); //add new round of measurement
+
+		//The SCALE instrument is only the default one used, it is not stored in TECVEROM because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
+	}
+	else{
+		if (tokens.size() < 2 && !fSIMUActive)
+			throw std::runtime_error("An ECSP measurement must have at least 2 entries: "
+			"The stationned point and the measured distance.");
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		// look up the stationed point
+		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+
+
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
+		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+
+		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
+		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
+		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
+
+		// Store  the measured value
+		TECVE ecve(stationPoint, scaleInstr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
+		ecve.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		ecve.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+
+		ecve.line = line;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kECVE);
+		TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
+		ecveROMLatest.measECVE.emplace_back(ecve);
+
+	}
+}
 
 void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 {

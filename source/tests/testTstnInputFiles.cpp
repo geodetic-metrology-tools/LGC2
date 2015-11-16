@@ -566,16 +566,6 @@ namespace tut
         ensure_equals("V0 calculation should match for total station ST2",V0Calc, 199, 1e-8); 
 	}
 
-	template<>
-	template<>
-	void object::test<8>()
-	{
-		set_test_name("ECTH Test");
-		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testECTH.lgc2",
-					 getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testECTH.out");
-
-		proj.exec();
-	}
 }
 #endif
 

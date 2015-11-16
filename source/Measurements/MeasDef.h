@@ -4,9 +4,7 @@
 #include "TAMeas.h"
 #include <bitset>
 
-#include "TAdjustablePlane.h"
-#include "TAdjustableAngle.h"
-#include "TAdjustableHelmertTransformation.h"
+
 #include "UEOIndices.h"
 
 /// Two angle values of a PLR3D measurement
@@ -152,6 +150,42 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 
 		/// Returns the last LS-matrices equation index of this measurement, TECHO introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex()const {return getFirstEquationIndex();}
+};
+
+/*!
+\ingroup Measurements
+\brief Offset to a vertical plane (TECSP) made by a scale instrument (TInstrumentData::TSCALE).
+*/
+class TECSP : public TAScalarMeas<TInstrumentData::TSCALE> {
+public:
+	/*!@name Constructors */
+	//@{
+	TECSP(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr) :
+		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
+	TECSP(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
+		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement, TECSP introduces 1 equation.*/
+	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
+};
+
+/*!
+\ingroup Measurements
+\brief Offset to a vertical plane (ECVE) made by a scale instrument (TInstrumentData::TSCALE).
+*/
+class TECVE : public TAScalarMeas<TInstrumentData::TSCALE> {
+public:
+	/*!@name Constructors */
+	//@{
+	TECVE(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr) :
+		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
+	TECVE(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
+		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement, TECVE introduces 1 equation.*/
+	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
 };
 
 ///////////////////////////////////////////////////////////////////////////
