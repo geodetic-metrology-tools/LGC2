@@ -3,9 +3,10 @@
 
 #include "TAMeas.h"
 #include <bitset>
-
-
 #include "UEOIndices.h"
+
+//--------------------------  TSTN measurement--------------------------------------------
+
 
 /// Two angle values of a PLR3D measurement
 enum EPLR3DAngles {
@@ -110,9 +111,9 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 
 };
-///////////////////////////////////////////////////////////////////////////
-// TEDM 
-///////////////////////////////////////////////////////////////////////////
+
+
+//--------------------------  EDM measurement--------------------------------------------
 /*! 
 	\ingroup Measurements
 	\brief Spatial distance measurement (DSPT), made by an electronic distance metes instrument (TInstrumentData::TEDM).
@@ -131,9 +132,7 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 };
 
-///////////////////////////////////////////////////////////////////////////
-// TSCALE measurements
-///////////////////////////////////////////////////////////////////////////
+//--------------------------  SCALE measurement--------------------------------------------
 /*! 
 	\ingroup Measurements
 	\brief Offset to a vertical plane (ECHO) made by a scale instrument (TInstrumentData::TSCALE).
@@ -188,9 +187,7 @@ public:
 	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
 };
 
-///////////////////////////////////////////////////////////////////////////
-// Levelling measurements
-///////////////////////////////////////////////////////////////////////////
+//--------------------------  Levelling measurement--------------------------------------------
 /*! 
 	\ingroup Measurements
 	- DVER has no Target supplied with 0
@@ -286,7 +283,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 			shared_ptr<TDLEV::TDHOR> dhor;
 };
 
-
+//--------------------------  Orientation measurement--------------------------------------------
 /*! 
 	\ingroup Measurements
 	\brief  Gyro-Theodolite Azimuth (ORIE), also used for PDOR, which is also an ORIE measurement.
@@ -309,4 +306,66 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		//@}
 };
 
+
+/*!
+\ingroup Measurements
+\brief   PDOR, which is also an orientation measurement.
+*/
+class TPdorObs : public TAMeas<int>{
+public:
+	///Pointer to the fixed point
+	const TAdjustablePoint* calaPt;
+
+	///Pointer to the orientation point
+	const TAdjustablePoint* orientationPt;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/// DB comment after the measurement definition
+	std::string eolcomment;
+
+	/*!@name Constructors */
+	//@{
+	TPdorObs();
+	TPdorObs(const TAdjustablePoint& cala, const TAdjustablePoint& orientation, TAngle gis);
+	//@}
+
+	/*!@name Access methods*/
+	//@{
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+	/// Return if the pdor measurement is initialise or not
+	const bool isInitialised()const { return fIsInitialise; }
+
+	/// Return if the pdor measurement is initialise or not
+	const TAngle getBearing()const { return fbearing; }
+
+	/// Return if the pdor measurement is initialise or not
+	const TAngle& getSigma()const { return fSigmaObsVal; }
+
+	/// Returns residual of the observed angle
+	const TAngle& getAngleResidual()const { return fbearingResidual; }
+
+	//@}
+
+
+	/*!@name Settings */
+	//@{
+
+	/// Initialise the measurement
+	void Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis);
+
+	/// Sets a residual of observed angle
+	void setAngleResidual(const TAngle& a) { fbearingResidual = a; }
+	//@}
+	
+
+private:
+	// Standard deviation of the observed value
+	TAngle fSigmaObsVal;
+	TAngle fbearing;
+	TAngle fbearingResidual;
+	bool fIsInitialise;
+};
 #endif

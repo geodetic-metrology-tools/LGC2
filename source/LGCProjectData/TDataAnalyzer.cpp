@@ -176,13 +176,50 @@ bool TDataAnalyzer::dataConsistent(){
 		}
 	}
 
-	if (pdor.isActive() && nCALAinROOT != 1){
-		consistent = false;
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be exactly one point defined under CALA in a ROOT node."; 
-	}
-	else{
-		//Initialize the PDOR measurement
+	// if PDOR keyword is present
+	if (pdor.isActive())
+	{
+		//
+		if (nCALAinROOT != 1)
+		{
+			consistent = false;
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be exactly one point defined under CALA in a ROOT node.";
+		}
+		else
+		{
+			// Keep point to set the pdor measurement
+			TAdjustablePoint* cala;
+			for (auto& itPoint : fData.getPoints())
+				if (itPoint.isFixed())
+				{
+					cala = &itPoint;
+					break;
+				}
 
+			TAdjustablePoint& oriPt = fData.getPoints().getObject(pdor.fptname);
+
+			//initialize pdor measurement function
+			auto initialize = [&](TPdorObs& pdor_meas) {
+				
+				pdor_meas.Initialise(*cala, oriPt, pdor.fgis);
+				pdor_meas.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+				pdor_meas.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+				fData.fUEOIndices.EIndex++;
+				fData.fUEOIndices.OIndex++;
+				fData.addToMeasurementNum(TMeasurementsGlobal::kPDOR);
+			};
+
+			// Go in root node to initialize pdor
+			if (fData.getCurrentNode().isROOTNode() && !fData.getCurrentNode().measurements.fPDOR.isInitialised())
+				initialize(fData.getCurrentNode().measurements.fPDOR);
+			else
+				for (auto it(fTree.begin()); it != fTree.end(); ++it)
+					if (it.node->data->isROOTNode() && !it.node->data->measurements.fPDOR.isInitialised())
+					{
+						initialize(it.node->data->measurements.fPDOR);
+						break;
+					}
+		}
 	}
 
 	//Run through length collection and check whether all objects were initialized, assign unknown indices

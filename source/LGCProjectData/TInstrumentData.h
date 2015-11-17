@@ -74,8 +74,8 @@ class TInstrumentData {
 				std::string ID;
 				TReal sigmaX;	               // [] unitless
 				TReal sigmaY;	               // [] unitless
-            TLength sigmaDist;	         // [m]
-            TLength sigmaTargetCentering; // [m]
+				TLength sigmaDist;	         // [m]
+				TLength sigmaTargetCentering; // [m]
 			};
 
 			/// allows the lookup of targets for this total station based on the target ID.
@@ -86,14 +86,14 @@ class TInstrumentData {
 			std::string ID;
 			std::string defTarget;
 			TLength instrHeight;         // [m]
-         TLength sigmaInstrHeight;    // [m]
-         TLength sigmaInstrCentering; // [m]
+			TLength sigmaInstrHeight;    // [m]
+			TLength sigmaInstrCentering; // [m]
 
 			struct TTarget {
-				std::string ID;
+			std::string ID;
             TLength sigmaDSpt;            // [m] sigma of the distance
             TLength ppmDSpt;              // [m]
-				bool  distCorrectionUnknown;
+			bool  distCorrectionUnknown;
             TLength distCorrectionValue;  // [m]
             TLength sigmaDCorr;           // [m]
             TLength sigmaTargetCentering; // [m]
@@ -114,7 +114,7 @@ class TInstrumentData {
 			TAdjustableAngle* collAngleAdjustable;
 
 			struct TTarget {
-				std::string ID;
+			std::string ID;
             TLength sigmaD;               // [m]
             TLength ppmD;                 // [m]
             TLength distCorrectionValue;  // [m]

@@ -38,6 +38,9 @@ struct TMeasurements {
 	/// All ECVE measurements in which they appeared in the input file
 	std::vector<TECVEROM> fECVE;
 
+	///pdor measurement in which they appeared in the input file
+	TPdorObs fPDOR;
+
 };
 
 #endif // MEASUREMENTS_H_

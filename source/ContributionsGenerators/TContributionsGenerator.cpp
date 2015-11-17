@@ -948,6 +948,51 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	
 }
 
+PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdorObs)
+{
+	TPositionVector fixedPt = pdorObs.calaPt->getEstimatedValue();
+	const TLOR2LOR& fixedPtLor2RootTrafo = getLORTransformation(pdorObs.calaPt->getFrameTreePosition(), fTree->begin()); // Transform target to ROOT
+	fixedPtLor2RootTrafo.transform(fixedPt);
+
+	TPositionVector oriPt = pdorObs.orientationPt->getEstimatedValue();
+	const TLOR2LOR& oriPtLor2RootTrafo = getLORTransformation(pdorObs.orientationPt->getFrameTreePosition(), fTree->begin()); // Transform station to ROOT 
+	oriPtLor2RootTrafo.transform(oriPt);
+
+
+	TReal xFix = fixedPt.getX().getMetresValue();
+	TReal yFix = fixedPt.getY().getMetresValue();
+
+	TReal xRef = oriPt.getX().getMetresValue();
+	TReal yRef = oriPt.getY().getMetresValue();
+
+	TReal D = dist(xFix, yFix, xRef, yRef);
+	if (D < nullLimit)
+		throw std::logic_error("TContributionsGenerator::getPDORContrib: Division by zero because observation points have identical coordinates.");
+
+	//gets calc value and sigma
+	TAngle calcmeas = TAngle::aTan2((xRef - xFix), (yRef - yFix));
+
+	//CALCULATION OF THE CONTRIBUTION IN LOCAL INSTRUMENT SYSTEM	
+	TReal a = (yRef - yFix) / powq(D, 2);//xFix coefficient
+	TReal b = -(xRef - xFix) / powq(D, 2);//yFix coefficient
+	TReal c = 0.0;
+
+	//Station can be defined anywhere, get point contributions and transformations contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fFixPtTransformContrib;
+	TFreeVector fixedPointContrib = getPointContributions(fixedPtLor2RootTrafo, -a, -b, -c);
+	addTransformationsContributions(fixedPtLor2RootTrafo, fixedPt, -a, -b, -c, fFixPtTransformContrib);
+
+	//Target can be defined anywhere, get point contributions and transformations contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
+	TFreeVector oriPointContrib = getPointContributions(oriPtLor2RootTrafo, a, b, c);
+	addTransformationsContributions(oriPtLor2RootTrafo, oriPt, a, b, c, fRefPtTransformContrib);
+	
+	return{ fixedPointContrib, oriPointContrib, fFixPtTransformContrib, fRefPtTransformContrib, calcmeas };
+
+}
+
+//PDOR contribution
+
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
 //////////////////////////////////////////////////////////////////////
@@ -1724,4 +1769,34 @@ TReal	TContributionsGenerator::getDVERCalcMeas(const TDVER& dver){
 		return target.getZ().getMetresValue() - station.getZ().getMetresValue() - dver.getDistanceCorrection();
 
 	}
+}
+
+TReal TContributionsGenerator::getPDORCalcMeas(const TPdorObs& pdorObs){
+	TPositionVector fixedPt = pdorObs.calaPt->getEstimatedValue();
+	const TLOR2LOR& fixedPtLor2RootTrafo = getLORTransformation(pdorObs.calaPt->getFrameTreePosition(), fTree->begin()); // Transform target to ROOT
+	fixedPtLor2RootTrafo.transform(fixedPt);
+
+	TPositionVector oriPt = pdorObs.orientationPt->getEstimatedValue();
+	const TLOR2LOR& oriPtLor2RootTrafo = getLORTransformation(pdorObs.orientationPt->getFrameTreePosition(), fTree->begin()); // Transform station to ROOT 
+	oriPtLor2RootTrafo.transform(oriPt);
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(pdorObs.calaPt->getName(), fixedPt, oriPt);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	TReal xFix = fixedPt.getX().getMetresValue();
+	TReal yFix = fixedPt.getY().getMetresValue();
+
+	TReal xRef = oriPt.getX().getMetresValue();
+	TReal yRef = oriPt.getY().getMetresValue();
+
+	TReal D = dist(xFix, yFix, xRef, yRef);
+	if (D < nullLimit)
+		throw std::logic_error("TContributionsGenerator::getPDORContrib: Division by zero because observation points have identical coordinates.");
+
+	//gets calc value and sigma
+	return TAngle::aTan2((xRef - xFix), (yRef - yFix));
 }

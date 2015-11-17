@@ -38,3 +38,33 @@ TDLEV::TDLEV(const TAdjustablePoint& targetPos, TInstrumentData::TLEVEL::TTarget
 			TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(targetPos, target, measValue),
 			dhor(nullptr)
 	{}
+
+///////////////////////////////////////////////////////////
+//////Orientation measurements
+///////////////////////////////////////////////////////////
+TPdorObs::TPdorObs(const TAdjustablePoint& cala, const TAdjustablePoint& orientation, TAngle gis) :
+TAMeas<int>(orientation, 0),
+calaPt(&cala),
+orientationPt(&orientation),
+fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
+fbearing(gis),
+fIsInitialise(true)
+{}
+
+TPdorObs::TPdorObs(): 
+calaPt(nullptr),
+orientationPt(nullptr),
+fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
+fbearing(NO_VALf),
+TAMeas<int>(*orientationPt, 0),
+fIsInitialise(false),
+fbearingResidual(NO_VALf)
+{}
+
+void TPdorObs::Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis)
+{
+	calaPt = &cala;
+	orientationPt = &ori;
+	fbearing = gis;
+	fIsInitialise = true;
+}

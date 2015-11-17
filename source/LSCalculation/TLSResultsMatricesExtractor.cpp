@@ -114,6 +114,9 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 
 			//Extract vertical distance DVER residuals
 			extractDVERObs(rm, itTree.node->data->measurements.fDVER);
+
+			//Extract pdor residuals
+			extractPDORObs(rm, itTree.node->data->measurements.fPDOR);
 		}
 	}
 	catch(std::exception const & excp) {
@@ -300,6 +303,14 @@ void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, s
 		else
 			throw std::runtime_error("DVER observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
+}
+
+void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices& rm, TPdorObs& pdorObs){
+	MatrixIndex obsUidx = pdorObs.getFirstObservationIndex();
+	if (obsUidx < rm.getResidualsVctr()->size())
+		pdorObs.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx), TAngle::EUnits::kRadians));
+	else
+		throw std::runtime_error("PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
 
 ///////////////////////////////////////////////////////////////

@@ -45,7 +45,6 @@ void TKeyLEP::parse(const std::vector<std::string>&, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-
 void TKeySPHE::parse(const std::vector<std::string>&, int) {
 	// nothing to parse, using spherical reference frame
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)

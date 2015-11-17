@@ -83,6 +83,9 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 				addORIEContributions(itORIE, matrices);
 
 			addDVERContribution(itTree.node->data->measurements.fDVER, matrices);
+
+			if (itTree.node->data->measurements.fPDOR.isInitialised())
+				addPDORContributions(itTree.node->data->measurements.fPDOR, matrices);
 		}
 	}
 	catch (std::exception const & excp)
@@ -774,6 +777,57 @@ void  TLSInputMatricesFiller::addDVERContribution(const std::vector<TDVER>& dver
 	}
 }
 
+void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSInputMatrices*  matrices)
+{
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	PtOrientationContrib contributions;
+
+	eqIdx = pdorObs.getFirstEquationIndex();
+	obsIdx = pdorObs.getFirstObservationIndex();
+
+	contributions = fCGenerator.getPDORContrib(pdorObs); //Get the observation contribution
+
+	//Add point contribution for the point of orientation
+	// Add target contributions
+	if (!pdorObs.orientationPt->isFixed())
+		isProcessOK = isProcessOK && addPointContribution(*pdorObs.orientationPt, contributions.oriPointContrib, eqIdx, matrices);
+
+	// Add contributions of transformations parameters 
+	for (auto itTgTransform(contributions.fRefPtTransformContrib.begin()); itTgTransform != contributions.fRefPtTransformContrib.end(); ++itTgTransform){
+		if (!itTgTransform->first.isFixed())
+			isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+	}
+
+	// Adding contributions of STATION transformation's parameters 
+	for (auto itStTransform(contributions.fFixPtTransformContrib.begin()); itStTransform != contributions.fFixPtTransformContrib.end(); ++itStTransform){
+		if (!itStTransform->first.isFixed())
+			isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
+	}
+
+	// Adding contributions of TARGET transformation's parameters 
+	for (auto itTgTransform(contributions.fRefPtTransformContrib.begin()); itTgTransform != contributions.fRefPtTransformContrib.end(); ++itTgTransform){
+		if (!itTgTransform->first.isFixed())
+			isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+	}
+
+	// Add Misclosure vector's contribution 
+	isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (pdorObs.getBearing().getRadiansValue() - contributions.calcmeas));
+
+	// Add weight unknown matrix element
+	if (pdorObs.getSigma() < nullLimit)
+		throw std::runtime_error("Error when filling pdor contribution, variance is zero or too small, can not set weight matrix element.");
+	else{
+		isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / pow2(pdorObs.getSigma().getRadiansValue()));
+		isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(pdorObs.getSigma().getRadiansValue()));
+	}
+
+	isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+	if (!isProcessOK)
+		throw std::runtime_error("Error occurred during filling input design matrices of PDOR measurement.");
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

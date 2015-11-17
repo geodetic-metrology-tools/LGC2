@@ -158,26 +158,6 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	TAKeyWord* dhor  = new TKeyDHOR(project);
 	TAKeyWord* plr3d = new TKeyPLR3D(project);
 
-/*SET hierarchical structure -- CURRENTLY IT IS NOT USED, REPLACED BY THE LIST OF PROHIBITED KEYWORDS -- KeywordRights.h*/
-/* KEPT STILL HERE IN CASE IT WAS NEEDED IN THE FUTURE*/
-
-	//tstn->addChild(v0);
-	//v0->addChild(angl);
-	//v0->addChild(zend);
-	//v0->addChild(dist);
-	//v0->addChild(ecth);
-	//v0->addChild(dhor);
-	//v0->addChild(plr3d);
-
-	///*set hierarchical structure*/
-	//v0->setParent(tstn);
-	//zend->setParent(v0);
-	//angl->setParent(v0);
-	//dist->setParent(v0);
-	//ecth->setParent(v0);
-	//dhor->setParent(v0);
-	//plr3d->setParent(v0);
-
 	/*add keywords to interpreters*/
 	finterpreters.emplace_back(UPK(tstn));
 	finterpreters.emplace_back(UPK(v0));

@@ -7,6 +7,7 @@ class TLGCData;
 class TLSResultsMatrices;
 class TUVD;
 class TUVEC;
+class TPdorObs;
 struct TLEVEL;
 struct TECHOROM;
 struct TECSPROM;
@@ -122,6 +123,8 @@ private:
 		/// Sets the distance measurement residual for a SCALE (ECTH, ECVE, ECSP).
 		void extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TSCALE>& scaleMeas);
 
+		/// Sets the PDOR measurement residual.
+		void extractPDORObs(const TLSResultsMatrices& rm, TPdorObs& pdorObs);
 	//@}
 
 

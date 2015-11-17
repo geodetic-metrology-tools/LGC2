@@ -10,15 +10,17 @@
 #include "TTSTN.h"
 #include "TLOR2LOR.h"
 
+class TUVEC;
+class TUVD;
+class TPdorObs;
 struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
 struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
-class TUVEC;
-class TUVD;
 struct TCAM;
+
 
 /*!
 	\ingroup ContributionsGenerators
@@ -116,6 +118,9 @@ public:
 		/// Returns contribution for the Gyro-Theodolithe measurement (TORIE)
 		AnglMeasContrib	getOrieContrib(const TORIEROM& orieROM, const TORIE& orie);
 
+		///  Returns the contribution for a pdor measurement
+		PtOrientationContrib	getPDORContrib(const TPdorObs& pdorObs);
+
 	//@}
 
 
@@ -168,6 +173,9 @@ public:
 
 		/// Returns the the DVER measurement calculated meas in meter [m]
 		TReal	getDVERCalcMeas(const TDVER& dver);
+
+		/// Returns the the pdor measurement calculated meas in radians [rad]
+		TReal getPDORCalcMeas(const TPdorObs& pdorObs);
 
 	//@}
 private:
