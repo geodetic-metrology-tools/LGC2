@@ -33,11 +33,13 @@ public:
 		/// Write results header
 		void writeDVERResultsHeader();
 		void writeORIEResultsHeader();
+		void writePDORResultsHeader();
 	//@}
 
 	/*!@name Results */
 	//@{
 		/// Write results data
+		void writePDORResults(const TPdorObs& fPDOR);
 		void writeDVERResults(const std::vector<TDVER>& fDVER);
 		void writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos);
 		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);

@@ -172,7 +172,74 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 
 	(*stream) << endl;
 }
+
+void TOtherMeasurentWriter::writePDORResultsHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeString(nameWidth, "CALA POINT");
+	(*stream).writeString(nameWidth, "POINT");
+	(*stream).writeString(obsWidth, "OBSERVE"); //observed bearing
+	(*stream).writeString(obsWidth, "CALCULE"); //estimated bearing 
+	(*stream).writeString(obsResWidth, "RESIDU"); //residual
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeString(nameWidth, "");
+	(*stream).writeString(nameWidth, "");
+	(*stream).writeString(obsWidth, "(GON)"); //observed bearing
+	(*stream).writeString(obsWidth, "(GON)"); //estimated bearing
+	(*stream).writeString(obsResWidth, "(CC)"); //residual
+	(*stream) << endl;
+}
+
 //------------------ Result data---------------------------------------------------------------------------
+void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					anglePrecision = getAnglePrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	//first line
+	(*stream) << TABs;
+	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kPDOR), 1);
+	(*stream) << endl;
+
+	writePDORResultsHeader(); // write the title line for the observations
+
+	(*stream) << TABs;
+	//write CALA POSITION
+	(*stream).writeString(nameWidth, fPDOR.calaPt->getName());
+	//write ORI POSITION
+	(*stream).writeString(nameWidth, fPDOR.orientationPt->getName());
+
+	//write the observed bearing
+	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue());
+
+	//write the estimated bearing
+	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue() + fPDOR.getAngleResidual().getGonsValue());
+
+	//write the residual
+	(*stream).writeDouble(obsResWidth, angleResPrecision, fPDOR.getAngleResidual().getSignedCCValue());
+	(*stream) << endl<<endl;
+	(*stream) << endl;
+}
+
 void TOtherMeasurentWriter::writeDVERResults(const std::vector<TDVER>& fDVER)
 {
 TAStreamFormatter*	stream = getStream();

@@ -253,42 +253,73 @@ void    TResultsFileWriter::writeDataSummary()
  
  
  
-    //LECTURE DES OBSERVATIONS ANGULAIRES
+    //LECTURE DES OBSERVATIONS
     int fNumHorAng = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kANGL);
     int fNumZenDist = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kZEND);
     int fNumDistMeas = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDIST);
     int fNumPLR3D = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPLR3D);
+	int fNumECTH = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECTH);
+	int fNumDHOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDHOR);
+	int fNumDSPT = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDSPT);
+	int fNumUVEC = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVEC);
+	int fNumUVD = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVD);
     int fNumDLEV = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEV);
-    int fNumDHOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDHOR);
+	int fNumDVER = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDVER);
     int fNumECHO = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECHO);
+	int fNumECSP = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECSP);
+	int fNumECVE = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECVE);
     int fNumORIE = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kORIE);
+	int fNumPDOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPDOR);
+	int fNumRADI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI);
  
     (*stream)<<"MEASUREMENTS SUMMARY:" << endl;
     if(fNumHorAng != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kANGL), fNumHorAng);    
  
-    //LECTURE DES DISTANCES ZENITHAL
     if(fNumZenDist != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kZEND), fNumZenDist);    
  
-    //LECTURE DES DISTANCES MEASURE
     if(fNumDistMeas != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDIST), fNumDistMeas);    
     
     if(fNumPLR3D != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kPLR3D), fNumPLR3D);
+
+	if (fNumECTH != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECTH), fNumECTH);
+
+	if (fNumDHOR != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDHOR), fNumDHOR);
+
+	if (fNumUVEC != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kUVEC), fNumUVEC);
+
+	if (fNumUVD != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kUVD), fNumUVD);
+
+	if (fNumDSPT != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDSPT), fNumDSPT);
  
     if(fNumDLEV != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDLEV), fNumDLEV);
  
-    if(fNumDHOR != 0)
-        writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDHOR), fNumDHOR);
+	if (fNumDVER != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDVER), fNumDVER);
  
     if(fNumECHO != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECHO), fNumECHO);
+	
+	if (fNumECSP != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECSP), fNumECSP);
+	
+	if (fNumECVE != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECVE), fNumECVE);
  
-    if(fNumORIE != 0)
-        writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kORIE), fNumORIE);
+    if(fNumPDOR != 0)
+        writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kPDOR), fNumPDOR);
+
+	if (fNumRADI != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kRADI), fNumRADI);
  
  
     //FIN DE FICHIER
@@ -330,8 +361,10 @@ void    TResultsFileWriter::writeCalcDataSummary()
  
     //NOMBRE D'OBSERVATIONS
     stream<<"             NOMBRE D'OBSERVATIONS =  "<< fProjectData->fUEOIndices.OIndex;
-    if (fProjectData->getConfig().pdor.isActive())    //originaly there was if ORIE is used, but below is PDOR, so it is probably the same
-        stream<<" (PDOR INCLUS)";
+	if (fProjectData->getConfig().pdor.isActive())
+	{
+		stream << " (PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
+	}
     stream<<endl<<endl;
  
     //NOMBRE D'INCONNUES

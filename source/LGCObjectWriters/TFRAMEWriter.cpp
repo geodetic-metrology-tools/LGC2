@@ -67,6 +67,10 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TLEVELWriter levelWriter(*stream);
 	TOtherMeasurentWriter otherMeasWriter(*stream);
 
+	//If PDOR
+	if (frameIt->get()->measurements.fPDOR.isInitialised())
+		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
+
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 		tstnWriter.writeTSTNResults(itTSTN);
 
@@ -77,17 +81,27 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		levelWriter.writeLEVELResults(itLEVEL);
 
 	//No instrument for DVER, so no loop to have each instrument.
-	if (! frameIt->get()->measurements.fDVER.empty())
+	if (!frameIt->get()->measurements.fDVER.empty())
 		otherMeasWriter.writeDVERResults(frameIt->get()->measurements.fDVER);
+
+	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+		edmWriter.writeEDMResults(itEDM);
+
+	for (auto& itECHO : frameIt->get()->measurements.fECHO)
+		scaleWriter.writeECHOResults(itECHO);
+
+	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+		scaleWriter.writeECSPResults(itECSP);
+	
+	for (auto& itECVE : frameIt->get()->measurements.fECVE)
+		scaleWriter.writeECVEResults(itECVE);
 
 	for (auto& itORIE:frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
 
-	for(auto& itEDM:frameIt->get()->measurements.fEDM)
-		edmWriter.writeEDMResults(itEDM);
-
-	for(auto& itECHO:frameIt->get()->measurements.fECHO)
-		scaleWriter.writeECHOResults(itECHO);
+	//for (auto& itRADI : frameIt->get()->measurements.fRADI)
+	//	otherMeasWriter.writeRADIResults(itRADI);
+	
 }
 
 
@@ -114,6 +128,10 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		TLEVELWriter levelWriter(*stream);
 		TOtherMeasurentWriter otherMeasWriter(*stream);
 
+		//If PDOR
+		if (frameIt->get()->measurements.fPDOR.isInitialised())
+			otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
+
 		for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 			tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
@@ -129,12 +147,22 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		for(auto& itECHO:frameIt->get()->measurements.fECHO)
 			scaleWriter.writeECHOSIMUResults(itECHO);
 
+		//NOT YET IMPLEMENTED
+		//for (auto& itECSP : frameIt->get()->measurements.fECSP)
+		//	scaleWriter.writeECSPSIMUResults(itECSP);
+		//
+		//for (auto& itECVE : frameIt->get()->measurements.fECVE)
+		//	scaleWriter.writeECVESIMUResults(itECVE);
+
 		//No instrument for DVER, so no loop to have each instrument.
 		if (!frameIt->get()->measurements.fDVER.empty())
 			otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
 
 		for (auto& itORIE : frameIt->get()->measurements.fORIE)
 			otherMeasWriter.writeORIESIMUResults(itORIE);
+
+		//for (auto& itRADI : frameIt->get()->measurements.fRADI)
+		//	otherMeasWriter.writeRADISIMUResults(itRADI);
 	}
 }
 
@@ -493,9 +521,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 
 	//ANGL
 	bool isANGL = false;
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{	
-		for(auto const ItRoms : itTSTN->roms)
+		for(auto const ItRoms : itTSTN.roms)
 		{
 			if(ItRoms.measANGL.size() > 0){
 				
@@ -505,16 +533,16 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeANGLReliabilityHeader();
 					isANGL = true;
 				}
-				tstnWriter.writeANGLReliabilityData(*itTSTN, fProjectData->getStatistics(), ItRoms.measANGL);				
+				tstnWriter.writeANGLReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measANGL);				
 			}		
 		}
 	}
 
 	//ZEND
 	bool isZEND = false;
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{	
-		for(auto const ItRoms : itTSTN->roms)
+		for(auto const ItRoms : itTSTN.roms)
 		{	
 			if(ItRoms.measZEND.size() > 0){
 				if (isZEND == false)
@@ -523,16 +551,16 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeZENDReliabilityHeader();
 					isZEND = true;
 				}
-				tstnWriter.writeZENDReliabilityData(*itTSTN, fProjectData->getStatistics(), ItRoms.measZEND);			
+				tstnWriter.writeZENDReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measZEND);			
 			}
 		}
 	}
 
 	//DIST
 	bool isDIST = false;
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{
-		for(auto const ItRoms : itTSTN->roms)
+		for(auto const ItRoms : itTSTN.roms)
 		{
 			if(ItRoms.measDIST.size() > 0){
 				
@@ -542,16 +570,16 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeDISTReliabilityHeader();
 					isDIST = true;
 				}
-				tstnWriter.writeDISTReliabilityData(*itTSTN, fProjectData->getStatistics(), ItRoms.measDIST);
+				tstnWriter.writeDISTReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measDIST);
 			}
 		}
 	}
 
 	//PLR
 	bool isPLR = false;
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{	
-		for(auto const ItRoms : itTSTN->roms)
+		for(auto const ItRoms : itTSTN.roms)
 		{
 			if(ItRoms.measPLR3D.size() > 0){
 				
@@ -561,16 +589,16 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writePLRReliabilityHeader();
 					isPLR = true;
 				}
-				tstnWriter.writePLRReliabilityData(*itTSTN, fProjectData->getStatistics(), ItRoms.measPLR3D);
+				tstnWriter.writePLRReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measPLR3D);
 			}
 		}
 	}
 
 	//ECTH
 	bool isECTH = false;
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{
-		for(auto const ItRoms : itTSTN->roms)
+		for(auto const ItRoms : itTSTN.roms)
 		{
 			if(ItRoms.measECTH.size() > 0){
 				
@@ -580,16 +608,16 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeECTHReliabilityHeader();
 					isECTH = true;
 				}
-				tstnWriter.writeECTHReliabilityData(*itTSTN, fProjectData->getStatistics(), ItRoms.measECTH);
+				tstnWriter.writeECTHReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measECTH);
 			}
 		}
 	}
 
 	//DHOR
 	bool isDHOR = false;
-	for(auto itTSTN(frameIt->get()->measurements.fTSTN.begin()); itTSTN != frameIt->get()->measurements.fTSTN.end(); ++itTSTN)
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{
-		for(auto const ItRoms : itTSTN->roms)
+		for(auto const ItRoms : itTSTN.roms)
 		{
 			if(ItRoms.measDHOR.size() > 0){
 				
@@ -599,7 +627,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeDHORReliabilityHeader();
 					isDHOR = true;
 				}
-				tstnWriter.writeDHORReliabilityData(*itTSTN, fProjectData->getStatistics(), ItRoms.measDHOR);
+				tstnWriter.writeDHORReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measDHOR);
 			}
 		}
 	}
@@ -613,9 +641,9 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 
 	//UVEC
 	bool isuvec = false;
-	for(auto itCAM(frameIt->get()->measurements.fCAM.begin()); itCAM != frameIt->get()->measurements.fCAM.end(); ++itCAM)
+	for(auto& itCAM:frameIt->get()->measurements.fCAM)
 	{
-		if(itCAM->measUVEC.size() > 0){
+		if(itCAM.measUVEC.size() > 0){
 				
 			if (isuvec==false)
 			{
@@ -623,15 +651,15 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 				camWriter.writeUVECReliabilityHeader();
 				isuvec = true;
 			}
-			camWriter.writeUVECReliabilityData(*itCAM, fProjectData->getStatistics());
+			camWriter.writeUVECReliabilityData(itCAM, fProjectData->getStatistics());
 		}	
 	}
 
 	//UVD
 	bool isuvd = false;
-	for(auto itCAM(frameIt->get()->measurements.fCAM.begin()); itCAM != frameIt->get()->measurements.fCAM.end(); ++itCAM)
+	for(auto& itCAM:frameIt->get()->measurements.fCAM)
 	{
-		if(itCAM->measUVD.size() > 0){
+		if(itCAM.measUVD.size() > 0){
 				
 			if (isuvd==false)
 			{
@@ -639,7 +667,7 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 				camWriter.writeUVDReliabilityHeader();
 				isuvd = true;
 			}
-			camWriter.writeUVDReliabilityData(*itCAM, fProjectData->getStatistics());
+			camWriter.writeUVDReliabilityData(itCAM, fProjectData->getStatistics());
 		}	
 	}
 		
@@ -653,16 +681,16 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 
 	//DLEV
 	bool isdlev = false;
-	for(auto itLEV(frameIt->get()->measurements.fLEVEL.begin()); itLEV != frameIt->get()->measurements.fLEVEL.end(); ++itLEV)
+	for(auto& itLEV:frameIt->get()->measurements.fLEVEL)
 	{
-		if(itLEV->measDLEV.size() > 0){	
+		if(itLEV.measDLEV.size() > 0){	
 			if (isdlev==false)
 			{
 				(*stream)<<"DLEV observations"<<endl;
 				levelWriter.writeReliabilityHeader();
 				isdlev = true;
 			}
-			levelWriter.writeDLEVReliabilityData(*itLEV, fProjectData->getStatistics());
+			levelWriter.writeDLEVReliabilityData(itLEV, fProjectData->getStatistics());
 		}	
 	}
 
@@ -670,9 +698,9 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 
 	//DHOR
 	bool isdhor = false;
-	for(auto itLEV(frameIt->get()->measurements.fLEVEL.begin()); itLEV != frameIt->get()->measurements.fLEVEL.end(); ++itLEV)
+	for(auto& itLEV:frameIt->get()->measurements.fLEVEL)
 	{
-		if(itLEV->hasDHOR){
+		if(itLEV.hasDHOR){
 				
 			if (isdhor==false)
 			{
@@ -680,7 +708,7 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 				levelWriter.writeReliabilityHeader();
 				isdhor = true;
 			}
-			levelWriter.writeDHORReliabilityData(*itLEV, fProjectData->getStatistics());
+			levelWriter.writeDHORReliabilityData(itLEV, fProjectData->getStatistics());
 		}	
 	}
 }
@@ -708,7 +736,35 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 	}
 
 	//ECSP
+	bool isecsp = false;
+	for (auto& itECSP:frameIt->get()->measurements.fECSP)
+	{
+		if (itECSP.measECSP.size() > 0){
+
+			if (isecsp == false)
+			{
+				(*stream) << "ECSP observations" << endl;
+				scaleWriter.writeECSPReliabilityHeader();
+				isecsp = true;
+			}
+			scaleWriter.writeECSPReliabilityData(itECSP, fProjectData->getStatistics(), itECSP.measECSP);
+		}
+	}
 	//ECVE
+	bool isecve = false;
+	for (auto& itECVE:frameIt->get()->measurements.fECVE)
+	{
+		if (itECVE.measECVE.size() > 0){
+
+			if (isecve == false)
+			{
+				(*stream) << "ECVE observations" << endl;
+				scaleWriter.writeECVEReliabilityHeader();
+				isecve = true;
+			}
+			scaleWriter.writeECVEReliabilityData(itECVE, fProjectData->getStatistics(), itECVE.measECVE);
+		}
+	}
 
 }
 

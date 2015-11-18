@@ -179,21 +179,27 @@ bool TDataAnalyzer::dataConsistent(){
 	// if PDOR keyword is present
 	if (pdor.isActive())
 	{
-		//
+		//keep the first fixed point in root. Now we give a warning message if more than 1 point is CALA and not an error.
 		if (nCALAinROOT != 1)
 		{
-			consistent = false;
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be exactly one point defined under CALA in a ROOT node.";
+			//consistent = false;
+			//outputMessages << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be exactly one point defined under CALA in a ROOT node.";
+			outputMessages << TFileLogger::e_logType::LOG_WARNING << "PDOR keyword is used, there are more than one CALA defined in the ROOT node, the first one is used to calculate the PDOR measurement.";
 		}
 		else
 		{
 			// Keep point to set the pdor measurement
 			TAdjustablePoint* cala;
 			for (auto& itPoint : fData.getPoints())
-				if (itPoint.isFixed())
+				if (itPoint.isFixed() && itPoint.getFrameTreePosition().node->data->isROOTNode())
 				{
 					cala = &itPoint;
 					break;
+				}
+				else
+				{
+					consistent = false;
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be at least one point defined under CALA in a ROOT node.";
 				}
 
 			TAdjustablePoint& oriPt = fData.getPoints().getObject(pdor.fptname);

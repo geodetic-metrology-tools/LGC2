@@ -1,8 +1,7 @@
 #include "TLSResultsMatricesExtractor.h"
 #include "TLGCData.h"
 #include "TLSResultsMatrices.h"
-#include "TUVEC.h"
-#include "TUVD.h"
+
 
 
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData* fData):
@@ -50,24 +49,23 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			for(auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN){
 				// Iterate through every ROM of TSTN 
 				for(auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM){
-					for(auto itANGL(itROM->measANGL.begin()); itANGL != itROM->measANGL.end(); ++itANGL)
-						extractAngleObs(rm, *itANGL); //Extract residuals of ANGL
+					for(auto& itANGL:itROM->measANGL)
+						extractAngleObs(rm, itANGL); //Extract residuals of ANGL
 
-					for(auto itZEND(itROM->measZEND.begin()); itZEND != itROM->measZEND.end(); ++itZEND)
-						extractAngleObs(rm, *itZEND); //Extract residuals of ZEND, same extractor used for both angle measurements
+					for(auto& itZEND:itROM->measZEND)
+						extractAngleObs(rm, itZEND); //Extract residuals of ZEND, same extractor used for both angle measurements
 
-					for(auto itDIST(itROM->measDIST.begin()); itDIST != itROM->measDIST.end(); ++itDIST)
-						extractDistObs( rm, *itDIST); //Extract residuals of DIST
+					for(auto& itDIST:itROM->measDIST)
+						extractDistObs( rm, itDIST); //Extract residuals of DIST
 
-					for(auto itDHOR(itROM->measDHOR.begin()); itDHOR != itROM->measDHOR.end(); ++itDHOR)
-						extractDistObs(rm, *itDHOR); //Extract residuals of DHOR
-
-				
-					for(auto itPLR3D(itROM->measPLR3D.begin()); itPLR3D != itROM->measPLR3D.end(); ++itPLR3D)
-						extractPLR3DObs(rm, *itPLR3D);  //Extract residuals of PLR3D measurement
+					for(auto& itDHOR:itROM->measDHOR)
+						extractDistObs(rm, itDHOR); //Extract residuals of DHOR
+			
+					for(auto& itPLR3D:itROM->measPLR3D)
+						extractPLR3DObs(rm, itPLR3D);  //Extract residuals of PLR3D measurement
 					
-					for(auto itECTH(itROM->measECTH.begin()); itECTH != itROM->measECTH.end(); ++itECTH){
-						extractDistObs(rm, *itECTH);
+					for(auto& itECTH:itROM->measECTH){
+						extractDistObs(rm, itECTH);
 					}
 					
 				}
@@ -75,11 +73,11 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 
 			//Iterate through camera (CAM) measurements
 			for(auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM){
-				for(auto itUVD(itCAM->measUVD.begin()); itUVD != itCAM->measUVD.end(); ++itUVD)
-					extractUVDObs(rm, *itUVD);
+				for(auto& itUVD:itCAM->measUVD)
+					extractUVDObs(rm, itUVD);
 
-				for(auto itUVEC(itCAM->measUVEC.begin()); itUVEC != itCAM->measUVEC.end(); ++itUVEC)
-					extractUVECObs(rm, *itUVEC);
+				for(auto& itUVEC:itCAM->measUVEC)
+					extractUVECObs(rm, itUVEC);
 			}
 			
 
