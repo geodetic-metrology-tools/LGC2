@@ -48,7 +48,8 @@ calaPt(&cala),
 orientationPt(&orientation),
 fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
 fbearing(gis),
-fIsInitialise(true)
+fIsInitialise(true),
+fDefined(true)
 {}
 
 TPdorObs::TPdorObs(): 
@@ -58,13 +59,15 @@ fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
 fbearing(NO_VALf),
 TAMeas<int>(*orientationPt, 0),
 fIsInitialise(false),
+fDefined(false),
 fbearingResidual(NO_VALf)
 {}
 
-void TPdorObs::Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis)
+void TPdorObs::Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis, bool hasbearing)
 {
 	calaPt = &cala;
 	orientationPt = &ori;
 	fbearing = gis;
 	fIsInitialise = true;
+	fDefined = hasbearing;
 }

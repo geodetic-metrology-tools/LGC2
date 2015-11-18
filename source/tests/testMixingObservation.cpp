@@ -145,60 +145,158 @@ namespace tut
 		const TLGCData& dataset = calcul.getData();
 
 		/*part of results with lgc1
-		QFA____61610S   4171.0452667   6626.7459029   2400.7377227   0.0000   0.0000            0.0067   0.0029
-		QDA____61710E   4144.5519355   6614.5363895   2400.7563023   0.0000   0.0000            1.0555  -1.4605
-		QDA____61710S   4141.9847008   6613.3533489   2400.7579944   0.0000   0.0000            1.0908  -1.5211
-		QFA____61810E   4115.4924821   6601.1429977   2400.7751578   0.0000   0.0000            2.4821  -3.9223
-		QFA____61810S   4112.9252145   6599.9598266   2400.7765458   0.0000   0.0000            2.5545  -4.0734
-		QDA____61910E   4086.4324861   6587.7507845   2400.7949119   0.0000   0.0000            3.5161  -5.5255
-		QDA____61910S   4083.8656270   6586.5680576   2400.7967353   0.0000   0.0000            3.4670  -5.4224
-		VEBZ___61632E   4169.5733559   6625.9904680   2400.5870009   0.0000   0.0000            3.5759  -6.9920
-		VEBZ___61632S   4169.3916727   6625.9069384   2400.5871222   0.0000   0.0000            3.6227  -7.0116
-		VEBY___61638E   4166.0207081   6624.3574698   2400.5893401   0.0000   0.0000            3.6981  -7.2202
-		VEBY___61638S   4165.8389414   6624.2739851   2400.5894612   0.0000   0.0000            3.6614  -7.1949
-		ZS_____61638E   4165.3438480   6624.0463687   2400.7760412   0.0000   0.0000            3.7780  -7.2713
-		ZS_____61638S   4162.9632494   6622.9521406   2400.7776071   0.0000   0.0000            3.8094  -7.4294
+		QFA____61610S   4176.4377368   6627.9083784   2400.7350565   0.2732   0.1101          5392.4768 1162.4784          
+		QDA____61710E   4205.6083632   6627.6994929   2400.7261137   1.4187   0.4154          61057.4832 13161.6429          
+		QDA____61710S   4208.4349988   6627.6791832   2400.7251390   1.4448   0.4464          66451.3888 14324.3132          
 		...
-		VEBX___61778E   4124.7179673   6605.3350335   2400.6164936   0.0000   0.0000            4.7773  -9.6365
-		VEBX___61778S   4124.5364987   6605.2509459   2400.6166136   0.0000   0.0000            4.8887  -9.8941
-		MST____61779E   4124.1944636   6605.0926649   2400.8030896   0.0000   0.0000            5.1636 -10.2251
-		MST____61779S   4122.1241999   6604.1374905   2400.8044452   0.0000   0.0000            5.0099  -9.8595
-		VEBX___61793E   4121.7820967   6603.9788450   2400.6184213   0.0000   0.0000            5.1967 -10.4650
-		VEBX___61793S   4121.6005110   6603.8950705   2400.6185410   0.0000   0.0000            5.2010 -10.4195
-		MST____61794E   4121.2580862   6603.7376905   2400.8050163   0.0000   0.0000            5.0762  -9.8395
+		MST____61779E   4228.0494246   6627.5950878   2400.7516599   1.7305   0.7786          103860.1246 22492.1978
+		MST____61779S   4230.3293623   6627.5797501   2400.7508631   1.7518   0.8167          108210.1723 23432.4001
+		VEBX___61793E   4230.7062787   6627.5777204   2400.5644826   1.7779   0.8231          108929.3787 23588.4104
 		...
-		VEBX___61856S   4102.8205039   6595.2211573   2400.6309254   0.0000   0.0000            6.2739 -11.9327
-		MSE____61857E   4102.4785083   6595.0627844   2400.8173901   0.0000   0.0000            6.2483 -11.6356
-		MSE____61857S   4100.4110772   6594.1014474   2400.8187605   0.0000   0.0000            6.3372 -11.8126
-		VEBX___61871E   4100.0689967   6593.9427082   2400.6327352   0.0000   0.0000            6.0167 -11.3718
-		VEBX___61871S   4099.8874740   6593.8587273   2400.6328643   0.0000   0.0000            5.8040 -10.9127
-		MSE____61872E   4099.5462338   6593.6987500   2400.8193397   0.0000   0.0000            6.3338 -11.7800
-		MSE____61872S   4097.4798676   6592.7350845   2400.8207003   0.0000   0.0000            6.2476 -11.5955
-		VEBW___61876E   4097.1387668   6592.5741879   2400.6346760   0.0000   0.0000            6.1268 -11.6021
-		VEBW___61876S   4096.9580663   6592.4884558   2400.6347959   0.0000   0.0000            6.3163 -11.9942
+		MSE____61872S   4257.4832675   6627.4261818   2400.7414491   2.3148   1.2797          160009.6475 34679.5018
+		VEBW___61876E   4257.8602335   6627.4266159   2400.5550652   2.3346   1.2862          160727.5935 34840.8259
+		VEBW___61876S   4258.0602385   6627.4274141   2400.5549937   2.3505   1.2896          161108.4885 34926.9641
 		*/
+
 		TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
-		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0452667, 1e-7);
-		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7459029, 1e-7);
-		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377227, 1e-7);
-		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 99.9347599, 1e-4);
-		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 99.9416635, 1e-4);
-		ensure_equals("QFA sz coordinate should match", QFA.getZEstPrecision().getMMetresValue(), 99.9270390, 1e-4);
+		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4176.4377368, 1e-7);
+		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6627.9083784, 1e-7);
+		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7350565, 1e-7);
+		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 0.2732, 1e-4);
+		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.1101, 1e-4);
 
 		TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
-		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1241999, 1e-7);
-		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1374905, 1e-7);
-		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044452, 1e-7);
-		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 99.9347599, 1e-4);
-		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 99.9416635, 1e-4);
-		ensure_equals("MST sz coordinate should match", MST.getZEstPrecision().getMMetresValue(), 99.9270390, 1e-4);
+		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4230.3293623, 1e-7);
+		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6627.5797501, 1e-7);
+		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.7508631, 1e-7);
+		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 1.7518, 1e-4);
+		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 0.8167, 1e-4);
 
 		TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
-		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1387668, 1e-7);
-		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.5741879, 1e-7);
-		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346760, 1e-7);
-		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 99.9347599, 1e-4);
-		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 99.9416635, 1e-4);
-		ensure_equals("VEBW sz coordinate should match", VEBW.getZEstPrecision().getMMetresValue(), 99.9270390, 1e-4);
+		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4257.8602335, 1e-7);
+		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6627.4266159, 1e-7);
+		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.5550652, 1e-7);
+		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 2.3346, 1e-4);
+		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 1.2862, 1e-4);
+	}
+
+	template<>
+	template<>
+	void object::test<5>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing PDOR");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(MixObs::PDOR_1CALA_0);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/*part of results with lgc1
+		QFA____61610S   4171.0442076   6626.7482039   2400.7377214   0.2522   0.1521           -1.0524   2.3039
+		QDA____61710E   4144.5399430   6614.5624426   2400.7562879   1.3016   0.7008          -10.9370  24.5926
+		QDA____61710S   4141.9716490   6613.3817036   2400.7579787   1.3269   0.7253          -11.9610  26.8336
+		...
+		VEBX___61778E   4124.6977353   6605.3788684   2400.6164693   1.5627   0.9889          -15.4547  34.1984
+		VEBX___61778S   4124.5161914   6605.2949434   2400.6165892   1.5824   0.9976          -15.4186  34.1034
+		MST____61779E   4124.1740144   6605.1369692   2400.8030651   1.6068   1.0096          -15.2856  34.0792
+		MST____61779S   4122.1028954   6604.1836508   2400.8044196   1.6290   1.0403          -16.2946  36.3008
+		...
+		VEBX___61871S   4099.8569652   6593.9248235   2400.6328278   2.1336   1.4708          -24.7048  55.1835
+		MSE____61872E   4099.5155817   6593.7651522   2400.8193030   2.1519   1.4808          -24.3183  54.6222
+		MSE____61872S   4097.4483525   6592.8033393   2400.8206625   2.1701   1.5122          -25.2675  56.6593
+		VEBW___61876E   4097.1071077   6592.6427484   2400.6346380   2.1882   1.5221          -25.5323  56.9584
+		VEBW___61876S   4096.9263304   6592.5571783   2400.6347579   2.2025   1.5287          -25.4196  56.7283
+		*/
+		TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
+		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0442076, 1e-7);
+		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7482039, 1e-7);
+		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377214, 1e-7);
+		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 0.2522, 1e-4);
+		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.1521, 1e-4);
+
+
+		TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
+		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1028954, 1e-7);
+		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1836508, 1e-7);
+		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044196, 1e-7);
+		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 1.6290, 1e-4);
+		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 1.0403, 1e-4);
+
+		TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
+		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1071077, 1e-7);
+		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.6427484, 1e-7);
+		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346380, 1e-7);
+		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 2.1882, 1e-4);
+		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 1.5221, 1e-4);
+	}
+
+	template<>
+	template<>
+	void object::test<6>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing PDOR");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(MixObs::PDOR_2CALA);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/*part of results with lgc1
+		QFA____61610S   4171.0419520   6626.7526980   2400.7377190   1.4802   0.7192           -3.3080   6.7980
+		QDA____61710E   4144.5478999   6614.5451520   2400.7562974   6.1860   2.9359           -2.9801   7.3020
+		QDA____61710S   4141.9806353   6613.3623246   2400.7579894   6.2254   2.8870           -2.9747   7.4546
+		...
+		MST____61779E   4124.1894389   6605.1030340   2400.8030840   6.3999   2.9892            0.1389   0.1440
+		MST____61779S   4122.1190879   6604.1480000   2400.8044394   6.3832   2.9752           -0.1021   0.6500
+		VEBX___61793E   4121.7769551   6603.9893703   2400.6184155   6.3556   2.9617            0.0551   0.0603
+		..
+		MSE____61872E   4099.5400014   6593.7106624   2400.8193334   2.6253   1.2613            0.1014   0.1324
+		MSE____61872S   4097.4735554   6592.7471312   2400.8206938   2.2018   1.0722           -0.0646   0.4512
+		VEBW___61876E   4097.1324292   6592.5862509   2400.6346696   1.4892   0.7709           -0.2108   0.4609
+		*/
+		TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
+		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0419520, 1e-7);
+		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7526980, 1e-7);
+		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377190, 1e-7);
+		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 1.4802, 1e-4);
+		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.7192, 1e-4);
+
+		TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
+		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1190879, 1e-7);
+		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1480000, 1e-7);
+		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044394, 1e-7);
+		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 6.3832, 1e-4);
+		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 2.9752, 1e-4);
+
+		TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
+		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1324292, 1e-7);
+		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.5862509, 1e-7);
+		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346696, 1e-7);
+		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 1.4892, 1e-4);
+		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 0.7709, 1e-4);
 	}
 };

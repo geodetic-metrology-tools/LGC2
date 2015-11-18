@@ -100,6 +100,8 @@ struct TLGCConfig
 			std::string fptname;
 			/// Constant gisement of the result
 			TAngle fgis;
+			//boolean to know if the bearing is given in the input file
+			bool hasBearing; 
 			
 			/// There is no orientation point for the adjustment
 			TPDOR() : TBinaryOption() {}
@@ -112,7 +114,8 @@ struct TLGCConfig
 			TPDOR(const std::string& ptname, TAngle gisement = TAngle(0.0)) :
 				TBinaryOption(true),
 				fptname(ptname),
-				fgis(gisement) {}
+				fgis(gisement),
+				hasBearing(false){}
 	};
 	
 	/// Defines the column separator for the output files.

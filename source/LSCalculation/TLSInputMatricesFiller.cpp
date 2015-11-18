@@ -800,12 +800,6 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 			isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
 	}
 
-	// Adding contributions of STATION transformation's parameters 
-	for (auto itStTransform(contributions.fFixPtTransformContrib.begin()); itStTransform != contributions.fFixPtTransformContrib.end(); ++itStTransform){
-		if (!itStTransform->first.isFixed())
-			isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
-	}
-
 	// Adding contributions of TARGET transformation's parameters 
 	for (auto itTgTransform(contributions.fRefPtTransformContrib.begin()); itTgTransform != contributions.fRefPtTransformContrib.end(); ++itTgTransform){
 		if (!itTgTransform->first.isFixed())
@@ -813,7 +807,11 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 	}
 
 	// Add Misclosure vector's contribution 
-	isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (pdorObs.getBearing().getRadiansValue() - contributions.calcmeas));
+	//if the bearing is not defined, the point of orientation is not moving
+	if (pdorObs.isBearingDefined())
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (pdorObs.getBearing().getRadiansValue() - contributions.calcmeas));
+	else
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, 0.0);
 
 	// Add weight unknown matrix element
 	if (pdorObs.getSigma() < nullLimit)

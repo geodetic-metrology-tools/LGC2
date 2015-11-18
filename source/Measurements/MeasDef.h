@@ -339,6 +339,9 @@ public:
 	const bool isInitialised()const { return fIsInitialise; }
 
 	/// Return if the pdor measurement is initialise or not
+	const bool isBearingDefined()const { return fDefined; }
+
+	/// Return if the pdor measurement is initialise or not
 	const TAngle getBearing()const { return fbearing; }
 
 	/// Return if the pdor measurement is initialise or not
@@ -354,7 +357,7 @@ public:
 	//@{
 
 	/// Initialise the measurement
-	void Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis);
+	void Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis, bool hasbearing);
 
 	/// Sets a residual of observed angle
 	void setAngleResidual(const TAngle& a) { fbearingResidual = a; }
@@ -367,5 +370,6 @@ private:
 	TAngle fbearing;
 	TAngle fbearingResidual;
 	bool fIsInitialise;
+	bool fDefined;
 };
 #endif

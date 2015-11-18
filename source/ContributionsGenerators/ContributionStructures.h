@@ -318,11 +318,8 @@ struct PLR3DCalcMeas{
 \brief Contributions for orientation measurement (PDOR, RADI).
 */
 struct PtOrientationContrib{
-	TFreeVector fixedPointContrib; //contribution for the oritented point
 	TFreeVector oriPointContrib; //contribution for the oritented point
 
-	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fFixPtTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the PLR3D measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
 
