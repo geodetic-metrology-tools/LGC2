@@ -142,7 +142,7 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DSPT
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaDSpt.getMMetresValue());//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDSPT.target.sigmaDSpt + ItDSPT.target.ppmDSpt*ItDSPT.getDistance() / 1000)* M2MM);//Output value in meters [mm], stored in [m]
 
 		//write the estimated DSPT
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance() + ItDSPT.getDistanceResidual());//Output value in meters [m], stored in [m]

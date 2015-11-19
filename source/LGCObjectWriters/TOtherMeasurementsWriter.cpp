@@ -436,7 +436,7 @@ void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kRADI), (int)fRADI.size());
 	(*stream) << endl;
 
-	writeDVERResultsHeader(); // write the title line for the observations
+	writeRADIResultsHeader(); // write the title line for the observations
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence
@@ -446,10 +446,10 @@ void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
 	{
 		(*stream) << TABs;
 		//write INST POSITION
-		(*stream).writeStringLeft(nameWidth, It.station->getName());
+		(*stream).writeString(nameWidth, It.station->getName());
 
 		//write the bearing
-		(*stream).writeDouble(obsWidth, anglePrecision, It.getAngleCnstr());
+		(*stream).writeDouble(obsWidth, anglePrecision, It.getAngleCnstr().getGonsValue());
 
 		//write the sigma 
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getObservedStDev().getMMetresValue());

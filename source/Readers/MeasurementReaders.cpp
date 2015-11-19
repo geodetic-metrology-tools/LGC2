@@ -1100,6 +1100,7 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 			radi.setObservedStDev(TLength(opts.getParamRmm2m("SIGMA", proj.getCurrentNode().measurements.fRADI.back().getObservedStDev())));
 
 		radi.line = line;
+		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')

@@ -120,11 +120,14 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kDIST :
 			fMeasInfo.fNumDIST++;
 			break;
+		case TMeasurementsGlobal::kPLR3D:
+			fMeasInfo.fNumPLR3D++;
+			break;
+		case TMeasurementsGlobal::kECTH:
+			fMeasInfo.fNumECTH++;
+			break;
 		case TMeasurementsGlobal::kDLEV:
 			fMeasInfo.fNumDLEV++;
-			break;
-		case TMeasurementsGlobal::kPLR3D :
-			fMeasInfo.fNumPLR3D++;
 			break;
 		case TMeasurementsGlobal::kDVER:
 			fMeasInfo.fNumDVER++;
@@ -150,6 +153,12 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kORIE:
 			fMeasInfo.fNumORIE++;
 			break;
+		case TMeasurementsGlobal::kPDOR:
+			fMeasInfo.fNumPDOR++;
+			break;
+		case TMeasurementsGlobal::kRADI:
+			fMeasInfo.fNumRADI++;
+			break;
 	}
 }
 
@@ -158,22 +167,22 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 	switch (type){
 	case TMeasurementsGlobal::kANGL:
 		return fMeasInfo.fNumANGL;
-	case TMeasurementsGlobal::kDHOR :
-		return fMeasInfo.fNumDHOR;
-	case TMeasurementsGlobal::kDIST:
-		return fMeasInfo.fNumDIST;
-	case TMeasurementsGlobal::kDLEV:
-		return fMeasInfo.fNumDLEV;
-	case TMeasurementsGlobal::kPLR3D:
-		return fMeasInfo.fNumPLR3D;
 	case TMeasurementsGlobal::kZEND:
 		return fMeasInfo.fNumZEND;
+	case TMeasurementsGlobal::kDIST:
+		return fMeasInfo.fNumDIST;
+	case TMeasurementsGlobal::kPLR3D:
+		return fMeasInfo.fNumPLR3D;
+	case TMeasurementsGlobal::kDHOR :
+		return fMeasInfo.fNumDHOR;
+	case TMeasurementsGlobal::kDSPT:
+		return fMeasInfo.fNumDSPT;
 	case TMeasurementsGlobal::kECTH:
 		return fMeasInfo.fNumECTH;
-	case TMeasurementsGlobal::kDVER :
+	case TMeasurementsGlobal::kDLEV:
+		return fMeasInfo.fNumDLEV;
+	case TMeasurementsGlobal::kDVER:
 		return fMeasInfo.fNumDVER;
-	case TMeasurementsGlobal::kDSPT :
-		return fMeasInfo.fNumDSPT;
 	case TMeasurementsGlobal::kUVEC :
 		return fMeasInfo.fNumUVEC;
 	case TMeasurementsGlobal::kUVD :
@@ -186,6 +195,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumECVE;
 	case TMeasurementsGlobal::kORIE :
 		return fMeasInfo.fNumORIE;
+	case TMeasurementsGlobal::kRADI:
+		return fMeasInfo.fNumRADI;
 	default:
         return 0;
 	}
@@ -239,9 +250,9 @@ void TLGCData::reInitForSIMU(){
 	for (auto& length : lengths)
 		length.reInitialise();
 
-	/*
-		Add for LINE when IMPLEMENTED!!!!!!!!
-	*/
+	//for (auto& line : lines)
+	//	line.reInitialise();
+
 	for (auto nodeIt( tree.begin()); nodeIt != tree.end(); ++nodeIt)
 		nodeIt->get()->frame.reInitialise();
 
