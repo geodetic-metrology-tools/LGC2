@@ -1081,7 +1081,12 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 
 	//On first line nothing appears so far: to be discussed
 	if (firstline)
-	{}
+	{
+		if (tokens.size() > 2)
+			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+		else
+			sigma = TLength(0.0, TLength::EUnits::kMillimetres);
+	}
 	else {
 		if (tokens.size() < 2 && !fSIMUActive)
 			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
@@ -1098,6 +1103,8 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 		
 		if (opts.has("SIGMA"))
 			radi.setObservedStDev(TLength(opts.getParamRmm2m("SIGMA", proj.getCurrentNode().measurements.fRADI.back().getObservedStDev())));
+		else
+			radi.setObservedStDev(sigma);
 
 		radi.line = line;
 		

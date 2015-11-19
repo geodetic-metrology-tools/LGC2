@@ -429,6 +429,8 @@ public:
 	/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
+
+	TLength sigma;
 };
 
 
