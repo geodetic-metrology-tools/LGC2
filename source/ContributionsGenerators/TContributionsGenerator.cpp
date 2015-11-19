@@ -948,6 +948,7 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	
 }
 
+//PDOR contribution
 PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdorObs)
 {
 	//The fixed point is defined in root
@@ -980,12 +981,48 @@ PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdo
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
 	TFreeVector oriPointContrib = getPointContributions(oriPtLor2RootTrafo, a, b, c);
 	addTransformationsContributions(oriPtLor2RootTrafo, oriPt, a, b, c, fRefPtTransformContrib);
+
 	
 	return{ oriPointContrib, fRefPtTransformContrib, calcmeas };
 
 }
 
-//PDOR contribution
+//RADI contribution
+PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
+{
+	//Constraint made in CCS, later could be extended to subframe
+	
+	TPositionVector prov = radi.station->getProvisionalValue();
+	TPositionVector estimated = radi.station->getEstimatedValue();
+	const TLOR2LOR& Lor2RootTrafo = getLORTransformation(radi.station->getFrameTreePosition(), fTree->begin()); // Transform to ROOT 
+	Lor2RootTrafo.transform(estimated);
+	Lor2RootTrafo.transform(prov);
+
+	TReal xp = prov.getX().getMetresValue();
+	TReal yp = prov.getY().getMetresValue();
+
+	TReal xe = estimated.getX().getMetresValue();
+	TReal ye = estimated.getY().getMetresValue();
+
+	TAngle bear = radi.getAngleCnstr();
+
+
+	//gets calc value and sigma
+	TLength calcmeas = TLength(-LITERAL(1.0) * sinq(bear) * (ye - yp) + cosq(bear) * (xe - xp));
+
+	//calculated contibutions in a local system
+	TReal a = -LITERAL(1.0) * cosq(bear);// xPt coefficient
+	TReal b = sinq(bear);//yPt coefficient
+	TReal c = LITERAL(0.0);//zPt coefficient
+
+
+	//Point can be defined anywhere, get point contributions and transformations contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> festimatedPtTransformContrib;
+	TFreeVector estimatedPointContrib = getPointContributions(Lor2RootTrafo, a, b, c);
+	addTransformationsContributions(Lor2RootTrafo, estimated, a, b, c, festimatedPtTransformContrib);
+
+	return{ estimatedPointContrib, festimatedPtTransformContrib, calcmeas };
+}
 
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
@@ -1793,4 +1830,25 @@ TReal TContributionsGenerator::getPDORCalcMeas(const TPdorObs& pdorObs){
 
 	//gets calc value and sigma
 	return TAngle::aTan2((xRef - xFix), (yRef - yFix));
+}
+
+TReal TContributionsGenerator::getRADICalcMeas(const TRADI& radi)
+{
+	//Constraint made in CCS, later could be extended to subframe
+	TPositionVector prov = radi.station->getProvisionalValue();
+	TPositionVector estimated = radi.station->getEstimatedValue();
+	const TLOR2LOR& Lor2RootTrafo = getLORTransformation(radi.station->getFrameTreePosition(), fTree->begin()); // Transform to ROOT 
+	Lor2RootTrafo.transform(estimated);
+	Lor2RootTrafo.transform(prov);
+
+	TReal xp = prov.getX().getMetresValue();
+	TReal yp = prov.getY().getMetresValue();
+
+	TReal xe = estimated.getX().getMetresValue();
+	TReal ye = estimated.getY().getMetresValue();
+
+	TAngle bear = radi.getAngleCnstr();
+
+	//gets calc value
+	return TLength(-LITERAL(1.0) * sinq(bear) * (ye - yp) + cosq(bear) * (xe - xp));
 }

@@ -41,6 +41,9 @@ struct TMeasurements {
 	///pdor measurement in which they appeared in the input file
 	TPdorObs fPDOR;
 
+	/// All RADI measurements in which they appeared in the input file
+	std::vector<TRADI> fRADI;
+
 };
 
 #endif // MEASUREMENTS_H_

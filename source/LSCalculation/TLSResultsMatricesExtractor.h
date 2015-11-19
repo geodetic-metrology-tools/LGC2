@@ -8,6 +8,7 @@ class TLSResultsMatrices;
 class TUVD;
 class TUVEC;
 class TPdorObs;
+class TRADI;
 struct TLEVEL;
 struct TECHOROM;
 struct TECSPROM;
@@ -125,6 +126,9 @@ private:
 
 		/// Sets the PDOR measurement residual.
 		void extractPDORObs(const TLSResultsMatrices& rm, TPdorObs& pdorObs);
+
+		/// Sets the RADI measurement residual.
+		void extractRADIObs(const TLSResultsMatrices& rm, std::vector<TRADI>& radi);
 	//@}
 
 

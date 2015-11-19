@@ -23,16 +23,19 @@ public:
 	/// Write reliability header 
 	void	writeDVERReliabilityHeader();
 	void	writeORIEReliabilityHeader();
+	void	writeRADIReliabilityHeader();
 
 	/// Write reliability data
 	void	writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
 	void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const TAdjustablePoint& instPos);
+	void	writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat);
 
 	/*!@name Headers */
 	//@{
 		/// Write results header
 		void writeDVERResultsHeader();
 		void writeORIEResultsHeader();
+		void writeRADIResultsHeader();
 		void writePDORResultsHeader();
 	//@}
 
@@ -42,8 +45,11 @@ public:
 		void writePDORResults(const TPdorObs& fPDOR);
 		void writeDVERResults(const std::vector<TDVER>& fDVER);
 		void writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos);
+		void writeRADIResults(const std::vector<TRADI>& fRADI);
+
 		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);
 		void writeORIESIMUResults(const TORIEROM& fOrieRom);
+		void writeRADISIMUResults(const std::vector<TRADI>& fRADI);
 	//@}
 
 

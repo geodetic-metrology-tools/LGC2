@@ -353,25 +353,6 @@ class TKeyECHO : public TAMeasurementKey {
 		virtual void parse(const std::vector<std::string>& tokens, int line); 
 };
 
-/// Keyword to process ORIE -- Gyro-Theodolite Azimut
-class TKeyORIE : public TAMeasurementKey {
-	public:
-		/// Constructor, the list of allowed keywords is filled
-		TKeyORIE(TLGCData& project, int nb_allowed_keywords = nb_allowed_orie, const char** keywords = allowed_ORIE) : 
-		TAMeasurementKey(project, ORIE)
-		{
-			for(int i(0) ; i< nb_allowed_keywords ; i++)
-				allowed_keywords.emplace_back(keywords[i]);
-		}
-
-		/*!
-			\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
-
-			/throws Exception if the keyword is not used correctly.
-		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
-};
-
 /// Keyword to process ECVE measurement
 class TKeyECVE : public TAMeasurementKey {
 public:
@@ -411,6 +392,46 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 };
+
+/// Keyword to process ORIE -- Gyro-Theodolite Azimut
+class TKeyORIE : public TAMeasurementKey {
+	public:
+		/// Constructor, the list of allowed keywords is filled
+		TKeyORIE(TLGCData& project, int nb_allowed_keywords = nb_allowed_orie, const char** keywords = allowed_ORIE) : 
+		TAMeasurementKey(project, ORIE)
+		{
+			for(int i(0) ; i< nb_allowed_keywords ; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+		}
+
+		/*!
+			\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
+
+			/throws Exception if the keyword is not used correctly.
+		*/
+		virtual void parse(const std::vector<std::string>& tokens, int line); 
+};
+
+/// Keyword to process ORIE -- Gyro-Theodolite Azimut
+class TKeyRADI : public TAMeasurementKey {
+public:
+	/// Constructor, the list of allowed keywords is filled
+	TKeyRADI(TLGCData& project, int nb_allowed_keywords = nb_allowed_radi, const char** keywords = allowed_RADI) :
+		TAMeasurementKey(project, RADI)
+	{
+		for (int i(0); i< nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	/*!
+	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
+
+	/throws Exception if the keyword is not used correctly.
+	*/
+	virtual void parse(const std::vector<std::string>& tokens, int line);
+};
+
+
 /*! @} End of Doxygen Groups*/
 
 #endif

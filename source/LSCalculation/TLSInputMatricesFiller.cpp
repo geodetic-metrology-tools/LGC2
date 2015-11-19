@@ -84,6 +84,9 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 
 			addDVERContribution(itTree.node->data->measurements.fDVER, matrices);
 
+			addRADIContributions(itTree.node->data->measurements.fRADI, matrices);
+
+			//add the initialised PDOR
 			if (itTree.node->data->measurements.fPDOR.isInitialised())
 				addPDORContributions(itTree.node->data->measurements.fPDOR, matrices);
 		}
@@ -825,6 +828,52 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 
 	if (!isProcessOK)
 		throw std::runtime_error("Error occurred during filling input design matrices of PDOR measurement.");
+}
+
+void  TLSInputMatricesFiller::addRADIContributions(const std::vector<TRADI>& radiMeas, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	PtOrientationContrib contributions;
+
+	for (auto meas(radiMeas.begin()); meas != radiMeas.end(); ++meas){
+		eqIdx = meas->getFirstEquationIndex();
+		obsIdx = meas->getFirstObservationIndex();
+
+		contributions = fCGenerator.getRADIContrib(*meas); //Get the observation contribution
+
+		// Add  contributions into a first design matrix
+		if (!meas->station->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.oriPointContrib, eqIdx, matrices);
+
+		// Add contributions of transformations parameters 
+		for (auto itTgTransform(contributions.fRefPtTransformContrib.begin()); itTgTransform != contributions.fRefPtTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Adding contributions for TARGET transformations parameters 
+		for (auto itTgTransform(contributions.fRefPtTransformContrib.begin()); itTgTransform != contributions.fRefPtTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * ( contributions.calcmeas));
+
+		// Add weight matrix element
+		if (pow2(meas->getObservedStDev()) < nullLimit)
+			throw std::runtime_error("Error when filling RADI contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / pow2(meas->getObservedStDev()));
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(meas->getObservedStDev()));
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");
+	}
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation

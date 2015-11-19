@@ -115,6 +115,9 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 
 			//Extract pdor residuals
 			extractPDORObs(rm, itTree.node->data->measurements.fPDOR);
+
+			//Extract radi residuals
+			extractRADIObs(rm, itTree.node->data->measurements.fRADI);
 		}
 	}
 	catch(std::exception const & excp) {
@@ -309,6 +312,16 @@ void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices& rm, T
 		pdorObs.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx), TAngle::EUnits::kRadians));
 	else
 		throw std::runtime_error("PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+}
+
+void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, std::vector<TRADI>& radi){
+	for (auto& itRADI:radi){
+		MatrixIndex obsUidx = itRADI.getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVctr()->size())
+			itRADI.setResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
+		else
+			throw std::runtime_error("RADI observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+	}
 }
 
 ///////////////////////////////////////////////////////////////

@@ -121,6 +121,9 @@ public:
 		///  Returns the contribution for a pdor measurement
 		PtOrientationContrib	getPDORContrib(const TPdorObs& pdorObs);
 
+		///  Returns the contribution for a RADI measurement
+		PtOrientationContrib	getRADIContrib(const TRADI& radi);
+
 	//@}
 
 
@@ -176,6 +179,9 @@ public:
 
 		/// Returns the the pdor measurement calculated meas in radians [rad]
 		TReal getPDORCalcMeas(const TPdorObs& pdorObs);
+
+		/// Returns the the RADI measurement calculated meas in meter [m]
+		TReal getRADICalcMeas(const TRADI& radi);
 
 	//@}
 private:

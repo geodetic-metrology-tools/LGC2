@@ -1074,3 +1074,42 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		proj.getCurrentNode().measurements.fORIE.back().measORIE.emplace_back(orie);
 	}
 }
+
+void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+
+	//On first line nothing appears so far: to be discussed
+	if (firstline)
+	{}
+	else {
+		if (tokens.size() < 2 && !fSIMUActive)
+			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
+			"One point and the angle.");
+
+		TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+
+		// Store  the measured value
+		proj.getCurrentNode().measurements.fRADI.emplace_back(
+			TRADI(fpoints.getObject(tokens.at(0)), TAngle(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)), TAngle::EUnits::kGons))
+			);
+
+		auto& radi(proj.getCurrentNode().measurements.fRADI.back());
+		
+		if (opts.has("SIGMA"))
+			radi.setObservedStDev(TLength(opts.getParamRmm2m("SIGMA", proj.getCurrentNode().measurements.fRADI.back().getObservedStDev())));
+
+		radi.line = line;
+		//If last token starts with a comment character, store it as a end of line comment
+		const char fOfLastToken = tokens.back().at(0);
+		if (fOfLastToken == '$' || fOfLastToken == '%')
+			radi.eolcomment = tokens.back();
+
+
+		radi.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		radi.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kRADI);
+	}
+}

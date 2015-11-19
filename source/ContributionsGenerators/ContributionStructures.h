@@ -320,7 +320,7 @@ struct PLR3DCalcMeas{
 struct PtOrientationContrib{
 	TFreeVector oriPointContrib; //contribution for the oritented point
 
-	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the PLR3D measurement is calculated.
+	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the root.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
 
 	TReal		calcmeas; //calculated measurement

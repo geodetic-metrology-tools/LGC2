@@ -71,3 +71,19 @@ void TPdorObs::Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle 
 	fIsInitialise = true;
 	fDefined = hasbearing;
 }
+
+TRADI::TRADI() :
+station(nullptr),
+fAngleCnstr(NO_VALf),
+fResidual(NO_VALf),
+fSigmaObsVal(0.0),
+TAMeas<int>(*station, 0)
+{}
+
+TRADI::TRADI(const TAdjustablePoint& point, TAngle obsVal, TLength sig) :
+station(&point),
+fAngleCnstr(obsVal),
+fResidual(NO_VALf),
+fSigmaObsVal(sig),
+TAMeas<int>(*station, 0)
+{}

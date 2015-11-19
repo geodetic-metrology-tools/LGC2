@@ -99,8 +99,8 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	for (auto& itORIE:frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
 
-	//for (auto& itRADI : frameIt->get()->measurements.fRADI)
-	//	otherMeasWriter.writeRADIResults(itRADI);
+	if (!frameIt->get()->measurements.fRADI.empty())
+		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
 	
 }
 
@@ -141,6 +141,10 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		for (auto& itLEVEL: frameIt->get()->measurements.fLEVEL)
 			levelWriter.writeLEVELSIMUResults(itLEVEL);
 
+		//No instrument for DVER, so no loop to have each instrument.
+		if (!frameIt->get()->measurements.fDVER.empty())
+			otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
+
 		for(auto& itEDM:frameIt->get()->measurements.fEDM)
 			edmWriter.writeEDMSIMUResults(itEDM);
 		
@@ -154,15 +158,12 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		//for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		//	scaleWriter.writeECVESIMUResults(itECVE);
 
-		//No instrument for DVER, so no loop to have each instrument.
-		if (!frameIt->get()->measurements.fDVER.empty())
-			otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
-
 		for (auto& itORIE : frameIt->get()->measurements.fORIE)
 			otherMeasWriter.writeORIESIMUResults(itORIE);
 
-		//for (auto& itRADI : frameIt->get()->measurements.fRADI)
-		//	otherMeasWriter.writeRADISIMUResults(itRADI);
+		//No instrument for RADI, so no loop to have each instrument.
+		if (!frameIt->get()->measurements.fRADI.empty())
+			otherMeasWriter.writeRADISIMUResults(frameIt->get()->measurements.fRADI);
 	}
 }
 
@@ -181,7 +182,6 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	writeTSTNReliability(frameIt);
 	writeCAMReliability(frameIt);
 	writeLEVELReliability(frameIt);
-	writeSCALEReliability(frameIt);
 
 	if (! frameIt->get()->measurements.fDVER.empty())
 	{
@@ -203,6 +203,8 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 		edmWriter.writeReliabilityData(itEDM, fProjectData->getStatistics());
 	}
 
+	writeSCALEReliability(frameIt);
+
 	bool  ORIEheaderWritten = false;
 	for (auto& itORIE:frameIt->get()->measurements.fORIE)
 	{
@@ -213,6 +215,13 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 			ORIEheaderWritten = true;
 		}
 		otherMeasWriter.writeORIEReliabilityData(itORIE.measORIE, fProjectData->getStatistics(), *itORIE.instrumentPos);
+	}
+
+	if (!frameIt->get()->measurements.fRADI.empty())
+	{
+		(*stream) << "RADI observations" << endl;
+		otherMeasWriter.writeRADIReliabilityHeader();
+		otherMeasWriter.writeRADIReliabilityData(frameIt->get()->measurements.fRADI, fProjectData->getStatistics());
 	}
 }
 

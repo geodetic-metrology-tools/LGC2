@@ -14,13 +14,19 @@ TOtherMeasurentWriter::~TOtherMeasurentWriter()
 //------------------ Reliability header---------------------------------------------------------------------------
 void	TOtherMeasurentWriter::writeDVERReliabilityHeader()
 {
-this->TObservationWriter::writeReliabilityHeader("POINT 1","POINT 2", "", "OBSERVATION", "M", "MM");
+	this->TObservationWriter::writeReliabilityHeader("POINT 1","POINT 2", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
 void	TOtherMeasurentWriter::writeORIEReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("STATION", "POINT", "", "OBSERVATION", "GON", "CC");
+	return;
+}
+
+void	TOtherMeasurentWriter::writeRADIReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("POINT", "", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
@@ -92,6 +98,42 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& f
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
+
+
+		writeReliability(index, stat);
+		(*stream).setDataSpacing();
+	}
+	return;
+}
+
+void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+
+	//For each ECHO measurement of the station
+	for (auto const& It : fRADI)
+	{
+		// Observation index to take the right value in the statistic vector
+		int index = It.getFirstObservationIndex();
+
+		// get Point 1 of the line or the linenumber?
+		(*stream).writeStringLeft(nameWidth, It.station->getName());
+		//get Tg point
+		(*stream).writeStringLeft(nameWidth, "");
+		// get Point 3
+		(*stream).writeStringLeft(nameWidth, "");
+
+		//get the bearing 
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.getAngleCnstr());
+		//get the standard deviation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getObservedStDev().getMMetresValue());
+		//get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual().getMMetresValue());
 
 
 		writeReliability(index, stat);
@@ -204,6 +246,37 @@ void TOtherMeasurentWriter::writePDORResultsHeader()
 	(*stream) << endl;
 }
 
+void TOtherMeasurentWriter::writeRADIResultsHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "POINT"); //Position of the ponit
+	(*stream).writeString(obsWidth, "GIS"); //observed radi
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
+	(*stream).writeString(obsResWidth, "RESIDU"); //residual
+	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //Position of the inst 
+	(*stream).writeString(obsWidth, "(GON)"); //observed radi
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma observed value
+	(*stream).writeString(obsResWidth, "(MM)"); //residual
+	(*stream).writeString(obsResWidth, "");    //residual/sigma
+
+	(*stream) << endl;
+}
 //------------------ Result data---------------------------------------------------------------------------
 void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
 {
@@ -348,6 +421,56 @@ void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, co
 	writeDistanceResultsSummary(summary, TABs);
 }
 
+void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					anglePrecision = getAnglePrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	//first line
+	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kRADI), (int)fRADI.size());
+	(*stream) << endl;
+
+	writeDVERResultsHeader(); // write the title line for the observations
+
+	//for output residual mean and the standart deviation of the residuals
+	// directly calculate here due to the instrument absence
+	TLGCObsSummary summary;
+
+	for (auto const& It : fRADI)
+	{
+		(*stream) << TABs;
+		//write INST POSITION
+		(*stream).writeStringLeft(nameWidth, It.station->getName());
+
+		//write the bearing
+		(*stream).writeDouble(obsWidth, anglePrecision, It.getAngleCnstr());
+
+		//write the sigma 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getObservedStDev().getMMetresValue());
+
+		//write the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual().getMMetresValue());
+
+		//write the residual/sigma
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual() / It.getObservedStDev());
+		(*stream) << endl;
+
+		//for output residual mean and the standart deviation of the residuals
+		summary.addNewResidual(It.getResidual().getMMetresValue());
+	}
+	(*stream) << endl;
+
+	//for output residual mean and the standart deviation of the residuals
+	writeDistanceResultsSummary(summary, TABs);
+}
+
+
 void TOtherMeasurentWriter::writeDVERSIMUResults(const std::vector<TDVER>& fDVER)
 {
 	TAStreamFormatter*	stream = getStream();
@@ -358,6 +481,18 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const std::vector<TDVER>& fDVER
 			(*stream) << TABs << "DVER" << endl;
 			//writeDistanceResultsSummary(fDVER, TABs);
 		}
+}
+
+void TOtherMeasurentWriter::writeRADISIMUResults(const std::vector<TRADI>& fRADI)
+{
+	TAStreamFormatter*	stream = getStream();
+	//Third hierarchy level from local FRAME
+	std::string        TABs = stream->getCurrSpaceExtended(3);
+
+	if (!fRADI.empty()){
+		(*stream) << TABs << "RADI" << endl;
+		//writeDistanceResultsSummary(fRADI, TABs);
+	}
 }
 
 void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)

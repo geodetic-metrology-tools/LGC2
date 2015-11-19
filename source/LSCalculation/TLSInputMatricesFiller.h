@@ -8,9 +8,10 @@
 class TLSInputMatrices;
 class TLGCData;
 struct TCalcType;
-class  TPLR3D;
-class  TDIR3D;
-class  TLINE;
+class TPLR3D;
+class TDIR3D;
+class TLINE;
+class TRADI;
 struct TECHOROM;
 struct TECSPROM;
 struct TECVEROM;
@@ -108,6 +109,9 @@ private:
 
 		/// Add the design matrices contributions for the PDOR measurement. 
 		void addPDORContributions(const TPdorObs& pdorObs, TLSInputMatrices*  matrices);
+
+		/// Add the design matrices contributions for the PDOR measurement. 
+		void addRADIContributions(const std::vector<TRADI>& radiMeas, TLSInputMatrices*  matrices);
 	//@}
 
 

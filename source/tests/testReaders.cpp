@@ -684,6 +684,20 @@ namespace tut
 			ensure_equals("This takes current instrument from previous", ecvemeas3.target.ID, "SC2");
 			ensure_equals("Has default values", ecvemeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			
+			// RADI
+			TKeyRADI radi(proj);
+			radi.parse(TReader::tokenizeLGCfileString("*RADI"), -1);
+			radi.parse(TReader::tokenizeLGCfileString("P1 100.0 SIGMA 0.01"), -1);
+			const auto& radiM(proj.getCurrentNode().measurements.fRADI.back());
+			ensure_equals("Point name should match", radiM.station->getName(), "P1");
+			ensure_equals("bearing should match", radiM.getAngleCnstr().getGonsValue(), 100.0, 1e-7);
+			ensure_equals("sigma should match", radiM.getObservedStDev().getMMetresValue(), 0.01);
+
+			radi.parse(TReader::tokenizeLGCfileString("P2 150.0"), -1);
+			const auto& radiM2(proj.getCurrentNode().measurements.fRADI.back());
+			ensure_equals("Point name should match", radiM2.station->getName(), "P2");
+			ensure_equals("bearing should match", radiM2.getAngleCnstr().getGonsValue(), 150.0, 1e-7);
+			ensure_equals("sigma should match", radiM2.getObservedStDev().getMMetresValue(), 0.0);
 
 			////////////////////////////////////
 			//Testing FRAME measurements

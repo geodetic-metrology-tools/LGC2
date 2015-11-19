@@ -306,7 +306,59 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		//@}
 };
 
+/*!
+\ingroup Measurements
+\brief  RADI constraints.
+*/
+class TRADI : public TAMeas<int>
+{
+public:
+	///Pointer to the first point
+	const TAdjustablePoint* station;
 
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/// DB comment after the measurement definition
+	std::string eolcomment;
+
+	/*!@name Constructors */
+	//@{
+	TRADI(const TAdjustablePoint& point, TAngle obsVal, TLength sig = TLength(0.0));
+	TRADI();
+	//@}
+
+	/*!@name Access methods*/
+	//@{
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+	/// Returns standard deviation of the observed value
+	inline TLength getObservedStDev() const { return fSigmaObsVal; }
+
+	/// Returns standard deviation of the observed value
+	inline TLength getResidual() const { return fResidual; }
+
+	/// Returns standard deviation of the observed value
+	inline TAngle getAngleCnstr() const { return fAngleCnstr; }
+	//@}
+
+
+	/*!@name Settings */
+	//@{
+	/// Sets standard deviation of the observed value
+	inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
+	/// Returns standard deviation of the observed value
+	inline void setResidual(TLength res) { fResidual = res; }
+	//@}
+
+private:
+	// The angle constraint
+	TAngle fAngleCnstr;
+	// The residual angle constraint
+	TLength fResidual;
+	// Standard deviation of the observed value
+	TLength fSigmaObsVal;
+};
 /*!
 \ingroup Measurements
 \brief   PDOR, which is also an orientation measurement.
