@@ -151,19 +151,15 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		for(auto& itECHO:frameIt->get()->measurements.fECHO)
 			scaleWriter.writeECHOSIMUResults(itECHO);
 
-		//NOT YET IMPLEMENTED
-		//for (auto& itECSP : frameIt->get()->measurements.fECSP)
-		//	scaleWriter.writeECSPSIMUResults(itECSP);
-		//
-		//for (auto& itECVE : frameIt->get()->measurements.fECVE)
-		//	scaleWriter.writeECVESIMUResults(itECVE);
+		for (auto& itECSP : frameIt->get()->measurements.fECSP)
+			scaleWriter.writeECSPSIMUResults(itECSP);
+		
+		for (auto& itECVE : frameIt->get()->measurements.fECVE)
+			scaleWriter.writeECVESIMUResults(itECVE);
 
 		for (auto& itORIE : frameIt->get()->measurements.fORIE)
 			otherMeasWriter.writeORIESIMUResults(itORIE);
 
-		//No instrument for RADI, so no loop to have each instrument.
-		if (!frameIt->get()->measurements.fRADI.empty())
-			otherMeasWriter.writeRADISIMUResults(frameIt->get()->measurements.fRADI);
 	}
 }
 

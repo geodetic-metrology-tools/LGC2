@@ -697,7 +697,15 @@ namespace tut
 			const auto& radiM2(proj.getCurrentNode().measurements.fRADI.back());
 			ensure_equals("Point name should match", radiM2.station->getName(), "P2");
 			ensure_equals("bearing should match", radiM2.getAngleCnstr().getGonsValue(), 150.0, 1e-7);
-			ensure_equals("sigma should match", radiM2.getObservedStDev().getMMetresValue(), 0.0);
+			ensure_equals("sigma should match", radiM2.getObservedStDev().getMMetresValue(), 1.0);
+
+			TKeyRADI radi2(proj);
+			radi2.parse(TReader::tokenizeLGCfileString("*RADI 2"), -1);
+			radi2.parse(TReader::tokenizeLGCfileString("P3 100.0"), -1);
+			const auto& radi2M(proj.getCurrentNode().measurements.fRADI.back());
+			ensure_equals("Point name should match", radi2M.station->getName(), "P3");
+			ensure_equals("bearing should match", radi2M.getAngleCnstr().getGonsValue(), 100.0, 1e-7);
+			ensure_equals("sigma should match", radi2M.getObservedStDev().getMMetresValue(), 2.0);
 
 			////////////////////////////////////
 			//Testing FRAME measurements

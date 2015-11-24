@@ -38,12 +38,16 @@ public:
 	//@{
 		/// Write the result data for ECHO 
 		void writeECHOResults(const  TECHOROM& echorom);
-		/// Write the simulated result data for ECHO 
-		void writeECHOSIMUResults(const  TECHOROM& echorom);
 		/// Write the result data for ECSP 
 		void writeECSPResults(const TECSPROM& ecsprom);
 		/// Write the result data for ECVE 
 		void writeECVEResults(const TECVEROM& ecverom);
+		/// Write the simulated result data for ECHO 
+		void writeECHOSIMUResults(const  TECHOROM& echorom);
+		/// Write the simulated result data for ECSP 
+		void writeECSPSIMUResults(const  TECSPROM& ecsprom);
+		/// Write the simulated result data for ECVE 
+		void writeECVESIMUResults(const  TECVEROM& ecverom);
 
 		/// Write reliability data for ECHO 
 		void	writeECHOReliabilityData(const  TECHOROM& echorom, const TLGCStatistic& stat, const std::vector<TECHO> measECHO);

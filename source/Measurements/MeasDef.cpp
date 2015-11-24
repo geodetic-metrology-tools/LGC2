@@ -76,7 +76,7 @@ TRADI::TRADI() :
 station(nullptr),
 fAngleCnstr(NO_VALf),
 fResidual(NO_VALf),
-fSigmaObsVal(0.0),
+fSigmaObsVal(1.0, TLength::EUnits::kMillimetres),
 TAMeas<int>(*station, 0)
 {}
 

@@ -140,7 +140,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		auto tgt(finstruments.getDevice(camera.instrument.targets, currentTarget));	//If not found throws exception, that the target was not found
 		
-      tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// optionally change target sigmas
 		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX );
@@ -1085,7 +1085,7 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 		if (tokens.size() > 2)
 			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
 		else
-			sigma = TLength(0.0, TLength::EUnits::kMillimetres);
+			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 	}
 	else {
 		if (tokens.size() < 2 && !fSIMUActive)

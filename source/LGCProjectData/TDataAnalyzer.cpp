@@ -121,7 +121,7 @@ bool TDataAnalyzer::dataConsistent(){
 		}
 
 
-		//If Reference point was not provided to a ECVE measurement, adjustable plane which is measured needs to be initialized
+		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){
 			if (!itECVE->fMeasuredLine->isInitialized()){
 				TReal referencePoint[3] = { 0, 0, 0 };

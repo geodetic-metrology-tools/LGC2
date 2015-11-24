@@ -62,12 +62,15 @@ private:
 			void	getANGLSimValues(const TTSTN& station,const TTSTN::TROM& rom,std::vector<TANGL>& angl);
 			void	getZENDSimValues(const TTSTN& station,std::vector<TZEND>& zend);
 			void	getDISTSimValues(const TTSTN& station,std::vector<TLINE>& dist);
-			void	getDHORSimValues(const TTSTN& station,std::vector<TLINE>& dhor);
-			//void	getECTHSimValues(const TTSTN& station, std::vector<TLINE>& dhor);
+			void	getDHORSimValues(const TTSTN& station, std::vector<TLINE>& dhor);
+			void	getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECTH>& ecth);
 
 			void	getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& dlev);
+			void	getDVERSimValues(std::vector<TDVER>& dver);
 			void	getDSPTSimValues(const TEDM& edmST, std::vector<TDSPT>& dspt);
 			void    getECHOSimValues(const TECHOROM& echoROM, std::vector<TECHO>& echo);
+			void    getECVESimValues(const TECVEROM& ecveROM, std::vector<TECVE>& ecve);
+			void    getECSPSimValues(const TECSPROM& ecspROM, std::vector<TECSP>& ecsp);
 			void    getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie);
 			/*DHOR made in DLEV measurement, different from the DHOR obs.*/
 			void	getHorDistSimValues(const TAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);

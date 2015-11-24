@@ -233,6 +233,8 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumECSP = 0;
 	fMeasInfo.fNumECVE = 0;
 	fMeasInfo.fNumORIE = 0;
+	fMeasInfo.fNumPDOR = 0;
+	fMeasInfo.fNumRADI = 0;
 
 	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 }
@@ -250,8 +252,8 @@ void TLGCData::reInitForSIMU(){
 	for (auto& length : lengths)
 		length.reInitialise();
 
-	//for (auto& line : lines)
-	//	line.reInitialise();
+	for (auto& line : lines)
+		line.reInitialise();
 
 	for (auto nodeIt( tree.begin()); nodeIt != tree.end(); ++nodeIt)
 		nodeIt->get()->frame.reInitialise();

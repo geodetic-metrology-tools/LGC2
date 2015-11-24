@@ -59,6 +59,12 @@ void TAdjustableLine::initialize(const TAdjustablePoint* pointOnALine, const TPo
 }
 
 
+void TAdjustableLine::reInitialise(){
+	fLineVectorEstimatedPrecision = TFreeVector(LITERAL(0.0), LITERAL(0.0), LITERAL(0.0), TCoordSysFactory::k3DCartesian);
+	fLineVectorCorrection = TFreeVector(LITERAL(0.0), LITERAL(0.0), LITERAL(0.0), TCoordSysFactory::k3DCartesian);
+}
+
+
 TAdjustableLine TAdjustableLine::createUninitialized(const std::string& name) {
 	TAdjustableLine ap(nullptr, TFreeVector(NO_VALf,  NO_VALf,  NO_VALf,TCoordSysFactory::ECoordSys::k3DCartesian),std::bitset<3>(), name);
 	ap.fInit = false;

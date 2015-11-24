@@ -100,7 +100,7 @@ void	TSimPointSummary::addNewResValue(const TFreeVector& res)
 
 	if (fFirstSim == true)
 	{
-      fResMin = fResMax = fSumRes;
+		fResMin = fResMax = fSumRes;
 		fFirstSim = false;
 	}
 	else

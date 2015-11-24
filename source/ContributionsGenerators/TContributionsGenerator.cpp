@@ -991,6 +991,7 @@ PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdo
 PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 {
 	//Constraint made in CCS, later could be extended to subframe
+	fMLAused = false;
 	
 	TPositionVector prov = radi.station->getProvisionalValue();
 	TPositionVector estimated = radi.station->getEstimatedValue();
@@ -1018,7 +1019,7 @@ PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 
 	//Point can be defined anywhere, get point contributions and transformations contributions
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> festimatedPtTransformContrib;
-	TFreeVector estimatedPointContrib = getPointContributions(Lor2RootTrafo, a, b, c);
+	TFreeVector estimatedPointContrib = TFreeVector(a, b, c, TCoordSysFactory::k3DCartesian);
 	addTransformationsContributions(Lor2RootTrafo, estimated, a, b, c, festimatedPtTransformContrib);
 
 	return{ estimatedPointContrib, festimatedPtTransformContrib, calcmeas };
@@ -1568,7 +1569,7 @@ TReal	 TContributionsGenerator::getECTHCalcMeas(const TTSTN& station, const TTST
 	b = sin(theta + Vo);  //ySt coefficient
 	c = 0.0;  //zSt coefficient
 
-	return -a*(xSt - xTg) + b*(ySt - yTg) - ecth.getDistance().getMetresValue();
+	return (-a*(xSt - xTg) + b*(ySt - yTg) - ecth.getDistance().getMetresValue());
 }
 
 
@@ -1665,6 +1666,7 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 	return calcMeas;
 }
 
+// To do
 TReal TContributionsGenerator::getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp)
 {
 	return 0;
@@ -1672,7 +1674,27 @@ TReal TContributionsGenerator::getECSPCalcMeas(const TECSPROM& ecspROM, const TE
 
 TReal TContributionsGenerator::getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve)
 {
-	return 0;
+	TReal cEcVp = ecve.target.distCorrectionValue; //distance of the target correction value
+	TPositionVector stationPoint = ecve.targetPos->getEstimatedValue();
+
+	const TLOR2LOR& stationPTLor2RootTrafo = getLORTransformation(ecve.targetPos->getFrameTreePosition(), fTree->begin());
+	stationPTLor2RootTrafo.transform(stationPoint);
+
+	/*Reference point is always defined in ROOT and is fixed (it is implicitly defined),
+	i.e. no transformation to ROOT required and no contribution required for its coordinates.*/
+	TPositionVector linePoint = ecveROM.fMeasuredLine->getLinePoint()->getEstimatedValue();
+	const TLOR2LOR& linePTLor2RootTrafo = getLORTransformation(ecveROM.fMeasuredLine->getLinePoint()->getFrameTreePosition(), fTree->begin());
+	linePTLor2RootTrafo.transform(linePoint);
+
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		transformPointsToMLASystem(ecveROM.fMeasuredLine->getName(), linePoint, stationPoint);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	TReal D = sqrt(pow2(linePoint.getX() - stationPoint.getX()) + pow2(linePoint.getY() - stationPoint.getY()));
+	return (D - cEcVp);
 }
 
 TFreeVector TContributionsGenerator::getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec){
@@ -1800,55 +1822,4 @@ TReal	TContributionsGenerator::getDVERCalcMeas(const TDVER& dver){
 		return target.getZ().getMetresValue() - station.getZ().getMetresValue() - dver.getDistanceCorrection();
 
 	}
-}
-
-TReal TContributionsGenerator::getPDORCalcMeas(const TPdorObs& pdorObs){
-	TPositionVector fixedPt = pdorObs.calaPt->getEstimatedValue();
-	const TLOR2LOR& fixedPtLor2RootTrafo = getLORTransformation(pdorObs.calaPt->getFrameTreePosition(), fTree->begin()); // Transform target to ROOT
-	fixedPtLor2RootTrafo.transform(fixedPt);
-
-	TPositionVector oriPt = pdorObs.orientationPt->getEstimatedValue();
-	const TLOR2LOR& oriPtLor2RootTrafo = getLORTransformation(pdorObs.orientationPt->getFrameTreePosition(), fTree->begin()); // Transform station to ROOT 
-	oriPtLor2RootTrafo.transform(oriPt);
-
-	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
-		transformPointsToMLASystem(pdorObs.calaPt->getName(), fixedPt, oriPt);
-		fMLAused = true;
-	}
-	else
-		fMLAused = false;
-
-	TReal xFix = fixedPt.getX().getMetresValue();
-	TReal yFix = fixedPt.getY().getMetresValue();
-
-	TReal xRef = oriPt.getX().getMetresValue();
-	TReal yRef = oriPt.getY().getMetresValue();
-
-	TReal D = dist(xFix, yFix, xRef, yRef);
-	if (D < nullLimit)
-		throw std::logic_error("TContributionsGenerator::getPDORContrib: Division by zero because observation points have identical coordinates.");
-
-	//gets calc value and sigma
-	return TAngle::aTan2((xRef - xFix), (yRef - yFix));
-}
-
-TReal TContributionsGenerator::getRADICalcMeas(const TRADI& radi)
-{
-	//Constraint made in CCS, later could be extended to subframe
-	TPositionVector prov = radi.station->getProvisionalValue();
-	TPositionVector estimated = radi.station->getEstimatedValue();
-	const TLOR2LOR& Lor2RootTrafo = getLORTransformation(radi.station->getFrameTreePosition(), fTree->begin()); // Transform to ROOT 
-	Lor2RootTrafo.transform(estimated);
-	Lor2RootTrafo.transform(prov);
-
-	TReal xp = prov.getX().getMetresValue();
-	TReal yp = prov.getY().getMetresValue();
-
-	TReal xe = estimated.getX().getMetresValue();
-	TReal ye = estimated.getY().getMetresValue();
-
-	TAngle bear = radi.getAngleCnstr();
-
-	//gets calc value
-	return TLength(-LITERAL(1.0) * sinq(bear) * (ye - yp) + cosq(bear) * (xe - xp));
 }

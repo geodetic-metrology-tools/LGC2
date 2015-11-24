@@ -49,7 +49,6 @@ public:
 
 		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);
 		void writeORIESIMUResults(const TORIEROM& fOrieRom);
-		void writeRADISIMUResults(const std::vector<TRADI>& fRADI);
 	//@}
 
 

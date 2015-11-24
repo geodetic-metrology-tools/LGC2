@@ -428,7 +428,6 @@ void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
 	int					anglePrecision = getAnglePrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
@@ -483,17 +482,6 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const std::vector<TDVER>& fDVER
 		}
 }
 
-void TOtherMeasurentWriter::writeRADISIMUResults(const std::vector<TRADI>& fRADI)
-{
-	TAStreamFormatter*	stream = getStream();
-	//Third hierarchy level from local FRAME
-	std::string        TABs = stream->getCurrSpaceExtended(3);
-
-	if (!fRADI.empty()){
-		(*stream) << TABs << "RADI" << endl;
-		//writeDistanceResultsSummary(fRADI, TABs);
-	}
-}
 
 void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)
 {

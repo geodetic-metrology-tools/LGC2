@@ -53,6 +53,7 @@ public:
 		/// initialize the line.
 		void initialize(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
       
+		void reinitialise();
 		//@}
 
 	   /*!@name Access methods*/

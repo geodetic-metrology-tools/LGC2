@@ -177,11 +177,6 @@ public:
 		/// Returns the the DVER measurement calculated meas in meter [m]
 		TReal	getDVERCalcMeas(const TDVER& dver);
 
-		/// Returns the the pdor measurement calculated meas in radians [rad]
-		TReal getPDORCalcMeas(const TPdorObs& pdorObs);
-
-		/// Returns the the RADI measurement calculated meas in meter [m]
-		TReal getRADICalcMeas(const TRADI& radi);
 
 	//@}
 private:
