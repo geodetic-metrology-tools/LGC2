@@ -32,7 +32,7 @@ bool	TSimulationCalculation::computeSimulatedResults(std::shared_ptr<TResSimFile
 	// seed the random number generator
 	
 	bool calcOK = false;
-	engine = std::default_random_engine(/*std::random_device()*/);
+	engine.seed();
 	
 	int numOfSimMade = 0;
 	int totalNumOfSimul = fData.getConfig().sim.numSims;
@@ -104,13 +104,10 @@ void TSimulationCalculation::updateResValues(){
 			if(globalRef!=TRefSystemFactory::ERefFrame::kLocalRefFrame){
 				if(globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 					TXYH2CCS::XYHs2CCS(provisionalValue);
-					//TXYH2CCS::CCS2XYHs(provisionalValue);
 				else if(globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 					TXYH2CCS::XYHg2000Machine2CCS(provisionalValue);
-					//TXYH2CCS::CCS2XYHg2000Machine(provisionalValue);
 				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 					TXYH2CCS::XYHg1985Machine2CCS(provisionalValue);
-					//TXYH2CCS::CCS2XYHg1985Machine(provisionalValue);
 			}
 		}
 

@@ -12,8 +12,6 @@ class TLSResultsMatricesExtractor;
 class TLSInputMatricesFiller;
 class TLSInputMatrices;
 class TLGCData;
-class TPLR3D;
-class TLINE;
 
 /*! 
 	\ingroup LGCCalculation
@@ -41,7 +39,7 @@ private:
 			TContributionsGenerator fCg; //< Contribution generator used for calculation of the 'measured values' 
 			TLGCData& fData;
 
-			std::default_random_engine engine; //< Random numbers generator 
+			std::tr1::ranlux3_01 engine; //< Random numbers generator 
 
 			TReal  fConvCriteria; //< Convergence criterion
 			int    fMaxIterations; //< Maximum number of iteration of LS
@@ -54,7 +52,6 @@ private:
 		/*!@name Methods*/
 		//@{
 			void	simulateValues();
-		//void	getECTHSimValues(const TTSTN& station,std::vector<TECTH>& ecth);
 
 			bool	processSimCalculation();
 

@@ -24,9 +24,9 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 		bool pln = extractPlaneParams(rm, convCrit);
 		bool len = extractLengthParams(rm, convCrit);
 		bool trf = extractTransformationParams(rm, convCrit);
-		//bool ln = extractLineParams(rm, convCrit);
+		bool ln = extractLineParams(rm, convCrit);
 
-		if ( (pt && angl && pln && trf && len) || fDataSet->getConfig().allfixed.isActive() )
+		if ( (pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive() )
 			fLastIteration = true;
 
 	}

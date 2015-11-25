@@ -1569,7 +1569,7 @@ TReal	 TContributionsGenerator::getECTHCalcMeas(const TTSTN& station, const TTST
 	b = sin(theta + Vo);  //ySt coefficient
 	c = 0.0;  //zSt coefficient
 
-	return (-a*(xSt - xTg) + b*(ySt - yTg) - ecth.getDistance().getMetresValue());
+	return -1.0*(a*(xSt - xTg) + b*(ySt - yTg) - ecth.target.distCorrectionValue.getMetresValue());
 }
 
 
