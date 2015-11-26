@@ -79,11 +79,14 @@ void	TSimFrameSummary::addNewResValue(const TransformParameters& res)
 {
 	fSumRes += res;
 	
-	/*ENSURE THAT THIS OPERATION WITH ANGLE SQURE PRECISION IS CORRECT, WE NEED REALLY JUST A DOUBLE WHERE WE CAN SUM IT!!!!!!!!!!!!!!!!*/
-	/* IT ONLY MAKES SENSE IF WE ASK LATER FOR THE RADIANS VALUE WHERE THE ACTUAL SUM IS, ASKING FOR GONS e.g. WILL RETURN VALUE WHERE THE 2PI is USED!!!!!!*/
-	fSumRes2.omega.setRadiansValue(fSumRes2.omega.getRadiansValue() + res.omega.getRadiansValue()  *res.omega.getRadiansValue());
-	fSumRes2.phi.setRadiansValue(fSumRes2.phi.getRadiansValue() + res.phi.getRadiansValue() * res.phi.getRadiansValue());
-	fSumRes2.kappa.setRadiansValue(fSumRes2.kappa.getRadiansValue() + res.kappa.getRadiansValue()  *res.kappa.getRadiansValue());
+	/*Because it is not an angle, but a square angle, we use double. Need to manage manually the units*/
+	fSumRes2.omega = fSumRes2.omega + res.omega.getRadiansValue()  *res.omega.getRadiansValue();
+	fSumRes2.phi = (fSumRes2.phi + res.phi.getRadiansValue() * res.phi.getRadiansValue());
+	fSumRes2.kappa = (fSumRes2.kappa + res.kappa.getRadiansValue()  *res.kappa.getRadiansValue());
+	fSumRes2.tX += (res.tX * res.tX);
+	fSumRes2.tY += (res.tY * res.tY);
+	fSumRes2.tZ += (res.tZ * res.tZ);
+	fSumRes2.scale += (res.scale * res.scale);
 
 	if (fFirstSim == true)
 	{
@@ -128,20 +131,20 @@ void	TSimFrameSummary::ifNecessarySetMin(const TransformParameters& res)
 ////////////////////////////////////////////////////////////
 void	TSimFrameSummary::ifNecessarySetMax(const TransformParameters& res)
 {
-	if (res.omega < fResMax.omega)
+	if (res.omega > fResMax.omega)
 		fResMax.omega = res.omega;
-	if (res.phi < fResMax.phi)
+	if (res.phi > fResMax.phi)
 		fResMax.phi = res.phi;
-	if (res.kappa < fResMax.kappa)
+	if (res.kappa > fResMax.kappa)
 		fResMax.kappa = res.kappa;
 
-	if (res.tX < fResMax.tX)
+	if (res.tX > fResMax.tX)
 		fResMax.tX = res.tX;
-	if (res.tY < fResMax.tY)
+	if (res.tY > fResMax.tY)
 		fResMax.tY = res.tY;
-	if (res.tZ < fResMax.tZ)
+	if (res.tZ > fResMax.tZ)
 		fResMax.tZ = res.tZ;
 
-	if (res.scale < fResMax.scale)
+	if (res.scale > fResMax.scale)
 		fResMax.scale = res.scale;
 }

@@ -27,42 +27,14 @@ namespace tut
 	template<>
 	template<>
 	void object::test<1>()
-	{ 
-		//Test if the whole application run
-		using namespace LGC;
-
-		// LGCData
-		std::shared_ptr<TLGCData> projTest(new TLGCData);(new TLGCData);
-
-		set_test_name("Testing Punch file writer");
-		
-		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PUNCH_FILE_WRITER_LOG.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
-		stringstream infiler(TestNonTSTN::echo_1);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-		
-		TLGCCalculation calcul(projTest);
-		bool succesCalc = calcul.computeResults(nullptr);
-
-		ensure_equals("Calculation successful", succesCalc, true);
- 	}
-
-	template<>
-	template<>
-	void object::test<2>()
 	{
 		//Test if the whole application runs
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
-
-		TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "testPDOR.lgc2", 
-					    getCurrentDirectory()+ slash + "test_files" + slash + "Calc" + slash + "testPDOR.out");
+		
+        TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "simFRAME.lgc2", 
+					    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "simFRAME.out");
 		ensure_equals( "Execution should work", proj.exec(), true);
 	}
-
 
 };

@@ -46,9 +46,9 @@ struct TransformParameters{
 	TransformParameters operator-(const TransformParameters &transfParam1)
 	{//add two Transformation parameters objects
 		TransformParameters resultat;
-		resultat.tX = this->tX + transfParam1.tX;
-		resultat.tY = this->tY + transfParam1.tY;
-		resultat.tZ = this->tZ + transfParam1.tZ;
+		resultat.tX = this->tX - transfParam1.tX;
+		resultat.tY = this->tY - transfParam1.tY;
+		resultat.tZ = this->tZ - transfParam1.tZ;
 
 		resultat.omega = this->omega - transfParam1.omega;
 		resultat.phi = this->phi - transfParam1.phi;

@@ -109,58 +109,53 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
-	/*Do we want to write out FRAMES only if there is any measurement inside or summarize it each time??? (some parameters can be variable)*/
-	/*Now: If there is at least one measurement or if it is a ROOT node, then write it!*/
-	if(frameIt->get()->measurements.fTSTN.size() != 0 || frameIt->get()->measurements.fCAM.size() != 0 || frameIt->get()->isROOTNode()){
-		writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
+	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
-		if(frameIt->get()->frame.getName() != "ROOT")
-			writeFRAMEDefinition(*frameIt->get());
-
-		//Write points for SIMU only in ROOT, not in local nodes
-		if(frameIt->get()->isROOTNode())
-			writePoints(frameIt);
-
-		TTSTNWriter tstnWriter(*stream);
-		TCAMWriter camWriter(*stream);
-		TEDMWriter edmWriter(*stream);
-		TSCALEWriter scaleWriter(*stream);
-		TLEVELWriter levelWriter(*stream);
-		TOtherMeasurentWriter otherMeasWriter(*stream);
-
-		//If PDOR
-		if (frameIt->get()->measurements.fPDOR.isInitialised())
-			otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
-
-		for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
-			tstnWriter.writeTSTNResultsSIMU(itTSTN);
-
-		for(auto& itCAM:frameIt->get()->measurements.fCAM)
-			camWriter.writeCAMResultsSIMU(itCAM);
-
-		for (auto& itLEVEL: frameIt->get()->measurements.fLEVEL)
-			levelWriter.writeLEVELSIMUResults(itLEVEL);
-
-		//No instrument for DVER, so no loop to have each instrument.
-		if (!frameIt->get()->measurements.fDVER.empty())
-			otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
-
-		for(auto& itEDM:frameIt->get()->measurements.fEDM)
-			edmWriter.writeEDMSIMUResults(itEDM);
+	if(frameIt->get()->frame.getName() != "ROOT")
+		writeFRAMEDefinition(*frameIt->get());
+	else
+		writePoints(frameIt);  //Write points for SIMU only in ROOT, not in local nodes
 		
-		for(auto& itECHO:frameIt->get()->measurements.fECHO)
-			scaleWriter.writeECHOSIMUResults(itECHO);
 
-		for (auto& itECSP : frameIt->get()->measurements.fECSP)
-			scaleWriter.writeECSPSIMUResults(itECSP);
-		
-		for (auto& itECVE : frameIt->get()->measurements.fECVE)
-			scaleWriter.writeECVESIMUResults(itECVE);
+	TTSTNWriter tstnWriter(*stream);
+	TCAMWriter camWriter(*stream);
+	TEDMWriter edmWriter(*stream);
+	TSCALEWriter scaleWriter(*stream);
+	TLEVELWriter levelWriter(*stream);
+	TOtherMeasurentWriter otherMeasWriter(*stream);
 
-		for (auto& itORIE : frameIt->get()->measurements.fORIE)
-			otherMeasWriter.writeORIESIMUResults(itORIE);
+	//If PDOR
+	if (frameIt->get()->measurements.fPDOR.isInitialised())
+		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
 
-	}
+	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+		tstnWriter.writeTSTNResultsSIMU(itTSTN);
+
+	for(auto& itCAM:frameIt->get()->measurements.fCAM)
+		camWriter.writeCAMResultsSIMU(itCAM);
+
+	for (auto& itLEVEL: frameIt->get()->measurements.fLEVEL)
+		levelWriter.writeLEVELSIMUResults(itLEVEL);
+
+	//No instrument for DVER, so no loop to have each instrument.
+	if (!frameIt->get()->measurements.fDVER.empty())
+		otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
+
+	for(auto& itEDM:frameIt->get()->measurements.fEDM)
+		edmWriter.writeEDMSIMUResults(itEDM);
+	
+	for(auto& itECHO:frameIt->get()->measurements.fECHO)
+		scaleWriter.writeECHOSIMUResults(itECHO);
+
+	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+		scaleWriter.writeECSPSIMUResults(itECSP);
+	
+	for (auto& itECVE : frameIt->get()->measurements.fECVE)
+		scaleWriter.writeECVESIMUResults(itECVE);
+
+	for (auto& itORIE : frameIt->get()->measurements.fORIE)
+		otherMeasWriter.writeORIESIMUResults(itORIE);
+
 }
 
 void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
