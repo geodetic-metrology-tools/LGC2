@@ -11,7 +11,6 @@ class TPdorObs;
 class TRADI;
 struct TLEVEL;
 struct TECHOROM;
-struct TECSPROM;
 struct TECVEROM;
 struct TORIEROM;
 /*!
@@ -105,9 +104,6 @@ private:
 
 		/// Sets the ECHO measurement residual.
 		void extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& echoMeas);
-
-		/// Sets the ECHO measurement residual.
-		void extractECSPROMObs(const TLSResultsMatrices& rm, TECSPROM& ecspMeas);
 
 		/// Sets the ECHO measurement residual.
 		void extractECVEROMObs(const TLSResultsMatrices& rm, TECVEROM& ecveMeas);

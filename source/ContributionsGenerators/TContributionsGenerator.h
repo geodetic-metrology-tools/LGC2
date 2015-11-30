@@ -17,7 +17,6 @@ struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
 struct TECVEROM;
-struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 
@@ -77,6 +76,8 @@ public:
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
 
+		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
+		ECTHContrib	 getECSPContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
 	//@}
 
 
@@ -102,9 +103,6 @@ public:
 
 		///  Returns the contribution for offset to a vertical plane (TECHO)
 		ECHOContrib	getECHOContrib(const TECHOROM& echoROM, const TECHO& echo);
-
-		///  Returns the contribution for offset to a spatial plane (TECSP)
-		ScaleMeasContrib getECSPContrib(const TECSPROM& ecspROM, const TECSP& ecsp);
 
 		///  Returns the contribution for offset to a vertical line (TECVE)
 		ScaleMeasContrib getECVEContrib(const TECVEROM& ecveROM, const TECVE& ecve);
@@ -147,6 +145,9 @@ public:
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		TReal	 getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
 
+		/// Returns contribution for the offset to a theodolite line (TECSP) measurement.
+		TReal	 getECSPCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
+
 		/// Returns the the TUVEC measurement calculaded measurement value
 		TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
 
@@ -161,9 +162,6 @@ public:
 
 		/// Returns the TECHO measurement calculated meas in meters [m]
 		TReal getECHOCalcMeas(const TECHOROM& echoROM, const TECHO& echo);
-
-		///  Returns the TECSP measurement calculated meas in meters [m]
-		TReal getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp);
 
 		///  Returns TECVE measurement calculated meas in meters [m]
 		TReal getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve);

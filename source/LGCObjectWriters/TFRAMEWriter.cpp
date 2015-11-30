@@ -89,9 +89,6 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	for (auto& itECHO : frameIt->get()->measurements.fECHO)
 		scaleWriter.writeECHOResults(itECHO);
-
-	for (auto& itECSP : frameIt->get()->measurements.fECSP)
-		scaleWriter.writeECSPResults(itECSP);
 	
 	for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		scaleWriter.writeECVEResults(itECVE);
@@ -103,7 +100,6 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
 	
 }
-
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
@@ -146,9 +142,6 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	
 	for(auto& itECHO:frameIt->get()->measurements.fECHO)
 		scaleWriter.writeECHOSIMUResults(itECHO);
-
-	for (auto& itECSP : frameIt->get()->measurements.fECSP)
-		scaleWriter.writeECSPSIMUResults(itECSP);
 	
 	for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		scaleWriter.writeECVESIMUResults(itECVE);
@@ -432,7 +425,6 @@ void TFRAMEWriter::writePointType(const std::list<AdjPointIter>& lop, TDataTreeI
 	}
 }
 
-
 void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformation& frameDef, int transl){
 	assert3D(transl);
 	TAStreamFormatter*	stream = getStream();
@@ -471,7 +463,6 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 	}
 	(*stream)<<endl;
 }
-
 
 void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation& frameDef, int rot){
 	assert3D(rot);
@@ -612,6 +603,24 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			}
 		}
 	}
+	//ECSP
+	bool isECSP = false;
+	for (auto& itTSTN : frameIt->get()->measurements.fTSTN)
+	{
+		for (auto const ItRoms : itTSTN.roms)
+		{
+			if (ItRoms.measECSP.size() > 0){
+
+				if (isECSP == false)
+				{
+					(*stream) << "ECSP observations" << endl;
+					tstnWriter.writeECTHReliabilityHeader();
+					isECSP = true;
+				}
+				tstnWriter.writeECSPReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measECSP);
+			}
+		}
+	}
 
 	//DHOR
 	bool isDHOR = false;
@@ -735,21 +744,6 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 		}	
 	}
 
-	//ECSP
-	bool isecsp = false;
-	for (auto& itECSP:frameIt->get()->measurements.fECSP)
-	{
-		if (itECSP.measECSP.size() > 0){
-
-			if (isecsp == false)
-			{
-				(*stream) << "ECSP observations" << endl;
-				scaleWriter.writeECSPReliabilityHeader();
-				isecsp = true;
-			}
-			scaleWriter.writeECSPReliabilityData(itECSP, fProjectData->getStatistics(), itECSP.measECSP);
-		}
-	}
 	//ECVE
 	bool isecve = false;
 	for (auto& itECVE:frameIt->get()->measurements.fECVE)

@@ -112,6 +112,28 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 };
 
+/*!
+\ingroup Measurements
+\brief Offset to a theodolit plane measurement (ECTH).
+*/
+class TECSP : public TAScalarMeas<TInstrumentData::TSCALE>
+{
+public:
+	/// Observed horizontal angle defining the reference plane
+	TAngle obsHorAngle;
+	/// Observed vertical angle defining the reference plane
+	TAngle obsVertAngle;
+
+	/*!@name Constructors */
+	//@{
+	TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle);
+	TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle, TLength v);
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+};
 
 //--------------------------  EDM measurement--------------------------------------------
 /*! 
@@ -151,23 +173,6 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 		inline MatrixIndex getLastEquationIndex()const {return getFirstEquationIndex();}
 };
 
-/*!
-\ingroup Measurements
-\brief Offset to a vertical plane (TECSP) made by a scale instrument (TInstrumentData::TSCALE).
-*/
-class TECSP : public TAScalarMeas<TInstrumentData::TSCALE> {
-public:
-	/*!@name Constructors */
-	//@{
-	TECSP(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr) :
-		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
-	TECSP(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
-		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
-	//@}
-
-	/// Returns the last LS-matrices equation index of this measurement, TECSP introduces 1 equation.*/
-	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
-};
 
 /*!
 \ingroup Measurements

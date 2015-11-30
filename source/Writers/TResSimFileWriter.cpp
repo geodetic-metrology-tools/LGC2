@@ -362,6 +362,7 @@ void TResSimFileWriter::writeSimFramesSummary(const std::list<TSimFrameSummary>&
 		writeSimFRAMEData(frameSummary, numbOfSimu);
 	}
 }
+
 void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const int i)
 {//write point's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
@@ -588,10 +589,6 @@ void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const i
 	// Table data line 1
 	//write name
 	(*stream).writeStringLeft(nameCoordWidth,simFr.getAdjustableTransformation()->getName());
-	//std::stringstream result;
-	//const std::vector<int>& ID = simFr.getAdjustableTransformation()->;
-	//std::copy(ID.begin(), ID.end(), std::ostream_iterator<int>(result));
-	//(*stream).writeStringLeft(nameCoordWidth,result.str());
 
 	//get delta from LGC simulations' results
 	TransformParameters deltaMoy = simFr.getSumRes();

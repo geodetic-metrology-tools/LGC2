@@ -64,9 +64,11 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 					for(auto& itPLR3D:itROM->measPLR3D)
 						extractPLR3DObs(rm, itPLR3D);  //Extract residuals of PLR3D measurement
 					
-					for(auto& itECTH:itROM->measECTH){
+					for(auto& itECTH:itROM->measECTH)
 						extractDistObs(rm, itECTH);
-					}
+
+					for (auto& itECSP : itROM->measECSP)
+						extractDistObs(rm, itECSP);
 					
 				}
 			}
@@ -97,10 +99,6 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			//In every node iterate through the ECHOROM's measurements
 			for(auto& itECHO:itTree.node->data->measurements.fECHO)
 				extractECHOROMObs(rm, itECHO);
-
-			//In every node iterate through the ECSPROM's measurements
-			for (auto& itECSP:itTree.node->data->measurements.fECSP)
-				extractECSPROMObs(rm, itECSP);
 
 			//In every node iterate through the ECVEROM's measurements
 			for (auto& itECVE:itTree.node->data->measurements.fECVE)
@@ -263,16 +261,6 @@ void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm
          itECHO->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 			throw std::runtime_error("ECHO observation, problem during extraction residuals: observation index exceeds matrix dimensions");
-	}
-}
-
-void TLSResultsMatricesExtractor::extractECSPROMObs(const TLSResultsMatrices& rm, TECSPROM& ecspMeas){
-	for (auto& itECSP:ecspMeas.measECSP){
-		MatrixIndex obsUidx = itECSP.getFirstObservationIndex();
-		if (obsUidx < rm.getResidualsVctr()->size())
-			itECSP.setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
-		else
-			throw std::runtime_error("ECSP observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
 }
 

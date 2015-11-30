@@ -8,13 +8,14 @@ TPLR3D::TPLR3D(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt
 			{}
 
 TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt): 
-				TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt) {}
+    TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt) 
+    {}
 
 TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v) :
-				TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v) {}
+    TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v) 
+    {}
 
-TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v) :
-				TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(pos, tgt, v), dhorSigma(NO_VALf) {}
+
 
 ///////////////////////////////////////////////////////////
 //////Offset measurements
@@ -23,6 +24,13 @@ TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE sca
 	TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v),
 	obsHorAngle(obsHorAngle)
 	{}
+
+TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle) :
+    TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr), obsHorAngle(horAngle), obsVertAngle(vertAngle)
+    {}
+TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle, TLength v) :
+    TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v), obsHorAngle(horAngle), obsVertAngle(vertAngle)
+    {}
 
 ///////////////////////////////////////////////////////////
 //////Levelling measurements
@@ -35,33 +43,36 @@ TDVER::TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TL
 	{}
 
 TDLEV::TDLEV(const TAdjustablePoint& targetPos, TInstrumentData::TLEVEL::TTarget target, TLength measValue) :
-			TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(targetPos, target, measValue),
-			dhor(nullptr)
+	TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(targetPos, target, measValue),
+	dhor(nullptr)
 	{}
 
+TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v) :
+    TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(pos, tgt, v), dhorSigma(NO_VALf) 
+    {}
 ///////////////////////////////////////////////////////////
 //////Orientation measurements
 ///////////////////////////////////////////////////////////
 TPdorObs::TPdorObs(const TAdjustablePoint& cala, const TAdjustablePoint& orientation, TAngle gis) :
-TAMeas<int>(orientation, 0),
-calaPt(&cala),
-orientationPt(&orientation),
-fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
-fbearing(gis),
-fIsInitialise(true),
-fDefined(true)
-{}
+    TAMeas<int>(orientation, 0),
+    calaPt(&cala),
+    orientationPt(&orientation),
+    fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
+    fbearing(gis),
+    fIsInitialise(true),
+    fDefined(true)
+    {}
 
 TPdorObs::TPdorObs(): 
-calaPt(nullptr),
-orientationPt(nullptr),
-fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
-fbearing(NO_VALf),
-TAMeas<int>(*orientationPt, 0),
-fIsInitialise(false),
-fDefined(false),
-fbearingResidual(NO_VALf)
-{}
+    calaPt(nullptr),
+    orientationPt(nullptr),
+    fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
+    fbearing(NO_VALf),
+    TAMeas<int>(*orientationPt, 0),
+    fIsInitialise(false),
+    fDefined(false),
+    fbearingResidual(NO_VALf)
+    {}
 
 void TPdorObs::Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis, bool hasbearing)
 {
@@ -73,17 +84,17 @@ void TPdorObs::Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle 
 }
 
 TRADI::TRADI() :
-station(nullptr),
-fAngleCnstr(NO_VALf),
-fResidual(NO_VALf),
-fSigmaObsVal(1.0, TLength::EUnits::kMillimetres),
-TAMeas<int>(*station, 0)
+    station(nullptr),
+    fAngleCnstr(NO_VALf),
+    fResidual(NO_VALf),
+    fSigmaObsVal(1.0, TLength::EUnits::kMillimetres),
+    TAMeas<int>(*station, 0)
 {}
 
 TRADI::TRADI(const TAdjustablePoint& point, TAngle obsVal, TLength sig) :
-station(&point),
-fAngleCnstr(obsVal),
-fResidual(NO_VALf),
-fSigmaObsVal(sig),
-TAMeas<int>(*station, 0)
+    station(&point),
+    fAngleCnstr(obsVal),
+    fResidual(NO_VALf),
+    fSigmaObsVal(sig),
+    TAMeas<int>(*station, 0)
 {}

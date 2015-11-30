@@ -181,9 +181,6 @@ namespace tut
 			TKeySOBS f3(proj);
 			f3.parse(TReader::tokenizeLGCfileString("*SOBS"), -1);
 			ensure("New LGC file must be on with measurement values disabled", 
-				cfg.sim.writeLGCFile && !cfg.sim.newInfileHasMeasurements);
-			f3.parse(TReader::tokenizeLGCfileString("*SOBS OBS"), -1);
-			ensure("New LGC file must be on with measurement values enabled", 
 				cfg.sim.writeLGCFile && cfg.sim.newInfileHasMeasurements);
 			
 		} catch (exception& e) {
@@ -554,6 +551,31 @@ namespace tut
 			ensure_equals("This takes current instrument from previous", ecthmeas3.target.ID, "SC2");
 			ensure_equals("Has default values", ecthmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
+			// ECSP
+			TKeyECSP ecsp(proj);
+			ecsp.parse(TReader::tokenizeLGCfileString("*ECSP 20.0 101.0 SC1 "), -1);
+			ecsp.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
+			const auto& ecspmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECSP.back());
+			ensure_equals(ecspmeas.targetPos->getName(), "P2");
+			ensure_equals(ecspmeas.target.ID, "SC1");
+			ensure_equals(ecspmeas.obsHorAngle.getGonsValue(), 20);
+			ensure_equals(ecspmeas.obsVertAngle.getGonsValue(), 101);
+			ensure_equals(ecspmeas.target.sigmaD, 0.01 * MM2M);
+			ensure_equals(ecspmeas.target.ppmD, 0.1 * MM2M);
+			ensure_equals(ecspmeas.target.sigmaInstrCentering, 0.5 * MM2M);
+			ensure_equals(ecspmeas.getDistance(), 1.1);
+			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
+
+			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
+			const auto& ecspmeas2(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECSP.back());
+			ensure_equals(ecspmeas2.target.ID, "SC2");
+			ensure_equals(ecspmeas2.getDistance(), 0.9);
+
+			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9"), -1);
+			const auto& ecspmeas3(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECSP.back());
+			ensure_equals("This takes current instrument from previous", ecspmeas3.target.ID, "SC2");
+			ensure_equals("Has default values", ecspmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
+			//
 			// DHOR
 			TKeyDHOR dhor(proj);
 			dhor.parse(TReader::tokenizeLGCfileString( "*DHOR"), -1);
@@ -636,29 +658,6 @@ namespace tut
 			dlev.parse(TReader::tokenizeLGCfileString( "*DLEV LI1"), -1);
 			const auto& levelRound2(proj.getCurrentNode().measurements.fLEVEL.back());
 			ensure_equals("Reference point given, plane should not be initialized", levelRound2.fMeasuredPlane->isInitialized(),false);
-			//
-			// ECSP
-			TKeyECSP ecsp(proj);
-			ecsp.parse(TReader::tokenizeLGCfileString("*ECSP SC1"), -1);
-			ecsp.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
-			const auto& ecspmeas(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
-			ensure_equals(ecspmeas.targetPos->getName(), "P2");
-			ensure_equals(ecspmeas.target.ID, "SC1");
-			ensure_equals(ecspmeas.target.sigmaD, 0.01 * MM2M);
-			ensure_equals(ecspmeas.target.ppmD, 0.1 * MM2M);
-			ensure_equals(ecspmeas.target.sigmaInstrCentering, 0.5 * MM2M);
-			ensure_equals(ecspmeas.getDistance(), 1.1);
-			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
-
-			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
-			const auto& ecspmeas2(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
-			ensure_equals(ecspmeas2.target.ID, "SC2");
-			ensure_equals(ecspmeas2.getDistance(), 0.9);
-
-			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9"), -1);
-			const auto& ecspmeas3(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
-			ensure_equals("This takes current instrument from previous", ecspmeas3.target.ID, "SC2");
-			ensure_equals("Has default values", ecspmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 
 			//
 			// ECVE

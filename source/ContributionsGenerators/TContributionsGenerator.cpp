@@ -521,6 +521,110 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(const TTSTN& station, const
 	return contrib;
 }
 
+//ECSP Contribution
+ECTHContrib	 TContributionsGenerator::getECSPContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp){
+	///////////////////Transform TARGET and STATION from their's LOR to ROOT///////////////////////////////
+	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = getLORTransformation(station.instrumentPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+
+	TPositionVector stationPos = ecsp.targetPos->getEstimatedValue(); //position of the TSTN
+	const TLOR2LOR& stLor2RootTrafo = getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fTree->begin()); //Get transformation from "Target lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
+		transformPointsToMLASystem(ecsp.targetPos->getName(), targetPos, stationPos);
+		fMLAused = true;
+	}
+	else
+		fMLAused = false;
+
+	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
+
+	
+
+	TAngle theta = ecsp.obsHorAngle;
+	TAngle phi = ecsp.obsVertAngle;
+	TAngle Vo =  rom.v0->getEstimatedValue();
+    //line direction at the TSTN position
+	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
+
+
+/*  Calcul par le produit matriciel
+    calculated measurement
+	TReal i, j, k; //produit matriciel
+	i = l[2] * (ySt - yTg) - l[1] * (zSt - zTg);
+	j = l[0] * (zSt - zTg) - l[2] * (xSt - xTg);
+	k = l[1] * (xSt - xTg) - l[0] * (ySt - yTg);
+    
+	TReal calcMeas =sqrt( pow2(i)+pow2(j)+pow2(k) )- ecsp.target.distCorrectionValue.getMetresValue();
+	
+    //contributions
+	TReal a, b, c, V0Contrib;
+	if (calcMeas > nullLimit)
+	{
+		//a = ((xSt - xTg)* (l[1] * l[1] + l[2] * l[2]) - l[0] * (l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
+		//b = ((ySt - yTg)* (l[0] * l[0] + l[2] * l[2]) - l[1] * (l[0] * (xSt - xTg) + l[2] * (zSt - zTg))) / calcMeas;
+		//c = ((zSt - zTg)* (l[1] * l[1] + l[0] * l[0]) - l[2] * (l[1] * (ySt - yTg) + l[0] * (xSt - xTg))) / calcMeas;
+
+		V0Contrib = (l[0] * l[1] * (pow2(ySt - yTg) - pow2(xSt - xTg))
+					   + (xSt - xTg)*(ySt - yTg) * (pow2(l[0]) - pow2(l[1]))
+					   + (ySt - yTg)*(zSt - zTg) * l[0]*l[2]
+					   - (xSt - xTg)*(zSt - zTg) * l[1]*l[2]) / calcMeas; //contribution for the V0 parameter
+	}
+	else
+		throw std::logic_error("TContributionGenerator::getECSPContrib: Division by zero because the point is on the line");
+*/
+
+
+    //Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	TReal d, pScal; 
+	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg));  // distance St-Tg
+	pScal = l[0] * (xSt - xTg) + l[1]*(ySt - yTg) + l[2] * (zSt - zTg);  //produit scalaire
+
+	TReal calcMeas = sqrt(pow2(d) - pow2(pScal)) - ecsp.target.distCorrectionValue.getMetresValue();
+
+    //contributions
+	TReal a, b, c, V0Contrib;
+    if (calcMeas > nullLimit)
+	{
+		a = ((xSt - xTg) - l[0] * (l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
+		b = ((ySt - yTg) - l[1] * (l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
+		c = ((zSt - zTg) - l[2] * (l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
+		V0Contrib =  -1 * (l[1] * (xSt - xTg) - l[0] * (ySt - yTg)) / calcMeas; /**/
+	}
+	else
+	 throw std::logic_error("TContributionGenerator::getECSPContrib: Division by zero because the point is on the line");
+
+    
+	TReal distCorrection = -1.0;  //Not use for the moment, because it is not adjustable.
+
+	//Station can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, -a, -b, -c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	addTransformationsContributions(stLor2RootTrafo, ecsp.targetPos->getEstimatedValue(), -a, -b, -c, stationTransfContributions);
+
+	//Target can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, a, b, c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
+	addTransformationsContributions(tgLor2RootTrafo, station.instrumentPos->getEstimatedValue(), a, b, c, targetTransfContributions);
+
+	// Variance calculation
+	TReal varM = pow2q(ecsp.target.sigmaD + ecsp.getDistance() / 1000 * ecsp.target.ppmD);
+	TReal variance = varM + (pow2q(cos(theta + Vo)*sin(phi)) + pow2q(sin(theta + Vo)*sin(phi)))*pow2q(ecsp.target.sigmaInstrCentering);
+
+	ECTHContrib	contrib = { calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance };
+	return contrib;
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- individual measurements
@@ -769,47 +873,6 @@ ScaleMeasContrib TContributionsGenerator::getECVEContrib(const TECVEROM& ecveROM
 	ScaleMeasContrib ecspContrib = { calcMeas, stationContrib, pointLineContrib, stationTransfContributions, pointLineTransfContributions, obsVariance };
 	return ecspContrib;
 }
-
-
-/*
-//ECSP contribution
-ScaleMeasContrib TContributionsGenerator::getECSPContrib(const TECSPROM& ecspROM, const TECSP& ecsp){
-	TReal cEcVp = ecsp.target.distCorrectionValue; //distance of the target correction value
-	TReal dRef = ecspROM.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();  // distance of the reference point from the plane
-	TReal theta = ecspROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); // Theta angle of the plane
-	TReal phi = ecspROM.fMeasuredPlane->getPhiEstimatedValue().getRadiansValue(); // Phi angle of the plane
-
-	TPositionVector stationPoint = ecsp.targetPos->getEstimatedValue();
-
-	const TLOR2LOR& stationPTLor2RootTrafo = getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fTree->begin());
-	stationPTLor2RootTrafo.transform(stationPoint);
-
-	//Reference point is always defined in ROOT and is fixed (it is implicitly defined),
-	//i.e. no transformation to ROOT required and no contribution required for its coordinates.
-	TPositionVector referencePoint = ecspROM.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
-
-	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame){
-		transformPointsToMLASystem(ecspROM.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, stationPoint);
-		fMLAused = true;
-	}
-	else
-		fMLAused = false;
-
-	//TReal calcMeas = -cEcVp;
-	//
-	//std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
-	//TFreeVector stationContrib = getPointContributions(stationPTLor2RootTrafo, -cosq(theta), sinq(theta), 0.0);
-	//addTransformationsContributions(stationPTLor2RootTrafo, echo.targetPos->getEstimatedValue(), -cosq(theta), sinq(theta), 0.0, stationTransfContributions);
-	//
-	//TReal thetaContrib = sinq(theta)*(stationPoint.getX() - referencePoint.getX()).getMetresValue() + cosq(theta)*(stationPoint.getY() - referencePoint.getY()).getMetresValue();
-	//
-	//TReal refPtDistContrib = 1.0;
-	//TReal obsVariance = pow2q(echo.target.sigmaD + echo.getDistance() / 1000 * echo.target.ppmD) + pow2q(echo.target.sigmaInstrCentering);
-	//
-	//ScaleMeasContrib ecspContrib = { calcMeas, stationContrib, refPtDistContrib, stationTransfContributions, obsVariance };
-	//return ecspContrib;
-}
-*/
 
 //DVER contributions
 DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
@@ -1573,6 +1636,13 @@ TReal	 TContributionsGenerator::getECTHCalcMeas(const TTSTN& station, const TTST
 }
 
 
+// To do
+TReal TContributionsGenerator::getECSPCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp)
+{
+	return 0;
+}
+
+
 TReal	TContributionsGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const TDLEV& dlev){
 	TPositionVector referencePoint = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 	const TLOR2LOR& refPTLor2RootTrafo = getLORTransformation(levelInstr.fMeasuredPlane->getReferencePoint()->getFrameTreePosition(), fTree->begin()); 
@@ -1666,12 +1736,6 @@ TReal	TContributionsGenerator::getECHOCalcMeas(const TECHOROM& echoROM, const TE
 	return calcMeas;
 }
 
-// To do
-TReal TContributionsGenerator::getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp)
-{
-	return 0;
-}
-
 TReal TContributionsGenerator::getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve)
 {
 	TReal cEcVp = ecve.target.distCorrectionValue; //distance of the target correction value
@@ -1736,7 +1800,6 @@ UVDCalcMeas TContributionsGenerator::getUVDCalcMeas(const TCAM& camera, const TU
 	UVDCalcMeas calMeas = {vectCalcMeas,sDist.getMetresValue()};
 	return calMeas;
 }
-
 
 TReal TContributionsGenerator::getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie){
 	//Transform TARGET and STATION in a LOCAL ASTRONOMICAL FRAME

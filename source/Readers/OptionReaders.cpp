@@ -95,7 +95,7 @@ void TKeySIMU::parse(const std::vector<std::string>& tokens, int) {
 	if (numTokens == 3)
 		fconfig.sim = TLGCConfig::TSimulation(std::stoi(tokens.at(2)));
 	else
-		throw std::runtime_error("*SIMU takes either 1 or 2 arguments." );
+		throw std::runtime_error("*SIMU takes  1 argument, the number of simulation." );
 }
 
 
@@ -253,14 +253,11 @@ void TKeyPLOT::parse(const std::vector<std::string>& tokens, int) {
 void TKeySOBS::parse(const std::vector<std::string>& tokens, int) {
 	auto numtokens = tokens.size();
 	
-	if (numtokens == 2 || (numtokens == 3 && tokens.at(2) == "NOBS")) {
-		fconfig.sim.writeLGCFile = true;
-	}
-	else if (numtokens == 3 && tokens.at(2) == "OBS") {
+	if (numtokens == 2 ) {
 		fconfig.sim.writeLGCFile = true;
 		fconfig.sim.newInfileHasMeasurements = true;
 	}
 	else {
-		throw std::runtime_error("Invalid argument for the keyword *SOBS.");
+		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");
 	}
 }

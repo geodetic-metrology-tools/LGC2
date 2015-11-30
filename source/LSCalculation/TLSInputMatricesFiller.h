@@ -13,7 +13,6 @@ class TDIR3D;
 class TLINE;
 class TRADI;
 struct TECHOROM;
-struct TECSPROM;
 struct TECVEROM;
 struct TORIEROM;
 
@@ -80,6 +79,8 @@ private:
 		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, const TTSTN& station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecth observations 
 		void  addECTHContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
+		/// Add the design matrices contributions for the ecth observations 
+		void  addECSPContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
 
 		/// Add CAMERA UVEC observation
 		void addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices);
@@ -97,9 +98,6 @@ private:
 
 		/// Add the design matrices contributions for the ECHO measurement. 
 		void addECHOContributions(const TECHOROM& echoRom, TLSInputMatrices*  matrices);
-
-		/// Add the design matrices contributions for the ECSP measurement. 
-		void addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ECVE measurement. 
 		void addECVEContributions(const TECVEROM& ecveRom, TLSInputMatrices*  matrices);
