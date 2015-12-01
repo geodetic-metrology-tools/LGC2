@@ -227,7 +227,11 @@ class TKeyPREC : public TAOptionKey {
 class TKeyPRES : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyPRES(TLGCData& project) : TAOptionKey(project, "PRES") {}
+		TKeyPRES(TLGCData& project, int nb_allowed_keywords = nb_allowed_pres, const char** keywords = allowed_PRES) : TAOptionKey(project, PRES) 
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+		}
 
 		///Tokenize and initialize options for the output processing
 		virtual void parse(const std::vector<std::string>&, int);

@@ -103,9 +103,8 @@ public:
 		TLength				getErrorEllMajorAxis() const;
 		/// Returns the semi minor axis of the error ellipsoid 
 		TLength				getErrorEllMinorAxis() const;
-		//Not used
 		/// Returns the gisement of the error ellipsoid 
-		//TAngle				getErrorEllGis() const;
+		TAngle				getErrorEllGis() const;
 
 		/// Returns the three axes of the error ellipsoid
 		struct ErrorEllipsoid {
@@ -144,13 +143,13 @@ public:
       inline TLength getDZValue() const { return (fEstimatedValue.getZ() - fProvisionalValue.getZ()); }
 
 
-		/// Returns the estimated XY covariance
+		/// Returns the estimated XY covariance in [m]
       inline TReal getXYCovar() const { return fCovariance.getX().getMetresValue(); }
 
-		/// Returns the estimated YZ covariance
+		/// Returns the estimated YZ covariance in [m]
       inline TReal getYZCovar() const { return fCovariance.getY().getMetresValue(); }
 
-		/// Returns the estimated XZ covariance
+		/// Returns the estimated XZ covariance in [m]
       inline TReal getXZCovar() const { return fCovariance.getZ().getMetresValue(); }
 
 

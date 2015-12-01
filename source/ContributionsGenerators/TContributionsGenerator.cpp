@@ -535,7 +535,7 @@ ECTHContrib	 TContributionsGenerator::getECSPContrib(const TTSTN& station, const
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
-		transformPointsToMLASystem(ecsp.targetPos->getName(), targetPos, stationPos);
+		transformPointsToMLASystem(ecsp.targetPos->getName(), stationPos, targetPos );
 		fMLAused = true;
 	}
 	else
@@ -550,39 +550,11 @@ ECTHContrib	 TContributionsGenerator::getECSPContrib(const TTSTN& station, const
 	TReal zTg = targetPos.getZ().getMetresValue();
 
 	
-
 	TAngle theta = ecsp.obsHorAngle;
 	TAngle phi = ecsp.obsVertAngle;
 	TAngle Vo =  rom.v0->getEstimatedValue();
     //line direction at the TSTN position
 	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
-
-
-/*  Calcul par le produit matriciel
-    calculated measurement
-	TReal i, j, k; //produit matriciel
-	i = l[2] * (ySt - yTg) - l[1] * (zSt - zTg);
-	j = l[0] * (zSt - zTg) - l[2] * (xSt - xTg);
-	k = l[1] * (xSt - xTg) - l[0] * (ySt - yTg);
-    
-	TReal calcMeas =sqrt( pow2(i)+pow2(j)+pow2(k) )- ecsp.target.distCorrectionValue.getMetresValue();
-	
-    //contributions
-	TReal a, b, c, V0Contrib;
-	if (calcMeas > nullLimit)
-	{
-		//a = ((xSt - xTg)* (l[1] * l[1] + l[2] * l[2]) - l[0] * (l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
-		//b = ((ySt - yTg)* (l[0] * l[0] + l[2] * l[2]) - l[1] * (l[0] * (xSt - xTg) + l[2] * (zSt - zTg))) / calcMeas;
-		//c = ((zSt - zTg)* (l[1] * l[1] + l[0] * l[0]) - l[2] * (l[1] * (ySt - yTg) + l[0] * (xSt - xTg))) / calcMeas;
-
-		V0Contrib = (l[0] * l[1] * (pow2(ySt - yTg) - pow2(xSt - xTg))
-					   + (xSt - xTg)*(ySt - yTg) * (pow2(l[0]) - pow2(l[1]))
-					   + (ySt - yTg)*(zSt - zTg) * l[0]*l[2]
-					   - (xSt - xTg)*(zSt - zTg) * l[1]*l[2]) / calcMeas; //contribution for the V0 parameter
-	}
-	else
-		throw std::logic_error("TContributionGenerator::getECSPContrib: Division by zero because the point is on the line");
-*/
 
 
     //Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
@@ -596,9 +568,9 @@ ECTHContrib	 TContributionsGenerator::getECSPContrib(const TTSTN& station, const
 	TReal a, b, c, V0Contrib;
     if (calcMeas > nullLimit)
 	{
-		a = ((xSt - xTg) - l[0] * (l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
-		b = ((ySt - yTg) - l[1] * (l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
-		c = ((zSt - zTg) - l[2] * (l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg))) / calcMeas;
+		a = ((xSt - xTg) - l[0] * pScal) / calcMeas;
+		b = ((ySt - yTg) - l[1] * pScal) / calcMeas;
+		c = ((zSt - zTg) - l[2] * pScal) / calcMeas;
 		V0Contrib =  -1 * (l[1] * (xSt - xTg) - l[0] * (ySt - yTg)) / calcMeas; /**/
 	}
 	else

@@ -63,9 +63,9 @@ TReal TAdjustablePoint::getStandDev(int d)const{
 
 TLength	TAdjustablePoint::getErrorEllMajorAxis() const
 {
-	TReal vxy = getXYCovar();
-	TReal sx2 = powq(getXEstPrecision(), 2) ;
-	TReal sy2 = powq(getYEstPrecision(), 2) ;
+	TReal vxy = getXYCovar()*M2MM;
+	TReal sx2 = powq(getXEstPrecision().getMMetresValue(), 2);
+	TReal sy2 = powq(getYEstPrecision().getMMetresValue(), 2);
 	TReal gdAxe = (LITERAL(1.0)/sqrtq(LITERAL(2.0))) * sqrtq( sx2 + sy2 + sqrtq( powq((sy2 - sx2), 2) + (LITERAL(4.0) * vxy * vxy) ) );
 	
 	TLength res;
@@ -75,21 +75,21 @@ TLength	TAdjustablePoint::getErrorEllMajorAxis() const
 
 TLength		TAdjustablePoint::getErrorEllMinorAxis() const
 {
-	TReal vxy = getXYCovar();
-	TReal sx2 = powq(getXEstPrecision(), 2) ;
-	TReal sy2 = powq(getYEstPrecision(), 2) ;
+	TReal vxy = getXYCovar()*M2MM;
+	TReal sx2 = powq(getXEstPrecision().getMMetresValue(), 2);
+	TReal sy2 = powq(getYEstPrecision().getMMetresValue(), 2);
 	TReal ptAxe = (LITERAL(1.0)/sqrtq(LITERAL(2.0))) * sqrtq( sx2 + sy2 - sqrtq( powq((sy2 - sx2), 2) + (LITERAL(4.0) * vxy *vxy) ) );
 	
 	TLength res;
 	res.setMMetresValue(ptAxe);
 	return res;
 }
-/*
+
 TAngle TAdjustablePoint::getErrorEllGis() const
 {
-	TReal vxy = getXYCovar().getValue();
-	TReal sx2 = powq(getXEstPrecision().getValue(), 2) ;
-	TReal sy2 = powq(getYEstPrecision().getValue(), 2) ;
+	TReal vxy = getXYCovar()*M2MM;
+	TReal sx2 = powq(getXEstPrecision().getMMetresValue(), 2);
+	TReal sy2 = powq(getYEstPrecision().getMMetresValue(), 2);
 	TAngle gis (( LITERAL(0.5)) * TAngle::aTan2(2*vxy , (sy2 - sx2) ) );
 	
 	TReal testAffichage = gis.getGonsValue();
@@ -102,7 +102,7 @@ TAngle TAdjustablePoint::getErrorEllGis() const
 
 	return gis;
 }
-*/
+
 
 TAdjustablePoint::ErrorEllipsoid TAdjustablePoint::getErrorEllipsoid() const {
 	Eigen::Matrix3d m;

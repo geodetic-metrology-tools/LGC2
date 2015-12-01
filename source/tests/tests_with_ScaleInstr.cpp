@@ -518,4 +518,50 @@ namespace tut
 		ensure_equals("ECVE_line24 y coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getY().getMetresValue(), 0.0, 1e-7);
 		ensure_equals("ECVE_line24 z coordinate should match", dataset.getPoints().getObject("ECVE_line24").getEstimatedValue().getZ().getMetresValue(), 60.0, 1e-7);
 	}
+
+	//----------------------------- ECSP --------------------------------//
+	template<>
+	template<>
+	void object::test<10>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECSP measurement in OLOC");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECSP.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestScaleInstr::ecsp_OLOC);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		/* LGC1 results:  VXY
+		P1       -0.0000000      100.1000000        0.0000000   0.0001062   0.0001041
+		P2      100.5000000       -0.0000000        0.0000000   0.0001041   0.0001062
+		*/
+
+		//We check only 2 points, which are choose with not particular meaning
+		TPositionVector P1 = dataset.getPoints().getObject("P1").getEstimatedValue();
+		ensure_equals("P1 x coordinate should match", P1.getX().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("P1 y coordinate should match", P1.getY().getMetresValue(), 100.1, 1e-7);
+		ensure_equals("P1 z coordinate should match", P1.getZ().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("P1 Sx should match", dataset.getPoints().getObject("P1").getXEstPrecision().getMMetresValue(), 0.0001062, 1e-4);
+		ensure_equals("P1 Sy should match", dataset.getPoints().getObject("P1").getYEstPrecision().getMMetresValue(), 0.0001041, 1e-4);
+
+		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
+		ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 100.5, 1e-7);
+		ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("P2 Sx should match", dataset.getPoints().getObject("P2").getXEstPrecision().getMMetresValue(), 0.0001041, 1e-4);
+		ensure_equals("P2 Sy should match", dataset.getPoints().getObject("P2").getYEstPrecision().getMMetresValue(), 0.0001062, 1e-4);
+	}
+
 }

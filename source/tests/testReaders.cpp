@@ -152,6 +152,10 @@ namespace tut
 			TKeyPREC o4(proj);
 			EXPECT_FAIL(o4.parse(TReader::tokenizeLGCfileString("*PREC 8"), -1));
 			ensure_equals("Precision must be at least 7 digits, we expect an error", cfg.outPrecision.digits, 7);
+			//
+			TKeyPRES o5(proj);
+			o5.parse(TReader::tokenizeLGCfileString("*PRES"), -1);
+			ensure("Ellips error, must match input", cfg.errorEllipses.isActive());
 
 
 			// additional output files
@@ -206,8 +210,8 @@ namespace tut
 
 			
 			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getX().getMetresValue(), 1.0);
-         ensure_equals("Point coords must match input", pt0.getProvisionalValue().getY().getMetresValue(), 2.0);
-         ensure_equals("Point coords must match input", pt0.getProvisionalValue().getH().getMetresValue(), 3.0);
+			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getY().getMetresValue(), 2.0);
+			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getH().getMetresValue(), 3.0);
 			ensure("Lock state must match", pt0.isFixed());
 			ensure_equals("Must be in the right frame", pt0.getFrameTreePosition()->get()->frame.getName(), "ROOT");
 
@@ -422,9 +426,9 @@ namespace tut
 		}
 	}
 
-		template<>
-		template<>
-		void object::test<5>()
+	template<>
+	template<>
+	void object::test<5>()
 		{
 			set_test_name("Testing measurement input");
 			using namespace LGC;

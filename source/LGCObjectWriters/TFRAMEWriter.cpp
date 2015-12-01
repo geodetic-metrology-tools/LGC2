@@ -380,6 +380,27 @@ void TFRAMEWriter::writePoints(TDataTreeIterator frameIt){
 	writePointType(pointVYZ, frameIt, TSpatialStatus::kVyz, localNode);
 	writePointType(pointVZ, frameIt, TSpatialStatus::kVz, localNode);
 
+	if (fProjectData->getConfig().errorEllipses.isActive())
+	{
+		//write ellips error
+		if (!pointVXY.empty())
+		{
+			writeEllipsHeader();
+
+			for (auto& it:pointVXY)
+				writeEllipsData(it);
+		}
+
+		//write ellipsoidal error
+		if (!pointVXYZ.empty())
+		{
+			writeEllipsoidHeader();
+
+			for (auto& it:pointVXYZ)				
+				writeEllipsoidData(it);
+		}
+	}
+
 	*getStream()<<endl;
 }
 
@@ -852,6 +873,76 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream)<<endl<<endl;
 }
 
+void TFRAMEWriter::writeEllipsHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
+
+	int					nameWidth = getNameWidth();
+	int					coordWidth = getCoordWidth();
+
+	*stream << endl << endl<<"ABSOLUTE ERROR ELLIPSES" << endl << endl;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//First line
+	stream->writeStringLeft(nameWidth, "NOM");
+	stream->writeString(coordWidth, "SEMI-MAJ.(A)");
+	stream->writeString(coordWidth, "SEMI-MIN.(B)");
+	stream->writeString(coordWidth, "ORIE. OF (A)");
+
+	*stream << endl;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//second line : units
+	stream->writeString(nameWidth, "");//Nom
+	stream->writeString(coordWidth, "(MM)");// MINOR
+	stream->writeString(coordWidth, "(MM)");// MAJOR
+	stream->writeString(coordWidth, "(GON)");// ORIENTATION
+
+	*stream << endl << endl;
+
+	return;
+}
+
+void TFRAMEWriter::writeEllipsoidHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
+
+	int					nameWidth = getNameWidth();
+	int					coordWidth = getCoordWidth();
+
+	*stream << endl<< endl<< "ABSOLUTE ERROR ELLIPSOIDS" << endl << endl;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//First line
+	stream->writeStringLeft(nameWidth, "NOM");
+	// Direction vectors: (+0.000, -0.000, +0.000) => 24
+	const int vecwidth(24);
+	stream->writeString(vecwidth, "DIRECTION X");
+	stream->writeString(vecwidth, "DIRECTION Y");
+	stream->writeString(vecwidth, "DIRECTION Z");
+	stream->writeString(coordWidth, "LONGUER X");
+	stream->writeString(coordWidth, "LONGUER Y");
+	stream->writeString(coordWidth, "LONGUER Z");
+
+	*stream << endl;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//second line : units
+	stream->writeString(nameWidth, "");//Nom
+	stream->writeString(vecwidth, "");//Direction
+	stream->writeString(vecwidth, "");//Direction
+	stream->writeString(vecwidth, "");//Direction
+	stream->writeString(coordWidth, "(MM)");// Axis length
+	stream->writeString(coordWidth, "(MM)");// Axis length
+	stream->writeString(coordWidth, "(MM)");// Axis length
+
+	*stream << endl << endl;
+
+	return;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //DATA
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -964,6 +1055,63 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	}
 
 	(*stream)<<endl; //end line
+}
+
+void TFRAMEWriter::writeEllipsData(AdjPointIter& pt)
+{
+	TAStreamFormatter*	stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
+
+	int					nameWidth = getNameWidth();
+	int					coordWidth = getCoordWidth();
+	int					coordResWidth = getCoordResWidth();
+	string				sep = getSeparator();
+	std::string        TABs = stream->getCurrSpaceExtended(1);
+
+	stream->writeStringLeft(nameWidth, pt->getName());
+	*stream << sep;
+	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllMajorAxis().getMMetresValue());
+	*stream << sep;
+	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllMinorAxis().getMMetresValue());
+	*stream << sep;
+	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllGis().getGonsValue());
+	*stream << endl;
+}
+
+void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
+{
+	TAStreamFormatter*	stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
+
+	int					nameWidth = getNameWidth();
+	int					coordWidth = getCoordWidth();
+	int					coordResWidth = getCoordResWidth();
+	string				sep = getSeparator();
+	std::string        TABs = stream->getCurrSpaceExtended(1);
+
+	const auto& ell(pt->getErrorEllipsoid());
+
+	const int vecwidth(24);
+	char vecstr[32]; // format the vector output here and write as a string
+
+	stream->writeStringLeft(nameWidth, pt->getName());
+	*stream << sep;
+	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
+	stream->writeString(vecwidth, vecstr);
+	*stream << sep;
+	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
+	stream->writeString(vecwidth, vecstr);
+	*stream << sep;
+	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
+	stream->writeString(vecwidth, vecstr);
+	*stream << sep;
+	stream->writeDouble(coordWidth, coordResWidth, ell.lx*M2MM);
+	*stream << sep;
+	stream->writeDouble(coordWidth, coordResWidth, ell.ly*M2MM);
+	*stream << sep;
+	stream->writeDouble(coordWidth, coordResWidth, ell.lz*M2MM);
+	*stream << sep;
+	*stream << endl;
 }
 
 
