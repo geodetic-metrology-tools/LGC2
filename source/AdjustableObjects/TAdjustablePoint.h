@@ -143,13 +143,13 @@ public:
       inline TLength getDZValue() const { return (fEstimatedValue.getZ() - fProvisionalValue.getZ()); }
 
 
-		/// Returns the estimated XY covariance in [m]
+		/// Returns the estimated XY covariance in [m2]
       inline TReal getXYCovar() const { return fCovariance.getX().getMetresValue(); }
 
-		/// Returns the estimated YZ covariance in [m]
+		/// Returns the estimated YZ covariance in [m2]
       inline TReal getYZCovar() const { return fCovariance.getY().getMetresValue(); }
 
-		/// Returns the estimated XZ covariance in [m]
+		/// Returns the estimated XZ covariance in [m2]
       inline TReal getXZCovar() const { return fCovariance.getZ().getMetresValue(); }
 
 

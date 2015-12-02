@@ -374,32 +374,49 @@ void TFRAMEWriter::writePoints(TDataTreeIterator frameIt){
 		localNode = true;
 
 	writePointType(pointCALA, frameIt, TSpatialStatus::kCala, localNode);
+	
 	writePointType(pointVXYZ, frameIt, TSpatialStatus::kVxyz, localNode);
-	writePointType(pointVXY, frameIt, TSpatialStatus::kVxy, localNode);
-	writePointType(pointVXZ, frameIt, TSpatialStatus::kVxz, localNode);
-	writePointType(pointVYZ, frameIt, TSpatialStatus::kVyz, localNode);
-	writePointType(pointVZ, frameIt, TSpatialStatus::kVz, localNode);
+	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVXYZ.empty()))
+	{
+		//write ellipsoidal error
+		writeEllipsoidHeader();
 
-	if (fProjectData->getConfig().errorEllipses.isActive())
+		for (auto& it : pointVXYZ)
+			writeEllipsoidData(it);
+	}
+	
+	writePointType(pointVXY, frameIt, TSpatialStatus::kVxy, localNode);
+	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVXY.empty()))
 	{
 		//write ellips error
-		if (!pointVXY.empty())
-		{
-			writeEllipsHeader();
+		writeEllipsHeader();
 
-			for (auto& it:pointVXY)
-				writeEllipsData(it);
-		}
-
-		//write ellipsoidal error
-		if (!pointVXYZ.empty())
-		{
-			writeEllipsoidHeader();
-
-			for (auto& it:pointVXYZ)				
-				writeEllipsoidData(it);
-		}
+		for (auto& it : pointVXY)
+			writeEllipsData(it);
 	}
+
+	writePointType(pointVXZ, frameIt, TSpatialStatus::kVxz, localNode);
+	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVXZ.empty()))
+	{
+		//write ellips error
+		writeEllipsHeader();
+
+		for (auto& it : pointVXZ)
+			writeEllipsData(it);
+	}
+	
+	writePointType(pointVYZ, frameIt, TSpatialStatus::kVyz, localNode);
+	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVYZ.empty()))
+	{
+		//write ellips error
+		writeEllipsHeader();
+
+		for (auto& it : pointVYZ)
+			writeEllipsData(it);
+	}
+	
+	writePointType(pointVZ, frameIt, TSpatialStatus::kVz, localNode);
+
 
 	*getStream()<<endl;
 }
@@ -1065,15 +1082,10 @@ void TFRAMEWriter::writeEllipsData(AdjPointIter& pt)
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
-	string				sep = getSeparator();
-	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	stream->writeStringLeft(nameWidth, pt->getName());
-	*stream << sep;
 	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllMajorAxis().getMMetresValue());
-	*stream << sep;
 	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllMinorAxis().getMMetresValue());
-	*stream << sep;
 	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllGis().getGonsValue());
 	*stream << endl;
 }
@@ -1087,7 +1099,6 @@ void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
 	string				sep = getSeparator();
-	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	const auto& ell(pt->getErrorEllipsoid());
 
@@ -1095,22 +1106,15 @@ void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
 	char vecstr[32]; // format the vector output here and write as a string
 
 	stream->writeStringLeft(nameWidth, pt->getName());
-	*stream << sep;
 	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
 	stream->writeString(vecwidth, vecstr);
-	*stream << sep;
 	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
 	stream->writeString(vecwidth, vecstr);
-	*stream << sep;
 	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
 	stream->writeString(vecwidth, vecstr);
-	*stream << sep;
 	stream->writeDouble(coordWidth, coordResWidth, ell.lx*M2MM);
-	*stream << sep;
 	stream->writeDouble(coordWidth, coordResWidth, ell.ly*M2MM);
-	*stream << sep;
 	stream->writeDouble(coordWidth, coordResWidth, ell.lz*M2MM);
-	*stream << sep;
 	*stream << endl;
 }
 
