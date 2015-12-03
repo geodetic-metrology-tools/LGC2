@@ -106,6 +106,8 @@ add_subdirectory(LGCCalculation)
 add_subdirectory(Writers)
 add_subdirectory(LGCObjectWriters)
 
+#include the CPack file allows to have PACKAGE in the solution and then to create the package
+include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 
 #copy test files for unit tests
 if(UNIX)
