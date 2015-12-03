@@ -116,15 +116,7 @@ namespace tut
 			ensure("PDOR Point name must match input", cfg.pdor.fptname == "P1");
 			ensure_equals("PDOR gisement must match input", cfg.pdor.fgis.getGonsValue(), 0.31, 1e-6);
 			
-#if 0
-			// Commented because we need the measurements for following tests, but works!
-			TKeySIMU c5(proj);
-			EXPECT_FAIL(c5.parse(empty, -1))
-			EXPECT_FAIL(c4.parse(TReader::tokenizeLGCfileString("*SIMU"), -1))
-			c5.parse(TReader::tokenizeLGCfileString("*SIMU 5"), -1);
-			ensure("Simulation must be enabled", cfg.sim.isActive());
-			ensure("Number of simulations must be 5", cfg.sim.numSims == 5);	
-#endif      
+     
 
 			// output options (not testing pure boolean options)
 			//

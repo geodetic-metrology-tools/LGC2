@@ -218,15 +218,22 @@ TKeyPOIN::TKeyPOIN(TLGCData& project, int nb_allowed_keywords, const char** keyw
 }
 
 TAdjustablePoint& TKeyPOIN::insertPoint(const std::string& pointName, TReal x, TReal y, TReal z) {
-	proj.addToPointNum(TSpatialStatus::kVxyz);
+	
+	//if allfixed option is used, all point are fixed
+	bool isAllfix = proj.getConfig().allfixed.isActive();  //return true if allfixed is used
+	if (!isAllfix)
+		proj.addToPointNum(TSpatialStatus::kVxyz);
+	else
+		proj.addToPointNum(TSpatialStatus::kCala);
+
 	if(proj.getCurrentNode().isROOTNode()){
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), false, false, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isAllfix, isAllfix, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 		else
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k2DPlusH), false, false, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k2DPlusH), isAllfix, isAllfix, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 	}
 	else
-		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), false, false, false, pointName,fconfig.referential, proj.getCurrentPosition()));
+		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isAllfix, isAllfix, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
 TKeyVXY::TKeyVXY(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAPointKey(project, VXY)
@@ -237,14 +244,22 @@ TKeyVXY::TKeyVXY(TLGCData& project, int nb_allowed_keywords, const char** keywor
 
 TAdjustablePoint& TKeyVXY::insertPoint(const std::string& pointName, TReal x, TReal y, TReal z) {
 	proj.addToPointNum(TSpatialStatus::kVxy);
+
+	//if allfixed option is used, all point are fixed
+	bool isAllfix = proj.getConfig().allfixed.isActive();  //return true if allfixed is used
+	if (!isAllfix)
+		proj.addToPointNum(TSpatialStatus::kVxy);
+	else
+		proj.addToPointNum(TSpatialStatus::kCala);
+
 	if(proj.getCurrentNode().isROOTNode()){
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), false, false, true, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isAllfix, isAllfix, true, pointName, fconfig.referential, proj.getCurrentPosition()));
 		else
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k2DPlusH), false, false, true, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k2DPlusH), isAllfix, isAllfix, true, pointName, fconfig.referential, proj.getCurrentPosition()));
 	}
 	else
-		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), false, false, true, pointName,fconfig.referential, proj.getCurrentPosition()));
+		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isAllfix, isAllfix, true, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
 TKeyVXZ::TKeyVXZ(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAPointKey(project, VXZ) 
@@ -254,15 +269,22 @@ TKeyVXZ::TKeyVXZ(TLGCData& project, int nb_allowed_keywords, const char** keywor
 }
 
 TAdjustablePoint& TKeyVXZ::insertPoint(const std::string& pointName, TReal x, TReal y, TReal z) {
-	proj.addToPointNum(TSpatialStatus::kVxz);
+
+	//if allfixed option is used, all point are fixed
+	bool isAllfix = proj.getConfig().allfixed.isActive();  //return true if allfixed is used
+	if (!isAllfix)
+		proj.addToPointNum(TSpatialStatus::kVxz);
+	else
+		proj.addToPointNum(TSpatialStatus::kCala);
+
 	if(proj.getCurrentNode().isROOTNode()){
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), false, true, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isAllfix, true, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 		else
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k2DPlusH), false, true, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k2DPlusH), isAllfix, true, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 	}
 	else
-		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), false, true, false, pointName,fconfig.referential, proj.getCurrentPosition()));
+		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isAllfix, true, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
 TKeyVYZ::TKeyVYZ(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAPointKey(project, VYZ) 
@@ -272,15 +294,22 @@ TKeyVYZ::TKeyVYZ(TLGCData& project, int nb_allowed_keywords, const char** keywor
 }
 
 TAdjustablePoint& TKeyVYZ::insertPoint(const std::string& pointName, TReal x, TReal y, TReal z) {
-	proj.addToPointNum(TSpatialStatus::kVyz);
+
+	//if allfixed option is used, all point are fixed
+	bool isAllfix = proj.getConfig().allfixed.isActive();  //return true if allfixed is used
+	if (!isAllfix)
+		proj.addToPointNum(TSpatialStatus::kVyz);
+	else
+		proj.addToPointNum(TSpatialStatus::kCala);
+
 	if(proj.getCurrentNode().isROOTNode()){
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), true, false, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), true, isAllfix, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 		else
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k2DPlusH), true, false, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k2DPlusH), true, isAllfix, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 	}
 	else
-		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), true, false, false, pointName,fconfig.referential, proj.getCurrentPosition()));
+		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), true, isAllfix, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
 
@@ -291,13 +320,20 @@ TKeyVZ::TKeyVZ(TLGCData& project, int nb_allowed_keywords, const char** keywords
 }
 
 TAdjustablePoint& TKeyVZ::insertPoint(const std::string& pointName, TReal x, TReal y, TReal z) {
-	proj.addToPointNum(TSpatialStatus::kVz);
+	
+	//if allfixed option is used, all point are fixed
+	bool isAllfix = proj.getConfig().allfixed.isActive();  //return true if allfixed is used
+	if (!isAllfix)
+		proj.addToPointNum(TSpatialStatus::kVz);
+	else
+		proj.addToPointNum(TSpatialStatus::kCala);
+
 	if(proj.getCurrentNode().isROOTNode()){
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), true, true, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), true, true, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 		else
-			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k2DPlusH), true, true, false, pointName,fconfig.referential,proj.getCurrentPosition()));
+			return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k2DPlusH), true, true, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 	}
 	else
-		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z,TCoordSysFactory::ECoordSys::k3DCartesian), true, true, false, pointName,fconfig.referential, proj.getCurrentPosition()));
+		return fpointAccess.addObject(TAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), true, true, isAllfix, pointName, fconfig.referential, proj.getCurrentPosition()));
 }

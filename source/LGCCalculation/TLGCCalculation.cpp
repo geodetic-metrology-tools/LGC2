@@ -49,9 +49,6 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TResSimFileWriter> fileWrit
 
 bool TLGCCalculation::computeALLFIXEDResults(){
 	bool successCalc = false;
-	/*Set all points to be fixed*/
-	for (auto& point : fData->getPoints())
-			point.updateFixedState(true, true, true);
 
 	/*Set all frame parameters to be fixed -- PROBABLY YES, BUT NEEDS CONFIRMATION (TO DO)*/
 	// ... 
