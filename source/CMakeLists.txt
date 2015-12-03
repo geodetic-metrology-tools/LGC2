@@ -109,6 +109,15 @@ add_subdirectory(LGCObjectWriters)
 #include the CPack file allows to have PACKAGE in the solution and then to create the package
 include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 
+# INSTALL for creation of the LGC2 installer
+add_executable(LGC main.cpp)
+install(TARGETS LGC DESTINATION "." COMPONENT application)
+install(FILES
+		"${VCREDIST_INSTALLER_PATH}"
+		DESTINATION "."
+		COMPONENT application
+	)
+
 #copy test files for unit tests
 if(UNIX)
 	execute_process(COMMAND copy_test_files_for_UnitTests.sh
