@@ -5,7 +5,7 @@
 
 #include "Utils.h"
 #include <TLGCData.h>
-#include <readers/TReader.h>
+#include <TReader.h>
 #include "TLGCApp.h"
 #include "testNonTSTNmeas.h"
 #include "TLGCCalculation.h"

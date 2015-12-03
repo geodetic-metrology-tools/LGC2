@@ -4,11 +4,11 @@
 #pragma warning(pop)
 
 #include <TLGCData.h>
-#include <readers/TReader.h>
-#include <readers/OptionReaders.h>
-#include <readers/AdjObjectsReader.h>
-#include <readers/InstrumentReaders.h>
-#include <readers/MeasurementReaders.h> 
+#include <TReader.h>
+#include <OptionReaders.h>
+#include <AdjObjectsReader.h>
+#include <InstrumentReaders.h>
+#include <MeasurementReaders.h> 
 #include <TXYH2CCS.h>
 #include <TLGCApp.h>
 #include "TLGCCalculation.h"

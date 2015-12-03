@@ -203,10 +203,10 @@ public:
 		inline TRefSystemFactory::ERefFrame getReferenceFrame() const {return fReferential;}
 
 		/// \see TAdjustableObject::isInitialized
-		inline virtual bool isInitialized() const { return !isnan(fProvisionalValue.getX().getMetresValue());}
+		inline virtual bool isInitialized() const { return !isnotanumber(fProvisionalValue.getX().getMetresValue());}
 
 		/// Returns Boolean value telling if the standard deviations were assigned to the point.
-		inline bool hasStandDeviations() const{return !isnan( fStandardDeviations[0]);} 
+		inline bool hasStandDeviations() const{return !isnotanumber( fStandardDeviations[0]);} 
 
 		/// Returns the height estimated value
 		TReal getHEstValue ()const;

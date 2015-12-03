@@ -7,7 +7,7 @@
 
 #include <TLGCData.h>
 #include <TLGCApp.h>
-#include <readers/TReader.h>
+#include <TReader.h>
 #include "tests_TSTN_OLOC.h"
 #include "TLGCCalculation.h"
 #include "Utils.h"

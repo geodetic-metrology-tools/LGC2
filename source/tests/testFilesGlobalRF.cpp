@@ -5,7 +5,7 @@
 
 
 #include <TLGCData.h>
-#include <readers/TReader.h>
+#include <TReader.h>
 #include "testFilesGlobalRF.h"
 #include "TLGCCalculation.h"
 

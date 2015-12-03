@@ -1,7 +1,7 @@
 #include <tut/tut.hpp>
 #include <tut_reporter.h>
 
-#include <readers/TReader.h>
+#include <TReader.h>
 
 namespace tut
 {

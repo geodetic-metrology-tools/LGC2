@@ -4,8 +4,8 @@
 #include <string>
 #include "Defaults.h"
 
-#ifndef isnan
-#define isnan(x) ((x)!=(x))
+#ifndef isnotanumber
+#define isnotanumber(x) ((x)!=(x))
 #endif
 
 /*! 

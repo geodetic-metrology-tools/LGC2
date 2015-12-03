@@ -5,7 +5,7 @@
 
 #include <TLGCData.h>
 #include <TLOR2LOR.h>
-#include <readers/TReader.h>
+#include <TReader.h>
 #include "testTLOR2LOR.h"
 #include "TInverseTransformation.h"
 #include "TDirectTransformation.h"

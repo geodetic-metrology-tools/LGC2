@@ -368,4 +368,3 @@ TReal TSimulationCalculation::getSimulatedValue(const TReal val, const TReal sig
 {
 	return val + std::normal_distribution<double>(0, sigma)(engine);
 }
-

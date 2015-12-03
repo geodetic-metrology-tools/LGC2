@@ -39,7 +39,7 @@ private:
 			TContributionsGenerator fCg; //< Contribution generator used for calculation of the 'measured values' 
 			TLGCData& fData;
 
-			std::tr1::ranlux3_01 engine; //< Random numbers generator 
+			std::default_random_engine engine; //< Random numbers generator 
 
 			TReal  fConvCriteria; //< Convergence criterion
 			int    fMaxIterations; //< Maximum number of iteration of LS

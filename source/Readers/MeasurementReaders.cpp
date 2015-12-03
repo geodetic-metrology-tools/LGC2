@@ -854,7 +854,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 
 			dlev.dhor->line = line;
 			TReal horDistSigma  = opts.getParamRmm2m("DSE",  NO_VALf);
-			if(!isnan(horDistSigma))
+			if(!isnotanumber(horDistSigma))
             dlev.dhor->setDHORSigma(TLength(horDistSigma));
 			else
 				throw std::runtime_error("If DHOR distance is provided, standard deviation (DSE) needs to be assigned!");

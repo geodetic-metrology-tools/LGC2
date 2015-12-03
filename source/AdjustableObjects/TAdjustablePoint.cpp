@@ -56,7 +56,7 @@ TAdjustablePoint TAdjustablePoint::createUninitialized(const std::string& name) 
 ///////////////////////////////////////////////////////////////////////////
 TReal TAdjustablePoint::getStandDev(int d)const{
 	assert3D(d);
-	if(!isnan( fStandardDeviations[d]))
+	if(!isnotanumber( fStandardDeviations[d]))
 		return fStandardDeviations[d];
 	throw std::runtime_error("Standard deviation of the point not assigned");
 }

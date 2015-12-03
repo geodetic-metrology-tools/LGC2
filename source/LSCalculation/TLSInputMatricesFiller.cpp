@@ -564,7 +564,7 @@ void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLS
 				// Adding the contribution to the second design matrix
 				isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdxHd, obsIdxHd, -1.0);
 
-				if(!isnan(itDLEV->dhor->getDHORSigma())){
+				if(!isnotanumber(itDLEV->dhor->getDHORSigma())){
 					isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdxHd, obsIdxHd, 1.0/pow2q(itDLEV->dhor->getDHORSigma()));
 					isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdxHd, obsIdxHd, pow2q(itDLEV->dhor->getDHORSigma()) );
 				}

@@ -5,7 +5,7 @@
 
 #include "Utils.h"
 #include <TLGCData.h>
-#include <readers/TReader.h>
+#include <TReader.h>
 #include "tests_with_ScaleInstr.h"
 #include "TLGCCalculation.h"
 #include <vector>
