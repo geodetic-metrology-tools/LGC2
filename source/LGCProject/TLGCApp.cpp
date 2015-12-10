@@ -104,7 +104,7 @@ void TLGCApp::saveResults(TLGCData *dat)
 void TLGCApp::writeStdResultsFile(TLGCData *dat)
 {	
 	// change stream name
-	fStream->setFileName(fOutputFileLoc);
+	fStream->resetStreamName(fOutputFileLoc);
 	TResultsFileWriter resultsFileWriter(fStream.get(), dat);
 	
 	if (!dat->getFileLogger().hasErrors())

@@ -27,14 +27,17 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
 
 	TOptionHelper opts(tokens.cbegin()+2, tokens.cend());
 
-	//If flag is used, change state of appropriate bit set and make the element of transl. rotation or scale variable (set 0)
-	if (opts.has("TX") || opts.has("STX")) translations.set(0,0);
-	if (opts.has("TY") || opts.has("STY")) translations.set(1,0);
-	if (opts.has("TZ") || opts.has("STZ")) translations.set(2,0);
-	if (opts.has("RX") || opts.has("SRX")) rotations.set(0,0);
-	if (opts.has("RY") || opts.has("SRY")) rotations.set(1,0);
-	if (opts.has("RZ") || opts.has("SRZ")) rotations.set(2,0);
-	if (opts.has("SCL")|| opts.has("SSCL")) scale.set(0,0);
+	//If flag is used and not in ALLFIXED option, change state of appropriate bit set and make the element of transl. rotation or scale variable (set 0)
+	if (!proj.getConfig().allfixed.isActive())
+	{
+		if (opts.has("TX") || opts.has("STX")) translations.set(0, 0);
+		if (opts.has("TY") || opts.has("STY")) translations.set(1, 0);
+		if (opts.has("TZ") || opts.has("STZ")) translations.set(2, 0);
+		if (opts.has("RX") || opts.has("SRX")) rotations.set(0, 0);
+		if (opts.has("RY") || opts.has("SRY")) rotations.set(1, 0);
+		if (opts.has("RZ") || opts.has("SRZ")) rotations.set(2, 0);
+		if (opts.has("SCL") || opts.has("SSCL")) scale.set(0, 0);
+	}
 
 	const auto gon(TAngle::kGons);
 	TransformParameters transfParam;
