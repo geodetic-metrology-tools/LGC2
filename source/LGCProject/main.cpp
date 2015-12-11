@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TLGCApp.h"
+#include "Utils.h"
 
 #ifdef __linux__
 	#include <sys/types.h>
@@ -16,10 +17,14 @@ void createOutputFile(std::string outputFilePath);
 
 int main( int argc,  char *argv[]){
 
-	//std::this_thread::sleep_for(std::chrono::seconds(10));
+	std::this_thread::sleep_for(std::chrono::seconds(10));
 
 	std::string inputFilePath;
+	std::string inputFilename;
 	std::string outputFilePath;
+	
+	// to manage absolute and relative path given in the cmd line
+	bool isAbsolutePath = true;
 
 	for (int i=0 ; i<argc ; i++)
 	{
@@ -29,14 +34,36 @@ int main( int argc,  char *argv[]){
 			{
 				// run command line interface
 				case 'i':
-				case 'I':					
+				case 'I':
 				{
-					if(!argv[i+1]) { // -I/-i option used, but the input file path was not specified
-						std::cout << "Input file was not specified"<< endl; 
+					if (!argv[i + 1]) { // -I/-i option used, but the input file path was not specified
+						std::cout << "Input file was not specified" << endl;
 						break;
 					}
 
-					inputFilePath = argv[i + 1];
+					inputFilename = argv[i + 1];
+					
+					// Look if absolute path is used
+					#ifdef __linux__    
+					if (inputFilename.substr(0, 1).compare(slash) != 0)
+					{
+						isAbsolutePath = false;
+						inputFilePath = getCurrentDirectory() + slash + inputFilename;
+					}
+					else
+						inputFilePath = inputFilename;
+
+					#else
+
+					if (inputFilename.substr(0, 3).compare("C:\\") == 0 || inputFilename.substr(0, 1).compare("\\") == 0)
+						inputFilePath = inputFilename;				
+					else
+					{
+						isAbsolutePath = false;
+						inputFilePath = getCurrentDirectory() + slash + inputFilename;
+					}
+					#endif
+					
 					break;
 				}
 
@@ -47,7 +74,10 @@ int main( int argc,  char *argv[]){
 						std::cout << "Output file was not specified" << endl;
 						break;
 					}
-					outputFilePath = argv[i + 1];  //store the output file path, if there is something ot read
+					if (isAbsolutePath)
+						outputFilePath = argv[i + 1];
+					else
+						outputFilePath = getCurrentDirectory() + slash + argv[i + 1];  //store the output file path, if there is something ot read
 					break;
 				}
 			}
@@ -56,17 +86,22 @@ int main( int argc,  char *argv[]){
 
 
 
-	if (inputFilePath == "" || outputFilePath == ""){
+	if (inputFilename == "" || outputFilePath == ""){
 		if (inputFilePath == "")
 			throw runtime_error("Error, the input file is not found");
 		else if (outputFilePath == "")
-			outputFilePath = inputFilePath.substr(0, inputFilePath.length() - 4) + "out";
+		{
+			if (isAbsolutePath)
+				outputFilePath = inputFilePath.substr(0, inputFilename.length() - 4) + "out";
+			else
+				outputFilePath = getCurrentDirectory() + slash + inputFilename.substr(0, inputFilename.length() - 4) + "out";
+		}
+			
 	}
 		
 	createOutputFile(outputFilePath);
 
 	try{
-
 		TLGCApp lgc(inputFilePath, outputFilePath);
 		return lgc.exec();	
 	}
