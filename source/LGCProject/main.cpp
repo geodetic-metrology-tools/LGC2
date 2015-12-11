@@ -36,7 +36,7 @@ int main( int argc,  char *argv[]){
 						break;
 					}
 
-					inputFilePath = argv[i+1]; 
+					inputFilePath = argv[i + 1];
 					break;
 				}
 
@@ -48,7 +48,6 @@ int main( int argc,  char *argv[]){
 						break;
 					}
 					outputFilePath = argv[i + 1];  //store the output file path, if there is something ot read
-					std::cout << outputFilePath << endl;
 					break;
 				}
 			}
@@ -57,19 +56,17 @@ int main( int argc,  char *argv[]){
 
 
 
-	if(inputFilePath == "" || outputFilePath == ""){ 
+	if (inputFilePath == "" || outputFilePath == ""){
 		if (inputFilePath == "")
 			throw runtime_error("Error, the input file is not found");
 		else if (outputFilePath == "")
 			outputFilePath = inputFilePath.substr(0, inputFilePath.length() - 4) + "out";
 	}
 		
-	std::cout << outputFilePath << endl;
 	createOutputFile(outputFilePath);
 
 	try{
-		std::cout << inputFilePath << endl;
-		std::cout << outputFilePath << endl;
+
 		TLGCApp lgc(inputFilePath, outputFilePath);
 		return lgc.exec();	
 	}
