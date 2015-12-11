@@ -6,15 +6,17 @@
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <unistd.h>
+	#include <fcntl.h>
 #else
 	#include <windows.h>
 #endif
 
-#include <thread>
-#include <chrono>
 
 void createOutputFile(std::string outputFilePath);
+
+/// Return the directory path - until the last \ or /
 std::string getPathDir(std::string fPath);
+/// Return the file path - until the last .
 std::string getPathFile(std::string fPath);
 
 int main( int argc,  char *argv[]){
@@ -72,11 +74,11 @@ int main( int argc,  char *argv[]){
 					// Look if absolute path is used
 					#ifdef __linux__    
 					if (outputFilePath.substr(0, 1).compare(slash) != 0 )
-						outputFilePath = getPath(inputFilePath) + argv[i + 1];
+						outputFilePath = getPathDir(inputFilePath) + slash + argv[i + 1];
 
 					#else
 					if (outputFilePath.substr(0, 3).compare("C:\\") != 0 && outputFilePath.substr(0, 1).compare("\\") != 0)
-						outputFilePath = getPathDir(inputFilePath) + argv[i + 1];
+						outputFilePath = getPathDir(inputFilePath) + slash +  argv[i + 1];
 
 					#endif
 
@@ -92,7 +94,7 @@ int main( int argc,  char *argv[]){
 		if (inputFilePath == "")
 			throw runtime_error("Error, the input file is not found");
 		else if (outputFilePath == "")
-			outputFilePath = getPathFile(inputFilePath) + "out";
+			outputFilePath = getPathFile(inputFilePath) + ".out";
 			
 	}
 		
@@ -132,7 +134,7 @@ void createOutputFile(std::string outFilePath)
 
 std::string getPathDir(std::string fPath)
 {
-	std::size_t found = fPath.find_last_of("/\\");
+	std::size_t found = fPath.find_last_of(slash);
 	return fPath.substr(0, found);
 }
 

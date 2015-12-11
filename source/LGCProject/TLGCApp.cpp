@@ -128,7 +128,7 @@ void TLGCApp::writePunchFile(TLGCData* dat)
 void TLGCApp::writeFautFile(TLGCData* dat)
 {
 	// change stream name
-	fStream->resetStreamName(fOutputFileLoc.substr(0,fOutputFileLoc.length() - 3 ) + ".err");
+	fStream->resetStreamName(fOutputFileLoc.substr(0,fOutputFileLoc.length() - 3 ) + "err");
 	TFautFileWriter fautFileWriter(fStream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
