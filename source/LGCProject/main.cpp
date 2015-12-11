@@ -14,17 +14,15 @@
 #include <chrono>
 
 void createOutputFile(std::string outputFilePath);
+std::string getPathDir(std::string fPath);
+std::string getPathFile(std::string fPath);
 
 int main( int argc,  char *argv[]){
-
-	std::this_thread::sleep_for(std::chrono::seconds(10));
 
 	std::string inputFilePath;
 	std::string inputFilename;
 	std::string outputFilePath;
 	
-	// to manage absolute and relative path given in the cmd line
-	bool isAbsolutePath = true;
 
 	for (int i=0 ; i<argc ; i++)
 	{
@@ -46,10 +44,7 @@ int main( int argc,  char *argv[]){
 					// Look if absolute path is used
 					#ifdef __linux__    
 					if (inputFilename.substr(0, 1).compare(slash) != 0)
-					{
-						isAbsolutePath = false;
 						inputFilePath = getCurrentDirectory() + slash + inputFilename;
-					}
 					else
 						inputFilePath = inputFilename;
 
@@ -58,10 +53,7 @@ int main( int argc,  char *argv[]){
 					if (inputFilename.substr(0, 3).compare("C:\\") == 0 || inputFilename.substr(0, 1).compare("\\") == 0)
 						inputFilePath = inputFilename;				
 					else
-					{
-						isAbsolutePath = false;
 						inputFilePath = getCurrentDirectory() + slash + inputFilename;
-					}
 					#endif
 					
 					break;
@@ -74,10 +66,20 @@ int main( int argc,  char *argv[]){
 						std::cout << "Output file was not specified" << endl;
 						break;
 					}
-					if (isAbsolutePath)
-						outputFilePath = argv[i + 1];
-					else
-						outputFilePath = getCurrentDirectory() + slash + argv[i + 1];  //store the output file path, if there is something ot read
+
+					outputFilePath = argv[i + 1];
+
+					// Look if absolute path is used
+					#ifdef __linux__    
+					if (outputFilePath.substr(0, 1).compare(slash) != 0 )
+						outputFilePath = getPath(inputFilePath) + argv[i + 1];
+
+					#else
+					if (outputFilePath.substr(0, 3).compare("C:\\") != 0 && outputFilePath.substr(0, 1).compare("\\") != 0)
+						outputFilePath = getPathDir(inputFilePath) + argv[i + 1];
+
+					#endif
+
 					break;
 				}
 			}
@@ -90,12 +92,7 @@ int main( int argc,  char *argv[]){
 		if (inputFilePath == "")
 			throw runtime_error("Error, the input file is not found");
 		else if (outputFilePath == "")
-		{
-			if (isAbsolutePath)
-				outputFilePath = inputFilePath.substr(0, inputFilename.length() - 4) + "out";
-			else
-				outputFilePath = getCurrentDirectory() + slash + inputFilename.substr(0, inputFilename.length() - 4) + "out";
-		}
+			outputFilePath = getPathFile(inputFilePath) + "out";
 			
 	}
 		
@@ -119,7 +116,7 @@ void createOutputFile(std::string outFilePath)
 #ifdef __linux__
 	struct stat st = { 0 };
 	if (stat(outputFileDirectory.c_str(), &st) == -1)
-		if (touch(outputFileDirectory.c_str(), 0700) == -1) {
+		if (creat(outputFileDirectory.c_str(),00007) == -1) {
 			std::cout << "Output directory does not exist and could not be created" << endl;
 		}
 #else
@@ -131,4 +128,16 @@ void createOutputFile(std::string outFilePath)
 	}
 
 #endif
+}
+
+std::string getPathDir(std::string fPath)
+{
+	std::size_t found = fPath.find_last_of("/\\");
+	return fPath.substr(0, found);
+}
+
+std::string getPathFile(std::string fPath)
+{
+	std::size_t found = fPath.find_last_of(".");
+	return fPath.substr(0, found);
 }
