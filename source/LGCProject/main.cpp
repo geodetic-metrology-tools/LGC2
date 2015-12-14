@@ -118,7 +118,7 @@ void createOutputFile(std::string outFilePath)
 #ifdef __linux__
 	struct stat st = { 0 };
 	if (stat(outputFileDirectory.c_str(), &st) == -1)
-		if (creat(outputFileDirectory.c_str(),00007) == -1) {
+		if (creat(outputFileDirectory.c_str(),S_IRWXU|S_IRWXG) == -1) {
 			std::cout << "Output directory does not exist and could not be created" << endl;
 		}
 #else
