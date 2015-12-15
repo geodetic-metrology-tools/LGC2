@@ -26,7 +26,6 @@ set(tests_SOURCES
 	testMixingObservation.cpp
 	testAppExecution.cpp
 	main.cpp
-	simulationTests.cpp
 	tests_with_ScaleInstr.cpp
 )
 

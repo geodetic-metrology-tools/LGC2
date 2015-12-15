@@ -6,9 +6,10 @@
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
+bool&TAdjustablePoint::allfixedParam = False;
 
 //Private constructor for creating uninitialized object
-TAdjustablePoint::TAdjustablePoint(const std::string& name):
+TAdjustablePoint::TAdjustablePoint(const std::string& name) :
 fName(name),
 fProvisionalValue(NO_VALf,  NO_VALf,  NO_VALf,TCoordSysFactory::k3DCartesian),
 fEstimatedValue(fProvisionalValue),
@@ -20,7 +21,7 @@ fSpatialStatus(TSpatialStatus::kUnknown)
 	setDefaults(true, true, true);
 }
 
-TAdjustablePoint::TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree):
+TAdjustablePoint::TAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree) :
 fName(name),
 fProvisionalValue(pos),
 fEstimatedValue(fProvisionalValue),
@@ -237,9 +238,9 @@ void TAdjustablePoint::setCorrection(int idx, TReal value) {
 			//If H value is fixed and all variables were set in this step, we need to make transformation: X1Y1Z1 -> X1Y1H0 --> X1Y1Z0new
 			if (fHfixed && fXValueSet && fYValueSet){
 				transformEstimatedValue();
-				if(!fixedState[0])
+				if (!(fixedState[0] | allfixedParam))
 					fXValueSet = false;
-				if(!fixedState[1])
+				if (!(fixedState[1] | allfixedParam))
 					fYValueSet = false;
 			}
 			return;
@@ -270,29 +271,45 @@ void	TAdjustablePoint::setEstimatedPrecision(int idx, TReal value){
 
 /*! Sets the XY covariance after calculation */
 void	TAdjustablePoint::setXYEstimatedCovariance(TReal value){
-	if (!fixedState[0] && !fixedState[1])
-      fCovariance.setX(TLength(value));
+	if (allfixedParam)
+		throw std::logic_error("ALLFIXED is used. No covariance to estimated");
 	else
-		throw std::logic_error("Point must be variable in both X and Y.");
+	{
+		if (!(fixedState[0]) && !(fixedState[1]))
+			fCovariance.setX(TLength(value));
+		else
+			throw std::logic_error("Point must be variable in both X and Y.");
+	}
 	
 }
 
 /*! Sets the YZ covariance after calculation  */
 void	TAdjustablePoint::setYZEstimatedCovariance(TReal value){
-	if (!fixedState[1] && !fixedState[2])
-		fCovariance.setY(TLength(value));
+	if (allfixedParam)
+		throw std::logic_error("ALLFIXED is used. No covariance to estimated");
 	else
-		throw std::logic_error("Point must be variable in both Y and Z.");
+	{
+		if (!(fixedState[1]) && !(fixedState[2]))
+			fCovariance.setY(TLength(value));
+		else
+			throw std::logic_error("Point must be variable in both Y and Z.");
+	}
 }
 
 /*! Sets the XZ covariance after calculation 	
 	\param[in] value Value to be set.
 */
 void	TAdjustablePoint::setXZEstimatedCovariance(TReal value){
-	if (!fixedState[0] && !fixedState[2])
-      fCovariance.setZ(TLength(value));
+
+	if (allfixedParam)
+		throw std::logic_error("ALLFIXED is used. No covariance to estimated");
 	else
-		throw std::logic_error("Point must be variable in both X and Z.");
+	{
+		if (!(fixedState[0]) && !(fixedState[2]))
+			fCovariance.setZ(TLength(value));
+		else
+			throw std::logic_error("Point must be variable in both X and Z.");
+	}
 }
 
 /*! 
@@ -303,19 +320,21 @@ void	TAdjustablePoint::setXZEstimatedCovariance(TReal value){
 void TAdjustablePoint::setFirstUidx(int idx) {
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to a fixed point.");
+	else if (allfixedParam)
+		throw std::logic_error("Trying to assign unknown index to a fixed point.(ALLFIXED is used)");
 	for (int i = 0; i < 3; i++)
-		if (!fixedState[i])
+		if (!(fixedState[i]| allfixedParam))
 			uidx[i] = idx++;
 }
 
 /// Update the adjustment information of an uninitialized point
 void TAdjustablePoint::updateFixedState(bool lx, bool ly, bool lz) {
-	fixedState[0] = lx;
-	fixedState[1] = ly;
-	fixedState[2] = lz;
+	fixedState[0] = (lx|allfixedParam);
+	fixedState[1] = (ly|allfixedParam);
+	fixedState[2] = (lz|allfixedParam);
 
-	fXValueSet = lx;
-	fYValueSet = ly;
+	fXValueSet = (lx|allfixedParam);
+	fYValueSet = (ly|allfixedParam);
 }
 
 
@@ -343,6 +362,56 @@ void TAdjustablePoint::reInitialise(){
 	fEstimatedPrecision[0] = fEstimatedPrecision[1] = fEstimatedPrecision[2] = TLength(0.0);
 
 	fCovariance = zeroVec;
+}
+
+int TAdjustablePoint::getNumUnkn() const
+{
+	if (!allfixedParam)
+		return !(int)fixedState[0] + !(int)fixedState[1] + !(int)fixedState[2];
+	else
+		return 0;
+}
+
+bool TAdjustablePoint::hasVariable() const
+{
+	if (!allfixedParam)
+		return !fixedState[0] || !fixedState[1] || !fixedState[2];
+	else
+		return false;
+}
+
+int TAdjustablePoint::getFirstUidx() const {
+	if (allfixedParam)
+		throw std::logic_error("Trying to get unknown index from fixed coordinate. (ALLFIXED is used)");
+	else
+	{	
+	for (int i = 0; i < 3; i++)
+		if (!fixedState[i])
+			return uidx[i];
+	throw std::logic_error("Trying to get unknown index from fixed coordinate.");
+	}
+}
+
+int TAdjustablePoint::getLastUidx() const {
+	if (allfixedParam)
+		throw std::logic_error("Trying to get unknown index from fixed coordinate. (ALLFIXED is used)");
+	else
+	{
+		for (int i = 2; i >= 0; i--)
+			if (!fixedState[i])
+				return uidx[i];
+		throw std::logic_error("Trying to get unknown index from fixed coordinate.");
+	}
+}
+
+int TAdjustablePoint::getCoordinateUnknIndex(int d) const {
+	assert3D(d);
+	if (allfixedParam)
+		throw std::logic_error("Trying to get unknown index from fixed coordinate. (ALLFIXED is used)");
+	else if (!fixedState[d])
+		return uidx[d];
+	else
+		throw std::logic_error("Trying to get unknown index from fixed coordinate.");
 }
 ///////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS

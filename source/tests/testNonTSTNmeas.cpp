@@ -148,7 +148,7 @@ namespace tut
 
 		const TAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
 
-      ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
+		ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);

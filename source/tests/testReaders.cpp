@@ -98,6 +98,19 @@ namespace tut
 			TKeyALLFIXED c1(proj);
 			c1.parse(empty, -1);
 			ensure("ALLFIXED must be ON now", cfg.allfixed.isActive());
+
+			TPositionVector position2(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k2DPlusH);
+			TDataTreeIterator iter;
+			TAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
+			// point should be fixed
+			ensure_equals("0 unknowns introduced", pH.getNumUnkn(), 0);
+			ensure_equals("Point is  fixed", pH.isFixed(), true);
+			ensure_equals("Name should match", pH.getName(), "pointH1");
+
+			//Need to re initialise allfixed parameter
+			TAdjustablePoint::setAllFixedParam(False);
+			TAdjustableHelmertTransformation::setAllFixedParam(False);
+
 			//
 			TKeyNODUP c2(proj);
 			c2.parse(empty, -1);

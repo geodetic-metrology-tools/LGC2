@@ -62,39 +62,30 @@ public:
 			\brief Calculates and \returns the number of unknowns that are added to the adjustment by this point.
 			This number varies from zero to three unknowns.
 		*/
-		inline virtual int getNumUnkn() const { return !(int)fixedState[0] + !(int)fixedState[1] + !(int)fixedState[2];}
+		virtual int getNumUnkn() const;
 
 
 		/// Tells if at least one coordinate is unfixed (variable).
-		inline bool hasVariable() const { return !fixedState[0] || !fixedState[1] || !fixedState[2];}
+		bool hasVariable() const;
 		
 
 		/// See \ref TVAdjustableObject::isFixed
-		inline virtual bool isFixed() const { return (fixedState[0] && fixedState[1] && fixedState[2]);}
+		inline virtual bool isFixed() const { return ((fixedState[0] && fixedState[1] && fixedState[2])|allfixedParam);}
 
 		/*! 
 			\brief See \ref TVAdjustableObject::getFirstUidx
 
 			\throws Throws a logic_error if no component of the point is variable, i.e. a fixed point.
 		*/
-		inline virtual int getFirstUidx() const {
-			for (int i = 0; i < 3; i++)
-				if (!fixedState[i])
-					return uidx[i];
-			throw std::logic_error("Trying to get unknown index from fixed point.");
-		}
+		virtual int getFirstUidx() const;
+
 
 		/*! 
 			\brief See \ref TVAdjustableObject::getLastUidx
 
 			\throws Throws a logic_error if no component of the point is variable, i.e. a fixed point.
 		*/
-		inline virtual int getLastUidx() const {
-			for (int i = 2; i >= 0; i--)
-				if (!fixedState[i])
-					return uidx[i];
-			throw std::logic_error("Trying to get unknown index from fixed point.");
-		}
+		virtual int getLastUidx() const;
 
 		/// Returns name of the point */
 		inline virtual const std::string& getName() const { return fName; }
@@ -174,7 +165,7 @@ public:
 		*/
 		inline bool isCoordinateFixed(int d) const { 
 			assert3D(d);
-			return fixedState[d]; 
+			return (fixedState[d]|allfixedParam); 
 		}
 
 		/*!
@@ -182,12 +173,7 @@ public:
 
 			\param[in] d Allowed values are 0(X), 1(Y) and 2(Z).
 		*/
-		inline int getCoordinateUnknIndex(int d) const { 
-			assert3D(d);
-			if(!fixedState[d])
-				return uidx[d];
-			throw std::logic_error("Trying to get unknown index from fixed coordinate.");
-		}
+		int getCoordinateUnknIndex(int d) const;
 
 		/*!
 			
@@ -257,6 +243,9 @@ public:
 			Sets the estimated values to be the provisional values and for the precisions, corrections and covariances zeros.
 		*/
 		void reInitialise();
+
+		///Set the boolean reference allfixedParam (to the TLGCConfig binary option ALLFIXED)
+		static void setAllFixedParam(const bool& param){ allfixedParam = param; };
 	//@}
 
 private:
@@ -288,12 +277,12 @@ private:
 	bool fXValueSet; /*!< Tells whether X value was set in one particular LS calculation run, if X component is variable. */	
 	bool fYValueSet; /*!< Tells whether Y value was set in one particular LS calculation run, if Y component is variable. */
 
+	static bool& allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
+
 	//This method set an original H0 value to fEstimatedValue, transform it into XYZ coordinates
 	void transformEstimatedValue();
 
-	/*!
-		Private constructor for creating uninitialized object
-	*/
+	/*!Private constructor for creating uninitialized object	*/
 	TAdjustablePoint(const std::string& name);
 
 	TSpatialStatus::ESpatialStatus fSpatialStatus;
