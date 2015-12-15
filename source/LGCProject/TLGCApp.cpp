@@ -116,7 +116,10 @@ void TLGCApp::writeStdResultsFile(TLGCData *dat)
 void TLGCApp::writePunchFile(TLGCData* dat)
 {
 	// change stream name
-	fStream->resetStreamName(fOutputFileLoc.substr(0,fOutputFileLoc.length() - 3 ) + "pun");
+	std::size_t found = fOutputFileLoc.find_last_of(".");
+	fOutputFileLoc=fOutputFileLoc.substr(0, found);
+
+	fStream->resetStreamName(fOutputFileLoc + ".pun");
 	TPunchFileWriter punchFileWriter(fStream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
@@ -128,7 +131,10 @@ void TLGCApp::writePunchFile(TLGCData* dat)
 void TLGCApp::writeFautFile(TLGCData* dat)
 {
 	// change stream name
-	fStream->resetStreamName(fOutputFileLoc.substr(0,fOutputFileLoc.length() - 3 ) + "err");
+	std::size_t found = fOutputFileLoc.find_last_of(".");
+	fOutputFileLoc=fOutputFileLoc.substr(0, found);
+
+	fStream->resetStreamName(fOutputFileLoc + ".err");
 	TFautFileWriter fautFileWriter(fStream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
