@@ -1,6 +1,7 @@
 #include <iostream>
 #include "TLGCApp.h"
 #include "Utils.h"
+#include "TFileLogger.h"
 
 #ifdef __linux__
 	#include <sys/types.h>
@@ -32,24 +33,32 @@ int main( int argc,  char *argv[]){
 	std::string inputFilePath;
 	std::string inputFilename;
 	std::string outputFilePath;
-	
+
+#ifdef __linux__
+	const std::string logFilePath = getCurrentDirectory()+slash+"LOGFile.log";
+#else
+	const std::string logFilePath = "C:\\temp\\LOGFile.log";
+#endif
+
 	//std::this_thread::sleep_for(chrono::seconds(10));
 
 	if (argc == 1)
 	{
-		std::cout << "No argument, LGC need at leat 1 argument -i inputPath" << endl;
-		//throw std::logic_error("Error, no argument, LGC need at leat 1 argument -i inputPath");
-		return 1;
+		//create a log file to write the error
+		TFileLogger logFile(logFilePath, "LGC log file");
+		auto& errorMessages(logFile);
+		errorMessages.writeReportHeader("Launch LGC:");
+		errorMessages << TFileLogger::e_logType::LOG_ERROR << "No argument, LGC needs at least the project filepath after the -i flag.";
 	}
-
-
-	for (int i=0 ; i<argc ; i++)
+	else
 	{
-		if(argv[i][0] == '-')
+		for (int i = 0; i < argc; i++)
 		{
-			switch (argv[i][1])
+			if (argv[i][0] == '-')
 			{
-				// run command line interface
+				switch (argv[i][1])
+				{
+					// run command line interface
 				case 'i':
 				case 'I':
 				{
@@ -58,23 +67,23 @@ int main( int argc,  char *argv[]){
 					}
 
 					inputFilename = argv[i + 1];
-					
+
 					// Look if absolute path is used
-					#ifdef __linux__    
+#ifdef __linux__    
 					if (inputFilename.substr(0, 1).compare(slash) != 0)
 						inputFilePath = getCurrentDirectory() + slash + inputFilename;
 					else
 						inputFilePath = inputFilename;
 
-					#else
+#else
 					inputFilename = changePathDir(inputFilename);
 
 					if (inputFilename.substr(0, 3).compare("C:\\") == 0 || inputFilename.substr(0, 1).compare("\\") == 0)
-						inputFilePath = inputFilename;				
+						inputFilePath = inputFilename;
 					else
 						inputFilePath = getCurrentDirectory() + slash + inputFilename;
-					#endif
-					
+#endif
+
 					break;
 				}
 
@@ -88,47 +97,53 @@ int main( int argc,  char *argv[]){
 					outputFilePath = argv[i + 1];
 
 					// Look if absolute path is used
-					#ifdef __linux__    
+#ifdef __linux__    
 					if (outputFilePath.substr(0, 1).compare(slash) != 0 )
 						outputFilePath = getPathDir(inputFilePath) + slash + argv[i + 1];
 
-					#else
+#else
 					outputFilePath = changePathDir(outputFilePath);
 
 					if (outputFilePath.substr(0, 3).compare("C:\\") != 0 && outputFilePath.substr(0, 1).compare("\\") != 0)
-						outputFilePath = getPathDir(inputFilePath) + slash +  argv[i + 1];
+						outputFilePath = getPathDir(inputFilePath) + slash + argv[i + 1];
 
-					#endif
+#endif
 
 					break;
 				}
+				}
 			}
 		}
-	}
 
 
 
-	if (inputFilename == "" || outputFilePath == ""){
-		if (inputFilePath == "")
-		{
-			//throw runtime_error("Error, the input file is not found");
-			cout << "Error, the input file is not specified" << endl;
-			return 1;
+		if (inputFilename == "" || outputFilePath == ""){
+			if (inputFilePath == "")
+			{
+				//create a log file to write the error
+				TFileLogger logFile(logFilePath, "LGC log file");
+				auto& errorMessages(logFile);
+				errorMessages.writeReportHeader("Launch LGC:");
+				errorMessages << TFileLogger::e_logType::LOG_ERROR << "Error, the input file is not found. Give the path after -i flag";
+				return 1;
+			}
+			else if (outputFilePath == "")
+				outputFilePath = getPathFile(inputFilePath) + ".out";
 		}
-		else if (outputFilePath == "")
-			outputFilePath = getPathFile(inputFilePath) + ".out";
-			
-	}
-		
-	createOutputFile(outputFilePath);
 
-	try{
-		TLGCApp lgc(inputFilePath, outputFilePath);
-		return lgc.exec();	
+		createOutputFile(outputFilePath);
+
+		try
+		{
+			TLGCApp lgc(inputFilePath, outputFilePath);
+			return lgc.exec();
+		}
+		catch (const std::runtime_error& ex)
+		{
+			cout << ex.what() << endl << endl;
+		}
 	}
-	catch (std::exception& ex){
-		cout << ex.what()<<endl<<endl;		
-	}
+
 
 	return 1;
 }
@@ -148,7 +163,7 @@ void createOutputFile(std::string outFilePath)
 
 	DWORD ftyp = GetFileAttributesA(outputFileDirectory.c_str());
 	if (ftyp == INVALID_FILE_ATTRIBUTES){ //This means that the directory still does not exist, using default one
-		throw runtime_error("Output directory does not exist and could not be created");
+		std::cout << "Output directory does not exist and could not be created";
 	}
 
 #endif

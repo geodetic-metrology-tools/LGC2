@@ -31,19 +31,14 @@ bool TLGCApp::exec()
 	std::ifstream inputFileStream (fInputFileLoc, std::ifstream::in);
 	std::shared_ptr<TLGCData> projectData(new TLGCData);
 
-	//If input file exists and is readable, read it.
-	if (inputFileStream.good())
-	{
-		projectData->getFileLogger().setOutputfileLocation(fLoggerFileLoc);
-		projectData->getFileLogger().writeReportHeader("LGC output file");
+	//The input file exists, already test in main.cpp.
+	projectData->getFileLogger().setOutputfileLocation(fLoggerFileLoc);
+	projectData->getFileLogger().writeReportHeader("LGC output file");
 
-		//Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
-		TReader r(projectData);
-		if (!r.read(inputFileStream))
-			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
-	}
-	else //Throw exception otherwise.
-		throw runtime_error("Input file \"" + fInputFileLoc + "\" was not found or is not readable!");
+	//Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
+	TReader r(projectData);
+	if (!r.read(inputFileStream))
+		throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
 	
 	//Initialize the writer into the output file.
 	initializeStream(projectData);
