@@ -6,14 +6,15 @@
 #include "TLSParametricMtdComputer.h"
 #include "TLSCombinedMtdComputer.h"
 #include "TLSWeightedUnkMtdComputer.h"
-#include "TContributionsGenerator.h"
 #include "TLSSolutionCalculator.h"
 #include "TXYH2CCS.h"
 
 TSimulationCalculation::TSimulationCalculation(TLGCData& data, int maxIter, TReal convCrit) : 
 	fData(data), fMaxIterations(maxIter), fConvCriteria(convCrit), 
-	fCg(&data.getTree(), data.getConfig().referential)
+	fPointTransformer(&data.getTree(), data.getConfig().referential),
+	fSimObs(fPointTransformer)
 {
+
 	/*Initialize the point summaries list*/
 	for (auto& point : fData.getPoints()){
 		if(!point.isFixed())
@@ -143,7 +144,6 @@ bool	TSimulationCalculation::processSimCalculation()
 
 void TSimulationCalculation::simulateValues()
 {//generate simulated values
-	TContributionsGenerator cg(&fData.getTree(), fData.getConfig().referential);
 
 	//Tteration through the tree nodes
 	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++){		
@@ -211,7 +211,7 @@ void TSimulationCalculation::simulateValues()
 
 void	TSimulationCalculation::getDVERSimValues(std::vector<TDVER>& dver){
 	for (auto& itDVER:dver){
-		TReal calcVal = fCg.getDVERCalcMeas(itDVER);
+		TReal calcVal = fSimObs.getDVERCalcMeas(itDVER);
 		TReal sigma = itDVER.getObservedStDev();
 		itDVER.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -219,7 +219,7 @@ void	TSimulationCalculation::getDVERSimValues(std::vector<TDVER>& dver){
 
 void	TSimulationCalculation::getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& dlev){
 	for(auto& itDLEV:dlev){
-		TReal calcVal = fCg.getDLEVCalcMeas(levelST, itDLEV);
+		TReal calcVal = fSimObs.getDLEVCalcMeas(levelST, itDLEV);
 		TReal sigma = itDLEV.target.sigmaD;
            itDLEV.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -227,14 +227,14 @@ void	TSimulationCalculation::getDLEVSimValues(const TLEVEL& levelST, std::vector
 
 /*DHOR made in DLEV measurement, different from the DHOR obs.*/
 void	TSimulationCalculation::getHorDistSimValues(const TAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel){
-	TReal calcVal = fCg.getHorDistCalcMeas(referencePoint, dhorlevel);
+	TReal calcVal = fSimObs.getHorDistCalcMeas(referencePoint, dhorlevel);
 	TReal sigma = dhorlevel.target.sigmaD;
 	dhorlevel.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 }
 
 void	TSimulationCalculation::getDSPTSimValues(const TEDM& edmST, std::vector<TDSPT>& dspt){
 	for(auto& itDSPT:dspt){
-		TReal calcVal = fCg.getDSPTCalcMeas(edmST, itDSPT);
+		TReal calcVal = fSimObs.getDSPTCalcMeas(edmST, itDSPT);
 		TReal sigma = itDSPT.target.sigmaDSpt;
         itDSPT.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -242,7 +242,7 @@ void	TSimulationCalculation::getDSPTSimValues(const TEDM& edmST, std::vector<TDS
 
 void TSimulationCalculation::getECHOSimValues(const TECHOROM& echoROM, std::vector<TECHO>& echo){
 	for(auto& itECHO:echo){
-		TReal calcVal = fCg.getECHOCalcMeas(echoROM, itECHO);
+		TReal calcVal = fSimObs.getECHOCalcMeas(echoROM, itECHO);
 		TReal sigma = itECHO.target.sigmaD;
         itECHO.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -250,7 +250,7 @@ void TSimulationCalculation::getECHOSimValues(const TECHOROM& echoROM, std::vect
 
 void TSimulationCalculation::getECVESimValues(const TECVEROM& ecveROM, std::vector<TECVE>& ecve){
 	for (auto& itECVE:ecve){
-		TReal calcVal = fCg.getECVECalcMeas(ecveROM, itECVE);
+		TReal calcVal = fSimObs.getECVECalcMeas(ecveROM, itECVE);
 		TReal sigma = itECVE.target.sigmaD;
 		itECVE.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -258,7 +258,7 @@ void TSimulationCalculation::getECVESimValues(const TECVEROM& ecveROM, std::vect
 
 void	TSimulationCalculation::getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie){
 	for (auto& itORIE:orie){
-		TReal calcVal = fCg.getORIECalcMeas(orieROM, itORIE);
+		TReal calcVal = fSimObs.getORIECalcMeas(orieROM, itORIE);
 		TReal sigma = itORIE.target.sigmaAngl;
 		itORIE.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
@@ -267,7 +267,7 @@ void	TSimulationCalculation::getORIESimValues(const TORIEROM& orieROM, std::vect
 void	TSimulationCalculation::getUVDSimValues(TCAM& camera){
 	UVDCalcMeas calcMeas;
 	for(auto itUVD(camera.measUVD.begin()); itUVD != camera.measUVD.end(); ++itUVD){
-		calcMeas = fCg.getUVDCalcMeas(camera, *itUVD);
+		calcMeas = fSimObs.getUVDCalcMeas(camera, *itUVD);
 
 
 		/*Simulate the values*/
@@ -287,7 +287,7 @@ void	TSimulationCalculation::getUVDSimValues(TCAM& camera){
 void	TSimulationCalculation::getUVECSimValues(TCAM& camera){
 	TFreeVector calcMeas;
 	for(auto itUVEC(camera.measUVEC.begin()); itUVEC != camera.measUVEC.end(); ++itUVEC){
-		calcMeas = fCg.getUVECCalcMeas(camera, *itUVEC);
+		calcMeas = fSimObs.getUVECCalcMeas(camera, *itUVEC);
 
 		/*Simulate the values*/
         calcMeas.setX( TLength(getSimulatedValue(calcMeas.getX().getMetresValue(), itUVEC->target.sigmaX)));
@@ -302,9 +302,9 @@ void	TSimulationCalculation::getUVECSimValues(TCAM& camera){
 
 void	TSimulationCalculation::getPLR3DSimValues(const TTSTN& station,const TTSTN::TROM& rom,std::vector<TPLR3D>& plr3D){
 	for(auto& itPLR3D:plr3D){
-		TReal calcValTheta = fCg.getANGLCalcMeas(station,rom,itPLR3D.targetPos);
-		TReal calcValPhi = fCg.getZENDCalcMeas(station,itPLR3D.targetPos,itPLR3D.target.targetHt);
-		TReal calcValDist = fCg.getDISTCalcMeas(station,itPLR3D.targetPos,itPLR3D.target.targetHt, itPLR3D.target.distCorrectionAdjustable->getEstimatedValue());
+		TReal calcValTheta = fSimObs.getANGLCalcMeas(station, rom, itPLR3D.targetPos);
+		TReal calcValPhi = fSimObs.getZENDCalcMeas(station, itPLR3D.targetPos, itPLR3D.target.targetHt);
+		TReal calcValDist = fSimObs.getDISTCalcMeas(station, itPLR3D.targetPos, itPLR3D.target.targetHt, itPLR3D.target.distCorrectionAdjustable->getEstimatedValue());
 
 		TReal sigmaTheta = itPLR3D.target.sigmaAngl;
 		TReal sigmaPhi = itPLR3D.target.sigmaZenD;
@@ -318,7 +318,7 @@ void	TSimulationCalculation::getPLR3DSimValues(const TTSTN& station,const TTSTN:
 
 void	TSimulationCalculation::getANGLSimValues(const TTSTN& station,const TTSTN::TROM& rom,std::vector<TANGL>& angl){
 	for(auto& itANGL:angl){
-		TReal calcVal = fCg.getANGLCalcMeas(station, rom, itANGL.targetPos);
+		TReal calcVal = fSimObs.getANGLCalcMeas(station, rom, itANGL.targetPos);
 		TReal sigma = itANGL.target.sigmaAngl;
 		itANGL.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
@@ -326,7 +326,7 @@ void	TSimulationCalculation::getANGLSimValues(const TTSTN& station,const TTSTN::
 
 void	TSimulationCalculation::getZENDSimValues(const TTSTN& station, std::vector<TZEND>& zend){
 	for(auto& itZEND:zend){
-		TReal calcVal = fCg.getZENDCalcMeas(station, itZEND.targetPos, itZEND.target.targetHt);
+		TReal calcVal = fSimObs.getZENDCalcMeas(station, itZEND.targetPos, itZEND.target.targetHt);
 		TReal sigma = itZEND.target.sigmaZenD;
 		itZEND.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
@@ -334,7 +334,7 @@ void	TSimulationCalculation::getZENDSimValues(const TTSTN& station, std::vector<
 
 void	TSimulationCalculation::getDISTSimValues(const TTSTN& station, std::vector<TLINE>& dist){
 	for(auto& itDIST:dist){
-		TReal calcVal = fCg.getDISTCalcMeas(station, itDIST.targetPos, itDIST.target.targetHt, itDIST.target.distCorrectionAdjustable->getEstimatedValue());
+		TReal calcVal = fSimObs.getDISTCalcMeas(station, itDIST.targetPos, itDIST.target.targetHt, itDIST.target.distCorrectionAdjustable->getEstimatedValue());
 		TReal sigma = itDIST.target.sigmaDist;
 		itDIST.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -342,7 +342,7 @@ void	TSimulationCalculation::getDISTSimValues(const TTSTN& station, std::vector<
 
 void	TSimulationCalculation::getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECTH>& ecth){
 	for (auto& itECTH:ecth){
-		TReal calcVal = fCg.getECTHCalcMeas(station, rom, itECTH);
+		TReal calcVal = fSimObs.getECTHCalcMeas(station, rom, itECTH);
 		TReal sigma = itECTH.target.sigmaD;
 		itECTH.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -350,7 +350,7 @@ void	TSimulationCalculation::getECTHSimValues(const TTSTN& station, const TTSTN:
 
 void	TSimulationCalculation::getECSPSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECSP>& ecsp){
 	for (auto& itECSP : ecsp){
-		TReal calcVal = fCg.getECSPCalcMeas(station, rom, itECSP);
+		TReal calcVal = fSimObs.getECSPCalcMeas(station, rom, itECSP);
 		TReal sigma = itECSP.target.sigmaD;
 		itECSP.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
@@ -358,7 +358,7 @@ void	TSimulationCalculation::getECSPSimValues(const TTSTN& station, const TTSTN:
 
 void	TSimulationCalculation::getDHORSimValues(const TTSTN& station, std::vector<TLINE>& dhor){
 	for (auto& itDHOR:dhor){
-		TReal calcVal = fCg.getDHORCalcMeas(station, itDHOR);
+		TReal calcVal = fSimObs.getDHORCalcMeas(station, itDHOR);
 		TReal sigma = itDHOR.target.sigmaDist;
 		itDHOR.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}

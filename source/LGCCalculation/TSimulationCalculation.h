@@ -5,7 +5,8 @@
 #include <limits>
 #include "TALSComputer.h"
 #include "TResSimFileWriter.h"
-#include "TContributionsGenerator.h"
+#include "TPointTransformer.h"
+#include "TSimulatedObservations.h"
 #include "TLGCStatistic.h"
 
 class TLSResultsMatricesExtractor;
@@ -36,7 +37,8 @@ private:
 
 		/*!@name Data*/
 		//@{
-			TContributionsGenerator fCg; //< Contribution generator used for calculation of the 'measured values' 
+			TSimulatedObservations fSimObs; //< Contribution generator used for calculation of the 'measured values' 
+			TPointTransformer fPointTransformer;
 			TLGCData& fData;
 
 			std::default_random_engine engine; //< Random numbers generator 

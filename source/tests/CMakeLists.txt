@@ -39,6 +39,7 @@ set(tests_INPUT
 	testMixingObservation.h
 	testDVER.h
 	tests_with_ScaleInstr.h
+	Utils.h
 )
 
 add_executable(tests ${tests_INPUT} ${tests_SOURCES})

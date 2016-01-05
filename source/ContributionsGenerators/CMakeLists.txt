@@ -12,11 +12,15 @@ include_directories(${CMAKE_SOURCE_DIR}
 set(ContributionsGenerators_HEADERS 	
 	TContributionsGenerator.h
 	ContributionStructures.h
+	TPointTransformer.h
+	TSimulatedObservations.h
 )
 
 # Create a variable containing all .cpp files:
 set(ContributionsGenerators_SOURCES
 	TContributionsGenerator.cpp
+	TPointTransformer.cpp
+	TSimulatedObservations.cpp
 )
 
 

@@ -46,13 +46,5 @@ namespace std
 	}
 };
 
-namespace LGC {
-
-	static const TReal VECCONV = 0.001;
-	static const TReal VECCONVINV = 1000;
-	
-	/// Access coordinate axes or rotations around axes by their index
-	enum {X, Y, Z, H=2};
-}
 
 #endif
