@@ -30,11 +30,29 @@ namespace tut
 	{
 		//Test if the whole application runs
 		using namespace LGC;
+
 		set_test_name("Testing TLGCApp class and nam file reader");
 		
         TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "simFRAME.lgc2", 
 					    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "simFRAME.out");
 		ensure_equals( "Execution should work", proj.exec(), true);
+	}
+
+	template<>
+	template<>
+	void object::test<2>()
+	{
+		//Test if the whole application runs
+		using namespace LGC;
+		set_test_name("Testing TLGCApp class and nam file reader");
+
+		//TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testAllfixed.lgc2",
+		//	getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testAllFixed.out");
+		//ensure_equals("Execution should work", proj.exec(), true);
+		
+		// re initialise static object allfixed param to false
+		TAdjustablePoint::setAllFixedParam(false);
+		TAdjustableHelmertTransformation::setAllFixedParam(false);
 	}
 
 };

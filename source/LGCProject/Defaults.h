@@ -7,8 +7,8 @@
 */
 
 #include <limits>
+#include "Quad.h"
 
-typedef double TReal;
 
 /*!
  *  \addtogroup ConstantsDefaults
