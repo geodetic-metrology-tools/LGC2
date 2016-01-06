@@ -13,14 +13,16 @@ set(ContributionsGenerators_HEADERS
 	TContributionsGenerator.h
 	ContributionStructures.h
 	TPointTransformer.h
-	TSimulatedObservations.h
+	TObservationGenerator.h
+	TAllfixedParamGenerator.h
 )
 
 # Create a variable containing all .cpp files:
 set(ContributionsGenerators_SOURCES
 	TContributionsGenerator.cpp
 	TPointTransformer.cpp
-	TSimulatedObservations.cpp
+	TObservationGenerator.cpp
+	TAllfixedParamGenerator.cpp
 )
 
 

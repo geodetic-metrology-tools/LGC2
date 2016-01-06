@@ -67,8 +67,7 @@ void TPointTransformer::transformMLA2CGRF(TFreeVector& fv){
 	fcgrf2ilg.transformInverse(fv);
 }
 
-
-// \returns index of a transformation with given name in the 'fLORTrafo' vector, if vector does not include this transformation, function \returns -1
+// returns index of a transformation with given name in the 'fLORTrafo' vector, if vector does not include this transformation, function \returns -1
 int TPointTransformer::getTransformationIndex(const std::string& transfName) const{
 	int index = 0;
 	for (auto itLOR2LOR(fLORTrafo.begin()); itLOR2LOR != fLORTrafo.end(); ++itLOR2LOR){

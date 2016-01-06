@@ -1,12 +1,7 @@
-#include<Eigen/Dense>
-
 #include "TContributionsGenerator.h"
 #include "TDist.h" 
 #include "TTreeEntry.h"
 #include "TXYH2CCS.h"
-#include "GeodeticConstants.h"
-#include "TCAM.h"
-#include "TAdjustablePoint.h"
 
 
 //////////////////////////////////////////////////////////////////////

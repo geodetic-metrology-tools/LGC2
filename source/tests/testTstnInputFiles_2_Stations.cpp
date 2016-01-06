@@ -40,7 +40,7 @@ namespace tut
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 			bool succesCalc = calcul.computeResults(fileWriter);
 			ensure_equals("Calculation successful", succesCalc, true);
 
@@ -80,7 +80,7 @@ namespace tut
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 			bool succesCalc = calcul.computeResults(fileWriter);
 			ensure_equals("Calculation successful", succesCalc, true);
 
@@ -122,7 +122,7 @@ namespace tut
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
 
@@ -163,7 +163,7 @@ namespace tut
 		r.read(infiler);
 
 		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TResSimFileWriter> fileWriter(nullptr);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
 		const TLGCData& dataset = calcul.getData();

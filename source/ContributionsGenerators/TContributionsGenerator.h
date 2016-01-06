@@ -2,10 +2,8 @@
 #define TCONTRIBUTION_GENERATOR_H
 
 #include "ContributionStructures.h"
-#include "TRefSystemFactory.h"
 #include "TPointTransformer.h"
 #include "TTSTN.h"
-
 class TUVEC;
 class TUVD;
 class TPdorObs;
@@ -27,15 +25,8 @@ struct TCAM;
 class TContributionsGenerator{
 
 public:
-
-	/*!@name Constructors*/
-	//@{
-		/*!
-			\param[in] tree A tree of local object reference frames.
-			\param[in] refFrame A reference frame used in the project.
-		*/
+	/// Constructor taking a reference to a TPointTransformer
 	TContributionsGenerator(TPointTransformer& fPointTransfoFunc);
-	//@}
 
 
 	/*!@name Contributions for the total station (TTSTN) observations. 
@@ -163,16 +154,14 @@ public:
 
 		/// Returns the the DVER measurement calculated meas in meter [m]
 		TReal	getDVERCalcMeas(const TDVER& dver);
-
-
 	//@}
+
 private:
 	// Contains references: not assignable
 	TContributionsGenerator& operator=(const TContributionsGenerator&);
 
 	//Pointer to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;
-
 
 	/*!@name Supporting functions used in contribution calculation methods */
 	//@{
@@ -192,8 +181,6 @@ private:
 		//Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
 		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 	//@}
-
-
 
 };
 #endif 

@@ -13,15 +13,14 @@ include_directories(${CMAKE_SOURCE_DIR}
 # Create a variable containing all .h files:
 set(LGCCalculation_HEADERS 	
 	TLGCCalculation.h
-	TSimulationCalculation.h
 	TSimFrameSummary.h
 	TSimPointSummary.h
+	TVAbractAlgorithm.h
 )
 
 # Create a variable containing all .cpp files:
 set(LGCCalculation_SOURCES
 	TLGCCalculation.cpp
-	TSimulationCalculation.cpp
 	TSimPointSummary.cpp
 	TSimFrameSummary.cpp
 )

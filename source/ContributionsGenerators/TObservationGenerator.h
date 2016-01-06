@@ -22,17 +22,11 @@ struct TCAM;
 \brief Simulate the observations for the least squares design matrices for all of the observations processed by LGC2.
 
 */
-class TSimulatedObservations{
+class TObservationGenerator{
 
 public:
-
-	/*!@name Constructors*/
-	//@{
-	/*!
-	*/
-	TSimulatedObservations(TPointTransformer& pPointTransfo);
-
-	//@}
+	/// Constructor taking a reference to a TPointTransformer
+	TObservationGenerator(TPointTransformer& pPointTransfo);
 
 
 	/*!@name Method for accessing the calculation measurement values only . */
@@ -84,11 +78,9 @@ public:
 
 	/// Returns the the DVER measurement calculated meas in meter [m]
 	TReal	getDVERCalcMeas(const TDVER& dver);
-
-
 	//@}
 
-
+private:
 	//Pointer to a TPointTransformationFunctions
 	TPointTransformer* fPointTransfo;
 

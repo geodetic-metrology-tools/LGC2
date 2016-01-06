@@ -15,7 +15,7 @@ set(Writers_SOURCES
 	TResultsFileWriter.cpp
 	TPunchFileWriter.cpp
 	TFautFileWriter.cpp
-	TResSimFileWriter.cpp
+	TSimulationOutputFileWriter.cpp
 	TSimFileWriter.cpp
 )
 
@@ -25,7 +25,7 @@ set(Writers_HEADERS
 	TResultsFileWriter.h
 	TPunchFileWriter.h
 	TFautFileWriter.h
-	TResSimFileWriter.h
+	TSimulationOutputFileWriter.h
 	TSimFileWriter.h
 )
 

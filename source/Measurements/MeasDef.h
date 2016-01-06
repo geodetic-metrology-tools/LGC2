@@ -40,6 +40,18 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		/// Returns the last observation index of this measurement (PLR3D introduces 3 observations, order is defined to be: theta, phi, s-distance). 
 		inline MatrixIndex getLastObservationIndex() const {return fFirstObservationIndex + 2;}
 			
+
+		struct PlrParamForAllfixed
+		{
+			TLength HiAllfixed = TLength(NO_VALf);
+			TLength CsAllfixed = TLength(NO_VALf);
+			TAngle V0Allfixed = TAngle(NO_VALf);
+			TAngle RxAllfixed = TAngle(NO_VALf);
+			TAngle RyAllfixed = TAngle(NO_VALf);
+		};
+
+		/// The optional parameter for ALLFIXED 
+		shared_ptr<TPLR3D::PlrParamForAllfixed> paramAllfixed;
 };
 		
 /*! 
@@ -56,6 +68,14 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Returns the last LS-matrices equation index of this measurement, ANGL introduces 1 equation.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		struct AnglParamForAllfixed
+		{
+			TAngle V0Allfixed = TAngle(NO_VALf);
+		};
+
+		/// The optional parameter for ALLFIXED 
+		shared_ptr<TANGL::AnglParamForAllfixed> paramAllfixed;
 };
 
 /*! 
@@ -72,6 +92,13 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Returns the last LS-matrices equation index of this measurement, ZEND introduces 1 equation.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		struct ZendParamForAllfixed
+		{
+			TLength HiAllfixed = TLength(NO_VALf);
+		};
+		/// The optional parameter for ALLFIXED 
+		shared_ptr<TZEND::ZendParamForAllfixed> paramAllfixed;
 };
 
 /*! 
@@ -88,6 +115,15 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 
 		/// Returns the last LS-matrices equation index of this measurement
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+
+		struct DistParamForAllfixed
+		{
+			TLength HiAllfixed = TLength(NO_VALf);
+			TLength CsAllfixed = TLength(NO_VALf);
+		};
+		/// The optional parameter for ALLFIXED 
+		shared_ptr<TLINE::DistParamForAllfixed> paramAllfixed;
 };
 
 /*! 
@@ -110,6 +146,13 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 		/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 
+
+		struct EcthParamForAllfixed
+		{
+			TAngle V0Allfixed = TAngle(NO_VALf);
+		};
+		/// The optional parameter for ALLFIXED 
+		shared_ptr<TECTH::EcthParamForAllfixed> paramAllfixed;
 };
 
 /*!
@@ -133,6 +176,13 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
+
+	struct EcspParamForAllfixed
+	{
+		TAngle V0Allfixed = TAngle(NO_VALf);
+	};
+	/// The optional parameter for ALLFIXED 
+	shared_ptr<TECSP::EcspParamForAllfixed> paramAllfixed;
 };
 
 //--------------------------  EDM measurement--------------------------------------------
@@ -152,6 +202,14 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 
 		/// Returns the last LS-matrices equation index of this measurement, DSPT introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		struct DsptParamForAllfixed
+		{
+			TLength HiAllfixed = TLength(NO_VALf);
+			TLength CsAllfixed = TLength(NO_VALf);
+		};
+		/// The optional parameter for ALLFIXED 
+		shared_ptr<TDSPT::DsptParamForAllfixed> paramAllfixed;
 };
 
 //--------------------------  SCALE measurement--------------------------------------------
@@ -286,6 +344,14 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 			/// The optional DHOR measurment 
 			shared_ptr<TDLEV::TDHOR> dhor;
+
+
+			struct DlevParamForAllfixed
+			{
+				TAngle CollAngleAllfixed = TAngle(NO_VALf);
+			};
+			/// The optional parameter for ALLFIXED 
+			shared_ptr<TDLEV::DlevParamForAllfixed> paramAllfixed;
 };
 
 //--------------------------  Orientation measurement--------------------------------------------

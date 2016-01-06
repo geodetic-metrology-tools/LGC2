@@ -1,21 +1,22 @@
 #include "TLGCCalculation.h"
 #include "TDataAnalyzer.h"
-#include "TSimulationCalculation.h"
-#include "TLSSolutionCalculator.h"
+#include "TLSSimulation.h"
+#include "TLSAlgorithm.h"
+#include "TVAbractAlgorithm.h"
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
-TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat): fData(dat),  fNumberOfMadeIterations(0), fMaxIterations(40)
-{
-	fConvCriteria = fData->getConfig().outPrecision.convCrit;
-}
+TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat): fData(dat), fMaxIterations(40)
+{}
 
 ///////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
 ///////////////////////////////////////////////////////////////////////////
-bool TLGCCalculation::computeResults(std::shared_ptr<TResSimFileWriter> fileWriter){
+bool TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter){
 	bool successCalculation = false;
+
+	std::unique_ptr<TVAbractAlgorithm> algorithm;
 
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fData.get());
@@ -24,17 +25,30 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TResSimFileWriter> fileWrit
 		throw std::runtime_error("Data are not consistent, see the output file: " + fData->getFileLogger().getOutputFileLocation() + " for more information.");
 
 	try{
-		if(fData->getConfig().libre.isActive())
-			analyzer.addNetworkConstraints();
+		bool L1NormUsed = false;
 
-		if(fData->getConfig().sim.isActive()){ //Process simulation
-			TSimulationCalculation simu(*fData.get(), fMaxIterations, fConvCriteria);
-			successCalculation = simu.computeSimulatedResults(fileWriter);
+		if (L1NormUsed)  //L1Norm
+		{
 		}
-		else if (fData->getConfig().allfixed.isActive())//ALLFIXED keyword used
-			successCalculation = computeALLFIXEDResults();
-		else //No special keyword used
-			successCalculation = computeNormalCalcResults();
+		else  // LS
+		{
+			algorithm.reset(new TLSAlgorithm());
+
+			if (fData->getConfig().libre.isActive())//LIBR keywork is used
+				analyzer.addNetworkConstraints();
+
+			else if (fData->getConfig().sim.isActive()){ //SIMU keywork is used
+				algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
+			}
+			else if (fData->getConfig().allfixed.isActive())//ALLFIXED keyword used
+			{
+				int i = 0;
+				//algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations, fileWriter));
+			}
+			successCalculation = algorithm->run(*fData.get(), fMaxIterations);
+
+		}
+		
 	}
 	catch(exception& e){
 		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
@@ -45,37 +59,5 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TResSimFileWriter> fileWrit
 		successCalculation = false;
 
 	return successCalculation;
-}
-
-bool TLGCCalculation::computeALLFIXEDResults(){
-	bool successCalc = false;
-
-	/*Set all frame parameters to be fixed -- PROBABLY YES, BUT NEEDS CONFIRMATION (TO DO)*/
-	// ... 
-
-	/*If at least one unknown in the data, use Least Squares algorithm.*/
-	/*In the future we might add other algorithms than Least Squares.*/
-	if(fData->fUEOIndices.UIndex>0){
-		TLSSolutionCalculator lsCalc;
-		successCalc = lsCalc.iterate2Solution(*fData.get(),fMaxIterations,fConvCriteria);	
-	}
-	else
-		throw runtime_error("There is no unknown in the data, the Least Squares algorithm can not be used!");
-
-	return successCalc;
-}
-
-bool TLGCCalculation::computeNormalCalcResults(){
-	bool successCalc = false;
-	/*If at least one unknown in the data, use Least Squares algorithm.*/
-	/*In the future we might add other algorithms than Least Squares.*/
-	if(fData->fUEOIndices.UIndex>0){
-		TLSSolutionCalculator lsCalc;
-		successCalc = lsCalc.iterate2Solution(*fData.get(),fMaxIterations,fConvCriteria);
-	}
-	else
-		throw runtime_error("There is no unknown in the data, the Least Squares algorithm can not be used!");
-
-	return successCalc;
 }
 

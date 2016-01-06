@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////
-// TResSimFileWriter.cpp :Implementation file
+// TSimulationOutputFileWriter.cpp :Implementation file
 // Write an LGC output file for the results of a simulation calculation
 // Creates a file from the calculation results and sends the appropriate messages
 /////////////////////////////////////////////////////////////////////
 
 
 #include	<ctime>
-#include	"TResSimFileWriter.h"
+#include	"TSimulationOutputFileWriter.h"
 #include	"TLGCData.h"
 #include	"TAStreamFormatter.h"
 #include	"TFRAMEWriter.h"
@@ -19,17 +19,17 @@
 /////////////////////////////////////////////////////////////////////////////
 //constructor / destructor
 /////////////////////////////////////////////////////////////////////////////
-TResSimFileWriter::TResSimFileWriter() : TResultsFileWriter()
+TSimulationOutputFileWriter::TSimulationOutputFileWriter() : TResultsFileWriter()
 {//default constructor
 }
 
 
-TResSimFileWriter::TResSimFileWriter(TAStreamFormatter* stream, const TLGCData* project) : TResultsFileWriter(stream, project)
+TSimulationOutputFileWriter::TSimulationOutputFileWriter(TAStreamFormatter* stream, const TLGCData* project) : TResultsFileWriter(stream, project)
 {//constructor
 }
 
 
-TResSimFileWriter::~TResSimFileWriter()
+TSimulationOutputFileWriter::~TSimulationOutputFileWriter()
 {//destructor
 }
 
@@ -41,7 +41,7 @@ TResSimFileWriter::~TResSimFileWriter()
 
 
 // Write the first part of the LGC simulation results file for the given project
-void	TResSimFileWriter::writeFileBegin()
+void	TSimulationOutputFileWriter::writeFileBegin()
 {
 	//Limited just number of points and unknowns for points for now
 	this->initObsListNumber();	
@@ -56,7 +56,7 @@ void	TResSimFileWriter::writeFileBegin()
 	this->writeCalcDataSummary();
 }
 
-void	TResSimFileWriter::writeSimSummary(TLGCData &project, int numberOfSim)
+void	TSimulationOutputFileWriter::writeSimSummary(TLGCData &project, int numberOfSim)
 {
 	//write simulation header
 	this->writeSimHeader(project, numberOfSim);
@@ -70,7 +70,7 @@ void	TResSimFileWriter::writeSimSummary(TLGCData &project, int numberOfSim)
 }
 
 
-void	TResSimFileWriter::writeLastSimResult(TLGCData &project, int numberOfSim)
+void	TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numberOfSim)
 {
 	//write simulation header
 	this->writeSimHeader(project, numberOfSim);
@@ -84,7 +84,7 @@ void	TResSimFileWriter::writeLastSimResult(TLGCData &project, int numberOfSim)
 }
 
 //Write the header for a given simulation
-void	TResSimFileWriter::writeSimHeader(TLGCData &data, int i)
+void	TSimulationOutputFileWriter::writeSimHeader(TLGCData &data, int i)
 {
 	TAStreamFormatter* stream = getStream();
 	string separator = getSeparator();
@@ -98,7 +98,7 @@ void	TResSimFileWriter::writeSimHeader(TLGCData &data, int i)
 	writeSigmaAPosteriori(data);
 }
 
-void TResSimFileWriter::writeSimTableDescription(const string &projTitle, const string &objectType, int i){
+void TSimulationOutputFileWriter::writeSimTableDescription(const string &projTitle, const string &objectType, int i){
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
 	string origSepar = stream->getSeparator();
@@ -204,7 +204,7 @@ void TResSimFileWriter::writeSimTableDescription(const string &projTitle, const 
 	stream->setSeparator(origSepar);
 }
 
-void TResSimFileWriter::writeSimFRAMEDescription(){
+void TSimulationOutputFileWriter::writeSimFRAMEDescription(){
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
 	string origSepar = stream->getSeparator();
@@ -345,7 +345,7 @@ void TResSimFileWriter::writeSimFRAMEDescription(){
 ////////////////////////////////////////////////////////////
 //STATISTIC
 ////////////////////////////////////////////////////////////
-void	TResSimFileWriter::writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu)
+void	TSimulationOutputFileWriter::writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu)
 {
 	writeSimTableDescription(projTitle, "POINTS", numbOfSimu);
 
@@ -355,7 +355,7 @@ void	TResSimFileWriter::writeSimPointsSummary(const string &projTitle, const std
 
 }
 
-void TResSimFileWriter::writeSimFramesSummary(const std::list<TSimFrameSummary>& dataSum, int numbOfSimu){
+void TSimulationOutputFileWriter::writeSimFramesSummary(const std::list<TSimFrameSummary>& dataSum, int numbOfSimu){
 	writeSimFRAMEDescription();
 
 	for (auto& frameSummary : dataSum){
@@ -363,7 +363,7 @@ void TResSimFileWriter::writeSimFramesSummary(const std::list<TSimFrameSummary>&
 	}
 }
 
-void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const int i)
+void	TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simPt, const int i)
 {//write point's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
@@ -573,7 +573,7 @@ void	TResSimFileWriter::writeSimPointData(const TSimPointSummary& simPt, const i
 
 }
 
-void	TResSimFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const int i)
+void	TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const int i)
 {
 	//writeframe's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
