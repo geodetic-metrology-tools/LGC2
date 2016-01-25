@@ -48,22 +48,54 @@ TAngle TAllfixedParamGenerator::getV0AllfixedANGL(const TTSTN& station, const TT
 	return (calcMeas - angl.getAngle());
 }
 
-/*
-TAngle TAllfixedParamGenerator::getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp)
-{}
 
-TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth)
-{}
+//TAngle TAllfixedParamGenerator::getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp)
+//{}
 
-TAngle TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
-{}
+TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth)
+{
+	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
 
-TAngle TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
-{}
+	TPositionVector stationPos = ecth.targetPos->getEstimatedValue(); //position of the TSTN
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecth.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
 
-TAngle TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
-{}
-*/
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
+		fPointTransfo.transformPointsToMLASystem(ecth.targetPos->getName(), stationPos, targetPos);
+		fPointTransfo.setMLA(true);
+	}
+	else
+		fPointTransfo.setMLA(false);
+
+
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+
+	TReal d = dist(xSt, ySt, xTg, yTg);
+
+	TAngle theta = ecth.obsHorAngle;
+	TAngle bearing = TAngle(atan2((ySt-yTg),(xSt-xTg)),TAngle::EUnits::kRadians);
+	TAngle alpha = TAngle(asin(ecth.getDistance().getMetresValue() / d), TAngle::EUnits::kRadians);
+
+	return (bearing+alpha-theta);
+}
+
+//TAngle TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+//{}
+
+//TAngle TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+//{}
+
+//TAngle TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+//{}
+
 
 TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelInstr, const TDLEV& dlev)
 {

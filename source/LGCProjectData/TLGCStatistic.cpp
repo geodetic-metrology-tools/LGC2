@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "TLGCStatistic.h"
-#include "TVNumericValue.h"
 #include "QuantileFunctions.h"
 #include "TLSResultsMatrices.h"
 #include "TLSInputMatrices.h"

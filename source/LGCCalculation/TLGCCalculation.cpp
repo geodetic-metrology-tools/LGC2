@@ -1,6 +1,7 @@
 #include "TLGCCalculation.h"
 #include "TDataAnalyzer.h"
 #include "TLSSimulation.h"
+#include "TLSAllfixed.h"
 #include "TLSAlgorithm.h"
 #include "TVAbractAlgorithm.h"
 
@@ -34,17 +35,13 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter
 		{
 			algorithm.reset(new TLSAlgorithm());
 
-			if (fData->getConfig().libre.isActive())//LIBR keywork is used
+			if (fData->getConfig().libre.isActive())
 				analyzer.addNetworkConstraints();
-
-			else if (fData->getConfig().sim.isActive()){ //SIMU keywork is used
+			else if (fData->getConfig().sim.isActive())
 				algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
-			}
-			else if (fData->getConfig().allfixed.isActive())//ALLFIXED keyword used
-			{
-				int i = 0;
-				//algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations, fileWriter));
-			}
+			else if (fData->getConfig().allfixed.isActive())
+				algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
+			
 			successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 
 		}

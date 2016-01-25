@@ -11,6 +11,7 @@ set(LSCalculation_HEADERS
 	TLSResultsMatricesExtractor.h
 	TLSAlgorithm.h
 	TLSSimulation.h
+	TLSAllfixed.h
 )
 
 # Create a variable containing all .cpp files:
@@ -19,6 +20,7 @@ set(LSCalculation_SOURCES
 	TLSResultsMatricesExtractor.cpp
 	TLSAlgorithm.cpp
 	TLSSimulation.cpp
+	TLSAllfixed.cpp
 )
 
 # Create a static library from sources:

@@ -47,11 +47,11 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 						//for (auto& itPLR3D : itROM->measPLR3D)
 						//	fAllfixedGenerator(rm, itPLR3D);
 
-						//for (auto& itECTH : itROM->measECTH)
-						//	fAllfixedGenerator.getV0AllfixedECTH(rm, itECTH);
+						for (auto& itECTH : itROM->measECTH)
+							fAllfixedGenerator.getV0AllfixedECTH(*itTSTN, itECTH);
 
 						//for (auto& itECSP : itROM->measECSP)
-						//	fAllfixedGenerator.getV0AllfixedECSP(rm, itECSP);
+						//	fAllfixedGenerator.getV0AllfixedECSP(*itTSTN, itECSP);
 
 					}
 				}

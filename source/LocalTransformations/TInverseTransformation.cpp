@@ -271,20 +271,16 @@ TDerivativeTransformation TInverseTransformation::differentiatedTransformationSc
 
 bool TInverseTransformation::transform(TRotationMatrix& rm) const{
 	TCoordSysFactory::ECoordSys k3DCart = TCoordSysFactory::ECoordSys::k3DCartesian;
-	TANumericValue::EStatus kNull = TANumericValue::EStatus::kNull;
 	bool result = false;
 
 	//If status is not null and matrix is in a 3d cart. coordinates.
-	if(rm.getStatus()!=kNull && rm.getCoordSys()==k3DCart){
+	if(rm.isInitialise() && rm.getCoordSys()==k3DCart){
 
 		//(TRotationMatrix is not affected by translation and scaling), just multiplication of rotation matrices.
 		TRotationMatrix transformation(TRotationMatrix::ERotationType::kRzyx, getAngle(0).getRadiansValue(), getAngle(1).getRadiansValue(), getAngle(2).getRadiansValue());
 		//Transform 
 		rm = transformation.transposed() * rm;	
 		result = true;
-	}
-	else{
-		rm.setStatus(kNull);
 	}
 	return result;
 }

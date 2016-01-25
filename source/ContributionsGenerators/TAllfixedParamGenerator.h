@@ -25,7 +25,7 @@ public:
 	//@{
 	TAngle getV0AllfixedANGL(const TTSTN& station, const TTSTN::TROM& rom, const TANGL& angl);
 	//TAngle getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
-	//TAngle getV0AllfixedECTH(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
+	TAngle getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth);
 	//TAngle getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 	//TAngle getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 	//TAngle getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);

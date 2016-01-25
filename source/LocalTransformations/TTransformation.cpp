@@ -155,11 +155,10 @@ TTransformation& TTransformation::operator=(const TTransformation& rhs) {
 
 bool TTransformation::transform(TPositionVector& pv) const{
 	TCoordSysFactory::ECoordSys k3DCart = TCoordSysFactory::ECoordSys::k3DCartesian;
-	TANumericValue::EStatus kNull = TANumericValue::EStatus::kNull;
 	bool result = false;
 
 	//If status is not null and vector is in a 3d cart. coordinates.
-	if(pv.getStatus()!=kNull && pv.getCoordSys() == k3DCart)
+	if(pv.isInitialise() && pv.getCoordSys() == k3DCart)
 	{
 		Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
 	
@@ -178,22 +177,19 @@ bool TTransformation::transform(TPositionVector& pv) const{
 		pv.setZ(TLength(pResult[2]/pResult[3]));
 		result = true;
 	}
-	else{
-		pv.setStatus(kNull);
-	}
+
 	return result;
 }
 
 bool TTransformation::transform(TFreeVector& fv) const{
 	
 	TCoordSysFactory::ECoordSys k3DCart = TCoordSysFactory::ECoordSys::k3DCartesian;
-	TANumericValue::EStatus kNull = TANumericValue::EStatus::kNull;
 	bool result = false;
 
 	Eigen::Matrix4d mat(*this->fTransM);		
 
 	//If status is not null and vector is in a 3d cart. coordinates.
-	if(fv.getStatus()!=kNull && fv.getCoordSys()==k3DCart){
+	if(fv.isInitialise() && fv.getCoordSys()==k3DCart){
       Eigen::Vector4d pTemp(fv.getX().getMetresValue(), fv.getY().getMetresValue(), fv.getZ().getMetresValue(), 1.0);
 	
 		//TFreeVector is not affected by translation
@@ -217,9 +213,7 @@ bool TTransformation::transform(TFreeVector& fv) const{
       fv.setZ(TLength(pResult[2]/pResult[3]));
 		result = true;
 	}
-	else{
-		fv.setStatus(kNull);
-	}
+
 	return result;
 }
 

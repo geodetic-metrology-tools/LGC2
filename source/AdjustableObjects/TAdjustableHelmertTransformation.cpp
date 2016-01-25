@@ -121,14 +121,14 @@ int TAdjustableHelmertTransformation::getLastUidx() const {
 
 const TLength& TAdjustableHelmertTransformation::getTranslationStandDev(int d) const{
 	assert3D(d);
-	if(!fTransStandDev[d].isNull())
+	if (!isnotanumber(fTransStandDev[d]))
 		return fTransStandDev[d];
 	throw std::runtime_error("Standard deviations of the translation's component not assigned");
 }
 
 const TAngle& TAdjustableHelmertTransformation::getRotationStandDev(int d) const{
 	assert3D(d);
-	if(!fRotStandDev[d].isNull())
+	if (!isnotanumber(fRotStandDev[d]))
 		return fRotStandDev[d];
 	throw std::runtime_error("Standard deviations of the rotation's component not assigned");
 }
@@ -141,12 +141,12 @@ TReal TAdjustableHelmertTransformation::getScaleStandDev()const{
 
 bool TAdjustableHelmertTransformation::hasRotationStandDev(int d) const{
 	assert3D(d);
-	return (!fRotStandDev[d].isNull()|allfixedParam);
+	return (!isnotanumber(fRotStandDev[d]) | allfixedParam);
 }
 
 bool TAdjustableHelmertTransformation::hasTranslStandDev(int d)const{
 	assert3D(d);
-	return (!fTransStandDev[d].isNull()|allfixedParam);
+	return (!isnotanumber(fTransStandDev[d]) | allfixedParam);
 }
 
 bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
@@ -154,8 +154,8 @@ bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
 }
 
 bool TAdjustableHelmertTransformation::hasStandDev(){
-	return (!fTransStandDev[0].isNull() || !fTransStandDev[1].isNull() || !fTransStandDev[2].isNull() || !fRotStandDev[0].isNull() || !fRotStandDev[1].isNull()
-	|| !fRotStandDev[2].isNull() || !isnotanumber(fScaleStandDev));
+	return (!isnotanumber(fTransStandDev[0]) || !isnotanumber(fTransStandDev[1]) || !isnotanumber(fTransStandDev[2]) || !isnotanumber(fRotStandDev[0]) || !isnotanumber(fRotStandDev[1])
+		|| !isnotanumber(fRotStandDev[2]) || !isnotanumber(fScaleStandDev));
 
 }
 
@@ -240,7 +240,7 @@ const TAngle& TAdjustableHelmertTransformation::getEstimatedPrecisionRot(int d)c
 }
 
 const TLength& TAdjustableHelmertTransformation::getEstimatedPrecisionTransl(int d)const{
-	if(fEstPrecisionTranslation[d].isNull())
+	if (isnotanumber(fEstPrecisionTranslation[d]))
 		throw std::logic_error("No translation precision assigned");
 	return fEstPrecisionTranslation[d];
 
