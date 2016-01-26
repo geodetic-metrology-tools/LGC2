@@ -7,8 +7,8 @@
 */
 
 #include <limits>
+#include "Quad.h"
 
-typedef double TReal;
 
 /*!
  *  \addtogroup ConstantsDefaults
@@ -32,6 +32,15 @@ static const TReal FAUT_DEF_BETA  = 10.0;
 static const char* const INPUT_SEPERATOR_CHARS = " \t";
 /// Comment characters for line comments
 static const char* const INPUT_COMMENT_CHARS = "%$#";
+
+namespace LGC {
+	///Conversion factor for the unitless vector (UVEC and UVD)
+	static const TReal VECCONV = 0.001;
+	static const TReal VECCONVINV = 1000;
+}
+
+/// Access coordinate axes or rotations around axes by their index
+enum { X, Y, Z, H = 2 };
 //@}
 
 /*! @} End of Doxygen Groups*/

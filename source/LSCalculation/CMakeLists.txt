@@ -9,14 +9,18 @@ include_directories(${CMAKE_SOURCE_DIR}
 set(LSCalculation_HEADERS 	
 	TLSInputMatricesFiller.h
 	TLSResultsMatricesExtractor.h
-	TLSSolutionCalculator.h
+	TLSAlgorithm.h
+	TLSSimulation.h
+	TLSAllfixed.h
 )
 
 # Create a variable containing all .cpp files:
 set(LSCalculation_SOURCES
 	TLSInputMatricesFiller.cpp
 	TLSResultsMatricesExtractor.cpp
-	TLSSolutionCalculator.cpp
+	TLSAlgorithm.cpp
+	TLSSimulation.cpp
+	TLSAllfixed.cpp
 )
 
 # Create a static library from sources:

@@ -14,17 +14,17 @@ class		TLGCData;
 
 	Provides functions to write different parts of the simulation file.
 */
-class  TResSimFileWriter : public TResultsFileWriter
+class  TSimulationOutputFileWriter : public TResultsFileWriter
 {
 public:
 
 	/*!@name Constructors and Destructors*/
 		//@{
 			 /// constructor
-			TResSimFileWriter(TAStreamFormatter* stream, const TLGCData* project);
+			TSimulationOutputFileWriter(TAStreamFormatter* stream, const TLGCData* project);
 
 			 /// Destructor
-			virtual  ~TResSimFileWriter();
+			virtual  ~TSimulationOutputFileWriter();
 		//@}
 
 
@@ -51,7 +51,7 @@ public:
 private:
 
 	/*!default constructor*/
-	TResSimFileWriter();
+	TSimulationOutputFileWriter();
 
 	/*!@name Private member functions*/
 	//@{

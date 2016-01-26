@@ -11,7 +11,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCTOR / DESTRUCTOR
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel): fCGenerator(tree, referentiel)
+TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel) : fPointTransformer(tree, referentiel), fCGenerator(fPointTransformer)
 {}
 
 
@@ -30,7 +30,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 		//Input matrices have to be initialized each time they are filled.
 		initMatriceDimension(*projData, matrices);
 		//Contribution generator transformations need to update the transformations it stores.
-		fCGenerator.updateTransformations();
+		fPointTransformer.updateTransformations();
 
 		//If weight unknown matrix should be filled
 		if(fillWeightUnkn)

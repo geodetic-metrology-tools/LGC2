@@ -2,8 +2,7 @@
 #define TLGC_CALCULATION
 
 #include <memory>
-#include "TALSComputer.h"
-#include "TResSimFileWriter.h"
+#include "TSimulationOutputFileWriter.h"
 
 /*!
 	\ingroup LGCCalculation
@@ -27,7 +26,7 @@ class TLGCCalculation{
 
 		@param dat[in] fileWriter The writer is only used for SIMULATION, where we output values after each simulation run. 
 	*/
-	bool computeResults(std::shared_ptr<TResSimFileWriter> fileWriter);
+	bool computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter);
 
 	/// Returns the project data.
 	const TLGCData& getData(){ return *fData.get();}
@@ -41,19 +40,6 @@ class TLGCCalculation{
 	std::shared_ptr<TLGCData> fData;
 
 	int			fMaxIterations; /*!< maximum of iterations that can be carried out */
-	TReal		fConvCriteria; /*!< convergence criteria that has to be exceeded to stop the iterative process */
-	int			fNumberOfMadeIterations; /*!< indicates how many iteration have been carried out */
-
-
-	/*!@name Calculation options*/
-	//@{
-		/// Treats the ALLFIXED calculation option, running the appropriate algorithm (so far only LS).
-		bool	computeALLFIXEDResults();
-
-		/// Treats the normal calculation option (no special keyword used), running the appropriate algorithm (so far only LS).
-		bool	computeNormalCalcResults();
-	//@}
-
 	//@}
 
 };

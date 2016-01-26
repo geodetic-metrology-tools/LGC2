@@ -12,25 +12,11 @@
 #include <stdexcept>
 #include "Defaults.h"
 #include "tree.h"
-#include "Quad.h"
 #include "TLength.h"
 
 
 #define assert3D(x) assert((x) >= 0 && (x) < 3)
 #define assert4D(x) assert((x) >= 0 && (x) < 4)
-
-#ifndef powq
-#define powq(x,y) pow((x),(y)) 
-#endif
-#ifndef pow2q
-#define pow2q(x) pow2(x) 
-#endif
-#ifndef fabsq
-#define fabsq(x) fabs(x) 
-#endif
-#ifndef sqrtq
-#define sqrtq(x) sqrt(x)
-#endif
 
 
 /* Definition provided in TTreeEntry, only forward declaration */
@@ -60,13 +46,5 @@ namespace std
 	}
 };
 
-namespace LGC {
-
-	static const TReal VECCONV = 0.001;
-	static const TReal VECCONVINV = 1000;
-	
-	/// Access coordinate axes or rotations around axes by their index
-	enum {X, Y, Z, H=2};
-}
 
 #endif

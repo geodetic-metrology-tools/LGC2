@@ -24,7 +24,7 @@ TDerivativeTransformation& TDerivativeTransformation::operator=(const TDerivativ
 TFreeVector TDerivativeTransformation::transform(const TPositionVector & pv) const
 {
 	//If status is not null and vector is in a 3d cart. coordinates.
-	if(pv.getStatus()!= TANumericValue::EStatus::kNull && pv.getCoordSys() == TCoordSysFactory::ECoordSys::k3DCartesian)
+	if(pv.isInitialise() && pv.getCoordSys() == TCoordSysFactory::ECoordSys::k3DCartesian)
 	{
       Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
 	
@@ -43,7 +43,6 @@ TFreeVector TDerivativeTransformation::transform(const TPositionVector & pv) con
 	else
 	{
 		TFreeVector vector_null(TCoordSysFactory::ECoordSys::k3DCartesian);
-		vector_null.setStatus(TANumericValue::EStatus::kNull);
 		return vector_null;
 	}
 }

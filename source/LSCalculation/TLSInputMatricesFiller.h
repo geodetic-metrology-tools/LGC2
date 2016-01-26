@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "TContributionsGenerator.h"
+#include "TPointTransformer.h"
 #include "Global.h"
 
 class TLSInputMatrices;
@@ -58,6 +59,9 @@ private:
 	
 	/// Contributions generator, used to calculated the contributions to be inserted into the input matrices.
 	TContributionsGenerator  fCGenerator;
+
+	/// Point transformation used to calculate the contribution generators
+	TPointTransformer fPointTransformer;
 
 	/// Initialise the dimensions of the input matrices from the project data.
 	void			initMatriceDimension(const TLGCData& projData, TLSInputMatrices* matrices);

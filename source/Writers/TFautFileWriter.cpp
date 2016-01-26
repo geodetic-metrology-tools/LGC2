@@ -154,7 +154,7 @@ void	TFautFileWriter::writeOverallReliability(TLGCData* project)
 
 	TDouble F(project->getStatistics().getOVERALL());
 
-	if (F.getStatus()!=TVNumericValue::kNull)
+	if (F.getValue() != NO_VALf)
 	{
 		(*stream) << "* * * OVERALL NETWORK RELIABILITY FACTOR: " << separator;
 		stream->width(stream->getObsFormat()->getObsResidualWidth());

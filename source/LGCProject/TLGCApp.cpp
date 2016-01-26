@@ -3,7 +3,7 @@
 #include "TLGCCalculation.h"
 #include "TStreamFormatterFactory.h"
 #include "Version.h"
-#include "TResSimFileWriter.h"
+#include "TSimulationOutputFileWriter.h"
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ bool TLGCApp::exec()
 
 	//Run the calculation, results are obtained in the 'projectData', 
 	TLGCCalculation lgcCalculation(projectData);
-	std::shared_ptr<TResSimFileWriter> fileWriter (new TResSimFileWriter(fStream.get(), projectData.get()));
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(new TSimulationOutputFileWriter(fStream.get(), projectData.get()));
 	
 	result = lgcCalculation.computeResults(fileWriter);
 
