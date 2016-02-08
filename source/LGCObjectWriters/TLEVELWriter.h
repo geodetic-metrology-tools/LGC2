@@ -35,6 +35,9 @@ public:
 	void writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStatistic& stat );
 	/// Write reliability data for DLEV
 	void writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStatistic& stat);
+
+	/// Set if ALLFIXED option is used
+	void setAllfixed(bool fBool){ isAllfixed = fBool; }
 	
 private:
 	// Information about the instrument/ station
@@ -45,6 +48,7 @@ private:
 	void writeDLEVResults(std::vector<TDLEV> measDLEV);
 	void writeDLEVResultsHeader(int nOObs);
 
+	bool isAllfixed;
 };
 
 #endif //SU_LEVEL_WRITER

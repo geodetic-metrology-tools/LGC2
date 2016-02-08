@@ -39,6 +39,9 @@ public:
 	void	writeReliabilityData(const TEDM& fEdm, const TLGCStatistic& stat);
 	/// Write reliabilty header
 	void	writeReliabilityHeader();
+
+	/// Set if ALLFIXED option is used
+	void setAllfixed(bool fBool){ isAllfixed = fBool; }
 	
 private:
 	/// Write information about the instrument
@@ -48,6 +51,8 @@ private:
 	/// Write measurements
 	void writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const TAdjustablePoint* instrPos);
 	void writeDSPTResultsHeader(const int);
+
+	bool isAllfixed;
 };
 
 #endif //SU_TEDM_WRITER

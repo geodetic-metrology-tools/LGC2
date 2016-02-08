@@ -63,7 +63,8 @@ public:
 	/// Write reliability data for ECSP
 	void	writeECSPReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP);
 
-
+	/// Set if ALLFIXED option is used
+	void setAllfixed(bool fBool){ isAllfixed = fBool; }
 
 private:
 	/*!@name Headers */
@@ -87,6 +88,8 @@ private:
 		void writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos);
 		void writeECSPResults(const std::vector<TECSP>& measECSP, const TAdjustablePoint* instrPos);
 	//@}
+
+		bool isAllfixed;
 
 };
 

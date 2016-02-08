@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include "TAMeas.h"
 
-TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream):TObservationWriter(stream)
+TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream) :TObservationWriter(stream), isAllfixed(false)
 {}
 
 TLEVELWriter::~TLEVELWriter(){}
@@ -124,6 +124,14 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 		//residual/sima
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()/ItDlev.target.sigmaD);
 
+		if (isAllfixed)
+			if (!isnotanumber(ItDlev.fAllFixedCollimation))
+				(*stream).writeDouble(obsWidth, getAnglePrecision(), ItDlev.fAllFixedCollimation.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+		else
+			(*stream).writeString(obsWidth, "");
+
 		//DHOR
 		if (ItDlev.dhor)
 		{
@@ -181,6 +189,9 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth,	"CALCULE");       //DLEV: estimation 
 	(*stream).writeString(obsResWidth,	"RESIDU");    //DLEV: residual
 	(*stream).writeString(obsResWidth,	"RES/SIG");   //DLEV: residual/sigma
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "COLLIMATION");       //DLEV: allfixed parameter (collimation angle)
+
 	(*stream).writeString(obsWidth,	"OBSDHOR");       //DHOR: mesurement
 	(*stream).writeString(obsResWidth,	"SDHOR");     //DHOR: sigma 
 	(*stream).writeString(obsWidth,	"CALCDHOR");      //DHOR: estimation  
@@ -198,6 +209,9 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth,	"(M)");     //DLEV: estimation 
 	(*stream).writeString(obsResWidth,"(MM)");  //DLEV: residual
 	(*stream).writeString(obsResWidth,"");      //DLEV: residual/sigma
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "GONS");       //DLEV: allfixed parameter (collimation angle)
+
 	(*stream).writeString(obsWidth,	"(M)");     //DHOR: mesurement
 	(*stream).writeString(obsResWidth,	"(MM)");//DHOR: sigma 
 	(*stream).writeString(obsWidth,	"(M)");     //DHOR: estimation  

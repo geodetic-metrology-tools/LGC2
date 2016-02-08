@@ -35,12 +35,7 @@ map<string,vector<TLSCalcPosVectorParam::ErrorEllipsoid>> elldata;
 // Can point to a writer that prints a header for an ellipsoid, an ellipse or a line
 typedef void (*HeaderPrintFunc)(TAStreamFormatter* stream, int namewdith, int coordwidth);
  
-//static void writeNoHeader(TAStreamFormatter*, int , int) { }
- 
-// Can point to a writer that prints the axes of an ellipsoid, an ellipse or a line after a header
-//typedef void (*EllPrintFunc)(TAStreamFormatter* stream, LSPosVecConstIter pt, int namewdith, int coordwidth, int coorprecision, const std::string& sep);
- 
- 
+
 /////////////////////////////////////////////////////////////////////////////
 //constructor / destructor
 /////////////////////////////////////////////////////////////////////////////

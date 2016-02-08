@@ -3,7 +3,6 @@
 
 #include "TAFileWriter.h"
 #include "TRefSystemFactory.h"
-#include "TTSTNWriter.h"
 #include "TSpatialStatus.h"
 
 class TPositionVector;

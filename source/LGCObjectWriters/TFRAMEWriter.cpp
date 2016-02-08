@@ -61,11 +61,14 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	//Start to write the measurements
 	TTSTNWriter tstnWriter(*stream);
-	TCAMWriter camWriter(*stream);
+	tstnWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TCAMWriter camWriter(*stream);// no allfixed parameter
 	TEDMWriter edmWriter(*stream);
-	TSCALEWriter scaleWriter(*stream);
+	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TSCALEWriter scaleWriter(*stream); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream);
-	TOtherMeasurentWriter otherMeasWriter(*stream);
+	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TOtherMeasurentWriter otherMeasWriter(*stream);// no allfixed parameter
 
 	//If PDOR
 	if (frameIt->get()->measurements.fPDOR.isInitialised())

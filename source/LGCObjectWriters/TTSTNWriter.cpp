@@ -6,7 +6,7 @@
 #include "TLGCObsSummary.h"
 #include "TAdjustablePoint.h"
 
-TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream): TObservationWriter(stream)
+TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream) : TObservationWriter(stream), isAllfixed(false)
 {}
 
 TTSTNWriter::~TTSTNWriter(){}
@@ -226,6 +226,30 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		//write the target height
 		(*stream).writeDouble(obsWidth,lengthPrecision, ItPLR3D.target.targetHt);	
 
+
+//write allfixed parameter
+		if (isAllfixed){
+			if (!isnotanumber(ItPLR3D.fAllFixedV0))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItPLR3D.fAllFixedRx))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItPLR3D.fAllFixedRy))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItPLR3D.fAllFixedHi))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedHi);
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItPLR3D.fAllFixedCs))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedCs.getMMetresValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+		}
 		(*stream)<<endl;
 		}
 	(*stream)<<endl;
@@ -276,6 +300,13 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 		
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt);
+
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItANGL.fAllFixedV0))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItANGL.fAllFixedV0.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -326,6 +357,14 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 		
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItZEND.target.targetHt);
+
+
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItZEND.fAllFixedHi))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.fAllFixedHi);
+			else
+				(*stream).writeString(obsWidth, "FIXED");
 		(*stream)<<endl;
 	}
 	(*stream)<<endl<<endl;
@@ -392,6 +431,18 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.targetHt);
 
+		//write allfixed parameter
+		if (isAllfixed){
+			if (!isnotanumber(ItDIST.fAllFixedHi))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedHi);
+			else
+				(*stream).writeString(obsResWidth, "FIXED");
+			if (!isnotanumber(ItDIST.fAllFixedCs))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMMetresValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+		}
+
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -435,6 +486,12 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.targetHt);
 
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItDHOR.fAllFixedCs))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMMetresValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -479,6 +536,12 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 		//write azimut
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.obsHorAngle.getGonsValue());
 
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItECTH.fAllFixedV0))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.fAllFixedV0.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
 
 		(*stream) << endl;
 	}
@@ -526,6 +589,12 @@ void TTSTNWriter::writeECSPResults(const std::vector<TECSP>& measECSP, const TAd
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsHorAngle.getGonsValue());
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsVertAngle.getGonsValue());
 
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItECSP.fAllFixedV0))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -580,6 +649,15 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(nameWidth, "TRGT"); //Name of the target used
 		(*stream).writeString(obsWidth,	"H_TRGT"); //target height
 
+		if (isAllfixed)
+		{
+			(*stream).writeString(obsWidth, "V0"); //allfixed parameter: V0
+			(*stream).writeString(obsWidth, "Rx"); //allfixed parameter: rx
+			(*stream).writeString(obsWidth, "Ry"); //allfixed parameter: ry
+			(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
+			(*stream).writeString(obsWidth, "Cs"); //allfixed parameter: cs		
+		}
+
 		(*stream)<<endl;
 
 		(*stream)<<TABs;
@@ -610,6 +688,15 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth,	"(MM)"); //sigma distance corr
 		(*stream).writeString(nameWidth,""); //TARGET ID
 		(*stream).writeString(obsWidth,	"(M)"); //height of the target
+
+		if (isAllfixed)
+		{
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: V0
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: rx
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: ry
+			(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
+			(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: cs		
+		}
 		(*stream)<<endl;
 }
 
@@ -637,6 +724,8 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"RES"); //residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
 	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -651,6 +740,8 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: v0
 	(*stream)<<endl;
 }
 
@@ -678,6 +769,8 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"RES"); //residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
 	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -693,6 +786,8 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
 	(*stream)<<endl;
 }
 
@@ -722,6 +817,11 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"SCONST"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
 	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	if (isAllfixed)
+	{
+		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
+		(*stream).writeString(obsWidth, "Cs"); //allfixed parameter: cs
+	}
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -738,6 +838,11 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	if (isAllfixed)
+	{
+		(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
+		(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: cs
+	}
 	(*stream)<<endl;
 }
 
@@ -765,6 +870,8 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"RES/SIG"); //residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
 	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "Cs"); //allfixed parameter: Cs
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -779,6 +886,8 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	""); //residual/sigma
 	(*stream).writeStringLeft(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //target height
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: Cs
 	(*stream)<<endl;
 }
 
@@ -806,6 +915,8 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"RESIDU"); //offset ECTH
 	(*stream).writeString(obsResWidth,	"RES/SIG"); //offset/sigma
 	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -818,6 +929,8 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //offset ECTH
 	(*stream).writeString(obsResWidth,	""); //offset/sigma
 	(*stream).writeString(obsWidth, "(GON)"); //azimut
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: v0
 	(*stream)<<endl;
 
 }
@@ -847,6 +960,8 @@ void TTSTNWriter::writeECSPResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma
 	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
 	(*stream).writeString(obsWidth, "ZEND"); //zenithal distance
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -860,6 +975,8 @@ void TTSTNWriter::writeECSPResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, ""); //offset/sigma
 	(*stream).writeString(obsWidth, "(GON)"); //azimut
 	(*stream).writeString(obsWidth, "(GON)"); //zenithal distance
+	if (isAllfixed)
+		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
 	(*stream) << endl;
 
 }
