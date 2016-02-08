@@ -27,6 +27,7 @@ set(tests_SOURCES
 	testAppExecution.cpp
 	main.cpp
 	tests_with_ScaleInstr.cpp
+	testAllfixed.cpp
 )
 
 set(tests_INPUT
@@ -39,6 +40,7 @@ set(tests_INPUT
 	testMixingObservation.h
 	testDVER.h
 	tests_with_ScaleInstr.h
+	testAllfixed.h
 	Utils.h
 )
 

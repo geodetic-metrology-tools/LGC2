@@ -97,7 +97,7 @@ TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TE
 	TReal d = dist(xSt, ySt, xTg, yTg);
 
 	TAngle theta = ecth.obsHorAngle;
-	TAngle bearing = TAngle(atan2((ySt-yTg),(xSt-xTg)),TAngle::EUnits::kRadians);
+	TAngle bearing = TAngle(atan2((xTg-xSt), (yTg-ySt)), TAngle::EUnits::kRadians);
 	TAngle alpha = TAngle(asin(ecth.getDistance().getMetresValue() / d), TAngle::EUnits::kRadians);
 
 	return (bearing+alpha-theta);
