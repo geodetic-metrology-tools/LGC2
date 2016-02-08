@@ -26,32 +26,50 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 					for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM)
 					{
 						for (auto& itANGL : itROM->measANGL)
-							fAllfixedGenerator.getV0AllfixedANGL(*itTSTN, *itROM, itANGL);
+							itANGL.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedANGL(*itTSTN, *itROM, itANGL);
 
 						for (auto& itZEND : itROM->measZEND)
 							if (!itTSTN->instrumentHeightAdjustable->isFixed())
-								fAllfixedGenerator.getHiAllfixedZEND(*itTSTN, itZEND);
+								itZEND.fAllFixedHi = fAllfixedGenerator.getHiAllfixedZEND(*itTSTN, itZEND);
 
 						for (auto& itDIST : itROM->measDIST)
 						{
 							if (!itDIST.target.distCorrectionAdjustable->isFixed())
-								fAllfixedGenerator.getCsAllfixedDIST(*itTSTN, itDIST);
+								itDIST.fAllFixedCs = fAllfixedGenerator.getCsAllfixedDIST(*itTSTN, itDIST);
 							if (!itTSTN->instrumentHeightAdjustable->isFixed())
-								fAllfixedGenerator.getHiAllfixedDIST(*itTSTN, itDIST);
+								itDIST.fAllFixedHi = fAllfixedGenerator.getHiAllfixedDIST(*itTSTN, itDIST);
 						}
 
 						for (auto& itDHOR : itROM->measDHOR)
 							if (!itDHOR.target.distCorrectionAdjustable->isFixed())
-								fAllfixedGenerator.getCsAllfixedDIST(*itTSTN, itDHOR);
+								itDHOR.fAllFixedCs = fAllfixedGenerator.getCsAllfixedDIST(*itTSTN, itDHOR);
 
-						//for (auto& itPLR3D : itROM->measPLR3D)
-						//	fAllfixedGenerator(rm, itPLR3D);
+						for (auto& itPLR3D : itROM->measPLR3D)
+						{
+							//V0
+							itPLR3D.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedPLR(*itTSTN, *itROM, itPLR3D);
+
+							//Cs
+							if (!itPLR3D.target.distCorrectionAdjustable->isFixed())
+								itPLR3D.fAllFixedCs = fAllfixedGenerator.getCsAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+
+							//Rx & Ry if ROT3D used
+							if (itTSTN->rot3D)
+							{
+								itPLR3D.fAllFixedRx = fAllfixedGenerator.getRxAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+								itPLR3D.fAllFixedRy = fAllfixedGenerator.getRyAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+							}
+
+							//Hi
+							if (!itTSTN->instrumentHeightAdjustable->isFixed())
+								itPLR3D.fAllFixedHi = fAllfixedGenerator.getHiAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+						}
 
 						for (auto& itECTH : itROM->measECTH)
-							fAllfixedGenerator.getV0AllfixedECTH(*itTSTN, itECTH);
+							itECTH.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedECTH(*itTSTN, itECTH);
 
 						//for (auto& itECSP : itROM->measECSP)
-						//	fAllfixedGenerator.getV0AllfixedECSP(*itTSTN, itECSP);
+						//	itECSP.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedECSP(*itTSTN, itECSP);
 
 					}
 				}
@@ -61,7 +79,7 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 					//Iterate through DPST measurements
 					for (auto& itDPST : itEDM->measDSPT)
 						if (!itDPST.target.distCorrectionAdjustable->isFixed())
-							fAllfixedGenerator.getCsAllfixedDSPT(*itEDM, itDPST);
+							itDPST.fAllFixedCs = fAllfixedGenerator.getCsAllfixedDSPT(*itEDM, itDPST);
 
 
 				//In every node iterate through the LEVEL's measurements
@@ -69,7 +87,7 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 					//Iterate through DLEV measurements
 					for (auto& itDLEV : itLEVEL.measDLEV)
 						if (!itLEVEL.instrument.collAngleAdjustable->isFixed())
-							fAllfixedGenerator.getCollimationAllfixedDLEV(itLEVEL, itDLEV);
+							itDLEV.fAllFixedCollimation = fAllfixedGenerator.getCollimationAllfixedDLEV(itLEVEL, itDLEV);
 					
 			}
 		}

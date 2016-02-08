@@ -4,15 +4,17 @@
 //////Total station measurements
 ///////////////////////////////////////////////////////////
 TPLR3D::TPLR3D(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
-			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>(pos, tgt)
+			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>(pos, tgt),
+			fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf),
+			fAllFixedRx(TAngle(NO_VALf)), fAllFixedRy(TAngle(NO_VALf)), fAllFixedV0(TAngle(NO_VALf))
 			{}
 
 TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt): 
-    TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt) 
+TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
     {}
 
 TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v) :
-    TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v) 
+TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
     {}
 
 
@@ -22,14 +24,16 @@ TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, 
 ///////////////////////////////////////////////////////////
 TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TLength v) : 
 	TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v),
-	obsHorAngle(obsHorAngle)
+	obsHorAngle(obsHorAngle), fAllFixedV0(TAngle(NO_VALf))
 	{}
 
 TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle) :
-    TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr), obsHorAngle(horAngle), obsVertAngle(vertAngle)
+    TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr),
+	obsHorAngle(horAngle), obsVertAngle(vertAngle), fAllFixedV0(TAngle(NO_VALf))
     {}
 TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle, TLength v) :
-    TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v), obsHorAngle(horAngle), obsVertAngle(vertAngle)
+    TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v),
+	obsHorAngle(horAngle), obsVertAngle(vertAngle), fAllFixedV0(TAngle(NO_VALf))
     {}
 
 ///////////////////////////////////////////////////////////
@@ -44,7 +48,7 @@ TDVER::TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TL
 
 TDLEV::TDLEV(const TAdjustablePoint& targetPos, TInstrumentData::TLEVEL::TTarget target, TLength measValue) :
 	TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(targetPos, target, measValue),
-	dhor(nullptr)
+	dhor(nullptr), fAllFixedCollimation(TAngle(NO_VALf))
 	{}
 
 TDLEV::TDHOR::TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v) :

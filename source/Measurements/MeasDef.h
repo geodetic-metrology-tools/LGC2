@@ -40,6 +40,16 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		/// Returns the last observation index of this measurement (PLR3D introduces 3 observations, order is defined to be: theta, phi, s-distance). 
 		inline MatrixIndex getLastObservationIndex() const {return fFirstObservationIndex + 2;}
 			
+		/// Allfixed parameter: instrument heigth - Hi
+		TLength fAllFixedHi;
+		/// Allfixed parameter: distance correction - Cs
+		TLength fAllFixedCs;
+		/// Allfixed parameter: V0
+		TAngle fAllFixedV0;
+		/// Allfixed parameter: Rx
+		TAngle fAllFixedRx;
+		/// Allfixed parameter: Ry
+		TAngle fAllFixedRy;
 };
 		
 /*! 
@@ -52,10 +62,13 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 	public:
 		/// See TAScalarMeas
 		TANGL(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
-			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt) {}
+			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt), fAllFixedV0(TAngle(NO_VALf)) {}
 
 		/// Returns the last LS-matrices equation index of this measurement, ANGL introduces 1 equation.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		/// Allfixed parameter: V0
+		TAngle fAllFixedV0;
 };
 
 /*! 
@@ -68,10 +81,13 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 	public:
 		/// See TAScalarMeas
 		TZEND(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
-			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt) {}
+			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt), fAllFixedHi(NO_VALf) {}
 
 		/// Returns the last LS-matrices equation index of this measurement, ZEND introduces 1 equation.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		/// Allfixed parameter: instrument heigth - Hi
+		TLength fAllFixedHi;
 };
 
 /*! 
@@ -88,6 +104,12 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 
 		/// Returns the last LS-matrices equation index of this measurement
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		/// Allfixed parameter: distance correction - Cs
+		TLength fAllFixedCs;
+		/// Allfixed parameter: instrument heigth - Hi
+		TLength fAllFixedHi;
+		
 };
 
 /*! 
@@ -110,6 +132,8 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 		/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 
+		/// Allfixed parameter: V0
+		TAngle fAllFixedV0;
 };
 
 /*!
@@ -133,6 +157,8 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
+	/// Allfixed parameter: V0
+	TAngle fAllFixedV0;
 };
 
 //--------------------------  EDM measurement--------------------------------------------
@@ -145,13 +171,16 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 		/*!@name Constructors */
 		//@{
 			TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt) : 
-				TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt) {}
+				TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt), fAllFixedCs(NO_VALf) {}
          TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt, TLength v) :
-				TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v) {}
+			 TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf) {}
 		//@}
 
 		/// Returns the last LS-matrices equation index of this measurement, DSPT introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+
+		/// Allfixed parameter: distance correction
+		TLength fAllFixedCs;
 };
 
 //--------------------------  SCALE measurement--------------------------------------------
@@ -286,6 +315,9 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 			/// The optional DHOR measurment 
 			shared_ptr<TDLEV::TDHOR> dhor;
+
+			/// Allfixed parameter: collimation angle
+			TAngle fAllFixedCollimation;
 };
 
 //--------------------------  Orientation measurement--------------------------------------------
