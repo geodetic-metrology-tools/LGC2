@@ -300,14 +300,12 @@ TLength TAllfixedParamGenerator::getHiAllfixedZEND(const TTSTN& station, const T
 
 TLength TAllfixedParamGenerator::getHiAllfixedDIST(const TTSTN& station, const TLINE& dist)
 {
-	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
-	TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
-	targetPos = dist.targetPos->getEstimatedValue();
-	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(dist.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+	TPositionVector targetPos = dist.targetPos->getEstimatedValue();
+	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(dist.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "TARGET FRAME" to "ROOT"
 	tgLor2RootTrafo.transform(targetPos);
 
-	stationPos = station.instrumentPos->getEstimatedValue();
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
@@ -326,11 +324,22 @@ TLength TAllfixedParamGenerator::getHiAllfixedDIST(const TTSTN& station, const T
 	TReal xTg = targetPos.getX().getMetresValue();
 	TReal yTg = targetPos.getY().getMetresValue();
 	TReal zTg = targetPos.getZ().getMetresValue();
+
 	TReal hTg = dist.target.targetHt;
+	TReal hInst = station.instrumentHeightAdjustable->getEstimatedValue();
+	TReal cst = dist.target.distCorrectionAdjustable->getProvisionalValue();
 
-	TReal D = pow2(dist.getDistance() + dist.target.distCorrectionValue) - pow2(xSt - xTg) - pow2(ySt - yTg);
 
-	return TLength(zTg + hTg - zSt - sqrt(D));
+	int sign = 0;
+	if (zSt + hInst > zTg + hTg)
+		sign = 1;
+	else
+		sign = -1;
+
+	TReal distance2D = pow2(dist.getDistance() + cst) - pow2(xSt - xTg) - pow2(ySt - yTg);
+
+	return TLength (zTg + hTg - zSt + sign * sqrt(distance2D));
+
 
 }
 
