@@ -21,10 +21,11 @@ class TLSAlgorithm : public TVAbractAlgorithm
 public:
 	TLSAlgorithm();
 
+	//run the calculation
 	virtual bool run(TLGCData& data, int fMaxIterations);
 
 	/// Iterates to the solution
-	bool	iterate2Solution(TLGCData& data,
+	virtual bool	iterate2Solution(TLGCData& data,
 		TLSInputMatricesFiller* matrFiller,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
@@ -36,10 +37,14 @@ public:
 	/// Returns number of iterations made
 	int		getNumberOfIterations() { return fNumberOfIterations; }
 
-private:
+protected:
+	/// number of equations
 	int		 fNumberOfIterations;
+
+	/// flag if S a posteriori variance exists
 	bool	 fS0APosterioriVariances;
 
+	///compute the covariance matrix,the residual vector and the reliabilities
 	void	 computeVarCovarAndReliability(TLGCData* data,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,

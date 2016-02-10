@@ -112,7 +112,7 @@ private:
 		/// Add the design matrices contributions for the PDOR measurement. 
 		void addPDORContributions(const TPdorObs& pdorObs, TLSInputMatrices*  matrices);
 
-		/// Add the design matrices contributions for the PDOR measurement. 
+		/// Add the design matrices contributions for the RADI measurement. 
 		void addRADIContributions(const std::vector<TRADI>& radiMeas, TLSInputMatrices*  matrices);
 	//@}
 

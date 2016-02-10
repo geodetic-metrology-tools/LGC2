@@ -113,7 +113,11 @@ class TKeyALLFIXED : public TAOptionKey {
 class TKeyLIBR : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyLIBR(TLGCData& project) : TAOptionKey(project, "LIBR") {}
+		TKeyLIBR(TLGCData& project, int nb_allowed_keywords = nb_allowed_libr, const char** keywords = allowed_LIBR) : TAOptionKey(project, "LIBR")
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+		}
 
 		///Tokenize and initialize options for the calculation
 		virtual void parse(const std::vector<std::string>&, int);

@@ -102,7 +102,7 @@ TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TE
 
 	return (bearing+alpha-theta);
 }
-
+/*
 TAngle TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -228,7 +228,7 @@ TAngle TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTS
 	return TAngle(Ry, TAngle::EUnits::kRadians);
 }
 
-
+*/
 
 TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelInstr, const TDLEV& dlev)
 {

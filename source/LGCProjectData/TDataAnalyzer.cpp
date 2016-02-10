@@ -286,9 +286,4 @@ bool TDataAnalyzer::dataConsistent(){
 	return consistent;
 }
 
-void TDataAnalyzer::addNetworkConstraints(){
-	fData.setNumberOfConstraints(0);
-	throw runtime_error("*LIBR keyword not enabled yet!");
-}
-
 

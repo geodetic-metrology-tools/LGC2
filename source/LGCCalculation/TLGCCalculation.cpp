@@ -2,6 +2,7 @@
 #include "TDataAnalyzer.h"
 #include "TLSSimulation.h"
 #include "TLSAllfixed.h"
+#include "TLSLibre.h"
 #include "TLSAlgorithm.h"
 #include "TVAbractAlgorithm.h"
 
@@ -36,7 +37,7 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter
 			algorithm.reset(new TLSAlgorithm());
 
 			if (fData->getConfig().libre.isActive())
-				analyzer.addNetworkConstraints();
+				algorithm.reset(new TLSLibre(*fData.get(), fMaxIterations));
 			else if (fData->getConfig().sim.isActive())
 				algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
 			else if (fData->getConfig().allfixed.isActive())

@@ -82,7 +82,7 @@ public:
 	TLA2MLATransformation& getLA2MLA(){ return fla2mla; }
 	//@}
 
-	//Pointer to a tree of LORs
+	///Pointer to a tree of LORs
 	const TDataTree* getTree() { return fTree;}
 
 	/// Returns a reference on the reference frame

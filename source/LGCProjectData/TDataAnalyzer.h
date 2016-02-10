@@ -1,7 +1,6 @@
 #ifndef TData_Analyzer_H
 #define TData_Analyzer_H
 
-#include "TLSConstraintIdentifier.h"
 class TLGCData;
 
 /*! 
@@ -37,9 +36,6 @@ public:
 
 	/// Returns TRUE if at least one standard deviation assigned to a point or frame element.
 	inline bool hasStandardDeviations() {return fStandDevUsed;};
-
-	/// Identifies and adds network constraints
-	void addNetworkConstraints();
 
 private:
 	bool fStandDevUsed; // If at least one standard deviation assigned to a point or frame element.

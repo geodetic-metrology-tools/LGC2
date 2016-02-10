@@ -81,7 +81,7 @@ public:
 	//@}
 
 private:
-	//Pointer to a TPointTransformationFunctions
+	/// Pointer to a TPointTransformationFunctions
 	TPointTransformer* fPointTransfo;
 
 };

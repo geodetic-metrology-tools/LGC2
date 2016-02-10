@@ -17,11 +17,10 @@ public:
 	/// Constructor
 	TLSAllfixed(TLGCData& data, int maxIter);
 
+	//run the calculation
 	virtual bool run(TLGCData& data, int fMaxIterations);
 
 private:
-
-
 	TAllfixedParamGenerator fAllfixedGenerator; 
 	TPointTransformer fPointTransformer;
 };

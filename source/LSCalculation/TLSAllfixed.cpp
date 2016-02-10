@@ -47,7 +47,7 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 						for (auto& itPLR3D : itROM->measPLR3D)
 						{
 							//V0
-							itPLR3D.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedPLR(*itTSTN, *itROM, itPLR3D);
+							//itPLR3D.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedPLR(*itTSTN, *itROM, itPLR3D);
 
 							//Cs
 							if (!itPLR3D.target.distCorrectionAdjustable->isFixed())
@@ -56,8 +56,8 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 							//Rx & Ry if ROT3D used
 							if (itTSTN->rot3D)
 							{
-								itPLR3D.fAllFixedRx = fAllfixedGenerator.getRxAllfixedPLR(*itTSTN, *itROM, itPLR3D);
-								itPLR3D.fAllFixedRy = fAllfixedGenerator.getRyAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+								//itPLR3D.fAllFixedRx = fAllfixedGenerator.getRxAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+								//itPLR3D.fAllFixedRy = fAllfixedGenerator.getRyAllfixedPLR(*itTSTN, *itROM, itPLR3D);
 							}
 
 							//Hi

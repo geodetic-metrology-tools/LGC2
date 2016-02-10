@@ -110,35 +110,20 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 	if ((projData.fUEOIndices.OIndex == 0))
 		throw std::runtime_error("Observation index in LS matrices is null.");	
 
-
-	//So far checks nothing, in LGC1: this is TRUE if a "static bool	fUsedPDOR" is TRUE
-	//This should be detected in analyzer, whether this option was used or not.
-	/*
-		IF ORIE used, need to set up cnstrObs = TRUE
-			if (fcalcType.fOrieUsed)
-				cnstrObs = true;
-			else
-				cnstrObs = false;
-	*/
-
 	bool cnstrObs = false;
 
 	if(projData.getConfig().libre.isActive()){
 		int cnstrNumber = projData.getNumberOfConstraints();
 
-		if (cnstrNumber != 0){
-			//This case is not yet implemented
-
-			// Setting of the input matrices size with the observations & parameters indices
+		if (cnstrNumber != 0)
 			matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
-
-			//processFreeCnstr(data, matrices, data.getFreeConstraints());
-			throw std::runtime_error("LIBR keyword is not implemented yet.");		
-		}
 		else
-			throw std::runtime_error("Constraint index is null even though the LIBR option is used.");		
+		{
+			matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
+			throw std::runtime_error("LIBR  is used, but no constraints are found.");
+		}
 	}
-	else//No LIBR used, sets the input matrices size with the observations & parameters indices
+	else
 		matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs); 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

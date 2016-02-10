@@ -15,6 +15,7 @@ set(ContributionsGenerators_HEADERS
 	TPointTransformer.h
 	TObservationGenerator.h
 	TAllfixedParamGenerator.h
+	TLibrCnstrGenerator.h
 )
 
 # Create a variable containing all .cpp files:
@@ -23,6 +24,7 @@ set(ContributionsGenerators_SOURCES
 	TPointTransformer.cpp
 	TObservationGenerator.cpp
 	TAllfixedParamGenerator.cpp
+	TLibrCnstrGenerator.cpp
 )
 
 
