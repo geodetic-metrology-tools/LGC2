@@ -414,7 +414,13 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 
 		if(!ItDIST.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue());
+			if (isAllfixed)
+				if (!isnotanumber(ItDIST.fAllFixedCs))
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMMetresValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue());
 
 			//write the distance cste sigma )
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
@@ -437,10 +443,6 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TIns
 				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedHi);
 			else
 				(*stream).writeString(obsResWidth, "FIXED");
-			if (!isnotanumber(ItDIST.fAllFixedCs))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMMetresValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
 		}
 
 		(*stream)<<endl;
@@ -481,17 +483,34 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 		//write the residual/SIGMA
 		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() /ItDHOR.target.sigmaDist );
 
+		if (!ItDHOR.target.distCorrectionAdjustable->isFixed()){
+			//write the distance cste calculated
+			if (isAllfixed)
+				if (!isnotanumber(ItDHOR.fAllFixedCs))
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMMetresValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.distCorrectionAdjustable->getEstimatedValue());
+
+			//write the distance cste sigma )
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
+		}
+		else {
+			//write the distance cste
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.distCorrectionAdjustable->getProvisionalValue());
+
+			//write the distance cste sigma 
+			(*stream).writeString(obsResWidth, "FIXED");
+		}
+
 		//write TARGET ID
 		(*stream).writeString(nameWidth, ItDHOR.target.ID);
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.targetHt);
 
 		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItDHOR.fAllFixedCs))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMMetresValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
+		
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -820,7 +839,6 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	if (isAllfixed)
 	{
 		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
-		(*stream).writeString(obsWidth, "Cs"); //allfixed parameter: cs
 	}
 	(*stream)<<endl;	
 
@@ -841,7 +859,6 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	if (isAllfixed)
 	{
 		(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
-		(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: cs
 	}
 	(*stream)<<endl;
 }
@@ -868,10 +885,10 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"RESIDU"); //residual
 	//(*stream).writeString(obsResWidth,	"ECART"); //ecart
 	(*stream).writeString(obsResWidth,	"RES/SIG"); //residual/sigma
+	(*stream).writeString(obsWidth, "CONST"); //dist corr
+	(*stream).writeString(obsResWidth, "SCONST"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
 	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
-	if (isAllfixed)
-		(*stream).writeString(obsWidth, "Cs"); //allfixed parameter: Cs
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -884,10 +901,10 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //residual
 	//(*stream).writeString(obsResWidth,	"ECART"); //ecart
 	(*stream).writeString(obsResWidth,	""); //residual/sigma
+	(*stream).writeString(obsWidth, "(M)"); //provisional dist corr
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma of provisional dist corr
 	(*stream).writeStringLeft(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //target height
-	if (isAllfixed)
-		(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: Cs
 	(*stream)<<endl;
 }
 

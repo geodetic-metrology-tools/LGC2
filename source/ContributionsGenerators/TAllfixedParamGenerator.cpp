@@ -256,7 +256,7 @@ TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelIn
 	TReal zInst = referencePoint.getZ().getMetresValue();
 	TReal zTg = dlev.targetPos->getEstimatedValue().getZ().getMetresValue();
 
-	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz;
+	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dlev.getDistance();
 
 	return TAngle(atan(calcMeas/ dTg), TAngle::EUnits::kRadians);
 

@@ -101,9 +101,9 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	(*stream).writeString(obsResWidth,	"RESIDU"); //offset (mm)
 	(*stream).writeString(obsResWidth,	"SENSI"); //sensitivity
 	(*stream).writeString(obsResWidth,	"RES/SIG"); //offset/sigma 
+	(*stream).writeString(obsWidth, "CONST"); //dist corr
+	(*stream).writeString(obsResWidth, "SCONST"); //sigma of provisional dist corr
 	(*stream).writeString(obsWidth,	"H_PRISME"); //prism's height 	 
-	if (isAllfixed)
-		(*stream).writeString(obsWidth, "CS"); //allfixed parameter
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +116,9 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	(*stream).writeString(obsResWidth,	"(MM)"); //residu (mm)
 	(*stream).writeString(obsResWidth,	"(MM/CM)"); //sensitivity
 	(*stream).writeString(obsResWidth,	""); //res/sigma
+	(*stream).writeString(obsWidth, "(M)"); //provisional dist corr
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma of provisional dist corr
 	(*stream).writeString(obsWidth,	"(M)"); //prism's height
-	if (isAllfixed)
-		(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter
 	(*stream)<<endl;
 	
 	return;
@@ -166,15 +166,31 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 		//write the res/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual()/ItDSPT.target.sigmaDSpt);
 
+		//write the distance correction
+		if (!ItDSPT.target.distCorrectionAdjustable->isFixed()){
+			//write the distance cste calculated
+			if (isAllfixed)
+				if (!isnotanumber(ItDSPT.fAllFixedCs))
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.fAllFixedCs.getMMetresValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.target.distCorrectionAdjustable->getEstimatedValue());
+
+			//write the distance cste sigma )
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
+		}
+		else {
+			//write the distance cste
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.target.distCorrectionAdjustable->getProvisionalValue());
+
+			//write the distance cste sigma 
+			(*stream).writeString(obsResWidth, "FIXED");
+		}
+
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.target.targetHt);//Output value in meters [m], stored in [m]
 
-		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItDSPT.fAllFixedCs))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.fAllFixedCs.getMMetresValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;

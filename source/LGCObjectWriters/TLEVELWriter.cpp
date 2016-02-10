@@ -20,7 +20,7 @@ void TLEVELWriter::writeLEVELResults(const TLEVEL& fLevel)
 
 	if(fLevel.measDLEV.size() > 0){
 		//The eventual DHOR result to be written inside this method 
-		writeDLEVResults(fLevel.measDLEV);
+		writeDLEVResults(fLevel.measDLEV, fLevel.instrument);
 		(*stream)<<TABs;
 		(*stream)<<"DLEV"<<endl;
 		writeDistanceResultsSummary(fLevel.getDLEVObsSummary(), TABs);
@@ -92,7 +92,7 @@ void TLEVELWriter::writeLEVELData(const TLEVEL& fLevel)
 	(*stream)<<endl<<endl;
 }
 
-void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
+void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV, const TInstrumentData::TLEVEL& instr)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -124,13 +124,24 @@ void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV)
 		//residual/sima
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDlev.getDistanceResidual()/ItDlev.target.sigmaD);
 
-		if (isAllfixed)
-			if (!isnotanumber(ItDlev.fAllFixedCollimation))
-				(*stream).writeDouble(obsWidth, getAnglePrecision(), ItDlev.fAllFixedCollimation.getGonsValue());
+		//Collimation angle
+		if (!instr.collAngleAdjustable->isFixed())
+		{
+			if (isAllfixed)
+				if (!isnotanumber(ItDlev.fAllFixedCollimation))
+					(*stream).writeDouble(obsWidth, getAnglePrecision(), ItDlev.fAllFixedCollimation.getGonsValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
 			else
-				(*stream).writeString(obsWidth, "FIXED");
+				(*stream).writeDouble(obsWidth, getAnglePrecision(), instr.collAngleAdjustable->getEstimatedValue().getGonsValue());
+			
+			(*stream).writeDouble(obsResWidth, getAngleResidualPrecision(), instr.collAngleAdjustable->getEstimatedPrecision().getSignedCCValue());
+		}
 		else
-			(*stream).writeString(obsWidth, "");
+		{
+			(*stream).writeDouble(obsWidth, getAnglePrecision(), instr.collAngleAdjustable->getProvisionalValue().getGonsValue());
+			(*stream).writeString(obsResWidth, "FIXED");
+		}
 
 		//DHOR
 		if (ItDlev.dhor)
@@ -189,8 +200,8 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth,	"CALCULE");       //DLEV: estimation 
 	(*stream).writeString(obsResWidth,	"RESIDU");    //DLEV: residual
 	(*stream).writeString(obsResWidth,	"RES/SIG");   //DLEV: residual/sigma
-	if (isAllfixed)
-		(*stream).writeString(obsWidth, "COLLIMATION");       //DLEV: allfixed parameter (collimation angle)
+	(*stream).writeString(obsWidth, "COLLIMATION");   //DLEV: collimation angle
+	(*stream).writeString(obsResWidth, "SCOLL");         //DLEV: sigma of collimation angle
 
 	(*stream).writeString(obsWidth,	"OBSDHOR");       //DHOR: mesurement
 	(*stream).writeString(obsResWidth,	"SDHOR");     //DHOR: sigma 
@@ -209,8 +220,8 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth,	"(M)");     //DLEV: estimation 
 	(*stream).writeString(obsResWidth,"(MM)");  //DLEV: residual
 	(*stream).writeString(obsResWidth,"");      //DLEV: residual/sigma
-	if (isAllfixed)
-		(*stream).writeString(obsWidth, "GONS");       //DLEV: allfixed parameter (collimation angle)
+	(*stream).writeString(obsWidth, "GONS");    //DLEV: collimation angle
+	(*stream).writeString(obsResWidth, "CC");      //DLEV: sigma collimation angle
 
 	(*stream).writeString(obsWidth,	"(M)");     //DHOR: mesurement
 	(*stream).writeString(obsResWidth,	"(MM)");//DHOR: sigma 
