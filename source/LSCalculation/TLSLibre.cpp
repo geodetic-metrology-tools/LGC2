@@ -16,8 +16,8 @@ bool TLSLibre::run(TLGCData& data, int fMaxIterations)
 	std::unique_ptr<TALSComputer> computer;
 	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
-	std::unique_ptr<TLSResultsMatricesExtractor> extractor(new TLSResultsMatricesExtractor(&data));
 	std::unique_ptr<TLSResultsMatrices> resultMatrices(new TLSResultsMatrices(data.fUEOIndices));
+	extractor = std::make_unique<TLSResultsMatricesExtractor>(&data);
 
 	// identify the constraints necessary, create them
 	fLibrCnstrGenerator.initCnstrIdentifier(data);
@@ -37,7 +37,7 @@ bool TLSLibre::run(TLGCData& data, int fMaxIterations)
 	}
 
 	//run calculation
-	bool computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), extractor.get(), resultMatrices.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	bool computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), resultMatrices.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
 
 	return computationIsOK;
@@ -48,7 +48,6 @@ bool	TLSLibre::iterate2Solution(TLGCData& data,
 	TLSInputMatricesFiller* matrFiller,
 	TLSInputMatrices* inputMtr,
 	TALSComputer* computer,
-	TLSResultsMatricesExtractor* extractor,
 	TLSResultsMatrices* resultMatrices,
 	int fMaxIterations,
 	TReal convCrit){
@@ -68,9 +67,11 @@ bool	TLSLibre::iterate2Solution(TLGCData& data,
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
 
+		
+
 		//fill part of the free constraints
 		fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
-
+		inputMtr->saveMatricesToFile(100 + fNumberOfIterations);
 
 		if (fillOK)
 		{
@@ -80,7 +81,7 @@ bool	TLSLibre::iterate2Solution(TLGCData& data,
 			if (computationOK)
 			{
 				bool extractOK = false;
-				extractOK = extractor->extractResults(*resultMatrices, convCrit);
+				extractOK = extractor->extractResults(*resultMatrices, convCrit, fLibrCnstrGenerator);
 				if (extractOK)
 					lastIteration = extractor->lastIteration();
 				else{
@@ -111,7 +112,7 @@ bool	TLSLibre::iterate2Solution(TLGCData& data,
 	}
 	else
 	{
-		computeVarCovarAndReliability(&data, inputMtr, computer, extractor, resultMatrices);
+		computeVarCovarAndReliability(&data, inputMtr, computer, resultMatrices);
 		return true;
 	}
 }

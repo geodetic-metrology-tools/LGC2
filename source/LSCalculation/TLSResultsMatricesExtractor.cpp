@@ -1,12 +1,14 @@
 #include "TLSResultsMatricesExtractor.h"
 #include "TLGCData.h"
 #include "TLSResultsMatrices.h"
+#include "TLibrCnstrGenerator.h"
 
 
 
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData* fData):
 fDataSet(fData),
-fLastIteration(false)
+fLastIteration(false),
+freeCnstr(nullptr)
 {}
 
 TLSResultsMatricesExtractor::~TLSResultsMatricesExtractor()
@@ -32,6 +34,30 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 	}
 	catch (std::exception const & excp) {
 		fDataSet->getFileLogger() << TFileLogger::e_logType::LOG_ERROR <<  excp.what();
+		successfullExtraction = false;
+		return successfullExtraction;
+	}
+	return successfullExtraction;
+}
+
+bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator fCnstr) {
+	bool successfullExtraction = true;
+	freeCnstr = &fCnstr;
+
+	try{
+		bool pt = extractPointParams(rm, convCrit);
+		bool angl = extractAngleParams(rm, convCrit);
+		bool pln = extractPlaneParams(rm, convCrit);
+		bool len = extractLengthParams(rm, convCrit);
+		bool trf = extractTransformationParams(rm, convCrit);
+		bool ln = extractLineParams(rm, convCrit);
+
+		if ((pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive())
+			fLastIteration = true;
+
+	}
+	catch (std::exception const & excp) {
+		fDataSet->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
 		successfullExtraction = false;
 		return successfullExtraction;
 	}
@@ -318,6 +344,14 @@ void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, s
 bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& rm, const TReal convCrit)  {
 	bool critNotExceeded = true;
 
+	TReal numberOfPoints = fDataSet->getPoints().numObjects();
+	TReal factor = LITERAL(1.0) / numberOfPoints;
+
+	TLength zero(LITERAL(0.0));
+	TLength xcg = zero;
+	TLength ycg = zero;
+	TLength zcg = zero;
+
 	for (auto& point : fDataSet->getPoints()){
 		if(point.hasVariable()){
 			for(int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx){
@@ -330,27 +364,22 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& r
 				if ( fabsq(correction) > convCrit )
 					critNotExceeded = false;
 			}
+
+			if (fDataSet->getConfig().libre.isActive())
+			{
+				// update the estimated centre of Gravity for the data points
+				xcg = xcg + (point.getEstimatedValue().getX() * factor);
+				ycg = ycg + (point.getEstimatedValue().getY() * factor);
+				zcg = zcg + (point.getEstimatedValue().getZ() * factor);
+
+			}
 		}
 	}
-#if 0
-	/*
-		Update estimated center of gravity, to be added into TLGCData class???
 
-		// update the estimated centre of Gravity for the data points
-		xcg = xcg + (iterB->getEstimatedValue().getX() * factor);
-		ycg = ycg + (iterB->getEstimatedValue().getY() * factor);
-		zcg = zcg + (iterB->getEstimatedValue().getZ() * factor);
-	*/
-#endif
-	if(fDataSet->getConfig().libre.isActive())
+	if (fDataSet->getConfig().libre.isActive())
 	{
-		throw std::runtime_error("LIBR option is not implemented yet!");
-		/*
-			Do some staff :: To be implemented later.
-		*/
-		/*TLSConstraintIdentifier cnstr = fDataSet->getFreeConstraints();
-		cnstr.setEstimatedGravityCenterCoord(xcg, ycg, zcg);
-		fDataSet->setFreeConstraints(cnstr);*/
+		freeCnstr->setEstimatedGravityCenterCoord(xcg, ycg, zcg);
+		//fDataSet->setFreeConstraints(cnstr);
 	}
 	return critNotExceeded;
 }

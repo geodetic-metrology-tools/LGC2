@@ -26,10 +26,11 @@ public:
 		TLSInputMatricesFiller* matrFiller,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
-		TLSResultsMatricesExtractor* extractor,
 		TLSResultsMatrices* resultMatrices,
 		int fMaxIterations,
 		TReal convCrit);
+
+
 
 private: 
 	TLibrCnstrGenerator fLibrCnstrGenerator;

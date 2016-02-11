@@ -3,12 +3,12 @@
 
 #include "TALSComputer.h"
 #include "TVAbractAlgorithm.h"
+#include "TLSResultsMatricesExtractor.h"
 
 class TLGCData;
 class TLSInputMatrices;
 class TLSInputMatricesFiller;
 class TALSComputer;
-class TLSResultsMatricesExtractor;
 class TLSResultsMatrices;
 
 /*!
@@ -29,7 +29,6 @@ public:
 		TLSInputMatricesFiller* matrFiller,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
-		TLSResultsMatricesExtractor* extractor,
 		TLSResultsMatrices* resultMatrices,
 		int fMaxIterations,
 		TReal convCrit);
@@ -37,7 +36,11 @@ public:
 	/// Returns number of iterations made
 	int		getNumberOfIterations() { return fNumberOfIterations; }
 
+
 protected:
+	/// Pointer to the result matrix extractor
+	unique_ptr<TLSResultsMatricesExtractor> extractor;
+
 	/// number of equations
 	int		 fNumberOfIterations;
 
@@ -48,7 +51,6 @@ protected:
 	void	 computeVarCovarAndReliability(TLGCData* data,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
-		TLSResultsMatricesExtractor* extractor,
 		TLSResultsMatrices* resultMatrices);
 
 };

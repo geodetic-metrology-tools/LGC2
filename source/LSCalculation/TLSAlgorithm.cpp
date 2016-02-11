@@ -7,18 +7,21 @@
 #include "TLSWeightedUnkMtdComputer.h"
 
 
-TLSAlgorithm::TLSAlgorithm() : fNumberOfIterations(0), fS0APosterioriVariances(false){
+TLSAlgorithm::TLSAlgorithm() 
+	: fNumberOfIterations(0)
+	, fS0APosterioriVariances(false)
+{
 }
 
 bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 {
 	std::unique_ptr<TALSComputer> computer;
-
 	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
-
-	std::unique_ptr<TLSResultsMatricesExtractor> extractor(new TLSResultsMatricesExtractor(&data));
 	std::unique_ptr<TLSResultsMatrices> resultMatrices(new TLSResultsMatrices(data.fUEOIndices));
+
+	extractor = std::make_unique<TLSResultsMatricesExtractor>(&data);
+	
 
 	if (data.isCombinedCaseUsed())
 		computer.reset(new TLSCombinedMtdComputer());
@@ -27,7 +30,7 @@ bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 	else
 		computer.reset(new TLSParametricMtdComputer());
 
-	bool computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), extractor.get(), resultMatrices.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	bool computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), resultMatrices.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
 	return computationIsOK;
 }
@@ -37,7 +40,6 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	TLSInputMatricesFiller* matrFiller,
 	TLSInputMatrices* inputMtr,
 	TALSComputer* computer,
-	TLSResultsMatricesExtractor* extractor,
 	TLSResultsMatrices* resultMatrices,
 	int fMaxIterations,
 	TReal convCrit){
@@ -96,7 +98,7 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	}
 	else
 	{
-		computeVarCovarAndReliability(&data, inputMtr, computer, extractor, resultMatrices);
+		computeVarCovarAndReliability(&data, inputMtr, computer, resultMatrices);
 		return true;
 	}
 }
@@ -104,7 +106,6 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 	TLSInputMatrices* inputMtr,
 	TALSComputer* computer,
-	TLSResultsMatricesExtractor* extractor,
 	TLSResultsMatrices* resultMatrices)
 {
 	computer->calcResiduAndVarCovMatrice(inputMtr, resultMatrices);

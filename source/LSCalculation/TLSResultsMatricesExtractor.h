@@ -5,6 +5,7 @@
 
 class TLGCData;
 class TLSResultsMatrices;
+class TLibrCnstrGenerator;
 class TUVD;
 class TUVEC;
 class TPdorObs;
@@ -43,6 +44,7 @@ public:
 		\returns TRUE if the process was successful, FALSE otherwise. 
 	*/
 	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit);
+	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator fCnstr);
 
 	/// Returns the boolean that indicates if a new iteration is necessary or not 
 	bool	lastIteration() const;
@@ -130,6 +132,7 @@ private:
 
 	TLGCData*				fDataSet;			/*!< pointer to a project data*/
 	bool					fLastIteration;		/*!< indicates if the convergence criteria has been exceeded and if a new iteration is necessary (default value = false)*/
+	TLibrCnstrGenerator* freeCnstr; /*!< pointer to a LIBR constraint generator*/
 };
 #endif
 
