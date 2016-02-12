@@ -71,7 +71,7 @@ bool	TLSLibre::iterate2Solution(TLGCData& data,
 
 		//fill part of the free constraints
 		fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
-		inputMtr->saveMatricesToFile(100 + fNumberOfIterations);
+		//inputMtr->saveMatricesToFile(100 + fNumberOfIterations);
 
 		if (fillOK)
 		{

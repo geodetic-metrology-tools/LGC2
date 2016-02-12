@@ -94,6 +94,10 @@ namespace tut
 					}
 				}
 
+		// re initialise static object allfixed param to false
+		TAdjustablePoint::setAllFixedParam(false);
+		TAdjustableHelmertTransformation::setAllFixedParam(false);
+
 	}
 
 	// test ZEND (Hi), DIST (Hi + Cs) and ANGL (V0) in RS2K
@@ -164,6 +168,10 @@ namespace tut
 					}
 				}
 
+		// re initialise static object allfixed param to false
+		TAdjustablePoint::setAllFixedParam(false);
+		TAdjustableHelmertTransformation::setAllFixedParam(false);
+
 	}
 
 	// test ECTH (V0) in OLOC
@@ -220,6 +228,9 @@ namespace tut
 						ensure_equals("V0 should match", itECTH.fAllFixedV0, V0_lgc1[i], 1e-7);
 						i++;
 					}
+		// re initialise static object allfixed param to false
+		TAdjustablePoint::setAllFixedParam(false);
+		TAdjustableHelmertTransformation::setAllFixedParam(false);
 	}
 
 	// test ECTH (V0) in LEP
@@ -276,5 +287,9 @@ namespace tut
 						ensure_equals("V0 should match", itECTH.fAllFixedV0, V0_lgc1[i], 1e-7);
 						i++;
 					}
+
+		// re initialise static object allfixed param to false
+		TAdjustablePoint::setAllFixedParam(false);
+		TAdjustableHelmertTransformation::setAllFixedParam(false);
 	}
 }

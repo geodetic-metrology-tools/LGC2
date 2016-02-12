@@ -17,9 +17,9 @@ data(fDataSet)
 	fXcg = zero;
 	fYcg = zero;
 	fZcg = zero;
-	fXcgEst = zero;
-	fYcgEst = zero;
-	fZcgEst = zero;
+	fXcgEst = fXcg;
+	fYcgEst = fYcg;
+	fZcgEst = fZcg;
 
 	fCnstrNumber.dx = NO_VALf;
 	fCnstrNumber.dy = NO_VALf;
@@ -37,17 +37,13 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 {//adds the offset's contributions to the input matrices
 	bool successfullyProcessed = true;
 
-
-	//get point's type used for calculation
-	//auto ptIt = data.getPoints().begin();
-	//auto endIt = data.getPoints().end();
 	TReal nbrPts = data.getPoints().numObjects();
 
 	double rotX, rotY, rotZ, ech;
-	rotX = 0;
-	rotY = 0;
-	rotZ = 0;
-	ech = 0;
+	rotX = 0.0;
+	rotY = 0.0;
+	rotZ = 0.0;
+	ech = 0.0;
 
 	///////////////////////////////////////////////
 	//build A2
@@ -75,6 +71,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 			{
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
@@ -90,6 +87,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double a = 1.0;
@@ -106,6 +104,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double a = 1.0;
@@ -119,6 +118,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double a = -1.0 * (zPt.getMetresValue() - fZcgEst.getMetresValue());
@@ -130,6 +130,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double b = yPt.getMetresValue() - fYcgEst.getMetresValue();
@@ -144,6 +145,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 			{
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
@@ -153,6 +155,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double b = -1.0 * (xPt.getMetresValue() - fXcgEst.getMetresValue());
@@ -168,6 +171,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 			{
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
@@ -177,6 +181,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double b = xPt.getMetresValue() - fXcgEst.getMetresValue();
@@ -195,6 +200,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 			{
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
@@ -204,6 +210,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double b = yPt.getMetresValue();
@@ -215,6 +222,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double c = zPt.getMetresValue();
@@ -452,9 +460,9 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 		}
 
 		//build gravity center
-		fXcg = fXcg + (iter->getProvisionalValue().getX() * factor);
-		fYcg = fYcg + (iter->getProvisionalValue().getY() * factor);
-		fZcg = fZcg + (iter->getProvisionalValue().getZ() * factor);
+		fXcg = fXcg + (iter->getEstimatedValue().getX() * factor);
+		fYcg = fYcg + (iter->getEstimatedValue().getY() * factor);
+		fZcg = fZcg + (iter->getEstimatedValue().getZ() * factor);
 
 		iter++;
 	}
@@ -584,7 +592,7 @@ TReal	TLibrCnstrGenerator::getRxCalcValue(TAdjustablePoint& ptIt)
 {
 	TReal a = -LITERAL(1.0) *
 		(
-		ptIt.getProvisionalValue().getZ().getMetresValue()
+		ptIt.getEstimatedValue().getZ().getMetresValue()
 		- fZcgEst.getMetresValue()
 		)
 		*
@@ -593,7 +601,7 @@ TReal	TLibrCnstrGenerator::getRxCalcValue(TAdjustablePoint& ptIt)
 		- fYcgEst.getMetresValue()
 		);
 	TReal b = (
-		ptIt.getProvisionalValue().getY().getMetresValue()
+		ptIt.getEstimatedValue().getY().getMetresValue()
 		- fYcgEst.getMetresValue()
 		)
 		*
@@ -611,7 +619,7 @@ TReal	TLibrCnstrGenerator::getRyCalcValue(TAdjustablePoint& ptIt)
 {
 	TReal a = -LITERAL(1.0) *
 		(
-		ptIt.getProvisionalValue().getX().getMetresValue()
+		ptIt.getEstimatedValue().getX().getMetresValue()
 		- fXcgEst.getMetresValue()
 		)
 		*
@@ -620,7 +628,7 @@ TReal	TLibrCnstrGenerator::getRyCalcValue(TAdjustablePoint& ptIt)
 		- fZcgEst.getMetresValue()
 		);
 	TReal b = (
-		ptIt.getProvisionalValue().getZ().getMetresValue()
+		ptIt.getEstimatedValue().getZ().getMetresValue()
 		- fZcgEst.getMetresValue()
 		)
 		*
@@ -638,7 +646,7 @@ TReal	TLibrCnstrGenerator::getRzCalcValue(TAdjustablePoint& ptIt)
 {
 	TReal a = -LITERAL(1.0) *
 		(
-		ptIt.getProvisionalValue().getY().getMetresValue()
+		ptIt.getEstimatedValue().getY().getMetresValue()
 		- fYcgEst.getMetresValue()
 		)
 		*
@@ -647,7 +655,7 @@ TReal	TLibrCnstrGenerator::getRzCalcValue(TAdjustablePoint& ptIt)
 		- fXcgEst.getMetresValue()
 		);
 	TReal b = (
-		ptIt.getProvisionalValue().getX().getMetresValue()
+		ptIt.getEstimatedValue().getX().getMetresValue()
 		- fXcgEst.getMetresValue()
 		)
 		*

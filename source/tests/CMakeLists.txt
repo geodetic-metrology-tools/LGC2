@@ -28,6 +28,7 @@ set(tests_SOURCES
 	main.cpp
 	tests_with_ScaleInstr.cpp
 	testAllfixed.cpp
+	testLIBR.cpp
 )
 
 set(tests_INPUT
@@ -41,6 +42,7 @@ set(tests_INPUT
 	testDVER.h
 	tests_with_ScaleInstr.h
 	testAllfixed.h
+	testLIBR.h
 	Utils.h
 )
 
