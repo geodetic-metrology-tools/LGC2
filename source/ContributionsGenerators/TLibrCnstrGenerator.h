@@ -23,7 +23,7 @@ class TLibrCnstrGenerator{
 
 public:
 	/// Constructor taking a reference to a TPointTransformer and a TLGCData
-	TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, TLGCData& fDataSet);
+	TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, const TLGCData& fDataSet);
 
 	//!Calculates the contributions of a offset (LIBR) constraints and puts them in the matrices
 	/*!\param ptIter an iterator pointing to the point which has a constraint to be processed*/
@@ -37,6 +37,8 @@ public:
 
 	//! get the number of free network constraints for the LGC project
 	int						getNumberOfConstraint() const;
+
+	isFreeCnstr getCnstIdentifier() const{ return fCnstrVector; }
 
 private:
 	/*!@name Private Member functions*/
@@ -53,13 +55,13 @@ private:
 	void	addCnstr(const struct isFreeCnstr);
 
 	//! Calculate the Rx value
-	TReal getRxCalcValue(TAdjustablePoint& ptIt);
+	TReal getRxCalcValue(const TAdjustablePoint& ptIt);
 	//! Calculate the Ry value	  
-	TReal getRyCalcValue(TAdjustablePoint& ptIt);
+	TReal getRyCalcValue(const TAdjustablePoint& ptIt);
 	//! Calculate the Rz value	  
-	TReal getRzCalcValue(TAdjustablePoint& ptIt);
+	TReal getRzCalcValue(const TAdjustablePoint& ptIt);
 	//! Calculate the scale value  
-	TReal getScaleCalcValue(TAdjustablePoint& ptIt);
+	TReal getScaleCalcValue(const TAdjustablePoint& ptIt);
 	//@}
 
 
@@ -67,7 +69,7 @@ private:
 	TPointTransformer& fPointTransfo;
 
 	///Reference to a TLGCData
-	TLGCData& data;
+	const TLGCData& data;
 
 	struct isFreeCnstr		fCnstrVector; /*!<constraint vector*/
 	struct freeCnstrRank	fCnstrNumber;

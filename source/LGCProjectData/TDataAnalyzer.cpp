@@ -161,7 +161,7 @@ bool TDataAnalyzer::dataConsistent(){
 			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!"; 
 		}
-		//Count number of CALA in ROOT, if pdor active there must be exactly one point defined as CALA
+		//Count number of CALA in ROOT
 		if(pdor.isActive() && point.getFrameTreePosition()->get()->frame.getName() == "ROOT" && point.isFixed() == true)
 			nCALAinROOT++;
 
@@ -275,6 +275,32 @@ bool TDataAnalyzer::dataConsistent(){
 	//Save total number of unknowns without sigmas
 	fData.fUEOIndices.UIndex = lastUidx;
 
+
+	//Not run ALLFIXED and LIBR in the same time
+	if (fData.getConfig().libre.isActive() && fData.getConfig().allfixed.isActive())
+	{
+		consistent = false;
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED and LIBR option cannot be used in the same calculation";
+	}
+
+	//Not SIMU + LIBR with free frame
+	if (fData.getConfig().libre.isActive() && fData.getConfig().sim.isActive())
+	{
+		for (auto it(fTree.begin()); it != fTree.end(); ++it){
+			auto& frame(it.node->data.get()->frame);
+			
+			//free frame
+			if (!frame.isFixed()){
+				consistent = false;
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + LIBR options cannot cannot have free subframe";
+			}
+
+			if (frame.hasStandDev()){  //If a frame has standard deviation assigned 
+				consistent = false;
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + LIBR options cannot cannot have free subframe";
+			}
+		}
+	}
 
 	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
 		consistent = false;

@@ -1,7 +1,7 @@
 #include "TLibrCnstrGenerator.h"
 
 
-TLibrCnstrGenerator::TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, TLGCData& fDataSet) :
+TLibrCnstrGenerator::TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, const TLGCData& fDataSet) :
 fPointTransfo(fPointTransfoFunc),
 data(fDataSet)
 {
@@ -588,7 +588,7 @@ int TLibrCnstrGenerator::getNumberOfConstraint() const
 //////////////////////////
 //MEMBER PRIVATE FUNCTION
 //////////////////////////
-TReal	TLibrCnstrGenerator::getRxCalcValue(TAdjustablePoint& ptIt)
+TReal	TLibrCnstrGenerator::getRxCalcValue(const TAdjustablePoint& ptIt)
 {
 	TReal a = -LITERAL(1.0) *
 		(
@@ -615,7 +615,7 @@ TReal	TLibrCnstrGenerator::getRxCalcValue(TAdjustablePoint& ptIt)
 }
 
 
-TReal	TLibrCnstrGenerator::getRyCalcValue(TAdjustablePoint& ptIt)
+TReal	TLibrCnstrGenerator::getRyCalcValue(const TAdjustablePoint& ptIt)
 {
 	TReal a = -LITERAL(1.0) *
 		(
@@ -642,7 +642,7 @@ TReal	TLibrCnstrGenerator::getRyCalcValue(TAdjustablePoint& ptIt)
 }
 
 
-TReal	TLibrCnstrGenerator::getRzCalcValue(TAdjustablePoint& ptIt)
+TReal	TLibrCnstrGenerator::getRzCalcValue(const TAdjustablePoint& ptIt)
 {
 	TReal a = -LITERAL(1.0) *
 		(
@@ -669,7 +669,7 @@ TReal	TLibrCnstrGenerator::getRzCalcValue(TAdjustablePoint& ptIt)
 }
 
 
-TReal	TLibrCnstrGenerator::getScaleCalcValue(TAdjustablePoint& ptIt)
+TReal	TLibrCnstrGenerator::getScaleCalcValue(const TAdjustablePoint& ptIt)
 {
 	TReal xp = ptIt.getProvisionalValue().getX().getMetresValue();
 	TReal xe = ptIt.getEstimatedValue().getX().getMetresValue();

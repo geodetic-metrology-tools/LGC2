@@ -13,7 +13,6 @@ include_directories(${CMAKE_SOURCE_DIR}
 set(LGCProjectData_HEADERS 	
 	tree.h
 	TTreeEntry.h
-	TLSConstraintIdentifier.h
 	TLGCStatistic.h
 	TLGCData.h
 	TLGCConfig.h
