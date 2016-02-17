@@ -4,6 +4,8 @@
 #include "TALSComputer.h"
 #include "TVAbractAlgorithm.h"
 #include "TLSResultsMatricesExtractor.h"
+#include "TLibrCnstrGenerator.h"
+#include "TPointTransformer.h"
 
 class TLGCData;
 class TLSInputMatrices;
@@ -19,7 +21,7 @@ class TLSAlgorithm : public TVAbractAlgorithm
 {
 
 public:
-	TLSAlgorithm();
+	TLSAlgorithm(TLGCData& data);
 
 	//run the calculation
 	virtual bool run(TLGCData& data, int fMaxIterations);
@@ -52,6 +54,10 @@ protected:
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
 		TLSResultsMatrices* resultMatrices);
+
+private:
+	TLibrCnstrGenerator fLibrCnstrGenerator;
+	TPointTransformer fPointTransformer;
 
 };
 

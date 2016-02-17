@@ -5,11 +5,14 @@
 #include "TLSParametricMtdComputer.h"
 #include "TLSCombinedMtdComputer.h"
 #include "TLSWeightedUnkMtdComputer.h"
+#include "TLSCnstMtdComputer.h"
 
 
-TLSAlgorithm::TLSAlgorithm() 
+TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	: fNumberOfIterations(0)
 	, fS0APosterioriVariances(false)
+	,fPointTransformer(&data.getTree(), data.getConfig().referential)
+	,fLibrCnstrGenerator(fPointTransformer, data)
 {
 }
 
@@ -22,13 +25,26 @@ bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 
 	extractor = std::make_unique<TLSResultsMatricesExtractor>(&data);
 	
+	// identify the constraints necessary, create them
+	if (data.getConfig().libre.isActive())
+	{
+		fLibrCnstrGenerator.initCnstrIdentifier(data);
+		data.setNumberOfConstraints(fLibrCnstrGenerator.getNumberOfConstraint());
+	}
 
-	if (data.isCombinedCaseUsed())
-		computer.reset(new TLSCombinedMtdComputer());
-	else if (data.hasStandDeviations())
-		computer.reset(new TLSWeightedUnkMtdComputer());
+
+	//choose LS algorithm
+	if (fLibrCnstrGenerator.getNumberOfConstraint() != 0)
+		computer.reset(new TLSCnstMtdComputer());
 	else
-		computer.reset(new TLSParametricMtdComputer());
+	{
+		if (data.isCombinedCaseUsed())
+			computer.reset(new TLSCombinedMtdComputer());
+		else if (data.hasStandDeviations())
+			computer.reset(new TLSWeightedUnkMtdComputer());
+		else
+			computer.reset(new TLSParametricMtdComputer());
+	}
 
 	bool computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), resultMatrices.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
@@ -59,6 +75,14 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
 
+
+		//fill part of the free constraints
+		if (data.getConfig().libre.isActive())
+		{
+			fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
+			inputMtr->saveMatricesToFile(100 + fNumberOfIterations);
+		}
+
 		if (fillOK)
 		{
 			// compute solution 
@@ -66,8 +90,12 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 			if (computationOK)
 			{
-				bool extractOK = false;
-				extractOK = extractor->extractResults(*resultMatrices, convCrit);
+				bool extractOK = false; 
+				if (data.getConfig().libre.isActive())
+					extractOK = extractor->extractResults(*resultMatrices, convCrit, fLibrCnstrGenerator);
+				else
+					extractOK = extractor->extractResults(*resultMatrices, convCrit);
+
 				if (extractOK)
 					lastIteration = extractor->lastIteration();
 				else{

@@ -6,7 +6,7 @@
 
 #include "TXYH2CCS.h"
 
-TLSSimulation::TLSSimulation(TLGCData& data, int maxIter, std::shared_ptr<TSimulationOutputFileWriter> fResFileWriter) :
+TLSSimulation::TLSSimulation(TLGCData& data, int maxIter, std::shared_ptr<TSimulationOutputFileWriter> fResFileWriter) : TLSAlgorithm(data),
 fData(data), fMaxIterations(maxIter),
 fPointTransformer(&data.getTree(), data.getConfig().referential),
 fSimObs(fPointTransformer),
@@ -29,7 +29,7 @@ fileWriter(fResFileWriter)
 
 bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
 {
-	TLSAlgorithm lsCalc;
+	TLSAlgorithm lsCalc(data);
 	bool calcOK = false;
 	engine.seed();
 

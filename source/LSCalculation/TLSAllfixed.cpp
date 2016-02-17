@@ -1,14 +1,16 @@
 #include "TLSAllfixed.h"
 #include "TLGCData.h"
 
-TLSAllfixed::TLSAllfixed(TLGCData& data, int maxIter):fPointTransformer(&data.getTree(), data.getConfig().referential),
-fAllfixedGenerator(fPointTransformer)
+TLSAllfixed::TLSAllfixed(TLGCData& data, int maxIter):TLSAlgorithm(data)
+, fPointTransformer(&data.getTree()
+, data.getConfig().referential)
+,fAllfixedGenerator(fPointTransformer)
 {}
 
 bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 {
 	bool computationOK;
-	TLSAlgorithm normalLSProcess;
+	TLSAlgorithm normalLSProcess(data);
 	computationOK = normalLSProcess.run(data, fMaxIterations);
 
 	if (computationOK)
