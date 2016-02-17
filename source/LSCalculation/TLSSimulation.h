@@ -34,25 +34,40 @@ private:
 
 	/*!@name Data*/
 	//@{
-	TObservationGenerator fSimObs; //< Contribution generator used for calculation of the 'measured values' 
-	TPointTransformer fPointTransformer;
+	/// Contribution generator used for calculation of the 'measured values' 
+	TObservationGenerator fSimObs; 
+
+	/// Allow usual transformations between reference frame
+	TPointTransformer fPointTransformer; 
+
+	/// Reference to the data
 	TLGCData& fData;
+
+	/// Pointer to the specific simulated output file writer
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter;
 
-	std::default_random_engine engine; //< Random numbers generator 
+	/// Random numbers generator 
+	std::default_random_engine engine;
 
-	TReal  fConvCriteria; //< Convergence criterion
-	int    fMaxIterations; //< Maximum number of iteration of LS
+	/// Convergence criterion
+	TReal  fConvCriteria; 
 
-	std::list<TSimPointSummary> fPointSummaries; //< Summaries of points across the simulations
-	std::list<TSimFrameSummary> fFrameSummaries; //< Summaries of points across the simulations
+	/// Maximum number of iteration of LS
+	int    fMaxIterations; 
+
+	/// Summaries of points across the simulations
+	std::list<TSimPointSummary> fPointSummaries; 
+	/// Summaries of frame across the simulations
+	std::list<TSimFrameSummary> fFrameSummaries; 
 
 	//@}
 
 	/*!@name Methods*/
 	//@{
+	/// Simulate all measurements
 	void	simulateValues();
 
+	/// Run the simulation process
 	bool	processSimCalculation();
 
 	void	getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TPLR3D>& plr3D);
@@ -75,8 +90,10 @@ private:
 	void	getUVDSimValues(TCAM& camera);
 	void	getUVECSimValues(TCAM& camera);
 
+	/// Return a biased value (correct measurement + small error)
 	TReal   getSimulatedValue(const TReal val, const TReal sigma);
 
+	/// Reinitialised simulated observation for the next iteration/ simulation
 	void updateResValues();
 	//@}
 };

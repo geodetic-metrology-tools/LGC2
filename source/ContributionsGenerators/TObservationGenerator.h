@@ -43,7 +43,7 @@ public:
 	/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
 	TReal getDHORCalcMeas(const TTSTN& station, const TLINE& dhor);
 
-	///  Returns the TPLR3D calculated measurement values
+	/// Returns the TPLR3D calculated measurement values
 	PLR3DCalcMeas getPLR3DCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
 	/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.

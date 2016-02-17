@@ -5,12 +5,8 @@
 #include "TVAbractAlgorithm.h"
 #include "TLSResultsMatricesExtractor.h"
 #include "TLibrCnstrGenerator.h"
-#include "TPointTransformer.h"
 
-class TLGCData;
-class TLSInputMatrices;
 class TLSInputMatricesFiller;
-class TALSComputer;
 class TLSResultsMatrices;
 
 /*!
@@ -23,10 +19,10 @@ class TLSAlgorithm : public TVAbractAlgorithm
 public:
 	TLSAlgorithm(TLGCData& data);
 
-	//run the calculation
+	/// Run the calculation
 	virtual bool run(TLGCData& data, int fMaxIterations);
 
-	/// Iterates to the solution
+	/// Iterate to the solution
 	virtual bool	iterate2Solution(TLGCData& data,
 		TLSInputMatricesFiller* matrFiller,
 		TLSInputMatrices* inputMtr,
@@ -35,7 +31,7 @@ public:
 		int fMaxIterations,
 		TReal convCrit);
 
-	/// Returns number of iterations made
+	/// Return number of iterations made
 	int		getNumberOfIterations() { return fNumberOfIterations; }
 
 
@@ -43,20 +39,23 @@ protected:
 	/// Pointer to the result matrix extractor
 	unique_ptr<TLSResultsMatricesExtractor> extractor;
 
-	/// number of equations
+	/// Number of equations
 	int		 fNumberOfIterations;
 
-	/// flag if S a posteriori variance exists
+	/// Flag if S a posteriori variance exists
 	bool	 fS0APosterioriVariances;
 
-	///compute the covariance matrix,the residual vector and the reliabilities
+	/// Compute the covariance matrix,the residual vector and the reliabilities
 	void	 computeVarCovarAndReliability(TLGCData* data,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
 		TLSResultsMatrices* resultMatrices);
 
 private:
+	/// Contribution generator for the free network
 	TLibrCnstrGenerator fLibrCnstrGenerator;
+
+	/// Allow transformations between the usual reference frame
 	TPointTransformer fPointTransformer;
 
 };

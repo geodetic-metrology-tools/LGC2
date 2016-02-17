@@ -1,7 +1,5 @@
 #include "TLSAlgorithm.h"
-#include "TLGCData.h"
 #include "TLSInputMatricesFiller.h"
-#include "TLSResultsMatricesExtractor.h"
 #include "TLSParametricMtdComputer.h"
 #include "TLSCombinedMtdComputer.h"
 #include "TLSWeightedUnkMtdComputer.h"

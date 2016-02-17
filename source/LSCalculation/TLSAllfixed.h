@@ -17,7 +17,7 @@ public:
 	/// Constructor
 	TLSAllfixed(TLGCData& data, int maxIter);
 
-	//run the calculation
+	/// Run the calculation
 	virtual bool run(TLGCData& data, int fMaxIterations);
 
 private:

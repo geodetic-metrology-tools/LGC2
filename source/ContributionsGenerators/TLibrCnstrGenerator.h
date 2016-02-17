@@ -14,30 +14,33 @@
 
 */
 
-
+//! Structure to know free and fixed parameter to calculate
 struct isFreeCnstr { bool dx; bool dy; bool dz; bool rx; bool ry; bool rz; bool k; };
+
+//! Structure of constraint unknown index
 struct freeCnstrRank { int dx; int dy; int dz; int rx; int ry; int rz; int k; };
 
 
 class TLibrCnstrGenerator{
 
 public:
-	/// Constructor taking a reference to a TPointTransformer and a TLGCData
+	//! Constructor taking a reference to a TPointTransformer and a TLGCData
 	TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, const TLGCData& fDataSet);
 
 	//!Calculates the contributions of a offset (LIBR) constraints and puts them in the matrices
 	/*!\param ptIter an iterator pointing to the point which has a constraint to be processed*/
 	bool	processFreeCnstr(TLSInputMatrices& matrices);
 
-	/*!initialise translation, rotation and scale constraints using point's status*/
-	void	initCnstrIdentifier(const TLGCData&);
+	//!Initialise translation, rotation and scale constraints using point's status
+	void initCnstrIdentifier(const TLGCData&);
 
-	//! set the coordinates for the centre of gravity of the point data
-	void	setEstimatedGravityCenterCoord(TLength x, TLength y, TLength z);
+	//! Set the coordinates for the centre of gravity of the point data
+	void setEstimatedGravityCenterCoord(TLength x, TLength y, TLength z);
 
-	//! get the number of free network constraints for the LGC project
-	int						getNumberOfConstraint() const;
+	//! Get the number of free network constraints for the LGC project
+	int getNumberOfConstraint() const;
 
+	//! Return the constraint identifier
 	isFreeCnstr getCnstIdentifier() const{ return fCnstrVector; }
 
 private:
@@ -65,14 +68,15 @@ private:
 	//@}
 
 
-	///Reference to a TPointTransformationFunctions
+	//!Reference to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;
 
-	///Reference to a TLGCData
+	//!Reference to a TLGCData
 	const TLGCData& data;
 
-	struct isFreeCnstr		fCnstrVector; /*!<constraint vector*/
-	struct freeCnstrRank	fCnstrNumber;
+	struct isFreeCnstr		fCnstrVector; /*!<constraint vector identifier*/
+	struct freeCnstrRank	fCnstrNumber; /*!<constraint vector for unknown index*/
+
 	TLength					fXcg;/*!<x coordinate of the gravity center*/
 	TLength					fYcg;/*!<y coordinate of the gravity center*/
 	TLength					fZcg;/*!<z coordinate of the gravity center*/

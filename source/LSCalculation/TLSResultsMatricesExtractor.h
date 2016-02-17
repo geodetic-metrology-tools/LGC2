@@ -44,6 +44,16 @@ public:
 		\returns TRUE if the process was successful, FALSE otherwise. 
 	*/
 	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit);
+
+	/*!
+	\brief Extracts the solution from the results matrices for a free network, updates the adjustable objects.
+
+	\param[in] rm Result matrices.
+	\param[in] convCrit LS convergence criterium.
+	\param[in] fCnstr Constraints generator.
+
+	\returns TRUE if the process was successful, FALSE otherwise.
+	*/
 	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator fCnstr);
 
 	/// Returns the boolean that indicates if a new iteration is necessary or not 
