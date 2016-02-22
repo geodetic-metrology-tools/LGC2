@@ -297,6 +297,9 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	T = true;
 	F = false;
 
+	struct isFreeCnstr fCnstr;
+
+	/*
 	bool bx = false;
 	struct isFreeCnstr vx;
 	vx.dx = T;
@@ -376,6 +379,7 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	vcala.ry = F;
 	vcala.rz = F;
 	vcala.k = F;
+	*/
 
 	bool bscale = false;
 	struct isFreeCnstr vscale;
@@ -408,9 +412,510 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	TReal factor = 1 / div;
 
 
-	//constraints on points
+	////constraints on points
+	int nbCALA = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kCala);
+	int nbPOIN = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVxyz);
+	int nbVXY = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVxy);
+	int nbVXZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVyz);
+	int nbVYZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVyz);
+	int nbVZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVz);
+
+	int nbORIE = lsds.getMeasurementDimension(TMeasurementsGlobal::kORIE);
+	int nbPDOR = lsds.getMeasurementDimension(TMeasurementsGlobal::kPDOR);
+
+	//fill fCnstr
+	switch (nbCALA)
+	{
+
+	case 0:  //0 CALA point
+
+		// Only one point type
+		if (nbPOIN == numberOfPoints)
+		{
+			if (nbORIE == 1)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = T;
+				fCnstr.ry = F;
+				fCnstr.rz = T;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbORIE == 2)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbORIE > 2)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = T;
+				fCnstr.k = T;
+				break;
+			}
+			else{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = T;
+				fCnstr.ry = T;
+				fCnstr.rz = T;
+				fCnstr.k = T;
+				break;
+			}
+		}
+		else if (nbVXY == numberOfPoints)
+		{
+			fCnstr.dx = T;
+			fCnstr.dy = T;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = T;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVXZ == numberOfPoints)
+		{
+			fCnstr.dx = T;
+			fCnstr.dy = F;
+			fCnstr.dz = T;
+			fCnstr.rx = F;
+			fCnstr.ry = T;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVYZ == numberOfPoints)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = T;
+			fCnstr.dz = T;
+			fCnstr.rx = T;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVZ == numberOfPoints)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = T;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+
+		// Mixing point types
+		if (nbVZ > 0)
+		{
+			if (nbVXY > 0) // VZ + VXY + ...
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = F;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if ((nbVZ > 1 && (nbVXZ > 0 || nbVYZ > 0 || nbPOIN > 0)) || ((nbVXZ > 1 || (nbVXZ == 1 && nbVYZ > 0))) || ((nbORIE > 1 || (nbORIE == 1 && nbPOIN > 0)))) // VZ + VZ + (VXZ|VYZ|POIN)  || VZ+ VXZ + (VXZ | VYZ)  || VZ+ORIE+(POIN | ORIE)
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbVXZ == 1 && nbVXY == 0 && nbVYZ == 0 && nbPDOR == 0 && (nbPOIN > 0 || nbORIE > 0)) //VZ+ (POIN | ORIE) +VXZ
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = T;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbVYZ > 0 && nbVXY == 0 && nbVYZ > 0 && nbPDOR == 0) //VZ+ (POIN | ORIE | VYZ) +VYZ
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = T;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbVZ == 1 && nbVXY == 0 && nbVYZ == 0 && nbPDOR == 0 && nbORIE == 0 && nbPOIN > 1) //VZ+ POIN + POIN
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = T;
+				fCnstr.ry = T;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+		}
+		else if (nbVXY > 0)
+		{
+			if (nbVXZ > 0 && nbVYZ > 0)  // VXY + VXZ + VYZ
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = F;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbVXZ > 0) //VXY + VXZ + (VXZ , POIN, ORIE, VXY)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = F;
+				fCnstr.dz = F;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbVYZ > 0) //VXY + VYZ + (VXY, VYZ, POIN, ORIE)
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = T;
+				fCnstr.dz = F;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if ((nbVXY == 2 && nbORIE > 0) | (nbVXY == 1 && nbORIE > 0)) //VXY + VXY + ORIE | VXY +ORIE +(POIN|ORIE)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = F;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if ((nbVXY == 2 || nbVXY == 1) && nbPOIN > 0) //VXY + (POIN|VXY) +POIN
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = F;
+				fCnstr.rx = T;
+				fCnstr.ry = T;
+				fCnstr.rz = T;
+				fCnstr.k = T;
+				break;
+			}
+			else
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = T;
+				fCnstr.dz = F;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = T;
+				fCnstr.k = T;
+				break;
+			}
+		}
+		else if (nbVXZ > 0)
+		{
+			if (nbVYZ > 0) // VXZ + VYZ + (VXZ, VYZ, POIN, ORIE)
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else if (nbVXZ == 1 && nbPOIN == (numberOfPoints - 1) && nbORIE > 1)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			else // other case wich are not yet tested with VXZ : VXZ + VXZ + (POIN, ORIE) ou VXZ + POIN + (POIN, ORIE)
+			{
+				fCnstr.dx = T;
+				fCnstr.dy = F;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = T;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+		}
+		else if (nbVYZ > 0) // last combinations with VYZ
+		{
+			if (nbVYZ == 1 && nbPOIN == (numberOfPoints - 1) && nbORIE > 1) // VYZ + ORIE +ORIE
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = F;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+			if (nbVYZ == 1 && nbPOIN == (numberOfPoints - 1) && nbORIE == 0) // VYZ + POIN +POIN
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = T;
+				fCnstr.ry = T;
+				fCnstr.rz = T;
+				fCnstr.k = T;
+				break;
+			}
+			else // VYZ + VYZ + (POIN , ORIE) | VYZ +POIN + ORIE
+			{
+				fCnstr.dx = F;
+				fCnstr.dy = T;
+				fCnstr.dz = T;
+				fCnstr.rx = T;
+				fCnstr.ry = F;
+				fCnstr.rz = F;
+				fCnstr.k = T;
+				break;
+			}
+		}
+
+
+
+
+	case 1: // only 1 CALA is used
+		if ((nbORIE > 0 || nbPDOR > 0) && (nbVXY > 0 || nbVXZ > 0 || nbVYZ > 0 || nbVZ > 0)) // CALA + (ORIE | PDOR) + (VXY | VXZ | VYZ | VZ)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if ((nbORIE == 1 || nbPDOR == 1) && nbVXY == 0 && nbVXZ == 0 && nbVYZ == 0 && nbVZ == 0) // CALA + (ORIE | PDOR) + POIN 
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = T;
+			fCnstr.ry = T;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if ((nbORIE > 0 || nbPDOR > 0) && nbVXY == 0 && nbVXZ == 0 && nbVYZ == 0 && nbVZ == 0) // CALA + (ORIE | PDOR) + ORIE 
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbORIE == 0 && nbPDOR == 0 && nbVXY == 0 && nbVXZ == 0 && nbVYZ == 0 && (nbVZ == 0 || nbVZ == 1))  //CALA + POIN + POIN  ou CALA + POIN +VZ
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = T;
+			fCnstr.ry = T;
+			fCnstr.rz = T;
+			fCnstr.k = T;
+			break;
+		}
+		else if ((nbVXY > 0 || nbVXZ > 0 || nbVYZ > 0) && nbVZ > 0) // CALA + VZ + (VXY | VXZ | VYZ)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if ((nbVXY == 0 && nbVXZ == 0 && nbVYZ == 0 && nbPDOR == 0 && nbORIE == 0) && nbVZ > 0) // CALA + VZ + VZ
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = T;
+			fCnstr.ry = T;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if ((nbVZ == 0 && nbVXZ == 0 && nbVYZ == 0) && nbVXY > 0) // CALA + VXY + (VXY |POIN)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = T;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVZ == 0 && (nbVXZ > 0 || nbVYZ > 0) && nbVXY > 0) // CALA + VXY + (VXZ | VYZ )
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVZ == 0 && nbVXY == 0 && (nbVYZ > 0 || nbORIE > 0 || nbPDOR > 0) && nbVXZ > 0)// CALA + VXZ + (VYZ |PDOR|ORIE)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVZ == 0 && nbVXY == 0 && nbVYZ == 0 && nbVXZ > 1)// CALA + VXZ + VXZ 
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = T;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else if (nbVZ == 0 && nbVXY == 0 && nbVYZ == 0 && nbORIE == 0 && nbPDOR == 0 && nbVXZ == 1)// CALA + VXZ + POIN 
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = T;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+		else //CALA + VYZ +(VYZ | POIN)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = T;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = T;
+			break;
+		}
+
+
+
+	case 2: // only 2 CALA are used
+	{
+		if (nbVXY > 0 || nbVXZ > 0 || nbVYZ > 0 || nbVZ > 0 || nbPDOR > 0 || nbORIE > 0) // CALA + CALA + (VXY | VXZ | VYZ | VZ| PDOR| ORIE)
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = F;
+			fCnstr.ry = F;
+			fCnstr.rz = F;
+			fCnstr.k = F;
+			break;
+		}
+		else // CALA + CALA + POIN
+		{
+			fCnstr.dx = F;
+			fCnstr.dy = F;
+			fCnstr.dz = F;
+			fCnstr.rx = T;
+			fCnstr.ry = T;
+			fCnstr.rz = T;
+			fCnstr.k = F;
+			break;
+		}
+	}
+
+	default: // more than 3 CALA are used
+	{
+		fCnstr.dx = F;
+		fCnstr.dy = F;
+		fCnstr.dz = F;
+		fCnstr.rx = F;
+		fCnstr.ry = F;
+		fCnstr.rz = F;
+		fCnstr.k = F;
+		break;
+	}
+	}
+		
+
+	//build gravity center
 	while (iter != iterEnd)
 	{
+		/*
 		TSpatialStatus::ESpatialStatus status = TSpatialStatus::kUnknown;
 
 		status = iter->getSpatialStatus();
@@ -457,7 +962,7 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 
 		default:
 			break;
-		}
+		}*/
 
 		//build gravity center
 		fXcg = fXcg + (iter->getEstimatedValue().getX() * factor);
@@ -485,43 +990,47 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 
 
 	//constraints on orientation
-	if (lsds.getMeasurementDimension(TMeasurementsGlobal::kORIE) > 0)
-		if (brotation == false)
-			brotation = true;
+	//if (lsds.getMeasurementDimension(TMeasurementsGlobal::kORIE) > 0)
+	//	if (brotation == false)
+	//		brotation = true;
 
 
 	//build constraint vector
 	setCnstrIdentifier(T, T, T, T, T, T, T);
 
+	addCnstr(fCnstr);
+
+	/*
 	if (bx == true)
 		addCnstr(vx);
-
+	
 	if (by == true)
 		addCnstr(vy);
-
+	
 	if (bz == true)
 		addCnstr(vz);
-
+	
 	if (bxy == true)
 		addCnstr(vxy);
-
+	
 	if (bxz == true)
 		addCnstr(vxz);
-
+	
 	if (byz == true)
 		addCnstr(vyz);
-
+	
 	if (bxyz == true)
 		addCnstr(vxyz);
-
+	
 	if (bcala == true)
 		addCnstr(vcala);
+	*/
 
 	if (bscale == true)
 		addCnstr(vscale);
 
-	if (brotation == true)
-		addCnstr(vrotation);
+	//if (brotation == true)
+	//	addCnstr(vrotation);
 
 
 	//Calc the number of constraint

@@ -109,7 +109,6 @@ namespace tut
 
 			//Need to re initialise allfixed parameter
 			TAdjustablePoint::setAllFixedParam(False);
-			TAdjustableHelmertTransformation::setAllFixedParam(False);
 
 			//
 			TKeyNODUP c2(proj);

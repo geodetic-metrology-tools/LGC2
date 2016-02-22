@@ -346,8 +346,6 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		/// Returns the called provisional rotation i (X [0], Y [1], Z [3])
 		const TAngle& getProvRotation(int axis) const;
 
-		///Set the boolean reference allfixedParam (to the TLGCConfig binary option ALLFIXED)
-		static void setAllFixedParam(const bool& param){ allfixedParam = param; };
 		
 	private:
 
@@ -372,7 +370,6 @@ class TAdjustableHelmertTransformation : public TVAdjustableObject {
 		int uidx_trans[3]; // Unknown indices of translation
 		int uidx_scale; // Unknown indices of scale
 
-		static bool& allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
 
 		void setDefaults();
 		void setDefaultsParams();

@@ -63,7 +63,6 @@ void TKeyALLFIXED::parse(const std::vector<std::string>&, int) {
 	fconfig.allfixed = TLGCConfig::TBinaryOption(true);
 
 	TAdjustablePoint::setAllFixedParam(fconfig.allfixed.isActiveRef());
-	TAdjustableHelmertTransformation::setAllFixedParam(fconfig.allfixed.isActiveRef());
 }
 
 

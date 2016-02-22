@@ -302,6 +302,34 @@ bool TDataAnalyzer::dataConsistent(){
 		}
 	}
 
+	//Not ALLFIXED with free frame
+	if (fData.getConfig().allfixed.isActive())
+	{
+		for (auto it(fTree.begin()); it != fTree.end(); ++it){
+			auto& frame(it.node->data.get()->frame);
+
+			//free frame
+			if (!frame.isFixed() || frame.hasStandDev()){
+				consistent = false;
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED options cannot cannot have free subframe";
+			}
+		}
+	}
+
+	//Not LIBR with free frame
+	if (fData.getConfig().libre.isActive())
+	{
+		for (auto it(fTree.begin()); it != fTree.end(); ++it){
+			auto& frame(it.node->data.get()->frame);
+
+			//free frame
+			if (!frame.isFixed() || frame.hasStandDev()){
+				consistent = false;
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "LIBR options cannot cannot have free subframe";
+			}
+		}
+	}
+
 	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
 		consistent = false;
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  

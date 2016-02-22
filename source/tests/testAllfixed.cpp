@@ -96,7 +96,6 @@ namespace tut
 
 		// re initialise static object allfixed param to false
 		TAdjustablePoint::setAllFixedParam(false);
-		TAdjustableHelmertTransformation::setAllFixedParam(false);
 
 	}
 
@@ -170,7 +169,6 @@ namespace tut
 
 		// re initialise static object allfixed param to false
 		TAdjustablePoint::setAllFixedParam(false);
-		TAdjustableHelmertTransformation::setAllFixedParam(false);
 
 	}
 
@@ -230,7 +228,6 @@ namespace tut
 					}
 		// re initialise static object allfixed param to false
 		TAdjustablePoint::setAllFixedParam(false);
-		TAdjustableHelmertTransformation::setAllFixedParam(false);
 	}
 
 	// test ECTH (V0) in LEP
@@ -290,6 +287,5 @@ namespace tut
 
 		// re initialise static object allfixed param to false
 		TAdjustablePoint::setAllFixedParam(false);
-		TAdjustableHelmertTransformation::setAllFixedParam(false);
 	}
 }

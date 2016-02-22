@@ -1,7 +1,6 @@
 #include "TAdjustableHelmertTransformation.h"
 #include "Global.h"
 
-bool&TAdjustableHelmertTransformation::allfixedParam = False;
 
 TAdjustableHelmertTransformation::TAdjustableHelmertTransformation() {
 	
@@ -36,87 +35,60 @@ TAdjustableHelmertTransformation::TAdjustableHelmertTransformation(const Transfo
 }
 
 int TAdjustableHelmertTransformation::getNumUnkn() const {
-	if (!allfixedParam)
-		return (int)!fixedRotations[0] + (int)!fixedRotations[1] + (int)!fixedRotations[2] +
-		(int)!fixedTranslations[0] + (int)!fixedTranslations[1] + (int)!fixedTranslations[2] +
-		(int)!fixedScale[0];
-	else
-		return 0;
+	return (int)!fixedRotations[0] + (int)!fixedRotations[1] + (int)!fixedRotations[2] +
+	(int)!fixedTranslations[0] + (int)!fixedTranslations[1] + (int)!fixedTranslations[2] +
+	(int)!fixedScale[0];
 }
 
 int TAdjustableHelmertTransformation::getTranslationUnknIndex(int d) const{ 
 	assert3D(d);
-	if (!allfixedParam)
-	{
-		if (!fixedTranslations[d])
-			return uidx_trans[d];
-		throw std::logic_error("Trying to get unknown index from fixed translation.");
-	}
-	else
-		throw std::logic_error("Trying to get unknown index from fixed translation. ALLFIXED is used");
+	if (!fixedTranslations[d])
+		return uidx_trans[d];
+	throw std::logic_error("Trying to get unknown index from fixed translation.");
 }
 
 int TAdjustableHelmertTransformation::getRotationUnknIndex(int d) const{ 
 	assert3D(d);
-	if (!allfixedParam)
-	{
-		if(!fixedRotations[d])
-			return uidx_rot[d];
-		throw std::logic_error("Trying to get unknown index from fixed rotation.");
-	}
-	else
-		throw std::logic_error("Trying to get unknown index from fixed rotation. ALLFIXED is used");
+	if(!fixedRotations[d])
+		return uidx_rot[d];
+	throw std::logic_error("Trying to get unknown index from fixed rotation.");
 }
 
 int TAdjustableHelmertTransformation::getScaleUnknIndex() const{
-	if (!allfixedParam)
-	{
-		if(!fixedScale[0])
-			return uidx_scale;
-		throw std::logic_error("Trying to get unknown index from fixed scale.");
-	}
-	else
-		throw std::logic_error("Trying to get unknown index from fixed scale. ALLFIXED is used");
+	if(!fixedScale[0])
+		return uidx_scale;
+	throw std::logic_error("Trying to get unknown index from fixed scale.");
 }
 
 
 int TAdjustableHelmertTransformation::getFirstUidx() const {
-	if (!allfixedParam)
-	{
-		for (int i = 0; i < 3; i++)
-			if (!fixedTranslations[i])
-				return uidx_trans[i];
+	for (int i = 0; i < 3; i++)
+		if (!fixedTranslations[i])
+			return uidx_trans[i];
 
-		for (int i = 0; i < 3; i++)
-			if (!fixedRotations[i])
-				return uidx_rot[i];
+	for (int i = 0; i < 3; i++)
+		if (!fixedRotations[i])
+			return uidx_rot[i];
 
-		if (!fixedScale[0])
-			return uidx_scale;
+	if (!fixedScale[0])
+		return uidx_scale;
 
-		throw std::logic_error("Trying to get unknown index from fixed transformation.");
-	}
-	else
-		throw std::logic_error("Trying to get unknown index from fixed transformation. ALLFIXED is used.");
+	throw std::logic_error("Trying to get unknown index from fixed transformation.");
+
 }
 
 int TAdjustableHelmertTransformation::getLastUidx() const {
-	if (!allfixedParam)
-	{
-		if (!fixedScale[0])
-			return uidx_scale;
+	if (!fixedScale[0])
+		return uidx_scale;
 
-		for (int i = 2; i >= 0; i--)
-			if (!fixedRotations[i])
-				return uidx_rot[i];
-		for (int i = 2; i >= 0; i--)
-			if (!fixedTranslations[i])
-				return uidx_trans[i];
+	for (int i = 2; i >= 0; i--)
+		if (!fixedRotations[i])
+			return uidx_rot[i];
+	for (int i = 2; i >= 0; i--)
+		if (!fixedTranslations[i])
+			return uidx_trans[i];
 
-		throw std::logic_error("Trying to get unknown index from fixed transformation.");
-	}
-	else
-		throw std::logic_error("Trying to get unknown index from fixed transformation.");
+	throw std::logic_error("Trying to get unknown index from fixed transformation.");
 }
 
 const TLength& TAdjustableHelmertTransformation::getTranslationStandDev(int d) const{
@@ -141,16 +113,16 @@ TReal TAdjustableHelmertTransformation::getScaleStandDev()const{
 
 bool TAdjustableHelmertTransformation::hasRotationStandDev(int d) const{
 	assert3D(d);
-	return (!isnotanumber(fRotStandDev[d]) | allfixedParam);
+	return (!isnotanumber(fRotStandDev[d]));
 }
 
 bool TAdjustableHelmertTransformation::hasTranslStandDev(int d)const{
 	assert3D(d);
-	return (!isnotanumber(fTransStandDev[d]) | allfixedParam);
+	return (!isnotanumber(fTransStandDev[d]) );
 }
 
 bool TAdjustableHelmertTransformation::hasScaleStandDev() const{
-   return (!isnotanumber(fScaleStandDev)|allfixedParam);
+   return (!isnotanumber(fScaleStandDev));
 }
 
 bool TAdjustableHelmertTransformation::hasStandDev(){
@@ -274,12 +246,12 @@ const TReal&	TAdjustableHelmertTransformation::getXZCovarTransl() const{
 
 bool TAdjustableHelmertTransformation::isTranslationFixed(int d) const { 
 	assert3D(d);
-	return (fixedTranslations[d] | allfixedParam);
+	return (fixedTranslations[d]);
 }
 
 bool TAdjustableHelmertTransformation::isRotationFixed(int d) const { 
 	assert3D(d);
-	return (fixedRotations[d]|allfixedParam); 
+	return (fixedRotations[d]); 
 }
 
 const TReal& TAdjustableHelmertTransformation::getXYCovarRot() const{
@@ -304,8 +276,6 @@ const TReal& TAdjustableHelmertTransformation::getXZCovarRot() const{
 void TAdjustableHelmertTransformation::setFirstUidx(int idx) {
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to fixed transformation.");
-	else if (allfixedParam)
-		throw std::logic_error("Trying to assign unknown index to fixed transformation. ALLFIXED is used.");
 	
 	for (int i = 0; i < 3; i++)
 		if (!fixedTranslations[i])
@@ -371,77 +341,49 @@ void TAdjustableHelmertTransformation::setDefaultsParams(){
 
 
 void	TAdjustableHelmertTransformation::setXYTranslationCovariance(TReal value){
-	if (!allfixedParam)
-	{
-		if (!fixedTranslations[0] && !fixedTranslations[1])
-			fCovarianceTranslation[0] = value;
-		else
-			throw std::logic_error("TAdjustableHelmertTransformation::setXYTranslationCovariance, translation must be variable in both X and Y.");
-	}
+	if (!fixedTranslations[0] && !fixedTranslations[1])
+		fCovarianceTranslation[0] = value;
 	else
-		throw std::logic_error("ALLFIXED is used. No covariance are calculated");
+		throw std::logic_error("TAdjustableHelmertTransformation::setXYTranslationCovariance, translation must be variable in both X and Y.");
 }
 
 void	TAdjustableHelmertTransformation::setYZTranslationCovariance(TReal value){
-	if (!allfixedParam)
-	{
-		if (!fixedTranslations[1] && !fixedTranslations[2])
-			fCovarianceTranslation[1] = value;
-		else
-			throw std::logic_error("TAdjustablePlane::setYZTranslationCovariance, translation must be variable in both Y and Z.");
-	}
+	if (!fixedTranslations[1] && !fixedTranslations[2])
+		fCovarianceTranslation[1] = value;
 	else
-		throw std::logic_error("ALLFIXED is used. No covariance are calculated");
+		throw std::logic_error("TAdjustablePlane::setYZTranslationCovariance, translation must be variable in both Y and Z.");
+
 }
 
 void	TAdjustableHelmertTransformation::setXZTranslationCovariance(TReal value){
-	if (!allfixedParam)
-	{
-		if (!fixedTranslations[0] && !fixedTranslations[2])
-			fCovarianceTranslation[2] = value;
-		else
-			throw std::logic_error("TAdjustablePlane::setXZTranslationCovariance, translation must be variable in both X and Z.");
-	}
+	if (!fixedTranslations[0] && !fixedTranslations[2])
+		fCovarianceTranslation[2] = value;
 	else
-		throw std::logic_error("ALLFIXED is used. No covariance are calculated");
+		throw std::logic_error("TAdjustablePlane::setXZTranslationCovariance, translation must be variable in both X and Z.");
 }
 
 
 void	TAdjustableHelmertTransformation::setXYRotationCovariance(TReal value){
-	if (!allfixedParam)
-	{
-		if (!fixedRotations[0] && !fixedRotations[1])
-			fCovarianceRotation[0] = value;
-		else
-			throw std::logic_error("TAdjustableHelmertTransformation::setXYRotationCovariance, rotation must be variable in both X and Y.");
-	}
+	if (!fixedRotations[0] && !fixedRotations[1])
+		fCovarianceRotation[0] = value;
 	else
-		throw std::logic_error("ALLFIXED is used. No covariance are calculated");
+		throw std::logic_error("TAdjustableHelmertTransformation::setXYRotationCovariance, rotation must be variable in both X and Y.");
+
 }
 
 void	TAdjustableHelmertTransformation::setYZRotationCovariance(TReal value){
-	if (!allfixedParam)
-	{
-		if (!fixedRotations[1] && !fixedRotations[2])
-			fCovarianceRotation[1] = value;
-		else
-			throw std::logic_error("TAdjustablePlane::setYZRotationCovariance, rotation must be variable in both Y and Z.");
-	}
+	if (!fixedRotations[1] && !fixedRotations[2])
+		fCovarianceRotation[1] = value;
 	else
-		throw std::logic_error("ALLFIXED is used. No covariance are calculated");
+		throw std::logic_error("TAdjustablePlane::setYZRotationCovariance, rotation must be variable in both Y and Z.");
+
 }
 
 void	TAdjustableHelmertTransformation::setXZRotationCovariance(TReal value){
-	if (!allfixedParam)
-	{
-		if (!fixedRotations[0] && !fixedRotations[2])
-			fCovarianceRotation[2] = value;
-		else
-			throw std::logic_error("TAdjustablePlane::setXZRotationCovariance, rotation must be variable in both X and Z.");
-	}
+	if (!fixedRotations[0] && !fixedRotations[2])
+		fCovarianceRotation[2] = value;
 	else
-		throw std::logic_error("ALLFIXED is used. No covariance are calculated");
-
+		throw std::logic_error("TAdjustablePlane::setXZRotationCovariance, rotation must be variable in both X and Z.");
 }
 
 void	TAdjustableHelmertTransformation::setEstimatedPrecision(int idx, TReal value){
