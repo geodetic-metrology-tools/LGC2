@@ -77,10 +77,7 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 		//fill part of the free constraints
 		if (data.getConfig().libre.isActive())
-		{
 			fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
-			inputMtr->saveMatricesToFile(100 + fNumberOfIterations);
-		}
 
 		if (fillOK)
 		{
