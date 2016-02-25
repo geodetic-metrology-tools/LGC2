@@ -19,6 +19,7 @@ public:
 	/// abstarct funtion to run the calculation
 	virtual bool run(TLGCData& data, int fMaxIterations) = 0;
 
+	/// Pointer to the result matrices
 	TLSResultsMatrices* resultMatrices;
 
 };

@@ -45,6 +45,10 @@ class TLGCCalculation{
 	int			fMaxIterations; /*!< maximum of iterations that can be carried out */
 	//@}
 
+	/*!
+	\brief Pointer to the result matrices
+	\note  needed to be able to write a deform file
+	*/
 	TLSResultsMatrices* fResultsMtr;
 };
 

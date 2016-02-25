@@ -51,10 +51,10 @@ class TLGCApp {
 		/// Write punch files including coordinates of calculated points
 		void writePunchFile(TLGCData *dat);
 
-		/// Write faut files including coordinates of calculated points
+		/// Write faut files 
 		void writeFautFile(TLGCData *dat);
 
-		/// Write faut files including coordinates of calculated points
+		/// Write files for Deform
 		void writeDefaFile(TLGCData *dat, TLSResultsMatrices &fResMtrx);
 
 		/// Shared pointer to global stream

@@ -54,6 +54,7 @@ bool TLGCApp::exec()
 	if(result && !projectData->getConfig().sim.isActive())
 		this->saveResults(projectData.get());
 
+	//write deform file here to have acces to lgcCalculation
 	if (result && projectData->getConfig().writeDefa.isActive())
 		writeDefaFile(projectData.get(), lgcCalculation.getResultMtr());
 
@@ -79,7 +80,6 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat){
 	fStream->setCoordSys(TCoordSysFactory::k3DCartesian);
 }
 
-
 void TLGCApp::saveResults(TLGCData *dat)
 {
 	// Write the standard output file
@@ -98,7 +98,6 @@ void TLGCApp::saveResults(TLGCData *dat)
 	//Output options keywords implementation of addition output files to come here!!!
 	
 }
-
 
 void TLGCApp::writeStdResultsFile(TLGCData *dat)
 {	
@@ -148,7 +147,7 @@ void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
 	std::size_t found = fOutputFileLoc.find_last_of(".");
 	fOutputFileLoc = fOutputFileLoc.substr(0, found);
 
-	fStream->resetStreamName(fOutputFileLoc + ".defa");
+	fStream->resetStreamName(fOutputFileLoc + ".def");
 	TDefaFileWriter defaFileWriter(fStream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())

@@ -58,11 +58,11 @@ protected:
 	/// write the points' covariance and displacement header
 	void writeXYZVarCovarDeltaHeader();
 	/// write the points' covariance and displacement data
-	//void writeXYZVarCovarDeltaData(TAdjustablePoint const& point);
+	void writeXYZVarCovarDeltaData(TAdjustablePoint const& point);
 	/// write the points' coordinates, error ellipsoid parameters and displacement header
 	void writeXYZErrorEllSigZDeltaHeader();
 	/// write the points' coordinates, error ellipsoid parameters and displacement data
-	//void writeXYZErrorEllSigZDeltaData(TAdjustablePoint const& point);
+	void writeXYZErrorEllSigZDeltaData(TAdjustablePoint const& point);
 	/// write the points' XYZ coordinates and covariance header
 	void writeXYZSigmaHeader();
 	/// write the points' XYZ coordinates and covariance data
@@ -80,7 +80,12 @@ protected:
 	/// write the points' XYZH coordinates and geoidal undulation data
 	void writeXYZHNData(TAdjustablePoint const& point);
 
+
+	///Calulate N value
+	TReal getN(TAdjustablePoint const& point);
 	//@}
+
+	const TLGCData* fData;
 };
 
 /*@}*/

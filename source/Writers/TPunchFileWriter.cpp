@@ -14,18 +14,19 @@
 #include "TAStreamFormatter.h"
 #include "TRefSystemFactory.h"
 #include <TLOR2LOR.h>
+#include "TAGeoidModel.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //constructor / destructor
 /////////////////////////////////////////////////////////////////////////////
 
 TPunchFileWriter::TPunchFileWriter() :
-TAFileWriter()
+TAFileWriter(), fData(nullptr)
 {
 }
 
 TPunchFileWriter::TPunchFileWriter(TAStreamFormatter* stream, const TLGCData* project) :
-TAFileWriter(stream, project)
+TAFileWriter(stream, project), fData(project)
 {
 }
 
@@ -57,14 +58,14 @@ void TPunchFileWriter::writePoints()
 	switch(fProjectData->getConfig().writePunch.fmode)
 	{
 		case TLGCConfig::TCoordOut::kPLAIN: writeXYZHeader(); break;
-		//case TLGCConfig::TCoordOut::kE: 	writeXYZHeader(); break;
-		//case TLGCConfig::TCoordOut::kEE: 	writeXYZHeader(); break;
-		//case TLGCConfig::TCoordOut::kH: 	writeXYZHeader(); break;
-		//case TLGCConfig::TCoordOut::kZ: 	writeXYZHeader(); break;
+		case TLGCConfig::TCoordOut::kE: 	writeXYZVarCovarDeltaHeader(); break;
+		case TLGCConfig::TCoordOut::kEE: 	writeXYZErrorEllSigZDeltaHeader(); break;
+		case TLGCConfig::TCoordOut::kH: 	writeXYHHeader(); break;
+		case TLGCConfig::TCoordOut::kZ: 	writeXYZHeader(); break;
 		case TLGCConfig::TCoordOut::kHZ: 	writeXYZHHeader(); break;
 		case TLGCConfig::TCoordOut::kHN: 	writeXYHNHeader(); break;
 		case TLGCConfig::TCoordOut::kZHN: 	writeXYZHNHeader(); break;
-		//case TLGCConfig::TCoordOut::kT: 	writeXYZHeader(); break;
+		case TLGCConfig::TCoordOut::kT: 	writeXYZSigmaHeader(); break;
 		//case TLGCConfig::TCoordOut::kOUT1: 	writeXYZHeader(); break;
 		//case TLGCConfig::TCoordOut::kOUT3: 	writeXYZHeader(); break;
 	}
@@ -83,76 +84,85 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 	(*stream).setWidthFormat(20);
 	auto writeName	= [&](TAdjustablePoint const& point) { (*stream) << point.getName() << " "; };
 	(*stream).setWidthFormat(8);
-	auto writeXY	= [&](TAdjustablePoint const& point) { (*stream) << point.getEstimatedValue()[0] << " " << point.getEstimatedValue()[1] << " "; };
-	auto writeZ		= [&](TAdjustablePoint const& point) { (*stream) << point.getEstimatedValue()[2] << " "; };
-	auto writeH		= [&](TAdjustablePoint const& point) { (*stream) << point.getHEstValue(); };
+
 	auto writeDxyz	= [&](TAdjustablePoint const& point) { (*stream) << point.getDXValue() << " " << point.getDYValue() << " " << point.getDZValue() << " ";};
 	auto writeCovs	= [&](TAdjustablePoint const& point) { (*stream) << point.getXYCovar() << " " << point.getXZCovar() << " " << point.getYZCovar() << " ";};
-	
+	// transform the point coordinate in root
+	auto point_in_root = [&](TAdjustablePoint const& point) {
+		// Transformation of the point to the root
+		TPositionVector estimatedValue = point.getEstimatedValue();
+		TDataTreeIterator root = fProjectData->getTree().begin();
+
+		if (root != point.getFrameTreePosition()){
+			TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
+			transfo.transform(estimatedValue);
+		}
+
+		// Set new coordinates to the point expressed in the root
+		TAdjustablePoint point_int_root = TAdjustablePoint(estimatedValue,
+			point.isCoordinateFixed(0),
+			point.isCoordinateFixed(1),
+			point.isCoordinateFixed(2),
+			point.getName(),
+			point.getReferenceFrame(),
+			point.getFrameTreePosition());
+		
+		return point_int_root;
+	};
+
+	auto pointRoot = point_in_root(point);
+
 	switch(output_type)
 	{
 		///< Nom_Pt X Y Z
 		case TLGCConfig::TCoordOut::kPLAIN:
-			writeXYZData(point);
+			writeXYZData(pointRoot);
 			break; 
 		
 		///< Nom_Pt X Y Z Vx Vy Vz Cxy Cxz Cyz Dx Dy Dz
 		case TLGCConfig::TCoordOut::kE:
 			//writeXYZVarCovarDeltaData(point);
-			writeName(point);
-			writeXY(point);
-			writeZ(point);
+			//writeXYZData(point);
 			// Vx Vy Vz
-			writeCovs(point);
-			writeDxyz(point);
+			//writeCovs(point);
+			//writeDxyz(point);
 			break; 
 
 		///< Nom_Pt X Y Z Gist_gd_axe Gd_axe Pt_axe Sz dx dy dz
 		case TLGCConfig::TCoordOut::kEE:
-			
-			writeName(point);
-			writeXY(point);
-			writeZ(point);
+			//writeXYZData(point);
 			// Gist_gd_axe Gd_axe Pt_axe Sz
-			writeDxyz(point);
+			//writeDxyz(point);
 			break; 
 
 		///< Nom_Pt X Y H
 		case TLGCConfig::TCoordOut::kH:			
-			writeXYHData(point);
+			writeXYHData(pointRoot);
 			break; 
 
 		///< Nom_Pt X Y Z
 		case TLGCConfig::TCoordOut::kZ:
-			writeXYZData(point);
+			writeXYZData(pointRoot);
 			break; 
 
 		///< Nom_Pt X Y Z H
 		case TLGCConfig::TCoordOut::kHZ:
-			writeXYZHData(point);
+			writeXYZHData(pointRoot);
 			break; 
 
 		///< Nom_Pt X Y Z H NLEP
 		case TLGCConfig::TCoordOut::kHN:
-			writeXYZHData(point);
-			// NLEP
+			writeXYHNData(pointRoot);
 			break; 
 
-		///< Nom_Pt X Y H N NLEP
-		case TLGCConfig::TCoordOut::kZHN:
-			
-			writeName(point);
-			writeXY(point);
-			writeH(point);
-			// NLEP
+		///< Nom_Pt X Y Z H NLEP
+		case TLGCConfig::TCoordOut::kZHN:		
+			writeXYZHNData(pointRoot);
 			break; 
 
 		///< Nom_Pt X Y Z Sx Sy Sz
-		case TLGCConfig::TCoordOut::kT:
-			
-			writeName(point);
-			writeXY(point);
-			writeZ(point);
+		case TLGCConfig::TCoordOut::kT:	
+			writeXYZData(pointRoot);
 			//  Sx Sy Sz
 			break; 
 
@@ -207,7 +217,8 @@ void TPunchFileWriter::writeTitle()
 
 }
 
-void TPunchFileWriter::writeXYZHeader()
+
+void	TPunchFileWriter::writeXYZHeader()
 {//XYZ
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -216,26 +227,26 @@ void TPunchFileWriter::writeXYZHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
 
-void TPunchFileWriter::writeXYZVarCovarDeltaHeader()
+void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 {//X Y Z Vx Vy Vz Cxy Cxz Cyz Dx Dy Dz	
 
 	TAStreamFormatter*	stream = getStream();
@@ -243,85 +254,77 @@ void TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
 
-	//if(isSAPrioriUsed())
-	//{
-	//	(*stream)<<"LES VARIANCES ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)"<<endl<<endl;
-	//}
-	//else
-	//{
-	//	(*stream)<<"LES VARIANCES ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI"<<endl<<endl;
-	//}	
+	if (fData->getConfig().useApriori.isActive())
+		(*stream) << "LES VARIANCES ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
+	else
+		(*stream) << "LES VARIANCES ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl << endl;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(coordResWidth, "VX ");
 	(*stream).writeString(coordResWidth, "VY ");
 	(*stream).writeString(coordResWidth, "VZ ");
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(coordResWidth, "COVXY");
 	(*stream).writeString(coordResWidth, "COVXZ");
 	(*stream).writeString(coordResWidth, "COVYZ");
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(coordResWidth, "DX ");
 	(*stream).writeString(coordResWidth, "DY ");
 	(*stream).writeString(coordResWidth, "DZ ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(coordResWidth, "(MM2)");
 	(*stream).writeString(coordResWidth, "(MM2)");
 	(*stream).writeString(coordResWidth, "(MM2)");
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
 
-void TPunchFileWriter::writeXYZErrorEllSigZDeltaHeader()
+void	TPunchFileWriter::writeXYZErrorEllSigZDeltaHeader()
 {//X Y Z gist_gd_axe Gd_axe Pt_axe Sz Cyz Dx Dy Dz	
 
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
-	int					obsWidth = max(getObsWidth(),11);
+	int					obsWidth = max(getObsWidth(), 11);
 
-	//if(isSAPrioriUsed())
-	//{
-	//	(*stream)<<"LES ELLIPSES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)"<<endl<<endl;
-	//}
-	//else
-	//{
-	//	(*stream)<<"LES ELLIPSES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI"<<endl<<endl;
-	//}
+	if (fData->getConfig().useApriori.isActive())
+		(*stream) << "LES ELLIPSES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
+	else
+		(*stream) << "LES ELLIPSES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl << endl;
 
 
 
@@ -338,7 +341,7 @@ void TPunchFileWriter::writeXYZErrorEllSigZDeltaHeader()
 	(*stream).writeString(coordResWidth, "DX ");
 	(*stream).writeString(coordResWidth, "DY ");
 	(*stream).writeString(coordResWidth, "DZ ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
@@ -353,12 +356,12 @@ void TPunchFileWriter::writeXYZErrorEllSigZDeltaHeader()
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	return;
 }
 
-void TPunchFileWriter::writeXYHHeader()
+void	TPunchFileWriter::writeXYHHeader()
 {//XYH
 
 	TAStreamFormatter*	stream = getStream();
@@ -368,26 +371,26 @@ void TPunchFileWriter::writeXYHHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "H ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
 
-void TPunchFileWriter::writeXYZHHeader()
+void	TPunchFileWriter::writeXYZHHeader()
 {//XYZH
 
 	TAStreamFormatter*	stream = getStream();
@@ -397,28 +400,28 @@ void TPunchFileWriter::writeXYZHHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
 	(*stream).writeString(coordWidth, "H ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
 
-void TPunchFileWriter::writeXYHNHeader()
+void	TPunchFileWriter::writeXYHNHeader()
 {//XYHN
 
 	TAStreamFormatter*	stream = getStream();
@@ -427,67 +430,67 @@ void TPunchFileWriter::writeXYHNHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "H ");
 	(*stream).writeString(coordWidth, "N ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
 
-void TPunchFileWriter::writeXYZHNHeader()
+void	TPunchFileWriter::writeXYZHNHeader()
 {
-	TAStreamFormatter* stream =	getStream();
+	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
-	
+
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
 	(*stream).writeString(coordWidth, "H ");
 	(*stream).writeString(coordWidth, "N ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
 
-void TPunchFileWriter::writeXYZSigmaHeader()
+void	TPunchFileWriter::writeXYZSigmaHeader()
 {
-	TAStreamFormatter* stream =	getStream();
+	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
 
 	//First line
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
@@ -495,11 +498,11 @@ void TPunchFileWriter::writeXYZSigmaHeader()
 	(*stream).writeString(coordResWidth, "SX ");
 	(*stream).writeString(coordResWidth, "SY ");
 	(*stream).writeString(coordResWidth, "SZ ");
-	(*stream)<<endl;
+	(*stream) << endl;
 
 	//second line : units
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << "";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
@@ -507,9 +510,10 @@ void TPunchFileWriter::writeXYZSigmaHeader()
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream)<<endl<<endl;
+	(*stream) << endl << endl;
 	return;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //DATA
@@ -517,15 +521,6 @@ void TPunchFileWriter::writeXYZSigmaHeader()
 
 void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
 {
-	// Transformation of the point to the root
-	TPositionVector estimatedValue = point.getEstimatedValue();
-	TDataTreeIterator root = fProjectData->getTree().begin();
-		
-	if(root != point.getFrameTreePosition()){
-		TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
-		transfo.transform(estimatedValue);
-	}
-
    TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
@@ -533,33 +528,14 @@ void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << stream->getSeparator() << "";
 	converter.writeName(point.getName(), nameWidth);
-	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, estimatedValue);
-	(*stream)<<endl;
+	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
 	return;
 }
 
 void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 {
-	// Transformation of the point to the root
-	TPositionVector estimatedValue = point.getEstimatedValue();
-	TDataTreeIterator root = fProjectData->getTree().begin();
-		
-	if(root != point.getFrameTreePosition()){
-		TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
-		transfo.transform(estimatedValue);
-	}
-
-	// Set new coordinates to the point expressed in the root
-	TAdjustablePoint point_int_root = TAdjustablePoint( estimatedValue,
-														point.isCoordinateFixed(0), 
-														point.isCoordinateFixed(1), 
-														point.isCoordinateFixed(2),
-														point.getName(),
-														point.getReferenceFrame(), 
-														point.getFrameTreePosition());
-
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
@@ -567,10 +543,9 @@ void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream)<<"";
-	converter.writeName(point_int_root.getName(), nameWidth);
-   converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point_int_root.getXEstPrecision(), point_int_root.getYEstPrecision(), point_int_root.getHEstValue());
-	(*stream)<<endl;
+	(*stream) << stream->getSeparator() << "";
+	converter.writeName(point.getName(), nameWidth);
+	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
 	return;
 }
 
@@ -731,43 +706,14 @@ void TPunchFileWriter::writeXYZErrorEllSigZDeltaData(TAdjustablePoint const& poi
 
 void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 {
-	// Transformation of the point to the root
-	TPositionVector estimatedValue = point.getEstimatedValue();
-	TDataTreeIterator root = fProjectData->getTree().begin();
-		
-	if(root != point.getFrameTreePosition()){
-		TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
-		transfo.transform(estimatedValue);
-	}
-
-	// Set new coordinates to the point expressed in the root
-	TAdjustablePoint point_int_root = TAdjustablePoint( estimatedValue,
-														point.isCoordinateFixed(0), 
-														point.isCoordinateFixed(1), 
-														point.isCoordinateFixed(2),
-														point.getName(),
-														point.getReferenceFrame(), 
-														point.getFrameTreePosition());
-
-	TAStreamFormatter*	stream = getStream();
+	TAStreamFormatter* stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
-	int					coordWidth = getCoordWidth();
-	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream)<<"";
-
-	(*stream).writeString(nameWidth, (point_int_root.getName()));
-
-	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getX().getMetresValue());
-	(*stream)<<separator;
-   writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getY().getMetresValue());
-	(*stream)<<separator;
-   writeDouble(coordWidth, getCoordPrecision(), point_int_root.getEstimatedValue().getZ().getMetresValue());
-	(*stream)<<separator;
-	writeDouble(coordWidth, getCoordPrecision(), point_int_root.getHEstValue());
-	(*stream)<<separator;
-	(*stream)<<endl;
+	(*stream) << stream->getSeparator() << "";
+	converter.writeName(point.getName(), nameWidth);
+	converter.writeXYZandH(point.getEstimatedValue(), TLength(point.getHEstValue()));
 	return;
 }
 
@@ -780,12 +726,10 @@ void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << stream->getSeparator() << "";
 	converter.writeName(point.getName(), nameWidth);
-	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getXEstPrecision(), point.getYEstPrecision(), point.getHEstValue());
-	//converter.writeN( coordWidth, getCoordPrecision(), TLength::kMetres, point);
-	(*stream)<<endl;
-	
+	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
+	converter.writeN(coordWidth, getCoordPrecision(), getN(point));	
 	return;
 }
 
@@ -794,15 +738,33 @@ void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
-	//int					coordWidth = getCoordWidth();
-	string separator = stream->getSeparator();
+	int					coordWidth = getCoordWidth();
 
 	(*stream).width(1);
-	(*stream)<<"";
+	(*stream) << stream->getSeparator() << "";
 	converter.writeName(point.getName(), nameWidth);
-	//converter.writeXYZandH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point);
-	//converter.writeN( coordWidth, getCoordPrecision(), TLength::kMetres, point);
-	(*stream)<<endl;
-
+	converter.writeXYZandH(point.getEstimatedValue(), TLength(point.getHEstValue()));
+	converter.writeN(coordWidth, getCoordPrecision(), getN(point));
 	return;
+}
+
+TReal TPunchFileWriter::getN(TAdjustablePoint const& point)
+{
+	TRefSystemFactory::EGeoid	fGeoidModel;
+	if (fData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+		fGeoidModel = TRefSystemFactory::EGeoid::kCGSphere;
+	else if (fData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+		fGeoidModel = TRefSystemFactory::EGeoid::kCG2000Machine;
+	else if (fData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+		fGeoidModel = TRefSystemFactory::EGeoid::kCG1985Machine;
+	else
+		fGeoidModel = TRefSystemFactory::EGeoid::kNoGeoid;
+
+	//Toujours en CCS pendant le calcul TAReferenceFrame* pointRefFrame = getStreamFormatter()->getReferenceFrame();
+	TAReferenceFrame* ccs = TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCCS);
+	TAGeoidModel* geoid = TRefSystemFactory::getRefSystemFactory()->getGeoid(fGeoidModel);
+
+	TSpatialPosition pos(ccs);
+	pos.setCoordinates(point.getEstimatedValue());
+	return geoid->getN(pos).getMetresValue();
 }
