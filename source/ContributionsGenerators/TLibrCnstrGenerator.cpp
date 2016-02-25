@@ -416,7 +416,7 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	int nbCALA = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kCala);
 	int nbPOIN = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVxyz);
 	int nbVXY = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVxy);
-	int nbVXZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVyz);
+	int nbVXZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVxz);
 	int nbVYZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVyz);
 	int nbVZ = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kVz);
 

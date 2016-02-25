@@ -27,7 +27,6 @@ public:
 		TLSInputMatricesFiller* matrFiller,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,
-		TLSResultsMatrices* resultMatrices,
 		int fMaxIterations,
 		TReal convCrit);
 
@@ -48,8 +47,7 @@ protected:
 	/// Compute the covariance matrix,the residual vector and the reliabilities
 	void	 computeVarCovarAndReliability(TLGCData* data,
 		TLSInputMatrices* inputMtr,
-		TALSComputer* computer,
-		TLSResultsMatrices* resultMatrices);
+		TALSComputer* computer);
 
 private:
 	/// Contribution generator for the free network

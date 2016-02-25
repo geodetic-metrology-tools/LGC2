@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "TSimulationOutputFileWriter.h"
-
+class TLSResultsMatrices;
 /*!
 	\ingroup LGCCalculation
 	\brief Class responsible for the LGC calculation process.
@@ -31,6 +31,9 @@ class TLGCCalculation{
 	/// Returns the project data.
 	const TLGCData& getData(){ return *fData.get();}
 
+	/// Returns the results matrices.
+	TLSResultsMatrices& getResultMtr() const { return *fResultsMtr; }
+
 	private:
 
 	// contains references: not assignable
@@ -42,6 +45,7 @@ class TLGCCalculation{
 	int			fMaxIterations; /*!< maximum of iterations that can be carried out */
 	//@}
 
+	TLSResultsMatrices* fResultsMtr;
 };
 
 #endif

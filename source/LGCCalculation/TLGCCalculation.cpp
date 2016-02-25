@@ -4,11 +4,12 @@
 #include "TLSAllfixed.h"
 #include "TLSAlgorithm.h"
 #include "TVAbractAlgorithm.h"
+#include "TLSResultsMatrices.h"
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
-TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat): fData(dat), fMaxIterations(40)
+TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat) : fData(dat), fMaxIterations(40), fResultsMtr(nullptr)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
@@ -43,6 +44,9 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter
 				algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
 			
 			successCalculation = algorithm->run(*fData.get(), fMaxIterations);
+
+			if (successCalculation)
+				fResultsMtr = algorithm->resultMatrices;
 
 		}
 		

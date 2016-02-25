@@ -54,6 +54,9 @@ bool TLGCApp::exec()
 	if(result && !projectData->getConfig().sim.isActive())
 		this->saveResults(projectData.get());
 
+	if (result && projectData->getConfig().writeDefa.isActive())
+		writeDefaFile(projectData.get(), lgcCalculation.getResultMtr());
+
 	return result;
 }
 
@@ -93,6 +96,7 @@ void TLGCApp::saveResults(TLGCData *dat)
 	//MORE LOGIC TO COME
 
 	//Output options keywords implementation of addition output files to come here!!!
+	
 }
 
 
@@ -136,6 +140,21 @@ void TLGCApp::writeFautFile(TLGCData* dat)
 		fautFileWriter.writeFile(dat);
 	else
 		fautFileWriter.writeFile("Error has occured, see the LGC log file.");
+}
+
+void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
+{
+	// change stream name
+	std::size_t found = fOutputFileLoc.find_last_of(".");
+	fOutputFileLoc = fOutputFileLoc.substr(0, found);
+
+	fStream->resetStreamName(fOutputFileLoc + ".defa");
+	TDefaFileWriter defaFileWriter(fStream.get(), dat);
+
+	if (!dat->getFileLogger().hasErrors())
+		defaFileWriter.writeFile(*dat, fResMtrx);
+	else
+		defaFileWriter.writeFile("Error has occured, see the LGC log file.");
 }
 
 

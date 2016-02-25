@@ -4,6 +4,7 @@
 #include "TResultsFileWriter.h"
 #include "TPunchFileWriter.h"
 #include "TFautFileWriter.h"
+#include "TDefaFileWriter.h"
 
 /*!
 	\ingroup LGCProject
@@ -52,6 +53,9 @@ class TLGCApp {
 
 		/// Write faut files including coordinates of calculated points
 		void writeFautFile(TLGCData *dat);
+
+		/// Write faut files including coordinates of calculated points
+		void writeDefaFile(TLGCData *dat, TLSResultsMatrices &fResMtrx);
 
 		/// Shared pointer to global stream
 		std::shared_ptr<TAStreamFormatter> fStream;
