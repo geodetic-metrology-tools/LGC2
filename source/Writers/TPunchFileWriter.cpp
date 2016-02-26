@@ -68,7 +68,7 @@ void TPunchFileWriter::writePoints()
 		case TLGCConfig::TCoordOut::kHN: 	writeXYHNHeader(); break;
 		case TLGCConfig::TCoordOut::kZHN: 	writeXYZHNHeader(); break;
 		case TLGCConfig::TCoordOut::kT: 	writeXYZSigmaHeader(); break;
-		//case TLGCConfig::TCoordOut::kOUT1: 	writeXYZHeader(); break;
+		case TLGCConfig::TCoordOut::kOUT1: 	writeCooHeader(); break;
 		//case TLGCConfig::TCoordOut::kOUT3: 	writeXYZHeader(); break;
 	}
 
@@ -172,9 +172,12 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 
 		///< .coo file for GEODE
 		case TLGCConfig::TCoordOut::kOUT1:
-			
-			// ?
-			break; 
+			if (point.getFrameTreePosition()->get()->isROOTNode())
+				writeCooData(point);
+			else
+				writeCooData(pointRoot);
+			break;
+ 
 
 		///< .coo file for GEODE
 		case TLGCConfig::TCoordOut::kOUT3:
@@ -525,6 +528,29 @@ void	TPunchFileWriter::writeXYZSigmaHeader()
 	return;
 }
 
+void	TPunchFileWriter::writeCooHeader()
+{//XYH
+
+	TAStreamFormatter*	stream = getStream();
+	int	nameWidth = getNameWidth();
+	int	coordWidth = getCoordWidth();
+	int coordResWidth = getCoordResWidth();
+
+	(*stream).width(1);
+	(*stream) << "";
+	(*stream).writeString(nameWidth, "NOM");
+	(*stream).writeString(coordWidth, "X ");
+	(*stream).writeString(coordWidth, "Y ");
+	(*stream).writeString(coordWidth, "H ");
+	(*stream).writeString(nameWidth, "ID");
+	(*stream).writeString(coordResWidth, "DX ");
+	(*stream).writeString(coordResWidth, "DY ");
+	(*stream).writeString(coordResWidth, "DZ ");
+	(*stream).writeString(coordWidth, "DCUM ");
+	(*stream).writeString(nameWidth, "OPTION ");
+	(*stream) << endl<< endl;
+	return;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //DATA
@@ -853,6 +879,95 @@ void	TPunchFileWriter::writeXYZSigmaData(TAdjustablePoint const& point)
 		point.getYEstPrecision(),
 		point.getZEstPrecision(),
 		" ");/*sigma*/
+	return;
+}
+
+void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
+{
+	TAStreamFormatter* stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
+	int	nameWidth = getNameWidth();
+	int	coordWidth = getCoordWidth();
+	int coordResWidth = getCoordResWidth();
+	string separator = stream->getSeparator();
+
+	(*stream).width(1);
+	(*stream) << "";
+	converter.writeName(point.getName(), nameWidth);
+	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
+	stream->writeString(nameWidth, "-1");
+	//Delta
+	//transform H in Z
+	TPositionVector xyzValue = point.getProvisionalValue();
+	if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+	{
+		TXYH2CCS::XYHs2CCS(xyzValue);
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			"");
+	}
+	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+	{
+		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			"");
+	}
+	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+	{
+		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
+
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			"");
+	}
+	else
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+		coordResWidth,
+		getCoordPrecision(),
+		TLength::kMillimetres,
+		separator,
+		point.getDXValue(),
+		point.getDYValue(),
+		point.getDZValue(),
+		"");
+	
+	
+	stream->writeDouble(coordWidth, getCoordPrecision(), -1.0);
+	
+	string status;
+	if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kCala)
+		status = "CALA";
+	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxyz)
+		status = "POIN";
+	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxy)
+		status = "VXY";
+	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxz)
+		status = "VXZ";
+	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVyz)
+		status = "VYZ";
+	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVz)
+		status = "VZ";
+
+	stream->writeString(nameWidth, status);
 	return;
 }
 

@@ -117,13 +117,33 @@ void TLGCApp::writePunchFile(TLGCData* dat)
 	std::size_t found = fOutputFileLoc.find_last_of(".");
 	fOutputFileLoc=fOutputFileLoc.substr(0, found);
 
-	fStream->resetStreamName(fOutputFileLoc + ".pun");
-	TPunchFileWriter punchFileWriter(fStream.get(), dat);
+	auto writefile = [&](TPunchFileWriter punchFileWriter) {
+		if (!dat->getFileLogger().hasErrors())
+		 punchFileWriter.writeFile();
+	   else
+		punchFileWriter.writeFile("Error has occured, see the LGC log file."); 
+	};
 
-	if (!dat->getFileLogger().hasErrors())
-		punchFileWriter.writeFile();
+	if (dat->getConfig().writePunch.kOUT1)
+	{
+		fStream->resetStreamName(fOutputFileLoc + ".coo");
+		TPunchFileWriter punchFileWriter(fStream.get(), dat);
+		writefile(punchFileWriter);
+	}
+	else if (dat->getConfig().writePunch.kOUT3)
+	{
+		fStream->resetStreamName(fOutputFileLoc + ".mes");
+		TPunchFileWriter punchFileWriter(fStream.get(), dat);
+		writefile(punchFileWriter);
+	}
 	else
-		punchFileWriter.writeFile("Error has occured, see the LGC log file.");
+	{
+		fStream->resetStreamName(fOutputFileLoc + ".pun");
+		TPunchFileWriter punchFileWriter(fStream.get(), dat);
+		writefile(punchFileWriter);
+	}
+
+	
 }
 
 void TLGCApp::writeFautFile(TLGCData* dat)
