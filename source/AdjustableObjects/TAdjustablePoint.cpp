@@ -180,9 +180,9 @@ TAngle TAdjustablePoint::getErrorEllGis() const
 TAdjustablePoint::ErrorEllipsoid TAdjustablePoint::getErrorEllipsoid() const {
 	Eigen::Matrix3d m;
 
-	m << pow2(getXEstPrecision()), getXYCovar(), getXZCovar(), getXYCovar(), 
-        pow2(getYEstPrecision()), getYZCovar(), getXZCovar(), getYZCovar(), 
-        pow2(getZEstPrecision());
+	m << pow2(getXEstPrecision()), getXYCovar(), getXZCovar(), 
+		getXYCovar(), pow2(getYEstPrecision()), getYZCovar(),
+		getXZCovar(), getYZCovar(), pow2(getZEstPrecision());
 
 	Eigen::EigenSolver<Eigen::Matrix3d> ev(m);
 	

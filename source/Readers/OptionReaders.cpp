@@ -144,7 +144,7 @@ void TKeyEREL::parse(const std::vector<std::string>& tokens, int) {
 		// Default behaviour: nothing to do
 	}
 	else {
-		throw std::runtime_error("*" + tokens.at(1) + " expects either one or two arguments.");
+		throw std::runtime_error("*" + tokens.at(1) + " expects SEP \"separator\"  ");
 	}
 }
 

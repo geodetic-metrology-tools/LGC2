@@ -203,7 +203,12 @@ class TKeyFMTO : public TAOptionKey {
 class TKeyFMTP : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyFMTP(TLGCData& project) : TAOptionKey(project, "FMTP") {}
+		TKeyFMTP(TLGCData& project, int nb_allowed_keywords = nb_allowed_fmtp, const char** keywords = allowed_FMTP) : TAOptionKey(project, FMTP)
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+
+		}
 
 		//Tokenize and initialize options for the output processing
 		virtual void parse(const std::vector<std::string>& tokens, int);

@@ -15,6 +15,7 @@
 #include "TRefSystemFactory.h"
 #include <TLOR2LOR.h>
 #include "TAGeoidModel.h"
+#include "TXYH2CCS.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //constructor / destructor
@@ -28,6 +29,7 @@ TAFileWriter(), fData(nullptr)
 TPunchFileWriter::TPunchFileWriter(TAStreamFormatter* stream, const TLGCData* project) :
 TAFileWriter(stream, project), fData(project)
 {
+	stream->setSeparator(project->getConfig().CustomOutputSeparatorPunch.separator);
 }
 
 TPunchFileWriter::~TPunchFileWriter()
@@ -59,7 +61,7 @@ void TPunchFileWriter::writePoints()
 	{
 		case TLGCConfig::TCoordOut::kPLAIN: writeXYZHeader(); break;
 		case TLGCConfig::TCoordOut::kE: 	writeXYZVarCovarDeltaHeader(); break;
-		case TLGCConfig::TCoordOut::kEE: 	writeXYZErrorEllSigZDeltaHeader(); break;
+		case TLGCConfig::TCoordOut::kEE: 	writeXYZErrorEllHeader(); break;
 		case TLGCConfig::TCoordOut::kH: 	writeXYHHeader(); break;
 		case TLGCConfig::TCoordOut::kZ: 	writeXYZHeader(); break;
 		case TLGCConfig::TCoordOut::kHZ: 	writeXYZHHeader(); break;
@@ -121,19 +123,19 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 		
 		///< Nom_Pt X Y Z Vx Vy Vz Cxy Cxz Cyz Dx Dy Dz
 		case TLGCConfig::TCoordOut::kE:
-			//writeXYZVarCovarDeltaData(point);
-			//writeXYZData(point);
-			// Vx Vy Vz
-			//writeCovs(point);
-			//writeDxyz(point);
+			if (point.getFrameTreePosition()->get()->isROOTNode())
+				writeXYZVarCovarDeltaData(point);
+			else
+				writeXYZData(pointRoot);
 			break; 
 
 		///< Nom_Pt X Y Z Gist_gd_axe Gd_axe Pt_axe Sz dx dy dz
 		case TLGCConfig::TCoordOut::kEE:
-			//writeXYZData(point);
-			// Gist_gd_axe Gd_axe Pt_axe Sz
-			//writeDxyz(point);
-			break; 
+			if (point.getFrameTreePosition()->get()->isROOTNode())
+				writeXYZErrorEllData(point);
+			else
+				writeXYZData(pointRoot);
+			break;
 
 		///< Nom_Pt X Y H
 		case TLGCConfig::TCoordOut::kH:			
@@ -162,9 +164,11 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 
 		///< Nom_Pt X Y Z Sx Sy Sz
 		case TLGCConfig::TCoordOut::kT:	
-			writeXYZData(pointRoot);
-			//  Sx Sy Sz
-			break; 
+			if (point.getFrameTreePosition()->get()->isROOTNode())
+				writeXYZSigmaData(point);
+			else
+				writeXYZData(pointRoot);
+			break;
 
 		///< .coo file for GEODE
 		case TLGCConfig::TCoordOut::kOUT1:
@@ -312,7 +316,7 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	return;
 }
 
-void	TPunchFileWriter::writeXYZErrorEllSigZDeltaHeader()
+void	TPunchFileWriter::writeXYZErrorEllHeader()
 {//X Y Z gist_gd_axe Gd_axe Pt_axe Sz Cyz Dx Dy Dz	
 
 	TAStreamFormatter*	stream = getStream();
@@ -331,31 +335,38 @@ void	TPunchFileWriter::writeXYZErrorEllSigZDeltaHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line	
 	(*stream).writeString(nameWidth, "NOM  ");
-	(*stream).writeString(coordWidth, "X ");
-	(*stream).writeString(coordWidth, "Y ");
-	(*stream).writeString(coordWidth, "Z ");
-	(*stream).writeString(obsWidth, "GIS Gd_AXE");
-	(*stream).writeString(11, "1/2 Gd_AXE");
-	(*stream).writeString(11, "1/2 Pt_AXE");
-	(*stream).writeString(coordResWidth, "SZ ");
-	(*stream).writeString(coordResWidth, "DX ");
-	(*stream).writeString(coordResWidth, "DY ");
-	(*stream).writeString(coordResWidth, "DZ ");
-	(*stream) << endl;
+	stream->writeString(coordWidth, "X");
+	stream->writeString(coordWidth, "Y");
+	stream->writeString(coordWidth, "Z");
+	// Direction vectors: (+0.000, -0.000, +0.000) => 24
+	const int vecwidth(24);
+	stream->writeString(vecwidth, "DIRECTION X");
+	stream->writeString(vecwidth, "DIRECTION Y");
+	stream->writeString(vecwidth, "DIRECTION Z");
+	stream->writeString(coordWidth, "LONGUER X");
+	stream->writeString(coordWidth, "LONGUER Y");
+	stream->writeString(coordWidth, "LONGUER Z");
+	stream->writeString(coordResWidth, "DX");
+	stream->writeString(coordResWidth, "DY");
+	stream->writeString(coordResWidth, "DZ");
+
+	*stream << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
-	(*stream).writeString(nameWidth, "");
-	(*stream).writeString(coordWidth, "(M)");
-	(*stream).writeString(coordWidth, "(M)");
-	(*stream).writeString(coordWidth, "(M)");
-	(*stream).writeString(obsWidth, "(GON)");
-	(*stream).writeString(11, "(MM)");
-	(*stream).writeString(11, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
+	stream->writeString(nameWidth, "");//Nom
+	stream->writeString(coordWidth, "(M)");// coordianate
+	stream->writeString(coordWidth, "(M)");// coordianate
+	stream->writeString(coordWidth, "(M)");// coordianate
+	stream->writeString(vecwidth, "");//Direction
+	stream->writeString(vecwidth, "");//Direction
+	stream->writeString(vecwidth, "");//Direction
+	stream->writeString(coordWidth, "(MM)");// Axis length
+	stream->writeString(coordWidth, "(MM)");// Axis length
+	stream->writeString(coordWidth, "(MM)");// Axis length
+	stream->writeString(coordResWidth, "(MM)");// delta
+	stream->writeString(coordResWidth, "(MM)");// delta
+	stream->writeString(coordResWidth, "(MM)");// delta
 	(*stream) << endl;
 
 	return;
@@ -528,7 +539,7 @@ void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream) << stream->getSeparator() << "";
+	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
 	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
 	return;
@@ -543,13 +554,11 @@ void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream) << stream->getSeparator() << "";
+	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
 	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
 	return;
 }
-
-#if 0
 
 void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 {
@@ -562,10 +571,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 
 	(*stream).width(1);
 	(*stream)<<"";
-	//Name
 	converter.writeName(point.getName(), nameWidth);
-
-	//Coordinate
 	converter.writeXYZ(coordWidth, getCoordPrecision(),TLength::kMetres, separator, point.getEstimatedValue());
 
 	//Variance
@@ -580,51 +586,84 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 									coordResWidth,
 									pre,
 									separator,
-									double(powq(point.getXEstPrecision()*M2MM,2)),
-									point.getYEstPrecision(),
-									posVecIterator->getZVar(),
-									"XXX");
+									point.getXEstPrecision().getMMetresValue()*point.getXEstPrecision().getMMetresValue(),
+									point.getYEstPrecision().getMMetresValue()*point.getXEstPrecision().getMMetresValue(),
+									point.getZEstPrecision().getMMetresValue()*point.getZEstPrecision().getMMetresValue(),
+									" ");
 	(*stream).width(1);
 	(*stream)<<"";
 	//Covariance 
-	/*converter.writeTwoCoordParam(posVecIterator->getGlobalStatus(),
+	converter.writeCoordinateParam(point.getSpatialStatus(),
 								coordResWidth,
 								getCoordPrecision(),
-								TLength::kMillimetres,
 								separator,
-								posVecIterator->getXYCovar(),
-								posVecIterator->getXZCovar(),
-								posVecIterator->getYZCovar(),
-								"XXX");*/
-	converter.writeCoordinateParam(posVecIterator->getGlobalStatus(),
-								coordResWidth,
-								getCoordPrecision(),
-								TLength::kMillimetres,
-								separator,
-								posVecIterator->getXYCovar(),
-								posVecIterator->getXZCovar(),
-								posVecIterator->getYZCovar(),
-								"XXX", true);
+								point.getXYCovar(),
+								point.getXZCovar(),
+								point.getYZCovar(),
+								" ", true);
 
 
 	(*stream).width(1);
 	(*stream)<<"";
 	//Delta
-	converter.writeCoordinateParam(posVecIterator->getGlobalStatus(),
+
+	//transform H in Z
+	TPositionVector xyzValue = point.getProvisionalValue();
+	if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+	{
+		TXYH2CCS::XYHs2CCS(xyzValue);
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			" ");
+	}
+	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+	{
+		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			" ");
+	}
+	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+	{
+		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
+
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			" ");
+	}
+	else 
+		converter.writeCoordinateParam(point.getSpatialStatus(),
 								coordResWidth,
 								getCoordPrecision(),
 								TLength::kMillimetres,
 								separator,
-								posVecIterator->getDXValue(),
-								posVecIterator->getDYValue(),
-								posVecIterator->getDZValue(),
-								"XXX");
-	(*stream)<<endl;
+								point.getDXValue(),
+								point.getDYValue(),
+								point.getDZValue(),
+								" ");
 	return;
 }
 
 
-void TPunchFileWriter::writeXYZErrorEllSigZDeltaData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYZErrorEllData(TAdjustablePoint const& point)
 {	
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -634,75 +673,115 @@ void TPunchFileWriter::writeXYZErrorEllSigZDeltaData(TAdjustablePoint const& poi
 	int					obsWidth = max(getObsWidth(),11);
 	string separator = stream->getSeparator();
 
-	//Name
-	converter.writeName(posVecIterator, nameWidth);
-
-	//Coordinate
-	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, posVecIterator);
+	(*stream).width(1);
+	(*stream) << "";
+	converter.writeName(point.getName(), nameWidth);
+	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
 
 	
-	if (posVecIterator->getPosVecStatus() == "VXYZ") 
+	if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxyz)
 	{ // Error ellipsoid
-		const auto& ell(posVecIterator->getErrorEllipsoid());
+		const auto& ell(point.getErrorEllipsoid());
 		
+		(*stream).width(1);
+		(*stream)<<"" ;
+		const int vecwidth(24);
+		char vecstr[32]; // format the vector output here and write as a string
+		sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
+		stream->writeString(vecwidth, vecstr);
+		sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
+		stream->writeString(vecwidth, vecstr);
+		sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
+		stream->writeString(vecwidth, vecstr);
+		stream->writeDouble(coordWidth, coordResWidth, ell.lx*M2MM);
+		stream->writeDouble(coordWidth, coordResWidth, ell.ly*M2MM);
+		stream->writeDouble(coordWidth, coordResWidth, ell.lz*M2MM);
+
+	}
+	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxy
+		|| point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxz
+		|| point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVyz)
+	{//Error ellipse
+
+		(*stream).width(1);
+		(*stream) << "";
+		const int vecwidth(24);
+		char vecstr[32]; // format the vector output here and write as a string
+		stream->writeDouble(vecwidth, coordResWidth, point.getErrorEllGis().getGonsValue());
+		stream->writeString(vecwidth, "");
+		stream->writeString(vecwidth, "");
+		stream->writeDouble(coordWidth, coordResWidth, point.getErrorEllMajorAxis().getMMetresValue());
+		stream->writeDouble(coordWidth, coordResWidth, point.getErrorEllMinorAxis().getMMetresValue());
+		stream->writeString(coordWidth, "");
+
+	}
+	else
+	{
+		writeXYZData(point);
 		(*stream).width(obsWidth);
-		(*stream)<<"" << separator;
-		writeDouble(11, getLengthResidualPrecision(), ell.lx);
-		(*stream)<<separator;
-		writeDouble(11, getLengthResidualPrecision(), ell.ly);
-		(*stream)<<separator;
-		writeDouble(11, getLengthResidualPrecision(), ell.lz);
-		(*stream)<<separator;
-	}
-	else {
-		//Error ellipse
-		if( (posVecIterator->getXStatus() == TALSCalcParameter::kVariable) && (posVecIterator->getYStatus() == TALSCalcParameter::kVariable) )
-		{
-			writeAngle(obsWidth, getAngleResidualPrecision(), TAngle::kGons, posVecIterator->getErrorEllGis());
-			(*stream)<<separator;
-			writeLength(11, getLengthResidualPrecision(), TLength::kMillimetres, posVecIterator->getErrorEllMajorAxis());
-			(*stream)<<separator;
-			writeLength(11, getLengthResidualPrecision(), TLength::kMillimetres, posVecIterator->getErrorEllMinorAxis());
-			(*stream)<<separator;
- 		}
-		else
-		{
-			(*stream).width(obsWidth);
-			(*stream)<<"" << separator;
-			(*stream).width(11);
-			(*stream)<<"" << separator;
-			(*stream).width(11);
-			(*stream)<<"" << separator;
-		}	
-		//sigma Z
-		if(posVecIterator->getZStatus() == TALSCalcParameter::kVariable)
-			writeLength(coordResWidth, getCoordPrecision(),  TLength::kMillimetres, posVecIterator->getZSigma());
-		else
-		{
-			(*stream).width(coordResWidth);
-			(*stream)<<"";
-		}
+		(*stream) << "" << separator;
+		(*stream) << "" << separator;
+		(*stream) << "" << separator;
 	}
 
-	(*stream)<<separator;
 
-	//delta
-	
-	converter.writeCoordinateParam(posVecIterator->getGlobalStatus(),
-								coordResWidth,
-								getCoordPrecision(),
-								TLength::kMillimetres,
-								separator,
-								posVecIterator->getDXValue(),
-								posVecIterator->getDYValue(),
-								posVecIterator->getDZValue(),
-								"");
+	//Delta
+	//transform H in Z
+	TPositionVector xyzValue = point.getProvisionalValue();
+	if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+	{
+		TXYH2CCS::XYHs2CCS(xyzValue);
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			"");
+	}
+	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+	{
+		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			"");
+	}
+	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+	{
+		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
-	(*stream)<<endl;
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			coordResWidth,
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getEstValue(2) - xyzValue.getZ(),
+			"");
+	}
+	else
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+		coordResWidth,
+		getCoordPrecision(),
+		TLength::kMillimetres,
+		separator,
+		point.getDXValue(),
+		point.getDYValue(),
+		point.getDZValue(),
+		"");
+
 	return;
 }
 
-#endif
 
 void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 {
@@ -711,7 +790,7 @@ void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 	int					nameWidth = getNameWidth();
 
 	(*stream).width(1);
-	(*stream) << stream->getSeparator() << "";
+	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
 	converter.writeXYZandH(point.getEstimatedValue(), TLength(point.getHEstValue()));
 	return;
@@ -726,10 +805,11 @@ void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
-	(*stream) << stream->getSeparator() << "";
+	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
 	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
 	converter.writeN(coordWidth, getCoordPrecision(), getN(point));	
+	(*stream) << separator;
 	return;
 }
 
@@ -741,10 +821,38 @@ void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
 	int					coordWidth = getCoordWidth();
 
 	(*stream).width(1);
-	(*stream) << stream->getSeparator() << "";
+	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
 	converter.writeXYZandH(point.getEstimatedValue(), TLength(point.getHEstValue()));
 	converter.writeN(coordWidth, getCoordPrecision(), getN(point));
+	(*stream) << stream->getSeparator();
+	return;
+}
+
+void	TPunchFileWriter::writeXYZSigmaData(TAdjustablePoint const& point)
+{
+	TAStreamFormatter* stream = getStream();
+	TPointConverter converter(stream, fProjectData->getConfig().referential);
+	int nameWidth = getNameWidth();
+	int coordWidth = getCoordWidth();
+	string separator = stream->getSeparator();
+
+	(*stream).width(1);
+	(*stream) << "";
+	converter.writeName(point.getName(), nameWidth);
+	//Coordinate
+	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
+
+	//Sigma
+	converter.writeCoordinateParam(point.getSpatialStatus(),
+		getCoordResWidth(),
+		getCoordPrecision(),
+		TLength::kMillimetres,
+		separator,
+		point.getXEstPrecision(),
+		point.getYEstPrecision(),
+		point.getZEstPrecision(),
+		" ");/*sigma*/
 	return;
 }
 
