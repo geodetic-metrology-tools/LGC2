@@ -87,9 +87,8 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 	auto writeName	= [&](TAdjustablePoint const& point) { (*stream) << point.getName() << " "; };
 	(*stream).setWidthFormat(8);
 
-	auto writeDxyz	= [&](TAdjustablePoint const& point) { (*stream) << point.getDXValue() << " " << point.getDYValue() << " " << point.getDZValue() << " ";};
-	auto writeCovs	= [&](TAdjustablePoint const& point) { (*stream) << point.getXYCovar() << " " << point.getXZCovar() << " " << point.getYZCovar() << " ";};
-	// transform the point coordinate in root
+
+	// lambda function to transform the point coordinate in root
 	auto point_in_root = [&](TAdjustablePoint const& point) {
 		// Transformation of the point to the root
 		TPositionVector estimatedValue = point.getEstimatedValue();
@@ -179,7 +178,7 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 			break;
  
 
-		///< .coo file for GEODE
+		///< .mes file for GEODE
 		case TLGCConfig::TCoordOut::kOUT3:
 			
 			// ?
@@ -688,7 +687,6 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 	return;
 }
 
-
 void TPunchFileWriter::writeXYZErrorEllData(TAdjustablePoint const& point)
 {	
 	TAStreamFormatter* stream = getStream();
@@ -807,7 +805,6 @@ void TPunchFileWriter::writeXYZErrorEllData(TAdjustablePoint const& point)
 
 	return;
 }
-
 
 void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 {

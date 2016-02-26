@@ -79,9 +79,9 @@ protected:
 	void writeXYZHNHeader();
 	/// write the points' XYZH coordinates and geoidal undulation data
 	void writeXYZHNData(TAdjustablePoint const& point);
-	// write the points 'XYH, ID, displacement, DCUM, option
+	// write the points 'XYH, ID, displacement, DCUM, option header
 	void writeCooHeader();
-	// write the points 'XYH, ID, displacement, DCUM, option
+	// write the points 'XYH, ID, displacement, DCUM, option data
 	void writeCooData(TAdjustablePoint const& point);
 
 
