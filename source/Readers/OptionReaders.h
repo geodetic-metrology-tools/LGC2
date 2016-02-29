@@ -126,7 +126,11 @@ class TKeyLIBR : public TAOptionKey {
 class TKeyNODUP : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyNODUP(TLGCData& project) : TAOptionKey(project, "NODUP") {}
+		TKeyNODUP(TLGCData& project, int nb_allowed_keywords = nb_allowed_nodup, const char** keywords = allowed_NODUP) : TAOptionKey(project, "NODUP")
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+		}
 
 		///Tokenize and initialize options for the calculation
 		virtual void parse(const std::vector<std::string>&, int);

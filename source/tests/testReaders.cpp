@@ -111,10 +111,6 @@ namespace tut
 			TAdjustablePoint::setAllFixedParam(False);
 
 			//
-			TKeyNODUP c2(proj);
-			c2.parse(empty, -1);
-			ensure("NODUP must be ON now", cfg.nodup.isActive());
-			//
 			TKeyLIBR c3(proj);
 			c3.parse(empty, -1);
 			ensure("LIBRE must be ON now", cfg.libre.isActive());

@@ -129,6 +129,14 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
 		// get a camera reference to update default values
 		auto& camera(getCAM());
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for(auto& point : camera.measUVEC)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("An UVEC measurement is duplicated");
+
+		
 		
 		std::string currentTarget = currentTargetApplied; //Take the current target, which is used
 		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
@@ -204,6 +212,12 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
 		// get a camera reference to update default values
 		auto& camera(getCAM());
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : camera.measUVD)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("An UVD measurement is duplicated");
 		
 		std::string currentTarget = currentTargetApplied; //Take the current target, which is used
 		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
@@ -314,6 +328,12 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 
 		// get a copy of  the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measPLR3D)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("A PLR3D measurement is duplicated");
 		
 		// set optional target modifications
 		tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
@@ -368,7 +388,13 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 		// look up the observed point
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
 		// get a station reference to update default values
-		auto& stn(getStation());			
+		auto& stn(getStation());
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measANGL)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("A ANGL measurement is duplicated");
 
 		//Use the current target (either from V0 or from the previous measurement)
 		std::string currentTarget = currentTargetApplied;
@@ -423,6 +449,12 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 		// get a station reference to update default values
 		auto& stn(getStation());
 
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measZEND)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("A ZEND measurement is duplicated");
+
 		//Use the current target (either from V0 or from the previous measurement)
 		std::string currentTarget = currentTargetApplied;
 		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
@@ -475,6 +507,12 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
 		// get a station reference to update default values
 		auto& stn(getStation());
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measDIST)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("A DIST measurement is duplicated");
 
 		//Use the current target (either from V0 or from the previous measurement)
 		std::string currentTarget = currentTargetApplied;
@@ -540,6 +578,12 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 
 		// look up the stationed point
 		const auto& stPoint(fpoints.getObject(tokens.at(0)));
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measECTH)
+				if (stPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("A ECTH measurement is duplicated");
 	   
 
 		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
@@ -597,6 +641,12 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 		// look up the stationed point
 		const auto& stPoint(fpoints.getObject(tokens.at(0)));
 
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measECSP)
+				if (stPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("A ECSP measurement is duplicated");
+
 
 		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
 		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
@@ -639,6 +689,12 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
 		// get a station reference to update default values
 		auto& stn(getStation());
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM().measDHOR)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("A DHOR measurement is duplicated");
 
 		//Use the current target (either from V0 or from the previous measurement)
 		std::string currentTarget = currentTargetApplied;
@@ -717,6 +773,13 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		// look up the observed point
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : proj.getCurrentNode().measurements.fEDM.back().measDSPT)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("A DSPT measurement is duplicated");
+
 		// get a station reference to update default values
 		TInstrumentData::TEDM& instrument = proj.getCurrentNode().measurements.fEDM.back().instrument;
 
@@ -735,7 +798,7 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
          TDSPT(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
 		);
-
+		
 		//get a reference to the inserted measurement
 		auto& dpst(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
 		dpst.line = line;
@@ -831,6 +894,13 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 
 		const auto& tgtfPoint(fpoints.getObject(tokens.at(0)));
 		TLEVEL& levelGrOfMeas = proj.getCurrentNode().measurements.fLEVEL.back();
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : levelGrOfMeas.measDLEV)
+				if (tgtfPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("A DLEV measurement is duplicated");
+
 		levelGrOfMeas.instrument.defStaffID = opts.getParamS("TRGT",  levelGrOfMeas.instrument.defStaffID); //Overrides current target (staff) ID, current value
 
 		TInstrumentData::TLEVEL::TTarget tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, levelGrOfMeas.instrument.defStaffID);
@@ -926,6 +996,13 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 		proj.addToMeasurementNum(TMeasurementsGlobal::kECHO);
 		TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
 		echoROMLatest.measECHO.emplace_back(echo);
+
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : echoROMLatest.measECHO)
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("An ECHO measurement is duplicated");
 	}
 }
 
@@ -997,6 +1074,12 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 		TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : ecveROMLatest.measECVE)
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("An ECVE measurement is duplicated");
+
 	}
 }
 
@@ -1035,6 +1118,12 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 
 		// look up the observed point, i.e. the target
 		const auto& obspt(fpoints.getObject(tokens.at(0)));
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : proj.getCurrentNode().measurements.fORIE.back().measORIE)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("An ORIE measurement is duplicated");
 
 		// get a station reference to update default values
 		TInstrumentData::TPOLAR& instrument = proj.getCurrentNode().measurements.fORIE.back().instrument;
