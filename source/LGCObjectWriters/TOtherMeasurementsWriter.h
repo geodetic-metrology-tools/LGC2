@@ -16,7 +16,7 @@ class  TOtherMeasurentWriter : public TObservationWriter
 {
 public:
 	/// Constructor
-	TOtherMeasurentWriter(TAStreamFormatter& stream);
+	TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist);
 	/// Destructor
 	virtual ~TOtherMeasurentWriter();
 
@@ -51,6 +51,7 @@ public:
 		void writeORIESIMUResults(const TORIEROM& fOrieRom);
 	//@}
 
+		bool writeHist;
 
 };
 

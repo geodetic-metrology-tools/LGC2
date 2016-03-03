@@ -60,15 +60,15 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 
 	//Start to write the measurements
-	TTSTNWriter tstnWriter(*stream);
+	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
 	tstnWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TCAMWriter camWriter(*stream);// no allfixed parameter
-	TEDMWriter edmWriter(*stream);
+	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TSCALEWriter scaleWriter(*stream); // no allfixed parameter
-	TLEVELWriter levelWriter(*stream);
+	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream);// no allfixed parameter
+	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 
 	//If PDOR
 	if (frameIt->get()->measurements.fPDOR.isInitialised())
@@ -96,12 +96,13 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		scaleWriter.writeECVEResults(itECVE);
 
-	for (auto& itORIE:frameIt->get()->measurements.fORIE)
+	for (auto& itORIE : frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
+
 
 	if (!frameIt->get()->measurements.fRADI.empty())
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
-	
+		
 }
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
@@ -116,12 +117,12 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 		writePoints(frameIt);  //Write points for SIMU only in ROOT, not in local nodes
 		
 
-	TTSTNWriter tstnWriter(*stream);
-	TCAMWriter camWriter(*stream);
-	TEDMWriter edmWriter(*stream);
-	TSCALEWriter scaleWriter(*stream);
-	TLEVELWriter levelWriter(*stream);
-	TOtherMeasurentWriter otherMeasWriter(*stream);
+	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 
 	//If PDOR
 	if (frameIt->get()->measurements.fPDOR.isInitialised())
@@ -156,8 +157,8 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
-	TEDMWriter edmWriter(*stream);
-	TOtherMeasurentWriter otherMeasWriter(*stream);
+	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 
 	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
@@ -549,7 +550,7 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter*	stream = getStream();
-	TTSTNWriter tstnWriter(*stream);
+	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
 
 	//ANGL
 	bool isANGL = false;
@@ -686,7 +687,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter*	stream = getStream();
-	TCAMWriter camWriter(*stream);
+	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());
 
 
 	//UVEC
@@ -726,7 +727,7 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter*	stream = getStream();
-	TLEVELWriter levelWriter(*stream);
+	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	
 
 	//DLEV
@@ -766,7 +767,7 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter*	stream = getStream();
-	TSCALEWriter scaleWriter(*stream);
+	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive());
 	
 
 	//ECHO

@@ -12,7 +12,7 @@ class  TCAMWriter : public TObservationWriter
 {
 public:
 	/// Constructor
-	TCAMWriter(TAStreamFormatter& stream);
+	TCAMWriter(TAStreamFormatter& stream, bool hist);
 	/// Destructor
 	virtual ~TCAMWriter();
 
@@ -49,6 +49,8 @@ private:
 		void writeUVECResults(const std::vector<TUVEC>& measUVEC);
 		void writeUVDResults(const std::vector<TUVD>& measUVD);
 	//@}
+
+		bool writeHist;
 
 	
 };

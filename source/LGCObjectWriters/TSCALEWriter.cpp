@@ -7,7 +7,7 @@
 #include "RoundOfMeasurements.h"
 #include "TAdjustablePoint.h"
 
-TSCALEWriter::TSCALEWriter(TAStreamFormatter& stream): TObservationWriter(stream)
+TSCALEWriter::TSCALEWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), writeHist(hist)
 {}
 
 TSCALEWriter::~TSCALEWriter(){}
@@ -116,6 +116,9 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	(*stream)<<endl;
 
 	writeDistanceResultsSummary(echorom.getECHOObsSummary(), TABs3);
+
+	if (writeHist)
+		writeHisto(echorom.getECHOObsSummary(), "ECHO");
 }
 
 void TSCALEWriter::writeECHOSIMUResults(const  TECHOROM& echorom)
@@ -253,6 +256,9 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 	(*stream) << endl;
 
 	writeDistanceResultsSummary(ecverom.getECVEObsSummary(), TABs3);
+
+	if (writeHist)
+		writeHisto(ecverom.getECVEObsSummary(), "ECHO");
 }
 
 

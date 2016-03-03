@@ -6,7 +6,7 @@
 #include "TLGCObsSummary.h"
 #include "TAdjustablePoint.h"
 
-TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream) : TObservationWriter(stream), isAllfixed(false)
+TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
 {}
 
 TTSTNWriter::~TTSTNWriter(){}
@@ -31,37 +31,57 @@ void TTSTNWriter::writeTSTNResults(const TTSTN& tstn){
 
 		if(ItRoms.measANGL.size() > 0){
 			writeANGLResults(ItRoms.measANGL, tstn.instrumentPos, V0);
-			writeAngleResultsSummary(ItRoms.getANGLObsSummary(),TABs);
+			writeAngleResultsSummary(ItRoms.getANGLObsSummary(), TABs); 
+			if (writeHist)
+				writeHisto(ItRoms.getANGLObsSummary(), " ANGL");
 		}
 		if(ItRoms.measZEND.size() > 0){
 			writeZENDResults(ItRoms.measZEND, tstn.instrumentPos);
 			writeAngleResultsSummary(ItRoms.getZENDObsSummary(),TABs);
+			if (writeHist)
+				writeHisto(ItRoms.getZENDObsSummary(), " ZEND");
 		}
 		if(ItRoms.measDIST.size() > 0){
 			writeDISTResults(ItRoms.measDIST, tstn.instrument, tstn.instrumentPos);
 			writeDistanceResultsSummary(ItRoms.getDISTObsSummary(),TABs);
+			if (writeHist)
+				writeHisto(ItRoms.getDISTObsSummary(), " DIST");
 		}
 		if(ItRoms.measDHOR.size() > 0){
 			writeDHORResults(ItRoms.measDHOR);
 			writeDistanceResultsSummary(ItRoms.getDHORObsSummary(),TABs);
+			if (writeHist)
+				writeHisto(ItRoms.getDHORObsSummary(), " DHOR");
 		}
 		if(ItRoms.measECTH.size() > 0){
 			writeECTHResults(ItRoms.measECTH, tstn.instrumentPos);
 			writeDistanceResultsSummary(ItRoms.getECTHObsSummary(),TABs);
+			if (writeHist)
+				writeHisto(ItRoms.getECTHObsSummary(), " ECTH");
 		}
 		if (ItRoms.measECSP.size() > 0){
 			writeECSPResults(ItRoms.measECSP, tstn.instrumentPos);
 			writeDistanceResultsSummary(ItRoms.getECSPObsSummary(), TABs);
+			if (writeHist)
+				writeHisto(ItRoms.getECSPObsSummary(), " ECSP");
 		}
 		if(ItRoms.measPLR3D.size() > 0){
 			writePLRResults(ItRoms.measPLR3D, tstn.instrument, tstn.instrumentPos, V0);
 			TPOLARObsSummary summary = ItRoms.getPLR3DObsSummary();		
 			(*stream)<<TABs<<"ANGL"<<endl;
 			writeAngleResultsSummary(summary.anglObsSum, TABs);
+			if (writeHist)
+				writeHisto(summary.anglObsSum, " ANGL");
+
 			(*stream)<<TABs<<"ZEND"<<endl;
 			writeAngleResultsSummary(summary.zendObsSum,TABs);
+			if (writeHist)
+				writeHisto(summary.zendObsSum, " ZEND");
+
 			(*stream)<<TABs<<"DIST"<<endl;
 			writeDistanceResultsSummary(summary.distObsSum,TABs);
+			if (writeHist)
+				writeHisto(summary.distObsSum, " DIST");
 		}
 	}
 }

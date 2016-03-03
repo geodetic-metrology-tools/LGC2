@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include "TAMeas.h"
 
-TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream) :TObservationWriter(stream), isAllfixed(false)
+TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
 {}
 
 TLEVELWriter::~TLEVELWriter(){}
@@ -24,12 +24,16 @@ void TLEVELWriter::writeLEVELResults(const TLEVEL& fLevel)
 		(*stream)<<TABs;
 		(*stream)<<"DLEV"<<endl;
 		writeDistanceResultsSummary(fLevel.getDLEVObsSummary(), TABs);
+		if (writeHist)
+			writeHisto(fLevel.getDLEVObsSummary(), " DLEV");
 	}
 	//The DHOR result summary
 	if(fLevel.hasDHOR){
 		(*stream)<<TABs;
 		(*stream)<<"DHOR"<<endl;
 		writeDistanceResultsSummary(fLevel.getDHORObsSummary(), TABs);
+		if (writeHist)
+			writeHisto(fLevel.getDHORObsSummary(), " DHOR");
 	}
 }
 

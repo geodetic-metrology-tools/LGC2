@@ -174,6 +174,115 @@ void TObservationWriter::writeUnitlessResultsSummary(TLGCObsSummary summary, std
 	return;
 }
 
+void TObservationWriter::writeHisto(TLGCObsSummary summary, string description)
+{
+
+	// return if histograms are not to be written out, or if there are too
+	// few observations to generate a meaningful graph
+	if (summary.getNumberOfObs() >= 5)
+	{
+		TAStreamFormatter &stream = getStreamRef();
+
+		// write out the histogram title and scale factor
+		{
+			int k = summary.getHistoScale();
+			string ech = "";
+
+			if (description == " ANGL" ||
+				description == " ZEND" ||
+				description == " ORIE")/* Angle*/
+				ech = "(CC)";
+			else if (description == " XVEC" ||
+				description == " YVEC" )/*cam componant vector,  unitless*/
+				ech = "(unitless)";
+			else/*distance*/
+			{
+				switch (k)
+				{
+				case 1:
+					ech = "(MM)";
+					break;
+				case 10:
+					ech = "(1/10 MM)";
+					break;
+				case 100:
+					ech = "(1/100 MM)";
+					break;
+				}
+			}
+			stream << "REPARTITION DES " << description << getSeparator() << ech;
+			stream << endl << endl;
+		}
+
+		// output the histogram
+		{
+			//get the histogram data and set up begin and end iterators
+			list<int> result = summary.getHistogramData();
+			list<int>::iterator  iter, iterEnd;
+			iter = result.begin();
+			iterEnd = result.end();
+			// get the other necessary parameters for the histogram
+			TReal min = summary.getHistoLoLimit();
+			// interval is taken to be 1
+			int lowLim = 0;
+
+			// loop through the results writing out the data for each interval
+			while (iter != iterEnd)
+			{
+				stream << (min + lowLim) << endl;
+				stream << " + " << getSeparator();
+				int j = *iter;  // number of residuals in current interval, output counter
+				int J = j;  // number of residuals in current interval
+				int i = 0;  // counts multiples of ten residuals
+				int k = 0;  // identifies when too many residuals for the output line, limit 79
+
+				// output the histogram line for the current interval
+				while ((j != 0) && (k<79))
+				{
+					i++;
+					k++;
+					// if residual number is a multiple of ten output a 0 instead of a *
+					// otherwise output a star
+					if (i == 10)
+					{
+						stream << 'O';
+						i = 0;
+					}
+					else
+					{
+						stream << '*';
+					}
+
+					// if the number of residuals is greater than 79 write a summary
+					// string for those remaining
+					if (k == 79)
+					{
+						stream << "+... " << J;
+					}
+
+					j--;
+				}
+
+				// move on to the next interval
+				iter++;
+				stream << endl;
+				lowLim++;
+			}
+			if (lowLim != 0)
+			{
+				stream << (min + lowLim);
+				stream << endl << endl;
+			}
+
+			// write the number of pointsthat don't lie within the histogram limits
+			stream << "NOMBRE DE POINTS HORS-HISTOGRAMME" << getSeparator() << summary.getNumBeyondHistoLimits();
+			stream << endl << endl << endl;
+		}
+	}
+	return;
+
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC MEMBER FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

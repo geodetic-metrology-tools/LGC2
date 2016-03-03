@@ -221,7 +221,12 @@ class TKeyFMTP : public TAOptionKey {
 class TKeyHIST : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyHIST(TLGCData& project) : TAOptionKey(project, "HIST") {}
+		TKeyHIST(TLGCData& project, int nb_allowed_keywords = nb_allowed_hist, const char** keywords = allowed_HIST) : TAOptionKey(project, HIST)
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+
+		}
 
 		///Tokenize and initialize options for the output processing
 		virtual void parse(const std::vector<std::string>&, int);

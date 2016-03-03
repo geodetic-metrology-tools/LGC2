@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include "TAdjustablePoint.h"
 
-TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream): TObservationWriter(stream)
+TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), writeHist(hist)
 {}
 
 TOtherMeasurentWriter::~TOtherMeasurentWriter()
@@ -364,6 +364,9 @@ TAStreamFormatter*	stream = getStream();
 	
 	//for output residual mean and the standart deviation of the residuals
 	writeDistanceResultsSummary(summary, TABs);
+
+	if (writeHist)
+		writeHisto(summary, "DVER");
 }
 
 void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos)
@@ -419,6 +422,9 @@ void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, co
 
 	//for output residual mean and the standart deviation of the residuals
 	writeDistanceResultsSummary(summary, TABs);
+
+	if (writeHist)
+		writeHisto(summary, "ORIE");
 }
 
 void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
@@ -467,6 +473,9 @@ void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
 
 	//for output residual mean and the standart deviation of the residuals
 	writeDistanceResultsSummary(summary, TABs);
+	
+	if (writeHist)
+		writeHisto(summary, "RADI");
 }
 
 

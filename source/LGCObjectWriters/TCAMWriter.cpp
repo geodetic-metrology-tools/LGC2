@@ -5,7 +5,7 @@
 #include "Global.h"
 #include "TLGCObsSummary.h"
 
-TCAMWriter::TCAMWriter(TAStreamFormatter& stream):TObservationWriter(stream)
+TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool hist) :TObservationWriter(stream), writeHist(hist)
 {}
 
 TCAMWriter::~TCAMWriter(){}
@@ -22,18 +22,32 @@ void TCAMWriter::writeCAMResults(const TCAM& camera){
 		TUVDObsSummary summary = camera.getUVDObsSummary();
 		(*stream)<<TABs<<"XVECT"<<endl;
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);	
+		if (writeHist)
+			writeHisto(summary.xVectorCompObsSum, " XVEC");
+		
 		(*stream)<<TABs<<"YVECT"<<endl;
-		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 				
+		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 	
+		if (writeHist)
+			writeHisto(summary.yVectorCompObsSum, " YVEC");
+		
 		(*stream)<<TABs<<"DIST"<<endl;
 		writeDistanceResultsSummary(summary.distObsSum, TABs);
+		if (writeHist)
+			writeHisto(summary.distObsSum, " DIST");
+
 	}
 	if(camera.measUVEC.size() > 0){
 		writeUVECResults(camera.measUVEC);
 		TUVECObsSummary summary = camera.getUVECObsSummary();	
 		(*stream)<<TABs<<"XVECT"<<endl;
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs); 
+		
+		writeHisto(summary.xVectorCompObsSum, " XVEC");
+		
 		(*stream)<<TABs<<"YVECT"<<endl;
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 
+		
+		writeHisto(summary.yVectorCompObsSum, " YVEC");
 	}
 }
 
@@ -221,6 +235,7 @@ void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
+
 }
 
 void TCAMWriter::writeUVDResultsHeader(int nOObs)

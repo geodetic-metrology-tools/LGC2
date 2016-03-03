@@ -13,7 +13,7 @@ class  TTSTNWriter : public TObservationWriter
 {
 public:
 	/// Constructor
-	TTSTNWriter(TAStreamFormatter& stream);
+	TTSTNWriter(TAStreamFormatter& stream, bool hist);
 	///Destructor
 	virtual ~TTSTNWriter();
 
@@ -90,6 +90,7 @@ private:
 	//@}
 
 		bool isAllfixed;
+		bool writeHist;
 
 };
 

@@ -46,6 +46,10 @@ public:
 		void writeDistanceResultsSummary(TLGCObsSummary summary, std::string TABs);
 		/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
 		void writeUnitlessResultsSummary(TLGCObsSummary summary, std::string TABs);
+		
+		/// write a histogram for the group of measurements
+		void writeHisto(TLGCObsSummary summary, string description);
+
 protected:
 
 

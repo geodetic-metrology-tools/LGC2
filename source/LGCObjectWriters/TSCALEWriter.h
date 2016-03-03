@@ -14,7 +14,7 @@ class  TSCALEWriter : public TObservationWriter
 {
 public:
 	/// Constructor
-	TSCALEWriter(TAStreamFormatter& stream);
+	TSCALEWriter(TAStreamFormatter& stream, bool hist);
 	///Destructor
 	virtual ~TSCALEWriter();
 
@@ -51,6 +51,8 @@ public:
 private:
 	/// Write the result header for ECHO ECSP and ECVE
 	void writeSCALEResultsHeader();
+
+	bool writeHist;
 
 };
 

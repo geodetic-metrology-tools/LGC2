@@ -3,7 +3,7 @@
 #include "TAStreamFormatter.h"
 #include "TLGCObsSummary.h"
 
-TEDMWriter::TEDMWriter(TAStreamFormatter& stream) :TObservationWriter(stream), isAllfixed(false)
+TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
 {}
 
 TEDMWriter::~TEDMWriter(){}
@@ -42,6 +42,8 @@ void TEDMWriter::writeEDMSIMUResults(const TEDM& fEdm)
 	if(fEdm.measDSPT.size() > 0){	
 		//Write the measurements
 		writeDistanceResultsSummary(fEdm.getDSPTObsSummary(),TABs);
+		if (writeHist)
+			writeHisto(fEdm.getDSPTObsSummary(), "DSTP");
 	}
 
 }

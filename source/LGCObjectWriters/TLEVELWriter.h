@@ -19,7 +19,7 @@ class  TLEVELWriter : public TObservationWriter
 public:
 
 	/// Constructor
-	TLEVELWriter(TAStreamFormatter& stream);
+	TLEVELWriter(TAStreamFormatter& stream, bool hist);
 	/// Destructor
 	virtual ~TLEVELWriter();
 	
@@ -49,6 +49,7 @@ private:
 	void writeDLEVResultsHeader(int nOObs);
 
 	bool isAllfixed;
+	bool writeHist;
 };
 
 #endif //SU_LEVEL_WRITER

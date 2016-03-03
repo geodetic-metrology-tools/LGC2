@@ -26,7 +26,7 @@ class  TEDMWriter : public TObservationWriter
 {
 public:
 	/// Constructor
-	TEDMWriter(TAStreamFormatter& stream);
+	TEDMWriter(TAStreamFormatter& stream, bool hist);
 	///Destructor
 	virtual ~TEDMWriter();
 
@@ -53,6 +53,7 @@ private:
 	void writeDSPTResultsHeader(const int);
 
 	bool isAllfixed;
+	bool writeHist;
 };
 
 #endif //SU_TEDM_WRITER
