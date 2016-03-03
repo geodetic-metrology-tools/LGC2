@@ -44,12 +44,19 @@ private:
 	/*!default constructor*/
 	TSimFileWriter();
 
+	/// write the title, the referential and the options
 	void writeHeader();
+	/// write the instruments
 	void writeInstrument();
+	/// write the data for a node. Recursive function
 	void writeData(TDataTreeIterator frameIt);
 
+
+	/// write the frame definition
 	void writeFrameHeader(TDataTreeIterator frameIt);
+	/// write the points defined in the frame
 	void writePoint(TDataTreeIterator frameIt);
+	/// write the measurements made in the frame
 	void writeMeasurement(TDataTreeIterator frameIt);
 
 	void writeCAMMeas(TCAM* meas);

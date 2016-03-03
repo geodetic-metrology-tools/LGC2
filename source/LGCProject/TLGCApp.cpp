@@ -50,12 +50,15 @@ bool TLGCApp::exec()
 	
 	result = lgcCalculation.computeResults(fileWriter);
 
+	//Write input file with simulated observation (SOBS) if SIMU and SOBS are used
+	if (projectData->getConfig().sim.writeLGCFile && projectData->getConfig().sim.isActive())
+		writeSimFile(projectData.get());
 
-	// Save the final results if calculation was successful
+	// Save the final results if SIMU is not used. SIMU output is writen during the calculation after each iteration.
 	if(result && !projectData->getConfig().sim.isActive())
 		this->saveResults(projectData.get());
 
-	//write deform file here to have acces to lgcCalculation
+	// Write deform file here to have acces to lgcCalculation
 	if (result && projectData->getConfig().writeDefa.isActive())
 		writeDefaFile(projectData.get(), lgcCalculation.getResultMtr());
 
@@ -93,10 +96,6 @@ void TLGCApp::saveResults(TLGCData *dat)
 	//Write error file (FAUT)
 	if(dat->getConfig().faut.isActive()==true)
 		writeFautFile(dat);
-	
-	//Write input file with simulated observation (SOBS)
-	if (dat->getConfig().sim.writeLGCFile == true)
-		writeSimFile(dat);
 	
 }
 

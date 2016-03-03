@@ -233,12 +233,16 @@ void	TSimFileWriter::writeData(TDataTreeIterator itTree)
 	writePoint(itTree);
 	writeMeasurement(itTree);
 
+	//write the first child
 	if (itTree.node->first_child) {
 		writeData(itTree.node->first_child);
+
+		//write the other child
 		for (auto child = itTree.node->first_child; child != itTree.node->last_child; )
 			writeData(child = child->next_sibling);
 	}
 
+	//root not need to be closed
 	if (!itTree->get()->isROOTNode())
 		(*stream) << "*ENDFRAME" << endl;
 }
