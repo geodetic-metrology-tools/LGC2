@@ -192,7 +192,7 @@ public:
 		inline virtual bool isInitialized() const { return !isnotanumber(fProvisionalValue.getX().getMetresValue());}
 
 		/// Returns Boolean value telling if the standard deviations were assigned to the point.
-		inline bool hasStandDeviations() const{return !isnotanumber( fStandardDeviations[0]);} 
+		inline bool hasStandDeviations() const{ return !isnotanumber(fStandardDeviations[0]) || !isnotanumber(fStandardDeviations[1]) || !isnotanumber(fStandardDeviations[2]); }
 
 		/// Returns the height estimated value
 		TReal getHEstValue ()const;

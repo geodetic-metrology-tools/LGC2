@@ -4,6 +4,7 @@
 #include "TStreamFormatterFactory.h"
 #include "Version.h"
 #include "TSimulationOutputFileWriter.h"
+#include "TSimFileWriter.h"
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
@@ -93,9 +94,9 @@ void TLGCApp::saveResults(TLGCData *dat)
 	if(dat->getConfig().faut.isActive()==true)
 		writeFautFile(dat);
 	
-	//MORE LOGIC TO COME
-
-	//Output options keywords implementation of addition output files to come here!!!
+	//Write input file with simulated observation (SOBS)
+	if (dat->getConfig().sim.writeLGCFile == true)
+		writeSimFile(dat);
 	
 }
 
@@ -176,6 +177,20 @@ void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
 		defaFileWriter.writeFile("Error has occured, see the LGC log file.");
 }
 
+void TLGCApp::writeSimFile(TLGCData* dat)
+{
+	// change stream name
+	std::size_t found = fOutputFileLoc.find_last_of(".");
+	fOutputFileLoc = fOutputFileLoc.substr(0, found);
+
+	fStream->resetStreamName(fOutputFileLoc + ".sim");
+	TSimFileWriter simFileWriter(fStream.get(), dat);
+
+	if (!dat->getFileLogger().hasErrors())
+		simFileWriter.writeFile();
+	else
+		simFileWriter.writeFile("Error has occured, see the LGC log file.");
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////General information stuff

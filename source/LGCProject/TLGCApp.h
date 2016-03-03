@@ -57,6 +57,9 @@ class TLGCApp {
 		/// Write files for Deform
 		void writeDefaFile(TLGCData *dat, TLSResultsMatrices &fResMtrx);
 
+		/// Write simulated files 
+		void writeSimFile(TLGCData *dat);
+
 		/// Shared pointer to global stream
 		std::shared_ptr<TAStreamFormatter> fStream;
 };

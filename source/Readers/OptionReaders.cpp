@@ -255,10 +255,8 @@ void TKeyPLOT::parse(const std::vector<std::string>& tokens, int) {
 void TKeySOBS::parse(const std::vector<std::string>& tokens, int) {
 	auto numtokens = tokens.size();
 	
-	if (numtokens == 2 ) {
+	if (numtokens == 2 )
 		fconfig.sim.writeLGCFile = true;
-		fconfig.sim.newInfileHasMeasurements = true;
-	}
 	else {
 		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");
 	}

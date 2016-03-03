@@ -45,16 +45,13 @@ struct TLGCConfig
 			int  numSims;
 			/// write an output file that can be used as an imput file again
 			bool writeLGCFile;
-			/// The resulting input file has (calculated) measurement values
-			bool newInfileHasMeasurements;
 
 			/// The default constructor disables simulations. 
 			//Disable simulation means that ignoreMeasurements should be, by default, set to FALSE not TRUE!
 			TSimulation() : 
 				TBinaryOption(),
 				numSims(0),
-				writeLGCFile(false),
-				newInfileHasMeasurements(false) {}
+				writeLGCFile(false) {}
 			/*! 
 				\brief This constructor sets the default values for enabled simulations.
 
@@ -64,8 +61,7 @@ struct TLGCConfig
 			TSimulation(int n) :
 				TBinaryOption(true),
 				numSims(n),
-				writeLGCFile(false),
-				newInfileHasMeasurements(false) {}
+				writeLGCFile(false) {}
 	};
 	
 	/*!

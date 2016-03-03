@@ -821,7 +821,12 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
 	//On first line nothing appears so far: to be discussed
-	if (firstline) {}  
+	if (firstline) {
+		if (tokens.size() > 2)
+			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+		else
+			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
+	}
 	else {
 
 		if (tokens.size() < 3 && !fSIMUActive)
@@ -837,8 +842,14 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
 
 		auto& dver(proj.getCurrentNode().measurements.fDVER.back());
 
-      dver.setObservedStDev(TLength(opts.getParamRmm2m("OBSE", proj.getCurrentNode().measurements.fDVER.back().getObservedStDev())));
-      dver.setDistanceCorrection(TLength(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection())));
+
+		if (opts.has("OBSE"))
+			dver.setObservedStDev(TLength(opts.getParamRmm2m("OBSE", proj.getCurrentNode().measurements.fDVER.back().getObservedStDev())));
+		else
+			dver.setObservedStDev(sigma);
+
+      
+		dver.setDistanceCorrection(TLength(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection())));
 
 		dver.line = line;
 		//If last token starts with a comment character, store it as a end of line comment

@@ -333,9 +333,7 @@ class TKeyDVER : public TAMeasurementKey {
 		*/
 		virtual void parse(const std::vector<std::string>& tokens, int line); 
 
-		void storeEOLComment(){
-
-		}
+		TLength sigma;
 };
 
 /// Keyword to process DLEV measurement

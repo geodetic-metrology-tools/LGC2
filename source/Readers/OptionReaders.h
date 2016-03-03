@@ -316,7 +316,11 @@ class TKeyPLOT : public TAOptionKey {
 class TKeySOBS : public TAOptionKey {
 	public:
 		///Constructor
-		TKeySOBS(TLGCData& project) : TAOptionKey(project, "SOBS") {}
+		TKeySOBS(TLGCData& project, int nb_allowed_keywords = nb_allowed_sobs, const char** keywords = allowed_SOBS) : TAOptionKey(project, SOBS)
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+		}
 
 		///Tokenize and initialize options for the output processing
 		virtual void parse(const std::vector<std::string>& tokens, int);

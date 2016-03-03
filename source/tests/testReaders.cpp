@@ -184,8 +184,7 @@ namespace tut
 			//
 			TKeySOBS f3(proj);
 			f3.parse(TReader::tokenizeLGCfileString("*SOBS"), -1);
-			ensure("New LGC file must be on with measurement values disabled", 
-				cfg.sim.writeLGCFile && cfg.sim.newInfileHasMeasurements);
+			ensure("New LGC file must be on with measurement values disabled", cfg.sim.writeLGCFile);
 			
 		} catch (exception& e) {
 			ensure("Unexpected execption while testing reader: " + string(e.what()) + "\n", 0);
