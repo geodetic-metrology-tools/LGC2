@@ -406,7 +406,7 @@ void TLSInputMatricesFiller::addECTHContributions(const TTSTN::TROM& rom, const 
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
 
 		if (!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
+			throw std::runtime_error("Error when filling input design matrices of ECTH measurement occurred.");
 	}
 }
 
@@ -460,7 +460,7 @@ void TLSInputMatricesFiller::addECSPContributions(const TTSTN::TROM& rom, const 
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
 
 		if (!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
+			throw std::runtime_error("Error when filling input design matrices of ECSP measurement occurred.");
 	}
 }
 

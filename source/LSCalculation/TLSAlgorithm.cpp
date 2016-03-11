@@ -162,10 +162,7 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices);
 
 		//calcRelErrorParams( &extractor);
-		//ellips erros
+		
 	}
-	else
-	{//pas de probleme de convergence dans un calcul sans inconnues
-		//calcDS.setConvergenceResult(lastIteration);
-	}
+	
 }
