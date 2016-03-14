@@ -10,6 +10,7 @@
 #include "TLGCStatistic.h"
 #include "TSpatialStatus.h"
 #include "TTreeEntry.h"
+#include "TLSCalcRelativeError.h"
 
 /* Counter of points based on the type */
 struct TPointGlobal{
@@ -133,6 +134,10 @@ public:
 		/// Returns the constant reference on statistics of the project
 		TLGCStatistic const& getStatistics() const {return stat;}
 
+		/// Returns the file logger used to write on an output file
+		LSRelErrorsContainer& getRelError() { return fRelError; }
+		/// Returns the constant referrence on file logger used to write on an output file
+		LSRelErrorsContainer const& getRelError() const { return fRelError; }
 
 		/// Returns the file logger used to write on an output file
 		TFileLogger& getFileLogger() {return fileLogger;}
@@ -233,6 +238,9 @@ private:
 
 	/// Statistic output
 	TLGCStatistic stat;
+
+	/// List of relative errors
+	LSRelErrorsContainer fRelError;
 	
 	// contains references: not assignable
 	TLGCData& operator=(const TLGCData&);

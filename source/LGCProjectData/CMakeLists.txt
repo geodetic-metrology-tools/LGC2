@@ -19,6 +19,7 @@ set(LGCProjectData_HEADERS
 	TInstrumentData.h
 	TDataAnalyzer.h
 	TFileLogger.h
+	TLSCalcRelativeError.h
 )
 
 # Create a variable containing all .cpp files:
@@ -27,6 +28,7 @@ set(LGCProjectData_SOURCES
 	TLGCData.cpp
 	TDataAnalyzer.cpp
 	TFileLogger.cpp
+	TLSCalcRelativeError.cpp
 )
 
 # Create a static library from sources:

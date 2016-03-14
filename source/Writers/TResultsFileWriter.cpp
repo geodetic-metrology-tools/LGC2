@@ -103,6 +103,12 @@ void    TResultsFileWriter::writeFile()
  
     //Write all the information specific to a frame (points and frames)
     this->writeFramesResults();
+
+	if (!getDataSet()->getConfig().erelPairs.empty())
+	{
+		this->writeRelErrorHeader();
+		this->writeRelErrorResults(*getDataSet());
+	}
 }
  
  
@@ -585,4 +591,85 @@ void    TResultsFileWriter::writeMeasDataSummary(const string description, const
     stream<<endl<<endl<<endl;
  
     return;
+}
+
+void	TResultsFileWriter::writeRelErrorHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = max(getObsResWidth(), 9);
+
+	// write header
+	(*stream) << endl << endl << endl;
+	(*stream) << "ERREURS RELATIVES " << endl;
+	(*stream) << "*******************" << endl << endl;
+
+	//////////////////////////////////////////////////////////////
+	//line1
+	// point 1 & 2
+	(*stream).writeStringLeft(nameWidth, "POINT 1");
+	(*stream).writeStringLeft(nameWidth, "POINT 2");
+	// Sigmas
+	(*stream).writeString(obsResWidth, "SIGMA L");
+	(*stream).writeString(obsResWidth, "SIGMA G");
+	(*stream).writeString(obsResWidth, "SIGMA R");
+	(*stream).writeString(obsResWidth, "SIGMA Z");
+	(*stream).writeString(obsResWidth, "SIGMA V");
+	(*stream) << endl;
+
+	//////////////////////////////////////////////////////////////
+	//line2
+	// units
+	(*stream).writeString(nameWidth, " ");
+	(*stream).writeString(nameWidth, " ");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream) << endl << endl;
+
+	return;
+}
+
+void	TResultsFileWriter::writeRelErrorResults(const TLGCData& data)
+{
+
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	string				separator = getSeparator();
+
+	for (auto& ptPairIt : data.getRelError())
+	{
+		// write points name
+
+		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint1Name());
+		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint2Name());
+		// sets the values format:
+		stream->setLengthUnits(TLength::kMillimetres);
+		stream->setAngleUnits(TAngle::k100MicroGons);
+		stream->setPrecisionFormat(getLengthPrecision());
+		stream->setWidthFormat(max(getObsResWidth(), 9));
+
+		//sigma L
+		(*stream) << right << ptPairIt.getSigmaL() << separator;
+
+		//sigma G			
+		stream->setPrecisionFormat(getAnglePrecision());
+		(*stream) << right << ptPairIt.getSigmaG() << separator;
+
+		//sigma R
+		stream->setPrecisionFormat(getLengthPrecision());
+		(*stream) << right << ptPairIt.getSigmaR() << separator;
+
+		//sigma Z
+		(*stream) << right << ptPairIt.getSigmaZ() << separator;
+
+		//sigma V
+		stream->setPrecisionFormat(getAnglePrecision());
+		(*stream) << right << ptPairIt.getSigmaV() << separator << endl;
+		//(*stream).setDataSpacing();
+	}
+
+	return;
 }

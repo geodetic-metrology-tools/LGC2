@@ -68,9 +68,11 @@ protected:
 			///  Write the observation results
 			void	writeFramesResults();
 
+			///  Write the relative errors header
+			void writeRelErrorHeader();
+			/// Write the relative errors results
+			void writeRelErrorResults(const TLGCData&);
 
-
-///////////////// MINE PROTECTED FUNCTIONS ////////////////////////////////
 			/// Write general information about the adjustable objects
 			void writeAdjustableObjGeneralInfo(const std::string adjObjName, const int numAdj, const int numUnkn);
 		//@}

@@ -185,7 +185,12 @@ class TKeyAPRI : public TAOptionKey {
 class TKeyEREL : public TAOptionKey {
 	public:
 		///Constructor
-		TKeyEREL(TLGCData& project) : TAOptionKey(project, "EREL") {}
+		TKeyEREL(TLGCData& project, int nb_allowed_keywords = nb_allowed_erel, const char** keywords = allowed_EREL) : TAOptionKey(project, EREL)
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+
+		}
 
 		///Tokenize and initialize options for the output processing
 		virtual void parse(const std::vector<std::string>& tokens, int);

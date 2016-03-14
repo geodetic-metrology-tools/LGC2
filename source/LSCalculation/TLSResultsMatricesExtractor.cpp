@@ -2,6 +2,7 @@
 #include "TLGCData.h"
 #include "TLSResultsMatrices.h"
 #include "TLibrCnstrGenerator.h"
+#include "TLSCalcRelativeError.h"
 
 
 
@@ -659,4 +660,141 @@ void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResults
 			trafo.setXZRotationCovariance(rm.getUnkCovarMtrxElmt(xi,zi)); //Store covariance in METRES
 		}
 	}
+}
+
+void TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices& rm)
+{
+	try{
+		TReal fS0 = 0.0;
+		if (rm.getSigmaZero2() != NO_VALf)
+			fS0 = sqrtq(rm.getSigmaZero2());
+
+		auto& iterb = fDataSet->getConfig().erelPairs.begin();
+
+		while (iterb != fDataSet->getConfig().erelPairs.end()) {
+
+			auto& pt1 = fDataSet->getPoints().getObject(iterb->first);
+			auto& pt2 = fDataSet->getPoints().getObject(iterb->second);
+
+			// if points are not defined -> warning...
+			if (pt1.getFrameTreePosition() == pt2.getFrameTreePosition()){
+
+				TLSCalcRelativeError	re(pt1, pt2);
+
+				// matrix indices
+				MatrixIndex	ind[6];
+				for (int k = 0; k < 6; k++)
+					ind[k] = -1;
+
+				if (!pt1.isCoordinateFixed(0))
+					ind[0] = pt1.getCoordinateUnknIndex(0);
+				if (!pt1.isCoordinateFixed(1))
+					ind[1] = pt1.getCoordinateUnknIndex(1);
+				if (!pt1.isCoordinateFixed(2))
+					ind[2] = pt1.getCoordinateUnknIndex(2);
+				if (!pt2.isCoordinateFixed(0))
+					ind[3] = pt2.getCoordinateUnknIndex(0);
+				if (!pt2.isCoordinateFixed(1))
+					ind[4] = pt2.getCoordinateUnknIndex(1);
+				if (!pt2.isCoordinateFixed(2))
+					ind[5] = pt2.getCoordinateUnknIndex(2);
+
+				// sous-matrice cofacteur
+				TMatrix Q12(6, 6);
+				int i, j;
+
+				for (i = 0; i<6; i++) {
+					for (j = 0; j<6; j++) {
+						if ((ind[i] > -1) && (ind[j] > -1))
+							Q12(i, j) = (*rm.getUnkCovarMtrx()).coeff(ind[i], ind[j]) / powq(fS0, 2);
+						else
+							Q12(i, j) = LITERAL(0.0);
+					}
+				}
+
+				// computation of horizontal & spatial distances, and vertical angle & orientation
+				TReal ds, dh, G, V, x1, y1, z1, x2, y2, z2;
+				x1 = pt1.getEstimatedValue().getX().getMetresValue();
+				y1 = pt1.getEstimatedValue().getY().getMetresValue();
+				z1 = pt1.getEstimatedValue().getZ().getMetresValue();
+				x2 = pt2.getEstimatedValue().getX().getMetresValue();
+				y2 = pt2.getEstimatedValue().getY().getMetresValue();
+				z2 = pt2.getEstimatedValue().getZ().getMetresValue();
+				// length unit: meter
+				ds = sqrtq(powq(x2 - x1, 2) + powq(y2 - y1, 2) + powq(z2 - z1, 2));
+				dh = sqrtq(powq(x2 - x1, 2) + powq(y2 - y1, 2));
+				// angle unit: radian
+				G = atan2q(x2 - x1, y2 - y1);
+				V = acosq((z2 - z1) / ds);
+
+				// computation of sigmaL
+				TReal sl(LITERAL(0.0));
+				TReal co[6]; // error propagation
+				co[0] = -(x2 - x1) / ds;
+				co[1] = -(y2 - y1) / ds;
+				co[2] = -(z2 - z1) / ds;
+				co[3] = -co[0];
+				co[4] = -co[1];
+				co[5] = -co[2];
+
+				for (i = 0; i < 6; i++) {
+					for (j = 0; j < 6; j++)
+						sl += Q12(i, j) * co[i] * co[j];
+				}
+
+				TLength sigmaL(sqrtq(sl));
+				re.setSigmaL(sigmaL);
+
+				// computation of sigmaG 
+				TReal sg(LITERAL(0.0)), sr(LITERAL(0.0));
+				TAngle Gis(G); // normalisation of G
+				co[0] = -(Gis.cosine()) / dh;
+				co[1] = (Gis.sine()) / dh;
+				co[2] = LITERAL(0.0);
+				co[3] = -co[0];
+				co[4] = -co[1];
+				co[5] = -co[2];
+
+				for (i = 0; i < 6; i++) {
+					for (j = 0; j < 6; j++)
+						sg += Q12(i, j) * co[i] * co[j];
+				}
+
+				TAngle sigmaG(sqrtq(sg));
+				re.setSigmaG(sigmaG);
+
+				// computation of sigmaR
+				sr = dh * sqrtq(sg);
+				TLength sigmaR(sr);
+				re.setSigmaR(sigmaR);
+
+				// Computation of sigmaZ
+				TReal sz(LITERAL(0.0));
+				sz = Q12(2, 2) + Q12(5, 5) - Q12(2, 5) * 2;
+				TLength sigmaZ(sqrtq(sz));
+				re.setSigmaZ(sigmaZ);
+
+				// Computation of sigmaV
+				TReal sv(LITERAL(0.0));
+				sv = (sqrtq(sz)*sinq(V)) / ds;
+				TAngle sigmaV(sv);
+				re.setSigmaV(sigmaV);
+
+				fDataSet->getRelError().push_back(re);
+
+			}
+			else
+			{
+				string warning(iterb->first + " et " + iterb->second + " ne sont pas definit dans le meme frame.");
+				throw std::logic_error(warning);
+			}
+
+			iterb++;
+		}
+	}
+	catch (std::exception const & excp) {
+		fDataSet->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
+	}
+
+	return;
 }

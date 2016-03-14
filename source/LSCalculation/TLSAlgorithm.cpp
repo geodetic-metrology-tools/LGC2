@@ -160,9 +160,10 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 
 		//compute statistics (Z, W, T, G, NABLA and DELTY)
 		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices);
-
-		//calcRelErrorParams( &extractor);
 		
 	}
+
+	if ((data->fUEOIndices.UIndex != 0) && !data->getConfig().erelPairs.empty())
+		extractor->extractRelError(*resultMatrices);
 	
 }
