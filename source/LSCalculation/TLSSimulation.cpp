@@ -146,6 +146,7 @@ void TLSSimulation::simulateValues()
 				getDISTSimValues(*itTSTN, itROM->measDIST); //Fill contribution to a DIST measurement
 				getDHORSimValues(*itTSTN, itROM->measDHOR); //Fill contribution to a DHOR measurement
 				getECTHSimValues(*itTSTN, *itROM, itROM->measECTH); //Fill contribution to a ECTH measurement
+				getECSPSimValues(*itTSTN, *itROM, itROM->measECSP); //Fill contribution to a ECSP measurement
 			}
 		}
 
