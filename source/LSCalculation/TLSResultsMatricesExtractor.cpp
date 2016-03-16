@@ -220,8 +220,12 @@ void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, 
 		throw std::runtime_error("PLR3D observation (zend), problem during extraction residuals: observation index exceeds matrix dimensions");
 
 	MatrixIndex DISTidx = plr3DMeas.getFirstObservationIndex() + 2;
-	if ( DISTidx < rm.getResidualsVctr()->size() ) 
-      plr3DMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(DISTidx)));
+	if (DISTidx < rm.getResidualsVctr()->size())
+	{
+		plr3DMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(DISTidx)));
+		if (plr3DMeas.getDistance() + plr3DMeas.getDistanceResidual() < 0)
+			throw std::runtime_error("PLR3D observation (dist), problem with the residuals: the distance is negative.\n Try to add ACST 200.0 after the V0 declaration and relaunch the calculation. \n *V0 ACST 200.0");
+	}
 	else
 		throw std::runtime_error("PLR3D observation (d), problem during extraction residuals: observation index exceeds matrix dimensions");
 }
