@@ -249,18 +249,33 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 
 //write allfixed parameter
 		if (isAllfixed){
-			if (!isnotanumber(ItPLR3D.fAllFixedV0))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0.getGonsValue());
+			if (!isnotanumber(ItPLR3D.fAllFixedV0[0]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0[0].getGonsValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
-			if (!isnotanumber(ItPLR3D.fAllFixedRx))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx.getGonsValue());
+			if (!isnotanumber(ItPLR3D.fAllFixedV0[1]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0[1].getGonsValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
-			if (!isnotanumber(ItPLR3D.fAllFixedRy))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy.getGonsValue());
+
+			if (!isnotanumber(ItPLR3D.fAllFixedRx[0]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx[0].getGonsValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItPLR3D.fAllFixedRx[1]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx[1].getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+
+			if (!isnotanumber(ItPLR3D.fAllFixedRy[0]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy[0].getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItPLR3D.fAllFixedRy[1]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy[1].getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+
 			if (!isnotanumber(ItPLR3D.fAllFixedHi))
 				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedHi);
 			else
@@ -630,10 +645,15 @@ void TTSTNWriter::writeECSPResults(const std::vector<TECSP>& measECSP, const TAd
 
 		//write allfixed parameter
 		if (isAllfixed)
-			if (!isnotanumber(ItECSP.fAllFixedV0))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0.getGonsValue());
+			if (!isnotanumber(ItECSP.fAllFixedV0[0]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
+		
+		if (!isnotanumber(ItECSP.fAllFixedV0[1]))
+			(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
+		else
+			(*stream).writeString(obsWidth, "FIXED");
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -690,9 +710,12 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		if (isAllfixed)
 		{
-			(*stream).writeString(obsWidth, "V0"); //allfixed parameter: V0
-			(*stream).writeString(obsWidth, "Rx"); //allfixed parameter: rx
-			(*stream).writeString(obsWidth, "Ry"); //allfixed parameter: ry
+			(*stream).writeString(obsWidth, "V0 1"); //allfixed parameter: V0
+			(*stream).writeString(obsWidth, "V0 2"); //allfixed parameter: V02
+			(*stream).writeString(obsWidth, "Rx 1"); //allfixed parameter: rx
+			(*stream).writeString(obsWidth, "Rx 2"); //allfixed parameter: rx2
+			(*stream).writeString(obsWidth, "Ry 1"); //allfixed parameter: ry
+			(*stream).writeString(obsWidth, "Ry 2"); //allfixed parameter: ry2
 			(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
 			(*stream).writeString(obsWidth, "Cs"); //allfixed parameter: cs		
 		}
@@ -730,9 +753,12 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		if (isAllfixed)
 		{
-			(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: V0
-			(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: rx
-			(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: ry
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed rot parameter
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed rot parameter
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed rot parameter
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed rot parameter
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed rot parameter
+			(*stream).writeString(obsWidth, "(GONS)"); //allfixed rot parameter
 			(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
 			(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: cs		
 		}
@@ -998,7 +1024,10 @@ void TTSTNWriter::writeECSPResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
 	(*stream).writeString(obsWidth, "ZEND"); //zenithal distance
 	if (isAllfixed)
-		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
+	{
+		(*stream).writeString(obsWidth, "V0 1st solution"); //allfixed parameter: v0
+		(*stream).writeString(obsWidth, "2nd solution"); //allfixed parameter: v0
+	}
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -1013,7 +1042,11 @@ void TTSTNWriter::writeECSPResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "(GON)"); //azimut
 	(*stream).writeString(obsWidth, "(GON)"); //zenithal distance
 	if (isAllfixed)
+	{
 		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
+		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
+	}
+		
 	(*stream) << endl;
 
 }
@@ -1109,7 +1142,7 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 	int					anglePrecision = getAnglePrecision();
 	int					angleResPrecision = max(getAngleResidualPrecision()-4, 0);
 	int					lengthPrecision = max(getLengthPrecision()-3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream)<<TABs;
 	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
@@ -1120,7 +1153,7 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 		(*stream).writeDouble(obsWidth, lengthPrecision, tstn.instrument.instrHeight); 
 	}
 	else{
-		(*stream).writeDouble(obsResWidth, lengthPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue()); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue()); 
 	}
 
 

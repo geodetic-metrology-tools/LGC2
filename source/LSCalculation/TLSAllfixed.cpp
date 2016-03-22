@@ -49,7 +49,9 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 						for (auto& itPLR3D : itROM->measPLR3D)
 						{
 							//V0
-							//itPLR3D.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedPLR(*itTSTN, *itROM, itPLR3D);
+							TAngle* sol = fAllfixedGenerator.getV0AllfixedPLR(*itTSTN, *itROM, itPLR3D);
+							itPLR3D.fAllFixedV0[0] = *sol;
+							itPLR3D.fAllFixedV0[1] = *(sol + 1);
 
 							//Cs
 							if (!itPLR3D.target.distCorrectionAdjustable->isFixed())
@@ -58,20 +60,28 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 							//Rx & Ry if ROT3D used
 							if (itTSTN->rot3D)
 							{
-								//itPLR3D.fAllFixedRx = fAllfixedGenerator.getRxAllfixedPLR(*itTSTN, *itROM, itPLR3D);
-								//itPLR3D.fAllFixedRy = fAllfixedGenerator.getRyAllfixedPLR(*itTSTN, *itROM, itPLR3D);
-							}
+								TAngle* solrx = fAllfixedGenerator.getRxAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+								itPLR3D.fAllFixedRx[0] = *solrx;
+								itPLR3D.fAllFixedRx[1] = *(solrx + 1);
 
+								TAngle* solry = fAllfixedGenerator.getRyAllfixedPLR(*itTSTN, *itROM, itPLR3D);
+								itPLR3D.fAllFixedRy[0] = *solry;
+								itPLR3D.fAllFixedRy[1] = *(solry + 1);
+							}
 							//Hi
-							if (!itTSTN->instrumentHeightAdjustable->isFixed())
+							else if (!itTSTN->instrumentHeightAdjustable->isFixed())
 								itPLR3D.fAllFixedHi = fAllfixedGenerator.getHiAllfixedPLR(*itTSTN, *itROM, itPLR3D);
 						}
 
 						for (auto& itECTH : itROM->measECTH)
 							itECTH.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedECTH(*itTSTN, itECTH);
 
-						//for (auto& itECSP : itROM->measECSP)
-						//	itECSP.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedECSP(*itTSTN, itECSP);
+						for (auto& itECSP : itROM->measECSP)
+						{
+							TAngle* sol = fAllfixedGenerator.getV0AllfixedECSP(*itTSTN, *itROM, itECSP);
+							itECSP.fAllFixedV0[0] = *sol;
+							itECSP.fAllFixedV0[1] = *(sol+1);
+						}
 
 					}
 				}

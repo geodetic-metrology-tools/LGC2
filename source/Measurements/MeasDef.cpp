@@ -5,9 +5,16 @@
 ///////////////////////////////////////////////////////////
 TPLR3D::TPLR3D(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
 			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>(pos, tgt),
-			fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf),
-			fAllFixedRx(TAngle(NO_VALf)), fAllFixedRy(TAngle(NO_VALf)), fAllFixedV0(TAngle(NO_VALf))
-			{}
+			fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
+			{ 
+				fAllFixedRx[0] = (TAngle(NO_VALf));
+				fAllFixedRy[0] = (TAngle(NO_VALf));
+				fAllFixedV0[0] = TAngle(NO_VALf);
+				fAllFixedRx[1] = (TAngle(NO_VALf));
+				fAllFixedRy[1] = (TAngle(NO_VALf));
+				fAllFixedV0[1] = TAngle(NO_VALf);
+
+}
 
 TLINE::TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt): 
 TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
@@ -29,12 +36,18 @@ TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE sca
 
 TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle) :
     TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr),
-	obsHorAngle(horAngle), obsVertAngle(vertAngle), fAllFixedV0(TAngle(NO_VALf))
-    {}
+	obsHorAngle(horAngle), obsVertAngle(vertAngle)
+{
+	fAllFixedV0[0] = (TAngle(NO_VALf));
+	fAllFixedV0[1] = (TAngle(NO_VALf));
+}
 TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle, TLength v) :
     TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v),
-	obsHorAngle(horAngle), obsVertAngle(vertAngle), fAllFixedV0(TAngle(NO_VALf))
-    {}
+	obsHorAngle(horAngle), obsVertAngle(vertAngle)
+{
+	fAllFixedV0[0] = (TAngle(NO_VALf));
+	fAllFixedV0[1] = (TAngle(NO_VALf));
+}
 
 ///////////////////////////////////////////////////////////
 //////Levelling measurements

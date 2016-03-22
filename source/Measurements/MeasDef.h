@@ -45,11 +45,11 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		/// Allfixed parameter: distance correction - Cs
 		TLength fAllFixedCs;
 		/// Allfixed parameter: V0
-		TAngle fAllFixedV0;
+		TAngle fAllFixedV0[2];
 		/// Allfixed parameter: Rx
-		TAngle fAllFixedRx;
+		TAngle fAllFixedRx[2];
 		/// Allfixed parameter: Ry
-		TAngle fAllFixedRy;
+		TAngle fAllFixedRy[2];
 };
 		
 /*! 
@@ -158,7 +158,7 @@ public:
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
 	/// Allfixed parameter: V0
-	TAngle fAllFixedV0;
+	TAngle fAllFixedV0[2];
 };
 
 //--------------------------  EDM measurement--------------------------------------------

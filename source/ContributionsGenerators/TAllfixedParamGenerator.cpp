@@ -49,24 +49,58 @@ TAngle TAllfixedParamGenerator::getV0AllfixedANGL(const TTSTN& station, const TT
 }
 
 
-//TAngle TAllfixedParamGenerator::getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp)
-/*{TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
-const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
-tgLor2RootTrafo.transform(targetPos);
+TAngle* TAllfixedParamGenerator::getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp)
+{
+	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+	
+	TPositionVector stationPos = ecsp.targetPos->getEstimatedValue(); //position of the TSTN
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+	
+	
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
+		fPointTransfo.transformPointsToMLASystem(ecsp.targetPos->getName(), stationPos, targetPos);
+		fPointTransfo.setMLA(true);
+	}
+	else
+	fPointTransfo.setMLA(false);
 
-TPositionVector stationPos = ecsp.targetPos->getEstimatedValue(); //position of the TSTN
-const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
-stLor2RootTrafo.transform(stationPos);
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
 
 
-// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
-	fPointTransfo.transformPointsToMLASystem(ecsp.targetPos->getName(), stationPos, targetPos);
-	fPointTransfo.setMLA(true);
+	TAngle theta = ecsp.obsHorAngle;
+	TAngle phi = ecsp.obsVertAngle;
+	TAngle Vo = rom.v0->getEstimatedValue();
+	//line direction at the TSTN position
+	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
+
+
+	//Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	TReal d, pScal;
+	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg));  // distance St-Tg
+	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg);  //produit scalaire
+
+	TReal lambda = sqrt(pow2(d) - pow2(ecsp.getDistance() + ecsp.target.distCorrectionValue));
+
+	TReal k = -1.0 * (lambda - (zSt - zTg)*ecsp.obsVertAngle.cosine());
+
+	initSolution();
+	solveTrigoEquation((ySt - yTg)*ecsp.obsVertAngle.sine(), (xSt - xTg)*ecsp.obsVertAngle.sine(), k);
+	
+	// solveTrigoEquation gives a solution for theta+V0, we search V0 only.
+	fSolutionTrigo[0] -= ecsp.obsHorAngle;
+	fSolutionTrigo[1] -= ecsp.obsHorAngle;
+
+	return fSolutionTrigo;
 }
-else
-fPointTransfo.setMLA(false);
-}*/
 
 TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth)
 {
@@ -102,8 +136,9 @@ TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TE
 
 	return (bearing+alpha-theta);
 }
-/*
-TAngle TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+
+
+TAngle* TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
 	TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -133,8 +168,8 @@ TAngle TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTS
 	TReal V0 = NO_VALf;
 
 	TReal A, B, C;
-	A = -dX;
-	B = -dY;
+	A = -dY; //cos
+	B = -dX; //sin
 	C = (plr3D.getDistance() + plr3D.target.distCorrectionValue)*cosTheta*sinPhi;
 
 	initSolution();
@@ -143,12 +178,10 @@ TAngle TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTS
 	fSolutionTrigo[0] += rom.acst;
 	fSolutionTrigo[1] += rom.acst;
 
-	//V0 = fSolutionTrigo[0]
-
-	return TAngle(V0, TAngle::EUnits::kRadians);
+	return fSolutionTrigo;
 }
 
-TAngle TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+TAngle* TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
 	TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -173,22 +206,18 @@ TAngle TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTS
 	TReal dY = targetPos.getY().getMetresValue() - stationPos.getY().getMetresValue();
 	TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getProvisionalValue();
 
-	TReal Rx = NO_VALf;
-
 	TReal A, B, C;
-	A = -dY;
-	B = -dZ;
+	A = -dZ;
+	B = -dY;
 	C = (plr3D.getDistance() + plr3D.target.distCorrectionValue)*cosPhi;
 
 	initSolution();
 	solveTrigoEquation(A, B, C);
 
-	//Rx = fSolutionTrigo[0]
-
-	return TAngle(Rx, TAngle::EUnits::kRadians);
+	return fSolutionTrigo;
 }
 
-TAngle TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+TAngle* TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
 	TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -213,22 +242,18 @@ TAngle TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTS
 	TReal dX = targetPos.getX().getMetresValue() - stationPos.getX().getMetresValue();
 	TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getProvisionalValue();
 
-	TReal Ry = NO_VALf;
-
 	TReal A, B, C;
-	A = -dX;
-	B = -dZ;
+	A = -dZ;
+	B = -dX;
 	C = (plr3D.getDistance() + plr3D.target.distCorrectionValue)*cosPhi;
 
 	initSolution();
 	solveTrigoEquation(A, B, C);
 
-	//Ry = fSolutionTrigo[0]
-
-	return TAngle(Ry, TAngle::EUnits::kRadians);
+	return fSolutionTrigo;
 }
 
-*/
+
 
 TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelInstr, const TDLEV& dlev)
 {
@@ -583,12 +608,12 @@ TLength TAllfixedParamGenerator::getCsAllfixedPLR(const TTSTN& station, const TT
 
 
 
-// solve second degree equation
+// solve second degree equation a*x^2 + b*x + c =0
 void TAllfixedParamGenerator::solve2ndDegree(TReal a, TReal b, TReal c)
 {
-	TReal delta = b*b - 4 * a*c;
+	TReal delta = b*b - 4 *a*c;
 
-	if (delta == 0.0)
+	if (/*delta == 0.0*/ delta < 1e-5  && delta > -1e-5)
 		fSolution2ndD[0] = -b / (2 * a);
 	else if (delta > 0.0)
 	{
@@ -600,13 +625,13 @@ void TAllfixedParamGenerator::solve2ndDegree(TReal a, TReal b, TReal c)
 
 }
 
-// solve trigo equation
+// solve trigo equation A*cosX + B*sinX + C =0
 void TAllfixedParamGenerator::solveTrigoEquation(TReal A, TReal B, TReal C)
 {
 	TReal a, b, c;
-	a = C - B;
-	b = 2 * a;
-	C = C + B;
+	a = C - A;
+	b = 2 * B;
+	c = C + A;
 	solve2ndDegree(a,b,c);
 
 	if (fSolution2ndD[0]!= NO_VALf)

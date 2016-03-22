@@ -15,6 +15,7 @@ struct TEDM;
 \brief Calculates the implicite unknown parameters by observation to analyse the network. (ALLFIXED option)
 
 */
+
 class TAllfixedParamGenerator{
 
 public:
@@ -28,19 +29,19 @@ public:
 	TAngle getV0AllfixedANGL(const TTSTN& station, const TTSTN::TROM& rom, const TANGL& angl);
 
 	/// Returns the V0 for an ECSP measurement
-	//TAngle getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
+	TAngle* getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
 
 	/// Returns the V0 for an ECTH measurement
 	TAngle getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth);
 
 	/// Returns the V0 for a PLR measurement
-	//TAngle getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+	TAngle* getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
 	/// Returns RX for a PLR measurement
-	//TAngle getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+	TAngle* getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
 	/// Returns Ry for a PLR measurement
-	//TAngle getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+	TAngle* getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
 	/// Returns the collimation angle for a DLEV measurement
 	TAngle getCollimationAllfixedDLEV(const TLEVEL& levelST, const TDLEV& dlev);
@@ -72,7 +73,7 @@ private:
 	//Pointer to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;
 
-	//solution of the equation A*sinX + B*cosX + C =0
+	//solution of the equation A*cosX + B*sinX + C =0
 	TAngle fSolutionTrigo[2];
 
 	//solution of the equation a*x^2 + b*x + c =0
