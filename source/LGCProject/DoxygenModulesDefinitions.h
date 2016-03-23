@@ -178,7 +178,9 @@
 	\brief Classes responsible for the LS process in LGC2. 
 	- TLSInputMatricesFiller is responsible for filling contribution into the input LS matrices.
 	- TLSResultMatricesExtractor is responsible for extracting values from the LS result matrices and updating respective adjustable objects or measurements.
-	- TLSSolutionCalculator responsible for the LS iteration process and finding the solution.
+	- TLSAlgorithm is responsible for the LS iteration process and finding the solution.
+	- TLAllfixed calculated additionnal parameter after the LS process.
+	- TLSSimulation allows to run N LS calculation with simulated data.
 */
 
 
