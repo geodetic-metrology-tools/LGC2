@@ -9,6 +9,7 @@ class TLGCStatistic;
 
 /*!
 	\ingroup LGCObjectWriters
+	\brief Write SCALE  definition and its observations to an LGC output file.
 @{*/
 class  TSCALEWriter : public TObservationWriter 
 {
@@ -18,13 +19,8 @@ public:
 	///Destructor
 	virtual ~TSCALEWriter();
 
-
-	
-
 	/*!@name Headers */
 	//@{
-		
-
 		/// Write reliability header for ECHO 
 		void	writeECHOReliabilityHeader();
 		/// Write reliability header for ECVE 

@@ -1,10 +1,3 @@
-////////////////////////////////////////////////////////////////////
-// TEDMWriter
-/*!
-Write the TSTN instrument for an LGC output file
-
-*/
-////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef SU_TEDM_WRITER
 #define SU_TEDM_WRITER
@@ -21,6 +14,8 @@ Write the TSTN instrument for an LGC output file
 
 /*!
 	\ingroup LGCObjectWriters
+	\brief Write the TSTN instrument for an LGC output file
+
 @{*/
 class  TEDMWriter : public TObservationWriter
 {

@@ -13,6 +13,7 @@
 
 /*!
 	\ingroup LGCObjectWriters
+	\brief Write LEVEL  definition and its observations to an LGC output file.
 @{*/
 class  TLEVELWriter : public TObservationWriter 
 {

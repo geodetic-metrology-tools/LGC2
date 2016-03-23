@@ -8,7 +8,7 @@
 
 
 /*!
-\ingroup LibrCnstrGenerators
+\ingroup ContributionsGenerators
 
 \brief Calculates the LIBR constraints for the least squares design matrices processed by LGC2.
 
@@ -27,11 +27,12 @@ public:
 	//! Constructor taking a reference to a TPointTransformer and a TLGCData
 	TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, const TLGCData& fDataSet);
 
-	//!Calculates the contributions of a offset (LIBR) constraints and puts them in the matrices
-	/*!\param ptIter an iterator pointing to the point which has a constraint to be processed*/
+	/*! Calculates the contributions of a offset (LIBR) constraints and puts them in the matrices
+	\param ptIter an iterator pointing to the point which has a constraint to be processed
+	*/
 	bool	processFreeCnstr(TLSInputMatrices& matrices);
 
-	//!Initialise translation, rotation and scale constraints using point's status
+	//! Initialise translation, rotation and scale constraints using point's status
 	void initCnstrIdentifier(const TLGCData&);
 
 	//! Set the coordinates for the centre of gravity of the point data
@@ -68,10 +69,10 @@ private:
 	//@}
 
 
-	//!Reference to a TPointTransformationFunctions
+	//! Reference to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;
 
-	//!Reference to a TLGCData
+	//! Reference to a TLGCData
 	const TLGCData& data;
 
 	struct isFreeCnstr		fCnstrVector; /*!<constraint vector identifier*/

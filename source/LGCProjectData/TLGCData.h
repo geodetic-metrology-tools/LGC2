@@ -12,7 +12,7 @@
 #include "TTreeEntry.h"
 #include "TLSCalcRelativeError.h"
 
-/* Counter of points based on the type */
+/*! Counter of points based on the type */
 struct TPointGlobal{
 	int	fNumCala;
 	int	fNumVx;
@@ -24,7 +24,7 @@ struct TPointGlobal{
 	int	fNumVxyz;
 };
 
-/* Counter of measurements based on the type */
+/*! Counter of measurements based on the type */
 struct TMeasurementsGlobal{
 	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI};
 
@@ -60,7 +60,7 @@ struct TMeasurementsGlobal{
 */ 
 class TLGCData{
 public:
-	/**
+	/*!
 		The default constructor provides a tree which consists only of the root node 
 		and it is in a valid state, i.e. the current node pointer. 	
 	*/

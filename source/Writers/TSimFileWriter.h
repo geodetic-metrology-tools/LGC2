@@ -11,11 +11,10 @@ class	TLGCProject;
 using namespace std;
 
 
-/*!\ingroup LGC
-
-@{*/
-
-//Class definition
+/*!
+\ingroup Writers
+\brief Write an additional output file which can be used as an input file for lgc2 (SOBS).
+*/
 class  TSimFileWriter : public TAFileWriter  
 {
 public:

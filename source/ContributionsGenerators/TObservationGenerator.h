@@ -17,7 +17,7 @@ struct TCAM;
 
 
 /*!
-\ingroup SimulatedObservationsGenerators
+\ingroup ContributionsGenerators
 
 \brief Simulate the observations for the least squares design matrices for all of the observations processed by LGC2.
 

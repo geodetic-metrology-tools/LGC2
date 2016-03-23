@@ -67,18 +67,23 @@ void TTSTNWriter::writeTSTNResults(const TTSTN& tstn){
 		}
 		if(ItRoms.measPLR3D.size() > 0){
 			writePLRResults(ItRoms.measPLR3D, tstn.instrument, tstn.instrumentPos, V0);
+			
 			TPOLARObsSummary summary = ItRoms.getPLR3DObsSummary();		
+			
 			(*stream)<<TABs<<"ANGL"<<endl;
+			writePLRAnglResults(ItRoms.measPLR3D, tstn.instrument, tstn.instrumentPos, V0);
 			writeAngleResultsSummary(summary.anglObsSum, TABs);
 			if (writeHist)
 				writeHisto(summary.anglObsSum, " ANGL");
 
 			(*stream)<<TABs<<"ZEND"<<endl;
+			writePLRZendResults(ItRoms.measPLR3D, tstn.instrument, tstn.instrumentPos, V0);
 			writeAngleResultsSummary(summary.zendObsSum,TABs);
 			if (writeHist)
 				writeHisto(summary.zendObsSum, " ZEND");
 
 			(*stream)<<TABs<<"DIST"<<endl;
+			writePLRDistResults(ItRoms.measPLR3D, tstn.instrument, tstn.instrumentPos, V0);
 			writeDistanceResultsSummary(summary.distObsSum,TABs);
 			if (writeHist)
 				writeHisto(summary.distObsSum, " DIST");
@@ -158,7 +163,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		//write TARGET POSITION
 		(*stream).writeStringLeft(nameWidth, ItPLR3D.targetPos->getName());
 
-
+/*
 //ANGL
 		//write the observed ANGL
 		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kANGL).getGonsValue());
@@ -224,7 +229,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist));
-
+*/
 //OTHER INFO
 		
 
@@ -288,6 +293,150 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 		(*stream)<<endl;
 		}
 	(*stream)<<endl;
+}
+
+void TTSTNWriter::writePLRAnglResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writePLRAnglResultsHeader((int)measPLR3D.size()); // write the title line for the observations
+	for (auto const& ItPLR3D : measPLR3D)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItPLR3D.targetPos->getName());
+
+
+		//ANGL
+		//write the observed ANGL
+		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kANGL).getGonsValue());
+
+		//write the sigma ANGL
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaAngl.getSignedCCValue());
+
+		//write the estimated ANGL
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL) + V).getGonsValue());
+
+		//write the residual ANGL
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
+
+		//write the offset		
+		TReal dist = sqrt(pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
+			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
+			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*M2MM);
+
+		//write the residual/sigma ANGL
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaAngl.getRadiansValue()));
+
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writePLRZendResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writePLRZendResultsHeader((int)measPLR3D.size()); // write the title line for the observations
+	for (auto const& ItPLR3D : measPLR3D)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItPLR3D.targetPos->getName());
+
+		//ZEND
+		//write the observed ZEND
+		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kZEND).getGonsValue());
+
+		//write the sigma ZEND
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaZenD.getSignedCCValue());
+
+		//write the estimated ZEND
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kZEND) + ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND)).getGonsValue());
+
+		//write the residual ZEND
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
+
+		//write the offset	
+		TReal dist = sqrt(pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
+			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
+			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*M2MM);
+
+		//write the residual/sigma ZEND
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / TAngle(ItPLR3D.target.sigmaAngl).getRadiansValue()));
+
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writePLRDistResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writePLRDistResultsHeader((int)measPLR3D.size()); // write the title line for the observations
+	for (auto const& ItPLR3D : measPLR3D)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItPLR3D.targetPos->getName());
+
+		//DIST 
+		//write the observed distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance()); //Write value in meters [m]
+
+		//write the sigma, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance() / 1000)*M2MM);
+
+		//write the estimated DIST
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual());
+
+		//write the residual, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual().getMMetresValue());
+
+		//write the sensibility		
+		TReal dz = ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
+		if (ItPLR3D.target.distCorrectionUnknown)
+		{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue()));
+		}
+		else{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()));
+		}
+
+		//write the residual/sigma
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist));
+
+		
+		(*stream) << endl;
+	}
+	(*stream) << endl;
 }
 
 void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const TAngle& V)
@@ -680,7 +829,7 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		//second line
 		(*stream)<<TABs;
 		(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
-		
+		/*
 		(*stream).writeString(obsWidth,	"OBSANGL"); //mesured ANGL
 		(*stream).writeString(obsResWidth,	"SANGL"); //sigma ANGL
 		(*stream).writeString(obsWidth,	"CALCANGL"); //estimated ANGL 
@@ -702,7 +851,7 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth,	"RESDIST"); //residual
 		(*stream).writeString(obsResWidth,	"SENSI"); //sensibilite
 		(*stream).writeString(obsResWidth,	"RES"); //residual/sigma
-	
+	*/
 		(*stream).writeString(obsWidth,	"CONST"); //provisional dist corr
 		(*stream).writeString(obsResWidth,	"SCONST");  //sigma distance corr
 		(*stream).writeString(nameWidth, "TRGT"); //Name of the target used
@@ -724,7 +873,7 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		(*stream)<<TABs;
 		(*stream).writeStringLeft(nameWidth,""); //POSITION
-
+		/*
 		(*stream).writeString(obsWidth,	"(GON)"); //OBSERVED VALUE
 		(*stream).writeString(obsResWidth,"(CC)"); //sigma observed value
 		(*stream).writeString(obsWidth,	"(GON)"); //estimated DIST
@@ -745,7 +894,7 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth,	"(MM)"); //residual
 		(*stream).writeString(obsResWidth,	"(MM/CM)"); //sensibilite
 		(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
-
+		*/
 		(*stream).writeString(obsWidth,	"(M)"); //distance corr
 		(*stream).writeString(obsResWidth,	"(MM)"); //sigma distance corr
 		(*stream).writeString(nameWidth,""); //TARGET ID
@@ -763,6 +912,99 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 			(*stream).writeString(obsWidth, "(MM)"); //allfixed parameter: cs		
 		}
 		(*stream)<<endl;
+}
+
+void TTSTNWriter::writePLRAnglResultsHeader(int nOObs)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	////////////////////////////////////////////////////////////
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
+	(*stream).writeString(obsWidth, "OBSANGL"); //mesured ANGL
+	(*stream).writeString(obsResWidth, "SANGL"); //sigma ANGL
+	(*stream).writeString(obsWidth, "CALCANGL"); //estimated ANGL 
+	(*stream).writeString(obsResWidth, "RESANGL"); //residual
+	(*stream).writeString(obsResWidth, "ECART"); //ecart
+	(*stream).writeString(obsResWidth, "RES"); //residual/sigma
+	(*stream) << endl;
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //POSITION
+	(*stream).writeString(obsWidth, "(GON)"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "(CC)"); //sigma observed value
+	(*stream).writeString(obsWidth, "(GON)"); //estimated DIST
+	(*stream).writeString(obsResWidth, "(CC)"); //residual
+	(*stream).writeString(obsResWidth, "(MM)"); //ecart
+	(*stream).writeString(obsResWidth, "/SIG"); //residual/sigma
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writePLRZendResultsHeader(int nOObs)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	////////////////////////////////////////////////////////////
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
+	(*stream).writeString(obsWidth, "OBSZEND"); //mesured ZEND
+	(*stream).writeString(obsResWidth, "SZEND"); //sigma ZEND
+	(*stream).writeString(obsWidth, "CALCZEND"); //estimated ZEND 
+	(*stream).writeString(obsResWidth, "RESZEND"); //residual ZZEND
+	(*stream).writeString(obsResWidth, "ECART"); //ecart
+	(*stream).writeString(obsResWidth, "RES"); //residual/sigma
+	(*stream) << endl;
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //POSITION
+	(*stream).writeString(obsWidth, "(GON)"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "(CC)"); //sigma observed value
+	(*stream).writeString(obsWidth, "(GON)"); //estimated DIST
+	(*stream).writeString(obsResWidth, "(CC)"); //residual
+	(*stream).writeString(obsResWidth, "(MM)"); //ecart
+	(*stream).writeString(obsResWidth, "/SIG"); //residual/sigma
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writePLRDistResultsHeader(int nOObs)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	////////////////////////////////////////////////////////////
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
+	(*stream).writeString(obsWidth, "OBSDIST"); //mesured DIST
+	(*stream).writeString(obsResWidth, "SDIST"); //sigma DIST
+	(*stream).writeString(obsWidth, "CALCDIST"); //estimated DIST 
+	(*stream).writeString(obsResWidth, "RESDIST"); //residual
+	(*stream).writeString(obsResWidth, "SENSI"); //sensibilite
+	(*stream).writeString(obsResWidth, "RES"); //residual/sigma
+	(*stream) << endl;
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //POSITION
+	(*stream).writeString(obsWidth, "(M)"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma observed value
+	(*stream).writeString(obsWidth, "(M)"); //estimated DIST
+	(*stream).writeString(obsResWidth, "(MM)"); //residual
+	(*stream).writeString(obsResWidth, "(MM/CM)"); //sensibilite
+	(*stream).writeString(obsResWidth, "/SIG"); //residual/sigma
+	(*stream) << endl;
 }
 
 void TTSTNWriter::writeANGLResultsHeader(int nOObs)

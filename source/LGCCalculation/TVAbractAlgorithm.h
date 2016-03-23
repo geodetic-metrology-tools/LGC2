@@ -4,7 +4,7 @@
 class TLGCData;
 
 /*!
-\ingroup AbractAlgorithm
+\ingroup LGCCalculation
 \brief Abstract class to run the chosen algorithm process
 */
 class TVAbractAlgorithm{

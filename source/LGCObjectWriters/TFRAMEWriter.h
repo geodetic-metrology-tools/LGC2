@@ -1,9 +1,4 @@
-////////////////////////////////////////////////////////////////////
-// TFRAMEWriter
-/*!
-	Write the FRAME and its definition to an LGC output file, eventually also whole content of the frame (points and observations).
-*/
-////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef SU_FRAME_WRITER
 #define SU_FRAME_WRITER
 ////////////////////////////////////////////////////////////////
@@ -15,6 +10,8 @@
 
 /*!
 	\ingroup LGCObjectWriters
+	\brief Write the FRAME and its definition to an LGC output file, eventually also whole content of the frame (points and observations).
+	
 @{*/
 class  TFRAMEWriter : public TALGCObjectWriter 
 {

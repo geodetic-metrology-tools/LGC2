@@ -25,11 +25,12 @@ using namespace std;
 // typedefs
 ////////////////////////////////////////////////////////////////
 
-/*!\ingroup LGC
+/*!
+\ingroup Writers
+\brief Write a output file for DEFORM.
+*/
 
-@{*/
 
-//Class definition
 class  TDefaFileWriter : public TAFileWriter  
 {
 public:
@@ -37,14 +38,15 @@ public:
 	/*!@name Constructors and Destructors*/
 		//@{
 			//!constructor
-	TDefaFileWriter(TAStreamFormatter* stream, const TLGCData* project);
+			TDefaFileWriter(TAStreamFormatter* stream, const TLGCData* project);
 
 			//!Destructor
 			virtual  ~TDefaFileWriter();
 		//@}
 
-
+			/// write errors
 			void	writeFile(const string error);
+			/// write the input file for DEFORM
 			void	writeFile(TLGCData &project, TLSResultsMatrices& rm);
 
 private:

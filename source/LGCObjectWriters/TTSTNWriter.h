@@ -73,6 +73,9 @@ private:
 		void writeZENDResultsHeader(int nOObs);
 		void writeDISTResultsHeader(int nOObs);
 		void writePLRResultsHeader(int nOObs);
+		void writePLRAnglResultsHeader(int nOObs);
+		void writePLRZendResultsHeader(int nOObs);
+		void writePLRDistResultsHeader(int nOObs);
 		void writeDHORResultsHeader(int nOObs);
 		void writeECTHResultsHeader(int nOObs);
 		void writeECSPResultsHeader(int nOObs);
@@ -83,7 +86,10 @@ private:
 		void writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const TAngle& V);
 		void writeZENDResults(const std::vector<TZEND>& measZEND, const TAdjustablePoint* instrPos);
 		void writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos);
-		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const TAngle& V);
+		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V);
+		void writePLRAnglResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos, const TAngle& V);
+		void writePLRZendResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V);
+		void writePLRDistResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V);
 		void writeDHORResults(const std::vector<TLINE>& measDHOR);
 		void writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos);
 		void writeECSPResults(const std::vector<TECSP>& measECSP, const TAdjustablePoint* instrPos);

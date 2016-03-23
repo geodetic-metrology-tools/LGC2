@@ -7,7 +7,11 @@
 #endif // _MSC_VER >= 1000
 
 #include "TAdjustablePoint.h"
+/*!
+\ingroup LGCProjectData
 
+Class for writing the relative error between a list of points.
+*/
 
 class TLSCalcRelativeError {
 

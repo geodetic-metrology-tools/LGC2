@@ -4,7 +4,7 @@
 #include "TAdjustableHelmertTransformation.h"
 #include "TFreeVector.h"
 
-//Need to redifine a structure for the square residual because the angle are resize
+/// Need to redifine a structure for the square residual because the angle are resize
 struct TransformParametersSquare{
 	TReal omega; //!< Rotation about the X axis
 	TReal phi;  //!< Rotation about the Y axis
@@ -39,7 +39,7 @@ public:
 		TSimFrameSummary(const TAdjustableHelmertTransformation& point);
 
 		/// copy constructor
-		//TSimFrameSummary(const TSimFrameSummary&);
+		TSimFrameSummary(const TSimFrameSummary&);
 
 		/// destructor
 		virtual  ~TSimFrameSummary();

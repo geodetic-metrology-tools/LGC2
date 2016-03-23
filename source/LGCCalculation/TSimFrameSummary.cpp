@@ -36,12 +36,14 @@ TSimFrameSummary::TSimFrameSummary(const TAdjustableHelmertTransformation& frame
 ///////////////////
 // copy constructor
 ///////////////////
-/*
+///////////////////
+// copy constructor
+///////////////////
 TSimFrameSummary::TSimFrameSummary(const TSimFrameSummary& source)
 {
 	*this = source;
 }
-*/
+
 
 /////////////
 // destructor

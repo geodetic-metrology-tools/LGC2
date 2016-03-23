@@ -160,25 +160,26 @@ private:
 	// Contains references: not assignable
 	TContributionsGenerator& operator=(const TContributionsGenerator&);
 
-	//Pointer to a TPointTransformationFunctions
+	/// Pointer to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;
 
 	/*!@name Supporting functions used in contribution calculation methods */
 	//@{
-		// Returns the point contributions of a given transformation between local object references (lorTrafo), with a given coefficients
-		//The pattern is (e.g. for a X coordinate): a*pointXDerivative[0] + b*pointXDerivative[1] + c*pointXDerivative[2]
+		/*! Returns the point contributions of a given transformation between local object references (lorTrafo), with a given coefficients.
+		The pattern is (e.g. for a X coordinate): a*pointXDerivative[0] + b*pointXDerivative[1] + c*pointXDerivative[2]
+		*/
 		TFreeVector getPointContributions(const TLOR2LOR& lorTrafo, TReal a, TReal b, TReal c);
 
-		// Adds contribution of a LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
+		/// Adds contribution of a LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
 		void addTransformationsContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal a, TReal b, TReal c, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
 
-		// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
+		/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 		void addTransformationsContributions3D(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 
-		// Adds Point contributions for the PLR3D measurement
+		/// Adds Point contributions for the PLR3D measurement
 		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, Point3DContrib& pointContrib, bool station);
 	
-		//Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
+		///Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
 		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 	//@}
 

@@ -11,7 +11,7 @@
 
 
 /*!
-\ingroup PointTransformationFunctions
+\ingroup ContributionsGenerators
 
 \brief Functions to manage point transformations
 */
@@ -32,7 +32,7 @@ public:
 	\brief Updates the transformations between nodes, stored in the 'fLORTrafo' vector.
 
 	The transformation parametres stored in the tree can change during the adjustment, therefore update of the transformations is REQUIRED.
-	This method therefore HAVS TO BE CALLED whenever the TREE of local frames CHANGED, typically in the beginning of Filling Input Matrices procedure.
+	This method therefore HAVE TO BE CALLED whenever the TREE of local frames CHANGED, typically in the beginning of Filling Input Matrices procedure.
 	*/
 	void updateTransformations();
 
@@ -82,7 +82,7 @@ public:
 	TLA2MLATransformation& getLA2MLA(){ return fla2mla; }
 	//@}
 
-	///Pointer to a tree of LORs
+	/// Pointer to a tree of LORs
 	const TDataTree* getTree() { return fTree;}
 
 	/// Returns a reference on the reference frame
@@ -101,19 +101,19 @@ private:
 	/// Returns an identity transformation
 	TLOR2LOR getIdentityTransformation();
 
-	///Pointer to a tree of LORs
+	/// Pointer to a tree of LORs
 	const TDataTree* fTree;
 
-	///The reference frame used (Stored in the TLGCData configuration)
+	/// The reference frame used (Stored in the TLGCData configuration)
 	const TRefSystemFactory::ERefFrame fRefFrame;
 
-	///Geoid model used, determined by the fRefFrame
+	/// Geoid model used, determined by the fRefFrame
 	TRefSystemFactory::EGeoid fGeoidModel;
 
 	/// Vector containing all transformations between LORs of the tree, which were used
 	std::list<TLOR2LOR> fLORTrafo;
 
-	///Transformation between reference frames
+	/// Transformation between reference frames
 	TCCS2CGRFTransformation fccs2cgrf;
 	TCGRF2LGTransformation fcgrf2ilg;
 	TILG2ILATransformation  filg2ila;

@@ -10,7 +10,7 @@ struct TEDM;
 
 
 /*!
-\ingroup AllfixedParamGenerator
+\ingroup ContributionsGenerators
 
 \brief Calculates the implicite unknown parameters by observation to analyse the network. (ALLFIXED option)
 
@@ -70,22 +70,22 @@ public:
 	//@}
 
 private:
-	//Pointer to a TPointTransformationFunctions
+	/// Pointer to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;
 
-	//solution of the equation A*cosX + B*sinX + C =0
+	/// Solution of the equation A*cosX + B*sinX + C =0
 	TAngle fSolutionTrigo[2];
 
-	//solution of the equation a*x^2 + b*x + c =0
+	/// Solution of the equation 
 	TReal fSolution2ndD[2];
-
-	// solve second degree equation
+	
+	/// Solve second degree equation a*x^2 + b*x + c =0
 	void solve2ndDegree(TReal a, TReal b, TReal c);
 
-	// solve trigo equation
+	/// Solve trigo equation A*cosX + B*sinX + C =0
 	void solveTrigoEquation(TReal A, TReal B, TReal C);
 
-	// reinitialize fSolutionTrigo & fSolution2ndD
+	/// Reinitialize fSolutionTrigo & fSolution2ndD
 	void initSolution();
 
 };

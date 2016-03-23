@@ -11,6 +11,7 @@
 
 /*!
 	\ingroup LGCObjectWriters
+	\brief Write DVER, ORIE, RADI and PDOR observations to an LGC output file.
 @{*/
 class  TOtherMeasurentWriter : public TObservationWriter
 {
@@ -20,37 +21,50 @@ public:
 	/// Destructor
 	virtual ~TOtherMeasurentWriter();
 
-	/// Write reliability header 
+	/// Write DVER reliability header  
 	void	writeDVERReliabilityHeader();
+	/// Write ORIE reliability header
 	void	writeORIEReliabilityHeader();
+	/// Write RADI reliability header
 	void	writeRADIReliabilityHeader();
 
-	/// Write reliability data
+	/// Write DVER reliability data
 	void	writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
+	/// Write ORIE reliability data
 	void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const TAdjustablePoint& instPos);
+	/// Write RADI reliability data
 	void	writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat);
 
 	/*!@name Headers */
 	//@{
-		/// Write results header
+		/// Write DVER results header
 		void writeDVERResultsHeader();
+		/// Write ORIE results header
 		void writeORIEResultsHeader();
+		/// Write RADI results header
 		void writeRADIResultsHeader();
+		/// Write PDOR results header
 		void writePDORResultsHeader();
 	//@}
 
 	/*!@name Results */
 	//@{
-		/// Write results data
+		/// Write PDOR results data
 		void writePDORResults(const TPdorObs& fPDOR);
+		/// Write DVER results data
 		void writeDVERResults(const std::vector<TDVER>& fDVER);
+		/// Write ORIE results data
 		void writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos);
+		/// Write RADI results data
 		void writeRADIResults(const std::vector<TRADI>& fRADI);
 
+		/// Write DVER simulations
 		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);
+		/// Write ORIE simulations
 		void writeORIESIMUResults(const TORIEROM& fOrieRom);
 	//@}
 
+		/// flag to write the histogram
 		bool writeHist;
 
 };

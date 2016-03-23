@@ -7,8 +7,7 @@
 
 
 /*!
-\ingroup AllfixedCalculation
-
+\ingroup LSAlgorithm
 \brief Class responsible for running the calculation in the allfixed mode.
 */
 class TLSAllfixed : public TLSAlgorithm{
