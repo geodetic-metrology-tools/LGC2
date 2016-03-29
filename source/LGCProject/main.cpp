@@ -78,7 +78,7 @@ int main( int argc,  char *argv[]){
 #else
 					inputFilename = changePathDir(inputFilename);
 
-					if (inputFilename.substr(0, 3).compare("C:\\") == 0 || inputFilename.substr(0, 1).compare("\\") == 0)
+					if (inputFilename.substr(0, 3).compare("C:\\") == 0 || inputFilename.substr(0, 3).compare("c:\\") == 0 || inputFilename.substr(0, 1).compare("\\") == 0)
 						inputFilePath = inputFilename;
 					else
 						inputFilePath = getCurrentDirectory() + slash + inputFilename;
