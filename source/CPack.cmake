@@ -47,7 +47,7 @@ set(CPACK_PACKAGE_HKLM_REGISTRY_KEY "${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VE
 
 set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
 	SetOverwrite on
-	ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\"/install /quiet /norestart'
+	ExecWait '\\\"$INSTDIR\\\\vcredist_x64.exe\\\"/install /quiet /norestart'
 ")
 
 SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS ${CPACK_NSIS_EXTRA_INSTALL_COMMANDS} "
