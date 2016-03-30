@@ -31,5 +31,5 @@ set(ContributionsGenerators_SOURCES
 # Create a static library from sources:
 add_library(ContributionsGenerators STATIC ${ContributionsGenerators_HEADERS} ${ContributionsGenerators_SOURCES})
 # Link static libraries to the current one
-target_link_libraries(ContributionsGenerators MathematicalConcepts)
+target_link_libraries(ContributionsGenerators LocalTransformations MathematicalConcepts)
 

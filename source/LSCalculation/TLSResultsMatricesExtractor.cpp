@@ -673,7 +673,7 @@ void TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices& rm)
 		if (rm.getSigmaZero2() != NO_VALf)
 			fS0 = sqrtq(rm.getSigmaZero2());
 
-		auto& iterb = fDataSet->getConfig().erelPairs.begin();
+		auto iterb = fDataSet->getConfig().erelPairs.begin();
 
 		while (iterb != fDataSet->getConfig().erelPairs.end()) {
 

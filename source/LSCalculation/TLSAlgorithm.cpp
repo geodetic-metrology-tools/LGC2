@@ -5,7 +5,6 @@
 #include "TLSWeightedUnkMtdComputer.h"
 #include "TLSCnstMtdComputer.h"
 
-
 TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	: fNumberOfIterations(0)
 	, fS0APosterioriVariances(false)
@@ -23,7 +22,7 @@ bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
 	//std::unique_ptr<TLSResultsMatrices> resultMatrices(new TLSResultsMatrices(data.fUEOIndices));
 
-	extractor = std::make_unique<TLSResultsMatricesExtractor>(&data);
+	extractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
 	
 	// identify the constraints necessary, create them
 	if (data.getConfig().libre.isActive())

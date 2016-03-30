@@ -27,4 +27,4 @@ set(LSCalculation_SOURCES
 add_library(LSCalculation STATIC ${LSCalculation_HEADERS} ${LSCalculation_SOURCES})
 
 # Link static libraries to the current one
-target_link_libraries(LSCalculation CalcElements)
+target_link_libraries(LSCalculation CalcElements ContributionsGenerators LGCCalculation)

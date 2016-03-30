@@ -340,10 +340,10 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 			<< endl;
 	 
 	//Write point list
-	for (auto& point = data->getPoints().begin(); point != data->getPoints().end(); point++)
+	for (auto& point : data->getPoints())
 	{
-		TSpatialStatus::ESpatialStatus status = point->getSpatialStatus();
-		TDataTreeIterator posInTree = point->getFrameTreePosition();
+		TSpatialStatus::ESpatialStatus status = point.getSpatialStatus();
+		TDataTreeIterator posInTree = point.getFrameTreePosition();
 
 		if (posInTree == frameIt)
 		{
@@ -355,7 +355,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					firstCALA = false;
 					(*stream) << "*CALA" << endl;
 				}
-				writeXYZorH(*point);
+				writeXYZorH(point);
 				(*stream) << endl;
 				break;
 
@@ -365,24 +365,24 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					firstPOIN = false;
 					(*stream) << "*POIN" << endl;
 				}
-				writeXYZorH(*point);
+				writeXYZorH(point);
 
 				if (!frameIt->get()->isROOTNode())
 					(*stream) << "SX"<<sep
-					<< point->getStandDev(0) << sep
+					<< point.getStandDev(0) << sep
 					<< "SY" << sep
-					<< point->getStandDev(1) << sep
+					<< point.getStandDev(1) << sep
 					<< "SZ" << sep
-					<< point->getStandDev(2) << endl;
+					<< point.getStandDev(2) << endl;
 				else
 				{
-					if (point->hasStandDeviations())
+					if (point.hasStandDeviations())
 						(*stream) << "SX" << sep
-						<< point->getStandDev(0) << sep
+						<< point.getStandDev(0) << sep
 						<< "SY" << sep
-						<< point->getStandDev(1) << sep
+						<< point.getStandDev(1) << sep
 						<< "SZ" << sep
-						<< point->getStandDev(2) << endl;
+						<< point.getStandDev(2) << endl;
 					else
 						(*stream) << endl;
 				}
@@ -394,7 +394,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					firstVXY = false;
 					(*stream) << "*VXY" << endl;
 				}
-				writeXYZorH(*point);
+				writeXYZorH(point);
 				(*stream)<< endl;
 				break;
 
@@ -404,7 +404,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					firstVXZ = false;
 					(*stream) << "*VXZ" << endl;
 				}
-				writeXYZorH(*point);
+				writeXYZorH(point);
 				(*stream) << endl;
 				break;
 
@@ -415,7 +415,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					firstVYZ = false;
 					(*stream) << "*VYZ" << endl;
 				}
-				writeXYZorH(*point);
+				writeXYZorH(point);
 				(*stream) << endl;
 				break;
 
@@ -425,11 +425,9 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					firstCALA = false;
 					(*stream) << "*VZ" << endl;
 				}
-				writeXYZorH(*point);
+				writeXYZorH(point);
 				(*stream) << endl;
 				break;
-
-
 			}
 		}
 

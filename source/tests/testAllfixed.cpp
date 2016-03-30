@@ -6,7 +6,7 @@
 
 #include <TLGCData.h>
 #include <TReader.h>
-#include "testALLFIXED.h"
+#include "testAllfixed.h"
 #include "TLGCCalculation.h"
 
 

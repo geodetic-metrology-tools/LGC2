@@ -36,4 +36,6 @@ set(LocalTransformations_SOURCES
 )
 
 # Create a static library from sources:
-add_library(LocalTransformations STATIC ${LocalTransformations_HEADERS} ${LocalTransformations_SOURCES})
+add_library(LocalTransformations STATIC ${LocalTransformations_HEADERS} ${LocalTransformations_SOURCES})
+# Link static libraries to the current one
+target_link_libraries(LocalTransformations LocalTransformations)
