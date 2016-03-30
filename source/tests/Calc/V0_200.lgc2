@@ -10,7 +10,7 @@ REF  0 0 0
 *POIN
 PT  100 1000.5 50  %Correct values 0 100 0
 *TSTN STN TS1 IHFIX
-*V0
+*V0 ACST 200.0
 *PLR3D
 REF  50 100  141.421356237 %Does not work for -200, i.e. 50
 PT  100 100 100 %Does not work for -200, i.e. 100
