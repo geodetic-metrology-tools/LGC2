@@ -66,14 +66,7 @@ void TObservationWriter::writeAngleResultsSummary(TLGCObsSummary summary, std::s
 	stream << getSeparator();
 	stream << endl << endl <<endl;
 
-	//Histogram is not yet implemented, ToDo:
-/*
-	 write histograms for the observation residuals
-	writeResidualsHistogram(summary, description);
-	stream << endl;
-*/
 }
-
 
 void TObservationWriter::writeDistanceResultsSummary(TLGCObsSummary summary, std::string TABs){
 
@@ -115,15 +108,8 @@ void TObservationWriter::writeDistanceResultsSummary(TLGCObsSummary summary, std
 	stream<<getSeparator();
 	stream<<endl<<endl<<endl;;
 
-	//Histogram is not yet implemented, ToDo:
-/*
-	 write histograms for the observation residuals
-	writeResidualsHistogram(summary, description);
-	stream << endl;
-*/
 	return;
 }
-
 
 void TObservationWriter::writeUnitlessResultsSummary(TLGCObsSummary summary, std::string TABs){
 

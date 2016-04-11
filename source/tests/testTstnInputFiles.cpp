@@ -464,8 +464,9 @@ namespace tut
 
 		std::string test;
 
-		for(size_t i=0;i<v0.size();i++){
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
+		for (size_t i = 0; i < v0.size(); i++)
+		{
+			std::shared_ptr<TLGCData> projTest(new TLGCData);
 			TReader r(projTest);
 			projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputPLR.txt");
 			projTest->getFileLogger().writeReportHeader("LGC output file");
@@ -486,7 +487,7 @@ namespace tut
 
 
 
-			test = "*PLR3D\nREF " + refAnglV0Str +" 100 100 \n PT " +  ptAnglV0Str + " 100 100 \n PT2 " + pt2AnglV0Str + " 100 141.421356237 \n";
+			test = "*PLR3D\nREF " + refAnglV0Str + " 100 100 \n PT " + ptAnglV0Str + " 100 100 \n PT2 " + pt2AnglV0Str + " 100 141.421356237 \n";
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Root_PLR_setup3);
@@ -495,43 +496,44 @@ namespace tut
 			string infile = infiler.str();
 
 			r.read(infiler);
-		
-			if(i!=6){
-					TLGCCalculation calcul(projTest);
-					std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
 
-					const TLGCData& dataset = calcul.getData();
+			if (i != 6)
+			{
+				TLGCCalculation calcul(projTest);
+				std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+				bool succesCalc = calcul.computeResults(fileWriter);
+				ensure_equals("Calculation successful", succesCalc, true);
 
-					TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-					ensure_equals("Pt x coordinate should match",Pt.getX().getMetresValue(), 0, 1e-12);
-					ensure_equals("Pt y coordinate should match",Pt.getY().getMetresValue(), 100, 1e-12);
-					ensure_equals("Pt z coordinate should match",Pt.getZ().getMetresValue(), 0, 1e-12);
+				const TLGCData& dataset = calcul.getData();
 
-					TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
-					ensure_equals("Pt2 x coordinate should match",PT2.getX().getMetresValue(), 100, 1e-9);
-					ensure_equals("Pt2 y coordinate should match",PT2.getY().getMetresValue(), 100, 1e-9);
-					ensure_equals("Pt2 z coordinate should match",PT2.getZ().getMetresValue(), 0, 1e-9);
+				TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
+				ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
+				ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
+				ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
 
-					TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-					
-					std::vector<double> Outputv0;
-					Outputv0.push_back(0);
-					Outputv0.push_back(390);
-					Outputv0.push_back(310);
-					Outputv0.push_back(300);
-					Outputv0.push_back(290);
-					Outputv0.push_back(205);
-					Outputv0.push_back(200);
-					Outputv0.push_back(195);
-					Outputv0.push_back(110);
-					Outputv0.push_back(100);
-					Outputv0.push_back(10);
+				TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
+				ensure_equals("Pt2 x coordinate should match", PT2.getX().getMetresValue(), 100, 1e-9);
+				ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
+				ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
 
-					ensure_equals("V0 should match",V0Calc, Outputv0[i], 1e-12);
+				TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+
+				std::vector<double> Outputv0;
+				Outputv0.push_back(0);
+				Outputv0.push_back(390);
+				Outputv0.push_back(310);
+				Outputv0.push_back(300);
+				Outputv0.push_back(290);
+				Outputv0.push_back(205);
+				Outputv0.push_back(200);
+				Outputv0.push_back(195);
+				Outputv0.push_back(110);
+				Outputv0.push_back(100);
+				Outputv0.push_back(10);
+
+				ensure_equals("V0 should match", V0Calc, Outputv0[i], 1e-12);
 			}
-			}	
+		}
 	}	
 
 	template<>

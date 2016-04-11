@@ -2,6 +2,7 @@
 #define TData_Analyzer_H
 
 class TLGCData;
+class TFileLogger;
 
 /*! 
 	\ingroup LGCProjectData
@@ -38,6 +39,9 @@ public:
 	inline bool hasStandardDeviations() {return fStandDevUsed;};
 
 private:
+	void checkPDOR(TFileLogger& fileLog, bool dataConsistent);
+	void predeterminePLR3DV0();
+
 	bool fStandDevUsed; // If at least one standard deviation assigned to a point or frame element.
 
 	// contains references: not assignable
