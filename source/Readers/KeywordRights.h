@@ -15,7 +15,11 @@ namespace {
 #define PLR3D "PLR3D"
 #define ANGL "ANGL"
 #define ZEND "ZEND"
+#define ZENI "ZENI" //lgc1
+#define ZENH "ZENH" //lgc1
 #define DIST "DIST"
+#define DTHE "DTHE" //lgc1
+#define DMES "DMES" //lgc1
 #define ECTH "ECTH"
 #define DHOR "DHOR"
 #define CAM "CAM"
@@ -70,6 +74,15 @@ namespace {
 #define EREL "EREL"
 
 //measurements
+const int nb_allowed_angl_lgc1 = 15;
+const int nb_allowed_zeni_lgc1 = 15;
+const int nb_allowed_zenh_lgc1 = 15;
+const int nb_allowed_dmes_lgc1 = 15;
+const int nb_allowed_dthe_lgc1 = 15;
+const int nb_allowed_ecsp_lgc1 = 15;
+const int nb_allowed_ecth_lgc1 = 15;
+const int nb_allowed_dhor_lgc1 = 15;
+//
 const int nb_allowed_tstn		= 1;
 const int nb_allowed_v0			= 7;
 const int nb_allowed_plr3d		= 18;
@@ -90,13 +103,13 @@ const int nb_allowed_ecve		= 11;
 const int nb_allowed_orie		= 11;
 const int nb_allowed_radi       = 11;
 //points
-const int nb_allowed_cala		= 17;
-const int nb_allowed_poin		= 17;
-const int nb_allowed_pdor       = 17;
-const int nb_allowed_vxy		= 17;
-const int nb_allowed_vxz		= 17;
-const int nb_allowed_vyz		= 17;
-const int nb_allowed_vz			= 17;
+const int nb_allowed_cala		= 21;
+const int nb_allowed_poin		= 21;
+const int nb_allowed_pdor       = 21;
+const int nb_allowed_vxy		= 21;
+const int nb_allowed_vxz		= 21;
+const int nb_allowed_vyz		= 21;
+const int nb_allowed_vz			= 21;
 //instruments
 const int nb_allowed_polar		= 22;
 const int nb_allowed_camd		= 22;
@@ -142,6 +155,15 @@ const char* allowed_DIST[nb_allowed_dist]	= {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH
 const char* allowed_ECTH[nb_allowed_ecth]	= {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, FRAME, ENDFRAME, END};
 const char* allowed_DHOR[nb_allowed_dhor]	= {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, FRAME, ENDFRAME, END};
 const char* allowed_ECSP[nb_allowed_ecsp]   = {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, FRAME, ENDFRAME, END};
+//lgc1
+const char* allowed_ANGL_lgc1[nb_allowed_angl_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_ZENI_lgc1[nb_allowed_zeni_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_ZENH_lgc1[nb_allowed_zenh_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_DMES_lgc1[nb_allowed_dmes_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_DTHE_lgc1[nb_allowed_dthe_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_ECTH_lgc1[nb_allowed_ecth_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_DHOR_lgc1[nb_allowed_dhor_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
+const char* allowed_ECSP_lgc1[nb_allowed_ecsp_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
 //CAM measurments
 const char* allowed_CAM[nb_allowed_cam]		= {UVEC, UVD};
 const char* allowed_UVEC[nb_allowed_uvec]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END};
@@ -155,13 +177,13 @@ const char* allowed_ECVE[nb_allowed_ecve]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, 
 const char* allowed_ORIE[nb_allowed_orie]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, FRAME, END};
 const char* allowed_RADI[nb_allowed_radi]   = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, FRAME, END };
 //CALA & POIN & others point DEF
-const char* allowed_CALA[nb_allowed_cala]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI,		  POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END};
-const char* allowed_POIN[nb_allowed_poin]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA,   	VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END};
-const char* allowed_VXY[nb_allowed_vxy]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN,		 VXZ, VYZ, VZ, FRAME, ENDFRAME, END};
-const char* allowed_VXZ[nb_allowed_vxz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY,	  VYZ, VZ, FRAME, ENDFRAME, END};
-const char* allowed_VYZ[nb_allowed_vyz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ,	   VZ, FRAME, ENDFRAME, END};
-const char* allowed_VZ[nb_allowed_vz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ,	   FRAME, ENDFRAME, END};
-const char* allowed_PDOR[nb_allowed_pdor]   = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END };
+const char* allowed_CALA[nb_allowed_cala]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI,		  POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, DMES, ANGL, ZENI, ZENH};
+const char* allowed_POIN[nb_allowed_poin]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA,   	VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, DMES, ANGL, ZENI, ZENH};
+const char* allowed_VXY[nb_allowed_vxy]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN,		 VXZ, VYZ, VZ, FRAME, ENDFRAME, END, DMES, ANGL, ZENI, ZENH};
+const char* allowed_VXZ[nb_allowed_vxz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY,	  VYZ, VZ, FRAME, ENDFRAME, END, DMES, ANGL, ZENI, ZENH};
+const char* allowed_VYZ[nb_allowed_vyz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ,	   VZ, FRAME, ENDFRAME, END, DMES, ANGL, ZENI, ZENH};
+const char* allowed_VZ[nb_allowed_vz]		= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ,	   FRAME, ENDFRAME, END, DMES, ANGL, ZENI, ZENH};
+const char* allowed_PDOR[nb_allowed_pdor]   = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME,           END, DMES, ANGL, ZENI, ZENH };
 //Instruments
 const char* allowed_POLAR[nb_allowed_polar]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};
 const char* allowed_CAMD[nb_allowed_camd]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME};

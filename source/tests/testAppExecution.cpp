@@ -33,9 +33,9 @@ namespace tut
 
 		set_test_name("Testing TLGCApp class and nam file reader");
 		
-        TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.lgc2", 
-					    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.out");
-		ensure_equals( "Execution should work", proj.exec(), true);
+        //TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.lgc2", 
+		//			    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.out");
+		//ensure_equals( "Execution should work", proj.exec(), true);
 	}
 
 	template<>
@@ -46,10 +46,10 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "V0_200.lgc2",
-			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "V0_200.out");
-		
-		ensure_equals("Execution should work", proj.exec(), true);
+		//TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "ANGL_ZEND_DIST.lgc",
+		//	getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "ANGL_ZEND_DIST.res");
+		//
+		//ensure_equals("Execution should work", proj.exec(), true);
 		
 		// re initialise static object allfixed param to false
 		//TAdjustablePoint::setAllFixedParam(false);

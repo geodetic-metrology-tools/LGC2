@@ -23,18 +23,25 @@ class TReader {
 			If the keyword *FRAME is not used the tree will only consist of a root node.
 		*/
 		bool read(std::istream& lgcStream);
+		bool readLgc1File(std::istream& lgcStream);
+		bool isLgc2File(std::istream& lgcStream);
 
 		/// Splits a line into its tokens, removing blank characters
 		static std::vector<std::string> const tokenizeLGCfileString(const std::string& str);
 
 	private:
-		/// All keyword handler objects.
+		/// All lgc2 keyword handler objects.
 		std::vector< std::unique_ptr<TAKeyWord> > finterpreters;
+
+		/// All lgc1 keyword handler objects.
+		std::vector< std::unique_ptr<TAKeyWord> > finterpreters_lgc1;
 
 		/// The reference to the project passed in the constructor is stored
 		TLGCData& project;
 		
 		/// Not asignable, contains reference
 		TReader& operator=(const TReader&);
+
+		
 };
 #endif

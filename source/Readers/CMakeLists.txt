@@ -14,6 +14,7 @@ set(READER_HEADERS
 	OptionReaders.h
 	ReaderBase.h
 	KeywordRights.h
+	MeasurementReader_lgc1.h
 )
 
 set(READER_SOURCES
@@ -22,6 +23,7 @@ set(READER_SOURCES
 	InstrumentReaders.cpp
 	MeasurementReaders.cpp
 	OptionReaders.cpp
+	MeasurementReader_lgc1.cpp
 )
 
 add_library(Readers STATIC ${READER_HEADERS} ${READER_SOURCES})

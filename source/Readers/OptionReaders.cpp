@@ -78,23 +78,32 @@ void TKeyNODUP::parse(const std::vector<std::string>&, int) {
 
 void TKeyPDOR::parse(const std::vector<std::string>& tokens, int) {
 	const size_t numtok(tokens.size());
-	if (numtok == 3)
-		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(2));
-	else if (numtok == 4)
+
+	// this is a multi-line keyword, react just on the following calls
+		if (numtok>1 && tokens.at(1) == "PDOR") {
+			if (numtok > 2)
+				throw std::runtime_error("PDOR not starting with the keyword line.");
+			return;
+		}
+
+	// Points must occur in pairs
+	if (numtok == 1)
+		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(0));
+	else if (numtok == 2)
 	{
-		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kGons));
+		fconfig.pdor = TLGCConfig::TPDOR(tokens.at(0), TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
 		fconfig.pdor.hasBearing = true;
 	}
 	else
 		throw std::runtime_error("Keyword *PDOR takes either one or two arguments "
-		                         "(Point name and optinal bearing), not " + std::to_string(numtok) + ".");
+		"(Point name and optinal bearing), not " + std::to_string(numtok) + ".");
 }
 
 
 void TKeySIMU::parse(const std::vector<std::string>& tokens, int) {
 	auto numTokens = tokens.size();
 
-	if (numTokens == 3)
+	if (numTokens >= 3)
 		fconfig.sim = TLGCConfig::TSimulation(std::stoi(tokens.at(2)));
 	else
 		throw std::runtime_error("*SIMU takes  1 argument, the number of simulation." );
@@ -255,7 +264,7 @@ void TKeyPLOT::parse(const std::vector<std::string>& tokens, int) {
 void TKeySOBS::parse(const std::vector<std::string>& tokens, int) {
 	auto numtokens = tokens.size();
 	
-	if (numtokens == 2 )
+	if (numtokens >= 2 )
 		fconfig.sim.writeLGCFile = true;
 	else {
 		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");

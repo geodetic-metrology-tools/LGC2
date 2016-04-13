@@ -1,6 +1,7 @@
 #include "AdjObjectsReader.h"
 #include "InstrumentReaders.h"
 #include "MeasurementReaders.h"
+#include "MeasurementReader_lgc1.h"
 #include "OptionReaders.h"
 #include "TReader.h"
 
@@ -105,12 +106,23 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyLEP(project)));
 	finterpreters.emplace_back(UPK(new TKeySPHE(project)));
 
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyOLOC(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyRS2K(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyLEP(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeySPHE(project)));
+
 	// calculation objects
 	finterpreters.emplace_back(UPK(new TKeyALLFIXED(project)));
 	finterpreters.emplace_back(UPK(new TKeyLIBR(project)));
 	finterpreters.emplace_back(UPK(new TKeyNODUP(project)));
 	finterpreters.emplace_back(UPK(new TKeyPDOR(project)));
 	finterpreters.emplace_back(UPK(new TKeySIMU(project)));
+
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyALLFIXED(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyLIBR(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyNODUP(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyPDOR(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeySIMU(project)));
 
 	// output options
 	finterpreters.emplace_back(UPK(new TKeyAPRI(project)));
@@ -121,12 +133,26 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyPREC(project)));
 	finterpreters.emplace_back(UPK(new TKeyPRES(project)));
 
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyAPRI(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyEREL(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyFMTO(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyFMTP(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyHIST(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyPREC(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyPRES(project)));
+
 	// additional output files
 	finterpreters.emplace_back(UPK(new TKeyDEFA(project)));
 	finterpreters.emplace_back(UPK(new TKeyFAUT(project)));
 	finterpreters.emplace_back(UPK(new TKeyPUNC(project)));
 	finterpreters.emplace_back(UPK(new TKeyPLOT(project)));
 	finterpreters.emplace_back(UPK(new TKeySOBS(project)));
+
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyDEFA(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyFAUT(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyPUNC(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyPLOT(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeySOBS(project)));
 
 
 	// Adjusted Objects (points) Section
@@ -137,8 +163,16 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyVYZ(project)));
 	finterpreters.emplace_back(UPK(new TKeyVZ(project)));
 
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyCALA(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyPOIN(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyVXY(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyVXZ(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyVYZ(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyVZ(project)));
+
 		
 	// Instruments Section
+	//no instrument define in lgc1
 	finterpreters.emplace_back(UPK(new TKeyINSTR(project)));
 	finterpreters.emplace_back(UPK(new TKeyPOLAR(project)));
 	finterpreters.emplace_back(UPK(new TKeyCAMD(project)));
@@ -168,6 +202,14 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(dhor));
 	finterpreters.emplace_back(UPK(plr3d));
 
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyANGL_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyZENI_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyZENH_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyDTHE_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyECTH_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyDHOR_lgc1(project)));
+
+
 	/*CAMERA*/
 	TAKeyWord* cam  = new TKeyCAM(project);
 	TAKeyWord* uvec2dCam = new TKeyUVEC(project);
@@ -192,10 +234,21 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyECVE(project)));
 	finterpreters.emplace_back(UPK(new TKeyORIE(project)));
 	finterpreters.emplace_back(UPK(new TKeyRADI(project)));
+
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyDMES_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyDVER_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyDLEV_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyECHO_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyECSP_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyECVE_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyORIE_lgc1(project)));
+	//finterpreters_lgc1.emplace_back(UPK(new TKeyRADI_lgc1(project)));
 	
 	finterpreters.emplace_back(UPK(new TKeyFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyENDFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyTITR(project)));
+
+	finterpreters_lgc1.emplace_back(UPK(new TKeyTITR(project)));
 
 }
 
@@ -270,26 +323,27 @@ bool TReader::read(std::istream& lgcStream) {
 	// add the newline characters in the title to the linecount
 	nline += (int)count(line.cbegin(), line.cend(), '\n');
 	nline++;
-
+ 
 	// read the rest of the file
 	auto lasthandler(finterpreters.back().get());
-	for(auto currenthandler(lasthandler); 
-		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN"); 
-		++nline) {
+	for (auto currenthandler(lasthandler);
+		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
+		++nline) 
+	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline ) + ": ");
+		const string nlinestr("Line " + to_string(nline) + ": ");
 		// tokenize the current line
 		auto tokLine(tokenizeLGCfileString(line));
 
 		// skip empty lines
 		if (tokLine.empty()) continue;
 		// % means comment line, i.e. to be ignored
-		if (tokLine[0][0] == *"%"){ 
+		if (tokLine[0][0] == *"%"){
 			continue;
 		}
 
 		// This means that it is the last keyword, which actually ends the reading process.
-		if(tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
+		if (tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
 			break;
 
 		// If the line starts with a keyword
@@ -299,7 +353,7 @@ bool TReader::read(std::istream& lgcStream) {
 			currenthandler = nullptr;
 
 			// look for an appropriate handler
-			for(auto& handler : finterpreters) {
+			for (auto& handler : finterpreters) {
 				// if the handler matches the keyword: store it as the current handler
 				if (handler.get()->key == currentkey) {
 					currenthandler = handler.get();
@@ -307,25 +361,25 @@ bool TReader::read(std::istream& lgcStream) {
 				}
 			}
 
-			if(currentkey == OLOC ||currentkey == RS2K ||currentkey == LEP ||currentkey == SPHE)
+			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
 				isReferenceSystemDefined = true;
-			
+
 			try {
 
 				// abort if there is no valid handler
 				if (!currenthandler){
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line "+line;
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
 					continue;
 				}
 
 				// If the keyword in not allowed after the last handler
-				if(!lasthandler->isKeyWordAllowed(currenthandler->getKey()))
+				if (!lasthandler->isKeyWordAllowed(currenthandler->getKey()))
 					throw std::runtime_error("The keyword \"" + currentkey + "\" is not allowed here.");
 				else // Particular case : TSTN authorized after ENDFRAME if all frames are closed
-					if(currenthandler->getKey() == TSTN && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames()))
+					if (currenthandler->getKey() == TSTN && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames()))
 						throw std::runtime_error("TSTN keyword is not allowed in a frame ");
 			}
-			catch(std::exception const& excp) {
+			catch (std::exception const& excp) {
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
 			}
 		}
@@ -339,6 +393,8 @@ bool TReader::read(std::istream& lgcStream) {
 		}
 	}
 
+	
+
 	if(!isReferenceSystemDefined) {
 		// Define OLOC as default
 		project.getConfig().referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
@@ -351,4 +407,161 @@ bool TReader::read(std::istream& lgcStream) {
 
 	return !outputMessages.hasErrors();
 
+}
+
+
+bool TReader::readLgc1File(std::istream& lgcStream)
+{
+	using namespace std;
+	string line;
+	int nline(1);
+	bool isReferenceSystemDefined = false;
+	bool isLgc1 = true;
+
+	auto& outputMessages(project.getFileLogger());
+	outputMessages.writeReportHeader("Reading input file:");
+
+	// be sure to omit the byte order mark if there is one
+	skipBOM(lgcStream);
+
+	// read the first line of the file
+	safeGetline(lgcStream, line);
+	const auto& titlrline(tokenizeLGCfileString(line));
+	// It must start with *TITR
+	// Write error message into an ouput file instead of throwing exception
+	if (titlrline.size() != 2)
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
+	else if (titlrline[1] != "TITR")
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
+
+	// read until the next keyword
+	safeGetline(lgcStream, line/*, '*'*/);
+	// store the read title in the config
+	project.getConfig().title = line;
+	// restore the asterisk that was gobbled up by safeGetline
+	lgcStream.putback('*');
+
+	// add the newline characters in the title to the linecount
+	nline += (int)count(line.cbegin(), line.cend(), '\n');
+	nline++;
+
+	// read the rest of the file
+	auto lasthandler(finterpreters_lgc1.back().get());
+	for (auto currenthandler(lasthandler);
+		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
+		++nline)
+	{
+		// Prepare the error message for this line
+		const string nlinestr("Line " + to_string(nline) + ": ");
+		// tokenize the current line
+		auto tokLine(tokenizeLGCfileString(line));
+
+		// skip empty lines
+		if (tokLine.empty()) continue;
+		// % means comment line, i.e. to be ignored
+		if (tokLine[0][0] == *"%"){
+			continue;
+		}
+
+		// This means that it is the last keyword, which actually ends the reading process.
+		if (tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
+			break;
+
+		// If the line starts with a keyword
+		if (tokLine[0] == "*")  
+		{
+			const auto& currentkey(tokLine[1]);
+			lasthandler = currenthandler;
+			currenthandler = nullptr;
+
+			// look for an appropriate handler
+			for (auto& handler : finterpreters_lgc1) {
+				// if the handler matches the keyword: store it as the current handler
+				if (handler.get()->key == currentkey) {
+					currenthandler = handler.get();
+					break;
+				}
+			}
+
+			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
+				isReferenceSystemDefined = true;
+
+			try {
+				// abort if there is no valid handler
+				if (!currenthandler){
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
+					continue;
+				}
+
+			}
+			catch (std::exception const& excp)
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
+			}
+		}
+
+
+		try{ //Handler was found, try to parse
+			currenthandler->parse(tokLine, nline);
+		}
+		catch (std::exception const & excp) 
+		{  // Catch exceptions which can emerge during parsing
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
+		}
+	}
+
+	if (!isReferenceSystemDefined)
+		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
+
+	return !outputMessages.hasErrors();
+}
+
+bool TReader::isLgc2File(std::istream& lgcStream)
+{
+	string line;
+	int nline(1);
+
+	// be sure to omit the byte order mark if there is one
+	skipBOM(lgcStream);
+
+	// read the first line of the file
+	safeGetline(lgcStream, line);
+	const auto& titlrline(tokenizeLGCfileString(line));
+
+	// read until the next keyword
+	safeGetline(lgcStream, line/*, '*'*/);
+
+	// restore the asterisk that was gobbled up by safeGetline
+	lgcStream.putback('*');
+
+	// add the newline characters in the title to the linecount
+	nline += (int)count(line.cbegin(), line.cend(), '\n');
+	nline++;
+
+
+	auto lasthandler(finterpreters.back().get());
+	for (auto currenthandler(lasthandler);
+		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
+		++nline) 
+	{
+		// tokenize the current line
+		auto tokLine(tokenizeLGCfileString(line));
+
+		// skip empty lines
+		if (tokLine.empty()) continue;
+
+		// % means comment line, i.e. to be ignored
+		if (tokLine[0][0] == *"%") continue;
+
+		// If the line starts with a keyword
+		if (tokLine[0] == "*")
+		{
+			const auto& currentkey(tokLine[1]);
+
+			if (currentkey == INSTR)
+				return true;
+		}
+
+	}
+	return false;
 }

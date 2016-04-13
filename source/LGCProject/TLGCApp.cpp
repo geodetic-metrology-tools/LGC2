@@ -30,6 +30,7 @@ bool TLGCApp::exec()
 	bool result = false;
 
 	std::ifstream inputFileStream (fInputFileLoc, std::ifstream::in);
+	std::ifstream cp_inputFileStream(fInputFileLoc, std::ifstream::in);
 	std::shared_ptr<TLGCData> projectData(new TLGCData);
 
 	//The input file exists, already test in main.cpp.
@@ -38,8 +39,16 @@ bool TLGCApp::exec()
 
 	//Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
 	TReader r(projectData);
-	if (!r.read(inputFileStream))
-		throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
+	if (r.isLgc2File(cp_inputFileStream))
+	{
+		if (!r.read(inputFileStream))
+			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
+	}
+	else
+	{
+		if (!r.readLgc1File(inputFileStream))
+			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
+	}
 	
 	//Initialize the writer into the output file.
 	initializeStream(projectData);
