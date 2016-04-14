@@ -441,8 +441,8 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
-	for (auto& meas : frameIt->get()->measurements.fTSTN)
-		writeTSTNMeas(&meas);
+	for (auto meas : frameIt->get()->measurements.fTSTN)
+		writeTSTNMeas(meas);
 
 	for (auto& meas : frameIt->get()->measurements.fCAM)
 		writeCAMMeas(&meas);
@@ -799,7 +799,7 @@ void TSimFileWriter::writeRADIMeas(TRADI* meas)
 
 }
 
-void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
+void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 {
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
@@ -829,19 +829,19 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 
 		(*stream) << "*V0" << sep;
 
-		//if (rom.defaultTarget!=nullptr && rom.defaultTarget->ID != meas->instrument.defTarget)
-		//	(*stream) << "TRGT" << sep << rom.defaultTarget->ID << sep;
+		//if (rom->defaultTarget!=nullptr && rom->defaultTarget->ID != meas->instrument.defTarget)
+		//	(*stream) << "TRGT" << sep << rom->defaultTarget->ID << sep;
 
-		if (rom.acst != TAngle(0.0))
-			(*stream) << "ACST" << sep << rom.acst.getGonsValue() << sep;
+		if (rom->acst != TAngle(0.0))
+			(*stream) << "ACST" << sep << rom->acst.getGonsValue() << sep;
 		(*stream) << endl;
 
 
 		//ANGL
-		if (!rom.measANGL.empty())
+		if (!rom->measANGL.empty())
 		{
 			(*stream) << "*ANGL" << endl;
-			for (auto& angl : rom.measANGL)
+			for (auto& angl : rom->measANGL)
 			{
 				(*stream) << angl.targetPos->getName() << sep
 					<< angl.getAngle().getGonsValue()<< sep;
@@ -864,10 +864,10 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 
 
 		//ZEND
-		if (!rom.measZEND.empty())
+		if (!rom->measZEND.empty())
 		{
 			(*stream) << "*ZEND" << endl;
-			for (auto& zend : rom.measZEND)
+			for (auto& zend : rom->measZEND)
 			{
 				(*stream) << zend.targetPos->getName() << sep
 					<< zend.getAngle().getGonsValue() << sep;
@@ -897,11 +897,11 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 		}
 
 		//DIST
-		if (!rom.measDIST.empty())
+		if (!rom->measDIST.empty())
 		{
 			(*stream) << "*DIST" << endl;
 
-			for (auto& dist : rom.measDIST)
+			for (auto& dist : rom->measDIST)
 			{
 				(*stream) << dist.targetPos->getName() << sep
 					<< dist.getDistance() << sep;
@@ -935,10 +935,10 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 		}
 
 		//DHOR
-		if (!rom.measDHOR.empty())
+		if (!rom->measDHOR.empty())
 		{
 			(*stream) << "*DHOR" << endl;
-			for (auto& dhor : rom.measDHOR)
+			for (auto& dhor : rom->measDHOR)
 			{
 				(*stream) << dhor.targetPos->getName() << sep
 					<< dhor.getDistance() << sep;
@@ -964,11 +964,11 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 		}
 
 		//PLR
-		if (!rom.measPLR3D.empty())
+		if (!rom->measPLR3D.empty())
 		{
 			(*stream) << "*PLR3D" << endl;
 
-			for (auto& plr : rom.measPLR3D)
+			for (auto& plr : rom->measPLR3D)
 			{
 				(*stream) << plr.targetPos->getName() << sep
 					<< plr.getAngle(EPLR3DAngles::kANGL).getGonsValue() << sep
@@ -1012,20 +1012,20 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 		}
 
 		//ECTH
-		if (!rom.measECTH.empty())
+		if (!rom->measECTH.empty())
 		{
-			TAngle lecture = rom.measECTH.at(0).obsHorAngle;
-			string tgID = rom.measECTH.at(0).target.ID;
-			TLength ppm = rom.measECTH.at(0).target.ppmD;
-			TLength sigma = rom.measECTH.at(0).target.sigmaD;
-			TLength centering = rom.measECTH.at(0).target.sigmaInstrCentering;
+			TAngle lecture = rom->measECTH.at(0).obsHorAngle;
+			string tgID = rom->measECTH.at(0).target.ID;
+			TLength ppm = rom->measECTH.at(0).target.ppmD;
+			TLength sigma = rom->measECTH.at(0).target.sigmaD;
+			TLength centering = rom->measECTH.at(0).target.sigmaInstrCentering;
 
 			(*stream) << "*ECTH" << sep
-				<< rom.measECTH.at(0).obsHorAngle.getGonsValue() << sep
-				<< rom.measECTH.at(0).target.ID << sep
+				<< rom->measECTH.at(0).obsHorAngle.getGonsValue() << sep
+				<< rom->measECTH.at(0).target.ID << sep
 				<< endl;
 
-			for (auto& ecth : rom.measECTH)
+			for (auto& ecth : rom->measECTH)
 			{
 				if (ecth.obsHorAngle == lecture)
 				{
@@ -1036,7 +1036,7 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 						(*stream) << "SCALE" << sep
 						<< ecth.target.ID << sep;
 
-					if (ecth.target.sigmaD != rom.measECTH.at(0).target.sigmaD)
+					if (ecth.target.sigmaD != rom->measECTH.at(0).target.sigmaD)
 						(*stream) << "OBSE" << sep
 						<< ecth.target.sigmaD.getMMetresValue() << sep;
 
@@ -1069,7 +1069,7 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 						(*stream) << "SCALE" << sep
 						<< ecth.target.ID << sep;
 
-					if (ecth.target.sigmaD != rom.measECTH.at(0).target.sigmaD)
+					if (ecth.target.sigmaD != rom->measECTH.at(0).target.sigmaD)
 						(*stream) << "OBSE" << sep
 						<< ecth.target.sigmaD.getMMetresValue() << sep;
 
@@ -1088,22 +1088,22 @@ void TSimFileWriter::writeTSTNMeas(TTSTN* meas)
 
 		//ECSP
 		
-		if (!rom.measECSP.empty())
+		if (!rom->measECSP.empty())
 		{
-			TAngle lectureHz = rom.measECSP.at(0).obsHorAngle;
-			TAngle lectureV = rom.measECSP.at(0).obsVertAngle;
-			string tgID = rom.measECSP.at(0).target.ID;
-			TLength ppm = rom.measECSP.at(0).target.ppmD;
-			TLength sigma = rom.measECSP.at(0).target.sigmaD;
-			TLength centering = rom.measECSP.at(0).target.sigmaInstrCentering;
+			TAngle lectureHz = rom->measECSP.at(0).obsHorAngle;
+			TAngle lectureV = rom->measECSP.at(0).obsVertAngle;
+			string tgID = rom->measECSP.at(0).target.ID;
+			TLength ppm = rom->measECSP.at(0).target.ppmD;
+			TLength sigma = rom->measECSP.at(0).target.sigmaD;
+			TLength centering = rom->measECSP.at(0).target.sigmaInstrCentering;
 
 			(*stream) << "*ECSP" << sep
-				<< rom.measECSP.at(0).obsHorAngle.getGonsValue() << sep
-				<< rom.measECSP.at(0).obsVertAngle.getGonsValue() << sep
-				<< rom.measECSP.at(0).target.ID << sep
+				<< rom->measECSP.at(0).obsHorAngle.getGonsValue() << sep
+				<< rom->measECSP.at(0).obsVertAngle.getGonsValue() << sep
+				<< rom->measECSP.at(0).target.ID << sep
 				<< endl;
 
-			for (auto& ecsp : rom.measECSP)
+			for (auto& ecsp : rom->measECSP)
 			{
 				if (ecsp.obsHorAngle == lectureHz && ecsp.obsVertAngle == lectureV)
 				{

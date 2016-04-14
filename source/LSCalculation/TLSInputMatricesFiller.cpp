@@ -40,16 +40,16 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++){		
 
 			//In every node iterate through the Total station measurements (TSTN)
-			for(auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN){
+			for(auto& itTSTN : itTree.node->data->measurements.fTSTN){
 				//In every TSTN iterate through ROMS and add contributions for every observation type
 				for(auto& itROM:itTSTN->roms){
-					addPLR3DContributions(itROM, *itTSTN, matrices); //Process all the PLR3D measurement in this ROM
-					addHorAngContributions(itROM, *itTSTN, matrices); //Process all the ANGL measurement in this ROM
-					addSpaDistContributions(itROM.measDIST, *itTSTN, matrices);  
-					addZenDistContributions(itROM.measZEND, *itTSTN, matrices);
-					addHorDistContributions(itROM.measDHOR, *itTSTN, matrices);
-					addECTHContributions(itROM, *itTSTN, matrices);
-					addECSPContributions(itROM, *itTSTN, matrices);
+					addPLR3DContributions(itROM, itTSTN, matrices); //Process all the PLR3D measurement in this ROM
+					addHorAngContributions(itROM, itTSTN, matrices); //Process all the ANGL measurement in this ROM
+					addSpaDistContributions(itROM->measDIST, itTSTN, matrices);  
+					addZenDistContributions(itROM->measZEND, itTSTN, matrices);
+					addHorDistContributions(itROM->measDHOR, itTSTN, matrices);
+					addECTHContributions(itROM, itTSTN, matrices);
+					addECSPContributions(itROM, itTSTN, matrices);
 				}
 			}
 
@@ -129,7 +129,7 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - fill of models with 1 equation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addSpaDistContributions(const std::vector<TLINE>& distMeas, const TTSTN& station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addSpaDistContributions(const std::vector<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -142,8 +142,8 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::vector<TLINE>& d
 		contributions = fCGenerator.getSpatialDistanceContrib(station, *meas); //Get the observation contribution
 
 		// Add station's contributions into a first design matrix
-		if(!station.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+		if(!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
 
 		// Add target contributions into a first design matrix
 		if(!meas->targetPos->isFixed())
@@ -154,8 +154,8 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::vector<TLINE>& d
 			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
 		// Adding instrument height contribution
-		if(!station.instrumentHeightAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station.instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
+		if(!station->instrumentHeightAdjustable->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
 
 		// Adding contributions for STATION transformations parameters 
 		for(auto itStTransform( contributions.fStTransformContrib.begin()); itStTransform !=  contributions.fStTransformContrib.end(); ++itStTransform){
@@ -187,29 +187,29 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::vector<TLINE>& d
 	}
 }
 
-void  TLSInputMatricesFiller::addHorAngContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addHorAngContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
 	AnglMeasContrib contributions;
 
-	for(auto meas(rom.measANGL.begin()); meas != rom.measANGL.end(); ++meas){
+	for(auto meas(rom->measANGL.begin()); meas != rom->measANGL.end(); ++meas){
 		eqIdx = meas->getFirstEquationIndex(); 
 		obsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getHorAnglContrib(station, rom, *meas); //Get the observation contribution
 
 		// Add station contributions 
-		if(!station.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+		if(!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
 
 		// Add target contributions
 		if(!meas->targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
 
 		// Add V0 contribution
-		if(!rom.v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom.v0->getFirstUidx(), contributions.fV0Contrib);
+		if(!rom->v0->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
 		// Add contributions of transformations parameters 
 		for(auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
@@ -247,7 +247,7 @@ void  TLSInputMatricesFiller::addHorAngContributions(const TTSTN::TROM& rom, con
 	}
 }
 
-void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& zendMeas, const TTSTN& station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -260,16 +260,16 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& 
 		AnglMeasContrib contributions = fCGenerator.getZenDistContrib(station, *meas); //Get the observation contribution
 
 		// Add station contributions
-		if(!station.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+		if(!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
 
 		// Add target contributions
 		if(!meas->targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
 
 		// Add instrument height contribution
-		if(!station.instrumentHeightAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station.instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
+		if(!station->instrumentHeightAdjustable->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
 
 		// Adding contributions for STATION transformations parameters 
 		for(auto itStTransform( contributions.fStTransformContrib.begin()); itStTransform !=  contributions.fStTransformContrib.end(); ++itStTransform){
@@ -302,7 +302,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& 
 	}
 }
 
-void  TLSInputMatricesFiller::addHorDistContributions(const std::vector<TLINE>& dhorMeas, const TTSTN& station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addHorDistContributions(const std::vector<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -315,8 +315,8 @@ bool isProcessOK = true;
 		contributions = fCGenerator.getHorDistContrib(station, *meas); //Get the observation contribution
 
 		// Add station contributions into a first design matrix
-		if(!station.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+		if(!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
 
 		// Add target contributions into a first design matrix
 		if(!meas->targetPos->isFixed())
@@ -356,29 +356,29 @@ bool isProcessOK = true;
 	}
 }
 
-void TLSInputMatricesFiller::addECTHContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addECTHContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
 	ECTHContrib contributions;
 
-	for (auto& meas:rom.measECTH){
+	for (auto& meas:rom->measECTH){
 		eqIdx = meas.getFirstEquationIndex();
 		obsIdx = meas.getFirstObservationIndex();
 		
 		contributions = fCGenerator.getECTHContrib(station, rom, meas); //Get the observation contribution
 
 		// Add station's contributions into a first design matrix
-		if (!station.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fTSTNPtContrib, eqIdx, matrices);
+		if (!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fTSTNPtContrib, eqIdx, matrices);
 
 		// Add target contributions into a first design matrix
 		if (!meas.targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*meas.targetPos, contributions.fScaleStationPtContrib, eqIdx, matrices);
 
 		// Add V0 contribution
-		if (!rom.v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom.v0->getFirstUidx(), contributions.fV0Contrib);
+		if (!rom->v0->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
 		// Adding contributions for STATION transformations parameters 
 		for (auto& itStTransform:contributions.fTSTNPtTransformContrib){
@@ -410,29 +410,29 @@ void TLSInputMatricesFiller::addECTHContributions(const TTSTN::TROM& rom, const 
 	}
 }
 
-void TLSInputMatricesFiller::addECSPContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addECSPContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
 	ECTHContrib contributions;
 
-	for (auto& meas : rom.measECSP){
+	for (auto& meas : rom->measECSP){
 		eqIdx = meas.getFirstEquationIndex();
 		obsIdx = meas.getFirstObservationIndex();
 
 		contributions = fCGenerator.getECSPContrib(station, rom, meas); //Get the observation contribution
 
 		// Add station's contributions into a first design matrix
-		if (!station.instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station.instrumentPos, contributions.fTSTNPtContrib, eqIdx, matrices);
+		if (!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fTSTNPtContrib, eqIdx, matrices);
 
 		// Add target contributions into a first design matrix
 		if (!meas.targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*meas.targetPos, contributions.fScaleStationPtContrib, eqIdx, matrices);
 
 		// Add V0 contribution
-		if (!rom.v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom.v0->getFirstUidx(), contributions.fV0Contrib);
+		if (!rom->v0->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
 		// Adding contributions for STATION transformations parameters 
 		for (auto& itStTransform : contributions.fTSTNPtTransformContrib){
@@ -914,19 +914,19 @@ void  TLSInputMatricesFiller::addRADIContributions(const std::vector<TRADI>& rad
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addPLR3DContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addPLR3DContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
 	PLR3DContrib contributions;
 
-	for(auto meas(rom.measPLR3D.begin()); meas != rom.measPLR3D.end(); ++meas){
+	for(auto meas(rom->measPLR3D.begin()); meas != rom->measPLR3D.end(); ++meas){
 		firstEqIdx = meas->getFirstEquationIndex(); 
 		firstObsIdx = meas->getFirstObservationIndex();
 		//Get the observation contribution
 		contributions = fCGenerator.getPolar3DContrib(station, rom, *meas);
 
-		const TAdjustablePoint& stationPos = *station.instrumentPos;
+		const TAdjustablePoint& stationPos = *station->instrumentPos;
 		const TAdjustablePoint& targetPos = *meas->targetPos;
 		// Add contributions for STATION coordinates
 		if(!stationPos.isFixed()){
@@ -997,25 +997,25 @@ void TLSInputMatricesFiller::addPLR3DContributions(const TTSTN::TROM& rom, const
 		}
 
 		// Add V0's contribution, V0 is variable at any case. Check in a case of future change.
-		if(!rom.v0->isFixed()){
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, rom.v0->getFirstUidx(), contributions.fV0Contrib[0]);
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, rom.v0->getFirstUidx(), contributions.fV0Contrib[1]);
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 2, rom.v0->getFirstUidx(), contributions.fV0Contrib[2]);
+		if(!rom->v0->isFixed()){
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib[0]);
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, rom->v0->getFirstUidx(), contributions.fV0Contrib[1]);
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 2, rom->v0->getFirstUidx(), contributions.fV0Contrib[2]);
 		}
 
 		// Add instrument height contributions
-		if(!station.instrumentHeightAdjustable->isFixed()){
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, station.instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[0]); 
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, station.instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[1]); 
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 2, station.instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[2]); 
+		if(!station->instrumentHeightAdjustable->isFixed()){
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[0]); 
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[1]); 
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 2, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[2]); 
 		}
 
-		if(station.rot3D){
-			if(station.rotX == nullptr || station.rotY == nullptr)
+		if(station->rot3D){
+			if(station->rotX == nullptr || station->rotY == nullptr)
 				throw std::runtime_error("TSTN can rotate freely, but rotation angle around X or Y axis is nullptr.");
 			for(int i = 0; i<3;i++){
-				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + i, station.rotX->getFirstUidx(), contributions.fRxContrib[i]); 
-				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + i, station.rotY->getFirstUidx(), contributions.fRyContrib[i]); 
+				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + i, station->rotX->getFirstUidx(), contributions.fRxContrib[i]); 
+				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + i, station->rotY->getFirstUidx(), contributions.fRyContrib[i]); 
 			}
 		}
 

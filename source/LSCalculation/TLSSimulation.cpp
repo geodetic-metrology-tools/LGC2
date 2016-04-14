@@ -137,9 +137,9 @@ void TLSSimulation::simulateValues()
 	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++){
 
 		//In every node iterate through the Total station measurements (TSTN)
-		for (auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN){
+		for (auto itTSTN : itTree.node->data->measurements.fTSTN){
 			//In every TSTN iterate through ROMS
-			for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM){
+			for (auto itROM : itTSTN->roms){
 				getPLR3DSimValues(*itTSTN, *itROM, itROM->measPLR3D);  //Simulate PLR3D value
 				getANGLSimValues(*itTSTN, *itROM, itROM->measANGL); //Fill contribution to an ANGL measurement
 				getZENDSimValues(*itTSTN, itROM->measZEND); //Fill contribution to a ZEND measurement

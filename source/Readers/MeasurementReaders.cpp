@@ -27,7 +27,7 @@ bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& t
 		if (firstline && tokens.size() == 4 && tokens.at(2) == "TRGT")
 			currentTargetApplied = tokens.at(3);
 		else if(firstline) //Line starts with '*', but TRGT keyword not used, i.e. taking default taget value from ROM
-			currentTargetApplied = getROM().defaultTarget->ID;
+			currentTargetApplied = getROM()->defaultTarget->ID;
 	}
 	catch(exception e) { }
 
@@ -43,12 +43,12 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 		throw std::runtime_error("Key *TSTN takes at least two arguments: Positioned point ID  and InstrumentID.");
 	
 	// Initialize the station
-	TTSTN tstn(fpoints.getObject(tokens.at(2)),
+	shared_ptr<TTSTN> tstn = make_shared<TTSTN>(fpoints.getObject(tokens.at(2)),
 		finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
-	tstn.line = line;
+	tstn->line = line;
 
 	// Parse the rest of the options
-	TInstrumentData::TPOLAR& instrument(tstn.instrument);
+	TInstrumentData::TPOLAR& instrument(tstn->instrument);
 
 	TOptionHelper opts(tokens.cbegin()+3, tokens.cend());
 	size_t nofTSTN = proj.getCurrentNode().measurements.fTSTN.size();
@@ -60,11 +60,11 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
       instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
 	}
 
-	tstn.rot3D = opts.has("ROT3D");
+	tstn->rot3D = opts.has("ROT3D");
 	//If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
-	if (tstn.rot3D){
-		tstn.rotX = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
-		tstn.rotY = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
+	if (tstn->rot3D){
+		tstn->rotX = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
+		tstn->rotY = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
 		//If ROT3D used, instrument height is fixed and is equal to 0
 		instrumentHeightFixed = true;
 		instrument.instrHeight = TLength(0.0);
@@ -73,7 +73,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
 	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
 
-	tstn.instrumentHeightAdjustable = &flengths.addObject(TAdjustableLength(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn.instrument.ID + to_string(nofTSTN)));
+	tstn->instrumentHeightAdjustable = &flengths.addObject(TAdjustableLength(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn->instrument.ID + to_string(nofTSTN)));
 
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);
@@ -289,16 +289,16 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, int)
 	//Prepare a name of an adjustable angle (V0) = Frame name + V0 + numberOfAngle
 	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
-	TTSTN::TROM rom (tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
+	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))
-		rom.acst.setGonsValue(opts.getParamR("ACST"));	//Value in the input file given in GON
+		rom->acst.setGonsValue(opts.getParamR("ACST"));	//Value in the input file given in GON
 	else
-		rom.acst.setRadiansValue(stn.constAngle); // Value stored in RAD
+		rom->acst.setRadiansValue(stn.constAngle); // Value stored in RAD
 				
 	// Add the ROM
-	proj.getCurrentNode().measurements.fTSTN.back().roms.emplace_back(rom);
+	proj.getCurrentNode().measurements.fTSTN.back()->roms.emplace_back(rom);
 }
 
 void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line) 
@@ -331,7 +331,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measPLR3D)
+			for (auto& point : getROM()->measPLR3D)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A PLR3D measurement is duplicated");
 		
@@ -369,7 +369,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 			plr.setDistance(TLength(std::stor(tokens.at(3))));
 		}
 		//Ad this PLR3D measurement to TSTN's ROM 
-		getROM().measPLR3D.emplace_back(plr);
+		getROM()->measPLR3D.emplace_back(plr);
 	}
 }
 
@@ -392,7 +392,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measANGL)
+			for (auto& point : getROM()->measANGL)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
@@ -429,7 +429,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive)
 			angl.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
-		getROM().measANGL.emplace_back(angl);
+		getROM()->measANGL.emplace_back(angl);
 	}
 }
 
@@ -451,7 +451,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measZEND)
+			for (auto& point : getROM()->measZEND)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
@@ -490,7 +490,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive)
 			zend.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
-		getROM().measZEND.emplace_back(zend);
+		getROM()->measZEND.emplace_back(zend);
 	}
 }
 
@@ -510,7 +510,7 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measDIST)
+			for (auto& point : getROM()->measDIST)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DIST measurement is duplicated");
 
@@ -532,12 +532,12 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
       tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store  the measured value
-		getROM().measDIST.emplace_back(
+		getROM()->measDIST.emplace_back(
          TLINE(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
 		);
 
 		//get a reference to the inserted measurement
-	   auto& dist(getROM().measDIST.back());
+	   auto& dist(getROM()->measDIST.back());
 
 		dist.line = line;
 		//If last token starts with a comment character, store it as a end of line comment
@@ -581,7 +581,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measECTH)
+			for (auto& point : getROM()->measECTH)
 				if (stPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ECTH measurement is duplicated");
 	   
@@ -595,10 +595,10 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
 
 	   // Store  the measured value
-	   getROM().measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
+	   getROM()->measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
 
 	   //get a reference to the inserted measurement
-	   auto& ecth(getROM().measECTH.back());
+	   auto& ecth(getROM()->measECTH.back());
 
 	   ecth.line = line;
 	   	//If last token starts with a comment character, store it as a end of line comment
@@ -643,7 +643,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measECSP)
+			for (auto& point : getROM()->measECSP)
 				if (stPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ECSP measurement is duplicated");
 
@@ -657,10 +657,10 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
 
 		// Store  the measured value
-		getROM().measECSP.emplace_back(TECSP(stPoint, scaleInstr, fHorAngle, fVertAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
+		getROM()->measECSP.emplace_back(TECSP(stPoint, scaleInstr, fHorAngle, fVertAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
 
 		//get a reference to the inserted measurement
-		auto& ecsp(getROM().measECSP.back());
+		auto& ecsp(getROM()->measECSP.back());
 
 		ecsp.line = line;
 		//If last token starts with a comment character, store it as a end of line comment
@@ -692,7 +692,7 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measDHOR)
+			for (auto& point : getROM()->measDHOR)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
@@ -712,12 +712,12 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
       tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store the measured value
-		getROM().measDHOR.emplace_back(
+		getROM()->measDHOR.emplace_back(
          TLINE(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
 		);
 
 		//get a reference to the inserted measurement
-		auto& dhor(getROM().measDHOR.back());
+		auto& dhor(getROM()->measDHOR.back());
 		dhor.line = line;
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);

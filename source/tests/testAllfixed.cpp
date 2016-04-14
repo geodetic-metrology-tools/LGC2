@@ -68,8 +68,8 @@ namespace tut
 
 		//comparison
 		for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++)
-			for (auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN)
-				for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM)
+			for (auto& itTSTN  : itTree.node->data->measurements.fTSTN)
+				for (auto& itROM : itTSTN->roms)
 				{
 					int i = 0;
 					int j = 0;
@@ -143,8 +143,8 @@ namespace tut
 
 		//comparison
 		for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++)
-			for (auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN)
-				for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM)
+			for (auto& itTSTN : itTree.node->data->measurements.fTSTN)
+				for (auto& itROM : itTSTN->roms)
 				{
 					int i = 0;
 					int j = 0;
@@ -219,8 +219,8 @@ namespace tut
 		//comparison
 		int i = 0;
 		for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++)
-			for (auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN)
-				for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM)
+			for (auto& itTSTN : itTree.node->data->measurements.fTSTN)
+				for (auto& itROM : itTSTN->roms)
 					for (auto& itECTH : itROM->measECTH)
 					{
 						ensure_equals("V0 should match", itECTH.fAllFixedV0, V0_lgc1[i], 1e-7);
@@ -277,8 +277,8 @@ namespace tut
 		//comparison
 		int i = 0;
 		for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++)
-			for (auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN)
-				for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM)
+			for (auto& itTSTN : itTree.node->data->measurements.fTSTN)
+				for (auto& itROM : itTSTN->roms)
 					for (auto& itECTH : itROM->measECTH)
 					{
 						ensure_equals("V0 should match", itECTH.fAllFixedV0, V0_lgc1[i], 1e-7);

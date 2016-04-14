@@ -72,19 +72,19 @@ private:
 	/*!@name Methods to add the design matrix contributions for each type of observation*/
 	//@{
 		/// Add the design matrices contributions for the PLR3D observation 
-		void addPLR3DContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
+		void addPLR3DContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the spatial dist. observations 
-		void  addSpaDistContributions(const std::vector<TLINE>& distMeas, const TTSTN& station, TLSInputMatrices*  matrices);
+		void  addSpaDistContributions(const std::vector<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the hor. angle observations 
-		void  addHorAngContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
+		void  addHorAngContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the zenithal angle observations 
-		void  addZenDistContributions(const std::vector<TZEND>& zendMeas, const TTSTN& station, TLSInputMatrices*  matrices);
+		void  addZenDistContributions(const std::vector<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the hor. dist. observations 
-		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, const TTSTN& station, TLSInputMatrices*  matrices);
+		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecth observations 
-		void  addECTHContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
+		void  addECTHContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecth observations 
-		void  addECSPContributions(const TTSTN::TROM& rom, const TTSTN& station, TLSInputMatrices*  matrices);
+		void  addECSPContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add CAMERA UVEC observation
 		void addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices);

@@ -12,7 +12,7 @@
 */
 struct TMeasurements {
 	/// All total station measurements in the order in which they appeared in the input file
-	std::vector<TTSTN>  fTSTN;
+	std::vector<shared_ptr<TTSTN>>  fTSTN;
 
 	/// All electronic distance measurements in the order in which they appeared in the input file
 	std::vector<TEDM>   fEDM;

@@ -556,9 +556,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isANGL = false;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{	
-		for(auto const ItRoms : itTSTN.roms)
+		for(auto const ItRoms : itTSTN->roms)
 		{
-			if(ItRoms.measANGL.size() > 0){
+			if(ItRoms->measANGL.size() > 0){
 				
 				if (isANGL== false)
 				{
@@ -566,7 +566,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeANGLReliabilityHeader();
 					isANGL = true;
 				}
-				tstnWriter.writeANGLReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measANGL);				
+				tstnWriter.writeANGLReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measANGL);				
 			}		
 		}
 	}
@@ -575,16 +575,16 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isZEND = false;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{	
-		for(auto const ItRoms : itTSTN.roms)
+		for(auto const ItRoms : itTSTN->roms)
 		{	
-			if(ItRoms.measZEND.size() > 0){
+			if(ItRoms->measZEND.size() > 0){
 				if (isZEND == false)
 				{
 					(*stream)<<"ZEND observations"<<endl;
 					tstnWriter.writeZENDReliabilityHeader();
 					isZEND = true;
 				}
-				tstnWriter.writeZENDReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measZEND);			
+				tstnWriter.writeZENDReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measZEND);			
 			}
 		}
 	}
@@ -593,9 +593,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isDIST = false;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{
-		for(auto const ItRoms : itTSTN.roms)
+		for(auto const ItRoms : itTSTN->roms)
 		{
-			if(ItRoms.measDIST.size() > 0){
+			if(ItRoms->measDIST.size() > 0){
 				
 				if (isDIST==false)
 				{
@@ -603,7 +603,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeDISTReliabilityHeader();
 					isDIST = true;
 				}
-				tstnWriter.writeDISTReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measDIST);
+				tstnWriter.writeDISTReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measDIST);
 			}
 		}
 	}
@@ -612,9 +612,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isPLR = false;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{	
-		for(auto const ItRoms : itTSTN.roms)
+		for(auto const ItRoms : itTSTN->roms)
 		{
-			if(ItRoms.measPLR3D.size() > 0){
+			if(ItRoms->measPLR3D.size() > 0){
 				
 				if (isPLR==false)
 				{
@@ -622,7 +622,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writePLRReliabilityHeader();
 					isPLR = true;
 				}
-				tstnWriter.writePLRReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measPLR3D);
+				tstnWriter.writePLRReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measPLR3D);
 			}
 		}
 	}
@@ -631,9 +631,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isECTH = false;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{
-		for(auto const ItRoms : itTSTN.roms)
+		for(auto const ItRoms : itTSTN->roms)
 		{
-			if(ItRoms.measECTH.size() > 0){
+			if(ItRoms->measECTH.size() > 0){
 				
 				if (isECTH==false)
 				{
@@ -641,7 +641,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeECTHReliabilityHeader();
 					isECTH = true;
 				}
-				tstnWriter.writeECTHReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measECTH);
+				tstnWriter.writeECTHReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measECTH);
 			}
 		}
 	}
@@ -649,9 +649,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isECSP = false;
 	for (auto& itTSTN : frameIt->get()->measurements.fTSTN)
 	{
-		for (auto const ItRoms : itTSTN.roms)
+		for (auto const ItRoms : itTSTN->roms)
 		{
-			if (ItRoms.measECSP.size() > 0){
+			if (ItRoms->measECSP.size() > 0){
 
 				if (isECSP == false)
 				{
@@ -659,7 +659,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeECTHReliabilityHeader();
 					isECSP = true;
 				}
-				tstnWriter.writeECSPReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measECSP);
+				tstnWriter.writeECSPReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measECSP);
 			}
 		}
 	}
@@ -668,9 +668,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isDHOR = false;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 	{
-		for(auto const ItRoms : itTSTN.roms)
+		for(auto const ItRoms : itTSTN->roms)
 		{
-			if(ItRoms.measDHOR.size() > 0){
+			if(ItRoms->measDHOR.size() > 0){
 				
 				if (isDHOR==false)
 				{
@@ -678,7 +678,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 					tstnWriter.writeDHORReliabilityHeader();
 					isDHOR = true;
 				}
-				tstnWriter.writeDHORReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms.measDHOR);
+				tstnWriter.writeDHORReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measDHOR);
 			}
 		}
 	}

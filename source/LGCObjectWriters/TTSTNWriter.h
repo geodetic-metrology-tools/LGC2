@@ -18,20 +18,20 @@ public:
 	virtual ~TTSTNWriter();
 
 	///	Writes information about TSTN, its definition, calculated values and each ROM (round of measurements) as well as the observations included.
-	void writeTSTNResults(const TTSTN& tstn);
+	void writeTSTNResults(shared_ptr<TTSTN> tstn);
 
 	///	Writes information about TSTN, its definition, calculated values and each ROM (round of measurements) as well as the observations included.
-	void writeTSTNResultsSIMU(const TTSTN& tstn);
+	void writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn);
 
 	/// Writes TSTN header.
-	void writeTSTNHeader(const TTSTN& tstn);
+	void writeTSTNHeader(shared_ptr<TTSTN> tstn);
 	/// Writes TSTN data, definition, provisional and calculated values.
-	void writeTSTNData(const TTSTN& tstn);
+	void writeTSTNData(shared_ptr<TTSTN> tstn);
 	
 	/// Writes V0 (ROM = round of measurement) header.
 	void writeV0Header();
 	/// Writes V0 (ROM = round of measurement) definition.
-	void writeV0Data(const TTSTN::TROM& rom);
+	void writeV0Data(shared_ptr<TTSTN::TROM> rom);
 
 	/// Write reliability header for ANGL
 	void	writeANGLReliabilityHeader();
@@ -49,19 +49,19 @@ public:
 	void	writeECSPReliabilityHeader();
 
 	/// Write reliability data for ANGL
-	void	writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL);
+	void	writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL);
 	/// Write reliability data for ZEND
-	void	writeZENDReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TZEND>& measZEND);
+	void	writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TZEND>& measZEND);
 	/// Write reliability data for DIST
-	void	writeDISTReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDIST);
+	void	writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDIST);
 	/// Write reliability data for PLR
-	void	writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TPLR3D>& measPLR3D);
+	void	writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TPLR3D>& measPLR3D);
 	/// Write reliability data for DHOR
-	void	writeDHORReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR);
+	void	writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR);
 	/// Write reliability data for ECTH
-	void	writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH);
+	void	writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH);
 	/// Write reliability data for ECSP
-	void	writeECSPReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP);
+	void	writeECSPReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP);
 
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }

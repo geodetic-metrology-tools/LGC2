@@ -52,27 +52,27 @@ void TAMeasurementKey_lgc1::createPolarInstrument()
 void TAMeasurementKey_lgc1::createTSTN(string stn, int line)
 {
 	// Initialize the station
-	TTSTN tstn(fpoints.getObject(stn), getPolarInstr());
-	tstn.line = line;
+	shared_ptr<TTSTN> tstn = make_shared<TTSTN>(fpoints.getObject(stn), getPolarInstr());
+	tstn->line = line;
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);
 }
 
-void TAMeasurementKey_lgc1::createROM(TTSTN& tstn)
+void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 {
 	//Initialize the rom
 	TInstrumentData::TPOLAR::TTarget tgt = getPolarInstr().targets["PolarTgt"];
 	//Prepare a name of an adjustable angle (V0) = Frame name + V0 + numberOfAngle
 	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
-	TTSTN::TROM rom(tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
+	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
 	// Add the ROM
-	tstn.roms.emplace_back(rom);
+	tstn->roms.emplace_back(rom);
 }
 
 void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeANGL = [&](TTSTN::TROM& rom){
+	auto& storeANGL = [&](shared_ptr<TTSTN::TROM> rom){
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("An ANGL measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -82,7 +82,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : rom.measANGL)
+			for (auto& point : rom->measANGL)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
@@ -132,7 +132,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive)
 			angl.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
-		rom.measANGL.emplace_back(angl);
+		rom->measANGL.emplace_back(angl);
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -151,58 +151,59 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		if (currentStation != tokens.at(0))
 		{
 			currentStation = tokens.at(0);
-			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
+			if (proj.getCurrentNode().measurements.fTSTN.size() >= 1)
 			{
-				for (auto& itTstn : proj.getCurrentNode().measurements.fTSTN)
+				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
 				{
-					if (itTstn.instrumentPos->getName() == currentStation)
+					if (itTstn->instrumentPos->getName() == currentStation)
+					{
 						//if TSNT already exist, see if ANGL meas alredy defined. If true, create a new rom, else store in the first empty rom or creat a new one.
-						for (auto& itRom : itTstn.roms)
+						for (auto& itRom : itTstn->roms)
 						{
-							currentTSTN = &itTstn;
-							if (itRom.measANGL.size() == 0)
-							{
-								currentROM = &itRom;
-								storeANGL(*currentROM);
-							}
+							currentTSTN = itTstn;
+
+							if (itRom->measANGL.empty())
+								currentROM = itRom;
 							else
 							{
-								createROM(*currentTSTN);
-								currentROM = &itTstn.roms.back();
-								storeANGL(*currentROM);
+								createROM(currentTSTN);
+								currentROM = itTstn->roms.back();
 							}
+							storeANGL(currentROM);
 						}
+					}
 					else
 					{
 						createTSTN(currentStation, line);
-						currentTSTN = &proj.getCurrentNode().measurements.fTSTN.back();
+						currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
 
 						createROM(proj.getCurrentNode().measurements.fTSTN.back());
-						currentROM = &proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+						currentROM = currentTSTN->roms.back();
 
-						storeANGL(*currentROM);
+						storeANGL(currentROM);
 					}
 				}
 			}
 			else
 			{
 				createTSTN(currentStation, line);
-				currentTSTN = &proj.getCurrentNode().measurements.fTSTN.back();
+				//currentTSTN = make_shared<TTSTN>(proj.getCurrentNode().measurements.fTSTN.back());
+				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
 
-				createROM(*currentTSTN);
-				currentROM = &proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+				createROM(currentTSTN);
+				currentROM = currentTSTN->roms.back();
 
-				storeANGL(*currentROM);
+				storeANGL(currentROM);
 			}
 		}
 		else
-			storeANGL(*currentROM);
+			storeANGL(currentROM);
 	}
 }
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeZENI = [&](TTSTN::TROM& rom){
+	auto& storeZENI = [&](TTSTN::TROM* rom){
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("An ZENI measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -212,12 +213,14 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : rom.measZEND)
+			for (auto& point : rom->measZEND)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
 		TInstrumentData::TPOLAR& instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+
+		currentTSTN->instrumentHeightAdjustable = IH_adj.get();
 
 		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
 		{
@@ -257,7 +260,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
-		rom.measZEND.emplace_back(zend);
+		rom->measZEND.emplace_back(zend);
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -269,6 +272,9 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			sigmaZEND = TAngle(1.0, TAngle::EUnits::kCCs);
 
+		// Add adjustable scalar into a global collection and store a pointer
+		IH_adj.reset(&flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_IH")));
+
 	}
 	else
 	{
@@ -277,60 +283,56 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			currentStation = tokens.at(0);
 			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
 			{
-				for (auto& itTstn : proj.getCurrentNode().measurements.fTSTN)
+				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
 				{
-					if (itTstn.instrumentPos->getName() == currentStation)
+					if (itTstn->instrumentPos->getName() == currentStation)
 						//if TSNT already exist, see if ZEND meas alredy defined. If true, create a new rom, else store in the first empty rom or creat a new one.
-						for (auto& itRom : itTstn.roms)
+						for (auto itRom : itTstn->roms)
 						{
-							currentTSTN = &itTstn;
-							if (itRom.measZEND.size() == 0)
+							currentTSTN = itTstn;
+							if (itRom->measZEND.size() == 0)
 							{
-								currentROM = &itRom;
-								storeZENI(*currentROM);
+								currentROM = itRom;
+								storeZENI(currentROM.get());
 							}
 							else
 							{
-								createROM(*currentTSTN);
-								currentROM = &itTstn.roms.back();
-								storeZENI(*currentROM);
+								createROM(currentTSTN);
+								currentROM = itTstn->roms.back();
+								storeZENI(currentROM.get());
 							}
 						}
 					else
 					{
 						createTSTN(currentStation, line);
-						currentTSTN = &proj.getCurrentNode().measurements.fTSTN.back();
+						currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
 
 						createROM(proj.getCurrentNode().measurements.fTSTN.back());
-						currentROM = &proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+						currentROM = currentTSTN->roms.back();
 
-						storeZENI(*currentROM);
+						storeZENI(currentROM.get());
 					}
 				}
 			}
 			else
 			{
 				createTSTN(currentStation, line);
-				currentTSTN = &proj.getCurrentNode().measurements.fTSTN.back();
+				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
 
 				createROM(proj.getCurrentNode().measurements.fTSTN.back());
-				currentROM = &proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+				currentROM = currentTSTN->roms.back();
 
-				storeZENI(*currentROM);
+				storeZENI(currentROM.get());
 			}
 		}
 		else
-			storeZENI(*currentROM);
-
-		// instrument heigth to determine
-		TAdjustableLength* hi = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + "_IH"));
-		currentTSTN->instrumentHeightAdjustable = hi;
+			storeZENI(currentROM.get());
 	}
 }
 
 void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeZEND = [&](TTSTN::TROM& rom){
+	auto& storeZEND = [&](TTSTN::TROM* rom){
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("An ZENI measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -340,12 +342,14 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : rom.measZEND)
+			for (auto& point : rom->measZEND)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
 		TInstrumentData::TPOLAR& instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+
+		currentTSTN->instrumentHeightAdjustable = IH_adj;
 
 		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "\\"))
 		{
@@ -411,7 +415,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		if (!fSIMUActive)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
-		rom.measZEND.emplace_back(zend);
+		rom->measZEND.emplace_back(zend);
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -422,7 +426,10 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigmaZEND = TAngle(std::stor(tokens.at(2)), TAngle::EUnits::kCCs);
 		else
 			sigmaZEND = TAngle(1.0, TAngle::EUnits::kCCs);
-
+	
+		// Add adjustable scalar into a global collection and store a pointer
+		IH_adj = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + "_IH"));
+		
 	}
 	else
 	{
@@ -431,54 +438,55 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			currentStation = tokens.at(0);
 			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
 			{
-				for (auto& itTstn : proj.getCurrentNode().measurements.fTSTN)
+				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
 				{
-					if (itTstn.instrumentPos->getName() == currentStation)
+					if (itTstn->instrumentPos->getName() == currentStation)
+					{
 						//if TSNT already exist, see if ZEND meas alredy defined. If true, create a new rom, else store in the first empty rom or creat a new one.
-						for (auto& itRom : itTstn.roms)
+						for (auto itRom : itTstn->roms)
 						{
-							currentTSTN = &itTstn;
-							if (itRom.measZEND.size() == 0)
+							currentTSTN = itTstn;
+							if (itRom->measZEND.empty())
 							{
-								currentROM = &itRom;
-								storeZEND(*currentROM);
+								currentROM = itRom;
+								storeZEND(currentROM.get());
 							}
 							else
 							{
-								createROM(*currentTSTN);
-								currentROM = &itTstn.roms.back();
-								storeZEND(*currentROM);
+								createROM(currentTSTN);
+								currentROM = itTstn->roms.back();
+								storeZEND(currentROM.get());
 							}
 						}
+					}
 					else
 					{
 						createTSTN(currentStation, line);
-						currentTSTN = &proj.getCurrentNode().measurements.fTSTN.back();
+						currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
 
 						createROM(proj.getCurrentNode().measurements.fTSTN.back());
-						currentROM = &proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+						currentROM  = currentTSTN->roms.back();
 
-						storeZEND(*currentROM);
+						storeZEND(currentROM.get());
 					}
 				}
 			}
 			else
 			{
 				createTSTN(currentStation, line);
-				currentTSTN = &proj.getCurrentNode().measurements.fTSTN.back();
+				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
 
-				createROM(proj.getCurrentNode().measurements.fTSTN.back());
-				currentROM = &proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+				createROM( proj.getCurrentNode().measurements.fTSTN.back());
+				currentROM = currentTSTN->roms.back();
 
-				storeZEND(*currentROM);
+				storeZEND(currentROM.get());
 			}
 		}
 		else
-			storeZEND(*currentROM);
+			storeZEND(currentROM.get());
 
-		// instrument heigth to determine
-		TAdjustableLength* hi = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_IH"));
-		currentTSTN->instrumentHeightAdjustable = hi;
+
+		
 	}
 }
 
@@ -849,7 +857,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		
 		//create an EDM target
 		// Add adjustable scalar into a global collection and store a pointer
-		TAdjustableLength* distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr"));
+		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr"));
 
 		TInstrumentData::TEDM::TTarget t = {
 			"EDMTgt",
@@ -861,7 +869,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			TLength(0.0, TLength::EUnits::kMillimetres), //sigma tgt centering
 			TLength(0.0, TLength::EUnits::kMetres), //htgt
 			TLength(0.0, TLength::EUnits::kMillimetres), //sigma htgt
-			distCorrectionAdjustable // adjustableLength*
+			adjDCorr // adjustableLength*
 		};
 
 		if (tokens.size() == 3)
@@ -958,7 +966,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (tokens.at(3) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + "_adj"));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (tokens.at(3).compare(0, 1, "/"))
@@ -976,7 +984,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + tokens.at(1)));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + tokens.at(1)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (tokens.at(4).compare(0, 1, "/"))
@@ -1004,7 +1012,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + tokens.at(1)));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + tokens.at(1)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (tokens.at(5).compare(0, 1, "/"))

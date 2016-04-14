@@ -115,7 +115,7 @@ struct TTSTN {
 		int  line;
 
 		/// All round of measurements for this instrument. In each ROM a point on different position is measured.
-		std::vector<TROM> roms;
+		std::vector<shared_ptr<TROM>> roms;
 
 		/*!
 			Creates a total station that is centered on a given point with instrument data from the input file

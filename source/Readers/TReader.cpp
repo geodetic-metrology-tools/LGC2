@@ -106,10 +106,10 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyLEP(project)));
 	finterpreters.emplace_back(UPK(new TKeySPHE(project)));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyOLOC(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyRS2K(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyLEP(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeySPHE(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyOLOC(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyRS2K(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyLEP(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeySPHE(project)));
 
 	// calculation objects
 	finterpreters.emplace_back(UPK(new TKeyALLFIXED(project)));
@@ -118,11 +118,11 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyPDOR(project)));
 	finterpreters.emplace_back(UPK(new TKeySIMU(project)));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyALLFIXED(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyLIBR(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyNODUP(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPDOR(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeySIMU(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyALLFIXED(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyLIBR(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyNODUP(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyPDOR(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeySIMU(project)));
 
 	// output options
 	finterpreters.emplace_back(UPK(new TKeyAPRI(project)));
@@ -133,13 +133,13 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyPREC(project)));
 	finterpreters.emplace_back(UPK(new TKeyPRES(project)));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyAPRI(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyEREL(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyFMTO(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyFMTP(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyHIST(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPREC(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPRES(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyAPRI(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyEREL(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyFMTO(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyFMTP(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyHIST(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyPREC(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyPRES(project)));
 
 	// additional output files
 	finterpreters.emplace_back(UPK(new TKeyDEFA(project)));
@@ -148,11 +148,11 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyPLOT(project)));
 	finterpreters.emplace_back(UPK(new TKeySOBS(project)));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyDEFA(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyFAUT(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPUNC(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPLOT(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeySOBS(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyDEFA(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyFAUT(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyPUNC(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyPLOT(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeySOBS(project)));
 
 
 	// Adjusted Objects (points) Section
@@ -163,12 +163,12 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyVYZ(project)));
 	finterpreters.emplace_back(UPK(new TKeyVZ(project)));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyCALA(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPOIN(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyVXY(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyVXZ(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyVYZ(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyVZ(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyCALA(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyPOIN(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyVXY(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyVXZ(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyVYZ(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyVZ(project)));
 
 		
 	// Instruments Section
@@ -202,12 +202,12 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(dhor));
 	finterpreters.emplace_back(UPK(plr3d));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyANGL_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyZENI_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyZENH_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyDTHE_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyECTH_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyDHOR_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyANGL_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyZENI_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyZENH_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyDTHE_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyECTH_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyDHOR_lgc1(project)));
 
 
 	/*CAMERA*/
@@ -235,14 +235,14 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyORIE(project)));
 	finterpreters.emplace_back(UPK(new TKeyRADI(project)));
 
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyDMES_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyDVER_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyDLEV_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyECHO_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyECSP_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyECVE_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyORIE_lgc1(project)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyRADI_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyDMES_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyDVER_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyDLEV_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyECHO_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyECSP_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyECVE_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyORIE_lgc1(project)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyRADI_lgc1(project)));
 	
 	finterpreters.emplace_back(UPK(new TKeyFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyENDFRAME(project)));

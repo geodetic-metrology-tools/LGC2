@@ -34,13 +34,13 @@ class TAMeasurementKey : public TAKeyWord {
 		/// returns a reference to the most recently added station (TSTN)
 		// (a modifyable copy of the object in the instruments records)
 		inline TInstrumentData::TPOLAR& getStation() const {
-			return proj.getCurrentNode().measurements.fTSTN.back().instrument;
+			return proj.getCurrentNode().measurements.fTSTN.back()->instrument;
 		}
 
 		/// returns a reference to the current ROM
-		inline TTSTN::TROM& getROM() const {
-			if(proj.getCurrentNode().measurements.fTSTN.back().roms.size())
-				return proj.getCurrentNode().measurements.fTSTN.back().roms.back();
+		inline shared_ptr<TTSTN::TROM> getROM() const {
+			if(proj.getCurrentNode().measurements.fTSTN.back()->roms.size())
+				return proj.getCurrentNode().measurements.fTSTN.back()->roms.back();
 			else
 				throw std::range_error("TTSTN::ROM vector is emtpy");
 		}

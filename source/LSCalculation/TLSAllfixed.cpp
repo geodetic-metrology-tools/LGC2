@@ -22,10 +22,10 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 			for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++)
 			{
 				// Iterate through the Total station measurements (TSTN)
-				for (auto itTSTN(itTree.node->data->measurements.fTSTN.begin()); itTSTN != itTree.node->data->measurements.fTSTN.end(); ++itTSTN)
+				for (auto& itTSTN : itTree.node->data->measurements.fTSTN)
 				{
 					// Iterate through every ROM of TSTN 
-					for (auto itROM(itTSTN->roms.begin()); itROM != itTSTN->roms.end(); ++itROM)
+					for (auto& itROM : itTSTN->roms)
 					{
 						for (auto& itANGL : itROM->measANGL)
 							itANGL.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedANGL(*itTSTN, *itROM, itANGL);

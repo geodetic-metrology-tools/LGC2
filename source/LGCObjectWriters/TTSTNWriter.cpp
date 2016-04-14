@@ -12,7 +12,7 @@ TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool hist) : TObservationWri
 TTSTNWriter::~TTSTNWriter(){}
 
 
-void TTSTNWriter::writeTSTNResults(const TTSTN& tstn){
+void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(3);
@@ -21,55 +21,55 @@ void TTSTNWriter::writeTSTNResults(const TTSTN& tstn){
 	writeTSTNHeader(tstn);
 	writeTSTNData(tstn);
 
-	for(auto const ItRoms : tstn.roms)
+	for(auto ItRoms : tstn->roms)
 	{
-		const TAngle& V0 = ItRoms.v0->getEstimatedValue();
+		const TAngle& V0 = ItRoms->v0->getEstimatedValue();
 
 		//Write definition of ROM
 		writeV0Header();
 		writeV0Data(ItRoms);
 
-		if(ItRoms.measANGL.size() > 0){
-			writeANGLResults(ItRoms.measANGL, tstn.instrumentPos, V0);
-			writeAngleResultsSummary(ItRoms.getANGLObsSummary(), TABs); 
+		if(ItRoms->measANGL.size() > 0){
+			writeANGLResults(ItRoms->measANGL, tstn->instrumentPos, V0);
+			writeAngleResultsSummary(ItRoms->getANGLObsSummary(), TABs); 
 			if (writeHist)
-				writeHisto(ItRoms.getANGLObsSummary(), " ANGL");
+				writeHisto(ItRoms->getANGLObsSummary(), " ANGL");
 		}
-		if(ItRoms.measZEND.size() > 0){
-			writeZENDResults(ItRoms.measZEND, tstn.instrumentPos);
-			writeAngleResultsSummary(ItRoms.getZENDObsSummary(),TABs);
+		if(ItRoms->measZEND.size() > 0){
+			writeZENDResults(ItRoms->measZEND, tstn->instrumentPos);
+			writeAngleResultsSummary(ItRoms->getZENDObsSummary(),TABs);
 			if (writeHist)
-				writeHisto(ItRoms.getZENDObsSummary(), " ZEND");
+				writeHisto(ItRoms->getZENDObsSummary(), " ZEND");
 		}
-		if(ItRoms.measDIST.size() > 0){
-			writeDISTResults(ItRoms.measDIST, tstn.instrument, tstn.instrumentPos);
-			writeDistanceResultsSummary(ItRoms.getDISTObsSummary(),TABs);
+		if(ItRoms->measDIST.size() > 0){
+			writeDISTResults(ItRoms->measDIST, tstn->instrument, tstn->instrumentPos);
+			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(),TABs);
 			if (writeHist)
-				writeHisto(ItRoms.getDISTObsSummary(), " DIST");
+				writeHisto(ItRoms->getDISTObsSummary(), " DIST");
 		}
-		if(ItRoms.measDHOR.size() > 0){
-			writeDHORResults(ItRoms.measDHOR);
-			writeDistanceResultsSummary(ItRoms.getDHORObsSummary(),TABs);
+		if(ItRoms->measDHOR.size() > 0){
+			writeDHORResults(ItRoms->measDHOR);
+			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(),TABs);
 			if (writeHist)
-				writeHisto(ItRoms.getDHORObsSummary(), " DHOR");
+				writeHisto(ItRoms->getDHORObsSummary(), " DHOR");
 		}
-		if(ItRoms.measECTH.size() > 0){
-			writeECTHResults(ItRoms.measECTH, tstn.instrumentPos);
-			writeDistanceResultsSummary(ItRoms.getECTHObsSummary(),TABs);
+		if(ItRoms->measECTH.size() > 0){
+			writeECTHResults(ItRoms->measECTH, tstn->instrumentPos);
+			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(),TABs);
 			if (writeHist)
-				writeHisto(ItRoms.getECTHObsSummary(), " ECTH");
+				writeHisto(ItRoms->getECTHObsSummary(), " ECTH");
 		}
-		if (ItRoms.measECSP.size() > 0){
-			writeECSPResults(ItRoms.measECSP, tstn.instrumentPos);
-			writeDistanceResultsSummary(ItRoms.getECSPObsSummary(), TABs);
+		if (ItRoms->measECSP.size() > 0){
+			writeECSPResults(ItRoms->measECSP, tstn->instrumentPos);
+			writeDistanceResultsSummary(ItRoms->getECSPObsSummary(), TABs);
 			if (writeHist)
-				writeHisto(ItRoms.getECSPObsSummary(), " ECSP");
+				writeHisto(ItRoms->getECSPObsSummary(), " ECSP");
 		}
-		if(ItRoms.measPLR3D.size() > 0){
-			writePLRResults(ItRoms.measPLR3D, tstn.instrument, tstn.instrumentPos, V0, tstn.rotX->getEstimatedValue(), tstn.rotY->getEstimatedValue());
+		if(ItRoms->measPLR3D.size() > 0){
+			writePLRResults(ItRoms->measPLR3D, tstn->instrument, tstn->instrumentPos, V0, tstn->rotX->getEstimatedValue(), tstn->rotY->getEstimatedValue());
 			
 			// PLR3D summurary (3 measurements on the same line)
-			TPOLARObsSummary summary = ItRoms.getPLR3DObsSummary();		
+			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();		
 			int obsResWidth = getObsResWidth();
 			int angleResidualPrecision = max(getAngleResidualPrecision() - 3, 0); 
 			int	lengthResidualPrecision = max(getLengthResidualPrecision() - 2, 0);
@@ -183,7 +183,7 @@ void TTSTNWriter::writeTSTNResults(const TTSTN& tstn){
 	}
 }
 
-void TTSTNWriter::writeTSTNResultsSIMU(const TTSTN& tstn){
+void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(3);
@@ -192,39 +192,39 @@ void TTSTNWriter::writeTSTNResultsSIMU(const TTSTN& tstn){
 	writeTSTNHeader(tstn);
 	writeTSTNData(tstn);
 
-	for(auto const ItRoms : tstn.roms)
+	for(auto const ItRoms : tstn->roms)
 	{
 		//Write definition of ROM
 		writeV0Header();
 		writeV0Data(ItRoms);
 
-		if(ItRoms.measANGL.size() > 0){
+		if(ItRoms->measANGL.size() > 0){
 			(*stream)<<TABs<<"ANGL"<<endl;
-			writeAngleResultsSummary(ItRoms.getANGLObsSummary(),TABs);
+			writeAngleResultsSummary(ItRoms->getANGLObsSummary(),TABs);
 		}
-		if(ItRoms.measZEND.size() > 0){
+		if(ItRoms->measZEND.size() > 0){
 			(*stream)<<TABs<<"ZEND"<<endl;
-			writeAngleResultsSummary(ItRoms.getZENDObsSummary(),TABs);
+			writeAngleResultsSummary(ItRoms->getZENDObsSummary(),TABs);
 		}
-		if(ItRoms.measDIST.size() > 0){
+		if(ItRoms->measDIST.size() > 0){
 			(*stream)<<TABs<<"DIST"<<endl;
-			writeDistanceResultsSummary(ItRoms.getDISTObsSummary(),TABs);
+			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(),TABs);
 		}
-		if(ItRoms.measDHOR.size() > 0){
+		if(ItRoms->measDHOR.size() > 0){
 			(*stream)<<TABs<<"DHOR"<<endl;
-			writeDistanceResultsSummary(ItRoms.getDHORObsSummary(),TABs);
+			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(),TABs);
 		}
-		if(ItRoms.measECTH.size() > 0){
+		if(ItRoms->measECTH.size() > 0){
 			(*stream)<<TABs<<"ECTH"<<endl;
-			writeDistanceResultsSummary(ItRoms.getECTHObsSummary(),TABs);
+			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(),TABs);
 		}
-		if (ItRoms.measECSP.size() > 0){
+		if (ItRoms->measECSP.size() > 0){
 			(*stream) << TABs << "ECSP" << endl;
-			writeDistanceResultsSummary(ItRoms.getECSPObsSummary(), TABs);
+			writeDistanceResultsSummary(ItRoms->getECSPObsSummary(), TABs);
 		}
 
-		if(ItRoms.measPLR3D.size() > 0){
-			TPOLARObsSummary summary = ItRoms.getPLR3DObsSummary();	
+		if(ItRoms->measPLR3D.size() > 0){
+			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();	
 			(*stream)<<TABs<<"DIST"<<endl;
 			writeDistanceResultsSummary(summary.distObsSum,TABs);
 			(*stream)<<TABs<<"ANGL"<<endl;
@@ -1277,7 +1277,7 @@ void TTSTNWriter::writeECSPResultsHeader(int nOObs)
 
 }
 
-void TTSTNWriter::writeTSTNHeader(const TTSTN& tstn){
+void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1288,7 +1288,7 @@ void TTSTNWriter::writeTSTNHeader(const TTSTN& tstn){
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"TOTAL STATION INSTRUMENT: " + tstn.instrument.ID);
+	(*stream).writeStringLeft(nameWidth,"TOTAL STATION INSTRUMENT: " + tstn->instrument.ID);
 	(*stream)<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -1297,7 +1297,7 @@ void TTSTNWriter::writeTSTNHeader(const TTSTN& tstn){
 	(*stream).writeString(obsWidth,	"H_INSTR"); //HEIGHT OF THE INSTRUMENT initial
 	(*stream).writeString(obsWidth,	"ROT3D"); // indiacates if station can rotate freely
 
-	if(tstn.rot3D){
+	if(tstn->rot3D){
 		(*stream).writeString(obsWidth,	"rotX"); // rotation around X axis
 		(*stream).writeString(obsWidth,	"rotY"); //rotation around Y axis
 		(*stream).writeString(obsResWidth,	"SIGMA rX"); //rotation around Y axis
@@ -1311,7 +1311,7 @@ void TTSTNWriter::writeTSTNHeader(const TTSTN& tstn){
 	(*stream).writeString(obsWidth,	"(M)"); //INITIAL HEIGHT OF THE INSTRUMEN 
 	(*stream).writeString(obsWidth,	""); //BOOL VALUE TELLING IF TSTN CAN ROTATE FREELY
 	
-	if(tstn.rot3D){
+	if(tstn->rot3D){
 		(*stream).writeString(obsWidth,	"(GON)"); // rotation around X axis
 		(*stream).writeString(obsWidth,	"(GON)"); //rotation around Y axis
 		(*stream).writeString(obsResWidth,	"(CC)"); // rotation around X axis
@@ -1343,7 +1343,7 @@ void TTSTNWriter::writeV0Header(){
 }
 
 
-void TTSTNWriter::writeV0Data(const TTSTN::TROM& rom){
+void TTSTNWriter::writeV0Data(shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1353,14 +1353,14 @@ void TTSTNWriter::writeV0Data(const TTSTN::TROM& rom){
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "");
 
-	(*stream).writeDouble(obsWidth, anglePrecision, rom.acst.getGonsValue()); // Constant orientation (ACST)
-	(*stream).writeDouble(obsWidth, anglePrecision, rom.v0->getEstimatedValue().getGonsValue()); // V0 calculated angle
-	(*stream).writeDouble(obsWidth, anglePrecision, rom.v0->getEstimatedPrecision().getSignedCCValue()); // V0 estimated precision
+	(*stream).writeDouble(obsWidth, anglePrecision, rom->acst.getGonsValue()); // Constant orientation (ACST)
+	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedValue().getGonsValue()); // V0 calculated angle
+	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedPrecision().getSignedCCValue()); // V0 estimated precision
 
 	(*stream)<<endl<<endl;
 }
 
-void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
+void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1372,27 +1372,27 @@ void TTSTNWriter::writeTSTNData(const TTSTN& tstn){
 
 	(*stream)<<TABs;
 	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
-	(*stream).writeStringLeft(nameWidth,tstn.instrumentPos->getName());
+	(*stream).writeStringLeft(nameWidth,tstn->instrumentPos->getName());
 
 	//write INSTRUMENT HEIGHT
-	if(tstn.instrumentHeightAdjustable->isFixed()){
-		(*stream).writeDouble(obsWidth, lengthPrecision, tstn.instrument.instrHeight); 
+	if(tstn->instrumentHeightAdjustable->isFixed()){
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrument.instrHeight); 
 	}
 	else{
-		(*stream).writeDouble(obsWidth, lengthPrecision, tstn.instrumentHeightAdjustable->getEstimatedValue()); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrumentHeightAdjustable->getEstimatedValue()); 
 	}
 
 
-	if(tstn.rot3D){
+	if(tstn->rot3D){
 		(*stream).writeString(obsWidth, "TRUE");
 		//write the ROTX
-		(*stream).writeDouble(obsWidth, anglePrecision, tstn.rotX->getEstimatedValue().getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotX->getEstimatedValue().getGonsValue());
 		//write the ROTY
-		(*stream).writeDouble(obsWidth, anglePrecision, tstn.rotY->getEstimatedValue().getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotY->getEstimatedValue().getGonsValue());
 
 
-		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn.rotX->getEstimatedPrecision().getSignedCCValue());
-		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn.rotY->getEstimatedPrecision().getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotX->getEstimatedPrecision().getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotY->getEstimatedPrecision().getSignedCCValue());
 		(*stream)<<endl;
 	}
 	else
@@ -1447,7 +1447,7 @@ void	TTSTNWriter::writeECSPReliabilityHeader()
 	return;
 }
 
-void	TTSTNWriter::writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL)
+void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1462,7 +1462,7 @@ void	TTSTNWriter::writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		int index = ItANGL.getFirstObservationIndex();
 		
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItANGL.targetPos->getName());
@@ -1485,7 +1485,7 @@ void	TTSTNWriter::writeANGLReliabilityData(const TTSTN& tstn, const TLGCStatisti
 	return;
 }
 
-void	TTSTNWriter::writeZENDReliabilityData(const  TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TZEND>& measZEND)
+void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TZEND>& measZEND)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1500,7 +1500,7 @@ void	TTSTNWriter::writeZENDReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		int index = ItZEND.getFirstObservationIndex();
 		
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItZEND.targetPos->getName());
 		// get Point 3
@@ -1521,7 +1521,7 @@ void	TTSTNWriter::writeZENDReliabilityData(const  TTSTN& tstn, const TLGCStatist
 	return;
 }
 
-void	TTSTNWriter::writeDISTReliabilityData(const  TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDIST)
+void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDIST)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1536,7 +1536,7 @@ void	TTSTNWriter::writeDISTReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		int index = ItDist.getFirstObservationIndex();
 		
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItDist.targetPos->getName());
 		// get Point 3
@@ -1555,7 +1555,7 @@ void	TTSTNWriter::writeDISTReliabilityData(const  TTSTN& tstn, const TLGCStatist
 	return;	
 }
 
-void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TPLR3D>& measPLR3D)
+void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TPLR3D>& measPLR3D)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1573,7 +1573,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 
 //----------------------- ANGL ------------------------------------//
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItPLR.target.ID);
 		// get Point 3
@@ -1624,7 +1624,7 @@ void	TTSTNWriter::writePLRReliabilityData(const TTSTN& tstn, const TLGCStatistic
 	return;	
 }
 
-void	TTSTNWriter::writeDHORReliabilityData(const  TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR)
+void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1639,7 +1639,7 @@ void	TTSTNWriter::writeDHORReliabilityData(const  TTSTN& tstn, const TLGCStatist
 		int index = ItDhor.getFirstObservationIndex();
 		
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItDhor.targetPos->getName());
 		// get Point 3
@@ -1658,7 +1658,7 @@ void	TTSTNWriter::writeDHORReliabilityData(const  TTSTN& tstn, const TLGCStatist
 	return;	
 }
 
-void	TTSTNWriter::writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH)
+void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1673,7 +1673,7 @@ void	TTSTNWriter::writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		int index = ItEcth.getFirstObservationIndex();
 		
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItEcth.targetPos->getName());
 		// get Point 3
@@ -1692,7 +1692,7 @@ void	TTSTNWriter::writeECTHReliabilityData(const TTSTN& tstn, const TLGCStatisti
 	return;
 }
 
-void	TTSTNWriter::writeECSPReliabilityData(const TTSTN& tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP)
+void	TTSTNWriter::writeECSPReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1707,7 +1707,7 @@ void	TTSTNWriter::writeECSPReliabilityData(const TTSTN& tstn, const TLGCStatisti
 		int index = ItEcsp.getFirstObservationIndex();
 
 		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn.instrumentPos->getName());
+		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItEcsp.targetPos->getName());
 		// get Point 3

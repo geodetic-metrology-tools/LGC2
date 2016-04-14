@@ -438,18 +438,18 @@ namespace tut
 			EXPECT_FAIL(tstn.parse(TReader::tokenizeLGCfileString( "*TSTN PT1 POLAR1"), -1));
 			tstn.parse(TReader::tokenizeLGCfileString( "*TSTN P1 TS1 ROT3D TRGT PT2 ICSE 33"), -1);
 			const auto& ts1(proj.getCurrentNode().measurements.fTSTN.back());
-			ensure_equals(ts1.rot3D, true);
-			ensure_equals(ts1.instrument.defTarget, "PT2");
-			ensure_equals(ts1.instrument.sigmaInstrCentering, 33 * MM2M);
-			ensure_equals(ts1.instrumentPos->getName(), "P1");
+			ensure_equals(ts1->rot3D, true);
+			ensure_equals(ts1->instrument.defTarget, "PT2");
+			ensure_equals(ts1->instrument.sigmaInstrCentering, 33 * MM2M);
+			ensure_equals(ts1->instrumentPos->getName(), "P1");
 			// add a V0 to this station
 			TKeyV0 v0(proj);
 			v0.parse(TReader::tokenizeLGCfileString("*V0 TRGT PT9 ACST 66"), -1);
-			ensure_equals("Default target in thisTSTN should not be affected", ts1.instrument.defTarget, "PT2");
-			ensure_equals("In this ROM, default target should be updated", ts1.roms.back().defaultTarget->ID, "PT9");
-			ensure_equals("Adjustable distance correction should be valid and unchanged", ts1.roms.back().defaultTarget->distCorrectionAdjustable->getProvisionalValue(), 5.0);
+			ensure_equals("Default target in thisTSTN should not be affected", ts1->instrument.defTarget, "PT2");
+			ensure_equals("In this ROM, default target should be updated", ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("Adjustable distance correction should be valid and unchanged", ts1->roms.back()->defaultTarget->distCorrectionAdjustable->getProvisionalValue(), 5.0);
 
-			ensure_distance(proj.getCurrentNode().measurements.fTSTN.back().roms.back().acst.getGonsValue(), 66.0, 1e-8);
+			ensure_distance(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->acst.getGonsValue(), 66.0, 1e-8);
 
 			// Add one of each POLAR measurement to this ROM
 			//
@@ -457,10 +457,10 @@ namespace tut
 			TKeyPLR3D plr(proj);
 			plr.parse(TReader::tokenizeLGCfileString( "*PLR3D TRGT PT8"), -1);
 			plr.parse(TReader::tokenizeLGCfileString( "P2 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), -1);
-			ensure_equals("Default target in this ROM should not be affected",  ts1.roms.back().defaultTarget->ID, "PT9");
-			ensure_equals("Target of this measurement taken implicitly from *PLR3D", ts1.roms.back().measPLR3D.back().target.ID, "PT8");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("Target of this measurement taken implicitly from *PLR3D", ts1->roms.back()->measPLR3D.back().target.ID, "PT8");
 
-			const auto& plrmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measPLR3D.back());
+			const auto& plrmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measPLR3D.back());
 			ensure_distance(plrmeas.getAngle(kANGL).getGonsValue(), 1.0, 1e-8);
 			ensure_distance(plrmeas.getAngle(kZEND).getGonsValue(), 2.0, 1e-8);
 			ensure_distance(plrmeas.getDistance().getMetresValue(), 3.0, 1e-8);
@@ -474,27 +474,27 @@ namespace tut
 			ensure_equals(plrmeas.target.ppmDist, 17* MM2M);
 
 			plr.parse(TReader::tokenizeLGCfileString( "P3 1 2 3 TRGT PT2 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), -1);
-			ensure_equals("Default target in this ROM should not be affected",  ts1.roms.back().defaultTarget->ID, "PT9");
-			ensure_equals("Target of this measurement should be updated", ts1.roms.back().measPLR3D.back().target.ID, "PT2");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("Target of this measurement should be updated", ts1->roms.back()->measPLR3D.back().target.ID, "PT2");
 
 			plr.parse(TReader::tokenizeLGCfileString( "P4 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), -1);
-			ensure_equals("Target of this measurement taken from previous measurement (currValue)", ts1.roms.back().measPLR3D.back().target.ID, "PT2");
+			ensure_equals("Target of this measurement taken from previous measurement (currValue)", ts1->roms.back()->measPLR3D.back().target.ID, "PT2");
 
 			plr.parse(TReader::tokenizeLGCfileString( "P5 1 2 3 TRGT PT7 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), -1);
-			ensure_equals("Target of this measurement should be updated", ts1.roms.back().measPLR3D.back().target.ID, "PT7");
-			ensure_equals("Default target in this ROM should not be affected",  ts1.roms.back().defaultTarget->ID, "PT9");
+			ensure_equals("Target of this measurement should be updated", ts1->roms.back()->measPLR3D.back().target.ID, "PT7");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
 			//
 			// ANGL
 			TKeyANGL ang(proj);
 			ang.parse(TReader::tokenizeLGCfileString( "*ANGL"), -1);
 			ang.parse(TReader::tokenizeLGCfileString( "P2 88 OBSE 21 TCSE 22"), -1);
-			ensure_equals("ANGL deafault target should be taken from ROM", ts1.roms.back().measANGL.back().target.ID, "PT9");
+			ensure_equals("ANGL deafault target should be taken from ROM", ts1->roms.back()->measANGL.back().target.ID, "PT9");
 
 			ang.parse(TReader::tokenizeLGCfileString( "P3 88 TRGT PT7 OBSE 21 TCSE 22"), -1);
-			ensure_equals("Default target in this ROM should not be affected",  ts1.roms.back().defaultTarget->ID, "PT9");
-			ensure_equals("ANGL target of this measurement updated", ts1.roms.back().measANGL.back().target.ID, "PT7");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("ANGL target of this measurement updated", ts1->roms.back()->measANGL.back().target.ID, "PT7");
 
-			const auto& angmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measANGL.back());
+			const auto& angmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measANGL.back());
 			ensure_distance(angmeas.getAngle().getGonsValue(), 88.0, 1e-8);
 			ensure_equals(angmeas.target.sigmaAngl.getRadiansValue(), 21 * CC2RAD);
 			ensure_equals(angmeas.target.sigmaTargetCentering, 22 * MM2M);
@@ -503,8 +503,8 @@ namespace tut
 			TKeyZEND zend(proj);
 			zend.parse(TReader::tokenizeLGCfileString( "*ZEND TRGT PT8"), -1);
 			zend.parse(TReader::tokenizeLGCfileString( "P2 22 OBSE 31 TH 32 THSE 33 TCSE 34"), -1);
-			ensure_equals("Target of this measurement taken from *ZEND",  ts1.roms.back().measZEND.back().target.ID, "PT8");
-			const auto& zendmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measZEND.back());
+			ensure_equals("Target of this measurement taken from *ZEND",  ts1->roms.back()->measZEND.back().target.ID, "PT8");
+			const auto& zendmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measZEND.back());
 			ensure_equals(zendmeas.targetPos->getName(), "P2");
 			ensure_equals(zendmeas.target.sigmaZenD.getRadiansValue(), 31 * CC2RAD);
 			ensure_equals(zendmeas.target.targetHt, 32);
@@ -512,7 +512,7 @@ namespace tut
 			ensure_equals(zendmeas.target.sigmaTargetCentering, 34 * MM2M);
 
 			zend.parse(TReader::tokenizeLGCfileString( "P3 22 TRGT PT7 OBSE 31 TH 32 THSE 33 TCSE 34"), -1);
-			ensure_equals("Target of this measurement updated ZEND",  ts1.roms.back().measZEND.back().target.ID, "PT7");
+			ensure_equals("Target of this measurement updated ZEND",  ts1->roms.back()->measZEND.back().target.ID, "PT7");
 			//
 			// DIST
 			//New v0 occured i.e. without any parametr, default value from TSTN taken
@@ -521,9 +521,9 @@ namespace tut
 			TKeyDIST dist(proj);
 			dist.parse(TReader::tokenizeLGCfileString( "*DIST"), -1);
 			dist.parse(TReader::tokenizeLGCfileString( "P2 40 OBSE 41 PPM 42 TH 43 THSE 44 TCSE 45"), -1);
-			ensure_equals("Default target taken from new ROM, which takes default target implicitly from TSTN", ts1.roms.back().measDIST.back().target.ID, "PT2");
+			ensure_equals("Default target taken from new ROM, which takes default target implicitly from TSTN", ts1->roms.back()->measDIST.back().target.ID, "PT2");
 
-			const auto& distmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measDIST.back());
+			const auto& distmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDIST.back());
 			ensure_equals(distmeas.target.sigmaDist, 41 * MM2M);
 			ensure_equals(distmeas.target.ppmDist, 42 * MM2M);
 			ensure_equals(distmeas.target.targetHt, 43);
@@ -534,7 +534,7 @@ namespace tut
 			TKeyECTH ecth(proj);
 			ecth.parse(TReader::tokenizeLGCfileString( "*ECTH 1 SC1"), -1);
 			ecth.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"),-1);
-			const auto& ecthmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
+			const auto& ecthmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH.back());
 			ensure_equals(ecthmeas.targetPos->getName(), "P2");
 			ensure_equals(ecthmeas.obsHorAngle.getGonsValue(), 1);
 			ensure_equals(ecthmeas.target.ID, "SC1");
@@ -545,12 +545,12 @@ namespace tut
 			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE,"SC1").sigmaInstrCentering, 5 * MM2M);
 
 			ecth.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"),-1);
-			const auto& ecthmeas2(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
+			const auto& ecthmeas2(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH.back());
 			ensure_equals(ecthmeas2.target.ID, "SC2");
 			ensure_equals(ecthmeas2.getDistance(), 0.9);
 
 			ecth.parse(TReader::tokenizeLGCfileString("P2 0.9"),-1);
-			const auto& ecthmeas3(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECTH.back());
+			const auto& ecthmeas3(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH.back());
 			ensure_equals("This takes current instrument from previous", ecthmeas3.target.ID, "SC2");
 			ensure_equals("Has default values", ecthmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
@@ -558,7 +558,7 @@ namespace tut
 			TKeyECSP ecsp(proj);
 			ecsp.parse(TReader::tokenizeLGCfileString("*ECSP 20.0 101.0 SC1 "), -1);
 			ecsp.parse(TReader::tokenizeLGCfileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
-			const auto& ecspmeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECSP.back());
+			const auto& ecspmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECSP.back());
 			ensure_equals(ecspmeas.targetPos->getName(), "P2");
 			ensure_equals(ecspmeas.target.ID, "SC1");
 			ensure_equals(ecspmeas.obsHorAngle.getGonsValue(), 20);
@@ -570,12 +570,12 @@ namespace tut
 			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
 
 			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);
-			const auto& ecspmeas2(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECSP.back());
+			const auto& ecspmeas2(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECSP.back());
 			ensure_equals(ecspmeas2.target.ID, "SC2");
 			ensure_equals(ecspmeas2.getDistance(), 0.9);
 
 			ecsp.parse(TReader::tokenizeLGCfileString("P2 0.9"), -1);
-			const auto& ecspmeas3(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measECSP.back());
+			const auto& ecspmeas3(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECSP.back());
 			ensure_equals("This takes current instrument from previous", ecspmeas3.target.ID, "SC2");
 			ensure_equals("Has default values", ecspmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
@@ -583,11 +583,11 @@ namespace tut
 			TKeyDHOR dhor(proj);
 			dhor.parse(TReader::tokenizeLGCfileString( "*DHOR"), -1);
 			dhor.parse(TReader::tokenizeLGCfileString( "P2 50 TRGT PT7 OBSE 51 PPM 52 TCSE 53"), -1);
-			ensure_equals("Target of the measurement should match", ts1.roms.back().measDHOR.back().target.ID, "PT7");
+			ensure_equals("Target of the measurement should match", ts1->roms.back()->measDHOR.back().target.ID, "PT7");
 			dhor.parse(TReader::tokenizeLGCfileString( "P2 50 OBSE 51 PPM 52 TCSE 53"), -1);
-			ensure_equals("Target implicitly taken from previous measurement", ts1.roms.back().measDHOR.back().target.ID, "PT7");
+			ensure_equals("Target implicitly taken from previous measurement", ts1->roms.back()->measDHOR.back().target.ID, "PT7");
 
-			const auto& dhormeas(proj.getCurrentNode().measurements.fTSTN.back().roms.back().measDHOR.back());
+			const auto& dhormeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDHOR.back());
 			ensure_equals(dhormeas.target.sigmaDist, 51 * MM2M);
 			ensure_equals(dhormeas.target.ppmDist, 52 * MM2M);
 			ensure_equals(dhormeas.target.sigmaTargetCentering, 53 * MM2M);

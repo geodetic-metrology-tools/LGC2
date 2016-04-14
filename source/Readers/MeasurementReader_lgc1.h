@@ -40,7 +40,7 @@ protected:
 	//create a TSTN
 	void createTSTN(string stn, int line);
 	//create a ROM in tstn
-	void createROM(TTSTN& tstn);
+	void createROM(shared_ptr<TTSTN> tstn);
 
 
 	///Currently used target, e.g. in ROM (V0 keyword) reading for *TSTN and also for *CAM
@@ -64,8 +64,6 @@ public:
 		TAMeasurementKey_lgc1(project, ANGL),
 		currentTSTN(nullptr),
 		currentROM(nullptr)
-		/*currentTSTN(proj.getCurrentNode().measurements.fTSTN.back()),
-		currentROM(currentTSTN.roms.back())*/
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -73,7 +71,6 @@ public:
 
 	/*!
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
-
 	/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
@@ -81,10 +78,8 @@ public:
 private:
 	TAngle sigmaANGL, constanteANGL;
 	string currentStation;
-	//TTSTN& currentTSTN;
-	//TTSTN::TROM& currentROM;
-	TTSTN* currentTSTN;
-	TTSTN::TROM* currentROM;
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
 };
 
 /// Keyword to process Zenith distance measurement
@@ -94,7 +89,8 @@ public:
 	TKeyZENI_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_zeni_lgc1, const char** keywords = allowed_ZENI_lgc1) :
 		TAMeasurementKey_lgc1(project, ZENI),
 		currentTSTN(nullptr),
-		currentROM(nullptr)
+		currentROM(nullptr),
+		IH_adj(nullptr)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -102,7 +98,6 @@ public:
 
 	/*!
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
-
 	/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
@@ -111,11 +106,9 @@ private:
 	TAngle sigmaZEND;
 	TLength IH;
 	string currentStation;
-	//TTSTN& currentTSTN;
-	//TTSTN::TROM& currentROM;
-	TTSTN* currentTSTN;
-	TTSTN::TROM* currentROM;
-	
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
+	shared_ptr<TAdjustableLength> IH_adj;
 };
 
 /// Keyword to process Zenith distance measurement
@@ -125,7 +118,8 @@ public:
 	TKeyZENH_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_zenh_lgc1, const char** keywords = allowed_ZENH_lgc1) :
 		TAMeasurementKey_lgc1(project, ZENH),
 		currentTSTN(nullptr),
-		currentROM(nullptr)
+		currentROM(nullptr),
+		IH_adj(nullptr)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -133,7 +127,6 @@ public:
 
 	/*!
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
-
 	/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
@@ -141,10 +134,9 @@ public:
 private:
 	TAngle sigmaZEND;
 	string currentStation;
-	//TTSTN& currentTSTN;
-	//TTSTN::TROM& currentROM;
-	TTSTN* currentTSTN;
-	TTSTN::TROM* currentROM;
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
+	TAdjustableLength* IH_adj;
 };
 
 /// Keyword to process distance measurement
@@ -171,9 +163,10 @@ class TKeyDMES_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyDMES_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_dmes_lgc1, const char** keywords = allowed_DMES_lgc1) :
-		TAMeasurementKey_lgc1(project, DMES), fistrDMES(true)
+		TAMeasurementKey_lgc1(project, DMES),
+		adjDCorr(nullptr)
 	{
-		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+		//adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
 	}
@@ -186,7 +179,7 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	bool fistrDMES;
+	bool fistrDMES = true;
 	TLength sigma, ppm, dcorr;
 	TAdjustableLength* adjDCorr;
 	string currentStation;

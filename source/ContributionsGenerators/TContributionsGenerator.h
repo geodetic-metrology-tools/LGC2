@@ -39,25 +39,25 @@ public:
 	//@{
 
 		/// Returns contribution for the Spatial Distance measurement (TDIST)
-		DistMeasContrib	getSpatialDistanceContrib(const TTSTN& station, const TLINE& dist);
+		DistMeasContrib	getSpatialDistanceContrib(shared_ptr<TTSTN> station, const TLINE& dist);
 
 		/// Returns contribution for the Horizontal Angle measurement (TANGL)
-		AnglMeasContrib	getHorAnglContrib(const TTSTN& station, const TTSTN::TROM& rom, const TANGL& angl);
+		AnglMeasContrib	getHorAnglContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
 
 		/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND)
-		AnglMeasContrib	getZenDistContrib(const TTSTN& station, const TZEND& zend);
+		AnglMeasContrib	getZenDistContrib(shared_ptr<TTSTN> station, const TZEND& zend);
 
 		/// Returns contribution for the Horizontal Distance measurement (DHOR), made by a total station (TSTN).
-		HorDistContrib	getHorDistContrib(const TTSTN& station, const TLINE& dhor);
+		HorDistContrib	getHorDistContrib(shared_ptr<TTSTN> station, const TLINE& dhor);
 
 		/// Returns contribution for the TPLR3D measurement.
-		PLR3DContrib getPolar3DContrib(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+		PLR3DContrib getPolar3DContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-		ECTHContrib	 getECTHContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
+		ECTHContrib	 getECTHContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-		ECTHContrib	 getECSPContrib(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
+		ECTHContrib	 getECSPContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECSP& ecsp);
 	//@}
 
 
@@ -108,25 +108,25 @@ public:
 	/*!@name Method for accessing the calculation measurement values only . */
 	//@{
 		/// Returns the the ANGL measurement calculated meas in RADIANS [rad]
-		TReal getANGLCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TAdjustablePoint* targetAdjPoint);
+		TReal getANGLCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TAdjustablePoint* targetAdjPoint);
 
 		/// Returns the ZEND measurement calculated meas in RADIANS [rad]
-		TReal getZENDCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt);
+		TReal getZENDCalcMeas(shared_ptr<TTSTN> station, const TAdjustablePoint* targetAdjPoint, TReal targetHt);
 
 		/// Returns the DIST measurement calculated meas in meters [m]
-		TReal getDISTCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
+		TReal getDISTCalcMeas(shared_ptr<TTSTN> station, const TAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
 
 		/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
-		TReal getDHORCalcMeas(const TTSTN& station, const TLINE& dhor);
+		TReal getDHORCalcMeas(shared_ptr<TTSTN> station, const TLINE& dhor);
 
 		///  Returns the TPLR3D calculated measurement values
-		PLR3DCalcMeas getPLR3DCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
+		PLR3DCalcMeas getPLR3DCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-		TReal	 getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
+		TReal	 getECTHCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
 
 		/// Returns contribution for the offset to a theodolite line (TECSP) measurement.
-		TReal	 getECSPCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
+		TReal	 getECSPCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECSP& ecsp);
 
 		/// Returns the the TUVEC measurement calculaded measurement value
 		TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);

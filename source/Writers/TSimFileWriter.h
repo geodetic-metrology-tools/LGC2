@@ -66,7 +66,7 @@ private:
 	void writeLEVELMeas(TLEVEL* meas);
 	void writeORIEMeas(TORIEROM* meas);
 	void writeRADIMeas(TRADI* meas);
-	void writeTSTNMeas(TTSTN* meas);
+	void writeTSTNMeas(shared_ptr<TTSTN> meas);
 
 
 	/// Project data
