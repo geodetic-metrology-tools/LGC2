@@ -108,7 +108,7 @@ private:
 	string currentStation;
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
-	shared_ptr<TAdjustableLength> IH_adj;
+	TAdjustableLength* IH_adj;
 };
 
 /// Keyword to process Zenith distance measurement
