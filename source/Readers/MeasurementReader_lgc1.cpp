@@ -162,8 +162,8 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					//only 1 ROM per station oin lgc1
 					if (itTstn->instrumentPos->getName() == currentStation)
 					{
-						//if TSNT already exist, see if ZEND meas is empty
-						if (itTstn->roms.back()->measZEND.empty())
+						//if TSNT already exist, see if ANGL meas is empty
+						if (itTstn->roms.back()->measANGL.empty())
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
@@ -277,7 +277,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigmaZEND = TAngle(1.0, TAngle::EUnits::kCCs);
 
 		// Add adjustable scalar into a global collection and store a pointer
-		IH_adj = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + "_IH"));
+		IH_adj = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_IH"));
 		
 		currentStation = "";
 	}
@@ -345,7 +345,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto& storeZENH = [&](shared_ptr<TTSTN::TROM> rom){
 		if (tokens.size() < 3 && !fSIMUActive)
-			throw std::runtime_error("An ZENI measurement must have at least 3 entries: "
+			throw std::runtime_error("An ZENH measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
 
 		// look up the observed point
@@ -1140,12 +1140,12 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		if (tokens.size() == 4)
 		{
-			if (!tokens.at(3).compare(0, 1, "/"))
+			if (tokens.at(3).compare(0, 1, "/"))
 			{
 				dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
 				dver.setDistanceCorrection(dcorr);
 			}
-			else if (tokens.at(3).compare(0, 1, "/"))
+			else
 			{
 				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 				dver.setDistanceCorrection(dcorr);
@@ -1177,6 +1177,8 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kDVER);
 	}
+
+	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)

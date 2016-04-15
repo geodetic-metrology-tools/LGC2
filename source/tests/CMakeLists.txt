@@ -29,6 +29,7 @@ set(tests_SOURCES
 	tests_with_ScaleInstr.cpp
 	testAllfixed.cpp
 	testLIBR.cpp
+	testLgc1Reader.cpp
 )
 
 set(tests_INPUT
@@ -44,6 +45,7 @@ set(tests_INPUT
 	testAllfixed.h
 	testLIBR.h
 	Utils.h
+	testLgc1Reader.h
 )
 
 add_executable(tests ${tests_INPUT} ${tests_SOURCES})
