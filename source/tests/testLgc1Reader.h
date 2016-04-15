@@ -123,5 +123,24 @@ namespace TestLgc1 {
 		"REF   PT2     -11.0999030 \n"
 		"*END \n"
 		;
+
+	char const *const OLOC_DLEV =
+		"*TITR									\n"
+		"Testing Input Matrices Filler.			\n"
+		"*OLOC									\n"
+		"*CALA									\n"
+		"STN  0 0 0								\n"
+		"REF  0 0 200							\n"
+		"PTCAL1  200 10 130						\n"
+		"PTCAL2  250 10 800						\n"
+		"*VZ									\n"
+		"PT  0 0 20 % Correct solution 0 0 50	\n"
+		"*DLEV 0.8								\n"
+		"REF  STN -200							\n"
+		"REF  PTCAL1 -70  0.1					\n"
+		"REF  PTCAL2  601  0.2 /-1				\n"
+		"REF  PT -150 /0						\n"
+		"*END									\n"
+		;
 }
 #endif;

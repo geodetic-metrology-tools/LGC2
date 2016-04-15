@@ -103,6 +103,7 @@ namespace tut
 
 	}
 
+	//----------------------------- TSTN_DVER --------------------------------//
 	template<>
 	template<>
 	void object::test<3>()
@@ -155,4 +156,46 @@ namespace tut
 
 	}
 
+	//----------------------------- DLEV --------------------------------//
+	template<>
+	template<>
+	void object::test<4>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("DLEV");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::OLOC_DLEV);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		// Results with LGC1
+		/*              X            Y            Z
+		PT              0.00000      0.00000     50.00000
+		*/
+		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
+		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 0.0, 1e-7);
+		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 50.0, 1e-7);
+
+		std::vector<TLEVEL> meas = projTest->getCurrentNode().measurements.fLEVEL;
+		//constante
+		ensure_equals("constante correction should match", meas.back().measDLEV.at(2).target.distCorrectionValue, 1.0, 1e-1);
+		ensure_equals("constante correction should match", meas.back().measDLEV.at(3).target.distCorrectionValue, 0.0, 1e-1);
+		//sigma
+		ensure_equals("constante correction should match", meas.back().measDLEV.at(2).target.sigmaD.getMMetresValue(), 0.2, 1e-2);
+		ensure_equals("constante correction should match", meas.back().measDLEV.at(3).target.sigmaD.getMMetresValue(), 0.8, 1e-2);
+
+	}
 }
