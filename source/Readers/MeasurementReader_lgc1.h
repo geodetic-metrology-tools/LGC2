@@ -119,7 +119,8 @@ public:
 		TAMeasurementKey_lgc1(project, ZENH),
 		currentTSTN(nullptr),
 		currentROM(nullptr),
-		IH_adj(nullptr)
+		IH_adj(nullptr),
+		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -137,6 +138,7 @@ private:
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 	TAdjustableLength* IH_adj;
+	bool firstmeas;
 };
 
 /// Keyword to process distance measurement
