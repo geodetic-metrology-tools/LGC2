@@ -205,6 +205,8 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			storeANGL(currentROM);
 	}
+
+	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -1007,7 +1009,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
-				else if (tokens.at(3).compare(0, 1, "/"))
+				else if (!tokens.at(3).compare(0, 1, "/"))
 				{
 					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
@@ -1025,13 +1027,13 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + tokens.at(1)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
-				else if (tokens.at(4).compare(0, 1, "/"))
+				else if (!tokens.at(4).compare(0, 1, "/"))
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
 				}
-				else if (tokens.at(3).compare(0, 1, "\\"))
+				else if (!tokens.at(3).compare(0, 1, "\\"))
 				{
 					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
@@ -1053,13 +1055,13 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + tokens.at(1)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
-				else if (tokens.at(5).compare(0, 1, "/"))
+				else if (!tokens.at(5).compare(0, 1, "/"))
 				{
 					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
 				}
-				else if (tokens.at(4).compare(0, 1, "\\"))
+				else if (!tokens.at(4).compare(0, 1, "\\"))
 				{
 					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
@@ -1177,8 +1179,6 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kDVER);
 	}
-
-	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -1273,16 +1273,24 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		TInstrumentData::TLEVEL::TTarget tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, levelGrOfMeas.instrument.defStaffID);
 
+
 		if (tokens.size() == 4)
 		{
-			tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			tgt.distCorrectionValue = dcorr;
+			if (tokens.at(3).compare(0, 1, "/"))
+			{
+				tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+			else
+			{
+				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				tgt.sigmaD = sigma;
+			}
 		}
 		else if (tokens.size() == 5)
 		{
 			tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			dcorr = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
-			tgt.distCorrectionValue = dcorr;
+			tgt.distCorrectionValue = TLength(-1.0*std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 		}
 		else
 		{
@@ -1291,7 +1299,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 
 		// Store  the dlev measured value
-		TDLEV dlev(tgtfPoint, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))));
+		TDLEV dlev(tgtfPoint, tgt, TLength(fSIMUActive ? NO_VALf : -1.0*std::stor(tokens.at(2))));
 
 		dlev.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		dlev.setFirstObservationIndex(proj.fUEOIndices.OIndex);
@@ -1638,8 +1646,6 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
 			"One point and the angle.");
 
-		TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
-
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fRADI.emplace_back(
 			TRADI(fpoints.getObject(tokens.at(0)), TAngle(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)), TAngle::EUnits::kGons))
@@ -1647,7 +1653,7 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		auto& radi(proj.getCurrentNode().measurements.fRADI.back());
 
-		if (tokens.size()>2)
+		if (tokens.size() == 3)
 			radi.setObservedStDev(TLength(std::stor(tokens.at(2)),TLength::EUnits::kMillimetres));
 		else
 			radi.setObservedStDev(sigma);
@@ -1666,4 +1672,6 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kRADI);
 	}
+
+	auto& debug = proj.getCurrentNode().measurements;
 }

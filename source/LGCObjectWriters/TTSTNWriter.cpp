@@ -1375,12 +1375,12 @@ void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
 	(*stream).writeStringLeft(nameWidth,tstn->instrumentPos->getName());
 
 	//write INSTRUMENT HEIGHT
-	//if(tstn->instrumentHeightAdjustable->isFixed()){
-	//	(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrument.instrHeight); 
-	//}
-	//else{
+	if(!tstn->instrumentHeightAdjustable){
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrument.instrHeight); 
+	}
+	else{
 		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrumentHeightAdjustable->getEstimatedValue()); 
-	//}
+	}
 
 
 	if(tstn->rot3D){

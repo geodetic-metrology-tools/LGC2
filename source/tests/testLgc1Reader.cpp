@@ -198,4 +198,57 @@ namespace tut
 		ensure_equals("constante correction should match", meas.back().measDLEV.at(3).target.sigmaD.getMMetresValue(), 0.8, 1e-2);
 
 	}
+
+	//----------------------------- RADI --------------------------------//
+	template<>
+	template<>
+	void object::test<5>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("RADI");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outRADI.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::LEP_RADI);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		// Results with LGC1
+		/*              X            Y            Z
+		B___________1   2100.0120782   3999.9957879   2400.7144736		
+		C___________1   2100.0076157   4099.9943840   2399.6836689		
+		D___________1   2000.0054888   4099.9974433   2401.6845825
+
+		*/
+		TPositionVector B___________1 = dataset.getPoints().getObject("B___________1").getEstimatedValue();
+		ensure_equals("Pt x coordinate should match", B___________1.getX().getMetresValue(), 2100.0120782, 1e-7);
+		ensure_equals("Pt y coordinate should match", B___________1.getY().getMetresValue(), 3999.9957879, 1e-7);
+		ensure_equals("Pt z coordinate should match", B___________1.getZ().getMetresValue(), 2400.7144736, 1e-7);
+
+		TPositionVector C___________1 = dataset.getPoints().getObject("C___________1").getEstimatedValue();
+		ensure_equals("Pt x coordinate should match", C___________1.getX().getMetresValue(), 2100.0076157, 1e-7);
+		ensure_equals("Pt y coordinate should match", C___________1.getY().getMetresValue(), 4099.9943840, 1e-7);
+		ensure_equals("Pt z coordinate should match", C___________1.getZ().getMetresValue(), 2399.6836689, 1e-7);
+
+		TPositionVector D___________1 = dataset.getPoints().getObject("D___________1").getEstimatedValue();
+		ensure_equals("Pt x coordinate should match", D___________1.getX().getMetresValue(), 2000.0054888, 1e-7);
+		ensure_equals("Pt y coordinate should match", D___________1.getY().getMetresValue(), 4099.9974433, 1e-7);
+		ensure_equals("Pt z coordinate should match", D___________1.getZ().getMetresValue(), 2401.6845825, 1e-7);
+
+		std::vector<TRADI> meas = projTest->getCurrentNode().measurements.fRADI;
+		//sigma
+		ensure_equals("constante correction should match", meas.at(0).getObservedStDev().getMMetresValue(), 0.2, 1e-2);
+		ensure_equals("constante correction should match", meas.at(1).getObservedStDev().getMMetresValue(), 0.1, 1e-2);
+
+	}
 }
