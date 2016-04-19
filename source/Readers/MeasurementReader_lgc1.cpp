@@ -150,7 +150,6 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		bool anglStored = false;
-		auto& debug = proj.getCurrentNode().measurements.fTSTN;
 
 		if (currentStation != tokens.at(0))
 		{
@@ -205,8 +204,6 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			storeANGL(currentROM);
 	}
-
-	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -286,7 +283,6 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		bool zendStored = false;
-		auto& debug = proj.getCurrentNode().measurements.fTSTN;
 
 		if (currentStation != tokens.at(0))
 		{
@@ -469,7 +465,6 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		bool zendStored = false;
-		auto& debug = proj.getCurrentNode().measurements.fTSTN;
 
 		if (currentStation != tokens.at(0))
 		{
@@ -531,64 +526,236 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	/*
-	if (!updateDefaultTargetTSTN(tokens)) {
-		if (tokens.size() < 2 && !fSIMUActive)
-			throw std::runtime_error("A DIST measurement must have at least 2 entries: "
-			"The observed point and the measured distance.");
+	auto& storeDIST = [&](shared_ptr<TTSTN::TROM> rom){
+		if (tokens.size() < 3 && !fSIMUActive)
+			throw std::runtime_error("A DIST measurement must have at least 3 entries: "
+			"The station, the observed point and the measured angle.");
 
-		// prepare the options analysis
-		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a station reference to update default values
-		auto& stn(getPolarInstr());
+		const auto& obspt(fpoints.getObject(tokens.at(1)));
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measDIST)
+			for (auto& point : rom->measDIST)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DIST measurement is duplicated");
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
+		TInstrumentData::TPOLAR& instr = getPolarInstr();
+		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+
+		tgt.sigmaDist = sigmaDIST;
+		tgt.ppmDist = ppm;
+		tgt.distCorrectionValue = dcorr;
+		tgt.targetHt = TLength(0.0);
+		tgt.distCorrectionAdjustable = adjDCorr;
+
+		if (tokens.size() == 4 )
+		{ 
+			if (tokens.at(3) == "C")
+			{
+				// Add adjustable scalar into a global collection and store a pointer
+				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+				tgt.distCorrectionAdjustable = adjDCorr;
+			}
+			else if (!tokens.at(3).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+			else if (!tokens.at(3).compare(0, 1, "\\"))
+			{
+				tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+			}
+			else
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		}		
+		else if (tokens.size() == 5)
+		{
+			if (tokens.at(4) == "C")
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				// Add adjustable scalar into a global collection and store a pointer
+				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+				tgt.distCorrectionAdjustable = adjDCorr;
+			}
+			else if (!tokens.at(4).compare(0, 1, "/"))
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+			else if (!tokens.at(4).compare(0, 1, "\\"))
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			}
+			else if (!tokens.at(3).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			}
+			else
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			}			
+		}
+		else if (tokens.size() == 6)
+		{
+			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			if (tokens.at(4) == "C")
+			{
+				// Add adjustable scalar into a global collection and store a pointer
+				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+				tgt.distCorrectionAdjustable = adjDCorr;
+			}
+			else if (!tokens.at(4).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			}
+			else if (!tokens.at(5).compare(0, 1, "/"))
+			{
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+			else if (!tokens.at(5).compare(0, 1, "\\"))
+			{
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			}
+
+		}
+		else if (tokens.size() == 7)
+		{
+			if (tokens.at(5) == "C")
+			{
+				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+				tgt.distCorrectionAdjustable = adjDCorr;
+			}
+			else
+			{
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+				
+			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			tgt.targetHt = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
 		}
 
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 
-		tgt.sigmaDist = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
-		tgt.ppmDist = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
-		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
-		tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
-		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
-
-		// Store  the measured value
-		getROM().measDIST.emplace_back(
-			TLINE(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
-			);
-
-		//get a reference to the inserted measurement
-		auto& dist(getROM().measDIST.back());
-
-		dist.line = line;
+		// set measurement value
+		TLINE dthe(obspt, tgt);
+		dthe.line = line;
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dist.eolcomment = tokens.back();
+			dthe.eolcomment = tokens.back();
 
-		// set indices of LS matrices, DIST introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		dist.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		dist.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		// set indices of LS matrices, ANGL introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
+		dthe.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		dthe.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex++;
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kDIST);
+
+		if (!fSIMUActive)
+			dthe.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
+
+		rom->measDIST.emplace_back(dthe);
+	};
+
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline)
+	{
+		// Add adjustable scalar into a global collection and store a pointer
+		IH_adj = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_IH"));
+		// Add adjustable scalar into a global collection and store a pointer
+		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + "_dcorr"));
+
+		// *DTHE [sigma] [ppm]
+		if (tokens.size() == 3)
+		{
+			sigmaDIST = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
+		}
+		else if (tokens.size() == 4)
+		{
+			sigmaDIST = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+			ppm = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		}
+		else
+		{
+			sigmaDIST = TLength(1.0, TLength::EUnits::kMillimetres);
+			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
+		}
+
+		dcorr = TLength(0.0, TLength::EUnits::kMillimetres);
+		currentStation = "";
 	}
-	*/
+	else
+	{
+		bool distStored = false;
+
+		if (currentStation != tokens.at(0))
+		{
+			currentStation = tokens.at(0);
+			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
+			{
+				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
+				{
+					//only 1 ROM per station oin lgc1
+					if (itTstn->instrumentPos->getName() == currentStation)
+					{
+						//if TSNT already exist, see if ANGL meas is empty
+						if (itTstn->roms.back()->measDIST.empty())
+						{
+							currentTSTN = itTstn;
+							currentROM = currentTSTN->roms.back();
+							storeDIST(currentROM);
+							distStored = true;
+							break;
+						}
+						else
+							continue;
+
+					}
+					else
+						continue;
+				}
+
+				if (!distStored)
+				{
+					createTSTN(currentStation, line);
+					currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
+
+					createROM(currentTSTN);
+					currentROM = currentTSTN->roms.back();
+
+					storeDIST(currentROM);
+					distStored = true;
+				}
+			}
+			else
+			{
+				createTSTN(currentStation, line);
+				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
+
+				createROM(currentTSTN);
+				currentROM = currentTSTN->roms.back();
+
+				storeDIST(currentROM);
+			}
+		}
+		else
+			storeDIST(currentROM);
+	}
+
+	auto& meas = proj.getCurrentNode().measurements;
 }
 
 void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -818,60 +985,184 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	/*
-	if (!updateDefaultTargetTSTN(tokens)) {
-		if (tokens.size() < 2 && !fSIMUActive)
-			throw std::runtime_error("A DHOR measurement must have at least 2 entries: "
-			"The observed point and the measured horizontal distance.");
+	auto& storeDHOR = [&](shared_ptr<TTSTN::TROM> rom){
+		if (tokens.size() < 3 && !fSIMUActive)
+			throw std::runtime_error("A DHOR measurement must have at least 3 entries: "
+			"The station, the observed point and the measured angle.");
 
-		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a station reference to update default values
-		auto& stn(getPolarInstr());
+		const auto& obspt(fpoints.getObject(tokens.at(1)));
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measDHOR)
+			for (auto& point : rom->measDHOR)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
+		TInstrumentData::TPOLAR& instr = getPolarInstr();
+		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+
+		tgt.sigmaDist = sigmaDIST;
+		tgt.ppmDist = ppm;
+		tgt.distCorrectionValue = dcorr;
+
+		if (tokens.size() == 4)
+		{
+			if (!tokens.at(3).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+			else
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		}
+		else if (tokens.size() == 5)
+		{
+			if (!tokens.at(4).compare(0, 1, "/"))
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+			else if (!tokens.at(3).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			}
+			else
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			}
+		}
+		else if (tokens.size() == 6)
+		{
+			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			if (!tokens.at(4).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			}
+			else if (!tokens.at(5).compare(0, 1, "/"))
+			{
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
+
+		}
+		else if (tokens.size() == 7)
+		{
+			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			tgt.distCorrectionValue = dcorr;
 		}
 
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
 
-		tgt.sigmaDist = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
-		tgt.ppmDist = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
-		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
-
-		// Store the measured value
-		getROM().measDHOR.emplace_back(
-			TLINE(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))))
-			);
-
-		//get a reference to the inserted measurement
-		auto& dhor(getROM().measDHOR.back());
+		// set measurement value
+		TLINE dhor(obspt, tgt);
 		dhor.line = line;
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dhor.eolcomment = tokens.back();
 
-		// set indices of LS matrices, DHOR introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
+		// set indices of LS matrices, ANGL introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
 		dhor.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		dhor.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex++;
 		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kDHOR);
+		proj.addToMeasurementNum(TMeasurementsGlobal::kDIST);
+
+		if (!fSIMUActive)
+			dhor.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
+
+		rom->measDHOR.emplace_back(dhor);
+	};
+
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline)
+	{
+		// *DHOR [sigma] [ppm]
+		if (tokens.size() == 3)
+		{
+			sigmaDIST = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
+		}
+		else if (tokens.size() == 4)
+		{
+			sigmaDIST = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+			ppm = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		}
+		else
+		{
+			sigmaDIST = TLength(1.0, TLength::EUnits::kMillimetres);
+			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
+		}
+
+		dcorr = TLength(0.0, TLength::EUnits::kMillimetres);
+		currentStation = "";
 	}
-	*/
+	else
+	{
+		bool distStored = false;
+
+		if (currentStation != tokens.at(0))
+		{
+			currentStation = tokens.at(0);
+			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
+			{
+				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
+				{
+					//only 1 ROM per station oin lgc1
+					if (itTstn->instrumentPos->getName() == currentStation)
+					{
+						//if TSNT already exist, see if ANGL meas is empty
+						if (itTstn->roms.back()->measDHOR.empty())
+						{
+							currentTSTN = itTstn;
+							currentROM = currentTSTN->roms.back();
+							storeDHOR(currentROM);
+							distStored = true;
+							break;
+						}
+						else
+							continue;
+
+					}
+					else
+						continue;
+				}
+
+				if (!distStored)
+				{
+					createTSTN(currentStation, line);
+					currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
+
+					createROM(currentTSTN);
+					currentROM = currentTSTN->roms.back();
+
+					storeDHOR(currentROM);
+					distStored = true;
+				}
+			}
+			else
+			{
+				createTSTN(currentStation, line);
+				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
+
+				createROM(currentTSTN);
+				currentROM = currentTSTN->roms.back();
+
+				storeDHOR(currentROM);
+			}
+		}
+		else
+			storeDHOR(currentROM);
+	}
 }
 
 ///////////////////////
@@ -1375,8 +1666,25 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
 			currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, "ECHOInstr").ID;
-		}
 
+			//initialise the plane
+			const TAdjustablePoint& p1 = fpoints.getObject(encrage1);
+			const TAdjustablePoint& p2 = fpoints.getObject(encrage2);
+			TReal referencePoint[3] = { (p2.getEstimatedValue().getX().getMetresValue() + p1.getEstimatedValue().getX().getMetresValue())/2, 
+				(p2.getEstimatedValue().getY().getMetresValue() + p1.getEstimatedValue().getY().getMetresValue()) / 2,
+				(p2.getEstimatedValue().getZ().getMetresValue() + p1.getEstimatedValue().getZ().getMetresValue()) / 2 };
+			TReal initialRefPtDistance = 0.0;
+
+			/*Fixed reference point for the ECHO measurement*/
+			TAdjustablePoint& rp =
+				proj.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+				true, true, true, "ECHO_line" + std::to_string(line), proj.getConfig().referential, proj.getTree().begin()));
+
+			TReal thetaLineVectorAngle = atan2q(p2.getEstimatedValue().getX().getMetresValue() - p1.getEstimatedValue().getX().getMetresValue(), p2.getEstimatedValue().getY().getMetresValue() - p1.getEstimatedValue().getY().getMetresValue());
+
+			proj.getCurrentNode().measurements.fECHO.back().fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
+				TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
+		}
 
 		//This is a position of station point from which the plane is measured in the ECHO class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved.
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
@@ -1406,6 +1714,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 
 	
+
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(3))));
 		echo.setFirstEquationIndex(proj.fUEOIndices.EIndex);
@@ -1426,6 +1735,8 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECHO measurement is duplicated");
 	}
+
+	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -1469,9 +1780,9 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 stn p2 meas [sigma][/const]
-		if (tokens.size() < 4 && !fSIMUActive)
-			throw std::runtime_error("A ECHO measurement must have at least 3 entries: "
-			"The 2 encrage, the stationned point and the measured distance.");
+		if (tokens.size() < 3 && !fSIMUActive)
+			throw std::runtime_error("A ECVE measurement must have at least 3 entries: "
+			"The instrument position, the measured point and the offset measurement.");
 
 		// Initialize the station
 		if (ptLine != tokens.at(0))
@@ -1498,20 +1809,20 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		TInstrumentData::TSCALE instr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
 
-		if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
+		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
 		{
 			instr.sigmaD = sigma;
-			constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			constante = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 		}
-		else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
+		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
 		{
-			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 			instr.distCorrectionValue = constante;
 		}
-		else if (tokens.size() == 6)
+		else if (tokens.size() == 5)
 		{
-			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			constante = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 			instr.distCorrectionValue = constante;
 		}
 		else
@@ -1522,7 +1833,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 
 		// Store  the measured value
-		TECVE ecve(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
+		TECVE ecve(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))));
 		ecve.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		ecve.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 

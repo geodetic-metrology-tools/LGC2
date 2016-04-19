@@ -51,7 +51,14 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(shared_ptr<TT
 
 	TReal hTg = dist.target.targetHt;
 	TReal hInst = station->instrumentHeightAdjustable->getEstimatedValue();
-	TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue();
+	//TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue();
+
+	TReal cst;
+	if(!dist.target.distCorrectionAdjustable->isFixed())
+		cst = dist.target.distCorrectionAdjustable->getEstimatedValue();
+	else
+		cst = dist.target.distCorrectionValue;
+
 
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
@@ -389,7 +396,11 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(shared_ptr<TTSTN> stat
    TReal xTg = targetPos.getX().getMetresValue();
    TReal yTg = targetPos.getY().getMetresValue();
 
-	TReal cte = dhor.target.distCorrectionAdjustable->getEstimatedValue();
+   TReal cte;
+   if (!dhor.target.distCorrectionAdjustable->isFixed())
+	   cte = dhor.target.distCorrectionAdjustable->getEstimatedValue();
+   else
+	   cte = dhor.target.distCorrectionValue;
 
 	TReal D = dist(xSt, ySt, xTg, yTg);
 

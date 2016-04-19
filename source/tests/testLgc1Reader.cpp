@@ -23,7 +23,7 @@ namespace
 
 namespace tut
 {
-	//----------------------------- ANGL_ZENH --------------------------------//
+	//----------------------------- ANGL_ZENH_DMES --------------------------------//
 	template<>
 	template<>
 	void object::test<1>()
@@ -249,6 +249,83 @@ namespace tut
 		//sigma
 		ensure_equals("constante correction should match", meas.at(0).getObservedStDev().getMMetresValue(), 0.2, 1e-2);
 		ensure_equals("constante correction should match", meas.at(1).getObservedStDev().getMMetresValue(), 0.1, 1e-2);
+
+	}
+
+	//----------------------------- DTHE --------------------------------//
+	template<>
+	template<>
+	void object::test<6>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ANGL_ZENI_DTHE measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZENI_DTHE_DHOR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ANGL_ZENI_DTHE);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		std::vector<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
+		ensure_equals("PT x coordinate should match", P2.getX(), 99.7911671, 1e-7);
+		ensure_equals("PT y coordinate should match", P2.getY(), 99.9909812, 1e-7);
+		ensure_equals("PT z coordinate should match", P2.getZ(), 99.8908785, 1e-7);
+		
+		//sigma value
+		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measDIST.at(1).target.sigmaDist.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("sigma should match ", meas.at(1)->roms.back()->measDIST.at(0).target.sigmaDist.getMMetresValue(), 0.1, 1e-1);
+		ensure_equals("ppm should match ", meas.at(1)->roms.back()->measDIST.at(0).target.ppmDist.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("tgt heigth should match ", meas.at(1)->roms.back()->measDIST.at(1).target.targetHt, 0.002, 1e-1);
+
+	}
+
+	//----------------------------- DHOR --------------------------------//
+	template<>
+	template<>
+	void object::test<7>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ANGL_ZENI_DHOR measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZENI_DHOR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ANGL_ZENI_DHOR);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		std::vector<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+
+		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
+		ensure_equals("PT x coordinate should match", P2.getX(), 99.8261720, 1e-7);
+		ensure_equals("PT y coordinate should match", P2.getY(), 100.0260562, 1e-7);
+		ensure_equals("PT z coordinate should match", P2.getZ(), 99.9247094, 1e-7);
+
+		//sigma value
+		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measDHOR.at(2).target.sigmaDist.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measDHOR.at(0).target.sigmaDist.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("ppm should match ", meas.at(0)->roms.back()->measDHOR.at(0).target.ppmDist.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("ppm should match ", meas.at(0)->roms.back()->measDHOR.at(2).target.ppmDist.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("tgt heigth should match ", meas.at(1)->roms.back()->measDHOR.at(2).target.distCorrectionValue, 1.0, 1e-1);
 
 	}
 }

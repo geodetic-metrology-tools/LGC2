@@ -146,7 +146,12 @@ class TKeyDTHE_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyDTHE_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_dthe_lgc1, const char** keywords = allowed_DTHE_lgc1) :
-		TAMeasurementKey_lgc1(project, DTHE)
+		TAMeasurementKey_lgc1(project, DTHE),
+		currentTSTN(nullptr),
+		currentROM(nullptr),
+		IH_adj(nullptr),
+		adjDCorr(nullptr),
+		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -158,6 +163,15 @@ public:
 	/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
+
+private:
+	TLength sigmaDIST, dcorr, ppm;
+	string currentStation;
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
+	TAdjustableLength* IH_adj;
+	TAdjustableLength* adjDCorr;
+	bool firstmeas;
 };
 
 /// Keyword to process distance measurement
@@ -249,7 +263,10 @@ class TKeyDHOR_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyDHOR_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_dhor_lgc1, const char** keywords = allowed_DHOR_lgc1) :
-		TAMeasurementKey_lgc1(project, DHOR)
+		TAMeasurementKey_lgc1(project, DHOR),
+		currentTSTN(nullptr),
+		currentROM(nullptr),
+		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -261,6 +278,12 @@ public:
 	/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
+private:
+	TLength sigmaDIST,dcorr, ppm;
+	string currentStation;
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
+	bool firstmeas;
 };
 
 
