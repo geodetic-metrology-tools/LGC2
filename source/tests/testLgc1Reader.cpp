@@ -328,4 +328,91 @@ namespace tut
 		ensure_equals("tgt heigth should match ", meas.at(1)->roms.back()->measDHOR.at(2).target.distCorrectionValue, 1.0, 1e-1);
 
 	}
+
+	//----------------------------- ORIE --------------------------------//
+	template<>
+	template<>
+	void object::test<8>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ORIE measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ORIE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ORIE);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector I_1 = dataset.getPoints().getObject("I_1").getEstimatedValue();
+		ensure_equals("I_1 x coordinate should match", I_1.getX(), 2236.9919372, 1e-7);
+		ensure_equals("I_1 y coordinate should match", I_1.getY(), 2422.2046495, 1e-7);
+		ensure_equals("I_1 z coordinate should match", I_1.getZ(), 2449.9999706, 1e-7);
+		TPositionVector E_1 = dataset.getPoints().getObject("E_1").getEstimatedValue();
+		ensure_equals("E_1 x coordinate should match", E_1.getX(), 2117.5543186, 1e-7);
+		ensure_equals("E_1 y coordinate should match", E_1.getY(), 2261.8054678, 1e-7);
+		ensure_equals("E_1 z coordinate should match", E_1.getZ(), 2449.9999921, 1e-7);
+		TPositionVector B_1 = dataset.getPoints().getObject("B_1").getEstimatedValue();
+		ensure_equals("B_1 x coordinate should match", B_1.getX(), 2029.3889489, 1e-7);
+		ensure_equals("B_1 y coordinate should match", B_1.getY(), 2140.4511000, 1e-7);
+		ensure_equals("B_1 z coordinate should match", B_1.getZ(), 2449.9999995, 1e-7);
+
+		//sigma value
+		std::vector<TORIEROM> meas = projTest->getCurrentNode().measurements.fORIE;
+		ensure_equals("sigma should match ", meas.at(0).measORIE.at(0).target.sigmaAngl.getSignedCCValue(), 5.0, 1e-1);
+		ensure_equals("sigma should match ", meas.at(3).measORIE.at(0).target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
+		ensure_equals("contant angle should match ", meas.at(0).fConstantAngle, 0.0, 1e-1);
+		ensure_equals("contant angle should match ", meas.back().fConstantAngle.getGonsValue(), 2.0, 1e-1);
+
+	}
+
+	//----------------------------- ECTH --------------------------------//
+	template<>
+	template<>
+	void object::test<9>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECTH measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECTH.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ECTH);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector CS1 = dataset.getPoints().getObject("CS1").getEstimatedValue();
+		ensure_equals("CS1 x coordinate should match", CS1.getX(), 3100.0004758, 1e-7);
+		ensure_equals("CS1 y coordinate should match", CS1.getY(), 3000.3004300, 1e-7);
+		ensure_equals("CS1 z coordinate should match", CS1.getZ(), 2452.8445883, 1e-7);
+		TPositionVector AS2 = dataset.getPoints().getObject("AS2").getEstimatedValue();
+		ensure_equals("AS2 x coordinate should match", AS2.getX(), 2985.5482162, 1e-7);
+		ensure_equals("AS2 y coordinate should match", AS2.getY(), 2979.5983695, 1e-7);
+		ensure_equals("AS2 z coordinate should match", AS2.getZ(), 2450.8655837, 1e-7);
+		TPositionVector CS3 = dataset.getPoints().getObject("CS3").getEstimatedValue();
+		ensure_equals("CS3 x coordinate should match", CS3.getX(), 2968.9084481, 1e-7);
+		ensure_equals("CS3 y coordinate should match", CS3.getY(), 3095.0445340, 1e-7);
+		ensure_equals("CS3 z coordinate should match", CS3.getZ(), 2452.8508447, 1e-7);
+		
+		//sigma value
+		std::vector<TECTH> meas = projTest->getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH;
+		ensure_equals("sigma should match ", meas.at(16).target.sigmaD.getMMetresValue(), 2.0, 1e-1);
+		ensure_equals("distance correction should match ", meas.at(12).target.sigmaDCorr, 0.1, 1e-1);
+	}
 }

@@ -917,7 +917,7 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
-		throw std::logic_error("TContributionGenerator::getHorAnglContrib: Division by zero because observation points have identical coordinates.");
+		throw std::logic_error("TContributionGenerator::getOrieContrib: Division by zero because observation points have identical coordinates.");
 
 	TReal a, b, c; //station's contributions coefficients (negative values of these give the target coefficients)		
 	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; //xSt coefficient

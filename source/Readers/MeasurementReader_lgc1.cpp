@@ -754,15 +754,72 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			storeDIST(currentROM);
 	}
-
-	auto& meas = proj.getCurrentNode().measurements;
 }
 
 void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
-{/*
-	if (fistrECTH)
-	{
-		//create a default scale instrument
+{
+
+	auto& storeECTH = [&](shared_ptr<TTSTN::TROM> rom){
+		if (tokens.size() < 4 && !fSIMUActive)
+			throw std::runtime_error("A ECTH measurement must have at least 4 entries: "
+			"point1 station point2 angle offset");
+
+		// look up the observed point
+		const TAdjustablePoint& obspt(fpoints.getObject(tokens.at(1)));
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : rom->measECTH)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("ECTH measurement is duplicated");
+
+
+		TInstrumentData::TSCALE& ScaleInstr = proj.getInstruments().fSCALE["ECTHInstr"];
+		ScaleInstr.sigmaD = sigma;
+		ScaleInstr.distCorrectionValue = dcorr;
+
+		if (tokens.size() == 5)
+		{
+			if (!tokens.at(4).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				ScaleInstr.distCorrectionValue = dcorr;
+			}
+			else
+				ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+		}
+		else if (tokens.size() == 6)
+		{
+			ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			ScaleInstr.distCorrectionValue = dcorr;
+		}
+
+
+		// set measurement value
+		TECTH ecth(obspt, ScaleInstr, TAngle(std::stor(tokens.at(2)), TAngle::EUnits::kGons));
+		ecth.line = line;
+		//If last token starts with a comment character, store it as a end of line comment
+		const char fOfLastToken = tokens.back().at(0);
+		if (fOfLastToken == '$' || fOfLastToken == '%')
+			ecth.eolcomment = tokens.back();
+
+		// set indices of LS matrices, ANGL introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
+		ecth.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		ecth.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kECTH);
+
+		if (!fSIMUActive)
+			ecth.setDistance(TLength(std::stor(tokens.at(3))));
+
+		rom->measECTH.emplace_back(ecth);
+	};
+
+	//create a scale instrument for ecth measurements
+	if (firstmeas)
+	{//create a default scale instrument
 		const TInstrumentData::TSCALE scl = {
 			"ECTHInstr",
 			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
@@ -780,89 +837,84 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 
-		constante = TLength(0.0, TLength::EUnits::kMetres);
+		dcorr = TLength(0.0, TLength::EUnits::kMetres);
 
-		fistrECTH = false;
+		firstmeas = false;
 	}
-
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline)
 	{
-		// *ECVE [sigma]
+		// *ECTH [sigma]
 		if (tokens.size() == 3)
 			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
-		constante = TLength(0.0, TLength::EUnits::kMetres);
 
+		dcorr = TLength(0.0, TLength::EUnits::kMetres);
+		currentStation = "";
 	}
 	else
 	{
-		// stn pt angle ecart [sigma][/const]
-		if (tokens.size() < 4 && !fSIMUActive)
-			throw std::runtime_error("A ECTH measurement must have at least 4 entries: "
-			"the station, the measured point, the angle measurement and the measured offset.");
+		bool ecthStored = false;
 
-		// Initialize the station
 		if (currentStation != tokens.at(0))
 		{
 			currentStation = tokens.at(0);
-			fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
-			
-		}
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, "ECTHInstr");
 
-		// look up the stationed point
-		const auto& stPoint(fpoints.getObject(tokens.at(0)));
+			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
+			{
+				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
+				{
+					//only 1 ROM per station on lgc1
+					if (itTstn->instrumentPos->getName() == currentStation)
+					{
+						//if TSNT already exist, see if ECTH meas is empty
+						if (itTstn->roms.back()->measECTH.empty())
+						{
+							currentTSTN = itTstn;
+							currentROM = currentTSTN->roms.back();
+							storeECTH(currentROM);
+							ecthStored = true;
+							break;
+						}
+						else
+							continue;
 
-		//NODUP used
-		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM().measECTH)
-				if (stPoint.getName() == point.targetPos->getName())
-					throw std::runtime_error("A ECTH measurement is duplicated");
+					}
+					else
+						continue;
+				}
 
-		if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
-		{
-			scaleInstr.sigmaD = sigma;
-			constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMillimetres);
-		}
-		else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
-		{
-			scaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			scaleInstr.distCorrectionValue = constante;
-		}
-		else if (tokens.size() == 6)
-		{
-			scaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			constante = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMillimetres);
-			scaleInstr.distCorrectionValue = constante;
+				if (!ecthStored)
+				{
+					createTSTN(currentStation, line);
+					currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
+
+					createROM(currentTSTN);
+					currentROM = currentTSTN->roms.back();
+
+					storeECTH(currentROM);
+					ecthStored = true;
+				}
+			}
+			else
+			{
+				createTSTN(currentStation, line);
+				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
+
+				createROM(currentTSTN);
+				currentROM = currentTSTN->roms.back();
+
+				storeECTH(currentROM);
+			}
 		}
 		else
-		{
-			scaleInstr.distCorrectionValue = constante;
-			scaleInstr.sigmaD = sigma;
-		}
+			storeECTH(currentROM);
+	}
 
-		// Store  the measured value
-		getROM().measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(3)))));
-
-		//get a reference to the inserted measurement
-		auto& ecth(getROM().measECTH.back());
-
-		ecth.line = line;
-		//If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			ecth.eolcomment = tokens.back();
-
-		// set indices of LS matrices, ECTH introduces 1 equation and 1 observation
-		ecth.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		ecth.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECTH);
-	}	*/
+	auto& meas = proj.getCurrentNode().measurements;
+	
 }
 
 void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -1856,7 +1908,6 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	/*
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline){
 		if (tokens.size() == 3)
@@ -1864,6 +1915,8 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			sigma = TAngle(1.0, TAngle::EUnits::kCCs);
 		constante = TAngle(0.0, TAngle::EUnits::kGons);
+
+		currentStation = "";
 		
 	}
 	else
@@ -1873,6 +1926,7 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		if (tokens.at(0) != currentStation)
 		{
+			currentStation = tokens.at(0);
 			TORIEROM orieROM(fpoints.getObject(tokens.at(0)), getPolarInstr());
 			orieROM.line = line;
 
@@ -1881,7 +1935,8 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 
 		// look up the observed point, i.e. the target
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
+		const auto& obspt(fpoints.getObject(tokens.at(1)));
+		TORIEROM& rom = proj.getCurrentNode().measurements.fORIE.back();
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
@@ -1894,27 +1949,23 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		// get a copy of  the specified target and update it
 		TInstrumentData::TPOLAR::TTarget tgt(finstruments.getDevice(instrument.targets, instrument.defTarget));
 
-		if (tokens.size() == 5)
-		{
-			tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kGons);
-			instrument.constAngle = TAngle(stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
-		}
+		tgt.sigmaAngl = sigma;
+		rom.fConstantAngle = constante;
+
+		if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
+			tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
 		else if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
 		{
 			tgt.sigmaAngl = sigma;
-			instrument.constAngle = TAngle(stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
+			constante = TAngle(stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
+			rom.fConstantAngle = constante;
 		}
-		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
+		else if (tokens.size() == 5 )
 		{
-			tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kGons);
-			instrument.constAngle = constante;
+			tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
+			constante = TAngle(stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
+			rom.fConstantAngle = constante;
 		}
-		else
-		{
-			tgt.sigmaAngl = sigma;
-			instrument.constAngle = constante;
-		}
-
 
 		// set measurement value
 		TORIE orie(obspt, tgt);
@@ -1937,7 +1988,7 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			orie.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		proj.getCurrentNode().measurements.fORIE.back().measORIE.emplace_back(orie);
-	}*/
+	}
 }
 
 void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)

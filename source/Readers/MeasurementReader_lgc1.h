@@ -28,7 +28,6 @@ protected:
 
 	/// returns a reference to the polar instrument
 	inline TInstrumentData::TPOLAR& getPolarInstr() {
-		//if (proj.getCurrentNode().measurements.fTSTN.size() == 0)
 		if (finstruments.fPOLAR.size() == 0)
 			createPolarInstrument();
 		
@@ -150,8 +149,7 @@ public:
 		currentTSTN(nullptr),
 		currentROM(nullptr),
 		IH_adj(nullptr),
-		adjDCorr(nullptr),
-		firstmeas(true)
+		adjDCorr(nullptr)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -171,7 +169,6 @@ private:
 	shared_ptr<TTSTN::TROM> currentROM;
 	TAdjustableLength* IH_adj;
 	TAdjustableLength* adjDCorr;
-	bool firstmeas;
 };
 
 /// Keyword to process distance measurement
@@ -206,7 +203,10 @@ class TKeyECTH_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyECTH_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_ecth_lgc1, const char** keywords = allowed_ECTH_lgc1) :
-		TAMeasurementKey_lgc1(project, ECTH)
+		TAMeasurementKey_lgc1(project, ECTH),
+		currentTSTN(nullptr),
+		currentROM(nullptr),
+		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -220,12 +220,11 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TAngle fObservedAngle;
-	
-	bool fistrECTH;
-	TLength sigma;
-	TLength constante;
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
+	bool firstmeas;
 	string currentStation;
+	TLength sigma, dcorr;
 
 };
 
@@ -413,7 +412,7 @@ private:
 	TAngle constante;
 };
 
-/// Keyword to process ORIE -- Gyro-Theodolite Azimut
+/// Keyword to process RADI 
 class TKeyRADI_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled

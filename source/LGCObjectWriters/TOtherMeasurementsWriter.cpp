@@ -406,7 +406,8 @@ void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, co
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
 
 		//write the estimated ORIE
-		(*stream).writeDouble(obsWidth, anglePrecision, ItORIE.getAngle().getGonsValue() + ItORIE.getAngleResidual().getGonsValue());
+		TReal value = ItORIE.getAngle().getGonsValue() + ItORIE.getAngleResidual().getGonsValue();
+		(*stream).writeDouble(obsWidth, anglePrecision, (value >400.0 ? value-400 : value));
 
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
