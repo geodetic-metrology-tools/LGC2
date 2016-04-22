@@ -41,10 +41,6 @@ protected:
 	//create a ROM in tstn
 	void createROM(shared_ptr<TTSTN> tstn);
 
-
-	///Currently used target, e.g. in ROM (V0 keyword) reading for *TSTN and also for *CAM
-	std::string currentTargetApplied;
-
 private:
 	TAMeasurementKey_lgc1& operator=(const TAMeasurementKey_lgc1&);
 };
@@ -75,8 +71,9 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TAngle sigmaANGL, constanteANGL;
-	string currentStation;
+	TAngle sigmaANGL = TAngle(0.0);
+	TAngle constanteANGL = TAngle(0.0);
+	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 };
@@ -102,9 +99,9 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TAngle sigmaZEND;
-	TLength IH;
-	string currentStation;
+	TAngle sigmaZEND = TAngle(0.0);
+	TLength IH = TLength(0.0);
+	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 	TAdjustableLength* IH_adj;
@@ -132,8 +129,8 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TAngle sigmaZEND;
-	string currentStation;
+	TAngle sigmaZEND = TAngle(0.0);
+	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 	TAdjustableLength* IH_adj;
@@ -163,8 +160,10 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TLength sigmaDIST, dcorr, ppm;
-	string currentStation;
+	TLength sigmaDIST = TLength(0.0);
+	TLength dcorr = TLength(0.0); 
+	TLength ppm = TLength(0.0);
+	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 	TAdjustableLength* IH_adj;
@@ -193,9 +192,11 @@ public:
 
 private:
 	bool fistrDMES = true;
-	TLength sigma, ppm, dcorr;
+	TLength sigma = TLength(0.0);
+	TLength ppm = TLength(0.0);
+	TLength dcorr = TLength(0.0);
 	TAdjustableLength* adjDCorr;
-	string currentStation;
+	string currentStation = "";
 };
 
 /// Keyword to process ECTH measurement
@@ -223,8 +224,9 @@ private:
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 	bool firstmeas;
-	string currentStation;
-	TLength sigma, dcorr;
+	string currentStation = "";
+	TLength sigma = TLength(0.0);
+	TLength dcorr = TLength(0.0);
 
 };
 
@@ -233,7 +235,10 @@ class TKeyECSP_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyECSP_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_ecsp_lgc1, const char** keywords = allowed_ECSP_lgc1) :
-		TAMeasurementKey_lgc1(project, ECSP)
+		TAMeasurementKey_lgc1(project, ECSP),
+		currentTSTN(nullptr),
+		currentROM(nullptr),
+		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -247,14 +252,16 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TAngle fHorAngle;
-	TAngle fVertAngle;
-
-	bool fistrECSP = true;
-	TLength sigma;
-	TLength constante;
+	shared_ptr<TTSTN> currentTSTN;
+	shared_ptr<TTSTN::TROM> currentROM;
+	bool firstmeas;
 	string point1 = "";
 	string point2 = "";
+	TAngle fHorAngle = TAngle(0.0);
+	TAngle fVertAngle = TAngle(0.0);
+	TLength sigma = TLength(0.0);
+	TLength dcorr = TLength(0.0);
+	
 };
 
 /// Keyword to process DHOR measurement
@@ -278,8 +285,10 @@ public:
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 private:
-	TLength sigmaDIST,dcorr, ppm;
-	string currentStation;
+	TLength sigmaDIST = TLength(0.0); 
+	TLength dcorr = TLength(0.0);
+	TLength ppm = TLength(0.0);
+	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
 	bool firstmeas;
@@ -306,8 +315,8 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	TLength sigma;
-	TLength dcorr;
+	TLength sigma = TLength(0.0);
+	TLength dcorr = TLength(0.0);
 };
 
 /// Keyword to process DLEV measurement
@@ -356,8 +365,8 @@ public:
 
 private:
 	bool firstECHO = true;
-	TLength sigma;
-	TLength constante;
+	TLength sigma = TLength(0.0);
+	TLength constante = TLength(0.0);
 	string encrage1 = "";
 	string encrage2 = "";
 };
@@ -382,8 +391,8 @@ public:
 
 private:
 	bool fistrECVE = true;
-	TLength sigma;
-	TLength constante;
+	TLength sigma = TLength(0.0);
+	TLength constante = TLength(0.0);
 	string ptLine = "";
 };
 
@@ -408,8 +417,8 @@ public:
 private:
 	string currentStation = "";
 	bool fistrORIE = true;
-	TAngle sigma;
-	TAngle constante;
+	TAngle sigma = TAngle(0.0);
+	TAngle constante = TAngle(0.0);
 };
 
 /// Keyword to process RADI 

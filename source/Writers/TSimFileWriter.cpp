@@ -330,14 +330,17 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	//write PDOR if we are in ROOT & PDOR is used
 	if (frameIt->get()->isROOTNode())
 		if (data->getConfig().pdor.isActive() && data->getConfig().pdor.hasBearing)
-			(*stream) << "*PDOR" << sep
-			<<  data->getConfig().pdor.fptname 
-			<< sep << data->getConfig().pdor.fgis.getGonsValue()
-			<< endl;
+		{
+			(*stream) << "*PDOR" << endl;
+			(*stream) << data->getConfig().pdor.fptname
+				<< sep << data->getConfig().pdor.fgis.getGonsValue()
+				<< endl;
+		}
 		else if (data->getConfig().pdor.isActive())
-			(*stream) << "*PDOR" << sep
-			<< data->getConfig().pdor.fptname
-			<< endl;
+		{
+			(*stream) << "*PDOR" << endl;
+			(*stream) << data->getConfig().pdor.fptname << endl;
+		}
 	 
 	//Write point list
 	for (auto& point : data->getPoints())
