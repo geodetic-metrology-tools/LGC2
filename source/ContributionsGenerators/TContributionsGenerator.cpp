@@ -51,7 +51,6 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(shared_ptr<TT
 
 	TReal hTg = dist.target.targetHt;
 	TReal hInst = station->instrumentHeightAdjustable->getEstimatedValue();
-	//TReal cst = dist.target.distCorrectionAdjustable->getEstimatedValue();
 
 	TReal cst;
 	if(!dist.target.distCorrectionAdjustable->isFixed())
@@ -598,7 +597,12 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 
 	TReal hTg = dspt.target.targetHt;
 	TReal hInst = edmST.instrument.instrHeight;
-	TReal cst = dspt.target.distCorrectionAdjustable->getEstimatedValue();
+
+	TReal cst;
+	if (!dspt.target.distCorrectionAdjustable->isFixed())
+		cst = dspt.target.distCorrectionAdjustable->getEstimatedValue();
+	else
+		cst = dspt.target.distCorrectionValue;
 
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
