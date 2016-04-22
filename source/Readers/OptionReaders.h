@@ -251,6 +251,34 @@ class TKeyPREC : public TAOptionKey {
 		virtual void parse(const std::vector<std::string>& tokens, int);
 };
 
+class TKeyMICR : public TAOptionKey {
+public:
+	///Constructor
+	TKeyMICR(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAOptionKey(project, MICR)
+	{
+		for (int i(0); i< nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+
+	}
+
+	///Tokenize and initialize options for the output processing
+	virtual void parse(const std::vector<std::string>& tokens, int);
+};
+
+class TKeyCLIC : public TAOptionKey {
+public:
+	///Constructor
+	TKeyCLIC(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAOptionKey(project, CLIC)
+	{
+		for (int i(0); i< nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+
+	}
+
+	///Tokenize and initialize options for the output processing
+	virtual void parse(const std::vector<std::string>& tokens, int);
+};
+
 class TKeyPRES : public TAOptionKey {
 	public:
 		///Constructor

@@ -181,6 +181,14 @@ void TKeyPREC::parse(const std::vector<std::string>& tokens, int) {
 		throw std::runtime_error("*PREC expects interger between 0 and 7.");
 }
 
+void TKeyMICR::parse(const std::vector<std::string>& tokens, int) {
+		fconfig.outPrecision = TLGCConfig::TPrecision(6);
+}
+
+void TKeyCLIC::parse(const std::vector<std::string>& tokens, int) {
+	fconfig.outPrecision = TLGCConfig::TPrecision(6);
+}
+
 
 void TKeyPRES::parse(const std::vector<std::string>&, int) {
 	fconfig.errorEllipses = TLGCConfig::TBinaryOption(true);

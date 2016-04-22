@@ -81,7 +81,6 @@ class TAPointKey : public TAKeyWord {
 class TKeyCALA : public TAPointKey {
 	public:
 		TKeyCALA(TLGCData& project, int nb_allowed_keywords = nb_allowed_cala, const char** keywords = allowed_CALA);
-				
 	protected:		 
 		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
