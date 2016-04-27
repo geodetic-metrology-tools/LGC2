@@ -572,7 +572,14 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}		
 		else if (tokens.size() == 5)
 		{
-			if (tokens.at(4) == "C")
+			
+			if (!tokens.at(3).compare(0, 1, "/"))
+			{
+				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			}
+			else if (tokens.at(4) == "C")
 			{
 				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 				// Add adjustable scalar into a global collection and store a pointer
@@ -588,12 +595,6 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			else if (!tokens.at(4).compare(0, 1, "\\"))
 			{
 				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			}
-			else if (!tokens.at(3).compare(0, 1, "/"))
-			{
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
 				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 			}
 			else
@@ -943,7 +944,7 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		TReal d, beta;
 		if (proj.getConfig().referential != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
-			if (currentTSTN->instrumentHeightAdjustable->getEstimatedValue() != NO_VALf)
+			if (currentTSTN->instrumentHeightAdjustable != nullptr)
 			{
 				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getH() + currentTSTN->instrumentHeightAdjustable->getEstimatedValue(), Pos2.getX(), Pos2.getY(), Pos2.getH());
 				beta = acos((Pos2.getH() - Pos1.getH() - currentTSTN->instrumentHeightAdjustable->getEstimatedValue()) / d);
@@ -961,14 +962,14 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 		else
 		{
-			if (currentTSTN->instrumentHeightAdjustable->getEstimatedValue() != NO_VALf)
+			if (currentTSTN->instrumentHeightAdjustable != nullptr)
 			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getH() + currentTSTN->instrumentHeightAdjustable->getEstimatedValue(), Pos2.getX(), Pos2.getY(), Pos2.getZ());
+				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getZ() + currentTSTN->instrumentHeightAdjustable->getEstimatedValue(), Pos2.getX(), Pos2.getY(), Pos2.getZ());
 				beta = acos((Pos2.getZ() - Pos1.getZ() - currentTSTN->instrumentHeightAdjustable->getEstimatedValue()) / d);
 			}
 			if (currentTSTN->instrument.instrHeight != NO_VALf)
 			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getH() + currentTSTN->instrument.instrHeight, Pos2.getX(), Pos2.getY(), Pos2.getZ());
+				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getZ() + currentTSTN->instrument.instrHeight, Pos2.getX(), Pos2.getY(), Pos2.getZ());
 				beta = acos((Pos2.getZ() - Pos1.getZ() - currentTSTN->instrument.instrHeight) / d);
 			}
 			else
@@ -1015,7 +1016,7 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			ecsp.eolcomment = tokens.back();
 
-		// set indices of LS matrices, ANGL introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
+		// set indices of LS matrices, ECSP introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
 		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex++;
@@ -1460,7 +1461,12 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			else if (tokens.size() == 5)
 			{
-				if (tokens.at(4) == "C")
+				if (!tokens.at(3).compare(0, 1, "\\"))
+				{
+					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
+				}
+				else if (tokens.at(4) == "C")
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
@@ -1473,11 +1479,6 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
 				}
-				else if (!tokens.at(3).compare(0, 1, "\\"))
-				{
-					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
-				}
 				else
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
@@ -1487,9 +1488,22 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			else if (tokens.size() == 6)
 			{
-				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				if (tokens.at(5) == "C")
+				if (!tokens.at(3).compare(0, 1, "/"))
 				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
+				}
+				else if (!tokens.at(4).compare(0, 1, "\\"))
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
+				}
+				else if (tokens.at(5) == "C")
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
 					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
@@ -1497,14 +1511,10 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				}
 				else if (!tokens.at(5).compare(0, 1, "/"))
 				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
-				}
-				else if (!tokens.at(4).compare(0, 1, "\\"))
-				{
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 			}
 
@@ -1752,7 +1762,6 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-
 void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	if (firstECHO)
@@ -1776,7 +1785,6 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 		
 		constante = TLength(0.0, TLength::EUnits::kMetres);
-
 		firstECHO = false;
 	}
 
@@ -1790,6 +1798,8 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 		constante = TLength(0.0, TLength::EUnits::kMetres);
+		encrage1 = "";
+		encrage2 = "";
 	}
 	else
 	{
@@ -1806,19 +1816,19 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			const std::string& name = "ECHOPLANE" + std::to_string(proj.getCurrentNode().measurements.fECHO.size()); //name of the measured adjustable plane
 
-			fplanes.addObject(TAdjustablePlane::createUninitialized(name)); //The plane will be initialized in TDataAnalyzer class, when checked for consistency
+			fplanes.addObject(TAdjustablePlane::createUninitialized(name));
 			TECHOROM echoRom(fplanes.back());
 
 			echoRom.line = line;
 			proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement
 			proj.getCurrentNode().measurements.fECHO.back().line = line;
 
-			//initialise the plane
+			//initialise the plane instead of in TDataAnalyser
 			const TAdjustablePoint& p1 = fpoints.getObject(encrage1);
 			const TAdjustablePoint& p2 = fpoints.getObject(encrage2);
-			TReal referencePoint[3] = { (p2.getEstimatedValue().getX().getMetresValue() + p1.getEstimatedValue().getX().getMetresValue())/2, 
-				(p2.getEstimatedValue().getY().getMetresValue() + p1.getEstimatedValue().getY().getMetresValue()) / 2,
-				(p2.getEstimatedValue().getZ().getMetresValue() + p1.getEstimatedValue().getZ().getMetresValue()) / 2 };
+			TReal referencePoint[3] = { p1.getEstimatedValue().getX().getMetresValue(), 
+										p1.getEstimatedValue().getY().getMetresValue(),
+										p1.getEstimatedValue().getZ().getMetresValue() };
 			TReal initialRefPtDistance = 0.0;
 
 			/*Fixed reference point for the ECHO measurement*/
@@ -1830,6 +1840,30 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			proj.getCurrentNode().measurements.fECHO.back().fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
 				TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
+
+			// Create measurements for the encrage points
+			TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
+			instr.sigmaD = sigma;
+
+			TECHO echo1(p1, instr, TLength(fSIMUActive ? NO_VALf : 0.0));
+			echo1.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+			echo1.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+			proj.fUEOIndices.EIndex++;
+			proj.fUEOIndices.OIndex++;
+			echo1.line = line;
+			proj.addToMeasurementNum(TMeasurementsGlobal::kECHO);
+			TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
+			echoROMLatest.measECHO.emplace_back(echo1);
+
+			TECHO echo2(p2, instr, TLength(fSIMUActive ? NO_VALf : 0.0));
+			echo2.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+			echo2.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+			proj.fUEOIndices.EIndex++;
+			proj.fUEOIndices.OIndex++;
+			echo2.line = line;
+			proj.addToMeasurementNum(TMeasurementsGlobal::kECHO);
+			echoROMLatest.measECHO.emplace_back(echo2);
+
 		}
 
 		//This is a position of station point from which the plane is measured in the ECHO class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved.
@@ -1841,6 +1875,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		{
 			instr.sigmaD = sigma;
 			constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			instr.distCorrectionValue = constante;
 		}
 		else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
 		{
@@ -1859,16 +1894,12 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			instr.sigmaD = sigma;
 		}
 
-	
-
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(3))));
 		echo.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		echo.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
 		proj.fUEOIndices.EIndex++;
 		proj.fUEOIndices.OIndex++;
-
 		echo.line = line;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kECHO);
 		TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
@@ -1881,8 +1912,6 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECHO measurement is duplicated");
 	}
-
-	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
@@ -1921,6 +1950,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 		constante = TLength(0.0, TLength::EUnits::kMetres);
+		ptLine = "";
 	}
 	else
 	{
@@ -1955,6 +1985,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		{
 			instr.sigmaD = sigma;
 			constante = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+			instr.distCorrectionValue = constante;
 		}
 		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
 		{
@@ -1978,10 +2009,8 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		TECVE ecve(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))));
 		ecve.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		ecve.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
 		proj.fUEOIndices.EIndex++;
 		proj.fUEOIndices.OIndex++;
-
 		ecve.line = line;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kECVE);
 		TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();

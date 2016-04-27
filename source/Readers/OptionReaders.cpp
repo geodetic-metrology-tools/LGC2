@@ -183,10 +183,33 @@ void TKeyPREC::parse(const std::vector<std::string>& tokens, int) {
 
 void TKeyMICR::parse(const std::vector<std::string>& tokens, int) {
 		fconfig.outPrecision = TLGCConfig::TPrecision(6);
+		auto& outputMessages(proj.getFileLogger());
+		outputMessages.writeReportHeader("MICR should not be used. Use PREC option.");
 }
 
 void TKeyCLIC::parse(const std::vector<std::string>& tokens, int) {
 	fconfig.outPrecision = TLGCConfig::TPrecision(6);
+	auto& outputMessages(proj.getFileLogger());
+	outputMessages.writeReportHeader("CLIC should not be used. Use PREC option.");
+}
+
+void TKeyTOL::parse(const std::vector<std::string>& tokens, int) {
+	if (tokens.size() != 3)
+		throw std::runtime_error("*TOL expects exactly one integer argument.");
+	if (std::stoi(tokens.at(2)) >= 0 && std::stoi(tokens.at(2)) <= 6)
+		fconfig.outPrecision = TLGCConfig::TPrecision(1 + std::stoi(tokens.at(2)));
+	else
+		throw std::runtime_error("*TOL expects interger between 0 and 6.");
+
+	auto& outputMessages(proj.getFileLogger());
+	outputMessages.writeReportHeader("TOL should not be used. Use PREC option.");
+}
+
+void TKeyDIXI::parse(const std::vector<std::string>& tokens, int) {
+	fconfig.outPrecision = TLGCConfig::TPrecision(4);
+
+	auto& outputMessages(proj.getFileLogger());
+	outputMessages.writeReportHeader("DIXI should not be used. Use PREC option");
 }
 
 

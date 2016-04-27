@@ -138,7 +138,7 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 /*!
 \ingroup Measurements
-\brief Offset to a theodolit plane measurement (ECTH).
+\brief Offset to a spatial line measurement (ECSP).
 */
 class TECSP : public TAScalarMeas<TInstrumentData::TSCALE>
 {

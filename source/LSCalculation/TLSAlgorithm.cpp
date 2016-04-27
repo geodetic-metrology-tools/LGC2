@@ -20,7 +20,6 @@ bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 	std::unique_ptr<TALSComputer> computer;
 	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
-	//std::unique_ptr<TLSResultsMatrices> resultMatrices(new TLSResultsMatrices(data.fUEOIndices));
 
 	extractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
 	
@@ -72,7 +71,6 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 			fillOK = matrFiller->fillMatrices(&data, true, inputMtr);
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
-
 
 		//fill part of the free constraints
 		if (data.getConfig().libre.isActive())

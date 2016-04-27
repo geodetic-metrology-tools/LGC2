@@ -415,4 +415,90 @@ namespace tut
 		ensure_equals("sigma should match ", meas.at(16).target.sigmaD.getMMetresValue(), 2.0, 1e-1);
 		ensure_equals("distance correction should match ", meas.at(12).target.sigmaDCorr, 0.1, 1e-1);
 	}
+
+	//----------------------------- ECVE --------------------------------//
+	template<>
+	template<>
+	void object::test<10>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECVE measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECVE.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ECVE);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector D1 = dataset.getPoints().getObject("D__________________1").getEstimatedValue();
+		ensure_equals("D1 x coordinate should match", D1.getX(), 2088.1677910, 1e-7);
+		ensure_equals("D1 y coordinate should match", D1.getY(), 2221.3525451, 1e-7);
+		ensure_equals("D1 z coordinate should match", D1.getZ(), 2449.9999955, 1e-7);
+		TPositionVector G1 = dataset.getPoints().getObject("G__________________1").getEstimatedValue();
+		ensure_equals("G1 x coordinate should match", G1.getX(), 2176.3356346, 1e-7);
+		ensure_equals("G1 y coordinate should match", G1.getY(), 2342.7051526, 1e-7);
+		ensure_equals("G1 z coordinate should match", G1.getZ(), 2449.9999823, 1e-7);
+		TPositionVector J1 = dataset.getPoints().getObject("J__________________1").getEstimatedValue();
+		ensure_equals("J1 x coordinate should match", J1.getX(), 2264.5034547, 1e-7);
+		ensure_equals("J1 y coordinate should match", J1.getY(), 2464.0577278, 1e-7);
+		ensure_equals("J1 z coordinate should match", J1.getZ(), 2449.9999603, 1e-7);
+
+		//sigma value
+		std::vector<TECVEROM> meas = projTest->getCurrentNode().measurements.fECVE;
+		ensure_equals("sigma should match ", meas.at(0).measECVE.begin()->target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.at(8).measECVE.begin()->target.sigmaD.getMMetresValue(), 0.3, 1e-1);
+		ensure_equals("distance correction should match ", meas.at(8).measECVE.begin()->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+	}
+
+	//----------------------------- ECHO --------------------------------//
+	template<>
+	template<>
+	void object::test<11>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECHO measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECHO.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ECHO);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector BSx = dataset.getPoints().getObject("BSx").getEstimatedValue();
+		ensure_equals("BSx x coordinate should match", BSx.getX(), 3050.0003283, 2e-7);
+		ensure_equals("BSx y coordinate should match", BSx.getY(), 3000.4002934, 2e-7);
+		ensure_equals("BSx z coordinate should match", BSx.getZ(), 2451.8503375, 2e-7);
+		TPositionVector ES240 = dataset.getPoints().getObject("ES240").getEstimatedValue();
+		ensure_equals("ES240 x coordinate should match", ES240.getX(), 2970.3160464, 2e-7);
+		ensure_equals("ES240 y coordinate should match", ES240.getY(), 2959.8243428, 2e-7);
+		ensure_equals("ES240 z coordinate should match", ES240.getZ(), 2446.8685899, 2e-7);
+		TPositionVector CS360 = dataset.getPoints().getObject("CS360").getEstimatedValue();
+		ensure_equals("CS360 x coordinate should match", CS360.getX(), 2940.2550709, 5e-7);
+		ensure_equals("CS360 y coordinate should match", CS360.getY(), 3080.1913342, 5e-7);
+		ensure_equals("CS360 z coordinate should match", CS360.getZ(), 2452.8556750, 5e-7);
+
+		//sigma value
+		std::vector<TECHOROM> meas = projTest->getCurrentNode().measurements.fECHO;
+		ensure_equals("sigma should match ", meas.at(0).measECHO.begin()->target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.back().measECHO.back().target.sigmaD.getMMetresValue(), 0.1, 1e-1);
+		ensure_equals("distance correction should match ", meas.at(2).measECHO.begin()->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+	}
 }
