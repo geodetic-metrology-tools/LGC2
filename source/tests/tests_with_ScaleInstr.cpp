@@ -525,43 +525,51 @@ namespace tut
 	void object::test<10>()
 	{
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
+	
 		set_test_name("Testing ECSP measurement in OLOC");
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECSP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
-
+	
 		stringstream infiler(TestScaleInstr::ecsp_OLOC);
-
+	
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
-
+	
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
-
+	
 		const TLGCData& dataset = calcul.getData();
-
+	
 		/* LGC1 results:  VXY
-		P1       -0.0000000      100.1000000        0.0000000   0.0001062   0.0001041
-		P2      100.5000000       -0.0000000        0.0000000   0.0001041   0.0001062
+		Z100     3100.0000000     3000.0002943      450.0000000	  0.1000000   1.0803499 
+		 AS1     3024.9997804     3000.3004522      451.0000000	  0.1001066   0.2728478 
+		 BS1     3049.9998622     3000.3988332      452.0000000	  0.1001686   0.5522184 
+		 CS1     3099.9996046     3000.3014095      453.0000000	  0.1000992   1.1041705 
+		 AS2     2985.5480439     2979.5979542      451.0000000	  0.2338742   0.1800934 
+		 BS2     2970.9335324     2959.3142142      452.0000000	  0.4556345   0.3329581 
+		 CS2     2941.4626794     2918.9223523      453.0000000	  0.9024484   0.6552262 
+		 DS2     2985.5483758     2979.5982252      449.0000000	  0.2338712   0.1800903 
+		 ES2     2970.9348900     2959.3143758      447.0000000	  0.4556394   0.3329624 
+		 FS2     2941.4639498     2918.9212578      453.0000000	  0.9024604   0.6552123 
 		*/
-
+	
 		//We check only 2 points, which are choose with not particular meaning
-		TPositionVector P1 = dataset.getPoints().getObject("P1").getEstimatedValue();
-		ensure_equals("P1 x coordinate should match", P1.getX().getMetresValue(), 0.0, 1e-7);
-		ensure_equals("P1 y coordinate should match", P1.getY().getMetresValue(), 100.1, 1e-7);
-		ensure_equals("P1 z coordinate should match", P1.getZ().getMetresValue(), 0.0, 1e-7);
-		ensure_equals("P1 Sx should match", dataset.getPoints().getObject("P1").getXEstPrecision().getMMetresValue(), 0.0001062, 1e-4);
-		ensure_equals("P1 Sy should match", dataset.getPoints().getObject("P1").getYEstPrecision().getMMetresValue(), 0.0001041, 1e-4);
-
-		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
-		ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 100.5, 1e-7);
-		ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 0.0, 1e-7);
-		ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 0.0, 1e-7);
-		ensure_equals("P2 Sx should match", dataset.getPoints().getObject("P2").getXEstPrecision().getMMetresValue(), 0.0001041, 1e-4);
-		ensure_equals("P2 Sy should match", dataset.getPoints().getObject("P2").getYEstPrecision().getMMetresValue(), 0.0001062, 1e-4);
+		TPositionVector BS1 = dataset.getPoints().getObject("BS1").getEstimatedValue();
+		ensure_equals("BS1 x coordinate should match", BS1.getX().getMetresValue(), 3049.9998622, 1e-7);
+		ensure_equals("BS1 y coordinate should match", BS1.getY().getMetresValue(), 3000.3988332, 1e-7);
+		ensure_equals("BS1 z coordinate should match", BS1.getZ().getMetresValue(), 452.0000000, 1e-7);
+		ensure_equals("BS1 Sx should match", dataset.getPoints().getObject("BS1").getXEstPrecision().getMMetresValue(), 0.1001686, 1e-4);
+		ensure_equals("BS1 Sy should match", dataset.getPoints().getObject("BS1").getYEstPrecision().getMMetresValue(), 0.5522184, 1e-4);
+	
+		TPositionVector ES2 = dataset.getPoints().getObject("ES2").getEstimatedValue();
+		ensure_equals("ES2 x coordinate should match", ES2.getX().getMetresValue(), 2970.9348900, 1e-7);
+		ensure_equals("ES2 y coordinate should match", ES2.getY().getMetresValue(), 2959.3143758, 1e-7);
+		ensure_equals("ES2 z coordinate should match", ES2.getZ().getMetresValue(), 447.0000000, 1e-7);
+		ensure_equals("ES2 Sx should match", dataset.getPoints().getObject("ES2").getXEstPrecision().getMMetresValue(), 0.4556394, 1e-4);
+		ensure_equals("ES2 Sy should match", dataset.getPoints().getObject("ES2").getYEstPrecision().getMMetresValue(), 0.3329624, 1e-4);
 	}
 
 }
