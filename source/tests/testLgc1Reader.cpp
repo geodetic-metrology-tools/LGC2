@@ -497,8 +497,52 @@ namespace tut
 
 		//sigma value
 		std::vector<TECHOROM> meas = projTest->getCurrentNode().measurements.fECHO;
-		ensure_equals("sigma should match ", meas.at(0).measECHO.begin()->target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.at(0).measECHO.at(2).target.sigmaD.getMMetresValue(), 0.2, 1e-1);
 		ensure_equals("sigma should match ", meas.back().measECHO.back().target.sigmaD.getMMetresValue(), 0.1, 1e-1);
-		ensure_equals("distance correction should match ", meas.at(2).measECHO.begin()->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+		ensure_equals("distance correction should match ", meas.at(2).measECHO.at(2).target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+	}
+
+
+	//----------------------------- ECSP --------------------------------//
+	template<>
+	template<>
+	void object::test<12>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing ECSP measurement");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECSP.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		stringstream infiler(TestLgc1::ECSP);
+
+		bool succesReading = r.readLgc1File(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		bool succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc, true);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector BS1 = dataset.getPoints().getObject("BS1").getEstimatedValue();
+		ensure_equals("BS1 x coordinate should match", BS1.getX(), 3050.0001715, 2e-7);
+		ensure_equals("BS1 y coordinate should match", BS1.getY(), 3000.3990996, 2e-7);
+		ensure_equals("BS1 z coordinate should match", BS1.getZ(), 2451.8527090, 2e-7);
+		TPositionVector DS2 = dataset.getPoints().getObject("DS2").getEstimatedValue();
+		ensure_equals("DS2 x coordinate should match", DS2.getX(), 2985.5482256, 2e-7);
+		ensure_equals("DS2 y coordinate should match", DS2.getY(), 2979.5980837, 2e-7);
+		ensure_equals("DS2 z coordinate should match", DS2.getZ(), 2448.8655836, 2e-7);
+		TPositionVector Z100 = dataset.getPoints().getObject("Z100").getEstimatedValue();
+		ensure_equals("Z100 x coordinate should match", Z100.getX(), 3099.9999987, 5e-7);
+		ensure_equals("Z100 y coordinate should match", Z100.getY(), 3000.0004569, 5e-7);
+		ensure_equals("Z100 z coordinate should match", Z100.getZ(), 2449.8446312, 5e-7);
+
+		//sigma value
+		std::vector<TECSPROM> meas = projTest->getCurrentNode().measurements.fECSP;
+		ensure_equals("sigma should match ", meas.at(0).measECSP.at(0).target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.at(0).measECSP.back().target.sigmaD.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("distance correction should match ", meas.at(0).measECSP.at(1).target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
 	}
 }

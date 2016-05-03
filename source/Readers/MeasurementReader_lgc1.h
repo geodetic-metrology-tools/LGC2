@@ -236,8 +236,6 @@ public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyECSP_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_ecsp_lgc1, const char** keywords = allowed_ECSP_lgc1) :
 		TAMeasurementKey_lgc1(project, ECSP),
-		currentTSTN(nullptr),
-		currentROM(nullptr),
 		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
@@ -252,13 +250,9 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
 	bool firstmeas;
 	string point1 = "";
 	string point2 = "";
-	TAngle fHorAngle = TAngle(0.0);
-	TAngle fVertAngle = TAngle(0.0);
 	TLength sigma = TLength(0.0);
 	TLength dcorr = TLength(0.0);
 	

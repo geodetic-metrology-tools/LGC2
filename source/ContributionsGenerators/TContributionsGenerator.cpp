@@ -756,15 +756,11 @@ ECSPContrib	 TContributionsGenerator::getECSPContrib(const TECSPROM& ecspROM, co
 	const TLOR2LOR& linePTLor2RootTrafo2 = fPointTransfo.getLORTransformation(ecspROM.p2->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 	linePTLor2RootTrafo2.transform(linePoint2);
 
-	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame){
-		//fPointTransfo.transformPointsToMLASystem(ecspROM.fMeasuredLine->getName(), linePoint1, stationPoint);
-		//fPointTransfo.transformPointsToMLASystem(ecspROM.fMeasuredLine->getName(), linePoint2, stationPoint);
-		fPointTransfo.transformPointsToMLASystem(ecspROM.romName, linePoint1, stationPoint);
-		fPointTransfo.transformPointsToMLASystem(ecspROM.romName, linePoint2, stationPoint);
-		fPointTransfo.setMLA(true);
-	}
-	else
-		fPointTransfo.setMLA(false);
+	// contributions can be calculated simply in both the CCS and a local 
+	// reference frame since no instrument or target heights are involved
+	// and the measurement is independent of the local vertical
+	// Therefore there are no transformations necessary
+	//PARAMETERS IN CARTESIAN REFERENCE SYSTEM
 
 	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
 

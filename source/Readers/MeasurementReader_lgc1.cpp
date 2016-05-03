@@ -915,222 +915,6 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}	
 }
 
-void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
-{
-	auto& storeECSP = [&](shared_ptr<TTSTN::TROM> rom){
-		if (tokens.size() < 4 && !fSIMUActive)
-			throw std::runtime_error("A ECSP measurement must have at least 4 entries: "
-			"point1 station point2 offset");
-
-		// look up the observed point
-		const TAdjustablePoint& obspt(fpoints.getObject(tokens.at(1)));
-
-		//NODUP used
-		if (proj.getConfig().nodup.isActive())
-			for (auto& point : rom->measECSP)
-				if (obspt.getName() == point.targetPos->getName())
-					throw std::runtime_error("ECSP measurement is duplicated");
-
-
-		//calculate angle with points position
-		point2 = tokens.at(2);
-		TPositionVector Pos1 = fpoints.getObject(point1).getProvisionalValue();
-		TPositionVector Pos2 = fpoints.getObject(point2).getProvisionalValue();
-
-		TInstrumentData::TPOLAR& PolarInstr = proj.getInstruments().fPOLAR["TSTNInstr"];
-		TReal alpha = atan2(Pos2.getX() - Pos1.getX(), Pos2.getY() - Pos1.getY()) - rom->v0->getEstimatedValue().getRadiansValue() - rom->acst.getRadiansValue();
-		fHorAngle = TAngle(alpha, TAngle::kRadians);
-		
-		TReal d, beta;
-		if (proj.getConfig().referential != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-		{
-			if (currentTSTN->instrumentHeightAdjustable != nullptr)
-			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getH() + currentTSTN->instrumentHeightAdjustable->getEstimatedValue(), Pos2.getX(), Pos2.getY(), Pos2.getH());
-				beta = acos((Pos2.getH() - Pos1.getH() - currentTSTN->instrumentHeightAdjustable->getEstimatedValue()) / d);
-			}
-			if (currentTSTN->instrument.instrHeight != NO_VALf)
-			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getH() + currentTSTN->instrument.instrHeight, Pos2.getX(), Pos2.getY(), Pos2.getH());
-				beta = acos((Pos2.getH() - Pos1.getH() - currentTSTN->instrument.instrHeight) / d);
-			}
-			else
-			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getH(), Pos2.getX(), Pos2.getY(), Pos2.getH());
-				beta = acos((Pos2.getH() - Pos1.getH()) / d);
-			}
-		}
-		else
-		{
-			if (currentTSTN->instrumentHeightAdjustable != nullptr)
-			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getZ() + currentTSTN->instrumentHeightAdjustable->getEstimatedValue(), Pos2.getX(), Pos2.getY(), Pos2.getZ());
-				beta = acos((Pos2.getZ() - Pos1.getZ() - currentTSTN->instrumentHeightAdjustable->getEstimatedValue()) / d);
-			}
-			if (currentTSTN->instrument.instrHeight != NO_VALf)
-			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getZ() + currentTSTN->instrument.instrHeight, Pos2.getX(), Pos2.getY(), Pos2.getZ());
-				beta = acos((Pos2.getZ() - Pos1.getZ() - currentTSTN->instrument.instrHeight) / d);
-			}
-			else
-			{
-				d = dist3D(Pos1.getX(), Pos1.getY(), Pos1.getZ(), Pos2.getX(), Pos2.getY(), Pos2.getZ());
-				beta = acos((Pos2.getZ() - Pos1.getZ()) / d);
-			}
-		}
-
-
-		fVertAngle = TAngle(beta, TAngle::kRadians);
-		TReal a = fVertAngle.getGonsValue();
-
-
-
-		//instrument data
-		TInstrumentData::TSCALE& ScaleInstr = proj.getInstruments().fSCALE["ECSPInstr"];
-		ScaleInstr.sigmaD = sigma;
-		ScaleInstr.distCorrectionValue = dcorr;
-
-		if (tokens.size() == 5)
-		{
-			if (!tokens.at(4).compare(0, 1, "/"))
-			{
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				ScaleInstr.distCorrectionValue = dcorr;
-			}
-			else
-				ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-		}
-		else if (tokens.size() == 6)
-		{
-			ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			ScaleInstr.distCorrectionValue = dcorr;
-		}
-
-
-		// set measurement value
-		TECSP ecsp(obspt, ScaleInstr, fHorAngle, fVertAngle);
-		ecsp.line = line;
-		//If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			ecsp.eolcomment = tokens.back();
-
-		// set indices of LS matrices, ECSP introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECSP);
-
-		if (!fSIMUActive)
-			ecsp.setDistance(TLength(std::stor(tokens.at(3))));
-
-		rom->measECSP.emplace_back(ecsp);
-	};
-
-	//create a scale instrument for ecth measurements
-	if (firstmeas)
-	{//create a default scale instrument
-		const TInstrumentData::TSCALE scl = {
-			"ECSPInstr",
-			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
-			TLength(0.0, TLength::EUnits::kMillimetres)  //centering
-		};
-
-		// store the new station
-		finstruments.fSCALE.insert(std::make_pair("ECSPInstr", scl));
-
-		if (tokens.size() == 3)
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-		else
-			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
-
-		dcorr = TLength(0.0, TLength::EUnits::kMetres);
-		firstmeas = false;
-		
-	}
-
-	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline)
-	{
-		// *ECSP [sigma]
-		if (tokens.size() == 3)
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-		else
-			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
-
-		dcorr = TLength(0.0, TLength::EUnits::kMetres);
-		point1 = "";
-		point2 = "";
-		fHorAngle = TAngle(NO_VALf);
-		fVertAngle = TAngle(NO_VALf);
-	}
-	else
-	{
-		bool ecspStored = false;
-
-		if (point1 != tokens.at(0))
-		{
-			point1 = tokens.at(0);
-
-			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
-			{
-				for (auto itTstn : proj.getCurrentNode().measurements.fTSTN)
-				{
-					//only 1 ROM per station on lgc1
-					if (itTstn->instrumentPos->getName() == point1)
-					{
-						//if TSNT already exist, see if ECSP meas is empty
-						if (itTstn->roms.back()->measECSP.empty())
-						{
-							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-							storeECSP(currentROM);
-							ecspStored = true;
-							break;
-						}
-						else
-							continue;
-
-					}
-					else
-						continue;
-				}
-
-				if (!ecspStored)
-				{
-					createTSTN(point1, line);
-					currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
-
-					createROM(currentTSTN);
-					currentROM = currentTSTN->roms.back();
-
-					storeECSP(currentROM);
-					ecspStored = true;
-				}
-			}
-			else
-			{
-				createTSTN(point1, line);
-				currentTSTN = proj.getCurrentNode().measurements.fTSTN.back();
-
-				createROM(currentTSTN);
-				currentROM = currentTSTN->roms.back();
-
-				storeECSP(currentROM);
-			}
-		}
-		else
-			storeECSP(currentROM);
-	}
-
-	auto& meas = proj.getCurrentNode().measurements;
-}
-
 void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto& storeDHOR = [&](shared_ptr<TTSTN::TROM> rom){
@@ -1516,6 +1300,11 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
 				}
+				else  //comments at the end
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
 			}
 
 			else if (tokens.size() == 8)
@@ -1843,7 +1632,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			// Create measurements for the encrage points
 			TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
-			instr.sigmaD = sigma;
+			instr.sigmaD = sigma*0.01;
 
 			TECHO echo1(p1, instr, TLength(fSIMUActive ? NO_VALf : 0.0));
 			echo1.setFirstEquationIndex(proj.fUEOIndices.EIndex);
@@ -1911,6 +1700,117 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			for (auto& point : echoROMLatest.measECHO)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECHO measurement is duplicated");
+	}
+}
+
+void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
+{
+
+	//create a scale instrument for ecth measurements
+	if (firstmeas)
+	{//create a default scale instrument
+		const TInstrumentData::TSCALE scl = {
+			"ECSPInstr",
+			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
+			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+			TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
+			TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
+			TLength(0.0, TLength::EUnits::kMillimetres)  //centering
+		};
+
+		// store the new station
+		finstruments.fSCALE.insert(std::make_pair("ECSPInstr", scl));
+
+		if (tokens.size() == 3)
+			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+		else
+			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
+
+		dcorr = TLength(0.0, TLength::EUnits::kMetres);
+		firstmeas = false;
+
+	}
+
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline)
+	{
+		// *ECSP [sigma]
+		if (tokens.size() == 3)
+			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+		else
+			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
+
+		dcorr = TLength(0.0, TLength::EUnits::kMetres);
+		point1 = "";
+		point2 = "";
+	}
+	else
+	{
+		// p1 stn p2 meas [sigma][/const]
+		if (tokens.size() < 4 && !fSIMUActive)
+			throw std::runtime_error("A ECSP measurement must have at least 3 entries: "
+			"The instrument position, the measured point and the offset measurement.");
+
+		// Initialize the station
+		if (point1 != tokens.at(0) || point2 != tokens.at(2))
+		{
+			point1 = tokens.at(0);
+			point2 = tokens.at(2);
+			const std::string& name = "ECSPLINE" + std::to_string(proj.getCurrentNode().measurements.fECVE.size()); //name of the measured adjustable line
+
+			//The line will be initialized in TDataAnalyzer class, when checked for consistency
+			TECSPROM ecspRom(name, fpoints.getObject(point1), fpoints.getObject(point2));
+			ecspRom.line = line;
+			proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
+		}
+
+
+		/*This is a position of station point from which the plane is measured in the ECVE class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
+		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
+		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
+		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECSPInstr"];
+
+		if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
+		{
+			instr.sigmaD = sigma;
+			dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			instr.distCorrectionValue = dcorr;
+		}
+		else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
+		{
+			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			instr.distCorrectionValue = dcorr;
+		}
+		else if (tokens.size() == 6)
+		{
+			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+			instr.distCorrectionValue = dcorr;
+		}
+		else
+		{
+			instr.distCorrectionValue = dcorr;
+			instr.sigmaD = sigma;
+		}
+
+
+		// Store  the measured value
+		TECSP ecsp(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(3))));
+		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+		ecsp.line = line;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kECSP);
+		TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
+		ecspROMLatest.measECSP.emplace_back(ecsp);
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : ecspROMLatest.measECSP)
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("An ECSP measurement is duplicated");
+
 	}
 }
 
