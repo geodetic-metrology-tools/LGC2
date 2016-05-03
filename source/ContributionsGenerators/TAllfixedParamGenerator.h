@@ -28,9 +28,6 @@ public:
 	/// Returns the V0 for an ANGL measurement
 	TAngle getV0AllfixedANGL(const TTSTN& station, const TTSTN::TROM& rom, const TANGL& angl);
 
-	/// Returns the V0 for an ECSP measurement
-	TAngle* getV0AllfixedECSP(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
-
 	/// Returns the V0 for an ECTH measurement
 	TAngle getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth);
 

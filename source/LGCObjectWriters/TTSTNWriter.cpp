@@ -59,12 +59,7 @@ void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
 			if (writeHist)
 				writeHisto(ItRoms->getECTHObsSummary(), " ECTH");
 		}
-		if (ItRoms->measECSP.size() > 0){
-			writeECSPResults(ItRoms->measECSP, tstn->instrumentPos);
-			writeDistanceResultsSummary(ItRoms->getECSPObsSummary(), TABs);
-			if (writeHist)
-				writeHisto(ItRoms->getECSPObsSummary(), " ECSP");
-		}
+
 		if(ItRoms->measPLR3D.size() > 0){
 			writePLRResults(ItRoms->measPLR3D, tstn->instrument, tstn->instrumentPos, V0, tstn->rotX->getEstimatedValue(), tstn->rotY->getEstimatedValue());
 			
@@ -217,10 +212,6 @@ void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 		if(ItRoms->measECTH.size() > 0){
 			(*stream)<<TABs<<"ECTH"<<endl;
 			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(),TABs);
-		}
-		if (ItRoms->measECSP.size() > 0){
-			(*stream) << TABs << "ECSP" << endl;
-			writeDistanceResultsSummary(ItRoms->getECSPObsSummary(), TABs);
 		}
 
 		if(ItRoms->measPLR3D.size() > 0){
@@ -750,64 +741,6 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 
 }
 
-void TTSTNWriter::writeECSPResults(const std::vector<TECSP>& measECSP, const TAdjustablePoint* instrPos)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeECSPResultsHeader((int)measECSP.size());
-
-	//For each DHOR measurement of the station
-	for (auto const& ItECSP : measECSP)
-	{
-		(*stream) << TABs;
-
-		//write Point
-		(*stream).writeStringLeft(nameWidth, ItECSP.targetPos->getName());
-
-		//write the observed offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
-
-		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
-
-		//write the estimated offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
-
-		//write the offset (mm) after calculation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
-
-		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaD));
-
-		//write angle
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsHorAngle.getGonsValue());
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsVertAngle.getGonsValue());
-
-		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItECSP.fAllFixedV0[0]))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-		
-		if (!isnotanumber(ItECSP.fAllFixedV0[1]))
-			(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
-		else
-			(*stream).writeString(obsWidth, "FIXED");
-		(*stream) << endl;
-	}
-	(*stream) << endl;
-
-}
-
-
 ///////////////////////////////////////////////////////////////////
 //////////////HEADERS//////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
@@ -1224,59 +1157,6 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 
 }
 
-void TTSTNWriter::writeECSPResultsHeader(int nOObs)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	//summuray
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECSP), nOObs);
-	(*stream) << endl;
-
-
-	////////////////////////////////////////////////////////////
-	//first line
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "POINT"); //second point's Name
-	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECTH
-	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECTH
-	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECTH
-	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECTH
-	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma
-	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
-	(*stream).writeString(obsWidth, "ZEND"); //zenithal distance
-	if (isAllfixed)
-	{
-		(*stream).writeString(obsWidth, "V0 1st solution"); //allfixed parameter: v0
-		(*stream).writeString(obsWidth, "2nd solution"); //allfixed parameter: v0
-	}
-	(*stream) << endl;
-
-	///////////////////////////////////////////////////////////////////////////////////
-	//second line
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, ""); //station
-	(*stream).writeString(obsWidth, "(M)"); //mesured ECTH
-	(*stream).writeString(obsResWidth, "(MM)"); //sigma ECTH
-	(*stream).writeString(obsWidth, "(M)"); //estimated ECTH
-	(*stream).writeString(obsResWidth, "(MM)"); //offset ECTH
-	(*stream).writeString(obsResWidth, ""); //offset/sigma
-	(*stream).writeString(obsWidth, "(GON)"); //azimut
-	(*stream).writeString(obsWidth, "(GON)"); //zenithal distance
-	if (isAllfixed)
-	{
-		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
-		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
-	}
-		
-	(*stream) << endl;
-
-}
-
 void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1438,12 +1318,6 @@ void	TTSTNWriter::writeDHORReliabilityHeader()
 void	TTSTNWriter::writeECTHReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("STATION","TARGET", "", "OBSERVATION", "M", "MM");
-	return;
-}
-
-void	TTSTNWriter::writeECSPReliabilityHeader()
-{
-	this->TObservationWriter::writeReliabilityHeader("STATION", "TARGET", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
@@ -1685,40 +1559,6 @@ void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.target.sigmaD.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getDistanceResidual().getMMetresValue());
-
-		writeReliability(index, stat);
-		(*stream).setDataSpacing();
-	}
-	return;
-}
-
-void	TTSTNWriter::writeECSPReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-
-	for (auto const& ItEcsp : measECSP)
-	{
-		// Observation index to take the right value in the statistic vector
-		int index = ItEcsp.getFirstObservationIndex();
-
-		// get reference point to the plane
-		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
-		//get Tg point
-		(*stream).writeStringLeft(nameWidth, ItEcsp.targetPos->getName());
-		// get Point 3
-		(*stream).writeStringLeft(nameWidth, "");
-
-		//get the observed DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcsp.getDistance());
-		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaD.getMMetresValue());
-		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 
 		writeReliability(index, stat);
 		(*stream).setDataSpacing();

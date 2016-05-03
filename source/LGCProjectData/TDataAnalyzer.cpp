@@ -3,6 +3,7 @@
 #include "TLGCData.h"
 #include "TAllfixedParamGenerator.h"
 #include "TPointTransformer.h"
+#include "TDist.h" 
 #include <bitset>
 
 TDataAnalyzer::TDataAnalyzer(TLGCData& dat) : fData(dat), fStandDevUsed(false)
@@ -140,13 +141,36 @@ bool TDataAnalyzer::dataConsistent(){
 						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 						false, false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
 
-;
 					itECVE->fMeasuredLine->initialize(&rp, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111));
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
 			}
 		}
+
+
+	//If Reference point was not provided to a ECSP measurement, adjustable line which is measured needs to be initialized
+	/*for (auto itECSP(it.node->data.get()->measurements.fECSP.begin()); itECSP != it.node->data.get()->measurements.fECSP.end(); ++itECSP){
+		if (!itECSP->fMeasuredLine->isInitialized()){
+
+			//Calculation of the initial approximation value for the theta and phi angle of the plane.
+			const TPositionVector& firstPoint = itECSP->p1->getEstimatedValue();
+			const TPositionVector& lastPoint = itECSP->p2->getEstimatedValue();
+			TReal distance3D = dist3D(lastPoint.getX(), lastPoint.getY(), lastPoint.getZ(), firstPoint.getX(), firstPoint.getY(), firstPoint.getZ());
+
+			//TReal thetaLineVec = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+			//TReal phiLineVect = acosq((lastPoint.getZ() - firstPoint.getZ()) / distance3D);
+			//itECSP->fMeasuredLine->initialize(itECSP->p1.get(), TFreeVector(sin(thetaLineVec)*sin(phiLineVect), cos(thetaLineVec)*sin(phiLineVect), cos(phiLineVect), TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(000));
+		
+			//fixed vector
+			itECSP->fMeasuredLine->initialize(itECSP->p1, TFreeVector((lastPoint.getX() - firstPoint.getX()) / distance3D,
+				(lastPoint.getY() - firstPoint.getY()) / distance3D,
+				(lastPoint.getZ() - firstPoint.getZ()) / distance3D,
+				TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111));
+
+		
+		}
+	}*/
 
 	}
 

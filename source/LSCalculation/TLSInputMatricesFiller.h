@@ -83,8 +83,6 @@ private:
 		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecth observations 
 		void  addECTHContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
-		/// Add the design matrices contributions for the ecth observations 
-		void  addECSPContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add CAMERA UVEC observation
 		void addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices);
@@ -105,6 +103,9 @@ private:
 
 		/// Add the design matrices contributions for the ECVE measurement. 
 		void addECVEContributions(const TECVEROM& ecveRom, TLSInputMatrices*  matrices);
+
+		/// Add the design matrices contributions for the ecth observations 
+		void  addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ORIE measurement. 
 		void addORIEContributions(const TORIEROM& orieRom, TLSInputMatrices*  matrices);

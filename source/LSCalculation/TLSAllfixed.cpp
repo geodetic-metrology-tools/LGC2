@@ -76,13 +76,6 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 						for (auto& itECTH : itROM->measECTH)
 							itECTH.fAllFixedV0 = fAllfixedGenerator.getV0AllfixedECTH(*itTSTN, itECTH);
 
-						for (auto& itECSP : itROM->measECSP)
-						{
-							TAngle* sol = fAllfixedGenerator.getV0AllfixedECSP(*itTSTN, *itROM, itECSP);
-							itECSP.fAllFixedV0[0] = *sol;
-							itECSP.fAllFixedV0[1] = *(sol+1);
-						}
-
 					}
 				}
 

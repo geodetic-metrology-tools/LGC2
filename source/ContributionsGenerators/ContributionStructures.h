@@ -190,7 +190,7 @@ struct ECHOContrib{
 /*!
 \ingroup ContributionsGenerators
 
-\brief Contributions for the TECSP measurement.
+\brief Contributions for the TECVE measurement.
 */
 struct ScaleMeasContrib{
 	TReal		fCalcMeas;
@@ -204,7 +204,27 @@ struct ScaleMeasContrib{
 
 	TReal		fObsVariance;
 };
+/*!
+\ingroup ContributionsGenerators
 
+\brief Contributions for the TECSP measurement.
+*/
+struct ECSPContrib{
+	TReal		fCalcMeas;
+	TFreeVector	fStationContrib;
+	TFreeVector	fPointLineContrib1;
+	TFreeVector	fPointLineContrib2;
+	//TFreeVector	fLineVecContrib;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECSP measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECSP measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fPtLineTransformContrib1;
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECSP measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fPtLineTransformContrib2;
+
+	TReal		fObsVariance;
+};
 
 /*!
 	\ingroup ContributionsGenerators

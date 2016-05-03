@@ -143,57 +143,6 @@ TReal	 TObservationGenerator::getECTHCalcMeas(const TTSTN& station, const TTSTN:
 }
 
 
-TReal TObservationGenerator::getECSPCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp)
-{
-	TPositionVector targetPos = ecsp.targetPos->getEstimatedValue();
-	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo->getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
-	tgLor2RootTrafo.transform(targetPos);
-
-	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo->getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo->getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
-	stLor2RootTrafo.transform(stationPos);
-
-	//If not OLOC used and station can not rotate freely => contributions calculated in MLA of the instrument (station)
-	if (fPointTransfo->getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
-		//If stationed point is different than in the previous call of Cotrib. Gener., or if MLA system was not used in the previous call => set a new origin of the CCS2MLA transformation
-		if (!(fPointTransfo->getLastStnPtName() == station.instrumentPos->getName()) || !fPointTransfo->getMLAused()){
-			fPointTransfo->set2MLATransformation(stationPos);
-			fPointTransfo->setLastStnPtName(station.instrumentPos->getName());
-		}
-		fPointTransfo->setMLA(true);
-		fPointTransfo->transform2MLA(targetPos);
-		stationPos = TPositionVector(0.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian); //local astronomical system of the station, station's position is the origin of this system, i.e. ( 0 , 0, 0 )  
-	}
-	else
-		fPointTransfo->setMLA(false);
-
-	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
-	TReal xSt = stationPos.getX().getMetresValue();
-	TReal ySt = stationPos.getY().getMetresValue();
-	TReal zSt = stationPos.getZ().getMetresValue();
-	TReal xTg = targetPos.getX().getMetresValue();
-	TReal yTg = targetPos.getY().getMetresValue();
-	TReal zTg = targetPos.getZ().getMetresValue();
-
-
-	TAngle theta = ecsp.obsHorAngle;
-	TAngle phi = ecsp.obsVertAngle;
-	TAngle Vo = rom.v0->getEstimatedValue();
-	//line direction at the TSTN position
-	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
-
-
-	//Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
-	TReal d, pScal;
-	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg));  // distance St-Tg
-	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg);  //produit scalaire
-
-	return sqrt(pow2(d) - pow2(pScal)) - ecsp.target.distCorrectionValue.getMetresValue();
-
-
-}
-
-
 TReal	TObservationGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const TDLEV& dlev){
 	TPositionVector referencePoint = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 	const TLOR2LOR& refPTLor2RootTrafo = fPointTransfo->getLORTransformation(levelInstr.fMeasuredPlane->getReferencePoint()->getFrameTreePosition(), fPointTransfo->getTree()->begin());
@@ -310,6 +259,47 @@ TReal TObservationGenerator::getECVECalcMeas(const TECVEROM& ecveROM, const TECV
 
 	TReal D = sqrt(pow2(linePoint.getX() - stationPoint.getX()) + pow2(linePoint.getY() - stationPoint.getY()));
 	return (D - cEcVp);
+}
+
+TReal TObservationGenerator::getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp)
+{
+	TReal cEcVp = ecsp.target.distCorrectionValue; //distance of the target correction value
+
+	TPositionVector stationPoint = ecsp.targetPos->getEstimatedValue();
+	const TLOR2LOR& stationPTLor2RootTrafo = fPointTransfo->getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin());
+	stationPTLor2RootTrafo.transform(stationPoint);
+
+	TPositionVector linePoint1 = ecspROM.p1->getEstimatedValue();
+	const TLOR2LOR& linePTLor2RootTrafo1 = fPointTransfo->getLORTransformation(ecspROM.p1->getFrameTreePosition(), fPointTransfo->getTree()->begin());
+	linePTLor2RootTrafo1.transform(linePoint1);
+
+	TPositionVector linePoint2 = ecspROM.p2->getEstimatedValue();
+	const TLOR2LOR& linePTLor2RootTrafo2 = fPointTransfo->getLORTransformation(ecspROM.p2->getFrameTreePosition(), fPointTransfo->getTree()->begin());
+	linePTLor2RootTrafo2.transform(linePoint2);
+
+	if (fPointTransfo->getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		fPointTransfo->transformPointsToMLASystem(ecspROM.romName, linePoint1, stationPoint);
+		fPointTransfo->transformPointsToMLASystem(ecspROM.romName, linePoint2, stationPoint);
+		fPointTransfo->setMLA(true);
+	}
+	else
+		fPointTransfo->setMLA(false);
+
+	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
+
+
+	//Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	TReal dis, pScal, D;
+	dis = dist3D(stationPoint.getX(), stationPoint.getY(), stationPoint.getZ(), linePoint1.getX(), linePoint1.getY(), linePoint1.getZ());  // distance P1 - stn
+	D = dist3D(linePoint1.getX(), linePoint1.getY(), linePoint1.getZ(), linePoint2.getX(), linePoint2.getY(), linePoint2.getZ());// distance P1-P2
+	pScal = (linePoint2.getX() - linePoint1.getX()).getMetresValue() * (stationPoint.getX() - linePoint1.getX()).getMetresValue()
+		+ (linePoint2.getY() - linePoint1.getY()).getMetresValue() * (stationPoint.getY() - linePoint1.getY()).getMetresValue()
+		+ (linePoint2.getZ() - linePoint1.getZ()).getMetresValue() * (stationPoint.getZ() - linePoint1.getZ()).getMetresValue();  //produit scalaire
+
+
+	return sqrt(dis*dis*D*D - pow2(pScal)) / D - ecsp.target.distCorrectionValue;
+
+
 }
 
 TFreeVector TObservationGenerator::getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec){

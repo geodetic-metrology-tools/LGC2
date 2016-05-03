@@ -96,6 +96,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		scaleWriter.writeECVEResults(itECVE);
 
+	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+		scaleWriter.writeECSPResults(itECSP);
+
 	for (auto& itORIE : frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
 
@@ -149,6 +152,9 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	
 	for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		scaleWriter.writeECVESIMUResults(itECVE);
+	
+	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+		scaleWriter.writeECSPSIMUResults(itECSP);
 
 	for (auto& itORIE : frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIESIMUResults(itORIE);
@@ -645,24 +651,6 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			}
 		}
 	}
-	//ECSP
-	bool isECSP = false;
-	for (auto& itTSTN : frameIt->get()->measurements.fTSTN)
-	{
-		for (auto const ItRoms : itTSTN->roms)
-		{
-			if (ItRoms->measECSP.size() > 0){
-
-				if (isECSP == false)
-				{
-					(*stream) << "ECSP observations" << endl;
-					tstnWriter.writeECTHReliabilityHeader();
-					isECSP = true;
-				}
-				tstnWriter.writeECSPReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measECSP);
-			}
-		}
-	}
 
 	//DHOR
 	bool isDHOR = false;
@@ -799,6 +787,22 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 				isecve = true;
 			}
 			scaleWriter.writeECVEReliabilityData(itECVE, fProjectData->getStatistics(), itECVE.measECVE);
+		}
+	}
+
+	//ECSP
+	bool isecsp = false;
+	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+	{
+		if (itECSP.measECSP.size() > 0){
+
+			if (isecsp == false)
+			{
+				(*stream) << "ECSP observations" << endl;
+				scaleWriter.writeECSPReliabilityHeader();
+				isecsp = true;
+			}
+			scaleWriter.writeECSPReliabilityData(itECSP, fProjectData->getStatistics(), itECSP.measECSP);
 		}
 	}
 

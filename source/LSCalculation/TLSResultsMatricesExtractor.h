@@ -13,6 +13,7 @@ class TRADI;
 struct TLEVEL;
 struct TECHOROM;
 struct TECVEROM;
+struct TECSPROM;
 struct TORIEROM;
 /*!
 	\ingroup LSCalculation
@@ -120,8 +121,11 @@ private:
 		/// Sets the ECHO measurement residual.
 		void extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& echoMeas);
 
-		/// Sets the ECHO measurement residual.
+		/// Sets the ECVE measurement residual.
 		void extractECVEROMObs(const TLSResultsMatrices& rm, TECVEROM& ecveMeas);
+
+		/// Sets the ECSP measurement residual.
+		void extractECSPROMObs(const TLSResultsMatrices& rm, TECSPROM& ecspMeas);
 
 		/// Sets the ORIE measurement residual.
 		void extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas);

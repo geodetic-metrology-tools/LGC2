@@ -35,6 +35,9 @@ struct TMeasurements {
 	/// All ECVE measurements in which they appeared in the input file
 	std::vector<TECVEROM> fECVE;
 
+	/// All ECSP measurements in which they appeared in the input file
+	std::vector<TECSPROM> fECSP;
+
 	///pdor measurement in which they appeared in the input file
 	TPdorObs fPDOR;
 

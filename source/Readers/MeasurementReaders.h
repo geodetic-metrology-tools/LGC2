@@ -268,10 +268,6 @@ public:
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
-private:
-	TAngle fHorAngle;
-	TAngle fVertAngle;
-	std::string fScaleInstID;
 };
 
 /// Keyword to process DHOR measurement

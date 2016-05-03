@@ -615,68 +615,6 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
-{
-	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
-		// look up station point
-		if (tokens.size() < 5)
-			throw std::runtime_error("An ECSP measurement must have two 3 entries: "
-			"The horizontal and vertical angles defining the line and ID of a SCALE instrument.");
-
-		fScaleInstID = tokens.at(4);
-		fHorAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
-		fVertAngle = TAngle(std::stor(tokens.at(3)), TAngle::kGons);
-		
-		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
-	}
-	else{
-		if (tokens.size() < 2 && !fSIMUActive)
-			throw std::runtime_error("An ECTH measurement must have at least 2 entries: "
-			"The observed point and the measured distance.");
-		// prepare the options analysis
-		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
-
-		// look up the stationed point
-		const auto& stPoint(fpoints.getObject(tokens.at(0)));
-
-		//NODUP used
-		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measECSP)
-				if (stPoint.getName() == point.targetPos->getName())
-					throw std::runtime_error("A ECSP measurement is duplicated");
-
-
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
-
-		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
-		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
-		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
-
-		// Store  the measured value
-		getROM()->measECSP.emplace_back(TECSP(stPoint, scaleInstr, fHorAngle, fVertAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
-
-		//get a reference to the inserted measurement
-		auto& ecsp(getROM()->measECSP.back());
-
-		ecsp.line = line;
-		//If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			ecsp.eolcomment = tokens.back();
-
-		// set indices of LS matrices, ECTH introduces 1 equation and 1 observation
-		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECSP);
-	}
-}
-
 void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 {
 	if (! updateDefaultTargetTSTN(tokens)) {
@@ -1092,6 +1030,73 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("An ECVE measurement is duplicated");
 
 	}
+}
+
+void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline) {
+		// look up station point
+		if (tokens.size() < 5)
+			throw std::runtime_error("An ECSP measurement must have two 3 entries: "
+			"The 2 points defining the line and ID of a SCALE instrument.");
+
+
+		const std::string& name = "ECSPLINE" + std::to_string(proj.getCurrentNode().measurements.fECSP.size()); //name of the measured adjustable line
+		TECSPROM ecspRom(name, fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
+		
+		/*
+		flines.addObject(TAdjustableLine::createUninitialized(name));
+		//The line will be initialized in TDataAnalyzer class, when checked for consistency
+		TECSPROM ecspRom(flines.back(), fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
+		*/
+
+		ecspRom.line = line; 
+		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
+
+		//The SCALE instrument is only the default one used, it is not stored in TECSPROM because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(4)).ID;
+	}
+	else{
+		if (tokens.size() < 2 && !fSIMUActive)
+			throw std::runtime_error("An ECSP measurement must have at least 2 entries: "
+			"The observed point and the measured distance.");
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		// look up the stationed point
+		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
+		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+
+		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
+		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
+		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
+
+		// Store  the measured value
+		TECSP ecsp(stationPoint, scaleInstr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1))));
+		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+
+		ecsp.line = line;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kECSP);
+		TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
+		ecspROMLatest.measECSP.emplace_back(ecsp);
+
+		proj.setCombinedCaseCalcUsed(); //Combined case used
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : ecspROMLatest.measECSP)
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("An ECSP measurement is duplicated");
+	}
+	auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)

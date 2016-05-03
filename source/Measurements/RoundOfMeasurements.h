@@ -40,20 +40,50 @@ struct TECSPROM {
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::vector<TECSP> measECSP;
 
-	//Measured vertical plane
-	TAdjustablePlane* fMeasuredPlane;
+	//Measured line
+	//TAdjustableLine* fMeasuredLine;
+	const TAdjustablePoint* p1;
+	const TAdjustablePoint* p2;
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	TLGCObsSummary getECSPObsSummary() const;
 
 	/// Line of the measurement definition
 	int  line;
+	/// name of the rom
+	string romName;
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECSPROM(TAdjustablePlane& measPlane) :
-		fMeasuredPlane(&measPlane),
+	/*TECSPROM(TAdjustableLine& measLine) :
+		fMeasuredLine(&measLine),
+		line(NO_VALi),
+		p1(nullptr),
+		p2(nullptr)
+	{}
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TECSPROM(TAdjustableLine& measLine, const TAdjustablePoint& point1, const TAdjustablePoint& point2) :
+		fMeasuredLine(&measLine),
+		p1(&point1),
+		p2(&point2),
+		line(NO_VALi)
+	{}*/
+
+	TECSPROM(string name) :
+		romName(name),
+		line(NO_VALi),
+		p1(nullptr),
+		p2(nullptr)
+	{}
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TECSPROM(string name,const TAdjustablePoint& point1, const TAdjustablePoint& point2) :
+		romName(name),
+		p1(&point1),
+		p2(&point2),
 		line(NO_VALi)
 	{}
+	
 };
 
 /*!
@@ -112,5 +142,7 @@ struct TORIEROM {
 			fConstantAngle(0.0, TAngle::EUnits::kGons)
 		{
 		}
+
+
 };
 #endif

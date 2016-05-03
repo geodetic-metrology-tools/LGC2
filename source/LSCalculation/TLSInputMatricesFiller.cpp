@@ -49,7 +49,6 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 					addZenDistContributions(itROM->measZEND, itTSTN, matrices);
 					addHorDistContributions(itROM->measDHOR, itTSTN, matrices);
 					addECTHContributions(itROM, itTSTN, matrices);
-					addECSPContributions(itROM, itTSTN, matrices);
 				}
 			}
 
@@ -74,6 +73,10 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 			//In every node iterate through the ECVE measurements
 			for (auto& itECVE : itTree.node->data->measurements.fECVE)
 				addECVEContributions(itECVE, matrices);
+
+			//In every node iterate through the ECVE measurements
+			for (auto& itECSP : itTree.node->data->measurements.fECSP)
+				addECSPContributions(itECSP, matrices);
 
 			//In every node iterate through the LEVEL measurements
 			for (auto& itORIE:itTree.node->data->measurements.fORIE)
@@ -410,59 +413,7 @@ void TLSInputMatricesFiller::addECTHContributions(shared_ptr<TTSTN::TROM> rom, s
 	}
 }
 
-void TLSInputMatricesFiller::addECSPContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
-	bool isProcessOK = true;
-	MatrixIndex eqIdx = -1;
-	MatrixIndex obsIdx = -1;
-	ECTHContrib contributions;
 
-	for (auto& meas : rom->measECSP){
-		eqIdx = meas.getFirstEquationIndex();
-		obsIdx = meas.getFirstObservationIndex();
-
-		contributions = fCGenerator.getECSPContrib(station, rom, meas); //Get the observation contribution
-
-		// Add station's contributions into a first design matrix
-		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fTSTNPtContrib, eqIdx, matrices);
-
-		// Add target contributions into a first design matrix
-		if (!meas.targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas.targetPos, contributions.fScaleStationPtContrib, eqIdx, matrices);
-
-		// Add V0 contribution
-		if (!rom->v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
-
-		// Adding contributions for STATION transformations parameters 
-		for (auto& itStTransform : contributions.fTSTNPtTransformContrib){
-			if (!itStTransform.first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, eqIdx, matrices);
-		}
-
-		// Adding contributions for TARGET transformations parameters 
-		for (auto& itTgTransform : contributions.fStTransformContrib){
-			if (!itTgTransform.first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform.first, itTgTransform.second, eqIdx, matrices);
-		}
-
-		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas.getDistance() - contributions.fCalcMeas));
-
-		// Add weight unknown matrix element
-		if (contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling ECSP contribution, variance is zero or too small, can not set weight matrix element.");
-		else{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
-		}
-
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
-
-		if (!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of ECSP measurement occurred.");
-	}
-}
 
 void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices){
 	DLEVContrib contributions;
@@ -709,6 +660,64 @@ void  TLSInputMatricesFiller::addECVEContributions(const TECVEROM& ecveROM, TLSI
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of ECVE.");
+	}
+}
+
+void TLSInputMatricesFiller::addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	ECSPContrib contributions;
+
+	for (auto& itECSP : ecspRom.measECSP){
+		eqIdx = itECSP.getFirstEquationIndex();
+		obsIdx = itECSP.getFirstObservationIndex();
+
+		contributions = fCGenerator.getECSPContrib(ecspRom, itECSP); //Get the observation contribution
+
+		// Add point on the line contributions
+		if (!ecspRom.p1->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*ecspRom.p1, contributions.fPointLineContrib1, eqIdx, matrices);
+		if (!ecspRom.p2->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*ecspRom.p2, contributions.fPointLineContrib2, eqIdx, matrices);
+
+
+		// Adding contributions of the point on the line transformation's parameters 
+		for (auto& itRefPTTransform:contributions.fPtLineTransformContrib1){
+			if (!itRefPTTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itRefPTTransform.first, itRefPTTransform.second, eqIdx, matrices);
+		}
+		for (auto& itRefPTTransform:contributions.fPtLineTransformContrib2){
+			if (!itRefPTTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itRefPTTransform.first, itRefPTTransform.second, eqIdx, matrices);
+		}
+
+		// Add station's contributions
+		if (!itECSP.targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*itECSP.targetPos, contributions.fStationContrib, eqIdx, matrices);
+
+		// Adding contributions for STATION transformation parameters 
+		for (auto itStationTransform(contributions.fStTransformContrib.begin()); itStationTransform != contributions.fStTransformContrib.end(); ++itStationTransform){
+			if (!itStationTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStationTransform->first, itStationTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECSP.getDistance() - contributions.fCalcMeas));
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling ECSP contribution, variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		//add second design matrix contribution
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of ECSP measurement occurred.");
 	}
 }
 

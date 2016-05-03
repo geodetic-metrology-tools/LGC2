@@ -489,83 +489,6 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(shared_ptr<TTSTN> station, 
 	return contrib;
 }
 
-//ECSP Contribution
-ECTHContrib	 TContributionsGenerator::getECSPContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECSP& ecsp){
-	///////////////////Transform TARGET and STATION from their's LOR to ROOT///////////////////////////////
-	TPositionVector targetPos = station->instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
-	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
-	tgLor2RootTrafo.transform(targetPos);
-
-	TPositionVector stationPos = ecsp.targetPos->getEstimatedValue(); //position of the TSTN
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
-	stLor2RootTrafo.transform(stationPos);
-
-
-	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station->rot3D != true){
-		fPointTransfo.transformPointsToMLASystem(ecsp.targetPos->getName(), stationPos, targetPos);
-		fPointTransfo.setMLA(true);
-	}
-	else
-		fPointTransfo.setMLA(false);
-
-	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
-	TReal xSt = stationPos.getX().getMetresValue();
-	TReal ySt = stationPos.getY().getMetresValue();
-	TReal zSt = stationPos.getZ().getMetresValue();
-	TReal xTg = targetPos.getX().getMetresValue();
-	TReal yTg = targetPos.getY().getMetresValue();
-	TReal zTg = targetPos.getZ().getMetresValue();
-
-	
-	TAngle theta = ecsp.obsHorAngle;
-	TAngle phi = ecsp.obsVertAngle;
-	TAngle Vo =  rom->v0->getEstimatedValue();
-    //line direction at the TSTN position
-	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
-
-
-    //Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
-	TReal d, pScal; 
-	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg));  // distance St-Tg
-	pScal = l[0] * (xSt - xTg) + l[1]*(ySt - yTg) + l[2] * (zSt - zTg);  //produit scalaire
-
-	TReal calcMeas = sqrt(pow2(d) - pow2(pScal)) - ecsp.target.distCorrectionValue.getMetresValue();
-
-    //contributions
-	TReal a, b, c, V0Contrib;
-    if (calcMeas > nullLimit)
-	{
-		a = ((xSt - xTg) - l[0] * pScal) / calcMeas;
-		b = ((ySt - yTg) - l[1] * pScal) / calcMeas;
-		c = ((zSt - zTg) - l[2] * pScal) / calcMeas;
-		V0Contrib =  -1 * (l[1] * (xSt - xTg) - l[0] * (ySt - yTg)) / calcMeas; /**/
-	}
-	else
-	 throw std::logic_error("TContributionGenerator::getECSPContrib: Division by zero because the point is on the line");
-
-    
-	TReal distCorrection = -1.0;  //Not use for the moment, because it is not adjustable.
-
-	//Station can be defined anywhere, get point contributions and transformations contributions
-	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, -a, -b, -c);
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
-	addTransformationsContributions(stLor2RootTrafo, ecsp.targetPos->getEstimatedValue(), -a, -b, -c, stationTransfContributions);
-
-	//Target can be defined anywhere, get point contributions and transformations contributions
-	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, a, b, c);
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
-	addTransformationsContributions(tgLor2RootTrafo, station->instrumentPos->getEstimatedValue(), a, b, c, targetTransfContributions);
-
-	// Variance calculation
-	TReal varM = pow2q(ecsp.target.sigmaD + ecsp.getDistance() / 1000 * ecsp.target.ppmD);
-	TReal variance = varM + (pow2q(cos(theta + Vo)*sin(phi)) + pow2q(sin(theta + Vo)*sin(phi)))*pow2q(ecsp.target.sigmaInstrCentering);
-
-	ECTHContrib	contrib = { calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance };
-	return contrib;
-}
-
-
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- individual measurements
 //////////////////////////////////////////////////////////////////////
@@ -817,6 +740,85 @@ ScaleMeasContrib TContributionsGenerator::getECVEContrib(const TECVEROM& ecveROM
 	
 	ScaleMeasContrib ecspContrib = { calcMeas, stationContrib, pointLineContrib, stationTransfContributions, pointLineTransfContributions, obsVariance };
 	return ecspContrib;
+}
+
+//ECSP Contribution
+ECSPContrib	 TContributionsGenerator::getECSPContrib(const TECSPROM& ecspROM, const TECSP& ecsp){
+	TPositionVector stationPoint = ecsp.targetPos->getEstimatedValue();
+	const TLOR2LOR& stationPTLor2RootTrafo = fPointTransfo.getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	stationPTLor2RootTrafo.transform(stationPoint);
+
+	TPositionVector linePoint1 = ecspROM.p1->getEstimatedValue();
+	const TLOR2LOR& linePTLor2RootTrafo1 = fPointTransfo.getLORTransformation(ecspROM.p1->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	linePTLor2RootTrafo1.transform(linePoint1);
+
+	TPositionVector linePoint2 = ecspROM.p2->getEstimatedValue();
+	const TLOR2LOR& linePTLor2RootTrafo2 = fPointTransfo.getLORTransformation(ecspROM.p2->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	linePTLor2RootTrafo2.transform(linePoint2);
+
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		//fPointTransfo.transformPointsToMLASystem(ecspROM.fMeasuredLine->getName(), linePoint1, stationPoint);
+		//fPointTransfo.transformPointsToMLASystem(ecspROM.fMeasuredLine->getName(), linePoint2, stationPoint);
+		fPointTransfo.transformPointsToMLASystem(ecspROM.romName, linePoint1, stationPoint);
+		fPointTransfo.transformPointsToMLASystem(ecspROM.romName, linePoint2, stationPoint);
+		fPointTransfo.setMLA(true);
+	}
+	else
+		fPointTransfo.setMLA(false);
+
+	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
+
+	//Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	TReal dis, pScal, D;
+	dis = dist3D(stationPoint.getX(), stationPoint.getY(), stationPoint.getZ(), linePoint1.getX(), linePoint1.getY(), linePoint1.getZ());  // distance P1 - stn
+	D = dist3D(linePoint1.getX(), linePoint1.getY(), linePoint1.getZ(), linePoint2.getX(), linePoint2.getY(), linePoint2.getZ());// distance P1-P2
+	pScal = (linePoint2.getX() - linePoint1.getX()).getMetresValue() * (stationPoint.getX() - linePoint1.getX()).getMetresValue()
+		+ (linePoint2.getY() - linePoint1.getY()).getMetresValue() * (stationPoint.getY() - linePoint1.getY()).getMetresValue()
+		+ (linePoint2.getZ() - linePoint1.getZ()).getMetresValue() * (stationPoint.getZ() - linePoint1.getZ()).getMetresValue();  //produit scalaire
+
+	//contributions
+	TReal a, b, c, d, e, f, g,h,i;
+	TReal div = sqrt( dis*dis*D*D - pow2(pScal));
+	if (div > nullLimit)
+	{
+		//stn
+		a = 1.0/div * (D*(stationPoint.getX() - linePoint1.getX()) - pScal/D *(linePoint2.getX() - linePoint1.getX()));
+		b = 1.0/div * (D*(stationPoint.getY() - linePoint1.getY()) - pScal/D *(linePoint2.getY() - linePoint1.getY()));
+		c = 1.0/div * (D*(stationPoint.getZ() - linePoint1.getZ()) - pScal/D *(linePoint2.getZ() - linePoint1.getZ()));
+		//p2
+		d = 1.0 / div * (-pScal / D *(stationPoint.getX() - linePoint1.getX()) + pow2(pScal) / pow(D, 3) * (linePoint2.getX() - linePoint1.getX()));
+		e = 1.0 / div * (-pScal / D *(stationPoint.getY() - linePoint1.getY()) + pow2(pScal) / pow(D, 3) * (linePoint2.getY() - linePoint1.getY()));
+		f = 1.0 / div * (-pScal / D *(stationPoint.getZ() - linePoint1.getZ()) + pow2(pScal) / pow(D, 3) * (linePoint2.getZ() - linePoint1.getZ()));
+		//p1
+		g = 1.0 / div * (-D*(stationPoint.getX() - linePoint1.getX()) + pScal / D *(linePoint2.getX() - linePoint1.getX() + stationPoint.getX() - linePoint1.getX()) - pow2(pScal) / pow(D, 3) * (linePoint2.getX() - linePoint1.getX()));
+		h = 1.0 / div * (-D*(stationPoint.getY() - linePoint1.getY()) + pScal / D *(linePoint2.getY() - linePoint1.getY() + stationPoint.getY() - linePoint1.getY()) - pow2(pScal) / pow(D, 3) * (linePoint2.getY() - linePoint1.getY()));
+		i = 1.0 / div * (-D*(stationPoint.getZ() - linePoint1.getZ()) + pScal / D *(linePoint2.getZ() - linePoint1.getZ() + stationPoint.getZ() - linePoint1.getZ()) - pow2(pScal) / pow(D, 3) * (linePoint2.getZ() - linePoint1.getZ()));
+	}
+	else
+		throw std::logic_error("TContributionGenerator::getECSPContrib: Division by zero.");
+
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	TFreeVector stationContrib = getPointContributions(stationPTLor2RootTrafo, a, b, c);
+	addTransformationsContributions(stationPTLor2RootTrafo, ecsp.targetPos->getEstimatedValue(), a, b, c, stationTransfContributions);
+
+	//first point on the line
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> pointLineTransfContributions1;
+	TFreeVector pointLineContrib1 = getPointContributions(linePTLor2RootTrafo1, g, h, i);
+	addTransformationsContributions(linePTLor2RootTrafo1, ecsp.targetPos->getEstimatedValue(), g, h, i, pointLineTransfContributions1);
+	//second point on the line
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> pointLineTransfContributions2;
+	TFreeVector pointLineContrib2 = getPointContributions(linePTLor2RootTrafo2, d, e, f);
+	addTransformationsContributions(linePTLor2RootTrafo2, ecsp.targetPos->getEstimatedValue(), d, e, f, pointLineTransfContributions2);
+
+	// Variance calculation
+	TReal varM = pow2q(ecsp.target.sigmaD + ecsp.getDistance() / 1000 * ecsp.target.ppmD);
+	TReal obsVariance = varM + (pow2q((linePoint2.getX() - linePoint1.getX()) / D) + pow2q((linePoint2.getY() - linePoint1.getY()) / D))*pow2q(ecsp.target.sigmaInstrCentering);
+	
+	TReal calcmeas = div / D - ecsp.target.distCorrectionValue;
+	ECSPContrib ecspContrib = { calcmeas , stationContrib, pointLineContrib1, pointLineContrib2, stationTransfContributions, pointLineTransfContributions1, pointLineTransfContributions2, obsVariance };
+	return ecspContrib;
+	
+
 }
 
 //DVER contributions

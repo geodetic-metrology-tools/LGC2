@@ -11,6 +11,7 @@ struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
 struct TECVEROM;
+struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 
@@ -55,9 +56,6 @@ public:
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
-
-		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-		ECTHContrib	 getECSPContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECSP& ecsp);
 	//@}
 
 
@@ -86,6 +84,9 @@ public:
 
 		///  Returns the contribution for offset to a vertical line (TECVE)
 		ScaleMeasContrib getECVEContrib(const TECVEROM& ecveROM, const TECVE& ecve);
+
+		/// Returns contribution for the offset to a spatial line (TECSP) measurement.
+		ECSPContrib getECSPContrib(const TECSPROM& ecspROM, const TECSP& ecsp);
 
 		///  Returns the contribution for a free spatial distance measurement (TDSPT) made by EDM instrument
 		DistMeasContrib	getDSPTContrib(const TEDM& edmST, const TDSPT& dspt);

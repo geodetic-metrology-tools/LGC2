@@ -12,6 +12,7 @@ struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
 struct TECVEROM;
+struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 
@@ -49,9 +50,6 @@ public:
 	/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 	TReal	 getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
 
-	/// Returns contribution for the offset to a theodolite line (TECSP) measurement.
-	TReal	 getECSPCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECSP& ecsp);
-
 	/// Returns the the TUVEC measurement calculaded measurement value
 	TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
 
@@ -69,6 +67,9 @@ public:
 
 	///  Returns TECVE measurement calculated meas in meters [m]
 	TReal getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve);
+
+	/// Returns TECSP measurement calculated meas in meters[m]
+	TReal	 getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp);
 
 	/// Returns the TDHOR measurement calculated meas in meters [m]
 	TReal	getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);

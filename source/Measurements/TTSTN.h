@@ -43,7 +43,7 @@ struct TTSTN {
 			/// All Ecarte-Theodolite plan measurements in this ROM
 			std::vector<TECTH>  measECTH;
 			/// All Ecarte-Theodolite line measurements in this ROM
-			std::vector<TECSP>  measECSP;
+			//std::vector<TECSP>  measECSP;
 
 			/*!
 				\returns Summary of all the PLR3D measurements.
@@ -85,7 +85,7 @@ struct TTSTN {
 			\returns Summary of all the ECSP measurements.
 			\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getECSPObsSummary() const;
+			//TLGCObsSummary getECSPObsSummary() const;
 
 			/// Each ROM has a default target that is inherited to the measurements
 			TROM(const TInstrumentData::TPOLAR::TTarget& defTarget, TAdjustableAngle* v0):

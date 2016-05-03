@@ -45,8 +45,6 @@ public:
 	void	writeDHORReliabilityHeader();
 	/// Write reliability header for ECTH
 	void	writeECTHReliabilityHeader();
-	/// Write reliability header for ECSP
-	void	writeECSPReliabilityHeader();
 
 	/// Write reliability data for ANGL
 	void	writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL);
@@ -60,8 +58,6 @@ public:
 	void	writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR);
 	/// Write reliability data for ECTH
 	void	writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH);
-	/// Write reliability data for ECSP
-	void	writeECSPReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECSP>& measECSP);
 
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }
@@ -75,7 +71,6 @@ private:
 		void writePLRResultsHeader(int nOObs);
 		void writeDHORResultsHeader(int nOObs);
 		void writeECTHResultsHeader(int nOObs);
-		void writeECSPResultsHeader(int nOObs);
 	//@}
 
 	/*!@name Results */
@@ -86,7 +81,6 @@ private:
 		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry);
 		void writeDHORResults(const std::vector<TLINE>& measDHOR);
 		void writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos);
-		void writeECSPResults(const std::vector<TECSP>& measECSP, const TAdjustablePoint* instrPos);
 	//@}
 
 		bool isAllfixed;

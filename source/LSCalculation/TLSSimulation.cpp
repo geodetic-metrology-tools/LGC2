@@ -146,7 +146,6 @@ void TLSSimulation::simulateValues()
 				getDISTSimValues(*itTSTN, itROM->measDIST); //Fill contribution to a DIST measurement
 				getDHORSimValues(*itTSTN, itROM->measDHOR); //Fill contribution to a DHOR measurement
 				getECTHSimValues(*itTSTN, *itROM, itROM->measECTH); //Fill contribution to a ECTH measurement
-				getECSPSimValues(*itTSTN, *itROM, itROM->measECSP); //Fill contribution to a ECSP measurement
 			}
 		}
 
@@ -184,9 +183,13 @@ void TLSSimulation::simulateValues()
 		for (auto& itECHO : itTree.node->data->measurements.fECHO)
 			getECHOSimValues(itECHO, itECHO.measECHO);
 
-		//In every node iterate through the ECHO's measurements
+		//In every node iterate through the ECVE's measurements
 		for (auto& itECVE : itTree.node->data->measurements.fECVE)
 			getECVESimValues(itECVE, itECVE.measECVE);
+
+		//In every node iterate through the ECSP's measurements
+		for (auto& itECSP : itTree.node->data->measurements.fECSP)
+			getECSPSimValues(itECSP, itECSP.measECSP);
 
 		//In every node iterate through the ORIE's measurements
 		for (auto& itORIE : itTree.node->data->measurements.fORIE)
@@ -242,6 +245,14 @@ void TLSSimulation::getECVESimValues(const TECVEROM& ecveROM, std::vector<TECVE>
 		TReal calcVal = fSimObs.getECVECalcMeas(ecveROM, itECVE);
 		TReal sigma = itECVE.target.sigmaD;
 		itECVE.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
+	}
+}
+
+void TLSSimulation::getECSPSimValues(const TECSPROM& ecspROM, std::vector<TECSP>& ecsp){
+	for (auto& itECSP : ecsp){
+		TReal calcVal = fSimObs.getECSPCalcMeas(ecspROM, itECSP);
+		TReal sigma = itECSP.target.sigmaD;
+		itECSP.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
 }
 
@@ -337,13 +348,6 @@ void	TLSSimulation::getECTHSimValues(const TTSTN& station, const TTSTN::TROM& ro
 	}
 }
 
-void	TLSSimulation::getECSPSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECSP>& ecsp){
-	for (auto& itECSP : ecsp){
-		TReal calcVal = fSimObs.getECSPCalcMeas(station, rom, itECSP);
-		TReal sigma = itECSP.target.sigmaD;
-		itECSP.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
-	}
-}
 
 void	TLSSimulation::getDHORSimValues(const TTSTN& station, std::vector<TLINE>& dhor){
 	for (auto& itDHOR : dhor){
