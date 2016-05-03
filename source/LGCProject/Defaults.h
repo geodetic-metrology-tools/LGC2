@@ -21,7 +21,7 @@
 static bool False = false;
 
 /// Default precision for output files
-static const int PREC_DEF_DIGITS = 6;
+static const int PREC_DEF_DIGITS = 5;
 
 /// Default fisher alpha quantile for FAUT keyword
 static const TReal FAUT_DEF_ALPHA = 1.0;
