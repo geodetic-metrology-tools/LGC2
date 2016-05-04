@@ -192,18 +192,18 @@ void TPunchFileWriter::writeTitle()
 {
 	TAStreamFormatter* stream = getStream();
 	//write software id.
-	(*stream)<<(TLGCApp::getProgId())<<endl;
+	(*stream)<<"*"<<(TLGCApp::getProgId())<<endl;
 
 	//write software copyright
-	(*stream)<<(TLGCApp::getCopyright())<<endl;
+	(*stream) << "*" << (TLGCApp::getCopyright()) << endl;
 
 	//last compilation (now showed in progID together with surveylib version)
 	//(*stream)<<"Derniere compilation : "<<__DATE__<<endl<<endl<<endl;
 
 	//write title
 	(*stream)<<"*********************************************************************************************************************************** "<<endl;
-	(*stream)<<(fProjectData->getConfig().title)<<endl;
-	(*stream)<<endl;
+	(*stream) << "*" << (fProjectData->getConfig().title) << endl;
+	(*stream) << "*" << endl;
 
 	//write time
 	char tmpbuf[128];
@@ -218,7 +218,7 @@ void TPunchFileWriter::writeTitle()
 	today = localtime( &ltime );
 	string essai = ctime( &ltime );
 	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
-	(*stream)<<tmpbuf<<endl;
+	(*stream) << "*" << tmpbuf << endl;
 	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
 
 }
@@ -537,10 +537,13 @@ void	TPunchFileWriter::writeCooHeader()
 
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
-	(*stream).writeString(coordWidth, "H ");
+	if (fData->getConfig().referential != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		(*stream).writeString(coordWidth, "H ");
+	else
+		(*stream).writeString(coordWidth, "Z ");
 	(*stream).writeString(nameWidth, "ID");
 	(*stream).writeString(coordResWidth, "DX ");
 	(*stream).writeString(coordResWidth, "DY ");
@@ -891,8 +894,25 @@ void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
 	(*stream).width(1);
 	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
-	converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
-	stream->writeString(nameWidth, "-1");
+
+
+	if (fData->getConfig().referential != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		converter.writeXYH(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstValue(0), point.getEstValue(1), TLength(point.getHEstValue()));
+	else
+		converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
+	
+	//ID
+	if (!point.eolcomment.compare(0, 1, "$"))
+	{
+		//eolcomment = $cumul ID comments
+		int firstSpace = point.eolcomment.find_first_of(" ");
+		int secondSpace = point.eolcomment.find(" ", firstSpace+4);
+
+		stream->writeString(nameWidth, point.eolcomment.substr(firstSpace + 4, secondSpace - firstSpace - 4));
+	}	
+	else
+		stream->writeString(nameWidth, "-1");
+
 	//Delta
 	//transform H in Z
 	TPositionVector xyzValue = point.getProvisionalValue();
@@ -907,7 +927,7 @@ void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
 			point.getDXValue(),
 			point.getDYValue(),
 			point.getEstValue(2) - xyzValue.getZ(),
-			"");
+			"0.0");
 	}
 	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 	{
@@ -920,7 +940,7 @@ void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
 			point.getDXValue(),
 			point.getDYValue(),
 			point.getEstValue(2) - xyzValue.getZ(),
-			"");
+			"0.0");
 	}
 	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 	{
@@ -934,7 +954,7 @@ void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
 			point.getDXValue(),
 			point.getDYValue(),
 			point.getEstValue(2) - xyzValue.getZ(),
-			"");
+			"0.0");
 	}
 	else
 		converter.writeCoordinateParam(point.getSpatialStatus(),
@@ -945,11 +965,19 @@ void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
 		point.getDXValue(),
 		point.getDYValue(),
 		point.getDZValue(),
-		"");
+		"0.0");
 	
+	//DCUM
+	if (point.eolcomment != "")
+	{
+		//eolcomment = $cumul ID comments
+		int firstSpace = point.eolcomment.find_first_of(" ");
+		stream->writeString(nameWidth, point.eolcomment.substr(1, firstSpace-1));
+	}
+	else
+		stream->writeString(nameWidth, "-1");
 	
-	stream->writeDouble(coordWidth, getCoordPrecision(), -1.0);
-	
+	//OPT
 	string status;
 	if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kCala)
 		status = "CALA";

@@ -90,21 +90,21 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		TInstrumentData::TPOLAR& instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
-		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
+		if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 		{
 			tgt.sigmaAngl = sigmaANGL;
 			constanteANGL = TAngle(std::stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
 			instr.constAngle = constanteANGL;
 		}
-		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
+		else if ((tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "$") && tokens.at(3).compare(0, 1, "%")) || (tokens.size() == 5 && tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 		{
 			tgt.sigmaAngl = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 			instr.constAngle = constanteANGL;
 		}
-		else if (tokens.size() == 6)
+		else if (tokens.size() >= 5)
 		{
-			tgt.sigmaAngl = TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kCCs);
-			constanteANGL = TAngle(std::stor(tokens.at(5).substr(1)), TAngle::EUnits::kGons);
+			tgt.sigmaAngl = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+			constanteANGL = TAngle(std::stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
 			instr.constAngle = constanteANGL;
 		}
 		else
@@ -230,15 +230,15 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
 		tgt.sigmaZenD = sigmaZEND;
 
-		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
+		if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 		{
 			tgt.sigmaZenD = sigmaZEND;
 			tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 
 		}
-		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
+		else if ((tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "$") && tokens.at(3).compare(0, 1, "%")) || (tokens.size() == 5 && tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 			tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-		else if (tokens.size() == 5)
+		else if (tokens.size() >= 5)
 		{
 			tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 			tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
@@ -368,63 +368,120 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		else
 			instr.instrHeight = IH_adj->getEstimatedValue();
 
-		
+
 		//read options
-		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "\\"))
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			tgt.sigmaZenD = sigmaZEND;
-			tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-
-		}
-		else if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/") && firstmeas)
-		{
-			
-			tgt.sigmaZenD = sigmaZEND;
-			// Add adjustable scalar into a global collection and store a pointer
-			instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-			IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-		}
-		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "\\"))
-			tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-		else if (tokens.size() == 5)
-		{
-			if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
+			if (tokens.size() == 5)
 			{
-				// Add adjustable scalar into a global collection and store a pointer
-				instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-
+				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				}
+				else if (!tokens.at(3).compare(0, 1, "\\"))
+					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				else if (tokens.at(3).compare(0, 1, "/"))
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+				else
+					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
 			}
-			else if (!tokens.at(4).compare(0, 1, "/") && firstmeas)
+			else if (tokens.size() == 6)
+			{
+				if (firstmeas && !tokens.at(4).compare(0, 1, "/"))
+				{
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+					
+				}
+				else if (tokens.at(3).compare(0, 1, "/") && !tokens.at(4).compare(0, 1, "\\"))
+				{
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (firstmeas)
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
+			}
+			else if (tokens.size() == 7 && firstmeas)
 			{
 				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 				// Add adjustable scalar into a global collection and store a pointer
 				instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 			}
-			else
+			else if (!IH_adj && firstmeas)
+			{
+				// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+			}
+			else if (!firstmeas)
+				if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !firstmeas && !tokens.at(4).compare(0, 1, "/")) || tokens.size() == 6)
+					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
+		}
+		else
+		{
+			if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "\\"))
+				tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+
+			else if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/") && firstmeas)
+			{
+				// Add adjustable scalar into a global collection and store a pointer
+				instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+			}
+			else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "\\"))
+				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+			else if (tokens.size() == 5)
+			{
+				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+
+				}
+				else if (!tokens.at(4).compare(0, 1, "/") && firstmeas)
+				{
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				}
+				else
+				{
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+			}
+			else if (tokens.size() == 6 && firstmeas)
 			{
 				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				// Add adjustable scalar into a global collection and store a pointer
+				instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 			}
+			else if (!IH_adj && firstmeas)
+			{
+				// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+			}
+			else if (!firstmeas)
+				if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !firstmeas && !tokens.at(4).compare(0, 1, "/")) || tokens.size() == 6)
+					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
 		}
-		else if (tokens.size() == 6 && firstmeas)
-		{
-			tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-			// Add adjustable scalar into a global collection and store a pointer
-			instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-			tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-		}
-		else if (!IH_adj && firstmeas)
-		{
-			// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-			IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-		}
-		else if (!firstmeas)
-			if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !firstmeas && !tokens.at(4).compare(0, 1, "/")) || tokens.size()==6)
-				throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
 
 		firstmeas = false;
 
@@ -550,103 +607,207 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.targetHt = TLength(0.0);
 		tgt.distCorrectionAdjustable = adjDCorr;
 
-		if (tokens.size() == 4 )
-		{ 
-			if (tokens.at(3) == "C")
-			{
-				// Add adjustable scalar into a global collection and store a pointer
-				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
-				tgt.distCorrectionAdjustable = adjDCorr;
-			}
-			else if (!tokens.at(3).compare(0, 1, "/"))
-			{
-				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-			}
-			else if (!tokens.at(3).compare(0, 1, "\\"))
-			{
-				tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-			}
-			else
-				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		}		
-		else if (tokens.size() == 5)
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			
-			if (!tokens.at(3).compare(0, 1, "/"))
+			if (tokens.size() == 5)
 			{
-				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				if (tokens.at(3) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "\\"))
+				{
+					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 			}
-			else if (tokens.at(4) == "C")
+			else if (tokens.size() == 6)
 			{
-				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				// Add adjustable scalar into a global collection and store a pointer
-				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
-				tgt.distCorrectionAdjustable = adjDCorr;
-			}
-			else if (!tokens.at(4).compare(0, 1, "/"))
-			{
-				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-			}
-			else if (!tokens.at(4).compare(0, 1, "\\"))
-			{
-				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			}
-			else
-			{
-				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			}			
-		}
-		else if (tokens.size() == 6)
-		{
-			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			if (tokens.at(4) == "C")
-			{
-				// Add adjustable scalar into a global collection and store a pointer
-				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
-				tgt.distCorrectionAdjustable = adjDCorr;
-			}
-			else if (!tokens.at(4).compare(0, 1, "/"))
-			{
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			}
-			else if (!tokens.at(5).compare(0, 1, "/"))
-			{
-				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-			}
-			else if (!tokens.at(5).compare(0, 1, "\\"))
-			{
-				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			}
 
+				if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (tokens.at(4) == "C")
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "\\"))
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
+			}
+			else if (tokens.size() == 7)
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				if (tokens.at(4) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (!tokens.at(5).compare(0, 1, "/"))
+				{
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(5).compare(0, 1, "\\"))
+				{
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				}
+
+			}
+			else if (tokens.size() == 8)
+			{
+				if (tokens.at(5) == "C")
+				{
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				tgt.targetHt = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+			}
 		}
-		else if (tokens.size() == 7)
+		else
 		{
-			if (tokens.at(5) == "C")
+			if (tokens.size() == 4)
 			{
-				adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
-				tgt.distCorrectionAdjustable = adjDCorr;
+				if (tokens.at(3) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "\\"))
+				{
+					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 			}
-			else
+			else if (tokens.size() == 5)
 			{
-				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
+
+				if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (tokens.at(4) == "C")
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "\\"))
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
 			}
-				
-			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			tgt.targetHt = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+			else if (tokens.size() == 6)
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				if (tokens.at(4) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (!tokens.at(5).compare(0, 1, "/"))
+				{
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(5).compare(0, 1, "\\"))
+				{
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				}
+
+			}
+			else if (tokens.size() == 7)
+			{
+				if (tokens.at(5) == "C")
+				{
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				tgt.targetHt = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+			}
 		}
 
 
@@ -780,21 +941,43 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		ScaleInstr.sigmaD = sigma;
 		ScaleInstr.distCorrectionValue = dcorr;
 
-		if (tokens.size() == 5)
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			if (!tokens.at(4).compare(0, 1, "/"))
+			if (tokens.size() == 6)
 			{
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					ScaleInstr.distCorrectionValue = dcorr;
+				}
+				else
+					ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			}
+			else if (tokens.size() == 7)
+			{
+				ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 				ScaleInstr.distCorrectionValue = dcorr;
 			}
-			else
-				ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 		}
-		else if (tokens.size() == 6)
+		else
 		{
-			ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			ScaleInstr.distCorrectionValue = dcorr;
+			if (tokens.size() == 5)
+			{
+				if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					ScaleInstr.distCorrectionValue = dcorr;
+				}
+				else
+					ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+			}
+			else if (tokens.size() == 6)
+			{
+				ScaleInstr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				ScaleInstr.distCorrectionValue = dcorr;
+			}
 		}
 
 
@@ -937,60 +1120,119 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.sigmaDist = sigmaDIST;
 		tgt.ppmDist = ppm;
 		tgt.distCorrectionValue = dcorr;
-
-		if (tokens.size() == 4)
+		
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			if (!tokens.at(3).compare(0, 1, "/"))
+			if (tokens.size() == 5)
 			{
-				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
+				if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 			}
-			else
+			else if (tokens.size() == 6)
+			{
+				if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
+			}
+			else if (tokens.size() == 7)
+			{
 				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		}
-		else if (tokens.size() == 5)
-		{
-			if (!tokens.at(4).compare(0, 1, "/"))
+				if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (!tokens.at(5).compare(0, 1, "/"))
+				{
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+			}
+			else if (tokens.size() == 8)
 			{
 				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-			}
-			else if (!tokens.at(3).compare(0, 1, "/"))
-			{
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-				tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			}
-			else
-			{
-				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			}
-		}
-		else if (tokens.size() == 6)
-		{
-			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			if (!tokens.at(4).compare(0, 1, "/"))
-			{
-				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				tgt.distCorrectionValue = dcorr;
-				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			}
-			else if (!tokens.at(5).compare(0, 1, "/"))
-			{
 				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 				tgt.distCorrectionValue = dcorr;
 			}
-
 		}
-		else if (tokens.size() == 7)
+		else
 		{
-			tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			tgt.distCorrectionValue = dcorr;
+			if (tokens.size() == 4)
+			{
+				if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			}
+			else if (tokens.size() == 5)
+			{
+				if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				}
+				else
+				{
+					tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
+			}
+			else if (tokens.size() == 6)
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				}
+				else if (!tokens.at(5).compare(0, 1, "/"))
+				{
+					tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+
+			}
+			else if (tokens.size() == 7)
+			{
+				tgt.sigmaDist = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.ppmDist = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				tgt.distCorrectionValue = dcorr;
+			}
 		}
 
 
@@ -1185,7 +1427,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 	else 
 	{
-		// stn tgt meas [sigma][ppm] [/const | C ][ \hI HRefl]
+		// stn tgt meas [sigma][ppm] [/const | C ][ \hI HRefl] [$comments]
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("A DMES measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
@@ -1224,7 +1466,110 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.distCorrectionValue = dcorr;
 		tgt.distCorrectionAdjustable = adjDCorr;
 
-		if (tokens.size() > 3)
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
+		{
+			if (tokens.size() == 5)
+			{
+				if (tokens.at(3) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+			}
+
+			else if (tokens.size() == 6)
+			{
+				if (!tokens.at(3).compare(0, 1, "\\"))
+				{
+					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
+				}
+				else if (tokens.at(4) == "C")
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(4).compare(0, 1, "/"))
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
+			}
+
+			else if (tokens.size() == 7)
+			{
+				if (!tokens.at(3).compare(0, 1, "/"))
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
+				}
+				else if (!tokens.at(4).compare(0, 1, "\\"))
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
+				}
+				else if (tokens.at(5) == "C")
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (!tokens.at(5).compare(0, 1, "/"))
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else  //comments at the end
+				{
+					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				}
+			}
+
+			else if (tokens.size() == 9)
+			{
+				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
+
+				if (tokens.at(5) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+			}
+		}
+		else
 		{
 			if (tokens.size() == 4)
 			{
@@ -1313,7 +1658,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 				instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
 				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
-				
+
 				if (tokens.at(5) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
@@ -1326,7 +1671,6 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					tgt.distCorrectionValue = dcorr;
 				}
 			}
-
 		}
 
 		// Store  the measured value
@@ -1378,31 +1722,54 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		auto& dver(proj.getCurrentNode().measurements.fDVER.back());
 
+		dver.setObservedStDev(sigma);
+		dver.setDistanceCorrection(dcorr);
 
-		if (tokens.size() == 4)
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			if (tokens.at(3).compare(0, 1, "/"))
+			if (tokens.size() == 5)
 			{
-				dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
-				dver.setDistanceCorrection(dcorr);
+				if (tokens.at(3).compare(0, 1, "/"))
+				{
+					dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
+					dver.setDistanceCorrection(dcorr);
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					dver.setDistanceCorrection(dcorr);
+					dver.setObservedStDev(sigma);
+				}
 			}
-			else
+			else if (tokens.size() == 6)
 			{
-				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				dver.setDistanceCorrection(dcorr);
-				dver.setObservedStDev(sigma);
-			}
-		}
-		else if (tokens.size() == 5)
-		{
 				dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
 				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 				dver.setDistanceCorrection(dcorr);
+			}
 		}
 		else
 		{
-			dver.setObservedStDev(sigma);
-			dver.setDistanceCorrection(dcorr);
+			if (tokens.size() == 4)
+			{
+				if (tokens.at(3).compare(0, 1, "/"))
+				{
+					dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
+					dver.setDistanceCorrection(dcorr);
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					dver.setDistanceCorrection(dcorr);
+					dver.setObservedStDev(sigma);
+				}
+			}
+			else if (tokens.size() == 5)
+			{
+				dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				dver.setDistanceCorrection(dcorr);
+			}
 		}
 
 		dver.line = line;
@@ -1511,30 +1878,50 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("A DLEV measurement is duplicated");
 
 		TInstrumentData::TLEVEL::TTarget tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, levelGrOfMeas.instrument.defStaffID);
+		tgt.sigmaD = sigma;
+		tgt.distCorrectionValue = dcorr;
 
-
-		if (tokens.size() == 4)
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			if (tokens.at(3).compare(0, 1, "/"))
+			if (tokens.size() == 5)
+			{
+				if (tokens.at(3).compare(0, 1, "/"))
+				{
+					tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.sigmaD = sigma;
+				}
+			}
+			else if (tokens.size() == 6)
 			{
 				tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.distCorrectionValue = dcorr;
+				tgt.distCorrectionValue = TLength(-1.0*std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 			}
-			else
-			{
-				dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				tgt.sigmaD = sigma;
-			}
-		}
-		else if (tokens.size() == 5)
-		{
-			tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			tgt.distCorrectionValue = TLength(-1.0*std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 		}
 		else
 		{
-			tgt.sigmaD = sigma;
-			tgt.distCorrectionValue = dcorr;
+			if (tokens.size() == 4)
+			{
+				if (tokens.at(3).compare(0, 1, "/"))
+				{
+					tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+				{
+					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					tgt.sigmaD = sigma;
+				}
+			}
+			else if (tokens.size() == 5)
+			{
+				tgt.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				tgt.distCorrectionValue = TLength(-1.0*std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+			}
 		}
 
 		// Store  the dlev measured value
@@ -1659,28 +2046,48 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
 		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
+		instr.distCorrectionValue = constante;
+		instr.sigmaD = sigma;
 
-		if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			instr.sigmaD = sigma;
-			constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			instr.distCorrectionValue = constante;
-		}
-		else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
-		{
-			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			instr.distCorrectionValue = constante;
-		}
-		else if(tokens.size() == 6 )
-		{
-			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			constante = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			instr.distCorrectionValue = constante;
+			if (tokens.size() == 6 && !tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = sigma;
+				constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 6 && tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 7)
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				constante = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
 		}
 		else
 		{
-			instr.distCorrectionValue = constante;
-			instr.sigmaD = sigma;
+			if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = sigma;
+				constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 6)
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				constante = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
 		}
 
 		// Store  the measured value
@@ -1769,28 +2176,48 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
 		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECSPInstr"];
+		instr.distCorrectionValue = dcorr;
+		instr.sigmaD = sigma;
 
-		if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			instr.sigmaD = sigma;
-			dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			instr.distCorrectionValue = dcorr;
-		}
-		else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
-		{
-			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			instr.distCorrectionValue = dcorr;
-		}
-		else if (tokens.size() == 6)
-		{
-			instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-			dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			instr.distCorrectionValue = dcorr;
+			if (tokens.size() == 6 && !tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = sigma;
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = dcorr;
+			}
+			else if (tokens.size() == 6 && tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				instr.distCorrectionValue = dcorr;
+			}
+			else if (tokens.size() == 7)
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = dcorr;
+			}
 		}
 		else
 		{
-			instr.distCorrectionValue = dcorr;
-			instr.sigmaD = sigma;
+			if (tokens.size() == 5 && !tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = sigma;
+				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = dcorr;
+			}
+			else if (tokens.size() == 5 && tokens.at(4).compare(0, 1, "/"))
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				instr.distCorrectionValue = dcorr;
+			}
+			else if (tokens.size() == 6)
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+				dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = dcorr;
+			}
 		}
 
 
@@ -1880,28 +2307,48 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
 		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECVEInstr"];
+		instr.distCorrectionValue = constante;
+		instr.sigmaD = sigma;
 
-		if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			instr.sigmaD = sigma;
-			constante = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-			instr.distCorrectionValue = constante;
-		}
-		else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
-		{
-			instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			instr.distCorrectionValue = constante;
-		}
-		else if (tokens.size() == 5)
-		{
-			instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-			instr.distCorrectionValue = constante;
+			if (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/"))
+			{
+				instr.sigmaD = sigma;
+				constante = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 5 && tokens.at(3).compare(0, 1, "/"))
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 6)
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
 		}
 		else
 		{
-			instr.distCorrectionValue = constante;
-			instr.sigmaD = sigma;
+			if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
+			{
+				instr.sigmaD = sigma;
+				constante = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				instr.distCorrectionValue = constante;
+			}
+			else if (tokens.size() == 5)
+			{
+				instr.sigmaD = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				constante = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+				instr.distCorrectionValue = constante;
+			}
 		}
 
 
@@ -1970,19 +2417,37 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.sigmaAngl = sigma;
 		rom.fConstantAngle = constante;
 
-		if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
-			tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
-		else if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
+		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
-			tgt.sigmaAngl = sigma;
-			constante = TAngle(stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
-			rom.fConstantAngle = constante;
+			if (tokens.size() == 5 && tokens.at(3).compare(0, 1, "/"))
+				tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
+			else if (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/"))
+			{
+				constante = TAngle(stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
+				rom.fConstantAngle = constante;
+			}
+			else if (tokens.size() == 6)
+			{
+				tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
+				constante = TAngle(stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
+				rom.fConstantAngle = constante;
+			}
 		}
-		else if (tokens.size() == 5 )
+		else
 		{
-			tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
-			constante = TAngle(stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
-			rom.fConstantAngle = constante;
+			if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/"))
+				tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
+			else if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/"))
+			{
+				constante = TAngle(stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
+				rom.fConstantAngle = constante;
+			}
+			else if (tokens.size() == 5)
+			{
+				tgt.sigmaAngl = TAngle(stor(tokens.at(3)), TAngle::EUnits::kCCs);
+				constante = TAngle(stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
+				rom.fConstantAngle = constante;
+			}
 		}
 
 		// set measurement value
@@ -2031,7 +2496,7 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		auto& radi(proj.getCurrentNode().measurements.fRADI.back());
 
-		if (tokens.size() == 3)
+		if (tokens.size() >= 3 && tokens.at(2).compare(0, 1, "$") && tokens.at(2).compare(0, 1, "%"))
 			radi.setObservedStDev(TLength(std::stor(tokens.at(2)),TLength::EUnits::kMillimetres));
 		else
 			radi.setObservedStDev(sigma);

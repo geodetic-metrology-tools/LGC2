@@ -10,8 +10,9 @@ TKeyTITR::TKeyTITR(TLGCData& project, int nb_allowed_keywords, const char** keyw
 }
 
 void TKeyTITR::parse(const std::vector<std::string>& tokens, int) {
-	if (tokens.size() != 3)
+	if (tokens.at(0) == "*" && tokens.size() < 3)
 		throw std::runtime_error("Key *TITR expects only one argument");
+	
 }
 
 //////////////////

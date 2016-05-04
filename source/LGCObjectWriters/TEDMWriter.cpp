@@ -37,7 +37,6 @@ void TEDMWriter::writeEDMSIMUResults(const TEDM& fEdm)
 	writeEDMData(fEdm);
 
    this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
-	(*stream)<<endl;
 
 	if(fEdm.measDSPT.size() > 0){	
 		//Write the measurements

@@ -48,7 +48,7 @@ namespace tut
 		try {
 			TReader r(projShared);
 
-			istringstream mockfile("*TITR\n" + title);
+			istringstream mockfile("*TITR\n" + title + "\n" + "*OLOC");
 
 			r.read(mockfile);
 		} catch (exception& e) {

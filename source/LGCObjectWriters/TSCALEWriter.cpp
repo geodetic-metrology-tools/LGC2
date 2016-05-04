@@ -261,6 +261,96 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 		writeHisto(ecverom.getECVEObsSummary(), "ECHO");
 }
 
+void TSCALEWriter::writeECSPSIMUResults(const  TECSPROM& ecsprom)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+	std::string         TAB2 = stream->getCurrSpaceExtended(3);
+
+	//first line
+	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECSP), (int)ecsprom.measECSP.size());
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//first line
+	(*stream) << TAB2;
+	(*stream).writeStringLeft(nameWidth, "LINE: ");
+	(*stream)<< ecsprom.p1->getName()<< ", "<<ecsprom.p2->getName(); 
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+
+	writeDistanceResultsSummary(ecsprom.getECSPObsSummary(), stream->getCurrSpaceExtended(3));
+}
+
+void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs1 = stream->getCurrSpaceExtended(1);
+	std::string         TABs3 = stream->getCurrSpaceExtended(3);
+
+
+	//first line
+	(*stream) << TABs1 << "ECSP MEASUREMENTS" << endl;
+	(*stream) << TABs1 << "LINE " << ecsprom.p1->getName() << " - " << ecsprom.p2->getName() << endl;
+
+	////////////////////////////////////////////////////////////
+	//first line
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "POINT"); //second point's Name
+	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECTH
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECTH
+	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECTH
+	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECTH
+	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, ""); //station
+	(*stream).writeString(obsWidth, "(M)"); //mesured
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma 
+	(*stream).writeString(obsWidth, "(M)"); //estimated 
+	(*stream).writeString(obsResWidth, "(MM)"); //offset 
+	(*stream).writeString(obsResWidth, ""); //offset/sigma	
+	(*stream) << endl;
+
+		//For each measurement of the station
+		for (auto const& ItECSP : ecsprom.measECSP)
+		{
+			(*stream) << TABs1;
+
+			//write Point
+			(*stream).writeStringLeft(nameWidth, ItECSP.targetPos->getName());
+
+			//write the observed offset
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
+
+			//write the sigma
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
+
+			//write the estimated offset
+			(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
+
+			//write the offset (mm) after calculation
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
+
+			//write the offset / sigma (TDouble (MM))
+			(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaD));
+			(*stream) << endl;
+
+		}
+		(*stream) << endl;
+
+}
 
 //Reliability 
 void	TSCALEWriter::writeECHOReliabilityHeader()
@@ -272,6 +362,12 @@ void	TSCALEWriter::writeECHOReliabilityHeader()
 void	TSCALEWriter::writeECVEReliabilityHeader()
 {
 this->TObservationWriter::writeReliabilityHeader("PT LINE","STATION", "", "OBSERVATION", "M", "MM");
+	return;
+}
+
+void	TSCALEWriter::writeECSPReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("LINE NAME", "STATION", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
@@ -346,4 +442,40 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 	}
 	return;
 }
+
+void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::vector<TECSP> measECSP)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+
+	for (auto const& ItEcsp : measECSP)
+	{
+		// Observation index to take the right value in the statistic vector
+		int index = ItEcsp.getFirstObservationIndex();
+
+		// get reference point to the plane
+		(*stream).writeStringLeft(nameWidth, ecsprom.romName);
+		//get Tg point
+		(*stream).writeStringLeft(nameWidth, ItEcsp.targetPos->getName());
+		// get Point 3
+		(*stream).writeStringLeft(nameWidth, "");
+
+		//get the observed DIST
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcsp.getDistance());
+		//get the sigma
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaD.getMMetresValue());
+		//get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
+
+		writeReliability(index, stat);
+		(*stream).setDataSpacing();
+	}
+	return;
+}
+
+
 

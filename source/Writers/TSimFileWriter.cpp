@@ -469,6 +469,9 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 	for (auto& meas : frameIt->get()->measurements.fECVE)
 		writeECVEMeas(&meas);
 
+	for (auto& meas : frameIt->get()->measurements.fECSP)
+		writeECSPMeas(&meas);
+
 	for (auto& meas : frameIt->get()->measurements.fORIE)
 		writeORIEMeas(&meas);
 
@@ -660,6 +663,53 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 		(*stream) << endl;
 	}
 
+}
+
+void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
+{
+	TAStreamFormatter* stream = getStream();
+	string sep = stream->getSeparator();
+
+	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECSP.at(0).target.ID);
+
+	(*stream) << "*ECSP" << sep
+		<< meas->p1->getName() << sep 
+		<< meas->p2->getName() << sep
+		<< scaleDefInst.ID << sep;
+	(*stream) << endl;
+
+
+	//write the list of measurements for the line
+		string tgID = meas->measECSP.at(0).target.ID;
+		TLength ppm = meas->measECSP.at(0).target.ppmD;
+		TLength sigma = meas->measECSP.at(0).target.sigmaD;
+		TLength centering = meas->measECSP.at(0).target.sigmaInstrCentering;
+
+
+		for (auto& ecsp : meas->measECSP)
+		{
+				(*stream) << ecsp.targetPos->getName() << sep
+					<< ecsp.getDistance() << sep;
+
+				if (ecsp.target.ID != tgID)
+					(*stream) << "SCALE" << sep
+					<< ecsp.target.ID << sep;
+
+				if (ecsp.target.sigmaD != sigma)
+					(*stream) << "OBSE" << sep
+					<< ecsp.target.sigmaD.getMMetresValue() << sep;
+
+				if (ecsp.target.ppmD != ppm)
+					(*stream) << "PPM" << sep
+					<< ecsp.target.ppmD.getMMetresValue() << sep;
+
+				if (ecsp.target.sigmaInstrCentering != centering)
+					(*stream) << "ICSE" << sep
+					<< ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+				(*stream) << endl;
+			
+		}
 }
 
 void TSimFileWriter::writeEDMMeas(TEDM* meas)
@@ -1088,82 +1138,6 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				}
 			}
 		}
-
-		//ECSP
-		
-		if (!rom->measECSP.empty())
-		{
-			TAngle lectureHz = rom->measECSP.at(0).obsHorAngle;
-			TAngle lectureV = rom->measECSP.at(0).obsVertAngle;
-			string tgID = rom->measECSP.at(0).target.ID;
-			TLength ppm = rom->measECSP.at(0).target.ppmD;
-			TLength sigma = rom->measECSP.at(0).target.sigmaD;
-			TLength centering = rom->measECSP.at(0).target.sigmaInstrCentering;
-
-			(*stream) << "*ECSP" << sep
-				<< rom->measECSP.at(0).obsHorAngle.getGonsValue() << sep
-				<< rom->measECSP.at(0).obsVertAngle.getGonsValue() << sep
-				<< rom->measECSP.at(0).target.ID << sep
-				<< endl;
-
-			for (auto& ecsp : rom->measECSP)
-			{
-				if (ecsp.obsHorAngle == lectureHz && ecsp.obsVertAngle == lectureV)
-				{
-					(*stream) << ecsp.targetPos->getName() << sep
-						<< ecsp.getDistance() << sep;
-
-					if (ecsp.target.ID != tgID)
-						(*stream) << "SCALE" << sep
-						<< ecsp.target.ID << sep;
-
-					if (ecsp.target.sigmaD != sigma)
-						(*stream) << "OBSE" << sep
-						<< ecsp.target.sigmaD.getMMetresValue() << sep;
-
-					if (ecsp.target.ppmD != ppm)
-						(*stream) << "PPM" << sep
-						<< ecsp.target.ppmD.getMMetresValue() << sep;
-
-					if (ecsp.target.sigmaInstrCentering != centering)
-						(*stream) << "ICSE" << sep
-						<< ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
-
-					(*stream) << endl;
-				}
-				else
-				{
-					lectureHz = ecsp.obsHorAngle;
-					lectureV = ecsp.obsVertAngle;
-					(*stream) << "*ECSP" << sep
-						<< ecsp.obsHorAngle.getGonsValue() << sep
-						<< ecsp.obsVertAngle.getGonsValue() << sep
-						<< ecsp.target.ID << endl;
-
-					(*stream) << ecsp.targetPos->getName() << sep
-						<< ecsp.getDistance() << sep;
-
-					if (ecsp.target.ID != tgID)
-						(*stream) << "SCALE" << sep
-						<< ecsp.target.ID << sep;
-
-					if (ecsp.target.sigmaD != sigma)
-						(*stream) << "OBSE" << sep
-						<< ecsp.target.sigmaD.getMMetresValue() << sep;
-
-					if (ecsp.target.ppmD != ppm)
-						(*stream) << "PPM" << sep
-						<< ecsp.target.ppmD.getMMetresValue() << sep;
-
-					if (ecsp.target.sigmaInstrCentering != centering)
-						(*stream) << "ICSE" << sep
-						<< ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
-
-					(*stream) << endl;
-				}
-			}
-		}
-
 	}
 }
 

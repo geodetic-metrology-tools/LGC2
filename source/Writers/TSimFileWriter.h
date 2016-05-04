@@ -62,6 +62,7 @@ private:
 	void writeDVERMeas(TDVER* meas);
 	void writeECHOMeas(TECHOROM* meas);
 	void writeECVEMeas(TECVEROM* meas);
+	void writeECSPMeas(TECSPROM* meas);
 	void writeEDMMeas(TEDM* meas);
 	void writeLEVELMeas(TLEVEL* meas);
 	void writeORIEMeas(TORIEROM* meas);

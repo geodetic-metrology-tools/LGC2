@@ -311,19 +311,20 @@ bool TReader::read(std::istream& lgcStream) {
 			
 	// read until the next keyword
 	safeGetline(lgcStream, line/*, '*'*/);
-	// store the read title in the config
-	project.getConfig().title = line;
-	// restore the asterisk that was gobbled up by safeGetline
-	lgcStream.putback('*');
+	while (line.compare(0, 1, "*"))
+	{
+		// store the read title in the config
+		project.getConfig().title += line;
+		safeGetline(lgcStream, line/*, '*'*/);
 
-	// add the newline characters in the title to the linecount
-	nline += (int)count(line.cbegin(), line.cend(), '\n');
-	nline++;
+		nline += (int)count(line.cbegin(), line.cend(), '\n');
+		nline++;
+	}
  
 	// read the rest of the file
 	auto lasthandler(finterpreters.back().get());
 	for (auto currenthandler(lasthandler);
-		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
+		lgcStream.good() && (line != "*END" && line != "*FIN");
 		++nline) 
 	{
 		// Prepare the error message for this line
@@ -332,9 +333,14 @@ bool TReader::read(std::istream& lgcStream) {
 		auto tokLine(tokenizeLGCfileString(line));
 
 		// skip empty lines
-		if (tokLine.empty()) continue;
+		if (tokLine.empty())
+		{
+			safeGetline(lgcStream, line/*, '*'*/);
+			continue;
+		}
 		// % means comment line, i.e. to be ignored
 		if (tokLine[0][0] == *"%"){
+			safeGetline(lgcStream, line/*, '*'*/);
 			continue;
 		}
 
@@ -383,6 +389,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 		try{ //Handler was found, try to parse
 			currenthandler->parse(tokLine, nline);
+			safeGetline(lgcStream, line/*, '*'*/);
 		}
 		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
@@ -432,19 +439,20 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 	// read until the next keyword
 	safeGetline(lgcStream, line/*, '*'*/);
-	// store the read title in the config
-	project.getConfig().title = line;
-	// restore the asterisk that was gobbled up by safeGetline
-	lgcStream.putback('*');
-
-	// add the newline characters in the title to the linecount
-	nline += (int)count(line.cbegin(), line.cend(), '\n');
-	nline++;
+	while (line.compare(0, 1, "*"))
+	{
+		// store the read title in the config
+		project.getConfig().title += line;
+		safeGetline(lgcStream, line/*, '*'*/);
+		
+		nline += (int)count(line.cbegin(), line.cend(), '\n');
+		nline++;
+	}
 
 	// read the rest of the file
 	auto lasthandler(finterpreters_lgc1.back().get());
 	for (auto currenthandler(lasthandler);
-		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
+		lgcStream.good() && (line != "*END" && line != "*FIN");
 		++nline)
 	{
 		// Prepare the error message for this line
@@ -453,9 +461,14 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		auto tokLine(tokenizeLGCfileString(line));
 
 		// skip empty lines
-		if (tokLine.empty()) continue;
+		if (tokLine.empty())
+		{
+			safeGetline(lgcStream, line/*, '*'*/);
+			continue;
+		}
 		// % means comment line, i.e. to be ignored
 		if (tokLine[0][0] == *"%"){
+			safeGetline(lgcStream, line/*, '*'*/);
 			continue;
 		}
 
@@ -499,6 +512,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 		try{ //Handler was found, try to parse
 			currenthandler->parse(tokLine, nline);
+			safeGetline(lgcStream, line/*, '*'*/);
 		}
 		catch (std::exception const & excp) 
 		{  // Catch exceptions which can emerge during parsing
