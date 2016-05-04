@@ -21,7 +21,7 @@ namespace TestLgc1 {
 		"STN P3 29.51324 \n"
 		"STN P4  0.14677 \n"
 		"*ZENH 5 \n"
-		"STN P1 49.99345 /0.001 \\0.5 $comments\n"
+		"STN P1 49.99345 /0.001 \\0.5\n"
 		"STN P2 60.81738 \n"
 		"STN P3 53.53918 \n"
 		"STN P4 50.00874 \n"

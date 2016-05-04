@@ -363,54 +363,68 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		currentTSTN->instrumentHeightAdjustable = IH_adj;
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
 		tgt.sigmaZenD = sigmaZEND;
-		if (!IH_adj && firstmeas)
-			instr.instrHeight = TLength(0.0, TLength::EUnits::kMetres);
-		else
+		if (IH_adj!= nullptr && firstmeas)
 			instr.instrHeight = IH_adj->getEstimatedValue();
-
-
-		//read options
+		else
+			instr.instrHeight = TLength(0.0, TLength::EUnits::kMetres);
+		
 		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
 			if (tokens.size() == 5)
+			{
+				if (!tokens.at(3).compare(0, 1, "\\"))
+				{
+					tgt.sigmaZenD = sigmaZEND;
+					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					if (firstmeas)
+						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+
+				}
+				else if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
+				{
+
+					tgt.sigmaZenD = sigmaZEND;
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				}
+				else
+				{
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+					if (firstmeas)
+						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+				}
+			}
+			else if (tokens.size() == 6)
 			{
 				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
 					// Add adjustable scalar into a global collection and store a pointer
 					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+
 				}
-				else if (!tokens.at(3).compare(0, 1, "\\"))
-					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				else if (tokens.at(3).compare(0, 1, "/"))
-					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-				else
-					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
-			}
-			else if (tokens.size() == 6)
-			{
-				if (firstmeas && !tokens.at(4).compare(0, 1, "/"))
+				else if (!tokens.at(4).compare(0, 1, "/") && firstmeas)
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					// Add adjustable scalar into a global collection and store a pointer
 					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-					
 				}
-				else if (tokens.at(3).compare(0, 1, "/") && !tokens.at(4).compare(0, 1, "\\"))
+				else
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					if (firstmeas)
+						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
 				}
-				else if (firstmeas)
-				{
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				}
-				else
-					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
 			}
 			else if (tokens.size() == 7 && firstmeas)
 			{
@@ -430,18 +444,34 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
 		}
 		else
-		{
-			if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "\\"))
-				tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-
-			else if (tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/") && firstmeas)
+		{//read options
+			if (tokens.size() == 4)
 			{
-				// Add adjustable scalar into a global collection and store a pointer
-				instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				if (!tokens.at(3).compare(0, 1, "\\"))
+				{
+					tgt.sigmaZenD = sigmaZEND;
+					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					if (firstmeas)
+						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+				}
+				else if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
+				{
+
+					tgt.sigmaZenD = sigmaZEND;
+					// Add adjustable scalar into a global collection and store a pointer
+					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				}
+				else 
+				{
+					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
+					if (firstmeas)
+						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+				}
 			}
-			else if (tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "\\"))
-				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 			else if (tokens.size() == 5)
 			{
 				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
@@ -463,6 +493,10 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					if (firstmeas)
+						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
+						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
 				}
 			}
 			else if (tokens.size() == 6 && firstmeas)
@@ -481,6 +515,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			else if (!firstmeas)
 				if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !firstmeas && !tokens.at(4).compare(0, 1, "/")) || tokens.size() == 6)
 					throw std::runtime_error("The instrument heigth can be defined only at the beginning of the ROM.");
+
 		}
 
 		firstmeas = false;
@@ -519,6 +554,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigmaZEND = TAngle(1.0, TAngle::EUnits::kCCs);
 		
 		currentStation = "";
+		
 	}
 	else
 	{
