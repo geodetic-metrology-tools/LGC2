@@ -91,6 +91,11 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat){
 	fStream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));
 	fStream->setReferenceFrame(dataParam.getRefFrame());  //default param because not redefine
 	fStream->setCoordSys(TCoordSysFactory::k3DCartesian);
+
+	TPointFormat* pointFormat = fStream->getPointFormat(); 
+	pointFormat->setNameWidth(dat->getConfig().pointNameWidth);
+	fStream->setPointFormat(*pointFormat);
+	
 }
 
 void TLGCApp::saveResults(TLGCData *dat)

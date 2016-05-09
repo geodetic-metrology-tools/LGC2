@@ -156,6 +156,9 @@ void TAPointKey::parse(const std::vector<std::string>& tokens, int line) {
 	auto& pt = insertPoint(tokens.at(0), std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)));
 	pt.line = line;
 
+	if (tokens.at(0).size()>proj.getConfig().pointNameWidth)
+		proj.getConfig().pointNameWidth = tokens.at(0).size();
+
 	TOptionHelper opts(tokens.cbegin(), tokens.cend());
 
 	//If point defined using POIN

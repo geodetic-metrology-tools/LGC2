@@ -221,6 +221,9 @@ struct TLGCConfig
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
 	TCoordOut     writePlot;
 
+	///width of point's name
+	int pointNameWidth = 0;
+
 	/*
 	Checklist: 
 		Referentiel defined? 
