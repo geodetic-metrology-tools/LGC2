@@ -187,6 +187,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	TAKeyWord* zend  = new TKeyZEND(project);
 	TAKeyWord* dist  = new TKeyDIST(project);
 	TAKeyWord* ecth  = new TKeyECTH(project);
+	TAKeyWord* ecdir = new TKeyECDIR(project);
 	TAKeyWord* dhor  = new TKeyDHOR(project);
 	TAKeyWord* plr3d = new TKeyPLR3D(project);
 
@@ -197,6 +198,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(zend));
 	finterpreters.emplace_back(UPK(dist));
 	finterpreters.emplace_back(UPK(ecth));
+	finterpreters.emplace_back(UPK(ecdir));
 	finterpreters.emplace_back(UPK(dhor));
 	finterpreters.emplace_back(UPK(plr3d));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyANGL_lgc1(project)));

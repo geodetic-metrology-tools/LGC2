@@ -76,6 +76,7 @@ private:
 	void	getDISTSimValues(const TTSTN& station, std::vector<TLINE>& dist);
 	void	getDHORSimValues(const TTSTN& station, std::vector<TLINE>& dhor);
 	void	getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECTH>& ecth);
+	void	getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECDIR>& ecdir);
 
 	void	getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& dlev);
 	void	getDVERSimValues(std::vector<TDVER>& dver);

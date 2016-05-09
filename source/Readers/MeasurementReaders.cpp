@@ -615,6 +615,68 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
+void TKeyECDIR::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline) {
+		// look up station point
+		if (tokens.size() < 5)
+			throw std::runtime_error("An ECDIR measurement must have two 3 entries: "
+			"The horizontal and vertical angles defining the line and ID of a SCALE instrument.");
+
+		fScaleInstID = tokens.at(4);
+		fHorAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
+		fVertAngle = TAngle(std::stor(tokens.at(3)), TAngle::kGons);
+
+		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
+	}
+	else{
+		if (tokens.size() < 2 && !fSIMUActive)
+			throw std::runtime_error("An ECTH measurement must have at least 2 entries: "
+			"The observed point and the measured distance.");
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		// look up the stationed point
+		const auto& stPoint(fpoints.getObject(tokens.at(0)));
+
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : getROM()->measECDIR)
+				if (stPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("A ECDIR measurement is duplicated");
+
+
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
+		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+
+		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
+		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
+		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
+
+		// Store  the measured value
+		getROM()->measECDIR.emplace_back(TECDIR(stPoint, scaleInstr, fHorAngle, fVertAngle, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)))));
+
+		//get a reference to the inserted measurement
+		auto& ecdir(getROM()->measECDIR.back());
+
+		ecdir.line = line;
+		//If last token starts with a comment character, store it as a end of line comment
+		const char fOfLastToken = tokens.back().at(0);
+		if (fOfLastToken == '$' || fOfLastToken == '%')
+			ecdir.eolcomment = tokens.back();
+
+		// set indices of LS matrices, ECTH introduces 1 equation and 1 observation
+		ecdir.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		ecdir.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		proj.fUEOIndices.EIndex++;
+		proj.fUEOIndices.OIndex++;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
+	}
+}
+
 void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 {
 	if (! updateDefaultTargetTSTN(tokens)) {

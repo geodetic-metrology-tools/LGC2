@@ -56,6 +56,9 @@ public:
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
+
+		/// Returns contribution for the offset to a theodolite plane (TECDIR) measurement.
+		ECTHContrib	 getECDIRContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECDIR& ecdir);
 	//@}
 
 

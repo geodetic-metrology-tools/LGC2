@@ -135,6 +135,30 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
 };
+/*!
+\ingroup Measurements
+\brief Offset to a theodolit plane measurement (ECTH).
+*/
+class TECDIR : public TAScalarMeas<TInstrumentData::TSCALE>
+{
+public:
+	/// Observed horizontal angle defining the reference plane
+	TAngle obsHorAngle;
+	/// Observed vertical angle defining the reference plane
+	TAngle obsVertAngle;
+
+	/*!@name Constructors */
+	//@{
+	TECDIR(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle HorAngle, TAngle VerAngle);
+	TECDIR(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TAngle obsVerAngle, TLength v);
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+	/// Allfixed parameter: V0
+	TAngle fAllFixedV0[2];
+};
 
 /*!
 \ingroup Measurements

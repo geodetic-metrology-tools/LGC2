@@ -31,6 +31,9 @@ public:
 	/// Returns the V0 for an ECTH measurement
 	TAngle getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth);
 
+	/// Returns the V0 for an ECSP measurement
+	TAngle* getV0AllfixedECDIR(const TTSTN& station, const TTSTN::TROM& rom, const TECDIR& ecdir);
+
 	/// Returns the V0 for a PLR measurement
 	TAngle* getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 

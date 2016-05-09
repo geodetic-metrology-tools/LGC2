@@ -34,6 +34,21 @@ TECTH::TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE sca
 	obsHorAngle(obsHorAngle), fAllFixedV0(TAngle(NO_VALf))
 	{}
 
+TECDIR::TECDIR(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle) :
+TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr),
+obsHorAngle(horAngle), obsVertAngle(vertAngle)
+{
+	fAllFixedV0[0] = (TAngle(NO_VALf));
+	fAllFixedV0[1] = (TAngle(NO_VALf));
+}
+TECDIR::TECDIR(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle horAngle, TAngle vertAngle, TLength v) :
+TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr, v),
+obsHorAngle(horAngle), obsVertAngle(vertAngle)
+{
+	fAllFixedV0[0] = (TAngle(NO_VALf));
+	fAllFixedV0[1] = (TAngle(NO_VALf));
+}
+
 TECSP::TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr) :
     TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr)
 {}

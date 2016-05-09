@@ -678,32 +678,24 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 		<< scaleDefInst.ID << sep;
 	(*stream) << endl;
 
-
-	//write the list of measurements for the line
-		string tgID = meas->measECSP.at(0).target.ID;
-		TLength ppm = meas->measECSP.at(0).target.ppmD;
-		TLength sigma = meas->measECSP.at(0).target.sigmaD;
-		TLength centering = meas->measECSP.at(0).target.sigmaInstrCentering;
-
-
 		for (auto& ecsp : meas->measECSP)
 		{
 				(*stream) << ecsp.targetPos->getName() << sep
 					<< ecsp.getDistance() << sep;
 
-				if (ecsp.target.ID != tgID)
+				if (ecsp.target.ID != scaleDefInst.ID)
 					(*stream) << "SCALE" << sep
 					<< ecsp.target.ID << sep;
 
-				if (ecsp.target.sigmaD != sigma)
+				if (ecsp.target.sigmaD != scaleDefInst.sigmaD)
 					(*stream) << "OBSE" << sep
 					<< ecsp.target.sigmaD.getMMetresValue() << sep;
 
-				if (ecsp.target.ppmD != ppm)
+				if (ecsp.target.ppmD != scaleDefInst.ppmD)
 					(*stream) << "PPM" << sep
 					<< ecsp.target.ppmD.getMMetresValue() << sep;
 
-				if (ecsp.target.sigmaInstrCentering != centering)
+				if (ecsp.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 					(*stream) << "ICSE" << sep
 					<< ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
 
@@ -1068,10 +1060,8 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		if (!rom->measECTH.empty())
 		{
 			TAngle lecture = rom->measECTH.at(0).obsHorAngle;
-			string tgID = rom->measECTH.at(0).target.ID;
-			TLength ppm = rom->measECTH.at(0).target.ppmD;
-			TLength sigma = rom->measECTH.at(0).target.sigmaD;
-			TLength centering = rom->measECTH.at(0).target.sigmaInstrCentering;
+
+			auto scaleDefInst = data->getInstruments().fSCALE.at(rom->measECTH.at(0).target.ID);
 
 			(*stream) << "*ECTH" << sep
 				<< rom->measECTH.at(0).obsHorAngle.getGonsValue() << sep
@@ -1085,19 +1075,19 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 					(*stream) << ecth.targetPos->getName() << sep
 						<< ecth.getDistance() << sep;
 					
-					if (ecth.target.ID != tgID)
+					if (ecth.target.ID != scaleDefInst.ID)
 						(*stream) << "SCALE" << sep
 						<< ecth.target.ID << sep;
 
-					if (ecth.target.sigmaD != rom->measECTH.at(0).target.sigmaD)
+					if (ecth.target.sigmaD != scaleDefInst.sigmaD)
 						(*stream) << "OBSE" << sep
 						<< ecth.target.sigmaD.getMMetresValue() << sep;
 
-					if (ecth.target.ppmD != ppm)
+					if (ecth.target.ppmD != scaleDefInst.ppmD)
 						(*stream) << "PPM" << sep
 						<< ecth.target.ppmD.getMMetresValue() << sep;
 
-					if (ecth.target.sigmaInstrCentering != centering)
+					if (ecth.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep
 						<< ecth.target.sigmaInstrCentering.getMMetresValue() << sep;
 					
@@ -1106,10 +1096,6 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				else
 				{
 					lecture = ecth.obsHorAngle;
-					tgID = ecth.target.ID;
-					ppm = ecth.target.ppmD;
-					sigma = ecth.target.sigmaD;
-					centering = ecth.target.sigmaInstrCentering;
 
 					(*stream) << "*ECTH" << sep
 						<< ecth.obsHorAngle.getGonsValue() << sep
@@ -1118,21 +1104,92 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 					(*stream) << ecth.targetPos->getName() << sep
 						<< ecth.getDistance() << sep;
 
-					if (ecth.target.ID != tgID)
+					if (ecth.target.ID != scaleDefInst.ID)
 						(*stream) << "SCALE" << sep
 						<< ecth.target.ID << sep;
 
-					if (ecth.target.sigmaD != rom->measECTH.at(0).target.sigmaD)
+					if (ecth.target.sigmaD != scaleDefInst.sigmaD)
 						(*stream) << "OBSE" << sep
 						<< ecth.target.sigmaD.getMMetresValue() << sep;
 
-					if (ecth.target.ppmD != ppm)
+					if (ecth.target.ppmD != scaleDefInst.ppmD)
 						(*stream) << "PPM" << sep
 						<< ecth.target.ppmD.getMMetresValue() << sep;
 
-					if (ecth.target.sigmaInstrCentering != centering)
+					if (ecth.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep
 						<< ecth.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+					(*stream) << endl;
+				}
+			}
+		}
+
+		//ECDIR
+		if (!rom->measECDIR.empty())
+		{
+			auto scaleDefInst = data->getInstruments().fSCALE.at(rom->measECDIR.at(0).target.ID);
+			TAngle lectureHz = rom->measECDIR.at(0).obsHorAngle;
+			TAngle lectureV = rom->measECDIR.at(0).obsVertAngle;
+
+			(*stream) << "*ECDIR" << sep
+				<< rom->measECDIR.at(0).obsHorAngle.getGonsValue() << sep
+				<< rom->measECDIR.at(0).obsVertAngle.getGonsValue() << sep
+				<< rom->measECDIR.at(0).target.ID << sep
+				<< endl;
+
+			for (auto& ecdir : rom->measECDIR)
+			{
+				if (ecdir.obsHorAngle == lectureHz && ecdir.obsVertAngle == lectureV)
+				{
+					(*stream) << ecdir.targetPos->getName() << sep
+						<< ecdir.getDistance() << sep;
+
+					if (ecdir.target.ID != scaleDefInst.ID)
+						(*stream) << "SCALE" << sep
+						<< ecdir.target.ID << sep;
+
+					if (ecdir.target.sigmaD != scaleDefInst.sigmaD)
+						(*stream) << "OBSE" << sep
+						<< ecdir.target.sigmaD.getMMetresValue() << sep;
+
+					if (ecdir.target.ppmD != scaleDefInst.ppmD)
+						(*stream) << "PPM" << sep
+						<< ecdir.target.ppmD.getMMetresValue() << sep;
+
+					if (ecdir.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
+						(*stream) << "ICSE" << sep
+						<< ecdir.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+					(*stream) << endl;
+				}
+				else
+				{
+					lectureHz = ecdir.obsHorAngle;
+					lectureV = ecdir.obsVertAngle;
+					(*stream) << "*ECDIR" << sep
+						<< ecdir.obsHorAngle.getGonsValue() << sep
+						<< ecdir.obsVertAngle.getGonsValue() << sep
+						<< ecdir.target.ID << endl;
+
+					(*stream) << ecdir.targetPos->getName() << sep
+						<< ecdir.getDistance() << sep;
+
+					if (ecdir.target.ID != scaleDefInst.ID)
+						(*stream) << "SCALE" << sep
+						<< ecdir.target.ID << sep;
+
+					if (ecdir.target.sigmaD != scaleDefInst.sigmaD)
+						(*stream) << "OBSE" << sep
+						<< ecdir.target.sigmaD.getMMetresValue() << sep;
+
+					if (ecdir.target.ppmD != scaleDefInst.ppmD)
+						(*stream) << "PPM" << sep
+						<< ecdir.target.ppmD.getMMetresValue() << sep;
+
+					if (ecdir.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
+						(*stream) << "ICSE" << sep
+						<< ecdir.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 					(*stream) << endl;
 				}

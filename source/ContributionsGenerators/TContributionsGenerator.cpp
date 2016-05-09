@@ -489,6 +489,82 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(shared_ptr<TTSTN> station, 
 	return contrib;
 }
 
+//ECDIR contribution
+ECTHContrib	 TContributionsGenerator::getECDIRContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECDIR& ecdir)
+{
+	///////////////////Transform TARGET and STATION from their's LOR to ROOT///////////////////////////////
+	TPositionVector targetPos = station->instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+
+	TPositionVector stationPos = ecdir.targetPos->getEstimatedValue(); //position of the TSTN
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecdir.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station->rot3D != true){
+		fPointTransfo.transformPointsToMLASystem(ecdir.targetPos->getName(), stationPos, targetPos);
+		fPointTransfo.setMLA(true);
+	}
+	else
+		fPointTransfo.setMLA(false);
+
+	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
+
+
+	TAngle theta = ecdir.obsHorAngle;
+	TAngle phi = ecdir.obsVertAngle;
+	TAngle Vo = rom->v0->getEstimatedValue();
+	//line direction at the TSTN position
+	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
+
+
+	//Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	TReal d, pScal;
+	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg));  // distance St-Tg
+	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg);  //produit scalaire
+
+	TReal calcMeas = sqrt(pow2(d) - pow2(pScal)) - ecdir.target.distCorrectionValue.getMetresValue();
+
+	//contributions
+	TReal a, b, c, V0Contrib;
+	if (calcMeas > nullLimit)
+	{
+		a = ((xSt - xTg) - l[0] * pScal) / calcMeas;
+		b = ((ySt - yTg) - l[1] * pScal) / calcMeas;
+		c = ((zSt - zTg) - l[2] * pScal) / calcMeas;
+		V0Contrib = -1 * (l[1] * (xSt - xTg) - l[0] * (ySt - yTg)) / calcMeas; /**/
+	}
+	else
+		throw std::logic_error("TContributionGenerator::getECDIRContrib: Division by zero because the point is on the line");
+
+
+	TReal distCorrection = -1.0;  //Not use for the moment, because it is not adjustable.
+
+	//Station can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, -a, -b, -c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
+	addTransformationsContributions(stLor2RootTrafo, ecdir.targetPos->getEstimatedValue(), -a, -b, -c, stationTransfContributions);
+
+	//Target can be defined anywhere, get point contributions and transformations contributions
+	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, a, b, c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
+	addTransformationsContributions(tgLor2RootTrafo, station->instrumentPos->getEstimatedValue(), a, b, c, targetTransfContributions);
+
+	// Variance calculation
+	TReal varM = pow2q(ecdir.target.sigmaD + ecdir.getDistance() / 1000 * ecdir.target.ppmD);
+	TReal variance = varM + (pow2q(cos(theta + Vo)*sin(phi)) + pow2q(sin(theta + Vo)*sin(phi)))*pow2q(ecdir.target.sigmaInstrCentering);
+
+	ECTHContrib	contrib = { calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance };
+	return contrib;
+}
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- individual measurements
 //////////////////////////////////////////////////////////////////////

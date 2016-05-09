@@ -126,6 +126,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kECTH:
 			fMeasInfo.fNumECTH++;
 			break;
+		case TMeasurementsGlobal::kECDIR:
+			fMeasInfo.fNumECDIR++;
+			break;
 		case TMeasurementsGlobal::kDLEV:
 			fMeasInfo.fNumDLEV++;
 			break;
@@ -179,6 +182,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumDSPT;
 	case TMeasurementsGlobal::kECTH:
 		return fMeasInfo.fNumECTH;
+	case TMeasurementsGlobal::kECDIR:
+		return fMeasInfo.fNumECDIR;
 	case TMeasurementsGlobal::kDLEV:
 		return fMeasInfo.fNumDLEV;
 	case TMeasurementsGlobal::kDVER:
@@ -226,6 +231,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumDHOR = 0;
 	fMeasInfo.fNumDVER = 0;
 	fMeasInfo.fNumECTH = 0;
+	fMeasInfo.fNumECDIR = 0;
 	fMeasInfo.fNumDSPT = 0;
 	fMeasInfo.fNumUVEC = 0;
 	fMeasInfo.fNumUVD = 0;

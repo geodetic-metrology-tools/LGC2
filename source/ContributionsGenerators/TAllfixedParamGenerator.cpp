@@ -48,6 +48,58 @@ TAngle TAllfixedParamGenerator::getV0AllfixedANGL(const TTSTN& station, const TT
 	return (calcMeas - angl.getAngle());
 }
 
+TAngle* TAllfixedParamGenerator::getV0AllfixedECDIR(const TTSTN& station, const TTSTN::TROM& rom, const TECDIR& ecdir)
+{
+	TPositionVector targetPos = station.instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
+	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+	tgLor2RootTrafo.transform(targetPos);
+
+	TPositionVector stationPos = ecdir.targetPos->getEstimatedValue(); //position of the TSTN
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecdir.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+	stLor2RootTrafo.transform(stationPos);
+
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station.rot3D != true){
+		fPointTransfo.transformPointsToMLASystem(ecdir.targetPos->getName(), stationPos, targetPos);
+		fPointTransfo.setMLA(true);
+	}
+	else
+		fPointTransfo.setMLA(false);
+
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
+
+
+	TAngle theta = ecdir.obsHorAngle;
+	TAngle phi = ecdir.obsVertAngle;
+	TAngle Vo = rom.v0->getEstimatedValue();
+	//line direction at the TSTN position
+	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
+
+
+	//Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	TReal d, pScal;
+	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg));  // distance St-Tg
+	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg);  //produit scalaire
+
+	TReal lambda = sqrt(pow2(d) - pow2(ecdir.getDistance() + ecdir.target.distCorrectionValue));
+
+	TReal k = -1.0 * (lambda - (zSt - zTg)*ecdir.obsVertAngle.cosine());
+
+	initSolution();
+	solveTrigoEquation((ySt - yTg)*ecdir.obsVertAngle.sine(), (xSt - xTg)*ecdir.obsVertAngle.sine(), k);
+
+	// solveTrigoEquation gives a solution for theta+V0, we search V0 only.
+	fSolutionTrigo[0] -= ecdir.obsHorAngle;
+	fSolutionTrigo[1] -= ecdir.obsHorAngle;
+
+	return fSolutionTrigo;
+}
 
 TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TECTH& ecth)
 {

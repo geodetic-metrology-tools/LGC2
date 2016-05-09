@@ -136,7 +136,7 @@ private:
 		/// Sets the DVER measurement residual.
 		void extractDVERObs(const TLSResultsMatrices& rm, std::vector<TDVER>& dver);
 
-		/// Sets the distance measurement residual for a SCALE (ECTH, ECVE, ECSP).
+		/// Sets the distance measurement residual for a SCALE (ECTH, ECVE,ECSP, ECDIR).
 		void extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TSCALE>& scaleMeas);
 
 		/// Sets the PDOR measurement residual.

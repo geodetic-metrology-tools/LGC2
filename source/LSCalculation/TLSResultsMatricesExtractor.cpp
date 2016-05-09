@@ -93,6 +93,9 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 					
 					for(auto& itECTH:itROM->measECTH)
 						extractDistObs(rm, itECTH);
+
+					for (auto& itECDIR : itROM->measECDIR)
+						extractDistObs(rm, itECDIR);
 					
 				}
 			}

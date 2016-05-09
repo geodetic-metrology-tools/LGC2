@@ -146,6 +146,7 @@ void TLSSimulation::simulateValues()
 				getDISTSimValues(*itTSTN, itROM->measDIST); //Fill contribution to a DIST measurement
 				getDHORSimValues(*itTSTN, itROM->measDHOR); //Fill contribution to a DHOR measurement
 				getECTHSimValues(*itTSTN, *itROM, itROM->measECTH); //Fill contribution to a ECTH measurement
+				getECDIRSimValues(*itTSTN, *itROM, itROM->measECDIR); //Fill contribution to a ECSP measurement
 			}
 		}
 
@@ -345,6 +346,14 @@ void	TLSSimulation::getECTHSimValues(const TTSTN& station, const TTSTN::TROM& ro
 		TReal calcVal = fSimObs.getECTHCalcMeas(station, rom, itECTH);
 		TReal sigma = itECTH.target.sigmaD;
 		itECTH.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
+	}
+}
+
+void	TLSSimulation::getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECDIR>& ecdir){
+	for (auto& itECSP : ecdir){
+		TReal calcVal = fSimObs.getECDIRCalcMeas(station, rom, itECSP);
+		TReal sigma = itECSP.target.sigmaD;
+		itECSP.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
 }
 

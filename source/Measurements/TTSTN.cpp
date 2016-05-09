@@ -36,12 +36,12 @@ TLGCObsSummary  TTSTN::TROM::getECTHObsSummary() const{
 	return summary;	
 }
 
-//TLGCObsSummary  TTSTN::TROM::getECSPObsSummary() const{
-//	TLGCObsSummary summary;
-//	for (auto& ItECSP :measECTH)
-//		summary.addNewResidual(ItECSP.getDistanceResidual().getMMetresValue());
-//	return summary;
-//}
+TLGCObsSummary  TTSTN::TROM::getECDIRObsSummary() const{
+	TLGCObsSummary summary;
+	for (auto& ItECDIR :measECDIR)
+		summary.addNewResidual(ItECDIR.getDistanceResidual().getMMetresValue());
+	return summary;
+}
 
 TPOLARObsSummary TTSTN::TROM::getPLR3DObsSummary()const{
 	TPOLARObsSummary summary;

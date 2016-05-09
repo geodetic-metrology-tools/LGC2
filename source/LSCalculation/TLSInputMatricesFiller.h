@@ -83,6 +83,8 @@ private:
 		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecth observations 
 		void  addECTHContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		/// Add the design matrices contributions for the ecdir observations 
+		void  addECDIRContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add CAMERA UVEC observation
 		void addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices);

@@ -261,6 +261,7 @@ void    TResultsFileWriter::writeDataSummary()
     int fNumDistMeas = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDIST);
     int fNumPLR3D = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPLR3D);
 	int fNumECTH = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECTH);
+	int fNumECDIR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECDIR);
 	int fNumDHOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDHOR);
 	int fNumDSPT = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDSPT);
 	int fNumUVEC = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVEC);
@@ -287,6 +288,9 @@ void    TResultsFileWriter::writeDataSummary()
     if(fNumPLR3D != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kPLR3D), fNumPLR3D);
 
+	if (fNumECDIR != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECDIR), fNumECDIR);
+	
 	if (fNumECTH != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECTH), fNumECTH);
 

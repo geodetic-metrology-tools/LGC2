@@ -50,6 +50,9 @@ public:
 	/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 	TReal	 getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
 
+	/// Returns contribution for the offset to a theodolite line (TECDIR) measurement.
+	TReal	 getECDIRCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECDIR& ecdir);
+
 	/// Returns the the TUVEC measurement calculaded measurement value
 	TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
 
