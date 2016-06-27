@@ -373,6 +373,8 @@ bool TReader::read(std::istream& lgcStream) {
 				// abort if there is no valid handler
 				if (!currenthandler){
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
+					//allow to get to the next line, avoid infinite loop
+					safeGetline(lgcStream, line/*, '*'*/);
 					continue;
 				}
 
@@ -385,6 +387,8 @@ bool TReader::read(std::istream& lgcStream) {
 			}
 			catch (std::exception const& excp) {
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
+				//allow to get to the next line, avoid infinite loop
+				safeGetline(lgcStream, line/*, '*'*/);
 			}
 		}
 
@@ -395,6 +399,8 @@ bool TReader::read(std::istream& lgcStream) {
 		}
 		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
+			//allow to get to the next line, avoid infinite loop
+			safeGetline(lgcStream, line/*, '*'*/);
 		}
 	}
 
@@ -501,6 +507,8 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 				// abort if there is no valid handler
 				if (!currenthandler){
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
+					//allow to get to the next line, avoid infinite loop
+					safeGetline(lgcStream, line/*, '*'*/);
 					continue;
 				}
 
@@ -508,6 +516,8 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			catch (std::exception const& excp)
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
+				//allow to get to the next line, avoid infinite loop
+				safeGetline(lgcStream, line/*, '*'*/);
 			}
 		}
 
@@ -519,6 +529,8 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		catch (std::exception const & excp) 
 		{  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
+			//allow to get to the next line, avoid infinite loop
+			safeGetline(lgcStream, line/*, '*'*/);
 		}
 	}
 
