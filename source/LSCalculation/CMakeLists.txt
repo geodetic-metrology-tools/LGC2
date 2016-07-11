@@ -1,9 +1,9 @@
-include_directories(${LGC_MODULE_PATH}
-					${LGC_MODULE_PATH}/AdjustableObjects
-					${LGC_MODULE_PATH}/ContributionsGenerators
-					${LGC_MODULE_PATH}/LGCProjectData
-					${LGC_MODULE_PATH}/LocalTransformations
-					${LGC_MODULE_PATH}/Measurements)
+include_directories(${CMAKE_SOURCE_DIR}
+					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/ContributionsGenerators
+					${CMAKE_SOURCE_DIR}/LGCProjectData
+					${CMAKE_SOURCE_DIR}/LocalTransformations
+					${CMAKE_SOURCE_DIR}/Measurements)
 
 # Create a variable containing all .h files:
 set(LSCalculation_HEADERS 	
