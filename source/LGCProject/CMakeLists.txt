@@ -1,14 +1,14 @@
-include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/AdjustableObjects
-					${CMAKE_SOURCE_DIR}/ContributionsGenerators
-					${CMAKE_SOURCE_DIR}/LGCCalculation
-					${CMAKE_SOURCE_DIR}/LGCProject
-					${CMAKE_SOURCE_DIR}/LGCProjectData
-					${CMAKE_SOURCE_DIR}/Measurements
-					${CMAKE_SOURCE_DIR}/LGCObjectWriters
-					${CMAKE_SOURCE_DIR}/LocalTransformations
-					${CMAKE_SOURCE_DIR}/Readers
-					${CMAKE_SOURCE_DIR}/Writers
+include_directories(${LGC_MODULE_PATH}
+					${LGC_MODULE_PATH}/AdjustableObjects
+					${LGC_MODULE_PATH}/ContributionsGenerators
+					${LGC_MODULE_PATH}/LGCCalculation
+					${LGC_MODULE_PATH}/LGCProject
+					${LGC_MODULE_PATH}/LGCProjectData
+					${LGC_MODULE_PATH}/Measurements
+					${LGC_MODULE_PATH}/LGCObjectWriters
+					${LGC_MODULE_PATH}/LocalTransformations
+					${LGC_MODULE_PATH}/Readers
+					${LGC_MODULE_PATH}/Writers
 					)
 
 # Create a variable containing all .h files:

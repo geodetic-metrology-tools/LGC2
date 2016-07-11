@@ -1,10 +1,10 @@
-include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/AdjustableObjects
-					${CMAKE_SOURCE_DIR}/LGCProject
-					${CMAKE_SOURCE_DIR}/LGCProjectData
-					${CMAKE_SOURCE_DIR}/Measurements
-					${CMAKE_SOURCE_DIR}/LGCObjectWriters
-					${CMAKE_SOURCE_DIR}/LocalTransformations)
+include_directories(${LGC_MODULE_PATH}
+					${LGC_MODULE_PATH}/AdjustableObjects
+					${LGC_MODULE_PATH}/LGCProject
+					${LGC_MODULE_PATH}/LGCProjectData
+					${LGC_MODULE_PATH}/Measurements
+					${LGC_MODULE_PATH}/LGCObjectWriters
+					${LGC_MODULE_PATH}/LocalTransformations)
 
 set(READER_HEADERS
 	AdjObjectsReader.h
