@@ -324,14 +324,14 @@ void	TObservationWriter::writeReliabilityHeader(	string name1,
 	return;
 }
 
-void TObservationWriter::writeReliability(int index, const TLGCStatistic& stat)
+void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
 
 	// Test the computing: if it failed, write the corresponding error messages
-	if (stat.getAreDetermined())
+	if (stat.getAreDetermined(index))
 	{
 		//get zi
 		TReal z = stat.getZi().coeff(index);
@@ -357,19 +357,19 @@ void TObservationWriter::writeReliability(int index, const TLGCStatistic& stat)
 		}
 	
 		//get gi	
-		if (stat.getGToCompute())
+		if (stat.getGToCompute(index))
 		{
 			(*stream).writeString(3,"**");
-			(*stream).writeDouble(obsResWidth,2, stat.getGi().coeff(index) );
+			(*stream).writeDouble(obsResWidth, 2, stat.getGi().coeff(index)*RAD2CC);
 		}else{
 			(*stream).writeString(3,"");
 			(*stream).writeString(obsResWidth,"");
 		}
 		
 		// get nabla
-		if (stat.getDeltaComputed()) 
+		if (stat.getDeltaComputed(index))
 		{ //tests that the nabla has been correctly computed
-			(*stream).writeDouble(obsResWidth,2, stat.getNabla().coeff(index));
+			(*stream).writeDouble(obsResWidth,2, stat.getNabla().coeff(index)*RAD2CC);
 		}else{
 			(*stream).writeString(obsResWidth,"INDTMNE");
 		}
@@ -379,7 +379,7 @@ void TObservationWriter::writeReliability(int index, const TLGCStatistic& stat)
 		
 		// get DELTY
 		stream->width(10);
-		if (stat.getDeltaComputed())/*tests that the delty has been correctly computed*/
+		if (stat.getDeltaComputed(index))/*tests that the delty has been correctly computed*/
 		{ 
 			(*stream).writeDouble(obsResWidth,2, stat.getDelty().coeff(index));
 		}else{
@@ -399,6 +399,94 @@ void TObservationWriter::writeReliability(int index, const TLGCStatistic& stat)
 
 	(*stream)<<endl;
 }
+
+void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic& stat)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+
+	// Test the computing: if it failed, write the corresponding error messages
+	if (stat.getAreDetermined(index))
+	{
+		//get zi
+		TReal z = stat.getZi().coeff(index);
+		stream->setf(ios::fixed, ios::floatfield);
+		// checks that z is between 25% and 60%, and if not, adds some symbols
+		(*stream).writeDouble(obsResWidth, 1, 100 * z);
+
+		if (z < LITERAL(0.25))
+		{
+			(*stream).writeString(3, "**");
+		}
+
+		if (z > LITERAL(0.60))
+		{
+			(*stream).writeString(3, "!");
+		}
+
+		if (z >= LITERAL(0.25) && z <= LITERAL(0.60))
+		{
+			(*stream).writeString(3, "");
+		}
+
+		//get wi
+		if (stat.getWToCompute())
+		{
+			(*stream).writeDouble(8, 2, stat.getWi().coeff(index));
+		}
+		else{
+			(*stream).writeString(8, "");
+		}
+
+		//get gi	
+		if (stat.getGToCompute(index))
+		{
+			(*stream).writeString(3, "**");
+			(*stream).writeDouble(obsResWidth, 2, stat.getGi().coeff(index)*M2MM);
+		}
+		else{
+			(*stream).writeString(3, "");
+			(*stream).writeString(obsResWidth, "");
+		}
+
+		// get nabla
+		if (stat.getDeltaComputed(index))
+		{ //tests that the nabla has been correctly computed
+			(*stream).writeDouble(obsResWidth, 2, stat.getNabla().coeff(index)*M2MM);
+		}
+		else{
+			(*stream).writeString(obsResWidth, "INDTMNE");
+		}
+
+		// get T
+		(*stream).writeDouble(obsResWidth, 2, stat.getTi().coeff(index));
+
+		// get DELTY
+		stream->width(10);
+		if (stat.getDeltaComputed(index))/*tests that the delty has been correctly computed*/
+		{
+			(*stream).writeDouble(obsResWidth, 2, stat.getDelty().coeff(index));
+		}
+		else{
+			(*stream).writeString(obsResWidth, "INDTMNE");
+		}
+
+	}
+	else {
+		(*stream).writeString(obsResWidth, "0.0");//z
+		(*stream).writeString(3, "");
+		(*stream).writeString(8, "INDETERMINE");//wi
+		(*stream).writeString(0, "");
+		(*stream).writeString(obsResWidth, "");//gi
+		(*stream).writeString(obsResWidth, "");//nabla
+		(*stream).writeString(obsResWidth, "INFINI");//T
+		(*stream).writeString(obsResWidth, "");//DELTY
+	}
+
+	(*stream) << endl;
+}
+
 // Get the French version of the observation description
 // returns a string with the description
 string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)

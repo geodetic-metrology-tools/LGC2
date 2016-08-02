@@ -217,7 +217,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		// get Stn point
 		(*stream).writeStringLeft(nameWidth, fEdm.instrumentPos->getName());
 		//get Tg point
-		(*stream).writeStringLeft(nameWidth, ItDspt.target.ID);
+		(*stream).writeStringLeft(nameWidth, ItDspt.targetPos->getName());
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
 
@@ -229,7 +229,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;

@@ -41,7 +41,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 
-	//For each ECHO measurement of the station
+	//For each DVER measurement of the station
 	for(auto const& ItDver : fDVER)
 	{
 		// Observation index to take the right value in the statistic vector
@@ -62,7 +62,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDver.getDistanceResidual().getMMetresValue());
 
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -100,7 +100,7 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& f
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
 
 
-		writeReliability(index, stat);
+		writeReliabilityCC(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -136,7 +136,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::vector<TRADI>& f
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual().getMMetresValue());
 
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;

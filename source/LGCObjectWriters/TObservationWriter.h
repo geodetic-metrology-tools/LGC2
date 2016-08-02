@@ -64,7 +64,8 @@ protected:
 										string unit2);
 		
 		/// write reliability 
-		void writeReliability(int index, const TLGCStatistic& stat);
+		void writeReliabilityCC(int index, const TLGCStatistic& stat);
+		void writeReliabilityMM(int index, const TLGCStatistic& stat);
 
 	//@}
 private:

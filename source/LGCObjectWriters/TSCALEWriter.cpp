@@ -401,7 +401,7 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -437,7 +437,7 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -471,7 +471,7 @@ void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCS
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;

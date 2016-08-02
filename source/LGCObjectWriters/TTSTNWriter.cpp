@@ -1479,7 +1479,7 @@ void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue());
 
-		writeReliability(index, stat);
+		writeReliabilityCC(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -1515,7 +1515,7 @@ void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());
 
-		writeReliability(index, stat);
+		writeReliabilityCC(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -1549,7 +1549,7 @@ void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;	
@@ -1586,7 +1586,7 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
 
-		writeReliability(index, stat);
+		writeReliabilityCC(index, stat);
 //----------------------- ZEND ------------------------------------//
 		// get reference point to the plane
 		(*stream).writeStringLeft(nameWidth, "");
@@ -1602,7 +1602,7 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
 
-		writeReliability(index+1, stat);
+		writeReliabilityCC(index+1, stat);
 //----------------------- DIST ------------------------------------//
 		// get reference point to the plane
 		(*stream).writeStringLeft(nameWidth, "");
@@ -1618,7 +1618,7 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItPLR.getDistanceResidual(ESingleValue::kValue).getMMetresValue());
 
-		writeReliability(index+2, stat);
+		writeReliabilityMM(index+2, stat);
 		(*stream).setDataSpacing();
 	}
 	return;	
@@ -1652,7 +1652,7 @@ void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;	
@@ -1686,7 +1686,7 @@ void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
@@ -1720,7 +1720,7 @@ void	TTSTNWriter::writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSt
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 	return;
