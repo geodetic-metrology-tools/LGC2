@@ -275,7 +275,7 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStat
 			//get the residual
 			(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.dhor->getDistanceResidual().getMMetresValue());
 
-			writeReliability(index, stat);
+			writeReliabilityMM(index, stat);
 			(*stream).setDataSpacing();
 		}
 
@@ -313,7 +313,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDLEV.getDistanceResidual().getMMetresValue());
 
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 		(*stream).setDataSpacing();
 	}
 return;

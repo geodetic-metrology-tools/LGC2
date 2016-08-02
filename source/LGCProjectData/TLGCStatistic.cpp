@@ -5,12 +5,16 @@
 #include "QuantileFunctions.h"
 #include "TLSResultsMatrices.h"
 #include "TLSInputMatrices.h"
+#include "TSparseMatrix.h"
 
 //////////////////////////
 // no argument constructor
 //////////////////////////
-TLGCStatistic::TLGCStatistic():fError(""), fAreDetermined(false), fGToCompute(false),
-fDeltaComputed(false),fWToCompute(true),
+TLGCStatistic::TLGCStatistic():fError(""),
+fWToCompute(true),
+fAreDetermined(nullptr),
+fGToCompute(nullptr),
+fDeltaComputed(nullptr),
 fZ(nullptr),
 fW(nullptr),
 fT(nullptr),
@@ -35,6 +39,10 @@ void TLGCStatistic::initialiseStatVector(const TLSInputMatrices* im)
 	fDelty.reset(new TVector(nbObs));
 	fNablaValue.reset(new TVector(nbObs));
 	fGValue.reset(new TVector(nbObs));
+
+	fAreDetermined.reset(new TVector(nbObs));
+	fGToCompute.reset(new TVector(nbObs));
+	fDeltaComputed.reset(new TVector(nbObs));
 }
 
 void TLGCStatistic::clearVectors(){
@@ -44,37 +52,43 @@ void TLGCStatistic::clearVectors(){
 	fDelty.reset(nullptr);
 	fNablaValue.reset(nullptr);
 	fGValue.reset(nullptr);
+
+
+	fAreDetermined.reset(nullptr);
+	fGToCompute.reset(nullptr);
+	fDeltaComputed.reset(nullptr);
 }
 
 void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm)
 {
-	int nbObs = im->getNbrObservations() /*+ im->getNbrConstraints()*/; 
+	int nbObs = im->getNbrObservations(); 
 
 
 	double s02 = rm->getSigmaZero2();
-	TReal sigmaAPriori = 1;
+	TReal varAPriori = 1;
 	double varRes = 0;
 	double res = 0;
 
-	// reset the variables, necessary if the object is reused (e.g. in simulations)
-	fAreDetermined = fGToCompute = fDeltaComputed  = false;
-
+	// compute z
+	TSparseMatrix Z = *(rm->getResCovarMtrx()) * *(im->getWeightMtrx());
 
 	//loop for each unknowns
 	int i = 0;
 	while (i<nbObs)
 	{		
-		sigmaAPriori = im->getWeightInvMtrx()->coeff(i,i);
+		// reset the variables, necessary if the object is reused (e.g. in simulations)
+		(*fAreDetermined)(i) = (*fGToCompute)(i) = (*fDeltaComputed)(i) = false;
+
+		varAPriori = im->getWeightInvMtrx()->coeff(i,i);
 		varRes = rm->getResCovarMtrxElmt(i,i);
 		res = rm->getResidualsVctrElmt(i);
 
-		if (sigmaAPriori!=LITERAL(0.0) && varRes!=LITERAL(0.0)) {
+		if (varAPriori != LITERAL(0.0) && varRes != LITERAL(0.0)) {
 			
-			fAreDetermined = true;
+			(*fAreDetermined)(i) = true;
 			
 			// compute z		
-			TReal cof = varRes/s02;
-			(*fZ)(i) = cof * (1 / sigmaAPriori);
+			(*fZ)(i) = Z.coeff(i, i);
 			// check on z consistency
 			if ((fZ->coeff(i) < LITERAL(1.0000001))&&(fZ->coeff(i)>LITERAL(1.0))) 
 			{
@@ -83,7 +97,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 			
 			if ((fZ->coeff(i) > LITERAL(1.0))|| (fZ->coeff(i) < LITERAL(0.0005)))
 			{
-				fAreDetermined = false;
+				(*fAreDetermined)(i) = false;
 			}
 			else
 			{
@@ -98,28 +112,26 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 				
 				// determination of alpha's percentile (upper tail)
 		        TReal wmax = deviates_normal_upper_tail(alpha/2);
-		        fDeltaComputed = true;
+		        (*fDeltaComputed)(i) = true;
 
 				if ((fabsq(fW->coeff(i)) >= wmax) && fWToCompute)
 				{// test if g needs to be calculated
 					// computes g
 					(*fGValue)(i) = -(res/fZ->coeff(i));
-					fGToCompute = true;
+					(*fGToCompute)(i) = true;
 				}
 
 				// determination of beta's percentile (upper tail)
 		        TReal d = deviates_normal_upper_tail(beta);
-		        fDeltaComputed = true;
+		        (*fDeltaComputed)(i) = true;
 
 
-				if (fDeltaComputed)
+				if ((*fDeltaComputed)(i))
 				{
 					TReal delta(wmax+d);
 					//compute nabla
 					(*fNablaValue)(i) = (delta * (sqrtq(varRes)/fZ->coeff(i)));///powq(s0,2);
 
-					if (fNablaValue->coeff(i)>LITERAL(1000.0)*sigmaAPriori)
-						fAreDetermined = false;
 					// computes DELTY
 					(*fDelty)(i) = delta * sqrtq(powq(fT->coeff(i),2) - LITERAL(1.0));
 				}

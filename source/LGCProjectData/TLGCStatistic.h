@@ -48,13 +48,13 @@ public:
 	 //@}
 
 	/// Returns TRUE if reliabilities have been calculated
-	bool		getAreDetermined() const {return fAreDetermined;}
+	bool		getAreDetermined(int index) const {return (*fAreDetermined)(index);}
 	/// Returns TRUE if normalised residual has been calculated
 	bool		getWToCompute() const {return fWToCompute; }
 	/// Returns TRUE if the probable size of the detected fault has been calculated
-	bool		getGToCompute() const {return fGToCompute;}
+	bool		getGToCompute(int index) const { return (*fGToCompute)(index); }
 	/// Returns TRUE if external reliability has been calculated
-	bool		getDeltaComputed() const {return fDeltaComputed;}
+	bool		getDeltaComputed(int index) const { return (*fDeltaComputed)(index); }
 
 	/// Reset the vectors to a null vector
 	void clearVectors();
@@ -74,12 +74,12 @@ private:
 	std::unique_ptr<TVector>		fDelty; /*!< Maximum effect of an undetected gross-error */
 	std::unique_ptr<TVector>		fNablaValue; /*!< Value for greatest undetected error */
 	std::unique_ptr<TVector>		fGValue; /*!< Value for estimation of the gross-error made with the statistic wi */
-	TReal			fOverall; /*!< global network reliability */
+	TReal							fOverall; /*!< global network reliability */
 
-	bool		fAreDetermined; /*!< indicates if the error detection params can be computed */
-	bool		fWToCompute; /*!< Indicates if the w param is to compute: false if simulation */
-	bool		fGToCompute; /*!< indicates if G needs to be computed */
-	bool		fDeltaComputed; /*!< indicates that the parameters for statistic tests have been rightly chosen */
+	std::unique_ptr<TVector>		fAreDetermined; /*!< indicates if the error detection params can be computed */
+	bool							fWToCompute; /*!< Indicates if the w param is to compute: false if simulation */
+	std::unique_ptr<TVector>		fGToCompute; /*!< indicates if G needs to be computed */
+	std::unique_ptr<TVector>		fDeltaComputed; /*!< indicates that the parameters for statistic tests have been rightly chosen */
 
 };
 #endif 

@@ -387,7 +387,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvec.getXCompVectorResidual()* M2MM);
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 
 //------------------- 2nd obs----------------------------------------------------//
 		// get reference point to the plane
@@ -406,7 +406,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.getYCompVectorResidual()* M2MM);
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 
 	(*stream).setDataSpacing();
 	}
@@ -444,7 +444,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getXCompVectorResidual()* M2MM);
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 
 //------------------- 2nd obs----------------------------------------------------//
 		index = index + 1;
@@ -462,7 +462,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getYCompVectorResidual()* M2MM);
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 
 //------------------- 3rd obs----------------------------------------------------//
 		index = index + 1;
@@ -480,7 +480,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getDistanceResidual().getMMetresValue());
 
-		writeReliability(index, stat);
+		writeReliabilityMM(index, stat);
 
 	(*stream).setDataSpacing();
 	}
