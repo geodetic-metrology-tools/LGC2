@@ -125,7 +125,7 @@ private:
 		/// Fills contributions of an adjustable transformation
 		bool addTransformationContribution(const TAdjustableHelmertTransformation& trafo, const TransformationContrib& trContrib, int eqIndex, TLSInputMatrices* matrices);
 		/// Fills contributions of an adjustable point
-		bool addPointContribution(const TAdjustablePoint& pointAdj, const TFreeVector& pointContrib, int eqIdx, TLSInputMatrices* matrices);
+		bool addPointContribution(const LGCAdjustablePoint& pointAdj, const TFreeVector& pointContrib, int eqIdx, TLSInputMatrices* matrices);
 	//@}
 };
 

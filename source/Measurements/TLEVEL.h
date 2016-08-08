@@ -1,5 +1,5 @@
 #include "MeasDef.h"
-#include "TAdjustablePlane.h"
+#include "LGCAdjustablePlane.h"
 
 class TLGCObsSummary;
 
@@ -22,7 +22,7 @@ struct TLEVEL {
 		TLGCObsSummary getDHORObsSummary() const;
 
 		/// The plane which is measured
-		TAdjustablePlane* fMeasuredPlane;
+		LGCAdjustablePlane* fMeasuredPlane;
 
 		/// Levelling instrument which does the measurements
 		TInstrumentData::TLEVEL  instrument;
@@ -31,7 +31,7 @@ struct TLEVEL {
 		int  line;
 
 		// The station attribute is a copy of the parameter to override defaults
-		TLEVEL(TAdjustablePlane& measPlane, const TInstrumentData::TLEVEL& instrument) :
+		TLEVEL(LGCAdjustablePlane& measPlane, const TInstrumentData::TLEVEL& instrument) :
 			fMeasuredPlane(&measPlane),
 			line(NO_VALi),
 			instrument(instrument),

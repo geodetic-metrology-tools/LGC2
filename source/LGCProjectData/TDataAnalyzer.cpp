@@ -3,6 +3,7 @@
 #include "TLGCData.h"
 #include "TAllfixedParamGenerator.h"
 #include "TPointTransformer.h"
+
 #include "TDist.h" 
 #include <bitset>
 
@@ -61,8 +62,8 @@ bool TDataAnalyzer::dataConsistent(){
 					referencePoint[1] /=numberOfMeasurements;
 					referencePoint[2] /=numberOfMeasurements;
 
-					TAdjustablePoint& rp =
-						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
+					LGCAdjustablePoint& rp =
+						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
 						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
 
 						itLEVEL->fMeasuredPlane->initialize(&rp,TLength(0.0), TAngle(0.0, TAngle::EUnits::kRadians), 
@@ -99,8 +100,8 @@ bool TDataAnalyzer::dataConsistent(){
 					initialRefPtDistance /= numberOfMeasurements;
 
 					/*Fixed reference point for the ECHO measurement*/
-					TAdjustablePoint& rp =
-						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+					LGCAdjustablePoint& rp =
+						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 						true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
 
 					/*Calculation of the initial approximation value for the theta angle of the plane.*/
@@ -137,8 +138,8 @@ bool TDataAnalyzer::dataConsistent(){
 					referencePoint[1] /= numberOfMeasurements;
 					referencePoint[2] /= numberOfMeasurements;
 
-					TAdjustablePoint& rp =
-						fData.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+					LGCAdjustablePoint& rp =
+						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 						false, false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
 
 					itECVE->fMeasuredLine->initialize(&rp, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111));
@@ -314,7 +315,7 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 		}
 
 		//keep the first fixed point in root. Now we give a warning message if more than 1 point is CALA and not an error.
-		TAdjustablePoint* cala;
+		LGCAdjustablePoint* cala;
 		for (auto& itPoint : fData.getPoints())
 			if (itPoint.isFixed() && itPoint.getFrameTreePosition().node->data->isROOTNode())
 			{
@@ -327,7 +328,7 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 				fileLog << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be at least one point defined under CALA in a ROOT node.";
 			}
 
-		TAdjustablePoint& oriPt = fData.getPoints().getObject(pdor.fptname);
+		LGCAdjustablePoint& oriPt = fData.getPoints().getObject(pdor.fptname);
 
 		//initialize pdor measurement function
 		auto initialize = [&](TPdorObs& pdor_meas) {

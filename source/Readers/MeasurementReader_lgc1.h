@@ -22,8 +22,8 @@ protected:
 	TInstrumentData   &finstruments;
 	TAdjustableLengthCollection&flengths;
 	TAdjustableAngleCollection& fangles;
-	TAdjustablePlaneCollection& fplanes;
-	TAdjustableLineCollection& flines;
+	LGCAdjustablePlaneCollection& fplanes;
+	LGCAdjustableLineCollection& flines;
 	const bool& fSIMUActive;
 
 	/// returns a reference to the polar instrument

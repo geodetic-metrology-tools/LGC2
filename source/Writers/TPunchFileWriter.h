@@ -46,47 +46,47 @@ protected:
 	/// write the points data
 	void writePoints();
 	/// Write a point
-	void writePoint(TAdjustablePoint const& point, TLGCConfig::TCoordOut::eMode);
+	void writePoint(LGCAdjustablePoint const& point, TLGCConfig::TCoordOut::eMode);
 	/// write the points XYZ data header
 	void writeXYZHeader();
 	/// write the point XYZ coordinates
-	void writeXYZData(TAdjustablePoint const& point);
+	void writeXYZData(LGCAdjustablePoint const& point);
 	/// write the points' XYH data header
 	void writeXYHHeader();
 	/// write the points' XYH coordinates
-	void writeXYHData(TAdjustablePoint const& point);
+	void writeXYHData(LGCAdjustablePoint const& point);
 	/// write the points' covariance and displacement header
 	void writeXYZVarCovarDeltaHeader();
 	/// write the points' covariance and displacement data
-	void writeXYZVarCovarDeltaData(TAdjustablePoint const& point);
+	void writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point);
 	/// write the points' coordinates, error ellipsoid parameters and displacement header
 	void writeXYZErrorEllHeader();
 	/// write the points' coordinates, error ellipsoid parameters and displacement data
-	void writeXYZErrorEllData(TAdjustablePoint const& point);
+	void writeXYZErrorEllData(LGCAdjustablePoint const& point);
 	/// write the points' XYZ coordinates and covariance header
 	void writeXYZSigmaHeader();
 	/// write the points' XYZ coordinates and covariance data
-	void writeXYZSigmaData(TAdjustablePoint const& point);
+	void writeXYZSigmaData(LGCAdjustablePoint const& point);
 	/// write the points' XYZH coordinates header
 	void writeXYZHHeader();
 	/// write the points' XYZH coordinates data
-	void writeXYZHData(TAdjustablePoint const& point);
+	void writeXYZHData(LGCAdjustablePoint const& point);
 	/// write the points' XYH coordinates and geoidal undulation header
 	void writeXYHNHeader();
 	/// write the points' XYH coordinates and geoidal undulation data
-	void writeXYHNData(TAdjustablePoint const& point);
+	void writeXYHNData(LGCAdjustablePoint const& point);
 	/// write the points' XYZH coordinates and geoidal undulation header
 	void writeXYZHNHeader();
 	/// write the points' XYZH coordinates and geoidal undulation data
-	void writeXYZHNData(TAdjustablePoint const& point);
+	void writeXYZHNData(LGCAdjustablePoint const& point);
 	// write the points 'XYH, ID, displacement, DCUM, option header
 	void writeCooHeader();
 	// write the points 'XYH, ID, displacement, DCUM, option data
-	void writeCooData(TAdjustablePoint const& point);
+	void writeCooData(LGCAdjustablePoint const& point);
 
 
 	///Calulate N value
-	TReal getN(TAdjustablePoint const& point);
+	TReal getN(LGCAdjustablePoint const& point);
 	//@}
 
 	const TLGCData* fData;

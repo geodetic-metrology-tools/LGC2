@@ -12,7 +12,7 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 {
 	public:
 		/// Constructor
-		TUVEC(const TAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
+		TUVEC(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
 			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 		{}
 

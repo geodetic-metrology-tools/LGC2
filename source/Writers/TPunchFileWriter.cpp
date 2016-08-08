@@ -76,7 +76,7 @@ void TPunchFileWriter::writePoints()
 		writePoint(point, fProjectData->getConfig().writePunch.fmode);
 }
 
-void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCoordOut::eMode output_type)
+void TPunchFileWriter::writePoint(LGCAdjustablePoint const& point, TLGCConfig::TCoordOut::eMode output_type)
 {
 	TAStreamFormatter* stream = getStream();
 	stream->setLengthUnits(TLength::kMetres);
@@ -84,12 +84,12 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 	stream->setPrecisionFormat(getCoordPrecision());
 
 	(*stream).setWidthFormat(20);
-	auto writeName	= [&](TAdjustablePoint const& point) { (*stream) << point.getName() << " "; };
+	auto writeName	= [&](LGCAdjustablePoint const& point) { (*stream) << point.getName() << " "; };
 	(*stream).setWidthFormat(8);
 
 
 	// lambda function to transform the point coordinate in root
-	auto point_in_root = [&](TAdjustablePoint const& point) {
+	auto point_in_root = [&](LGCAdjustablePoint const& point) {
 		// Transformation of the point to the root
 		TPositionVector estimatedValue = point.getEstimatedValue();
 		TDataTreeIterator root = fProjectData->getTree().begin();
@@ -100,7 +100,7 @@ void TPunchFileWriter::writePoint(TAdjustablePoint const& point, TLGCConfig::TCo
 		}
 
 		// Set new coordinates to the point expressed in the root
-		TAdjustablePoint point_int_root = TAdjustablePoint(estimatedValue,
+		LGCAdjustablePoint point_int_root = LGCAdjustablePoint(estimatedValue,
 			point.isCoordinateFixed(0),
 			point.isCoordinateFixed(1),
 			point.isCoordinateFixed(2),
@@ -558,7 +558,7 @@ void	TPunchFileWriter::writeCooHeader()
 //DATA
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYZData(LGCAdjustablePoint const& point)
 {
    TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -573,7 +573,7 @@ void TPunchFileWriter::writeXYZData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYHData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -588,7 +588,7 @@ void TPunchFileWriter::writeXYHData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -690,7 +690,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeXYZErrorEllData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 {	
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -809,7 +809,7 @@ void TPunchFileWriter::writeXYZErrorEllData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYZHData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
@@ -822,7 +822,7 @@ void TPunchFileWriter::writeXYZHData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYHNData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -839,7 +839,7 @@ void TPunchFileWriter::writeXYHNData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeXYZHNData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
@@ -855,7 +855,7 @@ void TPunchFileWriter::writeXYZHNData(TAdjustablePoint const& point)
 	return;
 }
 
-void	TPunchFileWriter::writeXYZSigmaData(TAdjustablePoint const& point)
+void	TPunchFileWriter::writeXYZSigmaData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
@@ -882,7 +882,7 @@ void	TPunchFileWriter::writeXYZSigmaData(TAdjustablePoint const& point)
 	return;
 }
 
-void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
+void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 {
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
@@ -996,7 +996,7 @@ void TPunchFileWriter::writeCooData(TAdjustablePoint const& point)
 	return;
 }
 
-TReal TPunchFileWriter::getN(TAdjustablePoint const& point)
+TReal TPunchFileWriter::getN(LGCAdjustablePoint const& point)
 {
 	TRefSystemFactory::EGeoid	fGeoidModel;
 	if (fData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)

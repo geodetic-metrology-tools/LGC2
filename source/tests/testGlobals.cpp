@@ -11,7 +11,7 @@
 #include <TLOR2LOR.h>
 #include <TReader.h>
 #include <AdjObjectsReader.h>
-#include <TAdjustableObjectCollection.h>
+#include <LGCAdjustableObjectCollection.h>
 #include <TXYH2CCS.h>
 #include <TLGCCalculation.h>
 #include "TLSInputMatricesFiller.h"
@@ -50,14 +50,14 @@ namespace tut
 		set_test_name("Testing Adjustable objects");
 		TPositionVector position1(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k3DCartesian);
 		TDataTreeIterator iter;
-		TAdjustablePoint p(position1, true, false, false, "point1", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
+		LGCAdjustablePoint p(position1, true, false, false, "point1", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 		TFreeVector ll(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k3DCartesian);
 
 		
-		//////////////////////// Testing TAdjustableLine ////////////////////////
+		//////////////////////// Testing LGCAdjustableLine ////////////////////////
 		std::bitset<3> line;
 		line.set(0);
-		TAdjustableLine mmm(&p, ll, line, "line1");
+		LGCAdjustableLine mmm(&p, ll, line, "line1");
 		ensure_equals("Number of unknowns should match", mmm.getNumUnkn(), 2);
 		ensure_equals("Line is not fixed", mmm.isFixed(), false);
 		mmm.setFirstUidx(3);
@@ -69,15 +69,15 @@ namespace tut
 		ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getMetresValue(), 4.0);
 		
 		std::bitset<3> line2;
-		TAdjustableLine mmm2(&p, ll, line2, "line2");
+		LGCAdjustableLine mmm2(&p, ll, line2, "line2");
 		ensure_equals("Line is not fixed", mmm2.isFixed(), false);
 
-		TAdjustableLine unita = mmm2.createUninitialized("cop");
+		LGCAdjustableLine unita = mmm2.createUninitialized("cop");
 		ensure_equals("Point is not initialized", unita.isInitialized(), false);
 
-		//////////////////////// Testing TAdjustablePoint ////////////////////////
+		//////////////////////// Testing LGCAdjustablePoint ////////////////////////
 		//TDataTreeIterator iter;
-		//TAdjustablePoint p(position1,true,false,false,"point1",TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
+		//LGCAdjustablePoint p(position1,true,false,false,"point1",TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 		ensure_equals("Number of unknowns should match", p.getNumUnkn(), 2);
 		ensure_equals("Point is initialized", p.isInitialized(), true);
 		p.setFirstUidx(3);
@@ -88,7 +88,7 @@ namespace tut
 
 
 		TPositionVector position2(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k2DPlusH);
-		TAdjustablePoint pH(position2, false, false, true, "pointH1",TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
+		LGCAdjustablePoint pH(position2, false, false, true, "pointH1",TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
 		pH.setFirstUidx(5);
 		ensure_equals("Reference system of provisional value should match", pH.getProvisionalValue().getCoordSys(), TCoordSysFactory::ECoordSys::k2DPlusH);
 		ensure_equals("Provisional value should match", pH.getProvisionalValue().getX().getMetresValue(), 1.0);
@@ -151,7 +151,7 @@ namespace tut
 
 		ensure_equals("Reference system should match", pH.getProvisionalValue().getCoordSys(), position2.getCoordSys());
 
-		TAdjustablePoint unit = p.createUninitialized("point2");
+		LGCAdjustablePoint unit = p.createUninitialized("point2");
 		ensure_equals("Point is not initialized", unit.isInitialized(), false);
 
 		//////////////////////// Testing TAdjustableScalar ////////////////////////
@@ -194,7 +194,7 @@ namespace tut
 		//Measurements are tested more properly in testReaders -- Testing measurement input -- 
 		TPositionVector posit(1.0,1.0,1.0,TCoordSysFactory::ECoordSys::k3DCartesian);
 		TDataTreeIterator iter;
-		const TAdjustablePoint pos(posit, false, false, false, "point", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
+		const LGCAdjustablePoint pos(posit, false, false, false, "point", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 	
 #ifdef __linux__
 		const TInstrumentData::TPOLAR instrument{};
@@ -202,7 +202,7 @@ namespace tut
 		const TInstrumentData::TPOLAR instrument;
 #endif
 		TTSTN tstn( pos, instrument);
-		TAdjustablePoint ssa = *tstn.instrumentPos;
+		LGCAdjustablePoint ssa = *tstn.instrumentPos;
 		ssa.setXYEstimatedCovariance(3.0);
 
 		TReader r(proj5);

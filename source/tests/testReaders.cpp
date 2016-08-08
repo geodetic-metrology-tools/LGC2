@@ -101,14 +101,14 @@ namespace tut
 
 			TPositionVector position2(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k2DPlusH);
 			TDataTreeIterator iter;
-			TAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
+			LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
 			// point should be fixed
 			ensure_equals("0 unknowns introduced", pH.getNumUnkn(), 0);
 			ensure_equals("Point is  fixed", pH.isFixed(), true);
 			ensure_equals("Name should match", pH.getName(), "pointH1");
 
 			//Need to re initialise allfixed parameter
-			TAdjustablePoint::setAllFixedParam(False);
+			LGCAdjustablePoint::setAllFixedParam(False);
 
 			//
 			TKeyLIBR c3(proj);
@@ -205,7 +205,7 @@ namespace tut
 			
 			pr1.parse(TReader::tokenizeLGCfileString("P0 1 2 3"), -1);
 			ensure("Point data must match input", proj.getPoints().doesObjectExist("P0"));
-			const TAdjustablePoint& pt0 = proj.getPoints().getObject("P0");
+			const LGCAdjustablePoint& pt0 = proj.getPoints().getObject("P0");
 
 			
 			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getX().getMetresValue(), 1.0);
@@ -227,13 +227,13 @@ namespace tut
 			pryz.parse(TReader::tokenizeLGCfileString("P3 1 2 3"), -1);
 			prz.parse(TReader::tokenizeLGCfileString( "P4 1 2 3"), -1);
 			
-			const TAdjustablePoint& pt1 = proj.getPoints().getObject("P1");
+			const LGCAdjustablePoint& pt1 = proj.getPoints().getObject("P1");
 
 			ensure_equals(pt1.eolcomment, "$This is a DB comment");
 			ensure_equals(pt1.getName(), "P1");
 			ensure("Lock state must match", pt1.isCoordinateFixed(2));
 
-			const TAdjustablePoint& pt2 = proj.getPoints().getObject("P2");
+			const LGCAdjustablePoint& pt2 = proj.getPoints().getObject("P2");
 			// Fails, but the values seem correct anyway
 			//ensure_equals(pt2.hdrcomment, "%Pc1 1 2 3\n%Pc2 1 2 3");
 			ensure("Lock state must match", pt2.isCoordinateFixed(1));

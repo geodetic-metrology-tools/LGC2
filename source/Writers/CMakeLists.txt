@@ -1,5 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/LGCAdjustableObjects
 					${CMAKE_SOURCE_DIR}/LGCCalculation
 					${CMAKE_SOURCE_DIR}/LGCObjectWriters
 					${CMAKE_SOURCE_DIR}/LGCProject

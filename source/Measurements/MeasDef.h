@@ -32,7 +32,7 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 								   EPLR3DAngles, 2> {
 	public:
 		/// See TAScalarMeas
-		TPLR3D(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt);
+		TPLR3D(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt);
 
 		/// Returns the last LS-matrices equation index of this measurement (PLR3D introduces 3 equations) 
 		inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 2;}			
@@ -61,7 +61,7 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 								  ESingleValue, 1> {
 	public:
 		/// See TAScalarMeas
-		TANGL(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
+		TANGL(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
 			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt), fAllFixedV0(TAngle(NO_VALf)) {}
 
 		/// Returns the last LS-matrices equation index of this measurement, ANGL introduces 1 equation.
@@ -80,7 +80,7 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 							ESingleValue, 1> {
 	public:
 		/// See TAScalarMeas
-		TZEND(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
+		TZEND(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
 			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt), fAllFixedHi(NO_VALf) {}
 
 		/// Returns the last LS-matrices equation index of this measurement, ZEND introduces 1 equation.
@@ -97,10 +97,10 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 	public:
 		/// See TAScalarMeas
-		TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt);
+		TLINE(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt);
 
 		/// See TAScalarMeas , is initialized with a single value
-		TLINE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v);
+		TLINE(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v);
 
 		/// Returns the last LS-matrices equation index of this measurement
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
@@ -124,9 +124,9 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 		/*!@name Constructors */
 		//@{
-		TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle angle):
+		TECTH(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle angle):
 				TAScalarMeas<TInstrumentData::TSCALE>(stationedPoint, scaleInstr) { obsHorAngle = angle; }
-		TECTH(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  TAngle obsHorAngle, TLength v);
+		TECTH(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr,  TAngle obsHorAngle, TLength v);
 		//@}
 
 		/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
@@ -149,8 +149,8 @@ public:
 
 	/*!@name Constructors */
 	//@{
-	TECDIR(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle HorAngle, TAngle VerAngle);
-	TECDIR(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TAngle obsVerAngle, TLength v);
+	TECDIR(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle HorAngle, TAngle VerAngle);
+	TECDIR(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TAngle obsVerAngle, TLength v);
 	//@}
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
@@ -169,8 +169,8 @@ class TECSP : public TAScalarMeas<TInstrumentData::TSCALE>
 public:
 	/*!@name Constructors */
 	//@{
-	TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr);
-	TECSP(const TAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TLength v);
+	TECSP(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr);
+	TECSP(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TSCALE scaleInstr, TLength v);
 	//@}
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
@@ -186,9 +186,9 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 	public:
 		/*!@name Constructors */
 		//@{
-			TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt) : 
+			TDSPT(const LGCAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt) : 
 				TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt), fAllFixedCs(NO_VALf) {}
-         TDSPT(const TAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt, TLength v) :
+         TDSPT(const LGCAdjustablePoint& pos, TInstrumentData::TEDM::TTarget tgt, TLength v) :
 			 TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf) {}
 		//@}
 
@@ -208,9 +208,9 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 	public:
 		/*!@name Constructors */
 		//@{
-		TECHO(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr) : 
+		TECHO(const LGCAdjustablePoint& pos, TInstrumentData::TSCALE instr) : 
 				TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
-        TECHO(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
+        TECHO(const LGCAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
 				TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 		//@}
 
@@ -227,9 +227,9 @@ class TECVE : public TAScalarMeas<TInstrumentData::TSCALE> {
 public:
 	/*!@name Constructors */
 	//@{
-	TECVE(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr) :
+	TECVE(const LGCAdjustablePoint& pos, TInstrumentData::TSCALE instr) :
 		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
-	TECVE(const TAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
+	TECVE(const LGCAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
 		TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 	//@}
 
@@ -246,7 +246,7 @@ public:
 class TDVER  : public TAScalarMeas<int>{
 	public:
 		///Pointer to the first point
-		const TAdjustablePoint* station;
+		const LGCAdjustablePoint* station;
 
 		/// Line in the input file where this measurement was defined
 		int line;
@@ -256,7 +256,7 @@ class TDVER  : public TAScalarMeas<int>{
 
 	/*!@name Constructors */
 	//@{
-      TDVER(const TAdjustablePoint& station, const TAdjustablePoint& target, TLength obsVal);
+      TDVER(const LGCAdjustablePoint& station, const LGCAdjustablePoint& target, TLength obsVal);
 	//@}
 
 	/*!@name Access methods*/
@@ -298,7 +298,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 			public:
 
 				/// See TAScalarMeas , is initialized with a single value
-            TDHOR(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v);
+            TDHOR(const LGCAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v);
 
 				~TDHOR(){}
 
@@ -320,7 +320,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 		/*!@name Constructor*/
 		//@{
-      TDLEV(const TAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget target, TLength measValue);
+      TDLEV(const LGCAdjustablePoint& pos, TInstrumentData::TLEVEL::TTarget target, TLength measValue);
 		//@}
 
 		/*!@name Access methods*/
@@ -348,7 +348,7 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 	public:
 		/*!@name Constructor*/
 		//@{
-		TORIE(const TAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
+		TORIE(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
 			TAScalarMeas(pos, tgt) {}
 		//@}
 
@@ -367,7 +367,7 @@ class TRADI : public TAMeas<int>
 {
 public:
 	///Pointer to the first point
-	const TAdjustablePoint* station;
+	const LGCAdjustablePoint* station;
 
 	/// Line in the input file where this measurement was defined
 	int line;
@@ -377,7 +377,7 @@ public:
 
 	/*!@name Constructors */
 	//@{
-	TRADI(const TAdjustablePoint& point, TAngle obsVal, TLength sig = TLength(0.0));
+	TRADI(const LGCAdjustablePoint& point, TAngle obsVal, TLength sig = TLength(0.0));
 	TRADI();
 	//@}
 
@@ -419,10 +419,10 @@ private:
 class TPdorObs : public TAMeas<int>{
 public:
 	///Pointer to the fixed point
-	const TAdjustablePoint* calaPt;
+	const LGCAdjustablePoint* calaPt;
 
 	///Pointer to the orientation point
-	const TAdjustablePoint* orientationPt;
+	const LGCAdjustablePoint* orientationPt;
 
 	/// Line in the input file where this measurement was defined
 	int line;
@@ -433,7 +433,7 @@ public:
 	/*!@name Constructors */
 	//@{
 	TPdorObs();
-	TPdorObs(const TAdjustablePoint& cala, const TAdjustablePoint& orientation, TAngle gis);
+	TPdorObs(const LGCAdjustablePoint& cala, const LGCAdjustablePoint& orientation, TAngle gis);
 	//@}
 
 	/*!@name Access methods*/
@@ -462,7 +462,7 @@ public:
 	//@{
 
 	/// Initialise the measurement
-	void Initialise(TAdjustablePoint& cala, TAdjustablePoint& ori, TAngle gis, bool hasbearing);
+	void Initialise(LGCAdjustablePoint& cala, LGCAdjustablePoint& ori, TAngle gis, bool hasbearing);
 
 	/// Sets a residual of observed angle
 	void setAngleResidual(const TAngle& a) { fbearingResidual = a; }

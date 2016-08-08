@@ -1,6 +1,9 @@
+#include "LGCAdjustablePoint.h"
 #include "TAllfixedParamGenerator.h"
 #include "TDist.h" 
 #include "TTreeEntry.h"
+
+
 #include "TXYH2CCS.h"
 
 

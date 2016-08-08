@@ -1,3 +1,4 @@
+#include <LGCAdjustablePoint.h>
 #include "TContributionsGenerator.h"
 #include "TDist.h" 
 #include "TTreeEntry.h"
@@ -639,7 +640,7 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 }
 
 //Horizontal distance contribution for a measurement made in DLEV
-HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor){
+HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor){
 	TFreeVector staffContrib(TCoordSysFactory::k3DCartesian);
 	TFreeVector referencePTContrib(TCoordSysFactory::k3DCartesian);
 

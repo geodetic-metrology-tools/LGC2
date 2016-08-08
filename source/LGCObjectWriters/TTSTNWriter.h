@@ -80,13 +80,13 @@ private:
 
 	/*!@name Results */
 	//@{
-		void writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const TAngle& V);
-		void writeZENDResults(const std::vector<TZEND>& measZEND, const TAdjustablePoint* instrPos);
-		void writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos);
-		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry);
+		void writeANGLResults(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V);
+		void writeZENDResults(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos);
+		void writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos);
+		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry);
 		void writeDHORResults(const std::vector<TLINE>& measDHOR);
-		void writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos);
-		void writeECDIRResults(const std::vector<TECDIR>& measECDIR, const TAdjustablePoint* instrPos);
+		void writeECTHResults(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos);
+		void writeECDIRResults(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos);
 	//@}
 
 		bool isAllfixed;

@@ -63,7 +63,7 @@ void TKeySPHE::parse(const std::vector<std::string>&, int) {
 void TKeyALLFIXED::parse(const std::vector<std::string>&, int) {
 	fconfig.allfixed = TLGCConfig::TBinaryOption(true);
 
-	TAdjustablePoint::setAllFixedParam(fconfig.allfixed.isActiveRef());
+	LGCAdjustablePoint::setAllFixedParam(fconfig.allfixed.isActiveRef());
 }
 
 

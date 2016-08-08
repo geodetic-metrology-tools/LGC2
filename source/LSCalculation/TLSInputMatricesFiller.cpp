@@ -989,8 +989,8 @@ void TLSInputMatricesFiller::addPLR3DContributions(shared_ptr<TTSTN::TROM> rom, 
 		//Get the observation contribution
 		contributions = fCGenerator.getPolar3DContrib(station, rom, *meas);
 
-		const TAdjustablePoint& stationPos = *station->instrumentPos;
-		const TAdjustablePoint& targetPos = *meas->targetPos;
+		const LGCAdjustablePoint& stationPos = *station->instrumentPos;
+		const LGCAdjustablePoint& targetPos = *meas->targetPos;
 		// Add contributions for STATION coordinates
 		if(!stationPos.isFixed()){
 				isProcessOK = isProcessOK && addPointContribution(stationPos, contributions.fStCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
@@ -1100,8 +1100,8 @@ void TLSInputMatricesFiller::addUVDContribution(const TCAM& camera, TLSInputMatr
 
 		contributions = fCGenerator.getUVDContrib(camera, *meas);
 
-		const TAdjustablePoint& cameraPos = *camera.instrumentPos;
-		const TAdjustablePoint& targetPos = *meas->targetPos;
+		const LGCAdjustablePoint& cameraPos = *camera.instrumentPos;
+		const LGCAdjustablePoint& targetPos = *meas->targetPos;
 		// Add contributions for CAMERA coordinates
 		if(!cameraPos.isFixed()){
 				isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
@@ -1176,8 +1176,8 @@ void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMat
 
 		contributions = fCGenerator.getUVECContrib(camera, *meas);
 
-		const TAdjustablePoint& cameraPos = *camera.instrumentPos;
-		const TAdjustablePoint& targetPos = *meas->targetPos;
+		const LGCAdjustablePoint& cameraPos = *camera.instrumentPos;
+		const LGCAdjustablePoint& targetPos = *meas->targetPos;
 		// Add contributions for CAMERA coordinates
 		if(!cameraPos.isFixed()){
 				isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContribFirstEq, firstEqIdx, matrices);
@@ -1247,7 +1247,7 @@ bool TLSInputMatricesFiller::addTransformationContribution(const TAdjustableHelm
 }
 
 
-bool TLSInputMatricesFiller::addPointContribution(const TAdjustablePoint& pointAdj, const TFreeVector& pointContrib, int eqIdx, TLSInputMatrices* matrices){
+bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint& pointAdj, const TFreeVector& pointContrib, int eqIdx, TLSInputMatrices* matrices){
 	bool isProcessOK = true;
 
 	for(int i = 0; i<3;i++){

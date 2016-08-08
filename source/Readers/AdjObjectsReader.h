@@ -73,7 +73,7 @@ class TAPointKey : public TAKeyWord {
 		std::string hdrcomment;
 
 		// Template pattern: insert the correct point object into the collection by subclass implementation
-		virtual TAdjustablePoint& insertPoint(const std::string& ID, TReal x, TReal y, TReal z) = 0;
+		virtual LGCAdjustablePoint& insertPoint(const std::string& ID, TReal x, TReal y, TReal z) = 0;
 
 		TAPointKey& operator=(const TAPointKey&);
 };
@@ -82,21 +82,21 @@ class TKeyCALA : public TAPointKey {
 	public:
 		TKeyCALA(TLGCData& project, int nb_allowed_keywords = nb_allowed_cala, const char** keywords = allowed_CALA);
 	protected:		 
-		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
+		virtual LGCAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
 
 class TKeyPOIN : public TAPointKey {
 	public:
 		TKeyPOIN(TLGCData& project, int nb_allowed_keywords = nb_allowed_poin, const char** keywords = allowed_POIN);				
 	protected:
-		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
+		virtual LGCAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
 
 class TKeyVXY : public TAPointKey {
 	public:
 		TKeyVXY(TLGCData& project, int nb_allowed_keywords = nb_allowed_vxy, const char** keywords = allowed_VXY);
 	protected:
-		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
+		virtual LGCAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
 
 class TKeyVXZ : public TAPointKey {
@@ -104,7 +104,7 @@ class TKeyVXZ : public TAPointKey {
 		TKeyVXZ(TLGCData& project, int nb_allowed_keywords = nb_allowed_vxz, const char** keywords = allowed_VXZ);
 
 	protected:
-		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
+		virtual LGCAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
 
 class TKeyVYZ : public TAPointKey {
@@ -112,7 +112,7 @@ class TKeyVYZ : public TAPointKey {
 		TKeyVYZ(TLGCData& project, int nb_allowed_keywords = nb_allowed_vyz, const char** keywords = allowed_VYZ);
 		
 	protected:
-		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
+		virtual LGCAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
 
 class TKeyVZ : public TAPointKey {
@@ -120,7 +120,7 @@ class TKeyVZ : public TAPointKey {
 		TKeyVZ(TLGCData& project, int nb_allowed_keywords = nb_allowed_vz, const char** keywords = allowed_VZ);
 		
 	protected:
-		virtual TAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
+		virtual LGCAdjustablePoint& insertPoint(const std::string& pointName, TReal x, TReal y, TReal z);
 };
 /*! @} End of Doxygen Groups*/
 

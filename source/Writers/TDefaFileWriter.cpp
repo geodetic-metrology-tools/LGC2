@@ -291,8 +291,8 @@ void TDefaFileWriter::write3DPoint(string name, TReal X, TReal Y, TReal Z)
 
 void TDefaFileWriter::writeUpperTriangularCovarianceMatrix(TLGCData& project, TLSResultsMatrices& rm)
 {
-	std::list<TAdjustablePoint>::const_iterator begin;
-	std::list<TAdjustablePoint>::const_iterator end = project.getPoints().end();
+	std::list<LGCAdjustablePoint>::const_iterator begin;
+	std::list<LGCAdjustablePoint>::const_iterator end = project.getPoints().end();
 
 	for (int i = 0; i < rm.getUnkCovarMtrx()->rows(); i++)
 	{

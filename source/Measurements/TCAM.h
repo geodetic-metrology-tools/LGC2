@@ -7,7 +7,7 @@
 #include <Global.h>
 #include <TInstrumentData.h>
 
-class TAdjustablePoint;
+class LGCAdjustablePoint;
 struct TUVECObsSummary;
 struct TUVDObsSummary;
 
@@ -25,7 +25,7 @@ struct TCAM {
 
 			\param instrument A reference to the camera instrument. The object is stored as a deep copy.
 		*/
-		TCAM( const TAdjustablePoint& pos, const TInstrumentData::TCAMD& instrument) :
+		TCAM( const LGCAdjustablePoint& pos, const TInstrumentData::TCAMD& instrument) :
 			instrument(instrument),
 			instrumentPos(&pos),
 			line(NO_VALi)
@@ -40,7 +40,7 @@ struct TCAM {
 		TInstrumentData::TCAMD     instrument;
 
 		/// The point on which the instrument resides
-		const TAdjustablePoint* instrumentPos; 
+		const LGCAdjustablePoint* instrumentPos; 
 
 		/// Line of the camera definition
 		int  line;

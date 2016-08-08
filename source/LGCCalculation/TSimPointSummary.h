@@ -3,7 +3,7 @@
 #ifndef SU_SIM_PT_SUMMARY
 #define SU_SIM_PT_SUMMARY
 
-#include "TAdjustablePoint.h"
+#include "LGCAdjustablePoint.h"
 #include "TFreeVector.h"
 
 /*! 
@@ -24,7 +24,7 @@ public:
 		TSimPointSummary();
 
 		/// constructor taking a reference to th Adjustable point
-		TSimPointSummary(const TAdjustablePoint& point);
+		TSimPointSummary(const LGCAdjustablePoint& point);
 
 		/// copy constructor
 		TSimPointSummary(const TSimPointSummary&);
@@ -47,7 +47,7 @@ public:
 		void	addNewResValue(const TFreeVector& res);
 
 		/// get the pointer to the Adjustable Point of this entity
-		const TAdjustablePoint*	getAdjustablePoint() const { return fPoint; }
+		const LGCAdjustablePoint*	getAdjustablePoint() const { return fPoint; }
 
 		/// get the sum of residuals
 		TFreeVector		getSumRes() const { return fSumRes; }
@@ -74,7 +74,7 @@ private:
 
 private:
 
-	const TAdjustablePoint*		fPoint; /*!< pointer to a global collection of points in TLGCData*/
+	const LGCAdjustablePoint*		fPoint; /*!< pointer to a global collection of points in TLGCData*/
 
 	TFreeVector					fSumRes; /*!< sum of the residus from all the simulations for this point */
 	TFreeVector					fResMin; /*!< minimum of the residus from all the simulations for this point */

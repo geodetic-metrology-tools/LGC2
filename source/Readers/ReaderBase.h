@@ -8,7 +8,7 @@
 
 #include <TLGCConfig.h>
 
-#include "TAdjustableObjectCollection.h"
+#include "LGCAdjustableObjectCollection.h"
 
 #include <TLGCData.h>
 

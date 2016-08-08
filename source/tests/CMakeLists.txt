@@ -1,5 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/LGCAdjustableObjects
 					${CMAKE_SOURCE_DIR}/ContributionsGenerators
 					${CMAKE_SOURCE_DIR}/LGCCalculation
 					${CMAKE_SOURCE_DIR}/LGCObjectWriters
@@ -50,4 +50,4 @@ set(tests_INPUT
 
 add_executable(tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(tests LGCProject LGCProjectData LGCCalculation Readers CalcElements  LocalTransformations ProjectData Converters LGCObjectWriters FiltersAndFormats StreamFormatters Writers LSCalculation MathematicalConcepts AffineTransformations ContributionsGenerators ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects Measurements)
+target_link_libraries(tests LGCProject LGCProjectData LGCCalculation Readers CalcElements  LocalTransformations ProjectData Converters LGCObjectWriters FiltersAndFormats StreamFormatters Writers LSCalculation MathematicalConcepts AffineTransformations ContributionsGenerators ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects LGCAdjustableObjects Measurements)

@@ -22,8 +22,8 @@ class TAMeasurementKey : public TAKeyWord {
 		const TInstrumentData   &finstruments;
 		TAdjustableLengthCollection&flengths;
 		TAdjustableAngleCollection& fangles;
-		TAdjustablePlaneCollection& fplanes;
-		TAdjustableLineCollection& flines;
+		LGCAdjustablePlaneCollection& fplanes;
+		LGCAdjustableLineCollection& flines;
 		const bool& fSIMUActive;
 
 		/// Returns if this was the first line beginning with a '*',  NOT the success of the target update

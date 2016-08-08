@@ -1,9 +1,8 @@
-#include "TAdjustableLine.h"
-#include "Global.h"
-
+#include "LGCAdjustableLine.h"
+#include <LGCAdjustablePoint.h>
 
 //Reference point is the point on the line at the same time
-TAdjustableLine::TAdjustableLine(const TAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name) :
+LGCAdjustableLine::LGCAdjustableLine(const LGCAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name) :
 fName(name),
 fReferencePointPosition(TCoordSysFactory::k3DCartesian),
 fLinePoint(pointOnALine),
@@ -22,7 +21,7 @@ fixedStateLineVector(lineVectorFixedState)
 }
 
 //Reference point is the point on the line at the same time
-TAdjustableLine::TAdjustableLine(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name) :
+LGCAdjustableLine::LGCAdjustableLine(const LGCAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name) :
 fName(name),
 fLinePoint(pointOnALine),
 fReferencePointPosition(referencePoint),
@@ -36,7 +35,7 @@ fixedStateLineVector(lineVectorFixedState)
 	setDefaults();
 }
 
-void TAdjustableLine::initialize(const TAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState)
+void LGCAdjustableLine::initialize(const LGCAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState)
 {
 	fLinePoint = pointOnALine;
 	fReferencePointPosition = pointOnALine->getProvisionalValue();
@@ -47,7 +46,7 @@ void TAdjustableLine::initialize(const TAdjustablePoint* pointOnALine, const TFr
 	fInit = true;
 }
 
-void TAdjustableLine::initialize(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState)
+void LGCAdjustableLine::initialize(const LGCAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState)
 {
 	fLinePoint = pointOnALine;
 	fReferencePointPosition = referencePoint;
@@ -59,23 +58,23 @@ void TAdjustableLine::initialize(const TAdjustablePoint* pointOnALine, const TPo
 }
 
 
-void TAdjustableLine::reInitialise(){
+void LGCAdjustableLine::reInitialise(){
 	fLineVectorEstimatedPrecision = TFreeVector(LITERAL(0.0), LITERAL(0.0), LITERAL(0.0), TCoordSysFactory::k3DCartesian);
 	fLineVectorCorrection = TFreeVector(LITERAL(0.0), LITERAL(0.0), LITERAL(0.0), TCoordSysFactory::k3DCartesian);
 }
 
 
-TAdjustableLine TAdjustableLine::createUninitialized(const std::string& name) {
-	TAdjustableLine ap(nullptr, TFreeVector(NO_VALf,  NO_VALf,  NO_VALf,TCoordSysFactory::ECoordSys::k3DCartesian),std::bitset<3>(), name);
+LGCAdjustableLine LGCAdjustableLine::createUninitialized(const std::string& name) {
+	LGCAdjustableLine ap(nullptr, TFreeVector(NO_VALf,  NO_VALf,  NO_VALf,TCoordSysFactory::ECoordSys::k3DCartesian),std::bitset<3>(), name);
 	ap.fInit = false;
 	return ap;
 }
 
-int TAdjustableLine::getNumUnkn() const {
+int LGCAdjustableLine::getNumUnkn() const {
 	return (int)!fixedStateLineVector[0] + (int)!fixedStateLineVector[1] + (int)!fixedStateLineVector[2];
 }
 		
-int TAdjustableLine::getFirstUidx() const {			
+int LGCAdjustableLine::getFirstUidx() const {			
 	for (int i = 0; i < 3; i++)
 		if (!fixedStateLineVector[i])
 			return uidx_lineVector[i];		
@@ -83,7 +82,7 @@ int TAdjustableLine::getFirstUidx() const {
 	throw std::logic_error("Trying to get first unknown index from fixed line.");
 }
 
-int TAdjustableLine::getLastUidx() const {
+int LGCAdjustableLine::getLastUidx() const {
 	for (int i = 2; i >= 0; i--)
 		if (!fixedStateLineVector[i])
 			return uidx_lineVector[i];
@@ -91,7 +90,7 @@ int TAdjustableLine::getLastUidx() const {
 	throw std::logic_error("Trying to get last unknown index from fixed line.");
 }
 
-void TAdjustableLine::setFirstUidx(int idx) {
+void LGCAdjustableLine::setFirstUidx(int idx) {
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to fixed line.");
 
@@ -100,7 +99,7 @@ void TAdjustableLine::setFirstUidx(int idx) {
 			uidx_lineVector[i] = idx++;
 }
 
-void TAdjustableLine::setCorrection(int idx, TReal value) {
+void LGCAdjustableLine::setCorrection(int idx, TReal value) {
 
    TLength val(value);
 
@@ -126,7 +125,7 @@ void TAdjustableLine::setCorrection(int idx, TReal value) {
 
 
 /*! Sets the estimated precision after calculation to a line's point.*/
-void	TAdjustableLine::setLineVectorEstimatedPrecision(int idx, TReal value){
+void	LGCAdjustableLine::setLineVectorEstimatedPrecision(int idx, TReal value){
    TLength val(value);
    
    for (int i = 0; i < 3; i++)
@@ -146,7 +145,7 @@ void	TAdjustableLine::setLineVectorEstimatedPrecision(int idx, TReal value){
 }
 
 
-void TAdjustableLine::setDefaults(){
+void LGCAdjustableLine::setDefaults(){
 	uidx_lineVector[0] = -1;
 	uidx_lineVector[1] = -1;
 	uidx_lineVector[2] = -1;

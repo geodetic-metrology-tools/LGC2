@@ -1,9 +1,9 @@
 #ifndef TADJUSTABLE_OBJECT_COLLECTION
 #define TADJUSTABLE_OBJECT_COLLECTION
 
-#include "TAdjustableLine.h"
-#include "TAdjustablePlane.h"
-#include "TAdjustablePoint.h"
+#include "LGCAdjustableLine.h"
+#include "LGCAdjustablePlane.h"
+#include "LGCAdjustablePoint.h"
 
 class TAdjustableScalar;
 class TAdjustableHelmertTransformation;
@@ -17,11 +17,11 @@ class TAdjustableLength;
 	This class is basically a composite of an stl list with more comfortable retrieving functions and counting of the number of unknowns.
 */
 template<typename T>
-class TAdjustableObjectCollection {
+class LGCAdjustableObjectCollection {
 	public:
 
 		/// Default constructor creating an empty collection
-		TAdjustableObjectCollection() :
+		LGCAdjustableObjectCollection() :
 			fUnknowns(0) {}
 
 		/*!
@@ -49,7 +49,7 @@ class TAdjustableObjectCollection {
 
 		/// Returns the reference to a constant adjustable object by its name
 		const T& getObject(const std::string& name) const {
-			return const_cast<TAdjustableObjectCollection<T>& >( *this ).getObject(name);  
+			return const_cast<LGCAdjustableObjectCollection<T>& >( *this ).getObject(name);  
 		}
 
 		/// Returns the total number of unknowns for all objects in the collection
@@ -59,7 +59,7 @@ class TAdjustableObjectCollection {
 
 		/// Checks if an adjustable object with a given name is in the collection
 		bool doesObjectExist(const std::string& objectName) const {
-			auto p(const_cast<TAdjustableObjectCollection<T>& >( *this ).findObject(objectName));
+			auto p(const_cast<LGCAdjustableObjectCollection<T>& >( *this ).findObject(objectName));
 			if (p != objects.cend()) {
 				// an object with that name is already there, check if it was just forward-declared
 				return p->isInitialized();
@@ -155,14 +155,16 @@ class TAdjustableObjectCollection {
 
 };
 
-typedef TAdjustableObjectCollection<TAdjustableHelmertTransformation> TAdjustableTransformationCollection;
-typedef TAdjustableObjectCollection<TAdjustablePoint> TAdjustablePointCollection;
-typedef TAdjustableObjectCollection<TAdjustableLine> TAdjustableLineCollection;
-typedef TAdjustableObjectCollection<TAdjustablePlane> TAdjustablePlaneCollection;
-typedef TAdjustableObjectCollection<TAdjustableAngle> TAdjustableAngleCollection;
-typedef TAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollection;
-typedef TAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;
+typedef LGCAdjustableObjectCollection<TAdjustableHelmertTransformation> TAdjustableTransformationCollection;
+typedef LGCAdjustableObjectCollection<LGCAdjustablePoint> TAdjustablePointCollection;
+typedef LGCAdjustableObjectCollection<LGCAdjustableLine> LGCAdjustableLineCollection;
+typedef LGCAdjustableObjectCollection<LGCAdjustablePlane> LGCAdjustablePlaneCollection;
+typedef LGCAdjustableObjectCollection<TAdjustableAngle> TAdjustableAngleCollection;
+typedef LGCAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollection;
+typedef LGCAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;
 
-typedef std::list<TAdjustablePoint>::const_iterator AdjPointIter;
+typedef std::list<LGCAdjustablePoint>::const_iterator AdjPointIter;
+
+
 
 #endif

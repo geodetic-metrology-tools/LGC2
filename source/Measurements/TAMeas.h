@@ -6,7 +6,7 @@
 #include <TFreeVector.h>
 #include "UEOIndices.h"
 
-class TAdjustablePoint;
+class LGCAdjustablePoint;
 
 /// Enum for the case that no value of a certain type is measured in \ref TAScalarMeas.
 enum ENoValues {};
@@ -38,7 +38,7 @@ class TAMeas {
 		TTarget target;
 			
 		/// Pointer to the observed point on which the target is positioned
-		const TAdjustablePoint* targetPos; 
+		const LGCAdjustablePoint* targetPos; 
 
 		/// Line in the input file where this measurement was defined
 		int line;
@@ -54,7 +54,7 @@ class TAMeas {
 				\param targetPos The observed point on which the target is positioned.
 				\param tgt The target which is used. A copy of the target is made to store it.
 			*/
-			TAMeas(const TAdjustablePoint& targetPos, const TTarget& tgt) :
+			TAMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
 				target(tgt),
 				targetPos(&targetPos),
 				line(NO_VALi),
@@ -129,7 +129,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			\param targetPos The observed point on which the Target (tgt) is positioned.
 			\param tgt The observed target. A copy of the target is made to store it.
 		*/
-		TAScalarMeas(const TAdjustablePoint& targetPos, const TTarget& tgt) :
+		TAScalarMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
 			TAMeas<TTarget>(targetPos, tgt)
 		{
 			for (int i = 0; i < numDistances; i++)
@@ -143,7 +143,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			\param tgt The observed target. A copy of the target is made to store it.
 			\param value The measured value.
 		*/
-      TAScalarMeas(const TAdjustablePoint& targetPos, TTarget tgt, TLength value) :
+      TAScalarMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, TLength value) :
 			TAMeas<TTarget>(targetPos, tgt)
 		{
 			static_assert(numDistances==1, "This works only for single distance values.");
@@ -227,7 +227,7 @@ class TAVectorMeas : public TAMeas<TTarget>
 			\param targetPos The observed point
 			\param tgt The observed target. A copy of the target is made to store it.
 		*/
-		TAVectorMeas(const TAdjustablePoint& targetPos, const TTarget& tgt) :
+		TAVectorMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
 			TAMeas<TTarget>(targetPos, tgt),
 			vector(NO_VALf, NO_VALf, NO_VALf,TCoordSysFactory::ECoordSys::k3DCartesian),
 			XcompResidual(NO_VALf),
@@ -242,7 +242,7 @@ class TAVectorMeas : public TAMeas<TTarget>
 			\param tgt The observed target. A copy of the target is made to store it.
 			\param value The measured vector
 		*/
-		TAVectorMeas(const TAdjustablePoint& targetPos, TTarget tgt, const TFreeVector& value) :
+		TAVectorMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, const TFreeVector& value) :
 			TAMeas<TTarget>(targetPos, tgt),
 			vector(value),
 			XcompResidual(NO_VALf),

@@ -9,7 +9,7 @@
 #include <TLOR2LOR.h>
 #include <TReader.h>
 #include <AdjObjectsReader.h>
-#include <TAdjustableObjectCollection.h>
+#include <LGCAdjustableObjectCollection.h>
 #include <TXYH2CCS.h>
 #include <TLGCCalculation.h>
 #include "TLSInputMatricesFiller.h"

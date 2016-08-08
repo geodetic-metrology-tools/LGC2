@@ -1,12 +1,13 @@
-#ifndef TADJUSTABLE_LINE_N
-#define TADJUSTABLE_LINE_N
+#ifndef LGCADJUSTABLE_LINE_N
+#define LGCADJUSTABLE_LINE_N
 
 #include <bitset>
 
 #include "TVAdjustableObject.h"
-#include "TAdjustablePoint.h"
 #include "TPositionVector.h"
 #include "TFreeVector.h"
+
+class LGCAdjustablePoint;
 
 ///////////////////////////
 /// IMPLEMENTATION OF THIS CLASS IS NOT FINISHED, NEEDS REVIEW BEFORE IT IS USED!!!!!!!!!!
@@ -16,14 +17,14 @@
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a line object defined through a point (TPositionVector) on a line and a line vector (TFreeVector).
 */
-class TAdjustableLine : public TVAdjustableObject
+class LGCAdjustableLine : public TVAdjustableObject
 {
 public:
 	/*!@name Constructors*/
 	//@{
 
 		/*!
-			\brief Constructs an TAdjustableLine based on known point on a line and a line vector.
+			\brief Constructs an LGCAdjustableLine based on known point on a line and a line vector.
 			
 			\param[in] pointOnALine Known (e.g. measured) point on a line.
 			\param[in] lineVect Line vector, i.e. vector parallel with the line.
@@ -31,10 +32,10 @@ public:
 			\param[in] name Name of the adjustable line.
 		*/
 	   //In this case point on a line is fixed, therefore we can ommit pointLockState and set it inside to fixed
-	TAdjustableLine(const TAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name);
+	LGCAdjustableLine(const LGCAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name);
 
 		/*!
-			\brief Constructs an TAdjustableLine based on a reference point, point on a line and line vector.
+			\brief Constructs an LGCAdjustableLine based on a reference point, point on a line and line vector.
 			
 			\param[in] pointOnALine Known (e.g. measured) point of line.
 			\param[in] referencePoint Reference point for the Point on a line.
@@ -42,16 +43,16 @@ public:
 			\param[in] lineVectorFixedState Lock state of the line vector.
 			\param[in] name Name of the adjustable line.
 		*/
-		TAdjustableLine(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name);
+		LGCAdjustableLine(const LGCAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState, const std::string& name);
 	
 		
 		/// Create an unitialized line. 
-		static TAdjustableLine createUninitialized(const std::string& name);
+		static LGCAdjustableLine createUninitialized(const std::string& name);
 
 		/// initialize the line. 
-		void initialize(const TAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
+		void initialize(const LGCAdjustablePoint* pointOnALine, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
 		/// initialize the line.
-		void initialize(const TAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
+		void initialize(const LGCAdjustablePoint* pointOnALine, const TPositionVector& referencePoint, const TFreeVector& lineVect, const std::bitset<3>& lineVectorFixedState);
       
 		void reinitialise();
 		//@}
@@ -75,7 +76,7 @@ public:
 		const TFreeVector&	getLineVectorCovariances() const {return fLineVectorCovariance;}
 
 		/// Returns a constant pointer on the line point
-		const TAdjustablePoint* getLinePoint() const { return fLinePoint; }
+		const LGCAdjustablePoint* getLinePoint() const { return fLinePoint; }
 		
 		/// Returns a constant reference on the reference point 
 		const TPositionVector& getReferencePoint() const { return fReferencePointPosition; }
@@ -141,7 +142,7 @@ public:
 private:
 
 	TPositionVector fReferencePointPosition; /*!< position of the Reference point (fixed)*/
-	const TAdjustablePoint* fLinePoint;	//Line point is only being adjusted if there is associated Reference Point Position, otherwise it is fixed. 
+	const LGCAdjustablePoint* fLinePoint;	//Line point is only being adjusted if there is associated Reference Point Position, otherwise it is fixed. 
 
 	//Definition of line vector
 	TFreeVector				fLineVectorProvisionalValue;

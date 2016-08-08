@@ -3,7 +3,7 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include "TLGCObsSummary.h"
-#include "TAdjustablePoint.h"
+#include "LGCAdjustablePoint.h"
 
 TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), writeHist(hist)
 {}
@@ -68,7 +68,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 	return;
 }
 
-void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const TAdjustablePoint& instPos)
+void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -369,7 +369,7 @@ TAStreamFormatter*	stream = getStream();
 		writeHisto(summary, "DVER");
 }
 
-void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos)
+void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

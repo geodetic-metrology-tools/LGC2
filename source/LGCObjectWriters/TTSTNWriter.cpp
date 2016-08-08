@@ -4,7 +4,7 @@
 #include "TAStreamFormatter.h"
 #include "Global.h"
 #include "TLGCObsSummary.h"
-#include "TAdjustablePoint.h"
+#include "LGCAdjustablePoint.h"
 
 TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
 {}
@@ -237,7 +237,7 @@ void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 }
 
 //RESULTS
-void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const TAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry)
+void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -438,7 +438,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 	(*stream)<<endl;
 }
 
-void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAdjustablePoint* instrPos, const TAngle& V)
+void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -495,7 +495,7 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const TAd
 	(*stream)<<endl;
 }
 
-void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAdjustablePoint* instrPos)
+void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -553,7 +553,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const TAd
 	(*stream)<<endl<<endl;
 }
 
-void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TInstrumentData::TPOLAR& instr , const TAdjustablePoint* instrPos)
+void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TInstrumentData::TPOLAR& instr , const LGCAdjustablePoint* instrPos)
 {   
 
 	TAStreamFormatter*	stream = getStream();
@@ -699,7 +699,7 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 	(*stream)<<endl;
 }
 
-void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAdjustablePoint* instrPos)
+void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -751,7 +751,7 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const TAd
 
 }
 
-void TTSTNWriter::writeECDIRResults(const std::vector<TECDIR>& measECDIR, const TAdjustablePoint* instrPos)
+void TTSTNWriter::writeECDIRResults(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

@@ -1,3 +1,4 @@
+#include "LGCAdjustablePoint.h"
 #include "TObservationGenerator.h"
 #include "TDist.h" 
 #include "TTreeEntry.h"
@@ -10,7 +11,7 @@ TObservationGenerator::TObservationGenerator(TPointTransformer& pPointTransfo) :
 //////////////////////////////////////////
 /// Functions for Calculation Meas
 //////////////////////////////////////////
-TReal TObservationGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TAdjustablePoint* targetAdjPoint){
+TReal TObservationGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint){
 	TPositionVector targetPos = targetAdjPoint->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo->getLORTransformation(targetAdjPoint->getFrameTreePosition(), fPointTransfo->getTree()->begin()); // Transform target to ROOT
 	tgLor2RootTrafo.transform(targetPos);
@@ -35,7 +36,7 @@ TReal TObservationGenerator::getANGLCalcMeas(const TTSTN& station, const TTSTN::
 	return (TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst).getRadiansValue();
 }
 
-TReal TObservationGenerator::getZENDCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt){
+TReal TObservationGenerator::getZENDCalcMeas(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt){
 	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
 	const TLOR2LOR& stLor2RootTrafo = fPointTransfo->getLORTransformation(station.instrumentPos->getFrameTreePosition(), fPointTransfo->getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
@@ -59,7 +60,7 @@ TReal TObservationGenerator::getZENDCalcMeas(const TTSTN& station, const TAdjust
 	return (TAngle::aCos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue()) / distance3D))).getRadiansValue();
 }
 
-TReal TObservationGenerator::getDISTCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr){
+TReal TObservationGenerator::getDISTCalcMeas(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr){
 	TPositionVector targetPos = targetAdjPoint->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo->getLORTransformation(targetAdjPoint->getFrameTreePosition(), fPointTransfo->getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
 	tgLor2RootTrafo.transform(targetPos);
@@ -216,7 +217,7 @@ TReal	TObservationGenerator::getDLEVCalcMeas(const TLEVEL& levelInstr, const TDL
 	return calcMeas;
 }
 
-TReal	TObservationGenerator::getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor){
+TReal	TObservationGenerator::getHorDistCalcMeas(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor){
 	TPositionVector refPointPos = referencePoint->getEstimatedValue();  // Reference point is the 'target'.
 	const TLOR2LOR& refPTLor2RootTrafo = fPointTransfo->getLORTransformation(referencePoint->getFrameTreePosition(), fPointTransfo->getTree()->begin());
 	refPTLor2RootTrafo.transform(refPointPos);
