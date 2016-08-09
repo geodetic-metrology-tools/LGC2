@@ -18,7 +18,7 @@ class TAMeasurementKey : public TAKeyWord {
 		TAMeasurementKey(TLGCData& project, const std::string& key);
 
 	protected:
-		TAdjustablePointCollection const    &fpoints;
+		LGCAdjustablePointCollection const    &fpoints;
 		const TInstrumentData   &finstruments;
 		TAdjustableLengthCollection&flengths;
 		TAdjustableAngleCollection& fangles;

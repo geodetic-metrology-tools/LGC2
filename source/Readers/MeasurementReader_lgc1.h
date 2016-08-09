@@ -18,7 +18,7 @@ public:
 	TAMeasurementKey_lgc1(TLGCData& project, const std::string& key);
 
 protected:
-	TAdjustablePointCollection const    &fpoints;
+	LGCAdjustablePointCollection const    &fpoints;
 	TInstrumentData   &finstruments;
 	TAdjustableLengthCollection&flengths;
 	TAdjustableAngleCollection& fangles;

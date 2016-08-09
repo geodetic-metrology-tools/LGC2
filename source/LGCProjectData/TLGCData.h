@@ -98,9 +98,9 @@ public:
 	/*!@name Accessing the data stored, adjustable collections, configuration, instruments, logger writer.*/
 	//@{
 		/// Returns the vector/ collection of all the adjustable points
-		TAdjustablePointCollection& getPoints() {return points;}
+		LGCAdjustablePointCollection& getPoints() {return points;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable points
-		TAdjustablePointCollection const& getPoints() const {return points;}
+		LGCAdjustablePointCollection const& getPoints() const {return points;}
 		/// Returns the vector/ collection of all the adjustable lines
 		LGCAdjustableLineCollection& getLines() {return lines;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable lines
@@ -211,7 +211,7 @@ private:
 	/*!@name Collections of adjustable objects*/
 	//@{
 		/// Adjustable points are collected globally 
-		TAdjustablePointCollection points;
+		LGCAdjustablePointCollection points;
 		/// Adjustable lines are collected globally
 		LGCAdjustableLineCollection lines;
 		/// Adjustable planes are collected globally

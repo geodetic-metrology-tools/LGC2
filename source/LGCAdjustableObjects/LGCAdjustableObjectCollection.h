@@ -1,5 +1,5 @@
-#ifndef TADJUSTABLE_OBJECT_COLLECTION
-#define TADJUSTABLE_OBJECT_COLLECTION
+#ifndef LGCADJUSTABLE_OBJECT_COLLECTION
+#define LGCADJUSTABLE_OBJECT_COLLECTION
 
 #include "LGCAdjustableLine.h"
 #include "LGCAdjustablePlane.h"
@@ -156,7 +156,7 @@ class LGCAdjustableObjectCollection {
 };
 
 typedef LGCAdjustableObjectCollection<TAdjustableHelmertTransformation> TAdjustableTransformationCollection;
-typedef LGCAdjustableObjectCollection<LGCAdjustablePoint> TAdjustablePointCollection;
+typedef LGCAdjustableObjectCollection<LGCAdjustablePoint> LGCAdjustablePointCollection;
 typedef LGCAdjustableObjectCollection<LGCAdjustableLine> LGCAdjustableLineCollection;
 typedef LGCAdjustableObjectCollection<LGCAdjustablePlane> LGCAdjustablePlaneCollection;
 typedef LGCAdjustableObjectCollection<TAdjustableAngle> TAdjustableAngleCollection;

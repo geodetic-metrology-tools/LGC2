@@ -68,7 +68,7 @@ class TAPointKey : public TAKeyWord {
 		// read-only access to configuration
 		const TLGCConfig& fconfig;
 		// access to point storage
-		TAdjustablePointCollection& fpointAccess;
+		LGCAdjustablePointCollection& fpointAccess;
 		// comments before and in the current line
 		std::string hdrcomment;
 
