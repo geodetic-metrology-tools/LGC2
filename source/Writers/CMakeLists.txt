@@ -18,6 +18,7 @@ set(Writers_SOURCES
 	TSimulationOutputFileWriter.cpp
 	TSimFileWriter.cpp
 	TDefaFileWriter.cpp
+	TCovarFileWriter.cpp
 )
 
 # Create a variable containing all .h files:
@@ -29,6 +30,7 @@ set(Writers_HEADERS
 	TSimulationOutputFileWriter.h
 	TSimFileWriter.h
 	TDefaFileWriter.h
+	TCovarFileWriter.h
 )
 
 # Create a static library from sources:

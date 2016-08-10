@@ -123,6 +123,20 @@ class TKeyLIBR : public TAOptionKey {
 		virtual void parse(const std::vector<std::string>&, int);
 };
 
+class TKeyCOVAR : public TAOptionKey {
+public:
+	///Constructor
+	TKeyCOVAR(TLGCData& project, int nb_allowed_keywords = nb_allowed_covar, const char** keywords = allowed_COVAR) : TAOptionKey(project, COVAR)
+	{
+		for (int i(0); i< nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	///Tokenize and initialize options for the calculation
+	virtual void parse(const std::vector<std::string>&, int);
+};
+
+
 class TKeyNODUP : public TAOptionKey {
 	public:
 		///Constructor

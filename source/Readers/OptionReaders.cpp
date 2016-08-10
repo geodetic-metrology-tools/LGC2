@@ -71,6 +71,9 @@ void TKeyLIBR::parse(const std::vector<std::string>&, int) {
 	fconfig.libre = TLGCConfig::TBinaryOption(true);
 }
 
+void TKeyCOVAR::parse(const std::vector<std::string>&, int) {
+	fconfig.covar = TLGCConfig::TBinaryOption(true);
+}
 
 void TKeyNODUP::parse(const std::vector<std::string>&, int) {
 	fconfig.nodup = TLGCConfig::TBinaryOption(true);

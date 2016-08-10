@@ -1,10 +1,16 @@
 #include "TLGCApp.h"
 #include "TReader.h"
 #include "TLGCCalculation.h"
-#include "TStreamFormatterFactory.h"
 #include "Version.h"
+#include "TResultsFileWriter.h"
 #include "TSimulationOutputFileWriter.h"
 #include "TSimFileWriter.h"
+#include "TPunchFileWriter.h"
+#include "TFautFileWriter.h"
+#include "TDefaFileWriter.h"
+#include "TCovarFileWriter.h"
+
+
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
@@ -71,6 +77,8 @@ bool TLGCApp::exec()
 	if (result && projectData->getConfig().writeDefa.isActive())
 		writeDefaFile(projectData.get(), lgcCalculation.getResultMtr());
 
+	
+
 	return result;
 }
 
@@ -113,6 +121,10 @@ void TLGCApp::saveResults(TLGCData *dat)
 	//Write error file (FAUT)
 	if(dat->getConfig().faut.isActive()==true)
 		writeFautFile(dat);
+
+	// Write covariance matrices
+	if (dat->getConfig().covar.isActive())
+		writeCovarFile(dat);
 	
 }
 
@@ -191,6 +203,23 @@ void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
 		defaFileWriter.writeFile(*dat, fResMtrx);
 	else
 		defaFileWriter.writeFile("Error has occured, see the LGC log file.");
+}
+
+/// Write files for covariances
+void TLGCApp::writeCovarFile(TLGCData *dat)
+{
+	// change stream name
+	std::size_t found = fOutputFileLoc.find_last_of(".");
+	fOutputFileLoc = fOutputFileLoc.substr(0, found);
+
+	fStream->resetStreamName(fOutputFileLoc + ".cov");
+	TCovarFileWriter covarFileWriter(fStream.get(), dat);
+
+	if (!dat->getFileLogger().hasErrors())
+		covarFileWriter.writeFile(*dat);
+	else
+		covarFileWriter.writeFile("Error has occured, see the LGC log file.");
+
 }
 
 void TLGCApp::writeSimFile(TLGCData* dat)

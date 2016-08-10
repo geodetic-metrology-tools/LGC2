@@ -1,10 +1,15 @@
 #ifndef _LGCAPP_H_
 #define _LGCAPP_H_
 
-#include "TResultsFileWriter.h"
-#include "TPunchFileWriter.h"
-#include "TFautFileWriter.h"
-#include "TDefaFileWriter.h"
+#include <memory>
+#include <string>
+
+//SurveyLib
+#include "TStreamFormatterFactory.h"
+#include "TLSResultsMatrices.h"
+
+class TLGCData;
+
 
 /*!
 	\ingroup LGCProject
@@ -56,6 +61,9 @@ class TLGCApp {
 
 		/// Write files for Deform
 		void writeDefaFile(TLGCData *dat, TLSResultsMatrices &fResMtrx);
+
+		/// Write files for covariances
+		void writeCovarFile(TLGCData *dat);
 
 		/// Write simulated files 
 		void writeSimFile(TLGCData *dat);
