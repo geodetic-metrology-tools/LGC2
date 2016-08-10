@@ -1,5 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/LGCAdjustableObjects
 					${CMAKE_SOURCE_DIR}/LGCCalculation
 					${CMAKE_SOURCE_DIR}/LGCObjectWriters
 					${CMAKE_SOURCE_DIR}/LGCProject
@@ -18,6 +18,7 @@ set(Writers_SOURCES
 	TSimulationOutputFileWriter.cpp
 	TSimFileWriter.cpp
 	TDefaFileWriter.cpp
+	TCovarFileWriter.cpp
 )
 
 # Create a variable containing all .h files:
@@ -29,6 +30,7 @@ set(Writers_HEADERS
 	TSimulationOutputFileWriter.h
 	TSimFileWriter.h
 	TDefaFileWriter.h
+	TCovarFileWriter.h
 )
 
 # Create a static library from sources:

@@ -1,5 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/AdjustableObjects
+					${CMAKE_SOURCE_DIR}/LGCAdjustableObjects
 					${CMAKE_SOURCE_DIR}/LGCProject
 					${CMAKE_SOURCE_DIR}/LGCProjectData
 					${CMAKE_SOURCE_DIR}/Measurements
@@ -31,5 +31,5 @@ set(ContributionsGenerators_SOURCES
 # Create a static library from sources:
 add_library(ContributionsGenerators STATIC ${ContributionsGenerators_HEADERS} ${ContributionsGenerators_SOURCES})
 # Link static libraries to the current one
-target_link_libraries(ContributionsGenerators LocalTransformations MathematicalConcepts)
+target_link_libraries(ContributionsGenerators LocalTransformations MathematicalConcepts AdjustableObjects)
 

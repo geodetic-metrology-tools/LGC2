@@ -95,7 +95,7 @@ void TLSSimulation::updateResValues(){
 	for (auto& pointSummary : fPointSummaries){
 		TDataTreeIterator root = fData.getTree().begin();
 		TRefSystemFactory::ERefFrame globalRef = fData.getConfig().referential;
-		const TAdjustablePoint* point = pointSummary.getAdjustablePoint();
+		const LGCAdjustablePoint* point = pointSummary.getAdjustablePoint();
 
 		TPositionVector provisionalValue = point->getProvisionalValue();
 		TPositionVector estimatedValue = point->getEstimatedValue();
@@ -219,7 +219,7 @@ void	TLSSimulation::getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& 
 }
 
 /*DHOR made in DLEV measurement, different from the DHOR obs.*/
-void	TLSSimulation::getHorDistSimValues(const TAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel){
+void	TLSSimulation::getHorDistSimValues(const LGCAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel){
 	TReal calcVal = fSimObs.getHorDistCalcMeas(referencePoint, dhorlevel);
 	TReal sigma = dhorlevel.target.sigmaD;
 	dhorlevel.setDistance(TLength(getSimulatedValue(calcVal, sigma)));

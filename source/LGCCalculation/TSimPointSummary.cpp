@@ -22,7 +22,7 @@ fSumRes2(TCoordSysFactory::k3DCartesian)
 //////////////////////
 // Constructor taking a LSCPosVecIterator
 //////////////////////
-TSimPointSummary::TSimPointSummary(const TAdjustablePoint& point) :  fSumRes(0,0,0,TCoordSysFactory::k3DCartesian),
+TSimPointSummary::TSimPointSummary(const LGCAdjustablePoint& point) :  fSumRes(0,0,0,TCoordSysFactory::k3DCartesian),
 fResMin(0,0,0,TCoordSysFactory::k3DCartesian), fResMax(0,0,0,TCoordSysFactory::k3DCartesian),
 fSumRes2(0,0,0,TCoordSysFactory::k3DCartesian)
 {

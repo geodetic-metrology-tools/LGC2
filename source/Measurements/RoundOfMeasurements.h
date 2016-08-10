@@ -2,8 +2,8 @@
 #define Round_Of_Measurements
 
 #include "MeasDef.h"
-#include "TAdjustablePlane.h"
-#include "TAdjustableLine.h"
+#include "LGCAdjustablePlane.h"
+#include "LGCAdjustableLine.h"
 class TLGCObsSummary;
 
 /*!
@@ -16,7 +16,7 @@ struct TECHOROM {
 		std::vector<TECHO> measECHO;
 
 		//Measured vertical plane
-		TAdjustablePlane* fMeasuredPlane;
+		LGCAdjustablePlane* fMeasuredPlane;
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getECHOObsSummary() const;
@@ -25,7 +25,7 @@ struct TECHOROM {
 		int  line;
 
 		/// the station attribute is a copy of the parameter to override defaults
-		TECHOROM(TAdjustablePlane& measPlane) :
+		TECHOROM(LGCAdjustablePlane& measPlane) :
 			fMeasuredPlane(&measPlane),
 			line(NO_VALi)
 			{}
@@ -41,9 +41,9 @@ struct TECSPROM {
 	std::vector<TECSP> measECSP;
 
 	//Measured line
-	//TAdjustableLine* fMeasuredLine;
-	const TAdjustablePoint* p1;
-	const TAdjustablePoint* p2;
+	//LGCAdjustableLine* fMeasuredLine;
+	const LGCAdjustablePoint* p1;
+	const LGCAdjustablePoint* p2;
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	TLGCObsSummary getECSPObsSummary() const;
@@ -54,7 +54,7 @@ struct TECSPROM {
 	string romName;
 
 	/// the station attribute is a copy of the parameter to override defaults
-	/*TECSPROM(TAdjustableLine& measLine) :
+	/*TECSPROM(LGCAdjustableLine& measLine) :
 		fMeasuredLine(&measLine),
 		line(NO_VALi),
 		p1(nullptr),
@@ -62,7 +62,7 @@ struct TECSPROM {
 	{}
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECSPROM(TAdjustableLine& measLine, const TAdjustablePoint& point1, const TAdjustablePoint& point2) :
+	TECSPROM(LGCAdjustableLine& measLine, const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
 		fMeasuredLine(&measLine),
 		p1(&point1),
 		p2(&point2),
@@ -77,7 +77,7 @@ struct TECSPROM {
 	{}
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECSPROM(string name,const TAdjustablePoint& point1, const TAdjustablePoint& point2) :
+	TECSPROM(string name,const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
 		romName(name),
 		p1(&point1),
 		p2(&point2),
@@ -96,7 +96,7 @@ struct TECVEROM {
 	std::vector<TECVE> measECVE;
 
 	//Measured vertical plane
-	TAdjustableLine* fMeasuredLine;
+	LGCAdjustableLine* fMeasuredLine;
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	TLGCObsSummary getECVEObsSummary() const;
@@ -105,7 +105,7 @@ struct TECVEROM {
 	int  line;
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECVEROM(TAdjustableLine& measLine) :
+	TECVEROM(LGCAdjustableLine& measLine) :
 		fMeasuredLine(&measLine),
 		line(NO_VALi)
 	{}
@@ -121,7 +121,7 @@ struct TORIEROM {
 		std::vector<TORIE> measORIE;
 
 		/// The position of the instrument
-		const TAdjustablePoint* instrumentPos;
+		const LGCAdjustablePoint* instrumentPos;
 
 		/// The instrument that is used on this station
 		TInstrumentData::TPOLAR     instrument;
@@ -135,7 +135,7 @@ struct TORIEROM {
 		int  line;
 
 		/// the station attribute is a copy of the parameter to override defaults
-		TORIEROM(const TAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
+		TORIEROM(const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
 			instrumentPos(&pos),
 			instrument(instrument),
 			line(NO_VALi),

@@ -31,7 +31,7 @@ public:
 	/// Write DVER reliability data
 	void	writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
 	/// Write ORIE reliability data
-	void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const TAdjustablePoint& instPos);
+	void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
 	/// Write RADI reliability data
 	void	writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat);
 
@@ -54,7 +54,7 @@ public:
 		/// Write DVER results data
 		void writeDVERResults(const std::vector<TDVER>& fDVER);
 		/// Write ORIE results data
-		void writeORIEResults(const std::vector<TORIE>& fORIE, const TAdjustablePoint& instPos);
+		void writeORIEResults(const std::vector<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
 		/// Write RADI results data
 		void writeRADIResults(const std::vector<TRADI>& fRADI);
 

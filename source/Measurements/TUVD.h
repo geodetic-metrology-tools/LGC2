@@ -12,7 +12,7 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 {
 	public:
 
-		TUVD(const TAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
+		TUVD(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
 			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 		{}
 

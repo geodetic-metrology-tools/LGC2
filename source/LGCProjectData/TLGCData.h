@@ -3,7 +3,7 @@
 
 #include <TMeasurements.h>
 #include "TLGCConfig.h"
-#include "TAdjustableObjectCollection.h"
+#include "LGCAdjustableObjectCollection.h"
 #include <Global.h>
 #include "TFileLogger.h"
 #include "UEOIndices.h"
@@ -98,17 +98,17 @@ public:
 	/*!@name Accessing the data stored, adjustable collections, configuration, instruments, logger writer.*/
 	//@{
 		/// Returns the vector/ collection of all the adjustable points
-		TAdjustablePointCollection& getPoints() {return points;}
+		LGCAdjustablePointCollection& getPoints() {return points;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable points
-		TAdjustablePointCollection const& getPoints() const {return points;}
+		LGCAdjustablePointCollection const& getPoints() const {return points;}
 		/// Returns the vector/ collection of all the adjustable lines
-		TAdjustableLineCollection& getLines() {return lines;}
+		LGCAdjustableLineCollection& getLines() {return lines;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable lines
-		TAdjustableLineCollection const& getLines() const {return lines;}
+		LGCAdjustableLineCollection const& getLines() const {return lines;}
 		/// Returns the vector/ collection of all the adjustable planes
-		TAdjustablePlaneCollection& getPlanes() {return planes;}
+		LGCAdjustablePlaneCollection& getPlanes() {return planes;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable planes
-		TAdjustablePlaneCollection const& getPlanes() const {return planes;}
+		LGCAdjustablePlaneCollection const& getPlanes() const {return planes;}
 		/// Returns the vector/ collection of all the adjustable angles
 		TAdjustableAngleCollection& getAngles() {return angles;}
 		/// Returns a contant reference of the vector/ collection of all the adjustable angles
@@ -211,11 +211,11 @@ private:
 	/*!@name Collections of adjustable objects*/
 	//@{
 		/// Adjustable points are collected globally 
-		TAdjustablePointCollection points;
+		LGCAdjustablePointCollection points;
 		/// Adjustable lines are collected globally
-		TAdjustableLineCollection lines;
+		LGCAdjustableLineCollection lines;
 		/// Adjustable planes are collected globally
-		TAdjustablePlaneCollection planes;
+		LGCAdjustablePlaneCollection planes;
 		/// Adjustable angles are collected globally
 		TAdjustableAngleCollection angles;
 		/// Adjustable lengths are collected globally

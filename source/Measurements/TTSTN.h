@@ -98,7 +98,7 @@ struct TTSTN {
 		TInstrumentData::TPOLAR instrument;
 
 		/// The point on which the instrument resides
-		const TAdjustablePoint* instrumentPos; 
+		const LGCAdjustablePoint* instrumentPos; 
 
 		/// Adjustable instrument height, the height can be fixed or variable
 		const TAdjustableLength* instrumentHeightAdjustable;
@@ -124,7 +124,7 @@ struct TTSTN {
 
 			\param instrument A reference to the instrument data. The object is stored as a deep copy.
 		*/
-		TTSTN( const TAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
+		TTSTN( const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
 			instrument(instrument),
 			instrumentPos(&pos),
 			rot3D(false),

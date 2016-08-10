@@ -1,25 +1,25 @@
-#ifndef TADJUSTABLE_PLANE
-#define TADJUSTABLE_PLANE
+#ifndef LGCADJUSTABLE_PLANE
+#define LGCADJUSTABLE_PLANE
 
 #include "TVAdjustableObject.h"
 #include "TAngle.h"
 #include "TLength.h"
 #include <bitset>
 
-class TAdjustablePoint;
+class LGCAdjustablePoint;
 
 /*! 
 	\brief Adds adjustable information to a plane.
 
-	Plane is defined throught a Reference Point (TAdjustablePoint), distance of this Reference point (TLength) from the plane and two angles (TAngle) defining the normal vector of the plane.
+	Plane is defined throught a Reference Point (LGCAdjustablePoint), distance of this Reference point (TLength) from the plane and two angles (TAngle) defining the normal vector of the plane.
 */
-class TAdjustablePlane : public TVAdjustableObject{
+class LGCAdjustablePlane : public TVAdjustableObject{
 public:
 	/*!@name Constructors/Initialization */
 	//@{
 
 		/*!
-			\brief Constructs an TAdjustablePlane based on existing reference point, distance of the reference point from the plane and two angles used to represent the normal vector of the plane.
+			\brief Constructs an LGCAdjustablePlane based on existing reference point, distance of the reference point from the plane and two angles used to represent the normal vector of the plane.
 			
 			\param[in] referencePoint Fixed point, used as a reference point for the plane definition.
 			\param[in] refPointDistance Distance of the reference point from the plane. Is variable at any case, implicitly set to be a variable. 
@@ -29,15 +29,15 @@ public:
 			\param[in] phiFixed Boolean value telling if the zenith distance Phi angle is fixed(TRUE) or variable(FALSE).
 			\param[in] name Name of the adjustable plane.
 
-			\note Reference point distance (refPointDistance) is always variable, this object therefore introduces from 1 up to 3 unknowns (up to 2 for the two angle THETA and PHI + 1 RP distance). Reference point is adjusted separately from the TAdjustablePoint object independently on the plane.
+			\note Reference point distance (refPointDistance) is always variable, this object therefore introduces from 1 up to 3 unknowns (up to 2 for the two angle THETA and PHI + 1 RP distance). Reference point is adjusted separately from the LGCAdjustablePoint object independently on the plane.
 		*/
-      TAdjustablePlane(const TAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name);
+      LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name);
 
 		/// Create an unitialized plane. 
-		static TAdjustablePlane createUninitialized(const std::string& name);
+		static LGCAdjustablePlane createUninitialized(const std::string& name);
 
 		/// See the constructor definition.
-      void initialize(const TAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed);
+      void initialize(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed);
 		//@}
 
 	/*!@name Access methods*/
@@ -81,7 +81,7 @@ public:
       inline const TLength&		getRefPDistEstimatedPrecision() const { return fEstPrecisionRefPtDist; }
 
 		/// Returns pointer to the Reference point position. 
-		const TAdjustablePoint*		getReferencePoint() const {return fReferencePoint;}
+		const LGCAdjustablePoint*		getReferencePoint() const {return fReferencePoint;}
 
 
 		/*!
@@ -192,7 +192,7 @@ public:
 private:
 	std::string fName; /*!< Name of the adjustable plane */
 
-	const TAdjustablePoint*		fReferencePoint; /*!< Reference point*/
+	const LGCAdjustablePoint*		fReferencePoint; /*!< Reference point*/
 
 	//Reference point distance definition
    TLength	fProvValRefPtDist; /*!< Provisional value of the reference point distance. */

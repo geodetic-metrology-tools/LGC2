@@ -220,6 +220,8 @@ struct TLGCConfig
 	TCoordOut     writePunch;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
 	TCoordOut     writePlot;
+	/// Write a file for covariance analysis
+	TBinaryOption covar;
 
 	///width of point's name
 	int pointNameWidth = 0;

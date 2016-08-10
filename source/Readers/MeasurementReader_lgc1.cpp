@@ -964,7 +964,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			" station point angle offset");
 
 		// look up the observed point
-		const TAdjustablePoint& obspt(fpoints.getObject(tokens.at(1)));
+		const LGCAdjustablePoint& obspt(fpoints.getObject(tokens.at(1)));
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
@@ -1889,7 +1889,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			const std::string& name = "DLEVPLANE" + std::to_string(proj.getCurrentNode().measurements.fLEVEL.size()); //name of the measured adjustable plane
 			//Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed
-			fplanes.addObject(TAdjustablePlane(&fpoints.getObject(currentStation), TLength(0.0), TAngle(0.0, TAngle::kRadians),
+			fplanes.addObject(LGCAdjustablePlane(&fpoints.getObject(currentStation), TLength(0.0), TAngle(0.0, TAngle::kRadians),
 				TAngle(0.0, TAngle::kRadians), true, true, name));
 
 			TLEVEL level(fplanes.back(), finstruments.getDevice(finstruments.fLEVEL, "LEVELInstr"));
@@ -2028,7 +2028,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 			const std::string& name = "ECHOPLANE" + std::to_string(proj.getCurrentNode().measurements.fECHO.size()); //name of the measured adjustable plane
 
-			fplanes.addObject(TAdjustablePlane::createUninitialized(name));
+			fplanes.addObject(LGCAdjustablePlane::createUninitialized(name));
 			TECHOROM echoRom(fplanes.back());
 
 			echoRom.line = line;
@@ -2036,16 +2036,16 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			proj.getCurrentNode().measurements.fECHO.back().line = line;
 
 			//initialise the plane instead of in TDataAnalyser
-			const TAdjustablePoint& p1 = fpoints.getObject(encrage1);
-			const TAdjustablePoint& p2 = fpoints.getObject(encrage2);
+			const LGCAdjustablePoint& p1 = fpoints.getObject(encrage1);
+			const LGCAdjustablePoint& p2 = fpoints.getObject(encrage2);
 			TReal referencePoint[3] = { p1.getEstimatedValue().getX().getMetresValue(), 
 										p1.getEstimatedValue().getY().getMetresValue(),
 										p1.getEstimatedValue().getZ().getMetresValue() };
 			TReal initialRefPtDistance = 0.0;
 
 			/*Fixed reference point for the ECHO measurement*/
-			TAdjustablePoint& rp =
-				proj.getPoints().addObject(TAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+			LGCAdjustablePoint& rp =
+				proj.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 				true, true, true, "ECHO_line" + std::to_string(line), proj.getConfig().referential, proj.getTree().begin()));
 
 			TReal thetaLineVectorAngle = atan2q(p2.getEstimatedValue().getX().getMetresValue() - p1.getEstimatedValue().getX().getMetresValue(), p2.getEstimatedValue().getY().getMetresValue() - p1.getEstimatedValue().getY().getMetresValue());
@@ -2330,7 +2330,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			const std::string& name = "ECVELINE" + std::to_string(proj.getCurrentNode().measurements.fECVE.size()); //name of the measured adjustable line
 
 			/*The pointLine is known (ref point = point on the line)*/
-			flines.addObject(TAdjustableLine(&fpoints.getObject(ptLine), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
+			flines.addObject(LGCAdjustableLine(&fpoints.getObject(ptLine), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
 
 			//The line will be initialized in TDataAnalyzer class, when checked for consistency
 			TECVEROM ecveRom(flines.back());

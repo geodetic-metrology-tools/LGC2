@@ -7,16 +7,21 @@
 /////////////////////////////////////////////////////////////////////
  
 #include <ctime>
+
+//LGC Core
 #include "TLGCData.h"
-#include "TSeparatedFormatTStream.h"
 #include "TResultsFileWriter.h"
-#include "TPointConverter.h"
 #include "TLGCApp.h"
 #include "TLOR2LOR.h"
-#include "TXYH2CCS.h"
 #include "TFRAMEWriter.h"
-#include "TSpatialStatus.h"
 #include "TLibrCnstrGenerator.h"
+
+//SurveyLib
+#include "TSeparatedFormatTStream.h"
+#include "TPointConverter.h"
+#include "TObservationWriter.h"
+#include "TSpatialStatus.h"
+#include "TXYH2CCS.h"
  
 #ifdef PRNCSV
 ofstream fcsv;

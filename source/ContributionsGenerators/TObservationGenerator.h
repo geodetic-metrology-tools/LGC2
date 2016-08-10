@@ -33,13 +33,13 @@ public:
 	/*!@name Method for accessing the calculation measurement values only . */
 	//@{
 	/// Returns the the ANGL measurement calculated meas in RADIANS [rad]
-	TReal getANGLCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TAdjustablePoint* targetAdjPoint);
+	TReal getANGLCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint);
 
 	/// Returns the ZEND measurement calculated meas in RADIANS [rad]
-	TReal getZENDCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt);
+	TReal getZENDCalcMeas(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
 
 	/// Returns the DIST measurement calculated meas in meters [m]
-	TReal getDISTCalcMeas(const TTSTN& station, const TAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
+	TReal getDISTCalcMeas(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
 
 	/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
 	TReal getDHORCalcMeas(const TTSTN& station, const TLINE& dhor);
@@ -75,7 +75,7 @@ public:
 	TReal	 getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp);
 
 	/// Returns the TDHOR measurement calculated meas in meters [m]
-	TReal	getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
+	TReal	getHorDistCalcMeas(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
 	/// Returns the the ORIE measurement calculated meas in RADIANS [rad]
 	TReal getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie);

@@ -5,7 +5,7 @@
 #include "Global.h"
 #include "TLGCObsSummary.h"
 #include "RoundOfMeasurements.h"
-#include "TAdjustablePoint.h"
+#include "LGCAdjustablePoint.h"
 
 TSCALEWriter::TSCALEWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), writeHist(hist)
 {}

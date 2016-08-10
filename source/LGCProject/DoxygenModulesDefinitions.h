@@ -77,7 +77,7 @@
 	estimated precision or covariances. New description of observation models require, apart from the fundamental 
 	objects, also more general ones. Because of that, following adjustable objects have been introduced: point, angle, scalar, plane, line and transformation.
 
-	A collection of these objects is also part of this package (TAdjustableObjectCollection) as well as a common interface (TVAdjustableObject).
+	A collection of these objects is also part of this package (LGCAdjustableObjectCollection) as well as a common interface (TVAdjustableObject).
  */
 
 /** \defgroup LocalTransformations 

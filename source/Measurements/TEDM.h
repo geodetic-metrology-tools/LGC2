@@ -9,7 +9,7 @@ class TLGCObsSummary;
 struct TEDM {
 
 		// Constructor of the EDM station
-		TEDM(const TAdjustablePoint& pos, const TInstrumentData::TEDM& instrument) :
+		TEDM(const LGCAdjustablePoint& pos, const TInstrumentData::TEDM& instrument) :
 			instrument(instrument),
 			instrumentPos(&pos),
 			line(NO_VALi)
@@ -22,7 +22,7 @@ struct TEDM {
 		TInstrumentData::TEDM instrument;
 
 		/// The point on which the instrument resides
-		const TAdjustablePoint* instrumentPos; 	
+		const LGCAdjustablePoint* instrumentPos; 	
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getDSPTObsSummary() const;

@@ -18,12 +18,12 @@ class TAMeasurementKey : public TAKeyWord {
 		TAMeasurementKey(TLGCData& project, const std::string& key);
 
 	protected:
-		TAdjustablePointCollection const    &fpoints;
+		LGCAdjustablePointCollection const    &fpoints;
 		const TInstrumentData   &finstruments;
 		TAdjustableLengthCollection&flengths;
 		TAdjustableAngleCollection& fangles;
-		TAdjustablePlaneCollection& fplanes;
-		TAdjustableLineCollection& flines;
+		LGCAdjustablePlaneCollection& fplanes;
+		LGCAdjustableLineCollection& flines;
 		const bool& fSIMUActive;
 
 		/// Returns if this was the first line beginning with a '*',  NOT the success of the target update

@@ -886,11 +886,11 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 				throw std::runtime_error("Point" +  rpName + "used as reference point in DLEV measurement, must be declared before used");
 
 			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			fplanes.addObject(TAdjustablePlane(&fpoints.getObject(rpName), TLength(0.0), TAngle(0.0, TAngle::kRadians), 
+			fplanes.addObject(LGCAdjustablePlane(&fpoints.getObject(rpName), TLength(0.0), TAngle(0.0, TAngle::kRadians), 
 						TAngle(0.0, TAngle::kRadians), true, true, name));
 		}
 		else
-			fplanes.addObject(TAdjustablePlane::createUninitialized(name));
+			fplanes.addObject(LGCAdjustablePlane::createUninitialized(name));
 
 		TLEVEL level(fplanes.back(),finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
 		level.line = line;
@@ -969,7 +969,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 
 		const std::string& name = "ECHOPLANE" + std::to_string(proj.getCurrentNode().measurements.fECHO.size()); //name of the measured adjustable plane
 
-		fplanes.addObject(TAdjustablePlane::createUninitialized(name)); //The plane will be initialized in TDataAnalyzer class, when checked for consistency
+		fplanes.addObject(LGCAdjustablePlane::createUninitialized(name)); //The plane will be initialized in TDataAnalyzer class, when checked for consistency
 		TECHOROM echoRom(fplanes.back());
 
 		echoRom.line = line;
@@ -1037,10 +1037,10 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 				throw std::runtime_error("Point" + rpName + "used as reference point in ECVE measurement, must be declared before used");
 
 			/*The pointLine is known (ref point = point on the line)*/
-			flines.addObject(TAdjustableLine(&fpoints.getObject(rpName), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
+			flines.addObject(LGCAdjustableLine(&fpoints.getObject(rpName), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
 		}
 		else
-			flines.addObject(TAdjustableLine::createUninitialized(name));
+			flines.addObject(LGCAdjustableLine::createUninitialized(name));
 
 
 		 //The line will be initialized in TDataAnalyzer class, when checked for consistency
@@ -1108,7 +1108,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 		TECSPROM ecspRom(name, fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
 		
 		/*
-		flines.addObject(TAdjustableLine::createUninitialized(name));
+		flines.addObject(LGCAdjustableLine::createUninitialized(name));
 		//The line will be initialized in TDataAnalyzer class, when checked for consistency
 		TECSPROM ecspRom(flines.back(), fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
 		*/

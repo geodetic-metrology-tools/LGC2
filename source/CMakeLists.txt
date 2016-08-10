@@ -72,7 +72,7 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 include_directories (
 	SYSTEM
-	${CMAKE_SOURCE_DIR}/AdjustableObjects
+	${CMAKE_SOURCE_DIR}/LGCAdjustableObjects
 	${CMAKE_SOURCE_DIR}/LSCalculation
 	${CMAKE_SOURCE_DIR}/Readers
 	${CMAKE_SOURCE_DIR}/tests
@@ -85,6 +85,7 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/Writers
 	${CMAKE_SOURCE_DIR}/LGCObjectWriters
 	${Boost_INCLUDE_DIRS}
+	${SURVEYLIB_ROOT}/source/LSAlgorithms/AdjustableObjects
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcElements
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcParams
 	${SURVEYLIB_ROOT}/source/ProjectFramework/Converters
@@ -104,7 +105,7 @@ include_directories (
 )
 
 
-add_subdirectory(AdjustableObjects)
+add_subdirectory(LGCAdjustableObjects)
 add_subdirectory(LSCalculation)
 add_subdirectory(Readers)
 add_subdirectory(tests)
@@ -122,7 +123,7 @@ include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(LGC ${PROJECT_SOURCE_DIR}/LGCProject/main.cpp)
-target_link_libraries(LGC LGCProject LGCProjectData LGCCalculation Readers AdjustableObjects LocalTransformations CalcElements ProjectData LGCObjectWriters StreamFormatters FiltersAndFormats Converters ContributionsGenerators AffineTransformations LSCalculation MathematicalConcepts Measurements Writers ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
+target_link_libraries(LGC LGCProject LGCProjectData LGCCalculation Readers LGCAdjustableObjects AdjustableObjects LocalTransformations CalcElements ProjectData LGCObjectWriters StreamFormatters FiltersAndFormats Converters ContributionsGenerators AffineTransformations LSCalculation MathematicalConcepts Measurements Writers ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
 install(TARGETS LGC DESTINATION "." COMPONENT application)
 install(FILES
 		"${VCREDIST_INSTALLER_PATH}"

@@ -86,7 +86,7 @@ private:
 	void	getECSPSimValues(const TECSPROM& ecspROM, std::vector<TECSP>& ecsp);
 	void    getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie);
 	/*DHOR made in DLEV measurement, different from the DHOR obs.*/
-	void	getHorDistSimValues(const TAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);
+	void	getHorDistSimValues(const LGCAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);
 
 	void	getUVDSimValues(TCAM& camera);
 	void	getUVECSimValues(TCAM& camera);

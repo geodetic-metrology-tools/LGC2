@@ -125,7 +125,7 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	return;
 }
 
-void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const TAdjustablePoint* instrPos)
+void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const LGCAdjustablePoint* instrPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

@@ -95,7 +95,7 @@ public:
 		DistMeasContrib	getDSPTContrib(const TEDM& edmST, const TDSPT& dspt);
 
 		///  Returns the horizontal distance measurement contribution (RDHOR), made as a part of DLEV measurement
-		HorDistContribLEVEL	getHorDistContrib(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
+		HorDistContribLEVEL	getHorDistContrib(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
 		/// Returns contribution for the Gyro-Theodolithe measurement (TORIE)
 		AnglMeasContrib	getOrieContrib(const TORIEROM& orieROM, const TORIE& orie);
@@ -112,13 +112,13 @@ public:
 	/*!@name Method for accessing the calculation measurement values only . */
 	//@{
 		/// Returns the the ANGL measurement calculated meas in RADIANS [rad]
-		TReal getANGLCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TAdjustablePoint* targetAdjPoint);
+		TReal getANGLCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const LGCAdjustablePoint* targetAdjPoint);
 
 		/// Returns the ZEND measurement calculated meas in RADIANS [rad]
-		TReal getZENDCalcMeas(shared_ptr<TTSTN> station, const TAdjustablePoint* targetAdjPoint, TReal targetHt);
+		TReal getZENDCalcMeas(shared_ptr<TTSTN> station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
 
 		/// Returns the DIST measurement calculated meas in meters [m]
-		TReal getDISTCalcMeas(shared_ptr<TTSTN> station, const TAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
+		TReal getDISTCalcMeas(shared_ptr<TTSTN> station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
 
 		/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
 		TReal getDHORCalcMeas(shared_ptr<TTSTN> station, const TLINE& dhor);
@@ -151,7 +151,7 @@ public:
 		TReal getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve);
 
 		/// Returns the TDHOR measurement calculated meas in meters [m]
-		TReal	getHorDistCalcMeas(const TAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
+		TReal	getHorDistCalcMeas(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
 		/// Returns the the ORIE measurement calculated meas in RADIANS [rad]
 		TReal getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie);
