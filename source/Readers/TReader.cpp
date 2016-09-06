@@ -5,16 +5,10 @@
 #include "OptionReaders.h"
 #include "TReader.h"
 
+#include <StringManager.h>
 
 namespace {
-	static inline bool isDelim(const char c, const char* delims, int ndelims) {
-		for (int i = 0; i < ndelims; i++) {
-			if (c == delims[i]) return true;
-		}
-		return false;
-	}
-
-	static inline void skipBOM(std::istream& stream) {
+		static inline void skipBOM(std::istream& stream) {
 	static const int NUM_BOMs(3);
 	static const int BOM_LEN(3);
 
@@ -35,63 +29,6 @@ namespace {
 		}	
 	}
 }
-}
-
-// tokenizes a line by removing delimiters and stores non-delimiter words as separate strings.
-// The asterisk is considered to be a separate token and is thus stored in a different field as the keyword itself.
-// Parsing stops on a comment sign, the comment is then stored as a single token including the comment character.
-std::vector<std::string> const TReader::tokenizeLGCfileString(const std::string& str) {
-		using namespace std;
-		enum {
-			STATE_TOKEN,
-			STATE_DELIM
-		};
-		
-		size_t delimlen(strlen(INPUT_SEPERATOR_CHARS));
-		size_t commentslen(strlen(INPUT_COMMENT_CHARS));
-		vector<string> result(0);
-	
-		bool inString(false);
-		size_t start(0);
-		size_t end(0);
-		size_t length(str.length());
-		int state(STATE_DELIM);
-
-		do {
-			if (state == STATE_DELIM) {
-				if (! isDelim(str[end], INPUT_SEPERATOR_CHARS, (int)delimlen+1)) {
-					start = end;
-					state = STATE_TOKEN;
-				}
-			}
-			if (state == STATE_TOKEN) {
-				if (!inString&& str[end] == '\"') 
-					inString = true;
-				else if (inString&& str[end] == '\"') 
-					inString = false;
-				// the nul-character is a delimiter: reason for delimlen+1
-            if(!inString && isDelim(str[end], INPUT_SEPERATOR_CHARS, (int)delimlen + 1)) {
-					result.push_back(std::move(str.substr(start, end-start)));
-					state = STATE_DELIM;
-				}
-				// this is the beginning of a keyword, keep it as an extra token
-				if (str[end] == '*') {
-					result.push_back("*");
-					start = end+1;
-				}
-			}
-			if (state == STATE_TOKEN || state == STATE_DELIM) {
-				// check for comment
-            if(isDelim(str[end], INPUT_COMMENT_CHARS, (int)commentslen)) {
-					start = end;
-					end = length;
-					result.push_back(std::move(str.substr(start, end-start)));
-				}
-			}
-			end++;
-		} while (str[end-1] != 0);
-
-		return result;
 }
 
 TReader::TReader(std::shared_ptr<TLGCData> proj):
@@ -304,7 +241,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
-	const auto& titlrline(tokenizeLGCfileString(line));
+	const auto& titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
 	if (titlrline.size() != 2)
@@ -333,7 +270,7 @@ bool TReader::read(std::istream& lgcStream) {
 		// Prepare the error message for this line
 		const string nlinestr("Line " + to_string(nline) + ": ");
 		// tokenize the current line
-		auto tokLine(tokenizeLGCfileString(line));
+		auto tokLine(tokenizefileString(line));
 
 		// skip empty lines
 		if (tokLine.empty())
@@ -438,7 +375,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
-	const auto& titlrline(tokenizeLGCfileString(line));
+	const auto& titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
 	if (titlrline.size() != 2)
@@ -467,7 +404,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		// Prepare the error message for this line
 		const string nlinestr("Line " + to_string(nline) + ": ");
 		// tokenize the current line
-		auto tokLine(tokenizeLGCfileString(line));
+		auto tokLine(tokenizefileString(line));
 
 		// skip empty lines
 		if (tokLine.empty())
@@ -551,7 +488,7 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
-	const auto& titlrline(tokenizeLGCfileString(line));
+	const auto& titlrline(tokenizefileString(line));
 
 	// read until the next keyword
 	safeGetline(lgcStream, line/*, '*'*/);
@@ -570,7 +507,7 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 		++nline) 
 	{
 		// tokenize the current line
-		auto tokLine(tokenizeLGCfileString(line));
+		auto tokLine(tokenizefileString(line));
 
 		// skip empty lines
 		if (tokLine.empty()) continue;

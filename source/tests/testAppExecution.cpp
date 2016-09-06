@@ -3,7 +3,7 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
-#include "Utils.h"
+#include <StringManager.h>
 #include <TLGCData.h>
 #include <TReader.h>
 #include "TLGCApp.h"

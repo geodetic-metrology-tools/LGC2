@@ -44,10 +44,9 @@ set(tests_INPUT
 	tests_with_ScaleInstr.h
 	testAllfixed.h
 	testLIBR.h
-	Utils.h
 	testLgc1Reader.h
 )
 
 add_executable(tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(tests LGCProject LGCProjectData LGCCalculation Readers CalcElements  LocalTransformations ProjectData Converters LGCObjectWriters FiltersAndFormats StreamFormatters Writers LSCalculation MathematicalConcepts AffineTransformations ContributionsGenerators ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects LGCAdjustableObjects Measurements)
+target_link_libraries(tests LGCProject LGCProjectData LGCCalculation Readers CalcElements  LocalTransformations ProjectData Converters LGCObjectWriters FiltersAndFormats StreamFormatters Writers LSCalculation MathematicalConcepts AffineTransformations ContributionsGenerators ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects LGCAdjustableObjects Measurements Tools)

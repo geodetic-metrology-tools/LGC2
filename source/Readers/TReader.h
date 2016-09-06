@@ -26,8 +26,6 @@ class TReader {
 		bool readLgc1File(std::istream& lgcStream);
 		bool isLgc2File(std::istream& lgcStream);
 
-		/// Splits a line into its tokens, removing blank characters
-		static std::vector<std::string> const tokenizeLGCfileString(const std::string& str);
 
 	private:
 		/// All lgc2 keyword handler objects.

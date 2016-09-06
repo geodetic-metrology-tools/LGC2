@@ -27,3 +27,5 @@ set(READER_SOURCES
 )
 
 add_library(Readers STATIC ${READER_HEADERS} ${READER_SOURCES})
+
+target_link_libraries(Readers Tools)

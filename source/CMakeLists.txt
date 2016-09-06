@@ -100,6 +100,7 @@ include_directories (
 	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialMeasurments
 	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialObj
 	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialSystems
+	${SURVEYLIB_ROOT}/source/Tools
 	${TUT_INCLUDE_PATH}
 	${EIGEN_INCLUDE_PATH}
 )

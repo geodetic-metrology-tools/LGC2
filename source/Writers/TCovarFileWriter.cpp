@@ -163,12 +163,12 @@ void TCovarFileWriter::writeFrameDefinition(TAdjustableHelmertTransformation& fr
 void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelmertTransformation& frameDef)
 {
 	//Write frame upper covariance matrix
-	// stx cov_txty cov_txtz 0		 0		 0
-	//      sty     cov_tytz 0		 0		 0
-	//              stz      0       0       0
-	//                       srx cov_rxry cov_ryrz
-	//							    sry   cov_ryrz
-	//                                       srz
+	// vartx  cov_txty cov_txtz    0		 0		 0
+	//        varty     cov_tytz   0		 0		 0
+	//                  vartz      0         0       0
+	//                            varrx  cov_rxry  cov_ryrz
+	//							          svarry   cov_ryrz
+	//                                             varrz
 
 
 	TAStreamFormatter*	stream = getStream();
@@ -191,7 +191,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 		if (!frameDef.isTranslationFixed(0))
 		{
 			//variance
-			fStream->writeDouble(20, 16, frameDef.getEstimatedPrecisionTransl(0).getMMetresValue());
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionTransl(0).getMMetresValue()));
 
 			//covariances
 			if (!frameDef.isTranslationFixed(1))
@@ -227,7 +227,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 		else
 		{
 			if (frameDef.hasTranslStandDev(0))
-				fStream->writeDouble(20, 16, frameDef.getTranslationStandDev(0)*M2MM);
+				fStream->writeDouble(20, 16, pow2(frameDef.getTranslationStandDev(0)*M2MM));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -248,7 +248,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			//variance
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, frameDef.getEstimatedPrecisionTransl(1).getMMetresValue());
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionTransl(1).getMMetresValue()));
 
 			//covariances
 			if (!frameDef.isTranslationFixed(2))
@@ -277,7 +277,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (frameDef.hasTranslStandDev(1))
-				fStream->writeDouble(20, 16, frameDef.getTranslationStandDev(1)*M2MM);
+				fStream->writeDouble(20, 16, pow2(frameDef.getTranslationStandDev(1)*M2MM));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -298,7 +298,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			(*stream) << TABs;
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, frameDef.getEstimatedPrecisionTransl(2).getMMetresValue());
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionTransl(2).getMMetresValue()));
 
 
 			//rotations
@@ -317,7 +317,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (frameDef.hasTranslStandDev(2))
-				fStream->writeDouble(20, 16, frameDef.getTranslationStandDev(2)*M2MM);
+				fStream->writeDouble(20, 16, pow2(frameDef.getTranslationStandDev(2)*M2MM));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -342,7 +342,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 
 			//variance
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, frameDef.getEstimatedPrecisionRot(0).getGonsValue());
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionRot(0).getGonsValue()));
 
 			//covariances
 			if (!frameDef.isRotationFixed(1))
@@ -379,7 +379,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (frameDef.hasRotationStandDev(0))
-				fStream->writeDouble(20, 16, frameDef.getRotationStandDev(0)*RAD2GON);
+				fStream->writeDouble(20, 16, pow2(frameDef.getRotationStandDev(0)*RAD2GON));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -402,7 +402,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			//variance
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, frameDef.getEstimatedPrecisionRot(1).getGonsValue());
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionRot(1).getGonsValue()));
 
 			//covariances
 			if (!frameDef.isRotationFixed(2))
@@ -430,7 +430,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (frameDef.hasRotationStandDev(1))
-				fStream->writeDouble(20, 16, frameDef.getRotationStandDev(1)*RAD2GON);
+				fStream->writeDouble(20, 16, pow2(frameDef.getRotationStandDev(1)*RAD2GON));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -455,7 +455,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			(*stream) << TABs;
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, frameDef.getEstimatedPrecisionRot(2).getGonsValue());
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionRot(2).getGonsValue()));
 
 		}
 		else
@@ -471,7 +471,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (frameDef.hasRotationStandDev(2))
-				fStream->writeDouble(20, 16, frameDef.getRotationStandDev(2)*RAD2GON);
+				fStream->writeDouble(20, 16, pow2(frameDef.getRotationStandDev(2)*RAD2GON));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << endl;
@@ -502,7 +502,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 		if (!point.isCoordinateFixed(0))
 		{
 			//variance
-			fStream->writeDouble(20, 16, point.getXEstPrecision().getMMetresValue());
+			fStream->writeDouble(20, 16, pow2(point.getXEstPrecision().getMMetresValue()));
 
 			//covariances
 			if (!point.isCoordinateFixed(1))
@@ -531,7 +531,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 		else
 		{
 			if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(0)))
-				fStream->writeDouble(20, 16, point.getStandDev(0)*M2MM);
+				fStream->writeDouble(20, 16, pow2(point.getStandDev(0)*M2MM));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -546,7 +546,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 			//variance
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, point.getYEstPrecision().getMMetresValue());
+			fStream->writeDouble(20, 16, pow2(point.getYEstPrecision().getMMetresValue()));
 
 			//covariances
 			if (!point.isCoordinateFixed(2))
@@ -567,7 +567,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(1)))
-				fStream->writeDouble(20, 16, point.getStandDev(1)*M2MM);
+				fStream->writeDouble(20, 16, pow2(point.getStandDev(1)*M2MM));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -582,7 +582,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 			(*stream) << TABs;
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, point.getZEstPrecision().getMMetresValue());
+			fStream->writeDouble(20, 16, pow2(point.getZEstPrecision().getMMetresValue()));
 			(*stream) << endl;
 		}
 		else
@@ -592,7 +592,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 			fStream->writeString(20, "");
 			(*stream) << TABs;
 			if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(2)))
-				fStream->writeDouble(20, 16, point.getStandDev(2)*M2MM);
+				fStream->writeDouble(20, 16, pow2(point.getStandDev(2)*M2MM));
 			else
 				fStream->writeDouble(20, 16, 0.0);
 			(*stream) << endl;
@@ -602,17 +602,17 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePo
 	{
 		(*stream) << TABs;
 		if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(0)))
-			fStream->writeDouble(20, 16, point.getStandDev(0)*M2MM);
+			fStream->writeDouble(20, 16, pow2(point.getStandDev(0)*M2MM));
 		else
 			fStream->writeString(20, "");
 		(*stream) << TABs;
 		if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(1)))
-			fStream->writeDouble(20, 16, point.getStandDev(1)*M2MM);
+			fStream->writeDouble(20, 16, pow2(point.getStandDev(1)*M2MM));
 		else
 			fStream->writeString(20, "");
 		(*stream) << TABs;
 		if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(2)))
-			fStream->writeDouble(20, 16, point.getStandDev(2)*M2MM);
+			fStream->writeDouble(20, 16, pow2(point.getStandDev(2)*M2MM));
 		else
 			fStream->writeString(20, "");
 		(*stream) << endl;
