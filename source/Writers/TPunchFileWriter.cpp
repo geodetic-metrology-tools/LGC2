@@ -192,18 +192,16 @@ void TPunchFileWriter::writeTitle()
 {
 	TAStreamFormatter* stream = getStream();
 	//write software id.
-	(*stream)<<"*"<<(TLGCApp::getProgId())<<endl;
+	(*stream)<<"#"<<(TLGCApp::getProgId())<<endl;
 
 	//write software copyright
-	(*stream) << "*" << (TLGCApp::getCopyright()) << endl;
+	(*stream) << "#" << (TLGCApp::getCopyright()) << endl;
 
-	//last compilation (now showed in progID together with surveylib version)
-	//(*stream)<<"Derniere compilation : "<<__DATE__<<endl<<endl<<endl;
 
 	//write title
-	(*stream)<<"*********************************************************************************************************************************** "<<endl;
-	(*stream) << "*" << (fProjectData->getConfig().title) << endl;
-	(*stream) << "*" << endl;
+	(*stream)<<"# "<<endl;
+	(*stream) << "#" << (fProjectData->getConfig().title) << endl;
+	(*stream) << "#" << endl;
 
 	//write time
 	char tmpbuf[128];
@@ -218,8 +216,8 @@ void TPunchFileWriter::writeTitle()
 	today = localtime( &ltime );
 	string essai = ctime( &ltime );
 	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
-	(*stream) << "*" << tmpbuf << endl;
-	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
+	(*stream) << "#" << tmpbuf << endl;
+	(*stream)<<"# "<<endl<<endl;
 
 }
 

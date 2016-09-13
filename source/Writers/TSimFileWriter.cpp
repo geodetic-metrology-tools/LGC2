@@ -859,16 +859,16 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		if (meas->rot3D)
 			(*stream) << "ROT3D" << sep;
 
-		if (meas->instrumentHeightAdjustable->isFixed())
-		{
-			(*stream) << "IHFIX" << sep;
+		if (meas->instrumentHeightAdjustable)
+			if (meas->instrumentHeightAdjustable->isFixed())
+			{
+				(*stream) << "IHFIX" << sep;
+				if (meas->instrument.instrHeight != 0)
+					(*stream) << "IH" << sep << meas->instrument.instrHeight << sep;
 
-			if (meas->instrument.instrHeight != 0)
-				(*stream) << "IH" << sep << meas->instrument.instrHeight << sep;
-
-			if (meas->instrument.sigmaInstrHeight != 0)
-				(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
-		}
+				if (meas->instrument.sigmaInstrHeight != 0)
+					(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+			}
 
 		(*stream) << endl;
 
