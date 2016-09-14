@@ -1,0 +1,178 @@
+
+
+                          ****               ******              *****           ***********                                     
+                          ****            ************        ***********        ***********                                     
+                          ****           *****     ****      *****    ****              ****                                     
+                          ****          ****        ****    ****       ****             ****                                     
+                          ****          ****                ****                        ****                                     
+                          ****          ****                ****                 ***********                                     
+ ***********************  ****          ****      *******   ****                 ***********    ***********************             
+ ***********************  ****          ****      *******   ****                 ****            ***********************             
+                          ****          ****       ******   ****       ****      ****                                            
+                          ***********    ****     **** **    ****     ****       ****                                            
+                          ***********     ***********         ***********        ***********                                     
+                          ***********        *****               *****           ***********                                     
+
+
+
+*********************************************************************************************************************************** 
+
+
+
+LGC2 v2.0.0, version was not compiled against SurveyLib, compiled on Feb  9 2016
+Copyright 2015, CERN SU. All rights reserved.
+*********************************************************************************************************************************** 
+Testing parametric measurements.
+
+CALCUL DU 10 February 2016 10:04:09
+*********************************************************************************************************************************** 
+
+
+
+DATA SET - GENERAL INFO:
+
+	FRAMES defined:
+	 	 NOMBRE =	1
+
+	POINTS defined:
+	 	 NOMBRE =	4
+
+	Unknowns introduced by POINTS:
+	 	 NOMBRE =	0
+
+	ANGLES defined:
+	 	 NOMBRE =	1
+
+	Unknowns introduced by ANGLES:
+	 	 NOMBRE =	1
+
+	LENGTHS defined:
+	 	 NOMBRE =	3
+
+	Unknowns introduced by LENGTHS:
+	 	 NOMBRE =	1
+
+
+
+POINTS SUMMARY:
+            LECTURE DES POINTS DE CALAGE
++        OK :
+
+            NOMBRE=    2
+
+
+            LECTURE DES POINTS VARIABLES EN XYZ
++        OK :
+
+            NOMBRE=    2
+
+
+MEASUREMENTS SUMMARY:
+             LECTURE DES ANGLES HORIZONTAUX
++        OK :
+
+             NOMBRE=    3
+
+
+             LECTURE DES DISTANCES ZENITHALES
++        OK :
+
+             NOMBRE=    3
+
+
+             LECTURE DES DISTANCES SPATIALES (DSPT)
++        OK :
+
+             NOMBRE=    3
+
+
+*** FIN DE FICHIER ***
+
+             NOMBRE D'OBSERVATIONS =  9
+
+             NOMBRE D'INCONNUES =     2
+
+             NUMBER OF ITERATIONS =     1
+
+
+
+
+SIGMA ZERO A POSTERIORI =1.2771825, VALEUR CRITIQUE = ( 0.49133,  1.51246)
+
+LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
+
+
+
+FRAME	ROOT  ID(1)   
+
+
+	POINTS DE CALAGE   (NB. = 2,  REFERENTIEL = RS2K )
+
+	SFP          NOM               X                Y                Z                H         SX         SY         SZ         DX         DY         DZ    
+	                              (M)              (M)              (M)              (M)       (MM)       (MM)       (MM)       (MM)       (MM)       (MM)   
+
+	             STN        0.0000000        0.0000000     1999.3459263       -0.0000000                                                                     
+	             REF      100.0000000        0.0000000     1999.3759625       -0.0000000                                                                     
+
+
+	POINTS VARIABLE EN XYZ   (NB. = 2,  REFERENTIEL = RS2K )
+
+	SFP          NOM               X                Y                Z                H         SX         SY         SZ         DX         DY         DZ    
+	                              (M)              (M)              (M)              (M)       (MM)       (MM)       (MM)       (MM)       (MM)       (MM)   
+
+	             PT2      100.0000000      100.0000000     1999.4081789       -0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   
+	              PT        0.0000000      100.0000000     1999.3781494       -0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   0.0000000   
+
+SFP = Sub-Frame Point; * = TRUE
+
+
+	TOTAL STATION INSTRUMENT: TS1   
+	POSITION           H_INSTR           ROT3D   
+	                       (M)                   
+			STN                 0.0000           FALSE   
+
+		ROM                   ACST              V0             SV0   
+		                       GON             GON              CC   
+		                 0.0000000       0.0000822       2.8867513   
+
+			HORIZONTAL ANGLE OBSERVATIONS   (NB. = 3 )   
+
+			POSITION           OBSERVE      SIGMA         CALCULE     RESIDU      ECART        RES         TRGT           H_TGT              V0   
+			                     (GON)       (CC)           (GON)       (CC)       (MM)       /SIG                          (M)          (GONS)   
+			PT2             50.0001917      5.000      50.0000030     -2.709    -0.6017      -0.54           T1       0.0000000     399.9998113   
+			REF            100.0001205      5.000     100.0000002     -2.025    -0.3181      -0.41           T1       0.0000000     399.9998797   
+			PT             399.9994507      5.000       0.0000063      4.734     0.7436       0.95           T1       0.0000000       0.0005556   
+
+			RESIDU MOYEN =    0.0000    CC :  LIMITES DE CONFIANCE A 95.0 = (-10.2201, 10.2201)
+			ECART-TYPE   =    4.1141    CC :  LIMITES DE CONFIANCE A 95.0 = (2.1421, 25.8562)   
+
+
+			ZENITHAL DISTANCE OBSERVATIONS   (NB. = 3 )   
+
+			POSITION           OBSERVE      SIGMA         CALCULE     RESIDU      ECART        RES         TRGT           H_TGT              HI   
+			                     (GON)       (CC)           (GON)       (CC)       (MM)       /SIG                          (M)             (M)   
+			PT2            100.0004611      5.000     100.0007286      2.675     0.5942      0.535           T1       0.0000000           FIXED   
+			REF            100.0002025      5.000     100.0005471      3.446     0.5413      0.689           T1       0.0000000           FIXED   
+			PT              99.9990002      5.000     100.0004790     14.788     2.3228      2.958           T1       0.0000000           FIXED   
+
+
+			RESIDU MOYEN =    6.9696    CC :  LIMITES DE CONFIANCE A 95.0 = (-16.8467, 16.8467)
+			ECART-TYPE   =    6.7817    CC :  LIMITES DE CONFIANCE A 95.0 = (3.5310, 42.6212)   
+
+
+	EDM INSTRUMENT: EDM1   
+	INST POS        HINSTR (M)   
+	STN              0.0000000   
+
+			SPATIAL DISTANCES (DSPT)   (NB. = 3 )   
+
+			POINT              OBSERVE      SIGMA         CALCULE     RESIDU      SENSI    RES/SIG           CONST     SCONST        H_PRISME   
+			                       (M)       (MM)             (M)       (MM)    (MM/CM)                        (M)       (MM)             (M)   
+			PT2            141.4214861     0.5707     141.4212607    -0.2254     0.0044    -0.4508      -0.1161611     0.3214       0.0000000   
+			REF            100.0000132     0.5500      99.9998953    -0.1179     0.0030    -0.2358      -0.0086888     0.3214       0.0000000   
+			PT              99.9995687     0.5500      99.9998960     0.3273     0.0032     0.6545       0.4364919     0.3214       0.0000000   
+
+			RESIDU MOYEN =  -0.00535    MM :  LIMITES DE CONFIANCE A 95.0 = (-0.72790, 0.72790)
+			ECART-TYPE   =   0.29302    MM :  LIMITES DE CONFIANCE A 95.0 = (0.15256, 1.84155)   
+
+
