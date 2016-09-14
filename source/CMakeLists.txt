@@ -72,18 +72,18 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 include_directories (
 	SYSTEM
-	${CMAKE_SOURCE_DIR}/LGCAdjustableObjects
-	${CMAKE_SOURCE_DIR}/LSCalculation
-	${CMAKE_SOURCE_DIR}/Readers
-	${CMAKE_SOURCE_DIR}/tests
-	${CMAKE_SOURCE_DIR}/ContributionsGenerators
-	${CMAKE_SOURCE_DIR}/Measurements
-	${CMAKE_SOURCE_DIR}/LocalTransformations
-	${CMAKE_SOURCE_DIR}/LGCProject
-	${CMAKE_SOURCE_DIR}/LGCProjectData
-	${CMAKE_SOURCE_DIR}/LGCCalculation
-	${CMAKE_SOURCE_DIR}/Writers
-	${CMAKE_SOURCE_DIR}/LGCObjectWriters
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Readers
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Measurements
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LocalTransformations
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCProject
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCProjectData
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCCalculation
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Writers
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
+	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
 	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/AdjustableObjects
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcElements
@@ -106,25 +106,18 @@ include_directories (
 )
 
 
-add_subdirectory(LGCAdjustableObjects)
-add_subdirectory(LSCalculation)
-add_subdirectory(Readers)
-add_subdirectory(tests)
-add_subdirectory(ContributionsGenerators)
-add_subdirectory(Measurements)
-add_subdirectory(LocalTransformations)
-add_subdirectory(LGCProject)
-add_subdirectory(LGCProjectData)
-add_subdirectory(LGCCalculation)
-add_subdirectory(Writers)
-add_subdirectory(LGCObjectWriters)
+# add subdirectories
+ADD_SUBDIRECTORY(LGC_Core)
+ADD_SUBDIRECTORY(LGC_Tests)
+#ADD_SUBDIRECTORY(LGC_UI)
+
 
 #include the CPack file allows to have PACKAGE in the solution and then to create the package
 include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 
 # INSTALL for creation of the LGC2 installer
-add_executable(LGC ${PROJECT_SOURCE_DIR}/LGCProject/main.cpp)
-target_link_libraries(LGC LGCProject LGCProjectData LGCCalculation Readers LGCAdjustableObjects AdjustableObjects LocalTransformations CalcElements ProjectData LGCObjectWriters StreamFormatters FiltersAndFormats Converters ContributionsGenerators AffineTransformations LSCalculation MathematicalConcepts Measurements Writers ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
+add_executable(LGC ${PROJECT_SOURCE_DIR}/LGC_Core/headers/LGCProject/main.cpp)
+target_link_libraries(LGC    LGC_Core  AdjustableObjects  CalcElements ProjectData  StreamFormatters FiltersAndFormats Converters  AffineTransformations  MathematicalConcepts   ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
 install(TARGETS LGC DESTINATION "." COMPONENT application)
 install(FILES
 		"${VCREDIST_INSTALLER_PATH}"
