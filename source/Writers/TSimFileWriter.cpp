@@ -822,7 +822,7 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 
 		if (itORIE.target.sigmaAngl != meas->instrument.targets.at(meas->instrument.defTarget).sigmaAngl)
 			(*stream) << "OBSE" << sep
-			<< itORIE.target.sigmaAngl .getGonsValue() << sep;
+			<< itORIE.target.sigmaAngl .getSignedCCValue() << sep;
 
 		if (itORIE.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
 			(*stream) << "TCSE" << sep
@@ -860,6 +860,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 			(*stream) << "ROT3D" << sep;
 
 		if (meas->instrumentHeightAdjustable)
+		{
 			if (meas->instrumentHeightAdjustable->isFixed())
 			{
 				(*stream) << "IHFIX" << sep;
@@ -869,6 +870,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				if (meas->instrument.sigmaInstrHeight != 0)
 					(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
 			}
+		}
+		else
+			(*stream) << "IHFIX" << sep;
 
 		(*stream) << endl;
 
