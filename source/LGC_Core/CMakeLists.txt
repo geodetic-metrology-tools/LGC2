@@ -218,5 +218,5 @@ source_group("Writers\\Sources" FILES ${WRITERS_CPP})
 # Create a static library from sources:
 add_library(LGC_Core STATIC ${Core_HEADERS} ${Core_SOURCES})
 # Link static libraries to the current one
-target_link_libraries(LGC_Core  MathematicalConcepts AdjustableObjects Converters Tools CalcElements)
+target_link_libraries(LGC_Core  LSAlgorithms ProjectFramework SpatialObjects Tools)
 
