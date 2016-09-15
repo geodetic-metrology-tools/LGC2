@@ -85,22 +85,22 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
 	${Boost_INCLUDE_DIRS}
-	${SURVEYLIB_ROOT}/source/LSAlgorithms/AdjustableObjects
-	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcElements
-	${SURVEYLIB_ROOT}/source/LSAlgorithms/CalcParams
-	${SURVEYLIB_ROOT}/source/ProjectFramework/Converters
-	${SURVEYLIB_ROOT}/source/ProjectFramework/FiltersAndFormats
-	${SURVEYLIB_ROOT}/source/ProjectFramework/ProjectData
-	${SURVEYLIB_ROOT}/source/ProjectFramework/StreamFormatters
-	${SURVEYLIB_ROOT}/source/SpatialObjects/AffineTransformations
-	${SURVEYLIB_ROOT}/source/SpatialObjects/MathematicalConcepts
-	${SURVEYLIB_ROOT}/source/SpatialObjects/ReferenceSurfaces
-	${SURVEYLIB_ROOT}/source/SpatialObjects/RefFrameTransformations
-	${SURVEYLIB_ROOT}/source/SpatialObjects/ShortestPath
-	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialMeasurments
-	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialObj
-	${SURVEYLIB_ROOT}/source/SpatialObjects/SpatialSystems
-	${SURVEYLIB_ROOT}/source/Tools
+	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
+	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcElements
+	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcParams
+	${SURVEYLIB_ROOT}/source/ProjectFramework/headers/Converters
+	${SURVEYLIB_ROOT}/source/ProjectFramework/headers/FiltersAndFormats
+	${SURVEYLIB_ROOT}/source/ProjectFramework/headers/ProjectData
+	${SURVEYLIB_ROOT}/source/ProjectFramework/headers/StreamFormatters
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/AffineTransformations
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/MathematicalConcepts
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/ReferenceSurfaces
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/RefFrameTransformations
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/ShortestPath
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialMeasurments
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialObj
+	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialSystems
+	${SURVEYLIB_ROOT}/source/Tools/headers
 	${TUT_INCLUDE_PATH}
 	${EIGEN_INCLUDE_PATH}
 )
@@ -116,8 +116,8 @@ ADD_SUBDIRECTORY(LGC_Tests)
 include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 
 # INSTALL for creation of the LGC2 installer
-add_executable(LGC ${PROJECT_SOURCE_DIR}/LGC_Core/headers/LGCProject/main.cpp)
-target_link_libraries(LGC    LGC_Core  AdjustableObjects  CalcElements ProjectData  StreamFormatters FiltersAndFormats Converters  AffineTransformations  MathematicalConcepts   ShortestPath ReferenceSurfaces RefFrameTransformations SpatialObj SpatialSystems)
+add_executable(LGC ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
+target_link_libraries(LGC    LGC_Core  LSAlgorithms ProjectFramework SpatialObjects)
 install(TARGETS LGC DESTINATION "." COMPONENT application)
 install(FILES
 		"${VCREDIST_INSTALLER_PATH}"

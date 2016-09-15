@@ -50,4 +50,4 @@ set(tests_INPUT
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(LGC_Tests  LGC_Core   CalcElements   ProjectData Converters FiltersAndFormats StreamFormatters  MathematicalConcepts AffineTransformations ReferenceSurfaces ShortestPath RefFrameTransformations SpatialObj SpatialSystems AdjustableObjects Tools)
+target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools)
