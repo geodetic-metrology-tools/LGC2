@@ -393,6 +393,8 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		
 		nline += (int)count(line.cbegin(), line.cend(), '\n');
 		nline++;
+
+		if (lgcStream.peek() == EOF) break; // End of file
 	}
 
 	// read the rest of the file
