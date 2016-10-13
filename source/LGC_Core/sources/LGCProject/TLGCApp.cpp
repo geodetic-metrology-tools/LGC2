@@ -235,6 +235,14 @@ void TLGCApp::writeSimFile(TLGCData* dat)
 		simFileWriter.writeFile();
 	else
 		simFileWriter.writeFile("Error has occured, see the LGC log file.");
+
+	//Write error file (FAUT) if needed
+	if (dat->getConfig().faut.isActive() == true)
+		writeFautFile(dat);
+
+	// Write punch files if needed
+	if (dat->getConfig().writePunch.isActive())
+		writePunchFile(dat);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

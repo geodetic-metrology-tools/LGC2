@@ -389,12 +389,12 @@ void	TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	TFreeVector deltaMin = simPt.getMinRes();
 	TFreeVector deltaSigma = simPt.getSumRes2();
 
-	TReal sigmadx(sqrtq((deltaSigma.getX().getMMetresValue()
-		-powq(deltaMoy.getX().getMMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmady(sqrtq((deltaSigma.getY().getMMetresValue()
-			-powq(deltaMoy.getY().getMMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
-	TReal sigmadz(sqrtq((deltaSigma.getZ().getMMetresValue()
-			-powq(deltaMoy.getZ().getMMetresValue()*i,2)/i)*(LITERAL(1.0)/i)));
+	TReal sigmadx(sqrtq(deltaSigma.getX()*(LITERAL(1.0) / i)
+		- powq(deltaMoy.getX().getMetresValue(), 2))*M2MM);
+	TReal sigmady(sqrtq(deltaSigma.getY()*(LITERAL(1.0) / i)
+		- powq(deltaMoy.getY().getMetresValue(), 2))*M2MM);
+	TReal sigmadz(sqrtq(deltaSigma.getZ()*(LITERAL(1.0) / i)
+		- powq(deltaMoy.getZ().getMetresValue(), 2))*M2MM);
 	TReal sx(simPt.getAdjustablePoint()->getXEstPrecision().getMMetresValue());
 	TReal sy(simPt.getAdjustablePoint()->getYEstPrecision().getMMetresValue());
 	TReal sz(simPt.getAdjustablePoint()->getZEstPrecision().getMMetresValue());
