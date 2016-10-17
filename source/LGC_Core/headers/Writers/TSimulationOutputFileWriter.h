@@ -44,6 +44,11 @@ public:
 
 			/// Write a final TABLE which summarises FRAME statistics.
 			virtual void    writeSimFramesSummary(const std::list<TSimFrameSummary>& dataSum, int numbOfSimu);
+
+			///  Write the relative errors header
+			void writeRelErrorHeader();
+			/// Write the relative errors results
+			void writeRelErrorResults(const TLGCData&);
 		//@}
 
 

@@ -79,6 +79,12 @@ bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
 		fileWriter->writeSimPointsSummary(fData.getConfig().title, fPointSummaries, numOfSimMade);
 		fileWriter->writeSimFramesSummary(fFrameSummaries, numOfSimMade);
 
+		if (!fData.getConfig().erelPairs.empty())
+		{
+			fileWriter->writeRelErrorHeader();
+			fileWriter->writeRelErrorResults(fData);
+		}
+
 	}
 	catch (std::exception const& excp) {
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
