@@ -6,6 +6,7 @@
 #include "TLSResultsMatrices.h"
 #include "TLSInputMatrices.h"
 #include "TSparseMatrix.h"
+#include <TConstants.h>
 
 //////////////////////////
 // no argument constructor
@@ -139,20 +140,30 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 		}
 		i++;
 	}
+	calcOverall();
 
 	return;
 }
 
 
-void    TLGCStatistic::calcOverall(TVector* fZ)
+void    TLGCStatistic::calcOverall()
 {
+	fOverall = 0.0;
 	int nbUnk = (int)fZ->size();
 	int i = 0;
 	while (i<nbUnk)
 	{
-		fOverall += powq(fZ->coeff(i),2)-1;
+		double k = fZ->coeff(i);
+		if (fAreDetermined->coeff(i))
+			fOverall += powq(fZ->coeff(i),2)-1;
+		else
+		{
+			fOverall = NO_VALf;
+			break;
+		}
 		i++;
 	}
-	fOverall /= nbUnk;
+	if (fOverall != NO_VALf)
+		fOverall /= (nbUnk-1);
 	return;
 }

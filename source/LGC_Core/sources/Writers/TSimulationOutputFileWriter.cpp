@@ -359,6 +359,7 @@ void	TSimulationOutputFileWriter::writeRelErrorHeader()
 	// point 1 & 2
 	(*stream).writeStringLeft(nameWidth, "POINT 1");
 	(*stream).writeStringLeft(nameWidth, "POINT 2");
+	(*stream).writeStringLeft(nameWidth, "");
 	// Sigmas
 	(*stream).writeString(obsResWidth, "SIGMA L");
 	(*stream).writeString(obsResWidth, "SIGMA G");
@@ -370,6 +371,7 @@ void	TSimulationOutputFileWriter::writeRelErrorHeader()
 	//////////////////////////////////////////////////////////////
 	//line2
 	// units
+	(*stream).writeString(nameWidth, " ");
 	(*stream).writeString(nameWidth, " ");
 	(*stream).writeString(nameWidth, " ");
 	(*stream).writeString(obsResWidth, "(MM)");
@@ -389,12 +391,18 @@ void	TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 	int					nameWidth = getNameWidth();
 	string				separator = getSeparator();
 
-	for (auto& ptPairIt : data.getRelError())
-	{
-		// write points name
 
-		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint1Name());
-		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint2Name());
+	ERELStat reducedEREL = calculateStatForEREL(data.getRelError());
+
+	//for (auto& ptPairIt : reducedEREL.MaxErel /*data.getRelError()*/)
+	for (int ptPairIt = 0; ptPairIt < reducedEREL.MaxErel.size(); ptPairIt++)
+	{
+
+		// LINE 1 : MIN
+		// write points name
+		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint1Name());
+		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint2Name());
+		(*stream).writeStringLeft(nameWidth, "MIN");
 		// sets the values format:
 		stream->setLengthUnits(TLength::kMillimetres);
 		stream->setAngleUnits(TAngle::k100MicroGons);
@@ -402,26 +410,147 @@ void	TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 		stream->setWidthFormat(max(getObsResWidth(), 9));
 
 		//sigma L
-		(*stream) << right << ptPairIt.getSigmaL() << separator;
+		(*stream) << right << reducedEREL.MinErel.at(ptPairIt).getSigmaL() << separator;
 
 		//sigma G			
 		stream->setPrecisionFormat(getAnglePrecision());
-		(*stream) << right << ptPairIt.getSigmaG() << separator;
+		(*stream) << right << reducedEREL.MinErel.at(ptPairIt).getSigmaG() << separator;
 
 		//sigma R
 		stream->setPrecisionFormat(getLengthPrecision());
-		(*stream) << right << ptPairIt.getSigmaR() << separator;
+		(*stream) << right << reducedEREL.MinErel.at(ptPairIt).getSigmaR() << separator;
 
 		//sigma Z
-		(*stream) << right << ptPairIt.getSigmaZ() << separator;
+		(*stream) << right << reducedEREL.MinErel.at(ptPairIt).getSigmaZ() << separator;
 
 		//sigma V
 		stream->setPrecisionFormat(getAnglePrecision());
-		(*stream) << right << ptPairIt.getSigmaV() << separator << endl;
+		(*stream) << right << reducedEREL.MinErel.at(ptPairIt).getSigmaV() << separator << endl;
 		//(*stream).setDataSpacing();
+
+		//LINE 2: MAX
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "MAX");
+		//sigma L
+		(*stream) << right << reducedEREL.MaxErel.at(ptPairIt).getSigmaL() << separator;
+
+		//sigma G			
+		stream->setPrecisionFormat(getAnglePrecision());
+		(*stream) << right << reducedEREL.MaxErel.at(ptPairIt).getSigmaG() << separator;
+
+		//sigma R
+		stream->setPrecisionFormat(getLengthPrecision());
+		(*stream) << right << reducedEREL.MaxErel.at(ptPairIt).getSigmaR() << separator;
+
+		//sigma Z
+		(*stream) << right << reducedEREL.MaxErel.at(ptPairIt).getSigmaZ() << separator;
+
+		//sigma V
+		stream->setPrecisionFormat(getAnglePrecision());
+		(*stream) << right << reducedEREL.MaxErel.at(ptPairIt).getSigmaV() << separator << endl;
+
+
+		//LINE 3: MEAN
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "MEAN");
+		//sigma L
+		(*stream) << right << reducedEREL.MeanErel.at(ptPairIt).getSigmaL() << separator;
+
+		//sigma G			
+		stream->setPrecisionFormat(getAnglePrecision());
+		(*stream) << right << reducedEREL.MeanErel.at(ptPairIt).getSigmaG() << separator;
+
+		//sigma R
+		stream->setPrecisionFormat(getLengthPrecision());
+		(*stream) << right << reducedEREL.MeanErel.at(ptPairIt).getSigmaR() << separator;
+
+		//sigma Z
+		(*stream) << right << reducedEREL.MeanErel.at(ptPairIt).getSigmaZ() << separator;
+
+		//sigma V
+		stream->setPrecisionFormat(getAnglePrecision());
+		(*stream) << right << reducedEREL.MeanErel.at(ptPairIt).getSigmaV() << separator << endl;
 	}
 
 	return;
+}
+
+ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer ERELdata)
+{
+
+	ERELStat statForErel;
+	vector<int> numOfPair;
+
+	for (auto& ptPairIt : ERELdata)
+	{
+		if (statForErel.MaxErel.empty() && statForErel.MinErel.empty() &&statForErel.MeanErel.empty())
+		{
+			statForErel.MaxErel.push_back(ptPairIt);
+			statForErel.MinErel.push_back(ptPairIt);
+			statForErel.MeanErel.push_back(ptPairIt);
+			numOfPair.push_back(1);
+		}
+		else
+		{
+			bool saved = false;
+			//find if pair is already saved
+			for (int itInStat = 0; itInStat < statForErel.MaxErel.size(); itInStat++)
+			{
+				//pair is already save
+				if (statForErel.MinErel.at(itInStat).getPoint1Name() == ptPairIt.getPoint1Name()
+					&& statForErel.MinErel.at(itInStat).getPoint2Name() == ptPairIt.getPoint2Name())
+				{
+					numOfPair.at(itInStat) += 1;
+					
+					//update mean
+					statForErel.MeanErel.at(itInStat).setSigmaG(TAngle((statForErel.MeanErel.at(itInStat).getSigmaG().getRadiansValue()*(numOfPair.at(itInStat) - 1) + ptPairIt.getSigmaG().getRadiansValue()) * 1 / numOfPair.at(itInStat),TAngle::EUnits::kRadians));
+					statForErel.MeanErel.at(itInStat).setSigmaV(TAngle((statForErel.MeanErel.at(itInStat).getSigmaV().getRadiansValue()*(numOfPair.at(itInStat) - 1) + ptPairIt.getSigmaV().getRadiansValue()) * 1 / numOfPair.at(itInStat),TAngle::EUnits::kRadians));
+					statForErel.MeanErel.at(itInStat).setSigmaL(TLength((statForErel.MeanErel.at(itInStat).getSigmaL().getMetresValue()*(numOfPair.at(itInStat) - 1) + ptPairIt.getSigmaL()) * 1 / numOfPair.at(itInStat)));
+					statForErel.MeanErel.at(itInStat).setSigmaR(TLength((statForErel.MeanErel.at(itInStat).getSigmaR().getMetresValue()*(numOfPair.at(itInStat) - 1) + ptPairIt.getSigmaR()) * 1 / numOfPair.at(itInStat)));
+					statForErel.MeanErel.at(itInStat).setSigmaZ(TLength((statForErel.MeanErel.at(itInStat).getSigmaZ().getMetresValue()*(numOfPair.at(itInStat) - 1) + ptPairIt.getSigmaZ()) * 1 / numOfPair.at(itInStat)));
+					
+					//update min if necessary
+					if (ptPairIt.getSigmaG() < statForErel.MinErel.at(itInStat).getSigmaG())
+						statForErel.MinErel.at(itInStat).setSigmaG(ptPairIt.getSigmaG());
+					if (ptPairIt.getSigmaL() < statForErel.MinErel.at(itInStat).getSigmaL())
+						statForErel.MinErel.at(itInStat).setSigmaL(ptPairIt.getSigmaL());
+					if (ptPairIt.getSigmaR() < statForErel.MinErel.at(itInStat).getSigmaR())
+						statForErel.MinErel.at(itInStat).setSigmaR(ptPairIt.getSigmaR());
+					if (ptPairIt.getSigmaZ() < statForErel.MinErel.at(itInStat).getSigmaZ())
+						statForErel.MinErel.at(itInStat).setSigmaZ(ptPairIt.getSigmaZ());
+					if (ptPairIt.getSigmaV() < statForErel.MinErel.at(itInStat).getSigmaV())
+						statForErel.MinErel.at(itInStat).setSigmaV(ptPairIt.getSigmaV());
+
+					//update max if necessary
+					if (ptPairIt.getSigmaG() > statForErel.MaxErel.at(itInStat).getSigmaG())
+						statForErel.MaxErel.at(itInStat).setSigmaG(ptPairIt.getSigmaG());
+					if (ptPairIt.getSigmaL() > statForErel.MaxErel.at(itInStat).getSigmaL())
+						statForErel.MaxErel.at(itInStat).setSigmaL(ptPairIt.getSigmaL());
+					if (ptPairIt.getSigmaR() > statForErel.MaxErel.at(itInStat).getSigmaR())
+						statForErel.MaxErel.at(itInStat).setSigmaR(ptPairIt.getSigmaR());
+					if (ptPairIt.getSigmaZ() > statForErel.MaxErel.at(itInStat).getSigmaZ())
+						statForErel.MaxErel.at(itInStat).setSigmaZ(ptPairIt.getSigmaZ());
+					if (ptPairIt.getSigmaV() >statForErel.MaxErel.at(itInStat).getSigmaV())
+						statForErel.MaxErel.at(itInStat).setSigmaV(ptPairIt.getSigmaV());
+					saved = true;
+				}
+				
+			}
+			//if not, save it
+			if (!saved) 
+			{
+				statForErel.MaxErel.push_back(ptPairIt);
+				statForErel.MinErel.push_back(ptPairIt);
+				statForErel.MeanErel.push_back(ptPairIt);
+			}
+		}
+
+
+	}
+	return statForErel;
+
 }
 ////////////////////////////////////////////////////////////
 //STATISTIC

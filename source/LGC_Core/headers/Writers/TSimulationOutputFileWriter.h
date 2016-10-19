@@ -4,6 +4,7 @@
 #include	"TResultsFileWriter.h"
 #include	"TSimPointSummary.h"
 #include	"TSimFrameSummary.h"
+# include <TLSCalcRelativeError.h>
 
 class		TLGCData;
 
@@ -14,9 +15,16 @@ class		TLGCData;
 
 	Provides functions to write different parts of the simulation file.
 */
+struct ERELStat{
+	vector<TLSCalcRelativeError> MinErel;
+	vector<TLSCalcRelativeError> MaxErel;
+	vector<TLSCalcRelativeError> MeanErel;
+};
+
 class  TSimulationOutputFileWriter : public TResultsFileWriter
 {
 public:
+	
 
 	/*!@name Constructors and Destructors*/
 		//@{
@@ -57,6 +65,8 @@ private:
 
 	/*!default constructor*/
 	TSimulationOutputFileWriter();
+
+	ERELStat calculateStatForEREL(LSRelErrorsContainer ERELdata);
 
 	/*!@name Private member functions*/
 	//@{

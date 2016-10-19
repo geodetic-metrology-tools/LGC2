@@ -23,9 +23,6 @@ public:
     ///Computes the statistic vector
 	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm);
 
-	///Calculate the overall
-	void    calcOverall(TVector* Z);
-	
 	/// Access to eventual error 
 	std::string		getError() const { return fError; }
 
@@ -62,6 +59,9 @@ public:
 	void initialiseStatVector(const TLSInputMatrices* im);
 
 private:
+	///Calculate the overall
+	void    calcOverall();
+
 	std::string			fError;		/*!< errors during calculation */
 
 	/*No assignable nor copyable*/

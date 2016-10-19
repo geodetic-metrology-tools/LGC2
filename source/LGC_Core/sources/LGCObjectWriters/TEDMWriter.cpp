@@ -224,7 +224,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDspt.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDspt.target.sigmaDSpt.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDspt.target.sigmaDSpt + ItDspt.target.ppmDSpt*ItDspt.getDistance() / 1000)* M2MM);
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 
