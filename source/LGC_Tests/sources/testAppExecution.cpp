@@ -46,9 +46,10 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "net_DISTppm_2.inp",
-			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "net_DISTppm_2.res");
-			ensure_equals("Execution should work", proj.exec(), true);
+		//TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testCovar.lgc2",
+		//	getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "testCovar.res");
+		//
+		//ensure_equals("Execution should work", proj.exec(), true);
 		
 		// re initialise static object allfixed param to false
 		//TAdjustablePoint::setAllFixedParam(false);
