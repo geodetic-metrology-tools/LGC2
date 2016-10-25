@@ -120,7 +120,7 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	else
 	{
 		computeVarCovarAndReliability(&data, inputMtr, computer);
-		return true;
+ 		return true;
 	}
 }
 
@@ -156,7 +156,7 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 		TReal beta = data->getConfig().faut.beta / 100;
 
 		//compute statistics (Z, W, T, G, NABLA and DELTY)
-		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices);
+		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());
 		
 	}
 

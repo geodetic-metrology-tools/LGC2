@@ -8,6 +8,11 @@
 #include "TSparseMatrix.h"
 #include <TConstants.h>
 
+
+#ifndef isnotanumber
+#define isnotanumber(x) ((x)!=(x))
+#endif
+
 //////////////////////////
 // no argument constructor
 //////////////////////////
@@ -60,10 +65,9 @@ void TLGCStatistic::clearVectors(){
 	fDeltaComputed.reset(nullptr);
 }
 
-void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm)
+void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm, bool hasPdor)
 {
-	int nbObs = im->getNbrObservations(); 
-
+	int nbObs = im->getNbrObservations();
 
 	double s02 = rm->getSigmaZero2();
 	TReal varAPriori = 1;
@@ -99,6 +103,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 			if ((fZ->coeff(i) > LITERAL(1.0))|| (fZ->coeff(i) < LITERAL(0.0005)))
 			{
 				(*fAreDetermined)(i) = false;
+				(*fZ)(i) = NO_VALf;
 			}
 			else
 			{
@@ -140,18 +145,22 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 		}
 		i++;
 	}
-	calcOverall();
+
+	//last observation is for the PDOR
+	if (hasPdor)
+		calcOverall(nbObs-1);
+	else
+		calcOverall(nbObs);
 
 	return;
 }
 
 
-void    TLGCStatistic::calcOverall()
+void    TLGCStatistic::calcOverall(int nbObs)
 {
 	fOverall = 0.0;
-	int nbUnk = (int)fZ->size();
 	int i = 0;
-	while (i<nbUnk)
+	while (i<nbObs)
 	{
 		double k = fZ->coeff(i);
 		if (fAreDetermined->coeff(i))
@@ -163,7 +172,7 @@ void    TLGCStatistic::calcOverall()
 		}
 		i++;
 	}
-	if (fOverall != NO_VALf)
-		fOverall /= (nbUnk-1);
+	if (!isnotanumber(fOverall))
+		fOverall /= (nbObs - 1);
 	return;
 }

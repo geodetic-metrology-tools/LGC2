@@ -21,7 +21,7 @@ public:
 	~TLGCStatistic();
 
     ///Computes the statistic vector
-	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm);
+	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor);
 
 	/// Access to eventual error 
 	std::string		getError() const { return fError; }
@@ -60,7 +60,7 @@ public:
 
 private:
 	///Calculate the overall
-	void    calcOverall();
+	void    calcOverall(int nbObs);
 
 	std::string			fError;		/*!< errors during calculation */
 
