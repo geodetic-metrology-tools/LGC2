@@ -677,6 +677,119 @@ void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResults
 				throw std::runtime_error("Unknown index of rotation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
 			trafo.setXZRotationCovariance(rm.getUnkCovarMtrxElmt(xi,zi)); //Store covariance in METRES
 		}
+
+		
+		//Filling scale covariance
+		if (!trafo.isTranslationFixed(0) && !trafo.isScaleFixed()){
+			int xi = trafo.getTranslationUnknIndex(0);
+			int li = trafo.getScaleUnknIndex();
+			if ((xi >= rm.getUnkCovarMtrx()->rows()) || (li >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setScaleCovariance(0, rm.getUnkCovarMtrxElmt(xi, li));
+		}
+		if (!trafo.isTranslationFixed(1) && !trafo.isScaleFixed()){
+			int yi = trafo.getTranslationUnknIndex(1);
+			int li = trafo.getScaleUnknIndex();
+			if ((yi >= rm.getUnkCovarMtrx()->rows()) || (li >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setScaleCovariance(1, rm.getUnkCovarMtrxElmt(yi, li));
+		}
+		if (!trafo.isTranslationFixed(2) && !trafo.isScaleFixed()){
+			int zi = trafo.getTranslationUnknIndex(2);
+			int li = trafo.getScaleUnknIndex();
+			if ((zi >= rm.getUnkCovarMtrx()->rows()) || (li >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setScaleCovariance(2, rm.getUnkCovarMtrxElmt(zi, li));
+		}
+		if (!trafo.isRotationFixed(0) && !trafo.isScaleFixed()){
+			int xi = trafo.getRotationUnknIndex(0);
+			int li = trafo.getScaleUnknIndex();
+			if ((xi >= rm.getUnkCovarMtrx()->rows()) || (li >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setScaleCovariance(3,rm.getUnkCovarMtrxElmt(xi, li)); 
+		}
+		if (!trafo.isRotationFixed(1) && !trafo.isScaleFixed()){
+			int yi = trafo.getRotationUnknIndex(1);
+			int li = trafo.getScaleUnknIndex();
+			if ((yi >= rm.getUnkCovarMtrx()->rows()) || (li >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setScaleCovariance(4, rm.getUnkCovarMtrxElmt(yi, li)); 
+		}
+		if (!trafo.isRotationFixed(2) && !trafo.isScaleFixed()){
+			int zi = trafo.getRotationUnknIndex(2);
+			int li = trafo.getScaleUnknIndex();
+			if ((zi >= rm.getUnkCovarMtrx()->rows()) || (li >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setScaleCovariance(5, rm.getUnkCovarMtrxElmt(zi, li)); 
+		}
+		//Filling translation-rotation covariance
+		//tx-rot
+		if (!trafo.isRotationFixed(0) && !trafo.isTranslationFixed(0)){
+			int xi = trafo.getRotationUnknIndex(0);
+			int ti = trafo.getTranslationUnknIndex(0);
+			if ((xi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(0, rm.getUnkCovarMtrxElmt(xi, ti));
+		}
+		if (!trafo.isRotationFixed(1) && !trafo.isTranslationFixed(0)){
+			int yi = trafo.getRotationUnknIndex(1);
+			int ti = trafo.getTranslationUnknIndex(0);
+			if ((yi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(1, rm.getUnkCovarMtrxElmt(yi, ti));
+		}
+		if (!trafo.isRotationFixed(2) && !trafo.isTranslationFixed(0)){
+			int zi = trafo.getRotationUnknIndex(2);
+			int ti = trafo.getTranslationUnknIndex(0);
+			if ((zi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(2, rm.getUnkCovarMtrxElmt(zi, ti));
+		}
+		//ty-rot
+		if (!trafo.isRotationFixed(0) && !trafo.isTranslationFixed(1)){
+			int xi = trafo.getRotationUnknIndex(0);
+			int ti = trafo.getTranslationUnknIndex(1);
+			if ((xi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(3, rm.getUnkCovarMtrxElmt(xi, ti));
+		}
+		if (!trafo.isRotationFixed(1) && !trafo.isTranslationFixed(1)){
+			int yi = trafo.getRotationUnknIndex(1);
+			int ti = trafo.getTranslationUnknIndex(1);
+			if ((yi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(4, rm.getUnkCovarMtrxElmt(yi, ti));
+		}
+		if (!trafo.isRotationFixed(2) && !trafo.isTranslationFixed(1)){
+			int zi = trafo.getRotationUnknIndex(2);
+			int ti = trafo.getTranslationUnknIndex(1);
+			if ((zi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(5, rm.getUnkCovarMtrxElmt(zi, ti));
+		}
+		//tz-rot
+		if (!trafo.isRotationFixed(0) && !trafo.isTranslationFixed(2)){
+			int xi = trafo.getRotationUnknIndex(0);
+			int ti = trafo.getTranslationUnknIndex(2);
+			if ((xi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(6, rm.getUnkCovarMtrxElmt(xi, ti));
+		}
+		if (!trafo.isRotationFixed(1) && !trafo.isTranslationFixed(2)){
+			int yi = trafo.getRotationUnknIndex(1);
+			int ti = trafo.getTranslationUnknIndex(2);
+			if ((yi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(7, rm.getUnkCovarMtrxElmt(yi, ti));
+		}
+		if (!trafo.isRotationFixed(2) && !trafo.isTranslationFixed(2)){
+			int zi = trafo.getRotationUnknIndex(2);
+			int ti = trafo.getTranslationUnknIndex(2);
+			if ((zi >= rm.getUnkCovarMtrx()->rows()) || (ti >= rm.getUnkCovarMtrx()->rows()))
+				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+			trafo.setTrRotCovariance(8, rm.getUnkCovarMtrxElmt(zi, ti));
+		}
+		
 	}
 }
 

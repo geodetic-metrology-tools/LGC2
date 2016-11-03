@@ -1055,7 +1055,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 	}
 	else{
 		if (tokens.size() < 2 && !fSIMUActive)
-			throw std::runtime_error("An ECSP measurement must have at least 2 entries: "
+			throw std::runtime_error("An ECVE measurement must have at least 2 entries: "
 			"The stationned point and the measured distance.");
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());

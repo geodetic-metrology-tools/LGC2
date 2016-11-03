@@ -339,6 +339,8 @@ bool TReader::read(std::istream& lgcStream) {
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
 			//allow to get to the next line, avoid infinite loop
 			safeGetline(lgcStream, line/*, '*'*/);
+			//need return error during reading since the fisrt failure. because if no instrument are defined after *INSTR. When the first instr ID is not found, the software crashs.
+			return !outputMessages.hasErrors();
 		}
 	}
 

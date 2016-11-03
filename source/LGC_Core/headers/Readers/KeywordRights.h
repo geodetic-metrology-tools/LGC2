@@ -139,7 +139,7 @@ const int nb_allowed_allfixed   = 24;
 const int nb_allowed_covar      = 25;
 
 //header
-const int nb_allowed_instr		= 5;
+const int nb_allowed_instr		= 13; // instruments + points +frame
 const int nb_allowed_frame		= 6;
 const int nb_allowed_ef			= 19;
 const int nb_allowed_end		= 0;
@@ -254,7 +254,7 @@ const char* allowed_LIBR[nb_allowed_libr]         = { FMTP, DEFA, APRI, PREC, PR
 const char* allowed_ALLFIXED[nb_allowed_allfixed] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR,       NODUP, SOBS, HIST, EREL};
 const char* allowed_COVAR[nb_allowed_covar]       = {       DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, COVAR };
 // Others
-const char* allowed_INSTR[nb_allowed_instr]	= {POLAR, CAMD, EDM, LEVEL, SCALE};
+const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ };
 const char* allowed_FRAME[nb_allowed_frame]	= {CAM, DSPT, CALA, POIN, FRAME, ENDFRAME};
 const char* allowed_ENDFRAME[nb_allowed_ef]	= {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END};
 const char* allowed_END[1]					= {};

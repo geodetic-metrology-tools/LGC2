@@ -1,4 +1,4 @@
-#include "TFRAMEWriter.h"
+ï»¿#include "TFRAMEWriter.h"
 #include "TTSTNWriter.h"
 #include "TPointConverter.h"
 #include "TCAMWriter.h"
@@ -12,6 +12,7 @@
 #include "TInverseTransformation.h"
 #include "TAStreamFormatter.h"
 #include "TSpatialStatus.h"
+#include "TPointTransformer.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //CONSTRUCTOR / DESTRUCTOR
@@ -331,21 +332,21 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(1))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR (GON²): "); 
+			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR (GONÂ²): "); 
 			(*stream)<<node.frame.getXYCovarRot()*RAD2GON<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(1) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR (GON²): "); 
+			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR (GONÂ²): "); 
 			(*stream)<<node.frame.getYZCovarRot()*RAD2GON<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR (GON²): "); 
+			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR (GONÂ²): "); 
 			(*stream)<<node.frame.getXZCovarRot()*RAD2GON<<(separator);
 		}
 		
@@ -354,21 +355,21 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(1))
 		{		
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "XY TRANS. COVAR (m²): "); 
+			(*stream).writeStringLeft(nameWidth, "XY TRANS. COVAR (mÂ²): "); 
 			(*stream)<<node.frame.getXYCovarTransl()<<(separator);
 		}
 
 		if (!node.frame.isTranslationFixed(1) && !node.frame.isTranslationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth, "YZ TRANS. COVAR (m²): "); 
+			(*stream).writeStringLeft(nameWidth, "YZ TRANS. COVAR (mÂ²): "); 
 			(*stream)<<node.frame.getYZCovarTransl()<<(separator);
 		}
 	
 		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(2))
 		{
 			(*stream)<<TABs;
-			(*stream).writeStringLeft(nameWidth,  "XZ TRANS. COVAR (m²): "); 
+			(*stream).writeStringLeft(nameWidth,  "XZ TRANS. COVAR (mÂ²): "); 
 			(*stream)<<node.frame.getXZCovarTransl()<<(separator);
 		}
 	}
@@ -1028,10 +1029,13 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		TDataTreeIterator root = fProjectData->getTree().begin();
 		TRefSystemFactory::ERefFrame globalRef = fProjectData->getConfig().referential;
 
-
+		TFreeVector sigmaRoot;
 		//If point is defined in a sub-frame
 		if(root != pt->getFrameTreePosition()){
 			TLOR2LOR transfo = TLOR2LOR(pt->getFrameTreePosition(), fProjectData->getTree().begin(), "transfo");
+			//transform sigma in root
+			sigmaRoot = pt->transformSigmaInRoot(pt, fProjectData);
+			//transform coordinates in root
 			transfo.transform(provisionalValue);
 			transfo.transform(estimatedValue);
 		}
@@ -1063,9 +1067,15 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 										"");/*sigma*/
 		}
 		else{
-				(*stream).writeString( coordResWidth, "");
-				(*stream).writeString( coordResWidth, "");
-				(*stream).writeString( coordResWidth, "");
+			//status = vxyz to write sigma because with CALA, no sigma are writen
+			converter.writeCoordinateParam(TSpatialStatus::kVxyz,
+				coordResWidth,
+				coordResPrecision,
+				separator,
+				sigmaRoot.getX().getMMetresValue(),
+				sigmaRoot.getY().getMMetresValue(),
+				sigmaRoot.getZ().getMMetresValue(),
+				"");/*sigma convert in root*/
 		}
 
 
@@ -1144,3 +1154,4 @@ void TFRAMEWriter::transfXYZ2XYH(TPositionVector& pv, const TRefSystemFactory::E
 		else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::CCS2XYHg1985Machine(pv);
 }
+

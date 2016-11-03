@@ -364,41 +364,44 @@ void TDataAnalyzer::predeterminePLR3DV0()
 			for (auto itTSTN : it.node->data->measurements.fTSTN)
 				for (auto itplr : itTSTN->roms)
 				{
-					auto firstMeas = itplr->measPLR3D.at(0);
-					//calul v0 app
-					TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
-					TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
-					TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
-					targetPos = firstMeas.targetPos->getEstimatedValue();
-					const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(firstMeas.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
-					tgLor2RootTrafo.transform(targetPos);
+					if (itplr->measPLR3D.size() != 0)
+					{
 
-					stationPos = itTSTN->instrumentPos->getEstimatedValue();
-					const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(itTSTN->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
-					stLor2RootTrafo.transform(stationPos);
+						auto firstMeas = itplr->measPLR3D.at(0);
+						//calul v0 app
+						TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+						TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+						TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+						targetPos = firstMeas.targetPos->getEstimatedValue();
+						const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(firstMeas.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+						tgLor2RootTrafo.transform(targetPos);
 
-					// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-					if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && itTSTN->rot3D != true){
-						fPointTransfo.transformPointsToMLASystem(itTSTN->instrumentPos->getName(), stationPos, targetPos);
-						fPointTransfo.setMLA(true);
+						stationPos = itTSTN->instrumentPos->getEstimatedValue();
+						const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(itTSTN->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+						stLor2RootTrafo.transform(stationPos);
+
+						// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+						if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && itTSTN->rot3D != true){
+							fPointTransfo.transformPointsToMLASystem(itTSTN->instrumentPos->getName(), stationPos, targetPos);
+							fPointTransfo.setMLA(true);
+						}
+						else
+							fPointTransfo.setMLA(false);
+
+						TReal xSt = stationPos.getX().getMetresValue();
+						TReal ySt = stationPos.getY().getMetresValue();
+
+						TReal xTg = targetPos.getX().getMetresValue();
+						TReal yTg = targetPos.getY().getMetresValue();
+
+						//Calculated measurement value
+						TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->acst - itplr->measPLR3D.begin()->getAngle(EPLR3DAngles::kANGL);  //ACST is the constant orientation of the instrument
+
+
+						// estimated value = 0.0 + correction (V0app)
+						int indexV0 = itplr->v0->getFirstUidx();
+						itplr->v0->setCorrection(indexV0, V0app);
 					}
-					else
-						fPointTransfo.setMLA(false);
-
-					TReal xSt = stationPos.getX().getMetresValue();
-					TReal ySt = stationPos.getY().getMetresValue();
-
-					TReal xTg = targetPos.getX().getMetresValue();
-					TReal yTg = targetPos.getY().getMetresValue();
-
-					//Calculated measurement value
-					TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->acst - itplr->measPLR3D.begin()->getAngle(EPLR3DAngles::kANGL);  //ACST is the constant orientation of the instrument
-			
-
-					// estimated value = 0.0 + correction (V0app)
-					int indexV0 = itplr->v0->getFirstUidx();
-					itplr->v0->setCorrection(indexV0, V0app);
-
 				}
 				
 

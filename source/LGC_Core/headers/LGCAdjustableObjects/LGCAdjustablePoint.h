@@ -5,6 +5,8 @@
 #include "LGCAdjustableObjectCollection.h"
 #include "Global.h"
 
+class TLGCData;
+
 /*! 
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a point represented by a TPositionVector class.
@@ -127,6 +129,9 @@ public:
 		///Set the boolean reference allfixedParam (to the TLGCConfig binary option ALLFIXED)
 		static void setAllFixedParam(const bool& param){ allfixedParam = param; };
 	//@}
+
+		///Transform sigma a posteriori (= estimated precision) in root
+		TFreeVector transformSigmaInRoot(std::list<LGCAdjustablePoint>::const_iterator pv, const TLGCData* fData) const;
 
 private:
 

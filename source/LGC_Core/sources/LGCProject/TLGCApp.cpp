@@ -113,6 +113,10 @@ void TLGCApp::saveResults(TLGCData *dat)
 {
 	// Write the standard output file
 	writeStdResultsFile(dat);
+
+	// change stream name
+	std::size_t found = fOutputFileLoc.find_last_of(".");
+	fOutputFileLoc = fOutputFileLoc.substr(0, found);
 	
 	// Write punch files if needed
 	if(dat->getConfig().writePunch.isActive())
@@ -142,10 +146,6 @@ void TLGCApp::writeStdResultsFile(TLGCData *dat)
 
 void TLGCApp::writePunchFile(TLGCData* dat)
 {
-	// change stream name
-	std::size_t found = fOutputFileLoc.find_last_of(".");
-	fOutputFileLoc=fOutputFileLoc.substr(0, found);
-
 	auto writefile = [&](TPunchFileWriter punchFileWriter) {
 		if (!dat->getFileLogger().hasErrors())
 		 punchFileWriter.writeFile();
@@ -177,9 +177,6 @@ void TLGCApp::writePunchFile(TLGCData* dat)
 
 void TLGCApp::writeFautFile(TLGCData* dat)
 {
-	// change stream name
-	std::size_t found = fOutputFileLoc.find_last_of(".");
-	fOutputFileLoc=fOutputFileLoc.substr(0, found);
 
 	fStream->resetStreamName(fOutputFileLoc + ".err");
 	TFautFileWriter fautFileWriter(fStream.get(), dat);
@@ -192,9 +189,6 @@ void TLGCApp::writeFautFile(TLGCData* dat)
 
 void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
 {
-	// change stream name
-	std::size_t found = fOutputFileLoc.find_last_of(".");
-	fOutputFileLoc = fOutputFileLoc.substr(0, found);
 
 	fStream->resetStreamName(fOutputFileLoc + ".def");
 	TDefaFileWriter defaFileWriter(fStream.get(), dat);
@@ -208,9 +202,6 @@ void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
 /// Write files for covariances
 void TLGCApp::writeCovarFile(TLGCData *dat)
 {
-	// change stream name
-	std::size_t found = fOutputFileLoc.find_last_of(".");
-	fOutputFileLoc = fOutputFileLoc.substr(0, found);
 
 	fStream->resetStreamName(fOutputFileLoc + ".cov");
 	TCovarFileWriter covarFileWriter(fStream.get(), dat);

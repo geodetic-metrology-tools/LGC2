@@ -1294,6 +1294,9 @@ void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth,"POSITION"); //Point on which is the TSTN positioned
 	(*stream).writeString(obsWidth,	"H_INSTR"); //HEIGHT OF THE INSTRUMENT initial
+	if (tstn->instrumentHeightAdjustable){
+		(*stream).writeString(obsResWidth, "SIGMA H_INSTR"); //HEIGHT OF THE INSTRUMENT initial
+	}
 	(*stream).writeString(obsWidth,	"ROT3D"); // indiacates if station can rotate freely
 
 	if(tstn->rot3D){
@@ -1323,6 +1326,7 @@ void TTSTNWriter::writeV0Header(){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//////////////////////////////////////
@@ -1337,7 +1341,7 @@ void TTSTNWriter::writeV0Header(){
 	(*stream).writeStringLeft(nameWidth,"");
 	(*stream).writeString(obsWidth,	"GON"); // Constant orientation
 	(*stream).writeString(obsWidth, "GON"); // V0 calculated angle
-	(*stream).writeString(obsWidth,	"CC"); // V0 calculated angle
+	(*stream).writeString(obsResWidth, "CC"); // V0 calculated angle
 	(*stream)<<endl;
 }
 
@@ -1346,7 +1350,9 @@ void TTSTNWriter::writeV0Data(shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	(*stream)<<TABs;
@@ -1354,7 +1360,7 @@ void TTSTNWriter::writeV0Data(shared_ptr<TTSTN::TROM> rom){
 
 	(*stream).writeDouble(obsWidth, anglePrecision, rom->acst.getGonsValue()); // Constant orientation (ACST)
 	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedValue().getGonsValue()); // V0 calculated angle
-	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedPrecision().getSignedCCValue()); // V0 estimated precision
+	(*stream).writeDouble(obsResWidth, angleResPrecision, rom->v0->getEstimatedPrecision().getSignedCCValue()); // V0 estimated precision
 
 	(*stream)<<endl<<endl;
 }
@@ -1366,7 +1372,8 @@ void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
 	int					angleResPrecision = max(getAngleResidualPrecision()-4, 0);
-	int					lengthPrecision = max(getLengthPrecision()-3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream)<<TABs;
@@ -1379,6 +1386,7 @@ void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
 	}
 	else{
 		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrumentHeightAdjustable->getEstimatedValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, tstn->instrumentHeightAdjustable->getEstimatedPrecision().getMMetresValue());
 	}
 
 

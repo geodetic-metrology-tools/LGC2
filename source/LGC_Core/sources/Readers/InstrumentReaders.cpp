@@ -16,8 +16,10 @@ TKeyINSTR::TKeyINSTR(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyINSTR::parse(const std::vector<std::string>&, int) {
+void TKeyINSTR::parse(const std::vector<std::string>& tokens, int) {
 	// Does not parse, just the root of its sub-keys
+	if (tokens[0] != "*")
+		throw std::runtime_error("INSTR must be follow by an instrument keyword ");
 }
 
 //////////////////////

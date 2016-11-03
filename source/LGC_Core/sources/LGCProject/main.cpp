@@ -13,8 +13,8 @@
 
 #endif
 
-//#include <chrono>
-//#include <thread>
+#include <chrono>
+#include <thread>
 
 //Create the output file
 void createOutputFile(std::string outputFilePath);
@@ -40,7 +40,7 @@ int main( int argc,  char *argv[]){
 	const std::string logFilePath = "C:\\temp\\LOGFile.log";
 #endif
 
-	//std::this_thread::sleep_for(chrono::seconds(10));
+	//std::this_thread::sleep_for(std::chrono::milliseconds(8000));
 
 	if (argc == 1)
 	{
@@ -105,7 +105,7 @@ int main( int argc,  char *argv[]){
 					outputFilePath = changePathDir(outputFilePath);
 
 					if (outputFilePath.substr(0, 3).compare("C:\\") != 0 && outputFilePath.substr(0, 1).compare("\\") != 0)
-						outputFilePath = getPathDir(inputFilePath) + slash + argv[i + 1];
+						outputFilePath = getCurrentDirectory() + slash + outputFilePath;
 
 #endif
 
@@ -128,7 +128,7 @@ int main( int argc,  char *argv[]){
 				return 1;
 			}
 			else if (outputFilePath == "")
-				outputFilePath = getPathFile(inputFilePath) + ".out";
+				outputFilePath = getPathFile(inputFilePath) + ".res";
 		}
 
 		createOutputFile(outputFilePath);
