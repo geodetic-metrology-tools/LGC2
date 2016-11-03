@@ -228,12 +228,20 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string& name, const std::vector<i
 	int					obsResWidth = getObsResWidth();
 	////////////////////////////////////////////////////////////
 	//first line
-	std::stringstream result;
-	std::copy(ID.begin(), ID.end(), std::ostream_iterator<int>(result));
+
+	std::string nameID;
+	for (std::vector<int>::const_iterator it = ID.begin(); it != ID.end(); ++it)
+	{
+		if (it == ID.begin())
+			nameID += std::to_string(*it);
+		else
+			nameID += "_"+ std::to_string(*it);
+	}
+
 
 	(*stream)<<endl<<endl;
 	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"FRAME\t" + name + "  ID(" + result.str() + ")");
+	(*stream).writeStringLeft(nameWidth,"FRAME\t" + name + "  ID(" + nameID + ")");
 	(*stream)<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -870,9 +878,9 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream).writeString( coordResWidth,	"SZ ");//sigma Z
 
 
-	(*stream).writeString( coordResWidth,	"DX ");//X offset 
-	(*stream).writeString( coordResWidth,	"DY ");//Y offset 
-	(*stream).writeString( coordResWidth,	"DZ ");//Z offset
+	(*stream).writeString(coordResWidth, "DX ");//X offset 
+	(*stream).writeString(coordResWidth, "DY ");//Y offset 
+	(*stream).writeString(coordResWidth, "DZ ");//Z offset
 	(*stream)<<endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -893,9 +901,9 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream).writeString( coordResWidth,	"(MM)");//sigma Y units
 	(*stream).writeString( coordResWidth,	"(MM)");//sigma Z units
 
-	(*stream).writeString( coordResWidth,	"(MM)");//X offset units
-	(*stream).writeString( coordResWidth,	"(MM)");//Y offset units
-	(*stream).writeString( coordResWidth,	"(MM)");// Z offset units
+	(*stream).writeString(coordResWidth, "(MM)");//X offset units
+	(*stream).writeString(coordResWidth, "(MM)");//Y offset units
+	(*stream).writeString(coordResWidth, "(MM)");// Z offset units
 	(*stream)<<endl<<endl;
 }
 
@@ -1003,26 +1011,29 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 	if(localFRAME){ //Means that it is not ROOT!!!!!!
 		//Write point coordinates XYZ or H because it is a local frame
+		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
 		//Write point's estimated precision after calculation
 		converter.writeCoordinateParam( pt->getSpatialStatus(),
 										coordResWidth,
-										coordResPrecision,
+										coordPrecision,
+										TLength::EUnits::kMillimetres,
 										separator,
-                              pt->getXEstPrecision().getMMetresValue(),
-                              pt->getYEstPrecision().getMMetresValue(),
-                              pt->getZEstPrecision().getMMetresValue(),
+										pt->getXEstPrecision(),
+										pt->getYEstPrecision(),
+										pt->getZEstPrecision(),
 										"");/*sigma*/
 
 		//Write DX, DY, DZ difference between provisional and estimated value
 		converter.writeCoordinateParam( pt->getSpatialStatus(),
 										coordResWidth,
-										coordResPrecision,
+										coordPrecision,
+										TLength::EUnits::kMillimetres,
 										separator,
-										(estimatedValue.getX() - provisionalValue.getX()).getMMetresValue(),
-                              (estimatedValue.getY() - provisionalValue.getY()).getMMetresValue(),
-                              (estimatedValue.getZ() - provisionalValue.getZ()).getMMetresValue(),
+										TLength(estimatedValue.getX() - provisionalValue.getX()),
+										TLength(estimatedValue.getY() - provisionalValue.getY()),
+										TLength(estimatedValue.getZ() - provisionalValue.getZ()),
 										"");/*offset*/
 	}
 	else{//It is ROOT
@@ -1045,6 +1056,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 				transfXYH2XYZ(provisionalValue, globalRef);
 		}
 
+		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
 		if(globalRef!=TRefSystemFactory::ERefFrame::kLocalRefFrame){
@@ -1059,33 +1071,36 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		//Write point's estimated precision after calculation
 		converter.writeCoordinateParam( pt->getSpatialStatus(),
 										coordResWidth,
-										coordResPrecision,
+										coordPrecision,
+										TLength::EUnits::kMillimetres,
 										separator,
-										pt->getXEstPrecision().getMMetresValue(),
-										pt->getYEstPrecision().getMMetresValue(),
-										pt->getZEstPrecision().getMMetresValue(),
+										pt->getXEstPrecision(),
+										pt->getYEstPrecision(),
+										pt->getZEstPrecision(),
 										"");/*sigma*/
 		}
 		else{
 			//status = vxyz to write sigma because with CALA, no sigma are writen
 			converter.writeCoordinateParam(TSpatialStatus::kVxyz,
 				coordResWidth,
-				coordResPrecision,
+				coordPrecision,
+				TLength::EUnits::kMillimetres,
 				separator,
-				sigmaRoot.getX().getMMetresValue(),
-				sigmaRoot.getY().getMMetresValue(),
-				sigmaRoot.getZ().getMMetresValue(),
+				sigmaRoot.getX(),
+				sigmaRoot.getY(),
+				sigmaRoot.getZ(),
 				"");/*sigma convert in root*/
 		}
 
 
 		converter.writeCoordinateParam( pt->getSpatialStatus(),
 										coordResWidth,
-										coordResPrecision,
+										coordPrecision,
+										TLength::EUnits::kMillimetres,
 										separator,
-										(estimatedValue.getX().getMMetresValue() - provisionalValue.getX().getMMetresValue()),
-										(estimatedValue.getY().getMMetresValue() - provisionalValue.getY().getMMetresValue()),
-										(estimatedValue.getZ().getMMetresValue() - provisionalValue.getZ().getMMetresValue()),
+										TLength(estimatedValue.getX() - provisionalValue.getX()),
+										TLength(estimatedValue.getY() - provisionalValue.getY()),
+										TLength(estimatedValue.getZ() - provisionalValue.getZ()),
 											"");/*offset*/
 	}
 

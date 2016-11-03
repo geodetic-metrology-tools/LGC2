@@ -542,7 +542,7 @@ void	TPunchFileWriter::writeCooHeader()
 		(*stream).writeString(coordWidth, "H ");
 	else
 		(*stream).writeString(coordWidth, "Z ");
-	(*stream).writeString(nameWidth, "ID");
+	(*stream).writeString(coordWidth, "ID");
 	(*stream).writeString(coordResWidth, "DX ");
 	(*stream).writeString(coordResWidth, "DY ");
 	(*stream).writeString(coordResWidth, "DZ ");
@@ -906,10 +906,10 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 		int firstSpace = point.eolcomment.find_first_of(" ");
 		int secondSpace = point.eolcomment.find(" ", firstSpace+4);
 
-		stream->writeString(nameWidth, point.eolcomment.substr(firstSpace + 4, secondSpace - firstSpace - 4));
+		stream->writeString(coordWidth, point.eolcomment.substr(firstSpace + 4, secondSpace - firstSpace - 4));
 	}	
 	else
-		stream->writeString(nameWidth, "-1");
+		stream->writeString(coordWidth, "-1");
 
 	//Delta
 	//transform H in Z
@@ -970,10 +970,10 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	{
 		//eolcomment = $cumul ID comments
 		int firstSpace = point.eolcomment.find_first_of(" ");
-		stream->writeString(nameWidth, point.eolcomment.substr(1, firstSpace-1));
+		stream->writeString(coordWidth, point.eolcomment.substr(1, firstSpace - 1));
 	}
 	else
-		stream->writeString(nameWidth, "-1");
+		stream->writeString(coordWidth, "-1");
 	
 	//OPT
 	string status;

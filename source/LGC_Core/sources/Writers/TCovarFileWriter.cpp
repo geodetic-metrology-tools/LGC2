@@ -147,11 +147,11 @@ void TCovarFileWriter::writeFrameDefinition(TAdjustableHelmertTransformation& fr
 	
 	//Writing rotations
 	(*stream) << TABs;
-	fStream->writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(0).getGonsValue());
+	fStream->writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(0).getRadiansValue());
 	(*stream) << TABs;
-	fStream->writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(1).getGonsValue());
+	fStream->writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(1).getRadiansValue());
 	(*stream) << TABs;
-	fStream->writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(2).getGonsValue());
+	fStream->writeDouble(obsWidth, anglePrecision, frameDef.getEstRotation(2).getRadiansValue());
 
 	//Writing scale factor
 	(*stream) << TABs;
