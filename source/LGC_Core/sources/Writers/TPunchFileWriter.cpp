@@ -16,6 +16,7 @@
 #include <TLOR2LOR.h>
 #include "TAGeoidModel.h"
 #include "TXYH2CCS.h"
+#include <StringManager.h>
 
 /////////////////////////////////////////////////////////////////////////////
 //constructor / destructor
@@ -107,6 +108,7 @@ void TPunchFileWriter::writePoint(LGCAdjustablePoint const& point, TLGCConfig::T
 			point.getName(),
 			point.getReferenceFrame(),
 			point.getFrameTreePosition());
+		point_int_root.eolcomment = point.eolcomment;
 		
 		return point_int_root;
 	};
@@ -543,9 +545,9 @@ void	TPunchFileWriter::writeCooHeader()
 	else
 		(*stream).writeString(coordWidth, "Z ");
 	(*stream).writeString(coordWidth, "ID");
-	(*stream).writeString(coordResWidth, "DX ");
-	(*stream).writeString(coordResWidth, "DY ");
-	(*stream).writeString(coordResWidth, "DZ ");
+	(*stream).writeString(coordWidth, "DX ");
+	(*stream).writeString(coordWidth, "DY ");
+	(*stream).writeString(coordWidth, "DZ ");
 	(*stream).writeString(coordWidth, "DCUM ");
 	(*stream).writeString(nameWidth, "OPTION ");
 	(*stream) << endl<< endl;
@@ -903,10 +905,8 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	if (!point.eolcomment.compare(0, 1, "$"))
 	{
 		//eolcomment = $cumul ID comments
-		int firstSpace = point.eolcomment.find_first_of(" ");
-		int secondSpace = point.eolcomment.find(" ", firstSpace+4);
-
-		stream->writeString(coordWidth, point.eolcomment.substr(firstSpace + 4, secondSpace - firstSpace - 4));
+		std::vector<std::string> comments = tokenizefileString(point.eolcomment.substr(1));
+		stream->writeString(coordWidth, comments.at(1));		
 	}	
 	else
 		stream->writeString(coordWidth, "-1");
@@ -918,7 +918,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	{
 		TXYH2CCS::XYHs2CCS(xyzValue);
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			coordWidth,
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -931,7 +931,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	{
 		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			coordWidth,
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -945,7 +945,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			coordWidth,
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -956,7 +956,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	}
 	else
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-		coordResWidth,
+		coordWidth,
 		getCoordPrecision(),
 		TLength::kMillimetres,
 		separator,
@@ -966,11 +966,10 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 		"0.0");
 	
 	//DCUM
-	if (point.eolcomment != "")
+	if (!point.eolcomment.compare(0, 1, "$"))
 	{
-		//eolcomment = $cumul ID comments
-		int firstSpace = point.eolcomment.find_first_of(" ");
-		stream->writeString(coordWidth, point.eolcomment.substr(1, firstSpace - 1));
+		std::vector<std::string> comments = tokenizefileString(point.eolcomment.substr(1));
+		stream->writeString(coordWidth, comments.at(0));
 	}
 	else
 		stream->writeString(coordWidth, "-1");
