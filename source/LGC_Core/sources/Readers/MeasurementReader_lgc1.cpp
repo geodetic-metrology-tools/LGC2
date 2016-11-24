@@ -73,7 +73,8 @@ void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 
 void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeANGL = [&](shared_ptr<TTSTN::TROM> rom){
+	auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
+	{
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("An ANGL measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -209,7 +210,8 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeZENI = [&](shared_ptr<TTSTN::TROM> rom){
+	auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+	{
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("An ZENI measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -342,7 +344,8 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeZENH = [&](shared_ptr<TTSTN::TROM> rom){
+	auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+	{
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("An ZENH measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -620,7 +623,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeDIST = [&](shared_ptr<TTSTN::TROM> rom){
+	auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+	{
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("A DTHE measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -958,7 +962,8 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 
-	auto& storeECTH = [&](shared_ptr<TTSTN::TROM> rom){
+	auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+	{
 		if (tokens.size() < 4 && !fSIMUActive)
 			throw std::runtime_error("A ECTH measurement must have at least 4 entries: "
 			" station point angle offset");
@@ -1136,7 +1141,8 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	auto& storeDHOR = [&](shared_ptr<TTSTN::TROM> rom){
+	auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+	{
 		if (tokens.size() < 3 && !fSIMUActive)
 			throw std::runtime_error("A DHOR measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
