@@ -47,8 +47,8 @@ private:
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter;
 
 	/// Random numbers generator 
-	//std::default_random_engine engine;
-	std::tr1::ranlux3_01 engine;
+	std::default_random_engine engine;  // FRK 16/11 Remis comme avant!!!
+//	std::tr1::ranlux3_01 engine;
 
 	/// Convergence criterion
 	TReal  fConvCriteria; 
