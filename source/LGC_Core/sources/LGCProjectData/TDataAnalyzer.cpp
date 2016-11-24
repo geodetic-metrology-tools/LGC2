@@ -360,7 +360,7 @@ void TDataAnalyzer::predeterminePLR3DV0()
 
 	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) != 0)
 	{
-		for (auto& it(fTree.begin()); it != fTree.end(); ++it)
+		for (auto it(fTree.begin()); it != fTree.end(); ++it)  // FRK 17/11/2016: suppressed reference "auto&"
 			for (auto itTSTN : it.node->data->measurements.fTSTN)
 				for (auto itplr : itTSTN->roms)
 				{
