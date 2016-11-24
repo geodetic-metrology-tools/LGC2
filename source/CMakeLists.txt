@@ -65,7 +65,8 @@ ENDIF(MSVC)
 # Add options to compile with GCC to get more opinions on the code
 IF(MINGW)
 message("    Using MinGW")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")
+	ADD_DEFINITIONS(-D_USE_MATH_DEFINES) #defined variable added FRK 17/11/2016
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")  
 ENDIF(MINGW)
 
 INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
