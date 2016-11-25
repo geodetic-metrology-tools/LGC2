@@ -1,7 +1,12 @@
 #ifndef TLS_SIMULATION
 #define TLS_SIMULATION
 
-#include <random>
+#ifdef __linux__
+#include <tr1/random>
+#else
+	#include <random>
+#endif
+
 #include <limits>
 #include "TLSAlgorithm.h"
 #include "TSimulationOutputFileWriter.h"
@@ -47,7 +52,6 @@ private:
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter;
 
 	/// Random numbers generator 
-	//std::default_random_engine engine;
 	std::tr1::ranlux3_01 engine;
 
 	/// Convergence criterion
