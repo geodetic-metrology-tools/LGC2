@@ -10,7 +10,7 @@ PROJECT(LGC2)
 # Set version number and provide a header file with corresponding defines
 set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 00)
-set (LGC_VERSION_PATCH 02)
+set (LGC_VERSION_PATCH 03)
 
 # Allows c++ 11 standard
 if(UNIX)
@@ -65,7 +65,8 @@ ENDIF(MSVC)
 # Add options to compile with GCC to get more opinions on the code
 IF(MINGW)
 message("    Using MinGW")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")
+	ADD_DEFINITIONS(-D_USE_MATH_DEFINES) #defined variable added FRK 17/11/2016
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")  
 ENDIF(MINGW)
 
 INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
@@ -119,11 +120,13 @@ include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 add_executable(LGC ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
 target_link_libraries(LGC    LGC_Core  LSAlgorithms ProjectFramework SpatialObjects)
 install(TARGETS LGC DESTINATION "." COMPONENT application)
-install(FILES
-		"${VCREDIST_INSTALLER_PATH}"
-		DESTINATION "."
-		COMPONENT application
-	)
+if(!UNIX)
+	install(FILES
+			"${VCREDIST_INSTALLER_PATH}"
+			DESTINATION "."
+			COMPONENT application
+		)
+endif()
 
 #copy test files for unit tests
 if(UNIX)
