@@ -164,7 +164,7 @@ void    TLGCStatistic::calcOverall(int nbObs)
 	{
 		double k = fZ->coeff(i);
 		if (fAreDetermined->coeff(i))
-			fOverall += powq(fZ->coeff(i),2)-1;
+			fOverall += powq(1/fZ->coeff(i),2)-1;
 		else
 		{
 			fOverall = NO_VALf;
