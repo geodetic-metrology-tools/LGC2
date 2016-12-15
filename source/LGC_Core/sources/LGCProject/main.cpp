@@ -10,6 +10,7 @@
 	#include <fcntl.h>
 #else
 	#include <windows.h>
+	#include <regex>
 
 #endif
 
@@ -78,7 +79,8 @@ int main( int argc,  char *argv[]){
 #else
 					inputFilename = changePathDir(inputFilename);
 
-					if (inputFilename.substr(0, 3).compare("C:\\") == 0 || inputFilename.substr(0, 3).compare("c:\\") == 0 || inputFilename.substr(0, 1).compare("\\") == 0)
+					std::regex disk("[[:alpha:]]:");
+					if ((regex_match(inputFilename.substr(0, 2), disk) && inputFilename.substr(2, 3).compare("\\")) || inputFilename.substr(0, 1).compare("\\") == 0)
 						inputFilePath = inputFilename;
 					else
 						inputFilePath = getCurrentDirectory() + slash + inputFilename;
