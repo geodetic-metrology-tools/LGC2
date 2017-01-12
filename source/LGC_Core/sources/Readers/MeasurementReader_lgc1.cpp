@@ -1610,6 +1610,27 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					tgt.distCorrectionValue = dcorr;
 				}
 			}
+			else if (tokens.size() == 8)
+			{
+				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+				instrument.instrHeight = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+				tgt.targetHt = TLength(std::stor(tokens.at(6)), TLength::EUnits::kMetres);
+
+				if (tokens.at(4) == "C")
+				{
+					// Add adjustable scalar into a global collection and store a pointer
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					tgt.distCorrectionAdjustable = adjDCorr;
+				}
+				else if (tokens.at(4) == "/")
+				{
+					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+					tgt.distCorrectionValue = dcorr;
+				}
+				else
+					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+
+			}
 		}
 		else
 		{
