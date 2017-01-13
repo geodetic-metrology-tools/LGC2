@@ -663,6 +663,9 @@ namespace tut
 			ensure_equals("Has default values", ecvemeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
 			// ECSP
+			TKeyCALA pr1(proj);
+			pr1.parse(tokenizefileString("A 1 2 3"), -1);
+			pr1.parse(tokenizefileString("B 0 2 3"), -1);
 			TKeyECSP ecsp(proj);
 			ecsp.parse(tokenizefileString("*ECSP A B SC1 "), -1);
 			ecsp.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), -1);

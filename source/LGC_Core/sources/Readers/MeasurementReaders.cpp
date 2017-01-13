@@ -1105,6 +1105,10 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 
 
 		const std::string& name = "ECSPLINE" + std::to_string(proj.getCurrentNode().measurements.fECSP.size()); //name of the measured adjustable line
+		if (!fpoints.doesObjectExist(tokens.at(2)))
+			throw std::runtime_error("the first point on the line doesn't exit");
+		if (!fpoints.doesObjectExist(tokens.at(3)))
+			throw std::runtime_error("the second point on the line doesn't exit");
 		TECSPROM ecspRom(name, fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
 		
 		/*
