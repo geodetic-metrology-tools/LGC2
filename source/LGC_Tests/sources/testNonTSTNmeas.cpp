@@ -40,7 +40,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dspt_1);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -70,7 +70,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_1);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -103,7 +103,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_1_RS2K);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -136,7 +136,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_2);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -173,7 +173,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_3);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -215,7 +215,7 @@ namespace tut
 		
 		stringstream infiler(TestDVER::OLOC_DVER_cheminement);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -251,7 +251,7 @@ namespace tut
 		
 		stringstream infiler(TestDVER::OLOC_DVER_cheminement_LOR);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -292,7 +292,7 @@ namespace tut
 		
 		stringstream infiler(TestDVER::RS2K__DVER);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -337,8 +337,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestDVER::RS2K_TSTN_DVER);
+		stringstream cpinfiler(TestDVER::RS2K_TSTN_DVER);
 		
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 		
 		TLGCCalculation calcul(projTest);
@@ -391,7 +392,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::echo_1);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -420,7 +421,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::echo_1_plus_on_left_side);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -448,7 +449,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::echo_2_line_exact);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -478,7 +479,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_SPHE);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -528,7 +529,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_RS2K);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -578,7 +579,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_LEP);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -628,7 +629,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_OLOC);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);

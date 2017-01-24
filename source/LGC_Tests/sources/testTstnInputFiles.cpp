@@ -86,11 +86,14 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Param_case);
+			stringstream cpinfiler(TestROOT::Param_case);
 			infiler.seekp(0, std::ios::end);
 			infiler << anglPart;
+			cpinfiler.seekp(0, std::ios::end);
+			cpinfiler << anglPart;
 			string infile = infiler.str();
 
-			r.read(infiler);
+			r.read(infiler,cpinfiler);
 		
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -181,11 +184,14 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Param_case_setup2);
+			stringstream cpinfiler(TestROOT::Param_case_setup2);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
+			cpinfiler.seekp(0, std::ios::end);
+			cpinfiler << test;
 			string infile = infiler.str();
 
-			r.read(infiler);
+			r.read(infiler,cpinfiler);
 		
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -283,11 +289,14 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Param_case_setup3);
+			stringstream cpinfiler(TestROOT::Param_case_setup3);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
+			cpinfiler.seekp(0, std::ios::end);
+			cpinfiler << test;
 			string infile = infiler.str();
 
-			r.read(infiler);
+			r.read(infiler,cpinfiler);
 		
 
 			TLGCCalculation calcul(projTest);
@@ -386,11 +395,14 @@ namespace tut
 
 				//One POINT and one TSTN (V0) = 4 unknowns)
 				stringstream infiler(TestROOT::Root_PLR_setup2);
+				stringstream cpinfiler(TestROOT::Root_PLR_setup2);
 				infiler.seekp(0, std::ios::end);
 				infiler << test;
+				cpinfiler.seekp(0, std::ios::end);
+				cpinfiler << test;
 				string infile = infiler.str();
 
-				r.read(infiler);
+				r.read(infiler,cpinfiler);
 		
 				TLGCCalculation calcul(projTest);
 				std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -491,11 +503,14 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Root_PLR_setup3);
+			stringstream cpinfiler(TestROOT::Root_PLR_setup3);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
+			cpinfiler.seekp(0, std::ios::end);
+			cpinfiler << test;
 			string infile = infiler.str();
 
-			r.read(infiler);
+			r.read(infiler,cpinfiler);
 
 			if (i != 6)
 			{
@@ -550,7 +565,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Root_PLR_setup2_SEP);
-		r.read(infiler);
+		stringstream cpinfiler(TestROOT::Root_PLR_setup2_SEP);
+		r.read(infiler,cpinfiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);

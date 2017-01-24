@@ -69,6 +69,9 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 {
 	int nbObs = im->getNbrObservations();
 
+	rm->saveMatricesToFile(0);
+	im->saveMatricesToFile(0);
+
 	double s02 = rm->getSigmaZero2();
 	TReal varAPriori = 1;
 	double varRes = 0;
@@ -94,6 +97,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 			
 			// compute z		
 			(*fZ)(i) = Z.coeff(i, i);
+			TReal qwe = Z.coeff(i, i);
 			// check on z consistency
 			if ((fZ->coeff(i) < LITERAL(1.0000001))&&(fZ->coeff(i)>LITERAL(1.0))) 
 			{

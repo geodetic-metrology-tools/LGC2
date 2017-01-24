@@ -35,8 +35,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(MixObs::ANGL_ZEND_DIST);
+		stringstream cpinfiler(MixObs::ANGL_ZEND_DIST);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -69,8 +70,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(MixObs::ANGL_ZEND_DHOR);
+		stringstream cpinfiler(MixObs::ANGL_ZEND_DHOR);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler,cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -103,8 +105,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(MixObs::ANGL_ZEND_DSPT);
+		stringstream cpinfiler(MixObs::ANGL_ZEND_DSPT);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler,cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -133,8 +136,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(MixObs::PDOR_1CALA_GIS);
+		stringstream cpinfiler(MixObs::PDOR_1CALA_GIS);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler,cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -192,8 +196,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(MixObs::PDOR_1CALA_0);
+		stringstream cpinfiler(MixObs::PDOR_1CALA_0);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler,cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -254,8 +259,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(MixObs::PDOR_2CALA);
+		stringstream cpinfiler(MixObs::PDOR_2CALA);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler,cpinfiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);

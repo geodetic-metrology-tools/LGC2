@@ -207,7 +207,8 @@ namespace tut
 
 		TReader r(proj5);
 		stringstream infile(LOR2LORInputFiles::plateFileOrig);
-		r.read(infile);
+		stringstream cpinfile(LOR2LORInputFiles::plateFileOrig);
+		r.read(infile,cpinfile);
 
 		ensure_equals("One instrument defined", proj5->getInstruments().fPOLAR.size(),1);
 		ensure_equals("Provisional value of the pair should match", proj5->getLength().getObject("TS1T1").getProvisionalValue(),2.0);

@@ -51,7 +51,7 @@ namespace tut
 
 			istringstream mockfile("*TITR\n" + title + "\n" + "*OLOC");
 
-			r.read(mockfile);
+			r.read(mockfile,mockfile);
 		} catch (exception& e) {
 			ensure("Unexpected execption while testing 'read title': " + string(e.what()) + "\n", 0);
 		}

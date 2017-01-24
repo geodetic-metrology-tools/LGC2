@@ -47,6 +47,9 @@ class TAKeyWord {
 		*/
 		virtual void parse(const std::vector<std::string>& tokens, int line) = 0;
 
+		/* virtual function used only for V0 keyword. The polar instrument has an unknown orientation angle which can be determinate only if ANGL, PLR3D, ECTH or ECDIR measurement are used */
+		virtual void setRequiredAdjVo(bool b) {};
+
 		/*!@name Currently not used functions - these functions are related to hierarchy of keywords, which was originally considered,
 				but was later replaced by a list of prohibited keywords. This matter is still not completely resolved and therefore
 				these methods still remain there if needed in the future

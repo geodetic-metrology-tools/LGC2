@@ -143,12 +143,17 @@ class TKeyV0 : public TAMeasurementKey {
 		TKeyV0(TLGCData& project, int nb_allowed_keywords = nb_allowed_v0, const char** keywords = allowed_V0) : 
 		TAMeasurementKey(project, V0) 
 		{
+			requiredAdjustableVo = true;
+
 			for(int i(0) ; i< nb_allowed_keywords ; i++)
 				allowed_keywords.emplace_back(keywords[i]);
 		}
 
 		/// tokenize V0 data
-		virtual void parse(const std::vector<std::string>& tokens, int) ;
+		virtual void parse(const std::vector<std::string>& tokens, int);
+
+		bool requiredAdjustableVo;
+		virtual void setRequiredAdjVo(bool b){ requiredAdjustableVo = b; }
 };
 
 class TKeyPLR3D : public TAMeasurementKey {

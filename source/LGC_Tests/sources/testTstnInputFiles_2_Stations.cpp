@@ -37,7 +37,8 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::Param_setup4);
-		r.read(infiler);
+		stringstream cpinfiler(TestROOT::Param_setup4);
+		r.read(infiler,cpinfiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -77,7 +78,8 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::PLR3D_setup4);
-		r.read(infiler);
+		stringstream cpinfiler(TestROOT::PLR3D_setup4);
+		r.read(infiler,cpinfiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -119,7 +121,8 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::Param_setup4_different_z);
-		r.read(infiler);
+		stringstream cpinfiler(TestROOT::Param_setup4_different_z);
+		r.read(infiler,cpinfiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -160,7 +163,8 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::PLR3D_setup4_different_z);
-		r.read(infiler);
+		stringstream cpinfiler(TestROOT::PLR3D_setup4_different_z);
+		r.read(infiler,cpinfiler);
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);

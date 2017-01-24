@@ -227,11 +227,11 @@ std::istream& safeGetline(std::istream& is, std::string& t)
 }
 
 //fOutFilename is the output file used for writing results, possibly can be used for writing errors, might be better to create separate log file for errors and warnings
-bool TReader::read(std::istream& lgcStream) {
+bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 	using namespace std;
 	string line;
 	int nline(1);
-	bool isReferenceSystemDefined = false;
+	bool isReferenceSystemDefined = false;	
 
 	auto& outputMessages(project.getFileLogger());
 	outputMessages.writeReportHeader("Reading input file:");
@@ -289,7 +289,8 @@ bool TReader::read(std::istream& lgcStream) {
 			break;
 
 		// If the line starts with a keyword
-		if (tokLine[0] == "*")  {
+		if (tokLine[0] == "*")  
+		{
 			const auto& currentkey(tokLine[1]);
 			lasthandler = currenthandler;
 			currenthandler = nullptr;
@@ -305,6 +306,10 @@ bool TReader::read(std::istream& lgcStream) {
 
 			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
 				isReferenceSystemDefined = true;
+
+			//Have to know if ANGL, PLR3D, ECDIR or ECTH are used in the TSTN ROM to fixed or not V0
+			if (currentkey == V0)
+				currenthandler->setRequiredAdjVo(requiredAdjustableVo(cp_lgcStream, nline));
 
 			try {
 
@@ -332,6 +337,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 
 		try{ //Handler was found, try to parse
+			
 			currenthandler->parse(tokLine, nline);
 			safeGetline(lgcStream, line/*, '*'*/);
 		}
@@ -530,4 +536,55 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 
 	}
 	return false;
+}
+
+bool TReader::requiredAdjustableVo(std::istream& lgcStream, int v0Tstnline)
+{
+	string line;
+	bool V0read = false;
+
+	// be sure to omit the byte order mark if there is one
+	skipBOM(lgcStream);
+
+
+	auto lasthandler(finterpreters.back().get());
+	for (auto currenthandler(lasthandler);
+		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");)
+	{
+		// tokenize the current line
+		auto tokLine(tokenizefileString(line));
+
+		// skip empty lines
+		if (tokLine.empty()) continue;
+
+		// % means comment line, i.e. to be ignored
+		if (tokLine[0][0] == *"%") continue;
+
+		
+		
+		// If the line starts with a keyword
+		if (tokLine[0] == "*")
+		{
+			const auto& currentkey(tokLine[1]);
+
+			// read until v0 Tstnline
+			if (currentkey == V0)
+			{
+				V0read = true;
+				continue;
+			}
+			//Find a specific keyword after V0 and threat TSTN behavior
+			if (V0read)
+			{
+				if (currentkey == ANGL || currentkey == PLR3D || currentkey == ECDIR || currentkey == ECTH)
+					return true;
+				else if (currentkey == DIST || currentkey == DHOR || currentkey == ZEND)
+					continue;
+				else
+					return false;
+			}
+		}
+	}
+	return false;
+
 }

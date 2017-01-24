@@ -47,7 +47,7 @@ bool TLGCApp::exec()
 	TReader r(projectData);
 	if (r.isLgc2File(cp_inputFileStream))
 	{
-		if (!r.read(inputFileStream))
+		if (!r.read(inputFileStream, cp_inputFileStream))
 			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
 	}
 	else

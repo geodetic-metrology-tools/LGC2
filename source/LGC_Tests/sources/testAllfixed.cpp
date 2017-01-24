@@ -37,8 +37,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestAF::AZDist);
+		stringstream cp_infiler(TestAF::AZDist);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, cp_infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -112,8 +113,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestAF::AZDist_RS2K);
+		stringstream cp_infiler(TestAF::AZDist_RS2K);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, cp_infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -185,8 +187,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
 		stringstream infiler(TestAF::ECTH);
+		stringstream cp_infiler(TestAF::ECTH);
 	
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler, cp_infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 	
 		TLGCCalculation calcul(projTest);
@@ -243,8 +246,9 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestAF::ECTH_LEP);
+		stringstream cp_infiler(TestAF::ECTH_LEP);
 
-		bool succesReading = r.read(infiler);
+		bool succesReading = r.read(infiler,cp_infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
