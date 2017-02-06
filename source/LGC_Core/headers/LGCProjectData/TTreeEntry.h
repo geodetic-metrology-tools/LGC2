@@ -1,5 +1,10 @@
-#include "TAdjustableHelmertTransformation.h"
-#include "TMeasurements.h"
+
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TAdjustableHelmertTransformation.h>
+//LGC
+#include <TMeasurements.h>
 
 
 /** 

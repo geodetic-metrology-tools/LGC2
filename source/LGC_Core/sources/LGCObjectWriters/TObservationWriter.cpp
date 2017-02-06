@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////
 // TObservationConverter.cpp
 ////////////////////////////////////////////////////////////////////////////////////
-#include "TObservationWriter.h"
+#include <TObservationWriter.h>
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include "TLGCObsSummary.h"
-#include "TLGCData.h" 
+#include <TLGCData.h> 
 
 
 TObservationWriter::TObservationWriter(TAStreamFormatter& stream):

@@ -1,9 +1,13 @@
 #ifndef SU_TA_LGC_OBJECTWRITER
 #define SU_TA_LGC_OBJECTWRITER
 
-#include "TAConverter.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <map>
 #include <string>
+//SURVEYLIB
+#include "TAConverter.h"
 
 /*!
 	\ingroup LGCObjectWriters

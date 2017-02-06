@@ -1,13 +1,12 @@
 #ifndef SU_OTHERMEAS_WRITER
 #define SU_OTHERMEAS_WRITER
 
-////////////////////////////////////////////////////////////////
-// Forward declarations
-#include "TObservationWriter.h"
-#include "MeasDef.h"
-#include "RoundOfMeasurements.h"
-////////////////////////////////////////////////////////////////
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
+//LGC
+#include <TObservationWriter.h>
+#include <MeasDef.h>
+#include <RoundOfMeasurements.h>
 
 /*!
 	\ingroup LGCObjectWriters

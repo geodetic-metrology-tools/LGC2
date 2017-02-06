@@ -5,7 +5,7 @@
 // Copyright 2003-2008 M.Jones, CERN, EST/SU. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////////
 #include "TCovarFileWriter.h"
-#include "TLGCData.h"
+#include <TLGCData.h>
 #include "LGCAdjustableObjectCollection.h"
 
 #include "TSeparatedFormatTStream.h"

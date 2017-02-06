@@ -1,9 +1,15 @@
 #ifndef _MEAS_DEF_H_
 #define _MEAS_DEF_H_
 
-#include "TAMeas.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <bitset>
-#include "UEOIndices.h"
+//SURVEYLIB
+#include <UEOIndices.h>
+//LGC
+#include <TAMeas.h>
+
 
 //--------------------------  TSTN measurement--------------------------------------------
 

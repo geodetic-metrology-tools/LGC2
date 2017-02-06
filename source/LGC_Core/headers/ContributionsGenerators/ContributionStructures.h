@@ -1,6 +1,8 @@
 #ifndef TCONTRIBUTION_STRUCTURES_H
 #define TCONTRIBUTION_STRUCTURES_H
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
 /*!
    \file
    \ingroup ContributionsGenerators
@@ -9,8 +11,11 @@
 	Distances and positions are treated in METERS [m], angles, if TAngle class is not used, are treated in RADIANS [rad].
 	
 */
-#include "TFreeVector.h"
-#include "TAdjustableHelmertTransformation.h"
+
+//SURVEYLIB
+#include <TFreeVector.h>
+#include <TAdjustableHelmertTransformation.h>
+
 /*!
 	\ingroup ContributionsGenerators
 

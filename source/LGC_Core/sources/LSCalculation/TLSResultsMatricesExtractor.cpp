@@ -1,5 +1,5 @@
 #include "TLSResultsMatricesExtractor.h"
-#include "TLGCData.h"
+#include <TLGCData.h>
 #include "TLSResultsMatrices.h"
 #include "TLibrCnstrGenerator.h"
 #include "TLSCalcRelativeError.h"

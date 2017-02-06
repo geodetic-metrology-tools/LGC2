@@ -1,7 +1,10 @@
 #ifndef SU_TLS_RESULTS_MATRICES_EXTRACTOR
 #define SU_TLS_RESULTS_MATRICES_EXTRACTOR
 
-#include "MeasDef.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <MeasDef.h>
 
 class TLGCData;
 class TLSResultsMatrices;

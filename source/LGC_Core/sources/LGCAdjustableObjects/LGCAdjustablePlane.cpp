@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "LGCAdjustablePlane.h"
+#include <LGCAdjustablePlane.h>
 #include "LGCAdjustablePoint.h"
 
 LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name)

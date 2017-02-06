@@ -1,9 +1,12 @@
 #ifndef TINVERSE_TRANSFORMATION
 #define TINVERSE_TRANSFORMATION
 
-#include "TTransformation.h"
-#include "TDerivativeTransformation.h"
-#include "TTransformParameters.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TTransformation.h>
+#include <TDerivativeTransformation.h>
+#include <TTransformParameters.h>
 
 /*!
 	\ingroup LocalTransformations

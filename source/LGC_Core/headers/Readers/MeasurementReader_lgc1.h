@@ -1,9 +1,12 @@
 #ifndef _READERS_MEASUREMENTREADERS_LGC1_H_
 #define _READERS_MEASUREMENTREADERS_LGC1_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
 #include <TInstrumentData.h>
-#include "ReaderBase.h"
-#include "KeywordRights.h"
+#include <ReaderBase.h>
+#include <KeywordRights.h>
 
 /*!
 *  \addtogroup MeasurementReaders

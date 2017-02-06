@@ -1,9 +1,13 @@
 #ifndef LGCADJUSTABLE_POINT
 #define LGCADJUSTABLE_POINT
 
-#include "TAdjustablePoint.h"
-#include "LGCAdjustableObjectCollection.h"
-#include "Global.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TAdjustablePoint.h>
+//LGC
+#include <LGCAdjustableObjectCollection.h>
+#include <Global.h>
 
 class TLGCData;
 

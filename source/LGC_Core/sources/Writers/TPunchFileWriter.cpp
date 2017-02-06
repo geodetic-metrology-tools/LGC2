@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////////
 
 // other forward declarations
-#include "TLGCData.h"
+#include <TLGCData.h>
 #include "TPunchFileWriter.h"
 #include "TPointConverter.h"
 #include "TLGCApp.h"

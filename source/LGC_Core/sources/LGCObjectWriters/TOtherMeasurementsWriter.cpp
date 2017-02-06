@@ -1,5 +1,5 @@
 #include "TOtherMeasurementsWriter.h"
-#include "TAMeas.h"
+#include <TAMeas.h>
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include "TLGCObsSummary.h"

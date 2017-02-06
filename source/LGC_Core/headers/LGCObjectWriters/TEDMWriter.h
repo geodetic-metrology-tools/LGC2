@@ -1,16 +1,15 @@
 
 #ifndef SU_TEDM_WRITER
 #define SU_TEDM_WRITER
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
-////////////////////////////////////////////////////////////////
-// Forward declarations
-#include "TObservationWriter.h"
-#include "TLGCData.h"
-////////////////////////////////////////////////////////////////
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TObservationWriter.h>
+#include <TLGCData.h>
 
 /*!
 	\ingroup LGCObjectWriters

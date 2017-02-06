@@ -1,6 +1,8 @@
 #ifndef TData_Analyzer_H
 #define TData_Analyzer_H
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
 class TLGCData;
 class TFileLogger;
 

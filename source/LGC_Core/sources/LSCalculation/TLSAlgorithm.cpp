@@ -1,4 +1,4 @@
-#include "TLSAlgorithm.h"
+#include <TLSAlgorithm.h>
 #include "TLSInputMatricesFiller.h"
 #include "TLSParametricMtdComputer.h"
 #include "TLSCombinedMtdComputer.h"
@@ -156,7 +156,7 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 		TReal beta = data->getConfig().faut.beta / 100;
 
 		//compute statistics (Z, W, T, G, NABLA and DELTY)
-		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());
+		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive(), data->isCombinedCaseUsed());
 		
 	}
 

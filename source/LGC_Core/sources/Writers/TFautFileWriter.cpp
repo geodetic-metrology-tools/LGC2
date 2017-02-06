@@ -6,7 +6,7 @@
 #include "TFautFileWriter.h"
 
 #include	<ctime>
-#include	"TLGCData.h"
+#include	<TLGCData.h>
 #include	"TScalar.h"
 #include	"TSeparatedFormatTStream.h"
 #include "TLGCApp.h"

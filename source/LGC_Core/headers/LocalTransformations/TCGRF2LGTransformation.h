@@ -1,8 +1,10 @@
-//  TCGRF2LGTransformation.h
 #ifndef SU_CGRF_2_ILG_TRANSFORMATION
 #define SU_CGRF_2_ILG_TRANSFORMATION
 
-#include  "TTransformation.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include  <TTransformation.h>
 
 /*!
 	\ingroup RefFrameTransformations

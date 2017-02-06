@@ -1,8 +1,8 @@
 #include "TSCALEWriter.h"
-#include "TAMeas.h"
+#include <TAMeas.h>
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
-#include "Global.h"
+#include <Global.h>
 #include "TLGCObsSummary.h"
 #include "RoundOfMeasurements.h"
 #include "LGCAdjustablePoint.h"

@@ -1,8 +1,11 @@
 #ifndef _READERS_ADJOBJECTSREADER_H_
 #define _READERS_ADJOBJECTSREADER_H_
 
-#include "ReaderBase.h"
-#include "KeywordRights.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <ReaderBase.h>
+#include <KeywordRights.h>
 
 /*!
  *  \addtogroup AdjObjectsReader

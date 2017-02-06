@@ -3,7 +3,7 @@
 #include "TLGCCalculation.h"
 #include "Version.h"
 #include "TResultsFileWriter.h"
-#include "TSimulationOutputFileWriter.h"
+#include <TSimulationOutputFileWriter.h>
 #include "TSimFileWriter.h"
 #include "TPunchFileWriter.h"
 #include "TFautFileWriter.h"

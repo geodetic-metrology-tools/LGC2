@@ -1,13 +1,15 @@
 #ifndef TALLFIXED_PARAM_GENERATOR_H
 #define TALLFIXED_PARAM_GENERATOR_H
 
-#include "ContributionStructures.h"
-#include "TPointTransformer.h"
-#include "TTSTN.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <ContributionStructures.h>
+#include <TPointTransformer.h>
+#include <TTSTN.h>
+
 struct TLEVEL;
 struct TEDM;
-
-
 
 /*!
 \ingroup ContributionsGenerators

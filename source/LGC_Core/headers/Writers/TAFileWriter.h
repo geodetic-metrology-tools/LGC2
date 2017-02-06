@@ -1,12 +1,15 @@
 #ifndef SU_TA_FILE_WRITER
 #define SU_TA_FILE_WRITER
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include	<string>
-#include	"TALGCObjectWriter.h"
+//LGC
+#include	<TALGCObjectWriter.h>
 
 class		TAStreamFormatter;
 class		TLGCData;
-
 
 /*!
 	\ingroup Writers

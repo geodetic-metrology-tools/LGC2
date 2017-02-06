@@ -1,8 +1,12 @@
 #ifndef SU_ILG_2_ILA_TRANSFORMATION
 #define SU_ILG_2_ILA_TRANSFORMATION
 
-#include  "TTransformation.h"
-#include  "TRefSystemFactory.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include  <TRefSystemFactory.h>
+//LGC
+#include  <TTransformation.h>
 
 /*!
 	\ingroup RefFrameTransformations

@@ -1,5 +1,5 @@
 #include <LGCAdjustablePoint.h>
-#include "TContributionsGenerator.h"
+#include <TContributionsGenerator.h>
 #include "TDist.h" 
 #include "TTreeEntry.h"
 #include "TXYH2CCS.h"

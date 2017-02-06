@@ -1,10 +1,16 @@
 #ifndef _TTSTN_H_
 #define _TTSTN_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+
+//SURVEYLIB
+#include <TAdjustableAngle.h>
+//LGC
 #include <Global.h>
-#include "TInstrumentData.h"
-#include "MeasDef.h"
-#include "TAdjustableAngle.h"
+#include <TInstrumentData.h>
+#include <MeasDef.h>
+
 
 class  TLGCObsSummary;
 struct TPOLARObsSummary;

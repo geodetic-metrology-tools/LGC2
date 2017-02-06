@@ -1,8 +1,13 @@
 #ifndef _TUVD_H_
 #define _TUVD_H_
 
-#include "TAMeas.h"
-#include "UEOIndices.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+
+//SURVEYLIB
+#include <UEOIndices.h>
+//LGC
+#include <TAMeas.h>
 
 /*!
 	\ingroup Measurements

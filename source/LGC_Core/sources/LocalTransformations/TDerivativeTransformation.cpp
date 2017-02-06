@@ -1,6 +1,6 @@
 #include "TDerivativeTransformation.h"
 #include "TPositionVector.h"
-#include "Global.h"
+#include <Global.h>
 
 TDerivativeTransformation::TDerivativeTransformation() 
 	:fTransM(std::unique_ptr<Eigen::Matrix4d>(new Eigen::Matrix4d))

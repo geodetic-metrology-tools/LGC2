@@ -1,8 +1,12 @@
 #ifndef _LGCOPTIONS_H_
 #define _LGCOPTIONS_H_
 
-#include "TRefSystemFactory.h"
-#include "Global.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TRefSystemFactory.h>
+//LGC
+#include <Global.h>
 
 /*!
 	\ingroup LGCProjectData

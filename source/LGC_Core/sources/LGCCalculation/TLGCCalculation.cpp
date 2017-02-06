@@ -2,7 +2,7 @@
 #include "TDataAnalyzer.h"
 #include "TLSSimulation.h"
 #include "TLSAllfixed.h"
-#include "TLSAlgorithm.h"
+#include <TLSAlgorithm.h>
 #include "TVAbractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 

@@ -1,9 +1,12 @@
 #ifndef TDIRECT_TRANSFORMATION
 #define TDIRECT_TRANSFORMATION
 
-#include "TDerivativeTransformation.h"
-#include "TTransformation.h"
-#include "TTransformParameters.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TDerivativeTransformation.h>
+#include <TTransformation.h>
+#include <TTransformParameters.h>
 
 /*!
 	\ingroup LocalTransformations

@@ -3,7 +3,7 @@
 #include "LGCAdjustablePoint.h"
 #include "TXYH2CCS.h"
 
-#include "TPointTransformer.h"
+#include <TPointTransformer.h>
 #include <TLGCData.h>
 
 //////////////////////////////////////////////////////////////////////

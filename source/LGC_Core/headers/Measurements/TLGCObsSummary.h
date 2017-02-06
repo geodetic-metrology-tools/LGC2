@@ -1,10 +1,14 @@
 #ifndef SU_LGC_OBS_SUMMARY
 #define SU_LGC_OBS_SUMMARY
 
-#include "TALGCObjectWriter.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <list>
 #include <map>
 #include <string>
+//LGC
+#include <TALGCObjectWriter.h>
 
 
 /*!

@@ -1,8 +1,8 @@
 #include "TDataAnalyzer.h"
 #include "TLOR2LOR.h"
-#include "TLGCData.h"
+#include <TLGCData.h>
 #include "TAllfixedParamGenerator.h"
-#include "TPointTransformer.h"
+#include <TPointTransformer.h>
 
 #include "TDist.h" 
 #include <bitset>

@@ -12,7 +12,7 @@
 #include "TInverseTransformation.h"
 #include "TAStreamFormatter.h"
 #include "TSpatialStatus.h"
-#include "TPointTransformer.h"
+#include <TPointTransformer.h>
 
 /////////////////////////////////////////////////////////////////////////////
 //CONSTRUCTOR / DESTRUCTOR
@@ -88,9 +88,6 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	if (!frameIt->get()->measurements.fDVER.empty())
 		otherMeasWriter.writeDVERResults(frameIt->get()->measurements.fDVER);
 
-	for (auto& itEDM : frameIt->get()->measurements.fEDM)
-		edmWriter.writeEDMResults(itEDM);
-
 	for (auto& itECHO : frameIt->get()->measurements.fECHO)
 		scaleWriter.writeECHOResults(itECHO);
 	
@@ -106,6 +103,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	if (!frameIt->get()->measurements.fRADI.empty())
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
+
+	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+		edmWriter.writeEDMResults(itEDM);
 		
 }
 
@@ -144,9 +144,6 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	//No instrument for DVER, so no loop to have each instrument.
 	if (!frameIt->get()->measurements.fDVER.empty())
 		otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
-
-	for(auto& itEDM:frameIt->get()->measurements.fEDM)
-		edmWriter.writeEDMSIMUResults(itEDM);
 	
 	for(auto& itECHO:frameIt->get()->measurements.fECHO)
 		scaleWriter.writeECHOSIMUResults(itECHO);
@@ -159,6 +156,10 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 	for (auto& itORIE : frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIESIMUResults(itORIE);
+
+
+	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+		edmWriter.writeEDMSIMUResults(itEDM);
 
 }
 
@@ -186,18 +187,6 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	}
 
 
-	bool  EDMheaderWritten = false;
-	for(auto& itEDM:frameIt->get()->measurements.fEDM)
-	{
-		if (!EDMheaderWritten)
-		{
-			(*stream)<<"DSPT observations"<<endl;
-			edmWriter.writeReliabilityHeader();
-			EDMheaderWritten = true;
-		}
-		edmWriter.writeReliabilityData(itEDM, fProjectData->getStatistics());
-	}
-
 	writeSCALEReliability(frameIt);
 
 	bool  ORIEheaderWritten = false;
@@ -217,6 +206,18 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 		(*stream) << "RADI observations" << endl;
 		otherMeasWriter.writeRADIReliabilityHeader();
 		otherMeasWriter.writeRADIReliabilityData(frameIt->get()->measurements.fRADI, fProjectData->getStatistics());
+	}
+
+	bool  EDMheaderWritten = false;
+	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+	{
+		if (!EDMheaderWritten)
+		{
+			(*stream) << "DSPT observations" << endl;
+			edmWriter.writeReliabilityHeader();
+			EDMheaderWritten = true;
+		}
+		edmWriter.writeReliabilityData(itEDM, fProjectData->getStatistics());
 	}
 }
 

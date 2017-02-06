@@ -1,8 +1,12 @@
 #ifndef SU_SCALE_WRITER
 #define SU_SCALE_WRITER
 
-#include "TObservationWriter.h"
-#include "MeasDef.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TObservationWriter.h>
+#include <MeasDef.h>
+
 struct TECHOROM;
 struct TECVEROM;
 struct TECSPROM;

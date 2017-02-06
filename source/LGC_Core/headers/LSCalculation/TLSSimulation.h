@@ -1,18 +1,21 @@
 #ifndef TLS_SIMULATION
 #define TLS_SIMULATION
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #ifdef __linux__
 #include <tr1/random>
 #else
-	#include <random>
+#include <random>
 #endif
-
 #include <limits>
-#include "TLSAlgorithm.h"
-#include "TSimulationOutputFileWriter.h"
-#include "TPointTransformer.h"
-#include "TObservationGenerator.h"
-#include "TLGCStatistic.h"
+//LGC
+#include <TLSAlgorithm.h>
+#include <TSimulationOutputFileWriter.h>
+#include <TPointTransformer.h>
+#include <TObservationGenerator.h>
+#include <TLGCStatistic.h>
 
 
 /*!

@@ -9,7 +9,7 @@
 #include <ctime>
 
 //LGC Core
-#include "TLGCData.h"
+#include <TLGCData.h>
 #include "TResultsFileWriter.h"
 #include "TLGCApp.h"
 #include "TLOR2LOR.h"
@@ -19,7 +19,7 @@
 //SurveyLib
 #include "TSeparatedFormatTStream.h"
 #include "TPointConverter.h"
-#include "TObservationWriter.h"
+#include <TObservationWriter.h>
 #include "TSpatialStatus.h"
 #include "TXYH2CCS.h"
  

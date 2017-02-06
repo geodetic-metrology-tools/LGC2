@@ -1,11 +1,17 @@
 #ifndef TTRANSFORMATION
 #define TTRANSFORMATION
 
-#include "TFreeVector.h"
-#include "TPositionVector.h"
-#include "Global.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TFreeVector.h>
+#include <TPositionVector.h>
+#include <TRotationMatrix.h>
+//LGC
+#include <Global.h>
+//OTHER
 #include <Eigen/Dense>
-#include "TRotationMatrix.h"
+
 /*!
 	\ingroup LocalTransformations
 	\brief General representation of Helmert transformation, which enables to transform TPositionVector or TFreeVector. The rotation order used is Rxyz = Rx*Ry*Rz.

@@ -1,5 +1,5 @@
 #include "TLSSimulation.h"
-#include "TLGCData.h"
+#include <TLGCData.h>
 #include "TLSInputMatricesFiller.h"
 #include "TLSResultsMatricesExtractor.h"
 #include "TLSInputMatrices.h"

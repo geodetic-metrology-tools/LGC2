@@ -1,10 +1,16 @@
 #ifndef SU_FAUT_WRITER
 #define SU_FAUT_WRITER
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
+#include <string>
+//LGC
+#include <TAFileWriter.h>
+
 class	TLGCData;
 class	TAStreamFormatter;
-#include "TAFileWriter.h"
-#include <string>
+
 using namespace std;
 
 /*!

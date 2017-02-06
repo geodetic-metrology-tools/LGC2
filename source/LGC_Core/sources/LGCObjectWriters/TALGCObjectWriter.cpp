@@ -1,4 +1,4 @@
-#include	"TALGCObjectWriter.h"
+#include	<TALGCObjectWriter.h>
 #include	"TAStreamFormatter.h"
 
 /////////////////////////////////////////////////////////////////////

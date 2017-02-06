@@ -1,4 +1,4 @@
-#include "TTSTN.h"
+#include <TTSTN.h>
 #include "TLGCObsSummary.h"
 
 TLGCObsSummary TTSTN::TROM::getANGLObsSummary() const{

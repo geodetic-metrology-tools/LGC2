@@ -1,9 +1,9 @@
 #include "TLEVELWriter.h"
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
-#include "Global.h"
+#include <Global.h>
 #include "TLGCObsSummary.h"
-#include "TAMeas.h"
+#include <TAMeas.h>
 
 TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
 {}

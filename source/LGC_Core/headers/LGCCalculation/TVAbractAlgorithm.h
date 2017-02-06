@@ -1,6 +1,8 @@
 #ifndef TV_ABSTRACT_ALGORITHM
 #define TV_ABSTRACT_ALGORITHM
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
 class TLGCData;
 
 /*!

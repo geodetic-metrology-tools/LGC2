@@ -1,12 +1,14 @@
-
 #ifndef SU_LS_EREL
 #define SU_LS_EREL
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
 #include "TAdjustablePoint.h"
+
 /*!
 \ingroup LGCProjectData
 

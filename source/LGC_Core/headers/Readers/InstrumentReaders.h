@@ -1,10 +1,13 @@
 #ifndef _READERS_INSTRUMENTREADERS_H_
 #define _READERS_INSTRUMENTREADERS_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
 #include <TInstrumentData.h>
-#include "ReaderBase.h"
-#include "Global.h"
-#include "KeywordRights.h"
+#include <ReaderBase.h>
+#include <Global.h>
+#include <KeywordRights.h>
 
 
 namespace {

@@ -1,10 +1,15 @@
 #ifndef _TA_ANGLE_MEAS_H_
 #define _TA_ANGLE_MEAS_H_
 
-#include "TInstrumentData.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <array>
+//SURVEYLIB
 #include <TFreeVector.h>
-#include "UEOIndices.h"
+#include <UEOIndices.h>
+//LGC
+#include <TInstrumentData.h>
 
 class LGCAdjustablePoint;
 

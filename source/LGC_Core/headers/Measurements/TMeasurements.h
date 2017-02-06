@@ -1,10 +1,14 @@
 #ifndef MEASUREMENTS_H_
 #define MEASUREMENTS_H_
-#include "TEDM.h"
-#include "TTSTN.h"
-#include "TLEVEL.h"
-#include "TCAM.h"
-#include "RoundOfMeasurements.h"
+
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TEDM.h>
+#include <TTSTN.h>
+#include <TLEVEL.h>
+#include <TCAM.h>
+#include <RoundOfMeasurements.h>
 
 /*!
 	\ingroup Measurements

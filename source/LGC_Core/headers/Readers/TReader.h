@@ -1,8 +1,11 @@
 #ifndef _READERS_READER_H_
 #define _READERS_READER_H_
 
-#include "ReaderBase.h"
-#include "TLGCData.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <ReaderBase.h>
+#include <TLGCData.h>
 
 class TAKeyWord;
 

@@ -1,10 +1,12 @@
 #ifndef _LGCAPP_H_
 #define _LGCAPP_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <memory>
 #include <string>
-
-//SurveyLib
+//SURVEYLIB
 #include "TStreamFormatterFactory.h"
 #include "TLSResultsMatrices.h"
 

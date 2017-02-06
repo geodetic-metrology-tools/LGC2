@@ -1,9 +1,12 @@
 #ifndef LGCADJUSTABLE_OBJECT_COLLECTION
 #define LGCADJUSTABLE_OBJECT_COLLECTION
 
-#include "LGCAdjustableLine.h"
-#include "LGCAdjustablePlane.h"
-#include "LGCAdjustablePoint.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <LGCAdjustableLine.h>
+#include <LGCAdjustablePlane.h>
+#include <LGCAdjustablePoint.h>
 
 class TAdjustableScalar;
 class TAdjustableHelmertTransformation;

@@ -1,9 +1,13 @@
 #ifndef Round_Of_Measurements
 #define Round_Of_Measurements
 
-#include "MeasDef.h"
-#include "LGCAdjustablePlane.h"
-#include "LGCAdjustableLine.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <MeasDef.h>
+#include <LGCAdjustablePlane.h>
+#include <LGCAdjustableLine.h>
+
 class TLGCObsSummary;
 
 /*!

@@ -1,11 +1,13 @@
 #ifndef TLIBR_CNSTR_GENERATOR_H
 #define TLIBR_CNSTR_GENERATOR_H
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
-#include "TPointTransformer.h"
-#include "TLGCData.h"
-#include "TLSInputMatrices.h"
-
+//SURVEYLIB
+#include <TLSInputMatrices.h>
+//LGC
+#include <TPointTransformer.h>
+#include <TLGCData.h>
 
 /*!
 \ingroup ContributionsGenerators

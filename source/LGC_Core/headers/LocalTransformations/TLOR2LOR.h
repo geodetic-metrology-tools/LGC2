@@ -1,8 +1,11 @@
 #ifndef TLOR_2_LOR_H
 #define TLOR_2_LOR_H
 
-#include "TTransformation.h"
-#include "Global.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TTransformation.h>
+#include <Global.h>
 
 class TAdjustableHelmertTransformation;
 

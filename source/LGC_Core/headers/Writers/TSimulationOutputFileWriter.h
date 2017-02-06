@@ -1,10 +1,13 @@
 #ifndef SU_RESSIM_WRITER
 #define SU_RESSIM_WRITER
 
-#include	"TResultsFileWriter.h"
-#include	"TSimPointSummary.h"
-#include	"TSimFrameSummary.h"
-# include <TLSCalcRelativeError.h>
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TResultsFileWriter.h>
+#include <TSimPointSummary.h>
+#include <TSimFrameSummary.h>
+#include <TLSCalcRelativeError.h>
 
 class		TLGCData;
 

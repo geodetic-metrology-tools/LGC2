@@ -1,12 +1,12 @@
 
 #ifndef SU_FRAME_WRITER
 #define SU_FRAME_WRITER
-////////////////////////////////////////////////////////////////
-// Forward declarations
-#include "TLGCData.h"
-#include "TALGCObjectWriter.h"
 
-////////////////////////////////////////////////////////////////
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TLGCData.h>
+#include <TALGCObjectWriter.h>
 
 /*!
 	\ingroup LGCObjectWriters

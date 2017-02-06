@@ -1,5 +1,5 @@
 #include "TLSAllfixed.h"
-#include "TLGCData.h"
+#include <TLGCData.h>
 
 TLSAllfixed::TLSAllfixed(TLGCData& data, int maxIter):TLSAlgorithm(data)
 , fPointTransformer(&data.getTree()

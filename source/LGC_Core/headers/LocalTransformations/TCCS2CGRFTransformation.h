@@ -1,8 +1,10 @@
-//  TCCS2CGRFTransformation.h
 #ifndef SU_CCS_2_CGRF_TRANSFORMATION
 #define SU_CCS_2_CGRF_TRANSFORMATION
 
-#include  "TTransformation.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include  <TTransformation.h>
 
 /*!
 	\ingroup RefFrameTransformations

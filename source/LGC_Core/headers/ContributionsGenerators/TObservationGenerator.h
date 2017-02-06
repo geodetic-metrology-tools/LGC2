@@ -1,9 +1,12 @@
 #ifndef TSIMOBSERVATION_GENERATOR_H
 #define TSIMOBSERVATION_GENERATOR_H
 
-#include "ContributionStructures.h"
-#include "TPointTransformer.h"
-#include "TTSTN.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <ContributionStructures.h>
+#include <TPointTransformer.h>
+#include <TTSTN.h>
 
 class TUVEC;
 class TUVD;

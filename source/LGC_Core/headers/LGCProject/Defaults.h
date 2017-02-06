@@ -1,13 +1,18 @@
 #ifndef _LGCDEFAULTS_H_
 #define _LGCDEFAULTS_H_
+
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
 /*!
    \file
    \ingroup LGCProject
    Default program constants shared among the classes.
 */
 
+//STL
 #include <limits>
-#include "Quad.h"
+//SURVEYLIB
+#include <Quad.h>
 
 
 /*!

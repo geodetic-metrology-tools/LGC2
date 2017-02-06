@@ -1,11 +1,16 @@
 #ifndef SU_TResultsFileWriter
 #define SU_TResultsFileWriter
 
-#include "TAFileWriter.h"
-#include "TRefSystemFactory.h"
-#include "TSpatialStatus.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TRefSystemFactory.h>
+#include <TSpatialStatus.h>
+//LGC
+#include <TAFileWriter.h>
 
 class TPositionVector;
+
 /*!
 	\ingroup Writers
 	\brief Write a standard LGC output file.

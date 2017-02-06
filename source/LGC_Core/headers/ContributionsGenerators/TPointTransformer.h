@@ -1,13 +1,16 @@
 #ifndef TPOINTTRANSFORMER_H
 #define TPOINTTRANSFORMER_H
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include "TRefSystemFactory.h"
+//LGC
 #include "TCCS2CGRFTransformation.h"
 #include "TCGRF2LGTransformation.h"
 #include "TILG2ILATransformation.h"
 #include "TLA2MLATransformation.h"
-#include "TRefSystemFactory.h"
 #include "TLOR2LOR.h"
-
 
 
 /*!

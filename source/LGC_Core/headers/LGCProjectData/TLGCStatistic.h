@@ -1,10 +1,14 @@
-// TLGCStatistic.h 
 #ifndef LGC_STATISTIC
 #define LGC_STATISTIC
 
-#include "TSparseMatrix.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <memory>
-#include "Defaults.h"
+//SURVEYLIB
+#include <TSparseMatrix.h>
+//LGC
+#include <Defaults.h>
 
 class TLSInputMatrices;
 class TLSResultsMatrices;
@@ -21,7 +25,7 @@ public:
 	~TLGCStatistic();
 
     ///Computes the statistic vector
-	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor);
+	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor, bool combinedcase);
 
 	/// Access to eventual error 
 	std::string		getError() const { return fError; }

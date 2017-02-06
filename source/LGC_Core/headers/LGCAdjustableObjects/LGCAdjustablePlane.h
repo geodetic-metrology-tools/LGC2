@@ -1,10 +1,15 @@
 #ifndef LGCADJUSTABLE_PLANE
 #define LGCADJUSTABLE_PLANE
 
-#include "TVAdjustableObject.h"
-#include "TAngle.h"
-#include "TLength.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <bitset>
+//SURVEYLIB
+#include <TVAdjustableObject.h>
+#include <TAngle.h>
+#include <TLength.h>
+
 
 class LGCAdjustablePoint;
 

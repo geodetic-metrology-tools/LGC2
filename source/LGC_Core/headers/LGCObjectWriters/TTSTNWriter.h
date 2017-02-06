@@ -1,9 +1,14 @@
 #ifndef SU_TSTN_WRITER
 #define SU_TSTN_WRITER
 
-#include "TTSTN.h"
-#include "TObservationWriter.h"
-#include "TAngle.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TAngle.h>
+//LGC
+#include <TTSTN.h>
+#include <TObservationWriter.h>
+
 
 /*!
 	\ingroup LGCObjectWriters

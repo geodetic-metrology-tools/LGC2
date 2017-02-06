@@ -1,8 +1,8 @@
 #include "TTSTNWriter.h"
-#include "TAMeas.h"
+#include <TAMeas.h>
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
-#include "Global.h"
+#include <Global.h>
 #include "TLGCObsSummary.h"
 #include "LGCAdjustablePoint.h"
 
@@ -176,10 +176,11 @@ void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
 			(*stream) << endl;
 			(*stream) << endl;
 
-
-			writeHisto(summary.anglObsSum, " ANGL");
-			writeHisto(summary.zendObsSum, " ZEND");
-			writeHisto(summary.distObsSum, " DIST");
+			if (writeHist){
+				writeHisto(summary.anglObsSum, " ANGL");
+				writeHisto(summary.zendObsSum, " ZEND");
+				writeHisto(summary.distObsSum, " DIST");
+			}
 		}
 	}
 }
@@ -1583,7 +1584,7 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 		// get reference point to the plane
 		(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 		//get Tg point
-		(*stream).writeStringLeft(nameWidth, ItPLR.target.ID);
+		(*stream).writeStringLeft(nameWidth, ItPLR.targetPos->getName());
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
 

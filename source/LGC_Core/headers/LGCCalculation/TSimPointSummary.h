@@ -1,10 +1,13 @@
-// TSimPointSummarySummary.h
-//////////////////////////////////////////////////////////////////////
 #ifndef SU_SIM_PT_SUMMARY
 #define SU_SIM_PT_SUMMARY
 
-#include "LGCAdjustablePoint.h"
-#include "TFreeVector.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TFreeVector.h>
+//LGC
+#include <LGCAdjustablePoint.h>
+
 
 /*! 
 	\ingroup LGCCalculation

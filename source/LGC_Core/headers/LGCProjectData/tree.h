@@ -1,13 +1,6 @@
 
-//	STL-like templated tree class.
-//
 // Copyright (C) 2001-2011 Kasper Peeters <kasper@phi-sci.com>
-// Distributed under the GNU General Public License version 3.
-//
-// When used together with the htmlcxx library to create 
-// HTML::Node template instances, the GNU Lesser General Public 
-// version 2 applies. Special permission to use tree.hh under
-// the LGPL for other projects can be requested from the author.
+//Exceptional right to use the software under bilateral licence conditions agreed between Mr.K.Peeters and CERN KT office in Feb 2017
 
 /** @file
   \ingroup LGCProjectData

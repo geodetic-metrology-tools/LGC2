@@ -1,9 +1,13 @@
 #ifndef _TCAM_H_
 #define _TCAM_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <array>
-#include "TUVD.h"
-#include "TUVEC.h"
+//LGC
+#include <TUVD.h>
+#include <TUVEC.h>
 #include <Global.h>
 #include <TInstrumentData.h>
 

@@ -1,14 +1,18 @@
 #ifndef SU_TOBS_WRITER
 #define SU_TOBS_WRITER
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <list>
+//SURVEYLIB
 #include <TSpatialPointName.h>
-#include "TALGCObjectWriter.h"
-#include "TLGCStatistic.h"
+//LGC
+#include <TALGCObjectWriter.h>
+#include <TLGCStatistic.h>
 
 class TLGCData;
 class TLGCObsSummary;
-////////////////////////////////////////////////////////////////
 
 /*!
 	\ingroup LGCObjectWriters

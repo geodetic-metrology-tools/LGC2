@@ -1,9 +1,15 @@
 #ifndef TDERIVATIVE_TRANSFORMATION
 #define TDERIVATIVE_TRANSFORMATION
 
-#include <Eigen/Dense>
-#include "TFreeVector.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <memory>
+//SURVEYLIB
+#include <TFreeVector.h>
+//OTHER
+#include <Eigen/Dense>
+
 class TPositionVector;
 
 /** 

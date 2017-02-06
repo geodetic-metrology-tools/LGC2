@@ -1,10 +1,14 @@
 #ifndef LS_INPUT_MATRICES_FILLER
 #define LS_INPUT_MATRICES_FILLER
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <vector>
-#include "TContributionsGenerator.h"
-#include "TPointTransformer.h"
-#include "Global.h"
+//LGC
+#include <TContributionsGenerator.h>
+#include <TPointTransformer.h>
+#include <Global.h>
 
 class TLSInputMatrices;
 class TLGCData;

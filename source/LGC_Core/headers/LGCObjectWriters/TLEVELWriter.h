@@ -1,15 +1,14 @@
 #ifndef SU_LEVEL_WRITER
 #define SU_LEVEL_WRITER
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
-////////////////////////////////////////////////////////////////
-// Forward declarations
-#include "TLGCData.h"
-#include "TObservationWriter.h"
-////////////////////////////////////////////////////////////////
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TLGCData.h>
+#include <TObservationWriter.h>
 
 /*!
 	\ingroup LGCObjectWriters

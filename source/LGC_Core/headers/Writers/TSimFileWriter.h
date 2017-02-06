@@ -1,13 +1,18 @@
 #ifndef SU_SIM_OBS_WRITER
 #define SU_SIM_OBS_WRITER
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
-class	TLGCProject;
-#include "TAFileWriter.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <string>
+//LGC
+#include <TAFileWriter.h>
+
+class	TLGCProject;
+
 using namespace std;
 
 

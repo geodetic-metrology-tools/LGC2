@@ -1,8 +1,11 @@
 #ifndef SU_CAM_WRITER
 #define SU_CAM_WRITER
 
-#include "TLGCData.h"
-#include "TObservationWriter.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TLGCData.h>
+#include <TObservationWriter.h>
 
 /*!
 	\ingroup LGCObjectWriters

@@ -1,4 +1,4 @@
-#include "TLGCData.h"	
+#include <TLGCData.h>	
 
 TLGCData::TLGCData() : 
 	fCombinedCase(false),

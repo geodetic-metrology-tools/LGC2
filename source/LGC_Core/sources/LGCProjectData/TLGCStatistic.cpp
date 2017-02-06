@@ -1,7 +1,7 @@
 #include <memory>
 #include <iostream>
 
-#include "TLGCStatistic.h"
+#include <TLGCStatistic.h>
 #include "QuantileFunctions.h"
 #include "TLSResultsMatrices.h"
 #include "TLSInputMatrices.h"
@@ -65,20 +65,26 @@ void TLGCStatistic::clearVectors(){
 	fDeltaComputed.reset(nullptr);
 }
 
-void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm, bool hasPdor)
+void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm, bool hasPdor, bool combinedcase)
 {
 	int nbObs = im->getNbrObservations();
-
-	rm->saveMatricesToFile(0);
-	im->saveMatricesToFile(0);
-
+	int nbEq = im->getNbrEquations();
 	double s02 = rm->getSigmaZero2();
 	TReal varAPriori = 1;
 	double varRes = 0;
 	double res = 0;
 
 	// compute z
-	TSparseMatrix Z = *(rm->getResCovarMtrx()) * *(im->getWeightMtrx());
+	TSparseMatrix Z(nbObs,nbEq);
+	if (combinedcase)
+		Z = -1.0**(rm->getResCovarMtrx()) * *(im->getWeightMtrx()) *(im->getSecondDgnMtrx()->transpose());
+	else
+		Z = *(rm->getResCovarMtrx()) * *(im->getWeightMtrx()); // *(im->getSecondDgnMtrx()->transpose());
+
+	//V = Cw => C=Qvv* P*BT
+	rm->setIntermediateMatrix2(Z);
+	rm->saveMatricesToFile(0);
+	im->saveMatricesToFile(0);
 
 	//loop for each unknowns
 	int i = 0;

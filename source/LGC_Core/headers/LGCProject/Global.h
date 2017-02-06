@@ -1,18 +1,25 @@
 #ifndef _LGCGLOBAL_H_
 #define _LGCGLOBAL_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+
 /*!
    \file
    \ingroup LGCProject
    Global definitions and includes shared among the classes.
 */
 
+//STL
 #include <string>
 #include <cassert>
 #include <stdexcept>
-#include "Defaults.h"
-#include "tree.h"
-#include "TLength.h"
+//SURVEYLIB
+#include <TLength.h>
+//LGC
+#include <Defaults.h>
+#include <tree.h>
+
 
 
 #define assert3D(x) assert((x) >= 0 && (x) < 3)

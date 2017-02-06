@@ -1,9 +1,12 @@
 #ifndef TLS_ALLFIXED
 #define TLS_ALLFIXED
 
-#include "TLSAlgorithm.h"
-#include "TPointTransformer.h"
-#include "TAllfixedParamGenerator.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <TLSAlgorithm.h>
+#include <TPointTransformer.h>
+#include <TAllfixedParamGenerator.h>
 
 
 /*!

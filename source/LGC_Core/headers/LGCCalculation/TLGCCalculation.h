@@ -1,8 +1,13 @@
 #ifndef TLGC_CALCULATION
 #define TLGC_CALCULATION
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <memory>
-#include "TSimulationOutputFileWriter.h"
+//LGC
+#include <TSimulationOutputFileWriter.h>
+
 class TLSResultsMatrices;
 /*!
 	\ingroup LGCCalculation

@@ -1,3 +1,6 @@
+
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
 /*!
    \file
    \ingroup LGCProject

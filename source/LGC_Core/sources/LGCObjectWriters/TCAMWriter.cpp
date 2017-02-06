@@ -1,8 +1,8 @@
 #include "TCAMWriter.h"
-#include "TAMeas.h"
+#include <TAMeas.h>
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
-#include "Global.h"
+#include <Global.h>
 #include "TLGCObsSummary.h"
 
 TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool hist) :TObservationWriter(stream), writeHist(hist)

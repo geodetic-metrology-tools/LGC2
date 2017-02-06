@@ -1,11 +1,14 @@
 #ifndef LGCADJUSTABLE_LINE_N
 #define LGCADJUSTABLE_LINE_N
 
-#include <bitset>
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
-#include "TVAdjustableObject.h"
-#include "TPositionVector.h"
-#include "TFreeVector.h"
+//STL
+#include <bitset>
+//SURVEYLIB
+#include <TVAdjustableObject.h>
+#include <TPositionVector.h>
+#include <TFreeVector.h>
 
 class LGCAdjustablePoint;
 

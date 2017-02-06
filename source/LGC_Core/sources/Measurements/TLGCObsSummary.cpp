@@ -12,7 +12,7 @@
 
 #include "TLGCObsSummary.h"
 #include "QuantileFunctions.h"
-#include "Global.h"
+#include <Global.h>
 
 //////////////////////
 // Default Constructor

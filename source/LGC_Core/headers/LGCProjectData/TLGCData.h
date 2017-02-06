@@ -1,16 +1,20 @@
 #ifndef _LGC_DATA_H_
 #define _LGC_DATA_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TSpatialStatus.h>
+#include <UEOIndices.h>
+//LGC
 #include <TMeasurements.h>
-#include "TLGCConfig.h"
-#include "LGCAdjustableObjectCollection.h"
+#include <TLGCConfig.h>
+#include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
-#include "TFileLogger.h"
-#include "UEOIndices.h"
-#include "TLGCStatistic.h"
-#include "TSpatialStatus.h"
-#include "TTreeEntry.h"
-#include "TLSCalcRelativeError.h"
+#include <TFileLogger.h>
+#include <TLGCStatistic.h>
+#include <TTreeEntry.h>
+#include <TLSCalcRelativeError.h>
 
 /*! Counter of points based on the type */
 struct TPointGlobal{

@@ -1,11 +1,14 @@
 #ifndef _INSTRUMENTDATA_H_
 #define _INSTRUMENTDATA_H_
 
-#include <map>
-#include "Global.h"
-#include "TAdjustableLength.h"
-#include "TAdjustableAngle.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
+//STL
+#include <map>
+#include <Global.h>
+//SURVEYLIB
+#include <TAdjustableLength.h>
+#include <TAdjustableAngle.h>
 /*!
 	\ingroup LGCProjectData
 

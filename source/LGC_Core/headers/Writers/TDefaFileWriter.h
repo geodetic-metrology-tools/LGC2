@@ -1,33 +1,26 @@
-////////////////////////////////////////////////////////////////////
-// TDefAFileWriter
-/*!
-Write a deformation analysis input file
- 
-Copyright 2003-2008 M.Jones, CERN, TS/SU. All rights reserved.
-*/
-/////////////////////////////////////////////////////////////////////
-
 #ifndef SU_DEFA_WRITER
 #define SU_DEFA_WRITER
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
-////////////////////////////////////////////////////////////////
-// Forward declarations
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
+#include <string>
+//LGC
+#include <TAFileWriter.h>
+
 class	TLGCData;
 class	TAStreamFormatter;
 class TLSResultsMatrices;
-#include "TAFileWriter.h"
-#include <string>
+
 using namespace std;
-// typedefs
-////////////////////////////////////////////////////////////////
+
 
 /*!
 \ingroup Writers
-\brief Write a output file for DEFORM.
+\brief Write a output file for DEFORM. Write a deformation analysis input file
 */
 
 

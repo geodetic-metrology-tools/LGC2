@@ -1,10 +1,13 @@
 #ifndef SU_TPunchFileWriter
 #define SU_TPunchFileWriter
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
-#include "TAFileWriter.h"
-#include "TLGCConfig.h"
-#include "TTSTNWriter.h"
+//LGC
+#include <TAFileWriter.h>
+#include <TLGCConfig.h>
+#include <TTSTNWriter.h>
+
 class	TAStreamFormatter;
 
 /*!

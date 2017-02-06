@@ -1,39 +1,30 @@
-////////////////////////////////////////////////////////////////////
-// TCovarFileWriter
-/*!
-Write all coariance matrices for points and frame in their tree position
-*/
-/////////////////////////////////////////////////////////////////////
-
-
 #ifndef _COVARFILEWRITER_H_
 #define _COVARFILEWRITER_H_
-
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
+
+//STL
 #include <string>
-
-#include "TAFileWriter.h"
-#include "TAdjustableHelmertTransformation.h"
-
-#include "Global.h"
-#include "LGCAdjustablePoint.h"
-
+//SURVEYLIB
+#include <TAdjustableHelmertTransformation.h>
+//LGC
+#include <Global.h>
+#include <TAFileWriter.h>
+#include <LGCAdjustablePoint.h>
 
 class TLGCData;
 class TAStreamFormatter;
 
-
 using namespace std;
-// typedefs
-////////////////////////////////////////////////////////////////
+
 
 /*!
 \ingroup Writers
-\brief Write a output file for COVAR.
+\brief Write all coariance matrices for points and frame in their tree position
 */
 class TCovarFileWriter : public TAFileWriter  
 {

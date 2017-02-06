@@ -1,5 +1,11 @@
-#include "MeasDef.h"
-#include "LGCAdjustablePlane.h"
+#ifndef _TLEVEL_H
+#define _TLEVEL_H
+
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <MeasDef.h>
+#include <LGCAdjustablePlane.h>
 
 class TLGCObsSummary;
 
@@ -38,3 +44,4 @@ struct TLEVEL {
 			hasDHOR(false)
 			{}
 };
+#endif

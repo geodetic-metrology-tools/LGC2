@@ -6,7 +6,7 @@
 #include "TLSInputMatricesFiller.h"
 #include "TLSInputMatrices.h"
 #include "TDataAnalyzer.h"
-#include "TLGCData.h"
+#include <TLGCData.h>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCTOR / DESTRUCTOR

@@ -1,8 +1,11 @@
 #ifndef SU_SIM_FRAME_SUMMARY
 #define SU_SIM_FRAME_SUMMARY
 
-#include "TAdjustableHelmertTransformation.h"
-#include "TFreeVector.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TAdjustableHelmertTransformation.h>
+#include <TFreeVector.h>
 
 /// Need to redifine a structure for the square residual because the angle are resize
 struct TransformParametersSquare{

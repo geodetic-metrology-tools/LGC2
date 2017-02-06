@@ -1,15 +1,16 @@
 #ifndef _READERBASE_H_
 #define _READERBASE_H_
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
-
+//LGC
 #include <TLGCConfig.h>
-
-#include "LGCAdjustableObjectCollection.h"
-
+#include <LGCAdjustableObjectCollection.h>
 #include <TLGCData.h>
 
 /*! 

@@ -1,10 +1,14 @@
 #ifndef TLS_ALGORITHM
 #define TLS_ALGORITHM
 
-#include "TALSComputer.h"
-#include "TVAbractAlgorithm.h"
-#include "TLSResultsMatricesExtractor.h"
-#include "TLibrCnstrGenerator.h"
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//SURVEYLIB
+#include <TALSComputer.h>
+//LGC
+#include <TVAbractAlgorithm.h>
+#include <TLSResultsMatricesExtractor.h>
+#include <TLibrCnstrGenerator.h>
 
 class TLSInputMatricesFiller;
 class TLSResultsMatrices;

@@ -1,4 +1,10 @@
-#include "MeasDef.h"
+#ifndef _TEDM_H
+#define _TEDM_H
+
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//LGC
+#include <MeasDef.h>
 
 class TLGCObsSummary;
 
@@ -30,3 +36,4 @@ struct TEDM {
 		/// Line of the station definition
 		int  line;
 };
+#endif

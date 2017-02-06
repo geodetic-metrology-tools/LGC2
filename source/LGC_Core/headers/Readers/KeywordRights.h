@@ -1,8 +1,10 @@
 #ifndef KEYWORD_AUTHORIZATIONS_H
 #define KEYWORD_AUTHORIZATIONS_H
-
 #pragma once
 
+//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
+
+//STL
 #include <vector>
 #include <string>
 #include <array>
