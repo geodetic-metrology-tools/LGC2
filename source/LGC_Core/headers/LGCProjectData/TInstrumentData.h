@@ -72,6 +72,7 @@ class TInstrumentData {
 		struct TCAMD {
 			std::string ID;
 			std::string defTarget;
+			TLength sigmaInstrCentering; // [m]
 						
 			struct TTarget {
 				std::string ID;

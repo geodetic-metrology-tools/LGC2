@@ -93,7 +93,7 @@ namespace MixObs {
 	"*FAUT\n"
 	"*PREC 7\n"
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*POLAR TS1 T2 0.0 0.1 0.1 0\n"
 	"T2  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0 \n"

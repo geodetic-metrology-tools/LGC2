@@ -82,9 +82,9 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 		Z = *(rm->getResCovarMtrx()) * *(im->getWeightMtrx()); // *(im->getSecondDgnMtrx()->transpose());
 
 	//V = Cw => C=Qvv* P*BT
-	rm->setIntermediateMatrix2(Z);
-	rm->saveMatricesToFile(0);
-	im->saveMatricesToFile(0);
+	//rm->setIntermediateMatrix2(Z);
+	//rm->saveMatricesToFile(0);
+	//im->saveMatricesToFile(0);
 
 	//loop for each unknowns
 	int i = 0;
@@ -103,7 +103,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 			
 			// compute z		
 			(*fZ)(i) = Z.coeff(i, i);
-			TReal qwe = Z.coeff(i, i);
+			//TReal qwe = Z.coeff(i, i);
 			// check on z consistency
 			if ((fZ->coeff(i) < LITERAL(1.0000001))&&(fZ->coeff(i)>LITERAL(1.0))) 
 			{
