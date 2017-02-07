@@ -102,11 +102,12 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, int) {
 	if (tokens.at(0) == "*") { 
 		// This is the keyword line		
 		auto& camInstruments(finstruments.fCAMD);
-		checkInstrument(4, camInstruments, tokens);
+		checkInstrument(5, camInstruments, tokens);
 
 		const TInstrumentData::TCAMD p = {
 						tokens.at(2),
 						tokens.at(3),
+						TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres)
 		};
 
 		// store the new station

@@ -11,7 +11,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -39,7 +39,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -71,7 +71,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -102,7 +102,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -133,7 +133,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -165,7 +165,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -197,7 +197,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -230,7 +230,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -267,7 +267,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -307,7 +307,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -349,7 +349,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 
 	"*CALA\n"
@@ -393,7 +393,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -429,7 +429,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -467,7 +467,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -505,7 +505,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -545,7 +545,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -586,7 +586,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -625,7 +625,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -668,7 +668,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
@@ -712,7 +712,7 @@ namespace TestCAM {
 	"*PREC 7\n"
 
 	"*INSTR\n"
-	"*CAMD BCAM1 T1\n"
+	"*CAMD BCAM1 T1 0.0\n"
 	"T1  5  5  0.5  0.5 \n"
 	"*EDM ED1 V1 0 0.001 0.001 \n"
 	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
