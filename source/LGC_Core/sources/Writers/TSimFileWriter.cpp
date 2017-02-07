@@ -490,11 +490,17 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
-	(*stream) << "*CAM" << sep
-		<< meas->instrumentPos->getName() << sep
-		<< meas->instrument.ID << sep
-		<< endl;
+    auto edmDefInst = data->getInstruments().fCAMD.at(meas->instrument.ID);
 
+    (*stream) << "*CAM" << sep
+        << meas->instrumentPos->getName() << sep
+        << meas->instrument.ID << sep;
+	
+    if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
+        (*stream) << "ICSE" << sep
+        << meas->instrument.sigmaInstrCentering << sep;
+
+    (*stream) << endl;
 
 	if (!meas->measUVD.empty())
 	{
@@ -709,10 +715,25 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
-	(*stream) << "*DSPT" << sep
-		<< meas->instrumentPos->getName() << sep
-		<< meas->instrument.ID << sep 
-		<<endl;
+    auto edmDefInst = data->getInstruments().fEDM.at(meas->instrument.ID);
+
+    (*stream) << "*DSPT" << sep
+        << meas->instrumentPos->getName() << sep
+        << meas->instrument.ID << sep;
+
+    if(meas->instrument.instrHeight != edmDefInst.instrHeight)
+        (*stream) << "IH" << sep
+        << meas->instrument.instrHeight << sep;
+    
+    if(meas->instrument.sigmaInstrHeight != edmDefInst.sigmaInstrHeight)
+        (*stream) << "IHSE" << sep
+        << meas->instrument.sigmaInstrHeight << sep;
+
+    if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
+        (*stream) << "ICSE" << sep
+        << meas->instrument.sigmaInstrCentering << sep;
+
+    (*stream) << endl;
 
 	//write the list of measurements
 	for (auto& itDspt : meas->measDSPT)
@@ -805,10 +826,21 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
+    auto polarDefInst = data->getInstruments().fPOLAR.at(meas->instrument.ID);
+
 	(*stream) << "*ORIE" << sep
 		<< meas->instrumentPos->getName() << sep
-		<< meas->instrument.ID << endl;
+		<< meas->instrument.ID << sep;
 
+    if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
+        (*stream) << "ICSE" << sep
+        << meas->instrument.sigmaInstrCentering << sep;
+
+    if(meas->fConstantAngle.getGonsValue() != polarDefInst.constAngle.getGonsValue())
+        (*stream) << "CST" << sep
+        << meas->fConstantAngle.getGonsValue() << sep;
+
+    (*stream) << endl;
 
 	//write the list of measurements for the line
 	for (auto& itORIE : meas->measORIE)
@@ -849,33 +881,37 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
+    auto polarDefInst = data->getInstruments().fPOLAR.at(meas->instrument.ID);
+
+    (*stream) << "*TSTN" << sep
+        << meas->instrumentPos->getName() << sep
+        << meas->instrument.ID << sep;
+
+    if(meas->rot3D)
+        (*stream) << "ROT3D" << sep;
+
+    if(meas->instrumentHeightAdjustable)
+    {
+        if(meas->instrumentHeightAdjustable->isFixed())
+        {
+            (*stream) << "IHFIX" << sep;
+            if(meas->instrument.instrHeight != 0)
+                (*stream) << "IH" << sep << meas->instrument.instrHeight << sep;
+
+            if(meas->instrument.sigmaInstrHeight != 0)
+                (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+        }
+    } else
+        (*stream) << "IHFIX" << sep;
+
+    if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
+        (*stream) << "ICSE" << sep
+        << meas->instrument.sigmaInstrCentering << sep;
+
+    (*stream) << endl;
+
 	for (auto& rom : meas->roms)
 	{
-
-		(*stream) << "*TSTN" << sep
-			<< meas->instrumentPos->getName() << sep
-			<< meas->instrument.ID << sep;
-
-		if (meas->rot3D)
-			(*stream) << "ROT3D" << sep;
-
-		if (meas->instrumentHeightAdjustable)
-		{
-			if (meas->instrumentHeightAdjustable->isFixed())
-			{
-				(*stream) << "IHFIX" << sep;
-				if (meas->instrument.instrHeight != 0)
-					(*stream) << "IH" << sep << meas->instrument.instrHeight << sep;
-
-				if (meas->instrument.sigmaInstrHeight != 0)
-					(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
-			}
-		}
-		else
-			(*stream) << "IHFIX" << sep;
-
-		(*stream) << endl;
-
 		(*stream) << "*V0" << sep;
 
 		//if (rom->defaultTarget!=nullptr && rom->defaultTarget->ID != meas->instrument.defTarget)
