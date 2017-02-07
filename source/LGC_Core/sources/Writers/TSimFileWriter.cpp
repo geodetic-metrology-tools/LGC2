@@ -524,6 +524,10 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 				(*stream) << "YSE" << sep
 				<< uvd.target.sigmaY*M2MM << sep;
 
+            if(uvd.target.sigmaDist != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDist)
+                (*stream) << "DSE" << sep
+                << uvd.target.sigmaDist.getMMetresValue() << sep;
+
 			(*stream) << endl;
 		}
 	}
@@ -555,10 +559,6 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 				(*stream) << "YSE" << sep
 				<< uvec.target.sigmaY*M2MM << sep;
 
-			if (uvec.target.sigmaDist != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDist)
-				(*stream) << "DSE" << sep
-				<< uvec.target.sigmaDist.getMMetresValue() << sep;
-			
 			(*stream) << endl;
 		}
 	}
