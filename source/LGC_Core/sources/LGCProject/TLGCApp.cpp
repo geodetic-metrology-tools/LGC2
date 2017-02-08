@@ -5,6 +5,7 @@
 #include "TResultsFileWriter.h"
 #include <TSimulationOutputFileWriter.h>
 #include "TSimFileWriter.h"
+#include "TInputFileWriter.h"
 #include "TPunchFileWriter.h"
 #include "TFautFileWriter.h"
 #include "TDefaFileWriter.h"
@@ -57,7 +58,7 @@ bool TLGCApp::exec()
 	}
 	
 	//Initialize the writer into the output file.
-	initializeStream(projectData);
+	initializeStream(projectData, fOutputFileLoc, fStream);
 
 	//Run the calculation, results are obtained in the 'projectData', 
 	TLGCCalculation lgcCalculation(projectData);
@@ -82,10 +83,27 @@ bool TLGCApp::exec()
 	return result;
 }
 
-void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat){
+bool TLGCApp::writeLGCFile(std::shared_ptr<TLGCData> dat, const std::string &filePath){
+    // Create and initialise stream:
+    std::shared_ptr<TAStreamFormatter> stream;
+    initializeStream(dat, filePath, stream);
+
+    // Create writer, write the file:
+    TInputFileWriter infileWriter(stream.get(), dat.get());
+    try{
+        infileWriter.writeFile();
+    } catch(...) {
+        // There were some problems with the TLGCData, and the writer
+        // tried to read faulty locations. Return false.
+        return false;
+    }
+    return true;
+}
+
+void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat, const std::string &filePath, std::shared_ptr<TAStreamFormatter> &stream){
 	
 	TFileParameters resultFileParam;
-	resultFileParam.setFileName(fOutputFileLoc);  
+    resultFileParam.setFileName(filePath);
 
 	//Some keywords(options) in the input file responsible for this, for now just setting here one of them (column), but can be semi-colon, dash etc.
 	TAStreamFormatter::ETextFormat resultsFileFormat = TAStreamFormatter::ETextFormat::kColumnFormat;
@@ -96,15 +114,15 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat){
 	dataParam.setPrecision( dat->getConfig().outPrecision.digits);
 
 	TADataSet tads(resultFileParam, dataParam);
-	fStream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));
-	fStream->setReferenceFrame(dataParam.getRefFrame());  //default param because not redefine
-	fStream->setCoordSys(TCoordSysFactory::k3DCartesian);
+    stream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));
+    stream->setReferenceFrame(dataParam.getRefFrame());  //default param because not redefine
+    stream->setCoordSys(TCoordSysFactory::k3DCartesian);
 
-	TPointFormat* pointFormat = fStream->getPointFormat();
+    TPointFormat* pointFormat = stream->getPointFormat();
 	if (dat->getConfig().pointNameWidth>pointFormat->getNameWidth())
 	{
 		pointFormat->setNameWidth(dat->getConfig().pointNameWidth);
-		fStream->setPointFormat(*pointFormat);
+        stream->setPointFormat(*pointFormat);
 	}
 	
 }

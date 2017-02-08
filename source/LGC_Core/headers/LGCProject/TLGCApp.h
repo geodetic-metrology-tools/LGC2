@@ -39,6 +39,9 @@ class TLGCApp {
 		///Executes the application
 		bool exec();
 
+        /// Write the given data as an LGC input file into the given file location
+        static bool writeLGCFile(std::shared_ptr<TLGCData> dat, const std::string &filePath);
+
 	private:
 		static const string		fCopyright;
 
@@ -51,7 +54,7 @@ class TLGCApp {
 		std::string fLoggerFileLoc; //Location of the input file with extension, e.g. C://Temp//outputLog.log 
 		std::string fNamFile; //Location of the 'name' file
 
-		void initializeStream(std::shared_ptr<TLGCData> dat);
+        static void initializeStream(std::shared_ptr<TLGCData> dat, const std::string &filePath, std::shared_ptr<TAStreamFormatter> &stream);
 		void saveResults(TLGCData *dat);
 		void writeStdResultsFile(TLGCData *dat);
 
