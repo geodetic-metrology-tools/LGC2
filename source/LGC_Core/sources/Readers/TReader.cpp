@@ -308,9 +308,8 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 				isReferenceSystemDefined = true;
 
 			//Have to know if ANGL, PLR3D, ECDIR or ECTH are used in the TSTN ROM to fixed or not V0
-			if (currentkey == V0)
-				currenthandler->setRequiredAdjVo(requiredAdjustableVo(cp_lgcStream, nline));
-
+			if (currentkey == V0) 
+				static_cast<TKeyV0*>(currenthandler)->setRequiredAdjVo(requiredAdjustableVo(cp_lgcStream, nline));
 			try {
 
 				// abort if there is no valid handler
