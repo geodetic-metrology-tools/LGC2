@@ -10,6 +10,7 @@
 #include <string>
 //LGC
 #include <TAFileWriter.h>
+#include "TMeasurements.h"
 
 class	TLGCProject;
 
@@ -43,13 +44,13 @@ public:
 			virtual void	writeFile(const string error);
 		//@}
 
-private:
+protected:
 
 	/*!default constructor*/
 	TSimFileWriter();
 
 	/// write the title, the referential and the options
-	void writeHeader();
+	virtual void writeHeader();
 	/// write the instruments
 	void writeInstrument();
 	/// write the data for a node. Recursive function
