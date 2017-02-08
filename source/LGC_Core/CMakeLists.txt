@@ -92,6 +92,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Writers/TResultsFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TPunchFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TFautFileWriter.h
+    ${CORE_INCLUDE_PATH}/Writers/TInputFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TSimulationOutputFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TSimFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TDefaFileWriter.h
@@ -158,6 +159,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/Writers/TResultsFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TPunchFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TFautFileWriter.cpp
+    ${CORE_SOURCES_PATH}/Writers/TInputFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TSimulationOutputFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TSimFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TDefaFileWriter.cpp
