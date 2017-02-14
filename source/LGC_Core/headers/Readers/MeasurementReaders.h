@@ -156,7 +156,8 @@ class TKeyV0 : public TAMeasurementKey {
 		virtual void parse(const std::vector<std::string>& tokens, int);
 
 		bool requiredAdjustableVo;
-		virtual void setRequiredAdjVo(bool b){ requiredAdjustableVo = b; }
+		/// function used only for V0 keyword. The polar instrument has an unknown orientation angle which can be determinate only if ANGL, PLR3D, ECTH or ECDIR measurement are used 
+		void setRequiredAdjVo(bool b){ requiredAdjustableVo = b; }
 };
 
 class TKeyPLR3D : public TAMeasurementKey {
