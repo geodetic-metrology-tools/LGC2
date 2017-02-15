@@ -909,7 +909,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     (*stream) << endl;
 
