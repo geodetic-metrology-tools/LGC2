@@ -837,7 +837,7 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     if(meas->fConstantAngle.getGonsValue() != polarDefInst.constAngle.getGonsValue())
         (*stream) << "CST" << sep
