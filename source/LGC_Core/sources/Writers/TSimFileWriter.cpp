@@ -730,11 +730,11 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
     
     if(meas->instrument.sigmaInstrHeight != edmDefInst.sigmaInstrHeight)
         (*stream) << "IHSE" << sep
-        << meas->instrument.sigmaInstrHeight << sep;
+        << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
 
     if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     (*stream) << endl;
 
