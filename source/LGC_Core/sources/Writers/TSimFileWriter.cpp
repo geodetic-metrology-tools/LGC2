@@ -139,7 +139,10 @@ void	TSimFileWriter::writeInstrument()
 	(*stream) << "*INSTR" << endl;
 	for (auto& itCAMD : data->getInstruments().fCAMD)
 	{
-		(*stream) << "*CAMD " << itCAMD.second.ID << sep << itCAMD.second.defTarget << endl;
+		(*stream) << "*CAMD " << itCAMD.second.ID << sep 
+            << itCAMD.second.defTarget << sep
+            << itCAMD.second.sigmaInstrCentering.getMMetresValue() << sep 
+            << endl;
 		for (auto& itTarget : itCAMD.second.targets)
 			(*stream) << itTarget.second.ID << sep
 			<< itTarget.second.sigmaX << sep
