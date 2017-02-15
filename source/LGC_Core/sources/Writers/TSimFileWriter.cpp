@@ -501,7 +501,7 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 	
     if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     (*stream) << endl;
 
