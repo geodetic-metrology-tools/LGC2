@@ -185,632 +185,8 @@ void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
 	}
 }
 
-void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
-	TAStreamFormatter*	stream = getStream();
-	//Third hierarchy level from local FRAME
-	std::string        TABs = stream->getCurrSpaceExtended(3);
 
-	//Write definition of TSTN
-	writeTSTNHeader(tstn);
-	writeTSTNData(tstn);
-
-	for(auto const ItRoms : tstn->roms)
-	{
-		//Write definition of ROM
-		writeV0Header();
-		writeV0Data(ItRoms);
-
-		if(ItRoms->measANGL.size() > 0){
-			(*stream)<<TABs<<"ANGL"<<endl;
-			writeAngleResultsSummary(ItRoms->getANGLObsSummary(),TABs);
-		}
-		if(ItRoms->measZEND.size() > 0){
-			(*stream)<<TABs<<"ZEND"<<endl;
-			writeAngleResultsSummary(ItRoms->getZENDObsSummary(),TABs);
-		}
-		if(ItRoms->measDIST.size() > 0){
-			(*stream)<<TABs<<"DIST"<<endl;
-			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(),TABs);
-		}
-		if(ItRoms->measDHOR.size() > 0){
-			(*stream)<<TABs<<"DHOR"<<endl;
-			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(),TABs);
-		}
-		if(ItRoms->measECTH.size() > 0){
-			(*stream)<<TABs<<"ECTH"<<endl;
-			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(),TABs);
-		}
-		if (ItRoms->measECDIR.size() > 0){
-			(*stream) << TABs << "ECDIR" << endl;
-			writeDistanceResultsSummary(ItRoms->getECDIRObsSummary(), TABs);
-		}
-
-		if(ItRoms->measPLR3D.size() > 0){
-			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();	
-			(*stream)<<TABs<<"DIST"<<endl;
-			writeDistanceResultsSummary(summary.distObsSum,TABs);
-			(*stream)<<TABs<<"ANGL"<<endl;
-			writeAngleResultsSummary(summary.anglObsSum, TABs);
-			(*stream)<<TABs<<"ZEND"<<endl;
-			writeAngleResultsSummary(summary.zendObsSum,TABs);
-		}
-	}
-}
-
-//RESULTS
-void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry)
-{   
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
-	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-   writePLRResultsHeader((int)measPLR3D.size()); // write the title line for the observations
-	for(auto const& ItPLR3D: measPLR3D)
-	{
-		(*stream)<<TABs;
-		//write TARGET POSITION
-		(*stream).writeStringLeft(nameWidth, ItPLR3D.targetPos->getName());
-		(*stream) << " | ";
-
-
-//ANGL
-		//write the observed ANGL
-		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kANGL).getGonsValue());
-
-		//write the sigma ANGL
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaAngl.getSignedCCValue());
-
-		//write the estimated ANGL
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL) + V).getGonsValue());
-
-		//write the residual ANGL
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
-
-		(*stream) << " | ";
-
-//ZEND
-		//write the observed ZEND
-		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kZEND).getGonsValue());
-
-		//write the sigma ZEND
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaZenD.getSignedCCValue());
-
-		//write the estimated ZEND
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kZEND) + ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND)).getGonsValue());
-
-		//write the residual ZEND
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
-
-		(*stream) << " | ";
-
-//DIST 
-		//write the observed distance
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance()); //Write value in meters [m]
-
-		//write the sigma, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance()/1000)*M2MM); 
-
-		//write the estimated DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()); 
-
-		//write the residual, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual().getMMetresValue()); 
-
-		(*stream) << " | ";
-
-//ROTATION
-		if (isAllfixed){
-			auto minAngle = [&](TAngle a, TAngle b)
-			{ 
-				if (fabs(a) > fabs(b))
-					return b;
-				else
-					return a;
-			};
-
-			if (!isnotanumber(ItPLR3D.fAllFixedV0[0]) && !isnotanumber(ItPLR3D.fAllFixedV0[1]))
-			{
-				TAngle V0 = minAngle(ItPLR3D.fAllFixedV0[0]-V, ItPLR3D.fAllFixedV0[1]-V) + V;
-					(*stream).writeDouble(obsWidth, anglePrecision, V0.getGonsValue());
-			}
-			else if (isnotanumber(ItPLR3D.fAllFixedV0[0]))
-				if (!isnotanumber(ItPLR3D.fAllFixedV0[1]))
-					(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0[1].getGonsValue());
-				else
-					(*stream).writeString(obsWidth, "FIXED");
-			else
-				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0[0].getGonsValue());
-
-
-
-
-			if (!isnotanumber(ItPLR3D.fAllFixedRx[0]) && !isnotanumber(ItPLR3D.fAllFixedRx[1]))
-			{
-				TAngle RX = minAngle(ItPLR3D.fAllFixedRx[0] - rx, ItPLR3D.fAllFixedRx[1] - rx) + rx;
-				(*stream).writeDouble(obsWidth, anglePrecision, RX.getGonsValue());
-			}
-			else if (isnotanumber(ItPLR3D.fAllFixedRx[0]))
-				if (!isnotanumber(ItPLR3D.fAllFixedRx[1]))
-					(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx[1].getGonsValue());
-				else
-					(*stream).writeString(obsWidth, "FIXED");
-			else
-				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx[0].getGonsValue());
-
-
-			if (!isnotanumber(ItPLR3D.fAllFixedRy[0]) && !isnotanumber(ItPLR3D.fAllFixedRy[1]))
-			{
-				TAngle RY = minAngle(ItPLR3D.fAllFixedRy[0] - ry, ItPLR3D.fAllFixedRy[1] - ry) + ry;
-				(*stream).writeDouble(obsWidth, anglePrecision, RY.getGonsValue());
-			}
-			else if (isnotanumber(ItPLR3D.fAllFixedRy[0]))
-				if (!isnotanumber(ItPLR3D.fAllFixedRy[1]))
-					(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy[1].getGonsValue());
-				else
-					(*stream).writeString(obsWidth, "FIXED");
-			else
-				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy[0].getGonsValue());
-
-
-
-			(*stream) << " | ";
-		}
-
-
-
-
-		//ECART	
-		TReal dist = sqrt(pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
-			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
-			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*M2MM);
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*M2MM);
-
-		(*stream) << " | ";
-
-		//DIST
-		//sensibility		
-		TReal dz = ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
-		if (ItPLR3D.target.distCorrectionUnknown)
-		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue()));
-		}
-		else{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()));
-		}
-
-		if (!ItPLR3D.target.distCorrectionAdjustable->isFixed()){
-			//write the distance cste calculated(TLength (M))
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue());
-
-			//write the distance cste sigma (in (MM))
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
-		}
-		else{
-			//write the distance cste (TLength (M))
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.distCorrectionAdjustable->getProvisionalValue());
-			(*stream).writeString(obsResWidth, "FIXED");
-		}
-
-		if (isAllfixed)
-			if (!isnotanumber(ItPLR3D.fAllFixedCs))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedCs.getMMetresValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-		
-		(*stream) << " | ";
-
-		//INSTR
-		if (isAllfixed)
-		{
-			if (!isnotanumber(ItPLR3D.fAllFixedHi))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedHi);
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-
-			(*stream) << " | ";
-		}
-
-
-		
-		//TARGET
-		//ID
-		(*stream).writeString(nameWidth, ItPLR3D.target.ID);
-		//height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.targetHt);
-
-		(*stream) << " | ";
-
-		//RES/SIGMA
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaAngl.getRadiansValue()));
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / TAngle(ItPLR3D.target.sigmaAngl).getRadiansValue()));
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist));
-		(*stream) << " | ";
-		
-		(*stream) << endl;
-		}
-	(*stream)<<endl;
-}
-
-void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V)
-{   
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
-	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeANGLResultsHeader((int)measANGL.size()); // write the title line for the observations
-	for(auto const& ItANGL : measANGL)
-	{
-		(*stream)<<TABs;
-		//write TARGET POSITION
-		(*stream).writeStringLeft(nameWidth, ItANGL.targetPos->getName());
-
-		//write the observed ANGL
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle()).getGonsValue());
-
-		//write the sigma ANGL
-		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItANGL.target.sigmaAngl).getSignedCCValue());
-
-		//write the estimated ANGL
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle() + ItANGL.getAngleResidual() + V).getGonsValue());
-
-		//write the residual
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue()); 
-		
-		//write the offset	
-		TReal dist =sqrt( pow2(ItANGL.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
-			pow2(ItANGL.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
-			pow2(ItANGL.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.getAngleResidual().getRadiansValue()*dist*M2MM);
-		
-		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, 2, (ItANGL.getAngleResidual().getRadiansValue() / ItANGL.target.sigmaAngl.getRadiansValue())); 
-		
-		//write TARGET ID
-		(*stream).writeString(nameWidth, ItANGL.target.ID);
-		
-		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt);
-
-		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItANGL.fAllFixedV0))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItANGL.fAllFixedV0.getGonsValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-		(*stream)<<endl;
-	}
-	(*stream)<<endl;
-}
-
-void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos)
-{   
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
-	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeZENDResultsHeader((int)measZEND.size()); // write the title line for the observations
-	for(auto const& ItZEND : measZEND)
-	{
-		(*stream)<<TABs;
-		//write TARGET POSITION
-		(*stream).writeStringLeft(nameWidth, ItZEND.targetPos->getName());
-
-		//write the observed ZEND
-		(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.getAngle().getGonsValue());
-
-		//write the sigma ZEND
-		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItZEND.target.sigmaZenD).getSignedCCValue());
-
-		//write the estimated ZEND
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItZEND.getAngle() + ItZEND.getAngleResidual()).getGonsValue());
-
-		//write the residual
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());
-
-		//write the offset	
-		TReal dist =sqrt( pow2(ItZEND.targetPos->getEstValue(0) - instrPos->getEstValue(0))+
-			pow2(ItZEND.targetPos->getEstValue(1) - instrPos->getEstValue(1))+
-			pow2(ItZEND.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*M2MM);
-
-		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItZEND.getAngleResidual().getRadiansValue() / ItZEND.target.sigmaZenD.getRadiansValue()));
-		
-		//write TARGET ID
-		(*stream).writeString(nameWidth, ItZEND.target.ID);
-		
-		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItZEND.target.targetHt);
-
-
-		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItZEND.fAllFixedHi))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.fAllFixedHi);
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-		(*stream)<<endl;
-	}
-	(*stream)<<endl<<endl;
-}
-
-void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST,const TInstrumentData::TPOLAR& instr , const LGCAdjustablePoint* instrPos)
-{   
-
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision =	getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeDISTResultsHeader((int)measDIST.size()); // write the title line for the observations
-	for(auto const& ItDIST : measDIST)
-	{
-		(*stream)<<TABs;
-		//write TARGET POSITION
-		(*stream).writeStringLeft(nameWidth, ItDIST.targetPos->getName());
-
-		//write the observed DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance());
-
-		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.target.sigmaDist +ItDIST.target.ppmDist*ItDIST.getDistance()/1000)* M2MM);
-
-		//write the estimated DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance() + ItDIST.getDistanceResidual());
-
-		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual().getMMetresValue());
-		
-		//write the sensibility	
-		TReal dz= ItDIST.targetPos->getEstValue(2) + ItDIST.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
-		if (ItDIST.target.distCorrectionUnknown)
-		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual() + ItDIST.target.distCorrectionAdjustable->getEstimatedValue()));
-		}else{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual()));
-		}
-
-		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, 2, (ItDIST.getDistanceResidual() / ItDIST.target.sigmaDist));
-
-		if(!ItDIST.target.distCorrectionAdjustable->isFixed()){
-			//write the distance cste calculated
-			if (isAllfixed)
-				if (!isnotanumber(ItDIST.fAllFixedCs))
-					(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMMetresValue());
-				else
-					(*stream).writeString(obsWidth, "FIXED");
-			else
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue());
-
-			//write the distance cste sigma )
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
-		} else {
-			//write the distance cste
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getProvisionalValue());
-
-			//write the distance cste sigma 
-			(*stream).writeString(obsResWidth, "FIXED");	
-		}
-		
-		//write TARGET ID
-		(*stream).writeString(nameWidth, ItDIST.target.ID);
-		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.targetHt);
-
-		//write allfixed parameter
-		if (isAllfixed){
-			if (!isnotanumber(ItDIST.fAllFixedHi))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedHi);
-			else
-				(*stream).writeString(obsResWidth, "FIXED");
-		}
-
-		(*stream)<<endl;
-	}
-	(*stream)<<endl;
-}
-
-void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
-{   
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision =	getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeDHORResultsHeader((int)measDHOR.size()); // write the title line for the observations
-	for(auto const& ItDHOR : measDHOR)
-	{
-		(*stream)<<TABs;
-
-		//write TARGET POSITION
-		(*stream).writeStringLeft(nameWidth, ItDHOR.targetPos->getName());
-
-		//write the observed DHOR
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance());
-
-		//write the sigma DHOR
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDHOR.target.sigmaDist + ItDHOR.target.ppmDist*ItDHOR.getDistance()/1000)*M2MM);//Output value in meters [mm], stored in [m]
-
-		//write the estimated DHOR
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance() + ItDHOR.getDistanceResidual());
-
-		//write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.getDistanceResidual().getMMetresValue());
-
-		//write the residual/SIGMA
-		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() /ItDHOR.target.sigmaDist );
-
-		if (!ItDHOR.target.distCorrectionAdjustable->isFixed()){
-			//write the distance cste calculated
-			if (isAllfixed)
-				if (!isnotanumber(ItDHOR.fAllFixedCs))
-					(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMMetresValue());
-				else
-					(*stream).writeString(obsWidth, "FIXED");
-			else
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.distCorrectionAdjustable->getEstimatedValue());
-
-			//write the distance cste sigma )
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
-		}
-		else {
-			//write the distance cste
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.distCorrectionAdjustable->getProvisionalValue());
-
-			//write the distance cste sigma 
-			(*stream).writeString(obsResWidth, "FIXED");
-		}
-
-		//write TARGET ID
-		(*stream).writeString(nameWidth, ItDHOR.target.ID);
-		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.targetHt);
-
-		//write allfixed parameter
-		
-		(*stream)<<endl;
-	}
-	(*stream)<<endl;
-}
-
-void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos)
-{   
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision =	getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeECTHResultsHeader((int)measECTH.size());
-
-	//For each DHOR measurement of the station
-	for(auto const& ItECTH : measECTH)
-	{
-		(*stream) << TABs;
-
-		//write Point
-		(*stream).writeStringLeft(nameWidth, ItECTH.targetPos->getName());
-
-		//write the observed offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECTH.getDistance());
-		
-		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaD.getMMetresValue());
-
-		//write the estimated offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECTH.getDistance() + ItECTH.getDistanceResidual()));
-		
-		//write the offset (mm) after calculation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.getDistanceResidual().getMMetresValue());
-
-		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECTH.getDistanceResidual() / ItECTH.target.sigmaD));
-
-		//write azimut
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.obsHorAngle.getGonsValue());
-
-		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItECTH.fAllFixedV0))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.fAllFixedV0.getGonsValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-
-		(*stream) << endl;
-	}
-	(*stream) << endl;
-
-}
-
-void TTSTNWriter::writeECDIRResults(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-
-	writeECDIRResultsHeader((int)measECDIR.size());
-
-	//For each DHOR measurement of the station
-	for (auto const& ItECSP : measECDIR)
-	{
-		(*stream) << TABs;
-
-		//write Point
-		(*stream).writeStringLeft(nameWidth, ItECSP.targetPos->getName());
-
-		//write the observed offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
-
-		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
-
-		//write the estimated offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
-
-		//write the offset (mm) after calculation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
-
-		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaD));
-
-		//write angle
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsHorAngle.getGonsValue());
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsVertAngle.getGonsValue());
-
-		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItECSP.fAllFixedV0[0]))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
-
-		if (!isnotanumber(ItECSP.fAllFixedV0[1]))
-			(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
-		else
-			(*stream).writeString(obsWidth, "FIXED");
-		(*stream) << endl;
-	}
-	(*stream) << endl;
-
-}
-///////////////////////////////////////////////////////////////////
-//////////////HEADERS//////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////
+//------------------ Result header---------------------------------------------------------------------------
 void TTSTNWriter::writePLRResultsHeader(int nOObs)
 {
 	TAStreamFormatter*	stream = getStream();
@@ -1346,7 +722,6 @@ void TTSTNWriter::writeV0Header(){
 	(*stream)<<endl;
 }
 
-
 void TTSTNWriter::writeV0Data(shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1409,8 +784,636 @@ void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
 	(*stream)<<endl<<endl;
 }
 
+//------------------ Result data---------------------------------------------------------------------------
+void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
 
-//RELIABILITY
+	writePLRResultsHeader((int)measPLR3D.size()); // write the title line for the observations
+	for (auto const& ItPLR3D : measPLR3D)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItPLR3D.targetPos->getName());
+		(*stream) << " | ";
+
+
+		//ANGL
+		//write the observed ANGL
+		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kANGL).getGonsValue());
+
+		//write the sigma ANGL
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaAngl.getSignedCCValue());
+
+		//write the estimated ANGL
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL) + V).getGonsValue());
+
+		//write the residual ANGL
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
+
+		(*stream) << " | ";
+
+		//ZEND
+		//write the observed ZEND
+		(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.getAngle(EPLR3DAngles::kZEND).getGonsValue());
+
+		//write the sigma ZEND
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaZenD.getSignedCCValue());
+
+		//write the estimated ZEND
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kZEND) + ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND)).getGonsValue());
+
+		//write the residual ZEND
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
+
+		(*stream) << " | ";
+
+		//DIST 
+		//write the observed distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance()); //Write value in meters [m]
+
+		//write the sigma, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance() / 1000)*M2MM);
+
+		//write the estimated DIST
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual());
+
+		//write the residual, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getDistanceResidual().getMMetresValue());
+
+		(*stream) << " | ";
+
+		//ROTATION
+		if (isAllfixed){
+			auto minAngle = [&](TAngle a, TAngle b)
+			{
+				if (fabs(a) > fabs(b))
+					return b;
+				else
+					return a;
+			};
+
+			if (!isnotanumber(ItPLR3D.fAllFixedV0[0]) && !isnotanumber(ItPLR3D.fAllFixedV0[1]))
+			{
+				TAngle V0 = minAngle(ItPLR3D.fAllFixedV0[0] - V, ItPLR3D.fAllFixedV0[1] - V) + V;
+				(*stream).writeDouble(obsWidth, anglePrecision, V0.getGonsValue());
+			}
+			else if (isnotanumber(ItPLR3D.fAllFixedV0[0]))
+				if (!isnotanumber(ItPLR3D.fAllFixedV0[1]))
+					(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0[1].getGonsValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedV0[0].getGonsValue());
+
+
+
+
+			if (!isnotanumber(ItPLR3D.fAllFixedRx[0]) && !isnotanumber(ItPLR3D.fAllFixedRx[1]))
+			{
+				TAngle RX = minAngle(ItPLR3D.fAllFixedRx[0] - rx, ItPLR3D.fAllFixedRx[1] - rx) + rx;
+				(*stream).writeDouble(obsWidth, anglePrecision, RX.getGonsValue());
+			}
+			else if (isnotanumber(ItPLR3D.fAllFixedRx[0]))
+				if (!isnotanumber(ItPLR3D.fAllFixedRx[1]))
+					(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx[1].getGonsValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRx[0].getGonsValue());
+
+
+			if (!isnotanumber(ItPLR3D.fAllFixedRy[0]) && !isnotanumber(ItPLR3D.fAllFixedRy[1]))
+			{
+				TAngle RY = minAngle(ItPLR3D.fAllFixedRy[0] - ry, ItPLR3D.fAllFixedRy[1] - ry) + ry;
+				(*stream).writeDouble(obsWidth, anglePrecision, RY.getGonsValue());
+			}
+			else if (isnotanumber(ItPLR3D.fAllFixedRy[0]))
+				if (!isnotanumber(ItPLR3D.fAllFixedRy[1]))
+					(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy[1].getGonsValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, anglePrecision, ItPLR3D.fAllFixedRy[0].getGonsValue());
+
+
+
+			(*stream) << " | ";
+		}
+
+
+
+
+		//ECART	
+		TReal dist = sqrt(pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
+			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
+			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*M2MM);
+
+		(*stream) << " | ";
+
+		//DIST
+		//sensibility		
+		TReal dz = ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
+		if (ItPLR3D.target.distCorrectionUnknown)
+		{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue()));
+		}
+		else{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()));
+		}
+
+		if (!ItPLR3D.target.distCorrectionAdjustable->isFixed()){
+			//write the distance cste calculated(TLength (M))
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue());
+
+			//write the distance cste sigma (in (MM))
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
+		}
+		else{
+			//write the distance cste (TLength (M))
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.distCorrectionAdjustable->getProvisionalValue());
+			(*stream).writeString(obsResWidth, "FIXED");
+		}
+
+		if (isAllfixed)
+			if (!isnotanumber(ItPLR3D.fAllFixedCs))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedCs.getMMetresValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+
+		(*stream) << " | ";
+
+		//INSTR
+		if (isAllfixed)
+		{
+			if (!isnotanumber(ItPLR3D.fAllFixedHi))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedHi);
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+
+			(*stream) << " | ";
+		}
+
+
+
+		//TARGET
+		//ID
+		(*stream).writeString(nameWidth, ItPLR3D.target.ID);
+		//height
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.targetHt);
+
+		(*stream) << " | ";
+
+		//RES/SIGMA
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaAngl.getRadiansValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / TAngle(ItPLR3D.target.sigmaAngl).getRadiansValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist));
+		(*stream) << " | ";
+
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writeANGLResultsHeader((int)measANGL.size()); // write the title line for the observations
+	for (auto const& ItANGL : measANGL)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItANGL.targetPos->getName());
+
+		//write the observed ANGL
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle()).getGonsValue());
+
+		//write the sigma ANGL
+		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItANGL.target.sigmaAngl).getSignedCCValue());
+
+		//write the estimated ANGL
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle() + ItANGL.getAngleResidual() + V).getGonsValue());
+
+		//write the residual
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue());
+
+		//write the offset	
+		TReal dist = sqrt(pow2(ItANGL.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
+			pow2(ItANGL.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
+			pow2(ItANGL.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.getAngleResidual().getRadiansValue()*dist*M2MM);
+
+		//write the residual/sigma
+		(*stream).writeDouble(obsResWidth, 2, (ItANGL.getAngleResidual().getRadiansValue() / ItANGL.target.sigmaAngl.getRadiansValue()));
+
+		//write TARGET ID
+		(*stream).writeString(nameWidth, ItANGL.target.ID);
+
+		//write the target height
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt);
+
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItANGL.fAllFixedV0))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItANGL.fAllFixedV0.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writeZENDResultsHeader((int)measZEND.size()); // write the title line for the observations
+	for (auto const& ItZEND : measZEND)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItZEND.targetPos->getName());
+
+		//write the observed ZEND
+		(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.getAngle().getGonsValue());
+
+		//write the sigma ZEND
+		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItZEND.target.sigmaZenD).getSignedCCValue());
+
+		//write the estimated ZEND
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItZEND.getAngle() + ItZEND.getAngleResidual()).getGonsValue());
+
+		//write the residual
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());
+
+		//write the offset	
+		TReal dist = sqrt(pow2(ItZEND.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
+			pow2(ItZEND.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
+			pow2(ItZEND.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*M2MM);
+
+		//write the residual/sigma
+		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItZEND.getAngleResidual().getRadiansValue() / ItZEND.target.sigmaZenD.getRadiansValue()));
+
+		//write TARGET ID
+		(*stream).writeString(nameWidth, ItZEND.target.ID);
+
+		//write the target height
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItZEND.target.targetHt);
+
+
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItZEND.fAllFixedHi))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.fAllFixedHi);
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+		(*stream) << endl;
+	}
+	(*stream) << endl << endl;
+}
+
+void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos)
+{
+
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writeDISTResultsHeader((int)measDIST.size()); // write the title line for the observations
+	for (auto const& ItDIST : measDIST)
+	{
+		(*stream) << TABs;
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItDIST.targetPos->getName());
+
+		//write the observed DIST
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance());
+
+		//write the sigma DIST
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.target.sigmaDist + ItDIST.target.ppmDist*ItDIST.getDistance() / 1000)* M2MM);
+
+		//write the estimated DIST
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance() + ItDIST.getDistanceResidual());
+
+		//write the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual().getMMetresValue());
+
+		//write the sensibility	
+		TReal dz = ItDIST.targetPos->getEstValue(2) + ItDIST.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
+		if (ItDIST.target.distCorrectionUnknown)
+		{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual() + ItDIST.target.distCorrectionAdjustable->getEstimatedValue()));
+		}
+		else{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual()));
+		}
+
+		//write the residual/sigma
+		(*stream).writeDouble(obsResWidth, 2, (ItDIST.getDistanceResidual() / ItDIST.target.sigmaDist));
+
+		if (!ItDIST.target.distCorrectionAdjustable->isFixed()){
+			//write the distance cste calculated
+			if (isAllfixed)
+				if (!isnotanumber(ItDIST.fAllFixedCs))
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMMetresValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue());
+
+			//write the distance cste sigma )
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
+		}
+		else {
+			//write the distance cste
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getProvisionalValue());
+
+			//write the distance cste sigma 
+			(*stream).writeString(obsResWidth, "FIXED");
+		}
+
+		//write TARGET ID
+		(*stream).writeString(nameWidth, ItDIST.target.ID);
+		//write the target height
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.targetHt);
+
+		//write allfixed parameter
+		if (isAllfixed){
+			if (!isnotanumber(ItDIST.fAllFixedHi))
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedHi);
+			else
+				(*stream).writeString(obsResWidth, "FIXED");
+		}
+
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writeDHORResultsHeader((int)measDHOR.size()); // write the title line for the observations
+	for (auto const& ItDHOR : measDHOR)
+	{
+		(*stream) << TABs;
+
+		//write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItDHOR.targetPos->getName());
+
+		//write the observed DHOR
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance());
+
+		//write the sigma DHOR
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDHOR.target.sigmaDist + ItDHOR.target.ppmDist*ItDHOR.getDistance() / 1000)*M2MM);//Output value in meters [mm], stored in [m]
+
+		//write the estimated DHOR
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance() + ItDHOR.getDistanceResidual());
+
+		//write the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.getDistanceResidual().getMMetresValue());
+
+		//write the residual/SIGMA
+		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() / ItDHOR.target.sigmaDist);
+
+		if (!ItDHOR.target.distCorrectionAdjustable->isFixed()){
+			//write the distance cste calculated
+			if (isAllfixed)
+				if (!isnotanumber(ItDHOR.fAllFixedCs))
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMMetresValue());
+				else
+					(*stream).writeString(obsWidth, "FIXED");
+			else
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.distCorrectionAdjustable->getEstimatedValue());
+
+			//write the distance cste sigma )
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
+		}
+		else {
+			//write the distance cste
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.distCorrectionAdjustable->getProvisionalValue());
+
+			//write the distance cste sigma 
+			(*stream).writeString(obsResWidth, "FIXED");
+		}
+
+		//write TARGET ID
+		(*stream).writeString(nameWidth, ItDHOR.target.ID);
+		//write the target height
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.targetHt);
+
+		//write allfixed parameter
+
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writeECTHResultsHeader((int)measECTH.size());
+
+	//For each DHOR measurement of the station
+	for (auto const& ItECTH : measECTH)
+	{
+		(*stream) << TABs;
+
+		//write Point
+		(*stream).writeStringLeft(nameWidth, ItECTH.targetPos->getName());
+
+		//write the observed offset
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECTH.getDistance());
+
+		//write the sigma
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaD.getMMetresValue());
+
+		//write the estimated offset
+		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECTH.getDistance() + ItECTH.getDistanceResidual()));
+
+		//write the offset (mm) after calculation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.getDistanceResidual().getMMetresValue());
+
+		//write the offset / sigma (TDouble (MM))
+		(*stream).writeDouble(obsResWidth, 2, (ItECTH.getDistanceResidual() / ItECTH.target.sigmaD));
+
+		//write azimut
+		(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.obsHorAngle.getGonsValue());
+
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItECTH.fAllFixedV0))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.fAllFixedV0.getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+
+}
+
+void TTSTNWriter::writeECDIRResults(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	writeECDIRResultsHeader((int)measECDIR.size());
+
+	//For each DHOR measurement of the station
+	for (auto const& ItECSP : measECDIR)
+	{
+		(*stream) << TABs;
+
+		//write Point
+		(*stream).writeStringLeft(nameWidth, ItECSP.targetPos->getName());
+
+		//write the observed offset
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
+
+		//write the sigma
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
+
+		//write the estimated offset
+		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
+
+		//write the offset (mm) after calculation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
+
+		//write the offset / sigma (TDouble (MM))
+		(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaD));
+
+		//write angle
+		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsHorAngle.getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsVertAngle.getGonsValue());
+
+		//write allfixed parameter
+		if (isAllfixed)
+			if (!isnotanumber(ItECSP.fAllFixedV0[0]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+
+		if (!isnotanumber(ItECSP.fAllFixedV0[1]))
+			(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
+		else
+			(*stream).writeString(obsWidth, "FIXED");
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+
+}
+
+
+//------------------ Simu data---------------------------------------------------------------------------
+void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
+	TAStreamFormatter*	stream = getStream();
+	//Third hierarchy level from local FRAME
+	std::string        TABs = stream->getCurrSpaceExtended(3);
+
+	//Write definition of TSTN
+	writeTSTNHeader(tstn);
+	writeTSTNData(tstn);
+
+	for (auto const ItRoms : tstn->roms)
+	{
+		//Write definition of ROM
+		writeV0Header();
+		writeV0Data(ItRoms);
+
+		if (ItRoms->measANGL.size() > 0){
+			(*stream) << TABs << "ANGL" << endl;
+			writeAngleResultsSummary(ItRoms->getANGLObsSummary(), TABs);
+		}
+		if (ItRoms->measZEND.size() > 0){
+			(*stream) << TABs << "ZEND" << endl;
+			writeAngleResultsSummary(ItRoms->getZENDObsSummary(), TABs);
+		}
+		if (ItRoms->measDIST.size() > 0){
+			(*stream) << TABs << "DIST" << endl;
+			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(), TABs);
+		}
+		if (ItRoms->measDHOR.size() > 0){
+			(*stream) << TABs << "DHOR" << endl;
+			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(), TABs);
+		}
+		if (ItRoms->measECTH.size() > 0){
+			(*stream) << TABs << "ECTH" << endl;
+			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(), TABs);
+		}
+		if (ItRoms->measECDIR.size() > 0){
+			(*stream) << TABs << "ECDIR" << endl;
+			writeDistanceResultsSummary(ItRoms->getECDIRObsSummary(), TABs);
+		}
+
+		if (ItRoms->measPLR3D.size() > 0){
+			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();
+			(*stream) << TABs << "DIST" << endl;
+			writeDistanceResultsSummary(summary.distObsSum, TABs);
+			(*stream) << TABs << "ANGL" << endl;
+			writeAngleResultsSummary(summary.anglObsSum, TABs);
+			(*stream) << TABs << "ZEND" << endl;
+			writeAngleResultsSummary(summary.zendObsSum, TABs);
+		}
+	}
+}
+
+
+//------------------ Reliability header---------------------------------------------------------------------
 void	TTSTNWriter::writeANGLReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("STATION","TARGET", "", "OBSERVATION", "GONS", "CC");
@@ -1456,6 +1459,7 @@ void	TTSTNWriter::writeECDIRReliabilityHeader()
 }
 
 
+//------------------ Reliability data------------------------------------------------------------------------
 void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL)
 {
 	TAStreamFormatter*	stream = getStream();
@@ -1735,3 +1739,363 @@ void	TTSTNWriter::writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSt
 	return;
 }
 
+
+//------------------ Synthesis header-------------------------------------------------------------------------
+void TTSTNWriter::writeANGLHeaderSynthesis(){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writeDISTHeaderSynthesis(){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream) << endl;
+}
+
+void TTSTNWriter::writePLRRHeaderynthesis(){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs2 = stream->getCurrSpaceExtended(4);
+
+
+	(*stream).writeStringLeft(nameWidth, "PLR3D"); //instrument
+	(*stream) << endl;
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "ANG(CC)");
+	(*stream).writeString(obsResWidth, "ANG(CC)");
+	(*stream).writeString(obsResWidth, "ANG(CC)");
+	(*stream).writeString(obsResWidth, "ANG(CC)");
+	if (obsWidth < 13)
+		(*stream) << TABs2;
+	else
+		(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "ZEN(CC)");
+	(*stream).writeString(obsResWidth, "ZEN(CC)");
+	(*stream).writeString(obsResWidth, "ZEN(CC)");
+	(*stream).writeString(obsResWidth, "ZEN(CC)");
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "DIS(MM)");
+	(*stream).writeString(obsResWidth, "DIS(MM)");
+	(*stream).writeString(obsResWidth, "DIS(MM)");
+	(*stream).writeString(obsResWidth, "DIS(MM)");
+	(*stream) << endl;
+}
+
+
+//------------------ Synthesis data--------------------------------------------------------------------------
+void TTSTNWriter::writeANGLResultsSynthesis(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	for (auto& it : rom)
+	{
+		TReal min = 100.0;
+		TReal max = 0.0;
+
+
+		for (auto& meas : measANGL)
+		{
+			if (meas.getAngleResidual().getSignedCCValue() > max)
+				max = meas.getAngleResidual().getSignedCCValue();
+			if (meas.getAngleResidual().getSignedCCValue() < min)
+				min = meas.getAngleResidual().getSignedCCValue();
+
+		}
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getANGLObsSummary().getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getANGLObsSummary().getVariance());//ecart type
+		(*stream) << endl;
+	}
+}
+
+void TTSTNWriter::writeZENDResultsSynthesis(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	for (auto& it : rom)
+	{
+		TReal min = 100.0;
+		TReal max = 0.0;
+
+
+		for (auto& meas : measZEND)
+		{
+			if (meas.getAngleResidual().getSignedCCValue() > max)
+				max = meas.getAngleResidual().getSignedCCValue();
+			if (meas.getAngleResidual().getSignedCCValue() < min)
+				min = meas.getAngleResidual().getSignedCCValue();
+
+		}
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getZENDObsSummary().getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getZENDObsSummary().getVariance());//ecart type
+		(*stream) << endl;
+	}
+}
+
+void TTSTNWriter::writeDISTResultsSynthesis(const std::vector<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom, bool isdhor){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	for (auto& it : rom)
+	{
+		TReal min = 100.0;
+		TReal max = 0.0;
+
+
+		for (auto& meas : measDIST)
+		{
+			if (meas.getDistanceResidual().getMMetresValue() > max)
+				max = meas.getDistanceResidual().getMMetresValue();
+			if (meas.getDistanceResidual().getMMetresValue() < min)
+				min = meas.getDistanceResidual().getMMetresValue();
+
+		}
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
+		if (isdhor)
+		{
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDHORObsSummary().getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDHORObsSummary().getVariance());//ecart type}
+		}
+		else
+		{
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDISTObsSummary().getMean());//residu moy
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDISTObsSummary().getVariance());//ecart type 
+		}
+		(*stream) << endl;
+	}
+}
+
+void TTSTNWriter::writePLRResultsSynthesis(const std::vector<TPLR3D>& measPLR3D, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs2 = stream->getCurrSpaceExtended(4);
+
+	for (auto& it : rom)
+	{
+	TReal minA = 100.0;
+	TReal maxA = 0.0;
+	TReal minZ = 100.0;
+	TReal maxZ = 0.0;
+	TReal minD = 100.0;
+	TReal maxD = 0.0;
+
+	for (auto& meas:it->measPLR3D)
+	{
+		if (meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue() > maxA)
+			maxA = meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue();
+		if (meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue() < minA)
+			minA = meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue();
+
+		if (meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue() > maxZ)
+			maxZ = meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue();
+		if (meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue() < minZ)
+			minZ = meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue();
+
+		if (meas.getDistanceResidual().getMMetresValue() > maxD)
+			maxD = meas.getDistanceResidual().getMMetresValue();
+		if (meas.getDistanceResidual().getMMetresValue() < minD)
+			minD = meas.getDistanceResidual().getMMetresValue();
+	}
+
+	//ANGL
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxA);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minA);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().anglObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().anglObsSum.getVariance());//ecart type
+	//ZEND
+	if (obsWidth < 13)
+		(*stream) << TABs2;
+	else
+		(*stream) << TABs;
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxZ);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minZ);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().zendObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().zendObsSum.getVariance());//ecart type
+	(*stream) << TABs;
+	//DIST
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxD);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minD);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().distObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().distObsSum.getVariance());//ecart type
+	(*stream) << endl;
+	}
+
+}
+
+void TTSTNWriter::writeECTHResultsSynthesis(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	for (auto& it : rom)
+	{
+		TReal min = 100.0;
+		TReal max = 0.0;
+
+
+		for (auto& meas : measECTH)
+		{
+			if (meas.getDistanceResidual().getMMetresValue() > max)
+				max = meas.getDistanceResidual().getMMetresValue();
+			if (meas.getDistanceResidual().getMMetresValue() < min)
+				min = meas.getDistanceResidual().getMMetresValue();
+
+		}
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //tstn position
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECTHObsSummary().getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECTHObsSummary().getVariance());//ecart type
+		(*stream) << endl;
+	}
+}
+
+void TTSTNWriter::writeECDIRResultsSynthesis(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	for (auto& it : rom)
+	{
+		TReal min = 100.0;
+		TReal max = 0.0;
+
+
+		for (auto& meas : measECDIR)
+		{
+			if (meas.getDistanceResidual().getMMetresValue() > max)
+				max = meas.getDistanceResidual().getMMetresValue();
+			if (meas.getDistanceResidual().getMMetresValue() < min)
+				min = meas.getDistanceResidual().getMMetresValue();
+
+		}
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //tstn position
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECDIRObsSummary().getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECDIRObsSummary().getVariance());//ecart type
+		(*stream) << endl;
+	}
+}

@@ -69,6 +69,8 @@ private:
 		///Writes points of the same type
 		void writePointType(const std::list<AdjPointIter>& lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type, bool localNode);
 		
+		///write measurements summary
+		void writeMeasurementsSummary(TDataTreeIterator frameIt);
 		
 		///WriteEllipsHeader
 		void writeEllipsHeader();

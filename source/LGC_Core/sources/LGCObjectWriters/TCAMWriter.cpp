@@ -10,7 +10,7 @@ TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool hist) :TObservationWriter
 
 TCAMWriter::~TCAMWriter(){}
 
-
+//------------------ Result header---------------------------------------------------------------------------
 void TCAMWriter::writeCAMResults(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
 	std::string        TABs = stream->getCurrSpaceExtended(2);
@@ -51,31 +51,6 @@ void TCAMWriter::writeCAMResults(const TCAM& camera){
 	}
 }
 
-void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
-	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(2);
-	writeCAMHeader(camera);
-	writeCAMData(camera);
-
-
-	if(camera.measUVD.size() > 0){
-		TUVDObsSummary summary = camera.getUVDObsSummary();
-		(*stream)<<TABs<<"XVECT"<<endl;
-		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);	
-		(*stream)<<TABs<<"YVECT"<<endl;
-		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 				
-		(*stream)<<TABs<<"DIST"<<endl;
-		writeDistanceResultsSummary(summary.distObsSum, TABs);
-	}
-	if(camera.measUVEC.size() > 0){
-		TUVECObsSummary summary = camera.getUVECObsSummary();	
-		(*stream)<<TABs<<"XVECT"<<endl;
-		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs); 
-		(*stream)<<TABs<<"YVECT"<<endl;
-		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 
-	}
-}
-
 void TCAMWriter::writeCAMHeader(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -106,9 +81,122 @@ void TCAMWriter::writeCAMData(const TCAM& camera){
 	(*stream)<<endl<<endl;
 }
 
+void TCAMWriter::writeUVDResultsHeader(int nOObs)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
-//Results
-//RESULTS
+	////////////////////////////////////////////////////////////
+	//first line
+	(*stream) << TABs;
+	this->writeObsTitle(this->getObsDescriptionEN(TCAMWriter::kUVD), nOObs);
+	(*stream) << endl;
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
+	//(*stream).writeString(obsWidth,	"HEIGHT"); //target height
+	//(*stream).writeString(obsWidth,	"CONST"); //provisional dist corr
+	//(*stream).writeString(obsWidth,	"CONST CALC"); //calculated distance corr
+	//(*stream).writeString(obsResWidth,	"SCCONST");  //sigma distance corr
+
+	(*stream).writeString(obsWidth, "OBSXV"); //mesured x vector component
+	(*stream).writeString(obsResWidth, "SXV"); //sigma x vector component
+	(*stream).writeString(obsWidth, "CALCXV"); //estimated x vector component 
+	(*stream).writeString(obsResWidth, "RESXV"); //residual
+
+
+	(*stream).writeString(obsWidth, "OBSYV"); //mesured y vector component
+	(*stream).writeString(obsResWidth, "SYV"); //sigma y vector component
+	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
+	(*stream).writeString(obsResWidth, "RESYV"); //residual 
+
+	(*stream).writeString(obsWidth, "OBSDIST"); //mesured DIST
+	(*stream).writeString(obsResWidth, "SDIST"); //sigma DIST
+	(*stream).writeString(obsWidth, "CALCDIST"); //estimated DIST 
+	(*stream).writeString(obsResWidth, "RESDIST"); //residual
+
+	(*stream) << endl;
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //TARGET ID
+	(*stream).writeStringLeft(nameWidth, ""); //POSITION
+	//	(*stream).writeString(obsWidth,	"(M)"); //height of the target
+	//	(*stream).writeString(obsWidth,	"(M)"); //provisional dist corr
+	//	(*stream).writeString(obsWidth,	"(M)"); //calculated distance corr
+	//	(*stream).writeString(obsResWidth,	"(MM)"); //sigma distance corr
+
+	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "()"); //sigma observed value
+	(*stream).writeString(obsWidth, "()"); //estimated 
+	(*stream).writeString(obsResWidth, "()"); //residual
+
+	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "()"); //sigma observed value
+	(*stream).writeString(obsWidth, "()"); //estimated 
+	(*stream).writeString(obsResWidth, "()"); //residual
+
+	(*stream).writeString(obsWidth, "(M)"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma observed value
+	(*stream).writeString(obsWidth, "(M)"); //estimated DIST
+	(*stream).writeString(obsResWidth, "(MM)"); //residual
+	(*stream) << endl;
+}
+
+void TCAMWriter::writeUVECResultsHeader(int nOObs)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string         TABs = stream->getCurrSpaceExtended(2);
+
+	////////////////////////////////////////////////////////////
+	//first line
+	(*stream) << TABs;
+	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kUVEC), nOObs);
+	(*stream) << endl;
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
+	//(*stream).writeString(obsWidth,	"HEIGHT"); //target height
+
+	(*stream).writeString(obsWidth, "OBSXV"); //mesured x vector component
+	(*stream).writeString(obsResWidth, "SXV"); //sigma x vector component
+	(*stream).writeString(obsWidth, "CALCXV"); //estimated x vector component 
+	(*stream).writeString(obsResWidth, "RESXV"); //residual
+
+
+	(*stream).writeString(obsWidth, "OBSYV"); //mesured y vector component
+	(*stream).writeString(obsResWidth, "SYV"); //sigma y vector component
+	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
+	(*stream).writeString(obsResWidth, "RESYV"); //residual 
+
+	(*stream) << endl;
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, ""); //TARGET ID
+	(*stream).writeStringLeft(nameWidth, ""); //POSITION
+	//(*stream).writeString(obsWidth,	"(M)"); //height of the target
+
+	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "()"); //sigma observed value
+	(*stream).writeString(obsWidth, "()"); //estimated 
+	(*stream).writeString(obsResWidth, "()"); //residual
+
+	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "()"); //sigma observed value
+	(*stream).writeString(obsWidth, "()"); //estimated 
+	(*stream).writeString(obsResWidth, "()"); //residual
+
+	(*stream) << endl;
+}
+
+//------------------ Result data---------------------------------------------------------------------------
 void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 {   
 
@@ -238,123 +326,51 @@ void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
 
 }
 
-void TCAMWriter::writeUVDResultsHeader(int nOObs)
-{
+//------------------ Simu data---------------------------------------------------------------------------
+
+void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	std::string         TABs = stream->getCurrSpaceExtended(2);
-
-		////////////////////////////////////////////////////////////
-		//first line
-		(*stream)<<TABs;
-		this->writeObsTitle(this->getObsDescriptionEN(TCAMWriter::kUVD), nOObs);
-		(*stream)<<endl;
-		//second line
-		(*stream)<<TABs;
-		(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
-		(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
-		//(*stream).writeString(obsWidth,	"HEIGHT"); //target height
-		//(*stream).writeString(obsWidth,	"CONST"); //provisional dist corr
-		//(*stream).writeString(obsWidth,	"CONST CALC"); //calculated distance corr
-		//(*stream).writeString(obsResWidth,	"SCCONST");  //sigma distance corr
-
-		(*stream).writeString(obsWidth,	"OBSXV"); //mesured x vector component
-		(*stream).writeString(obsResWidth,	"SXV"); //sigma x vector component
-		(*stream).writeString(obsWidth,	"CALCXV"); //estimated x vector component 
-		(*stream).writeString(obsResWidth,	"RESXV"); //residual
+	std::string        TABs = stream->getCurrSpaceExtended(2);
+	writeCAMHeader(camera);
+	writeCAMData(camera);
 
 
-		(*stream).writeString(obsWidth,	"OBSYV"); //mesured y vector component
-		(*stream).writeString(obsResWidth,	"SYV"); //sigma y vector component
-		(*stream).writeString(obsWidth,	"CALCYV"); //estimated y vector component 
-		(*stream).writeString(obsResWidth,	"RESYV"); //residual 
-
-		(*stream).writeString(obsWidth,	"OBSDIST"); //mesured DIST
-		(*stream).writeString(obsResWidth,	"SDIST"); //sigma DIST
-		(*stream).writeString(obsWidth,	"CALCDIST"); //estimated DIST 
-		(*stream).writeString(obsResWidth,	"RESDIST"); //residual
-
-		(*stream)<<endl;
-
-		(*stream)<<TABs;
-		(*stream).writeStringLeft(nameWidth,""); //TARGET ID
-		(*stream).writeStringLeft(nameWidth,""); //POSITION
-	//	(*stream).writeString(obsWidth,	"(M)"); //height of the target
-	//	(*stream).writeString(obsWidth,	"(M)"); //provisional dist corr
-	//	(*stream).writeString(obsWidth,	"(M)"); //calculated distance corr
-	//	(*stream).writeString(obsResWidth,	"(MM)"); //sigma distance corr
-
-		(*stream).writeString(obsWidth,	"()"); //OBSERVED VALUE
-		(*stream).writeString(obsResWidth,"()"); //sigma observed value
-		(*stream).writeString(obsWidth,	"()"); //estimated 
-		(*stream).writeString(obsResWidth,	"()"); //residual
-
-		(*stream).writeString(obsWidth,	"()"); //OBSERVED VALUE
-		(*stream).writeString(obsResWidth,"()"); //sigma observed value
-		(*stream).writeString(obsWidth,	"()"); //estimated 
-		(*stream).writeString(obsResWidth,	"()"); //residual
-		
-		(*stream).writeString(obsWidth,	"(M)"); //OBSERVED VALUE
-		(*stream).writeString(obsResWidth,"(MM)"); //sigma observed value
-		(*stream).writeString(obsWidth,	"(M)"); //estimated DIST
-		(*stream).writeString(obsResWidth,	"(MM)"); //residual
-		(*stream)<<endl;
+	if (camera.measUVD.size() > 0){
+		TUVDObsSummary summary = camera.getUVDObsSummary();
+		(*stream) << TABs << "XVECT" << endl;
+		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
+		(*stream) << TABs << "YVECT" << endl;
+		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
+		(*stream) << TABs << "DIST" << endl;
+		writeDistanceResultsSummary(summary.distObsSum, TABs);
+	}
+	if (camera.measUVEC.size() > 0){
+		TUVECObsSummary summary = camera.getUVECObsSummary();
+		(*stream) << TABs << "XVECT" << endl;
+		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
+		(*stream) << TABs << "YVECT" << endl;
+		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
+	}
 }
 
-void TCAMWriter::writeUVECResultsHeader(int nOObs)
+//------------------ Reliability header--------------------------------------------------------------------
+void	TCAMWriter::writeUVECReliabilityHeader()
 {
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	std::string         TABs = stream->getCurrSpaceExtended(2);
+	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_i", "[]", "[]");
+	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_j", "[]", "[]");
+	return;
+}
 
-	////////////////////////////////////////////////////////////
-	//first line
-	(*stream)<<TABs;
-	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kUVEC), nOObs);
-	(*stream)<<endl;
-	//second line
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
-	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
-	//(*stream).writeString(obsWidth,	"HEIGHT"); //target height
-
-	(*stream).writeString(obsWidth,	"OBSXV"); //mesured x vector component
-	(*stream).writeString(obsResWidth,	"SXV"); //sigma x vector component
-	(*stream).writeString(obsWidth,	"CALCXV"); //estimated x vector component 
-	(*stream).writeString(obsResWidth,	"RESXV"); //residual
-
-
-	(*stream).writeString(obsWidth,	"OBSYV"); //mesured y vector component
-	(*stream).writeString(obsResWidth,	"SYV"); //sigma y vector component
-	(*stream).writeString(obsWidth,	"CALCYV"); //estimated y vector component 
-	(*stream).writeString(obsResWidth,	"RESYV"); //residual 
-
-	(*stream)<<endl;
-
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,""); //TARGET ID
-	(*stream).writeStringLeft(nameWidth,""); //POSITION
-	//(*stream).writeString(obsWidth,	"(M)"); //height of the target
-
-	(*stream).writeString(obsWidth,	"()"); //OBSERVED VALUE
-	(*stream).writeString(obsResWidth,"()"); //sigma observed value
-	(*stream).writeString(obsWidth,	"()"); //estimated 
-	(*stream).writeString(obsResWidth,	"()"); //residual
-
-	(*stream).writeString(obsWidth,	"()"); //OBSERVED VALUE
-	(*stream).writeString(obsResWidth,"()"); //sigma observed value
-	(*stream).writeString(obsWidth,	"()"); //estimated 
-	(*stream).writeString(obsResWidth,	"()"); //residual
-
-	(*stream)<<endl;
+void	TCAMWriter::writeUVDReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_i", "[]", "[]");
+	this->TObservationWriter::writeReliabilityHeader("", "", "", "OBS_j", "[]", "[]");
+	this->TObservationWriter::writeReliabilityHeader("", "", "", "OBS_dist", "M", "MM");
+	return;
 }
 
 
-//Reliability
+//------------------ Reliability data---------------------------------------------------------------------------
 
 void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic& stat)
 {
@@ -412,7 +428,6 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 	}
 	return;
 }
-
 
 void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& stat)
 {
@@ -488,18 +503,206 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 }
 
 
-void	TCAMWriter::writeUVECReliabilityHeader()
+//------------------ Synthesis header-------------------------------------------------------------------------
+void TCAMWriter::writeUVDSynthesisHeader()
 {
-	this->TObservationWriter::writeReliabilityHeader("PIVOT","TARGET", "", "OBS_i", "[]", "[]");
-	this->TObservationWriter::writeReliabilityHeader("PIVOT","TARGET", "", "OBS_j", "[]", "[]");
-	return;
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	(*stream).writeStringLeft(nameWidth, "UVD"); //instrument
+	(*stream) << endl;
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "y");
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "d(MM)");
+	(*stream).writeString(obsResWidth, "d(MM)");
+	(*stream).writeString(obsResWidth, "d(MM)");
+	(*stream).writeString(obsResWidth, "d(MM)");
+	(*stream) << endl;
 }
 
-void	TCAMWriter::writeUVDReliabilityHeader()
+void TCAMWriter::writeUVECSynthesisHeader()
 {
-	this->TObservationWriter::writeReliabilityHeader("PIVOT","TARGET", "", "OBS_i", "[]", "[]");
-	this->TObservationWriter::writeReliabilityHeader("","", "", "OBS_j", "[]", "[]");
-	this->TObservationWriter::writeReliabilityHeader("","", "", "OBS_dist", "M", "MM");
-	return;
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+	(*stream).writeStringLeft(nameWidth, "UVEC"); //instrument
+	(*stream) << endl;
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << TABs; 
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream).writeString(obsResWidth, "x");
+	(*stream) << TABs;
+	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "y");
+	(*stream) << endl;
+
+	(*stream) << endl;
 }
 
+//------------------ Synthesis data--------------------------------------------------------------------------
+void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	TReal minX = 100.0;
+	TReal maxX = 0.0;
+	TReal minY = 100.0;
+	TReal maxY = 0.0;
+
+	for (auto& it : camera.measUVEC)
+	{
+		if (it.getXCompVectorResidual() > maxX)
+			maxX = it.getXCompVectorResidual();
+		if (it.getXCompVectorResidual() < minX)
+			minX = it.getXCompVectorResidual();
+
+		if (it.getYCompVectorResidual() > maxY)
+			maxY = it.getYCompVectorResidual();
+		if (it.getYCompVectorResidual() < minY)
+			minY = it.getYCompVectorResidual();
+	}
+
+	//X
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName()); //Reference point
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxX* M2MM);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minX* M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().xVectorCompObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().xVectorCompObsSum.getVariance());//ecart type
+	//Y
+	(*stream) << TABs;
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxY* M2MM);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minY* M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().yVectorCompObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().yVectorCompObsSum.getVariance());//ecart type
+	(*stream) << endl;
+
+
+}
+
+void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(3);
+
+
+	TReal minX = 100.0;
+	TReal maxX = 0.0;
+	TReal minY = 100.0;
+	TReal maxY = 0.0;
+	TReal minD = 100.0;
+	TReal maxD = 0.0;
+
+	for (auto& it : camera.measUVD)
+	{
+		if (it.getXCompVectorResidual() > maxX)
+			maxX = it.getXCompVectorResidual();
+		if (it.getXCompVectorResidual() < minX)
+			minX = it.getXCompVectorResidual();
+
+		if (it.getYCompVectorResidual() > maxY)
+			maxY = it.getYCompVectorResidual();
+		if (it.getYCompVectorResidual() < minY)
+			minY = it.getYCompVectorResidual();
+
+		if (it.getDistanceResidual() > maxD)
+			maxD = it.getDistanceResidual();
+		if (it.getDistanceResidual() < minD)
+			minD = it.getDistanceResidual();
+	}
+
+	//X
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName()); //Reference point
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxX* M2MM);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minX* M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().xVectorCompObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().xVectorCompObsSum.getVariance());//ecart type
+	//Y
+	(*stream) << TABs;
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxY* M2MM);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minY* M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().yVectorCompObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().yVectorCompObsSum.getVariance());//ecart type
+	(*stream) << TABs;
+	//D
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxD* M2MM);//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, minD* M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().distObsSum.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().distObsSum.getVariance());//ecart type
+	(*stream) << endl;
+
+
+}
