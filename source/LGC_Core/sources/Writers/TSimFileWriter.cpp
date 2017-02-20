@@ -139,7 +139,10 @@ void	TSimFileWriter::writeInstrument()
 	(*stream) << "*INSTR" << endl;
 	for (auto& itCAMD : data->getInstruments().fCAMD)
 	{
-		(*stream) << "*CAMD " << itCAMD.second.ID << sep << itCAMD.second.defTarget << endl;
+		(*stream) << "*CAMD " << itCAMD.second.ID << sep 
+            << itCAMD.second.defTarget << sep
+            << itCAMD.second.sigmaInstrCentering.getMMetresValue() << sep 
+            << endl;
 		for (auto& itTarget : itCAMD.second.targets)
 			(*stream) << itTarget.second.ID << sep
 			<< itTarget.second.sigmaX << sep
@@ -498,7 +501,7 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 	
     if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     (*stream) << endl;
 
@@ -727,11 +730,11 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
     
     if(meas->instrument.sigmaInstrHeight != edmDefInst.sigmaInstrHeight)
         (*stream) << "IHSE" << sep
-        << meas->instrument.sigmaInstrHeight << sep;
+        << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
 
     if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     (*stream) << endl;
 
@@ -834,7 +837,7 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     if(meas->fConstantAngle.getGonsValue() != polarDefInst.constAngle.getGonsValue())
         (*stream) << "CST" << sep
@@ -906,7 +909,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
-        << meas->instrument.sigmaInstrCentering << sep;
+        << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
     (*stream) << endl;
 
