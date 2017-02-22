@@ -32,6 +32,9 @@ public:
 		void	writeECVEReliabilityHeader();
 		/// Write reliability header for ECSP 
 		void	writeECSPReliabilityHeader();
+
+		/// Write the result synthesis header
+		void writeSCALESynthesisHeader();
 	//@}
 
 	/*!@name Results */
@@ -42,6 +45,7 @@ public:
 		void writeECVEResults(const TECVEROM& ecverom);
 		/// Write the result data for ECSP 
 		void writeECSPResults(const TECSPROM& ecsprom);
+
 		/// Write the simulated result data for ECHO 
 		void writeECHOSIMUResults(const  TECHOROM& echorom);
 		/// Write the simulated result data for ECVE 
@@ -55,7 +59,15 @@ public:
 		void	writeECVEReliabilityData(const TECVEROM& ecverom, const TLGCStatistic& stat, const std::vector<TECVE> measECVE);
 		/// Write reliability data for ECSP
 		void	writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::vector<TECSP> measECSP);
-	//@}
+	
+		/// Write the result synthesis for ECHO 
+		void writeECHOResultsSynthesis(const  TECHOROM& echorom);
+		/// Write the result synthesis for ECVE 
+		void writeECVEResultsSynthesis(const TECVEROM& ecverom);
+		/// Write the result synthesis for ECSP 
+		void writeECSPResultsSynthesis(const TECSPROM& ecsprom);
+		
+		//@}
 
 private:
 	/// Write the result header for ECHO ECSP and ECVE

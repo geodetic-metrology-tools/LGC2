@@ -46,6 +46,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
 	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
+	
 
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
@@ -75,6 +76,13 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	if (frameIt->get()->measurements.fPDOR.isInitialised())
 		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
 
+	//Summuray
+	(*stream) << TABs << "*** MEASUREMENTS SUMMARY ***" << endl << endl;
+	writeMeasurementsSummary(frameIt);
+	
+
+	//Measures
+	(*stream) << TABs << "*** MEASUREMENTS DATA ***" << endl << endl;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 		tstnWriter.writeTSTNResults(itTSTN);
 
@@ -93,13 +101,12 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	
 	for (auto& itECVE : frameIt->get()->measurements.fECVE)
 		scaleWriter.writeECVEResults(itECVE);
-
+	
 	for (auto& itECSP : frameIt->get()->measurements.fECSP)
 		scaleWriter.writeECSPResults(itECSP);
 
 	for (auto& itORIE : frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
-
 
 	if (!frameIt->get()->measurements.fRADI.empty())
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
@@ -107,6 +114,294 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	for (auto& itEDM : frameIt->get()->measurements.fEDM)
 		edmWriter.writeEDMResults(itEDM);
 		
+}
+
+void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
+	TAStreamFormatter*	stream = getStream();
+	std::string			TABs = stream->getCurrSpace();
+	int					nameWidth = getNameWidth();
+
+	//Start to write the measurements
+	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
+	tstnWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
+	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+
+	//TSTN
+	if (frameIt->get()->measurements.fTSTN.size() > 0)
+	{
+		//write ANGL summary
+		bool headerAnglWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measANGL.size() > 0){
+					if (!headerAnglWriten)
+					{
+						(*stream) << TABs;
+						(*stream).writeStringLeft(nameWidth, "ANGL");
+						(*stream) << endl;
+						tstnWriter.writeANGLHeaderSynthesis();
+						headerAnglWriten = true;
+					}
+					tstnWriter.writeANGLResultsSynthesis(itrom->measANGL, it->instrumentPos, it->roms);
+				}
+			}
+		}
+		
+
+		//then ZEND 
+		bool headerZendWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measZEND.size() > 0){
+					if (!headerZendWriten)
+					{
+						(*stream) << endl;
+						(*stream) << TABs;
+						(*stream).writeStringLeft(nameWidth, "ZEND");
+						(*stream) << endl;
+						tstnWriter.writeANGLHeaderSynthesis();
+						headerZendWriten = true;
+					}
+					tstnWriter.writeZENDResultsSynthesis(itrom->measZEND, it->instrumentPos, it->roms);
+				}
+			}
+		}
+		
+
+		//DITS
+		bool headerDistWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measDIST.size() > 0){
+					if (!headerDistWriten)
+					{
+						(*stream) << endl;
+						(*stream) << TABs;
+						(*stream).writeStringLeft(nameWidth, "DIST");
+						(*stream) << endl;
+						tstnWriter.writeDISTHeaderSynthesis();
+						headerDistWriten = true;
+					}
+					tstnWriter.writeDISTResultsSynthesis(itrom->measDIST, it->instrumentPos, it->roms);
+				}
+			}
+		}
+		
+
+		//DHOR
+		bool headerDhorWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measDHOR.size() > 0){
+					if (!headerDhorWriten)
+					{
+						(*stream) << endl;
+						(*stream) << TABs;
+						(*stream).writeStringLeft(nameWidth, "DHOR");
+						(*stream) << endl;
+						tstnWriter.writeDISTHeaderSynthesis();
+						headerDhorWriten = true;
+					}
+					tstnWriter.writeDISTResultsSynthesis(itrom->measDHOR, it->instrumentPos, it->roms, true);
+				}
+			}
+		}
+		
+
+		//PLR3D
+		bool headerPlrWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measPLR3D.size() > 0){
+					if (!headerPlrWriten)
+					{
+						(*stream) << endl;
+						tstnWriter.writePLRRHeaderynthesis();
+						headerPlrWriten = true;
+					}
+					tstnWriter.writePLRResultsSynthesis(itrom->measPLR3D, it->instrumentPos, it->roms);
+				}
+			}
+		}
+		(*stream) << endl;
+
+		//ECTH
+		bool headerEcthWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measECTH.size() > 0){
+					if (!headerEcthWriten)
+					{
+						(*stream) << endl;
+						(*stream) << TABs;
+						(*stream).writeStringLeft(nameWidth, "ECTH");
+						(*stream) << endl;
+						tstnWriter.writeDISTHeaderSynthesis();
+						headerEcthWriten = true;
+					}
+					tstnWriter.writeECTHResultsSynthesis(itrom->measECTH, it->instrumentPos, it->roms);
+				}
+			}
+		}
+		
+
+		//ECDIR
+		bool headerEcdirWriten = false;
+		for (auto& it : frameIt->get()->measurements.fTSTN)
+		{
+			for (auto& itrom : it->roms)
+			{
+				if (itrom->measECDIR.size() > 0){
+					if (!headerEcdirWriten)
+					{
+						(*stream) << endl;
+						(*stream) << TABs;
+						(*stream).writeStringLeft(nameWidth, "ECDIR");
+						(*stream) << endl;
+						tstnWriter.writeDISTHeaderSynthesis();
+						headerEcdirWriten = true;
+					}
+					tstnWriter.writeECDIRResultsSynthesis(itrom->measECDIR, it->instrumentPos, it->roms);
+				}
+			}
+		}
+	}
+
+	//BCAM
+	if (frameIt->get()->measurements.fCAM.size() > 0)
+	{
+		//write UVD summary
+		bool headerWriten = false;
+		for (auto& it : frameIt->get()->measurements.fCAM)
+		{
+			if (it.measUVD.size() > 0)
+			{
+				if (!headerWriten)
+				{
+					camWriter.writeUVDSynthesisHeader();
+					headerWriten = true;
+				}
+				camWriter.writeUVDResultsSynthesis(it);
+			}
+		}
+		(*stream) << endl;
+
+		//the UVEC when all UVD are written
+		bool headerWriten2 = false;
+		for (auto& it : frameIt->get()->measurements.fCAM)
+		{
+			if (it.measUVEC.size() > 0)
+			{
+				if (!headerWriten2)
+				{
+					camWriter.writeUVECSynthesisHeader();
+					headerWriten2 = true;
+				}
+				camWriter.writeUVECResultsSynthesis(it);
+			}
+		}
+		(*stream) << endl;
+	}
+
+	//DLEV
+	if (frameIt->get()->measurements.fLEVEL.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DLEV"); //instrument
+		(*stream) << endl;
+		levelWriter.writeLEVELSynthesisHeader();
+		for (auto& itLEVEL : frameIt->get()->measurements.fLEVEL)
+			levelWriter.writeLEVELResultsSynthesis(itLEVEL);
+		(*stream) << endl;
+	}
+
+	//DVER
+	if (frameIt->get()->measurements.fDVER.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DVER"); //instrument
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeDVERResultsSynthesis(frameIt->get()->measurements.fDVER);
+		(*stream) << endl;
+	}
+
+	//ECHO
+	if (frameIt->get()->measurements.fECHO.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECHO"); //instrument
+		(*stream) << endl;
+		scaleWriter.writeSCALESynthesisHeader();
+		for (auto& itECHO : frameIt->get()->measurements.fECHO)
+			scaleWriter.writeECHOResultsSynthesis(itECHO);
+		(*stream) << endl;
+	}
+
+	//DSPT
+
+	//ECVE
+	if (frameIt->get()->measurements.fECVE.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECVE"); //instrument
+		(*stream) << endl;
+		scaleWriter.writeSCALESynthesisHeader();
+		for (auto& itECVE : frameIt->get()->measurements.fECVE)
+			scaleWriter.writeECVEResultsSynthesis(itECVE);
+		(*stream) << endl;
+	}
+
+	//ECSP
+	if (frameIt->get()->measurements.fECSP.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECSP"); //instrument
+		(*stream) << endl;
+		scaleWriter.writeSCALESynthesisHeader();
+		for (auto& itECSP : frameIt->get()->measurements.fECSP)
+			scaleWriter.writeECSPResultsSynthesis(itECSP);
+		(*stream) << endl;
+	}
+	
+	//ORIE
+	if (frameIt->get()->measurements.fORIE.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ORIE"); //instrument
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		for (auto& itORIE : frameIt->get()->measurements.fORIE)
+			otherMeasWriter.writeORIEResultsSynthesis(itORIE.measORIE,*itORIE.instrumentPos);
+		(*stream) << endl;
+	}
+	
+	//RADI
+	if (frameIt->get()->measurements.fRADI.size() > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "RADI"); //instrument
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeRADIResultsSynthesis(frameIt->get()->measurements.fRADI);
+		(*stream) << endl;
+	}
 }
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){

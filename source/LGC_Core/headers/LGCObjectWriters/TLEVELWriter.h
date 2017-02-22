@@ -14,7 +14,7 @@
 	\ingroup LGCObjectWriters
 	\brief Write LEVEL  definition and its observations to an LGC output file.
 @{*/
-class  TLEVELWriter : public TObservationWriter 
+class  TLEVELWriter : public TObservationWriter
 {
 public:
 
@@ -22,19 +22,31 @@ public:
 	TLEVELWriter(TAStreamFormatter& stream, bool hist);
 	/// Destructor
 	virtual ~TLEVELWriter();
-	
-	/// Write results
-	void writeLEVELResults(const TLEVEL& fLevel);
-	/// Write simulated results
-	void writeLEVELSIMUResults(const TLEVEL& fLevel);
 
-	/// Write reliability header
-	void writeReliabilityHeader();
+	/*!@name Headers */
+	//@{
+		/// Write reliability header
+		void writeReliabilityHeader();
 
-	/// Write reliability data for DHOR (from DLEV)
-	void writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStatistic& stat );
-	/// Write reliability data for DLEV
-	void writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStatistic& stat);
+		/// Write the result synthesis header
+		void writeLEVELSynthesisHeader();
+	//@}
+
+	/*!@name Results */
+	//@{
+		/// Write results
+		void writeLEVELResults(const TLEVEL& fLevel);
+		/// Write simulated results
+		void writeLEVELSIMUResults(const TLEVEL& fLevel);
+
+		/// Write reliability data for DHOR (from DLEV)
+		void writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStatistic& stat);
+		/// Write reliability data for DLEV
+		void writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStatistic& stat);
+
+		/// Write results synthesis
+		void writeLEVELResultsSynthesis(const TLEVEL& fLevel);
+	//@}
 
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }
