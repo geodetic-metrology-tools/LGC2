@@ -75,7 +75,8 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ANGL measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
 
@@ -131,7 +132,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kANGL);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			angl.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		rom->measANGL.emplace_back(angl);
@@ -212,7 +213,8 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ZENI measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
 
@@ -263,7 +265,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kZEND);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		rom->measZEND.emplace_back(zend);
@@ -346,7 +348,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ZENH measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
 
@@ -540,7 +543,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kZEND);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		rom->measZEND.emplace_back(zend);
@@ -625,7 +628,8 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DTHE measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
 
@@ -866,7 +870,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kDIST);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			dthe.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
 
 		rom->measDIST.emplace_back(dthe);
@@ -964,7 +968,8 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 	auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-		if (tokens.size() < 4 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 4);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECTH measurement must have at least 4 entries: "
 			" station point angle offset");
 
@@ -1036,7 +1041,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kECTH);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			ecth.setDistance(TLength(std::stor(tokens.at(3))));
 
 		rom->measECTH.emplace_back(ecth);
@@ -1143,7 +1148,8 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DHOR measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
 
@@ -1293,7 +1299,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kDIST);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			dhor.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
 
 		rom->measDHOR.emplace_back(dhor);
@@ -1470,7 +1476,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else 
 	{
 		// stn tgt meas [sigma][ppm] [/const | C ][ \hI HRefl] [$comments]
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DMES measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
 
@@ -1738,7 +1745,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
-			TDSPT(obspt, tgt, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))))
+			TDSPT(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))))
 			);
 
 		//get a reference to the inserted measurement
@@ -1771,8 +1778,8 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		dcorr = TLength(0.0, TLength::EUnits::kMetres);
 	}
 	else {
-
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DVER measurement must have at least 3 entries: "
 			"Two points and the measured distance.");
 
@@ -1780,7 +1787,7 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fDVER.emplace_back(
-			TDVER(fpoints.getObject(tokens.at(0)), fpoints.getObject(tokens.at(1)), TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))))
+			TDVER(fpoints.getObject(tokens.at(0)), fpoints.getObject(tokens.at(1)), TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))))
 			);
 
 		auto& dver(proj.getCurrentNode().measurements.fDVER.back());
@@ -1905,7 +1912,8 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 p2 meas [sigma][/const]
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DLEV measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
 
@@ -1928,7 +1936,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 		const auto& tgtfPoint(fpoints.getObject(tokens.at(1)));
 
-		if (tokens.size() < 3 && !fSIMUActive)
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DLEV measurement must have at least 3 entries: the instrument,  the stationed point ID and observed vertical distance");
 
 
@@ -1988,7 +1996,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 
 		// Store  the dlev measured value
-		TDLEV dlev(tgtfPoint, tgt, TLength(fSIMUActive ? NO_VALf : -1.0*std::stor(tokens.at(2))));
+		TDLEV dlev(tgtfPoint, tgt, TLength(!hasAllParams ? NO_VALf : -1.0*std::stor(tokens.at(2))));
 
 		dlev.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		dlev.setFirstObservationIndex(proj.fUEOIndices.OIndex);
@@ -2043,7 +2051,8 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 stn p2 meas [sigma][/const]
-		if (tokens.size() < 4 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 4);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECHO measurement must have at least 3 entries: "
 			"The 2 encrage, the stationned point and the measured distance.");
 
@@ -2084,7 +2093,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
 			instr.sigmaD = sigma*0.01;
 
-			TECHO echo1(p1, instr, TLength(fSIMUActive ? NO_VALf : 0.0));
+			TECHO echo1(p1, instr, TLength(!hasAllParams ? NO_VALf : 0.0));
 			echo1.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 			echo1.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 			proj.fUEOIndices.EIndex++;
@@ -2094,7 +2103,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
 			echoROMLatest.measECHO.emplace_back(echo1);
 
-			TECHO echo2(p2, instr, TLength(fSIMUActive ? NO_VALf : 0.0));
+			TECHO echo2(p2, instr, TLength(!hasAllParams ? NO_VALf : 0.0));
 			echo2.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 			echo2.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 			proj.fUEOIndices.EIndex++;
@@ -2154,7 +2163,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 
 		// Store  the measured value
-		TECHO echo(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(3))));
+		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(3))));
 		echo.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		echo.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex++;
@@ -2217,7 +2226,8 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 stn p2 meas [sigma][/const]
-		if (tokens.size() < 4 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 4);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECSP measurement must have at least 3 entries: "
 			"The instrument position, the measured point and the offset measurement.");
 
@@ -2285,7 +2295,7 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 
 		// Store  the measured value
-		TECSP ecsp(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(3))));
+		TECSP ecsp(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(3))));
 		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex++;
@@ -2345,7 +2355,8 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 stn p2 meas [sigma][/const]
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECVE measurement must have at least 3 entries: "
 			"The instrument position, the measured point and the offset measurement.");
 
@@ -2416,7 +2427,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 
 		// Store  the measured value
-		TECVE ecve(stationPoint, instr, TLength(fSIMUActive ? NO_VALf : std::stor(tokens.at(2))));
+		TECVE ecve(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))));
 		ecve.setFirstEquationIndex(proj.fUEOIndices.EIndex);
 		ecve.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex++;
@@ -2449,7 +2460,8 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 	else
 	{
-		if (tokens.size() < 3 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 3);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("ORIE measurement must have at least 3 entries: station, targeted point and observed value");
 
 		if (tokens.at(0) != currentStation)
@@ -2530,7 +2542,7 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		proj.fUEOIndices.OIndex++;
 		proj.addToMeasurementNum(TMeasurementsGlobal::kORIE);
 
-		if (!fSIMUActive)
+		if (hasAllParams)
 			orie.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		proj.getCurrentNode().measurements.fORIE.back().measORIE.emplace_back(orie);
@@ -2548,13 +2560,14 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 	}
 	else {
-		if (tokens.size() < 2 && !fSIMUActive)
+        bool hasAllParams = !(tokens.size() < 2);
+		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
 			"One point and the angle.");
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fRADI.emplace_back(
-			TRADI(fpoints.getObject(tokens.at(0)), TAngle(fSIMUActive ? NO_VALf : std::stor(tokens.at(1)), TAngle::EUnits::kGons))
+			TRADI(fpoints.getObject(tokens.at(0)), TAngle(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)), TAngle::EUnits::kGons))
 			);
 
 		auto& radi(proj.getCurrentNode().measurements.fRADI.back());
