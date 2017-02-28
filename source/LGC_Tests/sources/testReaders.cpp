@@ -164,9 +164,9 @@ namespace tut
 			TKeyFAUT f1(proj);
 			f1.parse(tokenizefileString("*FAUT"), -1);
 			ensure_equals("Fault detection quantiles must match default values", 
-				cfg.faut.alpha, FAUT_DEF_ALPHA);
+				cfg.faut.alpha, 0.01);
 			ensure_equals("Fault detection quantiles must match default values", 
-				cfg.faut.beta, FAUT_DEF_BETA);
+				cfg.faut.beta, 0.1);
 			f1.parse(tokenizefileString("*FAUT 0.1 0.3"), -1);
 			ensure_equals("Fault detection quantiles must match input", 
 				cfg.faut.alpha, 0.1);

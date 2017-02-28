@@ -406,6 +406,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
+	std::string			TABs = stream->getCurrSpace();
 	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
@@ -427,6 +428,13 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	if (frameIt->get()->measurements.fPDOR.isInitialised())
 		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
 
+	//Summuray
+	(*stream) << TABs << "*** MEASUREMENTS SUMMARY ***" << endl << endl;
+	writeMeasurementsSummary(frameIt);
+
+
+	//Measures
+	(*stream) << TABs << "*** MEASUREMENTS DATA ***" << endl << endl;
 	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
 		tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
