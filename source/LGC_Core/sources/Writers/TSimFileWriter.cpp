@@ -47,6 +47,9 @@ void    TSimFileWriter::writeFile(const string error)
 void	TSimFileWriter::writeFile()
 {
 	TAStreamFormatter* stream = getStream();
+	//reformat the streamformatter
+	stream->setLengthUnits(TLength::EUnits::kMetres);
+	stream->setPrecisionFormat(fProjectData->getConfig().outPrecision.digits);
 	
 	writeHeader();
 	writeInstrument();
@@ -79,8 +82,8 @@ void	TSimFileWriter::writeHeader()
 	else if (data->getConfig().libre.isActive())
 		(*stream) << "*LIBR" << endl;
 	
-	if (data->getConfig().sim.isActive())
-		(*stream) << "*SIMU " << data->getConfig().sim.numSims<<endl;
+	if (data->getConfig().covar.isActive())
+		(*stream) << "*COVAR " << data->getConfig().sim.numSims<<endl;
 
 	if (data->getConfig().faut.isActive())
 		(*stream) << "*FAUT " << data->getConfig().faut.alpha << "  " << data->getConfig().faut.beta<< endl;
@@ -141,12 +144,12 @@ void	TSimFileWriter::writeInstrument()
 	{
 		(*stream) << "*CAMD " << itCAMD.second.ID << sep 
             << itCAMD.second.defTarget << sep
-            << itCAMD.second.sigmaInstrCentering.getMMetresValue() << sep 
+            << itCAMD.second.sigmaInstrCentering.getMMetresValue() << sep
             << endl;
 		for (auto& itTarget : itCAMD.second.targets)
 			(*stream) << itTarget.second.ID << sep
-			<< itTarget.second.sigmaX << sep
-			<< itTarget.second.sigmaY << sep
+			<< itTarget.second.sigmaX*M2MM << sep
+			<< itTarget.second.sigmaY*M2MM << sep
 			<< itTarget.second.sigmaDist.getMMetresValue() << sep
 			<< itTarget.second.sigmaTargetCentering.getMMetresValue() << endl;
 	}
@@ -155,7 +158,7 @@ void	TSimFileWriter::writeInstrument()
 	{
 		(*stream) << "*POLAR " << itPOLAR.second.ID << sep 
 			<< itPOLAR.second.defTarget << sep
-			<< itPOLAR.second.instrHeight << sep
+			<< itPOLAR.second.instrHeight.getMetresValue() << sep
 			<< itPOLAR.second.sigmaInstrHeight.getMMetresValue() << sep
 			<< itPOLAR.second.sigmaInstrCentering.getMMetresValue() << sep
 			<< itPOLAR.second.constAngle.getGonsValue() << sep
@@ -167,10 +170,10 @@ void	TSimFileWriter::writeInstrument()
 			<< itTarget.second.sigmaDist.getMMetresValue() << sep
 			<< itTarget.second.ppmDist.getMMetresValue() << sep
 			<< itTarget.second.distCorrectionUnknown << sep
-			<< itTarget.second.distCorrectionValue << sep
+			<< itTarget.second.distCorrectionValue.getMetresValue() << sep
 			<< itTarget.second.sigmaDCorr.getMMetresValue() << sep
 			<< itTarget.second.sigmaTargetCentering.getMMetresValue() << sep
-			<< itTarget.second.targetHt << sep
+			<< itTarget.second.targetHt.getMetresValue() << sep
 			<< itTarget.second.sigmaTargetHt.getMMetresValue() << sep
 			<<endl;
 	}
@@ -187,10 +190,10 @@ void	TSimFileWriter::writeInstrument()
 			<< itTarget.second.sigmaDSpt.getMMetresValue() << sep
 			<< itTarget.second.ppmDSpt.getMMetresValue() << sep
 			<< itTarget.second.distCorrectionUnknown << sep
-			<< itTarget.second.distCorrectionValue << sep
+			<< itTarget.second.distCorrectionValue.getMetresValue() << sep
 			<< itTarget.second.sigmaDCorr.getMMetresValue() << sep
 			<< itTarget.second.sigmaTargetCentering.getMMetresValue() << sep
-			<< itTarget.second.targetHt << sep
+			<< itTarget.second.targetHt.getMetresValue() << sep
 			<< itTarget.second.sigmaTargetHt.getMMetresValue() << sep << endl;
 	}
 
@@ -205,9 +208,9 @@ void	TSimFileWriter::writeInstrument()
 			(*stream) << itTarget.second.ID << sep
 			<< itTarget.second.sigmaD.getMMetresValue() << sep
 			<< itTarget.second.ppmD.getMMetresValue() << sep
-			<< itTarget.second.distCorrectionValue << sep
+			<< itTarget.second.distCorrectionValue.getMetresValue() << sep
 			<< itTarget.second.sigmaDCorr.getMMetresValue() << sep
-			<< itTarget.second.staffHt << sep
+			<< itTarget.second.staffHt.getMetresValue() << sep
 			<< itTarget.second.sigmaStaffHt.getMMetresValue() << sep
 			<< endl;
 	}
@@ -217,7 +220,7 @@ void	TSimFileWriter::writeInstrument()
 		(*stream) << "*SCALE " << itSCALE.second.ID << sep 
 			<< itSCALE.second.sigmaD.getMMetresValue() << sep
 			<< itSCALE.second.ppmD.getMMetresValue() << sep
-			<< itSCALE.second.distCorrectionValue << sep
+			<< itSCALE.second.distCorrectionValue.getMetresValue() << sep
 			<< itSCALE.second.sigmaDCorr.getMMetresValue() << sep
 			<< itSCALE.second.sigmaInstrCentering.getMMetresValue() << sep
 			<<endl;
@@ -259,9 +262,9 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 	{
 		(*stream) << "*FRAME" << sep
 			<< frameIt->get()->frame.getName() << sep
-			<< frameIt->get()->frame.getProvTranslation(0) << sep
-			<< frameIt->get()->frame.getProvTranslation(1) << sep
-			<< frameIt->get()->frame.getProvTranslation(2) << sep
+			<< frameIt->get()->frame.getProvTranslation(0).getMetresValue() << sep
+			<< frameIt->get()->frame.getProvTranslation(1).getMetresValue() << sep
+			<< frameIt->get()->frame.getProvTranslation(2).getMetresValue() << sep
 			<< frameIt->get()->frame.getProvRotation(0).getGonsValue() << sep
 			<< frameIt->get()->frame.getProvRotation(1).getGonsValue() << sep
 			<< frameIt->get()->frame.getProvRotation(2).getGonsValue() << sep
@@ -320,14 +323,14 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	auto writeXYZorH = [&](TAdjustablePoint const& fPoint) {
 		if ((data->getConfig().referential == 106 || data->getConfig().referential == 107 || data->getConfig().referential == 104) && frameIt->get()->isROOTNode())
 			(*stream) << fPoint.getName() << sep
-			<< fPoint.getProvisionalValue().getX() << sep
-			<< fPoint.getProvisionalValue().getY() << sep
-			<< fPoint.getProvisionalValue().getH() << sep;
+			<< fPoint.getProvisionalValue().getX().getMetresValue() << sep
+			<< fPoint.getProvisionalValue().getY().getMetresValue() << sep
+			<< fPoint.getProvisionalValue().getH().getMetresValue() << sep;
 		else
 			(*stream) << fPoint.getName() << sep
-			<< fPoint.getProvisionalValue().getX() << sep
-			<< fPoint.getProvisionalValue().getY() << sep
-			<< fPoint.getProvisionalValue().getZ() << sep;
+			<< fPoint.getProvisionalValue().getX().getMetresValue() << sep
+			<< fPoint.getProvisionalValue().getY().getMetresValue() << sep
+			<< fPoint.getProvisionalValue().getZ().getMetresValue() << sep;
 	};
 
 	//write PDOR if we are in ROOT & PDOR is used
@@ -515,7 +518,7 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 				<< uvd.getVectorValue().getX() << sep
 				<< uvd.getVectorValue().getY() << sep
 				<< uvd.getVectorValue().getZ() << sep
-				<< uvd.getDistance() << sep;
+				<< uvd.getDistance().getMetresValue() << sep;
 
 			if (uvd.target.ID != meas->instrument.targets.at(meas->instrument.defTarget).ID)
 				(*stream) << "TRGT" << sep
@@ -581,13 +584,13 @@ void TSimFileWriter::writeDVERMeas(TDVER* meas)
 	//write the list of measurements
 	(*stream) << meas->station->getName() << sep
 		<< meas->targetPos->getName() << sep
-		<< meas->getDistance() << sep
+		<< meas->getDistance().getMetresValue() << sep
 		<< "OBSE" << sep
 		<< meas->getObservedStDev().getMMetresValue() << sep;
 
 	if (meas->getDistanceCorrection().getMetresValue() != 0)
 		(*stream) << "DCOR" << sep
-		<< meas->getDistanceCorrection() << sep;
+		<< meas->getDistanceCorrection().getMetresValue() << sep;
 
 	(*stream) << endl;
 }
@@ -607,7 +610,7 @@ void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 	for (auto& itECHO : meas->measECHO)
 	{
 		(*stream) << itECHO.targetPos->getName() << sep
-			<< itECHO.getDistance() << sep;
+			<< itECHO.getDistance().getMetresValue() << sep;
 
 		if (itECHO.target.ID != scaleDefInst.ID)
 			(*stream) << "SCALE" << sep
@@ -651,7 +654,7 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 	for (auto& itECVE : meas->measECVE)
 	{
 		(*stream) << itECVE.targetPos->getName() << sep
-			<< itECVE.getDistance() << sep;
+			<< itECVE.getDistance().getMetresValue() << sep;
 
 		if (itECVE.target.ID != scaleDefInst.ID)
 			(*stream) << "SCALE" << sep
@@ -690,7 +693,7 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 		for (auto& ecsp : meas->measECSP)
 		{
 				(*stream) << ecsp.targetPos->getName() << sep
-					<< ecsp.getDistance() << sep;
+					<< ecsp.getDistance().getMetresValue() << sep;
 
 				if (ecsp.target.ID != scaleDefInst.ID)
 					(*stream) << "SCALE" << sep
@@ -726,7 +729,7 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 
     if(meas->instrument.instrHeight != edmDefInst.instrHeight)
         (*stream) << "IH" << sep
-        << meas->instrument.instrHeight << sep;
+		<< meas->instrument.instrHeight.getMetresValue() << sep;
     
     if(meas->instrument.sigmaInstrHeight != edmDefInst.sigmaInstrHeight)
         (*stream) << "IHSE" << sep
@@ -742,7 +745,7 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 	for (auto& itDspt : meas->measDSPT)
 	{
 		(*stream) << itDspt.targetPos->getName() << sep
-			<< itDspt.getDistance() << sep;
+			<< itDspt.getDistance().getMetresValue() << sep;
 
 		if (itDspt.target.ID != meas->instrument.defTarget)
 			(*stream) << "TRGT" << sep
@@ -758,7 +761,7 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 
 		if (itDspt.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
 			(*stream) << "TH" << sep
-			<< itDspt.target.targetHt << sep;
+			<< itDspt.target.targetHt.getMetresValue() << sep;
 
 		if (itDspt.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
 			(*stream) << "THSE" << sep
@@ -792,11 +795,11 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 	for (auto& itDLEV : meas->measDLEV)
 	{
 		(*stream) << itDLEV.targetPos->getName() << sep
-			<< itDLEV.getDistance() << sep;
+			<< itDLEV.getDistance().getMetresValue() << sep;
 
 		if (itDLEV.dhor.get())
 			(*stream) << "DHOR" << sep
-			<< itDLEV.dhor.get()->getDistance() << sep
+			<< itDLEV.dhor.get()->getDistance().getMetresValue() << sep
 			<< "DSE" << sep
 			<< itDLEV.dhor.get()->getDHORSigma().getMMetresValue() << sep;
 
@@ -814,7 +817,7 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 
 		if (itDLEV.target.staffHt != meas->instrument.targets.at(meas->instrument.defStaffID).staffHt)
 			(*stream) << "TH" << sep
-			<< itDLEV.target.staffHt << sep;
+			<< itDLEV.target.staffHt.getMetresValue() << sep;
 
 		if (itDLEV.target.sigmaStaffHt != meas->instrument.targets.at(meas->instrument.defStaffID).sigmaStaffHt)
 			(*stream) << "THSE" << sep
@@ -899,7 +902,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
         {
             (*stream) << "IHFIX" << sep;
             if(meas->instrument.instrHeight != 0)
-                (*stream) << "IH" << sep << meas->instrument.instrHeight << sep;
+				(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
 
             if(meas->instrument.sigmaInstrHeight != 0)
                 (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
@@ -970,7 +973,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 				if (zend.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
 					(*stream) << "TH" << sep
-					<< zend.target.targetHt << sep;
+					<< zend.target.targetHt.getMetresValue() << sep;
 
 				if (zend.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
 					(*stream) << "THSE" << sep
@@ -992,7 +995,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 			for (auto& dist : rom->measDIST)
 			{
 				(*stream) << dist.targetPos->getName() << sep
-					<< dist.getDistance() << sep;
+					<< dist.getDistance().getMetresValue() << sep;
 
 				if (dist.target.ID != meas->instrument.defTarget)
 					(*stream) << "TRGT" << sep
@@ -1008,7 +1011,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 				if (dist.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
 					(*stream) << "TH" << sep
-					<< dist.target.targetHt << sep;
+					<< dist.target.targetHt.getMetresValue() << sep;
 
 				if (dist.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
 					(*stream) << "THSE" << sep
@@ -1029,7 +1032,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 			for (auto& dhor : rom->measDHOR)
 			{
 				(*stream) << dhor.targetPos->getName() << sep
-					<< dhor.getDistance() << sep;
+					<< dhor.getDistance().getMetresValue() << sep;
 
 				if (dhor.target.ID != meas->instrument.defTarget)
 					(*stream) << "TRGT" << sep
@@ -1069,7 +1072,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 				if (plr.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
 					(*stream) << "TH" << sep
-					<< plr.target.targetHt << sep;
+					<< plr.target.targetHt.getMetresValue() << sep;
 
 				if (plr.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
 					(*stream) << "THSE" << sep
@@ -1116,7 +1119,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				if (ecth.obsHorAngle == lecture)
 				{
 					(*stream) << ecth.targetPos->getName() << sep
-						<< ecth.getDistance() << sep;
+						<< ecth.getDistance().getMetresValue() << sep;
 					
 					if (ecth.target.ID != scaleDefInst.ID)
 						(*stream) << "SCALE" << sep
@@ -1145,7 +1148,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 						<< ecth.target.ID << endl;
 
 					(*stream) << ecth.targetPos->getName() << sep
-						<< ecth.getDistance() << sep;
+						<< ecth.getDistance().getMetresValue() << sep;
 
 					if (ecth.target.ID != scaleDefInst.ID)
 						(*stream) << "SCALE" << sep
@@ -1186,7 +1189,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				if (ecdir.obsHorAngle == lectureHz && ecdir.obsVertAngle == lectureV)
 				{
 					(*stream) << ecdir.targetPos->getName() << sep
-						<< ecdir.getDistance() << sep;
+						<< ecdir.getDistance().getMetresValue() << sep;
 
 					if (ecdir.target.ID != scaleDefInst.ID)
 						(*stream) << "SCALE" << sep
@@ -1216,7 +1219,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 						<< ecdir.target.ID << endl;
 
 					(*stream) << ecdir.targetPos->getName() << sep
-						<< ecdir.getDistance() << sep;
+						<< ecdir.getDistance().getMetresValue() << sep;
 
 					if (ecdir.target.ID != scaleDefInst.ID)
 						(*stream) << "SCALE" << sep
