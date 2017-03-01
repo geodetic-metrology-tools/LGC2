@@ -29,9 +29,9 @@ static bool False = false;
 static const int PREC_DEF_DIGITS = 5;
 
 /// Default fisher alpha quantile for FAUT keyword
-static const TReal FAUT_DEF_ALPHA = 0.01;
+static const TReal FAUT_DEF_ALPHA = 0.01; //  1 %
 /// Default fisher beta quantile for FAUT keyword
-static const TReal FAUT_DEF_BETA  = 0.1;
+static const TReal FAUT_DEF_BETA = 0.1; // 10 %
 
 /// Allowed characters to separate fields in the input file.
 static const char* const INPUT_SEPERATOR_CHARS = " \t";
