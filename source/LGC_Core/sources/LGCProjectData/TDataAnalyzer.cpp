@@ -20,7 +20,8 @@ bool TDataAnalyzer::dataConsistent(){
 	
 	checkPDOR(outputMessages, consistent);
 
-	if (!fData.getConfig().libre.isActive())
+	//cannot predetermine V in simulation and LIBR
+	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
 		predeterminePLR3DV0();
 
 

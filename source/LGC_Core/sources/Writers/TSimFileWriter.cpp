@@ -257,6 +257,7 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
+	stream->setPrecisionFormat(fProjectData->getConfig().outPrecision.digits);
 
 	if ( !frameIt->get()->isROOTNode())
 	{
@@ -599,6 +600,7 @@ void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 {
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
+
 
 	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECHO.at(0).target.ID);
 

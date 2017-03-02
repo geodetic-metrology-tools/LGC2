@@ -9,7 +9,7 @@
 
 #define LGC_VERSION_MAJOR 2
 #define LGC_VERSION_MINOR 00
-#define LGC_VERSION_PATCH 05
+#define LGC_VERSION_PATCH 06
 
 static std::string getLGCVersion(void) {
 	stringstream ss;
