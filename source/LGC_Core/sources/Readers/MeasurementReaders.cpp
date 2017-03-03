@@ -6,6 +6,16 @@
 
 const TReal lengthTolerance = 1e-5;
 
+namespace{
+    bool isNumber(const std::string &str){
+        try{
+            std::stod(str);
+        } catch(...){
+            return false;
+        }
+        return true;
+    }
+}
 
 TAMeasurementKey::TAMeasurementKey(TLGCData& project, const std::string& key) : 
 			TAKeyWord(key, project),
@@ -119,7 +129,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
 	}
 	else{//Get here, if the line does NOT start with a "*", it means that is the concrete measurement 
-        bool hasAllParams = !(tokens.size() < 4);
+        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A UVEC measurement must have at least 4 entries: "
 									 "The observed point and 3 components of the unit vector.");
@@ -203,7 +213,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
 	}
 	else{//Enter if the line does NOT start with a "*"
-        bool hasAllParams = !(tokens.size() < 5);
+        bool hasAllParams = (tokens.size() > 4) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3)) && isNumber(tokens.at(4));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A UVD measurement must have at least 5 entries: "
 									 "The observed point, 3 components of the unit vector and the spatial distance.");
@@ -316,7 +326,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 
 	if (! updateDefaultTargetTSTN(tokens)) {
 		//We get here if line does NOT start with a "*"
-        bool hasAllParams = !(tokens.size() < 4);
+        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A PLR3D measurement must have at least 4 entries: "
 									 "The observed point and 3 measurement values.");
@@ -389,7 +399,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 	using namespace LGC;
 
 	if (! updateDefaultTargetTSTN(tokens)) {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ANGL measurement must have at least 2 entries: "
 									 "The observed point and the measured angle.");
@@ -449,7 +459,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 	using namespace LGC;
 
 	if (! updateDefaultTargetTSTN(tokens)) {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ZEND measurement must have at least 2 entries: "
 									 "The observed point and the measured angle.");
@@ -509,7 +519,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 {
 	if (! updateDefaultTargetTSTN(tokens)) {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DIST measurement must have at least 2 entries: "
 									 "The observed point and the measured distance.");
@@ -583,7 +593,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ECTH measurement must have at least 2 entries: "
 									 "The observed point and the measured distance.");
@@ -646,7 +656,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ECTH measurement must have at least 2 entries: "
 			"The observed point and the measured distance.");
@@ -695,7 +705,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, int line)
 void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 {
 	if (! updateDefaultTargetTSTN(tokens)) {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DHOR measurement must have at least 2 entries: "
 									 "The observed point and the measured horizontal distance.");
@@ -781,7 +791,7 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 		proj.getCurrentNode().measurements.fEDM.back().line = line;
 	} 
 	else {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DSPT measurement must have at least 2 entries: "
 									 "The observed point and the measured distance.");
@@ -845,7 +855,7 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 	}
 	else {
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DVER measurement must have at least 3 entries: "
 									 "Two points and the measured distance.");
@@ -915,7 +925,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); //add new measurement
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DLEV measurement must have at least 2 entries: stationed point ID and observed vertical distance");
 
@@ -998,7 +1008,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("ECHO measurement must have at least 2 entries: stationed point ID and observed horizontal offset");
 
@@ -1073,7 +1083,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ECVE measurement must have at least 2 entries: "
 			"The stationned point and the measured distance.");
@@ -1144,7 +1154,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(4)).ID;
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ECSP measurement must have at least 2 entries: "
 			"The observed point and the measured distance.");
@@ -1213,7 +1223,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		proj.getCurrentNode().measurements.fORIE.emplace_back(orieROM); //add new round of measurement
 	}
 	else{
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("ORIE measurement must have at least 2 entries: targeted point ID and observed value");
 
@@ -1279,7 +1289,7 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 	}
 	else {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
 			"One point and the angle.");

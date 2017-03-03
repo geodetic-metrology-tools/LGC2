@@ -2,6 +2,17 @@
 #include "TDist.h"
 #include "TXYH2CCS.h"
 
+namespace{
+    bool isNumber(const std::string &str){
+        try{
+            std::stod(str);
+        } catch(...){
+            return false;
+        }
+        return true;
+    }
+}
+
 TAMeasurementKey_lgc1::TAMeasurementKey_lgc1(TLGCData& project, const std::string& key) :
 TAKeyWord(key, project),
 fpoints(project.getPoints()),
@@ -75,7 +86,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ANGL measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -213,7 +224,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ZENI measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -348,7 +359,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ZENH measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -628,7 +639,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DTHE measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -968,7 +979,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 	auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-        bool hasAllParams = !(tokens.size() < 4);
+        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECTH measurement must have at least 4 entries: "
 			" station point angle offset");
@@ -1148,7 +1159,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DHOR measurement must have at least 3 entries: "
 			"The station, the observed point and the measured angle.");
@@ -1476,7 +1487,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else 
 	{
 		// stn tgt meas [sigma][ppm] [/const | C ][ \hI HRefl] [$comments]
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DMES measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
@@ -1778,7 +1789,7 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		dcorr = TLength(0.0, TLength::EUnits::kMetres);
 	}
 	else {
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DVER measurement must have at least 3 entries: "
 			"Two points and the measured distance.");
@@ -1912,7 +1923,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 p2 meas [sigma][/const]
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DLEV measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
@@ -2051,7 +2062,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 stn p2 meas [sigma][/const]
-        bool hasAllParams = !(tokens.size() < 4);
+        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECHO measurement must have at least 3 entries: "
 			"The 2 encrage, the stationned point and the measured distance.");
@@ -2226,7 +2237,7 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	else
 	{
 		// p1 stn p2 meas [sigma][/const]
-        bool hasAllParams = !(tokens.size() < 4);
+        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECSP measurement must have at least 3 entries: "
 			"The instrument position, the measured point and the offset measurement.");
@@ -2354,8 +2365,8 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 	else
 	{
-		// p1 stn p2 meas [sigma][/const]
-        bool hasAllParams = !(tokens.size() < 3);
+		// p1 stn meas [sigma][/const]
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ECVE measurement must have at least 3 entries: "
 			"The instrument position, the measured point and the offset measurement.");
@@ -2460,7 +2471,7 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 	else
 	{
-        bool hasAllParams = !(tokens.size() < 3);
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("ORIE measurement must have at least 3 entries: station, targeted point and observed value");
 
@@ -2560,7 +2571,7 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 	}
 	else {
-        bool hasAllParams = !(tokens.size() < 2);
+        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
 			"One point and the angle.");
