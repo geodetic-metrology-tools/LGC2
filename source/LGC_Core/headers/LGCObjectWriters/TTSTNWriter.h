@@ -67,33 +67,33 @@ public:
 		void writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn);
 
 		/// Write reliability data for ANGL
-		void	writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL);
+		void	writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TANGL>& measANGL);
 		/// Write reliability data for ZEND
-		void	writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TZEND>& measZEND);
+		void	writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TZEND>& measZEND);
 		/// Write reliability data for DIST
-		void	writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDIST);
+		void	writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDIST);
 		/// Write reliability data for PLR
-		void	writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TPLR3D>& measPLR3D);
+		void	writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TPLR3D>& measPLR3D);
 		/// Write reliability data for DHOR
-		void	writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR);
+		void	writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDHOR);
 		/// Write reliability data for ECTH
-		void	writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH);
+		void	writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECTH>& measECTH);
 		/// Write reliability data for ECDIR
-		void	writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECDIR>& measECDIR);
+		void	writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR);
 
 
 		/// Write ANGL synthesis
-		void writeANGLResultsSynthesis(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom);
+		void writeANGLResultsSynthesis(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
 		/// Write ZEND synthesis
-		void writeZENDResultsSynthesis(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom);
+		void writeZENDResultsSynthesis(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
 		/// Write DISt and DHOR synthesis
-		void writeDISTResultsSynthesis(const std::vector<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom, bool isdhor = false);
+		void writeDISTResultsSynthesis(const std::list<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom, bool isdhor = false);
 		/// Write PLR3D synthesis
-		void writePLRResultsSynthesis(const std::vector<TPLR3D>& measPLR3D, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom);
+		void writePLRResultsSynthesis(const std::list<TPLR3D>& measPLR3D, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
 		/// Write ECTH synthesis
-		void writeECTHResultsSynthesis(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom);
+		void writeECTHResultsSynthesis(const std::list<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
 		/// Write ECDIR synthesis
-		void writeECDIRResultsSynthesis(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom);
+		void writeECDIRResultsSynthesis(const std::list<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
 	//@}
 
 	/// Set if ALLFIXED option is used
@@ -113,13 +113,13 @@ private:
 
 	/*!@name Results */
 	//@{
-		void writeANGLResults(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V);
-		void writeZENDResults(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos);
-		void writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos);
-		void writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry);
-		void writeDHORResults(const std::vector<TLINE>& measDHOR);
-		void writeECTHResults(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos);
-		void writeECDIRResults(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos);
+		void writeANGLResults(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V);
+		void writeZENDResults(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos);
+		void writeDISTResults(const std::list<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos);
+		void writePLRResults(const std::list<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry);
+		void writeDHORResults(const std::list<TLINE>& measDHOR);
+		void writeECTHResults(const std::list<TECTH>& measECTH, const LGCAdjustablePoint* instrPos);
+		void writeECDIRResults(const std::list<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos);
 	//@}
 
 		bool isAllfixed;

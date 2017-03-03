@@ -133,7 +133,7 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - fill of models with 1 equation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addSpaDistContributions(const std::vector<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -251,7 +251,7 @@ void  TLSInputMatricesFiller::addHorAngContributions(shared_ptr<TTSTN::TROM> rom
 	}
 }
 
-void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -306,7 +306,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::vector<TZEND>& 
 	}
 }
 
-void  TLSInputMatricesFiller::addHorDistContributions(const std::vector<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addHorDistContributions(const std::list<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -775,7 +775,7 @@ void TLSInputMatricesFiller::addECSPContributions(const TECSPROM& ecspRom, TLSIn
 	}
 }
 
-void  TLSInputMatricesFiller::addDSPTContribution(const std::vector<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addDSPTContribution(const std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -829,7 +829,7 @@ void  TLSInputMatricesFiller::addDSPTContribution(const std::vector<TDSPT>& dspt
 	}
 }
 
-void  TLSInputMatricesFiller::addDVERContribution(const std::vector<TDVER>& dverMeas, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addDVERContribution(const std::list<TDVER>& dverMeas, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -929,7 +929,7 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 		throw std::runtime_error("Error occurred during filling input design matrices of PDOR measurement.");
 }
 
-void  TLSInputMatricesFiller::addRADIContributions(const std::vector<TRADI>& radiMeas, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI>& radiMeas, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;

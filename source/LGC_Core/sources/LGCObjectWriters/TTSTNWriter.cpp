@@ -785,7 +785,7 @@ void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
 }
 
 //------------------ Result data---------------------------------------------------------------------------
-void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry)
+void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -986,7 +986,7 @@ void TTSTNWriter::writePLRResults(const std::vector<TPLR3D>& measPLR3D, const TI
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V)
+void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1043,7 +1043,7 @@ void TTSTNWriter::writeANGLResults(const std::vector<TANGL>& measANGL, const LGC
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos)
+void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1101,7 +1101,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const LGC
 	(*stream) << endl << endl;
 }
 
-void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos)
+void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos)
 {
 
 	TAStreamFormatter*	stream = getStream();
@@ -1183,7 +1183,7 @@ void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST, const TIn
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
+void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1249,7 +1249,7 @@ void TTSTNWriter::writeDHORResults(const std::vector<TLINE>& measDHOR)
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos)
+void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAdjustablePoint* instrPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1301,7 +1301,7 @@ void TTSTNWriter::writeECTHResults(const std::vector<TECTH>& measECTH, const LGC
 
 }
 
-void TTSTNWriter::writeECDIRResults(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos)
+void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1460,7 +1460,7 @@ void	TTSTNWriter::writeECDIRReliabilityHeader()
 
 
 //------------------ Reliability data------------------------------------------------------------------------
-void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TANGL>& measANGL)
+void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TANGL>& measANGL)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1498,7 +1498,7 @@ void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;
 }
 
-void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TZEND>& measZEND)
+void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TZEND>& measZEND)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1534,7 +1534,7 @@ void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;
 }
 
-void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDIST)
+void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDIST)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1568,7 +1568,7 @@ void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;	
 }
 
-void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TPLR3D>& measPLR3D)
+void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TPLR3D>& measPLR3D)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1637,7 +1637,7 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 	return;	
 }
 
-void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TLINE>& measDHOR)
+void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDHOR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1671,7 +1671,7 @@ void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;	
 }
 
-void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECTH>& measECTH)
+void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECTH>& measECTH)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1705,7 +1705,7 @@ void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;
 }
 
-void	TTSTNWriter::writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::vector<TECDIR>& measECDIR)
+void	TTSTNWriter::writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1857,7 +1857,7 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TTSTNWriter::writeANGLResultsSynthesis(const std::vector<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeANGLResultsSynthesis(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1891,7 +1891,7 @@ void TTSTNWriter::writeANGLResultsSynthesis(const std::vector<TANGL>& measANGL, 
 	}
 }
 
-void TTSTNWriter::writeZENDResultsSynthesis(const std::vector<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeZENDResultsSynthesis(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1925,7 +1925,7 @@ void TTSTNWriter::writeZENDResultsSynthesis(const std::vector<TZEND>& measZEND, 
 	}
 }
 
-void TTSTNWriter::writeDISTResultsSynthesis(const std::vector<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom, bool isdhor){
+void TTSTNWriter::writeDISTResultsSynthesis(const std::list<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom, bool isdhor){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1967,7 +1967,7 @@ void TTSTNWriter::writeDISTResultsSynthesis(const std::vector<TLINE>& measDIST, 
 	}
 }
 
-void TTSTNWriter::writePLRResultsSynthesis(const std::vector<TPLR3D>& measPLR3D, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom)
+void TTSTNWriter::writePLRResultsSynthesis(const std::list<TPLR3D>& measPLR3D, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -2032,7 +2032,7 @@ void TTSTNWriter::writePLRResultsSynthesis(const std::vector<TPLR3D>& measPLR3D,
 
 }
 
-void TTSTNWriter::writeECTHResultsSynthesis(const std::vector<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeECTHResultsSynthesis(const std::list<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -2066,7 +2066,7 @@ void TTSTNWriter::writeECTHResultsSynthesis(const std::vector<TECTH>& measECTH, 
 	}
 }
 
-void TTSTNWriter::writeECDIRResultsSynthesis(const std::vector<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::vector<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeECDIRResultsSynthesis(const std::list<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();

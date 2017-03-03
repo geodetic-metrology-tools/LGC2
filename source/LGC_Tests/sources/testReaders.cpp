@@ -622,13 +622,13 @@ namespace tut
 			ensure_equals("Reference point given, plane should be initialized", levelRound.fMeasuredPlane->isInitialized(),true);
 			ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue().getMetresValue(), 0.0);
 
-			auto& firstDLEVMeasurement(levelRound.measDLEV[0]);
+			auto& firstDLEVMeasurement(levelRound.measDLEV.front());
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement.targetPos->getName(),"P1");
 			ensure_equals("Measured vertical distance should match", firstDLEVMeasurement.getDistance(),5);
 			ensure_equals("Target should be overidden", firstDLEVMeasurement.target.ID,"ST2");
 			ensure_equals("Target's ppm value should be overidden", firstDLEVMeasurement.target.ppmD, 0.01 * MM2M);
 
-			auto& firstDLEVMeasurement2(levelRound.measDLEV[1]);
+			auto& firstDLEVMeasurement2(*(std::next(levelRound.measDLEV.begin(), 1)));
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(),"P3");
 			ensure_equals("Measured vertical distance should match", firstDLEVMeasurement2.getDistance(),6);
 			ensure_equals("Target should be overidden", firstDLEVMeasurement2.target.ID,"ST2");

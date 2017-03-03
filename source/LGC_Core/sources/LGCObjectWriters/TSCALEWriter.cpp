@@ -380,7 +380,7 @@ void	TSCALEWriter::writeECSPReliabilityHeader()
 
 
 //------------------ Reliability data----------------------------------------------------------------------
-void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGCStatistic& stat, const std::vector<TECHO> measECHO)
+void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGCStatistic& stat, const std::list<TECHO> measECHO)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -416,7 +416,7 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 	return;
 }
 
-void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGCStatistic& stat, const std::vector<TECVE> measECVE)
+void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGCStatistic& stat, const std::list<TECVE> measECVE)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -452,7 +452,7 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 	return;
 }
 
-void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::vector<TECSP> measECSP)
+void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::list<TECSP> measECSP)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

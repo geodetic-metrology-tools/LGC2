@@ -22,7 +22,7 @@ struct TEDM {
 			{}
 
 		/// All DSPT measurments made by this EDM station.
-		std::vector<TDSPT> measDSPT;
+		std::list<TDSPT> measDSPT;
 
 		/// The instrument that is used on this station
 		TInstrumentData::TEDM instrument;

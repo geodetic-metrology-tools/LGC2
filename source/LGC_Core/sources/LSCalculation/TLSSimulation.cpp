@@ -165,7 +165,7 @@ void TLSSimulation::simulateValues()
 		}
 
 		//In every node iterate through the EDM's measurements
-		for (auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
+		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
 			//Iterate through DPST measurements
 			if (!itEDM->measDSPT.empty())
 				getDSPTSimValues(*itEDM, itEDM->measDSPT);
@@ -208,7 +208,7 @@ void TLSSimulation::simulateValues()
 	}
 }
 
-void	TLSSimulation::getDVERSimValues(std::vector<TDVER>& dver){
+void	TLSSimulation::getDVERSimValues(std::list<TDVER>& dver){
 	for (auto& itDVER : dver){
 		TReal calcVal = fSimObs.getDVERCalcMeas(itDVER);
 		TReal sigma = itDVER.getObservedStDev();
@@ -216,7 +216,7 @@ void	TLSSimulation::getDVERSimValues(std::vector<TDVER>& dver){
 	}
 }
 
-void	TLSSimulation::getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& dlev){
+void	TLSSimulation::getDLEVSimValues(const TLEVEL& levelST, std::list<TDLEV>& dlev){
 	for (auto& itDLEV : dlev){
 		TReal calcVal = fSimObs.getDLEVCalcMeas(levelST, itDLEV);
 		TReal sigma = itDLEV.target.sigmaD;
@@ -231,7 +231,7 @@ void	TLSSimulation::getHorDistSimValues(const LGCAdjustablePoint* referencePoint
 	dhorlevel.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 }
 
-void	TLSSimulation::getDSPTSimValues(const TEDM& edmST, std::vector<TDSPT>& dspt){
+void	TLSSimulation::getDSPTSimValues(const TEDM& edmST, std::list<TDSPT>& dspt){
 	for (auto& itDSPT : dspt){
 		TReal calcVal = fSimObs.getDSPTCalcMeas(edmST, itDSPT);
 		TReal sigma = itDSPT.target.sigmaDSpt;
@@ -239,7 +239,7 @@ void	TLSSimulation::getDSPTSimValues(const TEDM& edmST, std::vector<TDSPT>& dspt
 	}
 }
 
-void TLSSimulation::getECHOSimValues(const TECHOROM& echoROM, std::vector<TECHO>& echo){
+void TLSSimulation::getECHOSimValues(const TECHOROM& echoROM, std::list<TECHO>& echo){
 	for (auto& itECHO : echo){
 		TReal calcVal = fSimObs.getECHOCalcMeas(echoROM, itECHO);
 		TReal sigma = itECHO.target.sigmaD;
@@ -247,7 +247,7 @@ void TLSSimulation::getECHOSimValues(const TECHOROM& echoROM, std::vector<TECHO>
 	}
 }
 
-void TLSSimulation::getECVESimValues(const TECVEROM& ecveROM, std::vector<TECVE>& ecve){
+void TLSSimulation::getECVESimValues(const TECVEROM& ecveROM, std::list<TECVE>& ecve){
 	for (auto& itECVE : ecve){
 		TReal calcVal = fSimObs.getECVECalcMeas(ecveROM, itECVE);
 		TReal sigma = itECVE.target.sigmaD;
@@ -255,7 +255,7 @@ void TLSSimulation::getECVESimValues(const TECVEROM& ecveROM, std::vector<TECVE>
 	}
 }
 
-void TLSSimulation::getECSPSimValues(const TECSPROM& ecspROM, std::vector<TECSP>& ecsp){
+void TLSSimulation::getECSPSimValues(const TECSPROM& ecspROM, std::list<TECSP>& ecsp){
 	for (auto& itECSP : ecsp){
 		TReal calcVal = fSimObs.getECSPCalcMeas(ecspROM, itECSP);
 		TReal sigma = itECSP.target.sigmaD;
@@ -263,7 +263,7 @@ void TLSSimulation::getECSPSimValues(const TECSPROM& ecspROM, std::vector<TECSP>
 	}
 }
 
-void	TLSSimulation::getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie){
+void	TLSSimulation::getORIESimValues(const TORIEROM& orieROM, std::list<TORIE>& orie){
 	for (auto& itORIE : orie){
 		TReal calcVal = fSimObs.getORIECalcMeas(orieROM, itORIE);
 		TReal sigma = itORIE.target.sigmaAngl;
@@ -307,7 +307,7 @@ void	TLSSimulation::getUVECSimValues(TCAM& camera){
 	}
 }
 
-void	TLSSimulation::getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TPLR3D>& plr3D){
+void	TLSSimulation::getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TPLR3D>& plr3D){
 	for (auto& itPLR3D : plr3D){
 		TReal calcValTheta = fSimObs.getANGLCalcMeas(station, rom, itPLR3D.targetPos);
 		TReal calcValPhi = fSimObs.getZENDCalcMeas(station, itPLR3D.targetPos, itPLR3D.target.targetHt);
@@ -323,7 +323,7 @@ void	TLSSimulation::getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& r
 	}
 }
 
-void	TLSSimulation::getANGLSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TANGL>& angl){
+void	TLSSimulation::getANGLSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl){
 	for (auto& itANGL : angl){
 		TReal calcVal = fSimObs.getANGLCalcMeas(station, rom, itANGL.targetPos);
 		TReal sigma = itANGL.target.sigmaAngl;
@@ -331,7 +331,7 @@ void	TLSSimulation::getANGLSimValues(const TTSTN& station, const TTSTN::TROM& ro
 	}
 }
 
-void	TLSSimulation::getZENDSimValues(const TTSTN& station, std::vector<TZEND>& zend){
+void	TLSSimulation::getZENDSimValues(const TTSTN& station, std::list<TZEND>& zend){
 	for (auto& itZEND : zend){
 		TReal calcVal = fSimObs.getZENDCalcMeas(station, itZEND.targetPos, itZEND.target.targetHt);
 		TReal sigma = itZEND.target.sigmaZenD;
@@ -339,7 +339,7 @@ void	TLSSimulation::getZENDSimValues(const TTSTN& station, std::vector<TZEND>& z
 	}
 }
 
-void	TLSSimulation::getDISTSimValues(const TTSTN& station, std::vector<TLINE>& dist){
+void	TLSSimulation::getDISTSimValues(const TTSTN& station, std::list<TLINE>& dist){
 	for (auto& itDIST : dist){
 		TReal calcVal = fSimObs.getDISTCalcMeas(station, itDIST.targetPos, itDIST.target.targetHt, itDIST.target.distCorrectionAdjustable->getEstimatedValue());
 		TReal sigma = itDIST.target.sigmaDist;
@@ -347,7 +347,7 @@ void	TLSSimulation::getDISTSimValues(const TTSTN& station, std::vector<TLINE>& d
 	}
 }
 
-void	TLSSimulation::getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECTH>& ecth){
+void	TLSSimulation::getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECTH>& ecth){
 	for (auto& itECTH : ecth){
 		TReal calcVal = fSimObs.getECTHCalcMeas(station, rom, itECTH);
 		TReal sigma = itECTH.target.sigmaD;
@@ -355,7 +355,7 @@ void	TLSSimulation::getECTHSimValues(const TTSTN& station, const TTSTN::TROM& ro
 	}
 }
 
-void	TLSSimulation::getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECDIR>& ecdir){
+void	TLSSimulation::getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECDIR>& ecdir){
 	for (auto& itECSP : ecdir){
 		TReal calcVal = fSimObs.getECDIRCalcMeas(station, rom, itECSP);
 		TReal sigma = itECSP.target.sigmaD;
@@ -364,7 +364,7 @@ void	TLSSimulation::getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& r
 }
 
 
-void	TLSSimulation::getDHORSimValues(const TTSTN& station, std::vector<TLINE>& dhor){
+void	TLSSimulation::getDHORSimValues(const TTSTN& station, std::list<TLINE>& dhor){
 	for (auto& itDHOR : dhor){
 		TReal calcVal = fSimObs.getDHORCalcMeas(station, itDHOR);
 		TReal sigma = itDHOR.target.sigmaDist;

@@ -54,11 +54,11 @@ public:
 		void writeECSPSIMUResults(const  TECSPROM& ecsprom);
 
 		/// Write reliability data for ECHO 
-		void	writeECHOReliabilityData(const  TECHOROM& echorom, const TLGCStatistic& stat, const std::vector<TECHO> measECHO);
+		void	writeECHOReliabilityData(const  TECHOROM& echorom, const TLGCStatistic& stat, const std::list<TECHO> measECHO);
 		/// Write reliability data for ECVE
-		void	writeECVEReliabilityData(const TECVEROM& ecverom, const TLGCStatistic& stat, const std::vector<TECVE> measECVE);
+		void	writeECVEReliabilityData(const TECVEROM& ecverom, const TLGCStatistic& stat, const std::list<TECVE> measECVE);
 		/// Write reliability data for ECSP
-		void	writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::vector<TECSP> measECSP);
+		void	writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCStatistic& stat, const std::list<TECSP> measECSP);
 	
 		/// Write the result synthesis for ECHO 
 		void writeECHOResultsSynthesis(const  TECHOROM& echorom);

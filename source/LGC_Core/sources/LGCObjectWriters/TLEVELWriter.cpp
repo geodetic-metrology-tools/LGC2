@@ -130,7 +130,7 @@ void TLEVELWriter::writeLEVELResults(const TLEVEL& fLevel)
 	}
 }
 
-void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV, const TInstrumentData::TLEVEL& instr)
+void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrumentData::TLEVEL& instr)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

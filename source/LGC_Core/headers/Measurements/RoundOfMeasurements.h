@@ -17,7 +17,7 @@ class TLGCObsSummary;
 struct TECHOROM {
 
 		/// All ECHO measurements, measuring the 'fmeasuredPlane'
-		std::vector<TECHO> measECHO;
+		std::list<TECHO> measECHO;
 
 		//Measured vertical plane
 		LGCAdjustablePlane* fMeasuredPlane;
@@ -42,7 +42,7 @@ struct TECHOROM {
 struct TECSPROM {
 
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
-	std::vector<TECSP> measECSP;
+	std::list<TECSP> measECSP;
 
 	//Measured line
 	//LGCAdjustableLine* fMeasuredLine;
@@ -97,7 +97,7 @@ struct TECSPROM {
 struct TECVEROM {
 
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
-	std::vector<TECVE> measECVE;
+	std::list<TECVE> measECVE;
 
 	//Measured vertical plane
 	LGCAdjustableLine* fMeasuredLine;
@@ -122,7 +122,7 @@ struct TECVEROM {
 struct TORIEROM {
 
 		/// All ORIE measurements
-		std::vector<TORIE> measORIE;
+		std::list<TORIE> measORIE;
 
 		/// The position of the instrument
 		const LGCAdjustablePoint* instrumentPos;

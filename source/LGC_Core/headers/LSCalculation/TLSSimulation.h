@@ -78,21 +78,21 @@ private:
 	/// Run the simulation process
 	bool	processSimCalculation();
 
-	void	getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TPLR3D>& plr3D);
-	void	getANGLSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TANGL>& angl);
-	void	getZENDSimValues(const TTSTN& station, std::vector<TZEND>& zend);
-	void	getDISTSimValues(const TTSTN& station, std::vector<TLINE>& dist);
-	void	getDHORSimValues(const TTSTN& station, std::vector<TLINE>& dhor);
-	void	getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECTH>& ecth);
-	void	getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::vector<TECDIR>& ecdir);
+	void	getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TPLR3D>& plr3D);
+	void	getANGLSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl);
+	void	getZENDSimValues(const TTSTN& station, std::list<TZEND>& zend);
+	void	getDISTSimValues(const TTSTN& station, std::list<TLINE>& dist);
+	void	getDHORSimValues(const TTSTN& station, std::list<TLINE>& dhor);
+	void	getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECTH>& ecth);
+	void	getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECDIR>& ecdir);
 
-	void	getDLEVSimValues(const TLEVEL& levelST, std::vector<TDLEV>& dlev);
-	void	getDVERSimValues(std::vector<TDVER>& dver);
-	void	getDSPTSimValues(const TEDM& edmST, std::vector<TDSPT>& dspt);
-	void    getECHOSimValues(const TECHOROM& echoROM, std::vector<TECHO>& echo);
-	void    getECVESimValues(const TECVEROM& ecveROM, std::vector<TECVE>& ecve);
-	void	getECSPSimValues(const TECSPROM& ecspROM, std::vector<TECSP>& ecsp);
-	void    getORIESimValues(const TORIEROM& orieROM, std::vector<TORIE>& orie);
+	void	getDLEVSimValues(const TLEVEL& levelST, std::list<TDLEV>& dlev);
+	void	getDVERSimValues(std::list<TDVER>& dver);
+	void	getDSPTSimValues(const TEDM& edmST, std::list<TDSPT>& dspt);
+	void    getECHOSimValues(const TECHOROM& echoROM, std::list<TECHO>& echo);
+	void    getECVESimValues(const TECVEROM& ecveROM, std::list<TECVE>& ecve);
+	void	getECSPSimValues(const TECSPROM& ecspROM, std::list<TECSP>& ecsp);
+	void    getORIESimValues(const TORIEROM& orieROM, std::list<TORIE>& orie);
 	/*DHOR made in DLEV measurement, different from the DHOR obs.*/
 	void	getHorDistSimValues(const LGCAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);
 

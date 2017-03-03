@@ -183,7 +183,7 @@ void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeDVERResults(const std::vector<TDVER>& fDVER)
+void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -239,7 +239,7 @@ void TOtherMeasurentWriter::writeDVERResults(const std::vector<TDVER>& fDVER)
 		writeHisto(summary, "DVER");
 }
 
-void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
+void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -298,7 +298,7 @@ void TOtherMeasurentWriter::writeORIEResults(const std::vector<TORIE>& fORIE, co
 		writeHisto(summary, "ORIE");
 }
 
-void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
+void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -349,7 +349,7 @@ void TOtherMeasurentWriter::writeRADIResults(const std::vector<TRADI>& fRADI)
 		writeHisto(summary, "RADI");
 }
 
-void TOtherMeasurentWriter::writeDVERSIMUResults(const std::vector<TDVER>& fDVER)
+void TOtherMeasurentWriter::writeDVERSIMUResults(const std::list<TDVER>& fDVER)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
@@ -393,7 +393,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityHeader()
 }
 
 //------------------ Reliability data---------------------------------------------------------------------------
-void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat)
+void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::list<TDVER>& fDVER, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -429,7 +429,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::vector<TDVER>& f
 	return;
 }
 
-void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos)
+void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::list<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -467,7 +467,7 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::vector<TORIE>& f
 	return;
 }
 
-void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat)
+void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -536,7 +536,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 }
 
 //------------------ Synthesis data---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::vector<TDVER>& fDVER)
+void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::list<TDVER>& fDVER)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -574,7 +574,7 @@ void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::vector<TDVER>& 
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::vector<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
+void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -612,7 +612,7 @@ void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::vector<TORIE>& 
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::vector<TRADI>& fRADI)
+void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::list<TRADI>& fRADI)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

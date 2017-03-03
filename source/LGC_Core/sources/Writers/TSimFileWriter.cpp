@@ -600,7 +600,7 @@ void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
-	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECHO.at(0).target.ID);
+	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECHO.front().target.ID);
 
 	(*stream) << "*ECHO" << sep
 		<< scaleDefInst.ID << endl;
@@ -637,7 +637,7 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
-	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECVE.at(0).target.ID);
+	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECVE.front().target.ID);
 
 	(*stream) << "*ECVE" << sep
 		<< scaleDefInst.ID << sep;
@@ -682,7 +682,7 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
-	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECSP.at(0).target.ID);
+	auto scaleDefInst = data->getInstruments().fSCALE.at(meas->measECSP.front().target.ID);
 
 	(*stream) << "*ECSP" << sep
 		<< meas->p1->getName() << sep 
@@ -1105,13 +1105,13 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		//ECTH
 		if (!rom->measECTH.empty())
 		{
-			TAngle lecture = rom->measECTH.at(0).obsHorAngle;
+			TAngle lecture = rom->measECTH.front().obsHorAngle;
 
-			auto scaleDefInst = data->getInstruments().fSCALE.at(rom->measECTH.at(0).target.ID);
+			auto scaleDefInst = data->getInstruments().fSCALE.at(rom->measECTH.front().target.ID);
 
 			(*stream) << "*ECTH" << sep
-				<< rom->measECTH.at(0).obsHorAngle.getGonsValue() << sep
-				<< rom->measECTH.at(0).target.ID << sep
+				<< rom->measECTH.front().obsHorAngle.getGonsValue() << sep
+				<< rom->measECTH.front().target.ID << sep
 				<< endl;
 
 			for (auto& ecth : rom->measECTH)
@@ -1174,14 +1174,14 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		//ECDIR
 		if (!rom->measECDIR.empty())
 		{
-			auto scaleDefInst = data->getInstruments().fSCALE.at(rom->measECDIR.at(0).target.ID);
-			TAngle lectureHz = rom->measECDIR.at(0).obsHorAngle;
-			TAngle lectureV = rom->measECDIR.at(0).obsVertAngle;
+			auto scaleDefInst = data->getInstruments().fSCALE.at(rom->measECDIR.front().target.ID);
+			TAngle lectureHz = rom->measECDIR.front().obsHorAngle;
+			TAngle lectureV = rom->measECDIR.front().obsVertAngle;
 
 			(*stream) << "*ECDIR" << sep
-				<< rom->measECDIR.at(0).obsHorAngle.getGonsValue() << sep
-				<< rom->measECDIR.at(0).obsVertAngle.getGonsValue() << sep
-				<< rom->measECDIR.at(0).target.ID << sep
+				<< rom->measECDIR.front().obsHorAngle.getGonsValue() << sep
+				<< rom->measECDIR.front().obsVertAngle.getGonsValue() << sep
+				<< rom->measECDIR.front().target.ID << sep
 				<< endl;
 
 			for (auto& ecdir : rom->measECDIR)

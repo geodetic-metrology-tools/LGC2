@@ -111,7 +111,7 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			
 
 			//In every node iterate through the EDM's measurements
-			for(auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
+			for(auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
 				//Iterate through DPST measurements
 				for(auto& itDPST:itEDM->measDSPT){	
 					extractDSPTObs(rm, itDPST);
@@ -329,7 +329,7 @@ void TLSResultsMatricesExtractor::extractORIEROMObs(const TLSResultsMatrices& rm
 	}
 }
 
-void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, std::vector<TDVER>& dver){
+void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, std::list<TDVER>& dver){
 	for(auto itDVER(dver.begin()); itDVER != dver.end(); ++itDVER){
 		MatrixIndex obsUidx = itDVER->getFirstObservationIndex();
 		if ( obsUidx < rm.getResidualsVctr()->size() ) 
@@ -347,7 +347,7 @@ void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices& rm, T
 		throw std::runtime_error("PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
 
-void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, std::vector<TRADI>& radi){
+void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, std::list<TRADI>& radi){
 	for (auto& itRADI:radi){
 		MatrixIndex obsUidx = itRADI.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVctr()->size())

@@ -66,8 +66,8 @@ private:
 
 	/*!@name Write results */
 	//@{
-		void writeUVECResults(const std::vector<TUVEC>& measUVEC);
-		void writeUVDResults(const std::vector<TUVD>& measUVD);
+		void writeUVECResults(const std::list<TUVEC>& measUVEC);
+		void writeUVDResults(const std::list<TUVD>& measUVD);
 	//@}
 
 		bool writeHist;

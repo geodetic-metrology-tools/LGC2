@@ -36,9 +36,9 @@ struct TCAM {
 		    {}
 
 		/// All UVD measurements made by this camera
-		std::vector<TUVD> measUVD;
+		std::list<TUVD> measUVD;
 		/// All UVEC measurments made by this camera
-		std::vector<TUVEC> measUVEC;
+		std::list<TUVEC> measUVEC;
 
 		/// The instrument that is used on this station
 		TInstrumentData::TCAMD     instrument;

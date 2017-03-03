@@ -37,19 +37,19 @@ struct TTSTN {
 			const TInstrumentData::TPOLAR::TTarget* defaultTarget;  ///< Default taget for this round of measurements.
 			
 			/// All PLR3D measurements in this ROM
-			std::vector<TPLR3D> measPLR3D;
+			std::list<TPLR3D> measPLR3D;
 			/// All horizonthal angle measurements in this ROM
-			std::vector<TANGL>  measANGL;
+			std::list<TANGL>  measANGL;
 			/// All zenithal distance measurments in this ROM
-			std::vector<TZEND>  measZEND;
+			std::list<TZEND>  measZEND;
 			/// All spatial distane measurments in this ROM
-			std::vector<TLINE>  measDIST;
+			std::list<TLINE>  measDIST;
 			/// All horizonthal distance measurments in this ROM
-			std::vector<TLINE>  measDHOR;
+			std::list<TLINE>  measDHOR;
 			/// All Ecarte-Theodolite plan measurements in this ROM
-			std::vector<TECTH>  measECTH;
+			std::list<TECTH>  measECTH;
 			/// All Ecarte-Theodolite line measurements in this ROM
-			std::vector<TECDIR>  measECDIR;
+			std::list<TECDIR>  measECDIR;
 
 			/*!
 				\returns Summary of all the PLR3D measurements.
@@ -121,7 +121,7 @@ struct TTSTN {
 		int  line;
 
 		/// All round of measurements for this instrument. In each ROM a point on different position is measured.
-		std::vector<shared_ptr<TROM>> roms;
+		std::list<shared_ptr<TROM>> roms;
 
 		/*!
 			Creates a total station that is centered on a given point with instrument data from the input file

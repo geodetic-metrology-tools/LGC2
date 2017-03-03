@@ -17,7 +17,7 @@ class TLGCObsSummary;
 struct TLEVEL {
 
 		/// All DLEV measurements, measuring the plane (fmeasuredPlane).
-		std::vector<TDLEV> measDLEV;
+		std::list<TDLEV> measDLEV;
 
 		/// Tells if the Level Station has AT LEST one DHOR measurement
 		bool hasDHOR;

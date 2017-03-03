@@ -42,7 +42,7 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::vector<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
 		
@@ -55,10 +55,10 @@ namespace tut
 		
 		
 		//sigma value
-		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measANGL.at(1).target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
-		ensure_equals("1rst tgt heigth should match ", meas.at(0)->roms.back()->measZEND.at(0).target.targetHt, 0.5, 1e-1);
+		ensure_equals("sigma should match ", std::next(meas.front()->roms.back()->measANGL.begin(), 1)->target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
+		ensure_equals("1rst tgt heigth should match ", meas.front()->roms.back()->measZEND.front().target.targetHt, 0.5, 1e-1);
 		//1rst instrument heigth
-		ensure_equals("1rst intrument heigth should match ", meas.at(0)->instrumentHeightAdjustable->getEstimatedValue().getMetresValue(), 0.001, 1e-3 );
+		ensure_equals("1rst intrument heigth should match ", meas.front()->instrumentHeightAdjustable->getEstimatedValue().getMetresValue(), 0.001, 1e-3 );
 	}
 
 	//----------------------------- ANGL_ZENI --------------------------------//
@@ -80,7 +80,7 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::vector<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
 		
@@ -92,14 +92,14 @@ namespace tut
 		ensure_equals("PT z coordinate should match", P2.getZ().getMetresValue(), 99.9213383, 1e-7);
 		
 		//instrument heigth is adk=justable
-		ensure_equals("1rst instrument heigth free ", meas.at(0)->instrumentHeightAdjustable->isFixed(), false);
-		ensure_equals("1rst instrument heigth  ", meas.at(0)->instrumentHeightAdjustable->getEstimatedValue(), 0.2193, 1e-3);
-		ensure_equals("2nd nstrument heigth free ", meas.at(1)->instrumentHeightAdjustable->isFixed(), false);
-		ensure_equals("1rst instrument heigth  ", meas.at(1)->instrumentHeightAdjustable->getEstimatedValue(), 0.0167, 1e-3);
+		ensure_equals("1rst instrument heigth free ", meas.front()->instrumentHeightAdjustable->isFixed(), false);
+		ensure_equals("1rst instrument heigth  ", meas.front()->instrumentHeightAdjustable->getEstimatedValue(), 0.2193, 1e-3);
+		ensure_equals("2nd nstrument heigth free ", (*std::next(meas.begin(), 1))->instrumentHeightAdjustable->isFixed(), false);
+        ensure_equals("1rst instrument heigth  ", (*std::next(meas.begin(), 1))->instrumentHeightAdjustable->getEstimatedValue(), 0.0167, 1e-3);
 		
 		//sigma value
-		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measANGL.at(1).target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
-		ensure_equals("1rst tgt heigth should match ", meas.at(0)->roms.back()->measZEND.at(0).target.targetHt, 0.5, 1e-1);
+        ensure_equals("sigma should match ", std::next(meas.front()->roms.back()->measANGL.begin(), 1)->target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
+		ensure_equals("1rst tgt heigth should match ", meas.front()->roms.back()->measZEND.front().target.targetHt, 0.5, 1e-1);
 
 	}
 
@@ -150,7 +150,7 @@ namespace tut
 		ensure_equals("PT2 sy should match", dataset.getPoints().getObject("PT2").getYEstPrecision(), 0.001*1.4660, 1e-5);
 		ensure_equals("PT2 sz should match", dataset.getPoints().getObject("PT2").getZEstPrecision(), 0.001*0.0706, 1e-5);
 
-		std::vector<TDVER> meas = projTest->getCurrentNode().measurements.fDVER;
+		std::list<TDVER> meas = projTest->getCurrentNode().measurements.fDVER;
 		//constante
 		ensure_equals("constante correction should match", meas.back().getDistanceCorrection().getMetresValue(), 1.0, 1e-5);
 
@@ -189,13 +189,13 @@ namespace tut
 		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 0.0, 1e-7);
 		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 50.0, 1e-7);
 
-		std::vector<TLEVEL> meas = projTest->getCurrentNode().measurements.fLEVEL;
+		std::list<TLEVEL> meas = projTest->getCurrentNode().measurements.fLEVEL;
 		//constante
-		ensure_equals("constante correction should match", meas.back().measDLEV.at(2).target.distCorrectionValue, 1.0, 1e-1);
-		ensure_equals("constante correction should match", meas.back().measDLEV.at(3).target.distCorrectionValue, 0.0, 1e-1);
+		ensure_equals("constante correction should match", std::next(meas.back().measDLEV.begin(), 2)->target.distCorrectionValue, 1.0, 1e-1);
+        ensure_equals("constante correction should match", std::next(meas.back().measDLEV.begin(), 3)->target.distCorrectionValue, 0.0, 1e-1);
 		//sigma
-		ensure_equals("constante correction should match", meas.back().measDLEV.at(2).target.sigmaD.getMMetresValue(), 0.2, 1e-2);
-		ensure_equals("constante correction should match", meas.back().measDLEV.at(3).target.sigmaD.getMMetresValue(), 0.8, 1e-2);
+		ensure_equals("constante correction should match", std::next(meas.back().measDLEV.begin(), 2)->target.sigmaD.getMMetresValue(), 0.2, 1e-2);
+		ensure_equals("constante correction should match", std::next(meas.back().measDLEV.begin(), 3)->target.sigmaD.getMMetresValue(), 0.8, 1e-2);
 
 	}
 
@@ -245,10 +245,10 @@ namespace tut
 		ensure_equals("Pt y coordinate should match", D___________1.getY().getMetresValue(), 4099.9974433, 1e-7);
 		ensure_equals("Pt z coordinate should match", D___________1.getZ().getMetresValue(), 2401.6845825, 1e-7);
 
-		std::vector<TRADI> meas = projTest->getCurrentNode().measurements.fRADI;
+		std::list<TRADI> meas = projTest->getCurrentNode().measurements.fRADI;
 		//sigma
-		ensure_equals("constante correction should match", meas.at(0).getObservedStDev().getMMetresValue(), 0.2, 1e-2);
-		ensure_equals("constante correction should match", meas.at(1).getObservedStDev().getMMetresValue(), 0.1, 1e-2);
+		ensure_equals("constante correction should match", meas.front().getObservedStDev().getMMetresValue(), 0.2, 1e-2);
+		ensure_equals("constante correction should match", std::next(meas.begin())->getObservedStDev().getMMetresValue(), 0.1, 1e-2);
 
 	}
 
@@ -271,7 +271,7 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::vector<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
 
@@ -283,10 +283,10 @@ namespace tut
 		ensure_equals("PT z coordinate should match", P2.getZ(), 99.8908785, 1e-7);
 		
 		//sigma value
-		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measDIST.at(1).target.sigmaDist.getMMetresValue(), 0.5, 1e-1);
-		ensure_equals("sigma should match ", meas.at(1)->roms.back()->measDIST.at(0).target.sigmaDist.getMMetresValue(), 0.1, 1e-1);
-		ensure_equals("ppm should match ", meas.at(1)->roms.back()->measDIST.at(0).target.ppmDist.getMMetresValue(), 0.5, 1e-1);
-		ensure_equals("tgt heigth should match ", meas.at(1)->roms.back()->measDIST.at(1).target.targetHt, 0.002, 1e-1);
+		ensure_equals("sigma should match ", std::next(meas.front()->roms.back()->measDIST.begin(), 1)->target.sigmaDist.getMMetresValue(), 0.5, 1e-1);
+        ensure_equals("sigma should match ", (*std::next(meas.begin(), 1))->roms.back()->measDIST.front().target.sigmaDist.getMMetresValue(), 0.1, 1e-1);
+        ensure_equals("ppm should match ", (*std::next(meas.begin(), 1))->roms.back()->measDIST.front().target.ppmDist.getMMetresValue(), 0.5, 1e-1);
+        ensure_equals("tgt heigth should match ", std::next((*std::next(meas.begin(), 1))->roms.back()->measDIST.begin(), 1)->target.targetHt, 0.002, 1e-1);
 
 	}
 
@@ -309,7 +309,7 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::vector<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		bool succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc, true);
 
@@ -321,11 +321,11 @@ namespace tut
 		ensure_equals("PT z coordinate should match", P2.getZ(), 99.9247094, 1e-7);
 
 		//sigma value
-		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measDHOR.at(2).target.sigmaDist.getMMetresValue(), 0.2, 1e-1);
-		ensure_equals("sigma should match ", meas.at(0)->roms.back()->measDHOR.at(0).target.sigmaDist.getMMetresValue(), 0.5, 1e-1);
-		ensure_equals("ppm should match ", meas.at(0)->roms.back()->measDHOR.at(0).target.ppmDist.getMMetresValue(), 0.5, 1e-1);
-		ensure_equals("ppm should match ", meas.at(0)->roms.back()->measDHOR.at(2).target.ppmDist.getMMetresValue(), 0.2, 1e-1);
-		ensure_equals("tgt heigth should match ", meas.at(1)->roms.back()->measDHOR.at(2).target.distCorrectionValue, 1.0, 1e-1);
+		ensure_equals("sigma should match ", std::next(meas.front()->roms.back()->measDHOR.begin(), 2)->target.sigmaDist.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.front()->roms.back()->measDHOR.front().target.sigmaDist.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("ppm should match ", meas.front()->roms.back()->measDHOR.front().target.ppmDist.getMMetresValue(), 0.5, 1e-1);
+        ensure_equals("ppm should match ", std::next(meas.front()->roms.back()->measDHOR.begin(), 2)->target.ppmDist.getMMetresValue(), 0.2, 1e-1);
+        ensure_equals("tgt heigth should match ", std::next((*std::next(meas.begin(), 1))->roms.back()->measDHOR.begin(), 2)->target.distCorrectionValue, 1.0, 1e-1);
 
 	}
 
@@ -366,10 +366,10 @@ namespace tut
 		ensure_equals("B_1 z coordinate should match", B_1.getZ(), 2449.9999995, 1e-7);
 
 		//sigma value
-		std::vector<TORIEROM> meas = projTest->getCurrentNode().measurements.fORIE;
-		ensure_equals("sigma should match ", meas.at(0).measORIE.at(0).target.sigmaAngl.getSignedCCValue(), 5.0, 1e-1);
-		ensure_equals("sigma should match ", meas.at(3).measORIE.at(0).target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
-		ensure_equals("contant angle should match ", meas.at(0).fConstantAngle, 0.0, 1e-1);
+		std::list<TORIEROM> meas = projTest->getCurrentNode().measurements.fORIE;
+		ensure_equals("sigma should match ", meas.front().measORIE.front().target.sigmaAngl.getSignedCCValue(), 5.0, 1e-1);
+		ensure_equals("sigma should match ", std::next(meas.begin(), 3)->measORIE.front().target.sigmaAngl.getSignedCCValue(), 2.0, 1e-1);
+		ensure_equals("contant angle should match ", meas.front().fConstantAngle, 0.0, 1e-1);
 		ensure_equals("contant angle should match ", meas.back().fConstantAngle.getGonsValue(), 2.0, 1e-1);
 
 	}
@@ -411,9 +411,9 @@ namespace tut
 		ensure_equals("CS3 z coordinate should match", CS3.getZ(), 2452.8508447, 1e-7);
 		
 		//sigma value
-		std::vector<TECTH> meas = projTest->getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH;
-		ensure_equals("sigma should match ", meas.at(16).target.sigmaD.getMMetresValue(), 2.0, 1e-1);
-		ensure_equals("distance correction should match ", meas.at(12).target.sigmaDCorr, 0.1, 1e-1);
+		std::list<TECTH> meas = projTest->getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH;
+        ensure_equals("sigma should match ", std::next(meas.begin(), 16)->target.sigmaD.getMMetresValue(), 2.0, 1e-1);
+		ensure_equals("distance correction should match ", std::next(meas.begin(), 12)->target.sigmaDCorr, 0.1, 1e-1);
 	}
 
 	//----------------------------- ECVE --------------------------------//
@@ -453,10 +453,10 @@ namespace tut
 		ensure_equals("J1 z coordinate should match", J1.getZ(), 2449.9999603, 1e-7);
 
 		//sigma value
-		std::vector<TECVEROM> meas = projTest->getCurrentNode().measurements.fECVE;
-		ensure_equals("sigma should match ", meas.at(0).measECVE.begin()->target.sigmaD.getMMetresValue(), 0.2, 1e-1);
-		ensure_equals("sigma should match ", meas.at(8).measECVE.begin()->target.sigmaD.getMMetresValue(), 0.3, 1e-1);
-		ensure_equals("distance correction should match ", meas.at(8).measECVE.begin()->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+		std::list<TECVEROM> meas = projTest->getCurrentNode().measurements.fECVE;
+		ensure_equals("sigma should match ", meas.front().measECVE.begin()->target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", std::next(meas.begin(), 8)->measECVE.begin()->target.sigmaD.getMMetresValue(), 0.3, 1e-1);
+        ensure_equals("distance correction should match ", std::next(meas.begin(), 8)->measECVE.begin()->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
 	}
 
 	//----------------------------- ECHO --------------------------------//
@@ -496,10 +496,10 @@ namespace tut
 		ensure_equals("CS360 z coordinate should match", CS360.getZ(), 2452.8556750, 5e-7);
 
 		//sigma value
-		std::vector<TECHOROM> meas = projTest->getCurrentNode().measurements.fECHO;
-		ensure_equals("sigma should match ", meas.at(0).measECHO.at(2).target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		std::list<TECHOROM> meas = projTest->getCurrentNode().measurements.fECHO;
+		ensure_equals("sigma should match ", std::next(meas.front().measECHO.begin(), 2)->target.sigmaD.getMMetresValue(), 0.2, 1e-1);
 		ensure_equals("sigma should match ", meas.back().measECHO.back().target.sigmaD.getMMetresValue(), 0.1, 1e-1);
-		ensure_equals("distance correction should match ", meas.at(2).measECHO.at(2).target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+		ensure_equals("distance correction should match ", std::next(std::next(meas.begin(), 2)->measECHO.begin(), 2)->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
 	}
 
 
@@ -540,9 +540,9 @@ namespace tut
 		ensure_equals("Z100 z coordinate should match", Z100.getZ(), 2449.8446312, 5e-7);
 
 		//sigma value
-		std::vector<TECSPROM> meas = projTest->getCurrentNode().measurements.fECSP;
-		ensure_equals("sigma should match ", meas.at(0).measECSP.at(0).target.sigmaD.getMMetresValue(), 0.2, 1e-1);
-		ensure_equals("sigma should match ", meas.at(0).measECSP.back().target.sigmaD.getMMetresValue(), 0.5, 1e-1);
-		ensure_equals("distance correction should match ", meas.at(0).measECSP.at(1).target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
+		std::list<TECSPROM> meas = projTest->getCurrentNode().measurements.fECSP;
+		ensure_equals("sigma should match ", meas.front().measECSP.front().target.sigmaD.getMMetresValue(), 0.2, 1e-1);
+		ensure_equals("sigma should match ", meas.front().measECSP.back().target.sigmaD.getMMetresValue(), 0.5, 1e-1);
+		ensure_equals("distance correction should match ", std::next(meas.front().measECSP.begin())->target.distCorrectionValue.getMetresValue(), 1.0, 1e-1);
 	}
 }

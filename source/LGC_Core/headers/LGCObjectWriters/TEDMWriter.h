@@ -43,7 +43,7 @@ private:
 	void writeEDMData(const TEDM& fEdm);
 
 	/// Write measurements
-	void writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const LGCAdjustablePoint* instrPos);
+	void writeDSPTResultsData(const std::list<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const LGCAdjustablePoint* instrPos);
 	void writeDSPTResultsHeader(const int);
 
 	bool isAllfixed;

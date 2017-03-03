@@ -78,13 +78,13 @@ private:
 		/// Add the design matrices contributions for the PLR3D observation 
 		void addPLR3DContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the spatial dist. observations 
-		void  addSpaDistContributions(const std::vector<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addSpaDistContributions(const std::list<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the hor. angle observations 
 		void  addHorAngContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the zenithal angle observations 
-		void  addZenDistContributions(const std::vector<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addZenDistContributions(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the hor. dist. observations 
-		void  addHorDistContributions(const std::vector<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addHorDistContributions(const std::list<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecth observations 
 		void  addECTHContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		/// Add the design matrices contributions for the ecdir observations 
@@ -99,10 +99,10 @@ private:
 		void  addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the DSPT measurement (spatial measurement done be electronic distance meter) 
-		void  addDSPTContribution(const std::vector<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices);
+		void  addDSPTContribution(const std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the DVER measurement. 
-		void  addDVERContribution(const std::vector<TDVER>& dverMeas, TLSInputMatrices*  matrices);
+		void  addDVERContribution(const std::list<TDVER>& dverMeas, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ECHO measurement. 
 		void addECHOContributions(const TECHOROM& echoRom, TLSInputMatrices*  matrices);
@@ -120,7 +120,7 @@ private:
 		void addPDORContributions(const TPdorObs& pdorObs, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the RADI measurement. 
-		void addRADIContributions(const std::vector<TRADI>& radiMeas, TLSInputMatrices*  matrices);
+		void addRADIContributions(const std::list<TRADI>& radiMeas, TLSInputMatrices*  matrices);
 	//@}
 
 

@@ -16,37 +16,37 @@
 */
 struct TMeasurements {
 	/// All total station measurements in the order in which they appeared in the input file
-	std::vector<shared_ptr<TTSTN>>  fTSTN;
+	std::list<shared_ptr<TTSTN>>  fTSTN;
 
 	/// All electronic distance measurements in the order in which they appeared in the input file
-	std::vector<TEDM>   fEDM;
+	std::list<TEDM>   fEDM;
 
 	/// All leveling measurements in the order in which they appeared in the input file
-	std::vector<TLEVEL> fLEVEL;
+	std::list<TLEVEL> fLEVEL;
 
 	/// All measurements made by cameras in the order in which they appeared in the input file
-	std::vector<TCAM> fCAM;
+	std::list<TCAM> fCAM;
 
 	/// All DVER measurements in the order in which they appeared in the input file
-	std::vector<TDVER> fDVER;
+	std::list<TDVER> fDVER;
 
 	/// All ORIE (and PDOR if used) measurements in which they appeared in the input file
-	std::vector<TORIEROM> fORIE;
+	std::list<TORIEROM> fORIE;
 
 	/// All ECHO measurements in which they appeared in the input file
-	std::vector<TECHOROM> fECHO;
+	std::list<TECHOROM> fECHO;
 
 	/// All ECVE measurements in which they appeared in the input file
-	std::vector<TECVEROM> fECVE;
+	std::list<TECVEROM> fECVE;
 
 	/// All ECSP measurements in which they appeared in the input file
-	std::vector<TECSPROM> fECSP;
+	std::list<TECSPROM> fECSP;
 
 	///pdor measurement in which they appeared in the input file
 	TPdorObs fPDOR;
 
 	/// All RADI measurements in which they appeared in the input file
-	std::vector<TRADI> fRADI;
+	std::list<TRADI> fRADI;
 
 };
 

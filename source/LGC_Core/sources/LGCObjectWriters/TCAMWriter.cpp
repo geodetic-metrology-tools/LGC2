@@ -197,7 +197,7 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 }
 
 //------------------ Result data---------------------------------------------------------------------------
-void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
+void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 {   
 
 	TAStreamFormatter*	stream = getStream();
@@ -270,7 +270,7 @@ void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 		(*stream)<<endl;
 }
 
-void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
+void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 {   
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();

@@ -80,7 +80,7 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 				}
 
 				//In every node iterate through the EDM's measurements
-				for (auto itEDM(itTree.node->data->measurements.fEDM.begin()); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
+				for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
 					//Iterate through DPST measurements
 					for (auto& itDPST : itEDM->measDSPT)
 						if (!itDPST.target.distCorrectionAdjustable->isFixed())

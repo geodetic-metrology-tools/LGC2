@@ -367,7 +367,7 @@ void TDataAnalyzer::predeterminePLR3DV0()
 					if (itplr->measPLR3D.size() != 0)
 					{
 
-						auto firstMeas = itplr->measPLR3D.at(0);
+						auto firstMeas = itplr->measPLR3D.front();
 						//calul v0 app
 						TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 						TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);

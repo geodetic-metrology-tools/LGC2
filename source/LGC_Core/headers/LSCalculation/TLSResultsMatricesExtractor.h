@@ -137,7 +137,7 @@ private:
 		void extractDSPTObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TEDM::TTarget>& distanceMeas);
 
 		/// Sets the DVER measurement residual.
-		void extractDVERObs(const TLSResultsMatrices& rm, std::vector<TDVER>& dver);
+		void extractDVERObs(const TLSResultsMatrices& rm, std::list<TDVER>& dver);
 
 		/// Sets the distance measurement residual for a SCALE (ECTH, ECVE,ECSP, ECDIR).
 		void extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TSCALE>& scaleMeas);
@@ -146,7 +146,7 @@ private:
 		void extractPDORObs(const TLSResultsMatrices& rm, TPdorObs& pdorObs);
 
 		/// Sets the RADI measurement residual.
-		void extractRADIObs(const TLSResultsMatrices& rm, std::vector<TRADI>& radi);
+		void extractRADIObs(const TLSResultsMatrices& rm, std::list<TRADI>& radi);
 	//@}
 
 

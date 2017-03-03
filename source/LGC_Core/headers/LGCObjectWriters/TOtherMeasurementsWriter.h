@@ -47,30 +47,30 @@ public:
 		/// Write PDOR results data
 		void writePDORResults(const TPdorObs& fPDOR);
 		/// Write DVER results data
-		void writeDVERResults(const std::vector<TDVER>& fDVER);
+		void writeDVERResults(const std::list<TDVER>& fDVER);
 		/// Write ORIE results data
-		void writeORIEResults(const std::vector<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
+		void writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
 		/// Write RADI results data
-		void writeRADIResults(const std::vector<TRADI>& fRADI);
+		void writeRADIResults(const std::list<TRADI>& fRADI);
 
 		/// Write DVER simulations
-		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);
+		void writeDVERSIMUResults(const std::list<TDVER>& fDVER);
 		/// Write ORIE simulations
 		void writeORIESIMUResults(const TORIEROM& fOrieRom);
 
 		/// Write DVER reliability data
-		void	writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
+		void	writeDVERReliabilityData(const std::list<TDVER>& fDVER, const TLGCStatistic& stat);
 		/// Write ORIE reliability data
-		void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
+		void	writeORIEReliabilityData(const std::list<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
 		/// Write RADI reliability data
-		void	writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat);
+		void	writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat);
 
 		/// Write DVER synthesis data
-		void writeDVERResultsSynthesis(const std::vector<TDVER>& fDVER);
+		void writeDVERResultsSynthesis(const std::list<TDVER>& fDVER);
 		/// Write ORIE synthesis data
-		void writeORIEResultsSynthesis(const std::vector<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
+		void writeORIEResultsSynthesis(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
 		/// Write RADI synthesis data
-		void writeRADIResultsSynthesis(const std::vector<TRADI>& fRADI);
+		void writeRADIResultsSynthesis(const std::list<TRADI>& fRADI);
 	//@}
 
 		/// flag to write the histogram
