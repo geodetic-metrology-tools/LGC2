@@ -254,12 +254,14 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
-		project.getConfig().title += line;
+		project.getConfig().title += line + '\n';
 		safeGetline(lgcStream, line/*, '*'*/);
 
 		nline += (int)count(line.cbegin(), line.cend(), '\n');
 		nline++;
 	}
+    // Remove the last added newline:
+    project.getConfig().title.pop_back();
  
 	// read the rest of the file
 	auto lasthandler(finterpreters.back().get());
@@ -395,7 +397,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
-		project.getConfig().title += line;
+		project.getConfig().title += line + '\n';
 		safeGetline(lgcStream, line/*, '*'*/);
 		
 		nline += (int)count(line.cbegin(), line.cend(), '\n');
@@ -403,6 +405,8 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 		if (lgcStream.peek() == EOF) break; // End of file
 	}
+    // Remove the last added newline:
+    project.getConfig().title.pop_back();
 
 	// read the rest of the file
 	auto lasthandler(finterpreters_lgc1.back().get());
