@@ -185,32 +185,32 @@ int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
 }
 
 
-TFreeVector LGCAdjustablePoint::transformSigmaInRoot(std::list<LGCAdjustablePoint>::const_iterator pv, const TLGCData* fData) const
+TFreeVector LGCAdjustablePoint::transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData) const
 {
 	// vector to return the modified sigma in ROOT
-	TFreeVector sigmaRoot(pv->getEstimatedValue().getCoordSys());
+	TFreeVector sigmaRoot(pv.getEstimatedValue().getCoordSys());
 	TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
 	// vector to transform the point in the expected sigma to calcuated the partial derivative at each step
-	TPositionVector ptInSF = pv->getEstimatedValue();
+	TPositionVector ptInSF = pv.getEstimatedValue();
 
 	//actual frame iterator
-	TDataTreeIterator frameIt = pv->getFrameTreePosition();
+	TDataTreeIterator frameIt = pv.getFrameTreePosition();
 	// actual frame
-	auto frame = pv->getFrameTreePosition().node->data.get()->frame;
+	auto frame = pv.getFrameTreePosition().node->data.get()->frame;
 
 	
 	//transformed covariance matrix
 	TSparseMatrix covRoot(3, 3);
 	//at the fist iteration , point covariance are:
-	covRoot.insert(0, 0) = pow2q(pv->getXEstPrecision());
-	covRoot.insert(1, 1) = pow2q(pv->getYEstPrecision());
-	covRoot.insert(2, 2) = pow2q(pv->getZEstPrecision());
-	covRoot.insert(0, 1) = pv->getXYCovar();
-	covRoot.insert(1, 0) = pv->getXYCovar();
-	covRoot.insert(0, 2) = pv->getXZCovar();
-	covRoot.insert(2, 0) = pv->getXZCovar();
-	covRoot.insert(1, 2) = pv->getYZCovar();
-	covRoot.insert(2, 1) = pv->getYZCovar();
+	covRoot.insert(0, 0) = pow2q(pv.getXEstPrecision());
+	covRoot.insert(1, 1) = pow2q(pv.getYEstPrecision());
+	covRoot.insert(2, 2) = pow2q(pv.getZEstPrecision());
+	covRoot.insert(0, 1) = pv.getXYCovar();
+	covRoot.insert(1, 0) = pv.getXYCovar();
+	covRoot.insert(0, 2) = pv.getXZCovar();
+	covRoot.insert(2, 0) = pv.getXZCovar();
+	covRoot.insert(1, 2) = pv.getYZCovar();
+	covRoot.insert(2, 1) = pv.getYZCovar();
 
 
 	
@@ -218,7 +218,7 @@ TFreeVector LGCAdjustablePoint::transformSigmaInRoot(std::list<LGCAdjustablePoin
 	while (frame.getName() != "ROOT")
 	{
 		// transform point in the actual subframe
-		const TLOR2LOR& lorTrafo = fPointTransfo.getLORTransformation(pv->getFrameTreePosition(), frameIt); //Transformation from "TARGET POSITION" to "node n-1"
+		const TLOR2LOR& lorTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), frameIt); //Transformation from "TARGET POSITION" to "node n-1"
 		lorTrafo.transform(ptInSF);
 
 

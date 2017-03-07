@@ -324,14 +324,14 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	auto writeXYZorH = [&](TAdjustablePoint const& fPoint) {
 		if ((data->getConfig().referential == 106 || data->getConfig().referential == 107 || data->getConfig().referential == 104) && frameIt->get()->isROOTNode())
 			(*stream) << fPoint.getName() << sep
-			<< fPoint.getProvisionalValue().getX().getMetresValue() << sep
-			<< fPoint.getProvisionalValue().getY().getMetresValue() << sep
-			<< fPoint.getProvisionalValue().getH().getMetresValue() << sep;
+			<< fPoint.getProvisionalValue().getX() << sep
+			<< fPoint.getProvisionalValue().getY() << sep
+			<< fPoint.getProvisionalValue().getH() << sep;
 		else
 			(*stream) << fPoint.getName() << sep
-			<< fPoint.getProvisionalValue().getX().getMetresValue() << sep
-			<< fPoint.getProvisionalValue().getY().getMetresValue() << sep
-			<< fPoint.getProvisionalValue().getZ().getMetresValue() << sep;
+			<< fPoint.getProvisionalValue().getX() << sep
+			<< fPoint.getProvisionalValue().getY() << sep
+			<< fPoint.getProvisionalValue().getZ() << sep;
 	};
 
 	//write PDOR if we are in ROOT & PDOR is used

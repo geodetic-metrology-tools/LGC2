@@ -1651,7 +1651,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		if(root != pt->getFrameTreePosition()){
 			TLOR2LOR transfo = TLOR2LOR(pt->getFrameTreePosition(), fProjectData->getTree().begin(), "transfo");
 			//transform sigma in root
-			sigmaRoot = pt->transformSigmaInRoot(pt, fProjectData);
+			sigmaRoot = pt->transformSigmaInRoot(*pt, fProjectData);
 			//transform coordinates in root
 			transfo.transform(provisionalValue);
 			transfo.transform(estimatedValue);
