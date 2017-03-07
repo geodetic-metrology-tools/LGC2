@@ -3,85 +3,35 @@
 #include "TAStreamFormatter.h"
 #include "TLGCObsSummary.h"
 
-TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
+TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false)
 {}
 
 TEDMWriter::~TEDMWriter(){}
 
-//Result
-void TEDMWriter::writeEDMResults(const TEDM& fEdm)
-{
-	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
 
-	writeEDMHeader(fEdm);
-	writeEDMData(fEdm);
-
-   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
-	(*stream)<<endl;
-
-	if(fEdm.measDSPT.size() > 0){	
-		//Write the measurements
-		writeDSPTResultsData( fEdm.measDSPT, fEdm.instrument, fEdm.instrumentPos);
-		writeDistanceResultsSummary(fEdm.getDSPTObsSummary(),TABs);
-	}
-
-}
-
-void TEDMWriter::writeEDMSIMUResults(const TEDM& fEdm)
-{
-	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
-
-	writeEDMHeader(fEdm);
-	writeEDMData(fEdm);
-
-   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
-
-	if(fEdm.measDSPT.size() > 0){	
-		//Write the measurements
-		writeDistanceResultsSummary(fEdm.getDSPTObsSummary(),TABs);
-		if (writeHist)
-			writeHisto(fEdm.getDSPTObsSummary(), "DSTP");
-	}
-
-}
+//------------------ Result header---------------------------------------------------------------------------
 
 void TEDMWriter::writeEDMHeader(const TEDM& fEdm)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
+	int					lengthPrecision = getLengthPrecision();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	////////////////////////////////////////////////////////////
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"EDM INSTRUMENT: " + fEdm.instrument.ID);	
-	(*stream)<<endl;
+	(*stream) << endl << TABs;
+	(*stream).writeStringLeft(nameWidth, "EDM INSTRUMENT: " + fEdm.instrument.ID);
+	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"INST POS"); //Instrument position
-	(*stream).writeString(obsWidth,	"HINSTR (M)"); //instrument heigth
-	(*stream)<<endl;
-	///////////////////////////////////////////////////////////////////////////////////
-}
-
-void TEDMWriter::writeEDMData(const TEDM& fEdm)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					lengthPrecision =	getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
-
-	(*stream)<<TABs;
-	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INST POS"); //Instrument position
 	(*stream).writeStringLeft(nameWidth, fEdm.instrumentPos->getName());
-
-	//write the instrument height
-	(*stream).writeDouble(obsWidth, lengthPrecision, fEdm.instrument.instrHeight);		
-	(*stream)<<endl<<endl;
+	(*stream).writeString(obsWidth, "HINSTR (M)"); //instrument heigth
+	(*stream).writeDouble(obsWidth, lengthPrecision, fEdm.instrument.instrHeight);
+	(*stream) << endl << endl;
+	///////////////////////////////////////////////////////////////////////////////////
 }
 
 void	TEDMWriter::writeDSPTResultsHeader(const int)
@@ -94,35 +44,50 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 
 	////////////////////////////////////////////////////////////
 	//first line
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,	"POINT "); //second point's Name
-	(*stream).writeString(obsWidth,	"OBSERVE"); //mesured distance
-	(*stream).writeString(obsResWidth,	"SIGMA"); //sigma
-	(*stream).writeString(obsWidth,	"CALCULE"); //estimated distance
-	(*stream).writeString(obsResWidth,	"RESIDU"); //offset (mm)
-	(*stream).writeString(obsResWidth,	"SENSI"); //sensitivity
-	(*stream).writeString(obsResWidth,	"RES/SIG"); //offset/sigma 
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "POINT "); //second point's Name
+	(*stream).writeString(obsWidth, "OBSERVE"); //mesured distance
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma
+	(*stream).writeString(obsWidth, "CALCULE"); //estimated distance
+	(*stream).writeString(obsResWidth, "RESIDU"); //offset (mm)
+	(*stream).writeString(obsResWidth, "SENSI"); //sensitivity
+	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma 
 	(*stream).writeString(obsWidth, "CONST"); //dist corr
 	(*stream).writeString(obsResWidth, "SCONST"); //sigma of provisional dist corr
-	(*stream).writeString(obsWidth,	"H_PRISME"); //prism's height 	 
-	(*stream)<<endl;	
+	(*stream).writeString(obsWidth, "H_PRISME"); //prism's height 	 
+	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
-	(*stream)<<TABs;
-	(*stream).writeString(nameWidth,	""); //second point's Name
-	(*stream).writeString(obsWidth,	"(M)"); //mesured distance
-	(*stream).writeString(obsResWidth,	"(MM)"); //sigma
-	(*stream).writeString(obsWidth,	"(M)"); //estimated distance
-	(*stream).writeString(obsResWidth,	"(MM)"); //residu (mm)
-	(*stream).writeString(obsResWidth,	"(MM/CM)"); //sensitivity
-	(*stream).writeString(obsResWidth,	""); //res/sigma
+	(*stream) << TABs;
+	(*stream).writeString(nameWidth, ""); //second point's Name
+	(*stream).writeString(obsWidth, "(M)"); //mesured distance
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma
+	(*stream).writeString(obsWidth, "(M)"); //estimated distance
+	(*stream).writeString(obsResWidth, "(MM)"); //residu (mm)
+	(*stream).writeString(obsResWidth, "(MM/CM)"); //sensitivity
+	(*stream).writeString(obsResWidth, ""); //res/sigma
 	(*stream).writeString(obsWidth, "(M)"); //provisional dist corr
 	(*stream).writeString(obsResWidth, "(MM)"); //sigma of provisional dist corr
-	(*stream).writeString(obsWidth,	"(M)"); //prism's height
-	(*stream)<<endl;
-	
+	(*stream).writeString(obsWidth, "(M)"); //prism's height
+	(*stream) << endl;
+
 	return;
+}
+
+//------------------ Result data---------------------------------------------------------------------------
+void TEDMWriter::writeEDMResults(const TEDM& fEdm)
+{
+	TAStreamFormatter*	stream = getStream();
+	std::string        TABs = stream->getCurrSpaceExtended(3);
+
+	writeEDMHeader(fEdm);
+
+   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
+
+	if(fEdm.measDSPT.size() > 0)
+		//Write the measurements
+		writeDSPTResultsData( fEdm.measDSPT, fEdm.instrument, fEdm.instrumentPos);
 }
 
 void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const LGCAdjustablePoint* instrPos)
@@ -197,8 +162,29 @@ void TEDMWriter::writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TI
 	(*stream)<<endl;
 }
 
+//------------------ Simu data---------------------------------------------------------------------------
+void TEDMWriter::writeEDMSIMUResults(const TEDM& fEdm)
+{
+	TAStreamFormatter*	stream = getStream();
+	std::string        TABs = stream->getCurrSpaceExtended(3);
 
-//Reliability
+	writeEDMHeader(fEdm);
+
+	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
+
+	if (fEdm.measDSPT.size() > 0)
+		//Write the measurements
+		writeDistanceResultsSummary(fEdm.getDSPTObsSummary(), TABs);
+
+}
+
+//------------------ Reliability header---------------------------------------------------------------------------
+void	TEDMWriter::writeReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("POINT 1", "POINT 2", "", "OBSERVATION", "M", "MM");
+}
+
+//------------------ Reliability data---------------------------------------------------------------------------
 void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
@@ -236,7 +222,3 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 
 }
 
-void	TEDMWriter::writeReliabilityHeader()
-{
-	this->TObservationWriter::writeReliabilityHeader("POINT 1","POINT 2", "", "OBSERVATION", "M", "MM");
-}

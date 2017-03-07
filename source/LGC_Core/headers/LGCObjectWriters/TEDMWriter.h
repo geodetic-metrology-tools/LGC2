@@ -40,14 +40,12 @@ public:
 private:
 	/// Write information about the instrument
 	void writeEDMHeader(const TEDM& fEdm);
-	void writeEDMData(const TEDM& fEdm);
 
 	/// Write measurements
 	void writeDSPTResultsData(const std::vector<TDSPT> measDSPT,const TInstrumentData::TEDM& instr , const LGCAdjustablePoint* instrPos);
 	void writeDSPTResultsHeader(const int);
 
 	bool isAllfixed;
-	bool writeHist;
 };
 
 #endif //SU_TEDM_WRITER

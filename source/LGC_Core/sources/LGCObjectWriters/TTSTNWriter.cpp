@@ -6,7 +6,7 @@
 #include "TLGCObsSummary.h"
 #include "LGCAdjustablePoint.h"
 
-TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
+TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false)
 {}
 
 TTSTNWriter::~TTSTNWriter(){}
@@ -19,169 +19,35 @@ void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
 
 	//Write definition of TSTN
 	writeTSTNHeader(tstn);
-	writeTSTNData(tstn);
 
 	for(auto ItRoms : tstn->roms)
 	{
 		const TAngle& V0 = ItRoms->v0->getEstimatedValue();
 
 		//Write definition of ROM
-		writeV0Header();
-		writeV0Data(ItRoms);
+		writeV0Header(ItRoms);
 
-		if(ItRoms->measANGL.size() > 0){
+		if(ItRoms->measANGL.size() > 0)
 			writeANGLResults(ItRoms->measANGL, tstn->instrumentPos, V0);
-			writeAngleResultsSummary(ItRoms->getANGLObsSummary(), TABs); 
-			if (writeHist)
-				writeHisto(ItRoms->getANGLObsSummary(), " ANGL");
-		}
-		if(ItRoms->measZEND.size() > 0){
+		
+		if(ItRoms->measZEND.size() > 0)
 			writeZENDResults(ItRoms->measZEND, tstn->instrumentPos);
-			writeAngleResultsSummary(ItRoms->getZENDObsSummary(),TABs);
-			if (writeHist)
-				writeHisto(ItRoms->getZENDObsSummary(), " ZEND");
-		}
-		if(ItRoms->measDIST.size() > 0){
+	
+		if(ItRoms->measDIST.size() > 0)
 			writeDISTResults(ItRoms->measDIST, tstn->instrument, tstn->instrumentPos);
-			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(),TABs);
-			if (writeHist)
-				writeHisto(ItRoms->getDISTObsSummary(), " DIST");
-		}
-		if(ItRoms->measDHOR.size() > 0){
+		
+		if(ItRoms->measDHOR.size() > 0)
 			writeDHORResults(ItRoms->measDHOR);
-			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(),TABs);
-			if (writeHist)
-				writeHisto(ItRoms->getDHORObsSummary(), " DHOR");
-		}
-		if(ItRoms->measECTH.size() > 0){
+
+		if(ItRoms->measECTH.size() > 0)
 			writeECTHResults(ItRoms->measECTH, tstn->instrumentPos);
-			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(),TABs);
-			if (writeHist)
-				writeHisto(ItRoms->getECTHObsSummary(), " ECTH");
-		}
-		if (ItRoms->measECDIR.size() > 0){
+	
+		if (ItRoms->measECDIR.size() > 0)
 			writeECDIRResults(ItRoms->measECDIR, tstn->instrumentPos);
-			writeDistanceResultsSummary(ItRoms->getECDIRObsSummary(), TABs);
-			if (writeHist)
-				writeHisto(ItRoms->getECDIRObsSummary(), " ECDIR");
-		}
-
-		if(ItRoms->measPLR3D.size() > 0){
+		
+		if(ItRoms->measPLR3D.size() > 0)
 			writePLRResults(ItRoms->measPLR3D, tstn->instrument, tstn->instrumentPos, V0, tstn->rotX->getEstimatedValue(), tstn->rotY->getEstimatedValue());
-			
-			// PLR3D summurary (3 measurements on the same line)
-			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();		
-			int obsResWidth = getObsResWidth();
-			int angleResidualPrecision = max(getAngleResidualPrecision() - 3, 0); 
-			int	lengthResidualPrecision = max(getLengthResidualPrecision() - 2, 0);
-			int	nameWidth = 3*getNameWidth();
-
-			//Write statistic
-			(*stream) << TABs;
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth, "ANGL   ");
-			(*stream).writeStringLeft(obsResWidth+3, "");
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth, "ZEND   ");
-			(*stream).writeStringLeft(obsResWidth+3, "");
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth, "DIST   ");
-			(*stream).writeStringLeft(obsResWidth+3, "");
-			(*stream) << " | ";
-			(*stream) << endl;
-
-			// mean residual
-			(*stream) << TABs;
-			(*stream).writeStringLeft(nameWidth, "RESIDU MOYEN =  ");
-			(*stream).writeStringLeft(obsResWidth + 3, "");
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.anglObsSum.getMean());
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth + 3, "");
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.zendObsSum.getMean());
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth + 3, "");
-			(*stream).writeDouble(obsResWidth, lengthResidualPrecision, summary.distObsSum.getMean());
-			(*stream) << " | ";
-			(*stream) << endl;
-
-			// mean residual statistical test limits
-			(*stream) << TABs;
-			(*stream).writeStringLeft(nameWidth, "LIMITES DE CONFIANCE A 95.0 =");
-			(*stream) << "(";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.anglObsSum.getMeanLoLimit());
-			(*stream) << ",";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.anglObsSum.getMeanHiLimit());
-			(*stream) << ")";
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream) << "(";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.zendObsSum.getMeanLoLimit());
-			(*stream) << ",";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.zendObsSum.getMeanHiLimit());
-			(*stream) << ")";
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream) << "(";
-			(*stream).writeDouble(obsResWidth, lengthResidualPrecision, summary.distObsSum.getMeanLoLimit());
-			(*stream) << ",";
-			(*stream).writeDouble(obsResWidth, lengthResidualPrecision, summary.distObsSum.getMeanHiLimit());
-			(*stream) << ")";
-			(*stream) << " | ";
-			(*stream) << endl;
-
-			(*stream) << TABs;
-			// variance of residuals
-			(*stream).writeStringLeft(nameWidth, "ECART-TYPE   =");
-			(*stream).writeStringLeft(obsResWidth + 3, "");
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.anglObsSum.getVariance());
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth + 3, "");
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.zendObsSum.getVariance());
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream).writeStringLeft(obsResWidth + 3, "");
-			(*stream).writeDouble(obsResWidth, lengthResidualPrecision, summary.distObsSum.getVariance());
-			(*stream) << " | ";
-			(*stream) << endl;
-
-			//variance of residuals statistical test limits
-			(*stream) << TABs;
-			(*stream).writeStringLeft(nameWidth, "LIMITES DE CONFIANCE A 95.0 =");
-			(*stream) << "(";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.anglObsSum.getVarLoLimit());
-			(*stream) << ",";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.anglObsSum.getVarHiLimit());
-			(*stream)  << ")";
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream) << "(";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.zendObsSum.getVarLoLimit());
-			(*stream) << ",";
-			(*stream).writeDouble(obsResWidth, angleResidualPrecision, summary.zendObsSum.getVarHiLimit());
-			(*stream) << ")";
-			(*stream) << " | ";
-			(*stream).writeStringLeft(nameWidth, "");
-			(*stream) << "(";
-			(*stream).writeDouble(obsResWidth, lengthResidualPrecision, summary.distObsSum.getVarLoLimit());
-			(*stream) << ",";
-			(*stream).writeDouble(obsResWidth, lengthResidualPrecision, summary.distObsSum.getVarHiLimit());
-			(*stream) << ")";
-			(*stream) << " | ";
-			(*stream) << endl;
-			(*stream) << endl;
-			(*stream) << endl;
-
-			if (writeHist){
-				writeHisto(summary.anglObsSum, " ANGL");
-				writeHisto(summary.zendObsSum, " ZEND");
-				writeHisto(summary.distObsSum, " DIST");
-			}
-		}
+		
 	}
 }
 
@@ -198,7 +64,6 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		////////////////////////////////////////////////////////////
 		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D), nOObs);
-		(*stream)<<endl;
 		//first line
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "");
@@ -379,7 +244,6 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kANGL), nOObs);
-	(*stream)<<endl;
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -424,7 +288,6 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kZEND), nOObs);
-	(*stream)<<endl;
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -470,7 +333,6 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDIST), nOObs);
-	(*stream)<<endl;
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -523,7 +385,6 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDHOR), nOObs);
-	(*stream)<<endl;
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -567,9 +428,6 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 
 	//summuray
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECTH), nOObs);
-	(*stream)<<endl;
-
-	
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
@@ -611,8 +469,6 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 
 	//summuray
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECDIR), nOObs);
-	(*stream) << endl;
-
 
 	////////////////////////////////////////////////////////////
 	//first line
@@ -658,129 +514,76 @@ void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					anglePrecision = getAnglePrecision();
+	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					lengthPrecision = getLengthPrecision();
+	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	////////////////////////////////////////////////////////////
 	//first line
-	(*stream)<<TABs;
+	(*stream)<<endl<<TABs;
 	(*stream).writeStringLeft(nameWidth,"TOTAL STATION INSTRUMENT: " + tstn->instrument.ID);
 	(*stream)<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth,"POSITION"); //Point on which is the TSTN positioned
-	(*stream).writeString(obsWidth,	"H_INSTR"); //HEIGHT OF THE INSTRUMENT initial
-	if (tstn->instrumentHeightAdjustable){
-		(*stream).writeString(obsResWidth, "SIGMA H_INSTR"); //HEIGHT OF THE INSTRUMENT initial
+	(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
+
+	//write INSTRUMENT HEIGHT
+	if (!tstn->instrumentHeightAdjustable){
+		(*stream).writeStringLeft(obsWidth, "HI (M)");
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrument.instrHeight);
 	}
+	else{
+		(*stream).writeStringLeft(obsWidth, "HI (M)");
+		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrumentHeightAdjustable->getEstimatedValue());
+		(*stream).writeStringLeft(obsResWidth, "SHI (MM)");
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, tstn->instrumentHeightAdjustable->getEstimatedPrecision().getMMetresValue());
+	}
+
 	(*stream).writeString(obsWidth,	"ROT3D"); // indiacates if station can rotate freely
 
 	if(tstn->rot3D){
-		(*stream).writeString(obsWidth,	"rotX"); // rotation around X axis
-		(*stream).writeString(obsWidth,	"rotY"); //rotation around Y axis
-		(*stream).writeString(obsResWidth,	"SIGMA rX"); //rotation around Y axis
-		(*stream).writeString(obsResWidth,	"SIGMA rY"); //rotation around Y axis
+		(*stream).writeStringLeft(obsWidth, "TRUE");
+		(*stream).writeStringLeft(obsWidth, "rotX"); // rotation around X axis
+		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotX->getEstimatedValue().getGonsValue());
+		(*stream).writeStringLeft(obsWidth, "rotY"); //rotation around Y axis
+		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotY->getEstimatedValue().getGonsValue());
+		(*stream).writeStringLeft(obsResWidth, "SrX"); //rotation around Y axis
+		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotX->getEstimatedPrecision().getSignedCCValue());
+		(*stream).writeStringLeft(obsResWidth, "SrY"); //rotation around Y axis
+		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotY->getEstimatedPrecision().getSignedCCValue());
 	}
-	(*stream)<<endl;
-	///////////////////////////////////////////////////////////////////////////////////
-	//third line
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,""); //Point on which is the TSTN positioned
-	(*stream).writeString(obsWidth,	"(M)"); //INITIAL HEIGHT OF THE INSTRUMEN 
-	(*stream).writeString(obsWidth,	""); //BOOL VALUE TELLING IF TSTN CAN ROTATE FREELY
-	
-	if(tstn->rot3D){
-		(*stream).writeString(obsWidth,	"(GON)"); // rotation around X axis
-		(*stream).writeString(obsWidth,	"(GON)"); //rotation around Y axis
-		(*stream).writeString(obsResWidth,	"(CC)"); // rotation around X axis
-		(*stream).writeString(obsResWidth,	"(CC)"); // rotation around Y axis
-	}
+	else
+		(*stream).writeStringLeft(obsWidth, "FALSE");
+
 	(*stream)<<endl;
 }
 
-void TTSTNWriter::writeV0Header(){
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	std::string         TABs = stream->getCurrSpaceExtended(2);
-
-	//////////////////////////////////////
-	//first line
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"ROM");
-	(*stream).writeString(obsWidth,	"ACST"); // Constant orientation
-	(*stream).writeString(obsWidth, "V0"); // V0 calculated angle
-	(*stream).writeString(obsWidth,	"SV0"); // V0 calculated angle
-	(*stream)<<endl;
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"");
-	(*stream).writeString(obsWidth,	"GON"); // Constant orientation
-	(*stream).writeString(obsWidth, "GON"); // V0 calculated angle
-	(*stream).writeString(obsResWidth, "CC"); // V0 calculated angle
-	(*stream)<<endl;
-}
-
-void TTSTNWriter::writeV0Data(shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writeV0Header(shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
 	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(2);
-
-	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth, "");
-
-	(*stream).writeDouble(obsWidth, anglePrecision, rom->acst.getGonsValue()); // Constant orientation (ACST)
-	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedValue().getGonsValue()); // V0 calculated angle
-	(*stream).writeDouble(obsResWidth, angleResPrecision, rom->v0->getEstimatedPrecision().getSignedCCValue()); // V0 estimated precision
-
-	(*stream)<<endl<<endl;
-}
-
-void TTSTNWriter::writeTSTNData(shared_ptr<TTSTN> tstn){
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
-	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision()-4, 0);
-	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
+	//////////////////////////////////////
+	//first line
 	(*stream)<<TABs;
-	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
-	(*stream).writeStringLeft(nameWidth,tstn->instrumentPos->getName());
+	(*stream).writeStringLeft(nameWidth,"ROM");
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(obsWidth, "ACST (GON)"); // Constant orientation
+	(*stream).writeDouble(obsWidth, anglePrecision, rom->acst.getGonsValue());
+	(*stream).writeStringLeft(obsWidth, "V0 (GON)"); // V0 calculated angle
+	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedValue().getGonsValue());
+	(*stream).writeStringLeft(obsResWidth, "SV0 (CC)"); // V0 calculated angle
+	(*stream).writeDouble(obsResWidth, angleResPrecision, rom->v0->getEstimatedPrecision().getSignedCCValue());
 
-	//write INSTRUMENT HEIGHT
-	if(!tstn->instrumentHeightAdjustable){
-		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrument.instrHeight); 
-	}
-	else{
-		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrumentHeightAdjustable->getEstimatedValue()); 
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, tstn->instrumentHeightAdjustable->getEstimatedPrecision().getMMetresValue());
-	}
-
-
-	if(tstn->rot3D){
-		(*stream).writeString(obsWidth, "TRUE");
-		//write the ROTX
-		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotX->getEstimatedValue().getGonsValue());
-		//write the ROTY
-		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotY->getEstimatedValue().getGonsValue());
-
-
-		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotX->getEstimatedPrecision().getSignedCCValue());
-		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotY->getEstimatedPrecision().getSignedCCValue());
-		(*stream)<<endl;
-	}
-	else
-		(*stream).writeString(obsWidth, "FALSE");
-	
 	(*stream)<<endl<<endl;
 }
 
@@ -1098,7 +901,7 @@ void TTSTNWriter::writeZENDResults(const std::vector<TZEND>& measZEND, const LGC
 				(*stream).writeString(obsWidth, "FIXED");
 		(*stream) << endl;
 	}
-	(*stream) << endl << endl;
+	(*stream) << endl;
 }
 
 void TTSTNWriter::writeDISTResults(const std::vector<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos)
@@ -1367,47 +1170,45 @@ void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 
 	//Write definition of TSTN
 	writeTSTNHeader(tstn);
-	writeTSTNData(tstn);
 
 	for (auto const ItRoms : tstn->roms)
 	{
 		//Write definition of ROM
-		writeV0Header();
-		writeV0Data(ItRoms);
+		writeV0Header(ItRoms);
 
 		if (ItRoms->measANGL.size() > 0){
-			(*stream) << TABs << "ANGL" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kANGL), (int)ItRoms->measANGL.size());
 			writeAngleResultsSummary(ItRoms->getANGLObsSummary(), TABs);
 		}
 		if (ItRoms->measZEND.size() > 0){
-			(*stream) << TABs << "ZEND" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kZEND), (int)ItRoms->measZEND.size());
 			writeAngleResultsSummary(ItRoms->getZENDObsSummary(), TABs);
 		}
 		if (ItRoms->measDIST.size() > 0){
-			(*stream) << TABs << "DIST" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDIST), (int)ItRoms->measDIST.size());
 			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(), TABs);
 		}
 		if (ItRoms->measDHOR.size() > 0){
-			(*stream) << TABs << "DHOR" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDHOR), (int)ItRoms->measDHOR.size());
 			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(), TABs);
 		}
 		if (ItRoms->measECTH.size() > 0){
-			(*stream) << TABs << "ECTH" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECTH), (int)ItRoms->measECTH.size());
 			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(), TABs);
 		}
 		if (ItRoms->measECDIR.size() > 0){
-			(*stream) << TABs << "ECDIR" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECDIR), (int)ItRoms->measECDIR.size());
 			writeDistanceResultsSummary(ItRoms->getECDIRObsSummary(), TABs);
 		}
 
 		if (ItRoms->measPLR3D.size() > 0){
 			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();
-			(*stream) << TABs << "DIST" << endl;
-			writeDistanceResultsSummary(summary.distObsSum, TABs);
-			(*stream) << TABs << "ANGL" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D)+": ANGL", (int)ItRoms->measPLR3D.size());
 			writeAngleResultsSummary(summary.anglObsSum, TABs);
-			(*stream) << TABs << "ZEND" << endl;
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D) + ": ZEND", (int)ItRoms->measPLR3D.size());
 			writeAngleResultsSummary(summary.zendObsSum, TABs);
+			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D) + ": DIST", (int)ItRoms->measPLR3D.size());
+			writeDistanceResultsSummary(summary.distObsSum, TABs);
 		}
 	}
 }

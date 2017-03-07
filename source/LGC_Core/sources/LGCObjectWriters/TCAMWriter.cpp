@@ -5,7 +5,7 @@
 #include <Global.h>
 #include "TLGCObsSummary.h"
 
-TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool hist) :TObservationWriter(stream), writeHist(hist)
+TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool hist) :TObservationWriter(stream)
 {}
 
 TCAMWriter::~TCAMWriter(){}
@@ -15,40 +15,12 @@ void TCAMWriter::writeCAMResults(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
 	std::string        TABs = stream->getCurrSpaceExtended(2);
 	writeCAMHeader(camera);
-	writeCAMData(camera);
 
-	if(camera.measUVD.size() > 0){
+	if(camera.measUVD.size() > 0)
 		writeUVDResults(camera.measUVD);
-		TUVDObsSummary summary = camera.getUVDObsSummary();
-		(*stream)<<TABs<<"XVECT"<<endl;
-		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);	
-		if (writeHist)
-			writeHisto(summary.xVectorCompObsSum, " XVEC");
-		
-		(*stream)<<TABs<<"YVECT"<<endl;
-		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 	
-		if (writeHist)
-			writeHisto(summary.yVectorCompObsSum, " YVEC");
-		
-		(*stream)<<TABs<<"DIST"<<endl;
-		writeDistanceResultsSummary(summary.distObsSum, TABs);
-		if (writeHist)
-			writeHisto(summary.distObsSum, " DIST");
 
-	}
-	if(camera.measUVEC.size() > 0){
+	if(camera.measUVEC.size() > 0)
 		writeUVECResults(camera.measUVEC);
-		TUVECObsSummary summary = camera.getUVECObsSummary();	
-		(*stream)<<TABs<<"XVECT"<<endl;
-		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs); 
-		
-		writeHisto(summary.xVectorCompObsSum, " XVEC");
-		
-		(*stream)<<TABs<<"YVECT"<<endl;
-		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs); 
-		
-		writeHisto(summary.yVectorCompObsSum, " YVEC");
-	}
 }
 
 void TCAMWriter::writeCAMHeader(const TCAM& camera){
@@ -59,26 +31,16 @@ void TCAMWriter::writeCAMHeader(const TCAM& camera){
 
 	////////////////////////////////////////////////////////////
 	//first line
-	(*stream)<<TABs;
+	(*stream)<<endl<<TABs;
 	(*stream).writeStringLeft(nameWidth,"CAMERA INSTRUMENT: " + camera.instrument.ID);
 	(*stream)<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth,"POSITION"); //Point on which is the CAM positioned
-	(*stream)<<endl;
-	///////////////////////////////////////////////////////////////////////////////////
-}
-
-void TCAMWriter::writeCAMData(const TCAM& camera){
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	std::string        TABs = stream->getCurrSpaceExtended(1);
-
-	(*stream)<<TABs;
-	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
-	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName());	
+	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName());
 	(*stream)<<endl<<endl;
+	///////////////////////////////////////////////////////////////////////////////////
 }
 
 void TCAMWriter::writeUVDResultsHeader(int nOObs)
@@ -93,7 +55,6 @@ void TCAMWriter::writeUVDResultsHeader(int nOObs)
 	//first line
 	(*stream) << TABs;
 	this->writeObsTitle(this->getObsDescriptionEN(TCAMWriter::kUVD), nOObs);
-	(*stream) << endl;
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
@@ -158,7 +119,6 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	//first line
 	(*stream) << TABs;
 	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kUVEC), nOObs);
-	(*stream) << endl;
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
@@ -209,6 +169,7 @@ void TCAMWriter::writeUVDResults(const std::vector<TUVD>& measUVD)
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeUVDResultsHeader(measUVD.size()); // write the title line for the observations
+	(*stream) << endl;
 	for(auto const& ItUVD: measUVD)
 	{
 		(*stream)<<TABs;
@@ -282,6 +243,7 @@ void TCAMWriter::writeUVECResults(const std::vector<TUVEC>& measUVEC)
 
 
    writeUVECResultsHeader((int)measUVEC.size()); // write the title line for the observations
+   (*stream) << endl;
 	for(auto const& ItUVEC: measUVEC)
 	{
 		(*stream)<<TABs;
@@ -332,23 +294,23 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
 	std::string        TABs = stream->getCurrSpaceExtended(2);
 	writeCAMHeader(camera);
-	writeCAMData(camera);
+	//writeCAMData(camera);
 
 
 	if (camera.measUVD.size() > 0){
 		TUVDObsSummary summary = camera.getUVDObsSummary();
-		(*stream) << TABs << "XVECT" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVD) + ": XVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
-		(*stream) << TABs << "YVECT" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVD) + ": YVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
-		(*stream) << TABs << "DIST" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVD) + ": DIST", (int)camera.measUVD.size());
 		writeDistanceResultsSummary(summary.distObsSum, TABs);
 	}
 	if (camera.measUVEC.size() > 0){
 		TUVECObsSummary summary = camera.getUVECObsSummary();
-		(*stream) << TABs << "XVECT" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVEC) + ": XVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
-		(*stream) << TABs << "YVECT" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
 	}
 }

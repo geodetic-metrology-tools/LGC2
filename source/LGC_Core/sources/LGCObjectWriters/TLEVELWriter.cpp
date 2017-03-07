@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include <TAMeas.h>
 
-TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false), writeHist(hist)
+TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false)
 {}
 
 TLEVELWriter::~TLEVELWriter(){}
@@ -17,36 +17,26 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	int					nameWidth = getNameWidth();
 	string				separator = getSeparator();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
+	int					obsWidth = getObsWidth();
 
 	////////////////////////////////////////////////////////////
 	//first line
-	(*stream) << TABs;
+	(*stream) << endl << TABs;
 	(*stream).writeStringLeft(nameWidth, "LEVEL INSTRUMENT: " + fLevel.instrument.ID);
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF POINT"); //Reference point
-	(*stream).writeString(nameWidth, "X");
-	(*stream).writeString(nameWidth, "Y");
-	(*stream).writeString(nameWidth, "Z");
-	(*stream) << endl;
-	///////////////////////////////////////////////////////////////////////////////////
-}
-void TLEVELWriter::writeLEVELData(const TLEVEL& fLevel)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	std::string        TABs = stream->getCurrSpaceExtended(1);
-
-	(*stream) << TABs;
-	//write NAME OF THE POINT ON WHICH STATION IS POSITIONED
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
+	(*stream).writeString(nameWidth, "X");
 	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeString(nameWidth, "Y");
 	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeString(nameWidth, "Z");
 	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream) << endl << endl;
+	///////////////////////////////////////////////////////////////////////////////////
 }
 
 void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
@@ -61,7 +51,6 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDLEV), nOObs);
-	(*stream) << endl;
 	//Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target	
@@ -109,25 +98,11 @@ void TLEVELWriter::writeLEVELResults(const TLEVEL& fLevel)
 	std::string        TABs = stream->getCurrSpaceExtended(3);
 
 	writeLEVELHeader(fLevel);
-	writeLEVELData(fLevel);
 
-	if (fLevel.measDLEV.size() > 0){
+	if (fLevel.measDLEV.size() > 0)
 		//The eventual DHOR result to be written inside this method 
 		writeDLEVResults(fLevel.measDLEV, fLevel.instrument);
-		(*stream) << TABs;
-		(*stream) << "DLEV" << endl;
-		writeDistanceResultsSummary(fLevel.getDLEVObsSummary(), TABs);
-		if (writeHist)
-			writeHisto(fLevel.getDLEVObsSummary(), " DLEV");
-	}
-	//The DHOR result summary
-	if (fLevel.hasDHOR){
-		(*stream) << TABs;
-		(*stream) << "DHOR" << endl;
-		writeDistanceResultsSummary(fLevel.getDHORObsSummary(), TABs);
-		if (writeHist)
-			writeHisto(fLevel.getDHORObsSummary(), " DHOR");
-	}
+
 }
 
 void TLEVELWriter::writeDLEVResults(std::vector<TDLEV> measDLEV, const TInstrumentData::TLEVEL& instr)
@@ -225,11 +200,10 @@ void TLEVELWriter::writeLEVELSIMUResults(const TLEVEL& fLevel)
 	std::string        TABs = stream->getCurrSpaceExtended(3);
 
 	writeLEVELHeader(fLevel);
-	writeLEVELData(fLevel);
 
 	if (fLevel.measDLEV.size() > 0){
 		(*stream) << TABs;
-		(*stream) << "DLEV" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDLEV), (int)fLevel.measDLEV.size());
 		writeDistanceResultsSummary(fLevel.getDLEVObsSummary(), TABs);
 	}
 	//The DHOR result summary

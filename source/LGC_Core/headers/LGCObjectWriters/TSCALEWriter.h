@@ -72,9 +72,6 @@ public:
 private:
 	/// Write the result header for ECHO ECSP and ECVE
 	void writeSCALEResultsHeader();
-
-	bool writeHist;
-
 };
 
 

@@ -32,11 +32,11 @@ public:
 		void writePDORResultsHeader();
 
 		/// Write DVER reliability header  
-		void	writeDVERReliabilityHeader();
+		void writeDVERReliabilityHeader();
 		/// Write ORIE reliability header
-		void	writeORIEReliabilityHeader();
+		void writeORIEReliabilityHeader();
 		/// Write RADI reliability header
-		void	writeRADIReliabilityHeader();
+		void writeRADIReliabilityHeader();
 
 		/// Write synthesis results header
 		void writeResultsSynthesisHeader();
@@ -55,15 +55,17 @@ public:
 
 		/// Write DVER simulations
 		void writeDVERSIMUResults(const std::vector<TDVER>& fDVER);
+		/// Write RADI simulations
+		void writeRADISIMUResults(const std::vector<TRADI>& fRADI);
 		/// Write ORIE simulations
 		void writeORIESIMUResults(const TORIEROM& fOrieRom);
 
 		/// Write DVER reliability data
-		void	writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
+		void writeDVERReliabilityData(const std::vector<TDVER>& fDVER, const TLGCStatistic& stat);
 		/// Write ORIE reliability data
-		void	writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
+		void writeORIEReliabilityData(const std::vector<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
 		/// Write RADI reliability data
-		void	writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat);
+		void writeRADIReliabilityData(const std::vector<TRADI>& fRADI, const TLGCStatistic& stat);
 
 		/// Write DVER synthesis data
 		void writeDVERResultsSynthesis(const std::vector<TDVER>& fDVER);
@@ -73,11 +75,6 @@ public:
 		void writeRADIResultsSynthesis(const std::vector<TRADI>& fRADI);
 	//@}
 
-		/// flag to write the histogram
-		bool writeHist;
-
 };
-
-
 
 #endif //SU_OTHERMEAS_WRITER
