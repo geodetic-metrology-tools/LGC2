@@ -67,7 +67,7 @@ bool TLGCApp::exec()
 	result = lgcCalculation.computeResults(fileWriter);
 
 	//Write input file with simulated observation (SOBS) if SIMU and SOBS are used
-	if (projectData->getConfig().sim.writeLGCFile && projectData->getConfig().sim.isActive())
+	if (projectData->getConfig().sim.writeLGCFile && projectData->getConfig().sim.isActive() && result)
 		writeSimFile(projectData.get());
 
 	// Save the final results if SIMU is not used. SIMU output is writen during the calculation after each iteration.
@@ -252,6 +252,10 @@ void TLGCApp::writeSimFile(TLGCData* dat)
 	// Write punch files if needed
 	if (dat->getConfig().writePunch.isActive())
 		writePunchFile(dat);
+
+	// Write covariance matrices
+	if (dat->getConfig().covar.isActive())
+		writeCovarFile(dat);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
