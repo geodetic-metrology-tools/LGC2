@@ -83,7 +83,7 @@ void	TSimFileWriter::writeHeader()
 		(*stream) << "*LIBR" << endl;
 	
 	if (data->getConfig().covar.isActive())
-		(*stream) << "*COVAR " << data->getConfig().sim.numSims<<endl;
+		(*stream) << "*COVAR " << endl;
 
 	if (data->getConfig().faut.isActive())
 		(*stream) << "*FAUT " << data->getConfig().faut.alpha << "  " << data->getConfig().faut.beta<< endl;
