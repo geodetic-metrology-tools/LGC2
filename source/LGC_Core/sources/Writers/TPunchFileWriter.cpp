@@ -165,10 +165,7 @@ void TPunchFileWriter::writePoint(LGCAdjustablePoint const& point, TLGCConfig::T
 
 		///< Nom_Pt X Y Z Sx Sy Sz
 		case TLGCConfig::TCoordOut::kT:	
-			if (point.getFrameTreePosition()->get()->isROOTNode())
 				writeXYZSigmaData(point);
-			else
-				writeXYZData(pointRoot);
 			break;
 
 		///< .coo file for GEODE
@@ -866,19 +863,94 @@ void	TPunchFileWriter::writeXYZSigmaData(LGCAdjustablePoint const& point)
 	(*stream).width(1);
 	(*stream) << "";
 	converter.writeName(point.getName(), nameWidth);
-	//Coordinate
-	converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
+	
+	if (point.getFrameTreePosition()->get()->isROOTNode())
+	{ 
+		// lambda function to transform the point coordinate in root
+		auto point_in_root = [&](LGCAdjustablePoint const& point) {
+			// Transformation of the point to the root
+			TPositionVector estimatedValue = point.getEstimatedValue();
+			TDataTreeIterator root = fProjectData->getTree().begin();
 
-	//Sigma
-	converter.writeCoordinateParam(point.getSpatialStatus(),
-		getCoordResWidth(),
-		getCoordPrecision(),
-		TLength::kMillimetres,
-		separator,
-		point.getXEstPrecision(),
-		point.getYEstPrecision(),
-		point.getZEstPrecision(),
-		" ");/*sigma*/
+			if (root != point.getFrameTreePosition()){
+				TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
+				transfo.transform(estimatedValue);
+			}
+
+			// Set new coordinates to the point expressed in the root
+			LGCAdjustablePoint point_int_root = LGCAdjustablePoint(estimatedValue,
+				point.isCoordinateFixed(0),
+				point.isCoordinateFixed(1),
+				point.isCoordinateFixed(2),
+				point.getName(),
+				point.getReferenceFrame(),
+				point.getFrameTreePosition());
+			point_int_root.eolcomment = point.eolcomment;
+
+			return point_int_root;
+		};
+
+		auto pointRoot = point_in_root(point);
+		//Coordinate
+		converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
+
+		//Sigma
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			getCoordResWidth(),
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getXEstPrecision(),
+			point.getYEstPrecision(),
+			point.getZEstPrecision(),
+			" ");/*sigma*/
+	}
+	else
+	{
+		// lambda function to transform the point coordinate in root
+		auto point_in_root = [&](LGCAdjustablePoint const& point) {
+			// Transformation of the point to the root
+			TPositionVector estimatedValue = point.getEstimatedValue();
+			TDataTreeIterator root = fProjectData->getTree().begin();
+
+			if (root != point.getFrameTreePosition()){
+				TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
+				transfo.transform(estimatedValue);
+			}
+
+			// Set new coordinates to the point expressed in the root
+			LGCAdjustablePoint point_int_root = LGCAdjustablePoint(estimatedValue,
+				point.isCoordinateFixed(0),
+				point.isCoordinateFixed(1),
+				point.isCoordinateFixed(2),
+				point.getName(),
+				point.getReferenceFrame(),
+				point.getFrameTreePosition());
+			point_int_root.eolcomment = point.eolcomment;
+
+			return point_int_root;
+		};
+
+		auto pointRoot = point_in_root(point);
+		//Coordinate
+		converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, pointRoot.getEstimatedValue());
+
+		//transform sigma in root
+		TFreeVector sigmaRoot;
+		sigmaRoot = point.transformSigmaInRoot(point, fProjectData);
+		TAStreamFormatter*	stream = getStream();
+
+		stream->setLengthUnits(TLength::kMillimetres);
+		stream->setWidthFormat(getCoordResWidth());
+		stream->setPrecisionFormat(getCoordPrecision());
+		(*stream) << (sigmaRoot.getX());
+		(*stream) << (separator);
+		(*stream) << (sigmaRoot.getY());
+		(*stream) << (separator);
+		(*stream) << (sigmaRoot.getZ());
+		(*stream) << (separator);
+
+	}
 	return;
 }
 

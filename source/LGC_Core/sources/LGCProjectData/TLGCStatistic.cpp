@@ -139,18 +139,12 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 
 				// determination of beta's percentile (upper tail)
 		        TReal d = deviates_normal_upper_tail(beta);
-		        (*fDeltaComputed)(i) = true;
+				TReal delta(wmax+d);
+				//compute nabla
+				(*fNablaValue)(i) = (delta * (sqrtq(varRes)/fZ->coeff(i)));///powq(s0,2);
 
-
-				if ((*fDeltaComputed)(i))
-				{
-					TReal delta(wmax+d);
-					//compute nabla
-					(*fNablaValue)(i) = (delta * (sqrtq(varRes)/fZ->coeff(i)));///powq(s0,2);
-
-					// computes DELTY
-					(*fDelty)(i) = delta * sqrtq(powq(fT->coeff(i),2) - LITERAL(1.0));
-				}
+				// computes DELTY
+				(*fDelty)(i) = delta * sqrtq(powq(fT->coeff(i),2) - LITERAL(1.0));
 			}
 		}
 		i++;

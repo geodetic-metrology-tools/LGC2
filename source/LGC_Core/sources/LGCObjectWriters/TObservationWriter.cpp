@@ -174,12 +174,16 @@ void TObservationWriter::writeHisto(TLGCObsSummary summary, string description)
 			int k = summary.getHistoScale();
 			string ech = "";
 
-			if (description == " ANGL" ||
-				description == " ZEND" ||
-				description == " ORIE")/* Angle*/
+			if (description == "ANGL" ||
+				description == "ZEND" ||
+				description == "ORIE" ||
+				description == "PLR3D: ZEND"||
+				description == "PLR3D: ANGL")/* Angle*/
 				ech = "(CC)";
-			else if (description == " XVEC" ||
-				description == " YVEC" )/*cam componant vector,  unitless*/
+			else if (description == "UVD: XVEC" ||
+				description == "UVD: YVEC"||
+				description == "UVEC: XVEC" ||
+				description == "UVEC: YVEC")/*cam componant vector,  unitless*/
 				ech = "(unitless)";
 			else/*distance*/
 			{

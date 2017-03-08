@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include "LGCAdjustablePoint.h"
 
-TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), writeHist(hist)
+TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream)
 {}
 
 TOtherMeasurentWriter::~TOtherMeasurentWriter()
@@ -161,26 +161,20 @@ void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
 	//first line
 	(*stream) << TABs;
 	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kPDOR), 1);
-	(*stream) << endl;
-
-	writePDORResultsHeader(); // write the title line for the observations
 
 	(*stream) << TABs;
-	//write CALA POSITION
+	(*stream).writeString(nameWidth, "CALA POINT");
 	(*stream).writeString(nameWidth, fPDOR.calaPt->getName());
-	//write ORI POSITION
+	(*stream).writeString(nameWidth, "POINT");
 	(*stream).writeString(nameWidth, fPDOR.orientationPt->getName());
-
-	//write the observed bearing
+	(*stream).writeString(obsWidth, "OBS (GON)"); //observed bearing
 	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue());
-
-	//write the estimated bearing
+	(*stream).writeString(obsWidth, "CALC (GON)"); //estimated bearing 
 	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue() + fPDOR.getAngleResidual().getGonsValue());
-
-	//write the residual
+	(*stream).writeString(obsResWidth, "RES (CC)"); //residual
 	(*stream).writeDouble(obsResWidth, angleResPrecision, fPDOR.getAngleResidual().getSignedCCValue());
-	(*stream) << endl << endl;
 	(*stream) << endl;
+	(*stream) << endl << endl;
 }
 
 void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
@@ -194,14 +188,9 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
 	//first line
+	(*stream) << stream->getCurrSpaceExtended(1) << "DVER" << endl;
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), (int)fDVER.size());
-	(*stream) << endl;
-
 	writeDVERResultsHeader(); // write the title line for the observations
-
-	//for output residual mean and the standart deviation of the residuals
-	// directly calculate here due to the instrument absence
-	TLGCObsSummary summary;
 
 	for (auto const& ItDVER : fDVER)
 	{
@@ -226,17 +215,8 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 		//write the residual/sigam
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual() / ItDVER.getObservedStDev());//Output value in meters [mm], stored in [m]
 		(*stream) << endl;
-
-		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(ItDVER.getDistanceResidual().getMMetresValue());
 	}
 	(*stream) << endl;
-
-	//for output residual mean and the standart deviation of the residuals
-	writeDistanceResultsSummary(summary, TABs);
-
-	if (writeHist)
-		writeHisto(summary, "DVER");
 }
 
 void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
@@ -250,16 +230,10 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
-
 	//first line
+	(*stream) << stream->getCurrSpaceExtended(1) << "ORIENTATION CONSTRAINTS" << endl;
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kORIE), (int)fORIE.size());
-	(*stream) << endl;
-
 	writeORIEResultsHeader(); // write the title line for the observations
-
-	//for output residual mean and the standart deviation of the residuals
-	// directly calculate here due to the instrument absence
-	TLGCObsSummary summary;
 
 	for (auto const& ItORIE : fORIE)
 	{
@@ -285,17 +259,8 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 		//write the resi/sigma
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue() / ItORIE.target.sigmaAngl.getSignedCCValue());
 		(*stream) << endl;
-
-		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(ItORIE.getAngleResidual().getSignedCCValue());
 	}
 	(*stream) << endl;
-
-	//for output residual mean and the standart deviation of the residuals
-	writeDistanceResultsSummary(summary, TABs);
-
-	if (writeHist)
-		writeHisto(summary, "ORIE");
 }
 
 void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
@@ -309,14 +274,9 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	std::string         TABs = stream->getCurrSpaceExtended(3);
 
 	//first line
+	(*stream) << stream->getCurrSpaceExtended(1) << "RADIAL CONSTRAINTS" << endl;
 	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kRADI), (int)fRADI.size());
-	(*stream) << endl;
-
 	writeRADIResultsHeader(); // write the title line for the observations
-
-	//for output residual mean and the standart deviation of the residuals
-	// directly calculate here due to the instrument absence
-	TLGCObsSummary summary;
 
 	for (auto const& It : fRADI)
 	{
@@ -336,17 +296,8 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual() / It.getObservedStDev());
 		(*stream) << endl;
-
-		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(It.getResidual().getMMetresValue());
 	}
 	(*stream) << endl;
-
-	//for output residual mean and the standart deviation of the residuals
-	writeDistanceResultsSummary(summary, TABs);
-
-	if (writeHist)
-		writeHisto(summary, "RADI");
 }
 
 void TOtherMeasurentWriter::writeDVERSIMUResults(const std::list<TDVER>& fDVER)
@@ -355,9 +306,14 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const std::list<TDVER>& fDVER)
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(3);
 
+	TLGCObsSummary summary;
+	for (auto& it : fDVER)
+		summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+
 	if (!fDVER.empty()){
-		(*stream) << TABs << "DVER" << endl;
-		//writeDistanceResultsSummary(fDVER, TABs);
+		(*stream) << endl<<endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), (int)fDVER.size());
+		writeDistanceResultsSummary(summary, TABs);
 	}
 }
 
@@ -368,8 +324,26 @@ void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)
 	std::string        TABs = stream->getCurrSpaceExtended(3);
 
 	//Write definition of ROM
-	(*stream) << TABs << "ORIE" << endl;
+	(*stream) << endl << endl;
+	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kORIE), (int)fOrieRom.measORIE.size());
 	writeAngleResultsSummary(fOrieRom.getORIEObsSummary(), TABs);
+}
+
+void TOtherMeasurentWriter::writeRADISIMUResults(const std::list<TRADI>& fRADI)
+{
+	TAStreamFormatter*	stream = getStream();
+	//Third hierarchy level from local FRAME
+	std::string        TABs = stream->getCurrSpaceExtended(3);
+
+	TLGCObsSummary summary;
+	for (auto& it : fRADI)
+		summary.addNewResidual(it.getResidual().getMMetresValue());
+
+	if (!fRADI.empty()){
+		(*stream) << endl << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kRADI), (int)fRADI.size());
+		writeDistanceResultsSummary(summary, TABs);
+	}
 }
 
 

@@ -28,7 +28,7 @@ public:
 		/// Writes TSTN header.
 		void writeTSTNHeader(shared_ptr<TTSTN> tstn);
 		/// Writes V0 (ROM = round of measurement) header.
-		void writeV0Header();
+		void writeV0Header(shared_ptr<TTSTN::TROM> rom);
 
 		/// Write reliability header for ANGL
 		void	writeANGLReliabilityHeader();
@@ -57,12 +57,6 @@ public:
 	//@{
 		///	Writes information about TSTN, its definition, calculated values and each ROM (round of measurements) as well as the observations included.
 		void writeTSTNResults(shared_ptr<TTSTN> tstn);
-		/// Writes TSTN data, definition, provisional and calculated values.
-		void writeTSTNData(shared_ptr<TTSTN> tstn);
-		/// Writes V0 (ROM = round of measurement) definition.
-		void writeV0Data(shared_ptr<TTSTN::TROM> rom);
-
-
 		///	Writes information about TSTN, its definition, calculated values and each ROM (round of measurements) as well as the observations included.
 		void writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn);
 
@@ -123,8 +117,6 @@ private:
 	//@}
 
 		bool isAllfixed;
-		bool writeHist;
-
 };
 
 

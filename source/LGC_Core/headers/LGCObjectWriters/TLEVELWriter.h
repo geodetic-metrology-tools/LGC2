@@ -54,14 +54,12 @@ public:
 private:
 	// Information about the instrument/ station
 	void writeLEVELHeader(const TLEVEL& fLevel);
-	void writeLEVELData(const TLEVEL& fLevel);
 
 	// DLEV measurements
 	void writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrumentData::TLEVEL& instr);
 	void writeDLEVResultsHeader(int nOObs);
 
 	bool isAllfixed;
-	bool writeHist;
 };
 
 #endif //SU_LEVEL_WRITER

@@ -71,6 +71,8 @@ private:
 		
 		///write measurements summary
 		void writeMeasurementsSummary(TDataTreeIterator frameIt);
+		///write measurements summary
+		void writeHistogramme(TDataTreeIterator frameIt);
 		
 		///WriteEllipsHeader
 		void writeEllipsHeader();

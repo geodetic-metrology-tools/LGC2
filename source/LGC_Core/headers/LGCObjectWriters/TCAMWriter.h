@@ -37,8 +37,6 @@ public:
 
 	/*!@name Results */
 	//@{
-		/// Writes CAM data, defined in the header.
-		void writeCAMData(const TCAM& camera);
 		///	Writes information about CAM, its definition, calculated values and all the observations included.
 		void writeCAMResults(const TCAM& camera);
 
@@ -66,13 +64,9 @@ private:
 
 	/*!@name Write results */
 	//@{
-		void writeUVECResults(const std::list<TUVEC>& measUVEC);
-		void writeUVDResults(const std::list<TUVD>& measUVD);
-	//@}
-
-		bool writeHist;
-
-	
+        void writeUVECResults(const std::list<TUVEC>& measUVEC);
+        void writeUVDResults(const std::list<TUVD>& measUVD);
+	//@}	
 };
 
 #endif //SU_CAM_WRITER

@@ -41,11 +41,18 @@ bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
 		simulateValues();
 		calcOK = lsCalc.run(data, fMaxIterations);
 
-		updateResValues();
-		numOfSimMade++;
+		if (calcOK)
+		{
+			updateResValues();
+			numOfSimMade++;
 
-		fileWriter->writeFileBegin(); //Write the beginning of the file (data summary, title etc.)
-		fileWriter->writeSimSummary(fData, numOfSimMade); // Write results of the first iteration
+			fileWriter->writeFileBegin(); //Write the beginning of the file (data summary, title etc.)
+			fileWriter->writeSimSummary(fData, numOfSimMade); // Write results of the first iteration
+		}
+		else
+		{
+			throw std::logic_error("Calculation failed in simulation mode.");
+		}
 	}
 	catch (std::exception& excp) {
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
@@ -75,14 +82,17 @@ bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
 				fileWriter->writeLastSimResult(fData, numOfSimMade);
 		}
 
-		//Write out the 2 tables in the end
-		fileWriter->writeSimPointsSummary(fData.getConfig().title, fPointSummaries, numOfSimMade);
-		fileWriter->writeSimFramesSummary(fFrameSummaries, numOfSimMade);
-
-		if (!fData.getConfig().erelPairs.empty())
+		if (calcOK)
 		{
-			fileWriter->writeRelErrorHeader();
-			fileWriter->writeRelErrorResults(fData);
+			//Write out the 2 tables in the end
+			fileWriter->writeSimPointsSummary(fData.getConfig().title, fPointSummaries, numOfSimMade);
+			fileWriter->writeSimFramesSummary(fFrameSummaries, numOfSimMade);
+
+			if (!fData.getConfig().erelPairs.empty())
+			{
+				fileWriter->writeRelErrorHeader();
+				fileWriter->writeRelErrorResults(fData);
+			}
 		}
 
 	}

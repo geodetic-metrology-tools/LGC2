@@ -92,6 +92,7 @@ void    TResultsFileWriter::writeFile(const string error)
 // Write the LGC results for the given project
 void    TResultsFileWriter::writeFile()
 {
+	TAStreamFormatter* stream = getStream();
     //Limited just number of points and unknowns for points for now
     this->initObsListNumber();    
     
@@ -114,6 +115,9 @@ void    TResultsFileWriter::writeFile()
 		this->writeRelErrorHeader();
 		this->writeRelErrorResults(*getDataSet());
 	}
+
+	//FIN DE FICHIER
+	(*stream) << "*** FIN DE FICHIER ***";
 }
  
  
@@ -224,7 +228,7 @@ void    TResultsFileWriter::writeDataSummary()
     int fNumVyPoint = fProjectData->getPointsDimension(TSpatialStatus::kVy);
     int fNumVzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVz);
  
-    (*stream)<<"POINTS SUMMARY:" << endl;
+    (*stream)<<"POINTS SUMMARY:" << endl<<endl;
     //insure impose de mettre les endl en en retour de ligne....
     //LECTURE DES POINTS DE CALAGE
     if(fNumFixedPoint != 0)
@@ -280,7 +284,7 @@ void    TResultsFileWriter::writeDataSummary()
 	int fNumPDOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPDOR);
 	int fNumRADI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI);
  
-    (*stream)<<"MEASUREMENTS SUMMARY:" << endl;
+	(*stream) << endl << "MEASUREMENTS SUMMARY:" << endl<<endl;
     if(fNumHorAng != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kANGL), fNumHorAng);    
  
@@ -334,7 +338,7 @@ void    TResultsFileWriter::writeDataSummary()
  
  
     //FIN DE FICHIER
-    (*stream)<<"*** FIN DE FICHIER ***";
+    (*stream)<<endl<<"*** STATISTIQUES ***";
     (*stream)<<endl<<endl;
 }
  
@@ -354,13 +358,10 @@ void    TResultsFileWriter::writeAdjustableObjGeneralInfo(const std::string adjO
 void    TResultsFileWriter::writePointDataSummary(const string description, const int numPts)  
 {
     TAStreamFormatter &stream = getStreamRef();
-    //insure impose de mettre les endl en en retour de ligne....
  
-    stream<<"            LECTURE DES POINTS " << description << endl;
-    stream<<"+        OK :";
+    stream<<"	LECTURE DES POINTS " << description << endl;
+    stream<<"             NOMBRE=    "<<numPts;
     stream<<endl<<endl;
-    stream<<"            NOMBRE=    "<<numPts;
-    stream<<endl<<endl<<endl;
     return;
 }
  
@@ -371,20 +372,20 @@ void    TResultsFileWriter::writeCalcDataSummary()
     TAStreamFormatter &stream = getStreamRef();
  
     //NOMBRE D'OBSERVATIONS
-    stream<<"             NOMBRE D'OBSERVATIONS =  "<< fProjectData->fUEOIndices.OIndex;
+    stream<<"	NOMBRE D'OBSERVATIONS =  "<< fProjectData->fUEOIndices.OIndex;
 	if (fProjectData->getConfig().pdor.isActive())
 	{
-		stream << " (PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
+		stream << "	(PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
 	}
-    stream<<endl<<endl;
+    stream<<endl;
  
     //NOMBRE D'INCONNUES
-    stream<<"             NOMBRE D'INCONNUES =     "<< fProjectData->fUEOIndices.UIndex;
-    stream<<endl<<endl;
+    stream<<"	NOMBRE D'INCONNUES =     "<< fProjectData->fUEOIndices.UIndex;
+    stream<<endl;
  
     // NUMBER OF ITERATIONS
-    stream<<"             NUMBER OF ITERATIONS =     "<<fProjectData->getNumberOfLSIterations();
-    stream<<endl<<endl<<endl<<endl<<endl;
+    stream<<"	NUMBER OF ITERATIONS =     "<<fProjectData->getNumberOfLSIterations();
+    stream<<endl<<endl<<endl<<endl;
  
     //RESEAU COMPLETEMENT LIBRE ?
 	if (fProjectData->getConfig().libre.isActive())
@@ -445,7 +446,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
 				stream << endl;
 			}
 
-			stream << endl << endl << endl << endl << endl;
+			stream << endl << endl << endl << endl;
 
 		}
 		else
@@ -592,12 +593,10 @@ void    TResultsFileWriter::writeMeasDataSummary(const string description, const
     TAStreamFormatter &stream = getStreamRef();
  
     //insure impose de mettre les endl en en retour de ligne....
-    stream<<"             LECTURE DES " << description;
+    stream<<"	LECTURE DES " << description;
     stream<<endl;
-    stream<<"+        OK :";
-    stream<<endl<<endl;
     stream<<"             NOMBRE=    "<<numObs;
-    stream<<endl<<endl<<endl;
+    stream<<endl<<endl;
  
     return;
 }
