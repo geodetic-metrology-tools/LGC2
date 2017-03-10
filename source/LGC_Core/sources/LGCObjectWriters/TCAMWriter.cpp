@@ -12,8 +12,6 @@ TCAMWriter::~TCAMWriter(){}
 
 //------------------ Result header---------------------------------------------------------------------------
 void TCAMWriter::writeCAMResults(const TCAM& camera){
-	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(2);
 	writeCAMHeader(camera);
 
 	if(camera.measUVD.size() > 0)
@@ -54,7 +52,7 @@ void TCAMWriter::writeUVDResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
-	this->writeObsTitle(this->getObsDescriptionEN(TCAMWriter::kUVD), nOObs);
+	this->writeObsTitle(this->getObsDescriptionFR(TCAMWriter::kUVD), nOObs);
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
@@ -118,7 +116,7 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
-	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kUVEC), nOObs);
+	this->writeObsTitle(this->getObsDescriptionFR(TALGCObjectWriter::kUVEC), nOObs);
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
@@ -294,23 +292,21 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
 	std::string        TABs = stream->getCurrSpaceExtended(2);
 	writeCAMHeader(camera);
-	//writeCAMData(camera);
-
 
 	if (camera.measUVD.size() > 0){
 		TUVDObsSummary summary = camera.getUVDObsSummary();
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVD) + ": XVECT", (int)camera.measUVD.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": XVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVD) + ": YVECT", (int)camera.measUVD.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": YVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVD) + ": DIST", (int)camera.measUVD.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": DIST", (int)camera.measUVD.size());
 		writeDistanceResultsSummary(summary.distObsSum, TABs);
 	}
 	if (camera.measUVEC.size() > 0){
 		TUVECObsSummary summary = camera.getUVECObsSummary();
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVEC) + ": XVECT", (int)camera.measUVEC.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": XVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
 	}
 }
@@ -385,8 +381,6 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.getYCompVectorResidual()* M2MM);
 
 		writeReliabilityMM(index, stat);
-
-	(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -458,8 +452,6 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-
-	(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -473,24 +465,22 @@ void TCAMWriter::writeUVDSynthesisHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream).writeStringLeft(nameWidth, "UVD"); //instrument
 	(*stream) << endl;
 	////////////////////////////////////////////////////////////
 	//First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "INSTR"); //instrument
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
 	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
-	(*stream) << TABs;
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
 	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
-	(*stream) << TABs;
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
@@ -505,12 +495,10 @@ void TCAMWriter::writeUVDSynthesisHeader()
 	(*stream).writeString(obsResWidth, "x");
 	(*stream).writeString(obsResWidth, "x");
 	(*stream).writeString(obsResWidth, "x");
-	(*stream) << TABs;
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
-	(*stream) << TABs;
 	(*stream).writeString(obsResWidth, "d(MM)");
 	(*stream).writeString(obsResWidth, "d(MM)");
 	(*stream).writeString(obsResWidth, "d(MM)");
@@ -525,19 +513,18 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream).writeStringLeft(nameWidth, "UVEC"); //instrument
 	(*stream) << endl;
 	////////////////////////////////////////////////////////////
 	//First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "INSTR"); //instrument
+	(*stream).writeStringLeft(nameWidth, "POSITION"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
 	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
-	(*stream) << TABs; 
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
@@ -551,7 +538,6 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream).writeString(obsResWidth, "x");
 	(*stream).writeString(obsResWidth, "x");
 	(*stream).writeString(obsResWidth, "x");
-	(*stream) << TABs;
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
@@ -570,7 +556,7 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal minX = 100.0;
@@ -599,7 +585,6 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().xVectorCompObsSum.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().xVectorCompObsSum.getVariance());//ecart type
 	//Y
-	(*stream) << TABs;
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxY* M2MM);//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, minY* M2MM);//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().yVectorCompObsSum.getMean());//residu moy
@@ -617,7 +602,7 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal minX = 100.0;
@@ -653,12 +638,10 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().xVectorCompObsSum.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().xVectorCompObsSum.getVariance());//ecart type
 	//Y
-	(*stream) << TABs;
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxY* M2MM);//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, minY* M2MM);//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().yVectorCompObsSum.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().yVectorCompObsSum.getVariance());//ecart type
-	(*stream) << TABs;
 	//D
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxD* M2MM);//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, minD* M2MM);//residu min

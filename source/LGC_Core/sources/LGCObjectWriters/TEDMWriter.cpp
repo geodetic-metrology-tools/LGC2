@@ -20,8 +20,8 @@ void TEDMWriter::writeEDMHeader(const TEDM& fEdm)
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	////////////////////////////////////////////////////////////
-	(*stream) << endl << TABs;
-	(*stream).writeStringLeft(nameWidth, "EDM INSTRUMENT: " + fEdm.instrument.ID);
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTRUMENT EDM: " + fEdm.instrument.ID);
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -40,7 +40,7 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
 	//first line
@@ -79,11 +79,11 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 void TEDMWriter::writeEDMResults(const TEDM& fEdm)
 {
 	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
 	writeEDMHeader(fEdm);
 
-   this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
+   this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
 
 	if(fEdm.measDSPT.size() > 0)
 		//Write the measurements
@@ -98,7 +98,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
     writeDSPTResultsHeader((int)measDSPT.size()); // write the title line for the observations
 	for(auto const& ItDSPT : measDSPT)
@@ -166,11 +166,11 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 void TEDMWriter::writeEDMSIMUResults(const TEDM& fEdm)
 {
 	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
 	writeEDMHeader(fEdm);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
 
 	if (fEdm.measDSPT.size() > 0)
 		//Write the measurements
@@ -214,9 +214,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 
-
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 

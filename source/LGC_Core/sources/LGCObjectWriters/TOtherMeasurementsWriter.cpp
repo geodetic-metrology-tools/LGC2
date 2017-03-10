@@ -19,7 +19,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
 	////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
 	////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ void TOtherMeasurentWriter::writePDORResultsHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
 	////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
 	////////////////////////////////////////////////////////////
@@ -156,13 +156,10 @@ void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
 	int					obsResWidth = getObsResWidth();
 	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
 
 	//first line
-	(*stream) << TABs;
-	this->writeObsTitle(this->getObsDescriptionEN(TALGCObjectWriter::kPDOR), 1);
+	this->writeObsTitle(this->getObsDescriptionFR(TALGCObjectWriter::kPDOR), 1);
 
-	(*stream) << TABs;
 	(*stream).writeString(nameWidth, "CALA POINT");
 	(*stream).writeString(nameWidth, fPDOR.calaPt->getName());
 	(*stream).writeString(nameWidth, "POINT");
@@ -185,11 +182,11 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//first line
 	(*stream) << stream->getCurrSpaceExtended(1) << "DVER" << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), (int)fDVER.size());
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDVER), (int)fDVER.size());
 	writeDVERResultsHeader(); // write the title line for the observations
 
 	for (auto const& ItDVER : fDVER)
@@ -228,11 +225,11 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 	int					angleResidualPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//first line
-	(*stream) << stream->getCurrSpaceExtended(1) << "ORIENTATION CONSTRAINTS" << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kORIE), (int)fORIE.size());
+	(*stream) << stream->getCurrSpaceExtended(1) << "CONTRAINTES D'ORIENTATION" << endl;
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)fORIE.size());
 	writeORIEResultsHeader(); // write the title line for the observations
 
 	for (auto const& ItORIE : fORIE)
@@ -271,11 +268,11 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					anglePrecision = getAnglePrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//first line
-	(*stream) << stream->getCurrSpaceExtended(1) << "RADIAL CONSTRAINTS" << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kRADI), (int)fRADI.size());
+	(*stream) << stream->getCurrSpaceExtended(1) << "CONTRAINTES RADIALES" << endl;
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kRADI), (int)fRADI.size());
 	writeRADIResultsHeader(); // write the title line for the observations
 
 	for (auto const& It : fRADI)
@@ -304,15 +301,16 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const std::list<TDVER>& fDVER)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
 	TLGCObsSummary summary;
 	for (auto& it : fDVER)
 		summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
 
 	if (!fDVER.empty()){
+		(*stream) << TAB << "DIFFERENCES VERTICALES";
 		(*stream) << endl<<endl;
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDVER), (int)fDVER.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDVER), (int)fDVER.size());
 		writeDistanceResultsSummary(summary, TABs);
 	}
 }
@@ -320,12 +318,13 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const std::list<TDVER>& fDVER)
 void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)
 {
 	TAStreamFormatter*	stream = getStream();
-	//Third hierarchy level from local FRAME
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TAB = stream->getCurrSpaceExtended(1);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
+	(*stream) << TAB << "CONTRAINTES D ORIENTATION";
 	//Write definition of ROM
 	(*stream) << endl << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kORIE), (int)fOrieRom.measORIE.size());
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)fOrieRom.measORIE.size());
 	writeAngleResultsSummary(fOrieRom.getORIEObsSummary(), TABs);
 }
 
@@ -333,15 +332,16 @@ void TOtherMeasurentWriter::writeRADISIMUResults(const std::list<TRADI>& fRADI)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
 	TLGCObsSummary summary;
 	for (auto& it : fRADI)
 		summary.addNewResidual(it.getResidual().getMMetresValue());
 
 	if (!fRADI.empty()){
+		(*stream) << TAB << "CONTRAINTES RADIALES";
 		(*stream) << endl << endl;
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kRADI), (int)fRADI.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kRADI), (int)fRADI.size());
 		writeDistanceResultsSummary(summary, TABs);
 	}
 }
@@ -396,9 +396,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::list<TDVER>& fDV
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDver.getDistanceResidual().getMMetresValue());
 
-
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -434,9 +432,7 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::list<TORIE>& fOR
 		//get the residual
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
 
-
 		writeReliabilityCC(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -470,9 +466,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRA
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual().getMMetresValue());
 
-
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -486,7 +480,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	////////////////////////////////////////////////////////////
@@ -518,7 +512,7 @@ void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::list<TDVER>& fD
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence
@@ -556,7 +550,7 @@ void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::list<TORIE>& fO
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence
@@ -594,7 +588,7 @@ void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::list<TRADI>& fR
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence

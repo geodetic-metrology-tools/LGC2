@@ -64,7 +64,7 @@ void TObservationWriter::writeAngleResultsSummary(TLGCObsSummary summary, std::s
 	stream.precision(angleResidualPrecision);
 	stream << summary.getVarHiLimit()<<")";
 	stream << getSeparator();
-	stream << endl << endl <<endl;
+	stream << endl <<endl;
 
 }
 
@@ -106,7 +106,7 @@ void TObservationWriter::writeDistanceResultsSummary(TLGCObsSummary summary, std
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getVarHiLimit()<<")";
 	stream<<getSeparator();
-	stream<<endl<<endl<<endl;;
+	stream<<endl<<endl;;
 
 	return;
 }
@@ -149,7 +149,7 @@ void TObservationWriter::writeUnitlessResultsSummary(TLGCObsSummary summary, std
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getVarHiLimit()<<")";
 	stream<<getSeparator();
-	stream<<endl<<endl<<endl;;
+	stream<<endl<<endl;;
 
 	//Histogram is not yet implemented, ToDo:
 /*
@@ -496,15 +496,15 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic& stat
 string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char* descriptions[] = {
-		"POLAR3D",
-		"Unit Vector Measurment (UVEC)",
-		"Unit Vector Measurment + Distance (UVD)",
-		"ANGLES HORIZONTAUX",
-		"DISTANCES ZENITHALES",
+		"PLR3D",
+		"Vecteur directeur (UVEC)",
+		"Vecteur directeur + Distance (UVD)",
+		"ANGLES HORIZONTAUX (ANGL)",
+		"DISTANCES ZENITHALES (ZEND)",
 		"DISTANCES MESUREES (DIST)",
 		"ECART A UN PLAN VERTICAL (ECTH)",
 		"ECART A UNE DIRECTION (ECDIR)",
-		"DISTANCES HORIZONTALES",
+		"DISTANCES HORIZONTALES (DHOR)",
 		"DISTANCES SPATIALES (DSPT)",
 		"DISTANCES VERTICALES (DLEV)",
 		"DISTANCES VERTICALES (DVER)",
@@ -528,15 +528,15 @@ string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservatio
 string	TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char* descriptions[] = {
-		"POLAR3D",
+		"PLR3D",
 		"Unit Vector Measurment (UVEC)",
 		"Unit Vector Measurement + Distance (UVD)",
-		"HORIZONTAL ANGLE OBSERVATIONS",
-		"ZENITHAL DISTANCE OBSERVATIONS",
+		"HORIZONTAL ANGLE OBSERVATIONS (ANGL)",
+		"ZENITHAL DISTANCE OBSERVATIONS (ZEND)",
 		"OBSERVED SPATIAL DISTANCES (DIST)",
 		"OFFSETS TO A THEODOLITE PLAN (ECTH)",
 		"OFFSETS TO A THEODOLITE DIRECTION (ECDIR)",
-		"HORIZONTAL DISTANCES",
+		"HORIZONTAL DISTANCES (DHOR)",
 		"SPATIAL DISTANCES (DSPT)",
 		"VERTICAL DISTANCES (DLEV)",
 		"VERTICAL DISTANCES (DVER)",

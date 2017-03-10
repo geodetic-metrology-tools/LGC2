@@ -20,7 +20,7 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
 	////////////////////////////////////////////////////////////
@@ -60,28 +60,28 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
-	std::string         TABs3 = stream->getCurrSpaceExtended(3);
+	std::string         TABs3 = stream->getCurrSpaceExtended(2);
 
 
 	(*stream) << endl <<endl;
-	(*stream)<<TABs1<<"ECHO MEASUREMENTS"<<endl;
+	(*stream)<<TABs1<<"ECHO"<<endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	(*stream)<<TABs1;
 	(*stream).writeStringLeft(nameWidth,"REF POINT"); //Reference point
 	(*stream).writeStringLeft(nameWidth, echorom.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(nameWidth,"X"); 
-	(*stream).writeDouble(obsWidth, obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(nameWidth,"Y");
-	(*stream).writeDouble(obsWidth, obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(nameWidth,"Z");
-	(*stream).writeDouble(obsWidth, obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream).writeString(3,"X"); 
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeString(3,"Y");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeString(3,"Z");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 
 
 	//data summury
-   this->writeObsTitle(TABs3 + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
+   this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 	writeSCALEResultsHeader(); // write the title line for the observations
 
 	for(auto const& ItECHO : echorom.measECHO)
@@ -122,26 +122,26 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
-	std::string         TABs3 = stream->getCurrSpaceExtended(3);
+	std::string         TABs3 = stream->getCurrSpaceExtended(2);
 
 	(*stream) << endl << endl;
-	(*stream) << TABs1 << "ECVE MEASUREMENTS" << endl;
+	(*stream) << TABs1 << "ECVE" << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	(*stream) << TABs1;
 	(*stream).writeStringLeft(nameWidth, "POINT ON THE LINE"); //Reference point
 	(*stream).writeStringLeft(nameWidth, ecverom.fMeasuredLine->getLinePoint()->getName()); //Reference point
-	(*stream).writeString(nameWidth, "X");
-	(*stream).writeDouble(obsWidth, obsWidth, ecverom.fMeasuredLine->getLinePoint()->getEstValue(0));
-	(*stream).writeString(nameWidth, "Y");
-	(*stream).writeDouble(obsWidth, obsWidth, ecverom.fMeasuredLine->getLinePoint()->getEstValue(1));
-	(*stream).writeString(nameWidth, "Z");
-	(*stream).writeDouble(obsWidth, obsWidth, ecverom.fMeasuredLine->getLinePoint()->getEstValue(2));
+	(*stream).writeString(3, "X");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecverom.fMeasuredLine->getLinePoint()->getEstValue(0));
+	(*stream).writeString(3, "Y");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecverom.fMeasuredLine->getLinePoint()->getEstValue(1));
+	(*stream).writeString(3, "Z");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecverom.fMeasuredLine->getLinePoint()->getEstValue(2));
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 
 	//data summury
-	this->writeObsTitle(TABs3 + this->getObsDescriptionEN(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
+	this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
 	writeSCALEResultsHeader(); // write the title line for the observations
 
 	for (auto const& ItECVE : ecverom.measECVE)
@@ -181,7 +181,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
-	std::string         TABs3 = stream->getCurrSpaceExtended(3);
+	std::string         TABs2 = stream->getCurrSpaceExtended(2);
 
 
 	(*stream) << endl << endl;
@@ -189,7 +189,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	(*stream) << TABs1 << "LINE " << ecsprom.p1->getName() << " - " << ecsprom.p2->getName() << endl << endl;
 
 	////////////////////////////////////////////////////////////
-	(*stream) << TABs1;
+	(*stream) << TABs2;
 	(*stream).writeStringLeft(nameWidth, "POINT"); //second point's Name
 	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECTH
 	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECTH
@@ -199,7 +199,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
-	(*stream) << TABs1;
+	(*stream) << TABs2;
 	(*stream).writeStringLeft(nameWidth, ""); //station
 	(*stream).writeString(obsWidth, "(M)"); //mesured
 	(*stream).writeString(obsResWidth, "(MM)"); //sigma 
@@ -211,7 +211,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 		//For each measurement of the station
 		for (auto const& ItECSP : ecsprom.measECSP)
 		{
-			(*stream) << TABs1;
+			(*stream) << TABs2;
 
 			//write Point
 			(*stream).writeStringLeft(nameWidth, ItECSP.targetPos->getName());
@@ -243,25 +243,25 @@ void TSCALEWriter::writeECHOSIMUResults(const  TECHOROM& echorom)
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
+	int					lengthPrecision = getLengthPrecision();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
-	(*stream) << endl;
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF POINT"); //Reference point
 	(*stream).writeStringLeft(nameWidth, echorom.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(nameWidth, "X");
-	(*stream).writeDouble(obsWidth, obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(nameWidth, "Y");
-	(*stream).writeDouble(obsWidth, obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(nameWidth, "Z");
-	(*stream).writeDouble(obsWidth, obsWidth, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream).writeString(3, "X");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeString(3, "Y");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeString(3, "Z");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream) << endl << endl;
 
 
-	writeDistanceResultsSummary(echorom.getECHOObsSummary(), stream->getCurrSpaceExtended(3));
+	writeDistanceResultsSummary(echorom.getECHOObsSummary(), stream->getCurrSpaceExtended(2));
 }
 
 void TSCALEWriter::writeECVESIMUResults(const  TECVEROM& ecverom)
@@ -269,25 +269,25 @@ void TSCALEWriter::writeECVESIMUResults(const  TECVEROM& ecverom)
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
+	int					lengthPrecision = getLengthPrecision();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
-	(*stream) << endl;
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POINT ON THE LINE"); //Reference point
 	(*stream).writeStringLeft(nameWidth, ecverom.fMeasuredLine->getLinePoint()->getName()); //Reference point
-	(*stream).writeString(nameWidth, "X");
-	(*stream).writeDouble(obsWidth, obsWidth, ecverom.fMeasuredLine->getLinePoint()->getEstValue(0));
-	(*stream).writeString(nameWidth, "Y");
-	(*stream).writeDouble(obsWidth, obsWidth, ecverom.fMeasuredLine->getLinePoint()->getEstValue(1));
-	(*stream).writeString(nameWidth, "Z");
-	(*stream).writeDouble(obsWidth, obsWidth, ecverom.fMeasuredLine->getLinePoint()->getEstValue(2));
+	(*stream).writeString(3, "X");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecverom.fMeasuredLine->getLinePoint()->getEstValue(0));
+	(*stream).writeString(3, "Y");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecverom.fMeasuredLine->getLinePoint()->getEstValue(1));
+	(*stream).writeString(3, "Z");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecverom.fMeasuredLine->getLinePoint()->getEstValue(2));
 	(*stream) << endl << endl;
 
 
-	writeDistanceResultsSummary(ecverom.getECVEObsSummary(), stream->getCurrSpaceExtended(3));
+	writeDistanceResultsSummary(ecverom.getECVEObsSummary(), stream->getCurrSpaceExtended(2));
 }
 
 void TSCALEWriter::writeECSPSIMUResults(const  TECSPROM& ecsprom)
@@ -297,17 +297,14 @@ void TSCALEWriter::writeECSPSIMUResults(const  TECSPROM& ecsprom)
 	int					obsWidth = getObsWidth();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
-	std::string         TAB2 = stream->getCurrSpaceExtended(3);
+	std::string         TAB2 = stream->getCurrSpaceExtended(2);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECSP), (int)ecsprom.measECSP.size());
+	(*stream) << TABs;
+	(*stream) << "LINE: " << ecsprom.p1->getName() << ", " << ecsprom.p2->getName() << endl;
 	(*stream) << endl;
+	this->writeObsTitle(TAB2 + this->getObsDescriptionFR(TALGCObjectWriter::kECSP), (int)ecsprom.measECSP.size());
 
-	(*stream) << TAB2;
-	(*stream).writeStringLeft(nameWidth, "LINE: ");
-	(*stream) << ecsprom.p1->getName() << ", " << ecsprom.p2->getName();
-	(*stream) << endl << endl;
-
-	writeDistanceResultsSummary(ecsprom.getECSPObsSummary(), stream->getCurrSpaceExtended(3));
+	writeDistanceResultsSummary(ecsprom.getECSPObsSummary(), stream->getCurrSpaceExtended(2));
 }
 
 
@@ -363,7 +360,6 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -399,7 +395,6 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -433,7 +428,6 @@ void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCS
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -447,13 +441,13 @@ void TSCALEWriter::writeSCALESynthesisHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	////////////////////////////////////////////////////////////
 	//First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "LINE"); //plane name
+	(*stream).writeStringLeft(nameWidth, "LIGNE"); //plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
@@ -482,7 +476,7 @@ void TSCALEWriter::writeECHOResultsSynthesis(const  TECHOROM& echorom)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;
@@ -515,7 +509,7 @@ void TSCALEWriter::writeECVEResultsSynthesis(const  TECVEROM& ecrom)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;
@@ -548,7 +542,7 @@ void TSCALEWriter::writeECSPResultsSynthesis(const  TECSPROM& ecrom)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;

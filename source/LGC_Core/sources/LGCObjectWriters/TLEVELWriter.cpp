@@ -16,6 +16,7 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	string				separator = getSeparator();
+	int					lengthPrecision = getLengthPrecision();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 	int					obsWidth = getObsWidth();
 
@@ -29,12 +30,12 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF POINT"); //Reference point
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(nameWidth, "X");
-	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(nameWidth, "Y");
-	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(nameWidth, "Z");
-	(*stream).writeDouble(obsWidth, obsWidth, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream).writeString(3, "X");
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeString(3, "Y");
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeString(3, "Z");
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 }
@@ -45,12 +46,12 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
 	////////////////////////////////////////////////////////////
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDLEV), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEV), nOObs);
 	//Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target	
@@ -94,15 +95,11 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 //------------------ Result data---------------------------------------------------------------------------
 void TLEVELWriter::writeLEVELResults(const TLEVEL& fLevel)
 {
-	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
-
 	writeLEVELHeader(fLevel);
 
 	if (fLevel.measDLEV.size() > 0)
 		//The eventual DHOR result to be written inside this method 
 		writeDLEVResults(fLevel.measDLEV, fLevel.instrument);
-
 }
 
 void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrumentData::TLEVEL& instr)
@@ -113,7 +110,7 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeDLEVResultsHeader((int)measDLEV.size());
 
@@ -197,13 +194,12 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 void TLEVELWriter::writeLEVELSIMUResults(const TLEVEL& fLevel)
 {
 	TAStreamFormatter*	stream = getStream();
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
 	writeLEVELHeader(fLevel);
 
 	if (fLevel.measDLEV.size() > 0){
-		(*stream) << TABs;
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDLEV), (int)fLevel.measDLEV.size());
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEV), (int)fLevel.measDLEV.size());
 		writeDistanceResultsSummary(fLevel.getDLEVObsSummary(), TABs);
 	}
 	//The DHOR result summary
@@ -256,7 +252,6 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStat
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDistanceResidual().getMMetresValue());
 
 			writeReliabilityMM(index, stat);
-			(*stream).setDataSpacing();
 		}
 
 	}
@@ -292,9 +287,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.getDistanceResidual().getMMetresValue());
 
-
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -308,7 +301,7 @@ void TLEVELWriter::writeLEVELSynthesisHeader()
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	////////////////////////////////////////////////////////////
@@ -343,7 +336,7 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;

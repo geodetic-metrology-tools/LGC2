@@ -60,10 +60,10 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 		////////////////////////////////////////////////////////////
-		this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kPLR3D), nOObs);
 		//first line
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "");
@@ -239,11 +239,11 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kANGL), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kANGL), nOObs);
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -283,11 +283,11 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kZEND), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kZEND), nOObs);
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -328,11 +328,11 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDIST), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDIST), nOObs);
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -380,11 +380,11 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
 	//first line
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDHOR), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDHOR), nOObs);
 	//Second line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
@@ -424,10 +424,10 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//summuray
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECTH), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECTH), nOObs);
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
@@ -465,10 +465,10 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//summuray
-	this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECDIR), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECDIR), nOObs);
 
 	////////////////////////////////////////////////////////////
 	//first line
@@ -524,7 +524,7 @@ void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream)<<endl<<TABs;
-	(*stream).writeStringLeft(nameWidth,"TOTAL STATION INSTRUMENT: " + tstn->instrument.ID);
+	(*stream).writeStringLeft(nameWidth,"INSTRUMENT POLAIRE: " + tstn->instrument.ID);
 	(*stream)<<endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -598,7 +598,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writePLRResultsHeader((int)measPLR3D.size()); // write the title line for the observations
 	for (auto const& ItPLR3D : measPLR3D)
@@ -799,7 +799,7 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeANGLResultsHeader((int)measANGL.size()); // write the title line for the observations
 	for (auto const& ItANGL : measANGL)
@@ -856,7 +856,7 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeZENDResultsHeader((int)measZEND.size()); // write the title line for the observations
 	for (auto const& ItZEND : measZEND)
@@ -913,7 +913,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeDISTResultsHeader((int)measDIST.size()); // write the title line for the observations
 	for (auto const& ItDIST : measDIST)
@@ -994,7 +994,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeDHORResultsHeader((int)measDHOR.size()); // write the title line for the observations
 	for (auto const& ItDHOR : measDHOR)
@@ -1061,7 +1061,7 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 	int					anglePrecision = getAnglePrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeECTHResultsHeader((int)measECTH.size());
 
@@ -1113,7 +1113,7 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 	int					anglePrecision = getAnglePrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeECDIRResultsHeader((int)measECDIR.size());
 
@@ -1166,7 +1166,7 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
-	std::string        TABs = stream->getCurrSpaceExtended(3);
+	std::string        TABs = stream->getCurrSpaceExtended(2);
 
 	//Write definition of TSTN
 	writeTSTNHeader(tstn);
@@ -1177,37 +1177,37 @@ void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 		writeV0Header(ItRoms);
 
 		if (ItRoms->measANGL.size() > 0){
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kANGL), (int)ItRoms->measANGL.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kANGL), (int)ItRoms->measANGL.size());
 			writeAngleResultsSummary(ItRoms->getANGLObsSummary(), TABs);
 		}
 		if (ItRoms->measZEND.size() > 0){
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kZEND), (int)ItRoms->measZEND.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kZEND), (int)ItRoms->measZEND.size());
 			writeAngleResultsSummary(ItRoms->getZENDObsSummary(), TABs);
 		}
 		if (ItRoms->measDIST.size() > 0){
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDIST), (int)ItRoms->measDIST.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDIST), (int)ItRoms->measDIST.size());
 			writeDistanceResultsSummary(ItRoms->getDISTObsSummary(), TABs);
 		}
 		if (ItRoms->measDHOR.size() > 0){
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kDHOR), (int)ItRoms->measDHOR.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDHOR), (int)ItRoms->measDHOR.size());
 			writeDistanceResultsSummary(ItRoms->getDHORObsSummary(), TABs);
 		}
 		if (ItRoms->measECTH.size() > 0){
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECTH), (int)ItRoms->measECTH.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECTH), (int)ItRoms->measECTH.size());
 			writeDistanceResultsSummary(ItRoms->getECTHObsSummary(), TABs);
 		}
 		if (ItRoms->measECDIR.size() > 0){
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kECDIR), (int)ItRoms->measECDIR.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECDIR), (int)ItRoms->measECDIR.size());
 			writeDistanceResultsSummary(ItRoms->getECDIRObsSummary(), TABs);
 		}
 
 		if (ItRoms->measPLR3D.size() > 0){
 			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D)+": ANGL", (int)ItRoms->measPLR3D.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kPLR3D)+": ANGL", (int)ItRoms->measPLR3D.size());
 			writeAngleResultsSummary(summary.anglObsSum, TABs);
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D) + ": ZEND", (int)ItRoms->measPLR3D.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kPLR3D) + ": ZEND", (int)ItRoms->measPLR3D.size());
 			writeAngleResultsSummary(summary.zendObsSum, TABs);
-			this->writeObsTitle(TABs + this->getObsDescriptionEN(TALGCObjectWriter::kPLR3D) + ": DIST", (int)ItRoms->measPLR3D.size());
+			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kPLR3D) + ": DIST", (int)ItRoms->measPLR3D.size());
 			writeDistanceResultsSummary(summary.distObsSum, TABs);
 		}
 	}
@@ -1294,7 +1294,6 @@ void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue());
 
 		writeReliabilityCC(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -1330,7 +1329,6 @@ void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());
 
 		writeReliabilityCC(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -1364,7 +1362,6 @@ void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;	
 }
@@ -1433,7 +1430,6 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItPLR.getDistanceResidual(ESingleValue::kValue).getMMetresValue());
 
 		writeReliabilityMM(index+2, stat);
-		(*stream).setDataSpacing();
 	}
 	return;	
 }
@@ -1467,7 +1463,6 @@ void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;	
 }
@@ -1501,7 +1496,6 @@ void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -1535,7 +1529,6 @@ void	TTSTNWriter::writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSt
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
-		(*stream).setDataSpacing();
 	}
 	return;
 }
@@ -1548,7 +1541,7 @@ void TTSTNWriter::writeANGLHeaderSynthesis(){
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	////////////////////////////////////////////////////////////
@@ -1577,7 +1570,7 @@ void TTSTNWriter::writeDISTHeaderSynthesis(){
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	////////////////////////////////////////////////////////////
@@ -1606,8 +1599,8 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-	std::string         TABs2 = stream->getCurrSpaceExtended(4);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+	std::string         TABs2 = stream->getCurrSpaceExtended(2);
 
 
 	(*stream).writeStringLeft(nameWidth, "PLR3D"); //instrument
@@ -1665,7 +1658,7 @@ void TTSTNWriter::writeANGLResultsSynthesis(const std::list<TANGL>& measANGL, co
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	for (auto& it : rom)
 	{
@@ -1699,7 +1692,7 @@ void TTSTNWriter::writeZENDResultsSynthesis(const std::list<TZEND>& measZEND, co
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	for (auto& it : rom)
 	{
@@ -1733,7 +1726,7 @@ void TTSTNWriter::writeDISTResultsSynthesis(const std::list<TLINE>& measDIST, co
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	for (auto& it : rom)
 	{
@@ -1776,8 +1769,8 @@ void TTSTNWriter::writePLRResultsSynthesis(const std::list<TPLR3D>& measPLR3D, c
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
-	std::string         TABs2 = stream->getCurrSpaceExtended(4);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+	std::string         TABs2 = stream->getCurrSpaceExtended(2);
 
 	for (auto& it : rom)
 	{
@@ -1840,7 +1833,7 @@ void TTSTNWriter::writeECTHResultsSynthesis(const std::list<TECTH>& measECTH, co
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	for (auto& it : rom)
 	{
@@ -1874,7 +1867,7 @@ void TTSTNWriter::writeECDIRResultsSynthesis(const std::list<TECDIR>& measECDIR,
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(3);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	for (auto& it : rom)
 	{

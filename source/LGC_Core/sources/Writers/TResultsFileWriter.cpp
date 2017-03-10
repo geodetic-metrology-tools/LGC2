@@ -159,16 +159,13 @@ void    TResultsFileWriter::writeTitle()
     (*stream)<<"                          ***********        *****               *****           ***********                                     "<<endl<<endl<<endl<<endl;
  
     (*stream)<<"*********************************************************************************************************************************** "<<endl;
-    (*stream)<<endl<<endl<<endl;
+    (*stream)<<endl;
  
     //write software id.
     (*stream)<<(TLGCApp::getProgId())<<endl;
  
     //write software copyright
     (*stream)<<(TLGCApp::getCopyright())<<endl;
- 
-    //last compilation (now showed in progID together with surveylib version)
-    //(*stream)<<"Derniere compilation : "<<__DATE__<<endl<<endl<<endl;
  
     //write title
     (*stream)<<"*********************************************************************************************************************************** "<<endl;
@@ -189,7 +186,7 @@ void    TResultsFileWriter::writeTitle()
     string essai = ctime( &ltime );
     strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
     (*stream)<<tmpbuf<<endl;
-    (*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
+    (*stream)<<"*********************************************************************************************************************************** "<<endl<<endl;
  
 }
  
@@ -199,25 +196,23 @@ void    TResultsFileWriter::writeDataSummary()
 {
     TAStreamFormatter* stream = getStream();
  
-    (*stream)<<"DATA SET - GENERAL INFO:" << endl<<endl;
-    (*stream)<<"\tFRAMES defined:" << endl;
-    (*stream)<<"\t \t NOMBRE =\t"<< int(fProjectData->getNumberOfFrames()) << endl << endl;
+	(*stream) << "DATA SET -  INFO GENERAL:" << endl << endl;
+    (*stream)<<"\tFRAMES :" << int(fProjectData->getNumberOfFrames()) << endl << endl;
  
     if(fProjectData->getPoints().numObjects()>0)
        writeAdjustableObjGeneralInfo("POINTS", (int)fProjectData->getPoints().numObjects(), (int)fProjectData->getPoints().numUnknowns());
     if(fProjectData->getLines().numObjects()>0)
-       writeAdjustableObjGeneralInfo("LINES", (int)fProjectData->getLines().numObjects(), (int)fProjectData->getLines().numUnknowns());
+       writeAdjustableObjGeneralInfo("LIGNES", (int)fProjectData->getLines().numObjects(), (int)fProjectData->getLines().numUnknowns());
  
     if(fProjectData->getPlanes().numObjects()>0)
-       writeAdjustableObjGeneralInfo("PLANES", (int)fProjectData->getPlanes().numObjects(), (int)fProjectData->getPlanes().numUnknowns());
+       writeAdjustableObjGeneralInfo("PLANS", (int)fProjectData->getPlanes().numObjects(), (int)fProjectData->getPlanes().numUnknowns());
  
     if(fProjectData->getAngles().numObjects()>0)
        writeAdjustableObjGeneralInfo("ANGLES", (int)fProjectData->getAngles().numObjects(), (int)fProjectData->getAngles().numUnknowns());
  
     if(fProjectData->getLength().numObjects()>0)
-       writeAdjustableObjGeneralInfo("LENGTHS", (int)fProjectData->getLength().numObjects(), (int)fProjectData->getLength().numUnknowns());
- 
-    (*stream)<<endl<<endl;
+       writeAdjustableObjGeneralInfo("DISTANCES", (int)fProjectData->getLength().numObjects(), (int)fProjectData->getLength().numUnknowns());
+
  
     int fNumFixedPoint = fProjectData->getPointsDimension(TSpatialStatus::kCala);
     int fNumVxyzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVxyz);
@@ -228,7 +223,7 @@ void    TResultsFileWriter::writeDataSummary()
     int fNumVyPoint = fProjectData->getPointsDimension(TSpatialStatus::kVy);
     int fNumVzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVz);
  
-    (*stream)<<"POINTS SUMMARY:" << endl<<endl;
+	(*stream) << "POINTS : " << endl << endl;
     //insure impose de mettre les endl en en retour de ligne....
     //LECTURE DES POINTS DE CALAGE
     if(fNumFixedPoint != 0)
@@ -284,7 +279,7 @@ void    TResultsFileWriter::writeDataSummary()
 	int fNumPDOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPDOR);
 	int fNumRADI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI);
  
-	(*stream) << endl << "MEASUREMENTS SUMMARY:" << endl<<endl;
+	(*stream) << endl << "MESURES :" << endl << endl;
     if(fNumHorAng != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kANGL), fNumHorAng);    
  
@@ -347,10 +342,8 @@ void    TResultsFileWriter::writeDataSummary()
 void    TResultsFileWriter::writeAdjustableObjGeneralInfo(const std::string adjObjName, const int numAdj, const int numUnkn)  
 {
     TAStreamFormatter &stream = getStreamRef();
-    stream<<"\t"<< adjObjName << " defined:" << endl;
-    stream<<"\t \t NOMBRE =\t"<<numAdj << endl << endl;
-    stream<<"\tUnknowns introduced by " << adjObjName << ":"<<endl;
-    stream<<"\t \t NOMBRE =\t"<<numUnkn << endl << endl;
+    stream<<"\t"<< adjObjName << " : " <<numAdj << endl;
+    stream<<"\t Inconuues introduites " << adjObjName << ": "<<numUnkn << endl<<endl;
 }
  
  
@@ -359,9 +352,7 @@ void    TResultsFileWriter::writePointDataSummary(const string description, cons
 {
     TAStreamFormatter &stream = getStreamRef();
  
-    stream<<"	LECTURE DES POINTS " << description << endl;
-    stream<<"             NOMBRE=    "<<numPts;
-    stream<<endl<<endl;
+    stream<<"	LECTURE DES POINTS " << description<<" : "<<numPts<<endl;
     return;
 }
  
@@ -385,7 +376,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
  
     // NUMBER OF ITERATIONS
     stream<<"	NUMBER OF ITERATIONS =     "<<fProjectData->getNumberOfLSIterations();
-    stream<<endl<<endl<<endl<<endl;
+    stream<<endl<<endl;
  
     //RESEAU COMPLETEMENT LIBRE ?
 	if (fProjectData->getConfig().libre.isActive())
@@ -484,7 +475,7 @@ void    TResultsFileWriter::writeSigmaAPosteriori()
     stream->precision(5);
     stream->width( stream->getObsFormat()->getObsResidualWidth() );
         (*stream)<<S0UpLimit<<")";
-        (*stream)<<endl<<endl;
+        (*stream)<<endl;
  
     if(fProjectData->fUEOIndices.UIndex == fProjectData->fUEOIndices.OIndex)
     {
@@ -532,7 +523,7 @@ void    TResultsFileWriter::writeSigmaAPosteriori(const TLGCData& data)
     stream->precision(5);
     stream->width( stream->getObsFormat()->getObsResidualWidth() );
         (*stream)<<S0UpLimit<<")";
-        (*stream)<<endl<<endl;
+        (*stream)<<endl;
  
     if(fProjectData->fUEOIndices.UIndex == fProjectData->fUEOIndices.OIndex)
     {
@@ -593,10 +584,7 @@ void    TResultsFileWriter::writeMeasDataSummary(const string description, const
     TAStreamFormatter &stream = getStreamRef();
  
     //insure impose de mettre les endl en en retour de ligne....
-    stream<<"	LECTURE DES " << description;
-    stream<<endl;
-    stream<<"             NOMBRE=    "<<numObs;
-    stream<<endl<<endl;
+    stream<<"	LECTURE DES " << description<<" : "<<numObs<<endl;
  
     return;
 }
