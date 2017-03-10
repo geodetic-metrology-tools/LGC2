@@ -124,10 +124,7 @@ void TPunchFileWriter::writePoint(LGCAdjustablePoint const& point, TLGCConfig::T
 		
 		///< Nom_Pt X Y Z Vx Vy Vz Cxy Cxz Cyz Dx Dy Dz
 		case TLGCConfig::TCoordOut::kE:
-			if (point.getFrameTreePosition()->get()->isROOTNode())
-				writeXYZVarCovarDeltaData(point);
-			else
-				writeXYZData(pointRoot);
+			writeXYZVarCovarDeltaData(point);
 			break; 
 
 		///< Nom_Pt X Y Z Gist_gd_axe Gd_axe Pt_axe Sz dx dy dz
@@ -258,9 +255,9 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	int					coordResWidth = getCoordResWidth();
 
 	if (fData->getConfig().useApriori.isActive())
-		(*stream) << "LES VARIANCES ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
+		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
 	else
-		(*stream) << "LES VARIANCES ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl << endl;
+		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl << endl;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,9 +270,9 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	(*stream).writeString(coordWidth, "Z ");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "VX ");
-	(*stream).writeString(coordResWidth, "VY ");
-	(*stream).writeString(coordResWidth, "VZ ");
+	(*stream).writeString(coordResWidth, "SX ");
+	(*stream).writeString(coordResWidth, "SY ");
+	(*stream).writeString(coordResWidth, "SZ ");
 	(*stream).width(1);
 	(*stream) << "";
 	(*stream).writeString(coordResWidth, "COVXY");
@@ -342,9 +339,9 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	stream->writeString(vecwidth, "DIRECTION X");
 	stream->writeString(vecwidth, "DIRECTION Y");
 	stream->writeString(vecwidth, "DIRECTION Z");
-	stream->writeString(coordWidth, "LONGUER X");
-	stream->writeString(coordWidth, "LONGUER Y");
-	stream->writeString(coordWidth, "LONGUER Z");
+	stream->writeString(coordWidth, "LONGUEUR X");
+	stream->writeString(coordWidth, "LONGUEUR Y");
+	stream->writeString(coordWidth, "LONGUEUR Z");
 	stream->writeString(coordResWidth, "DX");
 	stream->writeString(coordResWidth, "DY");
 	stream->writeString(coordResWidth, "DZ");
@@ -590,100 +587,161 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
-	int					coordWidth = getCoordWidth();
-	int					coordResWidth = getCoordResWidth();
 	string separator = stream->getSeparator();
 
-	(*stream).width(1);
-	(*stream)<<"";
-	converter.writeName(point.getName(), nameWidth);
-	converter.writeXYZ(coordWidth, getCoordPrecision(),TLength::kMetres, separator, point.getEstimatedValue());
+	if (point.getFrameTreePosition()->get()->isROOTNode())
+	{
+		(*stream).width(1);
+		(*stream) << "";
+		converter.writeName(point.getName(), nameWidth);
+		converter.writeXYZ(getCoordWidth(), getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
 
-	//Variance
-	(*stream).width(1);
-	(*stream)<<"";
-	int  pre = getCoordPrecision();
-	if(pre >=3)
-	{pre = pre -3;}
+		//Variance
+		(*stream).width(1);
+		(*stream) << "";
+
+		//Create pseudo TLength to write correctly variance and covariance values (precision, digits...)
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			getCoordResWidth(),
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			TLength(point.getXEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
+			TLength(point.getXEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
+			TLength(point.getZEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
+			" ");
+		(*stream).width(1);
+		(*stream) << "";
+		//Covariance 
+		converter.writeCoordinateParam(point.getSpatialStatus(),
+			getCoordResWidth(),
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			TLength(point.getXYCovar(), TLength::EUnits::kMillimetres),
+			TLength(point.getXZCovar(), TLength::EUnits::kMillimetres),
+			TLength(point.getYZCovar(), TLength::EUnits::kMillimetres),
+			" ", true);
+
+
+		(*stream).width(1);
+		(*stream) << "";
+		//Delta
+
+		//transform H in Z
+		TPositionVector xyzValue = point.getProvisionalValue();
+		if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+		{
+			TXYH2CCS::XYHs2CCS(xyzValue);
+			converter.writeCoordinateParam(point.getSpatialStatus(),
+				getCoordResWidth(),
+				getCoordPrecision(),
+				TLength::kMillimetres,
+				separator,
+				point.getDXValue(),
+				point.getDYValue(),
+				point.getEstValue(2) - xyzValue.getZ(),
+				" ");
+		}
+		else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+		{
+			TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
+			converter.writeCoordinateParam(point.getSpatialStatus(),
+				getCoordResWidth(),
+				getCoordPrecision(),
+				TLength::kMillimetres,
+				separator,
+				point.getDXValue(),
+				point.getDYValue(),
+				point.getEstValue(2) - xyzValue.getZ(),
+				" ");
+		}
+		else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+		{
+			TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
+
+			converter.writeCoordinateParam(point.getSpatialStatus(),
+				getCoordResWidth(),
+				getCoordPrecision(),
+				TLength::kMillimetres,
+				separator,
+				point.getDXValue(),
+				point.getDYValue(),
+				point.getEstValue(2) - xyzValue.getZ(),
+				" ");
+		}
+		else
+			converter.writeCoordinateParam(point.getSpatialStatus(),
+			getCoordResWidth(),
+			getCoordPrecision(),
+			TLength::kMillimetres,
+			separator,
+			point.getDXValue(),
+			point.getDYValue(),
+			point.getDZValue(),
+			" ");
+	}
 	else
-	{pre = 0;}
-	converter.writeCoordinateParam( point.getSpatialStatus(),
-									coordResWidth,
-									pre,
-									separator,
-									point.getXEstPrecision().getMMetresValue()*point.getXEstPrecision().getMMetresValue(),
-									point.getYEstPrecision().getMMetresValue()*point.getXEstPrecision().getMMetresValue(),
-									point.getZEstPrecision().getMMetresValue()*point.getZEstPrecision().getMMetresValue(),
-									" ");
-	(*stream).width(1);
-	(*stream)<<"";
-	//Covariance 
-	converter.writeCoordinateParam(point.getSpatialStatus(),
-								coordResWidth,
-								getCoordPrecision(),
-								separator,
-								point.getXYCovar(),
-								point.getXZCovar(),
-								point.getYZCovar(),
-								" ", true);
-
-
-	(*stream).width(1);
-	(*stream)<<"";
-	//Delta
-
-	//transform H in Z
-	TPositionVector xyzValue = point.getProvisionalValue();
-	if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 	{
-		TXYH2CCS::XYHs2CCS(xyzValue);
+		(*stream).width(1);
+		(*stream) << "";
+		converter.writeName(point.getName(), nameWidth);
+
+		// Transformation of the point to the root
+		TPositionVector estimatedValue = point.getEstimatedValue();
+		TPositionVector provisionalValue = point.getProvisionalValue();
+		TDataTreeIterator root = fProjectData->getTree().begin();
+
+		if (root != point.getFrameTreePosition()){
+			TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
+			transfo.transform(estimatedValue);
+			transfo.transform(provisionalValue);
+		}
+
+		//transform sigma in root
+		TFreeVector sigmaRoot;
+		sigmaRoot = point.transformSigmaInRoot(point, fProjectData);
+
+		converter.writeXYZ(getCoordWidth(), getCoordPrecision(), TLength::kMetres, separator, estimatedValue);
+
+		//SIGMA
+		(*stream).width(1);
+		(*stream) << "";
+		stream->setLengthUnits(TLength::kMillimetres);
+		stream->setWidthFormat(getCoordResWidth());
+		stream->setPrecisionFormat(getCoordPrecision());
+		(*stream) << TLength((sigmaRoot.getX()));
+		(*stream) << (separator);
+		(*stream) << TLength((sigmaRoot.getY()));
+		(*stream) << (separator);
+		(*stream) << TLength((sigmaRoot.getZ()));
+		(*stream) << (separator);
+		(*stream).width(1);
+		(*stream) << "";
+
+		//No Covariance for the points which are not defined in ROOT
+		writeString(getCoordResWidth(), " ");
+		(*stream) << (separator);
+		writeString(getCoordResWidth(), " ");
+		(*stream) << (separator);
+		writeString(getCoordResWidth(), " ");
+		(*stream) << (separator);
+		(*stream).width(1);
+		(*stream) << "";
+
+		//Delta
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			getCoordResWidth(),
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
+			TLength(estimatedValue.getX() - provisionalValue.getX()),
+			TLength(estimatedValue.getY() - provisionalValue.getY()),
+			TLength(estimatedValue.getZ() - provisionalValue.getZ()),
 			" ");
+	
 	}
-	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-	{
-		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			" ");
-	}
-	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-	{
-		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			" ");
-	}
-	else 
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-								coordResWidth,
-								getCoordPrecision(),
-								TLength::kMillimetres,
-								separator,
-								point.getDXValue(),
-								point.getDYValue(),
-								point.getDZValue(),
-								" ");
 	return;
 }
 
@@ -866,31 +924,6 @@ void	TPunchFileWriter::writeXYZSigmaData(LGCAdjustablePoint const& point)
 	
 	if (point.getFrameTreePosition()->get()->isROOTNode())
 	{ 
-		// lambda function to transform the point coordinate in root
-		auto point_in_root = [&](LGCAdjustablePoint const& point) {
-			// Transformation of the point to the root
-			TPositionVector estimatedValue = point.getEstimatedValue();
-			TDataTreeIterator root = fProjectData->getTree().begin();
-
-			if (root != point.getFrameTreePosition()){
-				TLOR2LOR transfo = TLOR2LOR(point.getFrameTreePosition(), fProjectData->getTree().begin(), "toroot");
-				transfo.transform(estimatedValue);
-			}
-
-			// Set new coordinates to the point expressed in the root
-			LGCAdjustablePoint point_int_root = LGCAdjustablePoint(estimatedValue,
-				point.isCoordinateFixed(0),
-				point.isCoordinateFixed(1),
-				point.isCoordinateFixed(2),
-				point.getName(),
-				point.getReferenceFrame(),
-				point.getFrameTreePosition());
-			point_int_root.eolcomment = point.eolcomment;
-
-			return point_int_root;
-		};
-
-		auto pointRoot = point_in_root(point);
 		//Coordinate
 		converter.writeXYZ(coordWidth, getCoordPrecision(), TLength::kMetres, separator, point.getEstimatedValue());
 
