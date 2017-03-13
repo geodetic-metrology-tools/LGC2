@@ -8,6 +8,7 @@
 #include <TReader.h>
 #include "tests_2_TSTN_OLOC.h"
 #include "TLGCCalculation.h"
+#include <Behavior.h>
 
 namespace tut
 {
@@ -42,8 +43,8 @@ namespace tut
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
@@ -83,8 +84,8 @@ namespace tut
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
@@ -99,10 +100,10 @@ namespace tut
 
 
 		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-                ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 200, 1e-8);
+        ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 200, 1e-8);
 
-				TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-                ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
+		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
+        ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 
 	}
 
@@ -126,8 +127,8 @@ namespace tut
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 
 		const TLGCData& dataset = calcul.getData();
@@ -168,8 +169,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 		const TLGCData& dataset = calcul.getData();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), 0.0  , 1e-8);
@@ -183,10 +184,10 @@ namespace tut
 
 
 		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
-                ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
+        ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
-				TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
-                ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
+		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
+        ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 
 }

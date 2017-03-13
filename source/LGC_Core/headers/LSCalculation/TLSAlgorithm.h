@@ -5,6 +5,7 @@
 
 //SURVEYLIB
 #include <TALSComputer.h>
+#include <Behavior.h>
 //LGC
 #include <TVAbractAlgorithm.h>
 #include <TLSResultsMatricesExtractor.h>
@@ -24,10 +25,10 @@ public:
 	TLSAlgorithm(TLGCData& data);
 
 	/// Run the calculation
-	virtual bool run(TLGCData& data, int fMaxIterations);
+	virtual Behavior run(TLGCData& data, int fMaxIterations);
 
 	/// Iterate to the solution
-	virtual bool	iterate2Solution(TLGCData& data,
+	virtual Behavior	iterate2Solution(TLGCData& data,
 		TLSInputMatricesFiller* matrFiller,
 		TLSInputMatrices* inputMtr,
 		TALSComputer* computer,

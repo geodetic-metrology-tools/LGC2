@@ -8,6 +8,7 @@
 #include <TReader.h>
 #include "testMixingObservation.h"
 #include "TLGCCalculation.h"
+#include <Behavior.h>
 
 namespace tut
 {
@@ -42,8 +43,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 		//P2  99.79174     99.99156     99.89158  237.61  237.45  247.38
@@ -77,8 +78,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 		//P2     99.89996    100.09999     99.98884   74.85   74.74  130.85
@@ -112,8 +113,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -143,8 +144,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -203,8 +204,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -266,8 +267,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 

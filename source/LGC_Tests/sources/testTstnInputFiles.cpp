@@ -13,6 +13,7 @@
 #include "Utils.h"
 #include <vector>
 #include <ctime>
+#include <Behavior.h>
 
 namespace tut
 {
@@ -97,8 +98,8 @@ namespace tut
 		
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
+			Behavior succesCalc = calcul.computeResults(fileWriter);
+			ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 			const TLGCData& dataset = calcul.getData();
 			TPositionVector PTest = dataset.getPoints().getObject("PT").getEstimatedValue();
@@ -195,15 +196,15 @@ namespace tut
 		
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
+			Behavior succesCalc = calcul.computeResults(fileWriter);
+			ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 			const TLGCData& dataset = calcul.getData();
 			TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-         ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
-         ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
-         ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
-		 TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+			ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
+			ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
+			ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
+			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -301,21 +302,21 @@ namespace tut
 
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
-
+			Behavior succesCalc = calcul.computeResults(fileWriter);
+			ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	
 			const TLGCData& dataset = calcul.getData();
 			TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-         ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
-         ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
-         ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
-
+			 ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
+			 ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
+			 ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
+	
 			TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
-         ensure_equals("Pt2 x coordinate should match", PT2.getX().getMetresValue(), 100, 1e-9);
-         ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
-         ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
-
-		 TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+			ensure_equals("Pt2 x coordinate should match", PT2.getX().getMetresValue(), 100, 1e-9);
+			ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
+			 ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
+	
+			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -406,8 +407,8 @@ namespace tut
 		
 				TLGCCalculation calcul(projTest);
 				std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
+				Behavior succesCalc = calcul.computeResults(fileWriter);
+				ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 				const TLGCData& dataset = calcul.getData();
 				TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
@@ -434,7 +435,7 @@ namespace tut
 				int numberofLSIterations = projTest->getNumberOfLSIterations();
 				ensure("Number of LS iteration less than 10" ,numberofLSIterations<14 );
 			}
-			}
+		}
 	}	
 
 	//DOES NOT WORK PROPERLY FOR V0 = 200///////////////////
@@ -516,8 +517,8 @@ namespace tut
 			{
 				TLGCCalculation calcul(projTest);
 				std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-				bool succesCalc = calcul.computeResults(fileWriter);
-				ensure_equals("Calculation successful", succesCalc, true);
+				Behavior succesCalc = calcul.computeResults(fileWriter);
+				ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 				const TLGCData& dataset = calcul.getData();
 
@@ -570,8 +571,8 @@ namespace tut
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-			bool succesCalc = calcul.computeResults(fileWriter);
-			ensure_equals("Calculation successful", succesCalc, true);
+			Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();

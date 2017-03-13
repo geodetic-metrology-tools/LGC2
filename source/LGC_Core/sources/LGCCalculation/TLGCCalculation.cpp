@@ -15,47 +15,37 @@ TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat) : fData(dat), fM
 ///////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
 ///////////////////////////////////////////////////////////////////////////
-bool TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter){
-	bool successCalculation = false;
-
+Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter){
 	std::unique_ptr<TVAbractAlgorithm> algorithm;
+	Behavior successCalculation;
 
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fData.get());
 	// Checks whether the data are consistent, assign unknown indices and initialize uninitialized objects (points, lines, planes), reference poiints for certain observations, etc. 
-	if(!analyzer.dataConsistent())
+	if (!analyzer.dataConsistent())
+	{
 		throw std::runtime_error("Data are not consistent, see the output file: " + fData->getFileLogger().getOutputFileLocation() + " for more information.");
-
+		return Behavior(Behavior::BehaviorCode::ERR_readingContent, L"Data are not consistent, see the log file for more information.");
+	}
 	try{
-		bool L1NormUsed = false;
 
-		if (L1NormUsed)  //L1Norm
-		{
-		}
-		else  // LS
-		{
-			algorithm.reset(new TLSAlgorithm(*fData.get()));
+		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
-			if (fData->getConfig().sim.isActive())
-				algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
-			else if (fData->getConfig().allfixed.isActive())
-				algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
-			
-			successCalculation = algorithm->run(*fData.get(), fMaxIterations);
-
-			if (successCalculation)
-				fResultsMtr = algorithm->resultMatrices;
-
-		}
+		if (fData->getConfig().sim.isActive())
+			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
+		else if (fData->getConfig().allfixed.isActive())
+			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
 		
-	}
-	catch(exception& e){
-		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
-		successCalculation = false;
-	}
+		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 
-	if(fData->getFileLogger().hasErrors())
-		successCalculation = false;
+		if (successCalculation)
+			fResultsMtr = algorithm->resultMatrices;
+
+	}
+	catch (exception& e)
+	{
+		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
+	}
 
 	return successCalculation;
 }

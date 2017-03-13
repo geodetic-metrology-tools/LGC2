@@ -7,16 +7,13 @@ TLSAllfixed::TLSAllfixed(TLGCData& data, int maxIter):TLSAlgorithm(data)
 ,fAllfixedGenerator(fPointTransformer)
 {}
 
-bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
+Behavior TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 {
-	bool computationOK;
 	TLSAlgorithm normalLSProcess(data);
-	computationOK = normalLSProcess.run(data, fMaxIterations);
+	Behavior computationOK = normalLSProcess.run(data, fMaxIterations);
 
 	if (computationOK)
 	{
-		bool successfullExtraction = true;
-
 		try{
 			// Iteration through nodes of the LOR tree
 			for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++)
@@ -98,11 +95,9 @@ bool TLSAllfixed::run(TLGCData& data, int fMaxIterations)
 		}
 		catch (std::exception const & excp) {
 			data.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
-			successfullExtraction = false;
+			return Behavior(Behavior::BehaviorCode::ERR_results, L"Error extraction parameter in mode ALLFIXED");
 		}
-
-		return successfullExtraction;
 	}
-	else
-		return computationOK;
+
+	return computationOK;
 }

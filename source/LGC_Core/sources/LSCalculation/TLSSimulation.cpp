@@ -27,10 +27,10 @@ fileWriter(fResFileWriter)
 
 }
 
-bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
+Behavior TLSSimulation::run(TLGCData& data, int fMaxIterations)
 {
 	TLSAlgorithm lsCalc(data);
-	bool calcOK = false;
+	Behavior calcOK;
 	engine.seed();
 
 	int numOfSimMade = 0;
@@ -52,11 +52,12 @@ bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
 		else
 		{
 			throw std::logic_error("Calculation failed in simulation mode.");
+			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 		}
 	}
 	catch (std::exception& excp) {
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
-		calcOK = false;
+		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 	}
 
 	try{
@@ -98,7 +99,7 @@ bool TLSSimulation::run(TLGCData& data, int fMaxIterations)
 	}
 	catch (std::exception const& excp) {
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
-		calcOK = false;
+		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 	}
 	return calcOK;
 

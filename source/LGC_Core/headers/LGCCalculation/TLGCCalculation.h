@@ -5,6 +5,8 @@
 
 //STL
 #include <memory>
+//SURVEYLIB
+#include <Behavior.h>
 //LGC
 #include <TSimulationOutputFileWriter.h>
 
@@ -31,7 +33,7 @@ class TLGCCalculation{
 
 		@param dat[in] fileWriter The writer is only used for SIMULATION, where we output values after each simulation run. 
 	*/
-	bool computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter);
+	Behavior computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter);
 
 	/// Returns the project data.
 	const TLGCData& getData(){ return *fData.get();}

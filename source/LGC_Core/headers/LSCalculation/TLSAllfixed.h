@@ -3,6 +3,8 @@
 
 //Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
+//SURVEYLIB
+#include <Behavior.h>
 //LGC
 #include <TLSAlgorithm.h>
 #include <TPointTransformer.h>
@@ -20,7 +22,7 @@ public:
 	TLSAllfixed(TLGCData& data, int maxIter);
 
 	/// Run the calculation
-	virtual bool run(TLGCData& data, int fMaxIterations);
+	virtual Behavior run(TLGCData& data, int fMaxIterations);
 
 private:
 	TAllfixedParamGenerator fAllfixedGenerator; 

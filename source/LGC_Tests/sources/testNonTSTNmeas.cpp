@@ -11,6 +11,7 @@
 #include "TLGCCalculation.h"
 #include "TXYH2CCS.h"
 #include "TLOR2LOR.h"
+#include <Behavior.h>
 
 namespace tut
 {
@@ -45,8 +46,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -75,8 +76,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -108,8 +109,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -141,8 +142,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -178,14 +179,14 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);	
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
 		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
 
-      ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getMetresValue(), -74.0, 1e-7);
+		ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getMetresValue(), -74.0, 1e-7);
 
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
@@ -220,8 +221,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -256,8 +257,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -297,8 +298,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -344,8 +345,8 @@ namespace tut
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -397,13 +398,13 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
-      ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
-	  ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
+		ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
+	    ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
 
  	}
 
@@ -426,13 +427,13 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
-      ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
-	  ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
+		ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
+		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
 
  	}
 
@@ -454,13 +455,13 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
-      ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
-	  ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 50,1e-8);
+        ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
+	    ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 50,1e-8);
 
  	}
 
@@ -484,8 +485,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -534,8 +535,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -584,8 +585,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 
@@ -634,8 +635,8 @@ namespace tut
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		bool succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc, true);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 		const TLGCData& dataset = calcul.getData();
 

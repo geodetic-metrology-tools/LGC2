@@ -15,7 +15,7 @@ TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
 }
 
-bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
+Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 {
 	std::unique_ptr<TALSComputer> computer;
 	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
@@ -44,13 +44,13 @@ bool TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 			computer.reset(new TLSParametricMtdComputer());
 	}
 
-	bool computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
 	return computationIsOK;
 }
 
 
-bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
+Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	TLSInputMatricesFiller* matrFiller,
 	TLSInputMatrices* inputMtr,
 	TALSComputer* computer,
@@ -93,20 +93,20 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 					lastIteration = extractor->lastIteration();
 				else{
 					fileLog << "Problem in LS matrices extraction.\n";
-					return false; //Error during extraction, errors written out already, STOP the calculation.	
+					return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); //Error during extraction, errors written out already, STOP the calculation.	
 				}
 			}
 			else
 			{
 				//Write errors which occured in computer of LS methos
 				fileLog << "Problem with LS computation\n";
-				return false;
+				return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation\n");
 			}
 		}
 		else
 		{
 			fileLog << "Matrices filling was not successful.\n";
-			return false;
+			return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Matrices filling was not successful.\n");
 		}
 		fNumberOfIterations++;
 	}
@@ -115,12 +115,12 @@ bool	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	if (fNumberOfIterations == fMaxIterations && !lastIteration)
 	{
 		fileLog << "The calculation is not converging \n";
-		return false; //Error during the calculation, errors written out already, STOP the calculation.	
+		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"The calculation is not converging \n"); //Error during the calculation, errors written out already, STOP the calculation.	
 	}
 	else
 	{
 		computeVarCovarAndReliability(&data, inputMtr, computer);
- 		return true;
+		return Behavior();
 	}
 }
 

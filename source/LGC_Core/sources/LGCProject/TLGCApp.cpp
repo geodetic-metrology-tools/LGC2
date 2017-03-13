@@ -32,10 +32,8 @@ TLGCApp::~TLGCApp()
 /*! 
 		\throws Throws a runtime_error if the input file was not found or is not readable or if errors found in the input file or if errors occured in the file.
 */
-bool TLGCApp::exec()
+Behavior TLGCApp::exec()
 {
-	bool result = false;
-
 	std::ifstream inputFileStream (fInputFileLoc, std::ifstream::in);
 	std::ifstream cp_inputFileStream(fInputFileLoc, std::ifstream::in);
 	std::shared_ptr<TLGCData> projectData(new TLGCData);
@@ -49,12 +47,18 @@ bool TLGCApp::exec()
 	if (r.isLgc2File(cp_inputFileStream))
 	{
 		if (!r.read(inputFileStream, cp_inputFileStream))
+		{
 			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
+			return Behavior(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
+		}
 	}
 	else
 	{
 		if (!r.readLgc1File(inputFileStream))
+		{
 			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
+			return Behavior(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
+		}
 	}
 	
 	//Initialize the writer into the output file.
@@ -64,7 +68,7 @@ bool TLGCApp::exec()
 	TLGCCalculation lgcCalculation(projectData);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(new TSimulationOutputFileWriter(fStream.get(), projectData.get()));
 	
-	result = lgcCalculation.computeResults(fileWriter);
+	Behavior result = lgcCalculation.computeResults(fileWriter);
 
 	//Write input file with simulated observation (SOBS) if SIMU and SOBS are used
 	if (projectData->getConfig().sim.writeLGCFile && projectData->getConfig().sim.isActive() && result)

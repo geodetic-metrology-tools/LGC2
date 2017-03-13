@@ -3,6 +3,9 @@
 
 //Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
+//SURVEYLIB
+#include <Behavior.h>
+
 class TLGCData;
 
 /*!
@@ -19,7 +22,7 @@ public:
 
 
 	/// abstarct funtion to run the calculation
-	virtual bool run(TLGCData& data, int fMaxIterations) = 0;
+	virtual Behavior run(TLGCData& data, int fMaxIterations) = 0;
 
 	/// Pointer to the result matrices
 	TLSResultsMatrices* resultMatrices;

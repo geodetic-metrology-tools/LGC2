@@ -10,6 +10,8 @@
 #include <random>
 #endif
 #include <limits>
+//SURVEYLIB
+#include <Behavior.h>
 //LGC
 #include <TLSAlgorithm.h>
 #include <TSimulationOutputFileWriter.h>
@@ -36,7 +38,7 @@ public:
 	Calculating the 'measured values', runnning the algorithm to find the solutions (so far only LS),
 	writing out results, reinitialising for next SIMU.
 	*/
-	virtual bool run(TLGCData& data, int fMaxIterations);
+	virtual Behavior run(TLGCData& data, int fMaxIterations);
 
 private:
 

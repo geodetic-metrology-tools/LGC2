@@ -9,6 +9,7 @@
 //SURVEYLIB
 #include "TStreamFormatterFactory.h"
 #include "TLSResultsMatrices.h"
+#include <Behavior.h>
 
 class TLGCData;
 
@@ -37,7 +38,7 @@ class TLGCApp {
 		static const string getCopyright();
 
 		///Executes the application
-		bool exec();
+		Behavior exec();
 
         /// Write the given data as an LGC input file into the given file location
         static bool writeLGCFile(std::shared_ptr<TLGCData> dat, const std::string &filePath);
