@@ -143,7 +143,7 @@ public:
 		inline int getPhiUnknIndex() const { 
 			if(!fThetaFixed)
 				return uidx_Phi;
-			throw std::logic_error("Trying to get unknown index from fixed Theta angle of the plane.");
+			throw std::logic_error("Trying to get unknown index from fixed Phi angle of the plane.");
 		}
 
 		/// Returns index of an unknown index of the reference point for the distance in LS matrices.

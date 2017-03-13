@@ -44,6 +44,10 @@ TFileLogger::~TFileLogger ()
         outputFile << numWarnings << " warnings" << std::endl;
         outputFile << numErrors << " errors" << std::endl << std::endl;
 
+
+		//link to the user guide
+		outputFile << "User guide: " << "https://wikis.web.cern.ch/wikis/display/SUS/LGC2+User+Guide" << std::endl << std::endl;
+
         outputFile.close();
     } 
 }

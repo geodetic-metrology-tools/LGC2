@@ -201,7 +201,7 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(shared_ptr<TTSTN> sta
 	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
 	if (sinPhi < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (sinV).");
+		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (sinV=0).");
 
 	TReal a,b,c; //station's contributions coefficients (negative values of these give target's coefficients)	
 	a = (- 1.0 * dz * dx) / (powq(distance3D,3) * sinPhi);//xSt coefficient
@@ -254,7 +254,7 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(shared_ptr<TTSTN> statio
 
 	if(station->rot3D){ //If station can rotate freely get the rotation values
 		if(station->rotX == nullptr || station->rotY == nullptr)
-			throw std::runtime_error("TContributionGenerator::getPolar3DContrib station can rotate freely, but rotation angles are NULL.");
+			throw std::runtime_error("TContributionGenerator::getPolar3DContrib station can rotate freely, but rotation angles are not defined.");
 		Rx = station->rotX->getEstimatedValue().getRadiansValue();
 		Ry = station->rotY->getEstimatedValue().getRadiansValue();
 	}

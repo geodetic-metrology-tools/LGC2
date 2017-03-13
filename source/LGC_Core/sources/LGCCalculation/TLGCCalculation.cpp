@@ -36,8 +36,6 @@ bool TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter
 		{
 			algorithm.reset(new TLSAlgorithm(*fData.get()));
 
-			//if (fData->getConfig().libre.isActive())
-			//	algorithm.reset(new TLSLibre(*fData.get(), fMaxIterations));
 			if (fData->getConfig().sim.isActive())
 				algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
 			else if (fData->getConfig().allfixed.isActive())
