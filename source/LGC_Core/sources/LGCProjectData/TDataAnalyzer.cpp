@@ -291,7 +291,7 @@ bool TDataAnalyzer::dataConsistent(){
 	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
 		consistent = false;
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
-				", EQUATIONS = " + std::to_string(fData.fUEOIndices.EIndex) + ". LS calculation can not work."; 
+				", EQUATIONS = " + std::to_string(fData.fUEOIndices.EIndex) + ". LS calculation can not work. Add measurements or fix some unknowns"; 
 	}
 
 

@@ -23,7 +23,7 @@ TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLo
 	fOutputFileLoc(outfileLocation),
 	fStream(nullptr)
 {
-	fLoggerFileLoc = fOutputFileLoc.substr(0, fOutputFileLoc.length() - 4) + "Log" + ".log";  //Cut the extension + the dot(.)
+	fLoggerFileLoc = fOutputFileLoc.substr(0, fOutputFileLoc.length() - 4) + ".log";  //Cut the extension + the dot(.)
 }
 
 TLGCApp::~TLGCApp()
@@ -42,6 +42,9 @@ Behavior TLGCApp::exec()
 	projectData->getFileLogger().setOutputfileLocation(fLoggerFileLoc);
 	projectData->getFileLogger().writeReportHeader("LGC output file");
 
+	//Initialise Behavior with an error during the read
+	Behavior result(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
+
 	//Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
 	TReader r(projectData);
 	if (r.isLgc2File(cp_inputFileStream))
@@ -49,7 +52,6 @@ Behavior TLGCApp::exec()
 		if (!r.read(inputFileStream, cp_inputFileStream))
 		{
 			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
-			return Behavior(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
 		}
 	}
 	else
@@ -57,7 +59,6 @@ Behavior TLGCApp::exec()
 		if (!r.readLgc1File(inputFileStream))
 		{
 			throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
-			return Behavior(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
 		}
 	}
 	
@@ -68,7 +69,9 @@ Behavior TLGCApp::exec()
 	TLGCCalculation lgcCalculation(projectData);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(new TSimulationOutputFileWriter(fStream.get(), projectData.get()));
 	
-	Behavior result = lgcCalculation.computeResults(fileWriter);
+	//if we are here, the reading is well done, clean Behavior and launch calculation
+	result.extract(Behavior::BehaviorCode::ERR_readingContent);
+	result = lgcCalculation.computeResults(fileWriter);
 
 	//Write input file with simulated observation (SOBS) if SIMU and SOBS are used
 	if (projectData->getConfig().sim.writeLGCFile && projectData->getConfig().sim.isActive() && result)
