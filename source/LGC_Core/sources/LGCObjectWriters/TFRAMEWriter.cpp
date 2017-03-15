@@ -1731,9 +1731,9 @@ void TFRAMEWriter::writeEllipsoidHeader()
 	stream->writeString(vecwidth, "DIRECTION X");
 	stream->writeString(vecwidth, "DIRECTION Y");
 	stream->writeString(vecwidth, "DIRECTION Z");
-	stream->writeString(coordWidth, "LONGUER X");
-	stream->writeString(coordWidth, "LONGUER Y");
-	stream->writeString(coordWidth, "LONGUER Z");
+	stream->writeString(coordWidth, "LONGUEUR X");
+	stream->writeString(coordWidth, "LONGUEUR Y");
+	stream->writeString(coordWidth, "LONGUEUR Z");
 
 	*stream << endl;
 
