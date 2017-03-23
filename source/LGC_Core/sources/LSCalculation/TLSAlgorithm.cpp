@@ -99,8 +99,8 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 			else
 			{
 				//Write errors which occured in computer of LS methos
-				fileLog << "Problem with LS computation\n";
-				return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation\n");
+				fileLog << "Problem with LS computation: " << computer->getError()<< " \n";
+				return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation. Matrix not inverted\n");
 			}
 		}
 		else

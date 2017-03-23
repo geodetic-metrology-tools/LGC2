@@ -30,8 +30,8 @@ bool TDataAnalyzer::dataConsistent(){
 	for (auto it( fTree.begin()); it != fTree.end(); ++it){	
 		auto& frame(it.node->data.get()->frame);
 		if(!frame.isInitialized()){
-			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frame: " +	frame.getName() + " is not initialized!"; 
+			return false;
 		}
 		//Assign unknown indices
 		if(!frame.isFixed()){
@@ -156,8 +156,8 @@ bool TDataAnalyzer::dataConsistent(){
 	for (auto& point : fData.getPoints()){	
 		//Check whether initialized
 		if(!point.isInitialized()){
-			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!"; 
+			return false;
 		}
 		//Count number of CALA in ROOT
 		if (fData.getConfig().pdor.isActive() && point.getFrameTreePosition()->get()->frame.getName() == "ROOT" && point.isFixed() == true)
@@ -181,8 +181,8 @@ bool TDataAnalyzer::dataConsistent(){
 	//Run through length collection and check whether all objects were initialized, assign unknown indices
 	for (auto& length : fData.getLength()){		
 		if(!length.isInitialized()){
-			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Length: " + length.getName() + " is not initialized!"; 
+			return false;
 		}
 
 		if(!length.isFixed()){
@@ -194,8 +194,8 @@ bool TDataAnalyzer::dataConsistent(){
 	//Run through angle collection and check whether all objects were initialized, assign unknown indices
 	for (auto& angle : fData.getAngles()){		
 		if(!angle.isInitialized()){
-			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Angle: " + angle.getName() + " is not initialized!"; 
+			return false;
 		}
 
 		if(!angle.isFixed()){
@@ -207,8 +207,8 @@ bool TDataAnalyzer::dataConsistent(){
 	//Run through line collection and check whether all objects were initialized, assign unknown indices
 	for (auto& line : fData.getLines()){		
 		if(!line.isInitialized()){
-			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Line: " + line.getName() + " is not initialized!"; 
+			return false;
 		}
 
 		if(!line.isFixed()){
@@ -220,8 +220,8 @@ bool TDataAnalyzer::dataConsistent(){
 	//Run through plane collection and check whether all objects were initialized, assign unknown indices
 	for (auto& plane : fData.getPlanes()){		
 		if(!plane.isInitialized()){
-			consistent = false;
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Plane: " +	plane.getName() + " is not initialized!"; 
+			return false;
 		}
 
 		if(!plane.isFixed()){
@@ -237,8 +237,8 @@ bool TDataAnalyzer::dataConsistent(){
 	//Not run ALLFIXED and LIBR in the same time
 	if (fData.getConfig().libre.isActive() && fData.getConfig().allfixed.isActive())
 	{
-		consistent = false;
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED and LIBR option cannot be used in the same calculation";
+		return false;
 	}
 
 	//Not SIMU + LIBR with free frame
@@ -249,13 +249,13 @@ bool TDataAnalyzer::dataConsistent(){
 			
 			//free frame
 			if (!frame.isFixed()){
-				consistent = false;
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + LIBR options cannot cannot have free subframe";
+				return false;
 			}
 
 			if (frame.hasStandDev()){  //If a frame has standard deviation assigned 
-				consistent = false;
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + LIBR options cannot cannot have free subframe";
+				return false;
 			}
 		}
 	}
@@ -268,8 +268,8 @@ bool TDataAnalyzer::dataConsistent(){
 
 			//free frame
 			if (!frame.isFixed() || frame.hasStandDev()){
-				consistent = false;
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED options cannot cannot have free subframe";
+				return false;
 			}
 		}
 	}
@@ -282,16 +282,16 @@ bool TDataAnalyzer::dataConsistent(){
 
 			//free frame
 			if (!frame.isFixed() || frame.hasStandDev()){
-				consistent = false;
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "LIBR options cannot cannot have free subframe";
+				return false;
 			}
 		}
 	}
 
 	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
-		consistent = false;
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
 				", EQUATIONS = " + std::to_string(fData.fUEOIndices.EIndex) + ". LS calculation can not work. Add measurements or fix some unknowns"; 
+		return false;
 	}
 
 
