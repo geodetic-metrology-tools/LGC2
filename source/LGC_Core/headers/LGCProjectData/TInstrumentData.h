@@ -26,20 +26,6 @@ class TInstrumentData {
 				*this = par;
 			}
 
-			TPOLAR& operator=(const TPOLAR& par)
-			{
-				ID = par.ID;
-				defTarget = par.defTarget;
-				instrHeight = par.instrHeight;
-				sigmaInstrHeight = par.sigmaInstrHeight;
-				sigmaInstrCentering = par.sigmaInstrCentering;
-				constAngle = par.constAngle;
-				for(auto const& target : par.targets)
-					targets.emplace(target);
-
-				return *this;
-			}
-
 			std::string ID;
 			std::string defTarget;
 			TLength instrHeight;          // [m]
