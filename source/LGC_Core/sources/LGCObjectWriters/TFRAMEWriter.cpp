@@ -1731,9 +1731,9 @@ void TFRAMEWriter::writeEllipsoidHeader()
 	stream->writeString(vecwidth, "DIRECTION X");
 	stream->writeString(vecwidth, "DIRECTION Y");
 	stream->writeString(vecwidth, "DIRECTION Z");
-	stream->writeString(coordWidth, "LONGUER X");
-	stream->writeString(coordWidth, "LONGUER Y");
-	stream->writeString(coordWidth, "LONGUER Z");
+	stream->writeString(coordWidth, "LONGUEUR X");
+	stream->writeString(coordWidth, "LONGUEUR Y");
+	stream->writeString(coordWidth, "LONGUEUR Z");
 
 	*stream << endl;
 
@@ -1913,11 +1913,11 @@ void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
 	char vecstr[32]; // format the vector output here and write as a string
 
 	stream->writeStringLeft(nameWidth, pt->getName());
-	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
+	sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
 	stream->writeString(vecwidth, vecstr);
-	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
+	sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
 	stream->writeString(vecwidth, vecstr);
-	sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
+	sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
 	stream->writeString(vecwidth, vecstr);
 	stream->writeDouble(coordWidth, coordResWidth, ell.lx*M2MM);
 	stream->writeDouble(coordWidth, coordResWidth, ell.ly*M2MM);

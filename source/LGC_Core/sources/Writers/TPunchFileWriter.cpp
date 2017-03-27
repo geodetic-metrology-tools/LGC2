@@ -295,14 +295,14 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "(MM2)");
-	(*stream).writeString(coordResWidth, "(MM2)");
-	(*stream).writeString(coordResWidth, "(MM2)");
+	(*stream).writeString(coordResWidth, "(MM)");
+	(*stream).writeString(coordResWidth, "(MM)");
+	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
+	(*stream).writeString(coordResWidth, "(MM2)");
+	(*stream).writeString(coordResWidth, "(MM2)");
+	(*stream).writeString(coordResWidth, "(MM2)");
 	(*stream).width(1);
 	(*stream) << "";
 	(*stream).writeString(coordResWidth, "(MM)");
@@ -360,6 +360,7 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	stream->writeString(coordWidth, "(MM)");// Axis length
 	stream->writeString(coordWidth, "(MM)");// Axis length
 	stream->writeString(coordWidth, "(MM)");// Axis length
+	stream->writeString(1,""); //just to align unit with the title
 	stream->writeString(coordResWidth, "(MM)");// delta
 	stream->writeString(coordResWidth, "(MM)");// delta
 	stream->writeString(coordResWidth, "(MM)");// delta
@@ -769,11 +770,11 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 		(*stream)<<"" ;
 		const int vecwidth(24);
 		char vecstr[32]; // format the vector output here and write as a string
-		sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
+		sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vx[0], ell.vx[1], ell.vx[2]);
 		stream->writeString(vecwidth, vecstr);
-		sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
+		sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vy[0], ell.vy[1], ell.vy[2]);
 		stream->writeString(vecwidth, vecstr);
-		sprintf(vecstr, "(% .3f, % .3f, % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
+		sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
 		stream->writeString(vecwidth, vecstr);
 		stream->writeDouble(coordWidth, coordResWidth, ell.lx*M2MM);
 		stream->writeDouble(coordWidth, coordResWidth, ell.ly*M2MM);
@@ -799,11 +800,16 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 	}
 	else
 	{
-		writeXYZData(point);
-		(*stream).width(obsWidth);
-		(*stream) << "" << separator;
-		(*stream) << "" << separator;
-		(*stream) << "" << separator;
+		(*stream).width(1);
+		(*stream) << "";
+		const int vecwidth(24);
+		char vecstr[32]; // format the vector output here and write as a string
+		stream->writeString(vecwidth, "");
+		stream->writeString(vecwidth, "");
+		stream->writeString(vecwidth, "");
+		stream->writeString(coordWidth, "");
+		stream->writeString(coordWidth, "");
+		stream->writeString(coordWidth, "");
 	}
 
 
