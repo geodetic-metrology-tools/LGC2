@@ -397,7 +397,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
-		project.getConfig().title += line + '\n';
+		project.getConfig().title += line + ' ';
 		safeGetline(lgcStream, line/*, '*'*/);
 		
 		nline += (int)count(line.cbegin(), line.cend(), '\n');
