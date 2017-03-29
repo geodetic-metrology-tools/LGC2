@@ -10,7 +10,7 @@ PROJECT(LGC2)
 # Set version number and provide a header file with corresponding defines
 set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 00)
-set (LGC_VERSION_PATCH 06)
+set (LGC_VERSION_PATCH 07)
 
 # Allows c++ 11 standard
 if(UNIX)
