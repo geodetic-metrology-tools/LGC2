@@ -46,8 +46,8 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		//TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "SimuBCAM2.lgc",
-		//	getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "SimuBCAM2.res");
+		//TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "test.sim",
+		//	getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "test.sim");
 
 		//ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
 
