@@ -408,6 +408,8 @@ public:
 	inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
 	/// Returns standard deviation of the observed value
 	inline void setResidual(TLength res) { fResidual = res; }
+    /// Setter for the bearing value
+    inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
 
 private:
