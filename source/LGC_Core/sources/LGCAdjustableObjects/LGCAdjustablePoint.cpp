@@ -30,6 +30,17 @@ LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string& na
 // PUBLIC ACCESS METHODS
 ///////////////////////////////////////////////////////////////////////////
 
+void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, const TReal& z) {
+    fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys());
+
+    // Use H instead of Z if necessary:
+    if((*fFramePosition)->isROOTNode() &&
+        (fReferential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine ||
+        fReferential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS ||
+        fReferential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine))
+        fProvisionalValue.setH(TLength(z, TLength::kMetres));
+}
+
 void LGCAdjustablePoint::setCorrection(int idx, TReal value) {
 	for (int i = 0; i < 3; i++){
 		if (uidx[i] == idx) {

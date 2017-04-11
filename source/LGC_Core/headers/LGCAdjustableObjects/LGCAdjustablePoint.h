@@ -106,7 +106,7 @@ public:
         virtual void setName(const std::string name) { fName = name; }
 
         /// Reset the provisional position vector
-        virtual void setProvisionalValue(const TReal& x, const TReal& y, const TReal& z) { fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys()); }
+        virtual void setProvisionalValue(const TReal& x, const TReal& y, const TReal& z);
 
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
