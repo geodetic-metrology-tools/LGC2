@@ -24,8 +24,7 @@ class LGCAdjustableObjectCollection {
 	public:
 
 		/// Default constructor creating an empty collection
-		LGCAdjustableObjectCollection() :
-			fUnknowns(0) {}
+		LGCAdjustableObjectCollection() {}
 
 		/*!
 			\brief Returns A reference to the adjustable object.
@@ -57,7 +56,10 @@ class LGCAdjustableObjectCollection {
 
 		/// Returns the total number of unknowns for all objects in the collection
 		inline size_t numUnknowns() const {
-			return fUnknowns;
+            size_t n = 0;
+            for(const auto &obj : objects)
+                n += obj.getNumUnkn();
+			return n;
 		}
 
 		/// Checks if an adjustable object with a given name is in the collection
@@ -76,8 +78,6 @@ class LGCAdjustableObjectCollection {
 		/*!
 			\brief Adds an adjustable to the collection. 
 
-			This also updates the counter for the total number of unknowns.
-
 			\note Uninitialized objects may be in the collection by forward declaration. They will 
 			be initialized (content set by the assignemnt operator) when this method is called with a valid object.
 
@@ -88,12 +88,9 @@ class LGCAdjustableObjectCollection {
 			if (o != objects.cend()) {
 				// Object was forward-declared, initialize it
 				*o = obj;
-				// add number of unknowns introduced, uninitialized object did not introduced any
-				fUnknowns += obj.getNumUnkn();
 				return *o;
 			}
 			else {
-				fUnknowns += obj.getNumUnkn();
 				objects.emplace_back(obj);
 				return objects.back();
 			}
@@ -140,8 +137,6 @@ class LGCAdjustableObjectCollection {
 		}
 
 	protected:
-
-		size_t fUnknowns;
 
 		/// Returns The  object position in the collection by its name
 		typename std::list<T>::iterator findObject(const std::string& objName) {
