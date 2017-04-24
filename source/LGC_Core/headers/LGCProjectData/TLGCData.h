@@ -209,7 +209,8 @@ public:
 		int getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const;
 	//@}
 
-
+        /// Sets default values for number of points, measuremets, etc.
+        void setDefaultValues();
 private:
 
 	/*!@name Collections of adjustable objects*/
@@ -268,8 +269,6 @@ private:
 	TPointGlobal   fPointInfo;
 	TMeasurementsGlobal fMeasInfo;
 
-	/// Sets default values for number of points, measuremets, etc.
-	void setDefaultValues();
 };
 
 

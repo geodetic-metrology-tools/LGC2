@@ -18,6 +18,14 @@ bool TDataAnalyzer::dataConsistent(){
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
 	
+
+    // Initialise unknown, equation, and observation indices in the data,
+    // initialise the counts of different types of points and measurements
+    // (these are recounted in this function and assignEOIndices()):
+    fData.setDefaultValues();
+
+    // Assign the equation and observation indices, add different types
+    // of measurements into the count of total in TLGCData:
     assignEOIndices();
 
 	checkPDOR(outputMessages, consistent);
@@ -170,6 +178,7 @@ bool TDataAnalyzer::dataConsistent(){
 			fData.setStandDevUsed();
 		}
 
+        // Add the point to the count of total based on its type:
         fData.addToPointNum(point.getSpatialStatus());
 
 		//Assign unknown indices
@@ -303,10 +312,6 @@ bool TDataAnalyzer::dataConsistent(){
 }
 
 void TDataAnalyzer::assignEOIndices(){
-
-    // Initialise equation and observation indices in the data:
-    fData.fUEOIndices.EIndex = 0;
-    fData.fUEOIndices.OIndex = 0;
 
     // Iterate the whole tree and assign  to the measurements
     for(auto &node : fData.getTree()){

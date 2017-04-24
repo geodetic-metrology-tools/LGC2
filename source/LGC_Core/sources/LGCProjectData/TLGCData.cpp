@@ -5,7 +5,10 @@ TLGCData::TLGCData() :
 	fhasStandardDeviations(false),
 	fNumberOfConstraints(0)
 	{
-	setDefaultValues();
+        fLSRelatedInfo.fNumberOfLSIterations = 0;
+	    setDefaultValues();
+        config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+
 	// Create an empty root node
 	tree.insert(tree.begin(), TDataSPtr(new TTreeEntry())) ;	
 	
@@ -208,7 +211,6 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 }
 
 void TLGCData::setDefaultValues() {
-	fLSRelatedInfo.fNumberOfLSIterations = 0;
 
 	fUEOIndices.EIndex = 0;
 	fUEOIndices.OIndex = 0;
@@ -241,8 +243,6 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumORIE = 0;
 	fMeasInfo.fNumPDOR = 0;
 	fMeasInfo.fNumRADI = 0;
-
-	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 }
 
 void TLGCData::reInitForSIMU(){
