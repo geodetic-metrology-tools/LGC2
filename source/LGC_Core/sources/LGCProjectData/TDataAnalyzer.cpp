@@ -170,6 +170,8 @@ bool TDataAnalyzer::dataConsistent(){
 			fData.setStandDevUsed();
 		}
 
+        fData.addToPointNum(point.getSpatialStatus());
+
 		//Assign unknown indices
 		if(!point.isFixed()){
 			point.setFirstUidx(lastUidx);
