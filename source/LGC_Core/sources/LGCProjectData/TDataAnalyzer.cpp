@@ -18,6 +18,8 @@ bool TDataAnalyzer::dataConsistent(){
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
 	
+    assignEOIndices();
+
 	checkPDOR(outputMessages, consistent);
 
 	//cannot predetermine V in simulation and LIBR
@@ -298,6 +300,188 @@ bool TDataAnalyzer::dataConsistent(){
 	return consistent;
 }
 
+void TDataAnalyzer::assignEOIndices(){
+
+    // Initialise equation and observation indices in the data:
+    fData.fUEOIndices.EIndex = 0;
+    fData.fUEOIndices.OIndex = 0;
+
+    // Iterate the whole tree and assign  to the measurements
+    for(auto &node : fData.getTree()){
+        auto &measurements = node->measurements;
+
+        // TSTN
+        for(auto &tstn : measurements.fTSTN){
+            for(auto &rom : tstn->roms){
+                
+                // PLR3D
+                for(auto &plr : rom->measPLR3D){
+                    // set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
+                    plr.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+                    plr.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+                    fData.fUEOIndices.EIndex += 3;
+                    fData.fUEOIndices.OIndex += 3;
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kPLR3D);
+                }
+
+                // ANGL
+                for(auto &angl : rom->measANGL){
+                    // set indices of LS matrices, ANGL introduces 1 equation and 1 observation
+                    angl.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    angl.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kANGL);
+                }
+
+                // ZEND
+                for(auto &zend : rom->measZEND){
+                    // set indices of LS matrices, ZEND introduces 1 equation and 1 observation
+                    zend.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    zend.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kZEND);
+                }
+
+                // DIST
+                for(auto &dist : rom->measDIST){
+                    // set indices of LS matrices, DIST introduces 1 equation and 1 observation
+                    dist.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    dist.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kDIST);
+                }
+
+                // DHOR
+                for(auto &dhor : rom->measDHOR){
+                    // set indices of LS matrices, DHOR introduces 1 equation and 1 observation
+                    dhor.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    dhor.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kDHOR);
+                }
+
+                // ECTH
+                for(auto &ecth : rom->measECTH){
+                    // set indices of LS matrices, ECTH introduces 1 equation and 1 observation
+                    ecth.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    ecth.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kECTH);
+                }
+
+                // ECDIR
+                for(auto &ecdir : rom->measECDIR){
+                    // set indices of LS matrices, ECDIR introduces 1 equation and 1 observation
+                    ecdir.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    ecdir.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                    fData.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
+                }
+            }
+        }
+
+        // CAM
+        for(auto &cam : measurements.fCAM){
+            
+            // UVD
+            for(auto &uvd : cam.measUVD){
+                // set indices of LS matrices, UVD introduces 3 equations and 3 observations
+                uvd.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+                uvd.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+                fData.fUEOIndices.EIndex += 3;
+                fData.fUEOIndices.OIndex += 3;
+                fData.addToMeasurementNum(TMeasurementsGlobal::kUVD);
+            }
+
+            // UVEC
+            for(auto &uvec : cam.measUVEC){
+                // set indices of LS matrices, UVEC introduces 2 equations and 2 observations
+                uvec.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+                uvec.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+                fData.fUEOIndices.EIndex += 2;
+                fData.fUEOIndices.OIndex += 2;
+                fData.addToMeasurementNum(TMeasurementsGlobal::kUVEC);
+            }
+        }
+
+        // DSPT
+        for(auto &edm : measurements.fEDM)
+            for(auto &dspt : edm.measDSPT){
+                // set indices of LS matrices, DSPT introduces 1 equation and 1 observation
+                dspt.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                dspt.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kDSPT);
+            }
+
+        // DLEV
+        for(auto &level : measurements.fLEVEL){
+            // Reinitialise hasDHOR attribute:
+            level.hasDHOR = false;
+
+            for(auto &dlev : level.measDLEV){
+                // set indices of LS matrices, DLEV introduces 1 equation and 1 observation
+                dlev.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                dlev.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kDLEV);
+
+                // DLEV::DHOR
+                if(dlev.dhor){
+                    dlev.dhor->setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                    dlev.dhor->setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+
+                    // If DHOR exists, tell the station:
+                    level.hasDHOR = true;
+                }
+            }
+        }
+
+        // DVER
+        for(auto &dver : measurements.fDVER){
+            // set indices of LS matrices, DVER introduces 1 equation and 1 observation
+            dver.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+            dver.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+            fData.addToMeasurementNum(TMeasurementsGlobal::kDVER);
+        }
+
+        // ORIE
+        for(auto &orierom : measurements.fORIE)
+            for(auto &orie : orierom.measORIE){
+                // set indices of LS matrices, ORIE introduces 1 equation and 1 observation
+                orie.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                orie.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kORIE);
+            }
+
+        // ECHO
+        for(auto &echorom : measurements.fECHO)
+            for(auto &echo : echorom.measECHO){
+                // set indices of LS matrices, ECHO introduces 1 equation and 1 observation
+                echo.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                echo.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kECHO);
+            }
+        
+        // ECVE
+        for(auto &ecverom : measurements.fECVE)
+            for(auto &ecve : ecverom.measECVE){
+                // set indices of LS matrices, ECVE introduces 1 equation and 1 observation
+                ecve.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                ecve.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kECVE);
+            }
+
+        // ECSP
+        for(auto &ecsprom : measurements.fECSP)
+            for(auto &ecsp : ecsprom.measECSP){
+                // set indices of LS matrices, ECSP introduces 1 equation and 1 observation
+                ecsp.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                ecsp.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kECSP);
+            }
+
+        // RADI
+        for(auto &radi : measurements.fRADI){
+            // set indices of LS matrices, RADI introduces 1 equation and 1 observation
+            radi.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+            radi.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+            fData.addToMeasurementNum(TMeasurementsGlobal::kRADI);
+        }
+    }
+}
 
 void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 {	

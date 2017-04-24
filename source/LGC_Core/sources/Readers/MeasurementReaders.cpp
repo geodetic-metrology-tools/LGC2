@@ -2,7 +2,6 @@
 #include <TMeasurements.h>
 #include <string>
 #include <sstream>
-#include <UEOIndices.h>
 
 const TReal lengthTolerance = 1e-5;
 
@@ -174,13 +173,6 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			uvec.eolcomment = tokens.back();
 
-		// set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
-		uvec.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		uvec.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex +=2;
-		proj.fUEOIndices.OIndex +=2;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kUVEC);
-
 		// Measured unit vector save, if it is not a simulation
 		if (hasAllParams){
 			TFreeVector vectorMeasurement(std::stor(tokens.at(1)),std::stor(tokens.at(2)),std::stor(tokens.at(3)),TCoordSysFactory::k3DCartesian);
@@ -254,13 +246,6 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			uvd.eolcomment = tokens.back();
-
-		// set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
-		uvd.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		uvd.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex +=3;
-		proj.fUEOIndices.OIndex +=3;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kUVD);
 
 		//Measured unit vector and distance save if it is not a simulation
 		if (hasAllParams) {
@@ -374,13 +359,6 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			plr.eolcomment = tokens.back();
 
-		// set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
-		plr.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		plr.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex +=3;
-		proj.fUEOIndices.OIndex +=3;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kPLR3D);
-
 		proj.setCombinedCaseCalcUsed();   //PLR3D measurement processed, need to use Combined Case LS calculation
 
 		if (hasAllParams) { //Store value if it is not a simulation
@@ -439,14 +417,6 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			angl.eolcomment = tokens.back();
 
-		// set indices of LS matrices, ANGL introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		angl.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		angl.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kANGL);
-
 		if (hasAllParams)
 			angl.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
@@ -501,13 +471,6 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			zend.eolcomment = tokens.back();
-
-		// set indices of LS matrices, ZEND introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		zend.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		zend.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kZEND);
 
 		if (hasAllParams)
 			zend.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
@@ -568,12 +531,6 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dist.eolcomment = tokens.back();
 
-		// set indices of LS matrices, DIST introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		dist.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		dist.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kDIST);
 	}
 }
 
@@ -629,13 +586,6 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			ecth.eolcomment = tokens.back();
-
-	   // set indices of LS matrices, ECTH introduces 1 equation and 1 observation
-	   ecth.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-	   ecth.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-	   proj.fUEOIndices.EIndex++;
-	   proj.fUEOIndices.OIndex++;
-	   proj.addToMeasurementNum(TMeasurementsGlobal::kECTH);
 	}
 }
 
@@ -692,13 +642,6 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, int line)
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			ecdir.eolcomment = tokens.back();
-
-		// set indices of LS matrices, ECTH introduces 1 equation and 1 observation
-		ecdir.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		ecdir.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
 	}
 }
 
@@ -749,13 +692,6 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dhor.eolcomment = tokens.back();
-
-		// set indices of LS matrices, DHOR introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		dhor.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		dhor.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kDHOR);
 	}
 }
 
@@ -833,13 +769,6 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dpst.eolcomment = tokens.back();
-
-		// set indices of LS matrices, DSPT introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		dpst.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		dpst.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kDSPT);
 	}
 }
 
@@ -884,12 +813,6 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dver.eolcomment = tokens.back();
 
-
-		dver.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		dver.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kDVER);
 	}
 }
 
@@ -968,21 +891,9 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 			else
 				throw std::runtime_error("If DHOR distance is provided, standard deviation (DSE) needs to be assigned!");
 
-			dlev.dhor->setFirstEquationIndex(proj.fUEOIndices.EIndex);
-			dlev.dhor->setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		    proj.fUEOIndices.EIndex++;
-			proj.fUEOIndices.OIndex++;
-			levelGrOfMeas.hasDHOR = true;
 		}
 
-
-		dlev.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		dlev.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-
 		dlev.line = line;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kDLEV);
 		levelGrOfMeas.measDLEV.emplace_back(dlev);
 	}
 }
@@ -1026,14 +937,8 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 		
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
-		echo.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		echo.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
 
 		echo.line = line;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECHO);
 		TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
 		echoROMLatest.measECHO.emplace_back(echo);
 
@@ -1104,14 +1009,8 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		TECVE ecve(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
-		ecve.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		ecve.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
 
 		ecve.line = line;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECVE);
 		TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
@@ -1174,14 +1073,8 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 
 		// Store  the measured value
 		TECSP ecsp(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
-		ecsp.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		ecsp.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
 
 		ecsp.line = line;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kECSP);
 		TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
@@ -1261,14 +1154,6 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			orie.eolcomment = tokens.back();
 
-		// set indices of LS matrices, ANGL introduces 1 equation and 1 observation, index of observation is not stored since it is not used, but need to be counted
-		orie.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		orie.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kORIE);
-
 		if (hasAllParams)
 			orie.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 
@@ -1315,11 +1200,5 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			radi.eolcomment = tokens.back();
 
-
-		radi.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		radi.setFirstObservationIndex(proj.fUEOIndices.OIndex);
-		proj.fUEOIndices.EIndex++;
-		proj.fUEOIndices.OIndex++;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kRADI);
 	}
 }

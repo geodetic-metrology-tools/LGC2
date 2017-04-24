@@ -41,6 +41,10 @@ public:
 	inline bool hasStandardDeviations() {return fStandDevUsed;};
 
 private:
+
+    //! Assign observation and equation indices to measurements.
+    void assignEOIndices();
+
 	void checkPDOR(TFileLogger& fileLog, bool dataConsistent);
 	void predeterminePLR3DV0();
 
