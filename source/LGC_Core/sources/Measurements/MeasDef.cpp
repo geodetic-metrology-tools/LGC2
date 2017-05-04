@@ -1,4 +1,5 @@
 #include <MeasDef.h>
+#include <LGCAdjustablePoint.h>
 
 ///////////////////////////////////////////////////////////
 //////Total station measurements
@@ -122,4 +123,12 @@ TRADI::TRADI(const LGCAdjustablePoint& point, TAngle obsVal, TLength sig) :
     fResidual(NO_VALf),
     fSigmaObsVal(sig),
     TAMeas<int>(*station, 0)
+{}
+
+
+TCMM::TCMM(const LGCAdjustablePoint& point, TLength sigX, TLength sigY , TLength sigZ) :
+station(&point),
+fXResidual(NO_VALf), fYResidual(NO_VALf), fZResidual(NO_VALf),
+fXSigmaObsVal(sigX), fYSigmaObsVal(sigY), fZSigmaObsVal(sigZ),
+TAMeas<int>(*station, 0)
 {}

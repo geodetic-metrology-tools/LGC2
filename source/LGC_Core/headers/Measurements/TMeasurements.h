@@ -48,6 +48,8 @@ struct TMeasurements {
 	/// All RADI measurements in which they appeared in the input file
 	std::list<TRADI> fRADI;
 
+	/// All CMM measurements in which they appeared in the input file
+	std::list<TCMM> fCMM;
 };
 
 #endif // MEASUREMENTS_H_

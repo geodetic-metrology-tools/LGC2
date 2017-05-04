@@ -485,4 +485,67 @@ private:
 	bool fIsInitialise;
 	bool fDefined;
 };
+
+/*!
+\ingroup Measurements
+\brief  RADI constraints.
+*/
+class TCMM : public TAMeas<int>
+{
+public:
+	///Pointer to the point
+	const LGCAdjustablePoint* station;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/// DB comment after the measurement definition
+	std::string eolcomment;
+
+	/*!@name Constructors */
+	//@{
+	TCMM(const LGCAdjustablePoint& point, TLength sigX , TLength sigY , TLength sigZ);
+	TCMM();
+	//@}
+
+	/*!@name Access methods*/
+	//@{
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex()+2; }
+
+	/// Returns standard deviation of the observed value
+	inline TLength getXObservedStDev() const { return fXSigmaObsVal; }
+	inline TLength getYObservedStDev() const { return fYSigmaObsVal; }
+	inline TLength getZObservedStDev() const { return fZSigmaObsVal; }
+
+	/// Returns standard deviation of the observed value
+	inline TLength getXResidual() const { return fXResidual; }
+	inline TLength getYResidual() const { return fYResidual; }
+	inline TLength getZResidual() const { return fZResidual; }
+	//@}
+
+
+	/*!@name Settings */
+	//@{
+	/// Sets standard deviation of the observed value
+	inline void setXObservedStDev(TLength stDev){ fXSigmaObsVal = stDev; }
+	inline void setYObservedStDev(TLength stDev){ fYSigmaObsVal = stDev; }
+	inline void setZObservedStDev(TLength stDev){ fZSigmaObsVal = stDev; }
+	/// Returns standard deviation of the observed value
+	inline void setXResidual(TLength res) { fXResidual = res; }
+	inline void setYResidual(TLength res) { fYResidual = res; }
+	inline void setZResidual(TLength res) { fZResidual = res; }
+	//@}
+
+private:
+	// The residual angle constraint
+	TLength fXResidual;
+	TLength fYResidual;
+	TLength fZResidual;
+	// Standard deviation of the observed value
+	TLength fXSigmaObsVal;
+	TLength fYSigmaObsVal;
+	TLength fZSigmaObsVal;
+};
+
+
 #endif

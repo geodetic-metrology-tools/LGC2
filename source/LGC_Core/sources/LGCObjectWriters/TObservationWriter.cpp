@@ -514,6 +514,7 @@ string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservatio
 		"ORIENTATIONS (ORIE)",
 		"POINT D'ORIENTATION (PDOR)",
 		"CONTRAINTES RADIALES (RADI)",
+		"PSEUDO-OBSERVATION (CMM)",
 
 	};
 
@@ -546,6 +547,7 @@ string	TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservatio
 		"ORIENTATIONS (ORIE)",
 		"POINT OF ORIENTATION (PDOR)",
 		"RADIAL CONSTRAINTS (RADI)",
+		"PSEUDO-MEASUREMENTS (CMM)"
 		//"NoObs"
 	};
 

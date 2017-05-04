@@ -123,6 +123,12 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
 	}
 
+	if (!frameIt->get()->measurements.fCMM.empty())
+	{
+		(*stream) << endl;
+		otherMeasWriter.writeCMMResults(frameIt->get()->measurements.fCMM);
+	}
+
 	for (auto& itEDM : frameIt->get()->measurements.fEDM)
 		edmWriter.writeEDMResults(itEDM);
 		
@@ -596,6 +602,31 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 			for (auto const& It : frameIt->get()->measurements.fRADI)
 				RADIsummary.addNewResidual(It.getResidual().getMMetresValue());
 		otherMeasWriter.writeDistanceResultsSummary(RADIsummary,TABs);
+	}
+
+	//CMM
+	if (frameIt->get()->measurements.fCMM.size() > 0)
+	{
+		(*stream) << endl;
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "CMM"); //instrument
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeCMMResultsSynthesis(frameIt->get()->measurements.fCMM);
+
+		TLGCObsSummary XCMMsummary;
+		TLGCObsSummary YCMMsummary;
+		TLGCObsSummary ZCMMsummary;
+		if (frameIt->get()->measurements.fCMM.size() > 0)
+			for (auto const& It : frameIt->get()->measurements.fCMM)
+			{
+				XCMMsummary.addNewResidual(It.getXResidual().getMMetresValue());
+				YCMMsummary.addNewResidual(It.getYResidual().getMMetresValue());
+				ZCMMsummary.addNewResidual(It.getZResidual().getMMetresValue());
+			}
+		otherMeasWriter.writeDistanceResultsSummary(XCMMsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(YCMMsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(ZCMMsummary, TABs);
 	}
 }
 

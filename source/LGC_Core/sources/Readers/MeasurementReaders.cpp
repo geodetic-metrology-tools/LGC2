@@ -1323,3 +1323,42 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 		proj.addToMeasurementNum(TMeasurementsGlobal::kRADI);
 	}
 }
+
+
+void TKeyCMM::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+
+	//On first line nothing appears so far: to be discussed
+	if (!firstline)
+	{
+		bool hasAllParams = (tokens.size() == 4) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
+		if (!hasAllParams && !fSIMUActive)
+			throw std::runtime_error("A CMM measurements must have at 4 entries: "
+			"One point and 3 sigmas");
+
+		TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+		
+		// Store  the measured value
+		proj.getCurrentNode().measurements.fCMM.emplace_back(
+			TCMM(fpoints.getObject(tokens.at(0)), 
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(1))), TLength::EUnits::kMillimetres), 
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(2))), TLength::EUnits::kMillimetres),
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(3))), TLength::EUnits::kMillimetres)
+			));
+		
+		auto& cmm(proj.getCurrentNode().measurements.fCMM.back());
+		cmm.line = line;
+		
+		//If last token starts with a comment character, store it as a end of line comment
+		const char fOfLastToken = tokens.back().at(0);
+		if (fOfLastToken == '$' || fOfLastToken == '%')
+			cmm.eolcomment = tokens.back();
+			
+		cmm.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		cmm.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		proj.fUEOIndices.EIndex+=3;
+		proj.fUEOIndices.OIndex+=3;
+		proj.addToMeasurementNum(TMeasurementsGlobal::kCMM);
+	}
+}
