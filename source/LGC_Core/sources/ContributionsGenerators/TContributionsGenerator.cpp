@@ -1110,9 +1110,9 @@ PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 
 
 
-CMMContrib  TContributionsGenerator::getCMMContrib(const TCMM& cmm)
-{//Constraint made in CCS, later could be extended to subframe
-	fPointTransfo.setMLA(false);
+CXYZContrib  TContributionsGenerator::getCXYZContrib(const TCXYZ& cxyz)
+{
+/*	fPointTransfo.setMLA(false);
 
 	TPositionVector prov = cmm.station->getProvisionalValue();  //stn
 	TPositionVector estimated = cmm.station->getEstimatedValue();  //tgt
@@ -1145,9 +1145,29 @@ CMMContrib  TContributionsGenerator::getCMMContrib(const TCMM& cmm)
 
 	//Fill target transformation contributions
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector for target transformations contributions
-	addTransformationsContributions3Dcmm(Lor2RootTrafo, diff /*estimated*/, line1AMat, line2AMat, line3AMat, targetTransfContributions);
+	addTransformationsContributions3Dcmm(Lor2RootTrafo, diff, line1AMat, line2AMat, line3AMat, targetTransfContributions);
 
 	return{ coordContribTarget, targetTransfContributions, {dx,dy,dz} };
+*/
+
+	TPositionVector estimated = cxyz.station->getEstimatedValue();  //tgt
+	TPositionVector prov = cxyz.initialValue;  //stn
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(cxyz.positionInTree, cxyz.station->getFrameTreePosition()); // Transform to frame in which point is defined 
+	stLor2RootTrafo.transform(prov);
+
+	//ets calc value
+	TReal dx = (estimated.getX().getMetresValue() - prov.getX().getMetresValue());
+	TReal dy = (estimated.getY().getMetresValue() - prov.getY().getMetresValue());
+	TReal dz = (estimated.getZ().getMetresValue() - prov.getZ().getMetresValue());
+
+	//Contributions for the coordinates
+	Point3DContrib coordContribStation = { TFreeVector(1.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian), TFreeVector(0.0, 1.0, 0.0, TCoordSysFactory::k3DCartesian), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::k3DCartesian) };
+
+	//Fill transformation contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> TransfContributions;
+	addUVDTgTransfContributionsCamera(stLor2RootTrafo, cxyz.initialValue, TransfContributions);
+
+	return{ coordContribStation, TransfContributions, { dx, dy, dz } };
 }
 
 
@@ -1426,66 +1446,6 @@ void TContributionsGenerator::addTransformationsContributions3D(const TLOR2LOR& 
 		TransformationContrib3D stContrib = {firstEqContribSt, secondEqContribSt, thirdEqContribSt};
 		transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib3D> (*it->adjTrafo, stContrib));
 }
-}
-
-void TContributionsGenerator::addTransformationsContributions3Dcmm(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const TFreeVector& line1AMat, const TFreeVector& line2AMat, const TFreeVector& line3AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib){
-	const std::vector<TLOR2LOR::TransformAndParams>& trafoChain = lorTrafo.getTransformationChain();
-
-	TFreeVector omegaDerivative(TCoordSysFactory::k3DCartesian);
-	TFreeVector phiDerivative(TCoordSysFactory::k3DCartesian);
-	TFreeVector kappaDerivative(TCoordSysFactory::k3DCartesian);
-	TFreeVector t1Derivative(TCoordSysFactory::k3DCartesian);
-	TFreeVector t2Derivative(TCoordSysFactory::k3DCartesian);
-	TFreeVector t3Derivative(TCoordSysFactory::k3DCartesian);
-	TFreeVector scaleDeriv(TCoordSysFactory::k3DCartesian);
-	// Iterate through the transformations, calculate contributions and store the contributiojn for every transformation
-	for (auto it(trafoChain.begin()); it != trafoChain.end(); ++it){
-		std::string transformationName = it->adjTrafo->getName();
-
-		//Contributions for rotations : Omega, Phi and Kappa
-		omegaDerivative = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 0);
-		phiDerivative = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 1);
-		kappaDerivative = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 2);
-
-		//Contributions for translation: X, Y and Z coordinate
-		t1Derivative = lorTrafo.partialDerivativesTranslation(transformationName, pointPos, 0);
-		t2Derivative = lorTrafo.partialDerivativesTranslation(transformationName, pointPos, 1);
-		t3Derivative = lorTrafo.partialDerivativesTranslation(transformationName, pointPos, 2);
-
-		scaleDeriv = lorTrafo.partialDerivativesScale(transformationName, pointPos);
-
-		if (fPointTransfo.getMLAused()){ //If MLA used, then transform contributions
-			fPointTransfo.transform2MLA(omegaDerivative);
-			fPointTransfo.transform2MLA(phiDerivative);
-			fPointTransfo.transform2MLA(kappaDerivative);
-
-			fPointTransfo.transform2MLA(t1Derivative);
-			fPointTransfo.transform2MLA(t2Derivative);
-			fPointTransfo.transform2MLA(t3Derivative);
-
-			fPointTransfo.transform2MLA(scaleDeriv);
-		}
-		//translation contributions are not to be calculated because equations are scale*Rot*(Xestimated - Xprovisional) = 0
-		TransformationContrib firstEqContribSt = {
-			TFreeVector(line1AMat.dot(omegaDerivative), line1AMat.dot(phiDerivative), line1AMat.dot(kappaDerivative), TCoordSysFactory::k3DCartesian),
-			TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian),
-			line1AMat.dot(scaleDeriv) };
-
-
-		TransformationContrib secondEqContribSt = {
-			TFreeVector(line2AMat.dot(omegaDerivative), line2AMat.dot(phiDerivative), line2AMat.dot(kappaDerivative), TCoordSysFactory::k3DCartesian),
-			TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian), 
-			line2AMat.dot(scaleDeriv) };
-
-
-		TransformationContrib thirdEqContribSt = {
-			TFreeVector(line3AMat.dot(omegaDerivative), line3AMat.dot(phiDerivative), line3AMat.dot(kappaDerivative), TCoordSysFactory::k3DCartesian), //Tg contribution for a third equation
-			TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian), 
-			line3AMat.dot(scaleDeriv) };
-
-		TransformationContrib3D stContrib = { firstEqContribSt, secondEqContribSt, thirdEqContribSt };
-		transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>(*it->adjTrafo, stContrib));
-	}
 }
 
 void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, Point3DContrib& pointContrib, bool station){

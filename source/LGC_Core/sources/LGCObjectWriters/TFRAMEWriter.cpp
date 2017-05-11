@@ -123,10 +123,10 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
 	}
 
-	if (!frameIt->get()->measurements.fCMM.empty())
+	if (!frameIt->get()->measurements.fCXYZ.empty())
 	{
 		(*stream) << endl;
-		otherMeasWriter.writeCMMResults(frameIt->get()->measurements.fCMM);
+		otherMeasWriter.writeCXYZResults(frameIt->get()->measurements.fCXYZ);
 	}
 
 	for (auto& itEDM : frameIt->get()->measurements.fEDM)
@@ -604,29 +604,29 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		otherMeasWriter.writeDistanceResultsSummary(RADIsummary,TABs);
 	}
 
-	//CMM
-	if (frameIt->get()->measurements.fCMM.size() > 0)
+	//CXYZ
+	if (frameIt->get()->measurements.fCXYZ.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, "CMM"); //instrument
+		(*stream).writeStringLeft(nameWidth, "CXYZ"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		otherMeasWriter.writeCMMResultsSynthesis(frameIt->get()->measurements.fCMM);
+		otherMeasWriter.writeCXYZResultsSynthesis(frameIt->get()->measurements.fCXYZ);
 
-		TLGCObsSummary XCMMsummary;
-		TLGCObsSummary YCMMsummary;
-		TLGCObsSummary ZCMMsummary;
-		if (frameIt->get()->measurements.fCMM.size() > 0)
-			for (auto const& It : frameIt->get()->measurements.fCMM)
+		TLGCObsSummary XCXYZsummary;
+		TLGCObsSummary YCXYZsummary;
+		TLGCObsSummary ZCXYZsummary;
+		if (frameIt->get()->measurements.fCXYZ.size() > 0)
+			for (auto const& It : frameIt->get()->measurements.fCXYZ)
 			{
-				XCMMsummary.addNewResidual(It.getXResidual().getMMetresValue());
-				YCMMsummary.addNewResidual(It.getYResidual().getMMetresValue());
-				ZCMMsummary.addNewResidual(It.getZResidual().getMMetresValue());
+				XCXYZsummary.addNewResidual(It.getXResidual().getMMetresValue());
+				YCXYZsummary.addNewResidual(It.getYResidual().getMMetresValue());
+				ZCXYZsummary.addNewResidual(It.getZResidual().getMMetresValue());
 			}
-		otherMeasWriter.writeDistanceResultsSummary(XCMMsummary, TABs);
-		otherMeasWriter.writeDistanceResultsSummary(YCMMsummary, TABs);
-		otherMeasWriter.writeDistanceResultsSummary(ZCMMsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(XCXYZsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(YCXYZsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(ZCXYZsummary, TABs);
 	}
 }
 
@@ -903,7 +903,6 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 }
 
 
-
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
@@ -927,13 +926,6 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	//If PDOR
 	if (frameIt->get()->measurements.fPDOR.isInitialised())
 		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
-
-	//Summary
-	//(*stream) << endl << TABs << "*** MEASUREMENTS SUMMARY ***" << endl << endl;
-	//writeMeasurementsSummary(frameIt);
-	//if (fProjectData->getConfig().histo.isActive())
-	//	writeHistogramme(frameIt);
-
 
 	//Measures
 	(*stream) << endl << endl << TABs << "*** MEASUREMENTS DATA ***" << endl << endl;
@@ -963,7 +955,6 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 	for (auto& itORIE : frameIt->get()->measurements.fORIE)
 		otherMeasWriter.writeORIESIMUResults(itORIE);
-
 
 	for (auto& itEDM : frameIt->get()->measurements.fEDM)
 		edmWriter.writeEDMSIMUResults(itEDM);
@@ -1013,6 +1004,13 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 		(*stream) << endl << "RADI observations" << endl;
 		otherMeasWriter.writeRADIReliabilityHeader();
 		otherMeasWriter.writeRADIReliabilityData(frameIt->get()->measurements.fRADI, fProjectData->getStatistics());
+	}
+
+	if (!frameIt->get()->measurements.fCXYZ.empty())
+	{
+		(*stream) << endl << "CXYZ observations" << endl;
+		otherMeasWriter.writeCXYZReliabilityHeader();
+		otherMeasWriter.writeCXYZReliabilityData(frameIt->get()->measurements.fCXYZ, fProjectData->getStatistics());
 	}
 
 	bool  EDMheaderWritten = false;

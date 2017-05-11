@@ -379,20 +379,20 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 
 				if (!frameIt->get()->isROOTNode())
 					(*stream) << "SX"<<sep
-					<< point.getStandDev(0) << sep
+					<< point.getStandDev(0)*1000 << sep
 					<< "SY" << sep
-					<< point.getStandDev(1) << sep
+					<< point.getStandDev(1)*1000 << sep
 					<< "SZ" << sep
-					<< point.getStandDev(2) << endl;
+					<< point.getStandDev(2)*1000 << endl;
 				else
 				{
 					if (point.hasStandDeviations())
 						(*stream) << "SX" << sep
-						<< point.getStandDev(0) << sep
+						<< point.getStandDev(0)*1000 << sep
 						<< "SY" << sep
-						<< point.getStandDev(1) << sep
+						<< point.getStandDev(1)*1000 << sep
 						<< "SZ" << sep
-						<< point.getStandDev(2) << endl;
+						<< point.getStandDev(2)*1000 << endl;
 					else
 						(*stream) << endl;
 				}
@@ -487,6 +487,13 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		(*stream) << "*RADI" << endl;
 		for (auto& meas : frameIt->get()->measurements.fRADI)
 			writeRADIMeas(&meas);
+	}
+
+	if (!frameIt->get()->measurements.fCXYZ.empty())
+	{
+		(*stream) << "*CXYZ" << endl;
+		for (auto& meas : frameIt->get()->measurements.fCXYZ)
+			writeCXYZMeas(&meas);
 	}
 
 }
@@ -879,6 +886,22 @@ void TSimFileWriter::writeRADIMeas(TRADI* meas)
 	(*stream) << meas->station->getName() << sep
 		<< meas->getAngleCnstr().getGonsValue() << sep
 		<< "SIGMA" << sep << meas->getObservedStDev().getMMetresValue()<< endl;
+
+
+}
+
+void TSimFileWriter::writeCXYZMeas(TCXYZ* meas)
+{
+	TAStreamFormatter* stream = getStream();
+	string sep = stream->getSeparator();
+
+	(*stream) << meas->station->getName() << sep
+		<< meas->initialValue.getX() << sep
+		<< meas->initialValue.getY() << sep
+		<< meas->initialValue.getZ() << sep
+		<< meas->getXObservedStDev().getMMetresValue() << sep
+		<< meas->getYObservedStDev().getMMetresValue() << sep
+		<< meas->getZObservedStDev().getMMetresValue() << endl;
 
 
 }

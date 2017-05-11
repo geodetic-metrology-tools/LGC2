@@ -352,11 +352,15 @@ struct PtOrientationContrib{
 };
 
 
+/*!
+\ingroup ContributionsGenerators
 
-struct CMMContrib{
+\brief Contributions for constraint CXYZ.
+*/
+struct CXYZContrib{
 	Point3DContrib fTgCoordContrib;
 
-	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the measurement is calculated.
+	/// Vector of contributions in pairs with transformations, which are used to transform the point into the root.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
 
 	TReal	    fMisclosureVector[3]; //!< Misclosure vector of the First, Second and Third equation respectively.

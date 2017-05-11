@@ -7,6 +7,7 @@
 #include <bitset>
 //SURVEYLIB
 #include <UEOIndices.h>
+#include <TPositionVector.h>
 //LGC
 #include <TAMeas.h>
 
@@ -490,11 +491,14 @@ private:
 \ingroup Measurements
 \brief  RADI constraints.
 */
-class TCMM : public TAMeas<int>
+class TCXYZ : public TAMeas<int>
 {
 public:
 	///Pointer to the point
 	const LGCAdjustablePoint* station;
+	//Position of the point in the subframe (= observation)
+	TPositionVector initialValue;
+	TDataTreeIterator positionInTree;
 
 	/// Line in the input file where this measurement was defined
 	int line;
@@ -504,8 +508,8 @@ public:
 
 	/*!@name Constructors */
 	//@{
-	TCMM(const LGCAdjustablePoint& point, TLength sigX , TLength sigY , TLength sigZ);
-	TCMM();
+	TCXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree);
+	TCXYZ();
 	//@}
 
 	/*!@name Access methods*/

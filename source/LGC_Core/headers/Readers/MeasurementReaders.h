@@ -464,12 +464,12 @@ public:
 };
 
 
-/// Keyword to process CMM
-class TKeyCMM : public TAMeasurementKey {
+/// Keyword to process CXYZ
+class TKeyCXYZ : public TAMeasurementKey {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyCMM(TLGCData& project, int nb_allowed_keywords = nb_allowed_cmm, const char** keywords = allowed_CMM) :
-		TAMeasurementKey(project, CMM)
+	TKeyCXYZ(TLGCData& project, int nb_allowed_keywords = nb_allowed_CXYZ, const char** keywords = allowed_CXYZ) :
+		TAMeasurementKey(project, CXYZ)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);

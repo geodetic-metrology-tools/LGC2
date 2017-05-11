@@ -148,8 +148,8 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			//Extract radi residuals
 			extractRADIObs(rm, itTree.node->data->measurements.fRADI);
 
-			//Extract cmm residuals
-			extractCMMObs(rm, itTree.node->data->measurements.fCMM);
+			//Extract CXYZ residuals
+			extractCXYZObs(rm, itTree.node->data->measurements.fCXYZ);
 		}
 	}
 	catch(std::exception const & excp) {
@@ -360,17 +360,17 @@ void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, s
 	}
 }
 
-void TLSResultsMatricesExtractor::extractCMMObs(const TLSResultsMatrices& rm, std::list<TCMM>& cmm){
-	for (auto& itCMM : cmm){
-		MatrixIndex obsUidx = itCMM.getFirstObservationIndex();
+void TLSResultsMatricesExtractor::extractCXYZObs(const TLSResultsMatrices& rm, std::list<TCXYZ>& cxyz){
+	for (auto& itCXYZ : cxyz){
+		MatrixIndex obsUidx = itCXYZ.getFirstObservationIndex();
 		if (obsUidx+2 < rm.getResidualsVctr()->size())
 		{
-			itCMM.setXResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
-			itCMM.setYResidual(TLength(rm.getResidualsVctrElmt(obsUidx+1)));
-			itCMM.setZResidual(TLength(rm.getResidualsVctrElmt(obsUidx+2)));
+			itCXYZ.setXResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
+			itCXYZ.setYResidual(TLength(rm.getResidualsVctrElmt(obsUidx+1)));
+			itCXYZ.setZResidual(TLength(rm.getResidualsVctrElmt(obsUidx+2)));
 		}
 		else
-			throw std::runtime_error("CMM observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+			throw std::runtime_error("CXYZ observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
 }
 

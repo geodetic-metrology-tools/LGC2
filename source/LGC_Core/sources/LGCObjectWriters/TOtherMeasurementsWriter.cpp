@@ -147,7 +147,7 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeCMMResultsHeader()
+void TOtherMeasurentWriter::writeCXYZResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -321,7 +321,7 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeCMMResults(const std::list<TCMM>& fCMM)
+void TOtherMeasurentWriter::writeCXYZResults(const std::list<TCXYZ>& fCXYZ)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -329,10 +329,10 @@ void TOtherMeasurentWriter::writeCMMResults(const std::list<TCMM>& fCMM)
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 
 	//first line
-	this->writeObsTitle(TAB + this->getObsDescriptionFR(TALGCObjectWriter::kCMM), (int)fCMM.size());
-	writeCMMResultsHeader(); // write the title line for the observations
+	this->writeObsTitle(TAB + this->getObsDescriptionFR(TALGCObjectWriter::kCXYZ), (int)fCXYZ.size());
+	writeCXYZResultsHeader(); // write the title line for the observations
 
-	for (auto const& It : fCMM)
+	for (auto const& It : fCXYZ)
 	{
 		//X
 		//write INST POSITION
@@ -433,7 +433,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityHeader()
 	return;
 }
 
-void	TOtherMeasurentWriter::writeCMMReliabilityHeader()
+void	TOtherMeasurentWriter::writeCXYZReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("POINT", "", "", "OBSERVATION", "M", "MM");
 	return;
@@ -542,7 +542,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRA
 	return;
 }
 
-void	TOtherMeasurentWriter::writeCMMReliabilityData(const std::list<TCMM>& fCMM, const TLGCStatistic& stat)
+void	TOtherMeasurentWriter::writeCXYZReliabilityData(const std::list<TCXYZ>& fCXYZ, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -551,13 +551,13 @@ void	TOtherMeasurentWriter::writeCMMReliabilityData(const std::list<TCMM>& fCMM,
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
 
-	//For each CMM measurement of the station
-	for (auto const& It : fCMM)
+	//For each CXYZ measurement of the station
+	for (auto const& It : fCXYZ)
 	{
 		// Observation index to take the right value in the statistic vector
 		int index = It.getFirstObservationIndex();
 
-		// get Point
+		// get Point X
 		(*stream).writeStringLeft(nameWidth, It.station->getName() + " (x)");
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
@@ -566,9 +566,32 @@ void	TOtherMeasurentWriter::writeCMMReliabilityData(const std::list<TCMM>& fCMM,
 		//get the standard deviation
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getXObservedStDev().getMMetresValue());
 		//get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYResidual().getMMetresValue());
-
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getXResidual().getMMetresValue());
 		writeReliabilityMM(index, stat);
+
+		//Y
+		(*stream).writeStringLeft(nameWidth, It.station->getName() + " (y)");
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
+		//get the difference between estimated and provisionnal value 
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.station->getEstValue(1) - It.station->getProvisionalValue().getY());
+		//get the standard deviation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYObservedStDev().getMMetresValue());
+		//get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYResidual().getMMetresValue());
+		writeReliabilityMM(index+1, stat);
+
+		//Z
+		(*stream).writeStringLeft(nameWidth, It.station->getName() + " (z)");
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
+		//get the difference between estimated and provisionnal value 
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.station->getEstValue(2) - It.station->getProvisionalValue().getZ());
+		//get the standard deviation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getZObservedStDev().getMMetresValue());
+		//get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getZResidual().getMMetresValue());
+		writeReliabilityMM(index+2, stat);
 	}
 	return;
 }
@@ -719,7 +742,7 @@ void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::list<TRADI>& fR
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeCMMResultsSynthesis(const std::list<TCMM>& fCMM)
+void TOtherMeasurentWriter::writeCXYZResultsSynthesis(const std::list<TCXYZ>& fCXYZ)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -743,7 +766,7 @@ void TOtherMeasurentWriter::writeCMMResultsSynthesis(const std::list<TCMM>& fCMM
 	TReal Zmax = 0.0;
 
 
-	for (auto& meas : fCMM)
+	for (auto& meas : fCXYZ)
 	{
 		if (meas.getXResidual().getMMetresValue() > Xmax)
 			Xmax = meas.getXResidual().getMMetresValue();
@@ -767,21 +790,21 @@ void TOtherMeasurentWriter::writeCMMResultsSynthesis(const std::list<TCMM>& fCMM
 	}
 
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "all_cmm_X"); //Reference point
+	(*stream).writeStringLeft(nameWidth, "all_CXYZ_X"); //Reference point
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xmax);//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xmin);//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getVariance());//ecart type 
 	(*stream) << endl;
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "all_cmm_Y"); //Reference point
+	(*stream).writeStringLeft(nameWidth, "all_CXYZ_Y"); //Reference point
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ymax);//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ymin);//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getVariance());//ecart type 
 	(*stream) << endl;
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "all_cmm_Z"); //Reference point
+	(*stream).writeStringLeft(nameWidth, "all_CXYZ_Z"); //Reference point
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Zmax);//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Zmin);//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Zsummary.getMean());//residu moy

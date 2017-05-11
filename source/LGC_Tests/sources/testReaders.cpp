@@ -711,6 +711,20 @@ namespace tut
 			ensure_equals("bearing should match", radi2M.getAngleCnstr().getGonsValue(), 100.0, 1e-7);
 			ensure_equals("sigma should match", radi2M.getObservedStDev().getMMetresValue(), 2.0);
 
+
+			//CXYZ
+			TKeyCXYZ cxyz(proj);
+			cxyz.parse(tokenizefileString("*CXYZ"), -1);
+			cxyz.parse(tokenizefileString("P2 1 2 3 0.1 0.5 0.8"), -1);
+			const auto& cxyzM(proj.getCurrentNode().measurements.fCXYZ.back());
+			ensure_equals("Point name should match", cxyzM.station->getName(), "P2");
+			ensure_equals("SX should match", cxyzM.initialValue.getX(), 1);
+			ensure_equals("SY should match", cxyzM.initialValue.getY(), 2);
+			ensure_equals("SZ should match", cxyzM.initialValue.getZ(), 3);
+			ensure_equals("SX should match", cxyzM.getXObservedStDev().getMMetresValue(), 0.1);
+			ensure_equals("SY should match", cxyzM.getYObservedStDev().getMMetresValue(), 0.5);
+			ensure_equals("SZ should match", cxyzM.getZObservedStDev().getMMetresValue(), 0.8);
+
 			////////////////////////////////////
 			//Testing FRAME measurements
 			////////////////////////////////////

@@ -87,7 +87,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 
 			addRADIContributions(itTree.node->data->measurements.fRADI, matrices);
 
-			addCMMContributions(itTree.node->data->measurements.fCMM, matrices);
+			addCXYZContributions(itTree.node->data->measurements.fCXYZ, matrices);
 
 			//add the initialised PDOR
 			if (itTree.node->data->measurements.fPDOR.isInitialised())
@@ -977,18 +977,18 @@ void  TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI>& radiM
 	}
 }
 
-void  TLSInputMatricesFiller::addCMMContributions(const std::list<TCMM>& cmmMeas, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addCXYZContributions(const std::list<TCXYZ>& cxyzMeas, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
-	CMMContrib contributions;
+	CXYZContrib contributions;
 
-	for (auto meas(cmmMeas.begin()); meas != cmmMeas.end(); ++meas){
+	for (auto meas(cxyzMeas.begin()); meas != cxyzMeas.end(); ++meas){
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 
 		//Get the observation contribution
-		contributions = fCGenerator.getCMMContrib(*meas); 
+		contributions = fCGenerator.getCXYZContrib(*meas); 
 
 
 		// Add contributions for coordinates
@@ -1014,21 +1014,21 @@ void  TLSInputMatricesFiller::addCMMContributions(const std::list<TCMM>& cmmMeas
 
 		// Add weight matrix element
 		if (pow2(meas->getXObservedStDev()) < nullLimit)
-			throw std::runtime_error("Error when filling CMM contribution, X variance is zero or too small, can not set weight matrix element.");
+			throw std::runtime_error("Error when filling CXYZ contribution, X variance is zero or too small, can not set weight matrix element.");
 		else{
 			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / pow2(meas->getXObservedStDev()));
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx, firstObsIdx, pow2(meas->getXObservedStDev()));
 		}
 
 		if (pow2(meas->getYObservedStDev()) < nullLimit)
-			throw std::runtime_error("Error when filling CMM contribution, Y variance is zero or too small, can not set weight matrix element.");
+			throw std::runtime_error("Error when filling CXYZ contribution, Y variance is zero or too small, can not set weight matrix element.");
 		else{
 			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / pow2(meas->getYObservedStDev()));
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, pow2(meas->getYObservedStDev()));
 		}
 
 		if (pow2(meas->getZObservedStDev()) < nullLimit)
-			throw std::runtime_error("Error when filling CMM contribution, Z variance is zero or too small, can not set weight matrix element.");
+			throw std::runtime_error("Error when filling CXYZ contribution, Z variance is zero or too small, can not set weight matrix element.");
 		else{
 			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / pow2(meas->getZObservedStDev()));
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, pow2(meas->getZObservedStDev()));

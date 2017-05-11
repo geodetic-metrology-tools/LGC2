@@ -74,6 +74,7 @@ protected:
 	void writeORIEMeas(TORIEROM* meas);
 	void writeRADIMeas(TRADI* meas);
 	void writeTSTNMeas(shared_ptr<TTSTN> meas);
+	void writeCXYZMeas(TCXYZ* meas);
 
 
 	/// Project data
