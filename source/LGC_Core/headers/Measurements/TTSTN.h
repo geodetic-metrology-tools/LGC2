@@ -36,6 +36,8 @@ struct TTSTN {
 
 			const TInstrumentData::TPOLAR::TTarget* defaultTarget;  ///< Default taget for this round of measurements.
 			
+            int romId{ romCounter++ };
+
 			/// All PLR3D measurements in this ROM
 			std::list<TPLR3D> measPLR3D;
 			/// All horizonthal angle measurements in this ROM
@@ -96,6 +98,10 @@ struct TTSTN {
 			/// Each ROM has a default target that is inherited to the measurements
 			TROM(const TInstrumentData::TPOLAR::TTarget& defTarget, TAdjustableAngle* v0):
 				defaultTarget(&defTarget), v0(v0), acst(0.0, TAngle::EUnits::kGons){}
+
+        private:
+
+            static int romCounter;
 
 		};
 

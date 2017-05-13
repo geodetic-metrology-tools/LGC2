@@ -1,6 +1,8 @@
 #include <TTSTN.h>
 #include "TLGCObsSummary.h"
 
+int TTSTN::TROM::romCounter = 0;
+
 TLGCObsSummary TTSTN::TROM::getANGLObsSummary() const{
 	TLGCObsSummary summary;
 	for(auto& ItANGL:measANGL)
