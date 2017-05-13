@@ -16,6 +16,9 @@ endif(MINGW)
 # Define a variable that contains the path to LGC modules
 set(LGCCore_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 set(LGCCore_INCLUDE_PATH ${LGCCore_MODULE_PATH}/headers)
+set(SURVEYLIB_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../SurveyLib)
+
+INCLUDE(${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake)
 
 include_directories (
 	SYSTEM
