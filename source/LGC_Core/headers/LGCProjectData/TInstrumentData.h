@@ -51,7 +51,7 @@ class TInstrumentData {
 			};
 
 			/// allows the lookup of targets for this total station based on the target ID.
-			std::map<const std::string, TTarget> targets;
+			std::map<std::string, TTarget> targets;
 		};
 
 		//Definition of camera parameters
@@ -69,7 +69,7 @@ class TInstrumentData {
 			};
 
 			/// allows the lookup of targets for this total station based on the target ID.
-			std::map<const std::string, TTarget> targets;
+			std::map<std::string, TTarget> targets;
 		};
 
 		struct TEDM {
@@ -93,7 +93,7 @@ class TInstrumentData {
 			};
 			
 			/// allows the lookup of targets for this distance meter based on the target ID.
-			std::map<const std::string, TTarget> targets;
+			std::map<std::string, TTarget> targets;
 		};
 
 		struct TLEVEL {
@@ -114,7 +114,7 @@ class TInstrumentData {
 			};
 			
 			/// allows the lookup of targets for this leveling station based on the target ID.
-			std::map<const std::string, TTarget> targets;
+			std::map<std::string, TTarget> targets;
 		};
 
 		struct TSCALE {
@@ -127,15 +127,15 @@ class TInstrumentData {
 		};
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<const std::string, TPOLAR> fPOLAR;
+		std::map<std::string, TPOLAR> fPOLAR;
 		/// All available camera instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<const std::string, TCAMD> fCAMD;
+		std::map<std::string, TCAMD> fCAMD;
 		/// All available distance meters, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<const std::string, TEDM>   fEDM;
+		std::map<std::string, TEDM>   fEDM;
 		/// All available leveling instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<const std::string, TLEVEL> fLEVEL;
+		std::map<std::string, TLEVEL> fLEVEL;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<const std::string, TSCALE> fSCALE;
+		std::map<std::string, TSCALE> fSCALE;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.
@@ -147,7 +147,7 @@ class TInstrumentData {
 			\throws Throws a runtime_error if the instrument is not found
 		*/
 		template<typename T>
-		const T& getDevice(const std::map<const std::string, T>& m, const std::string& id) const {
+		const T& getDevice(const std::map<std::string, T>& m, const std::string& id) const {
 			auto it(m.find(id));
 			if (it == m.end())
 				throw std::runtime_error("Could not find device " + id + ".");

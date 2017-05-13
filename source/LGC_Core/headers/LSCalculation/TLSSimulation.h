@@ -6,6 +6,8 @@
 //STL
 #ifdef __linux__
 #include <tr1/random>
+#elif defined(__APPLE__)
+#include <boost/tr1/random.hpp>
 #else
 #include <random>
 #endif
@@ -56,8 +58,12 @@ private:
 	/// Pointer to the specific simulated output file writer
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter;
 
-	/// Random numbers generator 
+	/// Random numbers generator
+#ifdef __APPLE__
+	tr1::ranlux3_01 engine;
+#else
 	std::tr1::ranlux3_01 engine;
+#endif
 
 	/// Convergence criterion
 	TReal  fConvCriteria; 

@@ -89,7 +89,7 @@ void	TFautFileWriter::writeTitle()
 	time_t ltime;
 	time(&ltime);
 	struct tm *today;
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
 	tzset();
 #else
 	_tzset();

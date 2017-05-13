@@ -385,5 +385,9 @@ void	TLSSimulation::getDHORSimValues(const TTSTN& station, std::list<TLINE>& dho
 
 TReal TLSSimulation::getSimulatedValue(const TReal val, const TReal sigma)
 {
+#ifdef __APPLE__
+    return val + boost::normal_distribution<double>(0, sigma)(engine);
+#else
 	return val + std::normal_distribution<double>(0, sigma)(engine);
+#endif
 }
