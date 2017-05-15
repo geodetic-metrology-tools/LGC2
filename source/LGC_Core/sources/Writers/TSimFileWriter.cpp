@@ -377,7 +377,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 				}
 				writeXYZorH(point);
 
-				if (!frameIt->get()->isROOTNode())
+				/*if (!frameIt->get()->isROOTNode())
 					(*stream) << "SX"<<sep
 					<< point.getStandDev(0)*1000 << sep
 					<< "SY" << sep
@@ -395,7 +395,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 						<< point.getStandDev(2)*1000 << endl;
 					else
 						(*stream) << endl;
-				}
+				}*/
 				break;
 
 			case TSpatialStatus::ESpatialStatus::kVxy:
