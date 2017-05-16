@@ -3,7 +3,7 @@
 #include "TAStreamFormatter.h"
 #include "TLGCObsSummary.h"
 
-TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false)
+TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
 {}
 
 TEDMWriter::~TEDMWriter(){}

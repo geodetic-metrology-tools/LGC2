@@ -603,7 +603,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
-	int					nameWidth = getNameWidth();
+	// int				nameWidth = getNameWidth();
 
 	//Start to write the measurements
 	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
@@ -1766,10 +1766,10 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	int					coordWidth = getCoordWidth();
 	int					coordPrecision = this->getCoordPrecision();
 	int					coordResWidth = getCoordResWidth();
-	int					coordResidualPrecision = this->getCoordErrorPrecision();
+	// int				coordResidualPrecision = this->getCoordErrorPrecision();
 	string				separator = getSeparator();
 
-	int coordResPrecision = coordResidualPrecision > 3 ? (coordResidualPrecision - 3) : 0;
+	// int coordResPrecision = coordResidualPrecision > 3 ? (coordResidualPrecision - 3) : 0;
 
 	if(!pt->getFrameTreePosition()->get()->isROOTNode() && !localFRAME)
 		(*stream).writeStringLeft( 3, "*");

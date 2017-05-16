@@ -7,7 +7,7 @@
 #include "RoundOfMeasurements.h"
 #include "LGCAdjustablePoint.h"
 
-TSCALEWriter::TSCALEWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream)
+TSCALEWriter::TSCALEWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream)
 {}
 
 TSCALEWriter::~TSCALEWriter(){}
@@ -293,9 +293,9 @@ void TSCALEWriter::writeECVESIMUResults(const  TECVEROM& ecverom)
 void TSCALEWriter::writeECSPSIMUResults(const  TECSPROM& ecsprom)
 {
 	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
+    // int				nameWidth = getNameWidth();
+    // int				obsWidth = getObsWidth();
+    string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 	std::string         TAB2 = stream->getCurrSpaceExtended(2);
 
@@ -438,8 +438,8 @@ void TSCALEWriter::writeSCALESynthesisHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -472,11 +472,11 @@ void TSCALEWriter::writeECHOResultsSynthesis(const  TECHOROM& echorom)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;
@@ -505,11 +505,11 @@ void TSCALEWriter::writeECVEResultsSynthesis(const  TECVEROM& ecrom)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;
@@ -538,11 +538,11 @@ void TSCALEWriter::writeECSPResultsSynthesis(const  TECSPROM& ecrom)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;

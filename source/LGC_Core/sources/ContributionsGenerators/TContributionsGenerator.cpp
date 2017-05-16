@@ -811,7 +811,7 @@ ScaleMeasContrib TContributionsGenerator::getECVEContrib(const TECVEROM& ecveROM
 	TFreeVector pointLineContrib = getPointContributions(linePTLor2RootTrafo, -a, -b, -c);
 	addTransformationsContributions(linePTLor2RootTrafo, ecve.targetPos->getEstimatedValue(), -a, -b, -c, pointLineTransfContributions);
 	
-	TReal linePointContrib = -1.0;
+	// TReal linePointContrib = -1.0;
 
 	TReal obsVariance = pow2q(ecve.target.sigmaD + ecve.getDistance() / 1000 * ecve.target.ppmD) + pow2q(ecve.target.sigmaInstrCentering);
 	

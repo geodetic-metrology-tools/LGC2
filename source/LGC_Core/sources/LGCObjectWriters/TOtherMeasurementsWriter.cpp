@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include "LGCAdjustablePoint.h"
 
-TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream)
+TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream)
 {}
 
 TOtherMeasurentWriter::~TOtherMeasurentWriter()
@@ -477,8 +477,8 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -508,11 +508,11 @@ void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::list<TDVER>& fD
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence
@@ -546,11 +546,11 @@ void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::list<TORIE>& fO
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence
@@ -584,11 +584,11 @@ void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::list<TRADI>& fR
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//for output residual mean and the standart deviation of the residuals
 	// directly calculate here due to the instrument absence

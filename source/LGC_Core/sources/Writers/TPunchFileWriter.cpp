@@ -319,7 +319,7 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
-	int					obsWidth = max(getObsWidth(), 11);
+	// int				obsWidth = max(getObsWidth(), 11);
 
 	if (fData->getConfig().useApriori.isActive())
 		(*stream) << "LES ELLIPSES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
@@ -528,7 +528,7 @@ void	TPunchFileWriter::writeCooHeader()
 	TAStreamFormatter*	stream = getStream();
 	int	nameWidth = getNameWidth();
 	int	coordWidth = getCoordWidth();
-	int coordResWidth = getCoordResWidth();
+	// int coordResWidth = getCoordResWidth();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -753,7 +753,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
-	int					obsWidth = max(getObsWidth(),11);
+	// int				obsWidth = max(getObsWidth(),11);
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);
@@ -789,7 +789,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 		(*stream).width(1);
 		(*stream) << "";
 		const int vecwidth(24);
-		char vecstr[32]; // format the vector output here and write as a string
+		// char vecstr[32]; // format the vector output here and write as a string
 		stream->writeDouble(vecwidth, coordResWidth, point.getErrorEllGis().getGonsValue());
 		stream->writeString(vecwidth, "");
 		stream->writeString(vecwidth, "");
@@ -803,7 +803,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 		(*stream).width(1);
 		(*stream) << "";
 		const int vecwidth(24);
-		char vecstr[32]; // format the vector output here and write as a string
+		// char vecstr[32]; // format the vector output here and write as a string
 		stream->writeString(vecwidth, "");
 		stream->writeString(vecwidth, "");
 		stream->writeString(vecwidth, "");
@@ -999,7 +999,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 	int	nameWidth = getNameWidth();
 	int	coordWidth = getCoordWidth();
-	int coordResWidth = getCoordResWidth();
+	// int coordResWidth = getCoordResWidth();
 	string separator = stream->getSeparator();
 
 	(*stream).width(1);

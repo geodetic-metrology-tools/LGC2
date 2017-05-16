@@ -185,13 +185,13 @@ void TKeyPREC::parse(const std::vector<std::string>& tokens, int) {
 		throw std::runtime_error("*PREC expects interger between 0 and 7.");
 }
 
-void TKeyMICR::parse(const std::vector<std::string>& tokens, int) {
+void TKeyMICR::parse(const std::vector<std::string>& /*tokens*/, int) {
 		fconfig.outPrecision = TLGCConfig::TPrecision(6);
 		auto& outputMessages(proj.getFileLogger());
 		outputMessages.writeReportHeader("MICR should not be used. Use PREC option.");
 }
 
-void TKeyCLIC::parse(const std::vector<std::string>& tokens, int) {
+void TKeyCLIC::parse(const std::vector<std::string>& /*tokens*/, int) {
 	fconfig.outPrecision = TLGCConfig::TPrecision(6);
 	auto& outputMessages(proj.getFileLogger());
 	outputMessages.writeReportHeader("CLIC should not be used. Use PREC option.");
@@ -209,7 +209,7 @@ void TKeyTOL::parse(const std::vector<std::string>& tokens, int) {
 	outputMessages.writeReportHeader("TOL should not be used. Use PREC option.");
 }
 
-void TKeyDIXI::parse(const std::vector<std::string>& tokens, int) {
+void TKeyDIXI::parse(const std::vector<std::string>& /*tokens*/, int) {
 	fconfig.outPrecision = TLGCConfig::TPrecision(4);
 
 	auto& outputMessages(proj.getFileLogger());

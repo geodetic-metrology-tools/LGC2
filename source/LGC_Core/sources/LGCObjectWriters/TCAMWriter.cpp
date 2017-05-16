@@ -5,7 +5,7 @@
 #include <Global.h>
 #include "TLGCObsSummary.h"
 
-TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool hist) :TObservationWriter(stream)
+TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool /*hist*/) :TObservationWriter(stream)
 {}
 
 TCAMWriter::~TCAMWriter(){}
@@ -166,7 +166,7 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
-	writeUVDResultsHeader(measUVD.size()); // write the title line for the observations
+    writeUVDResultsHeader((int)measUVD.size()); // write the title line for the observations
 	(*stream) << endl;
 	for(auto const& ItUVD: measUVD)
 	{
@@ -462,8 +462,8 @@ void TCAMWriter::writeUVDSynthesisHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -510,8 +510,8 @@ void TCAMWriter::writeUVECSynthesisHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -552,11 +552,11 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal minX = 100.0;
@@ -598,11 +598,11 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal minX = 100.0;

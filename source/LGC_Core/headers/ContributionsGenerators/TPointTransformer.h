@@ -97,6 +97,8 @@ public:
 	/// Sets the name of the last station used
 	void  setLastStnPtName(std::string fName){ fLastStationPtName = fName; }
 
+    TPointTransformer& operator=(const TPointTransformer &other) = delete;
+
 private:
 	///  Returns the the index of a transformation named 'transfName' in the 'fLORTrafo' vector.  Returns the -1 if transformation was not set up.
 	int getTransformationIndex(const std::string& transfName) const;

@@ -459,9 +459,9 @@ TFreeVector LGCAdjustablePoint::transformSigmaInRoot(const LGCAdjustablePoint& p
 		frame = frameIt.node->data.get()->frame;
 
 
-		TReal a = sqrt(covRoot.coeff(0, 0));
-		TReal b = sqrt(covRoot.coeff(1, 1));
-		TReal c = sqrt(covRoot.coeff(2, 2));
+		// TReal a = sqrt(covRoot.coeff(0, 0));
+		// TReal b = sqrt(covRoot.coeff(1, 1));
+		// TReal c = sqrt(covRoot.coeff(2, 2));
 	}
 
 	//extract variance in root

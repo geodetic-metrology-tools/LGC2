@@ -21,13 +21,13 @@ data(fDataSet)
 	fYcgEst = fYcg;
 	fZcgEst = fZcg;
 
-	fCnstrNumber.dx = NO_VALf;
-	fCnstrNumber.dy = NO_VALf;
-	fCnstrNumber.dz = NO_VALf;
-	fCnstrNumber.rx = NO_VALf;
-	fCnstrNumber.ry = NO_VALf;
-	fCnstrNumber.rz = NO_VALf;
-	fCnstrNumber.k = NO_VALf;
+	fCnstrNumber.dx = (int)NO_VALf;
+	fCnstrNumber.dy = (int)NO_VALf;
+	fCnstrNumber.dz = (int)NO_VALf;
+	fCnstrNumber.rx = (int)NO_VALf;
+	fCnstrNumber.ry = (int)NO_VALf;
+	fCnstrNumber.rz = (int)NO_VALf;
+    fCnstrNumber.k = (int)NO_VALf;
 }
 
 //////////////////////////
@@ -37,7 +37,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 {//adds the offset's contributions to the input matrices
 	bool successfullyProcessed = true;
 
-	TReal nbrPts = data.getPoints().numObjects();
+	TReal nbrPts = (TReal)data.getPoints().numObjects();
 
 	double rotX, rotY, rotZ, ech;
 	rotX = 0.0;
@@ -391,7 +391,7 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	vscale.rz = T;
 	vscale.k = F;
 
-	bool brotation = false;
+	// bool brotation = false;
 	struct isFreeCnstr vrotation;
 	vrotation.dx = T;
 	vrotation.dy = T;
@@ -404,7 +404,7 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	//get point's type used for calculation
 	auto iter = lsds.getPoints().begin();
 	auto iterEnd = lsds.getPoints().end();
-	int numberOfPoints = lsds.getPoints().numObjects();
+    int numberOfPoints = (int)lsds.getPoints().numObjects();
 
 
 	//n accepte pas la division par un entier???

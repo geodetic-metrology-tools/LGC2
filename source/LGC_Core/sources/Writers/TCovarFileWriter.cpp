@@ -126,8 +126,8 @@ void TCovarFileWriter::writeFrameDefinition(TAdjustableHelmertTransformation& fr
 	int					lengthPrecision = getLengthPrecision();
 	int					anglePrecision = getAnglePrecision();
 	std::string			TABs = stream->getCurrSpace();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+	// int				obsResWidth = getObsResWidth();
+	// int				lengthResidualPrecision = getLengthResidualPrecision();
 	stream->setWidthFormat(obsWidth);
 	stream->setPrecisionFormat(lengthPrecision);
 	stream->setPrecisionFormat(anglePrecision);
@@ -173,14 +173,14 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 
 
 	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
+    // int				nameWidth = getNameWidth();
+    int					obsWidth = getObsWidth();
 	string				separator = getSeparator();
 	int					lengthPrecision = getLengthPrecision();
-	int					anglePrecision = getAnglePrecision();
+	// int              anglePrecision = getAnglePrecision();
 	std::string			TABs = stream->getCurrSpace();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+    // int				obsResWidth = getObsResWidth();
+    // int				lengthResidualPrecision = getLengthResidualPrecision();
 	//set length parameters
 	stream->setWidthFormat(obsWidth);
 	stream->setPrecisionFormat(lengthPrecision);
@@ -583,13 +583,13 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePoint &point)
 {
 	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
+    // int				nameWidth = getNameWidth();
+    int					obsWidth = getObsWidth();
 	string				separator = getSeparator();
 	int					lengthPrecision = getLengthPrecision();
 	std::string			TABs = stream->getCurrSpace();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = getLengthResidualPrecision();
+    // int				obsResWidth = getObsResWidth();
+    // int				lengthResidualPrecision = getLengthResidualPrecision();
 	//set length parameters
 	stream->setWidthFormat(obsWidth);
 	stream->setPrecisionFormat(lengthPrecision);

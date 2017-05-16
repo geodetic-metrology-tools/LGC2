@@ -71,6 +71,8 @@ public:
 
 	//@}
 
+    TAllfixedParamGenerator& operator=(const TAllfixedParamGenerator &other) = delete;
+
 private:
 	/// Pointer to a TPointTransformationFunctions
 	TPointTransformer& fPointTransfo;

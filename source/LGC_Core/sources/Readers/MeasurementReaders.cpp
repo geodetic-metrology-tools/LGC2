@@ -1086,7 +1086,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECSP measurement is duplicated");
 	}
-	auto& debug = proj.getCurrentNode().measurements;
+	// auto& debug = proj.getCurrentNode().measurements;
 }
 
 void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)

@@ -157,7 +157,7 @@ void TAPointKey::parse(const std::vector<std::string>& tokens, int line) {
 	pt.line = line;
 
 	if (tokens.at(0).size()>proj.getConfig().pointNameWidth)
-		proj.getConfig().pointNameWidth = tokens.at(0).size();
+        proj.getConfig().pointNameWidth = (int)tokens.at(0).size();
 
 	TOptionHelper opts(tokens.cbegin(), tokens.cend());
 

@@ -167,7 +167,7 @@ TAngle* TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TT
 	TReal dX = targetPos.getX().getMetresValue() - stationPos.getX().getMetresValue();
 	TReal dY = targetPos.getY().getMetresValue() - stationPos.getY().getMetresValue();
 
-	TReal V0 = NO_VALf;
+	// TReal V0 = NO_VALf;
 
 	TReal A, B, C;
 	A = -dY; //cos
@@ -183,7 +183,7 @@ TAngle* TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TT
 	return fSolutionTrigo;
 }
 
-TAngle* TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+TAngle* TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TTSTN::TROM& /*rom*/, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
 	TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -219,7 +219,7 @@ TAngle* TAllfixedParamGenerator::getRxAllfixedPLR(const TTSTN& station, const TT
 	return fSolutionTrigo;
 }
 
-TAngle* TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
+TAngle* TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TTSTN::TROM& /*rom*/, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
 	TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -280,8 +280,8 @@ TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelIn
 
 	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue()) + pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue()));
 
-	TReal zInst = referencePoint.getZ().getMetresValue();
-	TReal zTg = dlev.targetPos->getEstimatedValue().getZ().getMetresValue();
+	// TReal zInst = referencePoint.getZ().getMetresValue();
+	// TReal zTg = dlev.targetPos->getEstimatedValue().getZ().getMetresValue();
 
 	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dlev.getDistance();
 
@@ -423,7 +423,7 @@ TLength TAllfixedParamGenerator::getHiAllfixedPLR(const TTSTN& station, const TT
 	
 	TReal dX = targetPos.getX().getMetresValue() - stationPos.getX().getMetresValue();
 	TReal dY = targetPos.getY().getMetresValue() - stationPos.getY().getMetresValue();
-	TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getProvisionalValue();
+	// TReal dZ = targetPos.getZ().getMetresValue() + plr3D.target.targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getProvisionalValue();
 	
 
 	TReal Hi = NO_VALf;

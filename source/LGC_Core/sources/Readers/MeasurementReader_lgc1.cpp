@@ -1455,7 +1455,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			TEDM edm(fpoints.getObject(currentStation), finstruments.getDevice(finstruments.fEDM, "EDMInstr"));
 
 			// get a reference to modify the default values for this station
-			auto& instrument(edm.instrument);
+			// auto& instrument(edm.instrument);
 
 			proj.getCurrentNode().measurements.fEDM.emplace_back(edm);
 			proj.getCurrentNode().measurements.fEDM.back().line = line;
@@ -2502,5 +2502,5 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 	}
 
-	auto& debug = proj.getCurrentNode().measurements;
+	// auto& debug = proj.getCurrentNode().measurements;
 }

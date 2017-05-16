@@ -312,7 +312,7 @@ TReal TObservationGenerator::getECVECalcMeas(const TECVEROM& ecveROM, const TECV
 
 TReal TObservationGenerator::getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp)
 {
-	TReal cEcVp = ecsp.target.distCorrectionValue; //distance of the target correction value
+	// TReal cEcVp = ecsp.target.distCorrectionValue; //distance of the target correction value
 
 	TPositionVector stationPoint = ecsp.targetPos->getEstimatedValue();
 	const TLOR2LOR& stationPTLor2RootTrafo = fPointTransfo->getLORTransformation(ecsp.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin());

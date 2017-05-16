@@ -52,7 +52,7 @@ Behavior TLSSimulation::run(TLGCData& data, int fMaxIterations)
 		else
 		{
 			throw std::logic_error("Calculation failed in simulation mode.");
-			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
+			// return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 		}
 	}
 	catch (std::exception& excp) {

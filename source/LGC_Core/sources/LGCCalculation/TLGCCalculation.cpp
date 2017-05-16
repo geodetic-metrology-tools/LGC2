@@ -24,7 +24,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	// Checks whether the data are consistent, assign unknown indices and initialize uninitialized objects (points, lines, planes), reference poiints for certain observations, etc. 
 	if (!analyzer.dataConsistent())
 	{
-		throw std::runtime_error("Data are not consistent, see the output file: " + fData->getFileLogger().getOutputFileLocation() + " for more information.");
+		// throw std::runtime_error("Data are not consistent, see the output file: " + fData->getFileLogger().getOutputFileLocation() + " for more information.");
 		return Behavior(Behavior::BehaviorCode::ERR_readingContent, L"Data are not consistent, see the log file for more information.");
 	}
 	try{

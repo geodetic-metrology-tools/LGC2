@@ -374,7 +374,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	string line;
 	int nline(1);
 	bool isReferenceSystemDefined = false;
-	bool isLgc1 = true;
+	// bool isLgc1 = true;
 
 	auto& outputMessages(project.getFileLogger());
 	outputMessages.writeReportHeader("Reading input file:");
@@ -501,7 +501,7 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
-	const auto& titlrline(tokenizefileString(line));
+	// const auto& titlrline(tokenizefileString(line));
 
 	// read until the next keyword
 	safeGetline(lgcStream, line/*, '*'*/);
@@ -514,8 +514,8 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 	nline++;
 
 
-	auto lasthandler(finterpreters.back().get());
-	for (auto currenthandler(lasthandler);
+	// auto lasthandler(finterpreters.back().get());
+	for (/*auto currenthandler(lasthandler)*/;
 		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
 		++nline) 
 	{
@@ -541,7 +541,7 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 	return false;
 }
 
-bool TReader::requiredAdjustableVo(std::istream& lgcStream, int v0Tstnline)
+bool TReader::requiredAdjustableVo(std::istream& lgcStream, int /*v0Tstnline*/)
 {
 	string line;
 	bool V0read = false;
@@ -550,8 +550,8 @@ bool TReader::requiredAdjustableVo(std::istream& lgcStream, int v0Tstnline)
 	skipBOM(lgcStream);
 
 
-	auto lasthandler(finterpreters.back().get());
-	for (auto currenthandler(lasthandler);
+	// auto lasthandler(finterpreters.back().get());
+	for (/*auto currenthandler(lasthandler)*/;
 		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");)
 	{
 		// tokenize the current line

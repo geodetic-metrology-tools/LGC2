@@ -69,7 +69,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 {
 	int nbObs = im->getNbrObservations();
 	int nbEq = im->getNbrEquations();
-	double s02 = rm->getSigmaZero2();
+	// double s02 = rm->getSigmaZero2();
 	TReal varAPriori = 1;
 	double varRes = 0;
 	double res = 0;
@@ -166,7 +166,7 @@ void    TLGCStatistic::calcOverall(int nbObs)
 	int i = 0;
 	while (i<nbObs)
 	{
-		double k = fZ->coeff(i);
+		// double k = fZ->coeff(i);
 		if (fAreDetermined->coeff(i))
 			fOverall += powq(1/fZ->coeff(i),2)-1;
 		else

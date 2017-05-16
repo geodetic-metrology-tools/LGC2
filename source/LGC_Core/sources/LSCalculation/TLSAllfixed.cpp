@@ -1,7 +1,7 @@
 #include "TLSAllfixed.h"
 #include <TLGCData.h>
 
-TLSAllfixed::TLSAllfixed(TLGCData& data, int maxIter):TLSAlgorithm(data)
+TLSAllfixed::TLSAllfixed(TLGCData& data, int /*maxIter*/):TLSAlgorithm(data)
 , fPointTransformer(&data.getTree()
 , data.getConfig().referential)
 ,fAllfixedGenerator(fPointTransformer)

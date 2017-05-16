@@ -49,13 +49,13 @@ public:
 	 //@}
 
 	/// Returns TRUE if reliabilities have been calculated
-	bool		getAreDetermined(int index) const {return (*fAreDetermined)(index);}
+	bool		getAreDetermined(int index) const {return (*fAreDetermined)(index) != 0;}
 	/// Returns TRUE if normalised residual has been calculated
 	bool		getWToCompute() const {return fWToCompute; }
 	/// Returns TRUE if the probable size of the detected fault has been calculated
-	bool		getGToCompute(int index) const { return (*fGToCompute)(index); }
+    bool		getGToCompute(int index) const { return (*fGToCompute)(index) != 0; }
 	/// Returns TRUE if external reliability has been calculated
-	bool		getDeltaComputed(int index) const { return (*fDeltaComputed)(index); }
+    bool		getDeltaComputed(int index) const { return (*fDeltaComputed)(index) != 0; }
 
 	/// Reset the vectors to a null vector
 	void clearVectors();

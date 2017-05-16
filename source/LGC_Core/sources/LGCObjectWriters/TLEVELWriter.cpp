@@ -5,7 +5,7 @@
 #include "TLGCObsSummary.h"
 #include <TAMeas.h>
 
-TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool hist) : TObservationWriter(stream), isAllfixed(false)
+TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
 {}
 
 TLEVELWriter::~TLEVELWriter(){}
@@ -298,8 +298,8 @@ void TLEVELWriter::writeLEVELSynthesisHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -332,11 +332,11 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					obsResWidth = getObsResWidth();
+    // int				obsWidth = getObsWidth();
+    int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	int					lengthPrecision = getLengthPrecision();
-	std::string         TABs = stream->getCurrSpaceExtended(1);
+    // int				lengthPrecision = getLengthPrecision();
+    std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
 	TReal min = 100.0;

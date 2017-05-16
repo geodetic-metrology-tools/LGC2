@@ -363,7 +363,7 @@ void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, s
 bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& rm, const TReal convCrit)  {
 	bool critNotExceeded = true;
 
-	TReal numberOfPoints = fDataSet->getPoints().numObjects();
+	TReal numberOfPoints = (TReal)fDataSet->getPoints().numObjects();
 	TReal factor = LITERAL(1.0) / numberOfPoints;
 
 	TLength zero(LITERAL(0.0));
