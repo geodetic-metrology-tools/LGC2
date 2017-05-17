@@ -1110,7 +1110,7 @@ PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 
 
 
-CXYZContrib  TContributionsGenerator::getCXYZContrib(const TCXYZ& cxyz)
+OBSXYZContrib  TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ& OBSXYZ)
 {
 /*	fPointTransfo.setMLA(false);
 
@@ -1150,9 +1150,9 @@ CXYZContrib  TContributionsGenerator::getCXYZContrib(const TCXYZ& cxyz)
 	return{ coordContribTarget, targetTransfContributions, {dx,dy,dz} };
 */
 
-	TPositionVector estimated = cxyz.station->getEstimatedValue();  //tgt
-	TPositionVector prov = cxyz.initialValue;  //stn
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(cxyz.positionInTree, cxyz.station->getFrameTreePosition()); // Transform to frame in which point is defined 
+	TPositionVector estimated = OBSXYZ.station->getEstimatedValue();  //tgt
+	TPositionVector prov = OBSXYZ.initialValue;  //stn
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(OBSXYZ.positionInTree, OBSXYZ.station->getFrameTreePosition()); // Transform to frame in which point is defined 
 	stLor2RootTrafo.transform(prov);
 
 	//ets calc value
@@ -1165,7 +1165,7 @@ CXYZContrib  TContributionsGenerator::getCXYZContrib(const TCXYZ& cxyz)
 
 	//Fill transformation contributions
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> TransfContributions;
-	addUVDTgTransfContributionsCamera(stLor2RootTrafo, cxyz.initialValue, TransfContributions);
+	addUVDTgTransfContributionsCamera(stLor2RootTrafo, OBSXYZ.initialValue, TransfContributions);
 
 	return{ coordContribStation, TransfContributions, { dx, dy, dz } };
 }

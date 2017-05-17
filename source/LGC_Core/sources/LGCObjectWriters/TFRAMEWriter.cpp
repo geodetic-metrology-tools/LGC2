@@ -123,10 +123,10 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
 	}
 
-	if (!frameIt->get()->measurements.fCXYZ.empty())
+	if (!frameIt->get()->measurements.fOBSXYZ.empty())
 	{
 		(*stream) << endl;
-		otherMeasWriter.writeCXYZResults(frameIt->get()->measurements.fCXYZ);
+		otherMeasWriter.writeOBSXYZResults(frameIt->get()->measurements.fOBSXYZ);
 	}
 
 	for (auto& itEDM : frameIt->get()->measurements.fEDM)
@@ -604,29 +604,29 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		otherMeasWriter.writeDistanceResultsSummary(RADIsummary,TABs);
 	}
 
-	//CXYZ
-	if (frameIt->get()->measurements.fCXYZ.size() > 0)
+	//OBSXYZ
+	if (frameIt->get()->measurements.fOBSXYZ.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, "CXYZ"); //instrument
+		(*stream).writeStringLeft(nameWidth, "OBSXYZ"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		otherMeasWriter.writeCXYZResultsSynthesis(frameIt->get()->measurements.fCXYZ);
+		otherMeasWriter.writeOBSXYZResultsSynthesis(frameIt->get()->measurements.fOBSXYZ);
 
-		TLGCObsSummary XCXYZsummary;
-		TLGCObsSummary YCXYZsummary;
-		TLGCObsSummary ZCXYZsummary;
-		if (frameIt->get()->measurements.fCXYZ.size() > 0)
-			for (auto const& It : frameIt->get()->measurements.fCXYZ)
+		TLGCObsSummary XOBSXYZsummary;
+		TLGCObsSummary YOBSXYZsummary;
+		TLGCObsSummary ZOBSXYZsummary;
+		if (frameIt->get()->measurements.fOBSXYZ.size() > 0)
+			for (auto const& It : frameIt->get()->measurements.fOBSXYZ)
 			{
-				XCXYZsummary.addNewResidual(It.getXResidual().getMMetresValue());
-				YCXYZsummary.addNewResidual(It.getYResidual().getMMetresValue());
-				ZCXYZsummary.addNewResidual(It.getZResidual().getMMetresValue());
+				XOBSXYZsummary.addNewResidual(It.getXResidual().getMMetresValue());
+				YOBSXYZsummary.addNewResidual(It.getYResidual().getMMetresValue());
+				ZOBSXYZsummary.addNewResidual(It.getZResidual().getMMetresValue());
 			}
-		otherMeasWriter.writeDistanceResultsSummary(XCXYZsummary, TABs);
-		otherMeasWriter.writeDistanceResultsSummary(YCXYZsummary, TABs);
-		otherMeasWriter.writeDistanceResultsSummary(ZCXYZsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(XOBSXYZsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(YOBSXYZsummary, TABs);
+		otherMeasWriter.writeDistanceResultsSummary(ZOBSXYZsummary, TABs);
 	}
 }
 
@@ -1006,11 +1006,11 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 		otherMeasWriter.writeRADIReliabilityData(frameIt->get()->measurements.fRADI, fProjectData->getStatistics());
 	}
 
-	if (!frameIt->get()->measurements.fCXYZ.empty())
+	if (!frameIt->get()->measurements.fOBSXYZ.empty())
 	{
-		(*stream) << endl << "CXYZ observations" << endl;
-		otherMeasWriter.writeCXYZReliabilityHeader();
-		otherMeasWriter.writeCXYZReliabilityData(frameIt->get()->measurements.fCXYZ, fProjectData->getStatistics());
+		(*stream) << endl << "OBSXYZ observations" << endl;
+		otherMeasWriter.writeOBSXYZReliabilityHeader();
+		otherMeasWriter.writeOBSXYZReliabilityData(frameIt->get()->measurements.fOBSXYZ, fProjectData->getStatistics());
 	}
 
 	bool  EDMheaderWritten = false;

@@ -355,9 +355,9 @@ struct PtOrientationContrib{
 /*!
 \ingroup ContributionsGenerators
 
-\brief Contributions for constraint CXYZ.
+\brief Contributions for the point observation OBSXYZ.
 */
-struct CXYZContrib{
+struct OBSXYZContrib{
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform the point into the root.

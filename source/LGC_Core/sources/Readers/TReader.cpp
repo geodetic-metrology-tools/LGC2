@@ -171,7 +171,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyECVE(project)));
 	finterpreters.emplace_back(UPK(new TKeyORIE(project)));
 	finterpreters.emplace_back(UPK(new TKeyRADI(project)));
-	finterpreters.emplace_back(UPK(new TKeyCXYZ(project)));
+	finterpreters.emplace_back(UPK(new TKeyOBSXYZ(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDMES_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDVER_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDLEV_lgc1(project)));

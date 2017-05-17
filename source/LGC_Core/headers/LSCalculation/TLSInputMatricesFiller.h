@@ -122,8 +122,8 @@ private:
 		/// Add the design matrices contributions for the RADI measurement. 
 		void addRADIContributions(const std::list<TRADI>& radiMeas, TLSInputMatrices*  matrices);
 
-		/// Add the design matrices contributions for the CXYZ measurement. 
-		void addCXYZContributions(const std::list<TCXYZ>& CXYZMeas, TLSInputMatrices*  matrices);
+		/// Add the design matrices contributions for the OBSXYZ measurement. 
+		void addOBSXYZContributions(const std::list<TOBSXYZ>& OBSXYZMeas, TLSInputMatrices*  matrices);
 	//@}
 
 

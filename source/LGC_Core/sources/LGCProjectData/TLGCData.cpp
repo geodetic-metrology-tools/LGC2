@@ -162,8 +162,8 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kRADI:
 			fMeasInfo.fNumRADI++;
 			break;
-		case TMeasurementsGlobal::kCXYZ:
-			fMeasInfo.fNumCXYZ++;
+		case TMeasurementsGlobal::kOBSXYZ:
+			fMeasInfo.fNumOBSXYZ++;
 			break;
 	}
 }
@@ -205,8 +205,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumORIE;
 	case TMeasurementsGlobal::kRADI:
 		return fMeasInfo.fNumRADI;
-	case TMeasurementsGlobal::kCXYZ:
-		return fMeasInfo.fNumCXYZ;
+	case TMeasurementsGlobal::kOBSXYZ:
+		return fMeasInfo.fNumOBSXYZ;
 	default:
         return 0;
 	}
@@ -246,7 +246,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumORIE = 0;
 	fMeasInfo.fNumPDOR = 0;
 	fMeasInfo.fNumRADI = 0;
-	fMeasInfo.fNumCXYZ = 0;
+	fMeasInfo.fNumOBSXYZ = 0;
 
 	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 }

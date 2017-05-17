@@ -30,8 +30,8 @@ public:
 		void writeRADIResultsHeader();
 		/// Write PDOR results header
 		void writePDORResultsHeader();
-		/// Write CXYZ results header
-		void writeCXYZResultsHeader();
+		/// Write OBSXYZ results header
+		void writeOBSXYZResultsHeader();
 
 		/// Write DVER reliability header  
 		void writeDVERReliabilityHeader();
@@ -39,8 +39,8 @@ public:
 		void writeORIEReliabilityHeader();
 		/// Write RADI reliability header
 		void writeRADIReliabilityHeader();
-		/// Write CXYZ reliability header
-		void writeCXYZReliabilityHeader();
+		/// Write OBSXYZ reliability header
+		void writeOBSXYZReliabilityHeader();
 
 		/// Write synthesis results header
 		void writeResultsSynthesisHeader();
@@ -56,8 +56,8 @@ public:
 		void writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
 		/// Write RADI results data
 		void writeRADIResults(const std::list<TRADI>& fRADI);
-		/// Write CXYZ results data
-		void writeCXYZResults(const std::list<TCXYZ>& fCXYZ);
+		/// Write OBSXYZ results data
+		void writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ);
 
 		/// Write DVER simulations
         void writeDVERSIMUResults(const std::list<TDVER>& fDVER);
@@ -72,8 +72,8 @@ public:
         void writeORIEReliabilityData(const std::list<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
 		/// Write RADI reliability data
         void writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat);
-		/// Write CXYZ reliability data
-		void writeCXYZReliabilityData(const std::list<TCXYZ>& fCXYZ, const TLGCStatistic& stat);
+		/// Write OBSXYZ reliability data
+		void writeOBSXYZReliabilityData(const std::list<TOBSXYZ>& fOBSXYZ, const TLGCStatistic& stat);
 
 		/// Write DVER synthesis data
 		void writeDVERResultsSynthesis(const std::list<TDVER>& fDVER);
@@ -81,8 +81,8 @@ public:
 		void writeORIEResultsSynthesis(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
 		/// Write RADI synthesis data
 		void writeRADIResultsSynthesis(const std::list<TRADI>& fRADI);
-		/// Write CXYZ synthesis data
-		void writeCXYZResultsSynthesis(const std::list<TCXYZ>& fCXYZ);
+		/// Write OBSXYZ synthesis data
+		void writeOBSXYZResultsSynthesis(const std::list<TOBSXYZ>& fOBSXYZ);
 	//@}
 
 };

@@ -1325,22 +1325,22 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 }
 
 
-void TKeyCXYZ::parse(const std::vector<std::string>& tokens, int line)
+void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
 	//On first line nothing appears so far: to be discussed
 	if (!firstline)
 	{
-		bool hasAllParams = (tokens.size() == 7) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3))
+		bool hasAllParams = (tokens.size() >= 7) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3))
 			&& isNumber(tokens.at(4)) && isNumber(tokens.at(5)) && isNumber(tokens.at(6));
 		if (!hasAllParams && !fSIMUActive)
-			throw std::runtime_error("A CXYZ measurements must have at 7 entries: "
-			"One point 3 coordinates and 3 sigmas");
+			throw std::runtime_error("A OBSXYZ measurements must have at least 7 entries: "
+			"One point 3 observed coordinates and 3 sigmas");
 
 		// Store  the measured value
-		proj.getCurrentNode().measurements.fCXYZ.emplace_back(
-			TCXYZ(fpoints.getObject(tokens.at(0)),
+		proj.getCurrentNode().measurements.fOBSXYZ.emplace_back(
+			TOBSXYZ(fpoints.getObject(tokens.at(0)),
 			TPositionVector(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::ECoordSys::k3DCartesian),
 			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(4))), TLength::EUnits::kMillimetres), 
 			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(5))), TLength::EUnits::kMillimetres),
@@ -1348,18 +1348,18 @@ void TKeyCXYZ::parse(const std::vector<std::string>& tokens, int line)
 			proj.getCurrentPosition()
 			));
 		
-		auto& cxyz(proj.getCurrentNode().measurements.fCXYZ.back());
-		cxyz.line = line;
+		auto& obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
+		obsxyz.line = line;
 		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			cxyz.eolcomment = tokens.back();
+			obsxyz.eolcomment = tokens.back();
 			
-		cxyz.setFirstEquationIndex(proj.fUEOIndices.EIndex);
-		cxyz.setFirstObservationIndex(proj.fUEOIndices.OIndex);
+		obsxyz.setFirstEquationIndex(proj.fUEOIndices.EIndex);
+		obsxyz.setFirstObservationIndex(proj.fUEOIndices.OIndex);
 		proj.fUEOIndices.EIndex+=3;
 		proj.fUEOIndices.OIndex+=3;
-		proj.addToMeasurementNum(TMeasurementsGlobal::kCXYZ);
+		proj.addToMeasurementNum(TMeasurementsGlobal::kOBSXYZ);
 	}
 }

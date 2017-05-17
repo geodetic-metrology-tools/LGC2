@@ -489,11 +489,11 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 			writeRADIMeas(&meas);
 	}
 
-	if (!frameIt->get()->measurements.fCXYZ.empty())
+	if (!frameIt->get()->measurements.fOBSXYZ.empty())
 	{
-		(*stream) << "*CXYZ" << endl;
-		for (auto& meas : frameIt->get()->measurements.fCXYZ)
-			writeCXYZMeas(&meas);
+		(*stream) << "*OBSXYZ" << endl;
+		for (auto& meas : frameIt->get()->measurements.fOBSXYZ)
+			writeOBSXYZMeas(&meas);
 	}
 
 }
@@ -890,7 +890,7 @@ void TSimFileWriter::writeRADIMeas(TRADI* meas)
 
 }
 
-void TSimFileWriter::writeCXYZMeas(TCXYZ* meas)
+void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
 {
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();

@@ -110,8 +110,8 @@ public:
 		///  Returns the contribution for a RADI measurement
 		PtOrientationContrib	getRADIContrib(const TRADI& radi);
 
-		/// Returns the contribution for the CXYZ measurement
-		CXYZContrib  getCXYZContrib(const TCXYZ& cxyz);
+		/// Returns the contribution for the OBSXYZ measurement
+		OBSXYZContrib  getOBSXYZContrib(const TOBSXYZ& obsxyz);
 	//@}
 
 

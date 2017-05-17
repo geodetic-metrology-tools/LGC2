@@ -491,7 +491,7 @@ private:
 \ingroup Measurements
 \brief  RADI constraints.
 */
-class TCXYZ : public TAMeas<int>
+class TOBSXYZ : public TAMeas<int>
 {
 public:
 	///Pointer to the point
@@ -508,8 +508,8 @@ public:
 
 	/*!@name Constructors */
 	//@{
-	TCXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree);
-	TCXYZ();
+	TOBSXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree);
+	TOBSXYZ();
 	//@}
 
 	/*!@name Access methods*/

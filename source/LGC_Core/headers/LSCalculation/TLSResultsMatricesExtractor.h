@@ -148,8 +148,8 @@ private:
 		/// Sets the RADI measurement residual.
 		void extractRADIObs(const TLSResultsMatrices& rm, std::list<TRADI>& radi);
 
-		/// Sets the CXYZ measurement residual.
-		void extractCXYZObs(const TLSResultsMatrices& rm, std::list<TCXYZ>& cxyz);
+		/// Sets the OBSXYZ measurement residual.
+		void extractOBSXYZObs(const TLSResultsMatrices& rm, std::list<TOBSXYZ>& obsxyz);
 	//@}
 
 

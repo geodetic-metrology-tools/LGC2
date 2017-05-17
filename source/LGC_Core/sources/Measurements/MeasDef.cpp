@@ -125,7 +125,7 @@ TRADI::TRADI(const LGCAdjustablePoint& point, TAngle obsVal, TLength sig) :
     TAMeas<int>(*station, 0)
 {}
 
-TCXYZ::TCXYZ() :
+TOBSXYZ::TOBSXYZ() :
 station(nullptr),
 initialValue(TPositionVector(TCoordSysFactory::ECoordSys::k3DCartesian)),
 fXResidual(NO_VALf), fYResidual(NO_VALf), fZResidual(NO_VALf),
@@ -133,7 +133,7 @@ fXSigmaObsVal(NO_VALf), fYSigmaObsVal(NO_VALf), fZSigmaObsVal(NO_VALf),
 TAMeas<int>(*station, 0)
 {}
 
-TCXYZ::TCXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree) :
+TOBSXYZ::TOBSXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree) :
 station(&point),
 initialValue(pos),
 fXResidual(NO_VALf), fYResidual(NO_VALf), fZResidual(NO_VALf),

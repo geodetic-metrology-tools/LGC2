@@ -48,8 +48,8 @@ struct TMeasurements {
 	/// All RADI measurements in which they appeared in the input file
 	std::list<TRADI> fRADI;
 
-	/// All CXYZ measurements in which they appeared in the input file
-	std::list<TCXYZ> fCXYZ;
+	/// All OBSXYZ measurements in which they appeared in the input file
+	std::list<TOBSXYZ> fOBSXYZ;
 };
 
 #endif // MEASUREMENTS_H_
