@@ -28,11 +28,18 @@ struct TECHOROM {
 		/// Line of the measurement definition
 		int  line;
 
+        int romId{ romCounter++ };
+
 		/// the station attribute is a copy of the parameter to override defaults
 		TECHOROM(LGCAdjustablePlane& measPlane) :
 			fMeasuredPlane(&measPlane),
 			line(NO_VALi)
 			{}
+
+private:
+
+    static int romCounter;
+
 };
 
 /*!
@@ -56,6 +63,8 @@ struct TECSPROM {
 	int  line;
 	/// name of the rom
 	string romName;
+
+    int romId{ romCounter++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
 	/*TECSPROM(LGCAdjustableLine& measLine) :
@@ -87,7 +96,11 @@ struct TECSPROM {
 		p2(&point2),
 		line(NO_VALi)
 	{}
-	
+
+private:
+
+    static int romCounter;
+
 };
 
 /*!
@@ -108,11 +121,18 @@ struct TECVEROM {
 	/// Line of the measurement definition
 	int  line;
 
+    int romId{ romCounter++ };
+
 	/// the station attribute is a copy of the parameter to override defaults
 	TECVEROM(LGCAdjustableLine& measLine) :
 		fMeasuredLine(&measLine),
 		line(NO_VALi)
 	{}
+
+private:
+
+    static int romCounter;
+
 };
 
 /*!
@@ -138,6 +158,8 @@ struct TORIEROM {
 		/// Line of the measurement definition
 		int  line;
 
+        int romId{ romCounter++ };
+
 		/// the station attribute is a copy of the parameter to override defaults
 		TORIEROM(const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
 			instrumentPos(&pos),
@@ -146,6 +168,10 @@ struct TORIEROM {
 			fConstantAngle(0.0, TAngle::EUnits::kGons)
 		{
 		}
+
+    private:
+        
+        static int romCounter;
 
 
 };

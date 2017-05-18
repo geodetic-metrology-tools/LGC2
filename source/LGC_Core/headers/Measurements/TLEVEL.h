@@ -36,6 +36,8 @@ struct TLEVEL {
 		/// Line of the measurement definition
 		int  line;
 
+        int stnId{ stnCounter++ };
+
 		// The station attribute is a copy of the parameter to override defaults
 		TLEVEL(LGCAdjustablePlane& measPlane, const TInstrumentData::TLEVEL& instrument) :
 			fMeasuredPlane(&measPlane),
@@ -43,5 +45,10 @@ struct TLEVEL {
 			instrument(instrument),
 			hasDHOR(false)
 			{}
+
+    private:
+
+        static int stnCounter;
+
 };
 #endif

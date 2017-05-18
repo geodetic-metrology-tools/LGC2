@@ -31,6 +31,11 @@ enum ESingleValue {
 */
 template<typename TTarget>
 class TAMeas {
+
+    private:
+        
+        static int measCounter;
+
 	protected:
 
 		/// Index of first EQUATION introduced by this measurement in the LS design matrices 
@@ -50,6 +55,8 @@ class TAMeas {
 
 		/// DB comment after the measurement definition
 		std::string eolcomment;
+
+        int measId{ measCounter++ };
 
 		/*!@name Constructors */
 		//@{				
@@ -91,6 +98,9 @@ class TAMeas {
 			void setFirstObservationIndex(MatrixIndex firstObservationIndex){fFirstObservationIndex = firstObservationIndex;}
 		//@}
 };
+
+template<typename TTarget>
+int TAMeas<TTarget>::measCounter = 0;
 	
 /*!
 	\ingroup Measurements

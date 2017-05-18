@@ -2,6 +2,11 @@
 #include "TLGCObsSummary.h"
 
 
+int TECHOROM::romCounter = 0;
+int TECSPROM::romCounter = 0;
+int TECVEROM::romCounter = 0;
+int TORIEROM::romCounter = 0;
+
 TLGCObsSummary  TECHOROM::getECHOObsSummary() const{
 	TLGCObsSummary summary;
 	for(auto const& ItECHOROM: measECHO)

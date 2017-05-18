@@ -1,6 +1,8 @@
 #include "TCAM.h"
 #include "TLGCObsSummary.h"
 
+int TCAM::stnCounter = 0;
+
 TUVDObsSummary TCAM::getUVDObsSummary()const{
 	TUVDObsSummary summary;
 

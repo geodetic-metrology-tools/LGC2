@@ -129,6 +129,8 @@ struct TTSTN {
 		/// All round of measurements for this instrument. In each ROM a point on different position is measured.
 		std::list<shared_ptr<TROM>> roms;
 
+        int stnId{ stnCounter++ };
+
 		/*!
 			Creates a total station that is centered on a given point with instrument data from the input file
 
@@ -146,6 +148,11 @@ struct TTSTN {
 			rotY(nullptr)
 
 		{}
+
+    private:
+
+        static int stnCounter;
+
 	};
 
 #endif

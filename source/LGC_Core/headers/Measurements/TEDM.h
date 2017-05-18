@@ -35,5 +35,11 @@ struct TEDM {
 
 		/// Line of the station definition
 		int  line;
+
+        int stnId{ stnCounter++ };
+
+    private:
+
+        static int stnCounter;
 };
 #endif

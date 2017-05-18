@@ -49,10 +49,17 @@ struct TCAM {
 		/// Line of the camera definition
 		int  line;
 
+        int stnId{ stnCounter++ };
+
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TUVDObsSummary getUVDObsSummary()const;
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TUVECObsSummary getUVECObsSummary()const;
+
+    private:
+        
+        static int stnCounter;
+
 	};
 
 #endif

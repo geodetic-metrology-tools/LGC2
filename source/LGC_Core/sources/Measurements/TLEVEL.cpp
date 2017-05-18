@@ -1,6 +1,8 @@
 #include "TLEVEL.h"
 #include "TLGCObsSummary.h"
 
+int TLEVEL::stnCounter = 0;
+
 TLGCObsSummary  TLEVEL::getDLEVObsSummary() const{
 	TLGCObsSummary summary;
 	for(auto const& ItDLEV: measDLEV)
