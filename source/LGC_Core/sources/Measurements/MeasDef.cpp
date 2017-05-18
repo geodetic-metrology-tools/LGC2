@@ -97,7 +97,9 @@ TPdorObs::TPdorObs():
     fIsInitialise(false),
     fDefined(false),
     fbearingResidual(NO_VALf)
-    {}
+{
+    targetPos = nullptr;
+}
 
 void TPdorObs::Initialise(LGCAdjustablePoint& cala, LGCAdjustablePoint& ori, TAngle gis, bool hasbearing)
 {
@@ -114,12 +116,14 @@ TRADI::TRADI() :
     fResidual(NO_VALf),
     fSigmaObsVal(1.0, TLength::EUnits::kMillimetres),
     TAMeas<int>(*station, 0)
-{}
+{
+    targetPos = nullptr;
+}
 
 TRADI::TRADI(const LGCAdjustablePoint& point, TAngle obsVal, TLength sig) :
     station(&point),
     fAngleCnstr(obsVal),
     fResidual(NO_VALf),
     fSigmaObsVal(sig),
-    TAMeas<int>(*station, 0)
+    TAMeas<int>(point, 0)
 {}
