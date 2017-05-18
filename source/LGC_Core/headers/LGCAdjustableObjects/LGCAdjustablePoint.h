@@ -105,6 +105,9 @@ public:
         /// Rename the adjustable point
         virtual void setName(const std::string name) { fName = name; }
 
+        /// Set the frame position to *pos*
+        void setFrameTreePosition(const TDataTreeIterator& pos) { fFramePosition = pos; };
+
         /// Reset the provisional position vector
         virtual void setProvisionalValue(const TReal& x, const TReal& y, const TReal& z);
 

@@ -126,6 +126,9 @@ public:
 			\throws Throws a logic_error if no component of the line is variable.
 		*/
 		virtual void setFirstUidx(int idx);
+
+        /// Set the linePoint to *point*
+        void setLinePoint(const LGCAdjustablePoint* point) { fLinePoint = point; }
 		
 		/*! 
 			See \ref TVAdjustableObject::setCorrection

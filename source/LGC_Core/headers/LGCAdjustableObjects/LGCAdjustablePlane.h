@@ -184,6 +184,9 @@ public:
 		*/
 		virtual void setFirstUidx(int idx);
 
+        /// Set the refPt to *point*
+        void setReferencePoint(const LGCAdjustablePoint* point) { fReferencePoint = point; }
+
 
 		///	See \ref TVAdjustableObject::setCorrection
 		virtual void setCorrection(int idx, TReal value);
