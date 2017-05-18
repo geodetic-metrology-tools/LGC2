@@ -62,15 +62,17 @@ public:
 	/// Initialise the vectors with the size of the input matrices
 	void initialiseStatVector(const TLSInputMatrices* im);
 
+    /// Assignmen operator
+    TLGCStatistic& operator=(const TLGCStatistic&);
+
 private:
 	///Calculate the overall
 	void    calcOverall(int nbObs);
 
 	std::string			fError;		/*!< errors during calculation */
 
-	/*No assignable nor copyable*/
+	/*Not copyable*/
 	TLGCStatistic(const TLGCStatistic&) {}
-    TLGCStatistic& operator=(const TLGCStatistic&) { return *this; }
 
 	std::unique_ptr<TVector>		fZ; /*!< local reliability statistic */
 	std::unique_ptr<TVector>		fW; /*!< Gross-error detection statistic */

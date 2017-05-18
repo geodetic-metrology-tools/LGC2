@@ -180,3 +180,24 @@ void    TLGCStatistic::calcOverall(int nbObs)
 		fOverall /= (nbObs - 1);
 	return;
 }
+
+TLGCStatistic& TLGCStatistic::operator=(const TLGCStatistic &other) {
+    if(this == &other)
+        return *this;
+
+    fError = other.fError;
+    fZ.reset(other.fZ ? new TVector(*other.fZ) : nullptr);
+    fW.reset(other.fW ? new TVector(*other.fW) : nullptr);
+    fT.reset(other.fT ? new TVector(*other.fT) : nullptr);
+    fDelty.reset(other.fDelty ? new TVector(*other.fDelty) : nullptr);
+    fNablaValue.reset(other.fNablaValue ? new TVector(*other.fNablaValue) : nullptr);
+    fGValue.reset(other.fGValue ? new TVector(*other.fGValue) : nullptr);
+    fOverall = other.fOverall;
+
+    fAreDetermined.reset(other.fAreDetermined ? new TVector(*other.fAreDetermined) : nullptr);
+    fWToCompute = other.fWToCompute;
+    fGToCompute.reset(other.fGToCompute ? new TVector(*other.fGToCompute) : nullptr);
+    fDeltaComputed.reset(other.fDeltaComputed ? new TVector(*other.fDeltaComputed) : nullptr);
+
+    return *this;
+}
