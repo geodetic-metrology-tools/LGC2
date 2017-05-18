@@ -1,10 +1,10 @@
 #include <TLGCData.h>	
 
-TLGCData::TLGCData() : 
-	fCombinedCase(false),
-	fhasStandardDeviations(false),
-	fNumberOfConstraints(0)
-	{
+TLGCData::TLGCData() 
+    : fileLogger(std::make_shared<TFileLogger>())
+    , fCombinedCase(false)
+    , fhasStandardDeviations(false)
+    , fNumberOfConstraints(0) {
         fLSRelatedInfo.fNumberOfLSIterations = 0;
 	    setDefaultValues();
         config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
@@ -266,4 +266,327 @@ void TLGCData::reInitForSIMU(){
 
 
 	/*Eventually also all the statistics but they will be rewritten anyway, so it seems not to be necessary*/
+}
+
+
+std::shared_ptr<TLGCData> TLGCData::clone() const {
+    auto d = std::make_shared<TLGCData>();
+    
+    // Copy adjustable objects collections:
+    d->points = points;
+    d->lines = lines;
+    d->planes = planes;
+    d->angles = angles;
+    d->lengths = lengths;
+
+    // Copy tree and reset position:
+    copyTree(this, d.get());
+    d->pos = d->tree.begin();
+
+    // Reset the frameTreePositions in LGCAdjustablePoints and
+    // move the pointers to correct objects in lines and planes:
+    updateAdjustableObjectsPointers(d.get());
+
+    // Copy configuration:
+    d->config = config;
+    d->fCombinedCase = fCombinedCase;
+    d->fhasStandardDeviations = fhasStandardDeviations;
+    d->fNumberOfConstraints = fNumberOfConstraints;
+    d->fLSRelatedInfo = fLSRelatedInfo;
+    d->fPointInfo = fPointInfo;
+    d->fMeasInfo = fMeasInfo;
+
+    // Copy instruments:
+    d->instruments = instruments;
+
+    // Copy filelogger:
+    d->fileLogger = fileLogger;
+    
+    // TODO
+
+    // Copy statistics:
+    d->stat = stat;
+
+    // Copy relative errors:
+    for(const auto &erelPair : fRelError){
+        // Get the correct points from the new container:
+        auto p1 = d->points.getObject(erelPair.getPoint1Name());
+        auto p2 = d->points.getObject(erelPair.getPoint2Name());
+
+        // Create the erel pair, set sigmas:
+        TLSCalcRelativeError erel(p1, p2);
+        erel.setSigmaL(erelPair.getSigmaL());
+        erel.setSigmaR(erelPair.getSigmaR());
+        erel.setSigmaZ(erelPair.getSigmaZ());
+        erel.setSigmaG(erelPair.getSigmaG());
+        erel.setSigmaV(erelPair.getSigmaV());
+
+        // Add to the new container:
+        d->fRelError.push_back(erel);
+    }
+
+    return d;
+}
+
+
+void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
+
+    // Copy the tree structure/form:
+    tgt->tree = src->tree;
+
+    // Loop the tree in order to create a deep copy of each node
+    for(auto &entry : tgt->tree){
+    
+        // First replace the contents of the node:
+        entry.reset(new TTreeEntry(*entry));
+
+        // Necessary to manage all measurements separately thanks to pointers and references
+
+        // TSTN
+        for(auto &tstn : entry->measurements.fTSTN){
+        
+            // Replace the tstn:
+            tstn.reset(new TTSTN(*tstn));
+
+            // Reset the pointers to point to objects in the target core:
+            tstn->instrumentPos = &tgt->points.getObject(tstn->instrumentPos->getName());
+
+            if(tstn->instrumentHeightAdjustable)
+                tstn->instrumentHeightAdjustable = &tgt->lengths.getObject(tstn->instrumentHeightAdjustable->getName());
+
+            if(tstn->rotX)
+                tstn->rotX = &tgt->angles.getObject(tstn->rotX->getName());
+
+            if(tstn->rotY)
+                tstn->rotY = &tgt->angles.getObject(tstn->rotY->getName());
+
+            // TSTN::ROM
+            for(auto &rom : tstn->roms){
+
+                // Replace the rom:
+                rom.reset(new TTSTN::TROM(*rom));
+
+                // Reset the pointers:
+                if(rom->v0)
+                    rom->v0 = &tgt->angles.getObject(rom->v0->getName());
+
+                rom->defaultTarget = &tstn->instrument.targets.at(rom->defaultTarget->ID);
+
+                // Measurements in this rom
+
+                // PLR3D
+                for(auto &meas : rom->measPLR3D)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                // ANGL
+                for(auto &meas : rom->measANGL)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+                
+                // ZEND
+                for(auto &meas : rom->measZEND)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                // DIST
+                for(auto &meas : rom->measDIST)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                // DHOR
+                for(auto &meas : rom->measDHOR)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                // ECTH
+                for(auto &meas : rom->measECTH)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                // ECDIR
+                for(auto &meas : rom->measECDIR)
+                    if(meas.targetPos)
+                        meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+            }
+        }
+
+        // CAM
+        for(auto &cam : entry->measurements.fCAM){
+
+            // Reset the pointers to point to objects in the target core:
+            cam.instrumentPos = &tgt->points.getObject(cam.instrumentPos->getName());
+
+            // UVD
+            for(auto &meas : cam.measUVD)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+            // UVEC
+            for(auto &meas : cam.measUVEC)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+        }
+
+        // EDM
+        for(auto &edm : entry->measurements.fEDM){
+
+            // Reset the pointers to point to objects in the target core:
+            edm.instrumentPos = &tgt->points.getObject(edm.instrumentPos->getName());
+
+            // DSPT
+            for(auto &meas : edm.measDSPT)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+        }
+
+        // LEVEL
+        for(auto &level : entry->measurements.fLEVEL){
+
+            // Reset the pointers to point to objects in the target core:
+            if(level.fMeasuredPlane)
+                level.fMeasuredPlane = &tgt->planes.getObject(level.fMeasuredPlane->getName());
+
+            // DLEV
+            for(auto &meas : level.measDLEV){
+                
+                // If DHOR specified, replace it and reset pointer:
+                if(meas.dhor){
+
+                    meas.dhor.reset(new TDLEV::TDHOR(*meas.dhor));
+
+                    if(meas.dhor->targetPos)
+                        meas.dhor->targetPos = &tgt->points.getObject(meas.dhor->targetPos->getName());
+                }
+
+                // Reset the pointer
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+            }
+        }
+
+        // ORIE
+        for(auto &orierom : entry->measurements.fORIE){
+
+            // Reset the pointers to point to objects in the target core:
+            orierom.instrumentPos = &tgt->points.getObject(orierom.instrumentPos->getName());
+
+            // Measurements
+            for(auto &meas : orierom.measORIE)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+        }
+
+        // ECHO
+        for(auto &echorom : entry->measurements.fECHO){
+
+            // Reset the pointers to point to objects in the target core:
+            if(echorom.fMeasuredPlane)
+                echorom.fMeasuredPlane = &tgt->planes.getObject(echorom.fMeasuredPlane->getName());
+
+            // Measurements
+            for(auto &meas : echorom.measECHO)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+        }
+
+        // ECVE
+        for(auto &ecverom : entry->measurements.fECVE){
+
+            // Reset the pointers to point to objects in the target core:
+            if(ecverom.fMeasuredLine)
+                ecverom.fMeasuredLine = &tgt->lines.getObject(ecverom.fMeasuredLine->getName());
+
+            // Measurements
+            for(auto &meas : ecverom.measECVE)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+        }
+
+        // ECSP
+        for(auto &ecsprom : entry->measurements.fECSP){
+
+            // Reset the pointers to point to objects in the target core:
+            if(ecsprom.p1)
+                ecsprom.p1 = &tgt->points.getObject(ecsprom.p1->getName());
+
+            if(ecsprom.p2)
+                ecsprom.p2 = &tgt->points.getObject(ecsprom.p2->getName());
+
+            // Measurements
+            for(auto &meas : ecsprom.measECSP)
+                if(meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+        }
+
+        // DVER
+        for(auto &dver : entry->measurements.fDVER){
+
+            // Reset the pointers to point to objects in the target core:
+
+            if(dver.station)
+                dver.station = &tgt->points.getObject(dver.station->getName());
+        
+            if(dver.targetPos)
+                dver.targetPos = &tgt->points.getObject(dver.targetPos->getName());
+        }
+
+        // RADI
+        for(auto &radi : entry->measurements.fRADI){
+
+            // Reset the pointers to point to objects in the target core:
+            
+            if(radi.station)
+                radi.station = &tgt->points.getObject(radi.station->getName());
+
+            if(radi.targetPos)
+                radi.targetPos = &tgt->points.getObject(radi.targetPos->getName());
+        }
+
+        // PDOR 
+        auto &pdor = entry->measurements.fPDOR;
+
+        // Reset the pointers to point to objects in the target core:
+        if(pdor.calaPt)
+            pdor.calaPt = &tgt->points.getObject(pdor.calaPt->getName());
+
+        if(pdor.orientationPt)
+            pdor.orientationPt = &tgt->points.getObject(pdor.orientationPt->getName());
+
+        if(pdor.targetPos)
+            pdor.targetPos = &tgt->points.getObject(pdor.targetPos->getName());
+    }
+}
+
+void TLGCData::updateAdjustableObjectsPointers(TLGCData* d){
+    
+    // Update the iterators in points:
+    for(auto &p : d->points){
+
+        // If frameTreePosition is unknown, continue
+        if(p.getFrameTreePosition() == TDataTreeIterator()) continue;
+
+        // Get the id of the node:
+        auto nodeId = (*p.getFrameTreePosition())->ID;
+
+        // Loop the tree and find the node with the same id,
+        // update the frameTreePosition to the found node:
+        for(auto it = d->tree.begin(); it != d->tree.end(); ++it)
+            if((*it)->ID == nodeId){
+                p.setFrameTreePosition(it);
+                break;
+            }
+    }
+
+    // Update the pointers in lines:
+    for(auto &l : d->lines)
+        if(l.getLinePoint())
+            l.setLinePoint(&d->points.getObject(l.getLinePoint()->getName()));
+
+    // Update the pointers in planes:
+    for(auto &p : d->planes)
+        if(p.getReferencePoint())
+            p.setReferencePoint(&d->points.getObject(p.getReferencePoint()->getName()));
+
 }

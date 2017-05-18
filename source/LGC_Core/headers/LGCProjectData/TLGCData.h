@@ -145,9 +145,9 @@ public:
 		LSRelErrorsContainer const& getRelError() const { return fRelError; }
 
 		/// Returns the file logger used to write on an output file
-		TFileLogger& getFileLogger() {return fileLogger;}
+		TFileLogger& getFileLogger() {return *fileLogger;}
 		/// Returns the constant referrence on file logger used to write on an output file
-		TFileLogger const& getFileLogger() const {return fileLogger;}
+		TFileLogger const& getFileLogger() const {return *fileLogger;}
 	//@}
 
 
@@ -211,7 +211,15 @@ public:
 
         /// Sets default values for number of points, measuremets, etc.
         void setDefaultValues();
+
+        /// Creates a deep copy of the data and returns a shared pointer to it
+        std::shared_ptr<TLGCData> clone() const;
 private:
+
+    /// Copy the frametree structure from *src* to *tgt*
+    static void copyTree(TLGCData const * const src, TLGCData* tgt);
+
+    static void updateAdjustableObjectsPointers(TLGCData* data);
 
 	/*!@name Collections of adjustable objects*/
 	//@{
@@ -240,7 +248,7 @@ private:
 	TInstrumentData instruments;
 
 	/// Provides writing functionalities for writing errors, warnings, which occured in any stage.
-	TFileLogger fileLogger;
+	std::shared_ptr<TFileLogger> fileLogger;
 
 	/// Statistic output
 	TLGCStatistic stat;
