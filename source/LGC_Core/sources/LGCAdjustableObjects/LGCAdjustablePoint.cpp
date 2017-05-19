@@ -32,13 +32,13 @@ LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string& na
 
 void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, const TReal& z) {
     fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys());
+    fEstimatedValue = fProvisionalValue;
 
     // Use H instead of Z if necessary:
-    if((*fFramePosition)->isROOTNode() &&
-        (fReferential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine ||
-        fReferential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS ||
-        fReferential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine))
+    if(fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH){
         fProvisionalValue.setH(TLength(z, TLength::kMetres));
+        TAdjustablePoint::transformEstimatedValue();
+    }
 }
 
 void LGCAdjustablePoint::setCorrection(int idx, TReal value) {
