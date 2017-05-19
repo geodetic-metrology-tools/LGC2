@@ -196,7 +196,7 @@ int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
 }
 
 
-TFreeVector LGCAdjustablePoint::transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData) const
+TFreeVector LGCAdjustablePoint::transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData)
 {
 	// vector to return the modified sigma in ROOT
 	TFreeVector sigmaRoot(pv.getEstimatedValue().getCoordSys());

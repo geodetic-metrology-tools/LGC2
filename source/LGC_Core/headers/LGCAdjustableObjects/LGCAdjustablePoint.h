@@ -145,7 +145,7 @@ public:
 	//@}
 
 		///Transform sigma a posteriori (= estimated precision) in root
-		TFreeVector transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData) const;
+		static TFreeVector transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData);
 
 private:
 
