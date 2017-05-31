@@ -644,7 +644,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance()); //Write value in meters [m]
 
 		//write the sigma, output the value in [mm],  value is stored in [m], lower the precision by 3 decimal points because of the mm output
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist*ItPLR3D.getDistance() / 1000)*M2MM);
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM<TPLR3D>(&ItPLR3D));
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual());
@@ -926,7 +926,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance());
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.target.sigmaDist + ItDIST.target.ppmDist*ItDIST.getDistance() / 1000)* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM<TLINE>(&ItDIST));
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance() + ItDIST.getDistanceResidual());
@@ -1008,7 +1008,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance());
 
 		//write the sigma DHOR
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDHOR.target.sigmaDist + ItDHOR.target.ppmDist*ItDHOR.getDistance() / 1000)*M2MM);//Output value in meters [mm], stored in [m]
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM<TLINE>(&ItDHOR));//Output value in meters [mm], stored in [m]
 
 		//write the estimated DHOR
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance() + ItDHOR.getDistanceResidual());
@@ -1357,7 +1357,7 @@ void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDist.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDist.target.sigmaDist + ItDist.target.ppmDist*ItDist.getDistance() / 1000)* M2MM);
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM<TLINE>(&ItDist));
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual().getMMetresValue());
 
@@ -1425,7 +1425,7 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 		//get the observed 3rd equation
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItPLR.getDistance(ESingleValue::kValue));
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItPLR.target.sigmaDist + ItPLR.target.ppmDist*ItPLR.getDistance() / 1000)* M2MM);
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM<TPLR3D>(&ItPLR));
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItPLR.getDistanceResidual(ESingleValue::kValue).getMMetresValue());
 
@@ -1458,7 +1458,7 @@ void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 		//get the observed DHOR
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDhor.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDhor.target.sigmaDist + ItDhor.target.ppmDist*ItDhor.getDistance() / 1000)*M2MM);
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM<TLINE>(&ItDhor));
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual().getMMetresValue());
 

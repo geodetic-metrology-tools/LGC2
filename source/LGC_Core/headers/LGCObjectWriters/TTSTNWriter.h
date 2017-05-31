@@ -93,6 +93,13 @@ public:
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }
 
+    /// Get the sigma for the distance measurement
+    template<class TMEAS>
+    static TReal getDistanceSigmaInMM(TMEAS const * const meas){
+        // Return value in millimeters [mm]
+        return (meas->target.sigmaDist + meas->target.ppmDist * meas->getDistance() / 1000)*M2MM;
+    }
+
 private:
 	/*!@name Headers */
 	//@{
