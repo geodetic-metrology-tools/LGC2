@@ -47,7 +47,7 @@ namespace tut
 		set_test_name("Testing TLGCApp class and nam file reader");
 
 		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "cmm.lgc",
-			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "WU_cmm.res");
+			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "cmm.res");
 
 		ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
 
