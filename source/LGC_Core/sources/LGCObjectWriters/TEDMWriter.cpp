@@ -112,7 +112,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DSPT
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDSPT.target.sigmaDSpt + ItDSPT.target.ppmDSpt*ItDSPT.getDistance() / 1000)* M2MM);//Output value in meters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM(&ItDSPT));//Output value in meters [mm], stored in [m]
 
 		//write the estimated DSPT
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance() + ItDSPT.getDistanceResidual());//Output value in meters [m], stored in [m]
@@ -210,7 +210,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDspt.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDspt.target.sigmaDSpt + ItDspt.target.ppmDSpt*ItDspt.getDistance() / 1000)* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM(&ItDspt));
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 

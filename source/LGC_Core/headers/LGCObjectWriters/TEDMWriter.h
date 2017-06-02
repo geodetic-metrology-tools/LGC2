@@ -36,6 +36,12 @@ public:
 
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }
+
+    /// Get the sigma for the distance measurement
+    static TReal getDistanceSigmaInMM(TDSPT const * const meas){
+        // Return value in millimeters [mm]
+        return (meas->target.sigmaDSpt + meas->target.ppmDSpt * meas->getDistance() / 1000) * M2MM;
+    }
 	
 private:
 	/// Write information about the instrument
