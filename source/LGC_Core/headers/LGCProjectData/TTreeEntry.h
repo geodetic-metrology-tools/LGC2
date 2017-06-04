@@ -1,3 +1,5 @@
+#ifndef LGC2_TTREE_ENTRY_H
+#define LGC2_TTREE_ENTRY_H
 
 //Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
@@ -42,3 +44,5 @@ struct TTreeEntry {
 	~TTreeEntry() {}
 
 };
+
+#endif // LGC2_TTREE_ENTRY_H
