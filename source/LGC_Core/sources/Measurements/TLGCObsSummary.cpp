@@ -19,9 +19,7 @@
 //////////////////////
 TLGCObsSummary::TLGCObsSummary() 
 {
-	fObsText = "";
-	fAngleType = true;
-	// clear the statistics
+	// clear the statistics 
 	clear();
 }
 
@@ -61,6 +59,8 @@ TLGCObsSummary& TLGCObsSummary::operator=(const TLGCObsSummary& right)
 		fMeanLoLimit = LITERAL(0.0);
 		fMeanHiLimit = LITERAL(0.0);
 		fMeanCalculated = right.fMeanCalculated;
+        fResMin = right.fResMin;
+        fResMax = right.fResMax;
 		fSumRes2 = right.fSumRes2;
 		fVariance = right.fVariance;
 		fVarLoLimit = LITERAL(0.0);
@@ -69,6 +69,7 @@ TLGCObsSummary& TLGCObsSummary::operator=(const TLGCObsSummary& right)
 		// histogram data
 		fHistoList = right.fHistoList;
 		fHistoListSorted = right.fHistoListSorted;
+        fIsInitialised = right.fIsInitialised;
 	}
 
 	return *this;
@@ -90,6 +91,8 @@ bool	TLGCObsSummary::operator==(const TLGCObsSummary& right) const
 		fMeanLoLimit == right.fMeanLoLimit &&
 		fMeanHiLimit == right.fMeanHiLimit &&
 		fMeanCalculated == right.fMeanCalculated &&
+        fResMin == right.fResMin &&
+        fResMax == right.fResMax && 
 		fSumRes2 == right.fSumRes2 &&
 		fVariance == right.fVariance &&
 		fVarLoLimit == right.fVarLoLimit &&
@@ -97,7 +100,8 @@ bool	TLGCObsSummary::operator==(const TLGCObsSummary& right) const
 		fVarianceCalculated == right.fVarianceCalculated &&
 		// histogram data
 		fHistoList == right.fHistoList &&
-		fHistoListSorted == right.fHistoListSorted
+		fHistoListSorted == right.fHistoListSorted &&
+        fIsInitialised == right.fIsInitialised
 		);
 }
 
@@ -107,12 +111,18 @@ bool	TLGCObsSummary::operator==(const TLGCObsSummary& right) const
 ////////////////////////////////////////////
 void	TLGCObsSummary::addNewResidual(const TReal res)
 {
+    fIsInitialised = true;
+
 	// add the residual to the parameters to calculate the mean and variance
 	fNumberOfObs++;
 	fSumRes += res;
 	fSumRes2 += powq(res,2);
 	fMeanCalculated = false;
 	fVarianceCalculated = false;
+
+    // Check if residual is smaller or bigger than current resMin or resMax:
+    if(res > fResMax) fResMax = res;
+    if(res < fResMin) fResMin = res;
 
 	// add the residual to the histogram data list
 	addHistoListItem(res); 
@@ -127,6 +137,8 @@ void	TLGCObsSummary::addNewResidual(const TReal res)
 ////////////////////////////////////////////
 void	TLGCObsSummary::clear()
 {
+    fObsText = "";
+    fAngleType = true;
 	// reset the statistics and clear the histogram list
 	fNumberOfObs = 0;
 	fSumRes = LITERAL(0.0);
@@ -134,6 +146,8 @@ void	TLGCObsSummary::clear()
 	fMeanLoLimit = LITERAL(0.0);
 	fMeanHiLimit = LITERAL(0.0);
 	fMeanCalculated = false;
+    fResMin = 100.0;
+    fResMax = 0.0;
 	fSumRes2 = LITERAL(0.0);
 	fVariance = LITERAL(0.0);
 	fVarLoLimit = LITERAL(0.0);
@@ -142,7 +156,13 @@ void	TLGCObsSummary::clear()
 	fHistoList.clear();
 	fHistoListSorted = false;
 	fNumberOutsideHisto = 0;
+
+    fIsInitialised = false;
 	return;
+}
+
+bool TLGCObsSummary::isInitialised() const {
+    return fIsInitialised;
 }
 
 

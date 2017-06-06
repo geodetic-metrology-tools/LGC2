@@ -43,7 +43,10 @@ public:
 		void		addNewResidual(const TReal res);
 
 		/// clear the observation summary statistics 
-		void		clear();
+        void		clear();
+
+        /// Check if the obsSummary statistics are initialised or not
+        bool        isInitialised() const;
 
 		/// get the mean of the residuals 
 		TReal		getMean();
@@ -114,6 +117,8 @@ private:
 	TReal			fMeanLoLimit;
 	TReal			fMeanHiLimit;
 	bool			fMeanCalculated;
+    TReal           fResMin;
+    TReal           fResMax;
 	TReal			fSumRes2;
 	TReal			fVariance;
 	TReal			fVarLoLimit;
@@ -124,6 +129,8 @@ private:
 	list<TReal>	fHistoList;
 	bool			fHistoListSorted;
 	int				fNumberOutsideHisto;
+
+    bool fIsInitialised;
 };
 
 /*!
