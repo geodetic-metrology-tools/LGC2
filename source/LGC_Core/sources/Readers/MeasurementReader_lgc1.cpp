@@ -2023,20 +2023,6 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			//initialise the plane instead of in TDataAnalyser
 			const LGCAdjustablePoint& p1 = fpoints.getObject(encrage1);
 			const LGCAdjustablePoint& p2 = fpoints.getObject(encrage2);
-			TReal referencePoint[3] = { p1.getEstimatedValue().getX().getMetresValue(), 
-										p1.getEstimatedValue().getY().getMetresValue(),
-										p1.getEstimatedValue().getZ().getMetresValue() };
-			TReal initialRefPtDistance = 0.0;
-
-			/*Fixed reference point for the ECHO measurement*/
-			LGCAdjustablePoint& rp =
-				proj.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
-				true, true, true, "ECHO_line" + std::to_string(line), proj.getConfig().referential, proj.getTree().begin()));
-
-			TReal thetaLineVectorAngle = atan2q(p2.getEstimatedValue().getX().getMetresValue() - p1.getEstimatedValue().getX().getMetresValue(), p2.getEstimatedValue().getY().getMetresValue() - p1.getEstimatedValue().getY().getMetresValue());
-
-			proj.getCurrentNode().measurements.fECHO.back().fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
-				TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
 
 			// Create measurements for the encrage points
 			TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
