@@ -234,6 +234,9 @@ TReal		TLGCObsSummary::getMeanHiLimit()
 	return fMeanHiLimit;
 }
 
+TReal TLGCObsSummary::getResMin() const { return fResMin; }
+
+TReal TLGCObsSummary::getResMax() const { return fResMax; }
 
 /*!get the variance for the residuals */
 TReal		TLGCObsSummary::getVariance()

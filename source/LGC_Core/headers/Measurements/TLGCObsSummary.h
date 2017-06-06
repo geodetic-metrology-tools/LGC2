@@ -57,6 +57,12 @@ public:
 		/// get the upper confidence limit for the mean 
 		TReal		getMeanHiLimit();
 
+        /// Get the minimum residual of the added residuals
+        TReal       getResMin() const;
+
+        /// Get the maximum residual of the added residuals
+        TReal       getResMax() const;
+
 		/// get the variance for the residuals 
 		TReal		getVariance();
 
