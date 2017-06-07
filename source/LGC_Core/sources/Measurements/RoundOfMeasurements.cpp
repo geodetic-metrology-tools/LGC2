@@ -12,6 +12,9 @@ void TECHOROM::initialiseObsSummaries() {
     // Add the residuals of each measurement:
     for(auto const& ItECHOROM : measECHO)
         echoSummary_.addNewResidual(ItECHOROM.getDistanceResidual().getMMetresValue());
+
+    // Initialise the obsSummaries:
+    echoSummary_.initialise();
 }
 
 void TECSPROM::initialiseObsSummaries() {
@@ -21,6 +24,9 @@ void TECSPROM::initialiseObsSummaries() {
     // Add the residuals of each measurement:
     for(auto const& ItECSPROM : measECSP)
         ecspSummary_.addNewResidual(ItECSPROM.getDistanceResidual().getMMetresValue());
+
+    // Initialise the obsSummaries:
+    ecspSummary_.initialise();
 }
 
 void TECVEROM::initialiseObsSummaries() {
@@ -30,6 +36,9 @@ void TECVEROM::initialiseObsSummaries() {
     // Add the residuals of each measurement:
     for(auto const& ItECVEROM : measECVE)
         ecveSummary_.addNewResidual(ItECVEROM.getDistanceResidual().getMMetresValue());
+
+    // Initialise the obsSummaries:
+    ecveSummary_.initialise();
 }
 
 void TORIEROM::initialiseObsSummaries() {
@@ -39,13 +48,16 @@ void TORIEROM::initialiseObsSummaries() {
     // Add the residuals of each measurement:
     for(auto const& ItORIE : measORIE)
         orieSummary_.addNewResidual(ItORIE.getAngleResidual().getSignedCCValue());
+
+    // Initialise the obsSummaries:
+    orieSummary_.initialise();
 }
 
-TLGCObsSummary  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
+const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
 
-TLGCObsSummary  TECSPROM::getECSPObsSummary() const { return ecspSummary_; }
+const TLGCObsSummary&  TECSPROM::getECSPObsSummary() const { return ecspSummary_; }
 
-TLGCObsSummary  TECVEROM::getECVEObsSummary() const { return ecveSummary_; }
+const TLGCObsSummary&  TECVEROM::getECVEObsSummary() const { return ecveSummary_; }
 
-TLGCObsSummary  TORIEROM::getORIEObsSummary() const { return orieSummary_; }
+const TLGCObsSummary&  TORIEROM::getORIEObsSummary() const { return orieSummary_; }
 

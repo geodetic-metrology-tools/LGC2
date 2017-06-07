@@ -34,7 +34,7 @@ struct TEDM {
         void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TLGCObsSummary getDSPTObsSummary() const;
+        const TLGCObsSummary& getDSPTObsSummary() const;
 
 		/// Line of the station definition
 		int  line;

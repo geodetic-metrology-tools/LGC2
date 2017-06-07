@@ -9,6 +9,9 @@ void TEDM::initialiseObsSummaries() {
     // Add the residuals of each measurement:
     for(auto const& ItEDM : measDSPT)
         dsptSummary_.addNewResidual(ItEDM.getDistanceResidual().getMMetresValue());
+
+    // Initialise the obsSummaries:
+    dsptSummary_.initialise();
 }
 
-TLGCObsSummary  TEDM::getDSPTObsSummary() const { return dsptSummary_; }
+const TLGCObsSummary& TEDM::getDSPTObsSummary() const { return dsptSummary_; }

@@ -26,9 +26,9 @@ struct TLEVEL {
         void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TLGCObsSummary getDLEVObsSummary() const;		
+        const TLGCObsSummary& getDLEVObsSummary() const;
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TLGCObsSummary getDHORObsSummary() const;
+        const TLGCObsSummary& getDHORObsSummary() const;
 
 		/// The plane which is measured
 		LGCAdjustablePlane* fMeasuredPlane;

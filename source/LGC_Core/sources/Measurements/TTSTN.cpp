@@ -40,18 +40,29 @@ void TTSTN::TROM::initialiseObsSummaries() {
         plr3dSummary_.anglObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
         plr3dSummary_.zendObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
     }
+
+    // Initialise the obsSummaries:
+    plr3dSummary_.distObsSum.initialise();
+    plr3dSummary_.anglObsSum.initialise();
+    plr3dSummary_.zendObsSum.initialise();
+    anglSummary_.initialise();
+    zendSummary_.initialise();
+    distSummary_.initialise();
+    dhorSummary_.initialise();
+    ecthSummary_.initialise();
+    ecdirSummary_.initialise();
 }
 
-TLGCObsSummary TTSTN::TROM::getANGLObsSummary() const {	return anglSummary_; }
+const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary() const { return anglSummary_; }
 
-TLGCObsSummary TTSTN::TROM::getZENDObsSummary() const { return zendSummary_; }
+const TLGCObsSummary& TTSTN::TROM::getZENDObsSummary() const { return zendSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getDISTObsSummary() const { return distSummary_; }
+const TLGCObsSummary&  TTSTN::TROM::getDISTObsSummary() const { return distSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getDHORObsSummary() const { return dhorSummary_; }
+const TLGCObsSummary&  TTSTN::TROM::getDHORObsSummary() const { return dhorSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getECTHObsSummary() const { return ecthSummary_; }
+const TLGCObsSummary&  TTSTN::TROM::getECTHObsSummary() const { return ecthSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getECDIRObsSummary() const { return ecdirSummary_; }
+const TLGCObsSummary&  TTSTN::TROM::getECDIRObsSummary() const { return ecdirSummary_; }
 
-TPOLARObsSummary TTSTN::TROM::getPLR3DObsSummary() const { return plr3dSummary_; }
+const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary() const { return plr3dSummary_; }

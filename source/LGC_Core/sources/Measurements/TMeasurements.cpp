@@ -16,7 +16,11 @@ void TMeasurements::initialiseObsSummaries() {
     for(auto &radi : fRADI)
         radiSummary_.addNewResidual(radi.getResidual().getMMetresValue());
 
-    // Initialise the residual summaries of
+    // Initialise the obsSummaries:
+    dverSummary_.initialise();
+    radiSummary_.initialise();
+
+    // Initialise the observation summaries of
     // measurements that use an instrument:
 
     // TSTN
@@ -53,8 +57,8 @@ void TMeasurements::initialiseObsSummaries() {
         ecsprom.initialiseObsSummaries();
 }
 
-TLGCObsSummary  TMeasurements::getDVERObsSummary() const { return dverSummary_; }
+const TLGCObsSummary& TMeasurements::getDVERObsSummary() const { return dverSummary_; }
 
-TLGCObsSummary  TMeasurements::getRADIObsSummary() const { return radiSummary_; }
+const TLGCObsSummary&  TMeasurements::getRADIObsSummary() const { return radiSummary_; }
 
 

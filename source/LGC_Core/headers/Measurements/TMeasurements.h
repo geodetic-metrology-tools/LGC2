@@ -52,9 +52,9 @@ struct TMeasurements {
     void initialiseObsSummaries();
 
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-    TLGCObsSummary getDVERObsSummary() const;
+    const TLGCObsSummary& getDVERObsSummary() const;
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-    TLGCObsSummary getRADIObsSummary() const;
+    const TLGCObsSummary& getRADIObsSummary() const;
 
 private:
 

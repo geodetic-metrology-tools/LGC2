@@ -22,8 +22,15 @@ void TCAM::initialiseObsSummaries() {
         uvecSummary_.xVectorCompObsSum.addNewResidual(ItUVEC->getXCompVectorResidual()* LGC::VECCONVINV);
         uvecSummary_.yVectorCompObsSum.addNewResidual(ItUVEC->getYCompVectorResidual()* LGC::VECCONVINV);
     }
+
+    // Initialise the obsSummaries:
+    uvdSummary_.xVectorCompObsSum.initialise();
+    uvdSummary_.yVectorCompObsSum.initialise();
+    uvdSummary_.distObsSum.initialise();
+    uvecSummary_.xVectorCompObsSum.initialise();
+    uvecSummary_.yVectorCompObsSum.initialise();
 }
 
-TUVDObsSummary TCAM::getUVDObsSummary() const { return uvdSummary_; }
+const TUVDObsSummary& TCAM::getUVDObsSummary() const { return uvdSummary_; }
 
-TUVECObsSummary TCAM::getUVECObsSummary() const { return uvecSummary_; }
+const TUVECObsSummary& TCAM::getUVECObsSummary() const { return uvecSummary_; }

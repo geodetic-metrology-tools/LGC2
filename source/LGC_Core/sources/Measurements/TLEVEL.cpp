@@ -14,9 +14,14 @@ void TLEVEL::initialiseObsSummaries() {
         if(ItDLEV.dhor)
             dhorSummary_.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
     }
+
+
+    // Initialise the obsSummaries:
+    dlevSummary_.initialise();
+    dhorSummary_.initialise();
 }
 
-TLGCObsSummary  TLEVEL::getDLEVObsSummary() const { return dlevSummary_; }
+const TLGCObsSummary&  TLEVEL::getDLEVObsSummary() const { return dlevSummary_; }
 
 
-TLGCObsSummary  TLEVEL::getDHORObsSummary() const { return dhorSummary_; }
+const TLGCObsSummary&  TLEVEL::getDHORObsSummary() const { return dhorSummary_; }

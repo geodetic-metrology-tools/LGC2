@@ -26,7 +26,7 @@ struct TECHOROM {
         void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TLGCObsSummary getECHOObsSummary() const;
+        const TLGCObsSummary& getECHOObsSummary() const;
 
 		/// Line of the measurement definition
 		int  line;
@@ -64,7 +64,7 @@ struct TECSPROM {
     void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	TLGCObsSummary getECSPObsSummary() const;
+    const TLGCObsSummary& getECSPObsSummary() const;
 
 	/// Line of the measurement definition
 	int  line;
@@ -127,7 +127,7 @@ struct TECVEROM {
     void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	TLGCObsSummary getECVEObsSummary() const;
+    const TLGCObsSummary& getECVEObsSummary() const;
 
 	/// Line of the measurement definition
 	int  line;
@@ -166,7 +166,7 @@ struct TORIEROM {
         void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TLGCObsSummary getORIEObsSummary() const;
+        const TLGCObsSummary& getORIEObsSummary() const;
 
 		TAngle fConstantAngle;
 

@@ -54,9 +54,9 @@ struct TCAM {
         void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TUVDObsSummary getUVDObsSummary() const;
+		const TUVDObsSummary& getUVDObsSummary() const;
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TUVECObsSummary getUVECObsSummary() const;
+		const TUVECObsSummary& getUVECObsSummary() const;
 
     private:
         

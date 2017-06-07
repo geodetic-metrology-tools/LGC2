@@ -57,43 +57,43 @@ struct TTSTN {
 				\returns Summary of all the PLR3D measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TPOLARObsSummary getPLR3DObsSummary() const;
+			const TPOLARObsSummary& getPLR3DObsSummary() const;
 
 			/*!
 				\returns Summary of all the ANGL measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-            TLGCObsSummary getANGLObsSummary() const;
+            const TLGCObsSummary& getANGLObsSummary() const;
 
 			/*!
 				\returns Summary of all the ZEND measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-            TLGCObsSummary getZENDObsSummary() const;
+            const TLGCObsSummary& getZENDObsSummary() const;
 
 			/*!
 				\returns Summary of all the DIST measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-            TLGCObsSummary getDISTObsSummary() const;
+            const TLGCObsSummary& getDISTObsSummary() const;
 
 			/*!
 				\returns Summary of all the DHOR measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-            TLGCObsSummary getDHORObsSummary() const;
+            const TLGCObsSummary& getDHORObsSummary() const;
 
 			/*!
 				\returns Summary of all the ECTH measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-            TLGCObsSummary getECTHObsSummary() const;
+            const TLGCObsSummary& getECTHObsSummary() const;
 
 			/*!
 			\returns Summary of all the ECSP measurements.
 			\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-            TLGCObsSummary getECDIRObsSummary() const;
+            const TLGCObsSummary& getECDIRObsSummary() const;
 
 			/// Each ROM has a default target that is inherited to the measurements
 			TROM(const TInstrumentData::TPOLAR::TTarget& defTarget, TAdjustableAngle* v0):
