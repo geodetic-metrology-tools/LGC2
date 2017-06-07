@@ -1,21 +1,22 @@
 #include "TLEVEL.h"
-#include "TLGCObsSummary.h"
 
-int TLEVEL::stnCounter = 0;
+int TLEVEL::stnCounter_ = 0;
 
-TLGCObsSummary  TLEVEL::getDLEVObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto const& ItDLEV: measDLEV)
-		summary.addNewResidual(ItDLEV.getDistanceResidual().getMMetresValue());
-	return summary;	
+void TLEVEL::initialiseObsSummaries() {
+    // First clear the old contents away
+    dlevSummary_.clear();
+    dhorSummary_.clear();
+
+    // Add the residuals of each measurement:
+
+    for(auto const& ItDLEV : measDLEV){
+        dlevSummary_.addNewResidual(ItDLEV.getDistanceResidual().getMMetresValue());
+        if(ItDLEV.dhor)
+            dhorSummary_.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
+    }
 }
 
+TLGCObsSummary  TLEVEL::getDLEVObsSummary() const { return dlevSummary_; }
 
-TLGCObsSummary  TLEVEL::getDHORObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto const& ItDLEV: measDLEV){
-		if(ItDLEV.dhor)
-			summary.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
-	}
-	return summary;	
-}
+
+TLGCObsSummary  TLEVEL::getDHORObsSummary() const { return dhorSummary_; }

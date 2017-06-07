@@ -1,25 +1,29 @@
 #include "TCAM.h"
-#include "TLGCObsSummary.h"
 
-int TCAM::stnCounter = 0;
+int TCAM::stnCounter_ = 0;
 
-TUVDObsSummary TCAM::getUVDObsSummary()const{
-	TUVDObsSummary summary;
+void TCAM::initialiseObsSummaries() {
+    // First clear the old contents away
+    uvdSummary_.xVectorCompObsSum.clear();
+    uvdSummary_.yVectorCompObsSum.clear();
+    uvdSummary_.distObsSum.clear();
+    uvecSummary_.xVectorCompObsSum.clear();
+    uvecSummary_.yVectorCompObsSum.clear();
 
-	for(std::list<TUVD>::const_iterator ItUVD = measUVD.begin() ; ItUVD!=measUVD.end() ; ItUVD++) {//auto const& ItUVD: measUVD){
-		summary.xVectorCompObsSum.addNewResidual(ItUVD->getXCompVectorResidual() * LGC::VECCONVINV);
-		summary.yVectorCompObsSum.addNewResidual(ItUVD->getYCompVectorResidual() * LGC::VECCONVINV); 
-		summary.distObsSum.addNewResidual(ItUVD->getDistanceResidual().getMMetresValue());
-	}
-	return summary;	
+    // Add the residuals of each measurement:
+
+    for(std::list<TUVD>::const_iterator ItUVD = measUVD.begin(); ItUVD != measUVD.end(); ItUVD++) {//auto const& ItUVD: measUVD){
+        uvdSummary_.xVectorCompObsSum.addNewResidual(ItUVD->getXCompVectorResidual() * LGC::VECCONVINV);
+        uvdSummary_.yVectorCompObsSum.addNewResidual(ItUVD->getYCompVectorResidual() * LGC::VECCONVINV);
+        uvdSummary_.distObsSum.addNewResidual(ItUVD->getDistanceResidual().getMMetresValue());
+    }
+
+    for(std::list<TUVEC>::const_iterator ItUVEC = measUVEC.begin(); ItUVEC != measUVEC.end(); ItUVEC++) {//auto const& ItUVEC: measUVEC){
+        uvecSummary_.xVectorCompObsSum.addNewResidual(ItUVEC->getXCompVectorResidual()* LGC::VECCONVINV);
+        uvecSummary_.yVectorCompObsSum.addNewResidual(ItUVEC->getYCompVectorResidual()* LGC::VECCONVINV);
+    }
 }
 
-TUVECObsSummary TCAM::getUVECObsSummary()const{
-	TUVECObsSummary summary;
+TUVDObsSummary TCAM::getUVDObsSummary() const { return uvdSummary_; }
 
-	for(std::list<TUVEC>::const_iterator ItUVEC = measUVEC.begin() ; ItUVEC!=measUVEC.end() ; ItUVEC++) {//auto const& ItUVEC: measUVEC){
-		summary.xVectorCompObsSum.addNewResidual(ItUVEC->getXCompVectorResidual()* LGC::VECCONVINV);
-		summary.yVectorCompObsSum.addNewResidual(ItUVEC->getYCompVectorResidual()* LGC::VECCONVINV);
-	}
-	return summary;	
-}
+TUVECObsSummary TCAM::getUVECObsSummary() const { return uvecSummary_; }

@@ -1,11 +1,14 @@
 #include "TEDM.h"
-#include "TLGCObsSummary.h"
 
-int TEDM::stnCounter = 0;
+int TEDM::stnCounter_ = 0;
 
-TLGCObsSummary  TEDM::getDSPTObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto const& ItEDM: measDSPT)
-		summary.addNewResidual(ItEDM.getDistanceResidual().getMMetresValue());
-	return summary;	
+void TEDM::initialiseObsSummaries() {
+    // First clear the old contents away
+    dsptSummary_.clear();
+
+    // Add the residuals of each measurement:
+    for(auto const& ItEDM : measDSPT)
+        dsptSummary_.addNewResidual(ItEDM.getDistanceResidual().getMMetresValue());
 }
+
+TLGCObsSummary  TEDM::getDSPTObsSummary() const { return dsptSummary_; }

@@ -10,10 +10,7 @@
 #include <Global.h>
 #include <TInstrumentData.h>
 #include <MeasDef.h>
-
-
-class  TLGCObsSummary;
-struct TPOLARObsSummary;
+#include "TLGCObsSummary.h"
 
 /*!
 	\ingroup Measurements
@@ -36,7 +33,7 @@ struct TTSTN {
 
 			const TInstrumentData::TPOLAR::TTarget* defaultTarget;  ///< Default taget for this round of measurements.
 			
-            int romId{ romCounter++ };
+            int romId{ romCounter_++ };
 
 			/// All PLR3D measurements in this ROM
 			std::list<TPLR3D> measPLR3D;
@@ -53,47 +50,50 @@ struct TTSTN {
 			/// All Ecarte-Theodolite line measurements in this ROM
 			std::list<TECDIR>  measECDIR;
 
+            //! Initialise the observation summaries
+            void initialiseObsSummaries();
+
 			/*!
 				\returns Summary of all the PLR3D measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TPOLARObsSummary getPLR3DObsSummary()const;
+			TPOLARObsSummary getPLR3DObsSummary() const;
 
 			/*!
 				\returns Summary of all the ANGL measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getANGLObsSummary() const;
+            TLGCObsSummary getANGLObsSummary() const;
 
 			/*!
 				\returns Summary of all the ZEND measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getZENDObsSummary() const;
+            TLGCObsSummary getZENDObsSummary() const;
 
 			/*!
 				\returns Summary of all the DIST measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getDISTObsSummary() const;
+            TLGCObsSummary getDISTObsSummary() const;
 
 			/*!
 				\returns Summary of all the DHOR measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getDHORObsSummary() const;
+            TLGCObsSummary getDHORObsSummary() const;
 
 			/*!
 				\returns Summary of all the ECTH measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getECTHObsSummary() const;
+            TLGCObsSummary getECTHObsSummary() const;
 
 			/*!
 			\returns Summary of all the ECSP measurements.
 			\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
-			TLGCObsSummary getECDIRObsSummary() const;
+            TLGCObsSummary getECDIRObsSummary() const;
 
 			/// Each ROM has a default target that is inherited to the measurements
 			TROM(const TInstrumentData::TPOLAR::TTarget& defTarget, TAdjustableAngle* v0):
@@ -101,7 +101,15 @@ struct TTSTN {
 
         private:
 
-            static int romCounter;
+            static int romCounter_;
+
+            TPOLARObsSummary plr3dSummary_;
+            TLGCObsSummary anglSummary_;
+            TLGCObsSummary zendSummary_;
+            TLGCObsSummary distSummary_;
+            TLGCObsSummary dhorSummary_;
+            TLGCObsSummary ecthSummary_;
+            TLGCObsSummary ecdirSummary_;
 
 		};
 
@@ -129,7 +137,7 @@ struct TTSTN {
 		/// All round of measurements for this instrument. In each ROM a point on different position is measured.
 		std::list<shared_ptr<TROM>> roms;
 
-        int stnId{ stnCounter++ };
+        int stnId{ stnCounter_++ };
 
 		/*!
 			Creates a total station that is centered on a given point with instrument data from the input file
@@ -151,7 +159,7 @@ struct TTSTN {
 
     private:
 
-        static int stnCounter;
+        static int stnCounter_;
 
 	};
 

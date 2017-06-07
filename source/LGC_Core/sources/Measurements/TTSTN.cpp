@@ -1,58 +1,57 @@
-#include <TTSTN.h>
-#include "TLGCObsSummary.h"
+#include "TTSTN.h"
 
-int TTSTN::stnCounter = 0;
-int TTSTN::TROM::romCounter = 0;
+int TTSTN::stnCounter_ = 0;
+int TTSTN::TROM::romCounter_ = 0;
 
-TLGCObsSummary TTSTN::TROM::getANGLObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto& ItANGL:measANGL)
-		summary.addNewResidual(ItANGL.getAngleResidual().getSignedCCValue());
-	return summary;	
+void TTSTN::TROM::initialiseObsSummaries() {
+    // First clear the old contents away
+    plr3dSummary_.distObsSum.clear();
+    plr3dSummary_.anglObsSum.clear();
+    plr3dSummary_.zendObsSum.clear();
+    anglSummary_.clear();
+    zendSummary_.clear();
+    distSummary_.clear();
+    dhorSummary_.clear();
+    ecthSummary_.clear();
+    ecdirSummary_.clear();
+
+    // Add the residuals of each measurement:
+    
+    for(auto& ItANGL : measANGL)
+        anglSummary_.addNewResidual(ItANGL.getAngleResidual().getSignedCCValue());
+
+    for(auto& ItZEND : measZEND)
+        zendSummary_.addNewResidual(ItZEND.getAngleResidual().getSignedCCValue());
+
+    for(auto& ItDIST : measDIST)
+        distSummary_.addNewResidual(ItDIST.getDistanceResidual().getMMetresValue());
+
+    for(auto& ItDHOR : measDHOR)
+        dhorSummary_.addNewResidual(ItDHOR.getDistanceResidual().getMMetresValue());
+
+    for(auto& ItECTH : measECTH)
+        ecthSummary_.addNewResidual(ItECTH.getDistanceResidual().getMMetresValue());
+
+    for(auto& ItECDIR : measECDIR)
+        ecdirSummary_.addNewResidual(ItECDIR.getDistanceResidual().getMMetresValue());
+
+    for(auto& ItPLR3D : measPLR3D){
+        plr3dSummary_.distObsSum.addNewResidual(ItPLR3D.getDistanceResidual().getMMetresValue());
+        plr3dSummary_.anglObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
+        plr3dSummary_.zendObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
+    }
 }
 
-TLGCObsSummary TTSTN::TROM::getZENDObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto& ItZEND:measZEND)
-		summary.addNewResidual(ItZEND.getAngleResidual().getSignedCCValue());
-	return summary;	
-}
+TLGCObsSummary TTSTN::TROM::getANGLObsSummary() const {	return anglSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getDISTObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto& ItDIST:measDIST)
-		summary.addNewResidual(ItDIST.getDistanceResidual().getMMetresValue());
-	return summary;	
-}
+TLGCObsSummary TTSTN::TROM::getZENDObsSummary() const { return zendSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getDHORObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto& ItDHOR:measDHOR)
-		summary.addNewResidual(ItDHOR.getDistanceResidual().getMMetresValue());
-	return summary;	
-}
+TLGCObsSummary  TTSTN::TROM::getDISTObsSummary() const { return distSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getECTHObsSummary() const{
-	TLGCObsSummary summary;
-	for(auto& ItECTH:measECTH)
-		summary.addNewResidual(ItECTH.getDistanceResidual().getMMetresValue());
-	return summary;	
-}
+TLGCObsSummary  TTSTN::TROM::getDHORObsSummary() const { return dhorSummary_; }
 
-TLGCObsSummary  TTSTN::TROM::getECDIRObsSummary() const{
-	TLGCObsSummary summary;
-	for (auto& ItECDIR :measECDIR)
-		summary.addNewResidual(ItECDIR.getDistanceResidual().getMMetresValue());
-	return summary;
-}
+TLGCObsSummary  TTSTN::TROM::getECTHObsSummary() const { return ecthSummary_; }
 
-TPOLARObsSummary TTSTN::TROM::getPLR3DObsSummary()const{
-	TPOLARObsSummary summary;
+TLGCObsSummary  TTSTN::TROM::getECDIRObsSummary() const { return ecdirSummary_; }
 
-	for(auto& ItPLR3D:measPLR3D){
-		summary.distObsSum.addNewResidual(ItPLR3D.getDistanceResidual().getMMetresValue());
-		summary.anglObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
-		summary.zendObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
-	}
-	return summary;	
-}
+TPOLARObsSummary TTSTN::TROM::getPLR3DObsSummary() const { return plr3dSummary_; }

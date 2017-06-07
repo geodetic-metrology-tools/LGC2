@@ -42,6 +42,9 @@ class TLGCCalculation{
 	TLSResultsMatrices& getResultMtr() const { return *fResultsMtr; }
 
 	private:
+    
+    // Initialise the observation summaries in measurements
+    void initialiseObsSummaries();
 
 	// contains references: not assignable
 	TLGCCalculation& operator=(const TLGCCalculation&);

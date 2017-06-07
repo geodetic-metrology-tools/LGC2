@@ -142,6 +142,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAlgorithm.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSSimulation.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAllfixed.cpp
+    ${CORE_SOURCES_PATH}/Measurements/TMeasurements.cpp
 	${CORE_SOURCES_PATH}/Measurements/MeasDef.cpp
 	${CORE_SOURCES_PATH}/Measurements/TLGCObsSummary.cpp
 	${CORE_SOURCES_PATH}/Measurements/TTSTN.cpp

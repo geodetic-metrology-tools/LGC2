@@ -47,6 +47,17 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
 	}
 
+    // If the calculation succeeded, initialise the observation summaries:
+    if(successCalculation)
+        initialiseObsSummaries();
+
 	return successCalculation;
 }
 
+void TLGCCalculation::initialiseObsSummaries(){
+
+    // Iterate the whole tree and initialise the
+    // observation summaries in each node:
+    for(auto &node : fData->getTree())
+        node->measurements.initialiseObsSummaries();
+}

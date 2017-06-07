@@ -10,10 +10,9 @@
 #include <TUVEC.h>
 #include <Global.h>
 #include <TInstrumentData.h>
+#include "TLGCObsSummary.h"
 
 class LGCAdjustablePoint;
-struct TUVECObsSummary;
-struct TUVDObsSummary;
 
 /*!
 	\ingroup Measurements
@@ -49,16 +48,22 @@ struct TCAM {
 		/// Line of the camera definition
 		int  line;
 
-        int stnId{ stnCounter++ };
+        int stnId{ stnCounter_++ };
+
+        //! Initialise the observation summaries
+        void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TUVDObsSummary getUVDObsSummary()const;
+		TUVDObsSummary getUVDObsSummary() const;
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-		TUVECObsSummary getUVECObsSummary()const;
+		TUVECObsSummary getUVECObsSummary() const;
 
     private:
         
-        static int stnCounter;
+        static int stnCounter_;
+
+        TUVDObsSummary uvdSummary_;
+        TUVECObsSummary uvecSummary_;
 
 	};
 

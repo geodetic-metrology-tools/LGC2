@@ -48,6 +48,19 @@ struct TMeasurements {
 	/// All RADI measurements in which they appeared in the input file
 	std::list<TRADI> fRADI;
 
+    /// Initialise all observation summaries
+    void initialiseObsSummaries();
+
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    TLGCObsSummary getDVERObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    TLGCObsSummary getRADIObsSummary() const;
+
+private:
+
+    TLGCObsSummary dverSummary_;
+    TLGCObsSummary radiSummary_;
+
 };
 
 #endif // MEASUREMENTS_H_

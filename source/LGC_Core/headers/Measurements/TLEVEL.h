@@ -6,8 +6,8 @@
 //LGC
 #include <MeasDef.h>
 #include <LGCAdjustablePlane.h>
+#include "TLGCObsSummary.h"
 
-class TLGCObsSummary;
 
 /*!
 	\ingroup Measurements
@@ -21,6 +21,9 @@ struct TLEVEL {
 
 		/// Tells if the Level Station has AT LEST one DHOR measurement
 		bool hasDHOR;
+
+        //! Initialise the observation summaries
+        void initialiseObsSummaries();
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getDLEVObsSummary() const;		
@@ -36,7 +39,7 @@ struct TLEVEL {
 		/// Line of the measurement definition
 		int  line;
 
-        int stnId{ stnCounter++ };
+        int stnId{ stnCounter_++ };
 
 		// The station attribute is a copy of the parameter to override defaults
 		TLEVEL(LGCAdjustablePlane& measPlane, const TInstrumentData::TLEVEL& instrument) :
@@ -48,7 +51,10 @@ struct TLEVEL {
 
     private:
 
-        static int stnCounter;
+        static int stnCounter_;
+
+        TLGCObsSummary dlevSummary_;
+        TLGCObsSummary dhorSummary_;
 
 };
 #endif

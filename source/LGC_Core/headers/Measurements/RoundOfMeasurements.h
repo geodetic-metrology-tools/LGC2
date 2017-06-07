@@ -7,8 +7,8 @@
 #include <MeasDef.h>
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustableLine.h>
+#include "TLGCObsSummary.h"
 
-class TLGCObsSummary;
 
 /*!
 	\ingroup Measurements
@@ -22,13 +22,16 @@ struct TECHOROM {
 		//Measured vertical plane
 		LGCAdjustablePlane* fMeasuredPlane;
 
+        /// Initialise observation summaries
+        void initialiseObsSummaries();
+
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getECHOObsSummary() const;
 
 		/// Line of the measurement definition
 		int  line;
 
-        int romId{ romCounter++ };
+        int romId{ romCounter_++ };
 
 		/// the station attribute is a copy of the parameter to override defaults
 		TECHOROM(LGCAdjustablePlane& measPlane) :
@@ -38,8 +41,9 @@ struct TECHOROM {
 
 private:
 
-    static int romCounter;
+    static int romCounter_;
 
+    TLGCObsSummary echoSummary_;
 };
 
 /*!
@@ -56,6 +60,9 @@ struct TECSPROM {
 	const LGCAdjustablePoint* p1;
 	const LGCAdjustablePoint* p2;
 
+    /// Initialise observation summaries
+    void initialiseObsSummaries();
+
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	TLGCObsSummary getECSPObsSummary() const;
 
@@ -64,7 +71,7 @@ struct TECSPROM {
 	/// name of the rom
 	string romName;
 
-    int romId{ romCounter++ };
+    int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
 	/*TECSPROM(LGCAdjustableLine& measLine) :
@@ -99,8 +106,9 @@ struct TECSPROM {
 
 private:
 
-    static int romCounter;
+    static int romCounter_;
 
+    TLGCObsSummary ecspSummary_;
 };
 
 /*!
@@ -115,13 +123,16 @@ struct TECVEROM {
 	//Measured vertical plane
 	LGCAdjustableLine* fMeasuredLine;
 
+    /// Initialise observation summaries
+    void initialiseObsSummaries();
+
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	TLGCObsSummary getECVEObsSummary() const;
 
 	/// Line of the measurement definition
 	int  line;
 
-    int romId{ romCounter++ };
+    int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
 	TECVEROM(LGCAdjustableLine& measLine) :
@@ -131,8 +142,9 @@ struct TECVEROM {
 
 private:
 
-    static int romCounter;
+    static int romCounter_;
 
+    TLGCObsSummary ecveSummary_;
 };
 
 /*!
@@ -150,6 +162,9 @@ struct TORIEROM {
 		/// The instrument that is used on this station
 		TInstrumentData::TPOLAR     instrument;
 
+        /// Initialise observation summaries
+        void initialiseObsSummaries();
+
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getORIEObsSummary() const;
 
@@ -158,7 +173,7 @@ struct TORIEROM {
 		/// Line of the measurement definition
 		int  line;
 
-        int romId{ romCounter++ };
+        int romId{ romCounter_++ };
 
 		/// the station attribute is a copy of the parameter to override defaults
 		TORIEROM(const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
@@ -171,8 +186,8 @@ struct TORIEROM {
 
     private:
         
-        static int romCounter;
+        static int romCounter_;
 
-
+        TLGCObsSummary orieSummary_;
 };
 #endif

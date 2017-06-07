@@ -5,8 +5,8 @@
 
 //LGC
 #include <MeasDef.h>
+#include "TLGCObsSummary.h"
 
-class TLGCObsSummary;
 
 /*!
 	\ingroup Measurements
@@ -30,16 +30,21 @@ struct TEDM {
 		/// The point on which the instrument resides
 		const LGCAdjustablePoint* instrumentPos; 	
 
+        //! Initialise the observation summaries
+        void initialiseObsSummaries();
+
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		TLGCObsSummary getDSPTObsSummary() const;
 
 		/// Line of the station definition
 		int  line;
 
-        int stnId{ stnCounter++ };
+        int stnId{ stnCounter_++ };
 
     private:
 
-        static int stnCounter;
+        static int stnCounter_;
+
+        TLGCObsSummary dsptSummary_;
 };
 #endif
