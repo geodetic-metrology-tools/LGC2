@@ -77,17 +77,17 @@ public:
 
 
 		/// Write ANGL synthesis
-		void writeANGLResultsSynthesis(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
+        void writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
 		/// Write ZEND synthesis
-		void writeZENDResultsSynthesis(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
+        void writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
 		/// Write DISt and DHOR synthesis
-		void writeDISTResultsSynthesis(const std::list<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom, bool isdhor = false);
+        void writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom, bool isdhor = false);
 		/// Write PLR3D synthesis
-		void writePLRResultsSynthesis(const std::list<TPLR3D>& measPLR3D, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
+        void writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
 		/// Write ECTH synthesis
-		void writeECTHResultsSynthesis(const std::list<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
+        void writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
 		/// Write ECDIR synthesis
-		void writeECDIRResultsSynthesis(const std::list<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom);
+        void writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
 	//@}
 
 	/// Set if ALLFIXED option is used

@@ -3,7 +3,6 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include <Global.h>
-#include "TLGCObsSummary.h"
 
 TCAMWriter::TCAMWriter(TAStreamFormatter& stream, bool /*hist*/) :TObservationWriter(stream)
 {}
@@ -294,7 +293,7 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 	writeCAMHeader(camera);
 
 	if (camera.measUVD.size() > 0){
-		TUVDObsSummary summary = camera.getUVDObsSummary();
+		const auto &summary = camera.getUVDObsSummary();
 		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": XVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
 		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": YVECT", (int)camera.measUVD.size());
@@ -303,7 +302,7 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 		writeDistanceResultsSummary(summary.distObsSum, TABs);
 	}
 	if (camera.measUVEC.size() > 0){
-		TUVECObsSummary summary = camera.getUVECObsSummary();
+		const auto &summary = camera.getUVECObsSummary();
 		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": XVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
 		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
@@ -558,37 +557,21 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-
-	TReal minX = 100.0;
-	TReal maxX = 0.0;
-	TReal minY = 100.0;
-	TReal maxY = 0.0;
-
-	for (auto& it : camera.measUVEC)
-	{
-		if (it.getXCompVectorResidual() > maxX)
-			maxX = it.getXCompVectorResidual();
-		if (it.getXCompVectorResidual() < minX)
-			minX = it.getXCompVectorResidual();
-
-		if (it.getYCompVectorResidual() > maxY)
-			maxY = it.getYCompVectorResidual();
-		if (it.getYCompVectorResidual() < minY)
-			minY = it.getYCompVectorResidual();
-	}
+    const auto &uvecXSummary = camera.getUVECObsSummary().xVectorCompObsSum;
+    const auto &uvecYSummary = camera.getUVECObsSummary().yVectorCompObsSum;
 
 	//X
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxX* M2MM);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minX* M2MM);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().xVectorCompObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().xVectorCompObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMax() * M2MM);//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMin() * M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getVariance());//ecart type
 	//Y
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxY* M2MM);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minY* M2MM);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().yVectorCompObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVECObsSummary().yVectorCompObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMax() * M2MM);//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMin() * M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getVariance());//ecart type
 	(*stream) << endl;
 
 
@@ -604,49 +587,27 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-
-	TReal minX = 100.0;
-	TReal maxX = 0.0;
-	TReal minY = 100.0;
-	TReal maxY = 0.0;
-	TReal minD = 100.0;
-	TReal maxD = 0.0;
-
-	for (auto& it : camera.measUVD)
-	{
-		if (it.getXCompVectorResidual() > maxX)
-			maxX = it.getXCompVectorResidual();
-		if (it.getXCompVectorResidual() < minX)
-			minX = it.getXCompVectorResidual();
-
-		if (it.getYCompVectorResidual() > maxY)
-			maxY = it.getYCompVectorResidual();
-		if (it.getYCompVectorResidual() < minY)
-			minY = it.getYCompVectorResidual();
-
-		if (it.getDistanceResidual() > maxD)
-			maxD = it.getDistanceResidual();
-		if (it.getDistanceResidual() < minD)
-			minD = it.getDistanceResidual();
-	}
+    const auto &uvdXSummary = camera.getUVDObsSummary().xVectorCompObsSum;
+    const auto &uvdYSummary = camera.getUVDObsSummary().yVectorCompObsSum;
+    const auto &uvdDSummary = camera.getUVDObsSummary().distObsSum;
 
 	//X
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxX* M2MM);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minX* M2MM);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().xVectorCompObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().xVectorCompObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMax() * M2MM);//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMin() * M2MM);//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getVariance());//ecart type
 	//Y
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxY* M2MM);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minY* M2MM);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().yVectorCompObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().yVectorCompObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMax() * M2MM);//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getVariance());//ecart type
 	//D
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxD* M2MM);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minD* M2MM);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().distObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, camera.getUVDObsSummary().distObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMax() * M2MM);//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getVariance());//ecart type
 	(*stream) << endl;
 
 

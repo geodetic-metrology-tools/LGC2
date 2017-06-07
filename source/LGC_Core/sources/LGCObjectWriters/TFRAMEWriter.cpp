@@ -13,7 +13,6 @@
 #include "TAStreamFormatter.h"
 #include "TSpatialStatus.h"
 #include <TPointTransformer.h>
-#include "TLGCObsSummary.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //CONSTRUCTOR / DESTRUCTOR
@@ -162,7 +161,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writeANGLHeaderSynthesis();
 						headerAnglWriten = true;
 					}
-					tstnWriter.writeANGLResultsSynthesis(itrom->measANGL, it->instrumentPos, it->roms);
+					tstnWriter.writeANGLResultsSynthesis(it->instrumentPos, itrom);
 				}
 			}
 		}
@@ -194,7 +193,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writeANGLHeaderSynthesis();
 						headerZendWriten = true;
 					}
-					tstnWriter.writeZENDResultsSynthesis(itrom->measZEND, it->instrumentPos, it->roms);
+                    tstnWriter.writeZENDResultsSynthesis(it->instrumentPos, itrom);
 				}
 			}
 		}
@@ -226,7 +225,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writeDISTHeaderSynthesis();
 						headerDistWriten = true;
 					}
-					tstnWriter.writeDISTResultsSynthesis(itrom->measDIST, it->instrumentPos, it->roms);
+                    tstnWriter.writeDISTResultsSynthesis(it->instrumentPos, itrom);
 				}
 			}
 		}
@@ -258,7 +257,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writeDISTHeaderSynthesis();
 						headerDhorWriten = true;
 					}
-					tstnWriter.writeDISTResultsSynthesis(itrom->measDHOR, it->instrumentPos, it->roms, true);
+                    tstnWriter.writeDISTResultsSynthesis(it->instrumentPos, itrom, true);
 				}
 			}
 		}
@@ -287,7 +286,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writePLRRHeaderynthesis();
 						headerPlrWriten = true;
 					}
-					tstnWriter.writePLRResultsSynthesis(itrom->measPLR3D, it->instrumentPos, it->roms);
+                    tstnWriter.writePLRResultsSynthesis(it->instrumentPos, itrom);
 				}
 			}
 		}
@@ -327,7 +326,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writeDISTHeaderSynthesis();
 						headerEcthWriten = true;
 					}
-					tstnWriter.writeECTHResultsSynthesis(itrom->measECTH, it->instrumentPos, it->roms);
+                    tstnWriter.writeECTHResultsSynthesis(it->instrumentPos, itrom);
 				}
 			}
 		}
@@ -359,7 +358,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 						tstnWriter.writeDISTHeaderSynthesis();
 						headerEcdirWriten = true;
 					}
-					tstnWriter.writeECDIRResultsSynthesis(itrom->measECDIR, it->instrumentPos, it->roms);
+                    tstnWriter.writeECDIRResultsSynthesis(it->instrumentPos, itrom);
 				}
 			}
 		}
@@ -475,7 +474,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		(*stream).writeStringLeft(nameWidth, "DVER"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		otherMeasWriter.writeDVERResultsSynthesis(frameIt->get()->measurements.fDVER);
+		otherMeasWriter.writeDVERResultsSynthesis(frameIt->get()->measurements);
 		//(*stream) << endl;
 
 		TLGCObsSummary DVERsummary;
@@ -569,7 +568,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
 		for (auto& itORIE : frameIt->get()->measurements.fORIE)
-			otherMeasWriter.writeORIEResultsSynthesis(itORIE.measORIE,*itORIE.instrumentPos);
+			otherMeasWriter.writeORIEResultsSynthesis(itORIE, *itORIE.instrumentPos);
 		//(*stream) << endl;
 
 		TLGCObsSummary ORIEsummary;
@@ -588,7 +587,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		(*stream).writeStringLeft(nameWidth, "RADI"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		otherMeasWriter.writeRADIResultsSynthesis(frameIt->get()->measurements.fRADI);
+		otherMeasWriter.writeRADIResultsSynthesis(frameIt->get()->measurements);
 		//(*stream) << endl;
 
 		TLGCObsSummary RADIsummary;
@@ -918,7 +917,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	//No instrument for DVER, so no loop to have each instrument.
 	if (!frameIt->get()->measurements.fDVER.empty()){
 		(*stream) << TABs << "DVER" << endl << endl;
-		otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements.fDVER);
+		otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements);
 	}
 	
 	for(auto& itECHO:frameIt->get()->measurements.fECHO)

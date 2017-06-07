@@ -6,7 +6,7 @@
 //LGC
 #include <TObservationWriter.h>
 #include <MeasDef.h>
-#include <RoundOfMeasurements.h>
+#include "TMeasurements.h"
 
 /*!
 	\ingroup LGCObjectWriters
@@ -54,11 +54,11 @@ public:
 		void writeRADIResults(const std::list<TRADI>& fRADI);
 
 		/// Write DVER simulations
-        void writeDVERSIMUResults(const std::list<TDVER>& fDVER);
+        void writeDVERSIMUResults(const TMeasurements &tmeas);
 		/// Write RADI simulations
-        void writeRADISIMUResults(const std::list<TRADI>& fRADI);
+        void writeRADISIMUResults(const TMeasurements &tmeas);
         /// Write ORIE simulations
-		void writeORIESIMUResults(const TORIEROM& fOrieRom);
+		void writeORIESIMUResults(const TORIEROM& orieRom);
 
 		/// Write DVER reliability data
         void writeDVERReliabilityData(const std::list<TDVER>& fDVER, const TLGCStatistic& stat);
@@ -68,11 +68,11 @@ public:
         void writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat);
 
 		/// Write DVER synthesis data
-		void writeDVERResultsSynthesis(const std::list<TDVER>& fDVER);
+        void writeDVERResultsSynthesis(const TMeasurements &tmeas);
 		/// Write ORIE synthesis data
-		void writeORIEResultsSynthesis(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
+        void writeORIEResultsSynthesis(const TORIEROM& orieRom, const LGCAdjustablePoint& instPos);
 		/// Write RADI synthesis data
-		void writeRADIResultsSynthesis(const std::list<TRADI>& fRADI);
+        void writeRADIResultsSynthesis(const TMeasurements &tmeas);
 	//@}
 
 };

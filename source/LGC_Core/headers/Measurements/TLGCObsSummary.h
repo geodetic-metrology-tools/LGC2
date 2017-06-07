@@ -107,6 +107,8 @@ public:
 
 		/// get the number of residuals outside the histogram limits 
 		int			getNumBeyondHistoLimits() const;
+
+
 //@}
 
 

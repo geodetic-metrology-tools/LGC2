@@ -2,7 +2,6 @@
 #include <TAMeas.h>
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
-#include "TLGCObsSummary.h"
 #include "LGCAdjustablePoint.h"
 
 TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream)
@@ -297,25 +296,21 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeDVERSIMUResults(const std::list<TDVER>& fDVER)
+void TOtherMeasurentWriter::writeDVERSIMUResults(const TMeasurements &tmeas)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(2);
 
-	TLGCObsSummary summary;
-	for (auto& it : fDVER)
-		summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
-
-	if (!fDVER.empty()){
+	if (!tmeas.fDVER.empty()){
 		(*stream) << TAB << "DIFFERENCES VERTICALES";
 		(*stream) << endl<<endl;
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDVER), (int)fDVER.size());
-		writeDistanceResultsSummary(summary, TABs);
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDVER), (int)tmeas.fDVER.size());
+		writeDistanceResultsSummary(tmeas.getDVERObsSummary(), TABs);
 	}
 }
 
-void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)
+void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& orieRom)
 {
 	TAStreamFormatter*	stream = getStream();
 	std::string        TAB = stream->getCurrSpaceExtended(1);
@@ -324,25 +319,21 @@ void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& fOrieRom)
 	(*stream) << TAB << "CONTRAINTES D ORIENTATION";
 	//Write definition of ROM
 	(*stream) << endl << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)fOrieRom.measORIE.size());
-	writeAngleResultsSummary(fOrieRom.getORIEObsSummary(), TABs);
+    this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)orieRom.measORIE.size());
+    writeAngleResultsSummary(orieRom.getORIEObsSummary(), TABs);
 }
 
-void TOtherMeasurentWriter::writeRADISIMUResults(const std::list<TRADI>& fRADI)
+void TOtherMeasurentWriter::writeRADISIMUResults(const TMeasurements &tmeas)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(2);
 
-	TLGCObsSummary summary;
-	for (auto& it : fRADI)
-		summary.addNewResidual(it.getResidual().getMMetresValue());
-
-	if (!fRADI.empty()){
+	if (!tmeas.fRADI.empty()){
 		(*stream) << TAB << "CONTRAINTES RADIALES";
 		(*stream) << endl << endl;
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kRADI), (int)fRADI.size());
-		writeDistanceResultsSummary(summary, TABs);
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kRADI), (int)tmeas.fRADI.size());
+		writeDistanceResultsSummary(tmeas.getRADIObsSummary(), TABs);
 	}
 }
 
@@ -504,7 +495,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 }
 
 //------------------ Synthesis data---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::list<TDVER>& fDVER)
+void TOtherMeasurentWriter::writeDVERResultsSynthesis(const TMeasurements &tmeas)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -514,35 +505,18 @@ void TOtherMeasurentWriter::writeDVERResultsSynthesis(const std::list<TDVER>& fD
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	//for output residual mean and the standart deviation of the residuals
-	// directly calculate here due to the instrument absence
-	TLGCObsSummary summary;
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-
-	for (auto& meas : fDVER)
-	{
-		if (meas.getDistanceResidual().getMMetresValue() > max)
-			max = meas.getDistanceResidual().getMMetresValue();
-		if (meas.getDistanceResidual().getMMetresValue() < min)
-			min = meas.getDistanceResidual().getMMetresValue();
-
-		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(meas.getDistanceResidual().getMMetresValue());
-	}
+    const auto& dverSummary = tmeas.getDVERObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "all_dver"); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, summary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, summary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getVariance());//ecart type 
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
+void TOtherMeasurentWriter::writeORIEResultsSynthesis(const TORIEROM& orieRom, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -552,35 +526,18 @@ void TOtherMeasurentWriter::writeORIEResultsSynthesis(const std::list<TORIE>& fO
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	//for output residual mean and the standart deviation of the residuals
-	// directly calculate here due to the instrument absence
-	TLGCObsSummary summary;
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-
-	for (auto& meas : fORIE)
-	{
-		if (meas.getAngleResidual().getSignedCCValue() > max)
-			max = meas.getAngleResidual().getSignedCCValue();
-		if (meas.getAngleResidual().getSignedCCValue() < min)
-			min = meas.getAngleResidual().getSignedCCValue();
-
-		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(meas.getAngleResidual().getSignedCCValue());
-	}
+    const auto &orieSummary = orieRom.getORIEObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, instPos.getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, summary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, summary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getVariance());//ecart type 
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::list<TRADI>& fRADI)
+void TOtherMeasurentWriter::writeRADIResultsSynthesis(const TMeasurements &tmeas)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -590,30 +547,13 @@ void TOtherMeasurentWriter::writeRADIResultsSynthesis(const std::list<TRADI>& fR
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	//for output residual mean and the standart deviation of the residuals
-	// directly calculate here due to the instrument absence
-	TLGCObsSummary summary;
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-
-	for (auto& meas : fRADI)
-	{
-		if (meas.getResidual().getMMetresValue() > max)
-			max = meas.getResidual().getMMetresValue();
-		if (meas.getResidual().getMMetresValue() < min)
-			min = meas.getResidual().getMMetresValue();
-
-		//for output residual mean and the standart deviation of the residuals
-		summary.addNewResidual(meas.getResidual().getMMetresValue());
-	}
+    const auto& radiSummary = tmeas.getRADIObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "all_radi"); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, summary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, summary.getVariance());//ecart type 
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getVariance());//ecart type 
 	(*stream) << endl;
 }

@@ -45,14 +45,14 @@ public:
 		void writeObsTitle(const string& description, const int numObs);
 
 		/// write summary of statistics for a group of angle measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
-		void writeAngleResultsSummary(TLGCObsSummary summary, std::string TABs);
+		void writeAngleResultsSummary(const TLGCObsSummary& summary, std::string TABs);
 		/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
-		void writeDistanceResultsSummary(TLGCObsSummary summary, std::string TABs);
+        void writeDistanceResultsSummary(const TLGCObsSummary& summary, std::string TABs);
 		/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
-		void writeUnitlessResultsSummary(TLGCObsSummary summary, std::string TABs);
+        void writeUnitlessResultsSummary(const TLGCObsSummary& summary, std::string TABs);
 		
 		/// write a histogram for the group of measurements
-		void writeHisto(TLGCObsSummary summary, string description);
+        void writeHisto(const TLGCObsSummary& summary, string description);
 
 protected:
 

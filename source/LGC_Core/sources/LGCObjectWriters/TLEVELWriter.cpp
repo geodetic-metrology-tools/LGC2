@@ -2,7 +2,6 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include <Global.h>
-#include "TLGCObsSummary.h"
 #include <TAMeas.h>
 
 TLEVELWriter::TLEVELWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
@@ -338,25 +337,14 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-	for (auto& it : fLevel.measDLEV)
-	{
-		if (it.getDistanceResidual().getMMetresValue() > max)
-			max = it.getDistanceResidual().getMMetresValue();
-		if (it.getDistanceResidual().getMMetresValue() < min)
-			min = it.getDistanceResidual().getMMetresValue();
-	}
+    const auto &dlevSummary = fLevel.getDLEVObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, fLevel.getDLEVObsSummary().getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, fLevel.getDLEVObsSummary().getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getVariance());//ecart type
 	(*stream) << endl;
-
 
 }

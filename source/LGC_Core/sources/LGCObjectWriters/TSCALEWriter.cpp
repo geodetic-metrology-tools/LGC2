@@ -3,7 +3,6 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include <Global.h>
-#include "TLGCObsSummary.h"
 #include "RoundOfMeasurements.h"
 #include "LGCAdjustablePoint.h"
 
@@ -478,24 +477,14 @@ void TSCALEWriter::writeECHOResultsSynthesis(const  TECHOROM& echorom)
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-	for (auto& itEcho : echorom.measECHO)
-	{
-		if (itEcho.getDistanceResidual().getMMetresValue() > max)
-			max = itEcho.getDistanceResidual().getMMetresValue();
-		if (itEcho.getDistanceResidual().getMMetresValue() < min)
-			min = itEcho.getDistanceResidual().getMMetresValue();
-	}
+    const auto &echoSummary = echorom.getECHOObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, echorom.fMeasuredPlane->getReferencePoint()->getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, echorom.getECHOObsSummary().getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, echorom.getECHOObsSummary().getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getVariance());//ecart type
 	(*stream) << endl;
 
 
@@ -511,24 +500,14 @@ void TSCALEWriter::writeECVEResultsSynthesis(const  TECVEROM& ecrom)
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-	for (auto& itEc : ecrom.measECVE)
-	{
-		if (itEc.getDistanceResidual().getMMetresValue() > max)
-			max = itEc.getDistanceResidual().getMMetresValue();
-		if (itEc.getDistanceResidual().getMMetresValue() < min)
-			min = itEc.getDistanceResidual().getMMetresValue();
-	}
+    const auto &ecveSummary = ecrom.getECVEObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ecrom.fMeasuredLine->getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecrom.getECVEObsSummary().getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecrom.getECVEObsSummary().getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getVariance());//ecart type
 	(*stream) << endl;
 
 
@@ -544,24 +523,14 @@ void TSCALEWriter::writeECSPResultsSynthesis(const  TECSPROM& ecrom)
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
-
-	TReal min = 100.0;
-	TReal max = 0.0;
-
-	for (auto& itEc : ecrom.measECSP)
-	{
-		if (itEc.getDistanceResidual().getMMetresValue() > max)
-			max = itEc.getDistanceResidual().getMMetresValue();
-		if (itEc.getDistanceResidual().getMMetresValue() < min)
-			min = itEc.getDistanceResidual().getMMetresValue();
-	}
+    const auto &ecspSummary = ecrom.getECSPObsSummary();
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ecrom.romName); //line
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecrom.getECSPObsSummary().getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecrom.getECSPObsSummary().getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getVariance());//ecart type
 	(*stream) << endl;
 
 

@@ -3,7 +3,6 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include <Global.h>
-#include "TLGCObsSummary.h"
 #include "LGCAdjustablePoint.h"
 
 TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
@@ -1202,7 +1201,7 @@ void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
 		}
 
 		if (ItRoms->measPLR3D.size() > 0){
-			TPOLARObsSummary summary = ItRoms->getPLR3DObsSummary();
+			const auto &summary = ItRoms->getPLR3DObsSummary();
 			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kPLR3D)+": ANGL", (int)ItRoms->measPLR3D.size());
 			writeAngleResultsSummary(summary.anglObsSum, TABs);
 			this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kPLR3D) + ": ZEND", (int)ItRoms->measPLR3D.size());
@@ -1651,7 +1650,7 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TTSTNWriter::writeANGLResultsSynthesis(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
@@ -1660,32 +1659,18 @@ void TTSTNWriter::writeANGLResultsSynthesis(const std::list<TANGL>& measANGL, co
 	// int              lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	for (auto& it : rom)
-	{
-		TReal min = 100.0;
-		TReal max = 0.0;
+    const auto &anglSummary = rom->getANGLObsSummary();
 
-
-		for (auto& meas : measANGL)
-		{
-			if (meas.getAngleResidual().getSignedCCValue() > max)
-				max = meas.getAngleResidual().getSignedCCValue();
-			if (meas.getAngleResidual().getSignedCCValue() < min)
-				min = meas.getAngleResidual().getSignedCCValue();
-
-		}
-
-		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getANGLObsSummary().getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getANGLObsSummary().getVariance());//ecart type
-		(*stream) << endl;
-	}
+    (*stream) << TABs;
+    (*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getVariance());//ecart type
+    (*stream) << endl;
 }
 
-void TTSTNWriter::writeZENDResultsSynthesis(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
@@ -1694,32 +1679,18 @@ void TTSTNWriter::writeZENDResultsSynthesis(const std::list<TZEND>& measZEND, co
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	for (auto& it : rom)
-	{
-		TReal min = 100.0;
-		TReal max = 0.0;
+    const auto &zendSummary = rom->getZENDObsSummary();
 
-
-		for (auto& meas : measZEND)
-		{
-			if (meas.getAngleResidual().getSignedCCValue() > max)
-				max = meas.getAngleResidual().getSignedCCValue();
-			if (meas.getAngleResidual().getSignedCCValue() < min)
-				min = meas.getAngleResidual().getSignedCCValue();
-
-		}
-
-		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getZENDObsSummary().getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getZENDObsSummary().getVariance());//ecart type
-		(*stream) << endl;
-	}
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getVariance());//ecart type
+	(*stream) << endl;
 }
 
-void TTSTNWriter::writeDISTResultsSynthesis(const std::list<TLINE>& measDIST, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom, bool isdhor){
+void TTSTNWriter::writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom, bool isdhor){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
@@ -1728,41 +1699,18 @@ void TTSTNWriter::writeDISTResultsSynthesis(const std::list<TLINE>& measDIST, co
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	for (auto& it : rom)
-	{
-		TReal min = 100.0;
-		TReal max = 0.0;
+    const auto &lineSummary = isdhor ? rom->getDHORObsSummary() : rom->getDISTObsSummary();
 
-
-		for (auto& meas : measDIST)
-		{
-			if (meas.getDistanceResidual().getMMetresValue() > max)
-				max = meas.getDistanceResidual().getMMetresValue();
-			if (meas.getDistanceResidual().getMMetresValue() < min)
-				min = meas.getDistanceResidual().getMMetresValue();
-
-		}
-
-		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-		if (isdhor)
-		{
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDHORObsSummary().getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDHORObsSummary().getVariance());//ecart type}
-		}
-		else
-		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDISTObsSummary().getMean());//residu moy
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getDISTObsSummary().getVariance());//ecart type 
-		}
-		(*stream) << endl;
-	}
+    (*stream) << TABs;
+    (*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getVariance());//ecart type}
+    (*stream) << endl;
 }
 
-void TTSTNWriter::writePLRResultsSynthesis(const std::list<TPLR3D>& /*measPLR3D*/, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom)
-{
+void TTSTNWriter::writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
@@ -1772,61 +1720,37 @@ void TTSTNWriter::writePLRResultsSynthesis(const std::list<TPLR3D>& /*measPLR3D*
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 	std::string         TABs2 = stream->getCurrSpaceExtended(2);
 
-	for (auto& it : rom)
-	{
-	TReal minA = 100.0;
-	TReal maxA = 0.0;
-	TReal minZ = 100.0;
-	TReal maxZ = 0.0;
-	TReal minD = 100.0;
-	TReal maxD = 0.0;
-
-	for (auto& meas:it->measPLR3D)
-	{
-		if (meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue() > maxA)
-			maxA = meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue();
-		if (meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue() < minA)
-			minA = meas.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue();
-
-		if (meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue() > maxZ)
-			maxZ = meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue();
-		if (meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue() < minZ)
-			minZ = meas.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue();
-
-		if (meas.getDistanceResidual().getMMetresValue() > maxD)
-			maxD = meas.getDistanceResidual().getMMetresValue();
-		if (meas.getDistanceResidual().getMMetresValue() < minD)
-			minD = meas.getDistanceResidual().getMMetresValue();
-	}
+    const auto &anglSummary = rom->getPLR3DObsSummary().anglObsSum;
+    const auto &zendSummary = rom->getPLR3DObsSummary().zendObsSum;
+    const auto &distSummary = rom->getPLR3DObsSummary().distObsSum;
 
 	//ANGL
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, instrPos->getName()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxA);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minA);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().anglObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().anglObsSum.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getVariance());//ecart type
 	//ZEND
 	if (obsWidth < 13)
 		(*stream) << TABs2;
 	else
 		(*stream) << TABs;
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxZ);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minZ);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().zendObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().zendObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getVariance());//ecart type
 	(*stream) << TABs;
 	//DIST
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, maxD);//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, minD);//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().distObsSum.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getPLR3DObsSummary().distObsSum.getVariance());//ecart type
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getVariance());//ecart type
 	(*stream) << endl;
-	}
 
 }
 
-void TTSTNWriter::writeECTHResultsSynthesis(const std::list<TECTH>& measECTH, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
@@ -1835,32 +1759,18 @@ void TTSTNWriter::writeECTHResultsSynthesis(const std::list<TECTH>& measECTH, co
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	for (auto& it : rom)
-	{
-		TReal min = 100.0;
-		TReal max = 0.0;
+    const auto &ecthSummary = rom->getECTHObsSummary();
 
-
-		for (auto& meas : measECTH)
-		{
-			if (meas.getDistanceResidual().getMMetresValue() > max)
-				max = meas.getDistanceResidual().getMMetresValue();
-			if (meas.getDistanceResidual().getMMetresValue() < min)
-				min = meas.getDistanceResidual().getMMetresValue();
-
-		}
-
-		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //tstn position
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECTHObsSummary().getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECTHObsSummary().getVariance());//ecart type
-		(*stream) << endl;
-	}
+    (*stream) << TABs;
+    (*stream).writeStringLeft(nameWidth, instrPos->getName()); //tstn position
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getVariance());//ecart type
+    (*stream) << endl;
 }
 
-void TTSTNWriter::writeECDIRResultsSynthesis(const std::list<TECDIR>& measECDIR, const LGCAdjustablePoint* instrPos, std::list<shared_ptr<TTSTN::TROM>> rom){
+void TTSTNWriter::writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
@@ -1869,27 +1779,13 @@ void TTSTNWriter::writeECDIRResultsSynthesis(const std::list<TECDIR>& measECDIR,
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	for (auto& it : rom)
-	{
-		TReal min = 100.0;
-		TReal max = 0.0;
+    const auto &ecdirSummary = rom->getECDIRObsSummary();
 
-
-		for (auto& meas : measECDIR)
-		{
-			if (meas.getDistanceResidual().getMMetresValue() > max)
-				max = meas.getDistanceResidual().getMMetresValue();
-			if (meas.getDistanceResidual().getMMetresValue() < min)
-				min = meas.getDistanceResidual().getMMetresValue();
-
-		}
-
-		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, instrPos->getName()); //tstn position
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, max);//residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, min);//residu min
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECDIRObsSummary().getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, it->getECDIRObsSummary().getVariance());//ecart type
-		(*stream) << endl;
-	}
+    (*stream) << TABs;
+    (*stream).writeStringLeft(nameWidth, instrPos->getName()); //tstn position
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getResMin());//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getMean());//residu moy
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getVariance());//ecart type
+    (*stream) << endl;
 }

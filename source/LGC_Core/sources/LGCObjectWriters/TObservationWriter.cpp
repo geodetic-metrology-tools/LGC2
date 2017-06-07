@@ -27,7 +27,7 @@ void	TObservationWriter::writeObsTitle(const string& description, const int numO
 	return;
 }
 
-void TObservationWriter::writeAngleResultsSummary(TLGCObsSummary summary, std::string TABs){
+void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 	int					obsResWidth = getObsResWidth();
 	int					angleResidualPrecision = max(getAngleResidualPrecision()-3, 0);
 	TAStreamFormatter	&stream = getStreamRef();
@@ -68,7 +68,7 @@ void TObservationWriter::writeAngleResultsSummary(TLGCObsSummary summary, std::s
 
 }
 
-void TObservationWriter::writeDistanceResultsSummary(TLGCObsSummary summary, std::string TABs){
+void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 
 	int					obsResWidth = getObsResWidth();
 	int					lengthResidualPrecision = max(getLengthResidualPrecision()-2, 0);
@@ -111,7 +111,7 @@ void TObservationWriter::writeDistanceResultsSummary(TLGCObsSummary summary, std
 	return;
 }
 
-void TObservationWriter::writeUnitlessResultsSummary(TLGCObsSummary summary, std::string TABs){
+void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 
 	int					obsResWidth = getObsResWidth();
 	int					lengthResidualPrecision = max(getLengthResidualPrecision()-3, 0);
@@ -160,7 +160,7 @@ void TObservationWriter::writeUnitlessResultsSummary(TLGCObsSummary summary, std
 	return;
 }
 
-void TObservationWriter::writeHisto(TLGCObsSummary summary, string description)
+void TObservationWriter::writeHisto(const TLGCObsSummary& summary, string description)
 {
 
 	// return if histograms are not to be written out, or if there are too
