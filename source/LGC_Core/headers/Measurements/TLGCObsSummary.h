@@ -48,14 +48,17 @@ public:
         /// Check if the obsSummary statistics are initialised or not
         bool        isInitialised() const;
 
+        /// Initialise the observation summary
+        void        initialise();
+
 		/// get the mean of the residuals 
-		TReal		getMean();
+		TReal		getMean() const;
 
 		/// get the lower confidence limit for the mean 
-		TReal		getMeanLoLimit();
+		TReal		getMeanLoLimit() const;
 		
 		/// get the upper confidence limit for the mean 
-		TReal		getMeanHiLimit();
+		TReal		getMeanHiLimit() const;
 
         /// Get the minimum residual of the added residuals
         TReal       getResMin() const;
@@ -64,13 +67,13 @@ public:
         TReal       getResMax() const;
 
 		/// get the variance for the residuals 
-		TReal		getVariance();
+		TReal		getVariance() const;
 
 		/// get the lower confidence limit for the variance 
-		TReal		getVarLoLimit();
+		TReal		getVarLoLimit() const;
 		
 		/// get the upper confidence limit for the variance 
-		TReal		getVarHiLimit();
+		TReal		getVarHiLimit() const;
 
 		/// set a string to identify the observation type 
 		void		setObsText(const string keyWord) {fObsText = keyWord; return;}
@@ -91,26 +94,26 @@ public:
 		int			getNumberOfObs() const {return fNumberOfObs; }
 
 		/// get the histogram data corresponding to the obersation residuals 
-		const list<int>	getHistogramData();
+		const list<int>	getHistogramData() const;
 
 		/// get the lower limit for the histogram data 
-		TReal		getHistoLoLimit();
+		TReal		getHistoLoLimit() const;
 
 		/// get the higher limit for the histogram data 
-		TReal		getHistoHiLimit();
+		TReal		getHistoHiLimit() const;
 
 		/// get the scale factor for the histogram residuals 
-		int			getHistoScale();
+		int			getHistoScale() const;
 
 		/// get the number of residuals outside the histogram limits 
-		int			getNumBeyondHistoLimits();
+		int			getNumBeyondHistoLimits() const;
 //@}
 
 
 protected:
 
 	/// add an item to the list used for histogram
-	void	addHistoListItem(const TReal item) {fHistoList.push_back(item); return;}
+	void	addHistoListItem(const TReal item) { fHistoList.push_back(item); }
 			
 
 private:
@@ -122,21 +125,19 @@ private:
 	TReal			fMean;
 	TReal			fMeanLoLimit;
 	TReal			fMeanHiLimit;
-	bool			fMeanCalculated;
     TReal           fResMin;
     TReal           fResMax;
 	TReal			fSumRes2;
 	TReal			fVariance;
 	TReal			fVarLoLimit;
 	TReal			fVarHiLimit;
-	bool			fVarianceCalculated;
 
 	// histogram data
-	list<TReal>	fHistoList;
-	bool			fHistoListSorted;
+	list<TReal>	    fHistoList;
+    list<int>       fHistoData;
 	int				fNumberOutsideHisto;
 
-    bool fIsInitialised;
+    bool            fIsInitialised;
 };
 
 /*!
