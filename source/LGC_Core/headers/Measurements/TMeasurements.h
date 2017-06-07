@@ -56,11 +56,68 @@ struct TMeasurements {
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getRADIObsSummary() const;
 
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TPOLARObsSummary& getPOLARGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getANGLGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getZENDGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getDISTGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getDHORGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECTHGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECDIRGlobalObsSummary() const;
+    
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TUVDObsSummary& getUVDGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TUVECObsSummary& getUVECGlobalObsSummary() const;
+
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getDSPTGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getDLEVGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getDlevDHORGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getORIEGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECHOGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECVEGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECSPGlobalObsSummary() const;
+
 private:
 
     TLGCObsSummary dverSummary_;
     TLGCObsSummary radiSummary_;
 
+    // Compound summaries:
+    // TSTN:
+    TPOLARObsSummary plrGlobalSummary_;
+    TLGCObsSummary anglGlobalSummary_;
+    TLGCObsSummary zendGlobalSummary_;
+    TLGCObsSummary distGlobalSummary_;
+    TLGCObsSummary dhorGlobalSummary_;
+    TLGCObsSummary ecthGlobalSummary_;
+    TLGCObsSummary ecdirGlobalSummary_;
+
+    // CAM:
+    TUVDObsSummary uvdGlobalSummary_;
+    TUVECObsSummary uvecGlobalSummary_;
+
+    // Other:
+    TLGCObsSummary dsptGlobalSummary_;
+    TLGCObsSummary dlevGlobalSummary_;
+    TLGCObsSummary dlevDHORGlobalSummary_;
+    TLGCObsSummary orieGlobalSummary_;
+    TLGCObsSummary echoGlobalSummary_;
+    TLGCObsSummary ecveGlobalSummary_;
+    TLGCObsSummary ecspGlobalSummary_;
 };
 
 #endif // MEASUREMENTS_H_

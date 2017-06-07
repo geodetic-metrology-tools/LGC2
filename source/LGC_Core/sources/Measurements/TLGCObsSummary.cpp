@@ -118,8 +118,6 @@ void	TLGCObsSummary::addNewResidual(const TReal res)
 
 	// add the residual to the histogram data list
 	addHistoListItem(res); 
-
-	return;
 }
 
 
@@ -156,6 +154,10 @@ bool TLGCObsSummary::isInitialised() const {
 
 void TLGCObsSummary::initialise() {
 
+    // Set the initialisation flag true here, because some
+    // functions that check it are called in the following
+    fIsInitialised = true;
+
     // ------------- RESIDUALS and VARIANCE: -------------
 
     // determine the mean for the observation residuals
@@ -174,19 +176,18 @@ void TLGCObsSummary::initialise() {
     // Calculate the mean low and high limits, and the variance high and low limits
     if(dof > 0)
     {
-        TReal var, prob, STLo, STHi, chiLo, chiHi;
+        TReal prob, STLo, STHi, chiLo, chiHi;
 
         // initialise some parameters
         prob = LITERAL(0.975); 
-		var = getVariance();
 
         // calculate the confidence limits from the Student T distribution
         STLo = deviates_students_t_lower_tail(1 - prob, dof);
-        fMeanLoLimit = STLo * var / sqrtq(TReal(fNumberOfObs));
+        fMeanLoLimit = STLo * fVariance / sqrtq(TReal(fNumberOfObs));
 
         // calculate the confidence limits from the Student T distribution
         STHi = deviates_students_t_upper_tail(1 - prob, dof);
-        fMeanHiLimit = STHi * var / sqrtq(TReal(fNumberOfObs));
+        fMeanHiLimit = STHi * fVariance / sqrtq(TReal(fNumberOfObs));
 
         // chi test coefficients
         chiLo = deviates_chi_sq(prob, dof);
@@ -262,8 +263,6 @@ void TLGCObsSummary::initialise() {
             colWidth += LITERAL(1.0);
         }
     }
-
-    fIsInitialised = true;
 }
 
 /* get the mean of the residuals */
@@ -363,3 +362,35 @@ int TLGCObsSummary::getNumBeyondHistoLimits() const {
     return fNumberOutsideHisto;
 }
 
+TLGCObsSummary TLGCObsSummary::merge(const std::list<const TLGCObsSummary*> &summaries) {
+    TLGCObsSummary summary;
+    if(summaries.size() == 0) return summary;
+
+    bool first = true;
+    for(const auto &sum : summaries){
+        if(first){
+            // Use the first element as the base:
+            summary.fObsText = sum->fObsText;
+            summary.fAngleType = sum->fAngleType;
+
+            first = false;
+        }
+
+        assert(summary.fAngleType == sum->fAngleType);
+
+        // Statistics about number of observations and residuals summary:
+        summary.fNumberOfObs += sum->fNumberOfObs;
+        summary.fSumRes += sum->fSumRes;
+        summary.fSumRes2 += sum->fSumRes2;
+
+        // Check if residual is smaller or bigger than current resMin or resMax:
+        if(sum->fResMax > summary.fResMax) summary.fResMax = sum->fResMax;
+        if(sum->fResMin < summary.fResMin) summary.fResMin = sum->fResMin;
+
+        // Merge histogramlists:
+        summary.fHistoList.insert(summary.fHistoList.end(), sum->fHistoList.begin(), sum->fHistoList.end());
+    }
+
+    summary.initialise();
+    return summary;
+}

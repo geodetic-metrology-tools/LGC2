@@ -72,9 +72,11 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 
+    auto &tmeas = (*frameIt)->measurements;
+
 	//If PDOR
-	if (frameIt->get()->measurements.fPDOR.isInitialised())
-		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
+	if (tmeas.fPDOR.isInitialised())
+		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	//Summary
 	(*stream) << TABs << "*** RESUME DES MESURES ***" << endl << endl;
@@ -85,44 +87,44 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	//Measures
 	(*stream) << endl << endl<< TABs << "*** MESURES ***" << endl << endl;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 		tstnWriter.writeTSTNResults(itTSTN);
 
-	for(auto& itCAM:frameIt->get()->measurements.fCAM)
+	for(auto& itCAM:tmeas.fCAM)
 		camWriter.writeCAMResults(itCAM);
 
-	for(auto& itLEVEL:frameIt->get()->measurements.fLEVEL)
+	for(auto& itLEVEL:tmeas.fLEVEL)
 		levelWriter.writeLEVELResults(itLEVEL);
 
 	//No instrument for DVER, so no loop to have each instrument.
-	if (!frameIt->get()->measurements.fDVER.empty())
+	if (!tmeas.fDVER.empty())
 	{
 		(*stream) << endl;
-		otherMeasWriter.writeDVERResults(frameIt->get()->measurements.fDVER);
+		otherMeasWriter.writeDVERResults(tmeas.fDVER);
 	}
 
-	for (auto& itECHO : frameIt->get()->measurements.fECHO)
+	for (auto& itECHO : tmeas.fECHO)
 		scaleWriter.writeECHOResults(itECHO);
 	
-	for (auto& itECVE : frameIt->get()->measurements.fECVE)
+	for (auto& itECVE : tmeas.fECVE)
 		scaleWriter.writeECVEResults(itECVE);
 	
-	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+	for (auto& itECSP : tmeas.fECSP)
 		scaleWriter.writeECSPResults(itECSP);
 
-	for (auto& itORIE : frameIt->get()->measurements.fORIE)
+	for (auto& itORIE : tmeas.fORIE)
 	{
 		(*stream) << endl;
 		otherMeasWriter.writeORIEResults(itORIE.measORIE, *itORIE.instrumentPos);
 	}
 
-	if (!frameIt->get()->measurements.fRADI.empty())
+	if (!tmeas.fRADI.empty())
 	{
 		(*stream) << endl;
-		otherMeasWriter.writeRADIResults(frameIt->get()->measurements.fRADI);
+		otherMeasWriter.writeRADIResults(tmeas.fRADI);
 	}
 
-	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+	for (auto& itEDM : tmeas.fEDM)
 		edmWriter.writeEDMResults(itEDM);
 		
 }
@@ -143,12 +145,14 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 
+    auto &tmeas = (*frameIt)->measurements;
+
 	//TSTN
-	if (frameIt->get()->measurements.fTSTN.size() > 0)
+    if(tmeas.fTSTN.size() > 0)
 	{
 		//write ANGL summary
 		bool headerAnglWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -165,21 +169,13 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerAnglWriten)
-		{//write global mean
-			TLGCObsSummary ANGLsummary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& it : itrom->measANGL)
-						ANGLsummary.addNewResidual(it.getAngleResidual().getSignedCCValue());
-
-			tstnWriter.writeAngleResultsSummary(ANGLsummary, TABs);
-		}
+		if (headerAnglWriten) //write global mean
+			tstnWriter.writeAngleResultsSummary(tmeas.getANGLGlobalObsSummary(), TABs);
 		
 
 		//then ZEND 
 		bool headerZendWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -197,21 +193,13 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerZendWriten)
-		{//write global mean
-			TLGCObsSummary summary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& it : itrom->measZEND)
-						summary.addNewResidual(it.getAngleResidual().getSignedCCValue());
-
-			tstnWriter.writeAngleResultsSummary(summary, TABs);
-		}
+        if(headerZendWriten) //write global mean
+            tstnWriter.writeAngleResultsSummary(tmeas.getZENDGlobalObsSummary(), TABs);
 		
 
 		//DITS
 		bool headerDistWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -229,21 +217,13 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerDistWriten)
-		{//write global mean
-			TLGCObsSummary summary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& it : itrom->measDIST)
-						summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        if(headerDistWriten) //write global mean
+			tstnWriter.writeDistanceResultsSummary(tmeas.getDISTGlobalObsSummary(), TABs);
 
-			tstnWriter.writeDistanceResultsSummary(summary, TABs);
-		}
-		
 
 		//DHOR
 		bool headerDhorWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -261,21 +241,14 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerDhorWriten)
-		{//write global mean
-			TLGCObsSummary summary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& it : itrom->measDHOR)
-						summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        if(headerDhorWriten) //write global mean
+            tstnWriter.writeDistanceResultsSummary(tmeas.getDHORGlobalObsSummary(), TABs);
 
-			tstnWriter.writeDistanceResultsSummary(summary, TABs);
-		}
 		
 
 		//PLR3D
 		bool headerPlrWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -290,29 +263,19 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerPlrWriten)
-		{//write global mean
-			TPOLARObsSummary PLRsummary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& itplr : itrom->measPLR3D)
-					{
-						PLRsummary.anglObsSum.addNewResidual(itplr.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
-						PLRsummary.zendObsSum.addNewResidual(itplr.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
-						PLRsummary.distObsSum.addNewResidual(itplr.getDistanceResidual().getMMetresValue());
-					}
+		if (headerPlrWriten){ //write global mean
 
 			(*stream) << "PLR3D: ANGL"<<endl;
-			tstnWriter.writeAngleResultsSummary(PLRsummary.anglObsSum, TABs);
+			tstnWriter.writeAngleResultsSummary(tmeas.getPOLARGlobalObsSummary().anglObsSum, TABs);
 			(*stream) << "PLR3D: ZEND"<<endl;
-			tstnWriter.writeAngleResultsSummary(PLRsummary.zendObsSum, TABs);
+            tstnWriter.writeAngleResultsSummary(tmeas.getPOLARGlobalObsSummary().zendObsSum, TABs);
 			(*stream) << "PLR3D: DIST"<<endl;
-			tstnWriter.writeDistanceResultsSummary(PLRsummary.distObsSum, TABs);
+            tstnWriter.writeDistanceResultsSummary(tmeas.getPOLARGlobalObsSummary().distObsSum, TABs);
 		}
 
 		//ECTH
 		bool headerEcthWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -330,21 +293,13 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerEcthWriten)
-		{//write global mean
-			TLGCObsSummary summary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& it : itrom->measECTH)
-						summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        if(headerEcthWriten) //write global mean
+            tstnWriter.writeDistanceResultsSummary(tmeas.getECTHGlobalObsSummary(), TABs);
 
-			tstnWriter.writeDistanceResultsSummary(summary, TABs);
-		}
-		
 
 		//ECDIR
 		bool headerEcdirWriten = false;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
+        for(auto& it : tmeas.fTSTN)
 		{
 			for (auto& itrom : it->roms)
 			{
@@ -362,24 +317,17 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				}
 			}
 		}
-		if (headerEcdirWriten)
-		{//write global mean
-			TLGCObsSummary summary;
-			for (auto& it : frameIt->get()->measurements.fTSTN)
-				for (auto& itrom : it->roms)
-					for (auto& it : itrom->measECDIR)
-						summary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        if(headerEcdirWriten) //write global mean
+            tstnWriter.writeDistanceResultsSummary(tmeas.getECDIRGlobalObsSummary(), TABs);
 
-			tstnWriter.writeDistanceResultsSummary(summary, TABs);
-		}
 	}
 
 	//BCAM
-	if (frameIt->get()->measurements.fCAM.size() > 0)
+    if(tmeas.fCAM.size() > 0)
 	{
 		//write UVD summary
 		bool headerWriten = false;
-		for (auto& it : frameIt->get()->measurements.fCAM)
+		for (auto& it : tmeas.fCAM)
 		{
 			if (it.measUVD.size() > 0)
 			{
@@ -392,30 +340,19 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				camWriter.writeUVDResultsSynthesis(it);
 			}
 		}
-		if (headerWriten)
-		{
-			TUVDObsSummary summaryUVD;
-			//write UVD summary
-			for (auto& it : frameIt->get()->measurements.fCAM)
-				for (auto& itUVD : it.measUVD)
-				{
-					summaryUVD.xVectorCompObsSum.addNewResidual(itUVD.getXCompVectorResidual()*M2MM);
-					summaryUVD.yVectorCompObsSum.addNewResidual(itUVD.getYCompVectorResidual()*M2MM);
-					summaryUVD.distObsSum.addNewResidual(itUVD.getDistanceResidual().getMMetresValue());
-				}
-
+		if (headerWriten) {
 			(*stream) << "UVD: XVEC" << endl;
-			camWriter.writeUnitlessResultsSummary(summaryUVD.xVectorCompObsSum, TABs);
+			camWriter.writeUnitlessResultsSummary(tmeas.getUVDGlobalObsSummary().xVectorCompObsSum, TABs);
 			(*stream) << "UVD: YVEC" << endl;
-			camWriter.writeUnitlessResultsSummary(summaryUVD.yVectorCompObsSum, TABs);
+            camWriter.writeUnitlessResultsSummary(tmeas.getUVDGlobalObsSummary().yVectorCompObsSum, TABs);
 			(*stream) << "UVD: DIST" << endl;
-			camWriter.writeDistanceResultsSummary(summaryUVD.distObsSum, TABs);
+            camWriter.writeDistanceResultsSummary(tmeas.getUVDGlobalObsSummary().distObsSum, TABs);
 
 		}
 
 		//the UVEC when all UVD are written
 		bool headerWriten2 = false;
-		for (auto& it : frameIt->get()->measurements.fCAM)
+        for(auto& it : tmeas.fCAM)
 		{
 			if (it.measUVEC.size() > 0)
 			{
@@ -428,173 +365,134 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 				camWriter.writeUVECResultsSynthesis(it);
 			}
 		}
-		if (headerWriten2)
-		{
-			TUVDObsSummary summaryUVEC;
-			for (auto& it : frameIt->get()->measurements.fCAM)
-				for (auto& itUVEC : it.measUVEC)
-				{
-					summaryUVEC.xVectorCompObsSum.addNewResidual(itUVEC.getXCompVectorResidual()*M2MM);
-					summaryUVEC.yVectorCompObsSum.addNewResidual(itUVEC.getYCompVectorResidual()*M2MM);
-				}
-
+		if (headerWriten2){
 			(*stream) << "UVEC: XVEC" << endl;
-			camWriter.writeUnitlessResultsSummary(summaryUVEC.xVectorCompObsSum, TABs);
+			camWriter.writeUnitlessResultsSummary(tmeas.getUVECGlobalObsSummary().xVectorCompObsSum, TABs);
 			(*stream) << "UVEC: YVEC" << endl;
-			camWriter.writeUnitlessResultsSummary(summaryUVEC.yVectorCompObsSum, TABs);
+            camWriter.writeUnitlessResultsSummary(tmeas.getUVECGlobalObsSummary().yVectorCompObsSum, TABs);
 		}
 	}
 
 	//DLEV
-	if (frameIt->get()->measurements.fLEVEL.size() > 0)
+    if(tmeas.fLEVEL.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "DLEV"); //instrument
 		(*stream) << endl;
 		levelWriter.writeLEVELSynthesisHeader();
-		for (auto& itLEVEL : frameIt->get()->measurements.fLEVEL)
+		for (auto& itLEVEL : tmeas.fLEVEL)
 			levelWriter.writeLEVELResultsSynthesis(itLEVEL);
 		//(*stream) << endl;
 
 		//write global mean
-		TLGCObsSummary DLEVsummary;
-		if (frameIt->get()->measurements.fLEVEL.size() > 0)
-			for (auto& itLEVEL : frameIt->get()->measurements.fLEVEL)
-				for (auto& itDLEV : itLEVEL.measDLEV)
-					DLEVsummary.addNewResidual(itDLEV.getDistanceResidual().getMMetresValue());
-		levelWriter.writeDistanceResultsSummary(DLEVsummary, TABs);
+		levelWriter.writeDistanceResultsSummary(tmeas.getDLEVGlobalObsSummary(), TABs);
 	}
 
 	//DVER
-	if (frameIt->get()->measurements.fDVER.size() > 0)
+    if(tmeas.fDVER.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "DVER"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		otherMeasWriter.writeDVERResultsSynthesis(frameIt->get()->measurements);
+		otherMeasWriter.writeDVERResultsSynthesis(tmeas);
 		//(*stream) << endl;
 
-		TLGCObsSummary DVERsummary;
-		if (frameIt->get()->measurements.fDVER.size() > 0)
-			for (auto const& ItDVER : frameIt->get()->measurements.fDVER)
-				DVERsummary.addNewResidual(ItDVER.getDistanceResidual().getMMetresValue());
-		otherMeasWriter.writeDistanceResultsSummary(DVERsummary,TABs);
+        //write global mean
+        otherMeasWriter.writeDistanceResultsSummary(tmeas.getDVERObsSummary(), TABs);
 	}
 
 	//ECHO
-	if (frameIt->get()->measurements.fECHO.size() > 0)
+    if(tmeas.fECHO.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "ECHO"); //instrument
 		(*stream) << endl;
 		scaleWriter.writeSCALESynthesisHeader();
-		for (auto& itECHO : frameIt->get()->measurements.fECHO)
+		for (auto& itECHO : tmeas.fECHO)
 			scaleWriter.writeECHOResultsSynthesis(itECHO);
 		//(*stream) << endl;
 
-		TLGCObsSummary ECHOsummary;
-		if (frameIt->get()->measurements.fECHO.size() > 0)
-			for (auto& itECHOPROM : frameIt->get()->measurements.fECHO)
-				for (auto& itECHO : itECHOPROM.measECHO)
-					ECHOsummary.addNewResidual(itECHO.getDistanceResidual().getMMetresValue());
-		scaleWriter.writeDistanceResultsSummary(ECHOsummary, TABs);
+        //write global mean
+        scaleWriter.writeDistanceResultsSummary(tmeas.getECHOGlobalObsSummary(), TABs);
 	}
 
 	//DSPT
-	if (frameIt->get()->measurements.fECHO.size() > 0)
+    if(tmeas.fECHO.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "DSPT"); //instrument
 		(*stream) << endl;
 
-		TLGCObsSummary DSPTsummary;
-		for (auto& it : frameIt->get()->measurements.fEDM)
-			for (auto& itDSPT : it.measDSPT)
-				DSPTsummary.addNewResidual(itDSPT.getDistanceResidual().getMMetresValue());
-		edmWriter.writeDistanceResultsSummary(DSPTsummary, TABs);
+        //write global mean
+        edmWriter.writeDistanceResultsSummary(tmeas.getDSPTGlobalObsSummary(), TABs);
 	}
 
 	//ECVE
-	if (frameIt->get()->measurements.fECVE.size() > 0)
+    if(tmeas.fECVE.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "ECVE"); //instrument
 		(*stream) << endl;
 		scaleWriter.writeSCALESynthesisHeader();
-		for (auto& itECVE : frameIt->get()->measurements.fECVE)
+		for (auto& itECVE : tmeas.fECVE)
 			scaleWriter.writeECVEResultsSynthesis(itECVE);
 		//(*stream) << endl;
 
-		TLGCObsSummary summary;
-		if (frameIt->get()->measurements.fECHO.size() > 0)
-			for (auto& itECVEPROM : frameIt->get()->measurements.fECVE)
-				for (auto& itECVE : itECVEPROM.measECVE)
-					summary.addNewResidual(itECVE.getDistanceResidual().getMMetresValue());
-		scaleWriter.writeDistanceResultsSummary(summary, TABs);
+        //write global mean
+        scaleWriter.writeDistanceResultsSummary(tmeas.getECVEGlobalObsSummary(), TABs);
 	}
 
 	//ECSP
-	if (frameIt->get()->measurements.fECSP.size() > 0)
+    if(tmeas.fECSP.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "ECSP"); //instrument
 		(*stream) << endl;
 		scaleWriter.writeSCALESynthesisHeader();
-		for (auto& itECSP : frameIt->get()->measurements.fECSP)
+		for (auto& itECSP : tmeas.fECSP)
 			scaleWriter.writeECSPResultsSynthesis(itECSP);
 		//(*stream) << endl;
 
-		TLGCObsSummary summary;
-		if (frameIt->get()->measurements.fECHO.size() > 0)
-			for (auto& itECSPPROM : frameIt->get()->measurements.fECSP)
-				for (auto& itECSP : itECSPPROM.measECSP)
-					summary.addNewResidual(itECSP.getDistanceResidual().getMMetresValue());
-		scaleWriter.writeDistanceResultsSummary(summary, TABs);
+        //write global mean
+		scaleWriter.writeDistanceResultsSummary(tmeas.getECSPGlobalObsSummary(), TABs);
 	}
 	
 	//ORIE
-	if (frameIt->get()->measurements.fORIE.size() > 0)
+    if(tmeas.fORIE.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "ORIE"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		for (auto& itORIE : frameIt->get()->measurements.fORIE)
+		for (auto& itORIE : tmeas.fORIE)
 			otherMeasWriter.writeORIEResultsSynthesis(itORIE, *itORIE.instrumentPos);
 		//(*stream) << endl;
 
-		TLGCObsSummary ORIEsummary;
-		if (frameIt->get()->measurements.fORIE.size() > 0)
-			for (auto const& It : frameIt->get()->measurements.fORIE)
-				for (auto const& ItOrie : It.measORIE)
-					ORIEsummary.addNewResidual(ItOrie.getAngleResidual().getSignedCCValue());
-		otherMeasWriter.writeAngleResultsSummary(ORIEsummary, TABs);
+        //write global mean
+		otherMeasWriter.writeAngleResultsSummary(tmeas.getORIEGlobalObsSummary(), TABs);
 	}
 	
 	//RADI
-	if (frameIt->get()->measurements.fRADI.size() > 0)
+    if(tmeas.fRADI.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "RADI"); //instrument
 		(*stream) << endl;
 		otherMeasWriter.writeResultsSynthesisHeader();
-		otherMeasWriter.writeRADIResultsSynthesis(frameIt->get()->measurements);
+		otherMeasWriter.writeRADIResultsSynthesis(tmeas);
 		//(*stream) << endl;
 
-		TLGCObsSummary RADIsummary;
-		if (frameIt->get()->measurements.fRADI.size() > 0)
-			for (auto const& It : frameIt->get()->measurements.fRADI)
-				RADIsummary.addNewResidual(It.getResidual().getMMetresValue());
-		otherMeasWriter.writeDistanceResultsSummary(RADIsummary,TABs);
+        //write global mean
+		otherMeasWriter.writeDistanceResultsSummary(tmeas.getRADIObsSummary(),TABs);
 	}
 }
 
@@ -613,15 +511,13 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 
+    auto &tmeas = (*frameIt)->measurements;
+
 	//TSTN
-	if (frameIt->get()->measurements.fTSTN.size() > 0)
+	if (tmeas.fTSTN.size() > 0)
 	{
 		//write ANGL summary
-		TLGCObsSummary ANGLsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& it : itrom->measANGL)
-					ANGLsummary.addNewResidual(it.getAngleResidual().getSignedCCValue());
+        const auto &ANGLsummary = tmeas.getANGLGlobalObsSummary();
 
 		if (ANGLsummary.getNumberOfObs() >= 5)
 		{
@@ -632,11 +528,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 
 
 		//then ZEND 
-		TLGCObsSummary ZENDsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& it : itrom->measZEND)
-					ZENDsummary.addNewResidual(it.getAngleResidual().getSignedCCValue());
+        const auto& ZENDsummary = tmeas.getZENDGlobalObsSummary();
 
 		if (ZENDsummary.getNumberOfObs() >= 5)
 		{
@@ -646,11 +538,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 
 
 		//DITS
-		TLGCObsSummary DISTsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& it : itrom->measDIST)
-					DISTsummary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        const auto& DISTsummary = tmeas.getDISTGlobalObsSummary();
 
 		if (DISTsummary.getNumberOfObs() >= 5)
 		{
@@ -660,11 +548,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 
 
 		//DHOR
-		TLGCObsSummary DHORsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& it : itrom->measDHOR)
-					DHORsummary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        const auto& DHORsummary = tmeas.getDHORGlobalObsSummary();
 		
 		if (DHORsummary.getNumberOfObs() >= 5)
 		{
@@ -674,15 +558,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 
 
 		//PLR3D
-		TPOLARObsSummary PLRsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& itplr : itrom->measPLR3D)
-			{
-				PLRsummary.anglObsSum.addNewResidual(itplr.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
-				PLRsummary.zendObsSum.addNewResidual(itplr.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
-				PLRsummary.distObsSum.addNewResidual(itplr.getDistanceResidual().getMMetresValue());
-			}
+        const auto& PLRsummary = tmeas.getPOLARGlobalObsSummary();
 
 		if (PLRsummary.anglObsSum.getNumberOfObs() >= 5)
 		{
@@ -696,11 +572,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 
 
 		//ECTH
-		TLGCObsSummary ECTHsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& it : itrom->measECTH)
-					ECTHsummary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        const auto& ECTHsummary = tmeas.getECTHGlobalObsSummary();
 		
 		if (ECTHsummary.getNumberOfObs() >= 5)
 		{
@@ -710,11 +582,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 
 
 		//ECDIR
-		TLGCObsSummary ECDIRsummary;
-		for (auto& it : frameIt->get()->measurements.fTSTN)
-			for (auto& itrom : it->roms)
-				for (auto& it : itrom->measECDIR)
-					ECDIRsummary.addNewResidual(it.getDistanceResidual().getMMetresValue());
+        const auto& ECDIRsummary = tmeas.getECDIRGlobalObsSummary();
 		
 		if (ECDIRsummary.getNumberOfObs() >= 5)
 		{
@@ -725,18 +593,9 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//BCAM
-	if (frameIt->get()->measurements.fCAM.size() > 0)
+	if (tmeas.fCAM.size() > 0)
 	{
-		TUVDObsSummary summaryUVD;
-		//write UVD summary
-		for (auto& it : frameIt->get()->measurements.fCAM)
-			for (auto& itUVD : it.measUVD)
-			{
-				summaryUVD.xVectorCompObsSum.addNewResidual(itUVD.getXCompVectorResidual()*M2MM);
-				summaryUVD.yVectorCompObsSum.addNewResidual(itUVD.getYCompVectorResidual()*M2MM);
-				summaryUVD.distObsSum.addNewResidual(itUVD.getDistanceResidual().getMMetresValue());
-			}
-
+        const auto& summaryUVD = tmeas.getUVDGlobalObsSummary();
 		
 		if (summaryUVD.distObsSum.getNumberOfObs() >= 5)
 		{
@@ -749,14 +608,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 		}
 
 		//the UVEC when all UVD are written
-		TUVECObsSummary summaryUVEC;
-		for (auto& it : frameIt->get()->measurements.fCAM)
-			for (auto& itUVD : it.measUVEC)
-			{
-				summaryUVEC.xVectorCompObsSum.addNewResidual(itUVD.getXCompVectorResidual()*M2MM);
-				summaryUVEC.yVectorCompObsSum.addNewResidual(itUVD.getYCompVectorResidual()*M2MM);
-			}
-
+        const auto& summaryUVEC = tmeas.getUVECGlobalObsSummary();
 
 		if (summaryUVD.distObsSum.getNumberOfObs() >= 5)
 		{
@@ -768,11 +620,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//DLEV
-	TLGCObsSummary DLEVsummary;
-	if (frameIt->get()->measurements.fLEVEL.size() > 0)
-		for (auto& itLEVEL : frameIt->get()->measurements.fLEVEL)
-			for (auto& itDLEV : itLEVEL.measDLEV)
-				DLEVsummary.addNewResidual(itDLEV.getDistanceResidual().getMMetresValue());
+    const auto& DLEVsummary = tmeas.getDLEVGlobalObsSummary();
 
 	if (DLEVsummary.getNumberOfObs() >= 5)
 	{
@@ -782,10 +630,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	
 
 	//DVER
-	TLGCObsSummary DVERsummary;
-	if (frameIt->get()->measurements.fDVER.size() > 0)
-		for (auto const& ItDVER : frameIt->get()->measurements.fDVER)
-			DVERsummary.addNewResidual(ItDVER.getDistanceResidual().getMMetresValue());
+    const auto& DVERsummary = tmeas.getDVERObsSummary();
 		
 	if (DVERsummary.getNumberOfObs() >= 5)
 	{
@@ -794,11 +639,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//ECHO
-	TLGCObsSummary ECHOsummary;
-	if (frameIt->get()->measurements.fECHO.size() > 0)
-		for (auto& itECHOPROM : frameIt->get()->measurements.fECHO)
-			for (auto& itECHO : itECHOPROM.measECHO)
-				ECHOsummary.addNewResidual(itECHO.getDistanceResidual().getMMetresValue());
+    const auto& ECHOsummary = tmeas.getECHOGlobalObsSummary();
 
 	if (ECHOsummary.getNumberOfObs() >= 5)
 	{
@@ -807,10 +648,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//DSPT
-	TLGCObsSummary DSPTsummary;
-	for (auto& it : frameIt->get()->measurements.fEDM)	
-		for (auto& itDSPT : it.measDSPT)
-			DSPTsummary.addNewResidual(itDSPT.getDistanceResidual().getMMetresValue());
+    const auto& DSPTsummary = tmeas.getDSPTGlobalObsSummary();
 
 	if (DSPTsummary.getNumberOfObs() >= 5)
 	{
@@ -819,11 +657,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//ECVE
-	TLGCObsSummary ECVEsummary;
-	if (frameIt->get()->measurements.fECVE.size() > 0)
-		for (auto& itECVEROM : frameIt->get()->measurements.fECVE)
-			for (auto& itECVE : itECVEROM.measECVE)
-				ECVEsummary.addNewResidual(itECVE.getDistanceResidual().getMMetresValue());
+    const auto& ECVEsummary = tmeas.getECVEGlobalObsSummary();
 
 	if (ECVEsummary.getNumberOfObs() >= 5)
 	{
@@ -832,11 +666,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//ECSP
-	TLGCObsSummary ECSPsummary;
-	if (frameIt->get()->measurements.fECSP.size() > 0)
-		for (auto& itECSPROM : frameIt->get()->measurements.fECSP)
-			for (auto& itECSP : itECSPROM.measECSP)
-			ECSPsummary.addNewResidual(itECSP.getDistanceResidual().getMMetresValue());
+    const auto& ECSPsummary = tmeas.getECSPGlobalObsSummary();
 
 	if (ECSPsummary.getNumberOfObs() >= 5)
 	{
@@ -845,11 +675,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//ORIE
-	TLGCObsSummary ORIEsummary;
-	if (frameIt->get()->measurements.fORIE.size() > 0)
-		for (auto const& It : frameIt->get()->measurements.fORIE)
-			for (auto const& ItOrie : It.measORIE)
-				ORIEsummary.addNewResidual(ItOrie.getAngleResidual().getSignedCCValue());
+    const auto& ORIEsummary = tmeas.getORIEGlobalObsSummary();
 		
 	if (ORIEsummary.getNumberOfObs() >= 5)
 	{
@@ -858,10 +684,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 
 	//RADI
-	TLGCObsSummary RADIsummary;
-	if (frameIt->get()->measurements.fRADI.size() > 0)
-		for (auto const& It : frameIt->get()->measurements.fRADI)
-			RADIsummary.addNewResidual(It.getResidual().getMMetresValue());
+    const auto& RADIsummary = tmeas.getRADIObsSummary();
 
 	if (RADIsummary.getNumberOfObs() >= 5)
 	{
@@ -892,9 +715,11 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 
+    auto &tmeas = (*frameIt)->measurements;
+
 	//If PDOR
-	if (frameIt->get()->measurements.fPDOR.isInitialised())
-		otherMeasWriter.writePDORResults(frameIt->get()->measurements.fPDOR);
+	if (tmeas.fPDOR.isInitialised())
+		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	//Summary
 	//(*stream) << endl << TABs << "*** MEASUREMENTS SUMMARY ***" << endl << endl;
@@ -905,35 +730,35 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 	//Measures
 	(*stream) << endl << endl << TABs << "*** MEASUREMENTS DATA ***" << endl << endl;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 		tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
-	for(auto& itCAM:frameIt->get()->measurements.fCAM)
+	for(auto& itCAM:tmeas.fCAM)
 		camWriter.writeCAMResultsSIMU(itCAM);
 
-	for (auto& itLEVEL: frameIt->get()->measurements.fLEVEL)
+	for (auto& itLEVEL: tmeas.fLEVEL)
 		levelWriter.writeLEVELSIMUResults(itLEVEL);
 
 	//No instrument for DVER, so no loop to have each instrument.
-	if (!frameIt->get()->measurements.fDVER.empty()){
+	if (!tmeas.fDVER.empty()){
 		(*stream) << TABs << "DVER" << endl << endl;
-		otherMeasWriter.writeDVERSIMUResults(frameIt->get()->measurements);
+		otherMeasWriter.writeDVERSIMUResults(tmeas);
 	}
 	
-	for(auto& itECHO:frameIt->get()->measurements.fECHO)
+	for(auto& itECHO:tmeas.fECHO)
 		scaleWriter.writeECHOSIMUResults(itECHO);
 	
-	for (auto& itECVE : frameIt->get()->measurements.fECVE)
+	for (auto& itECVE : tmeas.fECVE)
 		scaleWriter.writeECVESIMUResults(itECVE);
 	
-	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+	for (auto& itECSP : tmeas.fECSP)
 		scaleWriter.writeECSPSIMUResults(itECSP);
 
-	for (auto& itORIE : frameIt->get()->measurements.fORIE)
+	for (auto& itORIE : tmeas.fORIE)
 		otherMeasWriter.writeORIESIMUResults(itORIE);
 
 
-	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+	for (auto& itEDM : tmeas.fEDM)
 		edmWriter.writeEDMSIMUResults(itEDM);
 
 }
@@ -942,6 +767,8 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
+
+    auto &tmeas = (*frameIt)->measurements;
 
 	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 
@@ -954,18 +781,18 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	writeCAMReliability(frameIt);
 	writeLEVELReliability(frameIt);
 
-	if (! frameIt->get()->measurements.fDVER.empty())
+	if (! tmeas.fDVER.empty())
 	{
 		(*stream) << endl << "DVER observations" << endl;
 		otherMeasWriter.writeDVERReliabilityHeader();
-		otherMeasWriter.writeDVERReliabilityData(frameIt->get()->measurements.fDVER, fProjectData->getStatistics());
+		otherMeasWriter.writeDVERReliabilityData(tmeas.fDVER, fProjectData->getStatistics());
 	}
 
 
 	writeSCALEReliability(frameIt);
 
 	bool  ORIEheaderWritten = false;
-	for (auto& itORIE:frameIt->get()->measurements.fORIE)
+	for (auto& itORIE:tmeas.fORIE)
 	{
 		if (!ORIEheaderWritten)
 		{
@@ -976,15 +803,15 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 		otherMeasWriter.writeORIEReliabilityData(itORIE.measORIE, fProjectData->getStatistics(), *itORIE.instrumentPos);
 	}
 
-	if (!frameIt->get()->measurements.fRADI.empty())
+	if (!tmeas.fRADI.empty())
 	{
 		(*stream) << endl << "RADI observations" << endl;
 		otherMeasWriter.writeRADIReliabilityHeader();
-		otherMeasWriter.writeRADIReliabilityData(frameIt->get()->measurements.fRADI, fProjectData->getStatistics());
+		otherMeasWriter.writeRADIReliabilityData(tmeas.fRADI, fProjectData->getStatistics());
 	}
 
 	bool  EDMheaderWritten = false;
-	for (auto& itEDM : frameIt->get()->measurements.fEDM)
+	for (auto& itEDM : tmeas.fEDM)
 	{
 		if (!EDMheaderWritten)
 		{
@@ -1343,9 +1170,11 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	TAStreamFormatter*	stream = getStream();
 	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
 
+    auto &tmeas = (*frameIt)->measurements;
+
 	//ANGL
 	bool isANGL = false;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 	{	
 		for(auto const ItRoms : itTSTN->roms)
 		{
@@ -1364,7 +1193,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 
 	//ZEND
 	bool isZEND = false;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 	{	
 		for(auto const ItRoms : itTSTN->roms)
 		{	
@@ -1382,7 +1211,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 
 	//DIST
 	bool isDIST = false;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 	{
 		for(auto const ItRoms : itTSTN->roms)
 		{
@@ -1401,7 +1230,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 
 	//PLR
 	bool isPLR = false;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 	{	
 		for(auto const ItRoms : itTSTN->roms)
 		{
@@ -1420,7 +1249,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 
 	//ECTH
 	bool isECTH = false;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 	{
 		for(auto const ItRoms : itTSTN->roms)
 		{
@@ -1439,7 +1268,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 
 	//DHOR
 	bool isDHOR = false;
-	for(auto& itTSTN:frameIt->get()->measurements.fTSTN)
+	for(auto& itTSTN:tmeas.fTSTN)
 	{
 		for(auto const ItRoms : itTSTN->roms)
 		{
@@ -1462,10 +1291,11 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 	TAStreamFormatter*	stream = getStream();
 	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());
 
+    auto &tmeas = (*frameIt)->measurements;
 
 	//UVEC
 	bool isuvec = false;
-	for(auto& itCAM:frameIt->get()->measurements.fCAM)
+	for(auto& itCAM:tmeas.fCAM)
 	{
 		if(itCAM.measUVEC.size() > 0){
 				
@@ -1481,7 +1311,7 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 
 	//UVD
 	bool isuvd = false;
-	for(auto& itCAM:frameIt->get()->measurements.fCAM)
+	for(auto& itCAM:tmeas.fCAM)
 	{
 		if(itCAM.measUVD.size() > 0){
 				
@@ -1502,10 +1332,11 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 	TAStreamFormatter*	stream = getStream();
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	
+    auto &tmeas = (*frameIt)->measurements;
 
 	//DLEV
 	bool isdlev = false;
-	for(auto& itLEV:frameIt->get()->measurements.fLEVEL)
+	for(auto& itLEV:tmeas.fLEVEL)
 	{
 		if(itLEV.measDLEV.size() > 0){	
 			if (isdlev==false)
@@ -1522,7 +1353,7 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 
 	//DHOR
 	bool isdhor = false;
-	for(auto& itLEV:frameIt->get()->measurements.fLEVEL)
+	for(auto& itLEV:tmeas.fLEVEL)
 	{
 		if(itLEV.hasDHOR){
 				
@@ -1542,10 +1373,11 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 	TAStreamFormatter*	stream = getStream();
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive());
 	
+    auto &tmeas = (*frameIt)->measurements;
 
 	//ECHO
 	bool isecho = false;
-	for(auto itECH(frameIt->get()->measurements.fECHO.begin()); itECH != frameIt->get()->measurements.fECHO.end(); ++itECH)
+	for(auto itECH(tmeas.fECHO.begin()); itECH != tmeas.fECHO.end(); ++itECH)
 	{
 		if(itECH->measECHO.size() > 0){
 				
@@ -1561,7 +1393,7 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 
 	//ECVE
 	bool isecve = false;
-	for (auto& itECVE:frameIt->get()->measurements.fECVE)
+	for (auto& itECVE:tmeas.fECVE)
 	{
 		if (itECVE.measECVE.size() > 0){
 
@@ -1577,7 +1409,7 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 
 	//ECSP
 	bool isecsp = false;
-	for (auto& itECSP : frameIt->get()->measurements.fECSP)
+	for (auto& itECSP : tmeas.fECSP)
 	{
 		if (itECSP.measECSP.size() > 0){
 

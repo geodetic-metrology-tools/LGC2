@@ -40,6 +40,10 @@ public:
 		bool		operator==(const TLGCObsSummary& ) const;
 
 		/// add a new value in the sum of the residus
+        /**
+         * @note After adding all the residuals, the obsSummary must be
+         * initialised (TLGCObsSummary::initialise()) before it can be used.
+         */
 		void		addNewResidual(const TReal res);
 
 		/// clear the observation summary statistics 
@@ -108,7 +112,12 @@ public:
 		/// get the number of residuals outside the histogram limits 
 		int			getNumBeyondHistoLimits() const;
 
-
+        /// Merge the given obsSummaries into one and return it initialised if *summaries* was not an empty list
+        /**
+         * @note The summaries to merge must be of same type (i.e., either length or angle type)
+         * @note The obs text is defined by the first obsSummary in the given list
+         */
+        static TLGCObsSummary merge(const std::list<const TLGCObsSummary*> &summaries);
 //@}
 
 
