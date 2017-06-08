@@ -197,7 +197,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
             tstnWriter.writeAngleResultsSummary(tmeas.getZENDGlobalObsSummary(), TABs);
 		
 
-		//DITS
+		//DIST
 		bool headerDistWriten = false;
         for(auto& it : tmeas.fTSTN)
 		{
