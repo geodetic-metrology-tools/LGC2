@@ -22,27 +22,18 @@ public:
 	//@{
 		/// default constructor
 		TLGCObsSummary();
-
-		/// copy constructor
-		TLGCObsSummary(const TLGCObsSummary&);
-
-		/// destructor
-		virtual  ~TLGCObsSummary();
 	//@}
 
 
 	/*!@name public member functions */
 	//@{
-		/// copy assignment operator
-		TLGCObsSummary& operator=(const TLGCObsSummary& );
-
-		/// equivalence operator
-		bool		operator==(const TLGCObsSummary& ) const;
 
 		/// add a new value in the sum of the residus
         /**
          * @note After adding all the residuals, the obsSummary must be
          * initialised (TLGCObsSummary::initialise()) before it can be used.
+         * @note getResMax() and getResMin() will return the residuals in
+         * the same units as they are added originally.
          */
 		void		addNewResidual(const TReal res);
 
