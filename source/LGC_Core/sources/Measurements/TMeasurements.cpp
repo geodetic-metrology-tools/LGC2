@@ -79,11 +79,11 @@ void TMeasurements::initialiseObsSummaries() {
             allPlrZENDSummaries.push_back(&rom->getPLR3DObsSummary().zendObsSum);
             allPlrDISTSummaries.push_back(&rom->getPLR3DObsSummary().distObsSum);
             allANGLSummaries.push_back(&rom->getANGLObsSummary());
-            allZENDSummaries.push_back(&rom->getANGLObsSummary());
-            allDISTSummaries.push_back(&rom->getANGLObsSummary());
-            allDHORSummaries.push_back(&rom->getANGLObsSummary());
-            allECTHSummaries.push_back(&rom->getANGLObsSummary());
-            allECDIRSummaries.push_back(&rom->getANGLObsSummary());
+            allZENDSummaries.push_back(&rom->getZENDObsSummary());
+            allDISTSummaries.push_back(&rom->getDISTObsSummary());
+            allDHORSummaries.push_back(&rom->getDHORObsSummary());
+            allECTHSummaries.push_back(&rom->getECTHObsSummary());
+            allECDIRSummaries.push_back(&rom->getECDIRObsSummary());
         }   
 
     // CAM
