@@ -563,13 +563,13 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 	//X
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName()); //Reference point
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMax() * M2MM);//residu max
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getVariance());//ecart type
 	//Y
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMax() * M2MM);//residu max
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getVariance());//ecart type
 	(*stream) << endl;
@@ -594,18 +594,18 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 	//X
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName()); //Reference point
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMax() * M2MM);//residu max
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getVariance());//ecart type
 	//Y
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMax() * M2MM);//residu max
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getMean());//residu moy
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getVariance());//ecart type
 	//D
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMax() * M2MM);//residu max
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMin() * M2MM);//residu min
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMax());//residu max
+    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getMean());//residu moy
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getVariance());//ecart type
 	(*stream) << endl;
