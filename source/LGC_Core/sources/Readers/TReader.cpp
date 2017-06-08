@@ -318,22 +318,25 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 				// abort if there is no valid handler
 				if (!currenthandler){
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
-					//allow to get to the next line, avoid infinite loop
-					safeGetline(lgcStream, line/*, '*'*/);
-					continue;
+					return !outputMessages.hasErrors();
 				}
 
 				// If the keyword in not allowed after the last handler
 				if (!lasthandler->isKeyWordAllowed(currenthandler->getKey()))
-					throw std::runtime_error("The keyword \"" + currentkey + "\" is not allowed here.");
+				{
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "The keyword \"" + currentkey + "\" is not allowed here.";
+					return !outputMessages.hasErrors();
+				}
 				else // Particular case : TSTN authorized after ENDFRAME if all frames are closed
 					if (currenthandler->getKey() == TSTN && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames()))
-						throw std::runtime_error("TSTN keyword is not allowed in a frame ");
+					{
+						outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "TSTN keyword is not allowed in a frame ";
+						return !outputMessages.hasErrors();
+					}
 			}
 			catch (std::exception const& excp) {
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
-				//allow to get to the next line, avoid infinite loop
-				safeGetline(lgcStream, line/*, '*'*/);
+				return !outputMessages.hasErrors();
 			}
 		}
 
@@ -345,8 +348,6 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 		}
 		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
-			//allow to get to the next line, avoid infinite loop
-			safeGetline(lgcStream, line/*, '*'*/);
 			//need return error during reading since the fisrt failure. because if no instrument are defined after *INSTR. When the first instr ID is not found, the software crashs.
 			return !outputMessages.hasErrors();
 		}
