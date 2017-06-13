@@ -902,14 +902,20 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
         if(meas->instrumentHeightAdjustable->isFixed())
         {
             (*stream) << "IHFIX" << sep;
-            if(meas->instrument.instrHeight != 0)
+            if(meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
 				(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
 
-            if(meas->instrument.sigmaInstrHeight != 0)
+            if(meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
                 (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
         }
-    } else
+    } else if(meas->ihfix){
         (*stream) << "IHFIX" << sep;
+        if(meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
+            (*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
+
+        if(meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
+            (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+    }
 
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep

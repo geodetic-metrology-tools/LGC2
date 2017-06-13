@@ -317,10 +317,35 @@ void TDataAnalyzer::assignEOIndices(){
     for(auto &node : fData.getTree()){
         auto &measurements = node->measurements;
 
+        auto numOfTSTN = measurements.fTSTN.size();
+
         // TSTN
         for(auto &tstn : measurements.fTSTN){
+
+            // For lgc1 compatibility:
+            // (lgc2 READER does not create the adjustable length
+            // but stores only the ihfix parameter of the tstn)
+            if(tstn->instrumentHeightAdjustable)
+                tstn->ihfix = tstn->instrumentHeightAdjustable->isFixed();
+
+            //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
+            if(tstn->rot3D){
+                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
+                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
+
+                // If ROT3D used, instrument height is fixed and is equal to 0
+                // (NB. These parameters will not affect in lgc1 case (instrumentHeightAdjustable,
+                // see above), since the option ROT3D is not possible in lgc1)
+                tstn->ihfix = true;
+                tstn->instrument.instrHeight = TLength(0.0);
+            }
+
+            // Check if the adjustable length already exists (only in lgc1 case, see above)
+            if(!tstn->instrumentHeightAdjustable)
+                tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
+
             for(auto &rom : tstn->roms){
-                
+
                 // PLR3D
                 for(auto &plr : rom->measPLR3D){
                     // set indices of LS matrices, PLR3D introduces 3 equations and 3 observations

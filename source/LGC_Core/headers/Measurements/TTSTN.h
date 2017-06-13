@@ -126,6 +126,9 @@ struct TTSTN {
 		/// Tells whether the instrument is be able to rotate freely in all three dimensions
 		bool rot3D;
 
+        /// Tells whether the instrument height is fixed or not
+        bool ihfix;
+
 		///The optional rotation angle about the X axis.
 		const TAdjustableAngle* rotX;
 		///The optional rotation angle about the Y axis.
@@ -150,6 +153,7 @@ struct TTSTN {
 			instrument(instrument),
 			instrumentPos(&pos),
 			rot3D(false),
+            ihfix(false),
 			line(NO_VALi),
 			instrumentHeightAdjustable(nullptr),
 			rotX(nullptr),
