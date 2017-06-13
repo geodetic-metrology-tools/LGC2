@@ -325,8 +325,7 @@ void TDataAnalyzer::assignEOIndices(){
             // For lgc1 compatibility:
             // (lgc2 READER does not create the adjustable length
             // but stores only the ihfix parameter of the tstn)
-            if(tstn->instrumentHeightAdjustable)
-                tstn->ihfix = tstn->instrumentHeightAdjustable->isFixed();
+            bool lgc1 = tstn->instrumentHeightAdjustable != nullptr;
 
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
@@ -340,8 +339,8 @@ void TDataAnalyzer::assignEOIndices(){
                 tstn->instrument.instrHeight = TLength(0.0);
             }
 
-            // Check if the adjustable length already exists (only in lgc1 case, see above)
-            if(!tstn->instrumentHeightAdjustable)
+            // Check if the adjustable length already exists (only in lgc2 case, see above)
+            if(!lgc1)
                 tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
             for(auto &rom : tstn->roms){
