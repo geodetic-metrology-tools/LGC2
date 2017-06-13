@@ -96,6 +96,11 @@ class LGCAdjustableObjectCollection {
 			}
 		}
 
+        /// Remove the given object
+        void removeObject(const T& obj) {
+            objects.remove(obj);
+        }
+
 		/// Returns The reference to the last adjustable object
 		T& back() {
 			return objects.back();
