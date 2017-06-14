@@ -108,21 +108,25 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			tgt.sigmaAngl = sigmaANGL;
 			constanteANGL = TAngle(std::stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
 			instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 		}
 		else if ((tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "$") && tokens.at(3).compare(0, 1, "%")) || (tokens.size() == 5 && tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 		{
 			tgt.sigmaAngl = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-			instr.constAngle = constanteANGL;
+            instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 		}
 		else if (tokens.size() >= 5)
 		{
 			tgt.sigmaAngl = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 			constanteANGL = TAngle(std::stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
-			instr.constAngle = constanteANGL;
+            instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 		}
 		else
 		{
-			instr.constAngle = constanteANGL;
+            instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 			tgt.sigmaAngl = sigmaANGL;
 		}
 
@@ -366,11 +370,13 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		currentTSTN->instrumentHeightAdjustable = IH_adj;
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
 		tgt.sigmaZenD = sigmaZEND;
-		if (IH_adj!= nullptr && firstmeas)
-			instr.instrHeight = IH_adj->getEstimatedValue();
-		else
-			instr.instrHeight = TLength(0.0, TLength::EUnits::kMetres);
-		
+        if(IH_adj != nullptr && firstmeas){
+            instr.instrHeight = IH_adj->getEstimatedValue();
+            currentTSTN->instrument.instrHeight = IH_adj->getEstimatedValue();
+        }
+        else // Just set the global instr height
+            instr.instrHeight = TLength(0.0, TLength::EUnits::kMetres);
+
 		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
 			if (tokens.size() == 5)
@@ -390,7 +396,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 					tgt.sigmaZenD = sigmaZEND;
 					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				}
 				else
@@ -407,7 +414,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 
@@ -416,7 +424,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				}
 				else
@@ -433,7 +442,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 				// Add adjustable scalar into a global collection and store a pointer
-				instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                currentTSTN->instrument.instrHeight = instr.instrHeight;
 				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 			}
@@ -464,7 +474,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 					tgt.sigmaZenD = sigmaZEND;
 					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				}
 				else 
@@ -480,7 +491,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 
@@ -489,7 +501,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				}
 				else
@@ -506,7 +519,8 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 				// Add adjustable scalar into a global collection and store a pointer
-				instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                currentTSTN->instrument.instrHeight = instr.instrHeight;
 				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 			}
@@ -1485,6 +1499,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.distCorrectionValue = dcorr;
 		tgt.distCorrectionAdjustable = adjDCorr;
 
+        auto &currentEDM = proj.getCurrentNode().measurements.fEDM.back();
+
 		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
 			if (tokens.size() == 5)
@@ -1508,7 +1524,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				if (!tokens.at(3).compare(0, 1, "\\"))
 				{
-					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(4) == "C")
@@ -1537,13 +1554,15 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (!tokens.at(4).compare(0, 1, "\\"))
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(5) == "C")
@@ -1572,7 +1591,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                currentEDM.instrument.instrHeight = instrument.instrHeight;
 				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
 
 				if (tokens.at(5) == "C")
@@ -1590,7 +1610,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			else if (tokens.size() == 8)
 			{
 				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				instrument.instrHeight = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+                instrument.instrHeight = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+                currentEDM.instrument.instrHeight = instrument.instrHeight;
 				tgt.targetHt = TLength(std::stor(tokens.at(6)), TLength::EUnits::kMetres);
 
 				if (tokens.at(4) == "C")
@@ -1632,7 +1653,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				if (!tokens.at(3).compare(0, 1, "\\"))
 				{
-					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(4) == "C")
@@ -1661,13 +1683,15 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (!tokens.at(4).compare(0, 1, "\\"))
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(5) == "C")
@@ -1696,7 +1720,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                currentEDM.instrument.instrHeight = instrument.instrHeight;
 				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
 
 				if (tokens.at(5) == "C")
@@ -1714,7 +1739,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 
 		// Store  the measured value
-		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
+		currentEDM.measDSPT.emplace_back(
 			TDSPT(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))))
 			);
 
