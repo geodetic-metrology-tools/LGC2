@@ -328,12 +328,14 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 			(*stream) << fPoint.getName() << sep
 			<< fPoint.getProvisionalValue().getX() << sep
 			<< fPoint.getProvisionalValue().getY() << sep
-			<< fPoint.getProvisionalValue().getH() << sep;
+			<< fPoint.getProvisionalValue().getH() << sep
+			<< fPoint.eolcomment << sep;
 		else
 			(*stream) << fPoint.getName() << sep
 			<< fPoint.getProvisionalValue().getX() << sep
 			<< fPoint.getProvisionalValue().getY() << sep
-			<< fPoint.getProvisionalValue().getZ() << sep;
+			<< fPoint.getProvisionalValue().getZ() << sep
+			<< fPoint.eolcomment << sep;
 	};
 
 	//write PDOR if we are in ROOT & PDOR is used
