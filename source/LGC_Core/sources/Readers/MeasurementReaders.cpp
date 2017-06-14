@@ -60,34 +60,23 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 	TInstrumentData::TPOLAR& instrument(tstn->instrument);
 
 	TOptionHelper opts(tokens.cbegin()+3, tokens.cend());
-	size_t nofTSTN = proj.getCurrentNode().measurements.fTSTN.size();
 
-	bool instrumentHeightFixed = opts.has("IHFIX");
+	tstn->ihfix = opts.has("IHFIX");
 	// Look for optional "IH" and "IHSE" flags only if the "IHFIX" flag used, ignore otherwise
-	if(instrumentHeightFixed){
+	if(tstn->ihfix){
 		instrument.instrHeight    = TLength(opts.getParamR("IH",   instrument.instrHeight));
       instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
 	}
 
 	tstn->rot3D = opts.has("ROT3D");
-	//If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
-	if (tstn->rot3D){
-		tstn->rotX = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
-		tstn->rotY = &proj.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + proj.getCurrentNode().frame.getName() + to_string(nofTSTN)));
-		//If ROT3D used, instrument height is fixed and is equal to 0
-		instrumentHeightFixed = true;
-		instrument.instrHeight = TLength(0.0);
-	}
 
 	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
 	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
 
-	tstn->instrumentHeightAdjustable = &flengths.addObject(TAdjustableLength(instrument.instrHeight,instrumentHeightFixed, "TSTN" + proj.getCurrentNode().frame.getName() + tstn->instrument.ID + to_string(nofTSTN)));
-
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);
 
-	if (opts.has("ROT3D") && opts.has("IHFIX"))
+	if (tstn->ihfix && tstn->rot3D)
 		throw std::runtime_error("ROT3D and IHFIX cannot be specified at the same time for TSTN.");
 }
 
