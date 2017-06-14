@@ -363,8 +363,10 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 	if(TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames())
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "The number of opened frames (*FRAME) and closed frames (*ENDFRAME) must be equal!";
 
-	return !outputMessages.hasErrors();
 
+    project.setLGCv1(false);
+
+	return !outputMessages.hasErrors();
 }
 
 
@@ -488,7 +490,35 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	if (!isReferenceSystemDefined)
 		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
 
-	return !outputMessages.hasErrors();
+    project.setLGCv1(true);
+
+    if(outputMessages.hasErrors()) return false;
+
+    TInstrumentData::TPOLAR::TTarget* polarDefTgt = project.getInstruments().fPOLAR.empty() ? nullptr : &project.getInstruments().fPOLAR.begin()->second.targets.begin()->second;
+    TInstrumentData::TEDM::TTarget* edmDefTgt = project.getInstruments().fEDM.empty() ? nullptr : &project.getInstruments().fEDM.begin()->second.targets.begin()->second;
+    TInstrumentData::TLEVEL::TTarget* defStaff = project.getInstruments().fLEVEL.empty() ? nullptr : &project.getInstruments().fLEVEL.begin()->second.targets.begin()->second;
+
+    // Update the targets in instruments stored in stations for data consistency
+    
+    if(polarDefTgt || edmDefTgt || defStaff) {
+        
+        for(auto& node : project.getTree()){
+        
+            for(auto &tstn : node->measurements.fTSTN)
+                tstn->instrument.targets.begin()->second = *polarDefTgt;
+
+            for(auto &edm : node->measurements.fEDM)
+                edm.instrument.targets.begin()->second = *edmDefTgt;
+
+            for(auto &level : node->measurements.fLEVEL)
+                level.instrument.targets.begin()->second = *defStaff;
+
+            for(auto &orierom : node->measurements.fORIE)
+                orierom.instrument.targets.begin()->second = *polarDefTgt;
+        }
+    }
+
+    return true;
 }
 
 bool TReader::isLgc2File(std::istream& lgcStream)

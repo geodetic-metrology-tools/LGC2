@@ -214,6 +214,10 @@ public:
 
         /// Creates a deep copy of the data and returns a shared pointer to it
         std::shared_ptr<TLGCData> clone() const;
+
+        bool isLGCv1() const { return islgc1; }
+
+        void setLGCv1(bool set) { islgc1 = set; }
 private:
 
     /// Copy the frametree structure from *src* to *tgt*
@@ -235,6 +239,10 @@ private:
 		TAdjustableLengthCollection lengths;
 	//@}
 	
+
+       
+    bool islgc1{false};
+
 	/// Represents the hierachical structure of the file and stores the measurements
 	TDataTree tree;
 	

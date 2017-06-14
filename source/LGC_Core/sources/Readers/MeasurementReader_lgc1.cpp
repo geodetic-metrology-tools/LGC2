@@ -84,7 +84,7 @@ void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 
 void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeANGL = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -100,6 +100,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget &tgt = instr.targets["PolarTgt"];
 
 		if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
@@ -138,8 +139,6 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			angl.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		rom->measANGL.emplace_back(angl);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -173,7 +172,8 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
-							storeANGL(currentTSTN->instrument, currentROM);
+
+                            storeANGL(currentROM);
 							anglStored = true;
 							break;
 						}
@@ -193,7 +193,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeANGL(currentTSTN->instrument, currentROM);
+                    storeANGL(currentROM);
 					anglStored = true;
 				}
 			}
@@ -205,17 +205,17 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeANGL(currentTSTN->instrument, currentROM);
+                storeANGL(currentROM);
 			}
 		}
 		else
-            storeANGL(currentTSTN->instrument, currentROM);
+            storeANGL(currentROM);
 	}
 }
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeZENI = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -231,7 +231,8 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
-		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+        auto &instr = getPolarInstr();
+        TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		currentTSTN->instrumentHeightAdjustable = IH_adj;
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
@@ -264,8 +265,6 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
         rom->measZEND.emplace_back(zend);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -301,7 +300,8 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
-                            storeZENI(currentTSTN->instrument, currentROM);
+
+                            storeZENI(currentROM);
 							zendStored = true;
 							break;
 						}
@@ -321,7 +321,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeZENI(currentTSTN->instrument, currentROM);
+                    storeZENI(currentROM);
 					zendStored = true;
 				}
 			}
@@ -333,17 +333,17 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeZENI(currentTSTN->instrument, currentROM);
+                storeZENI(currentROM);
 			}
 		}
 		else
-            storeZENI(currentTSTN->instrument, currentROM);
+            storeZENI(currentROM);
 	}
 }
 
 void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeZENH = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -359,6 +359,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		//default values
@@ -535,8 +536,6 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
         rom->measZEND.emplace_back(zend);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -572,8 +571,9 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						if (itTstn->roms.back()->measZEND.empty())
 						{
 							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-                            storeZENH(currentTSTN->instrument, currentROM);
+                            currentROM = currentTSTN->roms.back();
+
+                            storeZENH(currentROM);
 							zendStored = true;
 							break;
 						}
@@ -593,7 +593,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeZENH(currentTSTN->instrument, currentROM);
+                    storeZENH(currentROM);
 					zendStored = true;
 				}
 			}
@@ -605,17 +605,17 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeZENH(currentTSTN->instrument, currentROM);
+                storeZENH(currentROM);
 			}
 		}
 		else
-            storeZENH(currentTSTN->instrument, currentROM);
+            storeZENH(currentROM);
 	}	
 }
 
 void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeDIST = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -631,6 +631,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DTHE measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		tgt.sigmaDist = sigmaDIST;
@@ -855,8 +856,6 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			dthe.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
 
         rom->measDIST.emplace_back(dthe);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -905,8 +904,9 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						if (itTstn->roms.back()->measDIST.empty())
 						{
 							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-                            storeDIST(currentTSTN->instrument, currentROM);
+                            currentROM = currentTSTN->roms.back();
+
+                            storeDIST(currentROM);
 							distStored = true;
 							break;
 						}
@@ -926,7 +926,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeDIST(currentTSTN->instrument, currentROM);
+                    storeDIST(currentROM);
 					distStored = true;
 				}
 			}
@@ -938,18 +938,18 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeDIST(currentTSTN->instrument, currentROM);
+                storeDIST(currentROM);
 			}
 		}
 		else
-            storeDIST(currentTSTN->instrument, currentROM);
+            storeDIST(currentROM);
 	}
 }
 
 void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 
-    auto storeECTH = [&](TInstrumentData::TSCALE& ScaleInstr, shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
@@ -965,6 +965,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("ECTH measurement is duplicated");
 
+        auto &ScaleInstr = finstruments.fSCALE.at("ECTHInstr");
 		ScaleInstr.sigmaD = sigma;
 		ScaleInstr.distCorrectionValue = dcorr;
 
@@ -1079,7 +1080,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
-                            storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
+                            storeECTH(currentROM);
 							ecthStored = true;
 							break;
 						}
@@ -1099,8 +1100,8 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
-					ecthStored = true;
+                    storeECTH(currentROM);
+                    ecthStored = true;
 				}
 			}
 			else
@@ -1111,17 +1112,17 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
-			}
+                storeECTH(currentROM);
+            }
 		}
 		else
-            storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
-	}	
+            storeECTH(currentROM);
+    }
 }
 
 void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeDHOR = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -1137,6 +1138,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		tgt.sigmaDist = sigmaDIST;
@@ -1270,8 +1272,6 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			dhor.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
 
 		rom->measDHOR.emplace_back(dhor);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -1315,8 +1315,9 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						if (itTstn->roms.back()->measDHOR.empty())
 						{
 							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-                            storeDHOR(currentTSTN->instrument, currentROM);
+                            currentROM = currentTSTN->roms.back();
+
+                            storeDHOR(currentROM);
 							distStored = true;
 							break;
 						}
@@ -1336,7 +1337,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeDHOR(currentTSTN->instrument, currentROM);
+                    storeDHOR(currentROM);
 					distStored = true;
 				}
 			}
@@ -1348,11 +1349,11 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeDHOR(currentTSTN->instrument, currentROM);
+                storeDHOR(currentROM);
 			}
 		}
 		else
-            storeDHOR(currentTSTN->instrument, currentROM);
+            storeDHOR(currentROM);
 	}
 }
 
