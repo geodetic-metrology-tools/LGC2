@@ -98,7 +98,7 @@ private:
 		
 		 /// Write frame data from simualtions
 		void	writeSimFRAMEData(const TSimFrameSummary& simFr, const int i);
-								
+
 	//@}
 
 };

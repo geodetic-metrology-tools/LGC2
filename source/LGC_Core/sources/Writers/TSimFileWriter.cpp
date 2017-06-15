@@ -22,6 +22,8 @@ TSimFileWriter::TSimFileWriter() : TAFileWriter()
 
 TSimFileWriter::TSimFileWriter(TAStreamFormatter* stream, const TLGCData* project) : TAFileWriter(stream, project), data(project)
 {//constructor
+	// set comments to write back in the input file
+	stream->setComments(const_cast<TLGCData*>(project)->getComments());
 }
 
 

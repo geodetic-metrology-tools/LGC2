@@ -148,6 +148,11 @@ public:
 		TFileLogger& getFileLogger() {return *fileLogger;}
 		/// Returns the constant referrence on file logger used to write on an output file
 		TFileLogger const& getFileLogger() const {return *fileLogger;}
+	
+		/// Retrieves the comments
+		std::map<int, std::string>& getComments() { return comments; }
+		/// push a comment to the comment's map
+		void pushComment(std::pair<int, std::string> comment) { comments.insert(comment); }
 	//@}
 
 
@@ -285,6 +290,8 @@ private:
 	TPointGlobal   fPointInfo;
 	TMeasurementsGlobal fMeasInfo;
 
+	/// Comments lines, with their line number as Key
+	std::map<int, std::string> comments;
 };
 
 

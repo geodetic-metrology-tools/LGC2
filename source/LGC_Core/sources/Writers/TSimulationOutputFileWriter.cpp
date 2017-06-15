@@ -23,25 +23,20 @@ TSimulationOutputFileWriter::TSimulationOutputFileWriter() : TResultsFileWriter(
 {//default constructor
 }
 
-
 TSimulationOutputFileWriter::TSimulationOutputFileWriter(TAStreamFormatter* stream, const TLGCData* project) : TResultsFileWriter(stream, project)
 {//constructor
 }
-
 
 TSimulationOutputFileWriter::~TSimulationOutputFileWriter()
 {//destructor
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MEMBER PUBLIC FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // Write the first part of the LGC simulation results file for the given project
-void	TSimulationOutputFileWriter::writeFileBegin()
+void TSimulationOutputFileWriter::writeFileBegin()
 {
 	//Limited just number of points and unknowns for points for now
 	this->initObsListNumber();	
@@ -56,7 +51,7 @@ void	TSimulationOutputFileWriter::writeFileBegin()
 	this->writeCalcDataSummary();
 }
 
-void	TSimulationOutputFileWriter::writeSimSummary(TLGCData &project, int numberOfSim)
+void TSimulationOutputFileWriter::writeSimSummary(TLGCData &project, int numberOfSim)
 {
 	//write simulation header
 	this->writeSimHeader(project, numberOfSim);
@@ -69,8 +64,7 @@ void	TSimulationOutputFileWriter::writeSimSummary(TLGCData &project, int numberO
 	}
 }
 
-
-void	TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numberOfSim)
+void TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numberOfSim)
 {
 	//write simulation header
 	this->writeSimHeader(project, numberOfSim);
@@ -84,7 +78,7 @@ void	TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numb
 }
 
 //Write the header for a given simulation
-void	TSimulationOutputFileWriter::writeSimHeader(TLGCData &data, int i)
+void TSimulationOutputFileWriter::writeSimHeader(TLGCData &data, int i)
 {
 	TAStreamFormatter* stream = getStream();
 	string separator = getSeparator();
@@ -343,7 +337,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEDescription(){
 	stream->setSeparator(origSepar);
 }
 
-void	TSimulationOutputFileWriter::writeRelErrorHeader()
+void TSimulationOutputFileWriter::writeRelErrorHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -384,7 +378,7 @@ void	TSimulationOutputFileWriter::writeRelErrorHeader()
 	return;
 }
 
-void	TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
+void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 {
 
 	TAStreamFormatter*	stream = getStream();
@@ -555,7 +549,7 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 ////////////////////////////////////////////////////////////
 //STATISTIC
 ////////////////////////////////////////////////////////////
-void	TSimulationOutputFileWriter::writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu)
+void TSimulationOutputFileWriter::writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu)
 {
 	writeSimTableDescription(projTitle, "POINTS", numbOfSimu);
 
@@ -573,7 +567,7 @@ void TSimulationOutputFileWriter::writeSimFramesSummary(const std::list<TSimFram
 	}
 }
 
-void	TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simPt, const int i)
+void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simPt, const int i)
 {//write point's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
@@ -783,7 +777,7 @@ void	TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 
 }
 
-void	TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const int i)
+void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simFr, const int i)
 {
 	//writeframe's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/

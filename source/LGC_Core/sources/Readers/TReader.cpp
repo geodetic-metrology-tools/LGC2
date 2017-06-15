@@ -282,6 +282,7 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 		}
 		// % means comment line, i.e. to be ignored
 		if (tokLine[0][0] == *"%"){
+			project.pushComment(std::pair<int, std::string>(nline, line));
 			safeGetline(lgcStream, line/*, '*'*/);
 			continue;
 		}
@@ -429,6 +430,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		}
 		// % means comment line, i.e. to be ignored
 		if (tokLine[0][0] == *"%"){
+			project.getComments()[nline] = line;
 			safeGetline(lgcStream, line/*, '*'*/);
 			continue;
 		}
