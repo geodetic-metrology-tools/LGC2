@@ -328,14 +328,17 @@ void TDataAnalyzer::assignEOIndices(){
                 tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
                 // If ROT3D used, instrument height is fixed and is equal to 0
-                // (NB. These parameters will not affect in lgc1 case (instrumentHeightAdjustable,
-                // see above), since the option ROT3D is not possible in lgc1)
+                // (NB. These parameters will not affect in lgc1 case,
+                // since the option ROT3D is not possible in lgc1)
                 tstn->ihfix = true;
                 tstn->instrument.instrHeight = TLength(0.0);
             }
 
-            // Check if the adjustable length already exists (only in lgc2 case, see above)
-            if(!fData.isLGCv1())
+            // Add the instr height adjustable length into the global collection:
+            // NB!
+            // - LGCv1: add when ZEND is used (there will be only one ROM per each TSTN)
+            // - LGCv2: add always
+            if(!fData.isLGCv1() || !tstn->roms.front()->measZEND.empty())
                 tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
             for(auto &rom : tstn->roms){
