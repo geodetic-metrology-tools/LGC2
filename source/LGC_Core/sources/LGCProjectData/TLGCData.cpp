@@ -272,6 +272,8 @@ void TLGCData::reInitForSIMU(){
 std::shared_ptr<TLGCData> TLGCData::clone() const {
     auto d = std::make_shared<TLGCData>();
     
+    d->islgc1 = islgc1;
+
     // Copy adjustable objects collections:
     d->points = points;
     d->lines = lines;

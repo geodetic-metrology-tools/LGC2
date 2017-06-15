@@ -84,7 +84,7 @@ void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 
 void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeANGL = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -100,6 +100,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget &tgt = instr.targets["PolarTgt"];
 
 		if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
@@ -107,21 +108,25 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			tgt.sigmaAngl = sigmaANGL;
 			constanteANGL = TAngle(std::stor(tokens.at(3).substr(1)), TAngle::EUnits::kGons);
 			instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 		}
 		else if ((tokens.size() == 4 && tokens.at(3).compare(0, 1, "/") && tokens.at(3).compare(0, 1, "$") && tokens.at(3).compare(0, 1, "%")) || (tokens.size() == 5 && tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 		{
 			tgt.sigmaAngl = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-			instr.constAngle = constanteANGL;
+            instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 		}
 		else if (tokens.size() >= 5)
 		{
 			tgt.sigmaAngl = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 			constanteANGL = TAngle(std::stor(tokens.at(4).substr(1)), TAngle::EUnits::kGons);
-			instr.constAngle = constanteANGL;
+            instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 		}
 		else
 		{
-			instr.constAngle = constanteANGL;
+            instr.constAngle = constanteANGL;
+            currentTSTN->instrument.constAngle = constanteANGL;
 			tgt.sigmaAngl = sigmaANGL;
 		}
 
@@ -138,8 +143,6 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			angl.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
 		rom->measANGL.emplace_back(angl);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -173,7 +176,8 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
-							storeANGL(currentTSTN->instrument, currentROM);
+
+                            storeANGL(currentROM);
 							anglStored = true;
 							break;
 						}
@@ -193,7 +197,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeANGL(currentTSTN->instrument, currentROM);
+                    storeANGL(currentROM);
 					anglStored = true;
 				}
 			}
@@ -205,17 +209,17 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeANGL(currentTSTN->instrument, currentROM);
+                storeANGL(currentROM);
 			}
 		}
 		else
-            storeANGL(currentTSTN->instrument, currentROM);
+            storeANGL(currentROM);
 	}
 }
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeZENI = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -231,9 +235,9 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
-		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+        auto &instr = getPolarInstr();
+        TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
-		currentTSTN->instrumentHeightAdjustable = IH_adj;
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
 		tgt.sigmaZenD = sigmaZEND;
 
@@ -264,8 +268,6 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
         rom->measZEND.emplace_back(zend);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -276,9 +278,6 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigmaZEND = TAngle(std::stor(tokens.at(2)), TAngle::EUnits::kCCs);
 		else
 			sigmaZEND = TAngle(1.0, TAngle::EUnits::kCCs);
-
-		// Add adjustable scalar into a global collection and store a pointer
-        IH_adj = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_IH"));
 		
 		currentStation = "";
 	}
@@ -301,7 +300,8 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
-                            storeZENI(currentTSTN->instrument, currentROM);
+
+                            storeZENI(currentROM);
 							zendStored = true;
 							break;
 						}
@@ -321,7 +321,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeZENI(currentTSTN->instrument, currentROM);
+                    storeZENI(currentROM);
 					zendStored = true;
 				}
 			}
@@ -333,17 +333,17 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeZENI(currentTSTN->instrument, currentROM);
+                storeZENI(currentROM);
 			}
 		}
 		else
-            storeZENI(currentTSTN->instrument, currentROM);
+            storeZENI(currentROM);
 	}
 }
 
 void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeZENH = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -359,17 +359,15 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		//default values
-		currentTSTN->instrumentHeightAdjustable = IH_adj;
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
 		tgt.sigmaZenD = sigmaZEND;
-		if (IH_adj!= nullptr && firstmeas)
-			instr.instrHeight = IH_adj->getEstimatedValue();
-		else
-			instr.instrHeight = TLength(0.0, TLength::EUnits::kMetres);
-		
+        currentTSTN->ihfix = true;
+        instr.instrHeight = TLength(0.0, TLength::EUnits::kMetres);
+
 		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
 			if (tokens.size() == 5)
@@ -378,68 +376,51 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaZenD = sigmaZEND;
 					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					if (firstmeas)
-						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-
 
 				}
 				else if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
-
 					tgt.sigmaZenD = sigmaZEND;
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 				}
 				else
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-					if (firstmeas)
-						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-
 				}
 			}
 			else if (tokens.size() == 6)
 			{
 				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
+
+                    tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 
 				}
 				else if (!tokens.at(4).compare(0, 1, "/") && firstmeas)
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+                    instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 				}
 				else
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					if (firstmeas)
-						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-
 				}
 			}
 			else if (tokens.size() == 7 && firstmeas)
 			{
 				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-				// Add adjustable scalar into a global collection and store a pointer
-				instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			}
-			else if (!IH_adj && firstmeas)
-			{
-				// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+                instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                currentTSTN->instrument.instrHeight = instr.instrHeight;
+
+                tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 			}
 			else if (!firstmeas)
 				if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !firstmeas && !tokens.at(4).compare(0, 1, "/")) || tokens.size() == 6)
@@ -453,66 +434,51 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaZenD = sigmaZEND;
 					tgt.targetHt = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					if (firstmeas)
-						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 
 				}
 				else if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
-
 					tgt.sigmaZenD = sigmaZEND;
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 				}
 				else 
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-					if (firstmeas)
-						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
 				}
 			}
 			else if (tokens.size() == 5)
 			{
 				if (!tokens.at(3).compare(0, 1, "/") && firstmeas)
 				{
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instr.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
+
+                    tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 
 				}
 				else if (!tokens.at(4).compare(0, 1, "/") && firstmeas)
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-					// Add adjustable scalar into a global collection and store a pointer
-					instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+                    instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentTSTN->instrument.instrHeight = instr.instrHeight;
 				}
 				else
 				{
 					tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
 					tgt.targetHt = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					if (firstmeas)
-						// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-						IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-
 				}
 			}
 			else if (tokens.size() == 6 && firstmeas)
 			{
 				tgt.sigmaZenD = TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs);
-				// Add adjustable scalar into a global collection and store a pointer
-				instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
-				tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-			}
-			else if (!IH_adj && firstmeas)
-			{
-				// create a default TAdjustableLength at first measurement only if no instrument height is defined in the input file
-				IH_adj = &flengths.addObject(TAdjustableLength(instr.instrHeight, 1, currentStation + std::to_string(line) + "_IH"));
+
+                instr.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                currentTSTN->instrument.instrHeight = instr.instrHeight;
+
+                tgt.targetHt = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
 			}
 			else if (!firstmeas)
 				if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !firstmeas && !tokens.at(4).compare(0, 1, "/")) || tokens.size() == 6)
@@ -535,8 +501,6 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
 
         rom->measZEND.emplace_back(zend);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -559,7 +523,6 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		{
 			currentStation = tokens.at(0);
 			firstmeas = true;
-			IH_adj = nullptr;
 
 			if (proj.getCurrentNode().measurements.fTSTN.size() != 0)
 			{
@@ -572,8 +535,9 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						if (itTstn->roms.back()->measZEND.empty())
 						{
 							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-                            storeZENH(currentTSTN->instrument, currentROM);
+                            currentROM = currentTSTN->roms.back();
+
+                            storeZENH(currentROM);
 							zendStored = true;
 							break;
 						}
@@ -593,7 +557,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeZENH(currentTSTN->instrument, currentROM);
+                    storeZENH(currentROM);
 					zendStored = true;
 				}
 			}
@@ -605,17 +569,17 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeZENH(currentTSTN->instrument, currentROM);
+                storeZENH(currentROM);
 			}
 		}
 		else
-            storeZENH(currentTSTN->instrument, currentROM);
+            storeZENH(currentROM);
 	}	
 }
 
 void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeDIST = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -631,6 +595,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DTHE measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		tgt.sigmaDist = sigmaDIST;
@@ -855,15 +820,11 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			dthe.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
 
         rom->measDIST.emplace_back(dthe);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline)
 	{
-		// Add adjustable scalar into a global collection and store a pointer
-        IH_adj = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_IH"));
 		// Add adjustable scalar into a global collection and store a pointer
 		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, currentStation + "_dcorr"));
 
@@ -905,8 +866,9 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						if (itTstn->roms.back()->measDIST.empty())
 						{
 							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-                            storeDIST(currentTSTN->instrument, currentROM);
+                            currentROM = currentTSTN->roms.back();
+
+                            storeDIST(currentROM);
 							distStored = true;
 							break;
 						}
@@ -926,7 +888,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeDIST(currentTSTN->instrument, currentROM);
+                    storeDIST(currentROM);
 					distStored = true;
 				}
 			}
@@ -938,18 +900,18 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeDIST(currentTSTN->instrument, currentROM);
+                storeDIST(currentROM);
 			}
 		}
 		else
-            storeDIST(currentTSTN->instrument, currentROM);
+            storeDIST(currentROM);
 	}
 }
 
 void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 
-    auto storeECTH = [&](TInstrumentData::TSCALE& ScaleInstr, shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
@@ -965,6 +927,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("ECTH measurement is duplicated");
 
+        auto &ScaleInstr = finstruments.fSCALE.at("ECTHInstr");
 		ScaleInstr.sigmaD = sigma;
 		ScaleInstr.distCorrectionValue = dcorr;
 
@@ -1079,7 +1042,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						{
 							currentTSTN = itTstn;
 							currentROM = currentTSTN->roms.back();
-                            storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
+                            storeECTH(currentROM);
 							ecthStored = true;
 							break;
 						}
@@ -1099,8 +1062,8 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
-					ecthStored = true;
+                    storeECTH(currentROM);
+                    ecthStored = true;
 				}
 			}
 			else
@@ -1111,17 +1074,17 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
-			}
+                storeECTH(currentROM);
+            }
 		}
 		else
-            storeECTH((*finstruments.fSCALE.begin()).second, currentROM);
-	}	
+            storeECTH(currentROM);
+    }
 }
 
 void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-    auto storeDHOR = [&](TInstrumentData::TPOLAR& instr, shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
@@ -1137,6 +1100,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
+        auto &instr = getPolarInstr();
 		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
 
 		tgt.sigmaDist = sigmaDIST;
@@ -1270,8 +1234,6 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			dhor.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
 
 		rom->measDHOR.emplace_back(dhor);
-
-        getPolarInstr() = instr;
 	};
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
@@ -1315,8 +1277,9 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 						if (itTstn->roms.back()->measDHOR.empty())
 						{
 							currentTSTN = itTstn;
-							currentROM = currentTSTN->roms.back();
-                            storeDHOR(currentTSTN->instrument, currentROM);
+                            currentROM = currentTSTN->roms.back();
+
+                            storeDHOR(currentROM);
 							distStored = true;
 							break;
 						}
@@ -1336,7 +1299,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					createROM(currentTSTN);
 					currentROM = currentTSTN->roms.back();
 
-                    storeDHOR(currentTSTN->instrument, currentROM);
+                    storeDHOR(currentROM);
 					distStored = true;
 				}
 			}
@@ -1348,11 +1311,11 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				createROM(currentTSTN);
 				currentROM = currentTSTN->roms.back();
 
-                storeDHOR(currentTSTN->instrument, currentROM);
+                storeDHOR(currentROM);
 			}
 		}
 		else
-            storeDHOR(currentTSTN->instrument, currentROM);
+            storeDHOR(currentROM);
 	}
 }
 
@@ -1484,6 +1447,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		tgt.distCorrectionValue = dcorr;
 		tgt.distCorrectionAdjustable = adjDCorr;
 
+        auto &currentEDM = proj.getCurrentNode().measurements.fEDM.back();
+
 		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
 		{
 			if (tokens.size() == 5)
@@ -1507,7 +1472,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				if (!tokens.at(3).compare(0, 1, "\\"))
 				{
-					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(4) == "C")
@@ -1536,13 +1502,15 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (!tokens.at(4).compare(0, 1, "\\"))
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(5) == "C")
@@ -1571,7 +1539,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                currentEDM.instrument.instrHeight = instrument.instrHeight;
 				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
 
 				if (tokens.at(5) == "C")
@@ -1589,7 +1558,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			else if (tokens.size() == 8)
 			{
 				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				instrument.instrHeight = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+                instrument.instrHeight = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
+                currentEDM.instrument.instrHeight = instrument.instrHeight;
 				tgt.targetHt = TLength(std::stor(tokens.at(6)), TLength::EUnits::kMetres);
 
 				if (tokens.at(4) == "C")
@@ -1631,7 +1601,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				if (!tokens.at(3).compare(0, 1, "\\"))
 				{
-					instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(4) == "C")
@@ -1660,13 +1631,15 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
 					tgt.distCorrectionValue = dcorr;
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (!tokens.at(4).compare(0, 1, "\\"))
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
+                    currentEDM.instrument.instrHeight = instrument.instrHeight;
 					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
 				}
 				else if (tokens.at(5) == "C")
@@ -1695,7 +1668,8 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			{
 				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
+                currentEDM.instrument.instrHeight = instrument.instrHeight;
 				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
 
 				if (tokens.at(5) == "C")
@@ -1713,7 +1687,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		}
 
 		// Store  the measured value
-		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
+		currentEDM.measDSPT.emplace_back(
 			TDSPT(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))))
 			);
 

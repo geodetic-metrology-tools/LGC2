@@ -322,25 +322,23 @@ void TDataAnalyzer::assignEOIndices(){
         // TSTN
         for(auto &tstn : measurements.fTSTN){
 
-            // For lgc1 compatibility:
-            // (lgc2 READER does not create the adjustable length
-            // but stores only the ihfix parameter of the tstn)
-            bool lgc1 = tstn->instrumentHeightAdjustable != nullptr;
-
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
                 tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
                 tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
                 // If ROT3D used, instrument height is fixed and is equal to 0
-                // (NB. These parameters will not affect in lgc1 case (instrumentHeightAdjustable,
-                // see above), since the option ROT3D is not possible in lgc1)
+                // (NB. These parameters will not affect in lgc1 case,
+                // since the option ROT3D is not possible in lgc1)
                 tstn->ihfix = true;
                 tstn->instrument.instrHeight = TLength(0.0);
             }
 
-            // Check if the adjustable length already exists (only in lgc2 case, see above)
-            if(!lgc1)
+            // Add the instr height adjustable length into the global collection:
+            // NB!
+            // - LGCv1: add when ZEND is used (there will be only one ROM per each TSTN)
+            // - LGCv2: add always
+            if(!fData.isLGCv1() || !tstn->roms.front()->measZEND.empty())
                 tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
             for(auto &rom : tstn->roms){

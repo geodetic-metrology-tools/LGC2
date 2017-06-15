@@ -88,8 +88,7 @@ public:
 	TKeyZENI_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_zeni_lgc1, const char** keywords = allowed_ZENI_lgc1) :
 		TAMeasurementKey_lgc1(project, ZENI),
 		currentTSTN(nullptr),
-		currentROM(nullptr),
-		IH_adj(nullptr)
+		currentROM(nullptr)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -107,7 +106,6 @@ private:
 	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
-	TAdjustableLength* IH_adj;
 };
 
 /// Keyword to process Zenith distance measurement
@@ -118,7 +116,6 @@ public:
 		TAMeasurementKey_lgc1(project, ZENH),
 		currentTSTN(nullptr),
 		currentROM(nullptr),
-		IH_adj(nullptr),
 		firstmeas(true)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
@@ -136,7 +133,6 @@ private:
 	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
-	TAdjustableLength* IH_adj;
 	bool firstmeas;
 };
 
@@ -148,7 +144,6 @@ public:
 		TAMeasurementKey_lgc1(project, DTHE),
 		currentTSTN(nullptr),
 		currentROM(nullptr),
-		IH_adj(nullptr),
 		adjDCorr(nullptr)
 	{
 		for (int i(0); i< nb_allowed_keywords; i++)
@@ -169,7 +164,6 @@ private:
 	string currentStation = "";
 	shared_ptr<TTSTN> currentTSTN;
 	shared_ptr<TTSTN::TROM> currentROM;
-	TAdjustableLength* IH_adj;
 	TAdjustableLength* adjDCorr;
 };
 
