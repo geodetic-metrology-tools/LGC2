@@ -327,6 +327,9 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
         d->fRelError.push_back(erel);
     }
 
+	// Copy comments
+	d->comments = comments;
+
     return d;
 }
 
