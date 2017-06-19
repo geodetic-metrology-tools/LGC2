@@ -17,8 +17,8 @@ void TLEVEL::initialiseObsSummaries() {
 
 
     // Initialise the obsSummaries:
-    dlevSummary_.initialise();
-    dhorSummary_.initialise();
+    if(measDLEV.size() != 0) dlevSummary_.initialise();
+    if(dhorSummary_.getNumberOfObs() != 0) dhorSummary_.initialise();
 }
 
 const TLGCObsSummary&  TLEVEL::getDLEVObsSummary() const { return dlevSummary_; }

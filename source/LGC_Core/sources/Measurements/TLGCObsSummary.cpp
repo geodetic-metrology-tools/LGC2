@@ -288,8 +288,15 @@ TLGCObsSummary TLGCObsSummary::merge(const std::list<const TLGCObsSummary*> &sum
     TLGCObsSummary summary;
     if(summaries.size() == 0) return summary;
 
+    bool isAnyInitialised = false;
+
     bool first = true;
     for(const auto &sum : summaries){
+        // Don't merge uninitialised summaries:
+        if(!sum->isInitialised()) continue;
+        
+        isAnyInitialised = true;
+        
         if(first){
             // Use the first element as the base:
             summary.fObsText = sum->fObsText;
@@ -313,6 +320,6 @@ TLGCObsSummary TLGCObsSummary::merge(const std::list<const TLGCObsSummary*> &sum
         summary.fHistoList.insert(summary.fHistoList.end(), sum->fHistoList.begin(), sum->fHistoList.end());
     }
 
-    summary.initialise();
+    if(isAnyInitialised) summary.initialise();
     return summary;
 }

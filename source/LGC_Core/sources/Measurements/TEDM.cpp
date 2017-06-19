@@ -11,7 +11,7 @@ void TEDM::initialiseObsSummaries() {
         dsptSummary_.addNewResidual(ItEDM.getDistanceResidual().getMMetresValue());
 
     // Initialise the obsSummaries:
-    dsptSummary_.initialise();
+    if(measDSPT.size() != 0) dsptSummary_.initialise();
 }
 
 const TLGCObsSummary& TEDM::getDSPTObsSummary() const { return dsptSummary_; }

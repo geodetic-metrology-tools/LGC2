@@ -39,8 +39,8 @@ void TMeasurements::initialiseObsSummaries() {
         radiSummary_.addNewResidual(radi.getResidual().getMMetresValue());
 
     // Initialise the obsSummaries:
-    dverSummary_.initialise();
-    radiSummary_.initialise();
+    if(fDVER.size() != 0) dverSummary_.initialise();
+    if(fRADI.size() != 0) radiSummary_.initialise();
 
     // Initialise the observation summaries of
     // measurements that use an instrument. Initialise

@@ -42,15 +42,17 @@ void TTSTN::TROM::initialiseObsSummaries() {
     }
 
     // Initialise the obsSummaries:
-    plr3dSummary_.distObsSum.initialise();
-    plr3dSummary_.anglObsSum.initialise();
-    plr3dSummary_.zendObsSum.initialise();
-    anglSummary_.initialise();
-    zendSummary_.initialise();
-    distSummary_.initialise();
-    dhorSummary_.initialise();
-    ecthSummary_.initialise();
-    ecdirSummary_.initialise();
+    if(measPLR3D.size() != 0){
+        plr3dSummary_.distObsSum.initialise();
+        plr3dSummary_.anglObsSum.initialise();
+        plr3dSummary_.zendObsSum.initialise();
+    }
+    if(measANGL.size() != 0) anglSummary_.initialise();
+    if(measZEND.size() != 0) zendSummary_.initialise();
+    if(measDIST.size() != 0) distSummary_.initialise();
+    if(measDHOR.size() != 0) dhorSummary_.initialise();
+    if(measECTH.size() != 0) ecthSummary_.initialise();
+    if(measECDIR.size() != 0) ecdirSummary_.initialise();
 }
 
 const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary() const { return anglSummary_; }

@@ -24,11 +24,15 @@ void TCAM::initialiseObsSummaries() {
     }
 
     // Initialise the obsSummaries:
-    uvdSummary_.xVectorCompObsSum.initialise();
-    uvdSummary_.yVectorCompObsSum.initialise();
-    uvdSummary_.distObsSum.initialise();
-    uvecSummary_.xVectorCompObsSum.initialise();
-    uvecSummary_.yVectorCompObsSum.initialise();
+    if(measUVD.size() != 0){
+        uvdSummary_.xVectorCompObsSum.initialise();
+        uvdSummary_.yVectorCompObsSum.initialise();
+        uvdSummary_.distObsSum.initialise();
+    }
+    if(measUVEC.size() != 0){
+        uvecSummary_.xVectorCompObsSum.initialise();
+        uvecSummary_.yVectorCompObsSum.initialise();
+    }
 }
 
 const TUVDObsSummary& TCAM::getUVDObsSummary() const { return uvdSummary_; }

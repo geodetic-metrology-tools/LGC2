@@ -14,7 +14,7 @@ void TECHOROM::initialiseObsSummaries() {
         echoSummary_.addNewResidual(ItECHOROM.getDistanceResidual().getMMetresValue());
 
     // Initialise the obsSummaries:
-    echoSummary_.initialise();
+    if(measECHO.size() != 0) echoSummary_.initialise();
 }
 
 void TECSPROM::initialiseObsSummaries() {
@@ -26,7 +26,7 @@ void TECSPROM::initialiseObsSummaries() {
         ecspSummary_.addNewResidual(ItECSPROM.getDistanceResidual().getMMetresValue());
 
     // Initialise the obsSummaries:
-    ecspSummary_.initialise();
+    if(measECSP.size() != 0) ecspSummary_.initialise();
 }
 
 void TECVEROM::initialiseObsSummaries() {
@@ -38,7 +38,7 @@ void TECVEROM::initialiseObsSummaries() {
         ecveSummary_.addNewResidual(ItECVEROM.getDistanceResidual().getMMetresValue());
 
     // Initialise the obsSummaries:
-    ecveSummary_.initialise();
+    if(measECVE.size() != 0) ecveSummary_.initialise();
 }
 
 void TORIEROM::initialiseObsSummaries() {
@@ -50,7 +50,7 @@ void TORIEROM::initialiseObsSummaries() {
         orieSummary_.addNewResidual(ItORIE.getAngleResidual().getSignedCCValue());
 
     // Initialise the obsSummaries:
-    orieSummary_.initialise();
+    if(measORIE.size() != 0) orieSummary_.initialise();
 }
 
 const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
