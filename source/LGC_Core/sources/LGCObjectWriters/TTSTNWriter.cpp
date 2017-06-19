@@ -361,7 +361,7 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //residual
 	(*stream).writeString(obsResWidth,	"(MM/CM)"); //ecart
 	(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
-	(*stream).writeString(obsWidth,	"(M)"); //provisional dist corr
+	(*stream).writeString(obsWidth,	"(MM)"); //provisional dist corr
 	(*stream).writeString(obsResWidth,	"(MM)"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
@@ -954,14 +954,14 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 				else
 					(*stream).writeString(obsWidth, "FIXED");
 			else
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue());
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue().getMMetresValue());
 
 			//write the distance cste sigma )
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
 		}
 		else {
 			//write the distance cste
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getProvisionalValue());
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getProvisionalValue().getMMetresValue());
 
 			//write the distance cste sigma 
 			(*stream).writeString(obsResWidth, "FIXED");
