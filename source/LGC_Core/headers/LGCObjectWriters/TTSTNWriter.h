@@ -8,6 +8,7 @@
 //LGC
 #include <TTSTN.h>
 #include <TObservationWriter.h>
+#include "LGCAdjustablePoint.h"
 
 
 /*!
@@ -98,6 +99,22 @@ public:
     static TReal getDistanceSigmaInMM(TMEAS const * const meas){
         // Return value in millimeters [mm]
         return (meas->target.sigmaDist + meas->target.ppmDist * meas->getDistance() / 1000)*M2MM;
+    }
+
+    template<class TMEAS>
+    static TReal getDistanceSensibility(TMEAS const * const meas, LGCAdjustablePoint const * const instrPos, const TInstrumentData::TPOLAR& instr) {
+        TReal dz = meas->targetPos->getEstValue(2) + meas->target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
+        return meas->target.distCorrectionUnknown ?
+            10 * dz / (meas->getDistance() + meas->getDistanceResidual() + meas->target.distCorrectionAdjustable->getEstimatedValue()) :
+            10 * dz / (meas->getDistance() + meas->getDistanceResidual());
+    }
+
+    /// Get the estimated euclidean distance between two points
+    static TReal getEstEuclDistance(LGCAdjustablePoint const * const p1, LGCAdjustablePoint const * const p2){
+        return sqrt(
+            pow2(p1->getEstValue(0) - p2->getEstValue(0)) +
+            pow2(p1->getEstValue(1) - p2->getEstValue(1)) +
+            pow2(p1->getEstValue(2) - p2->getEstValue(2)));
     }
 
 private:

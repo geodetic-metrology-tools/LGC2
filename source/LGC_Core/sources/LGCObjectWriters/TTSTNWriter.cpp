@@ -3,7 +3,6 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 #include <Global.h>
-#include "LGCAdjustablePoint.h"
 
 TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
 {}
@@ -715,9 +714,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 
 
 		//ECART	
-		TReal dist = sqrt(pow2(ItPLR3D.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
-			pow2(ItPLR3D.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
-			pow2(ItPLR3D.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+        TReal dist = getEstEuclDistance(ItPLR3D.targetPos, instrPos);
 
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue()*dist*M2MM);
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue()*dist*M2MM);
@@ -726,14 +723,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 
 		//DIST
 		//sensibility		
-		TReal dz = ItPLR3D.targetPos->getEstValue(2) + ItPLR3D.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
-		if (ItPLR3D.target.distCorrectionUnknown)
-		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual() + ItPLR3D.target.distCorrectionAdjustable->getEstimatedValue()));
-		}
-		else{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItPLR3D.getDistance() + ItPLR3D.getDistanceResidual()));
-		}
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSensibility<TPLR3D>(&ItPLR3D, instrPos, instr));
 
 		if (!ItPLR3D.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated(TLength (M))
@@ -820,9 +810,7 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue());
 
 		//write the offset	
-		TReal dist = sqrt(pow2(ItANGL.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
-			pow2(ItANGL.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
-			pow2(ItANGL.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+        TReal dist = getEstEuclDistance(ItANGL.targetPos, instrPos);
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.getAngleResidual().getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma
@@ -877,9 +865,7 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());
 
 		//write the offset	
-		TReal dist = sqrt(pow2(ItZEND.targetPos->getEstValue(0) - instrPos->getEstValue(0)) +
-			pow2(ItZEND.targetPos->getEstValue(1) - instrPos->getEstValue(1)) +
-			pow2(ItZEND.targetPos->getEstValue(2) - instrPos->getEstValue(2)));
+        TReal dist = getEstEuclDistance(ItZEND.targetPos, instrPos);
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma
@@ -934,14 +920,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual().getMMetresValue());
 
 		//write the sensibility	
-		TReal dz = ItDIST.targetPos->getEstValue(2) + ItDIST.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
-		if (ItDIST.target.distCorrectionUnknown)
-		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual() + ItDIST.target.distCorrectionAdjustable->getEstimatedValue()));
-		}
-		else{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDIST.getDistance() + ItDIST.getDistanceResidual()));
-		}
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSensibility<TLINE>(&ItDIST, instrPos, instr));
 
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, 2, (ItDIST.getDistanceResidual() / ItDIST.target.sigmaDist));
