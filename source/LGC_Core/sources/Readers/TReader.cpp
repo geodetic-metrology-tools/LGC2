@@ -363,7 +363,12 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 	}
 
 	if(TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames())
+	{
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "The number of opened frames (*FRAME) and closed frames (*ENDFRAME) must be equal!";
+		// Reset frame counter following to an inconsistency
+		TKeyFRAME::resetFrameCounter();
+		TKeyENDFRAME::resetEndFrameCounter();
+	}
 
 
     project.setLGCv1(false);
