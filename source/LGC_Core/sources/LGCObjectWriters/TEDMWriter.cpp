@@ -2,6 +2,8 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 
+#include "TTSTNWriter.h" // getDistanceSigmaInMM, getDistanceSensibility
+
 TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
 {}
 
@@ -120,13 +122,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual().getMMetresValue());//Output value in meters [mm], stored in [m]
 
 		//write the sensibility
-		TReal dz= ItDSPT.targetPos->getEstValue(2) + ItDSPT.target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
-		if (ItDSPT.target.distCorrectionUnknown)
-		{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 *dz / (ItDSPT.getDistance() + ItDSPT.getDistanceResidual() + ItDSPT.target.distCorrectionAdjustable->getEstimatedValue()));
-		}else{
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * dz / (ItDSPT.getDistance() + ItDSPT.getDistanceResidual()));
-		}
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, TTSTNWriter::getDistanceSensibility<TDSPT, TInstrumentData::TEDM>(&ItDSPT, instrPos, instr));
 
 		//write the res/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual()/ItDSPT.target.sigmaDSpt);
@@ -209,7 +205,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDspt.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM(&ItDspt));
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSigmaInMM(&ItDspt));
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 
