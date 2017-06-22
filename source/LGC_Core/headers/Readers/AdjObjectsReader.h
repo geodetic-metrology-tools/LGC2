@@ -28,6 +28,9 @@ class TKeyFRAME : public TAKeyWord {
 		///Returns the number of frames that were created
 		static int getNumberOfOpenedFrames() {return fNumberOfFramesOpened;};
 
+		/// Resets the number of ENDFRAME keyword
+		static void resetFrameCounter(){ fNumberOfFramesOpened = 0; }
+
 	private:
 		TKeyFRAME& operator=(const TKeyFRAME&);
 
@@ -52,6 +55,9 @@ class TKeyENDFRAME : public TAKeyWord {
 		///Returns the number of frames that were closed
 		static int getNumberOfClosedFrames() {return fNumberOfFramesClosed;};
 		
+		/// Resets the number of ENDFRAME keyword
+		static void resetEndFrameCounter(){ fNumberOfFramesClosed = 0; }
+
 	private:
 		static int fNumberOfFramesClosed; 
 };
