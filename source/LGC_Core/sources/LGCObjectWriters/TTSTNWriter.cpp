@@ -44,7 +44,7 @@ void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
 			writeECDIRResults(ItRoms->measECDIR, tstn->instrumentPos);
 		
 		if(ItRoms->measPLR3D.size() > 0)
-			writePLRResults(ItRoms->measPLR3D, tstn->instrument, tstn->instrumentPos, V0, tstn->rotX->getEstimatedValue(), tstn->rotY->getEstimatedValue());
+			writePLRResults(ItRoms->measPLR3D, tstn->instrument, tstn->instrumentPos, V0, tstn->rotX ? tstn->rotX->getEstimatedValue() : TAngle(0.0), tstn->rotY ? tstn->rotY->getEstimatedValue() : TAngle(0.0));
 		
 	}
 }
