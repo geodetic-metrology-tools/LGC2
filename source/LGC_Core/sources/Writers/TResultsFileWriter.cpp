@@ -275,7 +275,7 @@ void    TResultsFileWriter::writeDataSummary()
     int fNumECHO = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECHO);
 	int fNumECSP = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECSP);
 	int fNumECVE = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECVE);
-    // int fNumORIE = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kORIE);
+    int fNumORIE = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kORIE);
 	int fNumPDOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPDOR);
 	int fNumRADI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI);
  
