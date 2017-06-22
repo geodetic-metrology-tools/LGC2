@@ -132,7 +132,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 			//write the distance cste calculated
 			if (isAllfixed)
 				if (!isnotanumber(ItDSPT.fAllFixedCs))
-					(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.fAllFixedCs.getMMetresValue());
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.fAllFixedCs.getMetresValue());
 				else
 					(*stream).writeString(obsWidth, "FIXED");
 			else

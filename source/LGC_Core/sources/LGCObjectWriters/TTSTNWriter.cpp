@@ -360,7 +360,7 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //residual
 	(*stream).writeString(obsResWidth,	"(MM/CM)"); //ecart
 	(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
-	(*stream).writeString(obsWidth,	"(MM)"); //provisional dist corr
+	(*stream).writeString(obsWidth,	"(M)"); //provisional dist corr
 	(*stream).writeString(obsResWidth,	"(MM)"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
@@ -929,18 +929,18 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 			//write the distance cste calculated
 			if (isAllfixed)
 				if (!isnotanumber(ItDIST.fAllFixedCs))
-					(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMMetresValue());
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedCs.getMetresValue());
 				else
 					(*stream).writeString(obsWidth, "FIXED");
 			else
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue().getMMetresValue());
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedValue().getMetresValue());
 
 			//write the distance cste sigma )
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.distCorrectionAdjustable->getEstimatedPrecision().getMMetresValue());
 		}
 		else {
 			//write the distance cste
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getProvisionalValue().getMMetresValue());
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.distCorrectionAdjustable->getProvisionalValue().getMetresValue());
 
 			//write the distance cste sigma 
 			(*stream).writeString(obsResWidth, "FIXED");
@@ -1001,7 +1001,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 			//write the distance cste calculated
 			if (isAllfixed)
 				if (!isnotanumber(ItDHOR.fAllFixedCs))
-					(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMMetresValue());
+					(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.fAllFixedCs.getMetresValue());
 				else
 					(*stream).writeString(obsWidth, "FIXED");
 			else
