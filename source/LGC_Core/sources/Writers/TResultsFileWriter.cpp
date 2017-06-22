@@ -324,6 +324,9 @@ void    TResultsFileWriter::writeDataSummary()
 	
 	if (fNumECVE != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECVE), fNumECVE);
+
+    if(fNumORIE != 0)
+        writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kORIE), fNumORIE);
  
     if(fNumPDOR != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kPDOR), fNumPDOR);
