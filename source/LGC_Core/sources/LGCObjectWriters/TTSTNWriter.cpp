@@ -740,7 +740,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 
 		if (isAllfixed)
 			if (!isnotanumber(ItPLR3D.fAllFixedCs))
-				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedCs.getMMetresValue());
+				(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.fAllFixedCs.getMetresValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
 
