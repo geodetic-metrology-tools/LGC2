@@ -465,7 +465,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 			//variance
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionRot(1).getGonsValue()));
+			fStream->writeDouble(20, 16, pow2(frameDef.getEstimatedPrecisionRot(1)));
 
 			//covariances
 			if (!frameDef.isRotationFixed(2))
