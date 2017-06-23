@@ -1123,16 +1123,18 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsVertAngle.getGonsValue());
 
 		//write allfixed parameter
-		if (isAllfixed)
-			if (!isnotanumber(ItECSP.fAllFixedV0[0]))
-				(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
-			else
-				(*stream).writeString(obsWidth, "FIXED");
+        if(isAllfixed){
+            if(!isnotanumber(ItECSP.fAllFixedV0[0]))
+                (*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
+            else
+                (*stream).writeString(obsWidth, "FIXED");
 
-		if (!isnotanumber(ItECSP.fAllFixedV0[1]))
-			(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
-		else
-			(*stream).writeString(obsWidth, "FIXED");
+            if(!isnotanumber(ItECSP.fAllFixedV0[1]))
+                (*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
+            else
+                (*stream).writeString(obsWidth, "FIXED");
+        }
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;
