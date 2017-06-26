@@ -24,6 +24,15 @@ bool TDataAnalyzer::dataConsistent(){
     // (these are recounted in this function and assignEOIndices()):
     fData.setDefaultValues();
 
+    // Initialise the statistics about dimensions of different types of points
+    // NB! Do this here BEFORE creating Echo_lineXXXs and other sources of problems...
+    // (These statistics are needed in places where only the count of the
+    // "provisional points" is wanted. Later this function adds Echo_lineXXX points
+    // which will mess up the statistics if they are counted in as well.)
+    for(auto& point : fData.getPoints())
+        // Add the point to the count of total based on its type:
+        fData.addToPointNum(point.getSpatialStatus());
+
     // Assign the equation and observation indices, add different types
     // of measurements into the count of total in TLGCData:
     assignEOIndices();
@@ -33,7 +42,6 @@ bool TDataAnalyzer::dataConsistent(){
 	//cannot predetermine V in simulation and LIBR
 	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
 		predeterminePLR3DV0();
-
 
 	//Run through tree and check that whether all frames were initialized, assign unknown indices
 	//It is necessary to firstly iterate over the tree, because a Reference point might be created in DLEV measurement and measured plane is initialized
@@ -177,9 +185,6 @@ bool TDataAnalyzer::dataConsistent(){
 			fStandDevUsed = true;
 			fData.setStandDevUsed();
 		}
-
-        // Add the point to the count of total based on its type:
-        fData.addToPointNum(point.getSpatialStatus());
 
 		//Assign unknown indices
 		if(!point.isFixed()){
