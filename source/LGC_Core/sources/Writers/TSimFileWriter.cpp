@@ -502,10 +502,15 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 	string sep = stream->getSeparator();
 
     auto edmDefInst = data->getInstruments().fCAMD.at(meas->instrument.ID);
+    auto camDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
 
     (*stream) << "*CAM" << sep
         << meas->instrumentPos->getName() << sep
         << meas->instrument.ID << sep;
+
+    if(camDefTarget.ID != edmDefInst.defTarget)
+        (*stream) << "TRGT" << sep
+        << camDefTarget.ID << sep;
 	
     if(meas->instrument.sigmaInstrCentering != edmDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
@@ -515,6 +520,8 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 
 	if (!meas->measUVD.empty())
 	{
+        auto romDefTarget = camDefTarget;
+
 		(*stream) << "*UVD" << endl;
 
 		for (auto& uvd : meas->measUVD)
@@ -525,33 +532,39 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 				<< uvd.getVectorValue().getZ() << sep
 				<< uvd.getDistance().getMetresValue() << sep;
 
-			if (uvd.target.ID != meas->instrument.targets.at(meas->instrument.defTarget).ID)
+			if (uvd.target.ID != romDefTarget.ID)
 				(*stream) << "TRGT" << sep
 				<< uvd.target.ID << sep;
 
-			if (uvd.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+			if (uvd.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 				(*stream) << "TCSE" << sep
 				<< uvd.target.sigmaTargetCentering.getMMetresValue() << sep;
 			
-			if (uvd.target.sigmaX != meas->instrument.targets.at(meas->instrument.defTarget).sigmaX)
+			if (uvd.target.sigmaX != romDefTarget.sigmaX)
 				(*stream) << "XSE" << sep
 				<< uvd.target.sigmaX*M2MM<< sep;
 
-			if (uvd.target.sigmaY != meas->instrument.targets.at(meas->instrument.defTarget).sigmaY)
+			if (uvd.target.sigmaY != romDefTarget.sigmaY)
 				(*stream) << "YSE" << sep
 				<< uvd.target.sigmaY*M2MM << sep;
 
-            if(uvd.target.sigmaDist != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDist)
+            if(uvd.target.sigmaDist != romDefTarget.sigmaDist)
                 (*stream) << "DSE" << sep
                 << uvd.target.sigmaDist.getMMetresValue() << sep;
 
 			(*stream) << endl;
-		}
+
+            // Update the rom def target if necessary
+            if(uvd.target.ID != romDefTarget.ID)
+                romDefTarget = uvd.target;
+        }
 	}
 	
 	if (!meas->measUVEC.empty())
 	{
-		(*stream) << "*UVEC" << endl;
+        auto romDefTarget = camDefTarget;
+        
+        (*stream) << "*UVEC" << endl;
 
 		for (auto& uvec : meas->measUVEC)
 		{
@@ -560,23 +573,27 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 				<< uvec.getVectorValue().getY() << sep
 				<< uvec.getVectorValue().getZ() << sep;
 			
-			if (uvec.target.ID != meas->instrument.targets.at(meas->instrument.defTarget).ID)
+			if (uvec.target.ID != romDefTarget.ID)
 				(*stream) << "TRGT" << sep
 				<< uvec.target.ID << sep;
 
-			if (uvec.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+			if (uvec.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 				(*stream) << "TCSE" << sep
 				<< uvec.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-			if (uvec.target.sigmaX != meas->instrument.targets.at(meas->instrument.defTarget).sigmaX)
+			if (uvec.target.sigmaX != romDefTarget.sigmaX)
 				(*stream) << "XSE" << sep
 				<< uvec.target.sigmaX*M2MM << sep;
 
-			if (uvec.target.sigmaY != meas->instrument.targets.at(meas->instrument.defTarget).sigmaY)
+			if (uvec.target.sigmaY != romDefTarget.sigmaY)
 				(*stream) << "YSE" << sep
 				<< uvec.target.sigmaY*M2MM << sep;
 
 			(*stream) << endl;
+
+            // Update the rom def target if necessary
+            if(uvec.target.ID != romDefTarget.ID)
+                romDefTarget = uvec.target;
 		}
 	}
 }
@@ -634,6 +651,10 @@ void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 			<< itECHO.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
+
+        // Update the default target if necessary
+        if(itECHO.target.ID != scaleDefInst.ID)
+            scaleDefInst = itECHO.target;
 	}
 }
 
@@ -678,6 +699,10 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 			<< itECVE.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
+
+        // Update the default target if necessary
+        if(itECVE.target.ID != scaleDefInst.ID)
+            scaleDefInst = itECVE.target;
 	}
 
 }
@@ -695,30 +720,34 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 		<< scaleDefInst.ID << sep;
 	(*stream) << endl;
 
-		for (auto& ecsp : meas->measECSP)
-		{
-				(*stream) << ecsp.targetPos->getName() << sep
-					<< ecsp.getDistance().getMetresValue() << sep;
+    for(auto& ecsp : meas->measECSP)
+    {
+        (*stream) << ecsp.targetPos->getName() << sep
+            << ecsp.getDistance().getMetresValue() << sep;
 
-				if (ecsp.target.ID != scaleDefInst.ID)
-					(*stream) << "SCALE" << sep
-					<< ecsp.target.ID << sep;
+        if(ecsp.target.ID != scaleDefInst.ID)
+            (*stream) << "SCALE" << sep
+            << ecsp.target.ID << sep;
 
-				if (ecsp.target.sigmaD != scaleDefInst.sigmaD)
-					(*stream) << "OBSE" << sep
-					<< ecsp.target.sigmaD.getMMetresValue() << sep;
+        if(ecsp.target.sigmaD != scaleDefInst.sigmaD)
+            (*stream) << "OBSE" << sep
+            << ecsp.target.sigmaD.getMMetresValue() << sep;
 
-				if (ecsp.target.ppmD != scaleDefInst.ppmD)
-					(*stream) << "PPM" << sep
-					<< ecsp.target.ppmD.getMMetresValue() << sep;
+        if(ecsp.target.ppmD != scaleDefInst.ppmD)
+            (*stream) << "PPM" << sep
+            << ecsp.target.ppmD.getMMetresValue() << sep;
 
-				if (ecsp.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
-					(*stream) << "ICSE" << sep
-					<< ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
+        if(ecsp.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
+            (*stream) << "ICSE" << sep
+            << ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-				(*stream) << endl;
-			
-		}
+        (*stream) << endl;
+
+        // Update the default target if necessary
+        if(ecsp.target.ID != scaleDefInst.ID)
+            scaleDefInst = ecsp.target;
+
+    }
 }
 
 void TSimFileWriter::writeEDMMeas(TEDM* meas)
@@ -727,10 +756,15 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 	string sep = stream->getSeparator();
 
     auto edmDefInst = data->getInstruments().fEDM.at(meas->instrument.ID);
+    auto romDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
 
     (*stream) << "*DSPT" << sep
         << meas->instrumentPos->getName() << sep
         << meas->instrument.ID << sep;
+
+    if(meas->instrument.defTarget != edmDefInst.defTarget)
+        (*stream) << "TRGT" << sep
+        << romDefTarget.ID << sep;
 
     if(meas->instrument.instrHeight != edmDefInst.instrHeight)
         (*stream) << "IH" << sep
@@ -752,32 +786,36 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 		(*stream) << itDspt.targetPos->getName() << sep
 			<< itDspt.getDistance().getMetresValue() << sep;
 
-		if (itDspt.target.ID != meas->instrument.defTarget)
+		if (itDspt.target.ID != romDefTarget.ID)
 			(*stream) << "TRGT" << sep
 			<< itDspt.target.ID << sep;
 
-		if (itDspt.target.sigmaDSpt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDSpt)
+		if (itDspt.target.sigmaDSpt != romDefTarget.sigmaDSpt)
 			(*stream) << "OBSE" << sep
 			<< itDspt.target.sigmaDSpt.getMMetresValue() << sep;
 
-		if (itDspt.target.ppmDSpt != meas->instrument.targets.at(meas->instrument.defTarget).ppmDSpt)
+		if (itDspt.target.ppmDSpt != romDefTarget.ppmDSpt)
 			(*stream) << "PPM" << sep
 			<< itDspt.target.ppmDSpt.getMMetresValue() << sep;
 
-		if (itDspt.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
+		if (itDspt.target.targetHt != romDefTarget.targetHt)
 			(*stream) << "TH" << sep
 			<< itDspt.target.targetHt.getMetresValue() << sep;
 
-		if (itDspt.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
+		if (itDspt.target.sigmaTargetHt != romDefTarget.sigmaTargetHt)
 			(*stream) << "THSE" << sep
 			<< itDspt.target.sigmaTargetHt.getMMetresValue() << sep;
 
-		if (itDspt.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+		if (itDspt.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 			(*stream) << "TCSE" << sep
 			<< itDspt.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
-	}
+
+        // Update the rom def target if necessary
+        if(itDspt.target.ID != romDefTarget.ID)
+            romDefTarget = itDspt.target;
+    }
 		
 }
 
@@ -785,6 +823,8 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 {
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
+
+    auto romDefStaff = meas->instrument.targets.at(meas->instrument.defStaffID);
 
 	(*stream) << "*DLEV" << sep
 		<< meas->instrument.ID << sep;
@@ -808,27 +848,31 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 			<< "DSE" << sep
 			<< itDLEV.dhor.get()->getDHORSigma().getMMetresValue() << sep;
 
-		if (itDLEV.target.ID != meas->instrument.defStaffID)
+		if (itDLEV.target.ID != romDefStaff.ID)
 			(*stream) << "TRGT" << sep
 			<< itDLEV.target.ID << sep;
 
-		if (itDLEV.target.sigmaD != meas->instrument.targets.at(meas->instrument.defStaffID).sigmaD)
+		if (itDLEV.target.sigmaD != romDefStaff.sigmaD)
 			(*stream) << "OBSE" << sep
 			<< itDLEV.target.sigmaD.getMMetresValue() << sep;
 
-		if (itDLEV.target.ppmD != meas->instrument.targets.at(meas->instrument.defStaffID).ppmD)
+		if (itDLEV.target.ppmD != romDefStaff.ppmD)
 			(*stream) << "PPM" << sep
 			<< itDLEV.target.ppmD.getMMetresValue() << sep;
 
-		if (itDLEV.target.staffHt != meas->instrument.targets.at(meas->instrument.defStaffID).staffHt)
+		if (itDLEV.target.staffHt != romDefStaff.staffHt)
 			(*stream) << "TH" << sep
 			<< itDLEV.target.staffHt.getMetresValue() << sep;
 
-		if (itDLEV.target.sigmaStaffHt != meas->instrument.targets.at(meas->instrument.defStaffID).sigmaStaffHt)
+		if (itDLEV.target.sigmaStaffHt != romDefStaff.sigmaStaffHt)
 			(*stream) << "THSE" << sep
 			<< itDLEV.target.sigmaStaffHt.getMMetresValue() << sep;
 
 		(*stream) << endl;
+
+        // Update the rom def target if necessary
+        if(itDLEV.target.ID != romDefStaff.ID)
+            romDefStaff = itDLEV.target;
 	}
 }
 
@@ -838,10 +882,14 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 	string sep = stream->getSeparator();
 
     auto polarDefInst = data->getInstruments().fPOLAR.at(meas->instrument.ID);
+    auto romDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
 
 	(*stream) << "*ORIE" << sep
 		<< meas->instrumentPos->getName() << sep
 		<< meas->instrument.ID << sep;
+
+    if(romDefTarget.ID != polarDefInst.defTarget)
+        (*stream) << "TRGT" << sep << romDefTarget.ID << sep;
 
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
@@ -859,19 +907,23 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 		(*stream) << itORIE.targetPos->getName() << sep
 			<< itORIE.getAngle().getGonsValue() << sep;
 
-		if (itORIE.target.ID != meas->instrument.defTarget)
+        if(itORIE.target.ID != romDefTarget.ID)
 			(*stream) << "TRGT" << sep
 			<< itORIE.target.ID << sep;
 
-		if (itORIE.target.sigmaAngl != meas->instrument.targets.at(meas->instrument.defTarget).sigmaAngl)
+        if(itORIE.target.sigmaAngl != romDefTarget.sigmaAngl)
 			(*stream) << "OBSE" << sep
 			<< itORIE.target.sigmaAngl .getSignedCCValue() << sep;
 
-		if (itORIE.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+        if(itORIE.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 			(*stream) << "TCSE" << sep
 			<< itORIE.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
+
+        // Update the rom def target if necessary
+        if(itORIE.target.ID != romDefTarget.ID)
+            romDefTarget = itORIE.target;
 	}
 }
 
@@ -893,6 +945,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 	string sep = stream->getSeparator();
 
     auto polarDefInst = data->getInstruments().fPOLAR.at(meas->instrument.ID);
+    auto tstnDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
 
     (*stream) << "*TSTN" << sep
         << meas->instrumentPos->getName() << sep
@@ -921,6 +974,10 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
             (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
     }
 
+    if(tstnDefTarget.ID != polarDefInst.defTarget)
+        (*stream) << "TRGT" << sep
+        << tstnDefTarget.ID << sep;
+
     if(meas->instrument.sigmaInstrCentering != polarDefInst.sigmaInstrCentering)
         (*stream) << "ICSE" << sep
         << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
@@ -929,10 +986,12 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 	for (auto& rom : meas->roms)
 	{
+        auto v0DefTarget = *rom->defaultTarget;
+
 		(*stream) << "*V0" << sep;
 
-		//if (rom->defaultTarget!=nullptr && rom->defaultTarget->ID != meas->instrument.defTarget)
-		//	(*stream) << "TRGT" << sep << rom->defaultTarget->ID << sep;
+		if (v0DefTarget.ID != tstnDefTarget.ID)
+			(*stream) << "TRGT" << sep << v0DefTarget.ID << sep;
 
 		if (rom->acst != TAngle(0.0))
 			(*stream) << "ACST" << sep << rom->acst.getGonsValue() << sep;
@@ -942,25 +1001,31 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		//ANGL
 		if (!rom->measANGL.empty())
 		{
+            auto romDefTarget = v0DefTarget;
+
 			(*stream) << "*ANGL" << endl;
 			for (auto& angl : rom->measANGL)
 			{
 				(*stream) << angl.targetPos->getName() << sep
 					<< angl.getAngle().getGonsValue()<< sep;
 
-				if (angl.target.ID != meas->instrument.defTarget)
+                if(angl.target.ID != romDefTarget.ID)
 					(*stream) << "TRGT" << sep
 					<< angl.target.ID << sep;
 
-				if (angl.target.sigmaAngl != meas->instrument.targets.at(meas->instrument.defTarget).sigmaAngl)
+                if(angl.target.sigmaAngl != romDefTarget.sigmaAngl)
 					(*stream) << "OBSE" << sep
 					<< angl.target.sigmaAngl.getSignedCCValue() << sep;
 
-				if (angl.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+                if(angl.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep
 					<< angl.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 				(*stream) << endl;
+
+                // Update the rom def target if necessary
+                if(angl.target.ID != romDefTarget.ID)
+                    romDefTarget = meas->instrument.targets.at(angl.target.ID);
 			}
 		}
 
@@ -968,107 +1033,127 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		//ZEND
 		if (!rom->measZEND.empty())
 		{
-			(*stream) << "*ZEND" << endl;
+            auto romDefTarget = v0DefTarget;
+            
+            (*stream) << "*ZEND" << endl;
 			for (auto& zend : rom->measZEND)
 			{
 				(*stream) << zend.targetPos->getName() << sep
 					<< zend.getAngle().getGonsValue() << sep;
 
-				if (zend.target.ID != meas->instrument.defTarget)
+				if (zend.target.ID != romDefTarget.ID)
 					(*stream) << "TRGT" << sep
 					<< zend.target.ID << sep;
 
-				if (zend.target.sigmaZenD != meas->instrument.targets.at(meas->instrument.defTarget).sigmaZenD)
+				if (zend.target.sigmaZenD != romDefTarget.sigmaZenD)
 					(*stream) << "OBSE" << sep
 					<< zend.target.sigmaZenD.getSignedCCValue() << sep;
 
-				if (zend.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
+				if (zend.target.targetHt != romDefTarget.targetHt)
 					(*stream) << "TH" << sep
 					<< zend.target.targetHt.getMetresValue() << sep;
 
-				if (zend.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
+				if (zend.target.sigmaTargetHt != romDefTarget.sigmaTargetHt)
 					(*stream) << "THSE" << sep
 					<< zend.target.sigmaTargetHt.getMMetresValue() << sep;
 
-				if (zend.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+				if (zend.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep
 					<< zend.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 				(*stream) << endl;
+
+                // Update the rom def target if necessary
+                if(zend.target.ID != romDefTarget.ID)
+                    romDefTarget = meas->instrument.targets.at(zend.target.ID);
 			}
 		}
 
 		//DIST
 		if (!rom->measDIST.empty())
 		{
-			(*stream) << "*DIST" << endl;
+            auto romDefTarget = v0DefTarget;
+            
+            (*stream) << "*DIST" << endl;
 
 			for (auto& dist : rom->measDIST)
 			{
 				(*stream) << dist.targetPos->getName() << sep
 					<< dist.getDistance().getMetresValue() << sep;
 
-				if (dist.target.ID != meas->instrument.defTarget)
+				if (dist.target.ID != romDefTarget.ID)
 					(*stream) << "TRGT" << sep
 					<< dist.target.ID << sep;
 
-				if (dist.target.sigmaDist != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDist)
+				if (dist.target.sigmaDist != romDefTarget.sigmaDist)
 					(*stream) << "OBSE" << sep
 					<< dist.target.sigmaDist.getMMetresValue() << sep;
 
-				if (dist.target.ppmDist != meas->instrument.targets.at(meas->instrument.defTarget).ppmDist)
+				if (dist.target.ppmDist != romDefTarget.ppmDist)
 					(*stream) << "PPM" << sep
 					<< dist.target.ppmDist.getMMetresValue() << sep;
 
-				if (dist.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
+				if (dist.target.targetHt != romDefTarget.targetHt)
 					(*stream) << "TH" << sep
 					<< dist.target.targetHt.getMetresValue() << sep;
 
-				if (dist.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
+				if (dist.target.sigmaTargetHt != romDefTarget.sigmaTargetHt)
 					(*stream) << "THSE" << sep
 					<< dist.target.sigmaTargetHt.getMMetresValue() << sep;
 
-				if (dist.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+				if (dist.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep
 					<< dist.target.sigmaTargetCentering.getMMetresValue() << sep;
 					
 				(*stream) << endl;
+
+                // Update the rom def target if necessary
+                if(dist.target.ID != romDefTarget.ID)
+                    romDefTarget = meas->instrument.targets.at(dist.target.ID);
 			}
 		}
 
 		//DHOR
 		if (!rom->measDHOR.empty())
 		{
-			(*stream) << "*DHOR" << endl;
+            auto romDefTarget = v0DefTarget;
+            
+            (*stream) << "*DHOR" << endl;
 			for (auto& dhor : rom->measDHOR)
-			{
-				(*stream) << dhor.targetPos->getName() << sep
+			{                
+                (*stream) << dhor.targetPos->getName() << sep
 					<< dhor.getDistance().getMetresValue() << sep;
 
-				if (dhor.target.ID != meas->instrument.defTarget)
+				if (dhor.target.ID != romDefTarget.ID)
 					(*stream) << "TRGT" << sep
 					<< dhor.target.ID << sep;
 
-				if (dhor.target.sigmaDist != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDist)
+				if (dhor.target.sigmaDist != romDefTarget.sigmaDist)
 					(*stream) << "OBSE" << sep
 					<< dhor.target.sigmaDist.getMMetresValue() << sep;
 
-				if (dhor.target.ppmDist != meas->instrument.targets.at(meas->instrument.defTarget).ppmDist)
+				if (dhor.target.ppmDist != romDefTarget.ppmDist)
 					(*stream) << "PPM" << sep
 					<< dhor.target.ppmDist.getMMetresValue() << sep;
 
-				if (dhor.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+				if (dhor.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep
 					<< dhor.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-				(*stream) << endl;
+                (*stream) << endl;
+
+                // Update the rom def target if necessary
+                if(dhor.target.ID != romDefTarget.ID)
+                    romDefTarget = meas->instrument.targets.at(dhor.target.ID);
 			}
 		}
 
 		//PLR
 		if (!rom->measPLR3D.empty())
 		{
-			(*stream) << "*PLR3D" << endl;
+            auto romDefTarget = v0DefTarget;
+            
+            (*stream) << "*PLR3D" << endl;
 
 			for (auto& plr : rom->measPLR3D)
 			{
@@ -1077,39 +1162,43 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 					<< plr.getAngle(EPLR3DAngles::kZEND).getGonsValue() << sep
 					<< plr.getDistance() << sep;
 
-				if (plr.target.ID != meas->instrument.defTarget)
+				if (plr.target.ID != romDefTarget.ID)
 					(*stream) << "TRGT" << sep
 					<< plr.target.ID << sep;
 
-				if (plr.target.targetHt != meas->instrument.targets.at(meas->instrument.defTarget).targetHt)
+				if (plr.target.targetHt != romDefTarget.targetHt)
 					(*stream) << "TH" << sep
 					<< plr.target.targetHt.getMetresValue() << sep;
 
-				if (plr.target.sigmaTargetHt != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetHt)
+				if (plr.target.sigmaTargetHt != romDefTarget.sigmaTargetHt)
 					(*stream) << "THSE" << sep
 					<< plr.target.sigmaTargetHt.getMMetresValue() << sep;
 
-				if (plr.target.sigmaTargetCentering != meas->instrument.targets.at(meas->instrument.defTarget).sigmaTargetCentering)
+				if (plr.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep
 					<< plr.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-				if (plr.target.sigmaAngl != meas->instrument.targets.at(meas->instrument.defTarget).sigmaAngl)
+				if (plr.target.sigmaAngl != romDefTarget.sigmaAngl)
 					(*stream) << "ASE" << sep
 					<< plr.target.sigmaAngl.getSignedCCValue() << sep;
 
-				if (plr.target.sigmaZenD != meas->instrument.targets.at(meas->instrument.defTarget).sigmaZenD)
+				if (plr.target.sigmaZenD != romDefTarget.sigmaZenD)
 					(*stream) << "ZSE" << sep
 					<< plr.target.sigmaZenD.getSignedCCValue() << sep;
 
-				if (plr.target.sigmaDist != meas->instrument.targets.at(meas->instrument.defTarget).sigmaDist)
+				if (plr.target.sigmaDist != romDefTarget.sigmaDist)
 					(*stream) << "DSE" << sep
 					<< plr.target.sigmaDist.getMMetresValue() << sep;
 
-				if (plr.target.ppmDist != meas->instrument.targets.at(meas->instrument.defTarget).ppmDist)
+				if (plr.target.ppmDist != romDefTarget.ppmDist)
 					(*stream) << "PPM" << sep
 					<< plr.target.ppmDist.getMMetresValue() << sep;
 
-				(*stream)<< endl;
+                (*stream) << endl;
+
+                // Update the rom def target if necessary
+                if(plr.target.ID != romDefTarget.ID)
+                    romDefTarget = meas->instrument.targets.at(plr.target.ID);
 			}
 		}
 
@@ -1179,6 +1268,10 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 					(*stream) << endl;
 				}
+
+                // Update the default target if necessary
+                if(ecth.target.ID != scaleDefInst.ID)
+                    scaleDefInst = ecth.target;
 			}
 		}
 
@@ -1250,6 +1343,10 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 					(*stream) << endl;
 				}
+
+                // Update the default target if necessary
+                if(ecdir.target.ID != scaleDefInst.ID)
+                    scaleDefInst = ecdir.target;
 			}
 		}
 	}
