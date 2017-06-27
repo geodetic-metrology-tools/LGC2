@@ -1403,7 +1403,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		
 		currentStation = "";
 		// Add adjustable scalar into a global collection and store a pointer
-		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr"+line));
+		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr"+ std::to_string(line)));
 	}
 	else 
 	{
@@ -1456,7 +1456,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (tokens.at(3) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (!tokens.at(3).compare(0, 1, "/"))
@@ -1480,7 +1480,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (!tokens.at(4).compare(0, 1, "/"))
@@ -1518,7 +1518,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (!tokens.at(5).compare(0, 1, "/"))
@@ -1546,7 +1546,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (tokens.at(5) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else
@@ -1565,7 +1565,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (tokens.at(4) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (tokens.at(4) == "/")
@@ -1585,7 +1585,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (tokens.at(3) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (!tokens.at(3).compare(0, 1, "/"))
@@ -1609,7 +1609,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				{
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (!tokens.at(4).compare(0, 1, "/"))
@@ -1647,7 +1647,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else if (!tokens.at(5).compare(0, 1, "/"))
@@ -1675,7 +1675,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (tokens.at(5) == "C")
 				{
 					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr" + line));
+					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
 					tgt.distCorrectionAdjustable = adjDCorr;
 				}
 				else
