@@ -145,6 +145,10 @@ void TLSSimulation::updateResValues(){
 		TransformParameters res = estimatedParam - provisionalParam;
 		frameSum.addNewResValue(res);
 	}
+
+    // Reinitialise the observation summaries
+    for(auto &node : fData.getTree())
+        node->measurements.initialiseObsSummaries();
 }
 
 void TLSSimulation::simulateValues()
