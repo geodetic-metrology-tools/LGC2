@@ -213,7 +213,7 @@ namespace tut
 		ensure_equals("One instrument defined", proj5->getInstruments().fPOLAR.size(),1);
 		ensure_equals("Provisional value of the pair should match", proj5->getLength().getObject("TS1T1").getProvisionalValue(),2.0);
 		ensure_equals("Dist. correction is 2.0",(*proj5->getInstruments().fPOLAR["TS1"].targets["T1"].distCorrectionAdjustable).getProvisionalValue(),2.0);	
-		ensure_equals("2 adjustable scalars expected",proj5->getLength().numObjects(), 9);
+		ensure_equals("1 adjustable scalar expected",proj5->getLength().numObjects(), 1);
 	}
 
 }

@@ -487,7 +487,7 @@ namespace tut
 		ensure_equals("BSx y coordinate should match", BSx.getY(), 3000.4002934, 2e-7);
 		ensure_equals("BSx z coordinate should match", BSx.getZ(), 2451.8503375, 2e-7);
 		TPositionVector ES240 = dataset.getPoints().getObject("ES240").getEstimatedValue();
-		ensure_equals("ES240 x coordinate should match", ES240.getX(), 2970.3160464, 2e-7);
+		ensure_equals("ES240 x coordinate should match", ES240.getX(), 2970.3160461, 2e-7);
 		ensure_equals("ES240 y coordinate should match", ES240.getY(), 2959.8243428, 2e-7);
 		ensure_equals("ES240 z coordinate should match", ES240.getZ(), 2446.8685899, 2e-7);
 		TPositionVector CS360 = dataset.getPoints().getObject("CS360").getEstimatedValue();
