@@ -81,6 +81,9 @@ void TKeyNODUP::parse(const std::vector<std::string>&, int) {
 
 
 void TKeyPDOR::parse(const std::vector<std::string>& tokens, int) {
+    if(fconfig.allfixed.isActive())
+        throw std::runtime_error("PDOR is not allowed with ALLFIXED option.");
+
 	const size_t numtok(tokens.size());
 
 	// this is a multi-line keyword, react just on the following calls

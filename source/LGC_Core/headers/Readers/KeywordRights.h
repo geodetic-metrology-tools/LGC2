@@ -147,7 +147,7 @@ const int nb_allowed_hist       = 27;
 const int nb_allowed_erel       = 27;
 const int nb_allowed_simu		= 26;
 const int nb_allowed_libr       = 26;
-const int nb_allowed_allfixed   = 24;
+const int nb_allowed_allfixed   = 23;
 const int nb_allowed_covar      = 25;
 
 //header
@@ -264,7 +264,7 @@ const char* allowed_HIST[nb_allowed_hist]   = {DEFA, APRI, SIMU, LIBR, ALLFIXED,
 const char* allowed_EREL[nb_allowed_erel]   = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST , COVAR};
 const char* allowed_SIMU[nb_allowed_simu]         = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, LIBR, NODUP, SOBS, HIST, EREL, COVAR};
 const char* allowed_LIBR[nb_allowed_libr]         = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, COVAR};
-const char* allowed_ALLFIXED[nb_allowed_allfixed] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR,       NODUP, SOBS, HIST, EREL};
+const char* allowed_ALLFIXED[nb_allowed_allfixed] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME,             NODUP, SOBS, HIST, EREL};
 const char* allowed_COVAR[nb_allowed_covar]       = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL };
 // Others
 const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ };
