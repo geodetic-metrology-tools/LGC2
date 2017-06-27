@@ -350,6 +350,21 @@ struct PtOrientationContrib{
 
 	TReal		calcmeas; //calculated measurement
 };
+
+
+/*!
+\ingroup ContributionsGenerators
+
+\brief Contributions for the point observation OBSXYZ.
+*/
+struct OBSXYZContrib{
+	Point3DContrib fTgCoordContrib;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform the point into the root.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
+
+	TReal	    fMisclosureVector[3]; //!< Misclosure vector of the First, Second and Third equation respectively.
+};
 #endif
 
 

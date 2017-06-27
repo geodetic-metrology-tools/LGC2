@@ -30,23 +30,26 @@ struct TMeasurements {
 	/// All DVER measurements in the order in which they appeared in the input file
 	std::list<TDVER> fDVER;
 
-	/// All ORIE (and PDOR if used) measurements in which they appeared in the input file
+	/// All ORIE (and PDOR if used) measurements in the order in which they appeared in the input file
 	std::list<TORIEROM> fORIE;
 
-	/// All ECHO measurements in which they appeared in the input file
+	/// All ECHO measurements in the order in which they appeared in the input file
 	std::list<TECHOROM> fECHO;
 
-	/// All ECVE measurements in which they appeared in the input file
+	/// All ECVE measurements in the order in which they appeared in the input file
 	std::list<TECVEROM> fECVE;
 
-	/// All ECSP measurements in which they appeared in the input file
+	/// All ECSP measurements in the order in which they appeared in the input file
 	std::list<TECSPROM> fECSP;
 
-	///pdor measurement in which they appeared in the input file
+	///pdor measurements in the order in which they appeared in the input file
 	TPdorObs fPDOR;
 
-	/// All RADI measurements in which they appeared in the input file
+	/// All RADI measurements in the order in which they appeared in the input file
 	std::list<TRADI> fRADI;
+
+    /// All OBSXYZ measurements in the order in which they appeared in the input file
+    std::list<TOBSXYZ> fOBSXYZ;
 
     /// Initialise all observation summaries
     void initialiseObsSummaries();
@@ -55,6 +58,8 @@ struct TMeasurements {
     const TLGCObsSummary& getDVERObsSummary() const;
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getRADIObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TOBSXYZObsSummary& getOBSXYZObsSummary() const;
 
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TPOLARObsSummary& getPOLARGlobalObsSummary() const;
@@ -95,6 +100,7 @@ private:
 
     TLGCObsSummary dverSummary_;
     TLGCObsSummary radiSummary_;
+    TOBSXYZObsSummary obsxyzSummary_;
 
     // Compound summaries:
     // TSTN:
@@ -118,6 +124,7 @@ private:
     TLGCObsSummary echoGlobalSummary_;
     TLGCObsSummary ecveGlobalSummary_;
     TLGCObsSummary ecspGlobalSummary_;
+
 };
 
 #endif // MEASUREMENTS_H_

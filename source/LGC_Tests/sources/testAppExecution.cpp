@@ -46,10 +46,10 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		//TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "test.sim",
-		//	getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "test.sim");
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "cmm.lgc",
+			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "cmm.res");
 
-		//ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+		ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
 
 		
 		// re initialise static object allfixed param to false

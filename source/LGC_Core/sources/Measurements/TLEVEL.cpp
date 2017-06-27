@@ -7,18 +7,18 @@ void TLEVEL::initialiseObsSummaries() {
     dlevSummary_.clear();
     dhorSummary_.clear();
 
-    // Add the residuals of each measurement:
+    if(measDLEV.size() != 0) {
+        // Add the residuals of each measurement:
+        for(auto const& ItDLEV : measDLEV){
+            dlevSummary_.addNewResidual(ItDLEV.getDistanceResidual().getMMetresValue());
+            if(ItDLEV.dhor)
+                dhorSummary_.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
+        }
 
-    for(auto const& ItDLEV : measDLEV){
-        dlevSummary_.addNewResidual(ItDLEV.getDistanceResidual().getMMetresValue());
-        if(ItDLEV.dhor)
-            dhorSummary_.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
+        // Initialise the obsSummaries:
+        dlevSummary_.initialise();
+        if(dhorSummary_.getNumberOfObs() != 0) dhorSummary_.initialise();
     }
-
-
-    // Initialise the obsSummaries:
-    if(measDLEV.size() != 0) dlevSummary_.initialise();
-    if(dhorSummary_.getNumberOfObs() != 0) dhorSummary_.initialise();
 }
 
 const TLGCObsSummary&  TLEVEL::getDLEVObsSummary() const { return dlevSummary_; }

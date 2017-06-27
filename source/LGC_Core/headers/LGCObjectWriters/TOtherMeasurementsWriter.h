@@ -30,6 +30,8 @@ public:
 		void writeRADIResultsHeader();
 		/// Write PDOR results header
 		void writePDORResultsHeader();
+		/// Write OBSXYZ results header
+		void writeOBSXYZResultsHeader();
 
 		/// Write DVER reliability header  
 		void writeDVERReliabilityHeader();
@@ -37,6 +39,8 @@ public:
 		void writeORIEReliabilityHeader();
 		/// Write RADI reliability header
 		void writeRADIReliabilityHeader();
+		/// Write OBSXYZ reliability header
+		void writeOBSXYZReliabilityHeader();
 
 		/// Write synthesis results header
 		void writeResultsSynthesisHeader();
@@ -52,6 +56,8 @@ public:
 		void writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos);
 		/// Write RADI results data
 		void writeRADIResults(const std::list<TRADI>& fRADI);
+		/// Write OBSXYZ results data
+		void writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ);
 
 		/// Write DVER simulations
         void writeDVERSIMUResults(const TMeasurements &tmeas);
@@ -66,6 +72,8 @@ public:
         void writeORIEReliabilityData(const std::list<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos);
 		/// Write RADI reliability data
         void writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat);
+		/// Write OBSXYZ reliability data
+		void writeOBSXYZReliabilityData(const std::list<TOBSXYZ>& fOBSXYZ, const TLGCStatistic& stat);
 
 		/// Write DVER synthesis data
         void writeDVERResultsSynthesis(const TMeasurements &tmeas);
@@ -73,6 +81,8 @@ public:
         void writeORIEResultsSynthesis(const TORIEROM& orieRom, const LGCAdjustablePoint& instPos);
 		/// Write RADI synthesis data
         void writeRADIResultsSynthesis(const TMeasurements &tmeas);
+		/// Write OBSXYZ synthesis data
+        void writeOBSXYZResultsSynthesis(const TMeasurements &tmeas);
 	//@}
 
 };

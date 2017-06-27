@@ -5,6 +5,9 @@ void TMeasurements::initialiseObsSummaries() {
     // First clear the old contents away
     dverSummary_.clear();
     radiSummary_.clear();
+    obsxyzSummary_.obsXObsSum.clear();
+    obsxyzSummary_.obsYObsSum.clear();
+    obsxyzSummary_.obsZObsSum.clear();
 
     plrGlobalSummary_.anglObsSum.clear();
     plrGlobalSummary_.zendObsSum.clear();
@@ -28,19 +31,36 @@ void TMeasurements::initialiseObsSummaries() {
     ecveGlobalSummary_.clear();
     ecspGlobalSummary_.clear();
 
-    // Add the residuals of each measurement:
+    // Add the residuals of each measurement and initialise the summaries:
 
     // DVER
-    for(auto &dver : fDVER)
-        dverSummary_.addNewResidual(dver.getDistanceResidual().getMMetresValue());
+    if(fDVER.size() != 0){
+        for(auto &dver : fDVER)
+            dverSummary_.addNewResidual(dver.getDistanceResidual().getMMetresValue());
+
+        dverSummary_.initialise();
+    }
 
     // RADI
-    for(auto &radi : fRADI)
-        radiSummary_.addNewResidual(radi.getResidual().getMMetresValue());
+    if(fRADI.size() != 0){
+        for(auto &radi : fRADI)
+            radiSummary_.addNewResidual(radi.getResidual().getMMetresValue());
 
-    // Initialise the obsSummaries:
-    if(fDVER.size() != 0) dverSummary_.initialise();
-    if(fRADI.size() != 0) radiSummary_.initialise();
+        radiSummary_.initialise();
+    }
+
+    // OBSXYZ
+    if(fOBSXYZ.size() != 0) {
+        for(auto &obs : fOBSXYZ){
+            obsxyzSummary_.obsXObsSum.addNewResidual(obs.getXResidual().getMMetresValue());
+            obsxyzSummary_.obsYObsSum.addNewResidual(obs.getYResidual().getMMetresValue());
+            obsxyzSummary_.obsZObsSum.addNewResidual(obs.getZResidual().getMMetresValue());
+        }
+
+        obsxyzSummary_.obsXObsSum.initialise();
+        obsxyzSummary_.obsYObsSum.initialise();
+        obsxyzSummary_.obsZObsSum.initialise();
+    }
 
     // Initialise the observation summaries of
     // measurements that use an instrument. Initialise
@@ -175,6 +195,8 @@ void TMeasurements::initialiseObsSummaries() {
 const TLGCObsSummary& TMeasurements::getDVERObsSummary() const { return dverSummary_; }
 
 const TLGCObsSummary&  TMeasurements::getRADIObsSummary() const { return radiSummary_; }
+
+const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary() const { return obsxyzSummary_; }
 
 
 const TPOLARObsSummary& TMeasurements::getPOLARGlobalObsSummary() const { return plrGlobalSummary_; }

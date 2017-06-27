@@ -87,6 +87,8 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 
 			addRADIContributions(itTree.node->data->measurements.fRADI, matrices);
 
+			addOBSXYZContributions(itTree.node->data->measurements.fOBSXYZ, matrices);
+
 			//add the initialised PDOR
 			if (itTree.node->data->measurements.fPDOR.isInitialised())
 				addPDORContributions(itTree.node->data->measurements.fPDOR, matrices);
@@ -969,6 +971,72 @@ void  TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI>& radiM
 		}
 
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");
+	}
+}
+
+void  TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ>& obsxyzMeas, TLSInputMatrices*  matrices){
+	bool isProcessOK = true;
+	MatrixIndex firstEqIdx = -1;
+	MatrixIndex firstObsIdx = -1;
+	OBSXYZContrib contributions;
+
+	for (auto meas(obsxyzMeas.begin()); meas != obsxyzMeas.end(); ++meas){
+		firstEqIdx = meas->getFirstEquationIndex();
+		firstObsIdx = meas->getFirstObservationIndex();
+
+		//Get the observation contribution
+		contributions = fCGenerator.getOBSXYZContrib(*meas); 
+
+
+		// Add contributions for coordinates
+		if (!meas->station->isFixed()){
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fTgCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fTgCoordContrib.secondEqPtContrib, firstEqIdx + 1, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fTgCoordContrib.thirdEqPtContrib, firstEqIdx + 2, matrices);
+		}
+
+		// Add contributions of transformations parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
+			if (!itTgTransform->first.isFixed()){
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second.firstEquationTransContrib, firstEqIdx, matrices);
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second.secondEquationTransContrib, firstEqIdx + 1, matrices);
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second.thirdEquationTransContrib, firstEqIdx + 2, matrices);
+			}
+		}
+
+
+		// Set Misclosure vector
+		for (int i = 0; i<3; i++)
+			isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx + i, contributions.fMisclosureVector[i]);
+
+		// Add weight matrix element
+		if (pow2(meas->getXObservedStDev()) < nullLimit)
+			throw std::runtime_error("Error when filling OBSXYZ contribution, X variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / pow2(meas->getXObservedStDev()));
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx, firstObsIdx, pow2(meas->getXObservedStDev()));
+		}
+
+		if (pow2(meas->getYObservedStDev()) < nullLimit)
+			throw std::runtime_error("Error when filling OBSXYZ contribution, Y variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / pow2(meas->getYObservedStDev()));
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, pow2(meas->getYObservedStDev()));
+		}
+
+		if (pow2(meas->getZObservedStDev()) < nullLimit)
+			throw std::runtime_error("Error when filling OBSXYZ contribution, Z variance is zero or too small, can not set weight matrix element.");
+		else{
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / pow2(meas->getZObservedStDev()));
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, pow2(meas->getZObservedStDev()));
+		}
+
+	
+		for (int i = 0; i<3; i++)
+			isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + i, firstEqIdx + i, -1.0);
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");

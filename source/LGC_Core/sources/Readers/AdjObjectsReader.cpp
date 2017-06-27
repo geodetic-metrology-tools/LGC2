@@ -166,10 +166,17 @@ void TAPointKey::parse(const std::vector<std::string>& tokens, int line) {
 		//If all 3 standard deviations are listed => store standard deviations
 		if(opts.has("SX") && opts.has("SY") && opts.has("SZ"))
 			pt.setStandardDeviations(opts.getParamR("SX") * MM2M, opts.getParamR("SY") * MM2M, opts.getParamR("SZ") * MM2M); //Standard deviations given in mili-meters, butstored in meters
-		else if(!pt.getFrameTreePosition().node->data->isROOTNode())
-			//POIN is not in a ROOT node and standard deviations are not provided => then it is an error
-			proj.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << "Line " + std::to_string(line) +  + " : point is defined using POIN in a sub-frame. Standard deviations are needed!";
-		else if(opts.has("SX") || opts.has("SY") || opts.has("SZ"))
+        
+        // NB. June 2017:
+        // With the new observation OBSXYZ the standard deviations
+        // of POIN are not used any longer (for now).
+        // -------------------------------------------------------
+        // else if(!pt.getFrameTreePosition().node->data->isROOTNode())
+        //     //POIN is not in a ROOT node and standard deviations are not provided => then it is an error
+        //     proj.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << "Line " + std::to_string(line) + +" : point is defined using POIN in a sub-frame. Standard deviations are needed!";
+        // -------------------------------------------------------
+
+        else if(opts.has("SX") || opts.has("SY") || opts.has("SZ"))
 			//If only some of these options are set => standard deviations are not stored and warning is produced => warning 
 			proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING << "Line " + std::to_string(line)  + " : point is defined using POIN, but not all standard errors specified (SX,SY,SZ)!";
 	}

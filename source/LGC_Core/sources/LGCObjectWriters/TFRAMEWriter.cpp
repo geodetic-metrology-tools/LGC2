@@ -124,9 +124,15 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		otherMeasWriter.writeRADIResults(tmeas.fRADI);
 	}
 
-	for (auto& itEDM : tmeas.fEDM)
-		edmWriter.writeEDMResults(itEDM);
-		
+    if(!tmeas.fOBSXYZ.empty())
+    {
+        (*stream) << endl;
+        otherMeasWriter.writeOBSXYZResults(tmeas.fOBSXYZ);
+    }
+
+    for(auto& itEDM : tmeas.fEDM)
+        edmWriter.writeEDMResults(itEDM);
+
 }
 
 void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
@@ -494,6 +500,22 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
         //write global mean
 		otherMeasWriter.writeDistanceResultsSummary(tmeas.getRADIObsSummary(),TABs);
 	}
+
+	//OBSXYZ
+	if (frameIt->get()->measurements.fOBSXYZ.size() > 0)
+	{
+		(*stream) << endl;
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "OBSXYZ"); //instrument
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeOBSXYZResultsSynthesis(tmeas);
+
+        // Write global means:
+		otherMeasWriter.writeDistanceResultsSummary(tmeas.getOBSXYZObsSummary().obsXObsSum, TABs);
+        otherMeasWriter.writeDistanceResultsSummary(tmeas.getOBSXYZObsSummary().obsYObsSum, TABs);
+        otherMeasWriter.writeDistanceResultsSummary(tmeas.getOBSXYZObsSummary().obsZObsSum, TABs);
+	}
 }
 
 ///write measurements summary
@@ -694,7 +716,6 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 }
 
 
-
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
@@ -720,13 +741,6 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	//If PDOR
 	if (tmeas.fPDOR.isInitialised())
 		otherMeasWriter.writePDORResults(tmeas.fPDOR);
-
-	//Summary
-	//(*stream) << endl << TABs << "*** MEASUREMENTS SUMMARY ***" << endl << endl;
-	//writeMeasurementsSummary(frameIt);
-	//if (fProjectData->getConfig().histo.isActive())
-	//	writeHistogramme(frameIt);
-
 
 	//Measures
 	(*stream) << endl << endl << TABs << "*** MEASUREMENTS DATA ***" << endl << endl;
@@ -756,7 +770,6 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 	for (auto& itORIE : tmeas.fORIE)
 		otherMeasWriter.writeORIESIMUResults(itORIE);
-
 
 	for (auto& itEDM : tmeas.fEDM)
 		edmWriter.writeEDMSIMUResults(itEDM);
@@ -808,6 +821,13 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 		(*stream) << endl << "RADI observations" << endl;
 		otherMeasWriter.writeRADIReliabilityHeader();
 		otherMeasWriter.writeRADIReliabilityData(tmeas.fRADI, fProjectData->getStatistics());
+	}
+
+	if (!frameIt->get()->measurements.fOBSXYZ.empty())
+	{
+		(*stream) << endl << "OBSXYZ observations" << endl;
+		otherMeasWriter.writeOBSXYZReliabilityHeader();
+		otherMeasWriter.writeOBSXYZReliabilityData(frameIt->get()->measurements.fOBSXYZ, fProjectData->getStatistics());
 	}
 
 	bool  EDMheaderWritten = false;

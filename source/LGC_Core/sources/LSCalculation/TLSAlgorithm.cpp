@@ -36,9 +36,9 @@ Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 		computer.reset(new TLSCnstMtdComputer());
 	else
 	{
-		if (data.hasStandDeviations())
+		/*if (data.hasStandDeviations())
 			computer.reset(new TLSWeightedUnkMtdComputer());
-		else if (data.isCombinedCaseUsed())
+		else */if (data.isCombinedCaseUsed())
 			computer.reset(new TLSCombinedMtdComputer());
 		else
 			computer.reset(new TLSParametricMtdComputer());

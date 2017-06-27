@@ -6,12 +6,14 @@ void TEDM::initialiseObsSummaries() {
     // First clear the old contents away
     dsptSummary_.clear();
 
-    // Add the residuals of each measurement:
-    for(auto const& ItEDM : measDSPT)
-        dsptSummary_.addNewResidual(ItEDM.getDistanceResidual().getMMetresValue());
+    if(measDSPT.size() != 0) {
+        // Add the residuals of each measurement:
+        for(auto const& ItEDM : measDSPT)
+            dsptSummary_.addNewResidual(ItEDM.getDistanceResidual().getMMetresValue());
 
-    // Initialise the obsSummaries:
-    if(measDSPT.size() != 0) dsptSummary_.initialise();
+        // Initialise the obsSummaries:
+        dsptSummary_.initialise();
+    }
 }
 
 const TLGCObsSummary& TEDM::getDSPTObsSummary() const { return dsptSummary_; }

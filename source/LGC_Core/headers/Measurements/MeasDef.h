@@ -7,6 +7,7 @@
 #include <bitset>
 //SURVEYLIB
 #include <UEOIndices.h>
+#include <TPositionVector.h>
 //LGC
 #include <TAMeas.h>
 
@@ -485,4 +486,70 @@ private:
 	bool fIsInitialise;
 	bool fDefined;
 };
+
+/*!
+\ingroup Measurements
+\brief  RADI constraints.
+*/
+class TOBSXYZ : public TAMeas<int>
+{
+public:
+	///Pointer to the point
+	const LGCAdjustablePoint* station;
+	//Position of the point in the subframe (= observation)
+	TPositionVector initialValue;
+	TDataTreeIterator positionInTree;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/// DB comment after the measurement definition
+	std::string eolcomment;
+
+	/*!@name Constructors */
+	//@{
+	TOBSXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree);
+	TOBSXYZ();
+	//@}
+
+	/*!@name Access methods*/
+	//@{
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex()+2; }
+
+	/// Returns standard deviation of the observed value
+	inline TLength getXObservedStDev() const { return fXSigmaObsVal; }
+	inline TLength getYObservedStDev() const { return fYSigmaObsVal; }
+	inline TLength getZObservedStDev() const { return fZSigmaObsVal; }
+
+	/// Returns standard deviation of the observed value
+	inline TLength getXResidual() const { return fXResidual; }
+	inline TLength getYResidual() const { return fYResidual; }
+	inline TLength getZResidual() const { return fZResidual; }
+	//@}
+
+
+	/*!@name Settings */
+	//@{
+	/// Sets standard deviation of the observed value
+	inline void setXObservedStDev(TLength stDev){ fXSigmaObsVal = stDev; }
+	inline void setYObservedStDev(TLength stDev){ fYSigmaObsVal = stDev; }
+	inline void setZObservedStDev(TLength stDev){ fZSigmaObsVal = stDev; }
+	/// Returns standard deviation of the observed value
+	inline void setXResidual(TLength res) { fXResidual = res; }
+	inline void setYResidual(TLength res) { fYResidual = res; }
+	inline void setZResidual(TLength res) { fZResidual = res; }
+	//@}
+
+private:
+	// The residual angle constraint
+	TLength fXResidual;
+	TLength fYResidual;
+	TLength fZResidual;
+	// Standard deviation of the observed value
+	TLength fXSigmaObsVal;
+	TLength fYSigmaObsVal;
+	TLength fZSigmaObsVal;
+};
+
+
 #endif

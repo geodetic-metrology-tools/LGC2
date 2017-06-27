@@ -29,11 +29,12 @@ class LGCAdjustableObjectCollection {
 		/*!
 			\brief Returns A reference to the adjustable object.
 
-			Get an adjustable object by its name.
+			Get an adjustable object by its name. Creates a new uninitialised object
+            and returns a reference to it if the specified object did not exist in
+            the collection before.
 
 			\param name Adjustable object is identified by its name.			
 
-			\throw Throws a runtime_error if the requested object is not found. 
 		*/
 		T& getObject(const std::string& name) {
 			auto obj(findObject(name));

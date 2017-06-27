@@ -1191,3 +1191,38 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 
 	}
 }
+
+
+void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+
+	//On first line nothing appears so far: to be discussed
+	if (!firstline)
+	{
+		bool hasAllParams = (tokens.size() >= 7) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3))
+			&& isNumber(tokens.at(4)) && isNumber(tokens.at(5)) && isNumber(tokens.at(6));
+		if (!hasAllParams && !fSIMUActive)
+			throw std::runtime_error("A OBSXYZ measurements must have at least 7 entries: "
+			"One point, 3 observed coordinates, and 3 sigmas");
+
+		// Store  the measured value
+		proj.getCurrentNode().measurements.fOBSXYZ.emplace_back(
+			TOBSXYZ(fpoints.getObject(tokens.at(0)),
+			TPositionVector(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::ECoordSys::k3DCartesian),
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(4))), TLength::EUnits::kMillimetres), 
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(5))), TLength::EUnits::kMillimetres),
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(6))), TLength::EUnits::kMillimetres),
+			proj.getCurrentPosition()
+			));
+		
+		auto& obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
+		obsxyz.line = line;
+		
+		//If last token starts with a comment character, store it as a end of line comment
+		const char fOfLastToken = tokens.back().at(0);
+		if (fOfLastToken == '$' || fOfLastToken == '%')
+			obsxyz.eolcomment = tokens.back();
+			
+	}
+}

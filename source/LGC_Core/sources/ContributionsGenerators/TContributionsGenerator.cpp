@@ -607,7 +607,7 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
 	if (D < nullLimit)
-		throw std::logic_error("TContributionGenerator::getSpatialDistanceContrib: Division by zero because observation points have identical coordinates.");
+		throw std::logic_error("TContributionGenerator::getDSPTContrib: Division by zero because observation points have identical coordinates.");
 
 	TReal a,b,c;   //station's contributions coefficients (negative values of these give target's coefficients)		 
 	a = (xSt -xTg)/D;  // xSt coefficient
@@ -1107,6 +1107,71 @@ PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 
 	return{ estimatedPointContrib, festimatedPtTransformContrib, calcmeas };
 }
+
+
+
+OBSXYZContrib  TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ& OBSXYZ)
+{
+/*	fPointTransfo.setMLA(false);
+
+	TPositionVector prov = cmm.station->getProvisionalValue();  //stn
+	TPositionVector estimated = cmm.station->getEstimatedValue();  //tgt
+	
+	const TLOR2LOR& Lor2RootTrafo = fPointTransfo.getLORTransformation(cmm.station->getFrameTreePosition(), fPointTransfo.getTree()->begin()); // Transform to ROOT 
+	Lor2RootTrafo.transform(estimated);
+	Lor2RootTrafo.transform(prov);
+
+	TReal xp = prov.getX().getMetresValue();
+	TReal yp = prov.getY().getMetresValue();
+	TReal zp = prov.getZ().getMetresValue();
+
+	TReal xe = estimated.getX().getMetresValue();
+	TReal ye = estimated.getY().getMetresValue();
+	TReal ze = estimated.getZ().getMetresValue();
+
+	//gets calc value
+	TReal dx = (xe - xp);
+	TReal dy = (ye - yp);
+	TReal dz = (ze - zp);
+	TPositionVector diff(dx, dy, dz, TCoordSysFactory::ECoordSys::k3DCartesian);
+
+	TFreeVector line1AMat(1.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian); //first line of the A-matrix
+	TFreeVector line2AMat(0.0, 1.0, 0.0, TCoordSysFactory::k3DCartesian); //second line of the A-matrix
+	TFreeVector line3AMat(0.0, 0.0, 1.0, TCoordSysFactory::k3DCartesian); //third line of the A-matrix
+	TFreeVector zeroVect(0, 0, 0, TCoordSysFactory::k3DCartesian);
+	// Contributions for the target coordinates
+	Point3DContrib coordContribTarget = { zeroVect, zeroVect, zeroVect };
+	addPointContributionsPLR3D(Lor2RootTrafo, line1AMat, line2AMat, line3AMat, coordContribTarget, true);
+
+	//Fill target transformation contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector for target transformations contributions
+	addTransformationsContributions3Dcmm(Lor2RootTrafo, diff, line1AMat, line2AMat, line3AMat, targetTransfContributions);
+
+	return{ coordContribTarget, targetTransfContributions, {dx,dy,dz} };
+*/
+
+	TPositionVector estimated = OBSXYZ.station->getEstimatedValue();  //tgt
+	TPositionVector prov = OBSXYZ.initialValue;  //stn
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(OBSXYZ.positionInTree, OBSXYZ.station->getFrameTreePosition()); // Transform to frame in which point is defined 
+	stLor2RootTrafo.transform(prov);
+
+	//ets calc value
+	TReal dx = (estimated.getX().getMetresValue() - prov.getX().getMetresValue());
+	TReal dy = (estimated.getY().getMetresValue() - prov.getY().getMetresValue());
+	TReal dz = (estimated.getZ().getMetresValue() - prov.getZ().getMetresValue());
+
+	//Contributions for the coordinates
+	Point3DContrib coordContribStation = { TFreeVector(1.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian), TFreeVector(0.0, 1.0, 0.0, TCoordSysFactory::k3DCartesian), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::k3DCartesian) };
+
+	//Fill transformation contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> TransfContributions;
+	addUVDTgTransfContributionsCamera(stLor2RootTrafo, OBSXYZ.initialValue, TransfContributions);
+
+	return{ coordContribStation, TransfContributions, { dx, dy, dz } };
+}
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)

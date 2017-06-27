@@ -30,7 +30,7 @@ struct TPointGlobal{
 
 /*! Counter of measurements based on the type */
 struct TMeasurementsGlobal{
-	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI};
+	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI, kOBSXYZ};
 
 	int	fNumANGL;
 	int	fNumZEND;
@@ -50,6 +50,7 @@ struct TMeasurementsGlobal{
 	int	fNumORIE;
 	int	fNumPDOR;
 	int	fNumRADI;
+	int fNumOBSXYZ;
 };
 
 

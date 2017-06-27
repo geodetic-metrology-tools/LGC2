@@ -15,44 +15,61 @@ void TTSTN::TROM::initialiseObsSummaries() {
     ecthSummary_.clear();
     ecdirSummary_.clear();
 
-    // Add the residuals of each measurement:
+    // Add the residuals of each measurement and initialise the obs summaries:
     
-    for(auto& ItANGL : measANGL)
-        anglSummary_.addNewResidual(ItANGL.getAngleResidual().getSignedCCValue());
+    if(measANGL.size() != 0) {
+        for(auto& ItANGL : measANGL)
+            anglSummary_.addNewResidual(ItANGL.getAngleResidual().getSignedCCValue());
 
-    for(auto& ItZEND : measZEND)
-        zendSummary_.addNewResidual(ItZEND.getAngleResidual().getSignedCCValue());
-
-    for(auto& ItDIST : measDIST)
-        distSummary_.addNewResidual(ItDIST.getDistanceResidual().getMMetresValue());
-
-    for(auto& ItDHOR : measDHOR)
-        dhorSummary_.addNewResidual(ItDHOR.getDistanceResidual().getMMetresValue());
-
-    for(auto& ItECTH : measECTH)
-        ecthSummary_.addNewResidual(ItECTH.getDistanceResidual().getMMetresValue());
-
-    for(auto& ItECDIR : measECDIR)
-        ecdirSummary_.addNewResidual(ItECDIR.getDistanceResidual().getMMetresValue());
-
-    for(auto& ItPLR3D : measPLR3D){
-        plr3dSummary_.distObsSum.addNewResidual(ItPLR3D.getDistanceResidual().getMMetresValue());
-        plr3dSummary_.anglObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
-        plr3dSummary_.zendObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
+        anglSummary_.initialise();
     }
 
-    // Initialise the obsSummaries:
+    if(measZEND.size() != 0) {
+        for(auto& ItZEND : measZEND)
+            zendSummary_.addNewResidual(ItZEND.getAngleResidual().getSignedCCValue());
+    
+        zendSummary_.initialise();
+    }
+
+    if(measDIST.size() != 0){
+        for(auto& ItDIST : measDIST)
+            distSummary_.addNewResidual(ItDIST.getDistanceResidual().getMMetresValue());
+
+        distSummary_.initialise();
+    }
+
+    if(measDHOR.size() != 0) {
+        for(auto& ItDHOR : measDHOR)
+            dhorSummary_.addNewResidual(ItDHOR.getDistanceResidual().getMMetresValue());
+
+        dhorSummary_.initialise();
+    }
+    
+    if(measECTH.size() != 0) {
+        for(auto& ItECTH : measECTH)
+            ecthSummary_.addNewResidual(ItECTH.getDistanceResidual().getMMetresValue());
+
+        ecthSummary_.initialise();
+    }
+
+    if(measECDIR.size() != 0){
+        for(auto& ItECDIR : measECDIR)
+            ecdirSummary_.addNewResidual(ItECDIR.getDistanceResidual().getMMetresValue());
+
+        ecdirSummary_.initialise();
+    }
+
     if(measPLR3D.size() != 0){
+        for(auto& ItPLR3D : measPLR3D){
+            plr3dSummary_.distObsSum.addNewResidual(ItPLR3D.getDistanceResidual().getMMetresValue());
+            plr3dSummary_.anglObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
+            plr3dSummary_.zendObsSum.addNewResidual(ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getSignedCCValue());
+        }
+
         plr3dSummary_.distObsSum.initialise();
         plr3dSummary_.anglObsSum.initialise();
         plr3dSummary_.zendObsSum.initialise();
     }
-    if(measANGL.size() != 0) anglSummary_.initialise();
-    if(measZEND.size() != 0) zendSummary_.initialise();
-    if(measDIST.size() != 0) distSummary_.initialise();
-    if(measDHOR.size() != 0) dhorSummary_.initialise();
-    if(measECTH.size() != 0) ecthSummary_.initialise();
-    if(measECDIR.size() != 0) ecdirSummary_.initialise();
 }
 
 const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary() const { return anglSummary_; }

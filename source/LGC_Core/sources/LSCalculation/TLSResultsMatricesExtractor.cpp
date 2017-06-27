@@ -147,6 +147,9 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 
 			//Extract radi residuals
 			extractRADIObs(rm, itTree.node->data->measurements.fRADI);
+
+			//Extract OBSXYZ residuals
+			extractOBSXYZObs(rm, itTree.node->data->measurements.fOBSXYZ);
 		}
 	}
 	catch(std::exception const & excp) {
@@ -354,6 +357,20 @@ void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, s
 			itRADI.setResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 			throw std::runtime_error("RADI observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+	}
+}
+
+void TLSResultsMatricesExtractor::extractOBSXYZObs(const TLSResultsMatrices& rm, std::list<TOBSXYZ>& obsxyz){
+	for (auto& itOBSXYZ : obsxyz){
+		MatrixIndex obsUidx = itOBSXYZ.getFirstObservationIndex();
+		if (obsUidx+2 < rm.getResidualsVctr()->size())
+		{
+			itOBSXYZ.setXResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
+			itOBSXYZ.setYResidual(TLength(rm.getResidualsVctrElmt(obsUidx+1)));
+			itOBSXYZ.setZResidual(TLength(rm.getResidualsVctrElmt(obsUidx+2)));
+		}
+		else
+			throw std::runtime_error("OBSXYZ observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
 }
 

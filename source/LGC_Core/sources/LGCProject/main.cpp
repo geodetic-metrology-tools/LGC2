@@ -176,7 +176,7 @@ std::string changePathDir(std::string fPath)
 	int found = 1;
 	while (found < fPath.length())
 	{
-		found = fPath.find_first_of("/");
+		found = (int)fPath.find_first_of("/");
 		if (found == std::string::npos)
 			return fPath;
 		else

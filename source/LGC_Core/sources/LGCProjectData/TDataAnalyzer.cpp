@@ -514,6 +514,16 @@ void TDataAnalyzer::assignEOIndices(){
             radi.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
             fData.addToMeasurementNum(TMeasurementsGlobal::kRADI);
         }
+
+        // OBSXYZ
+        for(auto &obsxyz : measurements.fOBSXYZ){
+            // set indices of LS matrices, OBSXYZ introduxes 3 equations and 3 observations
+            obsxyz.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+            obsxyz.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+            fData.fUEOIndices.EIndex += 3;
+            fData.fUEOIndices.OIndex += 3;
+            fData.addToMeasurementNum(TMeasurementsGlobal::kOBSXYZ);
+        }
     }
 }
 

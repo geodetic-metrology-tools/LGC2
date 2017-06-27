@@ -165,6 +165,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kRADI:
 			fMeasInfo.fNumRADI++;
 			break;
+		case TMeasurementsGlobal::kOBSXYZ:
+			fMeasInfo.fNumOBSXYZ++;
+			break;
 	}
 }
 
@@ -205,6 +208,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumORIE;
 	case TMeasurementsGlobal::kRADI:
 		return fMeasInfo.fNumRADI;
+	case TMeasurementsGlobal::kOBSXYZ:
+		return fMeasInfo.fNumOBSXYZ;
 	default:
         return 0;
 	}
@@ -243,6 +248,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumORIE = 0;
 	fMeasInfo.fNumPDOR = 0;
 	fMeasInfo.fNumRADI = 0;
+	fMeasInfo.fNumOBSXYZ = 0;
 }
 
 void TLGCData::reInitForSIMU(){
@@ -304,8 +310,6 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
     // Copy filelogger:
     d->fileLogger = fileLogger;
     
-    // TODO
-
     // Copy statistics:
     d->stat = stat;
 
@@ -340,8 +344,11 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
     tgt->tree = src->tree;
 
     // Loop the tree in order to create a deep copy of each node
-    for(auto &entry : tgt->tree){
+    // (NB. Iterator needed for the OBSXYZ measurement)
+    for(auto tree_iter = tgt->tree.begin(); tree_iter != tgt->tree.end(); ++tree_iter){
     
+        auto &entry = *tree_iter;
+
         // First replace the contents of the node:
         entry.reset(new TTreeEntry(*entry));
 
@@ -547,6 +554,21 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
 
             if(radi.targetPos)
                 radi.targetPos = &tgt->points.getObject(radi.targetPos->getName());
+        }
+
+        // OBSXYZ
+        for(auto &obsxyz : entry->measurements.fOBSXYZ){
+        
+            // Reset the pointers to point to objects in the target core:
+
+            if(obsxyz.station)
+                obsxyz.station = &tgt->points.getObject(obsxyz.station->getName());
+
+            if(obsxyz.targetPos)
+                obsxyz.targetPos = &tgt->points.getObject(obsxyz.targetPos->getName());
+
+            // Update the tree position
+            obsxyz.positionInTree = tree_iter;
         }
 
         // PDOR 

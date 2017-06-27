@@ -1,4 +1,5 @@
 #include <MeasDef.h>
+#include <LGCAdjustablePoint.h>
 
 ///////////////////////////////////////////////////////////
 //////Total station measurements
@@ -98,6 +99,8 @@ TPdorObs::TPdorObs():
     fDefined(false),
     fbearingResidual(NO_VALf)
 {
+    // Set TAMeas<int>::targetPos nullptr here, since the TAMeas
+    // constructor leaves an invalid reference as its value:
     targetPos = nullptr;
 }
 
@@ -117,6 +120,8 @@ TRADI::TRADI() :
     fSigmaObsVal(1.0, TLength::EUnits::kMillimetres),
     TAMeas<int>(*station, 0)
 {
+    // Set TAMeas<int>::targetPos nullptr here, since the TAMeas
+    // constructor leaves an invalid reference as its value:
     targetPos = nullptr;
 }
 
@@ -126,4 +131,25 @@ TRADI::TRADI(const LGCAdjustablePoint& point, TAngle obsVal, TLength sig) :
     fResidual(NO_VALf),
     fSigmaObsVal(sig),
     TAMeas<int>(point, 0)
+{}
+
+TOBSXYZ::TOBSXYZ() :
+station(nullptr),
+initialValue(TPositionVector(TCoordSysFactory::ECoordSys::k3DCartesian)),
+fXResidual(NO_VALf), fYResidual(NO_VALf), fZResidual(NO_VALf),
+fXSigmaObsVal(NO_VALf), fYSigmaObsVal(NO_VALf), fZSigmaObsVal(NO_VALf),
+TAMeas<int>(*station, 0)
+{
+    // Set TAMeas<int>::targetPos nullptr here, since the TAMeas
+    // constructor leaves an invalid reference as its value:
+    targetPos = nullptr;
+}
+
+TOBSXYZ::TOBSXYZ(const LGCAdjustablePoint& point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree) :
+station(&point),
+initialValue(pos),
+fXResidual(NO_VALf), fYResidual(NO_VALf), fZResidual(NO_VALf),
+fXSigmaObsVal(sigX), fYSigmaObsVal(sigY), fZSigmaObsVal(sigZ),
+positionInTree(itTree),
+TAMeas<int>(point, 0)
 {}

@@ -30,7 +30,7 @@ TLGCApp::~TLGCApp()
 { }
 
 /*! 
-		\throws Throws a runtime_error if the input file was not found or is not readable or if errors found in the input file or if errors occured in the file.
+		@return Returns false if the input file was not found or is not readable or if errors found in the input file or if errors occured in the file, otherwise true
 */
 Behavior TLGCApp::exec()
 {

@@ -381,25 +381,31 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 				}
 				writeXYZorH(point);
 
-				if (!frameIt->get()->isROOTNode())
-					(*stream) << "SX"<<sep
-					<< point.getStandDev(0) << sep
-					<< "SY" << sep
-					<< point.getStandDev(1) << sep
-					<< "SZ" << sep
-					<< point.getStandDev(2) << endl;
-				else
-				{
-					if (point.hasStandDeviations())
-						(*stream) << "SX" << sep
-						<< point.getStandDev(0) << sep
-						<< "SY" << sep
-						<< point.getStandDev(1) << sep
-						<< "SZ" << sep
-						<< point.getStandDev(2) << endl;
-					else
-						(*stream) << endl;
-				}
+                // NB. June 2017:
+                // With the new observation OBSXYZ the standard deviations
+                // of POIN are not used any longer (for now).
+                // -------------------------------------------------------
+                // if(!frameIt->get()->isROOTNode())
+                //     (*stream) << "SX" << sep
+                //     << point.getStandDev(0) * 1000 << sep
+                //     << "SY" << sep
+                //     << point.getStandDev(1) * 1000 << sep
+                //     << "SZ" << sep
+                //     << point.getStandDev(2) * 1000 << endl;
+                // else
+                // {
+                //     if(point.hasStandDeviations())
+                //         (*stream) << "SX" << sep
+                //         << point.getStandDev(0) * 1000 << sep
+                //         << "SY" << sep
+                //         << point.getStandDev(1) * 1000 << sep
+                //         << "SZ" << sep
+                //         << point.getStandDev(2) * 1000 << endl;
+                //     else
+                //         (*stream) << endl;
+                // }
+                // -------------------------------------------------------
+
 				break;
 
 			case TSpatialStatus::ESpatialStatus::kVxy:
@@ -491,6 +497,13 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		(*stream) << "*RADI" << endl;
 		for (auto& meas : frameIt->get()->measurements.fRADI)
 			writeRADIMeas(&meas);
+	}
+
+	if (!frameIt->get()->measurements.fOBSXYZ.empty())
+	{
+		(*stream) << "*OBSXYZ" << endl;
+		for (auto& meas : frameIt->get()->measurements.fOBSXYZ)
+			writeOBSXYZMeas(&meas);
 	}
 
 }
@@ -935,6 +948,22 @@ void TSimFileWriter::writeRADIMeas(TRADI* meas)
 	(*stream) << meas->station->getName() << sep
 		<< meas->getAngleCnstr().getGonsValue() << sep
 		<< "SIGMA" << sep << meas->getObservedStDev().getMMetresValue()<< endl;
+
+
+}
+
+void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
+{
+	TAStreamFormatter* stream = getStream();
+	string sep = stream->getSeparator();
+
+	(*stream) << meas->station->getName() << sep
+		<< meas->initialValue.getX() << sep
+		<< meas->initialValue.getY() << sep
+		<< meas->initialValue.getZ() << sep
+		<< meas->getXObservedStDev().getMMetresValue() << sep
+		<< meas->getYObservedStDev().getMMetresValue() << sep
+		<< meas->getZObservedStDev().getMMetresValue() << endl;
 
 
 }

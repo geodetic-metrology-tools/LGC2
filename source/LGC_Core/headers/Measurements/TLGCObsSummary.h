@@ -171,4 +171,14 @@ struct TUVECObsSummary{
 	TLGCObsSummary yVectorCompObsSum;
 };
 
+/*!
+\ingroup Measurements
+\brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the OBSXYZ observation.
+*/
+struct TOBSXYZObsSummary{
+    TLGCObsSummary obsXObsSum;
+    TLGCObsSummary obsYObsSum;
+    TLGCObsSummary obsZObsSum;
+};
+
 #endif // SU_LGC_OBS_SUMMARY
