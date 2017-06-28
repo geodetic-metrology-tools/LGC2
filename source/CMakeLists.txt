@@ -128,11 +128,3 @@ if(!UNIX)
 		)
 endif()
 
-#copy test files for unit tests
-if(UNIX)
-	execute_process(COMMAND copy_test_files_for_UnitTests.sh
-					RESULT_VARIABLE rv)
-else()
-	execute_process(COMMAND copy_test_files_for_UnitTests.bat
-					RESULT_VARIABLE rv)
-endif()
