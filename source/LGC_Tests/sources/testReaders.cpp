@@ -109,6 +109,7 @@ namespace tut
 			ensure_equals("Name should match", pH.getName(), "pointH1");
 
 			//Need to re initialise allfixed parameter
+            cfg.allfixed = TLGCConfig::TBinaryOption(false);
 			LGCAdjustablePoint::setAllFixedParam(False);
 
 			//
