@@ -11,6 +11,46 @@ namespace{
         }
         return true;
     }
+
+    // Return the value at pos and increment pos, if the string at pos has no known modifier, otherwise do nothing and return an empty string
+    std::string getValueWithoutModifier(const std::vector<std::string> &tokens, int &pos){
+        if(pos >= tokens.size())
+            return "";
+
+        // If the first character is one of the modifiers, string at pos is not sigma:
+        auto modifier = tokens.at(pos)[0];
+        if(std::string("/\\C$%").find(modifier) != std::string::npos) return "";
+
+        // Otherwise the string at pos is sigma => return sigma string at pos and increment pos
+        return tokens.at(pos++);
+    }
+
+    // Return the value at pos and increment pos, if the string at pos has the given modifier, otherwise do nothing and return an empty string
+    std::string getValueWithModifier(const std::vector<std::string> &tokens, int &pos, const char &modifier){
+        if(pos >= tokens.size())
+            return "";
+
+        // If the first character is the wanted modifier, return the string at pos without the modifier
+        // and increment the pos
+        return tokens.at(pos).at(0) == modifier ? tokens.at(pos++).substr(1) : "";
+    }
+
+    // If the string at position is the flag, increment the pos and return true, otherwise false
+    bool getBooleanValue(const std::vector<std::string> &tokens, int &pos, const std::string &flag){
+        if(pos >= tokens.size())
+            return false;
+
+        if(tokens.at(pos) != flag) return false;
+
+        ++pos;
+        return true;
+    }
+
+    // Return the possible end-of-line comment from the given tokens
+    std::string getEOLComment(const std::vector<std::string> &tokens){
+        // Check if the last is a comment
+        return (tokens.back().at(0) == '$' || tokens.back().at(0) == '%') ? tokens.back() : "";
+    }
 }
 
 TAMeasurementKey_lgc1::TAMeasurementKey_lgc1(TLGCData& project, const std::string& key) :
@@ -1322,7 +1362,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 //   NON TSTN MEAS   //
 ///////////////////////
-void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
+void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
 	if (fistrDMES)
 	{
@@ -1355,7 +1395,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
 	}
 
 
-    bool firstline(tokens_vec.size() > 0 && tokens_vec.at(0) == "*");
+    bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) 
 	{
         // For each new rom, initialise the romInstr to default:
@@ -1365,12 +1405,12 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
         // *DMES [sigma] [ppm]
 
         // Override the default values if sigma and/or ppm given:
-        if(tokens_vec.size() == 3)
-            romTarget->sigmaDSpt = TLength(std::stor(tokens_vec.at(2)), TLength::EUnits::kMillimetres);
+        if(tokens.size() == 3)
+            romTarget->sigmaDSpt = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
 
-        else if(tokens_vec.size() == 4) {
-            romTarget->sigmaDSpt = TLength(std::stor(tokens_vec.at(2)), TLength::EUnits::kMillimetres);
-            romTarget->ppmDSpt = TLength(std::stor(tokens_vec.at(3)), TLength::EUnits::kMillimetres);
+        else if(tokens.size() == 4) {
+            romTarget->sigmaDSpt = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+            romTarget->ppmDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 		}
 
         // No station yet:
@@ -1379,15 +1419,15 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
 	else 
 	{
 		// stn tgt meas [sigma][ppm] [/const | C ][ \hI HRefl] [$comments]
-        bool hasAllParams = (tokens_vec.size() > 2) && isNumber(tokens_vec.at(2));
+        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DMES measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
 
 		// Initialize the station
-        if(currentStation != tokens_vec.at(0))
+        if(currentStation != tokens.at(0))
 		{
-            currentStation = tokens_vec.at(0);
+            currentStation = tokens.at(0);
 			TEDM edm(fpoints.getObject(currentStation), romInstr);
 
 			proj.getCurrentNode().measurements.fEDM.emplace_back(edm);
@@ -1398,7 +1438,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
         auto &currentEDM = proj.getCurrentNode().measurements.fEDM.back();
 
 		// Find the observed point
-        const auto& obspt(fpoints.getObject(tokens_vec.at(1)));
+        const auto& obspt(fpoints.getObject(tokens.at(1)));
 
 		// NODUP used --> check that the stn-target pair does not exist yet:
 		if (proj.getConfig().nodup.isActive())
@@ -1410,109 +1450,18 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
 		// Get a copy of the station target for updating it
         TInstrumentData::TEDM::TTarget tgt = *romTarget;
 
-        // Take a non-constant copy of the tokens vector:
-        auto tokens = tokens_vec;
-
-        // Create variables for the pieces of the tokens vector:
-        std::string sigma_str = "";
-        std::string ppm_str = "";
-        std::string dcorr_str = "";
-        bool adjD_bool = false;
-        std::string instrH_str = "";
-        std::string trgtH_str = "";
-        std::string eolComment_str = "";
-
-        // At first store the possible comment:
-        if(tokens.back().at(0) == '$' || tokens.back().at(0) == '%'){
-            eolComment_str = tokens.back();
-
-            // Remove the comment from the vector in order to enable the following
-            // size checks to be correct regardless of the possible comment:
-            tokens.pop_back();
-        }
-
-        // Resolve the values for the different parametres of the meas definition:
-        if(tokens.size() == 4)
-        {
-            if(tokens.at(3) == "C")
-                adjD_bool = true;
-
-            else if(!tokens.at(3).compare(0, 1, "/"))
-                dcorr_str = tokens.at(3).substr(1);
-
-            else
-                sigma_str = tokens.at(3);
-        }
-
-        else if(tokens.size() == 5)
-        {
-            if(!tokens.at(3).compare(0, 1, "\\"))
-            {
-                instrH_str = tokens.at(3).substr(1);
-                trgtH_str = tokens.at(4);
-
-            } else if(tokens.at(4) == "C")
-            {
-                sigma_str = tokens.at(3);
-                adjD_bool = true;
-
-            } else if(!tokens.at(4).compare(0, 1, "/"))
-            {
-                sigma_str = tokens.at(3);
-                dcorr_str = tokens.at(4).substr(1);
-
-            } else
-            {
-                sigma_str = tokens.at(3);
-                ppm_str = tokens.at(4);
-            }
-        }
-
-        else if(tokens.size() == 6)
-        {
-            if(!tokens.at(3).compare(0, 1, "/"))
-            {
-                dcorr_str = tokens.at(3).substr(1);
-                instrH_str = tokens.at(4).substr(1);
-                trgtH_str = tokens.at(5);
-
-            } else if(!tokens.at(4).compare(0, 1, "\\"))
-            {
-                sigma_str = tokens.at(3);
-                instrH_str = tokens.at(4).substr(1);
-                trgtH_str = tokens.at(5);
-
-            } else if(tokens.at(5) == "C")
-            {
-                sigma_str = tokens.at(3);
-                ppm_str = tokens.at(4);
-                adjD_bool = true;
-
-            } else if(!tokens.at(5).compare(0, 1, "/"))
-            {
-                sigma_str = tokens.at(3);
-                ppm_str = tokens.at(4);
-                dcorr_str = tokens.at(5).substr(1);
-
-            } else
-            {
-                sigma_str = tokens.at(3);
-                ppm_str = tokens.at(4);
-            }
-        }
-
-        else if(tokens.size() == 8)
-        {
-            sigma_str = tokens.at(3);
-            ppm_str = tokens.at(4);
-            instrH_str = tokens.at(6).substr(1);
-            trgtH_str = tokens.at(7);
-
-            if(tokens.at(5) == "C")
-                adjD_bool = true;
-            else
-                dcorr_str = tokens.at(5).substr(1);
-        }
+        // Create variables for the pieces of the tokens vector and resolve
+        // the values for the different parametres of the meas definition:
+        
+        int pos = 3; // The position of the first optional parameter
+        
+        std::string sigma_str = getValueWithoutModifier(tokens, pos);
+        std::string ppm_str = getValueWithoutModifier(tokens, pos);
+        std::string dcorr_str = getValueWithModifier(tokens, pos, '/');
+        bool adjD_bool = getBooleanValue(tokens, pos, "C");
+        std::string instrH_str = getValueWithModifier(tokens, pos, '\\');
+        std::string trgtH_str = getValueWithoutModifier(tokens, pos);
+        std::string eolComment_str = getEOLComment(tokens);
 
         // Set the values from the parametres:
 
