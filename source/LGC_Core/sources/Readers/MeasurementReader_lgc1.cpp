@@ -103,6 +103,35 @@ void TAMeasurementKey_lgc1::createPolarInstrument()
 
 }
 
+
+void TAMeasurementKey_lgc1::createEDMInstrument() {
+    // Create and store the default EDM instrument
+    const TInstrumentData::TEDM e = {
+        "EDMInstr",
+        "EDMTgt",
+        TLength(0.0, TLength::EUnits::kMetres), //hi
+        TLength(0.0, TLength::EUnits::kMillimetres), //sigma hi
+        TLength(0.0, TLength::EUnits::kMillimetres) //sigma instr centering
+    };
+    finstruments.fEDM.insert(std::make_pair("EDMInstr", e));
+
+    // Create and store the EDM target:
+    TInstrumentData::TEDM::TTarget t = {
+        "EDMTgt",
+        TLength(1.0, TLength::EUnits::kMillimetres), //sigma
+        TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+        false, //dcorr adjustable
+        TLength(0.0, TLength::EUnits::kMetres), //dcorr value
+        TLength(0.0, TLength::EUnits::kMillimetres), // sigma dcorr
+        TLength(0.0, TLength::EUnits::kMillimetres), //sigma tgt centering
+        TLength(0.0, TLength::EUnits::kMetres), //htgt
+        TLength(0.0, TLength::EUnits::kMillimetres), //sigma htgt
+        &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr")) // adjustableLength*
+    };
+    finstruments.fEDM.begin()->second.targets.insert(std::make_pair("EDMTgt", t)); // we have only one EDM instrument
+
+}
+
 void TAMeasurementKey_lgc1::createTSTN(string stn, int line)
 {
 	// Initialize the station
@@ -1366,43 +1395,12 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 {
-	if (fistrDMES)
-	{
-		// Create and store the default EDM instrument
-		const TInstrumentData::TEDM e = {
-			"EDMInstr",
-			"EDMTgt",
-			TLength(0.0, TLength::EUnits::kMetres), //hi
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma hi
-			TLength(0.0, TLength::EUnits::kMillimetres) //sigma instr centering
-		};
-		finstruments.fEDM.insert(std::make_pair("EDMInstr", e));
-		
-		// Create and store the EDM target:
-		TInstrumentData::TEDM::TTarget t = {
-			"EDMTgt",
-			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			false, //dcorr adjustable
-			TLength(0.0, TLength::EUnits::kMetres), //dcorr value
-			TLength(0.0, TLength::EUnits::kMillimetres), // sigma dcorr
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma tgt centering
-			TLength(0.0, TLength::EUnits::kMetres), //htgt
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma htgt
-            &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr")) // adjustableLength*
-        };
-        finstruments.fEDM.begin()->second.targets.insert(std::make_pair("EDMTgt", t)); // we have only one EDM instrument
-
-		fistrDMES = false;
-	}
-
-
     bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) 
 	{
         // For each new rom, initialise the romInstr to default:
-        romInstr = finstruments.fEDM.begin()->second;
-        romTarget = &romInstr.targets.begin()->second;
+        romInstr = getEDMInstr();
+        romTarget = romInstr.targets.at(romInstr.defTarget);
 
         // * DMES [sigma] [ppm]
 
@@ -1412,10 +1410,10 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
         // Override the default values if sigma and ppm given:
         if(!isnotanumber(stn_sigma))
-            romTarget->sigmaDSpt = TLength(stn_sigma, TLength::EUnits::kMillimetres);
+            romTarget.sigmaDSpt = TLength(stn_sigma, TLength::EUnits::kMillimetres);
 
         if(!isnotanumber(stn_ppm))
-            romTarget->ppmDSpt = TLength(stn_ppm, TLength::EUnits::kMillimetres);
+            romTarget.ppmDSpt = TLength(stn_ppm, TLength::EUnits::kMillimetres);
 
         // No station yet:
         currentStation = "";
@@ -1452,7 +1450,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
 
 		// Get a copy of the station target for updating it
-        TInstrumentData::TEDM::TTarget tgt = *romTarget;
+        TInstrumentData::TEDM::TTarget tgt = romTarget;
 
         // Create variables for the pieces of the tokens vector and resolve
         // the values for the different parametres of the meas definition:
@@ -1469,28 +1467,35 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
         // Set the values from the parametres:
 
+        // distCorrAdjustable ('C') affects this measurement and the following
+        if(adjD_bool){
+            // Change the romTarget to the adj_dcorr one, copy the propagating properties:
+            // (the old values are stored in tgt because it's copied from the old romTarget above)
+            romTarget = getEDMAdjTarget();
+            romTarget.sigmaDSpt = tgt.sigmaDSpt;
+            romTarget.ppmDSpt = tgt.ppmDSpt;
+            romTarget.distCorrectionValue = tgt.distCorrectionValue;
+
+            // Now update the tgt
+            tgt = romTarget;
+        }
+
         // Sigma and PPM affect this measurement and the following
 
         if(!isnotanumber(sigma)){
-            romTarget->sigmaDSpt = TLength(sigma, TLength::kMillimetres);
-            tgt.sigmaDSpt = romTarget->sigmaDSpt;
+            romTarget.sigmaDSpt = TLength(sigma, TLength::kMillimetres);
+            tgt.sigmaDSpt = romTarget.sigmaDSpt;
         }
 
         if(!isnotanumber(ppm)){
-            romTarget->ppmDSpt = TLength(ppm, TLength::kMillimetres);
-            tgt.ppmDSpt = romTarget->ppmDSpt;
+            romTarget.ppmDSpt = TLength(ppm, TLength::kMillimetres);
+            tgt.ppmDSpt = romTarget.ppmDSpt;
         }
         
         // distCorrValue affects this measurement and the following
         if(!isnotanumber(dcorr)){
-            romTarget->distCorrectionValue = TLength(dcorr, TLength::kMetres);
-            tgt.distCorrectionValue = romTarget->distCorrectionValue;
-        }
-
-        // distCorrAdjustable ('C') affects this measurement and the following
-        if(adjD_bool){
-            romTarget->distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr_adj")); // --  +std::to_string(line)));
-            tgt.distCorrectionAdjustable = romTarget->distCorrectionAdjustable;
+            romTarget.distCorrectionValue = TLength(dcorr, TLength::kMetres);
+            tgt.distCorrectionValue = romTarget.distCorrectionValue;
         }
 
         // instrHeight & tgtHeight affect only the measurement (and stn) where defined

@@ -37,8 +37,33 @@ protected:
 		return finstruments.fPOLAR["TSTNInstr"];
 	}
 
+    TInstrumentData::TEDM& getEDMInstr() {
+        if(finstruments.fEDM.size() == 0)
+            createEDMInstrument();
+
+        return finstruments.fEDM.begin()->second;
+    }
+
+    TInstrumentData::TEDM::TTarget& getEDMAdjTarget() {
+        auto &tedm = getEDMInstr();
+        if(tedm.targets.size() < 2){
+            // Create the adjustable target:
+            auto adj_tgt = tedm.targets.begin()->second;
+            adj_tgt.ID = "EDMAdjTgt";
+            adj_tgt.distCorrectionUnknown = true;
+            adj_tgt.distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr_adj"));
+
+            // Add the new target to the instrument
+            tedm.targets["EDMAdjTgt"] = adj_tgt;
+        }
+
+        return tedm.targets.at("EDMAdjTgt");
+    }
+
 	//create a default TInstrumentData::TPOLAR
 	void createPolarInstrument();
+    // create a default EDM
+    void createEDMInstrument();
 	//create a TSTN
 	void createTSTN(string stn, int line);
 	//create a ROM in tstn
@@ -187,10 +212,9 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, int line);
 
 private:
-	bool fistrDMES = true;
 	string currentStation = "";
     TInstrumentData::TEDM romInstr;
-    TInstrumentData::TEDM::TTarget* romTarget;
+    TInstrumentData::TEDM::TTarget romTarget;
 };
 
 /// Keyword to process ECTH measurement
