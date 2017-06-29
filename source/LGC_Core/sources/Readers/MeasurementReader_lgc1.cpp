@@ -1322,11 +1322,11 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 //   NON TSTN MEAS   //
 ///////////////////////
-void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens_vec, int line)
 {
 	if (fistrDMES)
 	{
-		//create a default EDM instrument
+		// Create and store the default EDM instrument
 		const TInstrumentData::TEDM e = {
 			"EDMInstr",
 			"EDMTgt",
@@ -1334,15 +1334,9 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			TLength(0.0, TLength::EUnits::kMillimetres), //sigma hi
 			TLength(0.0, TLength::EUnits::kMillimetres) //sigma instr centering
 		};
-
-		// store the new station
 		finstruments.fEDM.insert(std::make_pair("EDMInstr", e));
 		
-		
-		//create an EDM target
-		// Add adjustable scalar into a global collection and store a pointer
-		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr"));
-
+		// Create and store the EDM target:
 		TInstrumentData::TEDM::TTarget t = {
 			"EDMTgt",
 			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
@@ -1353,338 +1347,207 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			TLength(0.0, TLength::EUnits::kMillimetres), //sigma tgt centering
 			TLength(0.0, TLength::EUnits::kMetres), //htgt
 			TLength(0.0, TLength::EUnits::kMillimetres), //sigma htgt
-			adjDCorr // adjustableLength*
-		};
-
-		if (tokens.size() == 3)
-		{
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
-		}
-		else if (tokens.size() == 4)
-		{
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-			ppm = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		}
-		else
-		{
-			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
-			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
-		}
-		dcorr = TLength(0.0, TLength::EUnits::kMetres);
-
-		// store the new target
-		finstruments.fEDM.begin()->second.targets.insert(std::make_pair("EDMTgt", t)); // we have only one EDM instrument
+            &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr")) // adjustableLength*
+        };
+        finstruments.fEDM.begin()->second.targets.insert(std::make_pair("EDMTgt", t)); // we have only one EDM instrument
 
 		fistrDMES = false;
 	}
 
 
-	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+    bool firstline(tokens_vec.size() > 0 && tokens_vec.at(0) == "*");
 	if (firstline) 
 	{
-		// *DMES [sigma] [ppm]
-		if (tokens.size() == 3)
-		{
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
+        // For each new rom, initialise the romInstr to default:
+        romInstr = finstruments.fEDM.begin()->second;
+        romTarget = &romInstr.targets.begin()->second;
+
+        // *DMES [sigma] [ppm]
+
+        // Override the default values if sigma and/or ppm given:
+        if(tokens_vec.size() == 3)
+            romTarget->sigmaDSpt = TLength(std::stor(tokens_vec.at(2)), TLength::EUnits::kMillimetres);
+
+        else if(tokens_vec.size() == 4) {
+            romTarget->sigmaDSpt = TLength(std::stor(tokens_vec.at(2)), TLength::EUnits::kMillimetres);
+            romTarget->ppmDSpt = TLength(std::stor(tokens_vec.at(3)), TLength::EUnits::kMillimetres);
 		}
-		else if (tokens.size() == 4)
-		{
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-			ppm = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		}
-		else
-		{
-			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
-			ppm = TLength(0.0, TLength::EUnits::kMillimetres);
-		}
-		dcorr = TLength(0.0, TLength::EUnits::kMetres);
-		
-		currentStation = "";
-		// Add adjustable scalar into a global collection and store a pointer
-		adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr"+ std::to_string(line)));
+
+        // No station yet:
+        currentStation = "";
 	}
 	else 
 	{
 		// stn tgt meas [sigma][ppm] [/const | C ][ \hI HRefl] [$comments]
-        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
+        bool hasAllParams = (tokens_vec.size() > 2) && isNumber(tokens_vec.at(2));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DMES measurement must have at least 3 entries: "
 			"The station, the observed point and the measured distance.");
 
 		// Initialize the station
-		if (currentStation != tokens.at(0))
+        if(currentStation != tokens_vec.at(0))
 		{
-			currentStation = tokens.at(0);
-			TEDM edm(fpoints.getObject(currentStation), finstruments.getDevice(finstruments.fEDM, "EDMInstr"));
-
-			// get a reference to modify the default values for this station
-			// auto& instrument(edm.instrument);
+            currentStation = tokens_vec.at(0);
+			TEDM edm(fpoints.getObject(currentStation), romInstr);
 
 			proj.getCurrentNode().measurements.fEDM.emplace_back(edm);
 			proj.getCurrentNode().measurements.fEDM.back().line = line;
 		}
 
-		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(1)));
+        // Get the current edm station object:
+        auto &currentEDM = proj.getCurrentNode().measurements.fEDM.back();
 
-		//NODUP used
+		// Find the observed point
+        const auto& obspt(fpoints.getObject(tokens_vec.at(1)));
+
+		// NODUP used --> check that the stn-target pair does not exist yet:
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : proj.getCurrentNode().measurements.fEDM.back().measDSPT)
+			for (auto& point : currentEDM.measDSPT)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DMES measurement is duplicated");
 
-		// get a station reference to update default values
-		TInstrumentData::TEDM& instrument = proj.getCurrentNode().measurements.fEDM.back().instrument;
 
-		// get a copy of  the specified target and update it
-		TInstrumentData::TEDM::TTarget tgt(finstruments.getDevice(instrument.targets, instrument.defTarget));
+		// Get a copy of the station target for updating it
+        TInstrumentData::TEDM::TTarget tgt = *romTarget;
 
-		//default value
-		tgt.sigmaDSpt = sigma;
-		tgt.ppmDSpt = ppm;
-		tgt.distCorrectionValue = dcorr;
-		tgt.distCorrectionAdjustable = adjDCorr;
+        // Take a non-constant copy of the tokens vector:
+        auto tokens = tokens_vec;
 
-        auto &currentEDM = proj.getCurrentNode().measurements.fEDM.back();
+        // Create variables for the pieces of the tokens vector:
+        std::string sigma_str = "";
+        std::string ppm_str = "";
+        std::string dcorr_str = "";
+        bool adjD_bool = false;
+        std::string instrH_str = "";
+        std::string trgtH_str = "";
+        std::string eolComment_str = "";
 
-		if (tokens.back().at(0) == '$' || tokens.back().at(0) == '%')
-		{
-			if (tokens.size() == 5)
-			{
-				if (tokens.at(3) == "C")
-				{
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (!tokens.at(3).compare(0, 1, "/"))
-				{
-					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			}
+        // At first store the possible comment:
+        if(tokens.back().at(0) == '$' || tokens.back().at(0) == '%'){
+            eolComment_str = tokens.back();
 
-			else if (tokens.size() == 6)
-			{
-				if (!tokens.at(3).compare(0, 1, "\\"))
-				{
-                    instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-                    currentEDM.instrument.instrHeight = instrument.instrHeight;
-					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
-				}
-				else if (tokens.at(4) == "C")
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (!tokens.at(4).compare(0, 1, "/"))
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				}
-			}
+            // Remove the comment from the vector in order to enable the following
+            // size checks to be correct regardless of the possible comment:
+            tokens.pop_back();
+        }
 
-			else if (tokens.size() == 7)
-			{
-				if (!tokens.at(3).compare(0, 1, "/"))
-				{
-					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-                    currentEDM.instrument.instrHeight = instrument.instrHeight;
-					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
-				}
-				else if (!tokens.at(4).compare(0, 1, "\\"))
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-                    currentEDM.instrument.instrHeight = instrument.instrHeight;
-					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
-				}
-				else if (tokens.at(5) == "C")
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (!tokens.at(5).compare(0, 1, "/"))
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else  //comments at the end
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				}
-			}
+        // Resolve the values for the different parametres of the meas definition:
+        if(tokens.size() == 4)
+        {
+            if(tokens.at(3) == "C")
+                adjD_bool = true;
 
-			else if (tokens.size() == 9)
-			{
-				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-                instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
-                currentEDM.instrument.instrHeight = instrument.instrHeight;
-				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
+            else if(!tokens.at(3).compare(0, 1, "/"))
+                dcorr_str = tokens.at(3).substr(1);
 
-				if (tokens.at(5) == "C")
-				{
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else
-				{
-					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-			}
-			else if (tokens.size() == 8)
-			{
-				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-                instrument.instrHeight = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-                currentEDM.instrument.instrHeight = instrument.instrHeight;
-				tgt.targetHt = TLength(std::stor(tokens.at(6)), TLength::EUnits::kMetres);
+            else
+                sigma_str = tokens.at(3);
+        }
 
-				if (tokens.at(4) == "C")
-				{
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (tokens.at(4) == "/")
-				{
-					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+        else if(tokens.size() == 5)
+        {
+            if(!tokens.at(3).compare(0, 1, "\\"))
+            {
+                instrH_str = tokens.at(3).substr(1);
+                trgtH_str = tokens.at(4);
 
-			}
-		}
-		else
-		{
-			if (tokens.size() == 4)
-			{
-				if (tokens.at(3) == "C")
-				{
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (!tokens.at(3).compare(0, 1, "/"))
-				{
-					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-			}
+            } else if(tokens.at(4) == "C")
+            {
+                sigma_str = tokens.at(3);
+                adjD_bool = true;
 
-			else if (tokens.size() == 5)
-			{
-				if (!tokens.at(3).compare(0, 1, "\\"))
-				{
-                    instrument.instrHeight = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-                    currentEDM.instrument.instrHeight = instrument.instrHeight;
-					tgt.targetHt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres);
-				}
-				else if (tokens.at(4) == "C")
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (!tokens.at(4).compare(0, 1, "/"))
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				}
-			}
+            } else if(!tokens.at(4).compare(0, 1, "/"))
+            {
+                sigma_str = tokens.at(3);
+                dcorr_str = tokens.at(4).substr(1);
 
-			else if (tokens.size() == 6)
-			{
-				if (!tokens.at(3).compare(0, 1, "/"))
-				{
-					dcorr = TLength(std::stor(tokens.at(3).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-                    currentEDM.instrument.instrHeight = instrument.instrHeight;
-					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
-				}
-				else if (!tokens.at(4).compare(0, 1, "\\"))
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-                    instrument.instrHeight = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
-                    currentEDM.instrument.instrHeight = instrument.instrHeight;
-					tgt.targetHt = TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres);
-				}
-				else if (tokens.at(5) == "C")
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else if (!tokens.at(5).compare(0, 1, "/"))
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-				else  //comments at the end
-				{
-					tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-					tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-				}
-			}
+            } else
+            {
+                sigma_str = tokens.at(3);
+                ppm_str = tokens.at(4);
+            }
+        }
 
-			else if (tokens.size() == 8)
-			{
-				tgt.sigmaDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-				tgt.ppmDSpt = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
-                instrument.instrHeight = TLength(std::stor(tokens.at(6).substr(1)), TLength::EUnits::kMetres);
-                currentEDM.instrument.instrHeight = instrument.instrHeight;
-				tgt.targetHt = TLength(std::stor(tokens.at(7)), TLength::EUnits::kMetres);
+        else if(tokens.size() == 6)
+        {
+            if(!tokens.at(3).compare(0, 1, "/"))
+            {
+                dcorr_str = tokens.at(3).substr(1);
+                instrH_str = tokens.at(4).substr(1);
+                trgtH_str = tokens.at(5);
 
-				if (tokens.at(5) == "C")
-				{
-					// Add adjustable scalar into a global collection and store a pointer
-					adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr"+ std::to_string(line)));
-					tgt.distCorrectionAdjustable = adjDCorr;
-				}
-				else
-				{
-					dcorr = TLength(std::stor(tokens.at(5).substr(1)), TLength::EUnits::kMetres);
-					tgt.distCorrectionValue = dcorr;
-				}
-			}
-		}
+            } else if(!tokens.at(4).compare(0, 1, "\\"))
+            {
+                sigma_str = tokens.at(3);
+                instrH_str = tokens.at(4).substr(1);
+                trgtH_str = tokens.at(5);
+
+            } else if(tokens.at(5) == "C")
+            {
+                sigma_str = tokens.at(3);
+                ppm_str = tokens.at(4);
+                adjD_bool = true;
+
+            } else if(!tokens.at(5).compare(0, 1, "/"))
+            {
+                sigma_str = tokens.at(3);
+                ppm_str = tokens.at(4);
+                dcorr_str = tokens.at(5).substr(1);
+
+            } else
+            {
+                sigma_str = tokens.at(3);
+                ppm_str = tokens.at(4);
+            }
+        }
+
+        else if(tokens.size() == 8)
+        {
+            sigma_str = tokens.at(3);
+            ppm_str = tokens.at(4);
+            instrH_str = tokens.at(6).substr(1);
+            trgtH_str = tokens.at(7);
+
+            if(tokens.at(5) == "C")
+                adjD_bool = true;
+            else
+                dcorr_str = tokens.at(5).substr(1);
+        }
+
+        // Set the values from the parametres:
+
+        // Sigma and PPM affect this measurement and the following
+
+        if(sigma_str.size() != 0){
+            romTarget->sigmaDSpt = TLength(std::stor(sigma_str), TLength::kMillimetres);
+            tgt.sigmaDSpt = romTarget->sigmaDSpt;
+        }
+
+        if(ppm_str.size() != 0){
+            romTarget->ppmDSpt = TLength(std::stor(ppm_str), TLength::kMillimetres);
+            tgt.ppmDSpt = romTarget->ppmDSpt;
+        }
+        
+        // distCorrValue affects this measurement and the following
+        if(dcorr_str.size() != 0){
+            romTarget->distCorrectionValue = TLength(std::stor(dcorr_str), TLength::kMetres);
+            tgt.distCorrectionValue = romTarget->distCorrectionValue;
+        }
+
+        // distCorrAdjustable ('C') affects this measurement and the following
+        if(adjD_bool){
+            romTarget->distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr_adj")); // --  +std::to_string(line)));
+            tgt.distCorrectionAdjustable = romTarget->distCorrectionAdjustable;
+        }
+
+        // instrHeight & tgtHeight affect only the measurement (and stn) where defined
+
+        if(instrH_str.size() != 0)
+            currentEDM.instrument.instrHeight = TLength(std::stor(instrH_str), TLength::kMetres);
+
+        if(trgtH_str.size() != 0)
+            tgt.targetHt = TLength(std::stor(trgtH_str), TLength::kMetres);
+
 
 		// Store  the measured value
 		currentEDM.measDSPT.emplace_back(
@@ -1692,13 +1555,9 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			);
 
 		//get a reference to the inserted measurement
-		auto& dpst(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
-		dpst.line = line;
-		//If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dpst.eolcomment = tokens.back();
-
+		auto& dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
+        dspt.line = line;
+        dspt.eolcomment = eolComment_str;
 	}
 }
 

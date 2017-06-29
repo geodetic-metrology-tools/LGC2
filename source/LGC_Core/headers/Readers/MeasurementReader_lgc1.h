@@ -172,8 +172,7 @@ class TKeyDMES_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyDMES_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_dmes_lgc1, const char** keywords = allowed_DMES_lgc1) :
-		TAMeasurementKey_lgc1(project, DMES),
-		adjDCorr(nullptr)
+		TAMeasurementKey_lgc1(project, DMES)
 	{
 		//adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
 		for (int i(0); i< nb_allowed_keywords; i++)
@@ -189,11 +188,9 @@ public:
 
 private:
 	bool fistrDMES = true;
-	TLength sigma = TLength(0.0);
-	TLength ppm = TLength(0.0);
-	TLength dcorr = TLength(0.0);
-	TAdjustableLength* adjDCorr;
 	string currentStation = "";
+    TInstrumentData::TEDM romInstr;
+    TInstrumentData::TEDM::TTarget* romTarget;
 };
 
 /// Keyword to process ECTH measurement
