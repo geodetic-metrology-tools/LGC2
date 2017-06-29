@@ -12,27 +12,29 @@ namespace{
         return true;
     }
 
-    // Return the value at pos and increment pos, if the string at pos has no known modifier, otherwise do nothing and return an empty string
-    std::string getValueWithoutModifier(const std::vector<std::string> &tokens, int &pos){
+    // Return the value at pos and increment pos if the string at pos has no
+    // known modifier, otherwise do nothing and return a NaN value
+    TReal getValueWithoutModifier(const std::vector<std::string> &tokens, int &pos){
         if(pos >= tokens.size())
-            return "";
+            return NO_VALf;
 
-        // If the first character is one of the modifiers, string at pos is not sigma:
+        // If the first character is one of the modifiers, string at pos is not the wanted value:
         auto modifier = tokens.at(pos)[0];
-        if(std::string("/\\C$%").find(modifier) != std::string::npos) return "";
+        if(std::string("/\\C$%").find(modifier) != std::string::npos) return NO_VALf;
 
-        // Otherwise the string at pos is sigma => return sigma string at pos and increment pos
-        return tokens.at(pos++);
+        // Otherwise the string at pos is what was wanted => return the value at pos and increment pos
+        return std::stor(tokens.at(pos++));
     }
 
-    // Return the value at pos and increment pos, if the string at pos has the given modifier, otherwise do nothing and return an empty string
-    std::string getValueWithModifier(const std::vector<std::string> &tokens, int &pos, const char &modifier){
+    // Return the value at pos and increment pos if the string at pos has
+    // the given modifier, otherwise do nothing and return a NaN value
+    TReal getValueWithModifier(const std::vector<std::string> &tokens, int &pos, const char &modifier){
         if(pos >= tokens.size())
-            return "";
+            return NO_VALf;
 
-        // If the first character is the wanted modifier, return the string at pos without the modifier
-        // and increment the pos
-        return tokens.at(pos).at(0) == modifier ? tokens.at(pos++).substr(1) : "";
+        // If the first character is the wanted modifier, return the value
+        // at pos without the modifier and increment the pos:
+        return tokens.at(pos).at(0) == modifier ? std::stor(tokens.at(pos++).substr(1)) : NO_VALf;
     }
 
     // If the string at position is the flag, increment the pos and return true, otherwise false
@@ -1402,16 +1404,18 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
         romInstr = finstruments.fEDM.begin()->second;
         romTarget = &romInstr.targets.begin()->second;
 
-        // *DMES [sigma] [ppm]
+        // * DMES [sigma] [ppm]
 
-        // Override the default values if sigma and/or ppm given:
-        if(tokens.size() == 3)
-            romTarget->sigmaDSpt = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+        int pos = 2; // The position of the first optional parameter
+        TReal stn_sigma = getValueWithoutModifier(tokens, pos);
+        TReal stn_ppm = getValueWithoutModifier(tokens, pos);
 
-        else if(tokens.size() == 4) {
-            romTarget->sigmaDSpt = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-            romTarget->ppmDSpt = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		}
+        // Override the default values if sigma and ppm given:
+        if(!isnotanumber(stn_sigma))
+            romTarget->sigmaDSpt = TLength(stn_sigma, TLength::EUnits::kMillimetres);
+
+        if(!isnotanumber(stn_ppm))
+            romTarget->ppmDSpt = TLength(stn_ppm, TLength::EUnits::kMillimetres);
 
         // No station yet:
         currentStation = "";
@@ -1455,31 +1459,31 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
         
         int pos = 3; // The position of the first optional parameter
         
-        std::string sigma_str = getValueWithoutModifier(tokens, pos);
-        std::string ppm_str = getValueWithoutModifier(tokens, pos);
-        std::string dcorr_str = getValueWithModifier(tokens, pos, '/');
+        TReal sigma = getValueWithoutModifier(tokens, pos);
+        TReal ppm = getValueWithoutModifier(tokens, pos);
+        TReal dcorr = getValueWithModifier(tokens, pos, '/');
         bool adjD_bool = getBooleanValue(tokens, pos, "C");
-        std::string instrH_str = getValueWithModifier(tokens, pos, '\\');
-        std::string trgtH_str = getValueWithoutModifier(tokens, pos);
-        std::string eolComment_str = getEOLComment(tokens);
+        TReal instrH = getValueWithModifier(tokens, pos, '\\');
+        TReal trgtH = getValueWithoutModifier(tokens, pos);
+        std::string eolComment = getEOLComment(tokens);
 
         // Set the values from the parametres:
 
         // Sigma and PPM affect this measurement and the following
 
-        if(sigma_str.size() != 0){
-            romTarget->sigmaDSpt = TLength(std::stor(sigma_str), TLength::kMillimetres);
+        if(!isnotanumber(sigma)){
+            romTarget->sigmaDSpt = TLength(sigma, TLength::kMillimetres);
             tgt.sigmaDSpt = romTarget->sigmaDSpt;
         }
 
-        if(ppm_str.size() != 0){
-            romTarget->ppmDSpt = TLength(std::stor(ppm_str), TLength::kMillimetres);
+        if(!isnotanumber(ppm)){
+            romTarget->ppmDSpt = TLength(ppm, TLength::kMillimetres);
             tgt.ppmDSpt = romTarget->ppmDSpt;
         }
         
         // distCorrValue affects this measurement and the following
-        if(dcorr_str.size() != 0){
-            romTarget->distCorrectionValue = TLength(std::stor(dcorr_str), TLength::kMetres);
+        if(!isnotanumber(dcorr)){
+            romTarget->distCorrectionValue = TLength(dcorr, TLength::kMetres);
             tgt.distCorrectionValue = romTarget->distCorrectionValue;
         }
 
@@ -1491,11 +1495,11 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 
         // instrHeight & tgtHeight affect only the measurement (and stn) where defined
 
-        if(instrH_str.size() != 0)
-            currentEDM.instrument.instrHeight = TLength(std::stor(instrH_str), TLength::kMetres);
+        if(!isnotanumber(instrH))
+            currentEDM.instrument.instrHeight = TLength(instrH, TLength::kMetres);
 
-        if(trgtH_str.size() != 0)
-            tgt.targetHt = TLength(std::stor(trgtH_str), TLength::kMetres);
+        if(!isnotanumber(trgtH))
+            tgt.targetHt = TLength(trgtH, TLength::kMetres);
 
 
 		// Store  the measured value
@@ -1506,7 +1510,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		//get a reference to the inserted measurement
 		auto& dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
         dspt.line = line;
-        dspt.eolcomment = eolComment_str;
+        dspt.eolcomment = eolComment;
 	}
 }
 
