@@ -75,19 +75,9 @@ Behavior TLGCApp::exec()
 	result.extract(Behavior::BehaviorCode::ERR_readingContent);
 	result = lgcCalculation.computeResults(fileWriter);
 
-	//Write input file with simulated observation (SOBS) if SIMU and SOBS are used
-	if (projectData->getConfig().sim.writeLGCFile && projectData->getConfig().sim.isActive() && result)
-		writeSimFile(projectData.get());
-
-	// Save the final results if SIMU is not used. SIMU output is writen during the calculation after each iteration.
-	if(result && !projectData->getConfig().sim.isActive())
-		this->saveResults(projectData.get());
-
-	// Write deform file here to have acces to lgcCalculation
-	if (result && projectData->getConfig().writeDefa.isActive())
-		writeDefaFile(projectData.get(), lgcCalculation.getResultMtr());
-
-	
+	// Save the final results (SIMU output is written during the calculation after each iteration)
+	if(result)
+        this->saveResults(projectData.get(), fOutputFileLoc, lgcCalculation, fStream);
 
 	return result;
 }
@@ -136,34 +126,45 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat, const std::string 
 	
 }
 
-void TLGCApp::saveResults(TLGCData *dat)
+void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLocation, const TLGCCalculation &calculation, std::shared_ptr<TAStreamFormatter> &stream)
 {
-	// Write the standard output file
-	writeStdResultsFile(dat);
+    const auto &conf = dat->getConfig();
 
-	// change stream name
-	std::size_t found = fOutputFileLoc.find_last_of(".");
-	fOutputFileLoc = fOutputFileLoc.substr(0, found);
-	
+    // Write the standard output file if simulation mode is not used:
+    if(!conf.sim.isActive())
+        writeStdResultsFile(dat, outputFileLocation, stream);
+
+    // Remove the output file location extension (each file writer will add a different extension):
+    std::size_t found = outputFileLocation.find_last_of(".");
+    outputFileLocation = outputFileLocation.substr(0, found);
+
+    //Write input file with simulated observation (SOBS) if SIMU and SOBS are used
+    if(conf.sim.isActive() && conf.sim.writeLGCFile)
+        writeSimFile(dat, outputFileLocation, stream);
+
 	// Write punch files if needed
-	if(dat->getConfig().writePunch.isActive())
-		writePunchFile(dat);
+	if(conf.writePunch.isActive())
+        writePunchFile(dat, outputFileLocation, stream);
 
 	//Write error file (FAUT)
-	if(dat->getConfig().faut.isActive()==true)
-		writeFautFile(dat);
+	if(conf.faut.isActive())
+        writeFautFile(dat, outputFileLocation, stream);
 
 	// Write covariance matrices
-	if (dat->getConfig().covar.isActive())
-		writeCovarFile(dat);
+	if (conf.covar.isActive())
+        writeCovarFile(dat, outputFileLocation, stream);
 	
+    // Write deform file here to have acces to lgcCalculation
+    if(conf.writeDefa.isActive())
+        writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
+
 }
 
-void TLGCApp::writeStdResultsFile(TLGCData *dat)
+void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {	
 	// change stream name
-	fStream->resetStreamName(fOutputFileLoc);
-	TResultsFileWriter resultsFileWriter(fStream.get(), dat);
+    stream->resetStreamName(outputFileLocation);
+    TResultsFileWriter resultsFileWriter(stream.get(), dat);
 	
 	if (!dat->getFileLogger().hasErrors())
 		resultsFileWriter.writeFile();
@@ -171,7 +172,7 @@ void TLGCApp::writeStdResultsFile(TLGCData *dat)
 		resultsFileWriter.writeFile("Error has occured, see the LGC log file.");
 }
 
-void TLGCApp::writePunchFile(TLGCData* dat)
+void TLGCApp::writePunchFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {
 	auto writefile = [&](TPunchFileWriter punchFileWriter) {
 		if (!dat->getFileLogger().hasErrors())
@@ -182,31 +183,28 @@ void TLGCApp::writePunchFile(TLGCData* dat)
 
 	if (dat->getConfig().writePunch.kOUT1)
 	{
-		fStream->resetStreamName(fOutputFileLoc + ".coo");
-		TPunchFileWriter punchFileWriter(fStream.get(), dat);
+        stream->resetStreamName(outputFileLocation + ".coo");
+        TPunchFileWriter punchFileWriter(stream.get(), dat);
 		writefile(punchFileWriter);
 	}
 	else if (dat->getConfig().writePunch.kOUT3)
 	{
-		fStream->resetStreamName(fOutputFileLoc + ".mes");
-		TPunchFileWriter punchFileWriter(fStream.get(), dat);
+        stream->resetStreamName(outputFileLocation + ".mes");
+        TPunchFileWriter punchFileWriter(stream.get(), dat);
 		writefile(punchFileWriter);
 	}
 	else
 	{
-		fStream->resetStreamName(fOutputFileLoc + ".pun");
-		TPunchFileWriter punchFileWriter(fStream.get(), dat);
+        stream->resetStreamName(outputFileLocation + ".pun");
+        TPunchFileWriter punchFileWriter(stream.get(), dat);
 		writefile(punchFileWriter);
 	}
-
-	
 }
 
-void TLGCApp::writeFautFile(TLGCData* dat)
+void TLGCApp::writeFautFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {
-
-	fStream->resetStreamName(fOutputFileLoc + ".err");
-	TFautFileWriter fautFileWriter(fStream.get(), dat);
+    stream->resetStreamName(outputFileLocation + ".err");
+    TFautFileWriter fautFileWriter(stream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
 		fautFileWriter.writeFile(dat);
@@ -214,11 +212,10 @@ void TLGCApp::writeFautFile(TLGCData* dat)
 		fautFileWriter.writeFile("Error has occured, see the LGC log file.");
 }
 
-void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
+void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
 {
-
-	fStream->resetStreamName(fOutputFileLoc + ".def");
-	TDefaFileWriter defaFileWriter(fStream.get(), dat);
+    stream->resetStreamName(outputFileLocation + ".def");
+    TDefaFileWriter defaFileWriter(stream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
 		defaFileWriter.writeFile(*dat, fResMtrx);
@@ -227,11 +224,10 @@ void TLGCApp::writeDefaFile(TLGCData* dat, TLSResultsMatrices &fResMtrx)
 }
 
 /// Write files for covariances
-void TLGCApp::writeCovarFile(TLGCData *dat)
+void TLGCApp::writeCovarFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {
-
-	fStream->resetStreamName(fOutputFileLoc + ".cov");
-	TCovarFileWriter covarFileWriter(fStream.get(), dat);
+    stream->resetStreamName(outputFileLocation + ".cov");
+    TCovarFileWriter covarFileWriter(stream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
 		covarFileWriter.writeFile(*dat);
@@ -240,31 +236,15 @@ void TLGCApp::writeCovarFile(TLGCData *dat)
 
 }
 
-void TLGCApp::writeSimFile(TLGCData* dat)
+void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {
-	// change stream name
-	std::size_t found = fOutputFileLoc.find_last_of(".");
-	fOutputFileLoc = fOutputFileLoc.substr(0, found);
-
-	fStream->resetStreamName(fOutputFileLoc + ".sim");
-	TSimFileWriter simFileWriter(fStream.get(), dat);
+    stream->resetStreamName(outputFileLocation + ".sim");
+	TSimFileWriter simFileWriter(stream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
 		simFileWriter.writeFile();
 	else
 		simFileWriter.writeFile("Error has occured, see the LGC log file.");
-
-	//Write error file (FAUT) if needed
-	if (dat->getConfig().faut.isActive() == true)
-		writeFautFile(dat);
-
-	// Write punch files if needed
-	if (dat->getConfig().writePunch.isActive())
-		writePunchFile(dat);
-
-	// Write covariance matrices
-	if (dat->getConfig().covar.isActive())
-		writeCovarFile(dat);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

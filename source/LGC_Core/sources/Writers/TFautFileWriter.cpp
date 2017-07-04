@@ -37,7 +37,7 @@ TFautFileWriter::~TFautFileWriter()
 //////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC: WRITING RESULTS
 //////////////////////////////////////////////////////////////////////////////////////////
-void	TFautFileWriter::writeFile(TLGCData* ds)
+void	TFautFileWriter::writeFile(TLGCData const * const ds)
 {
 
 	TAStreamFormatter*	stream = getStream();
@@ -147,7 +147,7 @@ void	TFautFileWriter::writeDataSummary()
 
 }
 
-void	TFautFileWriter::writeOverallReliability(TLGCData* project)
+void	TFautFileWriter::writeOverallReliability(TLGCData const * const project)
 {
 	TAStreamFormatter* stream =	getStream();
 	string separator = getSeparator();

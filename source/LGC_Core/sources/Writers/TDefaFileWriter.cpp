@@ -35,7 +35,7 @@ void TDefaFileWriter::writeFile(const string)
 
 }
 
-void TDefaFileWriter::writeFile(TLGCData &project, TLSResultsMatrices& rm)
+void TDefaFileWriter::writeFile(const TLGCData &project, TLSResultsMatrices& rm)
 {
 	writeTitle(project);
 	writePoints(project);
@@ -43,7 +43,7 @@ void TDefaFileWriter::writeFile(TLGCData &project, TLSResultsMatrices& rm)
 	writeUpperTriangularCovarianceMatrix(project, rm);
 }
 
-void TDefaFileWriter::writeTitle(TLGCData &project)
+void TDefaFileWriter::writeTitle(const TLGCData &project)
 {
 	fStream->writeStringLeft(8, "DEFA: ");
 	fStream->writeInteger(4, project.fUEOIndices.OIndex - project.fUEOIndices.UIndex - (project.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kORIE) == 1 ? 1 : 0));
@@ -68,7 +68,7 @@ void TDefaFileWriter::writeTitle(TLGCData &project)
 	*fStream << endl;
 }
 
-void TDefaFileWriter::writePoints(TLGCData &project)
+void TDefaFileWriter::writePoints(const TLGCData &project)
 {
 	*fStream << "(A8,5X,F15.8,3X,F15.8,3X,F15.8,I4)\n";
 	if (project.getPointsDimension(TSpatialStatus::kVx) != 0) writeXAnalysis(project);
@@ -81,7 +81,7 @@ void TDefaFileWriter::writePoints(TLGCData &project)
 	writeCALA(project);
 }
 
-void TDefaFileWriter::write3DAnalysis(TLGCData &project)
+void TDefaFileWriter::write3DAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -101,7 +101,7 @@ void TDefaFileWriter::write3DAnalysis(TLGCData &project)
 }
 
 
-void TDefaFileWriter::writeXYAnalysis(TLGCData &project)
+void TDefaFileWriter::writeXYAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -122,7 +122,7 @@ void TDefaFileWriter::writeXYAnalysis(TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::writeXZAnalysis(TLGCData &project)
+void TDefaFileWriter::writeXZAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -143,7 +143,7 @@ void TDefaFileWriter::writeXZAnalysis(TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::writeYZAnalysis(TLGCData &project)
+void TDefaFileWriter::writeYZAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -164,7 +164,7 @@ void TDefaFileWriter::writeYZAnalysis(TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::writeXAnalysis(TLGCData &project)
+void TDefaFileWriter::writeXAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -185,7 +185,7 @@ void TDefaFileWriter::writeXAnalysis(TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::writeYAnalysis(TLGCData &project)
+void TDefaFileWriter::writeYAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -206,7 +206,7 @@ void TDefaFileWriter::writeYAnalysis(TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::writeZAnalysis(TLGCData &project)
+void TDefaFileWriter::writeZAnalysis(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -227,7 +227,7 @@ void TDefaFileWriter::writeZAnalysis(TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::writeCALA(TLGCData &project)
+void TDefaFileWriter::writeCALA(const TLGCData &project)
 {
 	auto begin = project.getPoints().begin();
 	auto end = project.getPoints().end();
@@ -289,7 +289,7 @@ void TDefaFileWriter::write3DPoint(string name, TReal X, TReal Y, TReal Z)
 	*fStream << "   1" << endl;
 }
 
-void TDefaFileWriter::writeUpperTriangularCovarianceMatrix(TLGCData& project, TLSResultsMatrices& rm)
+void TDefaFileWriter::writeUpperTriangularCovarianceMatrix(const TLGCData& project, TLSResultsMatrices& rm)
 {
 	std::list<LGCAdjustablePoint>::const_iterator begin;
 	std::list<LGCAdjustablePoint>::const_iterator end = project.getPoints().end();

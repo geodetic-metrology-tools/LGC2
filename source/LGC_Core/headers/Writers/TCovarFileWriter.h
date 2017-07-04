@@ -41,19 +41,19 @@ public:
 	/// write errors
 	void	writeFile(const string error);
 	/// write the input file for DEFORM
-	void	writeFile(TLGCData &project);
+    void	writeFile(const TLGCData &project);
 
 private:
 
 	/*!default constructor*/
 	TCovarFileWriter();
 
-	void writeTitle(TLGCData &project);
-	void writePoints(LGCAdjustablePoint&);
+    void writeTitle(const TLGCData &project);
+	void writePoints(const LGCAdjustablePoint&);
 	void writeFrames(TTreeEntry*);
 	void writeFrameDefinition(TAdjustableHelmertTransformation&);
 	void writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelmertTransformation&);
-	void writePointUpperTriangularCovarianceMatrix(LGCAdjustablePoint&);
+	void writePointUpperTriangularCovarianceMatrix(const LGCAdjustablePoint&);
 
 };
 #endif

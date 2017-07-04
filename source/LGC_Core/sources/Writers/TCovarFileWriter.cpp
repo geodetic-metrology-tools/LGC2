@@ -36,10 +36,10 @@ void TCovarFileWriter::writeFile(const string)
 
 }
 
-void TCovarFileWriter::writeFile(TLGCData &project)
+void TCovarFileWriter::writeFile(const TLGCData &project)
 {
 	writeTitle(project);
-	LGCAdjustablePointCollection& AdjPointIter = project.getPoints();
+	const LGCAdjustablePointCollection& AdjPointIter = project.getPoints();
 	
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++){
 		if (itTree->get()->frame.getName() != "ROOT")
@@ -47,7 +47,7 @@ void TCovarFileWriter::writeFile(TLGCData &project)
 			
 			writeFrames(itTree->get());
 
-			for (auto& pointIt: AdjPointIter)
+			for (const auto& pointIt: AdjPointIter)
 				if (pointIt.getFrameTreePosition().node->data.get()->ID == itTree->get()->ID)
 				{
 					//Write points defined in the frame
@@ -56,7 +56,7 @@ void TCovarFileWriter::writeFile(TLGCData &project)
 		}
 		else
 		{
-			for (auto& pointIt : AdjPointIter)
+			for (const auto& pointIt : AdjPointIter)
 				if (pointIt.getFrameTreePosition().node->data.get()->ID == itTree->get()->ID)
 				{
 					//Write points defined in the frame
@@ -68,7 +68,7 @@ void TCovarFileWriter::writeFile(TLGCData &project)
 	}
 }
 
-void TCovarFileWriter::writeTitle(TLGCData &project)
+void TCovarFileWriter::writeTitle(const TLGCData &project)
 {
 	fStream->writeStringLeft(8, "FILE OF COVARIANCE MATRICES: ");
 	fStream->writeStringLeft(8, project.getConfig().title);
@@ -78,7 +78,7 @@ void TCovarFileWriter::writeTitle(TLGCData &project)
 	*fStream << endl;
 }
 
-void TCovarFileWriter::writePoints(LGCAdjustablePoint &point)
+void TCovarFileWriter::writePoints(const LGCAdjustablePoint &point)
 {
 	//write point name
 	TAStreamFormatter*	stream = getStream();
@@ -580,7 +580,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 
 }
 
-void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(LGCAdjustablePoint &point)
+void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(const LGCAdjustablePoint &point)
 {
 	TAStreamFormatter*	stream = getStream();
     // int				nameWidth = getNameWidth();

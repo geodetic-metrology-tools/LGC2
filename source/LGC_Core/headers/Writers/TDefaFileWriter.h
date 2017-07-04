@@ -40,25 +40,25 @@ public:
 			/// write errors
 			void	writeFile(const string error);
 			/// write the input file for DEFORM
-			void	writeFile(TLGCData &project, TLSResultsMatrices& rm);
+			void	writeFile(const TLGCData &project, TLSResultsMatrices& rm);
 
 private:
 
 	/*!default constructor*/
 	TDefaFileWriter();
 
-	void writeTitle(TLGCData &project);
-	void writePoints(TLGCData&);
-	void write3DAnalysis(TLGCData&);
-	void writeXYAnalysis(TLGCData&);
-	void writeXZAnalysis(TLGCData&);
-	void writeYZAnalysis(TLGCData&);
-	void writeXAnalysis(TLGCData&);
-	void writeYAnalysis(TLGCData&);
-	void writeZAnalysis(TLGCData&);
-	void writeCALA(TLGCData&);
+    void writeTitle(const TLGCData &project);
+    void writePoints(const TLGCData&);
+    void write3DAnalysis(const TLGCData&);
+    void writeXYAnalysis(const TLGCData&);
+    void writeXZAnalysis(const TLGCData&);
+    void writeYZAnalysis(const TLGCData&);
+    void writeXAnalysis(const TLGCData&);
+    void writeYAnalysis(const TLGCData&);
+    void writeZAnalysis(const TLGCData&);
+    void writeCALA(const TLGCData&);
 	void write3DPoint(string name, TReal X, TReal Y, TReal Z);
-	void writeUpperTriangularCovarianceMatrix(TLGCData& project, TLSResultsMatrices& rm);
+    void writeUpperTriangularCovarianceMatrix(const TLGCData& project, TLSResultsMatrices& rm);
 	
 
 private:
