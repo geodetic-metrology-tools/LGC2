@@ -843,9 +843,10 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 		<< meas->instrument.ID << sep;
 
 	//write point on the line if it is already defined
-	for (auto& point : data->getPoints())
-		if (point.getName() == meas->fMeasuredPlane->getReferencePoint()->getName())
-			(*stream) << "RefPt" << sep << meas->fMeasuredPlane->getReferencePoint()->getName() << sep;
+    if(meas->fMeasuredPlane->getReferencePoint())
+        for(auto& point : data->getPoints())
+            if(point.getName() == meas->fMeasuredPlane->getReferencePoint()->getName())
+                (*stream) << "RefPt" << sep << meas->fMeasuredPlane->getReferencePoint()->getName() << sep;
 
 	(*stream) << endl;
 
