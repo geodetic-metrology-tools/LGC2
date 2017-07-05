@@ -15,6 +15,11 @@
 #include "QuantileFunctions.h"
 #include <Global.h>
 
+///////////////////////
+// Static variables:
+bool TLGCObsSummary::fCreateHistogram = false;
+
+
 //////////////////////
 // Default Constructor
 //////////////////////
@@ -125,65 +130,67 @@ void TLGCObsSummary::initialise() {
     // ------------- HISTOGRAM: ------------
 
     // Histogram data:
+    if(fCreateHistogram){
 
-    fHistoData.clear();
-    fNumberOutsideHisto = 0;
+        fHistoData.clear();
+        fNumberOutsideHisto = 0;
 
-    // if there are some residuals create the histogram data
-    if(getNumberOfObs() > 0)
-    {
-        bool done = false;
-        TReal colWidth = 1;
-        TReal minVal, maxVal;
-
-        // Sort the histogram list:
-        fHistoList.sort();
-
-        // get the maximum and minimum residual values
-        maxVal = getHistoHiLimit();
-        minVal = getHistoLoLimit();
-
-        // get the scale factor to apply for the residuals
-        int k = getHistoScale();
-
-        // if there are residuals beyond the scaled limits of the histogram, count them
-        // and obtain an iterator to the first and the "one-beyond-last" residuals in range
-        //
-        //first the lower limit (scaled residuals less than -20, the min limit of the histogram)
-        auto startIter = fHistoList.begin();
-        auto finishIter = fHistoList.end();
-
-        while(startIter != finishIter && (isnotanumber(*startIter) || (*startIter)*k <= minVal))
+        // if there are some residuals create the histogram data
+        if(getNumberOfObs() > 0)
         {
-            startIter++;
-            fNumberOutsideHisto++;
-        }
+            bool done = false;
+            TReal colWidth = 1;
+            TReal minVal, maxVal;
 
-        // then the upper limit (scaled residuals greater than 20, the max limit of the histogram)
-        while(finishIter != startIter && !done)
-        {
-            --finishIter;
-            if(isnotanumber(*(finishIter)) || (*(finishIter))*k >= maxVal)
-            {
-                fNumberOutsideHisto++;
-            } else
-            {
-                finishIter++;
-                done = true;
-            }
-        }
+            // Sort the histogram list:
+            fHistoList.sort();
 
-        // generate the histogram data
-        while(startIter != finishIter || (minVal + colWidth) < maxVal)
-        {
-            int i = 0;//nbre d element dans une colonne
-            while(startIter != finishIter && (*startIter)*k <= (minVal + colWidth))
+            // get the maximum and minimum residual values
+            maxVal = getHistoHiLimit();
+            minVal = getHistoLoLimit();
+
+            // get the scale factor to apply for the residuals
+            int k = getHistoScale();
+
+            // if there are residuals beyond the scaled limits of the histogram, count them
+            // and obtain an iterator to the first and the "one-beyond-last" residuals in range
+            //
+            //first the lower limit (scaled residuals less than -20, the min limit of the histogram)
+            auto startIter = fHistoList.begin();
+            auto finishIter = fHistoList.end();
+
+            while(startIter != finishIter && (isnotanumber(*startIter) || (*startIter)*k <= minVal))
             {
                 startIter++;
-                i++;
+                fNumberOutsideHisto++;
             }
-            fHistoData.push_back(i);
-            colWidth += LITERAL(1.0);
+
+            // then the upper limit (scaled residuals greater than 20, the max limit of the histogram)
+            while(finishIter != startIter && !done)
+            {
+                --finishIter;
+                if(isnotanumber(*(finishIter)) || (*(finishIter))*k >= maxVal)
+                {
+                    fNumberOutsideHisto++;
+                } else
+                {
+                    finishIter++;
+                    done = true;
+                }
+            }
+
+            // generate the histogram data
+            while(startIter != finishIter || (minVal + colWidth) < maxVal)
+            {
+                int i = 0;//nbre d element dans une colonne
+                while(startIter != finishIter && (*startIter)*k <= (minVal + colWidth))
+                {
+                    startIter++;
+                    i++;
+                }
+                fHistoData.push_back(i);
+                colWidth += LITERAL(1.0);
+            }
         }
     }
 }
@@ -241,6 +248,7 @@ TReal TLGCObsSummary::getVarHiLimit() const {
 /*! get the histogram data corresponding to the obersation residuals */
 const list<int> TLGCObsSummary::getHistogramData() const {
     assert(fIsInitialised);
+    assert(fCreateHistogram);
     return fHistoData;
 }
 
@@ -248,6 +256,7 @@ const list<int> TLGCObsSummary::getHistogramData() const {
 /* get the lower limit for the histogram residuals */
 TReal TLGCObsSummary::getHistoLoLimit() const {
     assert(fIsInitialised);
+    assert(fCreateHistogram);
 
 	// the lower limit is the greater of the lowest residual and -20
 	auto maxval = max( (double) floorq(fHistoList.front()*getHistoScale()) - LITERAL(1.0), -LITERAL(20.0));
@@ -258,6 +267,7 @@ TReal TLGCObsSummary::getHistoLoLimit() const {
 /* get the upper limit for the histogram residuals */
 TReal TLGCObsSummary::getHistoHiLimit() const {
     assert(fIsInitialised);
+    assert(fCreateHistogram);
 
 	// the lower limit is the smaller of the highest residual and 20
 	auto minval = min( (double) ceilq(fHistoList.back()*getHistoScale()) + LITERAL(2.0), LITERAL(20.0));
@@ -268,6 +278,8 @@ TReal TLGCObsSummary::getHistoHiLimit() const {
 /* get the scale factor for the histogram residuals */
 int TLGCObsSummary::getHistoScale() const
 {
+    assert(fCreateHistogram);
+
 	int k = 1;
 	if(getVariance()<=1)
 	{
@@ -284,6 +296,7 @@ int TLGCObsSummary::getHistoScale() const
 /* get the scale factor for the histogram residuals */
 int TLGCObsSummary::getNumBeyondHistoLimits() const {
     assert(fIsInitialised);
+    assert(fCreateHistogram);
     return fNumberOutsideHisto;
 }
 

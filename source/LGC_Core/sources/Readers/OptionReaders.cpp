@@ -177,6 +177,9 @@ void TKeyFMTP::parse(const std::vector<std::string>& tokens, int) {
 
 void TKeyHIST::parse(const std::vector<std::string>&, int) {
 	fconfig.histo = TLGCConfig::TBinaryOption(true);
+
+    // Set the usage of histogram in obsSummary
+    TLGCObsSummary::createHistogram(fconfig.histo.isActive());
 }
 
 void TKeyPREC::parse(const std::vector<std::string>& tokens, int) {
