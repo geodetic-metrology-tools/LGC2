@@ -10,6 +10,7 @@
 
 #include <ctime>
 
+#include "TVAdjustableObject.h" // isnotanumber
 #include "TLGCObsSummary.h"
 #include "QuantileFunctions.h"
 #include <Global.h>
@@ -124,7 +125,6 @@ void TLGCObsSummary::initialise() {
     // ------------- HISTOGRAM: ------------
 
     // Histogram data:
-    list<TReal>::iterator startIter, finishIter;
 
     fHistoData.clear();
     fNumberOutsideHisto = 0;
@@ -150,10 +150,10 @@ void TLGCObsSummary::initialise() {
         // and obtain an iterator to the first and the "one-beyond-last" residuals in range
         //
         //first the lower limit (scaled residuals less than -20, the min limit of the histogram)
-        startIter = fHistoList.begin();
-        finishIter = fHistoList.end();
+        auto startIter = fHistoList.begin();
+        auto finishIter = fHistoList.end();
 
-        while(startIter != finishIter && (*startIter)*k <= minVal)
+        while(startIter != finishIter && (isnotanumber(*startIter) || (*startIter)*k <= minVal))
         {
             startIter++;
             fNumberOutsideHisto++;
@@ -162,7 +162,8 @@ void TLGCObsSummary::initialise() {
         // then the upper limit (scaled residuals greater than 20, the max limit of the histogram)
         while(finishIter != startIter && !done)
         {
-            if((*(--finishIter))*k >= maxVal)
+            --finishIter;
+            if(isnotanumber(*(finishIter)) || (*(finishIter))*k >= maxVal)
             {
                 fNumberOutsideHisto++;
             } else
@@ -249,7 +250,8 @@ TReal TLGCObsSummary::getHistoLoLimit() const {
     assert(fIsInitialised);
 
 	// the lower limit is the greater of the lowest residual and -20
-	return max( (double) floorq(fHistoList.front()*getHistoScale()) - LITERAL(1.0), -LITERAL(20.0));
+	auto maxval = max( (double) floorq(fHistoList.front()*getHistoScale()) - LITERAL(1.0), -LITERAL(20.0));
+    return isnotanumber(maxval) ? -LITERAL(20.0) : maxval;
 }
 
 
@@ -258,7 +260,8 @@ TReal TLGCObsSummary::getHistoHiLimit() const {
     assert(fIsInitialised);
 
 	// the lower limit is the smaller of the highest residual and 20
-	return min( (double) ceilq(fHistoList.back()*getHistoScale()) + LITERAL(2.0), LITERAL(20.0));
+	auto minval = min( (double) ceilq(fHistoList.back()*getHistoScale()) + LITERAL(2.0), LITERAL(20.0));
+    return isnotanumber(minval) ? LITERAL(20.0) : minval;
 }
 
 
