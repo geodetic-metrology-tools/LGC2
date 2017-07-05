@@ -18,6 +18,9 @@ bool TDataAnalyzer::dataConsistent(){
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
 	
+    // Update the static variables set by some options:
+    LGCAdjustablePoint::setAllFixedParam(fData.getConfig().allfixed.isActiveRef());
+    TLGCObsSummary::createHistogram(fData.getConfig().histo.isActive());
 
     // Initialise unknown, equation, and observation indices in the data,
     // initialise the counts of different types of points and measurements
