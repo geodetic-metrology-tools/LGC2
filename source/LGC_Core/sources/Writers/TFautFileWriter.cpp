@@ -131,18 +131,18 @@ void	TFautFileWriter::writeDataSummary()
 	stream->setf(ios::fixed,ios::floatfield);
 	stream->width(5);
 	stream->precision(1);
-	(*stream) << right << fAlpha << " %" << separator;
+	(*stream) << right << fAlpha * 100 << " %" << separator;
 	(*stream) << "OR EXPRESSED AS CONFIDENCE LEVEL, (1-ALPHA) = ";
 	stream->width(5);
 	stream->precision(1);
-	(*stream) << right << (100-fAlpha) << " %";
+	(*stream) << right << (100 - (fAlpha * 100)) << " %";
 	(*stream)<< endl << endl;
 	
 	// POWER OF TEST (1-beta)
 	(*stream) << "POWER OF TEST TO DETERMINE NABLA AND DELTY, (1-BETA) = ";
 	stream->width(5);
 	stream->precision(1);
-	(*stream) << right << (100-fBeta) << " %";
+	(*stream) << right << (100 - (fBeta * 100)) << " %";
 	(*stream)<< endl << endl << endl << endl;
 
 }
