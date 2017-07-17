@@ -15,7 +15,10 @@ class TAdjustableLength;
 
 /*! 
 	\ingroup AdjustableObjects
-	\brief A collection of adjustable objects, the only requirement is that the objects implement getName():string and getNumUnkn():int.
+	\brief A collection of adjustable objects (T) that implement the following functions:
+    - createUninitialized(const std::string &) : static T
+    - getName() : string
+    - getNumUnkn() : int
 
 	This class is basically a composite of an stl list with more comfortable retrieving functions and counting of the number of unknowns.
 */
@@ -27,7 +30,7 @@ class LGCAdjustableObjectCollection {
 		LGCAdjustableObjectCollection() {}
 
 		/*!
-			\brief Returns A reference to the adjustable object.
+			\brief Returns a reference to the adjustable object.
 
 			Get an adjustable object by its name. Creates a new uninitialised object
             and returns a reference to it if the specified object did not exist in
@@ -63,7 +66,7 @@ class LGCAdjustableObjectCollection {
 			return n;
 		}
 
-		/// Checks if an adjustable object with a given name is in the collection
+		/// Checks if an adjustable object with the given name is in the collection and is initialised
 		bool doesObjectExist(const std::string& objectName) const {
 			auto p(const_cast<LGCAdjustableObjectCollection<T>& >( *this ).findObject(objectName));
 			if (p != objects.cend()) {
@@ -77,10 +80,11 @@ class LGCAdjustableObjectCollection {
 		}
 
 		/*!
-			\brief Adds an adjustable to the collection. 
+			\brief Adds an adjustable to the collection or replaces the old object with the same name
 
-			\note Uninitialized objects may be in the collection by forward declaration. They will 
-			be initialized (content set by the assignemnt operator) when this method is called with a valid object.
+			\note If an object with the given name already exists in the container when calling
+            this function, the old object will be replaced with the given object (content set
+            with assignment operator).
 
 			\note The container takes a copy of the reference for the object that is passed here.
 		*/
