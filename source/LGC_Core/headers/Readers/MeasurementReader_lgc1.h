@@ -34,14 +34,14 @@ protected:
 		if (finstruments.fPOLAR.size() == 0)
 			createPolarInstrument();
 		
-		return finstruments.fPOLAR["TSTNInstr"];
+		return *finstruments.fPOLAR["TSTNInstr"];
 	}
 
     TInstrumentData::TEDM& getEDMInstr() {
         if(finstruments.fEDM.size() == 0)
             createEDMInstrument();
 
-        return finstruments.fEDM.begin()->second;
+        return *finstruments.fEDM.begin()->second;
     }
 
     TInstrumentData::TEDM::TTarget& getEDMAdjTarget() {
@@ -49,15 +49,15 @@ protected:
         if(tedm.targets.size() < 2){
             // Create the adjustable target:
             auto adj_tgt = tedm.targets.begin()->second;
-            adj_tgt.ID = "EDMAdjTgt";
-            adj_tgt.distCorrectionUnknown = true;
-            adj_tgt.distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr_adj"));
+            adj_tgt->ID = "EDMAdjTgt";
+            adj_tgt->distCorrectionUnknown = true;
+            adj_tgt->distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr_adj"));
 
             // Add the new target to the instrument
             tedm.targets["EDMAdjTgt"] = adj_tgt;
         }
 
-        return tedm.targets.at("EDMAdjTgt");
+        return *tedm.targets.at("EDMAdjTgt");
     }
 
 	//create a default TInstrumentData::TPOLAR

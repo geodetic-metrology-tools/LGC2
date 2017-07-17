@@ -373,8 +373,8 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
                 tstn->rotY = &tgt->angles.getObject(tstn->rotY->getName());
 
             for(auto &plrTgt : tstn->instrument.targets)
-                if(plrTgt.second.distCorrectionAdjustable)
-                    plrTgt.second.distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second.distCorrectionAdjustable->getName());
+                if(plrTgt.second->distCorrectionAdjustable)
+                    plrTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second->distCorrectionAdjustable->getName());
 
             // TSTN::ROM
             for(auto &rom : tstn->roms){
@@ -386,7 +386,7 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
                 if(rom->v0)
                     rom->v0 = &tgt->angles.getObject(rom->v0->getName());
 
-                rom->defaultTarget = &tstn->instrument.targets.at(rom->defaultTarget->ID);
+                rom->defaultTarget = tstn->instrument.targets.at(rom->defaultTarget->ID);
 
                 // Measurements in this rom
 
@@ -472,8 +472,8 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
             edm.instrumentPos = &tgt->points.getObject(edm.instrumentPos->getName());
 
             for(auto &edmTgt : edm.instrument.targets)
-                if(edmTgt.second.distCorrectionAdjustable)
-                    edmTgt.second.distCorrectionAdjustable = &tgt->lengths.getObject(edmTgt.second.distCorrectionAdjustable->getName());
+                if(edmTgt.second->distCorrectionAdjustable)
+                    edmTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(edmTgt.second->distCorrectionAdjustable->getName());
 
             // DSPT
             for(auto &meas : edm.measDSPT){
@@ -520,8 +520,8 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
             orierom.instrumentPos = &tgt->points.getObject(orierom.instrumentPos->getName());
 
             for(auto &plrTgt : orierom.instrument.targets)
-                if(plrTgt.second.distCorrectionAdjustable)
-                    plrTgt.second.distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second.distCorrectionAdjustable->getName());
+                if(plrTgt.second->distCorrectionAdjustable)
+                    plrTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second->distCorrectionAdjustable->getName());
 
             // Measurements
             for(auto &meas : orierom.measORIE){
@@ -634,24 +634,67 @@ void TLGCData::copyInstruments(TLGCData const * const src, TLGCData* tgtData){
     // Copy the instruments and targets:
     tgtData->instruments = src->instruments;
 
-    // Reset the pointers to adjustable objects in each concerned instrument/target:
+    // Reset the pointers to instruments and targets and to adjustable objects in each concerned instrument/target:
 
     // Polar targets:
-    for(auto &polar : tgtData->instruments.fPOLAR)
-        for(auto &tgt : polar.second.targets)
-            if(tgt.second.distCorrectionAdjustable)
-                tgt.second.distCorrectionAdjustable = &tgtData->lengths.getObject(tgt.second.distCorrectionAdjustable->getName());
+    for(auto &polar : tgtData->instruments.fPOLAR){
+
+        // Replace the instrument in the memory
+        polar.second.reset(new TInstrumentData::TPOLAR(*polar.second));
+
+        for(auto &tgt : polar.second->targets){
+
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TPOLAR::TTarget(*tgt.second));
+
+            if(tgt.second->distCorrectionAdjustable)
+                tgt.second->distCorrectionAdjustable = &tgtData->lengths.getObject(tgt.second->distCorrectionAdjustable->getName());
+        }
+    }
+
+    for(auto &camd : tgtData->instruments.fCAMD){
+    
+        // Replace the instrument in the memory
+        camd.second.reset(new TInstrumentData::TCAMD(*camd.second));
+
+        for(auto &tgt : camd.second->targets)
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TCAMD::TTarget(*tgt.second));
+    }
 
     // EDM targets:
-    for(auto &edm : tgtData->instruments.fEDM)
-        for(auto &tgt : edm.second.targets)
-            if(tgt.second.distCorrectionAdjustable)
-                tgt.second.distCorrectionAdjustable = &tgtData->lengths.getObject(tgt.second.distCorrectionAdjustable->getName());
+    for(auto &edm : tgtData->instruments.fEDM){
+
+        // Replace the instrument in the memory
+        edm.second.reset(new TInstrumentData::TEDM(*edm.second));
+
+        for(auto &tgt : edm.second->targets){
+
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TEDM::TTarget(*tgt.second));
+
+            if(tgt.second->distCorrectionAdjustable)
+                tgt.second->distCorrectionAdjustable = &tgtData->lengths.getObject(tgt.second->distCorrectionAdjustable->getName());
+        }
+    }
 
     // Levelling instrument:
-    for(auto &level : tgtData->instruments.fLEVEL)
-        if(level.second.collAngleAdjustable)
-            level.second.collAngleAdjustable = &tgtData->angles.getObject(level.second.collAngleAdjustable->getName());
+    for(auto &level : tgtData->instruments.fLEVEL){
+
+        // Replace the instrument in the memory
+        level.second.reset(new TInstrumentData::TLEVEL(*level.second));
+
+        if(level.second->collAngleAdjustable)
+            level.second->collAngleAdjustable = &tgtData->angles.getObject(level.second->collAngleAdjustable->getName());
+
+        for(auto &tgt : level.second->targets)
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TLEVEL::TTarget(*tgt.second));
+    }
+
+    for(auto &scale : tgtData->instruments.fSCALE)
+        // Replace the instrument in the memory
+        scale.second.reset(new TInstrumentData::TSCALE(*scale.second));
 }
 
 void TLGCData::updateAdjustableObjectsPointers(TLGCData* d){

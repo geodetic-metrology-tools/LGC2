@@ -270,8 +270,11 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, int)
 	// get a reference to the modifyable station copy
 	auto& stn(getStation());
 
+    // NB. the following line is to produce the error message if the specifiad target is not found...
+    auto tgtId = finstruments.getDevice(stn.targets, opts.getParamS("TRGT", stn.defTarget)).ID;
+
 	// Update the default target if specified or take one from TSTN (stn.defTarget)
-	const auto& tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", stn.defTarget)));
+    auto tgt = stn.targets.at(tgtId);
 	//Prepare a name of an adjustable angle (V0) = Frame name + V0 + numberOfAngle
 	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero

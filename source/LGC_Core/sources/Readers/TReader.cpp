@@ -503,10 +503,10 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
     if(outputMessages.hasErrors()) return false;
 
-    TInstrumentData::TPOLAR::TTarget* polarDefTgt = project.getInstruments().fPOLAR.empty() ? nullptr : &project.getInstruments().fPOLAR.begin()->second.targets.begin()->second;
-    TInstrumentData::TEDM::TTarget* edmDefTgt = project.getInstruments().fEDM.empty() ? nullptr : &project.getInstruments().fEDM.begin()->second.targets.at(project.getInstruments().fEDM.begin()->second.defTarget);
-    TInstrumentData::TEDM::TTarget* edmAdjTgt = project.getInstruments().fEDM.size() == 2 ? &project.getInstruments().fEDM.begin()->second.targets.at("EDMAdjTgt") : nullptr;
-    TInstrumentData::TLEVEL::TTarget* defStaff = project.getInstruments().fLEVEL.empty() ? nullptr : &project.getInstruments().fLEVEL.begin()->second.targets.begin()->second;
+    std::shared_ptr<TInstrumentData::TPOLAR::TTarget> polarDefTgt = project.getInstruments().fPOLAR.empty() ? nullptr : project.getInstruments().fPOLAR.begin()->second->targets.begin()->second;
+    std::shared_ptr<TInstrumentData::TEDM::TTarget> edmDefTgt = project.getInstruments().fEDM.empty() ? nullptr : project.getInstruments().fEDM.begin()->second->targets.at(project.getInstruments().fEDM.begin()->second->defTarget);
+    std::shared_ptr<TInstrumentData::TEDM::TTarget> edmAdjTgt = project.getInstruments().fEDM.size() == 2 ? project.getInstruments().fEDM.begin()->second->targets.at("EDMAdjTgt") : nullptr;
+    std::shared_ptr<TInstrumentData::TLEVEL::TTarget> defStaff = project.getInstruments().fLEVEL.empty() ? nullptr : project.getInstruments().fLEVEL.begin()->second->targets.begin()->second;
 
     // Update the targets in instruments stored in stations for data consistency
     
@@ -515,21 +515,21 @@ bool TReader::readLgc1File(std::istream& lgcStream)
         for(auto& node : project.getTree()){
         
             for(auto &tstn : node->measurements.fTSTN)
-                tstn->instrument.targets.begin()->second = *polarDefTgt;
+                *tstn->instrument.targets.begin()->second = *polarDefTgt;
 
             for(auto &edm : node->measurements.fEDM){
-                edm.instrument.targets.at(edmDefTgt->ID) = *edmDefTgt;
+                *edm.instrument.targets.at(edmDefTgt->ID) = *edmDefTgt;
 
                 // Copy the adjustable target to the station if it exists:
                 if(edmAdjTgt)
-                    edm.instrument.targets[edmAdjTgt->ID] = *edmAdjTgt;
+                    *edm.instrument.targets[edmAdjTgt->ID] = *edmAdjTgt;
             }
 
             for(auto &level : node->measurements.fLEVEL)
-                level.instrument.targets.begin()->second = *defStaff;
+                *level.instrument.targets.begin()->second = *defStaff;
 
             for(auto &orierom : node->measurements.fORIE)
-                orierom.instrument.targets.begin()->second = *polarDefTgt;
+                *orierom.instrument.targets.begin()->second = *polarDefTgt;
         }
     }
 

@@ -20,11 +20,58 @@ class TInstrumentData {
 	public:
 		class TPOLAR {
 		public:
-			TPOLAR(){}
-			TPOLAR(const TPOLAR& par)
+            struct TTarget {
+
+                std::string ID;
+                TAngle sigmaAngl;	            // [rad]
+                TAngle sigmaZenD;	            // [rad]
+                TLength sigmaDist;	         // [m]
+                TLength ppmDist;		         // [m]
+                bool  distCorrectionUnknown;
+                TLength distCorrectionValue;  // [m]
+                TLength sigmaDCorr;           // [m]
+                TLength sigmaTargetCentering; // [m]
+                TLength targetHt;             // [m]
+                TLength sigmaTargetHt;        // [m]
+                TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
+            };
+
+            TPOLAR() = default;
+            TPOLAR(
+                const std::string &instr_id,
+                const std::string &defTgt,
+                const TLength &instrH,
+                const TLength &sigmaInstrH,
+                const TLength &sigmaInstrCent,
+                const TAngle &cstAngle)
+                : ID(instr_id)
+                , defTarget(defTgt)
+                , instrHeight(instrH)
+                , sigmaInstrHeight(sigmaInstrH)
+                , sigmaInstrCentering(sigmaInstrCent)
+                , constAngle(cstAngle) {}
+            
+            TPOLAR(const TPOLAR& instr)
 			{
-				*this = par;
+                *this = instr; // Use the assignment operator to have the targets deep copied
 			}
+            TPOLAR& operator=(const TPOLAR &other){
+                if(this == &other) return *this;
+
+                ID = other.ID;
+                defTarget = other.defTarget;
+                instrHeight = other.instrHeight;
+                sigmaInstrHeight = other.sigmaInstrHeight;
+                sigmaInstrCentering = other.sigmaInstrCentering;
+                constAngle = other.constAngle;
+                targets = other.targets;
+
+                for(auto &tgt : targets)
+                    // Replace the target in the memory
+                    tgt.second.reset(new TTarget(*tgt.second));
+
+                return *this;
+            }
 
 			std::string ID;
 			std::string defTarget;
@@ -32,89 +79,163 @@ class TInstrumentData {
 			TLength sigmaInstrHeight;     // [m]
 			TLength sigmaInstrCentering;  // [m]
 			TAngle constAngle;            // [rad]
-
-					
-			struct TTarget {
-
-				std::string ID;
-				TAngle sigmaAngl;	            // [rad]
-				TAngle sigmaZenD;	            // [rad]
-				TLength sigmaDist;	         // [m]
-				TLength ppmDist;		         // [m]
-				bool  distCorrectionUnknown;
-				TLength distCorrectionValue;  // [m]
-				TLength sigmaDCorr;           // [m]
-				TLength sigmaTargetCentering; // [m]
-				TLength targetHt;             // [m]
-				TLength sigmaTargetHt;        // [m]
-				TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
-			};
-
-			/// allows the lookup of targets for this total station based on the target ID.
-			std::map<std::string, TTarget> targets;
+            std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
 		//Definition of camera parameters
 		struct TCAMD {
+            struct TTarget {
+                std::string ID;
+                TReal sigmaX;	               // [] unitless
+                TReal sigmaY;	               // [] unitless
+                TLength sigmaDist;	         // [m]
+                TLength sigmaTargetCentering; // [m]
+            };
+
+            TCAMD() = default;
+            TCAMD(
+                const std::string &instr_id,
+                const std::string &defTgt,
+                const TLength &sigmaInstrCent)
+                : ID(instr_id)
+                , defTarget(defTgt)
+                , sigmaInstrCentering(sigmaInstrCent) {}
+
+            TCAMD(const TCAMD& instr)
+            {
+                *this = instr; // Use the assignment operator to have the targets deep copied
+            }
+
+            TCAMD& operator=(const TCAMD &other){
+                if(this == &other) return *this;
+
+                ID = other.ID;
+                defTarget = other.defTarget;
+                sigmaInstrCentering = other.sigmaInstrCentering;
+                targets = other.targets;
+
+                for(auto &tgt : targets)
+                    // Replace the target in the memory
+                    tgt.second.reset(new TTarget(*tgt.second));
+
+                return *this;
+            }
+
 			std::string ID;
 			std::string defTarget;
 			TLength sigmaInstrCentering; // [m]
-						
-			struct TTarget {
-				std::string ID;
-				TReal sigmaX;	               // [] unitless
-				TReal sigmaY;	               // [] unitless
-				TLength sigmaDist;	         // [m]
-				TLength sigmaTargetCentering; // [m]
-			};
-
-			/// allows the lookup of targets for this total station based on the target ID.
-			std::map<std::string, TTarget> targets;
+            std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
 		struct TEDM {
+            struct TTarget {
+                std::string ID;
+                TLength sigmaDSpt;            // [m] sigma of the distance
+                TLength ppmDSpt;              // [m]
+                bool  distCorrectionUnknown;
+                TLength distCorrectionValue;  // [m]
+                TLength sigmaDCorr;           // [m]
+                TLength sigmaTargetCentering; // [m]
+                TLength targetHt;             // [m]
+                TLength sigmaTargetHt;        // [m]
+                TAdjustableLength* distCorrectionAdjustable;
+            };
+
+            TEDM() = default;
+            TEDM(
+                const std::string &instr_id,
+                const std::string &defTgt,
+                const TLength &instrH,
+                const TLength &sigmaInstrH,
+                const TLength &sigmaInstrCent)
+                : ID(instr_id)
+                , defTarget(defTgt)
+                , instrHeight(instrH)
+                , sigmaInstrHeight(sigmaInstrH)
+                , sigmaInstrCentering(sigmaInstrCent) {}
+
+            TEDM(const TEDM& instr)
+            {
+                *this = instr; // Use the assignment operator to have the targets deep copied
+            }
+
+            TEDM& operator=(const TEDM &other){
+                if(this == &other) return *this;
+
+                ID = other.ID;
+                defTarget = other.defTarget;
+                instrHeight = other.instrHeight;
+                sigmaInstrHeight = other.sigmaInstrHeight;
+                sigmaInstrCentering = other.sigmaInstrCentering;
+                targets = other.targets;
+
+                for(auto &tgt : targets)
+                    // Replace the target in the memory
+                    tgt.second.reset(new TTarget(*tgt.second));
+
+                return *this;
+            }
+
 			std::string ID;
 			std::string defTarget;
 			TLength instrHeight;         // [m]
 			TLength sigmaInstrHeight;    // [m]
 			TLength sigmaInstrCentering; // [m]
-
-			struct TTarget {
-			std::string ID;
-            TLength sigmaDSpt;            // [m] sigma of the distance
-            TLength ppmDSpt;              // [m]
-			bool  distCorrectionUnknown;
-            TLength distCorrectionValue;  // [m]
-            TLength sigmaDCorr;           // [m]
-            TLength sigmaTargetCentering; // [m]
-            TLength targetHt;             // [m]
-            TLength sigmaTargetHt;        // [m]
-			TAdjustableLength* distCorrectionAdjustable;
-			};
-			
-			/// allows the lookup of targets for this distance meter based on the target ID.
-			std::map<std::string, TTarget> targets;
+            std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
 		struct TLEVEL {
+            struct TTarget {
+                std::string ID;
+                TLength sigmaD;               // [m]
+                TLength ppmD;                 // [m]
+                TLength distCorrectionValue;  // [m]
+                TLength sigmaDCorr;           // [m]
+                TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
+                TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
+            };
+
+            TLEVEL() = default;
+            TLEVEL(
+                const std::string &instr_id,
+                const std::string &defStaff,
+                const bool &collAnglUnknown,
+                const TAngle &collAnglVal,
+                TAdjustableAngle* collAnglAdj)
+                : ID(instr_id)
+                , defStaffID(defStaff)
+                , collAngleUnknown(collAnglUnknown)
+                , collAngleValue(collAnglVal)
+                , collAngleAdjustable(collAnglAdj) {}
+
+            TLEVEL(const TLEVEL& instr)
+            {
+                *this = instr; // Use the assignment operator to have the targets deep copied
+            }
+
+            TLEVEL& operator=(const TLEVEL &other){
+                if(this == &other) return *this;
+
+                ID = other.ID;
+                defStaffID = other.defStaffID;
+                collAngleUnknown = other.collAngleUnknown;
+                collAngleValue = other.collAngleValue;
+                collAngleAdjustable = other.collAngleAdjustable;
+                targets = other.targets;
+
+                for(auto &tgt : targets)
+                    // Replace the target in the memory
+                    tgt.second.reset(new TTarget(*tgt.second));
+
+                return *this;
+            }
+
 			std::string ID;
 			std::string defStaffID;
 			bool collAngleUnknown;
 			TAngle collAngleValue;           // [rad]
 			TAdjustableAngle* collAngleAdjustable;
-
-			struct TTarget {
-			std::string ID;
-            TLength sigmaD;               // [m]
-            TLength ppmD;                 // [m]
-            TLength distCorrectionValue;  // [m]
-            TLength sigmaDCorr;           // [m]
-            TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
-            TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
-			};
-			
-			/// allows the lookup of targets for this leveling station based on the target ID.
-			std::map<std::string, TTarget> targets;
+            std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
 		struct TSCALE {
@@ -127,15 +248,15 @@ class TInstrumentData {
 		};
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<std::string, TPOLAR> fPOLAR;
+        std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
 		/// All available camera instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<std::string, TCAMD> fCAMD;
+        std::map<std::string, std::shared_ptr<TCAMD>> fCAMD;
 		/// All available distance meters, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<std::string, TEDM>   fEDM;
+        std::map<std::string, std::shared_ptr<TEDM>>   fEDM;
 		/// All available leveling instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<std::string, TLEVEL> fLEVEL;
+        std::map<std::string, std::shared_ptr<TLEVEL>> fLEVEL;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
-		std::map<std::string, TSCALE> fSCALE;
+        std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.
@@ -147,12 +268,12 @@ class TInstrumentData {
 			\throws Throws a runtime_error if the instrument is not found
 		*/
 		template<typename T>
-		const T& getDevice(const std::map<std::string, T>& m, const std::string& id) const {
+        const T& getDevice(const std::map<std::string, std::shared_ptr<T>>& m, const std::string& id) const {
 			auto it(m.find(id));
 			if (it == m.end())
 				throw std::runtime_error("Could not find device " + id + ".");
 
-			return it->second;
+			return *it->second;
 		}
 };
 #endif

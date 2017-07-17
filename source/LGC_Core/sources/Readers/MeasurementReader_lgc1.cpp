@@ -69,13 +69,13 @@ fSIMUActive(project.getConfig().sim.isActiveRef())
 void TAMeasurementKey_lgc1::createPolarInstrument()
 {
 	//create a default polar instrument
-	TInstrumentData::TPOLAR p;
-	p.ID = "TSTNInstr";
-	p.defTarget = "PolarTgt";
-	p.instrHeight = TLength(0.0);
-	p.sigmaInstrHeight = TLength(0.0, TLength::EUnits::kMillimetres);
-	p.sigmaInstrCentering = TLength(0.0, TLength::EUnits::kMillimetres);
-	p.constAngle = TAngle(0.0, TAngle::EUnits::kGons);
+    auto p = std::make_shared<TInstrumentData::TPOLAR>();
+    p->ID = "TSTNInstr";
+	p->defTarget = "PolarTgt";
+	p->instrHeight = TLength(0.0);
+	p->sigmaInstrHeight = TLength(0.0, TLength::EUnits::kMillimetres);
+	p->sigmaInstrCentering = TLength(0.0, TLength::EUnits::kMillimetres);
+	p->constAngle = TAngle(0.0, TAngle::EUnits::kGons);
 	
 	// store the new station
 	finstruments.fPOLAR.insert(std::make_pair("TSTNInstr", p));
@@ -84,39 +84,39 @@ void TAMeasurementKey_lgc1::createPolarInstrument()
 	// Add adjustable scalar into a global collection and store a pointer
 	TAdjustableLength* distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "POLAR_dcorr"));
 	
-	TInstrumentData::TPOLAR::TTarget t = {
-		"PolarTgt",
-		TAngle(1.0, TAngle::EUnits::kCCs),
-		TAngle(1.0, TAngle::EUnits::kCCs),
-		TLength(1.0, TLength::EUnits::kMillimetres),
-		TLength(0.0, TLength::EUnits::kMillimetres),
-		false,
-		TLength(0.0, TLength::EUnits::kMetres),
-		TLength(0.0, TLength::EUnits::kMillimetres),
-		TLength(0.0, TLength::EUnits::kMillimetres),
-		TLength(0.0, TLength::EUnits::kMetres), //htgt
-		TLength(0.0, TLength::EUnits::kMillimetres),
-		distCorrectionAdjustable // Adjustable object for "distCorrectionValue"
-	};
-	// store the new target
-	finstruments.fPOLAR["TSTNInstr"].targets.insert(std::make_pair("PolarTgt", t));
+    auto t = std::make_shared<TInstrumentData::TPOLAR::TTarget>(TInstrumentData::TPOLAR::TTarget{
+        "PolarTgt",
+        TAngle(1.0, TAngle::EUnits::kCCs),
+        TAngle(1.0, TAngle::EUnits::kCCs),
+        TLength(1.0, TLength::EUnits::kMillimetres),
+        TLength(0.0, TLength::EUnits::kMillimetres),
+        false,
+        TLength(0.0, TLength::EUnits::kMetres),
+        TLength(0.0, TLength::EUnits::kMillimetres),
+        TLength(0.0, TLength::EUnits::kMillimetres),
+        TLength(0.0, TLength::EUnits::kMetres), //htgt
+        TLength(0.0, TLength::EUnits::kMillimetres),
+        distCorrectionAdjustable // Adjustable object for "distCorrectionValue"
+    });
 
+	// store the new target
+	finstruments.fPOLAR["TSTNInstr"]->targets.insert(std::make_pair("PolarTgt", t));
 }
 
 
 void TAMeasurementKey_lgc1::createEDMInstrument() {
     // Create and store the default EDM instrument
-    const TInstrumentData::TEDM e = {
+    auto e = std::make_shared<TInstrumentData::TEDM>(
         "EDMInstr",
         "EDMTgt",
         TLength(0.0, TLength::EUnits::kMetres), //hi
         TLength(0.0, TLength::EUnits::kMillimetres), //sigma hi
         TLength(0.0, TLength::EUnits::kMillimetres) //sigma instr centering
-    };
+    );
     finstruments.fEDM.insert(std::make_pair("EDMInstr", e));
 
     // Create and store the EDM target:
-    TInstrumentData::TEDM::TTarget t = {
+    auto t = std::make_shared<TInstrumentData::TEDM::TTarget>(TInstrumentData::TEDM::TTarget{
         "EDMTgt",
         TLength(1.0, TLength::EUnits::kMillimetres), //sigma
         TLength(0.0, TLength::EUnits::kMillimetres), //ppm
@@ -127,8 +127,8 @@ void TAMeasurementKey_lgc1::createEDMInstrument() {
         TLength(0.0, TLength::EUnits::kMetres), //htgt
         TLength(0.0, TLength::EUnits::kMillimetres), //sigma htgt
         &flengths.addObject(TAdjustableLength(TLength(0.0), 1, "EDM_dcorr")) // adjustableLength*
-    };
-    finstruments.fEDM.begin()->second.targets.insert(std::make_pair("EDMTgt", t)); // we have only one EDM instrument
+    });
+    finstruments.fEDM.begin()->second->targets.insert(std::make_pair("EDMTgt", t)); // we have only one EDM instrument
 
 }
 
@@ -144,11 +144,11 @@ void TAMeasurementKey_lgc1::createTSTN(string stn, int line)
 void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 {
 	//Initialize the rom
-	TInstrumentData::TPOLAR::TTarget* tgt = &tstn->instrument.targets["PolarTgt"];
+	auto tgt = tstn->instrument.targets["PolarTgt"];
 	//Prepare a name of an adjustable angle (V0) = Frame name + V0 + numberOfAngle
 	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
-	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(*tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
+	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgt, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
 	// Add the ROM
 	tstn->roms.emplace_back(rom);
 }
@@ -172,7 +172,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
         auto &instr = getPolarInstr();
-		TInstrumentData::TPOLAR::TTarget &tgt = instr.targets["PolarTgt"];
+		auto &tgt = *instr.targets["PolarTgt"];
 
 		if ((tokens.size() == 4 && !tokens.at(3).compare(0, 1, "/")) || (tokens.size() == 5 && !tokens.at(3).compare(0, 1, "/") && (!tokens.at(4).compare(0, 1, "$") || !tokens.at(4).compare(0, 1, "%"))))
 		{
@@ -307,7 +307,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
         auto &instr = getPolarInstr();
-        TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+        auto &tgt = *instr.targets["PolarTgt"];
 
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
 		tgt.sigmaZenD = sigmaZEND;
@@ -431,7 +431,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
         auto &instr = getPolarInstr();
-		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+		auto &tgt = *instr.targets["PolarTgt"];
 
 		//default values
 		tgt.targetHt = TLength(0.0, TLength::EUnits::kMetres);
@@ -667,7 +667,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("A DTHE measurement is duplicated");
 
         auto &instr = getPolarInstr();
-		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+		auto &tgt = *instr.targets["PolarTgt"];
 
 		tgt.sigmaDist = sigmaDIST;
 		tgt.ppmDist = ppm;
@@ -998,7 +998,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("ECTH measurement is duplicated");
 
-        auto &ScaleInstr = finstruments.fSCALE.at("ECTHInstr");
+        auto &ScaleInstr = *finstruments.fSCALE.at("ECTHInstr");
 		ScaleInstr.sigmaD = sigma;
 		ScaleInstr.distCorrectionValue = dcorr;
 
@@ -1059,14 +1059,14 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	//create a scale instrument for ecth measurements
 	if (firstmeas)
 	{//create a default scale instrument
-		const TInstrumentData::TSCALE scl = {
-			"ECTHInstr",
-			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
-			TLength(0.0, TLength::EUnits::kMillimetres)  //centering
-		};
+        auto scl = std::make_shared<TInstrumentData::TSCALE>(TInstrumentData::TSCALE{
+            "ECTHInstr",
+            TLength(1.0, TLength::EUnits::kMillimetres), //sigma
+            TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+            TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
+            TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
+            TLength(0.0, TLength::EUnits::kMillimetres)  //centering
+        });
 
 		// store the new station
 		finstruments.fSCALE.insert(std::make_pair("ECTHInstr", scl));
@@ -1172,7 +1172,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
         auto &instr = getPolarInstr();
-		TInstrumentData::TPOLAR::TTarget& tgt = instr.targets["PolarTgt"];
+		auto &tgt = *instr.targets["PolarTgt"];
 
 		tgt.sigmaDist = sigmaDIST;
 		tgt.ppmDist = ppm;
@@ -1400,7 +1400,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	{
         // For each new rom, initialise the romInstr to default:
         romInstr = getEDMInstr();
-        romTarget = romInstr.targets.at(romInstr.defTarget);
+        romTarget = *romInstr.targets.at(romInstr.defTarget);
 
         // * DMES [sigma] [ppm]
 
@@ -1612,13 +1612,13 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		//create a default LEVEL instrument
 		// Add adjustable scalar into a global collection and store a pointer
 		TAdjustableAngle* collANGLEAdjustable = &fangles.addObject(TAdjustableAngle(TAngle(0.0), 1, "coll_angle_adjustable"));
-		const TInstrumentData::TLEVEL l = {
-			"LEVELInstr",
-			"Staff1",
-			false,
-			TAngle(0.0), //collimation angle value
-			collANGLEAdjustable
-		};
+        auto l = std::make_shared<TInstrumentData::TLEVEL>(
+            "LEVELInstr",
+            "Staff1",
+            false,
+            TAngle(0.0), //collimation angle value
+            collANGLEAdjustable
+        );
 
 		// store the new station
 		finstruments.fLEVEL.insert(std::make_pair("LEVELInstr", l));
@@ -1630,18 +1630,18 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 		dcorr = TLength(0.0, TLength::EUnits::kMetres);
 
-		TInstrumentData::TLEVEL::TTarget s = {
-			"Staff1",
-			sigma,
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			TLength(0.0, TLength::EUnits::kMetres), // distcorr
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma distcorr
-			TLength(0.0, TLength::EUnits::kMetres), //hstaff
-			TLength(0.0, TLength::EUnits::kMillimetres) //sigma hstaff
-		};
+        auto s = std::make_shared<TInstrumentData::TLEVEL::TTarget>(TInstrumentData::TLEVEL::TTarget{
+            "Staff1",
+            sigma,
+            TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+            TLength(0.0, TLength::EUnits::kMetres), // distcorr
+            TLength(0.0, TLength::EUnits::kMillimetres), //sigma distcorr
+            TLength(0.0, TLength::EUnits::kMetres), //hstaff
+            TLength(0.0, TLength::EUnits::kMillimetres) //sigma hstaff
+        });
 
 		// store the new staff
-		finstruments.fLEVEL.begin()->second.targets.insert(std::make_pair("Staff1", s)); // we have only one LEVEL instrument
+		finstruments.fLEVEL.begin()->second->targets.insert(std::make_pair("Staff1", s)); // we have only one LEVEL instrument
 
 		fistrDLEV = false;
 	}
@@ -1756,14 +1756,14 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	if (firstECHO)
 	{
 		//create a default scale instrument
-		const TInstrumentData::TSCALE scl = {
-			"ECHOInstr",
-			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
-			TLength(0.0, TLength::EUnits::kMillimetres)  //centering
-		};
+        auto scl = std::make_shared<TInstrumentData::TSCALE>(TInstrumentData::TSCALE{
+            "ECHOInstr",
+            TLength(1.0, TLength::EUnits::kMillimetres), //sigma
+            TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+            TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
+            TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
+            TLength(0.0, TLength::EUnits::kMillimetres)  //centering
+        });
 
 		// store the new station
 		finstruments.fSCALE.insert(std::make_pair("ECHOInstr", scl));
@@ -1818,7 +1818,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 			const LGCAdjustablePoint& p2 = fpoints.getObject(encrage2);
 
 			// Create measurements for the encrage points
-			TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
+			TInstrumentData::TSCALE& instr = *proj.getInstruments().fSCALE["ECHOInstr"];
 			instr.sigmaD = sigma*0.01;
 
 			TECHO echo1(p1, instr, TLength(!hasAllParams ? NO_VALf : 0.0));
@@ -1835,7 +1835,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		//This is a position of station point from which the plane is measured in the ECHO class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved.
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
-		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECHOInstr"];
+		TInstrumentData::TSCALE& instr = *proj.getInstruments().fSCALE["ECHOInstr"];
 		instr.distCorrectionValue = constante;
 		instr.sigmaD = sigma;
 
@@ -1901,14 +1901,14 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	//create a scale instrument for ecth measurements
 	if (firstmeas)
 	{//create a default scale instrument
-		const TInstrumentData::TSCALE scl = {
-			"ECSPInstr",
-			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
-			TLength(0.0, TLength::EUnits::kMillimetres)  //centering
-		};
+        auto scl = std::make_shared<TInstrumentData::TSCALE>(TInstrumentData::TSCALE{
+            "ECSPInstr",
+            TLength(1.0, TLength::EUnits::kMillimetres), //sigma
+            TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+            TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
+            TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
+            TLength(0.0, TLength::EUnits::kMillimetres)  //centering
+        });
 
 		// store the new station
 		finstruments.fSCALE.insert(std::make_pair("ECSPInstr", scl));
@@ -1961,7 +1961,7 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		/*This is a position of station point from which the plane is measured in the ECVE class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
-		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECSPInstr"];
+		TInstrumentData::TSCALE& instr = *proj.getInstruments().fSCALE["ECSPInstr"];
 		instr.distCorrectionValue = dcorr;
 		instr.sigmaD = sigma;
 
@@ -2027,14 +2027,14 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	if (fistrECVE)
 	{
 		//create a default scale instrument
-		const TInstrumentData::TSCALE scl = {
-			"ECVEInstr",
-			TLength(1.0, TLength::EUnits::kMillimetres), //sigma
-			TLength(0.0, TLength::EUnits::kMillimetres), //ppm
-			TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
-			TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
-			TLength(0.0, TLength::EUnits::kMillimetres)  //centering
-		};
+        auto scl = std::make_shared<TInstrumentData::TSCALE>(TInstrumentData::TSCALE{
+            "ECVEInstr",
+            TLength(1.0, TLength::EUnits::kMillimetres), //sigma
+            TLength(0.0, TLength::EUnits::kMillimetres), //ppm
+            TLength(0.0, TLength::EUnits::kMillimetres), //dcorrvalue
+            TLength(0.0, TLength::EUnits::kMillimetres), //sigma dcorr
+            TLength(0.0, TLength::EUnits::kMillimetres)  //centering
+        });
 
 		// store the new station
 		finstruments.fSCALE.insert(std::make_pair("ECVEInstr", scl));
@@ -2088,7 +2088,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 		/*This is a position of station point from which the plane is measured in the ECVE class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
 		const auto& stationPoint(fpoints.getObject(tokens.at(1)));
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
-		TInstrumentData::TSCALE& instr = proj.getInstruments().fSCALE["ECVEInstr"];
+		TInstrumentData::TSCALE& instr = *proj.getInstruments().fSCALE["ECVEInstr"];
 		instr.distCorrectionValue = constante;
 		instr.sigmaD = sigma;
 
