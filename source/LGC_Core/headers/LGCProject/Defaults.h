@@ -23,8 +23,6 @@
 /*!@name Default values for LGC2 */
 //@{
 
-static bool False = false;
-
 /// Default precision for output files
 static const int PREC_DEF_DIGITS = 5;
 

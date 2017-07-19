@@ -27,7 +27,7 @@ class TAMeasurementKey : public TAKeyWord {
 		TAdjustableAngleCollection& fangles;
 		LGCAdjustablePlaneCollection& fplanes;
 		LGCAdjustableLineCollection& flines;
-		const bool& fSIMUActive;
+		const bool fSIMUActive;
 
 		/// Returns if this was the first line beginning with a '*',  NOT the success of the target update
 		// To be used for the TSTN measurement's keywords, such as PLR3D, ANGL, ZEND,...

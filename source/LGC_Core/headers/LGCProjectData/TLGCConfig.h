@@ -35,8 +35,6 @@ struct TLGCConfig
 
 			/// Returns if the option is enabled.
 			inline bool isActive() const { return fisActive; }
-
-			inline const bool& isActiveRef() const { return fisActive; }
 	};
 
 	/*!

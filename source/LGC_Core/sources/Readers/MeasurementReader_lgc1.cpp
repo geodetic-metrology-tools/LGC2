@@ -63,7 +63,7 @@ flengths(project.getLength()),
 fangles(project.getAngles()),
 fplanes(project.getPlanes()),
 flines(project.getLines()),
-fSIMUActive(project.getConfig().sim.isActiveRef())
+fSIMUActive(project.getConfig().sim.isActive())
 {}
 
 void TAMeasurementKey_lgc1::createPolarInstrument()

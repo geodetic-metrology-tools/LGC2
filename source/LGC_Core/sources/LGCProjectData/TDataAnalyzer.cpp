@@ -19,7 +19,7 @@ bool TDataAnalyzer::dataConsistent(){
 	const TDataTree& fTree = fData.getTree();
 	
     // Update the static variables set by some options:
-    LGCAdjustablePoint::setAllFixedParam(fData.getConfig().allfixed.isActiveRef());
+    LGCAdjustablePoint::setAllFixedParam(fData.getConfig().allfixed.isActive());
     TLGCObsSummary::createHistogram(fData.getConfig().histo.isActive());
 
     // Initialise unknown, equation, and observation indices in the data,

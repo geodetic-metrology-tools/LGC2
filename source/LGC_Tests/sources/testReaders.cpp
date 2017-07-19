@@ -110,7 +110,7 @@ namespace tut
 
 			//Need to re initialise allfixed parameter
             cfg.allfixed = TLGCConfig::TBinaryOption(false);
-			LGCAdjustablePoint::setAllFixedParam(False);
+			LGCAdjustablePoint::setAllFixedParam(false);
 
 			//
 			TKeyLIBR c3(proj);

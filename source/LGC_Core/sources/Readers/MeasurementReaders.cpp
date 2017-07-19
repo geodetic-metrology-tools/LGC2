@@ -24,7 +24,7 @@ TAMeasurementKey::TAMeasurementKey(TLGCData& project, const std::string& key) :
 			fangles(project.getAngles()),
 			fplanes(project.getPlanes()),
 			flines(project.getLines()),
-			fSIMUActive(project.getConfig().sim.isActiveRef())
+            fSIMUActive(project.getConfig().sim.isActive())
 			{}
 
 bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& tokens) 

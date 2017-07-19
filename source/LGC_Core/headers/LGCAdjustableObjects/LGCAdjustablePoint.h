@@ -151,7 +151,7 @@ private:
 
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
 
-	static bool& allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
+	static bool allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
 
 	/*!Private constructor for creating uninitialized object	*/
 	LGCAdjustablePoint(const std::string& name);
