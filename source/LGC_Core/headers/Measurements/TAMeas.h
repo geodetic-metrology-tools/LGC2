@@ -30,7 +30,7 @@ enum ESingleValue {
 					of the observed target. May be set to int and supplied with 0 if no target is used.
 */
 template<typename TTarget>
-class TAMeas {
+class TAMeas : public TStatusObject {
 
     private:
         
