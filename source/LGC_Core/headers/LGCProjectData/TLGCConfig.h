@@ -5,6 +5,7 @@
 
 //SURVEYLIB
 #include <TRefSystemFactory.h>
+#include "TStatusObject.h"
 //LGC
 #include <Global.h>
 
@@ -23,18 +24,14 @@ struct TLGCConfig
 		The default is that the options are disabled this is done by 
 		the default constructor.
 	*/
-	class TBinaryOption {
-		private:
-			bool fisActive;
-
+	class TBinaryOption : public TStatusObject {
+		
 		public:
 			/// Base constructor for binary options, disables an option by default.
-			TBinaryOption(bool active = false) : fisActive(active) {}
+			TBinaryOption(bool active = false) : TStatusObject(active) {}
 			/// This virtual destructor does nothing.
 			virtual ~TBinaryOption() {}
 
-			/// Returns if the option is enabled.
-			inline bool isActive() const { return fisActive; }
 	};
 
 	/*!
