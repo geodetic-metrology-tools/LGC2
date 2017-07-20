@@ -99,7 +99,11 @@ struct TLGCConfig
 			bool hasBearing; 
 			
 			/// There is no orientation point for the adjustment
-			TPDOR() : TBinaryOption() {}
+			TPDOR()
+                : TBinaryOption()
+                , fptname("")
+                , fgis(TAngle(0.0))
+                , hasBearing(false) {}
 			/*!
 				\brief Adds an orientation point to the adjustment with an optional gisement.
 

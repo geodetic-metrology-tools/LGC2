@@ -131,7 +131,8 @@ namespace tut
 			// output options (not testing pure boolean options)
 			//
 			TKeyEREL o1(proj);
-            EXPECT_FAIL(o1.parse(tokenizefileString("*EREL P1 P2"), true, -1))
+            EXPECT_FAIL(o1.parse(tokenizefileString("*EREL P1 P2"), true, -1));
+            o1.parse(tokenizefileString("*EREL"), true, -1);
 			o1.parse(tokenizefileString("P1 P2"), true, -1);
 			o1.parse(tokenizefileString("P3 P4"), true, -1);
 			ensure("2 point pairs must be there for relative errors now", cfg.erelPairs.size() == 2);

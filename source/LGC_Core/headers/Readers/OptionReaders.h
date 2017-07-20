@@ -211,10 +211,13 @@ class TKeyEREL : public TAOptionKey {
 
 		///Tokenize and initialize options for the output processing
         virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
+
+private:
+    bool erelActive{ false };
 };
 
 struct TKeyFMTxHelper {
-	TKeyFMTxHelper(TLGCConfig::TCustomOutputSep& co, const std::vector<std::string>& tokens);
+	TKeyFMTxHelper(TLGCConfig::TCustomOutputSep& co, const std::vector<std::string>& tokens, bool lineActive);
 };
 
 class TKeyFMTO : public TAOptionKey {
