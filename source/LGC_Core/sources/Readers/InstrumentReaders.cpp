@@ -16,7 +16,7 @@ TKeyINSTR::TKeyINSTR(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyINSTR::parse(const std::vector<std::string>& tokens, int) {
+void TKeyINSTR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
 	// Does not parse, just the root of its sub-keys
 	if (tokens[0] != "*")
 		throw std::runtime_error("INSTR must be follow by an instrument keyword ");
@@ -31,7 +31,7 @@ TKeyPOLAR::TKeyPOLAR(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyPOLAR::parse(const std::vector<std::string>& tokens, int) {
+void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") { 
@@ -96,7 +96,7 @@ TKeyCAMD::TKeyCAMD(TLGCData& project, int nb_allowed_keywords, const char** keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyCAMD::parse(const std::vector<std::string>& tokens, int) {
+void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") { 
@@ -150,7 +150,7 @@ TKeyEDM::TKeyEDM(TLGCData& project, int nb_allowed_keywords, const char** keywor
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyEDM::parse(const std::vector<std::string>& tokens, int) {
+void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") {
@@ -210,7 +210,7 @@ TKeyLEVEL::TKeyLEVEL(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyLEVEL::parse(const std::vector<std::string>& tokens, int){
+void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int){
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") {
@@ -266,7 +266,7 @@ TKeySCALE::TKeySCALE(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 		
-void TKeySCALE::parse(const std::vector<std::string>& tokens, int) {
+void TKeySCALE::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
 	using namespace LGC;
 
 	auto& scales(finstruments.fSCALE);

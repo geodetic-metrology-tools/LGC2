@@ -288,6 +288,14 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 			continue;
 		}
 
+        // Check if the line begins with the deactivation characer, store the activation status
+        bool activeLine = true;
+        if(tokLine[0][0] == *DEACTIVATION_CHAR){
+            activeLine = false;
+            // Remove the deactivation character from the beginning of the string:
+            tokLine[0].erase(tokLine[0].begin());
+        }
+
 		// This means that it is the last keyword, which actually ends the reading process.
 		if (tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
 			break;
@@ -344,7 +352,7 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 
 		try{ //Handler was found, try to parse
 			
-			currenthandler->parse(tokLine, nline);
+			currenthandler->parse(tokLine, activeLine, nline);
 			safeGetline(lgcStream, line/*, '*'*/);
 		}
 		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
@@ -442,6 +450,14 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			continue;
 		}
 
+        // Check if the line begins with the deactivation characer, store the activation status
+        bool activeLine = true;
+        if(tokLine[0][0] == *DEACTIVATION_CHAR){
+            activeLine = false;
+            // Remove the deactivation character from the beginning of the string:
+            tokLine[0].erase(tokLine[0].begin());
+        }
+
 		// This means that it is the last keyword, which actually ends the reading process.
 		if (tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
 			break;
@@ -485,7 +501,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 
 		try{ //Handler was found, try to parse
-			currenthandler->parse(tokLine, nline);
+			currenthandler->parse(tokLine, activeLine, nline);
 			safeGetline(lgcStream, line/*, '*'*/);
 		}
 		catch (std::exception const & excp) 

@@ -12,7 +12,7 @@ TKeyFRAME::TKeyFRAME(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyFRAME::parse(const std::vector<std::string>& tokens, int line) {
+void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 	auto numTokens = tokens.size();
 			
@@ -102,7 +102,7 @@ TKeyENDFRAME::TKeyENDFRAME(TLGCData& project, int nb_allowed_keywords, const cha
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyENDFRAME::parse(const std::vector<std::string>& tokens, int) {
+void TKeyENDFRAME::parse(const std::vector<std::string>& tokens, bool, int) {
 	if (tokens.size() != 2 &&  tokens[2].at(0) != '%')  // More then 2 and at the same time the third is not comment
 		throw std::runtime_error("Key *ENDFRAME expects no arguments.");
 
@@ -130,7 +130,7 @@ size_t TAPointKey::findComment(const std::string& s) {
 	return std::string::npos;
 }
 
-void TAPointKey::parse(const std::vector<std::string>& tokens, int line) {
+void TAPointKey::parse(const std::vector<std::string>& tokens, bool activeLine, int line) {
 	using namespace LGC;
 
 	auto numTokens = tokens.size();

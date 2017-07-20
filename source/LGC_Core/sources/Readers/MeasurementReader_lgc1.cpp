@@ -20,7 +20,7 @@ namespace{
 
         // If the first character is one of the modifiers, string at pos is not the wanted value:
         auto modifier = tokens.at(pos)[0];
-        if(std::string("/\\C$%").find(modifier) != std::string::npos) return NO_VALf;
+        if(std::string("/\\C" + *INPUT_COMMENT_CHARS).find(modifier) != std::string::npos) return NO_VALf;
 
         // Otherwise the string at pos is what was wanted => return the value at pos and increment pos
         return std::stor(tokens.at(pos++));
@@ -153,7 +153,7 @@ void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 	tstn->roms.emplace_back(rom);
 }
 
-void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
     auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
 	{
@@ -288,7 +288,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
     auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
@@ -412,7 +412,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
     auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
@@ -648,7 +648,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}	
 }
 
-void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
     auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
@@ -979,7 +979,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 
     auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
@@ -1153,7 +1153,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, int line)
     }
 }
 
-void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
     auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
@@ -1393,7 +1393,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 //   NON TSTN MEAS   //
 ///////////////////////
-void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
     bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) 
@@ -1519,7 +1519,7 @@ void TKeyDMES_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
@@ -1605,7 +1605,7 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	if (fistrDLEV)
 	{
@@ -1751,7 +1751,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	if (firstECHO)
 	{
@@ -1895,7 +1895,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 
 	//create a scale instrument for ecth measurements
@@ -2022,7 +2022,7 @@ void TKeyECSP_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	if (fistrECVE)
 	{
@@ -2149,7 +2149,7 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline){
@@ -2244,7 +2244,7 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, int line)
+void TKeyRADI_lgc1::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline)

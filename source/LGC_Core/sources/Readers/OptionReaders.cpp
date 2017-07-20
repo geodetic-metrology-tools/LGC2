@@ -9,7 +9,7 @@ TKeyTITR::TKeyTITR(TLGCData& project, int nb_allowed_keywords, const char** keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyTITR::parse(const std::vector<std::string>& tokens, int) {
+void TKeyTITR::parse(const std::vector<std::string>& tokens, bool, int) {
 	if (tokens.at(0) == "*" && tokens.size() < 3)
 		throw std::runtime_error("Key *TITR expects only one argument");
 	
@@ -19,7 +19,7 @@ void TKeyTITR::parse(const std::vector<std::string>& tokens, int) {
 // Referentiels //
 //////////////////
 
-void TKeyOLOC::parse(const std::vector<std::string>&, int) 
+void TKeyOLOC::parse(const std::vector<std::string>&, bool, int) 
 {
 	// nothing to parse, using local cartesion coordinate system
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
@@ -28,7 +28,7 @@ void TKeyOLOC::parse(const std::vector<std::string>&, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-void TKeyRS2K::parse(const std::vector<std::string>&, int) 
+void TKeyRS2K::parse(const std::vector<std::string>&, bool, int) 
 {
 	// nothing to parse, using grid geoid
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
@@ -37,7 +37,7 @@ void TKeyRS2K::parse(const std::vector<std::string>&, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-void TKeyLEP::parse(const std::vector<std::string>&, int) 
+void TKeyLEP::parse(const std::vector<std::string>&, bool, int) 
 {
 	// nothing to parse, using parabolic ellipsoid
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
@@ -46,7 +46,7 @@ void TKeyLEP::parse(const std::vector<std::string>&, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-void TKeySPHE::parse(const std::vector<std::string>&, int) {
+void TKeySPHE::parse(const std::vector<std::string>&, bool, int) {
 	// nothing to parse, using spherical reference frame
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
@@ -60,27 +60,27 @@ void TKeySPHE::parse(const std::vector<std::string>&, int) {
 // Calc Options //
 //////////////////
 
-void TKeyALLFIXED::parse(const std::vector<std::string>&, int) {
+void TKeyALLFIXED::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.allfixed = TLGCConfig::TBinaryOption(true);
 
     LGCAdjustablePoint::setAllFixedParam(fconfig.allfixed.isActive());
 }
 
 
-void TKeyLIBR::parse(const std::vector<std::string>&, int) {
+void TKeyLIBR::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.libre = TLGCConfig::TBinaryOption(true);
 }
 
-void TKeyCOVAR::parse(const std::vector<std::string>&, int) {
+void TKeyCOVAR::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.covar = TLGCConfig::TBinaryOption(true);
 }
 
-void TKeyNODUP::parse(const std::vector<std::string>&, int) {
+void TKeyNODUP::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.nodup = TLGCConfig::TBinaryOption(true);
 }
 
 
-void TKeyPDOR::parse(const std::vector<std::string>& tokens, int) {
+void TKeyPDOR::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
     if(fconfig.allfixed.isActive())
         throw std::runtime_error("PDOR is not allowed with ALLFIXED option.");
 
@@ -107,7 +107,7 @@ void TKeyPDOR::parse(const std::vector<std::string>& tokens, int) {
 }
 
 
-void TKeySIMU::parse(const std::vector<std::string>& tokens, int) {
+void TKeySIMU::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	auto numTokens = tokens.size();
 
 	if (numTokens >= 3)
@@ -122,12 +122,12 @@ void TKeySIMU::parse(const std::vector<std::string>& tokens, int) {
 // Output Options //
 ////////////////////
 
-void TKeyAPRI::parse(const std::vector<std::string>&, int) {
+void TKeyAPRI::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.useApriori = TLGCConfig::TBinaryOption(true);
 }
 
 
-void TKeyEREL::parse(const std::vector<std::string>& tokens, int) {
+void TKeyEREL::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
     auto numtokens(tokens.size());
 	// this is a multi-line keyword, react just on the following calls
 	if (tokens.at(1) == "EREL") { 
@@ -165,24 +165,24 @@ void TKeyEREL::parse(const std::vector<std::string>& tokens, int) {
 }
 
 
-void TKeyFMTO::parse(const std::vector<std::string>& tokens, int) {
+ void TKeyFMTO::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	TKeyFMTxHelper(fconfig.CustomOutputSeparator, tokens);
 }
 
 
-void TKeyFMTP::parse(const std::vector<std::string>& tokens, int) {
+ void TKeyFMTP::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	TKeyFMTxHelper(fconfig.CustomOutputSeparatorPunch, tokens);
 }
 
 
-void TKeyHIST::parse(const std::vector<std::string>&, int) {
+ void TKeyHIST::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.histo = TLGCConfig::TBinaryOption(true);
 
     // Set the usage of histogram in obsSummary
     TLGCObsSummary::createHistogram(fconfig.histo.isActive());
 }
 
-void TKeyPREC::parse(const std::vector<std::string>& tokens, int) {
+ void TKeyPREC::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	if (tokens.size() != 3)
 		throw std::runtime_error("*PREC expects exactly one integer argument.");
 	if (std::stoi(tokens.at(2)) >= 0 && std::stoi(tokens.at(2)) <= 7)
@@ -191,19 +191,19 @@ void TKeyPREC::parse(const std::vector<std::string>& tokens, int) {
 		throw std::runtime_error("*PREC expects interger between 0 and 7.");
 }
 
-void TKeyMICR::parse(const std::vector<std::string>& /*tokens*/, int) {
+ void TKeyMICR::parse(const std::vector<std::string>& /*tokens*/, bool activeLine, int) {
 		fconfig.outPrecision = TLGCConfig::TPrecision(6);
 		auto& outputMessages(proj.getFileLogger());
 		outputMessages.writeReportHeader("MICR should not be used. Use PREC option.");
 }
 
-void TKeyCLIC::parse(const std::vector<std::string>& /*tokens*/, int) {
+ void TKeyCLIC::parse(const std::vector<std::string>& /*tokens*/, bool activeLine, int) {
 	fconfig.outPrecision = TLGCConfig::TPrecision(6);
 	auto& outputMessages(proj.getFileLogger());
 	outputMessages.writeReportHeader("CLIC should not be used. Use PREC option.");
 }
 
-void TKeyTOL::parse(const std::vector<std::string>& tokens, int) {
+ void TKeyTOL::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	if (tokens.size() != 3)
 		throw std::runtime_error("*TOL expects exactly one integer argument.");
 	if (std::stoi(tokens.at(2)) >= 0 && std::stoi(tokens.at(2)) <= 6)
@@ -215,7 +215,7 @@ void TKeyTOL::parse(const std::vector<std::string>& tokens, int) {
 	outputMessages.writeReportHeader("TOL should not be used. Use PREC option.");
 }
 
-void TKeyDIXI::parse(const std::vector<std::string>& /*tokens*/, int) {
+ void TKeyDIXI::parse(const std::vector<std::string>& /*tokens*/, bool activeLine, int) {
 	fconfig.outPrecision = TLGCConfig::TPrecision(4);
 
 	auto& outputMessages(proj.getFileLogger());
@@ -223,7 +223,7 @@ void TKeyDIXI::parse(const std::vector<std::string>& /*tokens*/, int) {
 }
 
 
-void TKeyPRES::parse(const std::vector<std::string>&, int) {
+ void TKeyPRES::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.errorEllipses = TLGCConfig::TBinaryOption(true);
 }
 
@@ -232,12 +232,12 @@ void TKeyPRES::parse(const std::vector<std::string>&, int) {
 // Additional Output Files //
 /////////////////////////////
 
-void TKeyDEFA::parse(const std::vector<std::string>&, int) {
+ void TKeyDEFA::parse(const std::vector<std::string>&, bool activeLine, int) {
 	fconfig.writeDefa = TLGCConfig::TBinaryOption(true);
 }
 
 
-void TKeyFAUT::parse(const std::vector<std::string>& tokens, int) {
+ void TKeyFAUT::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	auto numTokens = tokens.size();
 
 	if (numTokens == 2)
@@ -278,7 +278,7 @@ DiffOutHelper::	DiffOutHelper(TLGCConfig::TCoordOut& out, const std::string& opt
 }
 
 
-void TKeyPUNC::parse(const std::vector<std::string>& tokens, int) {
+void TKeyPUNC::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	auto numtokens = tokens.size();
 
 	if (numtokens == 2)
@@ -290,7 +290,7 @@ void TKeyPUNC::parse(const std::vector<std::string>& tokens, int) {
 }
 
 
-void TKeyPLOT::parse(const std::vector<std::string>& tokens, int) {
+void TKeyPLOT::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	auto numtokens = tokens.size();
 
 	if (numtokens == 2)
@@ -302,7 +302,7 @@ void TKeyPLOT::parse(const std::vector<std::string>& tokens, int) {
 }
 
 
-void TKeySOBS::parse(const std::vector<std::string>& tokens, int) {
+void TKeySOBS::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	auto numtokens = tokens.size();
 	
 	if (numtokens >= 2 )

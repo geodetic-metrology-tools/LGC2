@@ -43,7 +43,7 @@ bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& t
 	return firstline;
 }
 
-void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line) 
+void TKeyTSTN::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
 {
 	auto numTokens = tokens.size();
 	using namespace LGC;
@@ -80,7 +80,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, int line)
 		throw std::runtime_error("ROT3D and IHFIX cannot be specified at the same time for TSTN.");
 }
 
-void TKeyCAM::parse(const std::vector<std::string>& tokens, int line) 
+void TKeyCAM::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
 {
 	auto numTokens = tokens.size();
 	
@@ -108,7 +108,7 @@ void TKeyCAM::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 //   CAMERA MEAS       //
 ///////////////////////
-void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line) 
+void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
@@ -185,7 +185,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, int line)
 }
 
 
-void TKeyUVD::parse(const std::vector<std::string>& tokens, int line) 
+void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
@@ -264,7 +264,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 //   TSTN MEAS       //
 ///////////////////////
-void TKeyV0::parse(const std::vector<std::string>& tokens, int)
+void TKeyV0::parse(const std::vector<std::string>& tokens, bool activeLine, int)
 {
 	TOptionHelper opts(tokens.cbegin()+2, tokens.cend());
 	// get a reference to the modifyable station copy
@@ -297,7 +297,7 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, int)
 	proj.getCurrentNode().measurements.fTSTN.back()->roms.emplace_back(rom);
 }
 
-void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line) 
+void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
 {
 	using namespace LGC;
 
@@ -364,7 +364,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, int line)
 }
 
 
-void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
+void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	using namespace LGC;
 
@@ -416,7 +416,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
+void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {	
 	using namespace LGC;
 
@@ -471,7 +471,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	if (! updateDefaultTargetTSTN(tokens)) {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -526,7 +526,7 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) {
@@ -581,7 +581,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECDIR::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) {
@@ -637,7 +637,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	if (! updateDefaultTargetTSTN(tokens)) {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -690,7 +690,7 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, int line)
 ///////////////////////
 //   NON TSTN MEAS   //
 ///////////////////////
-void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	//TOptionHelper opts(tokens.cbegin(), tokens.cend());
@@ -764,7 +764,7 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDVER::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
@@ -808,7 +808,7 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
+void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	
@@ -890,7 +890,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*"); 
@@ -943,7 +943,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) {
@@ -1015,7 +1015,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
+void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 	if (firstline) {
@@ -1081,7 +1081,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, int line)
 	// auto& debug = proj.getCurrentNode().measurements;
 }
 
-void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
+void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*"); 
@@ -1153,7 +1153,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, int line)
 	}
 }
 
-void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
+void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
@@ -1196,7 +1196,7 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, int line)
 }
 
 
-void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, int line)
+void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 

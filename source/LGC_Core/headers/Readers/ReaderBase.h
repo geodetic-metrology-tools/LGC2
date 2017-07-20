@@ -38,7 +38,7 @@ class TAKeyWord {
 
 		/** React to a tokenized input line. Blanks and tabs are removed from the input 
 		* and keyword markers (*) are a separate token. 
-		* A comment symbol (%#$) causes the end of tokenization, so comments are 
+		* A comment symbol (%$) causes the end of tokenization, so comments are 
 		* not tokenized and the comment symbol is included.
 		*
 		* Example:
@@ -46,7 +46,7 @@ class TAKeyWord {
 		* leads to
 		* [*][DVER][P1][P2][5][/1.2][$ This is a  DB_COMMENT]
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line) = 0;
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line) = 0;
 
 		/*!@name Currently not used functions - these functions are related to hierarchy of keywords, which was originally considered,
 		but was later replaced by a list of prohibited keywords. This matter is still not completely resolved and therefore

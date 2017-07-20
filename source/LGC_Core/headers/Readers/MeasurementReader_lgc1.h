@@ -96,7 +96,7 @@ public:
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle sigmaANGL = TAngle(0.0);
@@ -123,7 +123,7 @@ public:
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle sigmaZEND = TAngle(0.0);
@@ -151,7 +151,7 @@ public:
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle sigmaZEND = TAngle(0.0);
@@ -180,7 +180,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TLength sigmaDIST = TLength(0.0);
@@ -209,7 +209,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	string currentStation = "";
@@ -236,7 +236,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	shared_ptr<TTSTN> currentTSTN;
@@ -265,7 +265,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool firstmeas;
@@ -295,7 +295,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 private:
 	TLength sigmaDIST = TLength(0.0); 
 	TLength dcorr = TLength(0.0);
@@ -324,7 +324,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TLength sigma = TLength(0.0);
@@ -347,7 +347,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool fistrDLEV = true;
@@ -373,7 +373,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool firstECHO = true;
@@ -399,7 +399,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool fistrECVE = true;
@@ -424,7 +424,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	string currentStation = "";
@@ -449,7 +449,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TLength sigma = TLength(0.0);
