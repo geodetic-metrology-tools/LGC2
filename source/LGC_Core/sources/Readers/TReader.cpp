@@ -77,6 +77,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters_lgc1.emplace_back(UPK(new TKeyPREC(project, nb_allowed_prec_lgc1, allowed_PREC_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyMICR(project, nb_allowed_micr_lgc1, allowed_MICR_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyCLIC(project, nb_allowed_clic_lgc1, allowed_CLIC_lgc1)));
+	finterpreters_lgc1.emplace_back(UPK(new TKeyNOSPC(project, nb_allowed_nospc_lgc1, allowed_NOSPC_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyPRES(project, nb_allowed_pres_lgc1, allowed_PRES_lgc1)));
 
 	// additional output files

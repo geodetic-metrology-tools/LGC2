@@ -327,6 +327,20 @@ public:
     virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
+class TKeyNOSPC : public TAOptionKey {
+public:
+	///Constructor
+	TKeyNOSPC(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAOptionKey(project, NOSPC)
+	{
+		for (int i(0); i< nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+
+	}
+
+	///Tokenize and initialize options for the output processing
+	virtual void parse(const std::vector<std::string>& tokens, int);
+};
+
 class TKeyPRES : public TAOptionKey {
 	public:
 		///Constructor
