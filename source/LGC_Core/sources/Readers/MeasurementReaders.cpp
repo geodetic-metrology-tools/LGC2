@@ -156,6 +156,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// set measurement value
 		TUVEC uvec(obspt, tgt);
 		uvec.line = line;
+        uvec.setActive(activeLine);
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -230,6 +231,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 		// set measurement value
 		TUVD uvd(obspt, tgt);
 		uvd.line = line;
+        uvd.setActive(activeLine);
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -346,6 +348,8 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		// set measurement values
 		TPLR3D plr(obspt, tgt);
 		plr.line = line;
+        plr.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -404,6 +408,8 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// set measurement value
 		TANGL angl(obspt, tgt);
 		angl.line = line;
+        angl.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -459,6 +465,8 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// set measurement value
 		TZEND zend(obspt, tgt);
 		zend.line = line;
+        zend.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -518,6 +526,8 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	   auto& dist(getROM()->measDIST.back());
 
 		dist.line = line;
+        dist.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -574,6 +584,8 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	   auto& ecth(getROM()->measECTH.back());
 
 	   ecth.line = line;
+       ecth.setActive(activeLine);
+
 	   	//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -630,6 +642,8 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		auto& ecdir(getROM()->measECDIR.back());
 
 		ecdir.line = line;
+        ecdir.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -680,6 +694,8 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		//get a reference to the inserted measurement
 		auto& dhor(getROM()->measDHOR.back());
 		dhor.line = line;
+        dhor.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -755,12 +771,14 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		);
 		
 		//get a reference to the inserted measurement
-		auto& dpst(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
-		dpst.line = line;
+        auto& dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
+        dspt.line = line;
+        dspt.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dpst.eolcomment = tokens.back();
+            dspt.eolcomment = tokens.back();
 	}
 }
 
@@ -800,6 +818,8 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		dver.setDistanceCorrection(TLength(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection())));
 
 		dver.line = line;
+        dver.setActive(activeLine);
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -886,6 +906,8 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		}
 
 		dlev.line = line;
+        dlev.setActive(activeLine);
+
 		levelGrOfMeas.measDLEV.emplace_back(dlev);
 	}
 }
@@ -931,6 +953,8 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
 		echo.line = line;
+        echo.setActive(activeLine);
+
 		TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
 		echoROMLatest.measECHO.emplace_back(echo);
 
@@ -1003,6 +1027,8 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TECVE ecve(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
 		ecve.line = line;
+        ecve.setActive(activeLine);
+
 		TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
@@ -1067,6 +1093,8 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TECSP ecsp(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
 		ecsp.line = line;
+        ecsp.setActive(activeLine);
+
 		TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
@@ -1140,6 +1168,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TORIE orie(obspt,tgt);
 
 		orie.line = line;
+        orie.setActive(activeLine);
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -1186,6 +1215,7 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, in
 			radi.setObservedStDev(sigma);
 
 		radi.line = line;
+        radi.setActive(activeLine);
 		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -1221,6 +1251,7 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		
 		auto& obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
 		obsxyz.line = line;
+        obsxyz.setActive(activeLine);
 		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);

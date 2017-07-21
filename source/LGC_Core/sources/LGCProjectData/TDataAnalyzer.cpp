@@ -18,6 +18,12 @@ bool TDataAnalyzer::dataConsistent(){
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
 	
+    // Clean the data:
+    if(!cleanDeactivated()){
+        outputMessages << TFileLogger::e_logType::LOG_ERROR << "Problem with data consistency because of deactivated lines.";
+        return false;
+    }
+
     // Update the static variables set by some options:
     LGCAdjustablePoint::setAllFixedParam(fData.getConfig().allfixed.isActive());
     TLGCObsSummary::createHistogram(fData.getConfig().histo.isActive());
@@ -317,6 +323,206 @@ bool TDataAnalyzer::dataConsistent(){
 
 
 	return consistent;
+}
+
+namespace {
+
+    template<class TAMEAS>
+    // Remove the deactivated measurements from the given list of measurements,
+    // and check that the *targetPos* point of each active measurement is active
+    bool rmDeactivated_and_checkTargetPos(std::list<TAMEAS> &meass){
+        for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+            if(!meas->isActive())
+                // Return value of erase(pos) is ++pos -> decrement because for-loop is incrementing
+                (meas = meass.erase(meas))--;
+            else if(!meas->targetPos->isActive())
+                return false;
+        }
+        return true;
+    }
+
+    template<class TAMEAS>
+    // Remove the deactivated measurements from the given list of measurements, and check
+    // that the *targetPos* and *station* points of each active measurement are active
+    bool rmDeactivated_and_checkTargetPos_noInstr(std::list<TAMEAS> &meass){
+        for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+            if(!meas->isActive())
+                // Return value of erase(pos) is ++pos -> decrement because for-loop is incrementing
+                (meas = meass.erase(meas))--;
+            else if(!meas->targetPos->isActive())
+                return false;
+            else if(std::is_same<TAMEAS, TRADI>::value && !meas->station->isActive())
+                return false;
+        }
+        return true;
+    }
+}
+
+bool TDataAnalyzer::cleanDeactivated(){
+
+    // Clean first the tree of measurements from deactivated measurements and ROMs. Check that the
+    // points, targets, and instruments of the active measurements are also active.
+    
+    // Don't care about adjustable lengths, planes, angles etc. while looping the tree,
+    // because they cannot be explicitly deactivated from the input file. Postprocess them...
+    
+    // Clean the tree of measurements:
+    for(auto node = fData.getTree().begin(); node != fData.getTree().end(); ++node){
+        auto &measurements = node->get()->measurements;
+
+        // TSTN
+        for(auto tstn = measurements.fTSTN.begin(); tstn != measurements.fTSTN.end(); ++tstn){
+        
+            // TODO: TSTN not active
+            if(false /* !tstn->get()->isActive() */){
+                (tstn = measurements.fTSTN.erase(tstn))--;
+                continue;
+            }
+
+            if(!tstn->get()->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+
+            for(auto rom = tstn->get()->roms.begin(); rom != tstn->get()->roms.end(); ++rom){
+
+                // TODO: ROM not active
+                if(false /* !rom->get()->isActive() */){
+                    (rom = tstn->get()->roms.erase(rom))--;
+                    continue;
+                }
+
+                if(
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measPLR3D) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measANGL) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measZEND) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measDIST) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measDHOR) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measECTH) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measECDIR)
+                    )
+                    return false; // Target pos point deactivated from active measurement
+            }
+        }
+
+        // CAM
+        for(auto cam = measurements.fCAM.begin(); cam != measurements.fCAM.end(); ++cam){
+        
+            // TODO: CAM not active
+            if(false /* !cam->isActive() */){
+                (cam = measurements.fCAM.erase(cam))--;
+                continue;
+            }
+
+            if(!cam->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+            
+            if(
+                !rmDeactivated_and_checkTargetPos(cam->measUVD) ||
+                !rmDeactivated_and_checkTargetPos(cam->measUVEC))
+                return false; // Target pos point deactivated from active measurement
+        }
+
+        // EDM
+        for(auto edm = measurements.fEDM.begin(); edm != measurements.fEDM.end(); ++edm){
+        
+            // TODO: EDM not active
+            if(false /* !edm->isActive() */){
+                (edm = measurements.fEDM.erase(edm))--;
+                continue;
+            }
+
+            if(!edm->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+
+            if(!rmDeactivated_and_checkTargetPos(edm->measDSPT))
+                return false;
+        }
+
+        // LEVEL
+        for(auto level = measurements.fLEVEL.begin(); level != measurements.fLEVEL.end(); ++level){
+        
+            // TODO: LEVEL not active
+            if(false /* !level->isActive() */){
+                (level = measurements.fLEVEL.erase(level))--;
+                continue;
+            }
+
+            if(!rmDeactivated_and_checkTargetPos(level->measDLEV))
+                return false;
+
+            // NB. No need to check DLEV::DHOR separetely, since it cannot be
+            // deactivated and its targetPos is the same as the DLEV's
+        }
+
+        // ORIE
+        for(auto orierom = measurements.fORIE.begin(); orierom != measurements.fORIE.end(); ++orierom){
+
+            // TODO: ORIE not active
+            if(false /* !orierom->isActive() */){
+                (orierom = measurements.fORIE.erase(orierom))--;
+                continue;
+            }
+
+            if(!orierom->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+
+            if(!rmDeactivated_and_checkTargetPos(orierom->measORIE))
+                return false;
+        }
+
+        // ECHO
+        for(auto echorom = measurements.fECHO.begin(); echorom != measurements.fECHO.end(); ++echorom){
+
+            // TODO: ECHO not active
+            if(false /* !echorom->isActive() */){
+                (echorom = measurements.fECHO.erase(echorom))--;
+                continue;
+            }
+
+            if(!rmDeactivated_and_checkTargetPos(echorom->measECHO))
+                return false;
+        }
+
+        // ECSP
+        for(auto ecsprom = measurements.fECSP.begin(); ecsprom != measurements.fECSP.end(); ++ecsprom){
+
+            // TODO: ECSP not active
+            if(false /* !ecsprom->isActive() */){
+                (ecsprom = measurements.fECSP.erase(ecsprom))--;
+                continue;
+            }
+
+            if(
+                !ecsprom->p1->isActive() ||
+                !ecsprom->p2->isActive()
+                )
+                return false; // P1 or P2 deactivated:
+
+            if(!rmDeactivated_and_checkTargetPos(ecsprom->measECSP))
+                return false;
+        }
+
+        // ECVE
+        for(auto ecverom = measurements.fECVE.begin(); ecverom != measurements.fECVE.end(); ++ecverom){
+
+            // TODO: ECVE not active
+            if(false /* !ecverom->isActive() */){
+                (ecverom = measurements.fECVE.erase(ecverom))--;
+                continue;
+            }
+
+            if(!rmDeactivated_and_checkTargetPos(ecverom->measECVE))
+                return false;
+        }
+
+        if(
+            !rmDeactivated_and_checkTargetPos_noInstr(measurements.fDVER) ||
+            !rmDeactivated_and_checkTargetPos_noInstr(measurements.fRADI) ||
+            !rmDeactivated_and_checkTargetPos_noInstr(measurements.fOBSXYZ)
+            )
+            return false;
+    }
+
+    return true;
 }
 
 void TDataAnalyzer::assignEOIndices(){
