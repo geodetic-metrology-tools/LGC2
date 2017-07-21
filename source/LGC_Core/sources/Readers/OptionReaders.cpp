@@ -9,7 +9,10 @@ TKeyTITR::TKeyTITR(TLGCData& project, int nb_allowed_keywords, const char** keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyTITR::parse(const std::vector<std::string>& tokens, bool, int) {
+void TKeyTITR::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
+    if(!activeLine)
+        throw std::runtime_error("*TITR cannot be deactivated");
+
 	if (tokens.at(0) == "*" && tokens.size() < 3)
 		throw std::runtime_error("Key *TITR expects only one argument");
 	
@@ -19,8 +22,10 @@ void TKeyTITR::parse(const std::vector<std::string>& tokens, bool, int) {
 // Referentiels //
 //////////////////
 
-void TKeyOLOC::parse(const std::vector<std::string>&, bool, int) 
-{
+void TKeyOLOC::parse(const std::vector<std::string>&, bool activeLine, int) {
+    if(!activeLine)
+        throw std::runtime_error("Reference system keywords cannot be deactivated");
+
 	// nothing to parse, using local cartesion coordinate system
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 		fconfig.referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
@@ -28,8 +33,10 @@ void TKeyOLOC::parse(const std::vector<std::string>&, bool, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-void TKeyRS2K::parse(const std::vector<std::string>&, bool, int) 
-{
+void TKeyRS2K::parse(const std::vector<std::string>&, bool activeLine, int) {
+    if(!activeLine)
+        throw std::runtime_error("Reference system keywords cannot be deactivated");
+
 	// nothing to parse, using grid geoid
 		if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 			fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg00Machine;
@@ -37,8 +44,10 @@ void TKeyRS2K::parse(const std::vector<std::string>&, bool, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-void TKeyLEP::parse(const std::vector<std::string>&, bool, int) 
-{
+void TKeyLEP::parse(const std::vector<std::string>&, bool activeLine, int) {
+    if(!activeLine)
+        throw std::runtime_error("Reference system keywords cannot be deactivated");
+
 	// nothing to parse, using parabolic ellipsoid
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
@@ -46,7 +55,10 @@ void TKeyLEP::parse(const std::vector<std::string>&, bool, int)
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
 
-void TKeySPHE::parse(const std::vector<std::string>&, bool, int) {
+void TKeySPHE::parse(const std::vector<std::string>&, bool activeLine, int) {
+    if(!activeLine)
+        throw std::runtime_error("Reference system keywords cannot be deactivated");
+
 	// nothing to parse, using spherical reference frame
 	if(fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
