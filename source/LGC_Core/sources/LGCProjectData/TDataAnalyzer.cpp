@@ -522,6 +522,10 @@ bool TDataAnalyzer::cleanDeactivated(){
             return false;
     }
 
+
+    std::remove_if(fData.getPoints().begin(), fData.getPoints().end(),
+        [](const LGCAdjustablePoint &pt){ return !pt.isActive(); });
+
     return true;
 }
 

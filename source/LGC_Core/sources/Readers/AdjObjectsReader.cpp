@@ -155,6 +155,7 @@ void TAPointKey::parse(const std::vector<std::string>& tokens, bool activeLine, 
 	// the conversion method stor throws on error
 	auto& pt = insertPoint(tokens.at(0), std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)));
 	pt.line = line;
+    pt.setActive(activeLine);
 
 	if (tokens.at(0).size()>proj.getConfig().pointNameWidth)
         proj.getConfig().pointNameWidth = (int)tokens.at(0).size();
