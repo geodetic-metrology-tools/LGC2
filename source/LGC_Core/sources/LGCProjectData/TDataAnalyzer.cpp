@@ -332,9 +332,11 @@ namespace {
     // and check that the *targetPos* point of each active measurement is active
     bool rmDeactivated_and_checkTargetPos(std::list<TAMEAS> &meass){
         for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+            
             if(!meas->isActive())
                 // Return value of erase(pos) is ++pos -> decrement because for-loop is incrementing
                 (meas = meass.erase(meas))--;
+
             else if(!meas->targetPos->isActive())
                 return false;
         }
@@ -346,12 +348,15 @@ namespace {
     // that the *targetPos* and *station* points of each active measurement are active
     bool rmDeactivated_and_checkTargetPos_noInstr(std::list<TAMEAS> &meass){
         for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+            
             if(!meas->isActive())
                 // Return value of erase(pos) is ++pos -> decrement because for-loop is incrementing
                 (meas = meass.erase(meas))--;
+
             else if(!meas->targetPos->isActive())
                 return false;
-            else if(std::is_same<TAMEAS, TRADI>::value && !meas->station->isActive())
+
+            else if(!meas->station->isActive())
                 return false;
         }
         return true;
