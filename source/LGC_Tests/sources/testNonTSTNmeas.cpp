@@ -81,7 +81,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+		const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 
 		ensure_equals("Reference point distance should be 100", plane1.getRefPtDistEstimatedValue().getMetresValue(), -100.0, 1e-7);
 
@@ -114,7 +114,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+        const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		TPositionVector PTxyH = PT;
 		TXYH2CCS::CCS2XYHg2000Machine(PTxyH);
@@ -147,7 +147,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+        const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 
 		ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
 
@@ -184,7 +184,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+        const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 
 		ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getMetresValue(), -74.0, 1e-7);
 

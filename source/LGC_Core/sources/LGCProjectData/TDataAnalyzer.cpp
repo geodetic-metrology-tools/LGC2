@@ -73,33 +73,40 @@ bool TDataAnalyzer::dataConsistent(){
 
 		//If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized
 		for (auto itLEVEL( it.node->data.get()->measurements.fLEVEL.begin()); itLEVEL != it.node->data.get()->measurements.fLEVEL.end(); ++itLEVEL){
-			if(!itLEVEL->fMeasuredPlane->isInitialized()){
+			
+            // Create the reference point if it was not given:
+            if(!itLEVEL->fRefPt){
 				TReal referencePoint[3] = {0,0,0};
-				for (auto itDLEVMeas( itLEVEL->measDLEV.begin()); itDLEVMeas != itLEVEL->measDLEV.end(); ++itDLEVMeas){
-					TPositionVector targetPos = itDLEVMeas->targetPos->getEstimatedValue();
-					TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(),"Target2ROOT");
-					transformation.transform(targetPos);
+                for(auto itDLEVMeas(itLEVEL->measDLEV.begin()); itDLEVMeas != itLEVEL->measDLEV.end(); ++itDLEVMeas){
+                    TPositionVector targetPos = itDLEVMeas->targetPos->getEstimatedValue();
+                    TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                    transformation.transform(targetPos);
 
-               referencePoint[0] += targetPos.getX().getMetresValue();
-               referencePoint[1] += targetPos.getY().getMetresValue();
-               referencePoint[2] += targetPos.getZ().getMetresValue();
-				}
+                    referencePoint[0] += targetPos.getX().getMetresValue();
+                    referencePoint[1] += targetPos.getY().getMetresValue();
+                    referencePoint[2] += targetPos.getZ().getMetresValue();
+                }
+
 				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
+
 				if(numberOfMeasurements>0){
 					referencePoint[0] /=numberOfMeasurements;
 					referencePoint[1] /=numberOfMeasurements;
 					referencePoint[2] /=numberOfMeasurements;
 
-					LGCAdjustablePoint& rp =
-						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
+					itLEVEL->fRefPt =
+						&fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
 						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
-
-						itLEVEL->fMeasuredPlane->initialize(&rp,TLength(0.0), TAngle(0.0, TAngle::EUnits::kRadians), 
-															TAngle(0.0, TAngle::EUnits::kRadians), true, true);
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found."; 
 			}
+            
+            // Name of the measured adjustable plane:
+            auto name = "DLEVPLANE" + std::to_string(itLEVEL->stnId);
+            
+            /*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
+            itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(itLEVEL->fRefPt, TLength(0.0), TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, name));
 		}
 
 		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO){
@@ -141,10 +148,9 @@ bool TDataAnalyzer::dataConsistent(){
 
                 TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
 
-                itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane::createUninitialized(
-                    "ECHOPLANE" + std::to_string(itECHO->romId))); // Name of the measured adjustable plane
-                itECHO->fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
-                    TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
+                auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
+                itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
+                    TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
             
             } else
                 outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
@@ -153,7 +159,7 @@ bool TDataAnalyzer::dataConsistent(){
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){
-			if (!itECVE->fMeasuredLine->isInitialized()){
+			if (!itECVE->fPtLine){
 				TReal referencePoint[3] = { 0, 0, 0 };
 				for (auto itECVEMeas(itECVE->measECVE.begin()); itECVEMeas != itECVE->measECVE.end(); ++itECVEMeas){
 					TPositionVector targetPos = itECVEMeas->targetPos->getEstimatedValue();
@@ -170,15 +176,19 @@ bool TDataAnalyzer::dataConsistent(){
 					referencePoint[1] /= numberOfMeasurements;
 					referencePoint[2] /= numberOfMeasurements;
 
-					LGCAdjustablePoint& rp =
-						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+					itECVE->fPtLine =
+						&fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 						false, false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
-
-					itECVE->fMeasuredLine->initialize(&rp, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111));
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
 			}
+
+            // Name of the measured adjustable line
+            auto name = "ECVELINE" + std::to_string(itECVE->romId);
+
+            // Create the measured line:
+            itECVE->fMeasuredLine = &fData.getLines().addObject(LGCAdjustableLine(itECVE->fPtLine, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
 		}
 
 	}

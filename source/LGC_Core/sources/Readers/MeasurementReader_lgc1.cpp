@@ -1670,12 +1670,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, bool activeLin
 		{
 			currentStation = tokens.at(0);
 
-			const std::string& name = "DLEVPLANE" + std::to_string(proj.getCurrentNode().measurements.fLEVEL.size()); //name of the measured adjustable plane
-			//Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed
-			fplanes.addObject(LGCAdjustablePlane(&fpoints.getObject(currentStation), TLength(0.0), TAngle(0.0, TAngle::kRadians),
-				TAngle(0.0, TAngle::kRadians), true, true, name));
-
-			TLEVEL level(fplanes.back(), finstruments.getDevice(finstruments.fLEVEL, "LEVELInstr"));
+            TLEVEL level(&fpoints.getObject(currentStation), finstruments.getDevice(finstruments.fLEVEL, "LEVELInstr"));
 			level.line = line;
 
 			proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); //add new measurement
@@ -2070,13 +2065,8 @@ void TKeyECVE_lgc1::parse(const std::vector<std::string>& tokens, bool activeLin
 		{
 			ptLine = tokens.at(0);
 
-			const std::string& name = "ECVELINE" + std::to_string(proj.getCurrentNode().measurements.fECVE.size()); //name of the measured adjustable line
-
-			/*The pointLine is known (ref point = point on the line)*/
-			flines.addObject(LGCAdjustableLine(&fpoints.getObject(ptLine), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
-
 			//The line will be initialized in TDataAnalyzer class, when checked for consistency
-			TECVEROM ecveRom(flines.back());
+            TECVEROM ecveRom(&fpoints.getObject(ptLine));
 			ecveRom.line = line;
 			proj.getCurrentNode().measurements.fECVE.emplace_back(ecveRom); //add new round of measurement
 		}

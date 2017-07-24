@@ -33,6 +33,9 @@ struct TLEVEL {
 		/// The plane which is measured
 		LGCAdjustablePlane* fMeasuredPlane;
 
+        /// The reference point
+        LGCAdjustablePoint const * fRefPt;
+
 		/// Levelling instrument which does the measurements
 		TInstrumentData::TLEVEL  instrument;
 
@@ -42,8 +45,9 @@ struct TLEVEL {
         int stnId{ stnCounter_++ };
 
 		// The station attribute is a copy of the parameter to override defaults
-		TLEVEL(LGCAdjustablePlane& measPlane, const TInstrumentData::TLEVEL& instrument) :
-			fMeasuredPlane(&measPlane),
+		TLEVEL(const LGCAdjustablePoint* refPt, const TInstrumentData::TLEVEL& instrument) :
+			fMeasuredPlane(nullptr),
+            fRefPt(refPt),
 			line(NO_VALi),
 			instrument(instrument),
 			hasDHOR(false)

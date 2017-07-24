@@ -832,23 +832,19 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
 
-		const std::string& name = "DLEVPLANE" + std::to_string(proj.getCurrentNode().measurements.fLEVEL.size()); //name of the measured adjustable plane
+        const LGCAdjustablePoint* refPt = nullptr;
 
 		if(opts.has("RefPt")){
-			std::string  rpName = opts.getParamS("RefPt", "NULL"); 
+			std::string rpName = opts.getParamS("RefPt", "NULL"); 
 			
 			if (!fpoints.doesObjectExist(rpName))
 				throw std::runtime_error("Point" +  rpName + "used as reference point in DLEV measurement, must be declared before used");
 
-			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			fplanes.addObject(LGCAdjustablePlane(&fpoints.getObject(rpName), TLength(0.0), TAngle(0.0, TAngle::kRadians), 
-						TAngle(0.0, TAngle::kRadians), true, true, name));
+            refPt = &fpoints.getObject(rpName);
 		}
-		else
-			fplanes.addObject(LGCAdjustablePlane::createUninitialized(name));
 
-		TLEVEL level(fplanes.back(),finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
-		level.line = line;
+        TLEVEL level(refPt, finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
+        level.line = line;
 
 		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); //add new measurement
 	}
@@ -967,7 +963,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-		const std::string& name = "ECVELINE" + std::to_string(proj.getCurrentNode().measurements.fECVE.size()); //name of the measured adjustable line
+        LGCAdjustablePoint const * ptLine = nullptr;
 
 		if (opts.has("PtLine")){
 			std::string  rpName = opts.getParamS("PtLine", "NULL");
@@ -975,15 +971,11 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 			if (!fpoints.doesObjectExist(rpName))
 				throw std::runtime_error("Point" + rpName + "used as reference point in ECVE measurement, must be declared before used");
 
-			/*The pointLine is known (ref point = point on the line)*/
-			flines.addObject(LGCAdjustableLine(&fpoints.getObject(rpName), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
+            ptLine = &fpoints.getObject(rpName);
 		}
-		else
-			flines.addObject(LGCAdjustableLine::createUninitialized(name));
-
 
 		 //The line will be initialized in TDataAnalyzer class, when checked for consistency
-		TECVEROM ecveRom(flines.back());
+		TECVEROM ecveRom(ptLine);
 
 		ecveRom.line = line;
 
