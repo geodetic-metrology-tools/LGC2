@@ -402,8 +402,8 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
-	    ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
+		ensure_equals("Reference point distance should match", dataset.getPlanes().begin()->getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
+        ensure_equals("Theta of the plane should match", dataset.getPlanes().begin()->getThetaEstimatedValue().getGonsValue(), 0, 1e-8);
 
  	}
 
@@ -431,8 +431,8 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
-		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
+        ensure_equals("Reference point distance should match", dataset.getPlanes().begin()->getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
+        ensure_equals("Theta of the plane should match", dataset.getPlanes().begin()->getThetaEstimatedValue().getGonsValue(), 0, 1e-8);
 
  	}
 
@@ -459,8 +459,8 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-        ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
-	    ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 50,1e-8);
+        ensure_equals("Reference point distance should match", dataset.getPlanes().begin()->getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
+        ensure_equals("Theta of the plane should match", dataset.getPlanes().begin()->getThetaEstimatedValue().getGonsValue(), 50, 1e-8);
 
  	}
 

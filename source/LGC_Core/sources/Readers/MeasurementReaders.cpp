@@ -913,11 +913,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		if (tokens.size() < 3 )
 			throw std::runtime_error("ECHO measurement must have at least 1 entry, the SCALE instrument ID");
 
-		const std::string& name = "ECHOPLANE" + std::to_string(proj.getCurrentNode().measurements.fECHO.size()); //name of the measured adjustable plane
-
-		fplanes.addObject(LGCAdjustablePlane::createUninitialized(name)); //The plane will be initialized in TDataAnalyzer class, when checked for consistency
-		TECHOROM echoRom(fplanes.back());
-
+		TECHOROM echoRom(nullptr);
 		echoRom.line = line;
       
 		proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement

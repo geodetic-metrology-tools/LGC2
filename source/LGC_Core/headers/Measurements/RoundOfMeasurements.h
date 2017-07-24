@@ -34,8 +34,8 @@ struct TECHOROM {
         int romId{ romCounter_++ };
 
 		/// the station attribute is a copy of the parameter to override defaults
-		TECHOROM(LGCAdjustablePlane& measPlane) :
-			fMeasuredPlane(&measPlane),
+		TECHOROM(LGCAdjustablePlane *measPlane) :
+			fMeasuredPlane(measPlane),
 			line(NO_VALi)
 			{}
 

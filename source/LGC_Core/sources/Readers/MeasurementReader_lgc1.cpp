@@ -1804,10 +1804,7 @@ void TKeyECHO_lgc1::parse(const std::vector<std::string>& tokens, bool activeLin
 			encrage1 = tokens.at(0);
 			encrage2 = tokens.at(2);
 
-			const std::string& name = "ECHOPLANE" + std::to_string(proj.getCurrentNode().measurements.fECHO.size()); //name of the measured adjustable plane
-
-			fplanes.addObject(LGCAdjustablePlane::createUninitialized(name));
-			TECHOROM echoRom(fplanes.back());
+			TECHOROM echoRom(nullptr);
 
 			echoRom.line = line;
 			proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement

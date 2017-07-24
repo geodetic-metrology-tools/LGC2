@@ -103,47 +103,51 @@ bool TDataAnalyzer::dataConsistent(){
 		}
 
 		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO){
-			if (!itECHO->fMeasuredPlane->isInitialized())
-			{
-				TReal referencePoint[3] = { 0, 0, 0 };
-				TReal initialRefPtDistance = 0.0;
-				for (auto itECHOMeas(itECHO->measECHO.begin()); itECHOMeas != itECHO->measECHO.end(); ++itECHOMeas){
-					TPositionVector stationPos = itECHOMeas->targetPos->getEstimatedValue(); /*In ECHO the targetPos is a stationPos (SCALE instrument used has no target)*/
-					TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-					transformation.transform(stationPos);
 
-					referencePoint[0] += stationPos.getX().getMetresValue();
-					referencePoint[1] += stationPos.getY().getMetresValue();
-					referencePoint[2] += stationPos.getZ().getMetresValue();
+            TReal referencePoint[3] = { 0, 0, 0 };
+            TReal initialRefPtDistance = 0.0;
 
-					if (!fData.getConfig().sim.isActive())
-						initialRefPtDistance += itECHOMeas->getDistance();
-				}
-				int numberOfMeasurements = (int)itECHO->measECHO.size();
-				if (numberOfMeasurements > 0){
-					referencePoint[0] /= numberOfMeasurements;
-					referencePoint[1] /= numberOfMeasurements;
-					referencePoint[2] /= numberOfMeasurements;
+            for(auto itECHOMeas(itECHO->measECHO.begin()); itECHOMeas != itECHO->measECHO.end(); ++itECHOMeas){
+                TPositionVector stationPos = itECHOMeas->targetPos->getEstimatedValue(); /*In ECHO the targetPos is a stationPos (SCALE instrument used has no target)*/
+                TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                transformation.transform(stationPos);
 
-					initialRefPtDistance /= numberOfMeasurements;
+                referencePoint[0] += stationPos.getX().getMetresValue();
+                referencePoint[1] += stationPos.getY().getMetresValue();
+                referencePoint[2] += stationPos.getZ().getMetresValue();
 
-					/*Fixed reference point for the ECHO measurement*/
-					LGCAdjustablePoint& rp =
-						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
-						true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
+                if(!fData.getConfig().sim.isActive())
+                    initialRefPtDistance += itECHOMeas->getDistance();
+            }
 
-					/*Calculation of the initial approximation value for the theta angle of the plane.*/
-					const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
-					const TPositionVector& lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+            int numberOfMeasurements = (int)itECHO->measECHO.size();
 
-					TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+            if(numberOfMeasurements > 0){
 
-					itECHO->fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
-						TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
-				}
-				else
-					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
-			}
+                referencePoint[0] /= numberOfMeasurements;
+                referencePoint[1] /= numberOfMeasurements;
+                referencePoint[2] /= numberOfMeasurements;
+
+                initialRefPtDistance /= numberOfMeasurements;
+
+                /*Fixed reference point for the ECHO measurement*/
+                LGCAdjustablePoint& rp =
+                    fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+                    true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
+
+                /*Calculation of the initial approximation value for the theta angle of the plane.*/
+                const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
+                const TPositionVector& lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+
+                TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+
+                itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane::createUninitialized(
+                    "ECHOPLANE" + std::to_string(itECHO->romId))); // Name of the measured adjustable plane
+                itECHO->fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
+                    TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
+            
+            } else
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
 		}
 
 
