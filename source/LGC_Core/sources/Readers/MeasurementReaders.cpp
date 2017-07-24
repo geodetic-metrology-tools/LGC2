@@ -1057,12 +1057,6 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		if (!fpoints.doesObjectExist(tokens.at(3)))
 			throw std::runtime_error("the second point on the line doesn't exit");
 		TECSPROM ecspRom(name, fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
-		
-		/*
-		flines.addObject(LGCAdjustableLine::createUninitialized(name));
-		//The line will be initialized in TDataAnalyzer class, when checked for consistency
-		TECSPROM ecspRom(flines.back(), fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
-		*/
 
 		ecspRom.line = line; 
 		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
