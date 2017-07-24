@@ -565,8 +565,10 @@ void TDataAnalyzer::assignEOIndices(){
 
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
-                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
-                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
+                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false,
+                    "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotX adjustable angle
+                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false,
+                    "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotY adjustable angle
 
                 // If ROT3D used, instrument height is fixed and is equal to 0
                 // (NB. These parameters will not affect in lgc1 case,
@@ -584,12 +586,25 @@ void TDataAnalyzer::assignEOIndices(){
 
             for(auto &rom : tstn->roms){
 
+                // V0 adjustable angle (NB. set initially fixed):
+                if(!fData.isLGCv1())
+                    rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true,
+                        node->frame.getName() + "_V0_adj_" + std::to_string(rom->romId))); // Name of the v0 adjustable angle
+
+                // V0 must be adjustable (i.e., not fixed), if PLR3D, ANGL, ECTH, or ECDIR measurements
+                // are used. Create a variable for checking, if these measurements are used, and update the
+                // v0 angle in the end of this for-loop (after looping all the measurements) accordingly.
+                bool requiredAdjustableV0 = false;
+
                 // PLR3D
                 for(auto &plr : rom->measPLR3D){
 
                     // Get the distCorrAdj for the used target:
                     if(!fData.isLGCv1())
                         plr.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, plr.target.ID);
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
 
                     // set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
                     plr.setFirstEquationIndex(fData.fUEOIndices.EIndex);
@@ -605,6 +620,9 @@ void TDataAnalyzer::assignEOIndices(){
                     // Get the distCorrAdj for the used target:
                     if(!fData.isLGCv1())
                         angl.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, angl.target.ID);
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
 
                     // set indices of LS matrices, ANGL introduces 1 equation and 1 observation
                     angl.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
@@ -653,6 +671,10 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ECTH
                 for(auto &ecth : rom->measECTH){
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
+
                     // set indices of LS matrices, ECTH introduces 1 equation and 1 observation
                     ecth.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     ecth.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -661,11 +683,18 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ECDIR
                 for(auto &ecdir : rom->measECDIR){
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
+
                     // set indices of LS matrices, ECDIR introduces 1 equation and 1 observation
                     ecdir.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     ecdir.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
                     fData.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
                 }
+
+                // Now update the fixed status of the v0 angle:
+                rom->v0->setFixed(!requiredAdjustableV0);
             }
         }
 

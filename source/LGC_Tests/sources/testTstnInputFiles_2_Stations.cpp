@@ -38,8 +38,7 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::Param_setup4);
-		stringstream cpinfiler(TestROOT::Param_setup4);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -58,10 +57,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 0.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+        TReal ST1_V0 = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
+        TReal ST2_V0 = (++dataset.getAngles().begin())->getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 
@@ -79,8 +78,7 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::PLR3D_setup4);
-		stringstream cpinfiler(TestROOT::PLR3D_setup4);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -99,10 +97,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 0.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+        TReal ST1_V0 = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 200, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
+        TReal ST2_V0 = (++dataset.getAngles().begin())->getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 
 	}
@@ -122,8 +120,7 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::Param_setup4_different_z);
-		stringstream cpinfiler(TestROOT::Param_setup4_different_z);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -143,10 +140,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 1.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+        TReal ST1_V0 = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
+        TReal ST2_V0 = (++dataset.getAngles().begin())->getEstimatedValue().getGonsValue();
 		ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 
@@ -164,8 +161,7 @@ namespace tut
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
 		stringstream infiler(TestROOT::PLR3D_setup4_different_z);
-		stringstream cpinfiler(TestROOT::PLR3D_setup4_different_z);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -183,10 +179,10 @@ namespace tut
 		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 1.0  , 1e-8);
 
 
-		TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+        TReal ST1_V0 = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST1",ST1_V0, 390, 1e-8);
 
-		TReal ST2_V0 = dataset.getAngles().getObject("ROOTV01").getEstimatedValue().getGonsValue();
+        TReal ST2_V0 = (++dataset.getAngles().begin())->getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST2",ST2_V0, 10, 1e-8);
 	}
 

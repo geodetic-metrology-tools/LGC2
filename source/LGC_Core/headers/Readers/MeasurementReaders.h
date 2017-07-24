@@ -146,18 +146,12 @@ class TKeyV0 : public TAMeasurementKey {
 		TKeyV0(TLGCData& project, int nb_allowed_keywords = nb_allowed_v0, const char** keywords = allowed_V0) : 
 		TAMeasurementKey(project, V0) 
 		{
-			requiredAdjustableVo = true;
-
 			for(int i(0) ; i< nb_allowed_keywords ; i++)
 				allowed_keywords.emplace_back(keywords[i]);
 		}
 
 		/// tokenize V0 data
 		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
-
-		bool requiredAdjustableVo;
-		/// function used only for V0 keyword. The polar instrument has an unknown orientation angle which can be determinate only if ANGL, PLR3D, ECTH or ECDIR measurement are used 
-		void setRequiredAdjVo(bool b){ requiredAdjustableVo = b; }
 };
 
 class TKeyPLR3D : public TAMeasurementKey {
