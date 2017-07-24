@@ -536,6 +536,24 @@ bool TDataAnalyzer::cleanDeactivated(){
 
 void TDataAnalyzer::assignEOIndices(){
 
+    // Get a pointer to the polar target distance correction adjustable length
+    auto getPolarTgtDistCorrAdj = [this](const std::string &instrId, const std::string &tgtId){
+        const auto &tgt = fData.getInstruments().fPOLAR.at(instrId)->targets.at(tgtId);
+        return &fData.getLength().addObject(TAdjustableLength(tgt->distCorrectionValue, !tgt->distCorrectionUnknown, "Polar_" + instrId + tgtId + "_dCorr"));
+    };
+
+    // Get a pointer to the edm target distance correction adjustable length
+    auto getEdmTgtDistCorrAdj = [this](const std::string &instrId, const std::string &tgtId){
+        const auto &tgt = fData.getInstruments().fEDM.at(instrId)->targets.at(tgtId);
+        return &fData.getLength().addObject(TAdjustableLength(tgt->distCorrectionValue, !tgt->distCorrectionUnknown, "Edm_" + instrId + tgtId + "_dCorr"));
+    };
+
+    // Get a pointer to the level collimation angle adjustable
+    auto getLevelCollAngleAdj = [this](const std::string &instrId){
+        const auto &instr = fData.getInstruments().fLEVEL.at(instrId);
+        return &fData.getAngles().addObject(TAdjustableAngle(instr->collAngleValue, !instr->collAngleUnknown, "Level_" + instrId + "_collAngle"));
+    };
+
     // Iterate the whole tree and assign  to the measurements
     for(auto &node : fData.getTree()){
         auto &measurements = node->measurements;
@@ -568,6 +586,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // PLR3D
                 for(auto &plr : rom->measPLR3D){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        plr.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, plr.target.ID);
+
                     // set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
                     plr.setFirstEquationIndex(fData.fUEOIndices.EIndex);
                     plr.setFirstObservationIndex(fData.fUEOIndices.OIndex);
@@ -578,6 +601,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ANGL
                 for(auto &angl : rom->measANGL){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        angl.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, angl.target.ID);
+
                     // set indices of LS matrices, ANGL introduces 1 equation and 1 observation
                     angl.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     angl.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -586,6 +614,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ZEND
                 for(auto &zend : rom->measZEND){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        zend.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, zend.target.ID);
+
                     // set indices of LS matrices, ZEND introduces 1 equation and 1 observation
                     zend.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     zend.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -594,6 +627,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // DIST
                 for(auto &dist : rom->measDIST){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        dist.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, dist.target.ID);
+
                     // set indices of LS matrices, DIST introduces 1 equation and 1 observation
                     dist.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     dist.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -602,6 +640,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // DHOR
                 for(auto &dhor : rom->measDHOR){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        dhor.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, dhor.target.ID);
+
                     // set indices of LS matrices, DHOR introduces 1 equation and 1 observation
                     dhor.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     dhor.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -653,6 +696,11 @@ void TDataAnalyzer::assignEOIndices(){
         // DSPT
         for(auto &edm : measurements.fEDM)
             for(auto &dspt : edm.measDSPT){
+
+                // Get the distCorrAdj for the used target:
+                if(!fData.isLGCv1())
+                    dspt.target.distCorrectionAdjustable = getEdmTgtDistCorrAdj(edm.instrument.ID, dspt.target.ID);
+
                 // set indices of LS matrices, DSPT introduces 1 equation and 1 observation
                 dspt.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                 dspt.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -663,6 +711,10 @@ void TDataAnalyzer::assignEOIndices(){
         for(auto &level : measurements.fLEVEL){
             // Reinitialise hasDHOR attribute:
             level.hasDHOR = false;
+
+            // Get the collimation angle for the used instrument:
+            if(!fData.isLGCv1())
+                level.instrument.collAngleAdjustable = getLevelCollAngleAdj(level.instrument.ID);
 
             for(auto &dlev : level.measDLEV){
                 // set indices of LS matrices, DLEV introduces 1 equation and 1 observation
@@ -692,6 +744,11 @@ void TDataAnalyzer::assignEOIndices(){
         // ORIE
         for(auto &orierom : measurements.fORIE)
             for(auto &orie : orierom.measORIE){
+
+                // Get the distCorrAdj for the used target:
+                if(!fData.isLGCv1())
+                    orie.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(orierom.instrument.ID, orie.target.ID);
+
                 // set indices of LS matrices, ORIE introduces 1 equation and 1 observation
                 orie.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                 orie.setFirstObservationIndex(fData.fUEOIndices.OIndex++);

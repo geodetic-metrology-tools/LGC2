@@ -67,11 +67,9 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
             TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
             TLength(std::stor(tokens[9]), TLength::EUnits::kMetres),
-            TLength(std::stor(tokens[10]), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
+            TLength(std::stor(tokens[10]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+            nullptr
         });
-
-		// Add adjustable scalar into a global collection and store a pointer
-		t->distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(std::stor(tokens[6])),std::stoi(tokens[5])==0, currentStation + tokens.at(0)));
 
 		// store the new target
 		targets[tokens.at(0)] = t;
@@ -184,12 +182,10 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/,
             TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens[7]), TLength::EUnits::kMetres),
-            TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres)
+            TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres),
+            nullptr
         });
 	
-		// Add adjustable scalar into a global collection and store a pointer
-		t->distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(std::stor(tokens[4])), std::stoi(tokens[3]) == 0, currentStation + tokens.at(0)));
-
 		// store the new target
 		targets[tokens.at(0)] = t;
 	}
@@ -225,7 +221,7 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             tokens.at(3),
             std::stoi(tokens.at(4)) != 0,
             TAngle(std::stor(tokens[5]), TAngle::EUnits::kGons),
-            &fangles.addObject(TAdjustableAngle(TAngle(std::stor(tokens[5]), TAngle::kGons), std::stoi(tokens[4]) == 0, currentStation + "CollANGLE"))
+            nullptr
 		);
 
 		// store the new station
