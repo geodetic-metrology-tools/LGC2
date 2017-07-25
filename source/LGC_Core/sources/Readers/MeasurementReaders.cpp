@@ -36,7 +36,7 @@ bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& t
 		if (firstline && tokens.size() == 4 && tokens.at(2) == "TRGT")
 			currentTargetApplied = tokens.at(3);
 		else if(firstline) //Line starts with '*', but TRGT keyword not used, i.e. taking default taget value from ROM
-			currentTargetApplied = getROM()->defaultTarget->ID;
+			currentTargetApplied = getROM()->defaultTargetId;
 	}
 	catch(exception e) { }
 
@@ -273,14 +273,11 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, bool activeLine, int)
 	auto& stn(getStation());
 
     // Update the default target, if specified, or take one from TSTN (stn.defTarget):
-    // (NB. the following line is needed to produce the error message if the specified
-    // target is not found. Cannot get the target itself with the getDevice() function,
-    // since TROM constructor wants the shared pointer to the target and getDevice()
-    // returns a constatns reference to the object.)
+    // (NB. use the following function to get the standard error message)
     auto tgtId = finstruments.getDevice(stn.targets, opts.getParamS("TRGT", stn.defTarget)).ID;
 
     // Create the ROM:
-    shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(stn.targets.at(tgtId), nullptr);
+    shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgtId, nullptr);
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))

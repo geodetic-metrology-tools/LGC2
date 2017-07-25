@@ -31,7 +31,7 @@ struct TTSTN {
 
 			TAdjustableAngle* v0; ///< V0 angle/orientation, defaults to zero, to be calculated during the LS calculation, always variable.
 
-			std::shared_ptr<TInstrumentData::TPOLAR::TTarget> defaultTarget;  ///< Default taget for this round of measurements.
+			std::string defaultTargetId;  ///< Default target id for this round of measurements.
 			
             int romId{ romCounter_++ };
 
@@ -96,8 +96,8 @@ struct TTSTN {
             const TLGCObsSummary& getECDIRObsSummary() const;
 
 			/// Each ROM has a default target that is inherited to the measurements
-			TROM(std::shared_ptr<TInstrumentData::TPOLAR::TTarget> defTarget, TAdjustableAngle* v0):
-				defaultTarget(defTarget), v0(v0), acst(0.0, TAngle::EUnits::kGons){}
+			TROM(std::string defTargetId, TAdjustableAngle* v0):
+				defaultTargetId(defTargetId), v0(v0), acst(0.0, TAngle::EUnits::kGons){}
 
         private:
 

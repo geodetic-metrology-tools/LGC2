@@ -386,8 +386,6 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
                 if(rom->v0)
                     rom->v0 = &tgt->angles.getObject(rom->v0->getName());
 
-                rom->defaultTarget = tstn->instrument.targets.at(rom->defaultTarget->ID);
-
                 // Measurements in this rom
 
                 // PLR3D

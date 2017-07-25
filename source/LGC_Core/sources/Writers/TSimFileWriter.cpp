@@ -1016,7 +1016,7 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 	for (auto& rom : meas->roms)
 	{
-        auto v0DefTarget = *rom->defaultTarget;
+        auto v0DefTarget = *meas->instrument.targets.at(rom->defaultTargetId);
 
 		(*stream) << "*V0" << sep;
 

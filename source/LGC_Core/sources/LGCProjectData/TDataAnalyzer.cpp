@@ -708,7 +708,8 @@ void TDataAnalyzer::assignEOIndices(){
                 }
 
                 // Now update the fixed status of the v0 angle:
-                rom->v0->setFixed(!requiredAdjustableV0);
+                if(!fData.isLGCv1())
+                    rom->v0->setFixed(!requiredAdjustableV0);
             }
         }
 

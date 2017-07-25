@@ -448,7 +448,7 @@ namespace tut
 			TKeyV0 v0(proj);
             v0.parse(tokenizefileString("*V0 TRGT PT9 ACST 66"), true, -1);
 			ensure_equals("Default target in thisTSTN should not be affected", ts1->instrument.defTarget, "PT2");
-			ensure_equals("In this ROM, default target should be updated", ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("In this ROM, default target should be updated", ts1->roms.back()->defaultTargetId, "PT9");
 			//ensure_equals("Adjustable distance correction should be valid and unchanged", ts1->roms.back()->defaultTarget->distCorrectionAdjustable->getProvisionalValue(), 5.0);
 
 			ensure_distance(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->acst.getGonsValue(), 66.0, 1e-8);
@@ -459,7 +459,7 @@ namespace tut
 			TKeyPLR3D plr(proj);
             plr.parse(tokenizefileString("*PLR3D TRGT PT8"), true, -1);
             plr.parse(tokenizefileString("P2 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
-			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTargetId, "PT9");
 			ensure_equals("Target of this measurement taken implicitly from *PLR3D", ts1->roms.back()->measPLR3D.back().target.ID, "PT8");
 
 			const auto& plrmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measPLR3D.back());
@@ -476,7 +476,7 @@ namespace tut
 			ensure_equals(plrmeas.target.ppmDist, 17* MM2M);
 
             plr.parse(tokenizefileString("P3 1 2 3 TRGT PT2 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
-			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTargetId, "PT9");
 			ensure_equals("Target of this measurement should be updated", ts1->roms.back()->measPLR3D.back().target.ID, "PT2");
 
             plr.parse(tokenizefileString("P4 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
@@ -484,7 +484,7 @@ namespace tut
 
             plr.parse(tokenizefileString("P5 1 2 3 TRGT PT7 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
 			ensure_equals("Target of this measurement should be updated", ts1->roms.back()->measPLR3D.back().target.ID, "PT7");
-			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+            ensure_equals("Default target in this ROM should not be affected", ts1->roms.back()->defaultTargetId, "PT9");
 			//
 			// ANGL
 			TKeyANGL ang(proj);
@@ -493,7 +493,7 @@ namespace tut
 			ensure_equals("ANGL deafault target should be taken from ROM", ts1->roms.back()->measANGL.back().target.ID, "PT9");
 
             ang.parse(tokenizefileString("P3 88 TRGT PT7 OBSE 21 TCSE 22"), true, -1);
-			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTarget->ID, "PT9");
+			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTargetId, "PT9");
 			ensure_equals("ANGL target of this measurement updated", ts1->roms.back()->measANGL.back().target.ID, "PT7");
 
 			const auto& angmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measANGL.back());
