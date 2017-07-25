@@ -380,6 +380,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*POIN" << endl;
 				}
 				writeXYZorH(point);
+                (*stream) << endl;
 
                 // NB. June 2017:
                 // With the new observation OBSXYZ the standard deviations
