@@ -1,6 +1,19 @@
 
 find_package(Boost 1.49.0 REQUIRED)
 
+
+# Configure version when called from UI
+# /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
+set (LGC_VERSION_MAJOR 2)
+set (LGC_VERSION_MINOR 0)
+set (LGC_VERSION_PATCH 8)
+
+# Versions files
+configure_file (
+    ${CMAKE_SOURCE_DIR}/LGCVersion.in
+    ${CMAKE_SOURCE_DIR}/Version.h
+)
+
 if(MSVC)
 	add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 	add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
