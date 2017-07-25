@@ -31,11 +31,10 @@ set(LGCCore_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 set(LGCCore_INCLUDE_PATH ${LGCCore_MODULE_PATH}/headers)
 set(SURVEYLIB_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../SurveyLib)
 
-INCLUDE(${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake)
-
 include_directories (
 	SYSTEM
 	${Boost_INCLUDE_DIRS}
+    ${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcElements
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcParams
@@ -51,7 +50,6 @@ include_directories (
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialMeasurments
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialObj
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialSystems
-    ${SURVEYLIB_ROOT}/source/Tools/headers
 	${TUT_INCLUDE_PATH}
 	${EIGEN_INCLUDE_PATH}
     ${LGCCore_INCLUDE_PATH}/LGCAdjustableObjects
@@ -66,6 +64,8 @@ include_directories (
 	${LGCCore_INCLUDE_PATH}/Writers
 	${LGCCore_INCLUDE_PATH}/LGCObjectWriters
 )
+
+INCLUDE(${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake)
 
 set(CORE_INCLUDE_PATH 	${LGCCore_INCLUDE_PATH})
 set(CORE_SOURCES_PATH 	${LGCCore_MODULE_PATH}/sources)
