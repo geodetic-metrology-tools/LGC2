@@ -261,7 +261,7 @@ bool TReader::read(std::istream& lgcStream, std::istream& cp_lgcStream) {
 		nline += (int)count(line.cbegin(), line.cend(), '\n');
 		nline++;
 	}
-    // Remove the last added newline:
+    // Remove the last added whitespace:
     project.getConfig().title.pop_back();
  
 	// read the rest of the file
@@ -415,7 +415,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 		if (lgcStream.peek() == EOF) break; // End of file
 	}
-    // Remove the last added newline:
+    // Remove the last added whitespace:
     project.getConfig().title.pop_back();
 
 	// read the rest of the file
@@ -536,33 +536,13 @@ bool TReader::readLgc1File(std::istream& lgcStream)
     return true;
 }
 
+// Check if the given file is in LGC2 format (i.e., it contains the *INSTR keyword)
 bool TReader::isLgc2File(std::istream& lgcStream)
 {
-	string line;
-	int nline(1);
-
 	// be sure to omit the byte order mark if there is one
 	skipBOM(lgcStream);
 
-	// read the first line of the file
-	safeGetline(lgcStream, line);
-	// const auto& titlrline(tokenizefileString(line));
-
-	// read until the next keyword
-	safeGetline(lgcStream, line/*, '*'*/);
-
-	// restore the asterisk that was gobbled up by safeGetline
-	lgcStream.putback('*');
-
-	// add the newline characters in the title to the linecount
-	nline += (int)count(line.cbegin(), line.cend(), '\n');
-	nline++;
-
-
-	// auto lasthandler(finterpreters.back().get());
-	for (/*auto currenthandler(lasthandler)*/;
-		lgcStream.good() && safeGetline(lgcStream, line) && (line != "*END" && line != "*FIN");
-		++nline) 
+	for (string line; lgcStream.good() && safeGetline(lgcStream, line);) 
 	{
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
@@ -570,18 +550,9 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 		// skip empty lines
 		if (tokLine.empty()) continue;
 
-		// % means comment line, i.e. to be ignored
-		if (tokLine[0][0] == *"%") continue;
-
 		// If the line starts with a keyword
-		if (tokLine[0] == "*")
-		{
-			const auto& currentkey(tokLine[1]);
-
-			if (currentkey == INSTR)
-				return true;
-		}
-
+        if(tokLine[0] == "*" && tokLine[1] == INSTR)
+            return true;
 	}
 	return false;
 }
