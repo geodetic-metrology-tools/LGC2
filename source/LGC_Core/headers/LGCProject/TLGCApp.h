@@ -12,7 +12,7 @@
 #include <Behavior.h>
 
 class TLGCData;
-
+class TLGCCalculation;
 
 /*!
 	\ingroup LGCProject
@@ -43,6 +43,30 @@ class TLGCApp {
         /// Write the given data as an LGC input file into the given file location
         static bool writeLGCFile(std::shared_ptr<TLGCData> dat, const std::string &filePath);
 
+        /// Initialise the given stream
+        static void initializeStream(std::shared_ptr<TLGCData> dat, const std::string &filePath, std::shared_ptr<TAStreamFormatter> &stream);
+
+        /// Save the results in files
+        static void saveResults(TLGCData const * const dat, std::string outputFileLocation, const TLGCCalculation &calculation, std::shared_ptr<TAStreamFormatter> &stream);
+        
+        /// Write the standard results file
+        static void writeStdResultsFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
+        /// Write simulated files 
+        static void writeSimFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
+        /// Write punch files including coordinates of calculated points
+        static void writePunchFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
+        /// Write faut files 
+        static void writeFautFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
+        /// Write files for Deform
+        static void writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream);
+
+        /// Write files for covariances
+        static void writeCovarFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
 	private:
 		static const string		fCopyright;
 
@@ -54,25 +78,6 @@ class TLGCApp {
 		std::string fOutputFileLoc; // Output file extension
 		std::string fLoggerFileLoc; //Location of the input file with extension, e.g. C://Temp//outputLog.log 
 		std::string fNamFile; //Location of the 'name' file
-
-        static void initializeStream(std::shared_ptr<TLGCData> dat, const std::string &filePath, std::shared_ptr<TAStreamFormatter> &stream);
-		void saveResults(TLGCData *dat);
-		void writeStdResultsFile(TLGCData *dat);
-
-		/// Write punch files including coordinates of calculated points
-		void writePunchFile(TLGCData *dat);
-
-		/// Write faut files 
-		void writeFautFile(TLGCData *dat);
-
-		/// Write files for Deform
-		void writeDefaFile(TLGCData *dat, TLSResultsMatrices &fResMtrx);
-
-		/// Write files for covariances
-		void writeCovarFile(TLGCData *dat);
-
-		/// Write simulated files 
-		void writeSimFile(TLGCData *dat);
 
 		/// Shared pointer to global stream
 		std::shared_ptr<TAStreamFormatter> fStream;

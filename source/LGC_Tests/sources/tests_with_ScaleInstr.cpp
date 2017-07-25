@@ -39,9 +39,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_OLOC);
-		stringstream cpinfiler(TestScaleInstr::ecth_OLOC);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -102,9 +101,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_LEP);
-		stringstream cpinfiler(TestScaleInstr::ecth_LEP);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -164,9 +162,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_RS2K);
-		stringstream cpinfiler(TestScaleInstr::ecth_RS2K);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -226,9 +223,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_SPHE);
-		stringstream cpinfiler(TestScaleInstr::ecth_SPHE);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -289,9 +285,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_OLOC_PtLine);
-		stringstream cpinfiler(TestScaleInstr::ecve_OLOC_PtLine);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -342,9 +337,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_RS2K_PtLine);
-		stringstream cpinfiler(TestScaleInstr::ecve_RS2K_PtLine);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -395,9 +389,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_LEP_PtLine);
-		stringstream cpinfiler(TestScaleInstr::ecve_LEP_PtLine);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -448,9 +441,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_SPHE_PtLine);
-		stringstream cpinfiler(TestScaleInstr::ecve_SPHE_PtLine);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -500,9 +492,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_OLOC);
-		stringstream cpinfiler(TestScaleInstr::ecve_OLOC);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -542,9 +533,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
 		stringstream infiler(TestScaleInstr::ecsp_OLOC);
-		stringstream cpinfiler(TestScaleInstr::ecsp_OLOC);
 	
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 	
 		TLGCCalculation calcul(projTest);

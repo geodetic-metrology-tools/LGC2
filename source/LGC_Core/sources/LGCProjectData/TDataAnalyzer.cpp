@@ -18,6 +18,15 @@ bool TDataAnalyzer::dataConsistent(){
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
 	
+    // Clean the data:
+    if(!cleanDeactivated()){
+        outputMessages << TFileLogger::e_logType::LOG_ERROR << "Problem with data consistency because of deactivated lines.";
+        return false;
+    }
+
+    // Update the static variables set by some options:
+    LGCAdjustablePoint::setAllFixedParam(fData.getConfig().allfixed.isActive());
+    TLGCObsSummary::createHistogram(fData.getConfig().histo.isActive());
 
     // Initialise unknown, equation, and observation indices in the data,
     // initialise the counts of different types of points and measurements
@@ -64,83 +73,93 @@ bool TDataAnalyzer::dataConsistent(){
 
 		//If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized
 		for (auto itLEVEL( it.node->data.get()->measurements.fLEVEL.begin()); itLEVEL != it.node->data.get()->measurements.fLEVEL.end(); ++itLEVEL){
-			if(!itLEVEL->fMeasuredPlane->isInitialized()){
+			
+            // Create the reference point if it was not given:
+            if(!itLEVEL->fRefPt){
 				TReal referencePoint[3] = {0,0,0};
-				for (auto itDLEVMeas( itLEVEL->measDLEV.begin()); itDLEVMeas != itLEVEL->measDLEV.end(); ++itDLEVMeas){
-					TPositionVector targetPos = itDLEVMeas->targetPos->getEstimatedValue();
-					TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(),"Target2ROOT");
-					transformation.transform(targetPos);
+                for(auto itDLEVMeas(itLEVEL->measDLEV.begin()); itDLEVMeas != itLEVEL->measDLEV.end(); ++itDLEVMeas){
+                    TPositionVector targetPos = itDLEVMeas->targetPos->getEstimatedValue();
+                    TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                    transformation.transform(targetPos);
 
-               referencePoint[0] += targetPos.getX().getMetresValue();
-               referencePoint[1] += targetPos.getY().getMetresValue();
-               referencePoint[2] += targetPos.getZ().getMetresValue();
-				}
+                    referencePoint[0] += targetPos.getX().getMetresValue();
+                    referencePoint[1] += targetPos.getY().getMetresValue();
+                    referencePoint[2] += targetPos.getZ().getMetresValue();
+                }
+
 				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
+
 				if(numberOfMeasurements>0){
 					referencePoint[0] /=numberOfMeasurements;
 					referencePoint[1] /=numberOfMeasurements;
 					referencePoint[2] /=numberOfMeasurements;
 
-					LGCAdjustablePoint& rp =
-						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
+					itLEVEL->fRefPt =
+						&fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2],TCoordSysFactory::ECoordSys::k3DCartesian), 
 						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
-
-						itLEVEL->fMeasuredPlane->initialize(&rp,TLength(0.0), TAngle(0.0, TAngle::EUnits::kRadians), 
-															TAngle(0.0, TAngle::EUnits::kRadians), true, true);
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found."; 
 			}
+            
+            // Name of the measured adjustable plane:
+            auto name = "DLEVPLANE" + std::to_string(itLEVEL->stnId);
+            
+            /*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
+            itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(itLEVEL->fRefPt, TLength(0.0), TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, name));
 		}
 
 		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO){
-			if (!itECHO->fMeasuredPlane->isInitialized())
-			{
-				TReal referencePoint[3] = { 0, 0, 0 };
-				TReal initialRefPtDistance = 0.0;
-				for (auto itECHOMeas(itECHO->measECHO.begin()); itECHOMeas != itECHO->measECHO.end(); ++itECHOMeas){
-					TPositionVector stationPos = itECHOMeas->targetPos->getEstimatedValue(); /*In ECHO the targetPos is a stationPos (SCALE instrument used has no target)*/
-					TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-					transformation.transform(stationPos);
 
-					referencePoint[0] += stationPos.getX().getMetresValue();
-					referencePoint[1] += stationPos.getY().getMetresValue();
-					referencePoint[2] += stationPos.getZ().getMetresValue();
+            TReal referencePoint[3] = { 0, 0, 0 };
+            TReal initialRefPtDistance = 0.0;
 
-					if (!fData.getConfig().sim.isActive())
-						initialRefPtDistance += itECHOMeas->getDistance();
-				}
-				int numberOfMeasurements = (int)itECHO->measECHO.size();
-				if (numberOfMeasurements > 0){
-					referencePoint[0] /= numberOfMeasurements;
-					referencePoint[1] /= numberOfMeasurements;
-					referencePoint[2] /= numberOfMeasurements;
+            for(auto itECHOMeas(itECHO->measECHO.begin()); itECHOMeas != itECHO->measECHO.end(); ++itECHOMeas){
+                TPositionVector stationPos = itECHOMeas->targetPos->getEstimatedValue(); /*In ECHO the targetPos is a stationPos (SCALE instrument used has no target)*/
+                TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                transformation.transform(stationPos);
 
-					initialRefPtDistance /= numberOfMeasurements;
+                referencePoint[0] += stationPos.getX().getMetresValue();
+                referencePoint[1] += stationPos.getY().getMetresValue();
+                referencePoint[2] += stationPos.getZ().getMetresValue();
 
-					/*Fixed reference point for the ECHO measurement*/
-					LGCAdjustablePoint& rp =
-						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
-						true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
+                if(!fData.getConfig().sim.isActive())
+                    initialRefPtDistance += itECHOMeas->getDistance();
+            }
 
-					/*Calculation of the initial approximation value for the theta angle of the plane.*/
-					const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
-					const TPositionVector& lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+            int numberOfMeasurements = (int)itECHO->measECHO.size();
 
-					TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+            if(numberOfMeasurements > 0){
 
-					itECHO->fMeasuredPlane->initialize(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
-						TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true);
-				}
-				else
-					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
-			}
+                referencePoint[0] /= numberOfMeasurements;
+                referencePoint[1] /= numberOfMeasurements;
+                referencePoint[2] /= numberOfMeasurements;
+
+                initialRefPtDistance /= numberOfMeasurements;
+
+                /*Fixed reference point for the ECHO measurement*/
+                LGCAdjustablePoint& rp =
+                    fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+                    true, true, true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
+
+                /*Calculation of the initial approximation value for the theta angle of the plane.*/
+                const TPositionVector& firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
+                const TPositionVector& lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+
+                TReal thetaLineVectorAngle = atan2q(lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+
+                auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
+                itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians),
+                    TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
+            
+            } else
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
 		}
 
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){
-			if (!itECVE->fMeasuredLine->isInitialized()){
+			if (!itECVE->fPtLine){
 				TReal referencePoint[3] = { 0, 0, 0 };
 				for (auto itECVEMeas(itECVE->measECVE.begin()); itECVEMeas != itECVE->measECVE.end(); ++itECVEMeas){
 					TPositionVector targetPos = itECVEMeas->targetPos->getEstimatedValue();
@@ -157,15 +176,19 @@ bool TDataAnalyzer::dataConsistent(){
 					referencePoint[1] /= numberOfMeasurements;
 					referencePoint[2] /= numberOfMeasurements;
 
-					LGCAdjustablePoint& rp =
-						fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+					itECVE->fPtLine =
+						&fData.getPoints().addObject(LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 						false, false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
-
-					itECVE->fMeasuredLine->initialize(&rp, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111));
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
 			}
+
+            // Name of the measured adjustable line
+            auto name = "ECVELINE" + std::to_string(itECVE->romId);
+
+            // Create the measured line:
+            itECVE->fMeasuredLine = &fData.getLines().addObject(LGCAdjustableLine(itECVE->fPtLine, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
 		}
 
 	}
@@ -316,7 +339,234 @@ bool TDataAnalyzer::dataConsistent(){
 	return consistent;
 }
 
+namespace {
+
+    template<class TAMEAS>
+    // Remove the deactivated measurements from the given list of measurements,
+    // and check that the *targetPos* point of each active measurement is active
+    bool rmDeactivated_and_checkTargetPos(std::list<TAMEAS> &meass){
+        for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+            
+            if(!meas->isActive())
+                // Return value of erase(pos) is ++pos -> decrement because for-loop is incrementing
+                (meas = meass.erase(meas))--;
+
+            else if(!meas->targetPos->isActive())
+                return false;
+        }
+        return true;
+    }
+
+    template<class TAMEAS>
+    // Remove the deactivated measurements from the given list of measurements, and check
+    // that the *targetPos* and *station* points of each active measurement are active
+    bool rmDeactivated_and_checkTargetPos_noInstr(std::list<TAMEAS> &meass){
+        for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+            
+            if(!meas->isActive())
+                // Return value of erase(pos) is ++pos -> decrement because for-loop is incrementing
+                (meas = meass.erase(meas))--;
+
+            else if(!meas->targetPos->isActive())
+                return false;
+
+            else if(!meas->station->isActive())
+                return false;
+        }
+        return true;
+    }
+}
+
+bool TDataAnalyzer::cleanDeactivated(){
+
+    // Clean first the tree of measurements from deactivated measurements and ROMs. Check that the
+    // points, targets, and instruments of the active measurements are also active.
+    
+    // Don't care about adjustable lengths, planes, angles etc. while looping the tree,
+    // because they cannot be explicitly deactivated from the input file. Postprocess them...
+    
+    // Clean the tree of measurements:
+    for(auto node = fData.getTree().begin(); node != fData.getTree().end(); ++node){
+        auto &measurements = node->get()->measurements;
+
+        // TSTN
+        for(auto tstn = measurements.fTSTN.begin(); tstn != measurements.fTSTN.end(); ++tstn){
+        
+            // TODO: TSTN not active
+            if(false /* !tstn->get()->isActive() */){
+                (tstn = measurements.fTSTN.erase(tstn))--;
+                continue;
+            }
+
+            if(!tstn->get()->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+
+            for(auto rom = tstn->get()->roms.begin(); rom != tstn->get()->roms.end(); ++rom){
+
+                // TODO: ROM not active
+                if(false /* !rom->get()->isActive() */){
+                    (rom = tstn->get()->roms.erase(rom))--;
+                    continue;
+                }
+
+                if(
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measPLR3D) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measANGL) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measZEND) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measDIST) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measDHOR) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measECTH) ||
+                    !rmDeactivated_and_checkTargetPos(rom->get()->measECDIR)
+                    )
+                    return false; // Target pos point deactivated from active measurement
+            }
+        }
+
+        // CAM
+        for(auto cam = measurements.fCAM.begin(); cam != measurements.fCAM.end(); ++cam){
+        
+            // TODO: CAM not active
+            if(false /* !cam->isActive() */){
+                (cam = measurements.fCAM.erase(cam))--;
+                continue;
+            }
+
+            if(!cam->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+            
+            if(
+                !rmDeactivated_and_checkTargetPos(cam->measUVD) ||
+                !rmDeactivated_and_checkTargetPos(cam->measUVEC))
+                return false; // Target pos point deactivated from active measurement
+        }
+
+        // EDM
+        for(auto edm = measurements.fEDM.begin(); edm != measurements.fEDM.end(); ++edm){
+        
+            // TODO: EDM not active
+            if(false /* !edm->isActive() */){
+                (edm = measurements.fEDM.erase(edm))--;
+                continue;
+            }
+
+            if(!edm->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+
+            if(!rmDeactivated_and_checkTargetPos(edm->measDSPT))
+                return false;
+        }
+
+        // LEVEL
+        for(auto level = measurements.fLEVEL.begin(); level != measurements.fLEVEL.end(); ++level){
+        
+            // TODO: LEVEL not active
+            if(false /* !level->isActive() */){
+                (level = measurements.fLEVEL.erase(level))--;
+                continue;
+            }
+
+            if(!rmDeactivated_and_checkTargetPos(level->measDLEV))
+                return false;
+
+            // NB. No need to check DLEV::DHOR separetely, since it cannot be
+            // deactivated and its targetPos is the same as the DLEV's
+        }
+
+        // ORIE
+        for(auto orierom = measurements.fORIE.begin(); orierom != measurements.fORIE.end(); ++orierom){
+
+            // TODO: ORIE not active
+            if(false /* !orierom->isActive() */){
+                (orierom = measurements.fORIE.erase(orierom))--;
+                continue;
+            }
+
+            if(!orierom->instrumentPos->isActive())
+                return false; // Instr pos point deactivated:
+
+            if(!rmDeactivated_and_checkTargetPos(orierom->measORIE))
+                return false;
+        }
+
+        // ECHO
+        for(auto echorom = measurements.fECHO.begin(); echorom != measurements.fECHO.end(); ++echorom){
+
+            // TODO: ECHO not active
+            if(false /* !echorom->isActive() */){
+                (echorom = measurements.fECHO.erase(echorom))--;
+                continue;
+            }
+
+            if(!rmDeactivated_and_checkTargetPos(echorom->measECHO))
+                return false;
+        }
+
+        // ECSP
+        for(auto ecsprom = measurements.fECSP.begin(); ecsprom != measurements.fECSP.end(); ++ecsprom){
+
+            // TODO: ECSP not active
+            if(false /* !ecsprom->isActive() */){
+                (ecsprom = measurements.fECSP.erase(ecsprom))--;
+                continue;
+            }
+
+            if(
+                !ecsprom->p1->isActive() ||
+                !ecsprom->p2->isActive()
+                )
+                return false; // P1 or P2 deactivated:
+
+            if(!rmDeactivated_and_checkTargetPos(ecsprom->measECSP))
+                return false;
+        }
+
+        // ECVE
+        for(auto ecverom = measurements.fECVE.begin(); ecverom != measurements.fECVE.end(); ++ecverom){
+
+            // TODO: ECVE not active
+            if(false /* !ecverom->isActive() */){
+                (ecverom = measurements.fECVE.erase(ecverom))--;
+                continue;
+            }
+
+            if(!rmDeactivated_and_checkTargetPos(ecverom->measECVE))
+                return false;
+        }
+
+        if(
+            !rmDeactivated_and_checkTargetPos_noInstr(measurements.fDVER) ||
+            !rmDeactivated_and_checkTargetPos_noInstr(measurements.fRADI) ||
+            !rmDeactivated_and_checkTargetPos_noInstr(measurements.fOBSXYZ)
+            )
+            return false;
+    }
+
+
+    std::remove_if(fData.getPoints().begin(), fData.getPoints().end(),
+        [](const LGCAdjustablePoint &pt){ return !pt.isActive(); });
+
+    return true;
+}
+
 void TDataAnalyzer::assignEOIndices(){
+
+    // Get a pointer to the polar target distance correction adjustable length
+    auto getPolarTgtDistCorrAdj = [this](const std::string &instrId, const std::string &tgtId){
+        const auto &tgt = fData.getInstruments().fPOLAR.at(instrId)->targets.at(tgtId);
+        return &fData.getLength().addObject(TAdjustableLength(tgt->distCorrectionValue, !tgt->distCorrectionUnknown, "Polar_" + instrId + tgtId + "_dCorr"));
+    };
+
+    // Get a pointer to the edm target distance correction adjustable length
+    auto getEdmTgtDistCorrAdj = [this](const std::string &instrId, const std::string &tgtId){
+        const auto &tgt = fData.getInstruments().fEDM.at(instrId)->targets.at(tgtId);
+        return &fData.getLength().addObject(TAdjustableLength(tgt->distCorrectionValue, !tgt->distCorrectionUnknown, "Edm_" + instrId + tgtId + "_dCorr"));
+    };
+
+    // Get a pointer to the level collimation angle adjustable
+    auto getLevelCollAngleAdj = [this](const std::string &instrId){
+        const auto &instr = fData.getInstruments().fLEVEL.at(instrId);
+        return &fData.getAngles().addObject(TAdjustableAngle(instr->collAngleValue, !instr->collAngleUnknown, "Level_" + instrId + "_collAngle"));
+    };
 
     // Iterate the whole tree and assign  to the measurements
     for(auto &node : fData.getTree()){
@@ -329,8 +579,10 @@ void TDataAnalyzer::assignEOIndices(){
 
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
-                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
-                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
+                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false,
+                    "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotX adjustable angle
+                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false,
+                    "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotY adjustable angle
 
                 // If ROT3D used, instrument height is fixed and is equal to 0
                 // (NB. These parameters will not affect in lgc1 case,
@@ -348,8 +600,26 @@ void TDataAnalyzer::assignEOIndices(){
 
             for(auto &rom : tstn->roms){
 
+                // V0 adjustable angle (NB. set initially fixed):
+                if(!fData.isLGCv1())
+                    rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true,
+                        node->frame.getName() + "_V0_adj_" + std::to_string(rom->romId))); // Name of the v0 adjustable angle
+
+                // V0 must be adjustable (i.e., not fixed), if PLR3D, ANGL, ECTH, or ECDIR measurements
+                // are used. Create a variable for checking, if these measurements are used, and update the
+                // v0 angle in the end of this for-loop (after looping all the measurements) accordingly.
+                bool requiredAdjustableV0 = false;
+
                 // PLR3D
                 for(auto &plr : rom->measPLR3D){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        plr.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, plr.target.ID);
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
+
                     // set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
                     plr.setFirstEquationIndex(fData.fUEOIndices.EIndex);
                     plr.setFirstObservationIndex(fData.fUEOIndices.OIndex);
@@ -360,6 +630,14 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ANGL
                 for(auto &angl : rom->measANGL){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        angl.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, angl.target.ID);
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
+
                     // set indices of LS matrices, ANGL introduces 1 equation and 1 observation
                     angl.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     angl.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -368,6 +646,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ZEND
                 for(auto &zend : rom->measZEND){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        zend.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, zend.target.ID);
+
                     // set indices of LS matrices, ZEND introduces 1 equation and 1 observation
                     zend.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     zend.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -376,6 +659,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // DIST
                 for(auto &dist : rom->measDIST){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        dist.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, dist.target.ID);
+
                     // set indices of LS matrices, DIST introduces 1 equation and 1 observation
                     dist.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     dist.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -384,6 +672,11 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // DHOR
                 for(auto &dhor : rom->measDHOR){
+
+                    // Get the distCorrAdj for the used target:
+                    if(!fData.isLGCv1())
+                        dhor.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, dhor.target.ID);
+
                     // set indices of LS matrices, DHOR introduces 1 equation and 1 observation
                     dhor.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     dhor.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -392,6 +685,10 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ECTH
                 for(auto &ecth : rom->measECTH){
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
+
                     // set indices of LS matrices, ECTH introduces 1 equation and 1 observation
                     ecth.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     ecth.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -400,11 +697,19 @@ void TDataAnalyzer::assignEOIndices(){
 
                 // ECDIR
                 for(auto &ecdir : rom->measECDIR){
+
+                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
+                    requiredAdjustableV0 = true;
+
                     // set indices of LS matrices, ECDIR introduces 1 equation and 1 observation
                     ecdir.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     ecdir.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
                     fData.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
                 }
+
+                // Now update the fixed status of the v0 angle:
+                if(!fData.isLGCv1())
+                    rom->v0->setFixed(!requiredAdjustableV0);
             }
         }
 
@@ -435,6 +740,11 @@ void TDataAnalyzer::assignEOIndices(){
         // DSPT
         for(auto &edm : measurements.fEDM)
             for(auto &dspt : edm.measDSPT){
+
+                // Get the distCorrAdj for the used target:
+                if(!fData.isLGCv1())
+                    dspt.target.distCorrectionAdjustable = getEdmTgtDistCorrAdj(edm.instrument.ID, dspt.target.ID);
+
                 // set indices of LS matrices, DSPT introduces 1 equation and 1 observation
                 dspt.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                 dspt.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -445,6 +755,10 @@ void TDataAnalyzer::assignEOIndices(){
         for(auto &level : measurements.fLEVEL){
             // Reinitialise hasDHOR attribute:
             level.hasDHOR = false;
+
+            // Get the collimation angle for the used instrument:
+            if(!fData.isLGCv1())
+                level.instrument.collAngleAdjustable = getLevelCollAngleAdj(level.instrument.ID);
 
             for(auto &dlev : level.measDLEV){
                 // set indices of LS matrices, DLEV introduces 1 equation and 1 observation
@@ -474,6 +788,11 @@ void TDataAnalyzer::assignEOIndices(){
         // ORIE
         for(auto &orierom : measurements.fORIE)
             for(auto &orie : orierom.measORIE){
+
+                // Get the distCorrAdj for the used target:
+                if(!fData.isLGCv1())
+                    orie.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(orierom.instrument.ID, orie.target.ID);
+
                 // set indices of LS matrices, ORIE introduces 1 equation and 1 observation
                 orie.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                 orie.setFirstObservationIndex(fData.fUEOIndices.OIndex++);

@@ -23,8 +23,6 @@
 /*!@name Default values for LGC2 */
 //@{
 
-static bool False = false;
-
 /// Default precision for output files
 static const int PREC_DEF_DIGITS = 5;
 
@@ -36,7 +34,9 @@ static const TReal FAUT_DEF_BETA = 0.1; // 10 %
 /// Allowed characters to separate fields in the input file.
 static const char* const INPUT_SEPERATOR_CHARS = " \t";
 /// Comment characters for line comments
-static const char* const INPUT_COMMENT_CHARS = "%$#";
+static const char* const INPUT_COMMENT_CHARS = "%$";
+/// Deactivate the oject defined in the line in front of which this character appears
+static const char* const DEACTIVATION_CHAR = "#";
 
 namespace LGC {
 	///Conversion factor for the unitless vector (UVEC and UVD)

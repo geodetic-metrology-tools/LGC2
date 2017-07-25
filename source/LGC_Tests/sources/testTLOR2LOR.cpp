@@ -44,8 +44,7 @@ namespace tut
 		std::shared_ptr<TLGCData> proj (new TLGCData);
 		TReader r(proj);
 		stringstream infile(LOR2LORInputFiles::plateFileOrig);
-		stringstream cpinfile(LOR2LORInputFiles::plateFileOrig);
-		r.read(infile,cpinfile);
+		r.read(infile);
 
 		TDataTree tree;
 		tree = proj->getTree();
@@ -174,8 +173,7 @@ namespace tut
 		std::shared_ptr<TLGCData> proj (new TLGCData);
 		TReader r(proj);
 		stringstream infile(LOR2LORInputFiles::test1);
-		stringstream cpinfile(LOR2LORInputFiles::test1);
-		r.read(infile,cpinfile);				
+		r.read(infile);				
 		TDataTree tree = proj->getTree();
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,8 +271,7 @@ namespace tut
 		std::shared_ptr<TLGCData> proj2(new TLGCData);;
 		TReader r2(proj2);
 		stringstream infile2(LOR2LORInputFiles::plateFileOrig);
-		stringstream cpinfile2(LOR2LORInputFiles::plateFileOrig);
-		r2.read(infile2,cpinfile2);
+		r2.read(infile2);
 
 		TDataTree tree2;
 		tree2 = proj2->getTree();
@@ -307,8 +304,7 @@ namespace tut
 
 		TReader r(proj);
 		stringstream infile(LOR2LORInputFiles::test2);
-		stringstream cpinfile(LOR2LORInputFiles::test2);
-		r.read(infile,cpinfile);				
+		r.read(infile);				
 		TDataTree tree = proj->getTree();
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,8 +363,7 @@ namespace tut
 		std::shared_ptr<TLGCData> proj (new TLGCData);
 		TReader r(proj);
 		stringstream infile(LOR2LORInputFiles::test_with_scale);
-		stringstream cpinfile(LOR2LORInputFiles::test_with_scale);
-		r.read(infile,cpinfile);				
+		r.read(infile);				
 		TDataTree tree = proj->getTree();
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////		
@@ -500,8 +495,7 @@ namespace tut
 		std::shared_ptr<TLGCData> proj (new TLGCData);
 		TReader r(proj);
 		stringstream infile(LOR2LORInputFiles::test1);
-		stringstream cpinfile(LOR2LORInputFiles::test1);
-		r.read(infile,cpinfile);				
+		r.read(infile);				
 		TDataTree tree = proj->getTree();
 	
 		TLOR2LOR FPT2ToROOT(tree,"FREF2","ROOT","FREF22ROOT");

@@ -87,14 +87,11 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Param_case);
-			stringstream cpinfiler(TestROOT::Param_case);
 			infiler.seekp(0, std::ios::end);
 			infiler << anglPart;
-			cpinfiler.seekp(0, std::ios::end);
-			cpinfiler << anglPart;
 			string infile = infiler.str();
 
-			r.read(infiler,cpinfiler);
+			r.read(infiler);
 		
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -106,7 +103,7 @@ namespace tut
          ensure_equals("Pt x coordinate should match", PTest.getX().getMetresValue(), 0, 1e-12);
          ensure_equals("Pt y coordinate should match", PTest.getY().getMetresValue(), 100, 1e-12);
          ensure_equals("Pt z coordinate should match", PTest.getZ().getMetresValue(), 0, 1e-12);
-		 TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+		 TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -185,14 +182,11 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Param_case_setup2);
-			stringstream cpinfiler(TestROOT::Param_case_setup2);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
-			cpinfiler.seekp(0, std::ios::end);
-			cpinfiler << test;
 			string infile = infiler.str();
 
-			r.read(infiler,cpinfiler);
+			r.read(infiler);
 		
 			TLGCCalculation calcul(projTest);
 			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -204,7 +198,7 @@ namespace tut
 			ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
 			ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
 			ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
-			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+			TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -290,14 +284,11 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Param_case_setup3);
-			stringstream cpinfiler(TestROOT::Param_case_setup3);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
-			cpinfiler.seekp(0, std::ios::end);
-			cpinfiler << test;
 			string infile = infiler.str();
 
-			r.read(infiler,cpinfiler);
+			r.read(infiler);
 		
 
 			TLGCCalculation calcul(projTest);
@@ -316,7 +307,7 @@ namespace tut
 			ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
 			 ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
 	
-			TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+             TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 
 			std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -396,14 +387,11 @@ namespace tut
 
 				//One POINT and one TSTN (V0) = 4 unknowns)
 				stringstream infiler(TestROOT::Root_PLR_setup2);
-				stringstream cpinfiler(TestROOT::Root_PLR_setup2);
 				infiler.seekp(0, std::ios::end);
 				infiler << test;
-				cpinfiler.seekp(0, std::ios::end);
-				cpinfiler << test;
 				string infile = infiler.str();
 
-				r.read(infiler,cpinfiler);
+				r.read(infiler);
 		
 				TLGCCalculation calcul(projTest);
 				std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -415,7 +403,7 @@ namespace tut
 				ensure_equals("Pt x coordinate should match",Pt.getX().getMetresValue(), 0, 1e-12);
 				ensure_equals("Pt y coordinate should match",Pt.getY().getMetresValue(), 100, 1e-12);
 				ensure_equals("Pt z coordinate should match",Pt.getZ().getMetresValue(), 0, 1e-12);
-				TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+                TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 
 				std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -504,14 +492,11 @@ namespace tut
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
 			stringstream infiler(TestROOT::Root_PLR_setup3);
-			stringstream cpinfiler(TestROOT::Root_PLR_setup3);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
-			cpinfiler.seekp(0, std::ios::end);
-			cpinfiler << test;
 			string infile = infiler.str();
 
-			r.read(infiler,cpinfiler);
+			r.read(infiler);
 
 			if (i != 6)
 			{
@@ -532,7 +517,7 @@ namespace tut
 				ensure_equals("Pt2 y coordinate should match", PT2.getY().getMetresValue(), 100, 1e-9);
 				ensure_equals("Pt2 z coordinate should match", PT2.getZ().getMetresValue(), 0, 1e-9);
 
-				TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+                TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 
 				std::vector<double> Outputv0;
 				Outputv0.push_back(0);
@@ -566,8 +551,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Root_PLR_setup2_SEP);
-		stringstream cpinfiler(TestROOT::Root_PLR_setup2_SEP);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -581,7 +565,7 @@ namespace tut
 		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 100, 1e-12);
 		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 0, 1e-12);
 
-		TReal V0Calc = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+        TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST2",V0Calc, 199, 1e-8); 
 	}
 

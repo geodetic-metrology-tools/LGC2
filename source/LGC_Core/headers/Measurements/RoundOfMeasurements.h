@@ -34,8 +34,8 @@ struct TECHOROM {
         int romId{ romCounter_++ };
 
 		/// the station attribute is a copy of the parameter to override defaults
-		TECHOROM(LGCAdjustablePlane& measPlane) :
-			fMeasuredPlane(&measPlane),
+		TECHOROM(LGCAdjustablePlane *measPlane) :
+			fMeasuredPlane(measPlane),
 			line(NO_VALi)
 			{}
 
@@ -123,6 +123,9 @@ struct TECVEROM {
 	//Measured vertical plane
 	LGCAdjustableLine* fMeasuredLine;
 
+    /// Point on the measured line
+    LGCAdjustablePoint const * fPtLine;
+
     /// Initialise observation summaries
     void initialiseObsSummaries();
 
@@ -135,8 +138,9 @@ struct TECVEROM {
     int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECVEROM(LGCAdjustableLine& measLine) :
-		fMeasuredLine(&measLine),
+    TECVEROM(LGCAdjustablePoint const * ptLine) :
+		fMeasuredLine(nullptr),
+        fPtLine(ptLine),
 		line(NO_VALi)
 	{}
 

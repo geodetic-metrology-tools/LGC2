@@ -35,7 +35,7 @@ public:
 	/*!@name Public member functions*/
 	//@{
 		/// write the point coordinate file corresponding to the given project
-		virtual void writeFile(TLGCData*);
+		virtual void writeFile(TLGCData const * const);
 
 		///write the lgc file  when there is an error in the project
 		virtual void writeFile(const string error);
@@ -56,7 +56,7 @@ private:
 	//@}
 
 	/// Total reliability if possible 
-		void	writeOverallReliability(TLGCData* project);
+		void	writeOverallReliability(TLGCData const * const project);
 
 	/*!@name Private Attribute*/
 	//@{

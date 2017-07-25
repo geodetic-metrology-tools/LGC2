@@ -42,6 +42,9 @@ public:
 
 private:
 
+    //! Manage the deactivated points, measurements etc. from the data
+    bool cleanDeactivated();
+
     //! Assign observation and equation indices to measurements.
     void assignEOIndices();
 
