@@ -117,7 +117,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	if (firstline){ //If this is the line starting with *UVEC, where only default target can be changed, use the default from the CAM definition or override it
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
 		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
-        getCAM().uvecActive = activeLine;
+        getCAM().uvecActive = getCAM().isActive() && activeLine; // Active only if station is active as well
 	}
 	else{//Get here, if the line does NOT start with a "*", it means that is the concrete measurement 
         bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
@@ -159,7 +159,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// set measurement value
 		TUVEC uvec(obspt, tgt);
 		uvec.line = line;
-        uvec.setActive(activeLine);
+        uvec.setActive(getCAM().uvecActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -196,7 +196,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 	if (firstline){ //If this is the line starting with *UVD, where only default target can be changed
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
 		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
-        getCAM().uvdActive = activeLine;
+        getCAM().uvdActive = getCAM().isActive() && activeLine; // Active only if station is active as well
     }
 	else{//Enter if the line does NOT start with a "*"
         bool hasAllParams = (tokens.size() > 4) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3)) && isNumber(tokens.at(4));
@@ -235,7 +235,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 		// set measurement value
 		TUVD uvd(obspt, tgt);
 		uvd.line = line;
-        uvd.setActive(activeLine);
+        uvd.setActive(getCAM().uvdActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -282,7 +282,7 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, bool activeLine, int)
 
     // Create the ROM:
     shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgtId, nullptr);
-    rom->setActive(activeLine);
+    rom->setActive(proj.getCurrentNode().measurements.fTSTN.back()->isActive() && activeLine); // Active only if station is active as well
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))
@@ -300,7 +300,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 
     // If first line, update the active status of the PLR3D rom:
     if(updateDefaultTargetTSTN(tokens))
-        getROM()->plrActive = activeLine;
+        getROM()->plrActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
     // Else handle the measurement line:
     else {
@@ -348,7 +348,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		// set measurement values
 		TPLR3D plr(obspt, tgt);
 		plr.line = line;
-        plr.setActive(activeLine);
+        plr.setActive(getROM()->plrActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -374,7 +374,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
     // If first line, update the active status of the ANGL rom:
     if(updateDefaultTargetTSTN(tokens))
-        getROM()->anglActive = activeLine;
+        getROM()->anglActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
     // Else handle the measurement line:
     else {
@@ -413,7 +413,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// set measurement value
 		TANGL angl(obspt, tgt);
 		angl.line = line;
-        angl.setActive(activeLine);
+        angl.setActive(getROM()->anglActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -433,7 +433,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
     // If first line, update the active status of the ZEND rom:
     if(updateDefaultTargetTSTN(tokens))
-        getROM()->zendActive = activeLine;
+        getROM()->zendActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
     // Else handle the measurement line:
     else {
@@ -475,7 +475,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// set measurement value
 		TZEND zend(obspt, tgt);
 		zend.line = line;
-        zend.setActive(activeLine);
+        zend.setActive(getROM()->zendActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -493,7 +493,7 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, in
 {
     // If first line, update the active status of the DIST rom:
     if(updateDefaultTargetTSTN(tokens))
-        getROM()->distActive = activeLine;
+        getROM()->distActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
     // Else handle the measurement line:
     else {
@@ -541,7 +541,7 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	   auto& dist(getROM()->measDIST.back());
 
 		dist.line = line;
-        dist.setActive(activeLine);
+        dist.setActive(getROM()->distActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -567,7 +567,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
         
         // Update the activation status of the ECTH rom:
-        getROM()->ecthActive = activeLine;
+        getROM()->ecthActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -602,7 +602,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	   auto& ecth(getROM()->measECTH.back());
 
 	   ecth.line = line;
-       ecth.setActive(activeLine);
+       ecth.setActive(getROM()->ecthActive && activeLine); // Active only if ROM is active as well
 
 	   	//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -628,7 +628,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 
         // Update the activation status of the ECDIR rom:
-        getROM()->ecdirActive = activeLine;
+        getROM()->ecdirActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -663,7 +663,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		auto& ecdir(getROM()->measECDIR.back());
 
 		ecdir.line = line;
-        ecdir.setActive(activeLine);
+        ecdir.setActive(getROM()->ecdirActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -676,7 +676,7 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 {
     // If first line, update the active status of the DHOR rom:
     if(updateDefaultTargetTSTN(tokens))
-        getROM()->dhorActive = activeLine;
+        getROM()->dhorActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
     // Else handle the measurement line:
     else {
@@ -720,7 +720,7 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		//get a reference to the inserted measurement
 		auto& dhor(getROM()->measDHOR.back());
 		dhor.line = line;
-        dhor.setActive(activeLine);
+        dhor.setActive(getROM()->dhorActive && activeLine); // Active only if ROM is active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -800,7 +800,7 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		//get a reference to the inserted measurement
         auto& dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
         dspt.line = line;
-        dspt.setActive(activeLine);
+        dspt.setActive(proj.getCurrentNode().measurements.fEDM.back().isActive() && activeLine); // Active only if station active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -848,7 +848,7 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		dver.setDistanceCorrection(TLength(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection())));
 
 		dver.line = line;
-        dver.setActive(activeLine);
+        dver.setActive(proj.getCurrentNode().measurements.dverActive && activeLine); // Active only if ROM active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -933,7 +933,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		}
 
 		dlev.line = line;
-        dlev.setActive(activeLine);
+        dlev.setActive(levelGrOfMeas.isActive() && activeLine); // Active only if station active as well
 
 		levelGrOfMeas.measDLEV.emplace_back(dlev);
 	}
@@ -976,10 +976,11 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-		echo.line = line;
-        echo.setActive(activeLine);
+        TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
 
-		TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
+		echo.line = line;
+        echo.setActive(echoROMLatest.isActive() && activeLine); // Active only if ROM active as well
+
 		echoROMLatest.measECHO.emplace_back(echo);
 
 
@@ -1047,10 +1048,11 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Store  the measured value
 		TECVE ecve(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-		ecve.line = line;
-        ecve.setActive(activeLine);
+        TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
+        
+        ecve.line = line;
+        ecve.setActive(ecveROMLatest.isActive() && activeLine); // Active only if ROM active as well
 
-		TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
 		//NODUP used
@@ -1109,10 +1111,11 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Store  the measured value
 		TECSP ecsp(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-		ecsp.line = line;
-        ecsp.setActive(activeLine);
+        TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
+        
+        ecsp.line = line;
+        ecsp.setActive(ecspROMLatest.isActive() && activeLine); // Active only if ROM active as well
 
-		TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
 		proj.setCombinedCaseCalcUsed(); //Combined case used
@@ -1186,7 +1189,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TORIE orie(obspt,tgt);
 
 		orie.line = line;
-        orie.setActive(activeLine);
+        orie.setActive(proj.getCurrentNode().measurements.fORIE.back().isActive() && activeLine); // Active only if ROM active as well
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -1236,7 +1239,7 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, in
 			radi.setObservedStDev(sigma);
 
 		radi.line = line;
-        radi.setActive(activeLine);
+        radi.setActive(proj.getCurrentNode().measurements.radiActive && activeLine); // Active only if ROM active as well
 		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -1277,7 +1280,7 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		
 		auto& obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
 		obsxyz.line = line;
-        obsxyz.setActive(activeLine);
+        obsxyz.setActive(proj.getCurrentNode().measurements.obsxyzActive && activeLine); // Active only if ROM active as well
 		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
