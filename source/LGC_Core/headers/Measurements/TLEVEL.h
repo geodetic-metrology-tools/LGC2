@@ -14,7 +14,7 @@
 	\brief Levelling station, which is a number of levelling measurements (TDLEV) of a single plane. The measurements are grouped by the plane.
 	DHOR measurements can be optionally taken.
 */
-struct TLEVEL {
+struct TLEVEL : public TStatusObject {
 
 		/// All DLEV measurements, measuring the plane (fmeasuredPlane).
 		std::list<TDLEV> measDLEV;

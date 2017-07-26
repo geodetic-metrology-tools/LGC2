@@ -51,6 +51,10 @@ struct TMeasurements {
     /// All OBSXYZ measurements in the order in which they appeared in the input file
     std::list<TOBSXYZ> fOBSXYZ;
 
+    bool dverActive{ true }; ///< activation status of the DVER rom
+    bool radiActive{ true }; ///< activation status of the RADI rom
+    bool obsxyzActive{ true }; ///< activation status of the OBSXYZ rom
+
     /// Initialise all observation summaries
     void initialiseObsSummaries();
 

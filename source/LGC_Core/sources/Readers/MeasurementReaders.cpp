@@ -55,6 +55,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	shared_ptr<TTSTN> tstn = make_shared<TTSTN>(fpoints.getObject(tokens.at(2)),
 		finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
 	tstn->line = line;
+    tstn->setActive(activeLine);
 
 	// Parse the rest of the options
 	TInstrumentData::TPOLAR& instrument(tstn->instrument);
@@ -92,6 +93,7 @@ void TKeyCAM::parse(const std::vector<std::string>& tokens, bool activeLine, int
 		finstruments.getDevice(finstruments.fCAMD, tokens.at(3)));
 
 	cam.line = line;
+    cam.setActive(activeLine);
 
 	// Parse the rest of the options
 	TInstrumentData::TCAMD& instrument(cam.instrument);
@@ -115,6 +117,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	if (firstline){ //If this is the line starting with *UVEC, where only default target can be changed, use the default from the CAM definition or override it
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
 		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
+        getCAM().uvecActive = activeLine;
 	}
 	else{//Get here, if the line does NOT start with a "*", it means that is the concrete measurement 
         bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
@@ -193,7 +196,8 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 	if (firstline){ //If this is the line starting with *UVD, where only default target can be changed
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
 		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
-	}
+        getCAM().uvdActive = activeLine;
+    }
 	else{//Enter if the line does NOT start with a "*"
         bool hasAllParams = (tokens.size() > 4) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3)) && isNumber(tokens.at(4));
 		if (!hasAllParams && !fSIMUActive)
@@ -278,6 +282,7 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, bool activeLine, int)
 
     // Create the ROM:
     shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgtId, nullptr);
+    rom->setActive(activeLine);
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))
@@ -293,7 +298,12 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 {
 	using namespace LGC;
 
-	if (! updateDefaultTargetTSTN(tokens)) {
+    // If first line, update the active status of the PLR3D rom:
+    if(updateDefaultTargetTSTN(tokens))
+        getROM()->plrActive = activeLine;
+
+    // Else handle the measurement line:
+    else {
 		//We get here if line does NOT start with a "*"
         bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !fSIMUActive)
@@ -362,7 +372,12 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 {
 	using namespace LGC;
 
-	if (! updateDefaultTargetTSTN(tokens)) {
+    // If first line, update the active status of the ANGL rom:
+    if(updateDefaultTargetTSTN(tokens))
+        getROM()->anglActive = activeLine;
+
+    // Else handle the measurement line:
+    else {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("An ANGL measurement must have at least 2 entries: "
@@ -416,7 +431,12 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 {	
 	using namespace LGC;
 
-	if (! updateDefaultTargetTSTN(tokens)) {
+    // If first line, update the active status of the ZEND rom:
+    if(updateDefaultTargetTSTN(tokens))
+        getROM()->zendActive = activeLine;
+
+    // Else handle the measurement line:
+    else {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A ZEND measurement must have at least 2 entries: "
@@ -471,7 +491,12 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
-	if (! updateDefaultTargetTSTN(tokens)) {
+    // If first line, update the active status of the DIST rom:
+    if(updateDefaultTargetTSTN(tokens))
+        getROM()->distActive = activeLine;
+
+    // Else handle the measurement line:
+    else {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DIST measurement must have at least 2 entries: "
@@ -540,6 +565,9 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
+        
+        // Update the activation status of the ECTH rom:
+        getROM()->ecthActive = activeLine;
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -598,6 +626,9 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 
 		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
 		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
+
+        // Update the activation status of the ECDIR rom:
+        getROM()->ecdirActive = activeLine;
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -643,7 +674,12 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 
 void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
-	if (! updateDefaultTargetTSTN(tokens)) {
+    // If first line, update the active status of the DHOR rom:
+    if(updateDefaultTargetTSTN(tokens))
+        getROM()->dhorActive = activeLine;
+
+    // Else handle the measurement line:
+    else {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !fSIMUActive)
 			throw std::runtime_error("A DHOR measurement must have at least 2 entries: "
@@ -712,17 +748,18 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Initialize the station
 		TEDM edm(fpoints.getObject(tokens.at(2)),
 			finstruments.getDevice(finstruments.fEDM, tokens.at(3)));
+        edm.line = line;
+        edm.setActive(activeLine);
 		
 		// get a reference to modify the default values for this station
 		auto& instrument(edm.instrument);
-		
-		instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
-      instrument.instrHeight         = TLength(opts.getParamR("IH", instrument.instrHeight));
-      instrument.sigmaInstrHeight    = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
-      instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
+
+        instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
+        instrument.instrHeight = TLength(opts.getParamR("IH", instrument.instrHeight));
+        instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
+        instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
 
 		proj.getCurrentNode().measurements.fEDM.emplace_back(edm);
-		proj.getCurrentNode().measurements.fEDM.back().line = line;
 	} 
 	else {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -782,6 +819,9 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, bool activeLine, in
 			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
+
+        // Update the activation status of the DVER rom:
+        proj.getCurrentNode().measurements.dverActive = activeLine;
 	}
 	else {
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
@@ -842,6 +882,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
         TLEVEL level(refPt, finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
         level.line = line;
+        level.setActive(activeLine);
 
 		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); //add new measurement
 	}
@@ -908,6 +949,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		TECHOROM echoRom(nullptr);
 		echoRom.line = line;
+        echoRom.setActive(activeLine);
       
 		proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement
 
@@ -975,6 +1017,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TECVEROM ecveRom(ptLine);
 
 		ecveRom.line = line;
+        ecveRom.setActive(activeLine);
 
 		proj.getCurrentNode().measurements.fECVE.emplace_back(ecveRom); //add new round of measurement
 
@@ -1037,6 +1080,8 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TECSPROM ecspRom(name, fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
 
 		ecspRom.line = line; 
+        ecspRom.setActive(activeLine);
+
 		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
 
 		//The SCALE instrument is only the default one used, it is not stored in TECSPROM because it is specific for each observation
@@ -1092,6 +1137,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TORIEROM orieROM(fpoints.getObject(tokens.at(2)), finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
 
 		orieROM.line = line;
+        orieROM.setActive(activeLine);
 
 		TInstrumentData::TPOLAR& instrument(orieROM.instrument);
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
@@ -1165,6 +1211,9 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, in
 			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
+
+        // Update the activation status of the RADI rom:
+        proj.getCurrentNode().measurements.radiActive = activeLine;
 	}
 	else {
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -1202,9 +1251,14 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-	//On first line nothing appears so far: to be discussed
-	if (!firstline)
-	{
+    if(firstline){
+
+        // On the first line no additional data is given for now: to be discussed
+
+        // Update the activation status of the OBSXYZ rom:
+        proj.getCurrentNode().measurements.obsxyzActive = activeLine;
+    }
+    else {
 		bool hasAllParams = (tokens.size() >= 7) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3))
 			&& isNumber(tokens.at(4)) && isNumber(tokens.at(5)) && isNumber(tokens.at(6));
 		if (!hasAllParams && !fSIMUActive)

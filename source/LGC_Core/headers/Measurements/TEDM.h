@@ -12,7 +12,7 @@
 	\ingroup Measurements
 	\brief The EDM station, which groups TDSPT measurements made by a single instrument.
 */
-struct TEDM {
+struct TEDM : public TStatusObject {
 
 		// Constructor of the EDM station
 		TEDM(const LGCAdjustablePoint& pos, const TInstrumentData::TEDM& instrument) :

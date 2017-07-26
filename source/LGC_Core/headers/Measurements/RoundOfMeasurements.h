@@ -14,7 +14,7 @@
 	\ingroup Measurements
 	\brief This class represents a round of ECHO (TECHO) measurements, which are measuring a single Plane.
 */
-struct TECHOROM {
+struct TECHOROM : public TStatusObject {
 
 		/// All ECHO measurements, measuring the 'fmeasuredPlane'
 		std::list<TECHO> measECHO;
@@ -50,7 +50,7 @@ private:
 \ingroup Measurements
 \brief This class represents a round of ECSP (TECSP) measurements, which are measuring a single Plane.
 */
-struct TECSPROM {
+struct TECSPROM : public TStatusObject {
 
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::list<TECSP> measECSP;
@@ -115,7 +115,7 @@ private:
 \ingroup Measurements
 \brief This class represents a round of ECVE (TECVE) measurements, which are measuring a single Plane.
 */
-struct TECVEROM {
+struct TECVEROM : public TStatusObject {
 
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::list<TECVE> measECVE;
@@ -155,7 +155,7 @@ private:
 	\ingroup Measurements
 	\brief This class represents a round of ORIE (TORIE) measurements made from a single position of the instrument.
 */
-struct TORIEROM {
+struct TORIEROM : public TStatusObject {
 
 		/// All ORIE measurements
 		std::list<TORIE> measORIE;
