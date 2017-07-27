@@ -518,7 +518,7 @@ bool TDataAnalyzer::cleanDeactivated(){
         for(auto ecsprom = measurements.fECSP.begin(); ecsprom != measurements.fECSP.end(); ++ecsprom){
 
             // If ECSPROM not active, remove it:
-            if(false /* !ecsprom->isActive() */){
+            if(!ecsprom->isActive()){
                 (ecsprom = measurements.fECSP.erase(ecsprom))--;
                 continue;
             }
@@ -537,7 +537,7 @@ bool TDataAnalyzer::cleanDeactivated(){
         for(auto ecverom = measurements.fECVE.begin(); ecverom != measurements.fECVE.end(); ++ecverom){
 
             // If ECVEROM not active, remove it:
-            if(false /* !ecverom->isActive() */){
+            if(!ecverom->isActive()){
                 (ecverom = measurements.fECVE.erase(ecverom))--;
                 continue;
             }
