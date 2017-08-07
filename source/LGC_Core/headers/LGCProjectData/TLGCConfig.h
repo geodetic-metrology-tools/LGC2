@@ -73,7 +73,11 @@ struct TLGCConfig
 				  beta;  ///< beta quantile for the fisher test
 			
 			/// The default constructor disables the blunder detection
-			TFautDetect() : TBinaryOption() {}
+			TFautDetect()
+                : TBinaryOption()
+                , alpha(FAUT_DEF_ALPHA)
+                , beta(FAUT_DEF_BETA) {}
+
 			/*! 
 				\brief Enables the blunder detection module with given quantiles.
 
@@ -125,7 +129,7 @@ struct TLGCConfig
 			std::string separator;
 			
 			/// A fixed spaced output is used by default.
-			TCustomOutputSep() : TBinaryOption() {}
+			TCustomOutputSep() : TBinaryOption(), separator("") {}
 			/// Sets a separator string, e.g. ';' or '\t'
 			TCustomOutputSep(const std::string& sepstr) :
 				TBinaryOption(true),
