@@ -441,19 +441,12 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			continue;
 		}
 		// % means comment line, i.e. to be ignored
-		if (tokLine[0][0] == *"%"){
+        // The deactivation character behaves as commented line in LGC1 mode
+        if(tokLine[0][0] == *"%" || tokLine[0][0] == *DEACTIVATION_CHAR){
 			project.getComments()[nline] = line;
 			safeGetline(lgcStream, line/*, '*'*/);
 			continue;
 		}
-
-        // Check if the line begins with the deactivation characer, store the activation status
-        bool activeLine = true;
-        if(tokLine[0][0] == *DEACTIVATION_CHAR){
-            activeLine = false;
-            // Remove the deactivation character from the beginning of the string:
-            tokLine[0].erase(tokLine[0].begin());
-        }
 
 		// This means that it is the last keyword, which actually ends the reading process.
 		if (tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
@@ -498,7 +491,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 
 		try{ //Handler was found, try to parse
-			currenthandler->parse(tokLine, activeLine, nline);
+			currenthandler->parse(tokLine, true, nline);
 			safeGetline(lgcStream, line/*, '*'*/);
 		}
 		catch (std::exception const & excp) 
