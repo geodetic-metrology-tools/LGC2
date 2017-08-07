@@ -69,8 +69,12 @@ void TInputFileWriter::writeHeader()
 	else if (config.libre.isActive())
 		(*stream) << "*LIBR" << endl;
 
-	if (config.sim.isActive())
-		(*stream) << "*SIMU " << config.sim.numSims<<endl;
+    if(config.sim.isActive() || config.sim.numSims != 0){
+        if(!config.sim.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
+        (*stream) << "*SIMU " << config.sim.numSims << endl;
+    }
 
     // Output options:
     if(config.useApriori.isActive())
@@ -89,11 +93,19 @@ void TInputFileWriter::writeHeader()
         }
     }
 
-    if(config.faut.isActive())
-        (*stream) << "*FAUT " << config.faut.alpha << "  " << config.faut.beta << endl;
+    if(config.faut.isActive() || config.faut.alpha != FAUT_DEF_ALPHA || config.faut.beta != FAUT_DEF_BETA){
+        if(!config.faut.isActive())
+            (*stream) << DEACTIVATION_CHAR;
 
-    if(config.CustomOutputSeparatorPunch.isActive())
+        (*stream) << "*FAUT " << config.faut.alpha << "  " << config.faut.beta << endl;
+    }
+
+    if(config.CustomOutputSeparatorPunch.isActive() || config.CustomOutputSeparatorPunch.separator != ""){
+        if(!config.CustomOutputSeparatorPunch.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
         (*stream) << "*FMTP SEP \"" << config.CustomOutputSeparatorPunch.separator << "\"" << endl;
+    }
 
 	if (config.histo.isActive())
 		(*stream) << "*HIST" << endl;
@@ -107,7 +119,10 @@ void TInputFileWriter::writeHeader()
 	if (config.errorEllipses.isActive())
 		(*stream) << "*PRES" << endl;
 
-    if(config.writePunch.isActive()){
+    if(config.writePunch.isActive() || config.writePunch.fmode != TLGCConfig::TCoordOut::eMode::kPLAIN){
+        if(!config.writePunch.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
         if(config.writePunch.fmode == TLGCConfig::TCoordOut::eMode::kE)
             (*stream) << "*PUNC E" << endl;
         else if(config.writePunch.fmode == TLGCConfig::TCoordOut::eMode::kEE)

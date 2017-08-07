@@ -324,6 +324,10 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 
 	// lambda function to write the point coordinate
 	auto writeXYZorH = [&](TAdjustablePoint const& fPoint) {
+
+        if(!fPoint.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		if ((data->getConfig().referential == 106 || data->getConfig().referential == 107 || data->getConfig().referential == 104) && frameIt->get()->isROOTNode())
 			(*stream) << fPoint.getName() << sep
 			<< fPoint.getProvisionalValue().getX() << sep
@@ -339,19 +343,34 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	};
 
 	//write PDOR if we are in ROOT & PDOR is used
-	if (frameIt->get()->isROOTNode())
-		if (data->getConfig().pdor.isActive() && data->getConfig().pdor.hasBearing)
-		{
-			(*stream) << "*PDOR" << endl;
-			(*stream) << data->getConfig().pdor.fptname
-				<< sep << data->getConfig().pdor.fgis.getGonsValue()
-				<< endl;
-		}
-		else if (data->getConfig().pdor.isActive())
-		{
-			(*stream) << "*PDOR" << endl;
-			(*stream) << data->getConfig().pdor.fptname << endl;
-		}
+    if(frameIt->get()->isROOTNode()){
+        const auto &pdor = data->getConfig().pdor;
+        
+        // Write pdor, if the point name is not an empty string
+        // (to enable saving a deactivated pdor with existing
+        // point name and possible bearing),
+        // set activation status with deactivation character
+        if(pdor.isActive() || pdor.fptname != ""){
+            
+            // Set inactive if necessary:
+            if(!pdor.isActive())
+                (*stream) << DEACTIVATION_CHAR;
+
+            (*stream) << "*PDOR" << endl;
+
+            // Set second line inactive if necessary:
+            // (This has no effect on the reader, but for clarity...)
+            if(!pdor.isActive())
+                (*stream) << DEACTIVATION_CHAR;
+
+            (*stream) << data->getConfig().pdor.fptname;
+
+            if(pdor.hasBearing)
+                (*stream) << sep << data->getConfig().pdor.fgis.getGonsValue();
+
+            (*stream) << endl;
+        }
+    }
 	 
 	//Write point list
 	for (auto& point : data->getPoints())
@@ -476,6 +495,9 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 
 	if (!frameIt->get()->measurements.fDVER.empty())
 	{
+        if(!frameIt->get()->measurements.dverActive)
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << "*DVER" << endl;
 		for (auto& meas : frameIt->get()->measurements.fDVER)
 			writeDVERMeas(&meas);
@@ -495,13 +517,19 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 
 	if (!frameIt->get()->measurements.fRADI.empty())
 	{
+        if(!frameIt->get()->measurements.radiActive)
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << "*RADI" << endl;
 		for (auto& meas : frameIt->get()->measurements.fRADI)
 			writeRADIMeas(&meas);
 	}
 
 	if (!frameIt->get()->measurements.fOBSXYZ.empty())
-	{
+    {
+        if(!frameIt->get()->measurements.obsxyzActive)
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << "*OBSXYZ" << endl;
 		for (auto& meas : frameIt->get()->measurements.fOBSXYZ)
 			writeOBSXYZMeas(&meas);
@@ -517,6 +545,9 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 
     auto edmDefInst = data->getInstruments().fCAMD.at(meas->instrument.ID);
     auto camDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
+
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
 
     (*stream) << "*CAM" << sep
         << meas->instrumentPos->getName() << sep
@@ -536,10 +567,16 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 	{
         auto romDefTarget = *camDefTarget;
 
+        if(!meas->uvdActive)
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << "*UVD" << endl;
 
 		for (auto& uvd : meas->measUVD)
-		{
+        {
+            if(!uvd.isActive())
+                (*stream) << DEACTIVATION_CHAR;
+
 			(*stream) << uvd.targetPos->getName() << sep
 				<< uvd.getVectorValue().getX() << sep
 				<< uvd.getVectorValue().getY() << sep
@@ -577,11 +614,17 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 	if (!meas->measUVEC.empty())
 	{
         auto romDefTarget = *camDefTarget;
-        
+
+        if(!meas->uvecActive)
+            (*stream) << DEACTIVATION_CHAR;
+
         (*stream) << "*UVEC" << endl;
 
 		for (auto& uvec : meas->measUVEC)
-		{
+        {
+            if(!uvec.isActive())
+                (*stream) << DEACTIVATION_CHAR;
+
 			(*stream) << uvec.targetPos->getName() << sep
 				<< uvec.getVectorValue().getX() << sep
 				<< uvec.getVectorValue().getY() << sep
@@ -617,6 +660,9 @@ void TSimFileWriter::writeDVERMeas(TDVER* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	//write the list of measurements
 	(*stream) << meas->station->getName() << sep
 		<< meas->targetPos->getName() << sep
@@ -638,13 +684,18 @@ void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 
 	auto scaleDefInst = *data->getInstruments().fSCALE.at(meas->measECHO.front().target.ID);
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	(*stream) << "*ECHO" << sep
 		<< scaleDefInst.ID << endl;
 
-	
 	//write the list of measurements for the line
 	for (auto& itECHO : meas->measECHO)
-	{
+    {
+        if(!itECHO.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << itECHO.targetPos->getName() << sep
 			<< itECHO.getDistance().getMetresValue() << sep;
 
@@ -679,6 +730,9 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 
 	auto scaleDefInst = *data->getInstruments().fSCALE.at(meas->measECVE.front().target.ID);
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	(*stream) << "*ECVE" << sep
 		<< scaleDefInst.ID << sep;
 	
@@ -689,10 +743,12 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 		
 	(*stream) << endl;
 
-
 	//write the list of measurements for the line
 	for (auto& itECVE : meas->measECVE)
-	{
+    {
+        if(!itECVE.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << itECVE.targetPos->getName() << sep
 			<< itECVE.getDistance().getMetresValue() << sep;
 
@@ -728,6 +784,9 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 
 	auto scaleDefInst = *data->getInstruments().fSCALE.at(meas->measECSP.front().target.ID);
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	(*stream) << "*ECSP" << sep
 		<< meas->p1->getName() << sep 
 		<< meas->p2->getName() << sep
@@ -736,6 +795,9 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 
     for(auto& ecsp : meas->measECSP)
     {
+        if(!ecsp.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
         (*stream) << ecsp.targetPos->getName() << sep
             << ecsp.getDistance().getMetresValue() << sep;
 
@@ -772,6 +834,9 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
     auto edmDefInst = *data->getInstruments().fEDM.at(meas->instrument.ID);
     auto romDefTarget = *meas->instrument.targets.at(meas->instrument.defTarget);
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
     (*stream) << "*DSPT" << sep
         << meas->instrumentPos->getName() << sep
         << meas->instrument.ID << sep;
@@ -796,7 +861,10 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 
 	//write the list of measurements
 	for (auto& itDspt : meas->measDSPT)
-	{
+    {
+        if(!itDspt.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << itDspt.targetPos->getName() << sep
 			<< itDspt.getDistance().getMetresValue() << sep;
 
@@ -840,6 +908,9 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 
     auto romDefStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	(*stream) << "*DLEV" << sep
 		<< meas->instrument.ID << sep;
 
@@ -853,7 +924,10 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 
 	//write measurement for the plane
 	for (auto& itDLEV : meas->measDLEV)
-	{
+    {
+        if(!itDLEV.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << itDLEV.targetPos->getName() << sep
 			<< itDLEV.getDistance().getMetresValue() << sep;
 
@@ -899,6 +973,9 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
     auto polarDefInst = *data->getInstruments().fPOLAR.at(meas->instrument.ID);
     auto romDefTarget = *meas->instrument.targets.at(meas->instrument.defTarget);
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	(*stream) << "*ORIE" << sep
 		<< meas->instrumentPos->getName() << sep
 		<< meas->instrument.ID << sep;
@@ -918,7 +995,10 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 
 	//write the list of measurements for the line
 	for (auto& itORIE : meas->measORIE)
-	{
+    {
+        if(!itORIE.isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << itORIE.targetPos->getName() << sep
 			<< itORIE.getAngle().getGonsValue() << sep;
 
@@ -947,6 +1027,9 @@ void TSimFileWriter::writeRADIMeas(TRADI* meas)
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
 
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
+
 	(*stream) << meas->station->getName() << sep
 		<< meas->getAngleCnstr().getGonsValue() << sep
 		<< "SIGMA" << sep << meas->getObservedStDev().getMMetresValue()<< endl;
@@ -958,6 +1041,9 @@ void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
 {
 	TAStreamFormatter* stream = getStream();
 	string sep = stream->getSeparator();
+
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << meas->station->getName() << sep
 		<< meas->initialValue.getX() << sep
@@ -977,6 +1063,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
     auto polarDefInst = *data->getInstruments().fPOLAR.at(meas->instrument.ID);
     auto tstnDefTarget = *meas->instrument.targets.at(meas->instrument.defTarget);
+
+    if(!meas->isActive())
+        (*stream) << DEACTIVATION_CHAR;
 
     (*stream) << "*TSTN" << sep
         << meas->instrumentPos->getName() << sep
@@ -1019,6 +1108,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 	{
         auto v0DefTarget = *meas->instrument.targets.at(rom->defaultTargetId);
 
+        if(!rom->isActive())
+            (*stream) << DEACTIVATION_CHAR;
+
 		(*stream) << "*V0" << sep;
 
 		if (v0DefTarget.ID != tstnDefTarget.ID)
@@ -1034,9 +1126,15 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		{
             auto romDefTarget = v0DefTarget;
 
+            if(!rom->anglActive)
+                (*stream) << DEACTIVATION_CHAR;
+
 			(*stream) << "*ANGL" << endl;
 			for (auto& angl : rom->measANGL)
 			{
+                if(!angl.isActive())
+                    (*stream) << DEACTIVATION_CHAR;
+
 				(*stream) << angl.targetPos->getName() << sep
 					<< angl.getAngle().getGonsValue()<< sep;
 
@@ -1065,10 +1163,16 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		if (!rom->measZEND.empty())
 		{
             auto romDefTarget = v0DefTarget;
-            
+
+            if(!rom->zendActive)
+                (*stream) << DEACTIVATION_CHAR;
+
             (*stream) << "*ZEND" << endl;
 			for (auto& zend : rom->measZEND)
-			{
+            {
+                if(!zend.isActive())
+                    (*stream) << DEACTIVATION_CHAR;
+
 				(*stream) << zend.targetPos->getName() << sep
 					<< zend.getAngle().getGonsValue() << sep;
 
@@ -1104,11 +1208,17 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		if (!rom->measDIST.empty())
 		{
             auto romDefTarget = v0DefTarget;
-            
+
+            if(!rom->distActive)
+                (*stream) << DEACTIVATION_CHAR;
+
             (*stream) << "*DIST" << endl;
 
 			for (auto& dist : rom->measDIST)
-			{
+            {
+                if(!dist.isActive())
+                    (*stream) << DEACTIVATION_CHAR;
+
 				(*stream) << dist.targetPos->getName() << sep
 					<< dist.getDistance().getMetresValue() << sep;
 
@@ -1148,10 +1258,16 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		if (!rom->measDHOR.empty())
 		{
             auto romDefTarget = v0DefTarget;
-            
+
+            if(!rom->dhorActive)
+                (*stream) << DEACTIVATION_CHAR;
+
             (*stream) << "*DHOR" << endl;
 			for (auto& dhor : rom->measDHOR)
-			{                
+            {
+                if(!dhor.isActive())
+                    (*stream) << DEACTIVATION_CHAR;
+
                 (*stream) << dhor.targetPos->getName() << sep
 					<< dhor.getDistance().getMetresValue() << sep;
 
@@ -1183,11 +1299,17 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 		if (!rom->measPLR3D.empty())
 		{
             auto romDefTarget = v0DefTarget;
-            
+
+            if(!rom->plrActive)
+                (*stream) << DEACTIVATION_CHAR;
+
             (*stream) << "*PLR3D" << endl;
 
 			for (auto& plr : rom->measPLR3D)
-			{
+            {
+                if(!plr.isActive())
+                    (*stream) << DEACTIVATION_CHAR;
+
 				(*stream) << plr.targetPos->getName() << sep
 					<< plr.getAngle(EPLR3DAngles::kANGL).getGonsValue() << sep
 					<< plr.getAngle(EPLR3DAngles::kZEND).getGonsValue() << sep
@@ -1240,6 +1362,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 
 			auto scaleDefInst = *data->getInstruments().fSCALE.at(rom->measECTH.front().target.ID);
 
+            if(!rom->ecthActive)
+                (*stream) << DEACTIVATION_CHAR;
+
 			(*stream) << "*ECTH" << sep
 				<< rom->measECTH.front().obsHorAngle.getGonsValue() << sep
 				<< rom->measECTH.front().target.ID << sep
@@ -1249,6 +1374,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 			{
 				if (ecth.obsHorAngle == lecture)
 				{
+                    if(!ecth.isActive())
+                        (*stream) << DEACTIVATION_CHAR;
+
 					(*stream) << ecth.targetPos->getName() << sep
 						<< ecth.getDistance().getMetresValue() << sep;
 					
@@ -1274,9 +1402,15 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				{
 					lecture = ecth.obsHorAngle;
 
+                    if(!rom->ecthActive)
+                        (*stream) << DEACTIVATION_CHAR;
+
 					(*stream) << "*ECTH" << sep
 						<< ecth.obsHorAngle.getGonsValue() << sep
 						<< ecth.target.ID << endl;
+
+                    if(!ecth.isActive())
+                        (*stream) << DEACTIVATION_CHAR;
 
 					(*stream) << ecth.targetPos->getName() << sep
 						<< ecth.getDistance().getMetresValue() << sep;
@@ -1313,6 +1447,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 			TAngle lectureHz = rom->measECDIR.front().obsHorAngle;
 			TAngle lectureV = rom->measECDIR.front().obsVertAngle;
 
+            if(!rom->ecdirActive)
+                (*stream) << DEACTIVATION_CHAR;
+
 			(*stream) << "*ECDIR" << sep
 				<< rom->measECDIR.front().obsHorAngle.getGonsValue() << sep
 				<< rom->measECDIR.front().obsVertAngle.getGonsValue() << sep
@@ -1323,6 +1460,9 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 			{
 				if (ecdir.obsHorAngle == lectureHz && ecdir.obsVertAngle == lectureV)
 				{
+                    if(!ecdir.isActive())
+                        (*stream) << DEACTIVATION_CHAR;
+
 					(*stream) << ecdir.targetPos->getName() << sep
 						<< ecdir.getDistance().getMetresValue() << sep;
 
@@ -1346,12 +1486,18 @@ void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
 				}
 				else
 				{
+                    if(!rom->ecdirActive)
+                        (*stream) << DEACTIVATION_CHAR;
+
 					lectureHz = ecdir.obsHorAngle;
 					lectureV = ecdir.obsVertAngle;
 					(*stream) << "*ECDIR" << sep
 						<< ecdir.obsHorAngle.getGonsValue() << sep
 						<< ecdir.obsVertAngle.getGonsValue() << sep
 						<< ecdir.target.ID << endl;
+
+                    if(!ecdir.isActive())
+                        (*stream) << DEACTIVATION_CHAR;
 
 					(*stream) << ecdir.targetPos->getName() << sep
 						<< ecdir.getDistance().getMetresValue() << sep;
