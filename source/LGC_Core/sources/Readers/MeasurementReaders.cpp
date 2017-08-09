@@ -276,13 +276,8 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, int)
 	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
 	
-	std::unique_ptr<TAdjustableAngle> VoAngle(new TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName));
-	//Vo is fixed if no ANGL, PLR3D, ECTH or ECDIR are used
-	if (!requiredAdjustableVo)
-		VoAngle.reset(new TAdjustableAngle(TAngle(0.0, TAngle::kGons), true, angleName));
-
-		
-	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgt, &proj.getAngles().addObject(*VoAngle.get()));
+	//V0 is set in the DataAnalyser	
+	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgt, nullptr);
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))

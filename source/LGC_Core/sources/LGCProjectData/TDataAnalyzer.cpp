@@ -327,6 +327,17 @@ void TDataAnalyzer::assignEOIndices(){
         // TSTN
         for(auto &tstn : measurements.fTSTN){
 
+			//Vo is free if at least one ANGL, PLR3D, ECTH or ECDIR is used
+			for (auto &rom : tstn->roms){
+				string angleName = node->frame.getName() + "V0" + std::to_string(fData.getAngles().numObjects());
+				if (rom->measANGL.empty() && rom->measPLR3D.empty() && rom->measECTH.empty() && rom->measECDIR.empty())
+				{
+					rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true, angleName));
+				}
+				else
+					rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName));
+			}
+
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
                 tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
