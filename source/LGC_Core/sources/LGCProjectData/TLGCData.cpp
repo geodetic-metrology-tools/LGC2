@@ -487,6 +487,9 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
         for(auto &level : entry->measurements.fLEVEL){
 
             // Reset the pointers to point to objects in the target core:
+            if(level.fRefPt)
+                level.fRefPt = &tgt->points.getObject(level.fRefPt->getName());
+
             if(level.fMeasuredPlane)
                 level.fMeasuredPlane = &tgt->planes.getObject(level.fMeasuredPlane->getName());
 
@@ -548,6 +551,9 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
         for(auto &ecverom : entry->measurements.fECVE){
 
             // Reset the pointers to point to objects in the target core:
+            if(ecverom.fPtLine)
+                ecverom.fPtLine = &tgt->points.getObject(ecverom.fPtLine->getName());
+
             if(ecverom.fMeasuredLine)
                 ecverom.fMeasuredLine = &tgt->lines.getObject(ecverom.fMeasuredLine->getName());
 
