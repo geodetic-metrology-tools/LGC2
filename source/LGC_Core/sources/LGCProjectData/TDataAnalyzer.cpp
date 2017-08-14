@@ -345,14 +345,16 @@ namespace {
     // Remove the deactivated measurements from the given list of measurements,
     // and check that the *targetPos* point of each active measurement is active
     bool rmDeactivated_and_checkTargetPos(std::list<TAMEAS> &meass){
-        for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+        for(auto meas = meass.begin(); meas != meass.end();){
             
             if(!meas->isActive())
-                // The return value of erase(pos) is ++pos -> decrement iterator because for-loop is incrementing
-                (meas = meass.erase(meas))--;
+                meass.erase(meas++); // Post-increment 
 
             else if(!meas->targetPos->isActive())
                 return false;
+
+            else
+                ++meas;
         }
         return true;
     }
@@ -361,17 +363,19 @@ namespace {
     // Remove the deactivated measurements from the given list of measurements, and check
     // that the *targetPos* and *station* points of each active measurement are active
     bool rmDeactivated_and_checkTargetPos_noInstr(std::list<TAMEAS> &meass){
-        for(auto meas = meass.begin(); meas != meass.end(); ++meas){
+        for(auto meas = meass.begin(); meas != meass.end();){
             
             if(!meas->isActive())
-                // The return value of erase(pos) is ++pos -> decrement iterator because for-loop is incrementing
-                (meas = meass.erase(meas))--;
+                meass.erase(meas++); // Post-increment
 
             else if(!meas->targetPos->isActive())
                 return false;
 
             else if(!meas->station->isActive())
                 return false;
+
+            else
+                ++meas;
         }
         return true;
     }
@@ -390,22 +394,22 @@ bool TDataAnalyzer::cleanDeactivated(){
         auto &measurements = node->get()->measurements;
 
         // TSTN
-        for(auto tstn = measurements.fTSTN.begin(); tstn != measurements.fTSTN.end(); ++tstn){
+        for(auto tstn = measurements.fTSTN.begin(); tstn != measurements.fTSTN.end();){
         
             // If TSTN not active, remove it:
             if(!tstn->get()->isActive()){
-                (tstn = measurements.fTSTN.erase(tstn))--;
+                measurements.fTSTN.erase(tstn++);
                 continue;
             }
 
             if(!tstn->get()->instrumentPos->isActive())
                 return false; // Instr pos point deactivated:
 
-            for(auto rom = tstn->get()->roms.begin(); rom != tstn->get()->roms.end(); ++rom){
+            for(auto rom = tstn->get()->roms.begin(); rom != tstn->get()->roms.end();){
 
                 // If ROM not active, remove it:
                 if(!rom->get()->isActive()){
-                    (rom = tstn->get()->roms.erase(rom))--;
+                    tstn->get()->roms.erase(rom++);
                     continue;
                 }
 
@@ -428,15 +432,19 @@ bool TDataAnalyzer::cleanDeactivated(){
                     !rmDeactivated_and_checkTargetPos(rom->get()->measECDIR)
                     )
                     return false; // Target pos point deactivated from active measurement
+
+                ++rom;
             }
+
+            ++tstn;
         }
 
         // CAM
-        for(auto cam = measurements.fCAM.begin(); cam != measurements.fCAM.end(); ++cam){
+        for(auto cam = measurements.fCAM.begin(); cam != measurements.fCAM.end();){
         
             // If CAM station not active, remove it:
             if(!cam->isActive()){
-                (cam = measurements.fCAM.erase(cam))--;
+                measurements.fCAM.erase(cam++);
                 continue;
             }
 
@@ -451,14 +459,16 @@ bool TDataAnalyzer::cleanDeactivated(){
                 !rmDeactivated_and_checkTargetPos(cam->measUVD) ||
                 !rmDeactivated_and_checkTargetPos(cam->measUVEC))
                 return false; // Target pos point deactivated from active measurement
+
+            ++cam;
         }
 
         // EDM
-        for(auto edm = measurements.fEDM.begin(); edm != measurements.fEDM.end(); ++edm){
+        for(auto edm = measurements.fEDM.begin(); edm != measurements.fEDM.end();){
         
             // If EDM station not active, remove it:
             if(!edm->isActive()){
-                (edm = measurements.fEDM.erase(edm))--;
+                measurements.fEDM.erase(edm++);
                 continue;
             }
 
@@ -467,14 +477,16 @@ bool TDataAnalyzer::cleanDeactivated(){
 
             if(!rmDeactivated_and_checkTargetPos(edm->measDSPT))
                 return false;
+
+            ++edm;
         }
 
         // LEVEL
-        for(auto level = measurements.fLEVEL.begin(); level != measurements.fLEVEL.end(); ++level){
+        for(auto level = measurements.fLEVEL.begin(); level != measurements.fLEVEL.end();){
         
             // If LEVEL station not active, remove it:
             if(!level->isActive()){
-                (level = measurements.fLEVEL.erase(level))--;
+                measurements.fLEVEL.erase(level++);
                 continue;
             }
 
@@ -483,14 +495,16 @@ bool TDataAnalyzer::cleanDeactivated(){
 
             // NB. No need to check DLEV::DHOR separetely, since it cannot be
             // deactivated and its targetPos is the same as the DLEV's
+
+            ++level;
         }
 
         // ORIE
-        for(auto orierom = measurements.fORIE.begin(); orierom != measurements.fORIE.end(); ++orierom){
+        for(auto orierom = measurements.fORIE.begin(); orierom != measurements.fORIE.end();){
 
             // If ORIEROM not active, it:
             if(!orierom->isActive()){
-                (orierom = measurements.fORIE.erase(orierom))--;
+                measurements.fORIE.erase(orierom++);
                 continue;
             }
 
@@ -499,27 +513,31 @@ bool TDataAnalyzer::cleanDeactivated(){
 
             if(!rmDeactivated_and_checkTargetPos(orierom->measORIE))
                 return false;
+
+            ++orierom;
         }
 
         // ECHO
-        for(auto echorom = measurements.fECHO.begin(); echorom != measurements.fECHO.end(); ++echorom){
+        for(auto echorom = measurements.fECHO.begin(); echorom != measurements.fECHO.end();){
 
             // If ECHOROM not active, remove it:
             if(!echorom->isActive()){
-                (echorom = measurements.fECHO.erase(echorom))--;
+                measurements.fECHO.erase(echorom++);
                 continue;
             }
 
             if(!rmDeactivated_and_checkTargetPos(echorom->measECHO))
                 return false;
+
+            ++echorom;
         }
 
         // ECSP
-        for(auto ecsprom = measurements.fECSP.begin(); ecsprom != measurements.fECSP.end(); ++ecsprom){
+        for(auto ecsprom = measurements.fECSP.begin(); ecsprom != measurements.fECSP.end();){
 
             // If ECSPROM not active, remove it:
             if(!ecsprom->isActive()){
-                (ecsprom = measurements.fECSP.erase(ecsprom))--;
+                measurements.fECSP.erase(ecsprom++);
                 continue;
             }
 
@@ -531,19 +549,23 @@ bool TDataAnalyzer::cleanDeactivated(){
 
             if(!rmDeactivated_and_checkTargetPos(ecsprom->measECSP))
                 return false;
+
+            ++ecsprom;
         }
 
         // ECVE
-        for(auto ecverom = measurements.fECVE.begin(); ecverom != measurements.fECVE.end(); ++ecverom){
+        for(auto ecverom = measurements.fECVE.begin(); ecverom != measurements.fECVE.end();){
 
             // If ECVEROM not active, remove it:
             if(!ecverom->isActive()){
-                (ecverom = measurements.fECVE.erase(ecverom))--;
+                measurements.fECVE.erase(ecverom++);
                 continue;
             }
 
             if(!rmDeactivated_and_checkTargetPos(ecverom->measECVE))
                 return false;
+
+            ++ecverom;
         }
 
         // If the roms of different types of measurements are not active, clear the rom:
