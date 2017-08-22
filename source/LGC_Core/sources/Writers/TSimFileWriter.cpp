@@ -333,13 +333,13 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 			<< fPoint.getProvisionalValue().getX() << sep
 			<< fPoint.getProvisionalValue().getY() << sep
 			<< fPoint.getProvisionalValue().getH() << sep
-			<< fPoint.eolcomment << sep;
+			<< fPoint.eolcomment << endl;
 		else
 			(*stream) << fPoint.getName() << sep
 			<< fPoint.getProvisionalValue().getX() << sep
 			<< fPoint.getProvisionalValue().getY() << sep
 			<< fPoint.getProvisionalValue().getZ() << sep
-			<< fPoint.eolcomment << sep;
+			<< fPoint.eolcomment << endl;
 	};
 
 	//write PDOR if we are in ROOT & PDOR is used
@@ -389,7 +389,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*CALA" << endl;
 				}
 				writeXYZorH(point);
-				(*stream) << endl;
 				break;
 
 			case TSpatialStatus::ESpatialStatus::kVxyz:
@@ -435,7 +434,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*VXY" << endl;
 				}
 				writeXYZorH(point);
-				(*stream)<< endl;
 				break;
 
 			case TSpatialStatus::ESpatialStatus::kVxz:
@@ -445,7 +443,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*VXZ" << endl;
 				}
 				writeXYZorH(point);
-				(*stream) << endl;
 				break;
 
 			case TSpatialStatus::ESpatialStatus::kVyz:
@@ -456,7 +453,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*VYZ" << endl;
 				}
 				writeXYZorH(point);
-				(*stream) << endl;
 				break;
 
 			case TSpatialStatus::ESpatialStatus::kVz:
@@ -466,7 +462,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*VZ" << endl;
 				}
 				writeXYZorH(point);
-				(*stream) << endl;
 				break;
 			}
 		}

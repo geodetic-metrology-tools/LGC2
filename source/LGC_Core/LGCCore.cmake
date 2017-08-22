@@ -5,8 +5,8 @@ find_package(Boost 1.49.0 REQUIRED)
 # Configure version when called from UI
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR 2)
-set (LGC_VERSION_MINOR 0)
-set (LGC_VERSION_PATCH 8)
+set (LGC_VERSION_MINOR 01)
+set (LGC_VERSION_PATCH 01)
 
 # Versions files
 configure_file (
