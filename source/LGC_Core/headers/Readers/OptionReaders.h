@@ -338,7 +338,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the output processing
-	virtual void parse(const std::vector<std::string>& tokens, int);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyPRES : public TAOptionKey {

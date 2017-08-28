@@ -245,7 +245,7 @@ void TKeyEREL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	outputMessages.writeReportHeader("DIXI should not be used. Use PREC option");
 }
 
-void TKeyNOSPC::parse(const std::vector<std::string>& /*tokens*/, int) {
+ void TKeyNOSPC::parse(const std::vector<std::string>& /*tokens*/, bool activeLine, int) {
 
 	auto& outputMessages(proj.getFileLogger());
 	outputMessages.writeReportHeader("NOSPC is used, it is an lgc1 option, so it is ignore in lgc2 output files");
