@@ -8,6 +8,8 @@ endif()
 PROJECT(LGC2)
 
 # Set version number and provide a header file with corresponding defines
+# /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
+>>>>>>> MERGEbranch
 set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 01)
 set (LGC_VERSION_PATCH 00)
@@ -69,8 +71,6 @@ message("    Using MinGW")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")  
 ENDIF(MINGW)
 
-INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
-
 include_directories (
 	SYSTEM
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
@@ -86,6 +86,7 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
 	${Boost_INCLUDE_DIRS}
+	${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcElements
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcParams
@@ -101,11 +102,11 @@ include_directories (
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialMeasurments
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialObj
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialSystems
-	${SURVEYLIB_ROOT}/source/Tools/headers
 	${TUT_INCLUDE_PATH}
 	${EIGEN_INCLUDE_PATH}
 )
 
+INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)

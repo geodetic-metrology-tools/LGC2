@@ -229,6 +229,10 @@ private:
     /// Copy the frametree structure from *src* to *tgt*
     static void copyTree(TLGCData const * const src, TLGCData* tgt);
 
+    /// Copy the instruments from *src* to *tgt*
+    static void copyInstruments(TLGCData const * const src, TLGCData* tgt);
+
+    /// Update the pointers and iterators in the adjustable objects to the correct ones
     static void updateAdjustableObjectsPointers(TLGCData* data);
 
 	/*!@name Collections of adjustable objects*/

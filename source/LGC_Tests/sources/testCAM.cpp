@@ -39,9 +39,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_ROOT_1);
-		stringstream cpinfiler(TestCAM::UVD_ROOT_1);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -69,9 +68,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_ROOT_1_SUBF1);
-		stringstream cpinfiler(TestCAM::UVD_ROOT_1_SUBF1);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -99,9 +97,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_ROOT_1_SUBF2);
-		stringstream cpinfiler(TestCAM::UVD_ROOT_1_SUBF2);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -135,9 +132,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_ROOTNOTORIG_1_SUBF);
-		stringstream cpinfiler(TestCAM::UVD_ROOTNOTORIG_1_SUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -171,9 +167,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_SUBF_1);
-		stringstream cpinfiler(TestCAM::UVD_SUBF_1);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -206,9 +201,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_SUBF_2);
-		stringstream cpinfiler(TestCAM::UVD_SUBF_2);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -242,9 +236,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_SUBFNOTORIG_1);
-		stringstream cpinfiler(TestCAM::UVD_SUBFNOTORIG_1);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -278,9 +271,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_2ST_ROOT);
-		stringstream cpinfiler(TestCAM::UVD_2ST_ROOT);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -308,9 +300,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_2STROOT_SUBF);
-		stringstream cpinfiler(TestCAM::UVD_2STROOT_SUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -343,9 +334,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_2ST_1STINSUBF);
-		stringstream cpinfiler(TestCAM::UVD_2ST_1STINSUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -378,9 +368,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVD_2STSUBF);
-		stringstream cpinfiler(TestCAM::UVD_2STSUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -417,9 +406,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_ROOT_1);
-		stringstream cpinfiler(TestCAM::UVEC_ROOT_1);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -448,9 +436,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_ROOT_1_SUBF);
-		stringstream cpinfiler(TestCAM::UVEC_ROOT_1_SUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -483,9 +470,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_ROOTNOTORIG_1_SUBF);
-		stringstream cpinfiler(TestCAM::UVEC_ROOTNOTORIG_1_SUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -519,9 +505,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_SUBF);
-		stringstream cpinfiler(TestCAM::UVEC_SUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -555,9 +540,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_SUBFNOTORIG_1);
-		stringstream cpinfiler(TestCAM::UVEC_SUBFNOTORIG_1);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -591,9 +575,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_2ST_ROOT);
-		stringstream cpinfiler(TestCAM::UVEC_2ST_ROOT);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -623,7 +606,7 @@ namespace tut
 		
 		stringstream infiler(TestCAM::UVEC_2STROOT_SUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -656,9 +639,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_2ST_1STINSUBF);
-		stringstream cpinfiler(TestCAM::UVEC_2ST_1STINSUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -690,9 +672,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestCAM::UVEC_2STSUBF);
-		stringstream cpinfiler(TestCAM::UVEC_2STSUBF);
 
-		bool succesReading = r.read(infiler,cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);

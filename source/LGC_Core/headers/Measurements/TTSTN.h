@@ -18,7 +18,7 @@
 
 	TROM = round of measurments groups the particular measurements, all of them have common: constant orientation acst and calculated orientation angle v0.
 */
-struct TTSTN {
+struct TTSTN : public TStatusObject {
 		/*!
 			\ingroup Measurements
 			\brief (ROM = a round of total station measurements) groups all the measurements which are made in one round.
@@ -26,12 +26,13 @@ struct TTSTN {
 			Every ROM can has specific constant orientation and specific V0 to be adjusted.
 			The ROM keeps the measurements which can be made by the TSTN in vectors.
 		*/
-		struct TROM {
+		struct TROM : public TStatusObject {
+
 			TAngle acst; ///< constant angle/orientation of the station, defaults to zero.
 
 			TAdjustableAngle* v0; ///< V0 angle/orientation, defaults to zero, to be calculated during the LS calculation, always variable.
 
-			const TInstrumentData::TPOLAR::TTarget* defaultTarget;  ///< Default taget for this round of measurements.
+			std::string defaultTargetId;  ///< Default target id for this round of measurements.
 			
             int romId{ romCounter_++ };
 
@@ -49,6 +50,14 @@ struct TTSTN {
 			std::list<TECTH>  measECTH;
 			/// All Ecarte-Theodolite line measurements in this ROM
 			std::list<TECDIR>  measECDIR;
+
+            bool plrActive{ true }; ///< activation status of the PLR3D rom
+            bool anglActive{ true }; ///< activation status of the ANGL rom
+            bool zendActive{ true }; ///< activation status of the ZEND rom
+            bool distActive{ true }; ///< activation status of the DIST rom
+            bool dhorActive{ true }; ///< activation status of the DHOR rom
+            bool ecthActive{ true }; ///< activation status of the ECTH rom
+            bool ecdirActive{ true }; ///< activation status of the ECDIR rom
 
             //! Initialise the observation summaries
             void initialiseObsSummaries();
@@ -96,8 +105,10 @@ struct TTSTN {
             const TLGCObsSummary& getECDIRObsSummary() const;
 
 			/// Each ROM has a default target that is inherited to the measurements
-			TROM(const TInstrumentData::TPOLAR::TTarget& defTarget, TAdjustableAngle* v0):
-				defaultTarget(&defTarget), v0(v0), acst(0.0, TAngle::EUnits::kGons){}
+			TROM(std::string defTargetId, TAdjustableAngle* v0)
+                : acst(0.0, TAngle::EUnits::kGons)
+                , v0(v0)
+                , defaultTargetId(defTargetId) {}
 
         private:
 

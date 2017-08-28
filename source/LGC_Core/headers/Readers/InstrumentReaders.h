@@ -76,7 +76,7 @@ class TKeyINSTR : public TAKeyWord {
 		\ extract, check and store the station data 
 		\ extract, check and store the target data 
 		*/
-		virtual void parse(const std::vector<std::string>&, int);
+		virtual void parse(const std::vector<std::string>&, bool, int);
 };
 
 class TKeyPOLAR : public TAInstrumentKey {
@@ -89,7 +89,7 @@ class TKeyPOLAR : public TAInstrumentKey {
 		/*! 
 			See \ref TKeyINSTR::parse
 		*/		
-		virtual void parse(const std::vector<std::string>& tokens, int);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 
 		virtual const std::vector<std::string>& parentKeys() const;
 
@@ -108,7 +108,7 @@ class TKeyCAMD : public TAInstrumentKey {
 		/*! 
 			See \ref TKeyINSTR::parse
 		*/		
-		virtual void parse(const std::vector<std::string>& tokens, int);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 
 		virtual const std::vector<std::string>& parentKeys() const;
 
@@ -127,7 +127,7 @@ class TKeyEDM : public TAInstrumentKey {
 		/*! 
 			See \ref TKeyINSTR::parse
 		*/	
-		virtual void parse(const std::vector<std::string>& tokens, int);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 
 
 		virtual const std::vector<std::string>& parentKeys() const;
@@ -146,7 +146,7 @@ class TKeyLEVEL : public TAInstrumentKey {
 		/*! 
 			See \ref TKeyINSTR::parse
 		*/	
-		virtual void parse(const std::vector<std::string>& tokens, int); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int); 
 
 		virtual const std::vector<std::string>& parentKeys() const;
 
@@ -164,7 +164,7 @@ class TKeySCALE : public TAInstrumentKey {
 		/*! 
 			See \ref TKeyINSTR::parse
 		*/	
-		virtual void parse(const std::vector<std::string>& tokens, int);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 
 		virtual const std::vector<std::string>& parentKeys() const;
 

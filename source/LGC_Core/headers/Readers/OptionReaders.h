@@ -39,7 +39,7 @@ class TKeyTITR : public TAKeyWord {
 			Titr does not parse anything, just a marker to move up the tree again and report.
 			\throws runtime_error if the following lines are wrong
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyOLOC : public TAOptionKey {
@@ -52,7 +52,7 @@ class TKeyOLOC : public TAOptionKey {
 		}
 
 		/// Tokenize and initialize options for the referential
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyRS2K : public TAOptionKey {
@@ -65,7 +65,7 @@ class TKeyRS2K : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the referential
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyLEP : public TAOptionKey {
@@ -78,7 +78,7 @@ class TKeyLEP : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the referential
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeySPHE : public TAOptionKey {
@@ -91,7 +91,7 @@ class TKeySPHE : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the referential
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 
@@ -110,7 +110,7 @@ class TKeyALLFIXED : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the calculation
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyLIBR : public TAOptionKey {
@@ -123,7 +123,7 @@ class TKeyLIBR : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the calculation
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyCOVAR : public TAOptionKey {
@@ -136,7 +136,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the calculation
-	virtual void parse(const std::vector<std::string>&, int);
+    virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 
@@ -150,7 +150,7 @@ class TKeyNODUP : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the calculation
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyPDOR : public TAOptionKey {
@@ -163,7 +163,7 @@ class TKeyPDOR : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the calculation
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeySIMU : public TAOptionKey {
@@ -176,7 +176,7 @@ class TKeySIMU : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the calculation
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 
@@ -196,7 +196,7 @@ class TKeyAPRI : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyEREL : public TAOptionKey {
@@ -210,11 +210,14 @@ class TKeyEREL : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
+
+private:
+    bool erelActive{ false };
 };
 
 struct TKeyFMTxHelper {
-	TKeyFMTxHelper(TLGCConfig::TCustomOutputSep& co, const std::vector<std::string>& tokens);
+	TKeyFMTxHelper(TLGCConfig::TCustomOutputSep& co, const std::vector<std::string>& tokens, bool lineActive);
 };
 
 class TKeyFMTO : public TAOptionKey {
@@ -223,7 +226,7 @@ class TKeyFMTO : public TAOptionKey {
 		TKeyFMTO(TLGCData& project) : TAOptionKey(project, "FMTO") {}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyFMTP : public TAOptionKey {
@@ -237,7 +240,7 @@ class TKeyFMTP : public TAOptionKey {
 		}
 
 		//Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyHIST : public TAOptionKey {
@@ -251,7 +254,7 @@ class TKeyHIST : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyPREC : public TAOptionKey {
@@ -265,7 +268,7 @@ class TKeyPREC : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyMICR : public TAOptionKey {
@@ -279,7 +282,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the output processing
-	virtual void parse(const std::vector<std::string>& tokens, int);
+    virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyCLIC : public TAOptionKey {
@@ -293,7 +296,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the output processing
-	virtual void parse(const std::vector<std::string>& tokens, int);
+    virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyDIXI : public TAOptionKey {
@@ -307,7 +310,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the output processing
-	virtual void parse(const std::vector<std::string>& tokens, int);
+    virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyTOL : public TAOptionKey {
@@ -321,7 +324,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the output processing
-	virtual void parse(const std::vector<std::string>& tokens, int);
+    virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyNOSPC : public TAOptionKey {
@@ -335,7 +338,7 @@ public:
 	}
 
 	///Tokenize and initialize options for the output processing
-	virtual void parse(const std::vector<std::string>& tokens, int);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyPRES : public TAOptionKey {
@@ -348,7 +351,7 @@ class TKeyPRES : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 
@@ -368,7 +371,7 @@ class TKeyDEFA : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>&, int);
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
 class TKeyFAUT : public TAOptionKey {
@@ -381,7 +384,7 @@ class TKeyFAUT : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 struct DiffOutHelper {
@@ -398,7 +401,7 @@ class TKeyPUNC : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyPLOT : public TAOptionKey {
@@ -407,7 +410,7 @@ class TKeyPLOT : public TAOptionKey {
 		TKeyPLOT(TLGCData& project) : TAOptionKey(project, "PLOT") {}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeySOBS : public TAOptionKey {
@@ -420,7 +423,7 @@ class TKeySOBS : public TAOptionKey {
 		}
 
 		///Tokenize and initialize options for the output processing
-		virtual void parse(const std::vector<std::string>& tokens, int);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 /*! @} End of Doxygen Groups*/

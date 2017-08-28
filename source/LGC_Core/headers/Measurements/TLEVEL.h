@@ -14,7 +14,7 @@
 	\brief Levelling station, which is a number of levelling measurements (TDLEV) of a single plane. The measurements are grouped by the plane.
 	DHOR measurements can be optionally taken.
 */
-struct TLEVEL {
+struct TLEVEL : public TStatusObject {
 
 		/// All DLEV measurements, measuring the plane (fmeasuredPlane).
 		std::list<TDLEV> measDLEV;
@@ -33,6 +33,9 @@ struct TLEVEL {
 		/// The plane which is measured
 		LGCAdjustablePlane* fMeasuredPlane;
 
+        /// The reference point
+        LGCAdjustablePoint const * fRefPt;
+
 		/// Levelling instrument which does the measurements
 		TInstrumentData::TLEVEL  instrument;
 
@@ -42,8 +45,9 @@ struct TLEVEL {
         int stnId{ stnCounter_++ };
 
 		// The station attribute is a copy of the parameter to override defaults
-		TLEVEL(LGCAdjustablePlane& measPlane, const TInstrumentData::TLEVEL& instrument) :
-			fMeasuredPlane(&measPlane),
+		TLEVEL(const LGCAdjustablePoint* refPt, const TInstrumentData::TLEVEL& instrument) :
+			fMeasuredPlane(nullptr),
+            fRefPt(refPt),
 			line(NO_VALi),
 			instrument(instrument),
 			hasDHOR(false)

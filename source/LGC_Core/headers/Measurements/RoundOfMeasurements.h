@@ -14,7 +14,7 @@
 	\ingroup Measurements
 	\brief This class represents a round of ECHO (TECHO) measurements, which are measuring a single Plane.
 */
-struct TECHOROM {
+struct TECHOROM : public TStatusObject {
 
 		/// All ECHO measurements, measuring the 'fmeasuredPlane'
 		std::list<TECHO> measECHO;
@@ -34,8 +34,8 @@ struct TECHOROM {
         int romId{ romCounter_++ };
 
 		/// the station attribute is a copy of the parameter to override defaults
-		TECHOROM(LGCAdjustablePlane& measPlane) :
-			fMeasuredPlane(&measPlane),
+		TECHOROM(LGCAdjustablePlane *measPlane) :
+			fMeasuredPlane(measPlane),
 			line(NO_VALi)
 			{}
 
@@ -50,7 +50,7 @@ private:
 \ingroup Measurements
 \brief This class represents a round of ECSP (TECSP) measurements, which are measuring a single Plane.
 */
-struct TECSPROM {
+struct TECSPROM : public TStatusObject {
 
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::list<TECSP> measECSP;
@@ -115,13 +115,16 @@ private:
 \ingroup Measurements
 \brief This class represents a round of ECVE (TECVE) measurements, which are measuring a single Plane.
 */
-struct TECVEROM {
+struct TECVEROM : public TStatusObject {
 
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::list<TECVE> measECVE;
 
 	//Measured vertical plane
 	LGCAdjustableLine* fMeasuredLine;
+
+    /// Point on the measured line
+    LGCAdjustablePoint const * fPtLine;
 
     /// Initialise observation summaries
     void initialiseObsSummaries();
@@ -135,8 +138,9 @@ struct TECVEROM {
     int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECVEROM(LGCAdjustableLine& measLine) :
-		fMeasuredLine(&measLine),
+    TECVEROM(LGCAdjustablePoint const * ptLine) :
+		fMeasuredLine(nullptr),
+        fPtLine(ptLine),
 		line(NO_VALi)
 	{}
 
@@ -151,7 +155,7 @@ private:
 	\ingroup Measurements
 	\brief This class represents a round of ORIE (TORIE) measurements made from a single position of the instrument.
 */
-struct TORIEROM {
+struct TORIEROM : public TStatusObject {
 
 		/// All ORIE measurements
 		std::list<TORIE> measORIE;

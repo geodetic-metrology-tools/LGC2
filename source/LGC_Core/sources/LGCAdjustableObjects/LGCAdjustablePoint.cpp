@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
-bool&LGCAdjustablePoint::allfixedParam = False;
+bool LGCAdjustablePoint::allfixedParam = false;
 
 LGCAdjustablePoint::LGCAdjustablePoint(const std::string& name):
 TAdjustablePoint(name)

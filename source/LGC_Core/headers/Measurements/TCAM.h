@@ -19,7 +19,7 @@ class LGCAdjustablePoint;
 	\brief A camera station, camera positioned on a specific position,
 	       which can take multiple unit vector (TUVEC) and unit vector + distance (TUVD) measurements.
 */
-struct TCAM {
+struct TCAM : public TStatusObject {
 
 		/*!
 			Creates a camera station that is centered on a given point.
@@ -38,6 +38,9 @@ struct TCAM {
 		std::list<TUVD> measUVD;
 		/// All UVEC measurments made by this camera
 		std::list<TUVEC> measUVEC;
+
+        bool uvdActive{ true }; ///< activation status of the UVD rom
+        bool uvecActive{ true }; ///< activation status of the UVEC rom
 
 		/// The instrument that is used on this station
 		TInstrumentData::TCAMD     instrument;

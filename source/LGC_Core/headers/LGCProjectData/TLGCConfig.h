@@ -5,6 +5,7 @@
 
 //SURVEYLIB
 #include <TRefSystemFactory.h>
+#include "TStatusObject.h"
 //LGC
 #include <Global.h>
 
@@ -23,20 +24,14 @@ struct TLGCConfig
 		The default is that the options are disabled this is done by 
 		the default constructor.
 	*/
-	class TBinaryOption {
-		private:
-			bool fisActive;
-
+	class TBinaryOption : public TStatusObject {
+		
 		public:
 			/// Base constructor for binary options, disables an option by default.
-			TBinaryOption(bool active = false) : fisActive(active) {}
+			TBinaryOption(bool active = false) : TStatusObject(active) {}
 			/// This virtual destructor does nothing.
 			virtual ~TBinaryOption() {}
 
-			/// Returns if the option is enabled.
-			inline bool isActive() const { return fisActive; }
-
-			inline const bool& isActiveRef() const { return fisActive; }
 	};
 
 	/*!
@@ -78,7 +73,11 @@ struct TLGCConfig
 				  beta;  ///< beta quantile for the fisher test
 			
 			/// The default constructor disables the blunder detection
-			TFautDetect() : TBinaryOption() {}
+			TFautDetect()
+                : TBinaryOption()
+                , alpha(FAUT_DEF_ALPHA)
+                , beta(FAUT_DEF_BETA) {}
+
 			/*! 
 				\brief Enables the blunder detection module with given quantiles.
 
@@ -104,7 +103,11 @@ struct TLGCConfig
 			bool hasBearing; 
 			
 			/// There is no orientation point for the adjustment
-			TPDOR() : TBinaryOption() {}
+			TPDOR()
+                : TBinaryOption()
+                , fptname("")
+                , fgis(TAngle(0.0))
+                , hasBearing(false) {}
 			/*!
 				\brief Adds an orientation point to the adjustment with an optional gisement.
 
@@ -126,7 +129,7 @@ struct TLGCConfig
 			std::string separator;
 			
 			/// A fixed spaced output is used by default.
-			TCustomOutputSep() : TBinaryOption() {}
+			TCustomOutputSep() : TBinaryOption(), separator("") {}
 			/// Sets a separator string, e.g. ';' or '\t'
 			TCustomOutputSep(const std::string& sepstr) :
 				TBinaryOption(true),

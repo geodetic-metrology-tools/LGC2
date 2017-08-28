@@ -39,8 +39,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::LEP_Parametric_1ST);
-		stringstream cpinfiler(TestROOT::LEP_Parametric_1ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -74,8 +73,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::LEP_Parametric_1STNOTATP0);
-		stringstream cpinfiler(TestROOT::LEP_Parametric_1STNOTATP0);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -109,8 +107,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::LEP_Parametric_2ST);
-		stringstream cpinfiler(TestROOT::LEP_Parametric_2ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -155,8 +152,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -195,8 +191,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1STSUBFRAME);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_1STSUBFRAME);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -241,8 +236,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -280,8 +274,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -327,8 +320,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_1R5E);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_1R5E);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -370,8 +362,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0_1R5E);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0_1R5E);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -406,8 +397,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST_1R5E);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST_1R5E);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -456,8 +446,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -489,8 +478,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -521,8 +509,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1STSUBFRAME);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_PLR3D_1STSUBFRAME);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -560,8 +547,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST_NOTATP0);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST_NOTATP0);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -591,8 +577,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_AVcoord);
-		stringstream cpinfiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_AVcoord);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -626,8 +611,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::SPHE_Parametric_1ST);
-		stringstream cpinfiler(TestROOT::SPHE_Parametric_1ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -663,8 +647,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::SPHE_Parametric_1STNOTATP0);
-		stringstream cpinfiler(TestROOT::SPHE_Parametric_1STNOTATP0);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -699,8 +682,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestROOT::SPHE_Parametric_2ST);
-		stringstream cpinfiler(TestROOT::SPHE_Parametric_2ST);
-		r.read(infiler,cpinfiler);
+		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);

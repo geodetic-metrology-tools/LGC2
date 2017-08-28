@@ -41,7 +41,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dspt_1);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -71,7 +71,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_1);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -81,7 +81,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+		const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 
 		ensure_equals("Reference point distance should be 100", plane1.getRefPtDistEstimatedValue().getMetresValue(), -100.0, 1e-7);
 
@@ -104,7 +104,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_1_RS2K);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -114,7 +114,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+        const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		TPositionVector PTxyH = PT;
 		TXYH2CCS::CCS2XYHg2000Machine(PTxyH);
@@ -137,7 +137,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_2);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -147,7 +147,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+        const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 
 		ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
 
@@ -174,7 +174,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::dlev_3);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -184,7 +184,7 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		const LGCAdjustablePlane& plane1 = dataset.getPlanes().getObject("DLEVPLANE0");
+        const LGCAdjustablePlane& plane1 = *dataset.getPlanes().begin();
 
 		ensure_equals("Reference point distance should be -54", plane1.getRefPtDistEstimatedValue().getMetresValue(), -74.0, 1e-7);
 
@@ -216,7 +216,7 @@ namespace tut
 		
 		stringstream infiler(TestDVER::OLOC_DVER_cheminement);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -252,7 +252,7 @@ namespace tut
 		
 		stringstream infiler(TestDVER::OLOC_DVER_cheminement_LOR);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -293,7 +293,7 @@ namespace tut
 		
 		stringstream infiler(TestDVER::RS2K__DVER);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -338,9 +338,8 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		stringstream infiler(TestDVER::RS2K_TSTN_DVER);
-		stringstream cpinfiler(TestDVER::RS2K_TSTN_DVER);
 		
-		bool succesReading = r.read(infiler, cpinfiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 		
 		TLGCCalculation calcul(projTest);
@@ -374,7 +373,7 @@ namespace tut
 		ensure_equals("PT2 sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision(), 0.00147, 1e-5);
 		ensure_equals("PT2 sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision(), 0.00007  , 1e-5);
 		
-		//TReal ST1_V0 = dataset.getAngles().getObject("ROOTV00").getEstimatedValue().getGonsValue();
+		//TReal ST1_V0 = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 		//ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 0.02349, 1e-5);
 	}
 
@@ -393,7 +392,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::echo_1);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -403,8 +402,8 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
-	    ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
+		ensure_equals("Reference point distance should match", dataset.getPlanes().begin()->getRefPtDistEstimatedValue().getMetresValue(), -120, 1e-8);
+        ensure_equals("Theta of the plane should match", dataset.getPlanes().begin()->getThetaEstimatedValue().getGonsValue(), 0, 1e-8);
 
  	}
 
@@ -422,7 +421,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::echo_1_plus_on_left_side);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -432,8 +431,8 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
-		ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 0,1e-8);
+        ensure_equals("Reference point distance should match", dataset.getPlanes().begin()->getRefPtDistEstimatedValue().getMetresValue(), 130, 1e-8);
+        ensure_equals("Theta of the plane should match", dataset.getPlanes().begin()->getThetaEstimatedValue().getGonsValue(), 0, 1e-8);
 
  	}
 
@@ -450,7 +449,7 @@ namespace tut
 		
 		stringstream infiler(TestNonTSTN::echo_2_line_exact);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -460,8 +459,8 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-        ensure_equals("Reference point distance should match", dataset.getPlanes().getObject("ECHOPLANE0").getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
-	    ensure_equals("Theta of the plane should match",dataset.getPlanes().getObject("ECHOPLANE0").getThetaEstimatedValue().getGonsValue(), 50,1e-8);
+        ensure_equals("Reference point distance should match", dataset.getPlanes().begin()->getRefPtDistEstimatedValue().getMetresValue(), -70.710678118654752, 1e-8);
+        ensure_equals("Theta of the plane should match", dataset.getPlanes().begin()->getThetaEstimatedValue().getGonsValue(), 50, 1e-8);
 
  	}
 
@@ -480,7 +479,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_SPHE);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -530,7 +529,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_RS2K);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -580,7 +579,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_LEP);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
@@ -630,7 +629,7 @@ namespace tut
 
 		stringstream infiler(TestNonTSTN::orie_OLOC);
 
-		bool succesReading = r.read(infiler, infiler);
+		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);

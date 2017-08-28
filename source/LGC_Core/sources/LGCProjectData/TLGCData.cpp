@@ -305,7 +305,7 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
     d->fMeasInfo = fMeasInfo;
 
     // Copy instruments:
-    d->instruments = instruments;
+    copyInstruments(this, d.get());
 
     // Copy filelogger:
     d->fileLogger = fileLogger;
@@ -372,6 +372,10 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
             if(tstn->rotY)
                 tstn->rotY = &tgt->angles.getObject(tstn->rotY->getName());
 
+            for(auto &plrTgt : tstn->instrument.targets)
+                if(plrTgt.second->distCorrectionAdjustable)
+                    plrTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second->distCorrectionAdjustable->getName());
+
             // TSTN::ROM
             for(auto &rom : tstn->roms){
 
@@ -382,34 +386,52 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
                 if(rom->v0)
                     rom->v0 = &tgt->angles.getObject(rom->v0->getName());
 
-                rom->defaultTarget = &tstn->instrument.targets.at(rom->defaultTarget->ID);
-
                 // Measurements in this rom
 
                 // PLR3D
-                for(auto &meas : rom->measPLR3D)
+                for(auto &meas : rom->measPLR3D){
                     if(meas.targetPos)
                         meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                    if(meas.target.distCorrectionAdjustable)
+                        meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+                }
 
                 // ANGL
-                for(auto &meas : rom->measANGL)
+                for(auto &meas : rom->measANGL){
                     if(meas.targetPos)
                         meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
-                
+
+                    if(meas.target.distCorrectionAdjustable)
+                        meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+                }
+
                 // ZEND
-                for(auto &meas : rom->measZEND)
+                for(auto &meas : rom->measZEND){
                     if(meas.targetPos)
                         meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                    if(meas.target.distCorrectionAdjustable)
+                        meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+                }
 
                 // DIST
-                for(auto &meas : rom->measDIST)
+                for(auto &meas : rom->measDIST){
                     if(meas.targetPos)
                         meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
+                    if(meas.target.distCorrectionAdjustable)
+                        meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+                }
+
                 // DHOR
-                for(auto &meas : rom->measDHOR)
+                for(auto &meas : rom->measDHOR){
                     if(meas.targetPos)
                         meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                    if(meas.target.distCorrectionAdjustable)
+                        meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+                }
 
                 // ECTH
                 for(auto &meas : rom->measECTH)
@@ -447,18 +469,32 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
             // Reset the pointers to point to objects in the target core:
             edm.instrumentPos = &tgt->points.getObject(edm.instrumentPos->getName());
 
+            for(auto &edmTgt : edm.instrument.targets)
+                if(edmTgt.second->distCorrectionAdjustable)
+                    edmTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(edmTgt.second->distCorrectionAdjustable->getName());
+
             // DSPT
-            for(auto &meas : edm.measDSPT)
+            for(auto &meas : edm.measDSPT){
                 if(meas.targetPos)
                     meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                if(meas.target.distCorrectionAdjustable)
+                    meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+            }
         }
 
         // LEVEL
         for(auto &level : entry->measurements.fLEVEL){
 
             // Reset the pointers to point to objects in the target core:
+            if(level.fRefPt)
+                level.fRefPt = &tgt->points.getObject(level.fRefPt->getName());
+
             if(level.fMeasuredPlane)
                 level.fMeasuredPlane = &tgt->planes.getObject(level.fMeasuredPlane->getName());
+
+            if(level.instrument.collAngleAdjustable)
+                level.instrument.collAngleAdjustable = &tgt->angles.getObject(level.instrument.collAngleAdjustable->getName());
 
             // DLEV
             for(auto &meas : level.measDLEV){
@@ -484,10 +520,18 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
             // Reset the pointers to point to objects in the target core:
             orierom.instrumentPos = &tgt->points.getObject(orierom.instrumentPos->getName());
 
+            for(auto &plrTgt : orierom.instrument.targets)
+                if(plrTgt.second->distCorrectionAdjustable)
+                    plrTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second->distCorrectionAdjustable->getName());
+
             // Measurements
-            for(auto &meas : orierom.measORIE)
+            for(auto &meas : orierom.measORIE){
                 if(meas.targetPos)
                     meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+
+                if(meas.target.distCorrectionAdjustable)
+                    meas.target.distCorrectionAdjustable = &tgt->lengths.getObject(meas.target.distCorrectionAdjustable->getName());
+            }
         }
 
         // ECHO
@@ -507,6 +551,9 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
         for(auto &ecverom : entry->measurements.fECVE){
 
             // Reset the pointers to point to objects in the target core:
+            if(ecverom.fPtLine)
+                ecverom.fPtLine = &tgt->points.getObject(ecverom.fPtLine->getName());
+
             if(ecverom.fMeasuredLine)
                 ecverom.fMeasuredLine = &tgt->lines.getObject(ecverom.fMeasuredLine->getName());
 
@@ -584,6 +631,74 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
         if(pdor.targetPos)
             pdor.targetPos = &tgt->points.getObject(pdor.targetPos->getName());
     }
+}
+
+void TLGCData::copyInstruments(TLGCData const * const src, TLGCData* tgtData){
+
+    // Copy the instruments and targets:
+    tgtData->instruments = src->instruments;
+
+    // Reset the pointers to instruments and targets and to adjustable objects in each concerned instrument/target:
+
+    // Polar targets:
+    for(auto &polar : tgtData->instruments.fPOLAR){
+
+        // Replace the instrument in the memory
+        polar.second.reset(new TInstrumentData::TPOLAR(*polar.second));
+
+        for(auto &tgt : polar.second->targets){
+
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TPOLAR::TTarget(*tgt.second));
+
+            if(tgt.second->distCorrectionAdjustable)
+                tgt.second->distCorrectionAdjustable = &tgtData->lengths.getObject(tgt.second->distCorrectionAdjustable->getName());
+        }
+    }
+
+    for(auto &camd : tgtData->instruments.fCAMD){
+    
+        // Replace the instrument in the memory
+        camd.second.reset(new TInstrumentData::TCAMD(*camd.second));
+
+        for(auto &tgt : camd.second->targets)
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TCAMD::TTarget(*tgt.second));
+    }
+
+    // EDM targets:
+    for(auto &edm : tgtData->instruments.fEDM){
+
+        // Replace the instrument in the memory
+        edm.second.reset(new TInstrumentData::TEDM(*edm.second));
+
+        for(auto &tgt : edm.second->targets){
+
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TEDM::TTarget(*tgt.second));
+
+            if(tgt.second->distCorrectionAdjustable)
+                tgt.second->distCorrectionAdjustable = &tgtData->lengths.getObject(tgt.second->distCorrectionAdjustable->getName());
+        }
+    }
+
+    // Levelling instrument:
+    for(auto &level : tgtData->instruments.fLEVEL){
+
+        // Replace the instrument in the memory
+        level.second.reset(new TInstrumentData::TLEVEL(*level.second));
+
+        if(level.second->collAngleAdjustable)
+            level.second->collAngleAdjustable = &tgtData->angles.getObject(level.second->collAngleAdjustable->getName());
+
+        for(auto &tgt : level.second->targets)
+            // Replace the target in the memory
+            tgt.second.reset(new TInstrumentData::TLEVEL::TTarget(*tgt.second));
+    }
+
+    for(auto &scale : tgtData->instruments.fSCALE)
+        // Replace the instrument in the memory
+        scale.second.reset(new TInstrumentData::TSCALE(*scale.second));
 }
 
 void TLGCData::updateAdjustableObjectsPointers(TLGCData* d){

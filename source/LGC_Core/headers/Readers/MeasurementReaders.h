@@ -27,7 +27,7 @@ class TAMeasurementKey : public TAKeyWord {
 		TAdjustableAngleCollection& fangles;
 		LGCAdjustablePlaneCollection& fplanes;
 		LGCAdjustableLineCollection& flines;
-		const bool& fSIMUActive;
+		const bool fSIMUActive;
 
 		/// Returns if this was the first line beginning with a '*',  NOT the success of the target update
 		// To be used for the TSTN measurement's keywords, such as PLR3D, ANGL, ZEND,...
@@ -75,7 +75,7 @@ class TKeyTSTN : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 class TKeyCAM : public TAMeasurementKey {
@@ -93,7 +93,7 @@ class TKeyCAM : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 
@@ -115,7 +115,7 @@ class TKeyUVEC : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 class TKeyUVD : public TAMeasurementKey {
@@ -133,7 +133,7 @@ class TKeyUVD : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 ///////////////////////
@@ -146,18 +146,12 @@ class TKeyV0 : public TAMeasurementKey {
 		TKeyV0(TLGCData& project, int nb_allowed_keywords = nb_allowed_v0, const char** keywords = allowed_V0) : 
 		TAMeasurementKey(project, V0) 
 		{
-			requiredAdjustableVo = true;
-
 			for(int i(0) ; i< nb_allowed_keywords ; i++)
 				allowed_keywords.emplace_back(keywords[i]);
 		}
 
 		/// tokenize V0 data
-		virtual void parse(const std::vector<std::string>& tokens, int);
-
-		bool requiredAdjustableVo;
-		/// function used only for V0 keyword. The polar instrument has an unknown orientation angle which can be determinate only if ANGL, PLR3D, ECTH or ECDIR measurement are used 
-		void setRequiredAdjVo(bool b){ requiredAdjustableVo = b; }
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
 };
 
 class TKeyPLR3D : public TAMeasurementKey {
@@ -175,7 +169,7 @@ class TKeyPLR3D : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 class TKeyANGL : public TAMeasurementKey {
@@ -193,7 +187,7 @@ class TKeyANGL : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 
 };
 
@@ -213,7 +207,7 @@ class TKeyZEND : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 };
 
 /// Keyword to process spatial distance measurement
@@ -232,7 +226,7 @@ class TKeyDIST : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 /// Keyword to process ECTH measurement
@@ -251,7 +245,7 @@ class TKeyECTH : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 	
 	private:
 		TAngle fObservedAngle;
@@ -274,7 +268,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle fHorAngle;
@@ -298,7 +292,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 };
 
@@ -318,7 +312,7 @@ class TKeyDHOR : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 };
 
 
@@ -340,7 +334,7 @@ class TKeyDSPT : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 };
 
 /// Keyword to process Vertical distance -- Geodetic Reference System
@@ -359,7 +353,7 @@ class TKeyDVER : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 
 		TLength sigma;
 };
@@ -380,7 +374,7 @@ class TKeyDLEV : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 };
 
 
@@ -400,7 +394,7 @@ class TKeyECHO : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 };
 
 /// Keyword to process ECVE measurement
@@ -419,7 +413,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 };
 
@@ -439,7 +433,7 @@ class TKeyORIE : public TAMeasurementKey {
 
 			/throws Exception if the keyword is not used correctly.
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int line); 
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line); 
 };
 
 /// Keyword to process ORIE -- Gyro-Theodolite Azimut
@@ -458,7 +452,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 	TLength sigma;
 };
@@ -480,7 +474,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
 /*! @} End of Doxygen Groups*/

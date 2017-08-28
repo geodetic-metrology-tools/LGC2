@@ -27,18 +27,43 @@ protected:
 	TAdjustableAngleCollection& fangles;
 	LGCAdjustablePlaneCollection& fplanes;
 	LGCAdjustableLineCollection& flines;
-	const bool& fSIMUActive;
+	const bool fSIMUActive;
 
 	/// returns a reference to the polar instrument
 	inline TInstrumentData::TPOLAR& getPolarInstr() {
 		if (finstruments.fPOLAR.size() == 0)
 			createPolarInstrument();
 		
-		return finstruments.fPOLAR["TSTNInstr"];
+		return *finstruments.fPOLAR["TSTNInstr"];
 	}
+
+    TInstrumentData::TEDM& getEDMInstr() {
+        if(finstruments.fEDM.size() == 0)
+            createEDMInstrument();
+
+        return *finstruments.fEDM.begin()->second;
+    }
+
+    TInstrumentData::TEDM::TTarget& getEDMAdjTarget() {
+        auto &tedm = getEDMInstr();
+        if(tedm.targets.size() < 2){
+            // Create the adjustable target:
+            auto adj_tgt = tedm.targets.begin()->second;
+            adj_tgt->ID = "EDMAdjTgt";
+            adj_tgt->distCorrectionUnknown = true;
+            adj_tgt->distCorrectionAdjustable = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, "EDM_dcorr_adj"));
+
+            // Add the new target to the instrument
+            tedm.targets["EDMAdjTgt"] = adj_tgt;
+        }
+
+        return *tedm.targets.at("EDMAdjTgt");
+    }
 
 	//create a default TInstrumentData::TPOLAR
 	void createPolarInstrument();
+    // create a default EDM
+    void createEDMInstrument();
 	//create a TSTN
 	void createTSTN(string stn, int line);
 	//create a ROM in tstn
@@ -71,7 +96,7 @@ public:
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle sigmaANGL = TAngle(0.0);
@@ -98,7 +123,7 @@ public:
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle sigmaZEND = TAngle(0.0);
@@ -126,7 +151,7 @@ public:
 	\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TAngle sigmaZEND = TAngle(0.0);
@@ -155,7 +180,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TLength sigmaDIST = TLength(0.0);
@@ -172,8 +197,7 @@ class TKeyDMES_lgc1 : public TAMeasurementKey_lgc1 {
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyDMES_lgc1(TLGCData& project, int nb_allowed_keywords = nb_allowed_dmes_lgc1, const char** keywords = allowed_DMES_lgc1) :
-		TAMeasurementKey_lgc1(project, DMES),
-		adjDCorr(nullptr)
+		TAMeasurementKey_lgc1(project, DMES)
 	{
 		//adjDCorr = &flengths.addObject(TAdjustableLength(TLength(0.0), 0, currentStation + "_adj"));
 		for (int i(0); i< nb_allowed_keywords; i++)
@@ -185,15 +209,12 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
-	bool fistrDMES = true;
-	TLength sigma = TLength(0.0);
-	TLength ppm = TLength(0.0);
-	TLength dcorr = TLength(0.0);
-	TAdjustableLength* adjDCorr;
 	string currentStation = "";
+    TInstrumentData::TEDM romInstr;
+    TInstrumentData::TEDM::TTarget romTarget;
 };
 
 /// Keyword to process ECTH measurement
@@ -215,7 +236,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	shared_ptr<TTSTN> currentTSTN;
@@ -244,7 +265,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool firstmeas;
@@ -274,7 +295,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 private:
 	TLength sigmaDIST = TLength(0.0); 
 	TLength dcorr = TLength(0.0);
@@ -303,7 +324,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TLength sigma = TLength(0.0);
@@ -326,7 +347,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool fistrDLEV = true;
@@ -352,7 +373,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool firstECHO = true;
@@ -378,7 +399,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	bool fistrECVE = true;
@@ -403,7 +424,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	string currentStation = "";
@@ -428,7 +449,7 @@ public:
 
 	/throws Exception if the keyword is not used correctly.
 	*/
-	virtual void parse(const std::vector<std::string>& tokens, int line);
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
 	TLength sigma = TLength(0.0);

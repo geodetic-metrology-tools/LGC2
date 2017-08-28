@@ -23,7 +23,7 @@ class TKeyFRAME : public TAKeyWord {
 
 	
 		///	Parse line with the frame definition.
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 		///Returns the number of frames that were created
 		static int getNumberOfOpenedFrames() {return fNumberOfFramesOpened;};
@@ -50,7 +50,7 @@ class TKeyENDFRAME : public TAKeyWord {
 
 			\throws runtime_error if arguments in *ENDFRAME line (there should be nothing else)
 		*/
-		virtual void parse(const std::vector<std::string>& tokens, int);
+		virtual void parse(const std::vector<std::string>& tokens, bool, int);
 
 		///Returns the number of frames that were closed
 		static int getNumberOfClosedFrames() {return fNumberOfFramesClosed;};
@@ -69,7 +69,7 @@ class TAPointKey : public TAKeyWord {
 		
 		size_t findComment(const std::string& s);
 
-		virtual void parse(const std::vector<std::string>& tokens, int line);
+        virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 	protected:
 		// standard error message if a point is not specified correctly

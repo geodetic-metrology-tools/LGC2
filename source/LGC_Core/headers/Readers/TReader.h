@@ -25,10 +25,9 @@ class TReader {
 
 			If the keyword *FRAME is not used the tree will only consist of a root node.
 		*/
-		bool read(std::istream& lgcStream, std::istream& cp_lgcStream);
+		bool read(std::istream& lgcStream);
 		bool readLgc1File(std::istream& lgcStream);
 		bool isLgc2File(std::istream& lgcStream);
-		bool requiredAdjustableVo(std::istream& lgcStream, int nline);
 
 
 	private:

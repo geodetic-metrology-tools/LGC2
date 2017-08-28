@@ -77,7 +77,7 @@ TFileLogger &operator<<(TFileLogger &logger, const std::string& text) {
             }
 
 
- bool TFileLogger::hasErrors(){
+ bool TFileLogger::hasErrors() const {
 	if(numErrors > 0)
 		return true;	
 	else
