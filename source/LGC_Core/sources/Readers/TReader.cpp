@@ -334,12 +334,12 @@ bool TReader::read(std::istream& lgcStream) {
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "The keyword \"" + currentkey + "\" is not allowed here.";
 					return !outputMessages.hasErrors();
 				}
-				else // Particular case : TSTN authorized after ENDFRAME if all frames are closed
-					if (currenthandler->getKey() == TSTN && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames()))
-					{
-						outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "TSTN keyword is not allowed in a frame ";
-						return !outputMessages.hasErrors();
-					}
+				//else // Particular case : TSTN authorized after ENDFRAME if all frames are closed
+				//	if (currenthandler->getKey() == TSTN && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames()))
+				//	{
+				//		outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "TSTN keyword is not allowed in a frame ";
+				//		return !outputMessages.hasErrors();
+				//	}
 			}
 			catch (std::exception const& excp) {
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();

@@ -368,6 +368,35 @@ struct OBSXYZContrib{
 
 	TReal	    fMisclosureVector[3]; //!< Misclosure vector of the First, Second and Third equation respectively.
 };
+
+
+
+struct DistMeasContribFrame{
+	TReal		fCalcMeas;
+	TFreeVector fStCoordContrib;
+	TFreeVector fTgCoordContrib;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+
+	TReal		fHIContrib; //!< Instrument (station) height contribution
+	TReal		fDistCorrection; //!< Distance correction
+
+	TReal		fObsVariance; //!< Variance of the observation
+};
+struct AnglMeasContribFrame{
+	TAngle	fCalcMeas;
+	TFreeVector fStCoordContrib;
+	TFreeVector fTgCoordContrib;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+
+	TReal		fHIContrib; //!< Instrument (station) height contribution
+	TReal		fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
+
+	TReal		fObsVariance; //!< Variance of the observation
+};
 #endif
 
 
