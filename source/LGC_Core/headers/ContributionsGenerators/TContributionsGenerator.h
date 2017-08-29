@@ -48,13 +48,17 @@ public:
 	//@{
 
 		/// Returns contribution for the Spatial Distance measurement (TDIST)
-		DistMeasContrib	getSpatialDistanceContrib(shared_ptr<TTSTN> station, const TLINE& dist);
+	DistMeasContrib	getSpatialDistanceContrib(shared_ptr<TTSTN> station, const TLINE& dist);
+	/// Returns contribution for the Spatial Distance measurement (TDIST) for a TSTN in a  frame
+	DistMeasContribFrame	getSpatialDistanceContribFrame(shared_ptr<TTSTN> station, const TLINE& dist);
 
-		/// Returns contribution for the Horizontal Angle measurement (TANGL)
-		AnglMeasContrib	getHorAnglContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
+	/// Returns contribution for the Horizontal Angle measurement (TANGL)
+	AnglMeasContrib	getHorAnglContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
+	AnglMeasContribFrame	getHorAnglContribFrame(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
 
-		/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND)
-		AnglMeasContrib	getZenDistContrib(shared_ptr<TTSTN> station, const TZEND& zend);
+	/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND)
+	AnglMeasContrib	getZenDistContrib(shared_ptr<TTSTN> station, const TZEND& zend);
+	AnglMeasContribFrame	getZenDistContribFrame(shared_ptr<TTSTN> station, const TZEND& zend);
 
 		/// Returns contribution for the Horizontal Distance measurement (DHOR), made by a total station (TSTN).
 		HorDistContrib	getHorDistContrib(shared_ptr<TTSTN> station, const TLINE& dhor);
