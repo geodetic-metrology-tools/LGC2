@@ -27,7 +27,6 @@ protected:
 	TAdjustableAngleCollection& fangles;
 	LGCAdjustablePlaneCollection& fplanes;
 	LGCAdjustableLineCollection& flines;
-	const bool fSIMUActive;
 
 	/// returns a reference to the polar instrument
 	inline TInstrumentData::TPOLAR& getPolarInstr() {
