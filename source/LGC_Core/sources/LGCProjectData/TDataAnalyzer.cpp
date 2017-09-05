@@ -47,7 +47,7 @@ bool TDataAnalyzer::dataConsistent(){
 		else
 			// Add the point to the count of total based on its type:
 			fData.addToPointNum(point.getSpatialStatus());
-
+			
     // Assign the equation and observation indices, add different types
     // of measurements into the count of total in TLGCData:
     assignEOIndices();
