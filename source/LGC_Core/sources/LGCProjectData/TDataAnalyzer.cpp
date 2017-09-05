@@ -39,8 +39,14 @@ bool TDataAnalyzer::dataConsistent(){
     // "provisional points" is wanted. Later this function adds Echo_lineXXX points
     // which will mess up the statistics if they are counted in as well.)
     for(auto& point : fData.getPoints())
-        // Add the point to the count of total based on its type:
-        fData.addToPointNum(point.getSpatialStatus());
+		//Check whether initialized
+		if (!point.isInitialized()){
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!";
+			return false;
+		}
+		else
+			// Add the point to the count of total based on its type:
+			fData.addToPointNum(point.getSpatialStatus());
 
     // Assign the equation and observation indices, add different types
     // of measurements into the count of total in TLGCData:
