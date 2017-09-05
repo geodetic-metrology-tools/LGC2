@@ -1537,14 +1537,13 @@ DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribFrame(sha
 	TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = dist.target.targetHt;
-	TReal hInst = station->instrumentHeightAdjustable->getEstimatedValue();
 
 	TReal cst;
 	if (!dist.target.distCorrectionAdjustable->isFixed())
 		cst = dist.target.distCorrectionAdjustable->getEstimatedValue();
 	else
 		cst = dist.target.distCorrectionValue;
-	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
+	TReal D = dist3D(xSt, ySt, zSt, xTg, yTg, (zTg + hTg));
 
 	if (D < nullLimit)
 		throw std::logic_error("TContributionGenerator::getSpatialDistanceContrib: Division by zero because observation points have identical coordinates.");
@@ -1552,7 +1551,7 @@ DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribFrame(sha
 	TReal a, b, c;   //station's contributions coefficients (negative values of these give coefficients of the TARGET)		 
 	a = (xSt - xTg) / D;  // xSt coefficient
 	b = (ySt - yTg) / D;  //ySt coefficient
-	c = (zSt + hInst - zTg - hTg) / D; //zSt coefficient
+	c = (zSt - zTg - hTg) / D; //zSt coefficient
 
 
 	//TSTN station's contribution is calculated in a LOR system of the station and, therefore, the station's contribution is this
@@ -1599,18 +1598,15 @@ DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribFrame(sha
 
 	//Calculate and return the contributions
 	TReal calcMeas = D - cst; // Calculated measurement value to be returned
-	TReal hiContrib = c; // Instrument height contribution to be returned
-	TReal distCorrContrib = -1.0;
 
 	// Variance calculation
 	TReal varM = pow2q(dist.target.sigmaDist + dist.getDistance() / 1000 * dist.target.ppmDist);
-	TReal varInstHeight = pow2q(station->instrument.sigmaInstrHeight);
 	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
 	TReal varTgCent = pow2q(dist.target.sigmaTargetCentering);
-	TReal variance = varM + pow2q((zTg - zSt + hTg - hInst) / D) * (varInstHeight + varTgHeight) + ((pow2q(yTg - ySt) + pow2q(xSt - xTg)) / pow2q(D)) * (varInstCent + varTgCent);
+	TReal variance = varM + pow2q((zTg - zSt + hTg) / D) * varTgHeight + ((pow2q(yTg - ySt) + pow2q(xSt - xTg)) / pow2q(D)) * (varInstCent + varTgCent);
 
-	DistMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, hiContrib, distCorrContrib, variance };
+	DistMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, -1.0, variance };
 	return contrib;
 }
 
@@ -1685,13 +1681,10 @@ AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribFrame(shared_ptr<
 		targetTransfContributions.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it->adjTrafo, thirdEqContrib));
 	}
 
-	TReal v0Contrib = 0.0; //contribution for the V0 parameter
-	TReal hiContrib = 0.0; // no contribution for the instrument height
-
 	// Variance calculation
 	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / pow2q(dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
 
-	AnglMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, hiContrib, v0Contrib, variance };
+	AnglMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, 0.0, variance };
 	return contrib;
 }
 
@@ -1713,19 +1706,18 @@ AnglMeasContribFrame	TContributionsGenerator::getZenDistContribFrame(shared_ptr<
 	TReal zTg = targetPos.getZ().getMetresValue();
 
 	TReal hTg = zend.target.targetHt;
-	TReal hInst = station->instrumentHeightAdjustable->getEstimatedValue();
 
 	TReal dx = xTg - xSt;
 	TReal dy = yTg - ySt;
-	TReal dz = zTg - zSt - hInst + hTg;
+	TReal dz = zTg - zSt + hTg;
 
-	TReal distance3D = dist3D(xSt, ySt, zSt + hInst, xTg, yTg, zTg + hTg);
+	TReal distance3D = dist3D(xSt, ySt, zSt, xTg, yTg, zTg + hTg);
 	if (distance3D < nullLimit)
 		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
 
 
 	// Prepare coefficients (a,b,c) for the points and the transformations contributions
-	TAngle calcMeas = TAngle::aCos((zTg - zSt - hInst + hTg) / distance3D);
+	TAngle calcMeas = TAngle::aCos((zTg - zSt + hTg) / distance3D);
 	//We are taking the currently calculated value not the measured one (zend.getAngle().rad()), do not know what is better to take
 	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
@@ -1783,15 +1775,10 @@ AnglMeasContribFrame	TContributionsGenerator::getZenDistContribFrame(shared_ptr<
 		targetTransfContributions.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it->adjTrafo, thirdEqContrib));
 	}
 
-
-	TReal hiContrib = c; // instrument height contribution
-	TReal v0Contrib = 0.0; // no contribution for the v0 parameter
-
 	//Calculate and return the contributions
 	TReal variance = pow2q(zend.target.sigmaZenD.getRadiansValue()) + (((pow2q(dx) + pow2q(dy))*pow2q(dz)) / (powq(distance3D, 6)*pow2q(sinPhi))) *
-		(pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering)) +
-		pow2q(-c) * (pow2q(station->instrument.sigmaInstrHeight) + pow2q(zend.target.sigmaTargetHt));
+		(pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering)) + pow2q(-c) *pow2q(zend.target.sigmaTargetHt);
 
-	AnglMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, hiContrib, v0Contrib, variance };
+	AnglMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, 0.0, variance };
 	return contrib;
 }
