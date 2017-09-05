@@ -945,36 +945,38 @@ void TDataAnalyzer::predeterminePLR3DV0()
 	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kANGL) != 0)
 	{
 		for (auto it(fTree.begin()); it != fTree.end(); ++it)  // FRK 17/11/2016: suppressed reference "auto&"
-			for (auto itTSTN : it.node->data->measurements.fTSTN)
-				for (auto itplr : itTSTN->roms)
-				{
-					if (itplr->measANGL.size() != 0 && !it.node->data->isROOTNode())
+			if (!it.node->data->isROOTNode())
+			{
+				for (auto itTSTN : it.node->data->measurements.fTSTN)
+					for (auto itplr : itTSTN->roms)
 					{
+						if (itplr->measANGL.size() != 0)
+						{
 
-						auto firstMeas = itplr->measANGL.front();
-						//calul v0 app
-						TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+							auto firstMeas = itplr->measANGL.begin();
+							//calul v0 app
+							TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 
-						fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
-						TPositionVector targetPos = firstMeas.targetPos->getEstimatedValue();
-						const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(firstMeas.targetPos->getFrameTreePosition(), itTSTN->instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
-						tg2stTrafo.transform(targetPos);
-						TPositionVector stationPos = itTSTN->instrumentPos->getEstimatedValue();
+							fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
+							TPositionVector targetPos = firstMeas->targetPos->getEstimatedValue();
+							const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(firstMeas->targetPos->getFrameTreePosition(), itTSTN->instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
+							tg2stTrafo.transform(targetPos);
+							TPositionVector stationPos = itTSTN->instrumentPos->getEstimatedValue();
 
-						TReal xSt = stationPos.getX().getMetresValue();
-						TReal ySt = stationPos.getY().getMetresValue();
+							TReal xSt = stationPos.getX().getMetresValue();
+							TReal ySt = stationPos.getY().getMetresValue();
 
-						TReal xTg = targetPos.getX().getMetresValue();
-						TReal yTg = targetPos.getY().getMetresValue();
+							TReal xTg = targetPos.getX().getMetresValue();
+							TReal yTg = targetPos.getY().getMetresValue();
 
-						//Calculated measurement value
-						TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->measANGL.begin()->getAngle();
+							//Calculated measurement value
+							TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->measANGL.begin()->getAngle();
 
 
-						// estimated value = 0.0 + correction (V0app)
-						int indexV0 = it.node->data->frame.getLastUidx();
-						it.node->data->frame.setRotationCorrection(indexV0, V0app);
+							// estimated value = 0.0 + correction (V0app)
+							it.node->data->frame.setRotationCorrection(2, V0app);
+						}
 					}
-				}
+			}
 	}
 }
