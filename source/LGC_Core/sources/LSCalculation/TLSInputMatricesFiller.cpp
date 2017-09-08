@@ -1417,23 +1417,7 @@ void  TLSInputMatricesFiller::addHorAngContributionsFrame(shared_ptr<TTSTN::TROM
 		if (!meas->targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
 
-		// Add V0 contribution
-		if (!rom->v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
-
 		// Add contributions of transformations parameters 
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
-			if (!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
-		// Adding contributions of STATION transformation's parameters 
-		//for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform){
-		//	if (!itStTransform->first.isFixed())
-		//		isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
-		//}
-
-		// Adding contributions of TARGET transformation's parameters 
 		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
 			if (!itTgTransform->first.isFixed())
 				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
@@ -1476,16 +1460,6 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND
 		// Add target contributions
 		if (!meas->targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
-
-		// Add instrument height contribution
-		if (!station->instrumentHeightAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
-
-		// Adding contributions for STATION transformations parameters 
-		//for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform){
-		//	if (!itStTransform->first.isFixed())
-		//		isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
-		//}
 
 		// Adding contributions for TARGET transformations parameters  
 		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
@@ -1536,15 +1510,6 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>
 		if (!meas->target.distCorrectionAdjustable->isFixed())
 			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
-		// Adding instrument height contribution
-		if (!station->instrumentHeightAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
-
-		// Adding contributions for STATION transformations parameters 
-		//for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform){
-		//	if (!itStTransform->first.isFixed())
-		//		isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
-		//}
 
 		// Adding contributions for TARGET transformations parameters 
 		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
