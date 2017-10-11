@@ -195,7 +195,7 @@ bool TDataAnalyzer::dataConsistent(){
 
 	}
 
-	//cannot predetermine V in simulation and LIBR
+	//cannot predetermine V0 in simulation and LIBR
 	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
 		predeterminePLR3DV0();
 
@@ -942,26 +942,37 @@ void TDataAnalyzer::predeterminePLR3DV0()
 {
 	const TDataTree& fTree = fData.getTree();
 
-	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kANGL) != 0)
+	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) != 0)
 	{
 		for (auto it(fTree.begin()); it != fTree.end(); ++it)  // FRK 17/11/2016: suppressed reference "auto&"
-			if (!it.node->data->isROOTNode())
+			if (it.node->data->isROOTNode())
 			{
 				for (auto itTSTN : it.node->data->measurements.fTSTN)
 					for (auto itplr : itTSTN->roms)
 					{
-						if (itplr->measANGL.size() != 0)
+						if (itplr->measPLR3D.size() != 0)
 						{
 
-							auto firstMeas = itplr->measANGL.begin();
+							auto firstMeas = itplr->measPLR3D.front();
 							//calul v0 app
 							TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+							TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+							TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+							targetPos = firstMeas.targetPos->getEstimatedValue();
+							const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(firstMeas.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+							tgLor2RootTrafo.transform(targetPos);
 
-							fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
-							TPositionVector targetPos = firstMeas->targetPos->getEstimatedValue();
-							const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(firstMeas->targetPos->getFrameTreePosition(), itTSTN->instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
-							tg2stTrafo.transform(targetPos);
-							TPositionVector stationPos = itTSTN->instrumentPos->getEstimatedValue();
+							stationPos = itTSTN->instrumentPos->getEstimatedValue();
+							const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(itTSTN->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+							stLor2RootTrafo.transform(stationPos);
+
+							// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+							if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && itTSTN->rot3D != true){
+								fPointTransfo.transformPointsToMLASystem(itTSTN->instrumentPos->getName(), stationPos, targetPos);
+								fPointTransfo.setMLA(true);
+							}
+							else
+								fPointTransfo.setMLA(false);
 
 							TReal xSt = stationPos.getX().getMetresValue();
 							TReal ySt = stationPos.getY().getMetresValue();
@@ -970,11 +981,12 @@ void TDataAnalyzer::predeterminePLR3DV0()
 							TReal yTg = targetPos.getY().getMetresValue();
 
 							//Calculated measurement value
-							TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->measANGL.begin()->getAngle();
+							TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->acst - itplr->measPLR3D.begin()->getAngle(EPLR3DAngles::kANGL);  //ACST is the constant orientation of the instrument
 
 
 							// estimated value = 0.0 + correction (V0app)
-							it.node->data->frame.setRotationCorrection(2, V0app);
+							int indexV0 = itplr->v0->getFirstUidx();
+							itplr->v0->setCorrection(indexV0, V0app);
 						}
 					}
 			}
