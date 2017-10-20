@@ -11,7 +11,7 @@ PROJECT(LGC2)
 # /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
 set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 01)
-set (LGC_VERSION_PATCH 01)
+set (LGC_VERSION_PATCH 02)
 
 # Allows c++ 11 standard
 if(UNIX)
