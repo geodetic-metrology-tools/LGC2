@@ -1,7 +1,11 @@
+/*
+© Copyright CERN 2000-2017. All rigths reserved. This software is released under a CERN proprietary software licence.
+Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
+*/
+
 #ifndef Round_Of_Measurements
 #define Round_Of_Measurements
 
-//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
 //LGC
 #include <MeasDef.h>
