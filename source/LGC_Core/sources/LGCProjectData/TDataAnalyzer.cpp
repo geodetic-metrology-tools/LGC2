@@ -73,6 +73,22 @@ bool TDataAnalyzer::dataConsistent(){
 			fData.setStandDevUsed();
 		}
 
+
+		//only ANGL, ZEND and DIST are allowed in a subframe for a total station
+		if (!it.node->data.get()->isROOTNode())
+		{
+			for (auto &tstn : it.node->data.get()->measurements.fTSTN) {
+				for (auto &rom : tstn->roms) {
+					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
+					{
+						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
+						return false;
+					}
+				}
+			}
+		}
+
+
 		//If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized
 		for (auto itLEVEL( it.node->data.get()->measurements.fLEVEL.begin()); itLEVEL != it.node->data.get()->measurements.fLEVEL.end(); ++itLEVEL){
 			
@@ -622,6 +638,7 @@ void TDataAnalyzer::assignEOIndices(){
 
         // TSTN
         for(auto &tstn : measurements.fTSTN){
+
 			//Vo is free if at least one ANGL, PLR3D, ECTH or ECDIR is used
 			for (auto &rom : tstn->roms){
 				string angleName = node->frame.getName() + "V0" + std::to_string(fData.getAngles().numObjects());
