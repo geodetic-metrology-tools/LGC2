@@ -139,7 +139,6 @@ TAngle TAllfixedParamGenerator::getV0AllfixedECTH(const TTSTN& station, const TE
 	return (bearing+alpha-theta);
 }
 
-
 TAngle* TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D)
 {
 	TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -256,7 +255,6 @@ TAngle* TAllfixedParamGenerator::getRyAllfixedPLR(const TTSTN& station, const TT
 }
 
 
-
 TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelInstr, const TDLEV& dlev)
 {
 	TReal cdz = dlev.target.distCorrectionValue; //distance correction value
@@ -288,6 +286,7 @@ TAngle TAllfixedParamGenerator::getCollimationAllfixedDLEV(const TLEVEL& levelIn
 	return TAngle(atan(calcMeas/ dTg), TAngle::EUnits::kRadians);
 
 }
+
 
 TLength TAllfixedParamGenerator::getHiAllfixedZEND(const TTSTN& station, const TZEND& zend)
 {
@@ -608,6 +607,30 @@ TLength TAllfixedParamGenerator::getCsAllfixedPLR(const TTSTN& station, const TT
 	return TLength(Cs);
 }
 
+TLength TAllfixedParamGenerator::getCsAllfixedDISTinFrame(const TTSTN& station, const TLINE& dist)
+{
+	fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
+	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
+
+	const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(dist.targetPos->getFrameTreePosition(), station.instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
+	TPositionVector targetPos = dist.targetPos->getEstimatedValue();
+	tg2stTrafo.transform(targetPos);
+
+	// Prepare coefficients (a,b,c) for the points and the transformations contributions
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+	TReal zSt = stationPos.getZ().getMetresValue();
+	TReal hInst = station.instrumentHeightAdjustable->getProvisionalValue();
+
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+	TReal zTg = targetPos.getZ().getMetresValue();
+	TReal hTg = dist.target.targetHt;
+
+	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
+
+	return TLength(D - dist.getDistance());
+}
 
 
 // solve second degree equation a*x^2 + b*x + c =0

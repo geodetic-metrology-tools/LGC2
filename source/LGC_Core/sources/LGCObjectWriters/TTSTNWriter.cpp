@@ -956,7 +956,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 			if (!isnotanumber(ItDIST.fAllFixedHi))
 				(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.fAllFixedHi);
 			else
-				(*stream).writeString(obsResWidth, "FIXED");
+				(*stream).writeString(obsWidth, "FIXED");
 		}
 
 		(*stream) << endl;

@@ -639,7 +639,7 @@ void TDataAnalyzer::assignEOIndices(){
         // TSTN
         for(auto &tstn : measurements.fTSTN){
 
-			//Vo is free if at least one ANGL, PLR3D, ECTH or ECDIR is used
+			//Vo is free if at least one ANGL, PLR3D, ECTH or ECDIR is used in Root frame
 			for (auto &rom : tstn->roms){
 				string angleName = node->frame.getName() + "V0" + std::to_string(fData.getAngles().numObjects());
 
@@ -653,7 +653,7 @@ void TDataAnalyzer::assignEOIndices(){
 				else
 				{
 					rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true, angleName));
-					// If ROT3D used, instrument height is fixed and is equal to 0
+					// instrument height is fixed and is equal to 0
 					tstn->ihfix = true;
 					tstn->instrument.instrHeight = TLength(0.0);
 				}

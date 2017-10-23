@@ -72,6 +72,12 @@ public:
 	/// Returns the distance correction for a PLR measurement
 	TLength getCsAllfixedPLR(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
+
+	//for a TSTN in a frame, instrument heigth is fixed and is equal to 0
+	/// Returns the distance correction for a DIST measurement
+	TLength getCsAllfixedDISTinFrame(const TTSTN& station, const TLINE& dist);
+
+
 	//@}
 
     TAllfixedParamGenerator& operator=(const TAllfixedParamGenerator &other) = delete;
