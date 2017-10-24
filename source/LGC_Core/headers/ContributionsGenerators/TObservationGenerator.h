@@ -42,11 +42,20 @@ public:
 	/// Returns the the ANGL measurement calculated meas in RADIANS [rad]
 	TReal getANGLCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint);
 
+	/// Returns the the ANGL measurement calculated meas in RADIANS [rad] for a TSTN defined in a subframe
+	TReal getANGLCalcMeasInFrame(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint);
+
 	/// Returns the ZEND measurement calculated meas in RADIANS [rad]
 	TReal getZENDCalcMeas(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
 
+	/// Returns the ZEND measurement calculated meas in RADIANS [rad] for a TSTN defined in a subframe
+	TReal getZENDCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
+
 	/// Returns the DIST measurement calculated meas in meters [m]
 	TReal getDISTCalcMeas(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
+
+	/// Returns the DIST measurement calculated meas in meters [m] for a TSTN defined in a subframe
+	TReal getDISTCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
 
 	/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
 	TReal getDHORCalcMeas(const TTSTN& station, const TLINE& dhor);
@@ -55,10 +64,10 @@ public:
 	PLR3DCalcMeas getPLR3DCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TPLR3D& plr3D);
 
 	/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-	TReal	 getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
+	TReal getECTHCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECTH& ecth);
 
 	/// Returns contribution for the offset to a theodolite line (TECDIR) measurement.
-	TReal	 getECDIRCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECDIR& ecdir);
+	TReal getECDIRCalcMeas(const TTSTN& station, const TTSTN::TROM& rom, const TECDIR& ecdir);
 
 	/// Returns the the TUVEC measurement calculaded measurement value
 	TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
@@ -70,7 +79,7 @@ public:
 	TReal getDLEVCalcMeas(const TLEVEL& levelST, const TDLEV& dlev);
 
 	/// Returns the TDSPT measurement calculated meas in meters [m]
-	TReal	getDSPTCalcMeas(const TEDM& edmST, const TDSPT& dspt);
+	TReal getDSPTCalcMeas(const TEDM& edmST, const TDSPT& dspt);
 
 	/// Returns the TECHO measurement calculated meas in meters [m]
 	TReal getECHOCalcMeas(const TECHOROM& echoROM, const TECHO& echo);
@@ -79,26 +88,17 @@ public:
 	TReal getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve);
 
 	/// Returns TECSP measurement calculated meas in meters[m]
-	TReal	 getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp);
+	TReal getECSPCalcMeas(const TECSPROM& ecspROM, const TECSP& ecsp);
 
 	/// Returns the TDHOR measurement calculated meas in meters [m]
-	TReal	getHorDistCalcMeas(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
+	TReal getHorDistCalcMeas(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
 
 	/// Returns the the ORIE measurement calculated meas in RADIANS [rad]
 	TReal getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie);
 
 	/// Returns the the DVER measurement calculated meas in meter [m]
-	TReal	getDVERCalcMeas(const TDVER& dver);
+	TReal getDVERCalcMeas(const TDVER& dver);
 
-
-	/// Returns the the ANGL measurement calculated meas in RADIANS [rad] for a TSTN defined in a subframe
-	TReal getANGLCalcMeasInFrame(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint);
-
-	/// Returns the ZEND measurement calculated meas in RADIANS [rad] for a TSTN defined in a subframe
-	TReal getZENDCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
-
-	/// Returns the DIST measurement calculated meas in meters [m] for a TSTN defined in a subframe
-	TReal getDISTCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
 	//@}
 
 private:

@@ -116,6 +116,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 
 	return fillOK;
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,6 +144,7 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 	else
 		matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs); 
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - fill of models with 1 equation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -200,6 +202,55 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& dis
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
 
 		if(!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
+	}
+}
+
+void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	DistMeasContribFrame contributions;
+
+	for (auto meas(distMeas.begin()); meas != distMeas.end(); ++meas) {
+		eqIdx = meas->getFirstEquationIndex();
+		obsIdx = meas->getFirstObservationIndex();
+
+		contributions = fCGenerator.getSpatialDistanceContribInFrame(station, *meas); //Get the observation contribution
+
+																					// Add station's contributions into a first design matrix
+		if (!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+
+		// Add target contributions into a first design matrix
+		if (!meas->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+
+		// Adding Distance correction contribution
+		if (!meas->target.distCorrectionAdjustable->isFixed())
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
+
+
+		// Adding contributions for TARGET transformations parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform) {
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getDistance() - contributions.fCalcMeas));
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling Spatial Distance contribution, variance is zero or too small, can not set weight matrix element.");
+		else {
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
 	}
 }
@@ -264,6 +315,50 @@ void  TLSInputMatricesFiller::addHorAngContributions(shared_ptr<TTSTN::TROM> rom
 	}
 }
 
+void  TLSInputMatricesFiller::addHorAngContributionsFrame(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	AnglMeasContribFrame contributions;
+
+	for (auto meas(rom->measANGL.begin()); meas != rom->measANGL.end(); ++meas) {
+		eqIdx = meas->getFirstEquationIndex();
+		obsIdx = meas->getFirstObservationIndex();
+
+		contributions = fCGenerator.getHorAnglContribInFrame(station, rom, *meas); //Get the observation contribution
+
+																				 // Add station contributions 
+		if (!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+
+		// Add target contributions
+		if (!meas->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+
+		// Add contributions of transformations parameters 
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform) {
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Add Misclosure vector's contribution 
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
+		else {
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal angle (ANGL) measurement.");
+	}
+}
+
 void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
@@ -315,6 +410,51 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& ze
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
 
 		if(!isProcessOK)
+			throw std::runtime_error("Error occurred during filling input design matrices of Zenith Distance (vertical angle) measurement.");
+	}
+}
+
+void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	AnglMeasContribFrame contributions;
+
+	for (auto meas(zendMeas.begin()); meas != zendMeas.end(); ++meas) {
+		eqIdx = meas->getFirstEquationIndex();
+		obsIdx = meas->getFirstObservationIndex();
+
+		AnglMeasContribFrame contributions = fCGenerator.getZenDistContribInFrame(station, *meas); //Get the observation contribution
+
+																								 // Add station contributions
+		if (!station->instrumentPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+
+		// Add target contributions
+		if (!meas->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+
+		// Adding contributions for TARGET transformations parameters  
+		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform) {
+			if (!itTgTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
+		}
+
+		// Add Misclosure vector values
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling Zenith Distance contribution, variance is zero or too small, can not set weight matrix element.");
+		else {
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		// Adding the contribution to the second design matrix , -1 on the diagonal
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Zenith Distance (vertical angle) measurement.");
 	}
 }
@@ -1053,6 +1193,7 @@ void  TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ>& o
 			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");
 	}
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1166,7 +1307,6 @@ void TLSInputMatricesFiller::addPLR3DContributions(shared_ptr<TTSTN::TROM> rom, 
 	}
 }
 
-
 void TLSInputMatricesFiller::addUVDContribution(const TCAM& camera, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex firstEqIdx = -1;
@@ -1241,7 +1381,6 @@ void TLSInputMatricesFiller::addUVDContribution(const TCAM& camera, TLSInputMatr
 			throw std::runtime_error("Error when filling input design matrices of UVD measurement occurred.");
 	}
 }
-
 
 void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
@@ -1325,7 +1464,6 @@ bool TLSInputMatricesFiller::addTransformationContribution(const TAdjustableHelm
 	return isProcessOK;
 }
 
-
 bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint& pointAdj, const TFreeVector& pointContrib, int eqIdx, TLSInputMatrices* matrices){
 	bool isProcessOK = true;
 
@@ -1335,7 +1473,6 @@ bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint& poin
 	}
 	return isProcessOK;
 }
-
 
 bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatrices* matrices){
 	bool fillOK = true;
@@ -1395,142 +1532,3 @@ bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatri
 	return fillOK;
 }
 
-
-
-void  TLSInputMatricesFiller::addHorAngContributionsFrame(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
-	bool isProcessOK = true;
-	MatrixIndex eqIdx = -1;
-	MatrixIndex obsIdx = -1;
-	AnglMeasContribFrame contributions;
-
-	for (auto meas(rom->measANGL.begin()); meas != rom->measANGL.end(); ++meas){
-		eqIdx = meas->getFirstEquationIndex();
-		obsIdx = meas->getFirstObservationIndex();
-
-		contributions = fCGenerator.getHorAnglContribFrame(station, rom, *meas); //Get the observation contribution
-
-		// Add station contributions 
-		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
-
-		// Add target contributions
-		if (!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
-
-		// Add contributions of transformations parameters 
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
-			if (!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
-		// Add Misclosure vector's contribution 
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
-
-		// Add weight unknown matrix element
-		if (contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
-		else{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
-		}
-
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
-
-		if (!isProcessOK)
-			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal angle (ANGL) measurement.");
-	}
-}
-
-void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
-	bool isProcessOK = true;
-	MatrixIndex eqIdx = -1;
-	MatrixIndex obsIdx = -1;
-	AnglMeasContribFrame contributions;
-
-	for (auto meas(zendMeas.begin()); meas != zendMeas.end(); ++meas){
-		eqIdx = meas->getFirstEquationIndex();
-		obsIdx = meas->getFirstObservationIndex();
-
-		AnglMeasContribFrame contributions = fCGenerator.getZenDistContribFrame(station, *meas); //Get the observation contribution
-
-		// Add station contributions
-		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
-
-		// Add target contributions
-		if (!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
-
-		// Adding contributions for TARGET transformations parameters  
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
-			if (!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
-		// Add Misclosure vector values
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
-
-		// Add weight unknown matrix element
-		if (contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling Zenith Distance contribution, variance is zero or too small, can not set weight matrix element.");
-		else{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
-		}
-
-		// Adding the contribution to the second design matrix , -1 on the diagonal
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
-
-		if (!isProcessOK)
-			throw std::runtime_error("Error occurred during filling input design matrices of Zenith Distance (vertical angle) measurement.");
-	}
-}
-
-void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
-	bool isProcessOK = true;
-	MatrixIndex eqIdx = -1;
-	MatrixIndex obsIdx = -1;
-	DistMeasContribFrame contributions;
-
-	for (auto meas(distMeas.begin()); meas != distMeas.end(); ++meas){
-		eqIdx = meas->getFirstEquationIndex();
-		obsIdx = meas->getFirstObservationIndex();
-
-		contributions = fCGenerator.getSpatialDistanceContribFrame(station, *meas); //Get the observation contribution
-
-		// Add station's contributions into a first design matrix
-		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
-
-		// Add target contributions into a first design matrix
-		if (!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
-
-		// Adding Distance correction contribution
-		if (!meas->target.distCorrectionAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
-
-
-		// Adding contributions for TARGET transformations parameters 
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform){
-			if (!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
-		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getDistance() - contributions.fCalcMeas));
-
-		// Add weight unknown matrix element
-		if (contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling Spatial Distance contribution, variance is zero or too small, can not set weight matrix element.");
-		else{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
-		}
-
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
-
-		if (!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
-	}
-}
