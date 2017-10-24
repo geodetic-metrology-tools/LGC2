@@ -476,3 +476,49 @@ TReal	TObservationGenerator::getDVERCalcMeas(const TDVER& dver){
 
 	}
 }
+
+
+TReal TObservationGenerator::getANGLCalcMeasInFrame(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint) {
+	fPointTransfo->setMLA(false); // TSTN in Frame measurements never in MLA
+	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
+
+	const TLOR2LOR& tg2stTrafo = fPointTransfo->getLORTransformation(targetAdjPoint->getFrameTreePosition(), station.instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
+	TPositionVector targetPos = targetAdjPoint->getEstimatedValue();
+	tg2stTrafo.transform(targetPos);
+
+	TReal xSt = stationPos.getX().getMetresValue();
+	TReal ySt = stationPos.getY().getMetresValue();
+
+	TReal xTg = targetPos.getX().getMetresValue();
+	TReal yTg = targetPos.getY().getMetresValue();
+
+	return (TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom.v0->getEstimatedValue() - rom.acst).getRadiansValue();
+}
+
+TReal TObservationGenerator::getZENDCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt) {
+	fPointTransfo->setMLA(false); // TSTN in Frame measurements never in MLA
+	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
+
+	const TLOR2LOR& tg2stTrafo = fPointTransfo->getLORTransformation(targetAdjPoint->getFrameTreePosition(), station.instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
+	TPositionVector targetPos = targetAdjPoint->getEstimatedValue();
+	tg2stTrafo.transform(targetPos);
+
+	TReal distance3D = dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue(),
+		targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), targetPos.getZ().getMetresValue() + targetHt);
+	if (distance3D < nullLimit)
+		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
+
+	return (TAngle::aCos(((targetPos.getZ().getMetresValue() + targetHt - stationPos.getZ().getMetresValue() - station.instrumentHeightAdjustable->getEstimatedValue()) / distance3D))).getRadiansValue();
+}
+
+TReal TObservationGenerator::getDISTCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr) {
+	fPointTransfo->setMLA(false); // TSTN in Frame measurements never in MLA
+	TPositionVector stationPos = station.instrumentPos->getEstimatedValue();
+
+	const TLOR2LOR& tg2stTrafo = fPointTransfo->getLORTransformation(targetAdjPoint->getFrameTreePosition(), station.instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
+	TPositionVector targetPos = targetAdjPoint->getEstimatedValue();
+	tg2stTrafo.transform(targetPos);
+
+	return (dist3D(stationPos.getX().getMetresValue(), stationPos.getY().getMetresValue(), (stationPos.getZ().getMetresValue() + station.instrumentHeightAdjustable->getEstimatedValue()),
+		targetPos.getX().getMetresValue(), targetPos.getY().getMetresValue(), (targetPos.getZ().getMetresValue() + targetHt)) - distanceCorr);
+}

@@ -87,9 +87,6 @@ private:
 	/// Simulate all measurements
 	void	simulateValues();
 
-	/// Run the simulation process
-	bool	processSimCalculation();
-
 	void	getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TPLR3D>& plr3D);
 	void	getANGLSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl);
 	void	getZENDSimValues(const TTSTN& station, std::list<TZEND>& zend);
@@ -97,6 +94,10 @@ private:
 	void	getDHORSimValues(const TTSTN& station, std::list<TLINE>& dhor);
 	void	getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECTH>& ecth);
 	void	getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECDIR>& ecdir);
+	//for a TSTN defined in a subframe
+	void	getANGLSimValuesInFrame(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl);
+	void	getZENDSimValuesInFrame(const TTSTN& station, std::list<TZEND>& zend);
+	void	getDISTSimValuesInFrame(const TTSTN& station, std::list<TLINE>& dist);
 
 	void	getDLEVSimValues(const TLEVEL& levelST, std::list<TDLEV>& dlev);
 	void	getDVERSimValues(std::list<TDVER>& dver);

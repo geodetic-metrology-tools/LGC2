@@ -89,6 +89,16 @@ public:
 
 	/// Returns the the DVER measurement calculated meas in meter [m]
 	TReal	getDVERCalcMeas(const TDVER& dver);
+
+
+	/// Returns the the ANGL measurement calculated meas in RADIANS [rad] for a TSTN defined in a subframe
+	TReal getANGLCalcMeasInFrame(const TTSTN& station, const TTSTN::TROM& rom, const LGCAdjustablePoint* targetAdjPoint);
+
+	/// Returns the ZEND measurement calculated meas in RADIANS [rad] for a TSTN defined in a subframe
+	TReal getZENDCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
+
+	/// Returns the DIST measurement calculated meas in meters [m] for a TSTN defined in a subframe
+	TReal getDISTCalcMeasInFrame(const TTSTN& station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
 	//@}
 
 private:
