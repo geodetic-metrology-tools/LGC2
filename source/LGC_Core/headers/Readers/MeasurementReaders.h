@@ -1,7 +1,12 @@
+/*
+© Copyright CERN 2000-2017. All rigths reserved. This software is released under a CERN proprietary software licence.
+Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
+*/
+
+
 #ifndef _READERS_MEASUREMENTREADERS_H_
 #define _READERS_MEASUREMENTREADERS_H_
 
-//Copyright 2017 CERN EN/ACE/SU.  All rights reserved.
 
 //LGC
 #include <TInstrumentData.h>
@@ -27,7 +32,6 @@ class TAMeasurementKey : public TAKeyWord {
 		TAdjustableAngleCollection& fangles;
 		LGCAdjustablePlaneCollection& fplanes;
 		LGCAdjustableLineCollection& flines;
-		const bool fSIMUActive;
 
 		/// Returns if this was the first line beginning with a '*',  NOT the success of the target update
 		// To be used for the TSTN measurement's keywords, such as PLR3D, ANGL, ZEND,...
