@@ -1,11 +1,34 @@
-# Mandatory in order to set the devtoolset2 (redhat specific) where compilers gcc & g++ are located
-if(UNIX)
-	SET(CMAKE_C_COMPILER   "/opt/rh/devtoolset-2/root/usr/bin/gcc")
-	SET(CMAKE_CXX_COMPILER "/opt/rh/devtoolset-2/root/usr/bin/g++")
-endif()
+#
+# CMake file for LGC2UI
+#
+# To create a solution with this CMake file, you need to first define the following variables in a CMake style file.
+# The path to this file can be setup in the below variable `EXT_LIBS_TXT_PATH`
+#
+# - `BOOST_ROOT`: The path to Boost folder
+# - `EIGEN_INCLUDE_PATH`: The path to Eigen folder
+# - `REFRAME_LIBRARY_DIR`: The path to Reframe folder
+# - `TUT_INCLUDE_PATH`: The path to Tut folder
+# - `VCREDIST_INSTALLER_PATH`: The path to the folder holding the VCRedist installer
 
-# Declare a project
-PROJECT(LGC2)
+cmake_minimum_required(VERSION 3.6)
+
+#############################################################
+#
+# PROJECT NAME
+#
+
+set(PROJECT_NAME LGC)
+
+#############################################################
+#
+# GLOBAL CONFIGURATION
+#
+
+set(CREATE_DOC ON)
+set(DOXYGEN_CONF_PATH ".")
+set(ENABLE_CONSOLE ON)
+
+include("../../SUSoftCMakeCommon/CMakeLists.txt")
 
 # Set version number and provide a header file with corresponding defines
 # /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
@@ -13,46 +36,13 @@ set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 01)
 set (LGC_VERSION_PATCH 02)
 
-# Allows c++ 11 standard
-if(UNIX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
-endif()
-
 # Versions files
 configure_file (
   "${CMAKE_SOURCE_DIR}/LGCVersion.in"
   "${CMAKE_SOURCE_DIR}/Version.h"
 )
 
-# Minimum version of CMake
-cmake_minimum_required(VERSION 2.8)
-CMAKE_POLICY(SET CMP0015 OLD)
-
-# We need some CMake macros
-INCLUDE(CheckIncludeFileCXX)
-
-# Enable languages
-enable_language("CXX")
-
-# Set the default build type:
-SET(CMAKE_BUILD_TYPE DEBUG)
-
-#######################################################################
-# Define Doxigen configuration if exists
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-	add_custom_target(doc
-		${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
-endif(DOXYGEN_FOUND)
-
-# REQ: BOOST_ROOT VCREDIST_INSTALLER_PATH SURVEYLIB_ROOT SURVEYLIB_LIBRARY_DIR EIGEN_INCLUDE_PATH
-INCLUDE(../../ext_libs.txt)
-
-# Make surveylib sublibraries avaliable
+# Make surveylib sublibraries available
 SET(SURVEYLIB_ROOT ${PROJECT_SOURCE_DIR}/../SurveyLib)
 
 FIND_PACKAGE(Boost 1.49.0 REQUIRED)
@@ -110,21 +100,24 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
-#ADD_SUBDIRECTORY(LGC_UI)
 
 
 #include the CPack file allows to have PACKAGE in the solution and then to create the package
 include(${PROJECT_SOURCE_DIR}/CPack.cmake)
 
 # INSTALL for creation of the LGC2 installer
-add_executable(LGC ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
-target_link_libraries(LGC    LGC_Core  LSAlgorithms ProjectFramework SpatialObjects)
-install(TARGETS LGC DESTINATION "." COMPONENT application)
-if(!UNIX)
-	install(FILES
-			"${VCREDIST_INSTALLER_PATH}"
-			DESTINATION "."
-			COMPONENT application
-		)
-endif()
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
+target_link_libraries(${PROJECT_NAME}
+	LGC_Core
+	LSAlgorithms
+	ProjectFramework
+	SpatialObjects
+)
 
+############################
+# MSVC:
+set_vs_default_startup_project(${PROJECT_NAME})
+
+############################
+# INSTALLER PACKAGE:
+create_default_installer()

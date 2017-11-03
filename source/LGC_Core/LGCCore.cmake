@@ -1,7 +1,3 @@
-
-find_package(Boost 1.49.0 REQUIRED)
-
-
 # Configure version when called from UI
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR 2)
