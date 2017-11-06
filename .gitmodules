@@ -1,5 +1,5 @@
 [submodule "SurveyLib"]
 	path = SurveyLib
 	url = https://gitlab.cern.ch/Libraries/SurveyLib.git
-	branch = lgc2ui
+	branch = master
 
