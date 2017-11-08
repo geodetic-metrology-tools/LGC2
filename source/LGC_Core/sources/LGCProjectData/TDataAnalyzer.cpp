@@ -781,11 +781,11 @@ void TDataAnalyzer::assignEOIndices(){
 
             // UVEC
             for(auto &uvec : cam.measUVEC){
-                // set indices of LS matrices, UVEC introduces 2 equations and 2 observations
+                // set indices of LS matrices, UVEC introduces 3 equations and 3 observations
                 uvec.setFirstEquationIndex(fData.fUEOIndices.EIndex);
                 uvec.setFirstObservationIndex(fData.fUEOIndices.OIndex);
-                fData.fUEOIndices.EIndex += 2;
-                fData.fUEOIndices.OIndex += 2;
+                fData.fUEOIndices.EIndex += 3;
+                fData.fUEOIndices.OIndex += 3;
                 fData.addToMeasurementNum(TMeasurementsGlobal::kUVEC);
             }
         }

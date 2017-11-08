@@ -303,4 +303,97 @@ class TAVectorMeas : public TAMeas<TTarget>
 		}
 };
 
+
+template <typename TTarget>
+class TAVector3DMeas : public TAMeas<TTarget>
+{
+
+protected:
+
+	/// FreeVector containing measurment value
+	TFreeVector vector;
+	/// X-component residual
+	TReal XcompResidual;
+	/// Y-component residual
+	TReal YcompResidual;
+	/// Y-component residual
+	TReal ZcompResidual;
+public:
+
+
+	/*!
+	\brief Constructs an uninitialized measurement
+
+	\param targetPos The observed point
+	\param tgt The observed target. A copy of the target is made to store it.
+	*/
+	TAVector3DMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
+		TAMeas<TTarget>(targetPos, tgt),
+		vector(NO_VALf, NO_VALf, NO_VALf, TCoordSysFactory::ECoordSys::k3DCartesian),
+		XcompResidual(NO_VALf),
+		YcompResidual(NO_VALf),
+		ZcompResidual(NO_VALf)
+	{
+	}
+
+	/*!
+	\brief Constructs an measurement that is initialized with a FreeVector
+
+	\param targetPos The observed point
+	\param tgt The observed target. A copy of the target is made to store it.
+	\param value The measured vector
+	*/
+	TAVector3DMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, const TFreeVector& value) :
+		TAMeas<TTarget>(targetPos, tgt),
+		vector(value),
+		XcompResidual(NO_VALf),
+		YcompResidual(NO_VALf),
+		ZcompResidual(NO_VALf)
+	{
+	}
+
+	/// The virtual base destructor does nothing.
+	virtual ~TAVector3DMeas() {}
+
+	/// Sets a vector
+	void setVectorMeasurement(const TFreeVector& vec) {
+		vector = vec;
+	}
+
+	/// Returns a vector value
+	const TFreeVector& getVectorValue() const {
+		return vector;
+	}
+
+	/// Sets a residual of an X component of observed vector
+	void setXVectorComponentResidual(TReal res) {
+		XcompResidual = res;
+	}
+
+	/// Sets a residual of an Y component of observed vector
+	void setYVectorComponentResidual(TReal res) {
+		YcompResidual = res;
+	}
+
+	/// Sets a residual of an Z component of observed vector
+	void setZVectorComponentResidual(TReal res) {
+		ZcompResidual = res;
+	}
+
+	/// Returns a residual of an X component of observed vector
+	const TReal getXCompVectorResidual() const {
+		return XcompResidual;
+	}
+
+	/// Returns a residual of an Y component of observed vector
+	const TReal getYCompVectorResidual() const {
+		return YcompResidual;
+	}
+
+	/// Returns a residual of an Y component of observed vector
+	const TReal getZCompVectorResidual() const {
+		return ZcompResidual;
+	}
+};
+
 #endif

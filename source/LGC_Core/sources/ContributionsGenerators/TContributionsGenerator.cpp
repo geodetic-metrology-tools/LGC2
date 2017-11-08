@@ -1405,26 +1405,36 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 	TReal dy = targetPos.getY().getMetresValue() - instrEstimValue.getY().getMetresValue();
 	TReal dz = targetPos.getZ().getMetresValue() - instrEstimValue.getZ().getMetresValue();
 
-	TFreeVector stFirstEqContrib(-k/dz, 
-						  0.0, 
-						  k*(dx/pow2q(dz)), TCoordSysFactory::k3DCartesian);
+	TReal D = sqrt(pow2q(dx)+ pow2q(dy) + pow2q(dz));
 
-	TFreeVector stSecondEqContrib(0, 
-						  -k/dz, 
-						  k*(dy/pow2q(dz)), TCoordSysFactory::k3DCartesian);
+	TFreeVector stFirstEqContrib((pow2q(D)+pow2q(dx))/powq(D,3), 
+		                  dx/powq(D, 3),
+						  dx/powq(D, 3), TCoordSysFactory::k3DCartesian);
+
+	TFreeVector stSecondEqContrib(dy / powq(D, 3),
+		(pow2q(D) + pow2q(dy)) / powq(D, 3),
+		dy / powq(D, 3), TCoordSysFactory::k3DCartesian);
+
+	TFreeVector stThirdEqContrib(dz / powq(D, 3),
+		dz / powq(D, 3),
+		(pow2q(D) + pow2q(dz)) / powq(D, 3), TCoordSysFactory::k3DCartesian);
 
 
-	TFreeVector tgFirstEqContrib(k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToX0().getX().getMetresValue()), 
-						  k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToY0().getX().getMetresValue()), 
-						  k*(-(dx/pow2q(dz))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToZ0().getX().getMetresValue()), TCoordSysFactory::k3DCartesian);
+	TFreeVector tgFirstEqContrib(-(pow2q(D) + pow2q(dx)) / powq(D, 3)*tg2stTrafo.partDerivWRespToX0().getX().getMetresValue() +(-dx / powq(D, 3))*tg2stTrafo.partDerivWRespToX0().getY().getMetresValue()+ (-dx / powq(D, 3))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue(),
+		-(pow2q(D) + pow2q(dx)) / powq(D, 3)*tg2stTrafo.partDerivWRespToY0().getX().getMetresValue() +(-dx / powq(D, 3))*tg2stTrafo.partDerivWRespToY0().getY().getMetresValue()+ (-dx / powq(D, 3))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue(),
+		-(pow2q(D) + pow2q(dx)) / powq(D, 3)*tg2stTrafo.partDerivWRespToZ0().getX().getMetresValue() +(-dx / powq(D, 3))*tg2stTrafo.partDerivWRespToZ0().getY().getMetresValue()+ (-dx / powq(D, 3))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
 
-	TFreeVector tgSecondEqContrib(k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToX0().getY().getMetresValue()), 
-						  k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToY0().getY().getMetresValue()), 
-						  k*(-(dy/pow2q(dz))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue() + (1/dz)*tg2stTrafo.partDerivWRespToZ0().getY().getMetresValue()), TCoordSysFactory::k3DCartesian);
+	TFreeVector tgSecondEqContrib(-dy / powq(D, 3)*tg2stTrafo.partDerivWRespToX0().getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*tg2stTrafo.partDerivWRespToX0().getY().getMetresValue() + (-dy / powq(D, 3))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue(),
+		-dy / powq(D, 3)*tg2stTrafo.partDerivWRespToY0().getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*tg2stTrafo.partDerivWRespToY0().getY().getMetresValue() + (-dy / powq(D, 3))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue(),
+		-dy / powq(D, 3)*tg2stTrafo.partDerivWRespToZ0().getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*tg2stTrafo.partDerivWRespToZ0().getY().getMetresValue() + (-dy / powq(D, 3))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
+
+	TFreeVector tgThirdEqContrib(-dz / powq(D, 3)*tg2stTrafo.partDerivWRespToX0().getX().getMetresValue() + (-dz / powq(D, 3))*tg2stTrafo.partDerivWRespToX0().getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*tg2stTrafo.partDerivWRespToX0().getZ().getMetresValue(),
+		-dz / powq(D, 3)*tg2stTrafo.partDerivWRespToY0().getX().getMetresValue() + (-dz / powq(D, 3))*tg2stTrafo.partDerivWRespToY0().getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*tg2stTrafo.partDerivWRespToY0().getZ().getMetresValue(),
+		-dz / powq(D, 3)*tg2stTrafo.partDerivWRespToZ0().getX().getMetresValue() + (-dz / powq(D, 3))*tg2stTrafo.partDerivWRespToZ0().getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*tg2stTrafo.partDerivWRespToZ0().getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
 
 
 //Fill transformation contributions
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib2D>> targetTransfContributions; // Vector with target's transformations contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector with target's transformations contributions
 	const std::vector<TLOR2LOR::TransformAndParams>& trafoChain = tg2stTrafo.getTransformationChain();
 	
 	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
@@ -1444,36 +1454,50 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 		TFreeVector scalePD = tg2stTrafo.partialDerivativesScale(transformationName, targetPos);
 
 		TransformationContrib firstEqContrib = {
-			TFreeVector(k*(-(1/pow2q(dz))*omegaPD.getZ().getMetresValue()*dx + (1/dz)*omegaPD.getX().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*phiPD.getZ().getMetresValue()*dx + (1/dz)*phiPD.getX().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*kappaPD.getZ().getMetresValue()*dx + (1/dz)*kappaPD.getX().getMetresValue()), TCoordSysFactory::k3DCartesian),
-			TFreeVector(k*((-1/pow2q(dz))*trans1PD.getZ().getMetresValue()*dx + (1/dz)*trans1PD.getX().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*trans2PD.getZ().getMetresValue()*dx + (1/dz)*trans2PD.getX().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*trans3PD.getZ().getMetresValue()*dx + (1/dz)*trans3PD.getX().getMetresValue()), TCoordSysFactory::k3DCartesian),
-				k*(-(1/pow2q(dz))*scalePD.getZ().getMetresValue()*dx + (1/dz)*scalePD.getX().getMetresValue())
+			TFreeVector(-(pow2q(D) + pow2q(dx)) / powq(D, 3)*omegaPD.getX().getMetresValue() + (-dx / powq(D, 3))*omegaPD.getY().getMetresValue() + (-dx / powq(D, 3))*omegaPD.getZ().getMetresValue(),
+			-(pow2q(D) + pow2q(dx)) / powq(D, 3)*phiPD.getX().getMetresValue() + (-dx / powq(D, 3))*phiPD.getY().getMetresValue() + (-dx / powq(D, 3))*phiPD.getZ().getMetresValue(),
+			-(pow2q(D) + pow2q(dx)) / powq(D, 3)*kappaPD.getX().getMetresValue() + (-dx / powq(D, 3))*kappaPD.getY().getMetresValue() + (-dx / powq(D, 3))*kappaPD.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian),
+			TFreeVector(-(pow2q(D) + pow2q(dx)) / powq(D, 3)*trans1PD.getX().getMetresValue() + (-dx / powq(D, 3))*trans1PD.getY().getMetresValue() + (-dx / powq(D, 3))*trans1PD.getZ().getMetresValue(),
+			-(pow2q(D) + pow2q(dx)) / powq(D, 3)*trans2PD.getX().getMetresValue() + (-dx / powq(D, 3))*trans2PD.getY().getMetresValue() + (-dx / powq(D, 3))*trans2PD.getZ().getMetresValue(),
+			-(pow2q(D) + pow2q(dx)) / powq(D, 3)*trans3PD.getX().getMetresValue() + (-dx / powq(D, 3))*trans3PD.getY().getMetresValue() + (-dx / powq(D, 3))*trans3PD.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian),
+			-(pow2q(D) + pow2q(dx)) / powq(D, 3)*scalePD.getX().getMetresValue() + (-dx / powq(D, 3))*scalePD.getY().getMetresValue() + (-dx / powq(D, 3))*scalePD.getZ().getMetresValue()
 		};
 
 		TransformationContrib secondEqContrib = {
-			TFreeVector(k*(-(1/pow2q(dz))*omegaPD.getZ().getMetresValue()*dy + (1/dz)*omegaPD.getY().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*phiPD.getZ().getMetresValue()*dy + (1/dz)*phiPD.getY().getMetresValue()), 
-						 k*(-(1/pow2q(dz))*kappaPD.getZ().getMetresValue()*dy + (1/dz)*kappaPD.getY().getMetresValue()), TCoordSysFactory::k3DCartesian),
-			TFreeVector(k*(-(1/pow2q(dz))*trans1PD.getZ().getMetresValue()*dy + (1/dz)*trans1PD.getY().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*trans2PD.getZ().getMetresValue()*dy + (1/dz)*trans2PD.getY().getMetresValue()), 
-						  k*(-(1/pow2q(dz))*trans3PD.getZ().getMetresValue()*dy + (1/dz)*trans3PD.getY().getMetresValue()), TCoordSysFactory::k3DCartesian),
-						k*(-(1/pow2q(dz))*scalePD.getZ().getMetresValue()*dy + (1/dz)*scalePD.getY().getMetresValue())
+			TFreeVector(-dy / powq(D, 3)*omegaPD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*omegaPD.getY().getMetresValue() + (-dy / powq(D, 3))*omegaPD.getZ().getMetresValue(),
+			-dy / powq(D, 3)*phiPD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*phiPD.getY().getMetresValue() + (-dy / powq(D, 3))*phiPD.getZ().getMetresValue(),
+			-dy / powq(D, 3)*kappaPD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*kappaPD.getY().getMetresValue() + (-dy / powq(D, 3))*kappaPD.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian),
+			TFreeVector(-dy / powq(D, 3)*trans1PD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*trans1PD.getY().getMetresValue() + (-dy / powq(D, 3))*trans1PD.getZ().getMetresValue(),
+			-dy / powq(D, 3)*trans2PD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*trans2PD.getY().getMetresValue() + (-dy / powq(D, 3))*trans2PD.getZ().getMetresValue(),
+			-dy / powq(D, 3)*trans3PD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*trans3PD.getY().getMetresValue() + (-dy / powq(D, 3))*trans3PD.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian),
+			-dy / powq(D, 3)*scalePD.getX().getMetresValue() + (-(pow2q(D) + pow2q(dy)) / powq(D, 3))*scalePD.getY().getMetresValue() + (-dy / powq(D, 3))*scalePD.getZ().getMetresValue()
 		};
 
-		TransformationContrib2D trafoContrib = {firstEqContrib, secondEqContrib};
+		TransformationContrib thirdEqContrib = {
+			TFreeVector(-dz / powq(D, 3)*omegaPD.getX().getMetresValue() + (-dz / powq(D, 3))*omegaPD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*omegaPD.getZ().getMetresValue(),
+			-dz / powq(D, 3)*phiPD.getX().getMetresValue() + (-dz / powq(D, 3))*phiPD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*phiPD.getZ().getMetresValue(),
+			-dz / powq(D, 3)*kappaPD.getX().getMetresValue() + (-dz / powq(D, 3))*kappaPD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*kappaPD.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian),
+			TFreeVector(-dy / powq(D, 3)*trans1PD.getX().getMetresValue() + (-dz / powq(D, 3))*trans1PD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*trans1PD.getZ().getMetresValue(),
+			-dz / powq(D, 3)*trans2PD.getX().getMetresValue() + (-dz / powq(D, 3))*trans2PD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*trans2PD.getZ().getMetresValue(),
+			-dz / powq(D, 3)*trans3PD.getX().getMetresValue() + (-dz / powq(D, 3))*trans3PD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*trans3PD.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian),
+			-dz / powq(D, 3)*scalePD.getX().getMetresValue() + (-dz / powq(D, 3))*scalePD.getY().getMetresValue() + (-(pow2q(D) + pow2q(dz)) / powq(D, 3))*scalePD.getZ().getMetresValue()
+		};
 
-		targetTransfContributions.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib2D> (*it->adjTrafo, trafoContrib));
+		TransformationContrib3D trafoContrib = {firstEqContrib, secondEqContrib, thirdEqContrib };
+
+		targetTransfContributions.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib3D> (*it->adjTrafo, trafoContrib));
 	}	
 //End of filling transformation contributions
 
-	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions, 
-						   {-1.0, 0.0}, // X contribution (i) for a first and second equation
-				           {0.0, -1.0}, // Y contribution (j) for a first and second equation
-						   {-i+(k/dz)*dx, -j+(k/dz)*dy}, //Misclosure vector for a first and second equation
-						   { pow2q(uvec.target.sigmaX) + pow2q(k / (dz)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)), pow2q(uvec.target.sigmaY) + pow2q(k / (dz)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)) } }; //Obs variances
+	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, stThirdEqContrib, tgFirstEqContrib, tgSecondEqContrib, tgThirdEqContrib, targetTransfContributions,
+						   {1.0, 0.0, 0.0}, // X contribution (i) for a first and second equation
+				           {0.0, 1.0, 0.0}, // Y contribution (j) for a first and second equation
+						   { 0.0, 0.0, 1.0 }, // Z contribution (j) for a first and second equation
+						   {i-1/D*dx, j-1/D*dy, k-1/D*dz}, //Misclosure vector for a first and second equation
+						   { pow2q(uvec.target.sigmaX) + pow2q(1 / D*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)),
+		pow2q(uvec.target.sigmaY) + pow2q(1 / D)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering),
+		pow2q(1 / D)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering) } }; //Obs variances
+
 	return contrib;
 }
 

@@ -17,12 +17,12 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	\ingroup Measurements
 	\brief Unit vector measurement made by a camera (TCAM).
 */
-class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget> 
+class TUVEC : public TAVector3DMeas<TInstrumentData::TCAMD::TTarget>
 {
 	public:
 		/// Constructor
 		TUVEC(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
-			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
+			TAVector3DMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 		{}
 
 		/// Returns the last equation index of this measurement (UVEC introduces 2 equations). 
