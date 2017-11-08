@@ -270,6 +270,12 @@ void TLSResultsMatricesExtractor::extractUVECObs(const TLSResultsMatrices& rm, T
 		uvecMeas.setYVectorComponentResidual(rm.getResidualsVctrElmt(YcompIDX));
 	else
 		throw std::runtime_error("UVEC observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+
+	MatrixIndex ZcompIDX = uvecMeas.getFirstObservationIndex() + 2;
+	if (ZcompIDX < rm.getResidualsVctr()->size())
+		uvecMeas.setZVectorComponentResidual(rm.getResidualsVctrElmt(ZcompIDX));
+	else
+		throw std::runtime_error("UVEC observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 }
 
 

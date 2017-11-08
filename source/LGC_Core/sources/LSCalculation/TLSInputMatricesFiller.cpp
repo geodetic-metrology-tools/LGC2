@@ -1400,12 +1400,14 @@ void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMat
 		if(!cameraPos.isFixed()){
 				isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContribFirstEq, firstEqIdx, matrices);
 				isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContribSecondEq, firstEqIdx + 1 , matrices);
+				isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContribThirdEq, firstEqIdx + 2, matrices);
 		}
 
 		// Add contributions for TARGET coordinates
 		if(!targetPos.isFixed()){
 				isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContribFirstEq, firstEqIdx, matrices);
 				isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContribSecondEq, firstEqIdx + 1 , matrices);
+				isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContribThirdEq, firstEqIdx + 2, matrices);
 		}
 
 		// Add contributions fot the transformations parameters 
@@ -1413,22 +1415,29 @@ void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMat
 			if(!itTgTransform->first.isFixed()){
 				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second.firstEquationTransContrib, firstEqIdx, matrices);
 				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second.secondEquationTransContrib, firstEqIdx + 1, matrices);
+				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second.thirdEquationTransContrib, firstEqIdx + 2, matrices);
 			}
 		}
 
 		// Setting contributions for observations into a second design matrix
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx, contributions.fXCompContrib[0]);  // X vector component contribution (i), first eq
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx, contributions.fXCompContrib[1]); // X vector component contribution (i), second eq
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 2, firstObsIdx, contributions.fXCompContrib[2]); // X vector component contribution (i), second eq
 
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx + 1, contributions.fYCompContrib[0]); // Y vector component contribution (j), first eq
 		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx + 1, contributions.fYCompContrib[1]); // Y vector component contribution (j), second eq
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 2, firstObsIdx + 1, contributions.fYCompContrib[2]); // Y vector component contribution (j), second eq
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx + 2, contributions.fZCompContrib[0]); // Z vector component contribution (k), first eq
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx + 2, contributions.fZCompContrib[1]); // Z vector component contribution (k), second eq
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 2, firstObsIdx + 2, contributions.fZCompContrib[2]); // Z vector component contribution (k), second eq
 
 		//Setting the misclosure vector elements
-		for(int i = 0; i<2; i++)
+		for(int i = 0; i<3; i++)
 			isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx + i,  contributions.fMisclosureVector[i]);
 
 		// Add weight unknown matrix element
-		if(contributions.fObsVariance[0] < nullLimit || contributions.fObsVariance[1] < nullLimit )
+		if(contributions.fObsVariance[0] < nullLimit || contributions.fObsVariance[1] < nullLimit || contributions.fObsVariance[2] < nullLimit)
 			throw std::runtime_error("Error when filling UVEC contribution, variance is zero or too small, can not set weight matrix element.");
 		else{
 			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0/contributions.fObsVariance[0]);
@@ -1436,6 +1445,9 @@ void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMat
 
 			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0/contributions.fObsVariance[1]);
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
+
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 2, firstObsIdx +2, 1.0 / contributions.fObsVariance[2]);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, contributions.fObsVariance[2]);
 		}
 
 		if(!isProcessOK)

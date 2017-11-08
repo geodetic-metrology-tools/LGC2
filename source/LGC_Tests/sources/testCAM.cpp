@@ -657,7 +657,7 @@ namespace tut
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
-		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 0.0  , 1e-7);
+		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 400.0  , 1e-7);
  	}
 
 	template<>
@@ -690,9 +690,9 @@ namespace tut
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
-		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 0.0  , 1e-7);
+		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 400.0  , 1e-7);
 		frameIt++;
-		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 0.0  , 1e-7);
+		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 400.0  , 1e-7);
 
  	}
 
