@@ -103,7 +103,9 @@ ADD_SUBDIRECTORY(LGC_Tests)
 
 
 #include the CPack file allows to have PACKAGE in the solution and then to create the package
-include(${PROJECT_SOURCE_DIR}/CPack.cmake)
+if(WIN32)
+	include(${PROJECT_SOURCE_DIR}/CPack.cmake)
+endif()
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
@@ -116,8 +118,12 @@ target_link_libraries(${PROJECT_NAME}
 
 ############################
 # MSVC:
-set_vs_default_startup_project(${PROJECT_NAME})
+if(MSVC)
+	set_vs_default_startup_project(${PROJECT_NAME})
+endif()
 
 ############################
 # INSTALLER PACKAGE:
-create_default_installer()
+if(WIN32)
+	create_default_installer()
+endif()
