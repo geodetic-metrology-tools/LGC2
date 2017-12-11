@@ -1,7 +1,5 @@
-#pragma warning(push)
-#pragma warning(disable : 4512)
 #include <tut/tut.hpp>
-#pragma warning(pop)
+#include <tut/tut_macros.hpp>
 
 #include <TLGCData.h>
 #include <TReader.h>
@@ -18,9 +16,6 @@
 #pragma warning (disable:4224)
 
 using namespace std;
-
-#define EXPECT_FAIL(x) \
-try {x;} catch (std::exception& e) {cout << endl << "expected failure: " << e.what();}
 
 namespace tut
 {
@@ -68,130 +63,125 @@ namespace tut
 		set_test_name("Testing options");
 				
 		std::vector<std::string> empty(0);
-		
-		try {		
-			// referentiels
-			//
-			TKeyOLOC r1(proj);
 
-			r1.parse(empty, true, -1);
-			ensure("Refsystem must be OLOC", cfg.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame);
-			TKeyRS2K r2(proj);
-			cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
-			r2.parse(empty, true, -1);
-			ensure("Refsystem must be RS2K", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
-			TKeySPHE r3(proj);
-			cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
-			r3.parse(empty, true, -1);
-			ensure("Refsystem must be SPHE", cfg.referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS);
-			TKeyLEP r4(proj);
-			cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
-			r4.parse(empty, true, -1);
-			ensure("Refsystem must be LEP", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine);
+		// referentiels
+		//
+		TKeyOLOC r1(proj);
+
+		r1.parse(empty, true, -1);
+		ensure("Refsystem must be OLOC", cfg.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame);
+		TKeyRS2K r2(proj);
+		cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+		r2.parse(empty, true, -1);
+		ensure("Refsystem must be RS2K", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
+		TKeySPHE r3(proj);
+		cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+		r3.parse(empty, true, -1);
+		ensure("Refsystem must be SPHE", cfg.referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS);
+		TKeyLEP r4(proj);
+		cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+		r4.parse(empty, true, -1);
+		ensure("Refsystem must be LEP", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine);
 
 
-			// calc options
-			//
-			ensure("All options must be OFF ion init", 
-				!cfg.allfixed.isActive() && !cfg.nodup.isActive() && 
-				!cfg.libre.isActive()    && !cfg.pdor.isActive() && !cfg.sim.isActive());
-			//
-			TKeyALLFIXED c1(proj);
-			c1.parse(empty, true, -1);
-			ensure("ALLFIXED must be ON now", cfg.allfixed.isActive());
+		// calc options
+		//
+		ensure("All options must be OFF ion init", 
+			!cfg.allfixed.isActive() && !cfg.nodup.isActive() && 
+			!cfg.libre.isActive()    && !cfg.pdor.isActive() && !cfg.sim.isActive());
+		//
+		TKeyALLFIXED c1(proj);
+		c1.parse(empty, true, -1);
+		ensure("ALLFIXED must be ON now", cfg.allfixed.isActive());
 
-			TPositionVector position2(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k2DPlusH);
-			TDataTreeIterator iter;
-			LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
-			// point should be fixed
-			ensure_equals("0 unknowns introduced", pH.getNumUnkn(), 0);
-			ensure_equals("Point is  fixed", pH.isFixed(), true);
-			ensure_equals("Name should match", pH.getName(), "pointH1");
+		TPositionVector position2(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k2DPlusH);
+		TDataTreeIterator iter;
+		LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
+		// point should be fixed
+		ensure_equals("0 unknowns introduced", pH.getNumUnkn(), 0);
+		ensure_equals("Point is  fixed", pH.isFixed(), true);
+		ensure_equals("Name should match", pH.getName(), "pointH1");
 
-			//Need to re initialise allfixed parameter
-            cfg.allfixed = TLGCConfig::TBinaryOption(false);
-			LGCAdjustablePoint::setAllFixedParam(false);
+		//Need to re initialise allfixed parameter
+        cfg.allfixed = TLGCConfig::TBinaryOption(false);
+		LGCAdjustablePoint::setAllFixedParam(false);
 
-			//
-			TKeyLIBR c3(proj);
-			c3.parse(empty, true, -1);
-			ensure("LIBRE must be ON now", cfg.libre.isActive());
-			//
-			TKeyPDOR c4(proj);
-			EXPECT_FAIL(c4.parse(empty, true, -1))
-			EXPECT_FAIL(c4.parse(tokenizefileString("*PDOR"), true, -1))
-            EXPECT_FAIL(c4.parse(tokenizefileString("*PDOR P3 0.efg"), true, -1))
-            c4.parse(tokenizefileString("P1 0.31"), true, -1);
-			ensure("PDOR must be ON now", cfg.pdor.isActive());
-			ensure("PDOR Point name must match input", cfg.pdor.fptname == "P1");
-			ensure_equals("PDOR gisement must match input", cfg.pdor.fgis.getGonsValue(), 0.31, 1e-6);
+		//
+		TKeyLIBR c3(proj);
+		c3.parse(empty, true, -1);
+		ensure("LIBRE must be ON now", cfg.libre.isActive());
+		//
+		TKeyPDOR c4(proj);
+		ensure_THROW(c4.parse(empty, true, -1), std::runtime_error);
+		ensure_NO_THROW(c4.parse(tokenizefileString("*PDOR"), true, -1));
+		ensure_THROW(c4.parse(tokenizefileString("*PDOR P3 0.efg"), true, -1), std::runtime_error);
+        c4.parse(tokenizefileString("P1 0.31"), true, -1);
+		ensure("PDOR must be ON now", cfg.pdor.isActive());
+		ensure("PDOR Point name must match input", cfg.pdor.fptname == "P1");
+		ensure_equals("PDOR gisement must match input", cfg.pdor.fgis.getGonsValue(), 0.31, 1e-6);
 			
      
 
-			// output options (not testing pure boolean options)
-			//
-			TKeyEREL o1(proj);
-            EXPECT_FAIL(o1.parse(tokenizefileString("*EREL P1 P2"), true, -1));
-            o1.parse(tokenizefileString("*EREL"), true, -1);
-			o1.parse(tokenizefileString("P1 P2"), true, -1);
-			o1.parse(tokenizefileString("P3 P4"), true, -1);
-			ensure("2 point pairs must be there for relative errors now", cfg.erelPairs.size() == 2);
-			ensure("First point pair for EREL must be P1 P2",  
-				cfg.erelPairs.at(0).first == "P1" && cfg.erelPairs.at(0).second == "P2");
-			ensure("Second point pair for EREL must be P3 P4", 
-				cfg.erelPairs.at(1).first == "P3" && cfg.erelPairs.at(1).second == "P4");
-			//
-			TKeyFMTO o2(proj);
-            o2.parse(tokenizefileString("*FMTO COL"), true, -1);
-			ensure("Custom separator must not be active using *FMTO COL", !cfg.CustomOutputSeparator.isActive());
-            EXPECT_FAIL(o2.parse(tokenizefileString("*FMTO STR"), true, -1));
-            o2.parse(tokenizefileString("*FMTO SEP \"   ;\""), true, -1);
-			ensure_equals("Custom separator must be \"   ;\"", cfg.CustomOutputSeparator.separator, "   ;");
-			//
-			TKeyPREC o3(proj);
-            o3.parse(tokenizefileString("*PREC 7"), true, -1);
-			ensure_equals("Precision must be 7 digits now", cfg.outPrecision.digits, 7);
-			ensure_equals("Convergence criteria must be 5e-8", cfg.outPrecision.convCrit, 5e-8);
-			TKeyPREC o4(proj);
-            EXPECT_FAIL(o4.parse(tokenizefileString("*PREC 8"), true, -1));
-			ensure_equals("Precision must be at least 7 digits, we expect an error", cfg.outPrecision.digits, 7);
-			//
-			TKeyPRES o5(proj);
-            o5.parse(tokenizefileString("*PRES"), true, -1);
-			ensure("Ellips error, must match input", cfg.errorEllipses.isActive());
+		// output options (not testing pure boolean options)
+		//
+		TKeyEREL o1(proj);
+		ensure_THROW(o1.parse(tokenizefileString("*EREL P1 P2"), true, -1), std::runtime_error);
+        o1.parse(tokenizefileString("*EREL"), true, -1);
+		o1.parse(tokenizefileString("P1 P2"), true, -1);
+		o1.parse(tokenizefileString("P3 P4"), true, -1);
+		ensure("2 point pairs must be there for relative errors now", cfg.erelPairs.size() == 2);
+		ensure("First point pair for EREL must be P1 P2",  
+			cfg.erelPairs.at(0).first == "P1" && cfg.erelPairs.at(0).second == "P2");
+		ensure("Second point pair for EREL must be P3 P4", 
+			cfg.erelPairs.at(1).first == "P3" && cfg.erelPairs.at(1).second == "P4");
+		//
+		TKeyFMTO o2(proj);
+        o2.parse(tokenizefileString("*FMTO COL"), true, -1);
+		ensure("Custom separator must not be active using *FMTO COL", !cfg.CustomOutputSeparator.isActive());
+		ensure_NO_THROW(o2.parse(tokenizefileString("*FMTO STR"), true, -1));
+        o2.parse(tokenizefileString("*FMTO SEP \"   ;\""), true, -1);
+		ensure_equals("Custom separator must be \"   ;\"", cfg.CustomOutputSeparator.separator, "   ;");
+		//
+		TKeyPREC o3(proj);
+        o3.parse(tokenizefileString("*PREC 7"), true, -1);
+		ensure_equals("Precision must be 7 digits now", cfg.outPrecision.digits, 7);
+		ensure_equals("Convergence criteria must be 5e-8", cfg.outPrecision.convCrit, 5e-8);
+		TKeyPREC o4(proj);
+		ensure_THROW(o4.parse(tokenizefileString("*PREC 8"), true, -1), std::runtime_error);
+		ensure_equals("Precision must be at least 7 digits, we expect an error", cfg.outPrecision.digits, 7);
+		//
+		TKeyPRES o5(proj);
+        o5.parse(tokenizefileString("*PRES"), true, -1);
+		ensure("Ellips error, must match input", cfg.errorEllipses.isActive());
 
 
-			// additional output files
-			//
-			TKeyFAUT f1(proj);
-            f1.parse(tokenizefileString("*FAUT"), true, -1);
-			ensure_equals("Fault detection quantiles must match default values", 
-				cfg.faut.alpha, 0.01);
-			ensure_equals("Fault detection quantiles must match default values", 
-				cfg.faut.beta, 0.1);
-            f1.parse(tokenizefileString("*FAUT 0.1 0.3"), true, -1);
-			ensure_equals("Fault detection quantiles must match input", 
-				cfg.faut.alpha, 0.1);
-			ensure_equals("Fault detection quantiles must match input", 
-				cfg.faut.beta, 0.3);
-			//
-			TKeyPUNC f2(proj);
-            EXPECT_FAIL(f2.parse(tokenizefileString("*PUNC NOPE"), true, -1));
-            EXPECT_FAIL(f2.parse(tokenizefileString("*PUNC EE NOPE"), true, 1));
-            f2.parse(tokenizefileString("*PUNC"), true, -1);
-			ensure_equals("Using plain PUNC file format", 
-				cfg.writePunch.fmode, TLGCConfig::TCoordOut::kPLAIN);
-            f2.parse(tokenizefileString("*PUNC T"), true, -1);
-			ensure_equals("Using T PUNC file format", 
-				cfg.writePunch.fmode, TLGCConfig::TCoordOut::kT);
-			//
-			TKeySOBS f3(proj);
-            f3.parse(tokenizefileString("*SOBS"), true, -1);
-			ensure("New LGC file must be on with measurement values disabled", cfg.sim.writeLGCFile);
-			
-		} catch (exception& e) {
-			ensure("Unexpected execption while testing reader: " + string(e.what()) + "\n", 0);
-		}
+		// additional output files
+		//
+		TKeyFAUT f1(proj);
+        f1.parse(tokenizefileString("*FAUT"), true, -1);
+		ensure_equals("Fault detection quantiles must match default values", 
+			cfg.faut.alpha, 0.01);
+		ensure_equals("Fault detection quantiles must match default values", 
+			cfg.faut.beta, 0.1);
+        f1.parse(tokenizefileString("*FAUT 0.1 0.3"), true, -1);
+		ensure_equals("Fault detection quantiles must match input", 
+			cfg.faut.alpha, 0.1);
+		ensure_equals("Fault detection quantiles must match input", 
+			cfg.faut.beta, 0.3);
+		//
+		TKeyPUNC f2(proj);
+		ensure_THROW(f2.parse(tokenizefileString("*PUNC NOPE"), true, -1), std::runtime_error);
+		ensure_THROW(f2.parse(tokenizefileString("*PUNC EE NOPE"), true, 1), std::runtime_error);
+        f2.parse(tokenizefileString("*PUNC"), true, -1);
+		ensure_equals("Using plain PUNC file format", 
+			cfg.writePunch.fmode, TLGCConfig::TCoordOut::kPLAIN);
+        f2.parse(tokenizefileString("*PUNC T"), true, -1);
+		ensure_equals("Using T PUNC file format", 
+			cfg.writePunch.fmode, TLGCConfig::TCoordOut::kT);
+		//
+		TKeySOBS f3(proj);
+        f3.parse(tokenizefileString("*SOBS"), true, -1);
+		ensure("New LGC file must be on with measurement values disabled", cfg.sim.writeLGCFile);
 	}
 	
 	template<>
@@ -199,66 +189,62 @@ namespace tut
 	void object::test<3>()
 	{
 		set_test_name("Testing point input");
-		
-		try {
-			// set points to be in LEP reference frame
-			cfg.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
 
-			TKeyCALA pr1(proj);
+		// set points to be in LEP reference frame
+		cfg.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
+
+		TKeyCALA pr1(proj);
 			
-            pr1.parse(tokenizefileString("P0 1 2 3"), true, -1);
-			ensure("Point data must match input", proj.getPoints().doesObjectExist("P0"));
-			const LGCAdjustablePoint& pt0 = proj.getPoints().getObject("P0");
+        pr1.parse(tokenizefileString("P0 1 2 3"), true, -1);
+		ensure("Point data must match input", proj.getPoints().doesObjectExist("P0"));
+		const LGCAdjustablePoint& pt0 = proj.getPoints().getObject("P0");
 
 			
-			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getX().getMetresValue(), 1.0);
-			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getY().getMetresValue(), 2.0);
-			ensure_equals("Point coords must match input", pt0.getProvisionalValue().getH().getMetresValue(), 3.0);
-			ensure("Lock state must match", pt0.isFixed());
-			ensure_equals("Must be in the right frame", pt0.getFrameTreePosition()->get()->frame.getName(), "ROOT");
+		ensure_equals("Point coords must match input", pt0.getProvisionalValue().getX().getMetresValue(), 1.0);
+		ensure_equals("Point coords must match input", pt0.getProvisionalValue().getY().getMetresValue(), 2.0);
+		ensure_equals("Point coords must match input", pt0.getProvisionalValue().getH().getMetresValue(), 3.0);
+		ensure("Lock state must match", pt0.isFixed());
+		ensure_equals("Must be in the right frame", pt0.getFrameTreePosition()->get()->frame.getName(), "ROOT");
 
-			TKeyVXY prxy(proj);
-			TKeyVXZ prxz(proj);
-			TKeyVYZ pryz(proj);
-			TKeyVZ  prz(proj);
-            EXPECT_FAIL(prxy.parse(tokenizefileString("P0 1 2 3"), true, -1));
-            prxy.parse(tokenizefileString("P1 1 2 3 $This is a DB comment"), true, -1);
+		TKeyVXY prxy(proj);
+		TKeyVXZ prxz(proj);
+		TKeyVYZ pryz(proj);
+		TKeyVZ  prz(proj);
+		ensure_THROW(prxy.parse(tokenizefileString("P0 1 2 3"), true, -1), std::runtime_error);
+        prxy.parse(tokenizefileString("P1 1 2 3 $This is a DB comment"), true, -1);
 			
-			prxz.parse(tokenizefileString("%Pc1 1 2 3"), true, -1);
-			prxz.parse(tokenizefileString("%Pc2 1 2 3"), true, -1);
-			prxz.parse(tokenizefileString("P2 1 2 3"), true, -1);
-			pryz.parse(tokenizefileString("P3 1 2 3"), true, -1);
-			prz.parse(tokenizefileString( "P4 1 2 3"), true, -1);
+		prxz.parse(tokenizefileString("%Pc1 1 2 3"), true, -1);
+		prxz.parse(tokenizefileString("%Pc2 1 2 3"), true, -1);
+		prxz.parse(tokenizefileString("P2 1 2 3"), true, -1);
+		pryz.parse(tokenizefileString("P3 1 2 3"), true, -1);
+		prz.parse(tokenizefileString( "P4 1 2 3"), true, -1);
 			
-			const LGCAdjustablePoint& pt1 = proj.getPoints().getObject("P1");
+		const LGCAdjustablePoint& pt1 = proj.getPoints().getObject("P1");
 
-			ensure_equals(pt1.eolcomment, "$This is a DB comment");
-			ensure_equals(pt1.getName(), "P1");
-			ensure("Lock state must match", pt1.isCoordinateFixed(2));
+		ensure_equals(pt1.eolcomment, "$This is a DB comment");
+		ensure_equals(pt1.getName(), "P1");
+		ensure("Lock state must match", pt1.isCoordinateFixed(2));
 
-			const LGCAdjustablePoint& pt2 = proj.getPoints().getObject("P2");
-			// Fails, but the values seem correct anyway
-			//ensure_equals(pt2.hdrcomment, "%Pc1 1 2 3\n%Pc2 1 2 3");
-			ensure("Lock state must match", pt2.isCoordinateFixed(1));
-			ensure_equals(proj.getPoints().numObjects(), (size_t)5);
+		const LGCAdjustablePoint& pt2 = proj.getPoints().getObject("P2");
+		// Fails, but the values seem correct anyway
+		//ensure_equals(pt2.hdrcomment, "%Pc1 1 2 3\n%Pc2 1 2 3");
+		ensure("Lock state must match", pt2.isCoordinateFixed(1));
+		ensure_equals(proj.getPoints().numObjects(), (size_t)5);
 
-			//Testing POIN point definition
-			TKeyPOIN poin1(proj);
-			//Incorrect definition, all 3 standard deviations should be assigned in POIN used. Just warning is produced, point is defined, but sigmas are not assigned.
-            poin1.parse(tokenizefileString("POIN1 1 2 3 SX 0.1 SY 0.2"), true, -1);
-			ensure("Point should be defined", proj.getPoints().doesObjectExist("POIN1"));
-			ensure_equals("Standard deviations should not be assigned.", proj.getPoints().getObject("POIN1").hasStandDeviations(), false);
+		//Testing POIN point definition
+		TKeyPOIN poin1(proj);
+		//Incorrect definition, all 3 standard deviations should be assigned in POIN used. Just warning is produced, point is defined, but sigmas are not assigned.
+        poin1.parse(tokenizefileString("POIN1 1 2 3 SX 0.1 SY 0.2"), true, -1);
+		ensure("Point should be defined", proj.getPoints().doesObjectExist("POIN1"));
+		ensure_equals("Standard deviations should not be assigned.", proj.getPoints().getObject("POIN1").hasStandDeviations(), false);
 
-			//Correct definition
-            poin1.parse(tokenizefileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), true, -1);
-			ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
+		//Correct definition
+        poin1.parse(tokenizefileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), true, -1);
+		ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
 
-			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); //Values are stored in metres
-			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M ); //Values are stored in metres
-			ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); //Values are stored in metres
-		} catch (exception& e) {
-			ensure("Unexpected execption while testing reader: " + string(e.what()) + "\n", 0);
-		}
+		ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); //Values are stored in metres
+		ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M ); //Values are stored in metres
+		ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); //Values are stored in metres
 	}
 	
 	template<>
@@ -288,144 +274,138 @@ namespace tut
 		*SCALE   scaleID   sigmaD   ppmD   distCorrectionValue   sigmaDCorr    sigmaInstrCentering  
 
 		*/
-		
-		try {
-			using namespace LGC;
-			TInstrumentData& instr(proj.getInstruments());
-			// TSTN station with targets
-			TKeyPOLAR m1(proj);
-            m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1);
-			m1.parse(tokenizefileString( "PT1 1 2 3 4 0 5 6 7 8 9"), true, -1);
-			m1.parse(tokenizefileString( "PT9 2 3 3 4 0 5 6 7 8 9"), true, -1);
-			m1.parse(tokenizefileString( "PT8 3 1 3 4 0 5 6 7 8 9"), true, -1);
-			m1.parse(tokenizefileString( "PT7 3 1 3 4 0 5 6 7 8 9"), true, -1);
-			// Already exists, must fail
-            EXPECT_FAIL(m1.parse(tokenizefileString("PT1 1 2 3 4 0 5 6 7 8 9"), true, -1));
-            EXPECT_FAIL(m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1));
-			//Uncomplete definition must fail
-            EXPECT_FAIL(m1.parse(tokenizefileString("*POLAR TS2 PT1 1 2 3 "), true, -1));
-            m1.parse(tokenizefileString("PT2 11 12 13 14 1 15 16 17 18 19"), true, -1);
-			const TInstrumentData::TPOLAR& ts1(instr.getDevice(instr.fPOLAR, "TS1"));
-			ensure_equals(ts1.ID, "TS1");
-			ensure_equals(ts1.defTarget, "PT1");
-			ensure_equals(ts1.instrHeight, 1);
-			ensure_equals(ts1.sigmaInstrHeight, 2*MM2M); //VALUE GIVEN IN MM, but stored in METRES 2mm = 0.002m 
-			ensure_equals(ts1.sigmaInstrCentering, 3*MM2M);
-			ensure_equals(ts1.constAngle, 4*GON2RAD);
-			const TInstrumentData::TPOLAR::TTarget& pt1(instr.getDevice(ts1.targets, "PT1"));
-			ensure_equals(pt1.ID, "PT1"); 
-			ensure_equals(pt1.sigmaAngl, 1*CC2RAD); 
-			ensure_equals(pt1.sigmaZenD, 2*CC2RAD);
-			ensure_equals(pt1.sigmaDist, 3*MM2M); 
-			ensure_equals(pt1.ppmDist, 4*MM2M); 
-			ensure_equals(pt1.distCorrectionUnknown, false); 
-			// ensure_equals(pt1.distCorrectionAdjustable->isFixed(), true);
-			ensure_equals(pt1.distCorrectionValue, 5); 
-			ensure_equals(pt1.sigmaDCorr, 6*MM2M); 
-			ensure_equals(pt1.sigmaTargetCentering, 7*MM2M); 
-			ensure_equals(pt1.targetHt, 8); 
-			ensure_equals(pt1.sigmaTargetHt, 9*MM2M); 
-			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-			// ensure_equals(pt1.distCorrectionAdjustable->getProvisionalValue(), 5);
 
-			const TInstrumentData::TPOLAR::TTarget& pt2(instr.getDevice(ts1.targets, "PT2"));
-			ensure_equals(pt2.ID, "PT2"); 
-			ensure_equals(pt2.sigmaAngl, 11*CC2RAD); 
-			ensure_equals(pt2.sigmaZenD, 12*CC2RAD); 
-			ensure_equals(pt2.sigmaDist, 13*MM2M); 
-			ensure_equals(pt2.ppmDist, 14*MM2M); 
-			ensure_equals(pt2.distCorrectionUnknown, true); 
-			// ensure_equals(pt2.distCorrectionAdjustable->isFixed(), false);
-			ensure_equals(pt2.distCorrectionValue, 15); 
-			ensure_equals(pt2.sigmaDCorr, 16*MM2M); 
-			ensure_equals(pt2.sigmaTargetCentering, 17*MM2M); 
-			ensure_equals(pt2.targetHt, 18); 
-			ensure_equals(pt2.sigmaTargetHt, 19*MM2M); 
-			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-			// ensure_equals(pt2.distCorrectionAdjustable->getProvisionalValue(), 15);
+		using namespace LGC;
+		TInstrumentData& instr(proj.getInstruments());
+		// TSTN station with targets
+		TKeyPOLAR m1(proj);
+        m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1);
+		m1.parse(tokenizefileString( "PT1 1 2 3 4 0 5 6 7 8 9"), true, -1);
+		m1.parse(tokenizefileString( "PT9 2 3 3 4 0 5 6 7 8 9"), true, -1);
+		m1.parse(tokenizefileString( "PT8 3 1 3 4 0 5 6 7 8 9"), true, -1);
+		m1.parse(tokenizefileString( "PT7 3 1 3 4 0 5 6 7 8 9"), true, -1);
+		// Already exists, must fail
+		ensure_THROW(m1.parse(tokenizefileString("PT1 1 2 3 4 0 5 6 7 8 9"), true, -1), std::runtime_error);
+		ensure_THROW(m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1), std::runtime_error);
+		//Uncomplete definition must fail
+		ensure_THROW(m1.parse(tokenizefileString("*POLAR TS2 PT1 1 2 3 "), true, -1), std::runtime_error);
+        m1.parse(tokenizefileString("PT2 11 12 13 14 1 15 16 17 18 19"), true, -1);
+		const TInstrumentData::TPOLAR& ts1(instr.getDevice(instr.fPOLAR, "TS1"));
+		ensure_equals(ts1.ID, "TS1");
+		ensure_equals(ts1.defTarget, "PT1");
+		ensure_equals(ts1.instrHeight, 1);
+		ensure_equals(ts1.sigmaInstrHeight, 2*MM2M); //VALUE GIVEN IN MM, but stored in METRES 2mm = 0.002m 
+		ensure_equals(ts1.sigmaInstrCentering, 3*MM2M);
+		ensure_equals(ts1.constAngle, 4*GON2RAD);
+		const TInstrumentData::TPOLAR::TTarget& pt1(instr.getDevice(ts1.targets, "PT1"));
+		ensure_equals(pt1.ID, "PT1"); 
+		ensure_equals(pt1.sigmaAngl, 1*CC2RAD); 
+		ensure_equals(pt1.sigmaZenD, 2*CC2RAD);
+		ensure_equals(pt1.sigmaDist, 3*MM2M); 
+		ensure_equals(pt1.ppmDist, 4*MM2M); 
+		ensure_equals(pt1.distCorrectionUnknown, false); 
+		// ensure_equals(pt1.distCorrectionAdjustable->isFixed(), true);
+		ensure_equals(pt1.distCorrectionValue, 5); 
+		ensure_equals(pt1.sigmaDCorr, 6*MM2M); 
+		ensure_equals(pt1.sigmaTargetCentering, 7*MM2M); 
+		ensure_equals(pt1.targetHt, 8); 
+		ensure_equals(pt1.sigmaTargetHt, 9*MM2M); 
+		//Check that pointer to adjustable collection of scalars is valid and the object contains right value
+		// ensure_equals(pt1.distCorrectionAdjustable->getProvisionalValue(), 5);
 
-			//
-			// EDM with targets
-			TKeyEDM m2(proj);
-            m2.parse(tokenizefileString("*EDM DM1 ET1 1 2 3"), true, -1);
-			//targetID   sigmaDSpt   ppmDSpt   distCorrectionKnown    distCorrectionValue    sigmaDCorr    sigmaTargetCentering   targetHt    sigmaTargetHt    
-            m2.parse(tokenizefileString("ET1 1 2 0 3 4 5 6 7"), true, -1);
-            m2.parse(tokenizefileString("ET2 11 12 1 13 14 15 16 17"), true, -1);
-			const TInstrumentData::TEDM& dm1(instr.getDevice(instr.fEDM, "DM1"));			
-			ensure_equals(dm1.ID, "DM1");
-			ensure_equals(dm1.defTarget, "ET1");
-			ensure_equals(dm1.instrHeight, 1);
-			ensure_equals(dm1.sigmaInstrHeight, 2 * MM2M);
-			ensure_equals(dm1.sigmaInstrCentering, 3 * MM2M);
-			const TInstrumentData::TEDM::TTarget& dt1(instr.getDevice(dm1.targets, "ET1"));
-			ensure_equals(dt1.ID, "ET1"); 
-			ensure_equals(dt1.sigmaDSpt, 1 * MM2M); 
-			ensure_equals(dt1.ppmDSpt, 2 * MM2M); 
-			ensure_equals(dt1.distCorrectionUnknown, false); 
-			// ensure_equals(dt1.distCorrectionAdjustable->isFixed(), true);
-			ensure_equals(dt1.distCorrectionValue, 3); 
-			ensure_equals(dt1.sigmaDCorr, 4 * MM2M); 
-			ensure_equals(dt1.sigmaTargetCentering, 5 * MM2M); 
-			ensure_equals(dt1.targetHt, 6); 
-			ensure_equals(dt1.sigmaTargetHt, 7 * MM2M); 
-			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-			// ensure_equals(dt1.distCorrectionAdjustable->getProvisionalValue(), 3);
+		const TInstrumentData::TPOLAR::TTarget& pt2(instr.getDevice(ts1.targets, "PT2"));
+		ensure_equals(pt2.ID, "PT2"); 
+		ensure_equals(pt2.sigmaAngl, 11*CC2RAD); 
+		ensure_equals(pt2.sigmaZenD, 12*CC2RAD); 
+		ensure_equals(pt2.sigmaDist, 13*MM2M); 
+		ensure_equals(pt2.ppmDist, 14*MM2M); 
+		ensure_equals(pt2.distCorrectionUnknown, true); 
+		// ensure_equals(pt2.distCorrectionAdjustable->isFixed(), false);
+		ensure_equals(pt2.distCorrectionValue, 15); 
+		ensure_equals(pt2.sigmaDCorr, 16*MM2M); 
+		ensure_equals(pt2.sigmaTargetCentering, 17*MM2M); 
+		ensure_equals(pt2.targetHt, 18); 
+		ensure_equals(pt2.sigmaTargetHt, 19*MM2M); 
+		//Check that pointer to adjustable collection of scalars is valid and the object contains right value
+		// ensure_equals(pt2.distCorrectionAdjustable->getProvisionalValue(), 15);
 
-			const TInstrumentData::TEDM::TTarget& dt2(instr.getDevice(dm1.targets, "ET2"));
-			ensure_equals(dt2.ID, "ET2"); 
-			ensure_equals(dt2.sigmaDSpt, 11 * MM2M); 
-			ensure_equals(dt2.ppmDSpt, 12 * MM2M); 
-			ensure_equals(dt2.distCorrectionUnknown, true); 
-			// ensure_equals(dt2.distCorrectionAdjustable->isFixed(), false);
-			ensure_equals(dt2.distCorrectionValue, 13); 
-			ensure_equals(dt2.sigmaDCorr, 14 * MM2M); 
-			ensure_equals(dt2.sigmaTargetCentering, 15 * MM2M); 
-			ensure_equals(dt2.targetHt, 16); 
-			ensure_equals(dt2.sigmaTargetHt, 17 * MM2M); 
-			// ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
+		//
+		// EDM with targets
+		TKeyEDM m2(proj);
+        m2.parse(tokenizefileString("*EDM DM1 ET1 1 2 3"), true, -1);
+		//targetID   sigmaDSpt   ppmDSpt   distCorrectionKnown    distCorrectionValue    sigmaDCorr    sigmaTargetCentering   targetHt    sigmaTargetHt    
+        m2.parse(tokenizefileString("ET1 1 2 0 3 4 5 6 7"), true, -1);
+        m2.parse(tokenizefileString("ET2 11 12 1 13 14 15 16 17"), true, -1);
+		const TInstrumentData::TEDM& dm1(instr.getDevice(instr.fEDM, "DM1"));			
+		ensure_equals(dm1.ID, "DM1");
+		ensure_equals(dm1.defTarget, "ET1");
+		ensure_equals(dm1.instrHeight, 1);
+		ensure_equals(dm1.sigmaInstrHeight, 2 * MM2M);
+		ensure_equals(dm1.sigmaInstrCentering, 3 * MM2M);
+		const TInstrumentData::TEDM::TTarget& dt1(instr.getDevice(dm1.targets, "ET1"));
+		ensure_equals(dt1.ID, "ET1"); 
+		ensure_equals(dt1.sigmaDSpt, 1 * MM2M); 
+		ensure_equals(dt1.ppmDSpt, 2 * MM2M); 
+		ensure_equals(dt1.distCorrectionUnknown, false); 
+		// ensure_equals(dt1.distCorrectionAdjustable->isFixed(), true);
+		ensure_equals(dt1.distCorrectionValue, 3); 
+		ensure_equals(dt1.sigmaDCorr, 4 * MM2M); 
+		ensure_equals(dt1.sigmaTargetCentering, 5 * MM2M); 
+		ensure_equals(dt1.targetHt, 6); 
+		ensure_equals(dt1.sigmaTargetHt, 7 * MM2M); 
+		//Check that pointer to adjustable collection of scalars is valid and the object contains right value
+		// ensure_equals(dt1.distCorrectionAdjustable->getProvisionalValue(), 3);
 
-			//
-			// Leveling with staffs
-			TKeyLEVEL m3(proj);
-            m3.parse(tokenizefileString("*LEVEL LI1 ST1 0 100"), true, -1);
-			//staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt    
-			m3.parse(tokenizefileString( "ST1 1 2 3 4 5 6"), true, -1);
-			m3.parse(tokenizefileString( "ST2 1 2 3 4 5 6"), true, -1);
-			const TInstrumentData::TLEVEL& ls1(instr.getDevice(instr.fLEVEL, "LI1"));			
-			ensure_equals(ls1.ID, "LI1");
-			ensure_equals(ls1.defStaffID, "ST1");
-			ensure_equals(ls1.collAngleUnknown, false);
-			// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
-			ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
-			// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
-			const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
-			ensure_equals(lt1.ID, "ST1"); 
-			ensure_equals(lt1.sigmaD, 1 * MM2M); 
-			ensure_equals(lt1.ppmD, 2 * MM2M); 
-			ensure_equals(lt1.distCorrectionValue, 3); 
-			ensure_equals(lt1.sigmaDCorr, 4 * MM2M); 
-			ensure_equals(lt1.staffHt, 5); 
-			ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
+		const TInstrumentData::TEDM::TTarget& dt2(instr.getDevice(dm1.targets, "ET2"));
+		ensure_equals(dt2.ID, "ET2"); 
+		ensure_equals(dt2.sigmaDSpt, 11 * MM2M); 
+		ensure_equals(dt2.ppmDSpt, 12 * MM2M); 
+		ensure_equals(dt2.distCorrectionUnknown, true); 
+		// ensure_equals(dt2.distCorrectionAdjustable->isFixed(), false);
+		ensure_equals(dt2.distCorrectionValue, 13); 
+		ensure_equals(dt2.sigmaDCorr, 14 * MM2M); 
+		ensure_equals(dt2.sigmaTargetCentering, 15 * MM2M); 
+		ensure_equals(dt2.targetHt, 16); 
+		ensure_equals(dt2.sigmaTargetHt, 17 * MM2M); 
+		// ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
 
-			//
-			// Scales
-			TKeySCALE m4(proj);
-			//*SCALE   scaleID   sigmaD   ppmD   distCorrectionValue   sigmaDCorr    sigmaInstrCentering
-            m4.parse(tokenizefileString("*SCALE SC1 1 2 3 4 5"), true, -1);
-			const TInstrumentData::TSCALE& sc1(instr.getDevice(instr.fSCALE, "SC1"));		
-			ensure_equals(sc1.ID, "SC1");		
-			ensure_equals(sc1.sigmaD, 1 * MM2M);		
-			ensure_equals(sc1.ppmD, 2 * MM2M);		
-			ensure_equals(sc1.distCorrectionValue, 3);		
-			ensure_equals(sc1.sigmaDCorr, 4 * MM2M);		
-			ensure_equals(sc1.sigmaInstrCentering, 5 * MM2M);	
+		//
+		// Leveling with staffs
+		TKeyLEVEL m3(proj);
+        m3.parse(tokenizefileString("*LEVEL LI1 ST1 0 100"), true, -1);
+		//staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt    
+		m3.parse(tokenizefileString( "ST1 1 2 3 4 5 6"), true, -1);
+		m3.parse(tokenizefileString( "ST2 1 2 3 4 5 6"), true, -1);
+		const TInstrumentData::TLEVEL& ls1(instr.getDevice(instr.fLEVEL, "LI1"));			
+		ensure_equals(ls1.ID, "LI1");
+		ensure_equals(ls1.defStaffID, "ST1");
+		ensure_equals(ls1.collAngleUnknown, false);
+		// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
+		ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
+		// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
+		const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
+		ensure_equals(lt1.ID, "ST1"); 
+		ensure_equals(lt1.sigmaD, 1 * MM2M); 
+		ensure_equals(lt1.ppmD, 2 * MM2M); 
+		ensure_equals(lt1.distCorrectionValue, 3); 
+		ensure_equals(lt1.sigmaDCorr, 4 * MM2M); 
+		ensure_equals(lt1.staffHt, 5); 
+		ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
 
-            m4.parse(tokenizefileString("*SCALE SC2 1 2 3 4 5"), true, -1);
+		//
+		// Scales
+		TKeySCALE m4(proj);
+		//*SCALE   scaleID   sigmaD   ppmD   distCorrectionValue   sigmaDCorr    sigmaInstrCentering
+        m4.parse(tokenizefileString("*SCALE SC1 1 2 3 4 5"), true, -1);
+		const TInstrumentData::TSCALE& sc1(instr.getDevice(instr.fSCALE, "SC1"));		
+		ensure_equals(sc1.ID, "SC1");		
+		ensure_equals(sc1.sigmaD, 1 * MM2M);		
+		ensure_equals(sc1.ppmD, 2 * MM2M);		
+		ensure_equals(sc1.distCorrectionValue, 3);		
+		ensure_equals(sc1.sigmaDCorr, 4 * MM2M);		
+		ensure_equals(sc1.sigmaInstrCentering, 5 * MM2M);	
 
-			
-		} catch (exception& e) {
-			ensure("Unexpected execption while testing reader: " + string(e.what()) + "\n", 0);
-		}
+        m4.parse(tokenizefileString("*SCALE SC2 1 2 3 4 5"), true, -1);
 	}
 
 	template<>
@@ -437,7 +417,7 @@ namespace tut
 
 			// add a total station
 			TKeyTSTN tstn(proj);
-            EXPECT_FAIL(tstn.parse(tokenizefileString("*TSTN PT1 POLAR1"), true, -1));
+			ensure_THROW(tstn.parse(tokenizefileString("*TSTN PT1 POLAR1"), true, -1), std::runtime_error);
             tstn.parse(tokenizefileString("*TSTN P1 TS1 ROT3D TRGT PT2 ICSE 33"), true, -1);
 			const auto& ts1(proj.getCurrentNode().measurements.fTSTN.back());
 			ensure_equals(ts1->rot3D, true);
@@ -741,10 +721,10 @@ namespace tut
 			++currentNodeIter;
 
 			ensure_equals("One FRAME measurement", currentNodeIter->get()->frame.getTranslationStandDev(0).getMMetresValue(), 0.1);
-			EXPECT_FAIL(currentNodeIter->get()->frame.getTranslationStandDev(1));
+			ensure_THROW(currentNodeIter->get()->frame.getTranslationStandDev(1), std::runtime_error);
 
 
-			EXPECT_FAIL(ensure_equals("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev()*M2MM, 5));
+			ensure_not("Scale standard deviation not assigned",currentNodeIter->get()->frame.getScaleStandDev()*M2MM == 5);
 		}
 
 }

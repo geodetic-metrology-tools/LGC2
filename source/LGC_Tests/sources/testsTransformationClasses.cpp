@@ -1,8 +1,4 @@
-#pragma warning(push)
-#pragma warning(disable : 4512)
 #include <tut/tut.hpp>
-#pragma warning(pop)
-
 
 //Input test files
 #include <TLGCData.h>
@@ -18,14 +14,6 @@
 #include "TInverseTransformation.h"
 #include "TDirectTransformation.h"
 #include <Eigen/Dense>
-
-
-
-
-#define EXPECT_FAIL(x) \
-try {x;} catch (std::exception& e) {cout << endl << "expected failure: " << e.what();}
-
-#pragma warning (disable:4224)
 
 using namespace std;
 

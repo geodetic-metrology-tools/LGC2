@@ -1,7 +1,5 @@
-#pragma warning(push)
-#pragma warning(disable : 4512)
 #include <tut/tut.hpp>
-#pragma warning(pop)
+#include <tut/tut_macros.hpp>
 
 
 //Input test files
@@ -18,10 +16,6 @@
 #include "TLSInputMatrices.h"
 #include "TLSResultsMatricesExtractor.h"
 #include "testTLOR2LOR.h"
-
-
-#define EXPECT_FAIL(x) \
-try {x;} catch (std::exception& e) {cout << endl << "expected failure: " << e.what();}
 
 #pragma warning (disable:4224)
 
@@ -112,10 +106,10 @@ namespace tut
 
 		ensure_equals("Coordinates fixed state should match",pH.getCoordinateUnknIndex(0), 5);
 		ensure_equals("Coordinates fixed state should match",pH.getCoordinateUnknIndex(1), 6);
-		EXPECT_FAIL(pH.getCoordinateUnknIndex(2));
+		ensure_THROW(pH.getCoordinateUnknIndex(2), std::logic_error);
 
 
-		EXPECT_FAIL(pH.getStandDev(0));
+		ensure_THROW(pH.getStandDev(0), std::runtime_error);
 		ensure_equals("Reference frame should match",pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 		ensure_equals("Point is initialized",pH.isInitialized(), true);
 		ensure_equals("No standard deviations",pH.hasStandDeviations(), false);
@@ -134,15 +128,15 @@ namespace tut
 		ensure_equals("Estimated precision should match", pH.getZEstPrecision().getMetresValue(), 0.0);
 
 		pH.setXYEstimatedCovariance(0.01);
-		EXPECT_FAIL(pH.setYZEstimatedCovariance(0.02));
-		EXPECT_FAIL(pH.setXZEstimatedCovariance(0.02));
+		ensure_THROW(pH.setYZEstimatedCovariance(0.02), std::logic_error);
+		ensure_THROW(pH.setXZEstimatedCovariance(0.02), std::logic_error);
 		ensure_equals("Covariance should match", pH.getXYCovar(), 0.01);
 
 		ensure_equals("Reference frame should match", pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 		ensure_equals("Point is initialized", pH.isInitialized(), true);
 		ensure_equals("No standard deviations", pH.hasStandDeviations(), false);
 
-		EXPECT_FAIL(pH.setCorrection(10,10));
+		ensure_THROW(pH.setCorrection(10,10), std::logic_error);
 		pH.setStandardDeviations(0.1,0.2,0.3);
 		ensure_equals("Standard deviations should match", pH.getStandDev(0), 0.1);
 		ensure_equals("Standard deviations should match", pH.getStandDev(1), 0.2);
@@ -175,8 +169,8 @@ namespace tut
 		adjLength.setEstimatedPrecision(2,0.01);
 		ensure_equals("Correction should match", adjLength.getCorrection(), 0.5);
 		ensure_equals("New estimated value should match", adjLength.getEstimatedValue(), 2.5);
-		EXPECT_FAIL(adjLength.setCorrection(3,0.5));
-		EXPECT_FAIL(adjLength.setEstimatedPrecision(3,0.01));
+		ensure_THROW(adjLength.setCorrection(3,0.5), std::logic_error);
+		ensure_THROW(adjLength.setEstimatedPrecision(3,0.01), std::logic_error);
 
 		ensure_equals("Correction should match", adjLength.getEstimatedPrecision(), 0.01);
 
