@@ -46,7 +46,7 @@ TFileLogger::~TFileLogger ()
 
 
 		//link to the user guide
-		outputFile << "User guide: " << "https://wikis.web.cern.ch/wikis/display/SUS/LGC2+User+Guide" << std::endl << std::endl;
+		outputFile << "User guide: " << "https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide" << std::endl << std::endl;
 
         outputFile.close();
     } 
