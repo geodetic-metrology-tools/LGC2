@@ -1,7 +1,4 @@
-#pragma warning(push)
-#pragma warning(disable : 4512)
 #include <tut/tut.hpp>
-#pragma warning(pop)
 
 #include <TLGCData.h>
 #include <TLOR2LOR.h>
@@ -9,9 +6,6 @@
 #include "testTLOR2LOR.h"
 #include "TInverseTransformation.h"
 #include "TDirectTransformation.h"
-
-#define EXPECT_FAIL(x) \
-try {x;} catch (std::exception& e) {cout << endl << "expected failure: " << e.what();}
 
 #pragma warning (disable:4224)
 

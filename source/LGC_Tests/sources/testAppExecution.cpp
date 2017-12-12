@@ -1,7 +1,4 @@
-#pragma warning(push)
-#pragma warning(disable : 4512)
 #include <tut/tut.hpp>
-#pragma warning(pop)
 
 #include <StringManager.h>
 #include <TLGCData.h>
@@ -33,9 +30,9 @@ namespace tut
 
 		set_test_name("Testing TLGCApp class and nam file reader");
 		
-        //TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.lgc2", 
-		//			    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.out");
-		//ensure_equals( "Execution should work", proj.exec(), true);
+        TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.lgc2", 
+					    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.out");
+		ensure( "Execution should work", proj.exec() == true);
 	}
 
 	template<>

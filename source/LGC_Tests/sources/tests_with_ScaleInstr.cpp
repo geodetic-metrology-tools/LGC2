@@ -35,7 +35,7 @@ namespace tut
 
 		set_test_name("Testing ECTH measurement in OLOC");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECTH.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECTHOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_OLOC);
@@ -97,7 +97,7 @@ namespace tut
 
 		set_test_name("Testing ECTH measurement in LEP");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECTH.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECTHLEP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_LEP);
@@ -158,7 +158,7 @@ namespace tut
 
 		set_test_name("Testing ECTH measurement in RS2K");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECTH.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECTHRS2K.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_RS2K);
@@ -219,7 +219,7 @@ namespace tut
 
 		set_test_name("Testing ECTH measurement in SPHE");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECTH.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECTHSPHE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecth_SPHE);
@@ -281,7 +281,7 @@ namespace tut
 
 		set_test_name("Testing ECVE measurement in OLOC");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECVEOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_OLOC_PtLine);
@@ -333,7 +333,7 @@ namespace tut
 
 		set_test_name("Testing ECVE measurement in RS2K");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECVERS2K.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_RS2K_PtLine);
@@ -385,7 +385,7 @@ namespace tut
 
 		set_test_name("Testing ECVE measurement in LEP");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECVELEP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_LEP_PtLine);
@@ -437,7 +437,7 @@ namespace tut
 
 		set_test_name("Testing ECVE measurement in SPHE");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECVESPHE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_SPHE_PtLine);
@@ -488,7 +488,7 @@ namespace tut
 
 		set_test_name("Testing ECVE measurement in OLOC");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECVE.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECVE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
 		stringstream infiler(TestScaleInstr::ecve_OLOC);
@@ -529,7 +529,7 @@ namespace tut
 	
 		set_test_name("Testing ECSP measurement in OLOC");
 		TReader r(projTest);
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECSP.txt");
+		projTest->getFileLogger().setOutputfileLocation("./outECSPOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
 		stringstream infiler(TestScaleInstr::ecsp_OLOC);
