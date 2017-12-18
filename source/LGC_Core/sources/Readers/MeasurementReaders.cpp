@@ -154,6 +154,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// optionally change target sigmas
 		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX );
 		tgt.sigmaY = opts.getParamRmm2m("YSE", tgt.sigmaY );
+		tgt.sigmaZ = opts.getParamRmm2m("ZSE", tgt.sigmaZ);
 		
 		// set measurement value
 		TUVEC uvec(obspt, tgt);

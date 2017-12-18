@@ -133,12 +133,22 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
 	(*stream).writeString(obsResWidth, "RESYV"); //residual 
 
+	(*stream).writeString(obsWidth, "OBSZV"); //mesured z vector component
+	(*stream).writeString(obsResWidth, "SZV"); //sigma z vector component
+	(*stream).writeString(obsWidth, "CALCZV"); //estimated z vector component 
+	(*stream).writeString(obsResWidth, "RESZV"); //residual 
+
 	(*stream) << endl;
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); //TARGET ID
 	(*stream).writeStringLeft(nameWidth, ""); //POSITION
 	//(*stream).writeString(obsWidth,	"(M)"); //height of the target
+
+	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "()"); //sigma observed value
+	(*stream).writeString(obsWidth, "()"); //estimated 
+	(*stream).writeString(obsResWidth, "()"); //residual
 
 	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
 	(*stream).writeString(obsResWidth, "()"); //sigma observed value
@@ -279,6 +289,19 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getYCompVectorResidual()* M2MM);/*Unitless, delete or replace with appropriate conversion*/
 
+
+//Z vector component
+		//write the observed Z vector component
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getZ());
+
+		//write the sigma Z vector component
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaZ* M2MM);/*Unitless, delete or replace with appropriate conversion*/
+
+		//write the estimated Y vector component
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getZ() + ItUVEC.getZCompVectorResidual());
+
+		//write the residual X vector component
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getZCompVectorResidual()* M2MM);/*Unitless, delete or replace with appropriate conversion*/
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
