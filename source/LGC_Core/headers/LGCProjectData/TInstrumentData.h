@@ -92,6 +92,7 @@ class TInstrumentData {
                 std::string ID;
                 TReal sigmaX;	               // [] unitless
                 TReal sigmaY;	               // [] unitless
+				TReal sigmaZ;                  // [] unitless
                 TLength sigmaDist;	         // [m]
                 TLength sigmaTargetCentering; // [m]
             };
