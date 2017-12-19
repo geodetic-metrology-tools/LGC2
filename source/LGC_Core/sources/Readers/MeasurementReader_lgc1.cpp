@@ -1565,10 +1565,15 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
 			}
 			else if (tokens.size() == 6)
 			{
+				if (tokens.at(3).compare(0, 1, "D") || tokens.at(3).compare(0, 1, "O"))
+					throw std::runtime_error("A DVER measurement, unvalid arguments, check your file. ");
+				
 				dver.setObservedStDev(TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
 				dcorr = TLength(std::stor(tokens.at(4).substr(1)), TLength::EUnits::kMetres);
 				dver.setDistanceCorrection(dcorr);
 			}
+			else
+				throw std::runtime_error("A DVER measurement, unvalid arguments, check your file. ");
 		}
 		else
 		{
