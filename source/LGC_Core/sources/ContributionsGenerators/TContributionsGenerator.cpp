@@ -1492,11 +1492,11 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, stThirdEqContrib, tgFirstEqContrib, tgSecondEqContrib, tgThirdEqContrib, targetTransfContributions,
 						   {1.0, 0.0, 0.0}, // X contribution (i) for a first and second equation
 				           {0.0, 1.0, 0.0}, // Y contribution (j) for a first and second equation
-						   { 0.0, 0.0, 1.0 }, // Z contribution (j) for a first and second equation
+						   { 0.0, 0.0, 1.0 }, // Z contribution (k) for a first and second equation
 						   {i-1/D*dx, j-1/D*dy, k-1/D*dz}, //Misclosure vector for a first and second equation
 						   { pow2q(uvec.target.sigmaX) + pow2q(1 / D*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)),
 		pow2q(uvec.target.sigmaY) + pow2q(1 / D)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering),
-		pow2q(1 / D)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering) } }; //Obs variances
+		pow2q(uvec.target.sigmaZ) + pow2q(1 / D)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering) } }; //Obs variances
 
 	return contrib;
 }
