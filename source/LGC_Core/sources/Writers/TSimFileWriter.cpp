@@ -152,8 +152,9 @@ void	TSimFileWriter::writeInstrument()
 			(*stream) << itTarget.second->ID << sep
 			<< itTarget.second->sigmaX*M2MM << sep
 			<< itTarget.second->sigmaY*M2MM << sep
-			<< itTarget.second->sigmaDist.getMMetresValue() << sep
-			<< itTarget.second->sigmaTargetCentering.getMMetresValue() << endl;
+			<< itTarget.second->sigmaZ*M2MM << sep
+			<< itTarget.second->sigmaDist.getMetresValue() << sep
+			<< itTarget.second->sigmaTargetCentering.getMetresValue() << endl;
 	}
 
 	for (auto& itPOLAR : data->getInstruments().fPOLAR)
@@ -640,6 +641,10 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 			if (uvec.target.sigmaY != romDefTarget.sigmaY)
 				(*stream) << "YSE" << sep
 				<< uvec.target.sigmaY*M2MM << sep;
+
+			if (uvec.target.sigmaZ != romDefTarget.sigmaZ)
+				(*stream) << "ZSE" << sep
+				<< uvec.target.sigmaZ*M2MM << sep;
 
 			(*stream) << endl;
 

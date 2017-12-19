@@ -328,6 +328,9 @@ void	TLSSimulation::getUVECSimValues(TCAM& camera){
 		calcMeas.setX(TLength(getSimulatedValue(calcMeas.getX().getMetresValue(), itUVEC->target.sigmaX)));
 		calcMeas.setY(TLength(getSimulatedValue(calcMeas.getY().getMetresValue(), itUVEC->target.sigmaY)));
 
+		//Z set to have a unit vector
+		calcMeas.setZ(TLength(sqrt(1-pow2q(calcMeas.getX())-pow2q(calcMeas.getY()))));
+
 		/* Probably needs to norm!!! -- the simulation random error could make it no to be unit, ENSURE about that!!! */
 		calcMeas.normalize();
 
