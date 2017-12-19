@@ -9,6 +9,7 @@ void TCAM::initialiseObsSummaries() {
     uvdSummary_.distObsSum.clear();
     uvecSummary_.xVectorCompObsSum.clear();
     uvecSummary_.yVectorCompObsSum.clear();
+	uvecSummary_.zVectorCompObsSum.clear();
 
     // Add the residuals of each measurement and initialise the obs summaries:
 
@@ -30,10 +31,12 @@ void TCAM::initialiseObsSummaries() {
         for(std::list<TUVEC>::const_iterator ItUVEC = measUVEC.begin(); ItUVEC != measUVEC.end(); ItUVEC++) {//auto const& ItUVEC: measUVEC){
             uvecSummary_.xVectorCompObsSum.addNewResidual(ItUVEC->getXCompVectorResidual()* LGC::VECCONVINV);
             uvecSummary_.yVectorCompObsSum.addNewResidual(ItUVEC->getYCompVectorResidual()* LGC::VECCONVINV);
+			uvecSummary_.zVectorCompObsSum.addNewResidual(ItUVEC->getZCompVectorResidual()* LGC::VECCONVINV);
         }
 
         uvecSummary_.xVectorCompObsSum.initialise();
         uvecSummary_.yVectorCompObsSum.initialise();
+		uvecSummary_.zVectorCompObsSum.initialise();
     }
 }
 
