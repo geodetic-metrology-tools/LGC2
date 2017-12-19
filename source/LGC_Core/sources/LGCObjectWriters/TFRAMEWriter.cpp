@@ -376,6 +376,8 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 			camWriter.writeUnitlessResultsSummary(tmeas.getUVECGlobalObsSummary().xVectorCompObsSum, TABs);
 			(*stream) << "UVEC: YVEC" << endl;
             camWriter.writeUnitlessResultsSummary(tmeas.getUVECGlobalObsSummary().yVectorCompObsSum, TABs);
+			(*stream) << "UVEC: ZVEC" << endl;
+			camWriter.writeUnitlessResultsSummary(tmeas.getUVECGlobalObsSummary().zVectorCompObsSum, TABs);
 		}
 	}
 
@@ -622,22 +624,24 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 		if (summaryUVD.distObsSum.getNumberOfObs() >= 5)
 		{
 			(*stream) << endl;
-			scaleWriter.writeHisto(summaryUVD.xVectorCompObsSum, "UVD: XVEC");
+			camWriter.writeHisto(summaryUVD.xVectorCompObsSum, "UVD: XVEC");
 			(*stream) << endl;
-			scaleWriter.writeHisto(summaryUVD.yVectorCompObsSum, "UVD: YVEC");
+			camWriter.writeHisto(summaryUVD.yVectorCompObsSum, "UVD: YVEC");
 			(*stream) << endl;
-			scaleWriter.writeHisto(summaryUVD.distObsSum, "UVD: DIST");
+			camWriter.writeHisto(summaryUVD.distObsSum, "UVD: DIST");
 		}
 
 		//the UVEC when all UVD are written
         const auto& summaryUVEC = tmeas.getUVECGlobalObsSummary();
 
-		if (summaryUVD.distObsSum.getNumberOfObs() >= 5)
+		if (summaryUVEC.xVectorCompObsSum.getNumberOfObs() >= 5)
 		{
 			(*stream) << endl;
-			scaleWriter.writeHisto(summaryUVEC.xVectorCompObsSum, "UVEC: XVEC");
+			camWriter.writeHisto(summaryUVEC.xVectorCompObsSum, "UVEC: XVEC");
 			(*stream) << endl;
-			scaleWriter.writeHisto(summaryUVEC.yVectorCompObsSum, "UVEC: YVEC");
+			camWriter.writeHisto(summaryUVEC.yVectorCompObsSum, "UVEC: YVEC");
+			(*stream) << endl;
+			camWriter.writeHisto(summaryUVEC.zVectorCompObsSum, "UVEC: ZVEC");
 		}
 	}
 
