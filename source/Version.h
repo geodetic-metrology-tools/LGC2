@@ -19,4 +19,3 @@ static std::string getLGCVersion(void) {
 }
 
 #endif
-
