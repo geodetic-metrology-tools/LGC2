@@ -556,7 +556,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	if (firstline) {
 		// look up station point
 		if (tokens.size() < 4)
-			throw std::runtime_error("An ECTH measurement must have two 2 entries: "
+			throw std::runtime_error("An ECTH measurement must have 2 entries: "
 									 "The observed horizontal angle defining the reference plane and ID of a SCALE instrument.");
 	
 		fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
@@ -616,7 +616,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 	if (firstline) {
 		// look up station point
 		if (tokens.size() < 5)
-			throw std::runtime_error("An ECDIR measurement must have two 3 entries: "
+			throw std::runtime_error("An ECDIR measurement must have 3 entries: "
 			"The horizontal and vertical angles defining the line and ID of a SCALE instrument.");
 
 		fScaleInstID = tokens.at(4);
@@ -1069,7 +1069,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	if (firstline) {
 		// look up station point
 		if (tokens.size() < 5)
-			throw std::runtime_error("An ECSP measurement must have two 3 entries: "
+			throw std::runtime_error("An ECSP measurement must have 3 entries: "
 			"The 2 points defining the line and ID of a SCALE instrument.");
 
 
