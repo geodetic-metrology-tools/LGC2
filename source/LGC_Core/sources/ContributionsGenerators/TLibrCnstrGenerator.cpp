@@ -63,9 +63,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 			MatrixIndex fLastUnkIndex = ptIt.getLastUidx();
 
 
-
-
-			bool xIsVariable = false;
+			//Fill matrix for every unknowns on the points
 			//dx constraint coefficient
 			if (fCnstrVector.dx)
 			{
@@ -77,7 +75,6 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				{
 					double a = 1.0;
 					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dx, fFisrtUnkIndex, a);
-					xIsVariable = true;
 				}
 			}
 
@@ -91,10 +88,11 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double a = 1.0;
-					if (xIsVariable)
+					if (!ptIt.isCoordinateFixed(0))
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dy, fFisrtUnkIndex + 1, a);
 					else
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dy, fFisrtUnkIndex, a);
+				
 				}
 			}
 
@@ -122,10 +120,10 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double a = -1.0 * (zPt.getMetresValue() - fZcgEst.getMetresValue());
-					if (xIsVariable)
+					if (!ptIt.isCoordinateFixed(0))
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fFisrtUnkIndex + 1, a);
 					else
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fFisrtUnkIndex + 1, a);
+						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fFisrtUnkIndex , a);
 				}
 				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
 					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
@@ -135,7 +133,6 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 				{
 					double b = yPt.getMetresValue() - fYcgEst.getMetresValue();
 					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fLastUnkIndex, b);
-				}
 
 				rotX = rotX + getRxCalcValue(ptIt);
 			}
@@ -185,7 +182,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double b = xPt.getMetresValue() - fXcgEst.getMetresValue();
-					if (xIsVariable)
+					if (!ptIt.isCoordinateFixed(0))
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex + 1, b);
 					else
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex, b);
@@ -214,7 +211,7 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
 				{
 					double b = yPt.getMetresValue();
-					if (xIsVariable)
+					if (!ptIt.isCoordinateFixed(0)) 
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex + 1, b);
 					else
 						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex, b);
