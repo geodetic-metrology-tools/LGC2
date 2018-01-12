@@ -140,7 +140,8 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 			auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget{
 				tokens.at(0),
 				std::stor(tokens.at(1))  * VECCONV, // unitless 
-				std::stor(tokens.at(2))  * VECCONV, // unitless 
+				std::stor(tokens.at(2))  * VECCONV, // unitless
+				std::stor(tokens.at(1))  * VECCONV, // unitless
 				TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
 				TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
 			});
