@@ -159,17 +159,28 @@ void TLSSimulation::simulateValues()
 	//Tteration through the tree nodes
 	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++){
 
-		//In every node iterate through the Total station measurements (TSTN)
-		for (auto itTSTN : itTree.node->data->measurements.fTSTN){
-			//In every TSTN iterate through ROMS
-			for (auto itROM : itTSTN->roms){
-				getPLR3DSimValues(*itTSTN, *itROM, itROM->measPLR3D);  //Simulate PLR3D value
-				getANGLSimValues(*itTSTN, *itROM, itROM->measANGL); //Fill contribution to an ANGL measurement
-				getZENDSimValues(*itTSTN, itROM->measZEND); //Fill contribution to a ZEND measurement
-				getDISTSimValues(*itTSTN, itROM->measDIST); //Fill contribution to a DIST measurement
-				getDHORSimValues(*itTSTN, itROM->measDHOR); //Fill contribution to a DHOR measurement
-				getECTHSimValues(*itTSTN, *itROM, itROM->measECTH); //Fill contribution to a ECTH measurement
-				getECDIRSimValues(*itTSTN, *itROM, itROM->measECDIR); //Fill contribution to a ECSP measurement
+		if (itTree.node->data->isROOTNode())
+		{
+			for (auto itTSTN : itTree.node->data->measurements.fTSTN) {
+				//In every TSTN iterate through ROMS
+				for (auto itROM : itTSTN->roms) {
+					getPLR3DSimValues(*itTSTN, *itROM, itROM->measPLR3D);  //Simulate PLR3D value
+					getANGLSimValues(*itTSTN, *itROM, itROM->measANGL); //Fill contribution to an ANGL measurement
+					getZENDSimValues(*itTSTN, itROM->measZEND); //Fill contribution to a ZEND measurement
+					getDISTSimValues(*itTSTN, itROM->measDIST); //Fill contribution to a DIST measurement
+					getDHORSimValues(*itTSTN, itROM->measDHOR); //Fill contribution to a DHOR measurement
+					getECTHSimValues(*itTSTN, *itROM, itROM->measECTH); //Fill contribution to a ECTH measurement
+					getECDIRSimValues(*itTSTN, *itROM, itROM->measECDIR); //Fill contribution to a ECSP measurement
+				}
+			}
+		}
+		else {
+			for (auto itTSTN : itTree.node->data->measurements.fTSTN) {
+				for (auto itROM : itTSTN->roms) {
+					getANGLSimValuesInFrame(*itTSTN, *itROM, itROM->measANGL);
+					getZENDSimValuesInFrame(*itTSTN, itROM->measZEND);
+					getDISTSimValuesInFrame(*itTSTN, itROM->measDIST);
+				}
 			}
 		}
 
@@ -386,6 +397,30 @@ void	TLSSimulation::getDHORSimValues(const TTSTN& station, std::list<TLINE>& dho
 		TReal calcVal = fSimObs.getDHORCalcMeas(station, itDHOR);
 		TReal sigma = itDHOR.target.sigmaDist;
 		itDHOR.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
+	}
+}
+
+void	TLSSimulation::getANGLSimValuesInFrame(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl) {
+	for (auto& itANGL : angl) {
+		TReal calcVal = fSimObs.getANGLCalcMeasInFrame(station, rom, itANGL.targetPos);
+		TReal sigma = itANGL.target.sigmaAngl;
+		itANGL.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
+	}
+	}
+
+void	TLSSimulation::getZENDSimValuesInFrame(const TTSTN& station, std::list<TZEND>& zend) {
+	for (auto& itZEND : zend) {
+		TReal calcVal = fSimObs.getZENDCalcMeasInFrame(station, itZEND.targetPos, itZEND.target.targetHt);
+		TReal sigma = itZEND.target.sigmaZenD;
+		itZEND.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
+	}
+}
+
+void	TLSSimulation::getDISTSimValuesInFrame(const TTSTN& station, std::list<TLINE>& dist) {
+	for (auto& itDIST : dist) {
+		TReal calcVal = fSimObs.getDISTCalcMeasInFrame(station, itDIST.targetPos, itDIST.target.targetHt, itDIST.target.distCorrectionAdjustable->getEstimatedValue());
+		TReal sigma = itDIST.target.sigmaDist;
+		itDIST.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
 }
 

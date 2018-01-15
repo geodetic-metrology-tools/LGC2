@@ -50,11 +50,20 @@ public:
 		/// Returns contribution for the Spatial Distance measurement (TDIST)
 		DistMeasContrib	getSpatialDistanceContrib(shared_ptr<TTSTN> station, const TLINE& dist);
 
+		/// Returns contribution for the Spatial Distance measurement (TDIST) for a TSTN in a  frame
+		DistMeasContribFrame	getSpatialDistanceContribInFrame(shared_ptr<TTSTN> station, const TLINE& dist);
+
 		/// Returns contribution for the Horizontal Angle measurement (TANGL)
 		AnglMeasContrib	getHorAnglContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
 
+		/// Returns contribution for the Horizontal Angle measurement (TANGL) for a TSTN in a frame
+		AnglMeasContribFrame	getHorAnglContribInFrame(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
+
 		/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND)
 		AnglMeasContrib	getZenDistContrib(shared_ptr<TTSTN> station, const TZEND& zend);
+
+		/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND) for a TSTN in a frame
+		AnglMeasContribFrame	getZenDistContribInFrame(shared_ptr<TTSTN> station, const TZEND& zend);
 
 		/// Returns contribution for the Horizontal Distance measurement (DHOR), made by a total station (TSTN).
 		HorDistContrib	getHorDistContrib(shared_ptr<TTSTN> station, const TLINE& dhor);
@@ -118,57 +127,6 @@ public:
 		OBSXYZContrib  getOBSXYZContrib(const TOBSXYZ& obsxyz);
 	//@}
 
-
-	/*!@name Method for accessing the calculation measurement values only . */
-	//@{
-		/// Returns the the ANGL measurement calculated meas in RADIANS [rad]
-		TReal getANGLCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const LGCAdjustablePoint* targetAdjPoint);
-
-		/// Returns the ZEND measurement calculated meas in RADIANS [rad]
-		TReal getZENDCalcMeas(shared_ptr<TTSTN> station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt);
-
-		/// Returns the DIST measurement calculated meas in meters [m]
-		TReal getDISTCalcMeas(shared_ptr<TTSTN> station, const LGCAdjustablePoint* targetAdjPoint, TReal targetHt, TReal distanceCorr);
-
-		/// Returns the DHOR measurement made by a TSTN, calculated meas in meters [m]
-		TReal getDHORCalcMeas(shared_ptr<TTSTN> station, const TLINE& dhor);
-
-		///  Returns the TPLR3D calculated measurement values
-		PLR3DCalcMeas getPLR3DCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
-
-		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-		TReal	 getECTHCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
-
-		/// Returns contribution for the offset to a theodolite line (TECSP) measurement.
-		TReal	 getECSPCalcMeas(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECSP& ecsp);
-
-		/// Returns the the TUVEC measurement calculaded measurement value
-		TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
-
-		/// Returns the TUVD measurement calculaded measurement value
-		UVDCalcMeas getUVDCalcMeas(const TCAM& camera, const TUVD& uvec);
-
-		/// Returns the TDLEV measurement calculated meas in meters [m]
-		TReal getDLEVCalcMeas(const TLEVEL& levelST, const TDLEV& dlev);
-
-		/// Returns the TDSPT measurement calculated meas in meters [m]
-		TReal	getDSPTCalcMeas(const TEDM& edmST, const TDSPT& dspt);
-
-		/// Returns the TECHO measurement calculated meas in meters [m]
-		TReal getECHOCalcMeas(const TECHOROM& echoROM, const TECHO& echo);
-
-		///  Returns TECVE measurement calculated meas in meters [m]
-		TReal getECVECalcMeas(const TECVEROM& ecveROM, const TECVE& ecve);
-
-		/// Returns the TDHOR measurement calculated meas in meters [m]
-		TReal	getHorDistCalcMeas(const LGCAdjustablePoint* referencePoint, const TDLEV::TDHOR& dhor);
-
-		/// Returns the the ORIE measurement calculated meas in RADIANS [rad]
-		TReal getORIECalcMeas(const TORIEROM& orieROM, const TORIE& orie);
-
-		/// Returns the the DVER measurement calculated meas in meter [m]
-		TReal	getDVERCalcMeas(const TDVER& dver);
-	//@}
 
 private:
 	// Contains references: not assignable

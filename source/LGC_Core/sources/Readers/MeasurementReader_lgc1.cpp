@@ -142,11 +142,8 @@ void TAMeasurementKey_lgc1::createTSTN(string stn, int line)
 
 void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
 {
-	//Initialize the rom
-	//Prepare a name of an adjustable angle (V0) = Frame name + V0 + numberOfAngle
-	string angleName = proj.getCurrentNode().frame.getName() + "V0" + std::to_string(proj.getAngles().numObjects());
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
-	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(getPolarInstr().defTarget, &proj.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName)));
+	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(getPolarInstr().defTarget, nullptr);
 	// Add the ROM
 	tstn->roms.emplace_back(rom);
 }

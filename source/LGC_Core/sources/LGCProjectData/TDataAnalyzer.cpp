@@ -54,10 +54,6 @@ bool TDataAnalyzer::dataConsistent(){
 
 	checkPDOR(outputMessages, consistent);
 
-	//cannot predetermine V in simulation and LIBR
-	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
-		predeterminePLR3DV0();
-
 	//Run through tree and check that whether all frames were initialized, assign unknown indices
 	//It is necessary to firstly iterate over the tree, because a Reference point might be created in DLEV measurement and measured plane is initialized
 	for (auto it( fTree.begin()); it != fTree.end(); ++it){	
@@ -76,6 +72,22 @@ bool TDataAnalyzer::dataConsistent(){
 			fStandDevUsed = true;
 			fData.setStandDevUsed();
 		}
+
+
+		//only ANGL, ZEND and DIST are allowed in a subframe for a total station
+		if (!it.node->data.get()->isROOTNode())
+		{
+			for (auto &tstn : it.node->data.get()->measurements.fTSTN) {
+				for (auto &rom : tstn->roms) {
+					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
+					{
+						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
+						return false;
+					}
+				}
+			}
+		}
+
 
 		//If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized
 		for (auto itLEVEL( it.node->data.get()->measurements.fLEVEL.begin()); itLEVEL != it.node->data.get()->measurements.fLEVEL.end(); ++itLEVEL){
@@ -198,6 +210,10 @@ bool TDataAnalyzer::dataConsistent(){
 		}
 
 	}
+
+	//cannot predetermine V0 in simulation and LIBR
+	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
+		predeterminePLR3DV0();
 
 	//Run through point collection and check whether all points were initialized, assign unknown indices at the same time and check that if PDOR used exactly one point in ROOT defined as CALA
 	for (auto& point : fData.getPoints()){	
@@ -623,12 +639,30 @@ void TDataAnalyzer::assignEOIndices(){
         // TSTN
         for(auto &tstn : measurements.fTSTN){
 
+			//Vo is free if at least one ANGL, PLR3D, ECTH or ECDIR is used in Root frame
+			for (auto &rom : tstn->roms){
+				string angleName = node->frame.getName() + "V0" + std::to_string(fData.getAngles().numObjects());
+
+				if (node->isROOTNode())
+				{
+					if (rom->measANGL.empty() && rom->measPLR3D.empty() && rom->measECTH.empty() && rom->measECDIR.empty())
+						rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true, angleName));
+					else
+						rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), false, angleName));
+				}
+				else
+				{
+					rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true, angleName));
+					// instrument height is fixed and is equal to 0
+					tstn->ihfix = true;
+					tstn->instrument.instrHeight = TLength(0.0);
+				}
+			}
+
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
-                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false,
-                    "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotX adjustable angle
-                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false,
-                    "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotY adjustable angle
+                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotX adjustable angle
+                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotY adjustable angle
 
                 // If ROT3D used, instrument height is fixed and is equal to 0
                 // (NB. These parameters will not affect in lgc1 case,
@@ -645,26 +679,12 @@ void TDataAnalyzer::assignEOIndices(){
                 tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
             for(auto &rom : tstn->roms){
-
-                // V0 adjustable angle (NB. set initially fixed):
-                if(!fData.isLGCv1())
-                    rom->v0 = &fData.getAngles().addObject(TAdjustableAngle(TAngle(0.0, TAngle::kGons), true,
-                        node->frame.getName() + "_V0_adj_" + std::to_string(rom->romId))); // Name of the v0 adjustable angle
-
-                // V0 must be adjustable (i.e., not fixed), if PLR3D, ANGL, ECTH, or ECDIR measurements
-                // are used. Create a variable for checking, if these measurements are used, and update the
-                // v0 angle in the end of this for-loop (after looping all the measurements) accordingly.
-                bool requiredAdjustableV0 = false;
-
                 // PLR3D
                 for(auto &plr : rom->measPLR3D){
 
                     // Get the distCorrAdj for the used target:
                     if(!fData.isLGCv1())
                         plr.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, plr.target.ID);
-
-                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
-                    requiredAdjustableV0 = true;
 
                     // set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
                     plr.setFirstEquationIndex(fData.fUEOIndices.EIndex);
@@ -680,9 +700,6 @@ void TDataAnalyzer::assignEOIndices(){
                     // Get the distCorrAdj for the used target:
                     if(!fData.isLGCv1())
                         angl.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, angl.target.ID);
-
-                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
-                    requiredAdjustableV0 = true;
 
                     // set indices of LS matrices, ANGL introduces 1 equation and 1 observation
                     angl.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
@@ -732,9 +749,6 @@ void TDataAnalyzer::assignEOIndices(){
                 // ECTH
                 for(auto &ecth : rom->measECTH){
 
-                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
-                    requiredAdjustableV0 = true;
-
                     // set indices of LS matrices, ECTH introduces 1 equation and 1 observation
                     ecth.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     ecth.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
@@ -744,18 +758,11 @@ void TDataAnalyzer::assignEOIndices(){
                 // ECDIR
                 for(auto &ecdir : rom->measECDIR){
 
-                    // TROM::v0 needs to be adjustable (i.e., not fixed) with this type of measurements:
-                    requiredAdjustableV0 = true;
-
                     // set indices of LS matrices, ECDIR introduces 1 equation and 1 observation
                     ecdir.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
                     ecdir.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
                     fData.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
                 }
-
-                // Now update the fixed status of the v0 angle:
-                if(!fData.isLGCv1())
-                    rom->v0->setFixed(!requiredAdjustableV0);
             }
         }
 
@@ -955,49 +962,50 @@ void TDataAnalyzer::predeterminePLR3DV0()
 	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) != 0)
 	{
 		for (auto it(fTree.begin()); it != fTree.end(); ++it)  // FRK 17/11/2016: suppressed reference "auto&"
-			for (auto itTSTN : it.node->data->measurements.fTSTN)
-				for (auto itplr : itTSTN->roms)
-				{
-					if (itplr->measPLR3D.size() != 0)
+			if (it.node->data->isROOTNode())
+			{
+				for (auto itTSTN : it.node->data->measurements.fTSTN)
+					for (auto itplr : itTSTN->roms)
 					{
+						if (itplr->measPLR3D.size() != 0)
+						{
 
-						auto firstMeas = itplr->measPLR3D.front();
-						//calul v0 app
-						TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
-						TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
-						TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
-						targetPos = firstMeas.targetPos->getEstimatedValue();
-						const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(firstMeas.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
-						tgLor2RootTrafo.transform(targetPos);
+							auto firstMeas = itplr->measPLR3D.front();
+							//calul v0 app
+							TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+							TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+							TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+							targetPos = firstMeas.targetPos->getEstimatedValue();
+							const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(firstMeas.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
+							tgLor2RootTrafo.transform(targetPos);
 
-						stationPos = itTSTN->instrumentPos->getEstimatedValue();
-						const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(itTSTN->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
-						stLor2RootTrafo.transform(stationPos);
+							stationPos = itTSTN->instrumentPos->getEstimatedValue();
+							const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(itTSTN->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
+							stLor2RootTrafo.transform(stationPos);
 
-						// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
-						if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && itTSTN->rot3D != true){
-							fPointTransfo.transformPointsToMLASystem(itTSTN->instrumentPos->getName(), stationPos, targetPos);
-							fPointTransfo.setMLA(true);
+							// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+							if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && itTSTN->rot3D != true){
+								fPointTransfo.transformPointsToMLASystem(itTSTN->instrumentPos->getName(), stationPos, targetPos);
+								fPointTransfo.setMLA(true);
+							}
+							else
+								fPointTransfo.setMLA(false);
+
+							TReal xSt = stationPos.getX().getMetresValue();
+							TReal ySt = stationPos.getY().getMetresValue();
+
+							TReal xTg = targetPos.getX().getMetresValue();
+							TReal yTg = targetPos.getY().getMetresValue();
+
+							//Calculated measurement value
+							TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->acst - itplr->measPLR3D.begin()->getAngle(EPLR3DAngles::kANGL);  //ACST is the constant orientation of the instrument
+
+
+							// estimated value = 0.0 + correction (V0app)
+							int indexV0 = itplr->v0->getFirstUidx();
+							itplr->v0->setCorrection(indexV0, V0app);
 						}
-						else
-							fPointTransfo.setMLA(false);
-
-						TReal xSt = stationPos.getX().getMetresValue();
-						TReal ySt = stationPos.getY().getMetresValue();
-
-						TReal xTg = targetPos.getX().getMetresValue();
-						TReal yTg = targetPos.getY().getMetresValue();
-
-						//Calculated measurement value
-						TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itplr->acst - itplr->measPLR3D.begin()->getAngle(EPLR3DAngles::kANGL);  //ACST is the constant orientation of the instrument
-
-
-						// estimated value = 0.0 + correction (V0app)
-						int indexV0 = itplr->v0->getFirstUidx();
-						itplr->v0->setCorrection(indexV0, V0app);
 					}
-				}
-				
-
+			}
 	}
 }

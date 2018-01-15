@@ -206,8 +206,10 @@ void TLGCApp::writeFautFile(TLGCData const * const dat, const std::string &outpu
     stream->resetStreamName(outputFileLocation + ".err");
     TFautFileWriter fautFileWriter(stream.get(), dat);
 
-	if (!dat->getFileLogger().hasErrors())
+	if (!dat->getFileLogger().hasErrors() && dat->fUEOIndices.UIndex != 0)
 		fautFileWriter.writeFile(dat);
+	else if (dat->fUEOIndices.UIndex != 0)
+		fautFileWriter.writeFile("No data because there s no unknowns.");
 	else
 		fautFileWriter.writeFile("Error has occured, see the LGC log file.");
 }
