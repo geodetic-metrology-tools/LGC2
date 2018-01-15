@@ -22,172 +22,174 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class  TLGCObsSummary
 {
 public:
-    /*!@name Constructors and Destructors */
-    //@{
-    /// default constructor
-    TLGCObsSummary();
-    //@}
+	/*!@name Constructors and Destructors */
+	//@{
+	/// default constructor
+	TLGCObsSummary();
+	//@}
 
 
-    /*!@name public member functions */
-    //@{
+	/*!@name public member functions */
+	//@{
 
-    /// add a new value in the sum of the residus
-    /**
-    * @note After adding all the residuals, the obsSummary must be
-    * initialised (TLGCObsSummary::initialise()) before it can be used.
-    * @note getResMax() and getResMin() will return the residuals in
-    * the same units as they are added originally.
-    */
-    void		addNewResidual(const TReal res);
+	/// add a new value in the sum of the residus
+	/**
+	* @note After adding all the residuals, the obsSummary must be
+	* initialised (TLGCObsSummary::initialise()) before it can be used.
+	* @note getResMax() and getResMin() will return the residuals in
+	* the same units as they are added originally.
+	*/
+	void		addNewResidual(const TReal res);
 
-    /// clear the observation summary statistics 
-    void		clear();
+	/// clear the observation summary statistics 
+	void		clear();
 
-    /// Check if the obsSummary statistics are initialised or not
-    bool        isInitialised() const;
+	/// Check if the obsSummary statistics are initialised or not
+	bool        isInitialised() const;
 
-    /// Initialise the observation summary
-    void        initialise();
+	/// Initialise the observation summary
+	void        initialise();
 
-    /// get the mean of the residuals 
-    TReal		getMean() const;
+	/// get the mean of the residuals 
+	TReal		getMean() const;
 
-    /// get the lower confidence limit for the mean 
-    TReal		getMeanLoLimit() const;
+	/// get the lower confidence limit for the mean 
+	TReal		getMeanLoLimit() const;
 
-    /// get the upper confidence limit for the mean 
-    TReal		getMeanHiLimit() const;
+	/// get the upper confidence limit for the mean 
+	TReal		getMeanHiLimit() const;
 
-    /// Get the minimum residual of the added residuals
-    TReal       getResMin() const;
+	/// Get the minimum residual of the added residuals
+	TReal       getResMin() const;
 
-    /// Get the maximum residual of the added residuals
-    TReal       getResMax() const;
+	/// Get the maximum residual of the added residuals
+	TReal       getResMax() const;
 
-    /// get the variance for the residuals 
-    TReal		getVariance() const;
+	/// get the variance for the residuals 
+	TReal		getVariance() const;
 
-    /// get the lower confidence limit for the variance 
-    TReal		getVarLoLimit() const;
+	/// get the lower confidence limit for the variance 
+	TReal		getVarLoLimit() const;
 
-    /// get the upper confidence limit for the variance 
-    TReal		getVarHiLimit() const;
+	/// get the upper confidence limit for the variance 
+	TReal		getVarHiLimit() const;
 
-    /// set a string to identify the observation type 
-    void		setObsText(const string keyWord) { fObsText = keyWord; return; }
+	/// set a string to identify the observation type 
+	void		setObsText(const string keyWord) { fObsText = keyWord; return; }
 
-    /// get the observation type 
-    string		getObsText() const { return fObsText; }
+	/// get the observation type 
+	string		getObsText() const { return fObsText; }
 
-    /// define if the observation is an angle 
-    void		defineAngleObservation() { fAngleType = true; return; };
+	/// define if the observation is an angle 
+	void		defineAngleObservation() { fAngleType = true; return; };
 
-    /// define if the observation is a length 
-    void		defineLengthObservation() { fAngleType = false; return; };
+	/// define if the observation is a length 
+	void		defineLengthObservation() { fAngleType = false; return; };
 
-    /// indicate if the summary is for an angle type measurement or a length type measurement 
-    bool		isAngleType() const { return fAngleType; }
+	/// indicate if the summary is for an angle type measurement or a length type measurement 
+	bool		isAngleType() const { return fAngleType; }
 
-    /// get the number of observations 
-    int			getNumberOfObs() const { return fNumberOfObs; }
+	/// get the number of observations 
+	int			getNumberOfObs() const { return fNumberOfObs; }
 
-    /// get the histogram data corresponding to the obersation residuals 
-    const list<int>	getHistogramData() const;
+	/// get the histogram data corresponding to the obersation residuals 
+	const list<int>	getHistogramData() const;
 
-    /// get the lower limit for the histogram data 
-    TReal		getHistoLoLimit() const;
+	/// get the lower limit for the histogram data 
+	TReal		getHistoLoLimit() const;
 
-    /// get the higher limit for the histogram data 
-    TReal		getHistoHiLimit() const;
+	/// get the higher limit for the histogram data 
+	TReal		getHistoHiLimit() const;
 
-    /// get the scale factor for the histogram residuals 
-    int			getHistoScale() const;
+	/// get the scale factor for the histogram residuals 
+	int			getHistoScale() const;
 
-    /// get the number of residuals outside the histogram limits 
-    int			getNumBeyondHistoLimits() const;
+	/// get the number of residuals outside the histogram limits 
+	int			getNumBeyondHistoLimits() const;
 
-    /// Merge the given obsSummaries into one and return it initialised if *summaries* was not an empty list
-    /**
-    * @note The summaries to merge must be of same type (i.e., either length or angle type)
-    * @note The obs text is defined by the first obsSummary in the given list
-    */
-    static TLGCObsSummary merge(const std::list<const TLGCObsSummary*> &summaries);
+	/// Merge the given obsSummaries into one and return it initialised if *summaries* was not an empty list
+	/**
+	* @note The summaries to merge must be of same type (i.e., either length or angle type)
+	* @note The obs text is defined by the first obsSummary in the given list
+	*/
+	static TLGCObsSummary merge(const std::list<const TLGCObsSummary*> &summaries);
 
-    /// Determine if the histogram data should be initialised and used (NB. Affects all created observation summaries)
-    static void createHistogram(bool create){ fCreateHistogram = create; }
+	/// Determine if the histogram data should be initialised and used (NB. Affects all created observation summaries)
+	static void createHistogram(bool create) { fCreateHistogram = create; }
 
-    //@}
+	//@}
 
 
 protected:
 
-    /// add an item to the list used for histogram
-    void	addHistoListItem(const TReal item) { fHistoList.push_back(item); }
+	/// add an item to the list used for histogram
+	void	addHistoListItem(const TReal item) { fHistoList.push_back(item); }
 
 
 private:
-    // statistics on the observation residuals
-    string			fObsText;
-    bool			fAngleType;
-    int				fNumberOfObs;
-    TReal			fSumRes;
-    TReal			fMean;
-    TReal			fMeanLoLimit;
-    TReal			fMeanHiLimit;
-    TReal           fResMin;
-    TReal           fResMax;
-    TReal			fSumRes2;
-    TReal			fVariance;
-    TReal			fVarLoLimit;
-    TReal			fVarHiLimit;
+	// statistics on the observation residuals
+	string			fObsText;
+	bool			fAngleType;
+	int				fNumberOfObs;
+	TReal			fSumRes;
+	TReal			fMean;
+	TReal			fMeanLoLimit;
+	TReal			fMeanHiLimit;
+	TReal           fResMin;
+	TReal           fResMax;
+	TReal			fSumRes2;
+	TReal			fVariance;
+	TReal			fVarLoLimit;
+	TReal			fVarHiLimit;
 
-    // histogram data
-    static bool     fCreateHistogram;
-    list<TReal>	    fHistoList;
-    list<int>       fHistoData;
-    int				fNumberOutsideHisto;
+	// histogram data
+	static bool     fCreateHistogram;
+	list<TReal>	    fHistoList;
+	list<int>       fHistoData;
+	int				fNumberOutsideHisto;
 
-    bool            fIsInitialised;
+	bool            fIsInitialised;
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the TPLR3D observation.
 */
-struct TPOLARObsSummary{
-    TLGCObsSummary distObsSum;
-    TLGCObsSummary anglObsSum;
-    TLGCObsSummary zendObsSum;
+struct TPOLARObsSummary {
+	TLGCObsSummary distObsSum;
+	TLGCObsSummary anglObsSum;
+	TLGCObsSummary zendObsSum;
+	TLGCObsSummary anglObsOffsetSum;  // Contains the spatial offsets corresponding to residues on observed polar "horizontal" angles
+	TLGCObsSummary zendObsOffsetSum;  // Contains the spatial offsets corresponding to residues on observed polar "vertical" angles
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVD observation.
 */
-struct TUVDObsSummary{
-    TLGCObsSummary distObsSum;
-    TLGCObsSummary xVectorCompObsSum;
-    TLGCObsSummary yVectorCompObsSum;
+struct TUVDObsSummary {
+	TLGCObsSummary distObsSum;
+	TLGCObsSummary xVectorCompObsSum;
+	TLGCObsSummary yVectorCompObsSum;
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVEC observation.
 */
-struct TUVECObsSummary{
-    TLGCObsSummary xVectorCompObsSum;
-    TLGCObsSummary yVectorCompObsSum;
+struct TUVECObsSummary {
+	TLGCObsSummary xVectorCompObsSum;
+	TLGCObsSummary yVectorCompObsSum;
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the OBSXYZ observation.
 */
-struct TOBSXYZObsSummary{
-    TLGCObsSummary obsXObsSum;
-    TLGCObsSummary obsYObsSum;
-    TLGCObsSummary obsZObsSum;
+struct TOBSXYZObsSummary {
+	TLGCObsSummary obsXObsSum;
+	TLGCObsSummary obsYObsSum;
+	TLGCObsSummary obsZObsSum;
 };
 
 #endif // SU_LGC_OBS_SUMMARY
