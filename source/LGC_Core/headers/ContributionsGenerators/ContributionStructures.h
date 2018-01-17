@@ -310,17 +310,20 @@ struct UVDContrib{
 struct UVECContrib{
 	TFreeVector fStCoordContribFirstEq;  //!< x,y,z station coordinate contributions for the First equation
 	TFreeVector fStCoordContribSecondEq; //!< x,y,z station coordinate contributions for the Second equation
+	TFreeVector fStCoordContribThirdEq; //!< x,y,z station coordinate contributions for the Second equation
 
 	TFreeVector fTgCoordContribFirstEq; //!< x,y,z target coordinate contributions for the First equation
 	TFreeVector fTgCoordContribSecondEq; //!< x,y,z target coordinate contributions for the Second equation
+	TFreeVector fTgCoordContribThirdEq; //!< x,y,z target coordinate contributions for the Second equation
 
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib2D>> fTgTransformContrib;		
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;		
 
-	TReal		fXCompContrib[2]; //!< X vector component contribution for the First and Second equation respectively.
-	TReal		fYCompContrib[2]; //!< Y vector component contribution for the First and Second equation respectively.
+	TReal		fXCompContrib[3]; //!< X vector component contribution for the equations.
+	TReal		fYCompContrib[3]; //!< Y vector component contribution for the equations.
+	TReal		fZCompContrib[3]; //!< Z vector component contribution for the equations.
 
-	TReal	    fMisclosureVector[2];  //!< Misclosure vector of the First and Second equation respectively.
-	TReal		fObsVariance[2];  //!< Variances for the First and Second equation respectively.
+	TReal	    fMisclosureVector[3];  //!< Misclosure vector of the First and Second equation respectively.
+	TReal		fObsVariance[3];  //!< Variances for the First and Second equation respectively.
 }; 
 
 /*!

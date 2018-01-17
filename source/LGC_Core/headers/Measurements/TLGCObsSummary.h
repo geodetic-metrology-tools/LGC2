@@ -178,6 +178,7 @@ struct TUVDObsSummary{
 struct TUVECObsSummary{
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
+	TLGCObsSummary zVectorCompObsSum;
 };
 
 /*!

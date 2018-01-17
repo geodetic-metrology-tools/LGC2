@@ -105,7 +105,7 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
         auto p = std::make_shared<TInstrumentData::TCAMD>(
             tokens.at(2),
             tokens.at(3),
-            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres)
+            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres)// conversion from mili-metres to metres
 		);
 
 		// store the new station
@@ -115,18 +115,39 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 	else {
 		// This is a target line		
 		auto& targets(finstruments.fCAMD[currentStation]->targets);
-		checkTarget(5, targets, tokens);				
-				
-        auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget{
-            tokens.at(0),
-            std::stor(tokens.at(1))  * VECCONV, // unitless 
-            std::stor(tokens.at(2))  * VECCONV, // unitless 
-            TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
-            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
-        });
+		
+		if ((int)tokens.size() == 6)
+		{
+			//new target definition, since v2.02
+			checkTarget(6, targets, tokens);
 
-		// store the new target
-		targets[tokens.at(0)] = t;				
+			auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget{
+				tokens.at(0),
+				std::stor(tokens.at(1))  * VECCONV, // unitless 
+				std::stor(tokens.at(2))  * VECCONV, // unitless 
+				std::stor(tokens.at(3))  * VECCONV, // unitless
+				TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+				TLength(std::stor(tokens.at(5)), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
+			});
+				// store the new target
+			targets[tokens.at(0)] = t;
+		}
+		else
+		{
+			//old target definition before version 2.02
+			checkTarget(5, targets, tokens);
+
+			auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget{
+				tokens.at(0),
+				std::stor(tokens.at(1))  * VECCONV, // unitless 
+				std::stor(tokens.at(2))  * VECCONV, // unitless
+				std::stor(tokens.at(1))  * VECCONV, // unitless
+				TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+				TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
+			});
+				// store the new target
+			targets[tokens.at(0)] = t;
+        }		
 	}
 }
 

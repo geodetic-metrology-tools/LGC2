@@ -133,12 +133,22 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
 	(*stream).writeString(obsResWidth, "RESYV"); //residual 
 
+	(*stream).writeString(obsWidth, "OBSZV"); //mesured z vector component
+	(*stream).writeString(obsResWidth, "SZV"); //sigma z vector component
+	(*stream).writeString(obsWidth, "CALCZV"); //estimated z vector component 
+	(*stream).writeString(obsResWidth, "RESZV"); //residual 
+
 	(*stream) << endl;
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); //TARGET ID
 	(*stream).writeStringLeft(nameWidth, ""); //POSITION
 	//(*stream).writeString(obsWidth,	"(M)"); //height of the target
+
+	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
+	(*stream).writeString(obsResWidth, "()"); //sigma observed value
+	(*stream).writeString(obsWidth, "()"); //estimated 
+	(*stream).writeString(obsResWidth, "()"); //residual
 
 	(*stream).writeString(obsWidth, "()"); //OBSERVED VALUE
 	(*stream).writeString(obsResWidth, "()"); //sigma observed value
@@ -279,6 +289,19 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getYCompVectorResidual()* M2MM);/*Unitless, delete or replace with appropriate conversion*/
 
+
+//Z vector component
+		//write the observed Z vector component
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getZ());
+
+		//write the sigma Z vector component
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaZ* M2MM);/*Unitless, delete or replace with appropriate conversion*/
+
+		//write the estimated Y vector component
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getZ() + ItUVEC.getZCompVectorResidual());
+
+		//write the residual X vector component
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getZCompVectorResidual()* M2MM);/*Unitless, delete or replace with appropriate conversion*/
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -307,6 +330,8 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
 		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": ZVECT", (int)camera.measUVEC.size());
+		writeUnitlessResultsSummary(summary.zVectorCompObsSum, TABs);
 	}
 }
 
@@ -315,6 +340,7 @@ void	TCAMWriter::writeUVECReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_i", "[]", "[]");
 	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_j", "[]", "[]");
+	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_k", "[]", "[]");
 	return;
 }
 
@@ -378,6 +404,25 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaY* M2MM);
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.getYCompVectorResidual()* M2MM);
+
+		writeReliabilityMM(index, stat);
+
+//------------------- 3rd obs----------------------------------------------------//
+		// get reference point to the plane
+		(*stream).writeStringLeft(nameWidth, "");
+		//get Tg point
+		(*stream).writeStringLeft(nameWidth, "");
+		// get Point 3
+		(*stream).writeStringLeft(nameWidth, "");
+
+		index = index + 1;
+
+		//get the observed j component
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItUvec.getVectorValue().getZ());
+		//get the sigma of j component
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaZ* M2MM);
+		//get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.getZCompVectorResidual()* M2MM);
 
 		writeReliabilityMM(index, stat);
 	}
@@ -528,6 +573,10 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
 	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
 	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -540,7 +589,11 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
 	(*stream).writeString(obsResWidth, "y");
-	(*stream).writeString(obsResWidth, "y");
+	(*stream).writeString(obsResWidth, "z");
+	(*stream).writeString(obsResWidth, "z");
+	(*stream).writeString(obsResWidth, "z");
+	(*stream).writeString(obsResWidth, "z");
+	(*stream).writeString(obsResWidth, "z");
 	(*stream) << endl;
 
 	(*stream) << endl;
@@ -559,6 +612,7 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 
     const auto &uvecXSummary = camera.getUVECObsSummary().xVectorCompObsSum;
     const auto &uvecYSummary = camera.getUVECObsSummary().yVectorCompObsSum;
+	const auto &uvecZSummary = camera.getUVECObsSummary().zVectorCompObsSum;
 
 	//X
 	(*stream) << TABs;
@@ -572,6 +626,11 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getVariance());//ecart type
+	 //Z
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecZSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecZSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecZSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecZSummary.getVariance());//ecart type
 	(*stream) << endl;
 
 

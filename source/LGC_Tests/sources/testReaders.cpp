@@ -274,138 +274,161 @@ namespace tut
 		*SCALE   scaleID   sigmaD   ppmD   distCorrectionValue   sigmaDCorr    sigmaInstrCentering  
 
 		*/
+		try {
 
-		using namespace LGC;
-		TInstrumentData& instr(proj.getInstruments());
-		// TSTN station with targets
-		TKeyPOLAR m1(proj);
-        m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1);
-		m1.parse(tokenizefileString( "PT1 1 2 3 4 0 5 6 7 8 9"), true, -1);
-		m1.parse(tokenizefileString( "PT9 2 3 3 4 0 5 6 7 8 9"), true, -1);
-		m1.parse(tokenizefileString( "PT8 3 1 3 4 0 5 6 7 8 9"), true, -1);
-		m1.parse(tokenizefileString( "PT7 3 1 3 4 0 5 6 7 8 9"), true, -1);
-		// Already exists, must fail
-		ensure_THROW(m1.parse(tokenizefileString("PT1 1 2 3 4 0 5 6 7 8 9"), true, -1), std::runtime_error);
-		ensure_THROW(m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1), std::runtime_error);
-		//Uncomplete definition must fail
-		ensure_THROW(m1.parse(tokenizefileString("*POLAR TS2 PT1 1 2 3 "), true, -1), std::runtime_error);
-        m1.parse(tokenizefileString("PT2 11 12 13 14 1 15 16 17 18 19"), true, -1);
-		const TInstrumentData::TPOLAR& ts1(instr.getDevice(instr.fPOLAR, "TS1"));
-		ensure_equals(ts1.ID, "TS1");
-		ensure_equals(ts1.defTarget, "PT1");
-		ensure_equals(ts1.instrHeight, 1);
-		ensure_equals(ts1.sigmaInstrHeight, 2*MM2M); //VALUE GIVEN IN MM, but stored in METRES 2mm = 0.002m 
-		ensure_equals(ts1.sigmaInstrCentering, 3*MM2M);
-		ensure_equals(ts1.constAngle, 4*GON2RAD);
-		const TInstrumentData::TPOLAR::TTarget& pt1(instr.getDevice(ts1.targets, "PT1"));
-		ensure_equals(pt1.ID, "PT1"); 
-		ensure_equals(pt1.sigmaAngl, 1*CC2RAD); 
-		ensure_equals(pt1.sigmaZenD, 2*CC2RAD);
-		ensure_equals(pt1.sigmaDist, 3*MM2M); 
-		ensure_equals(pt1.ppmDist, 4*MM2M); 
-		ensure_equals(pt1.distCorrectionUnknown, false); 
-		// ensure_equals(pt1.distCorrectionAdjustable->isFixed(), true);
-		ensure_equals(pt1.distCorrectionValue, 5); 
-		ensure_equals(pt1.sigmaDCorr, 6*MM2M); 
-		ensure_equals(pt1.sigmaTargetCentering, 7*MM2M); 
-		ensure_equals(pt1.targetHt, 8); 
-		ensure_equals(pt1.sigmaTargetHt, 9*MM2M); 
-		//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-		// ensure_equals(pt1.distCorrectionAdjustable->getProvisionalValue(), 5);
+			using namespace LGC;
+			TInstrumentData& instr(proj.getInstruments());
+			// TSTN station with targets
+			TKeyPOLAR m1(proj);
+			m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1);
+			m1.parse(tokenizefileString("PT1 1 2 3 4 0 5 6 7 8 9"), true, -1);
+			m1.parse(tokenizefileString("PT9 2 3 3 4 0 5 6 7 8 9"), true, -1);
+			m1.parse(tokenizefileString("PT8 3 1 3 4 0 5 6 7 8 9"), true, -1);
+			m1.parse(tokenizefileString("PT7 3 1 3 4 0 5 6 7 8 9"), true, -1);
+			// Already exists, must fail
+			ensure_THROW(m1.parse(tokenizefileString("PT1 1 2 3 4 0 5 6 7 8 9"), true, -1), std::runtime_error);
+			ensure_THROW(m1.parse(tokenizefileString("*POLAR TS1 PT1 1 2 3 4"), true, -1), std::runtime_error);
+			//Uncomplete definition must fail
+			ensure_THROW(m1.parse(tokenizefileString("*POLAR TS2 PT1 1 2 3 "), true, -1), std::runtime_error);
+			m1.parse(tokenizefileString("PT2 11 12 13 14 1 15 16 17 18 19"), true, -1);
+			const TInstrumentData::TPOLAR& ts1(instr.getDevice(instr.fPOLAR, "TS1"));
+			ensure_equals(ts1.ID, "TS1");
+			ensure_equals(ts1.defTarget, "PT1");
+			ensure_equals(ts1.instrHeight, 1);
+			ensure_equals(ts1.sigmaInstrHeight, 2 * MM2M); //VALUE GIVEN IN MM, but stored in METRES 2mm = 0.002m 
+			ensure_equals(ts1.sigmaInstrCentering, 3 * MM2M);
+			ensure_equals(ts1.constAngle, 4 * GON2RAD);
+			const TInstrumentData::TPOLAR::TTarget& pt1(instr.getDevice(ts1.targets, "PT1"));
+			ensure_equals(pt1.ID, "PT1");
+			ensure_equals(pt1.sigmaAngl, 1 * CC2RAD);
+			ensure_equals(pt1.sigmaZenD, 2 * CC2RAD);
+			ensure_equals(pt1.sigmaDist, 3 * MM2M);
+			ensure_equals(pt1.ppmDist, 4 * MM2M);
+			ensure_equals(pt1.distCorrectionUnknown, false);
+			// ensure_equals(pt1.distCorrectionAdjustable->isFixed(), true);
+			ensure_equals(pt1.distCorrectionValue, 5);
+			ensure_equals(pt1.sigmaDCorr, 6 * MM2M);
+			ensure_equals(pt1.sigmaTargetCentering, 7 * MM2M);
+			ensure_equals(pt1.targetHt, 8);
+			ensure_equals(pt1.sigmaTargetHt, 9 * MM2M);
+			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
+			// ensure_equals(pt1.distCorrectionAdjustable->getProvisionalValue(), 5);
 
-		const TInstrumentData::TPOLAR::TTarget& pt2(instr.getDevice(ts1.targets, "PT2"));
-		ensure_equals(pt2.ID, "PT2"); 
-		ensure_equals(pt2.sigmaAngl, 11*CC2RAD); 
-		ensure_equals(pt2.sigmaZenD, 12*CC2RAD); 
-		ensure_equals(pt2.sigmaDist, 13*MM2M); 
-		ensure_equals(pt2.ppmDist, 14*MM2M); 
-		ensure_equals(pt2.distCorrectionUnknown, true); 
-		// ensure_equals(pt2.distCorrectionAdjustable->isFixed(), false);
-		ensure_equals(pt2.distCorrectionValue, 15); 
-		ensure_equals(pt2.sigmaDCorr, 16*MM2M); 
-		ensure_equals(pt2.sigmaTargetCentering, 17*MM2M); 
-		ensure_equals(pt2.targetHt, 18); 
-		ensure_equals(pt2.sigmaTargetHt, 19*MM2M); 
-		//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-		// ensure_equals(pt2.distCorrectionAdjustable->getProvisionalValue(), 15);
+			const TInstrumentData::TPOLAR::TTarget& pt2(instr.getDevice(ts1.targets, "PT2"));
+			ensure_equals(pt2.ID, "PT2");
+			ensure_equals(pt2.sigmaAngl, 11 * CC2RAD);
+			ensure_equals(pt2.sigmaZenD, 12 * CC2RAD);
+			ensure_equals(pt2.sigmaDist, 13 * MM2M);
+			ensure_equals(pt2.ppmDist, 14 * MM2M);
+			ensure_equals(pt2.distCorrectionUnknown, true);
+			// ensure_equals(pt2.distCorrectionAdjustable->isFixed(), false);
+			ensure_equals(pt2.distCorrectionValue, 15);
+			ensure_equals(pt2.sigmaDCorr, 16 * MM2M);
+			ensure_equals(pt2.sigmaTargetCentering, 17 * MM2M);
+			ensure_equals(pt2.targetHt, 18);
+			ensure_equals(pt2.sigmaTargetHt, 19 * MM2M);
+			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
+			// ensure_equals(pt2.distCorrectionAdjustable->getProvisionalValue(), 15);
 
-		//
-		// EDM with targets
-		TKeyEDM m2(proj);
-        m2.parse(tokenizefileString("*EDM DM1 ET1 1 2 3"), true, -1);
-		//targetID   sigmaDSpt   ppmDSpt   distCorrectionKnown    distCorrectionValue    sigmaDCorr    sigmaTargetCentering   targetHt    sigmaTargetHt    
-        m2.parse(tokenizefileString("ET1 1 2 0 3 4 5 6 7"), true, -1);
-        m2.parse(tokenizefileString("ET2 11 12 1 13 14 15 16 17"), true, -1);
-		const TInstrumentData::TEDM& dm1(instr.getDevice(instr.fEDM, "DM1"));			
-		ensure_equals(dm1.ID, "DM1");
-		ensure_equals(dm1.defTarget, "ET1");
-		ensure_equals(dm1.instrHeight, 1);
-		ensure_equals(dm1.sigmaInstrHeight, 2 * MM2M);
-		ensure_equals(dm1.sigmaInstrCentering, 3 * MM2M);
-		const TInstrumentData::TEDM::TTarget& dt1(instr.getDevice(dm1.targets, "ET1"));
-		ensure_equals(dt1.ID, "ET1"); 
-		ensure_equals(dt1.sigmaDSpt, 1 * MM2M); 
-		ensure_equals(dt1.ppmDSpt, 2 * MM2M); 
-		ensure_equals(dt1.distCorrectionUnknown, false); 
-		// ensure_equals(dt1.distCorrectionAdjustable->isFixed(), true);
-		ensure_equals(dt1.distCorrectionValue, 3); 
-		ensure_equals(dt1.sigmaDCorr, 4 * MM2M); 
-		ensure_equals(dt1.sigmaTargetCentering, 5 * MM2M); 
-		ensure_equals(dt1.targetHt, 6); 
-		ensure_equals(dt1.sigmaTargetHt, 7 * MM2M); 
-		//Check that pointer to adjustable collection of scalars is valid and the object contains right value
-		// ensure_equals(dt1.distCorrectionAdjustable->getProvisionalValue(), 3);
+				//CAMD instrument with target
+			TKeyCAMD c1(proj);
+			c1.parse(tokenizefileString("*POLAR C1 bcam1 1"), true, -1);
+			c1.parse(tokenizefileString("bcam1 1 2 2 3 0.2"), true, -1);
+			const TInstrumentData::TCAMD& cam1(instr.getDevice(instr.fCAMD, "C1"));
+			ensure_equals(cam1.ID, "C1");
+			ensure_equals(cam1.defTarget, "bcam1");
+			ensure_equals(cam1.sigmaInstrCentering, 1 * MM2M);
+			const TInstrumentData::TCAMD::TTarget& target(instr.getDevice(cam1.targets, "bcam1"));
+			ensure_equals(target.ID, "bcam1");
+			ensure_equals(target.sigmaX, 1 * MM2M);
+			ensure_equals(target.sigmaY, 2 * MM2M);
+			ensure_equals(target.sigmaZ, 2 * MM2M);
+			ensure_equals(target.sigmaDist, 3 * MM2M);
+			ensure_equals(target.sigmaTargetCentering, 0.2 * MM2M);
 
-		const TInstrumentData::TEDM::TTarget& dt2(instr.getDevice(dm1.targets, "ET2"));
-		ensure_equals(dt2.ID, "ET2"); 
-		ensure_equals(dt2.sigmaDSpt, 11 * MM2M); 
-		ensure_equals(dt2.ppmDSpt, 12 * MM2M); 
-		ensure_equals(dt2.distCorrectionUnknown, true); 
-		// ensure_equals(dt2.distCorrectionAdjustable->isFixed(), false);
-		ensure_equals(dt2.distCorrectionValue, 13); 
-		ensure_equals(dt2.sigmaDCorr, 14 * MM2M); 
-		ensure_equals(dt2.sigmaTargetCentering, 15 * MM2M); 
-		ensure_equals(dt2.targetHt, 16); 
-		ensure_equals(dt2.sigmaTargetHt, 17 * MM2M); 
-		// ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
+			//
+			// EDM with targets
+			TKeyEDM m2(proj);
+			m2.parse(tokenizefileString("*EDM DM1 ET1 1 2 3"), true, -1);
+			//targetID   sigmaDSpt   ppmDSpt   distCorrectionKnown    distCorrectionValue    sigmaDCorr    sigmaTargetCentering   targetHt    sigmaTargetHt    
+			m2.parse(tokenizefileString("ET1 1 2 0 3 4 5 6 7"), true, -1);
+			m2.parse(tokenizefileString("ET2 11 12 1 13 14 15 16 17"), true, -1);
+			const TInstrumentData::TEDM& dm1(instr.getDevice(instr.fEDM, "DM1"));
+			ensure_equals(dm1.ID, "DM1");
+			ensure_equals(dm1.defTarget, "ET1");
+			ensure_equals(dm1.instrHeight, 1);
+			ensure_equals(dm1.sigmaInstrHeight, 2 * MM2M);
+			ensure_equals(dm1.sigmaInstrCentering, 3 * MM2M);
+			const TInstrumentData::TEDM::TTarget& dt1(instr.getDevice(dm1.targets, "ET1"));
+			ensure_equals(dt1.ID, "ET1");
+			ensure_equals(dt1.sigmaDSpt, 1 * MM2M);
+			ensure_equals(dt1.ppmDSpt, 2 * MM2M);
+			ensure_equals(dt1.distCorrectionUnknown, false);
+			// ensure_equals(dt1.distCorrectionAdjustable->isFixed(), true);
+			ensure_equals(dt1.distCorrectionValue, 3);
+			ensure_equals(dt1.sigmaDCorr, 4 * MM2M);
+			ensure_equals(dt1.sigmaTargetCentering, 5 * MM2M);
+			ensure_equals(dt1.targetHt, 6);
+			ensure_equals(dt1.sigmaTargetHt, 7 * MM2M);
+			//Check that pointer to adjustable collection of scalars is valid and the object contains right value
+			// ensure_equals(dt1.distCorrectionAdjustable->getProvisionalValue(), 3);
 
-		//
-		// Leveling with staffs
-		TKeyLEVEL m3(proj);
-        m3.parse(tokenizefileString("*LEVEL LI1 ST1 0 100"), true, -1);
-		//staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt    
-		m3.parse(tokenizefileString( "ST1 1 2 3 4 5 6"), true, -1);
-		m3.parse(tokenizefileString( "ST2 1 2 3 4 5 6"), true, -1);
-		const TInstrumentData::TLEVEL& ls1(instr.getDevice(instr.fLEVEL, "LI1"));			
-		ensure_equals(ls1.ID, "LI1");
-		ensure_equals(ls1.defStaffID, "ST1");
-		ensure_equals(ls1.collAngleUnknown, false);
-		// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
-		ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
-		// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
-		const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
-		ensure_equals(lt1.ID, "ST1"); 
-		ensure_equals(lt1.sigmaD, 1 * MM2M); 
-		ensure_equals(lt1.ppmD, 2 * MM2M); 
-		ensure_equals(lt1.distCorrectionValue, 3); 
-		ensure_equals(lt1.sigmaDCorr, 4 * MM2M); 
-		ensure_equals(lt1.staffHt, 5); 
-		ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
+			const TInstrumentData::TEDM::TTarget& dt2(instr.getDevice(dm1.targets, "ET2"));
+			ensure_equals(dt2.ID, "ET2");
+			ensure_equals(dt2.sigmaDSpt, 11 * MM2M);
+			ensure_equals(dt2.ppmDSpt, 12 * MM2M);
+			ensure_equals(dt2.distCorrectionUnknown, true);
+			// ensure_equals(dt2.distCorrectionAdjustable->isFixed(), false);
+			ensure_equals(dt2.distCorrectionValue, 13);
+			ensure_equals(dt2.sigmaDCorr, 14 * MM2M);
+			ensure_equals(dt2.sigmaTargetCentering, 15 * MM2M);
+			ensure_equals(dt2.targetHt, 16);
+			ensure_equals(dt2.sigmaTargetHt, 17 * MM2M);
+			// ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
 
-		//
-		// Scales
-		TKeySCALE m4(proj);
-		//*SCALE   scaleID   sigmaD   ppmD   distCorrectionValue   sigmaDCorr    sigmaInstrCentering
-        m4.parse(tokenizefileString("*SCALE SC1 1 2 3 4 5"), true, -1);
-		const TInstrumentData::TSCALE& sc1(instr.getDevice(instr.fSCALE, "SC1"));		
-		ensure_equals(sc1.ID, "SC1");		
-		ensure_equals(sc1.sigmaD, 1 * MM2M);		
-		ensure_equals(sc1.ppmD, 2 * MM2M);		
-		ensure_equals(sc1.distCorrectionValue, 3);		
-		ensure_equals(sc1.sigmaDCorr, 4 * MM2M);		
-		ensure_equals(sc1.sigmaInstrCentering, 5 * MM2M);	
+			//
+			// Leveling with staffs
+			TKeyLEVEL m3(proj);
+			m3.parse(tokenizefileString("*LEVEL LI1 ST1 0 100"), true, -1);
+			//staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt    
+			m3.parse(tokenizefileString("ST1 1 2 3 4 5 6"), true, -1);
+			m3.parse(tokenizefileString("ST2 1 2 3 4 5 6"), true, -1);
+			const TInstrumentData::TLEVEL& ls1(instr.getDevice(instr.fLEVEL, "LI1"));
+			ensure_equals(ls1.ID, "LI1");
+			ensure_equals(ls1.defStaffID, "ST1");
+			ensure_equals(ls1.collAngleUnknown, false);
+			// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
+			ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
+			// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
+			const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
+			ensure_equals(lt1.ID, "ST1");
+			ensure_equals(lt1.sigmaD, 1 * MM2M);
+			ensure_equals(lt1.ppmD, 2 * MM2M);
+			ensure_equals(lt1.distCorrectionValue, 3);
+			ensure_equals(lt1.sigmaDCorr, 4 * MM2M);
+			ensure_equals(lt1.staffHt, 5);
+			ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
 
-        m4.parse(tokenizefileString("*SCALE SC2 1 2 3 4 5"), true, -1);
+			//
+			// Scales
+			TKeySCALE m4(proj);
+			//*SCALE   scaleID   sigmaD   ppmD   distCorrectionValue   sigmaDCorr    sigmaInstrCentering
+			m4.parse(tokenizefileString("*SCALE SC1 1 2 3 4 5"), true, -1);
+			const TInstrumentData::TSCALE& sc1(instr.getDevice(instr.fSCALE, "SC1"));
+			ensure_equals(sc1.ID, "SC1");
+			ensure_equals(sc1.sigmaD, 1 * MM2M);
+			ensure_equals(sc1.ppmD, 2 * MM2M);
+			ensure_equals(sc1.distCorrectionValue, 3);
+			ensure_equals(sc1.sigmaDCorr, 4 * MM2M);
+			ensure_equals(sc1.sigmaInstrCentering, 5 * MM2M);
+
+			m4.parse(tokenizefileString("*SCALE SC2 1 2 3 4 5"), true, -1);
+
+
+		}
+		catch (exception& e) {
+			ensure("Unexpected execption while testing reader: " + string(e.what()) + "\n", 0);
+		}
 	}
 
 	template<>

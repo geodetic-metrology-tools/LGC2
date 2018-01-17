@@ -152,8 +152,9 @@ void	TSimFileWriter::writeInstrument()
 			(*stream) << itTarget.second->ID << sep
 			<< itTarget.second->sigmaX*M2MM << sep
 			<< itTarget.second->sigmaY*M2MM << sep
-			<< itTarget.second->sigmaDist.getMMetresValue() << sep
-			<< itTarget.second->sigmaTargetCentering.getMMetresValue() << endl;
+			<< itTarget.second->sigmaZ*M2MM << sep
+			<< itTarget.second->sigmaDist.getMetresValue() << sep
+			<< itTarget.second->sigmaTargetCentering.getMetresValue() << endl;
 	}
 
 	for (auto& itPOLAR : data->getInstruments().fPOLAR)
@@ -273,35 +274,38 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 			<< frameIt->get()->frame.getProvRotation(2).getGonsValue() << sep
 			<< frameIt->get()->frame.getProvScale() << sep;
 		
-		if (frameIt->get()->frame.hasTranslStandDev(0))
+		// NB. June 2017:
+		// With the retirement of the weigthed unknown least square the standard deviations
+		// of FRAME are not used any longer (for now).
+		/*if (frameIt->get()->frame.hasTranslStandDev(0))
 			(*stream) << "STX" << sep << frameIt->get()->frame.getTranslationStandDev(0).getMMetresValue() << sep;
-		else if (!frameIt->get()->frame.isTranslationFixed(0))
+		else */if (!frameIt->get()->frame.isTranslationFixed(0))
 			(*stream) << "TX" << sep ;
-		if (frameIt->get()->frame.hasTranslStandDev(1))
+		/*if (frameIt->get()->frame.hasTranslStandDev(1))
 			(*stream) << "STY" << sep << frameIt->get()->frame.getTranslationStandDev(1).getMMetresValue() << sep;
-		else if (!frameIt->get()->frame.isTranslationFixed(1))
+		else */if (!frameIt->get()->frame.isTranslationFixed(1))
 			(*stream) << "TY" << sep;
-		if (frameIt->get()->frame.hasTranslStandDev(2))
+		/*if (frameIt->get()->frame.hasTranslStandDev(2))
 			(*stream) << "STZ" << sep << frameIt->get()->frame.getTranslationStandDev(2).getMMetresValue() << sep;
-		else if (!frameIt->get()->frame.isTranslationFixed(2))
+		else */if (!frameIt->get()->frame.isTranslationFixed(2))
 			(*stream) << "TZ" << sep;
 
-		if (frameIt->get()->frame.hasRotationStandDev(0))
+		/*if (frameIt->get()->frame.hasRotationStandDev(0))
 			(*stream) << "SRX" << sep << frameIt->get()->frame.getRotationStandDev(0).getSignedCCValue() << sep;
-		else if (!frameIt->get()->frame.isRotationFixed(0))
+		else */if (!frameIt->get()->frame.isRotationFixed(0))
 			(*stream) << "RX" << sep;
-		if (frameIt->get()->frame.hasRotationStandDev(1))
+		/*if (frameIt->get()->frame.hasRotationStandDev(1))
 			(*stream) << "SRY" << sep << frameIt->get()->frame.getRotationStandDev(1).getSignedCCValue() << sep;
-		else if (!frameIt->get()->frame.isRotationFixed(1))
+		else */if (!frameIt->get()->frame.isRotationFixed(1))
 			(*stream) << "RY" << sep;
-		if (frameIt->get()->frame.hasRotationStandDev(2))
+		/*if (frameIt->get()->frame.hasRotationStandDev(2))
 			(*stream) << "SRZ" << sep << frameIt->get()->frame.getRotationStandDev(2).getSignedCCValue() << sep;
-		else if (!frameIt->get()->frame.isRotationFixed(2))
+		else */if (!frameIt->get()->frame.isRotationFixed(2))
 			(*stream) << "RZ" << sep;
 
-		if (frameIt->get()->frame.hasScaleStandDev())
+		/*if (frameIt->get()->frame.hasScaleStandDev())
 			(*stream) << "SSCL" << sep << frameIt->get()->frame.getScaleStandDev()*M2MM << sep;
-		else if (!frameIt->get()->frame.isScaleFixed())
+		else */if (!frameIt->get()->frame.isScaleFixed())
 			(*stream) << "SCL" << sep;
 
 		(*stream) << endl;
@@ -640,6 +644,10 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 			if (uvec.target.sigmaY != romDefTarget.sigmaY)
 				(*stream) << "YSE" << sep
 				<< uvec.target.sigmaY*M2MM << sep;
+
+			if (uvec.target.sigmaZ != romDefTarget.sigmaZ)
+				(*stream) << "ZSE" << sep
+				<< uvec.target.sigmaZ*M2MM << sep;
 
 			(*stream) << endl;
 

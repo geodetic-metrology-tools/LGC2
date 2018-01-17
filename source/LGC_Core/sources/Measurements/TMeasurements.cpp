@@ -81,6 +81,7 @@ void TMeasurements::initialiseObsSummaries() {
         allUvdDSummaries,
         allUvecXSummaries,
         allUvecYSummaries,
+		allUvecZSummaries,
         allDSPTSummaries,
         allDLEVSummaries,
         allDlevDHORSummaries,
@@ -116,6 +117,7 @@ void TMeasurements::initialiseObsSummaries() {
         allUvdDSummaries.push_back(&cam.getUVDObsSummary().distObsSum);
         allUvecXSummaries.push_back(&cam.getUVECObsSummary().xVectorCompObsSum);
         allUvecYSummaries.push_back(&cam.getUVECObsSummary().yVectorCompObsSum);
+		allUvecZSummaries.push_back(&cam.getUVECObsSummary().zVectorCompObsSum);
     }
 
     // DSPT
@@ -180,6 +182,7 @@ void TMeasurements::initialiseObsSummaries() {
     uvdGlobalSummary_.distObsSum = TLGCObsSummary::merge(allUvdDSummaries);
     uvecGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvecXSummaries);
     uvecGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvecYSummaries);
+	uvecGlobalSummary_.zVectorCompObsSum = TLGCObsSummary::merge(allUvecZSummaries);
 
     // Other:
     dsptGlobalSummary_ = TLGCObsSummary::merge(allDSPTSummaries);
