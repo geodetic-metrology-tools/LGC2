@@ -68,6 +68,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyPREC(project)));
 	finterpreters.emplace_back(UPK(new TKeyPRES(project)));
 	finterpreters.emplace_back(UPK(new TKeyCOVAR(project)));
+	finterpreters.emplace_back(UPK(new TKeyCHABA(project)));
 
 	finterpreters_lgc1.emplace_back(UPK(new TKeyAPRI(project, nb_allowed_apri_lgc1, allowed_APRI_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyEREL(project, nb_allowed_erel_lgc1, allowed_EREL_lgc1)));

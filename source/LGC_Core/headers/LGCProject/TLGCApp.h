@@ -71,6 +71,9 @@ class TLGCApp {
         /// Write files for covariances
         static void writeCovarFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
 
+		/// Write files for bestfit analysis
+		static void writeChabaFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
 	private:
 		static const string		fCopyright;
 
