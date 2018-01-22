@@ -484,9 +484,11 @@ namespace tut
 	template<>
 	void object::test<9>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ECVE measurement in OLOC");
+#ifndef _WIN32
+		skip();
+#else
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("./outECVE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
@@ -518,6 +520,7 @@ namespace tut
 		ensure_equals("ECVE_line24 x coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getX().getMetresValue(), 20.0, 1e-7);
 		ensure_equals("ECVE_line24 y coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getY().getMetresValue(), 0.0, 1e-7);
 		ensure_equals("ECVE_line24 z coordinate should match", dataset.getPoints().getObject("ECVE_line24").getEstimatedValue().getZ().getMetresValue(), 60.0, 1e-7);
+#endif
 	}
 
 	//----------------------------- ECSP --------------------------------//
