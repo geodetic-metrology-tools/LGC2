@@ -1,0 +1,49 @@
+# We use the image https://gitlab.cern.ch/DataProcessingAndAnalysis/sus_ci_worker to build and test.
+
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+
+# One job builds all the targets while the other builds the tests and run them.
+# The jobs are ran in parallel
+stages:
+    - test
+
+before_script:
+    - cp  -r /susoft/SUSoftCMakeCommon ..
+    - mkdir build && cd build
+    - cmake3 -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELEASE ../source
+
+# Build all targets
+build_all:
+    stage: test
+    image: gitlab-registry.cern.ch/dataprocessingandanalysis/sus_ci_worker:latest
+    dependencies: []
+    script:
+        - echo "Building all targets"
+        - make all
+
+# Build all targets and uploads the libSpatialObjDLL.so
+build_release:
+    stage: test
+    image: gitlab-registry.cern.ch/dataprocessingandanalysis/sus_ci_worker:latest
+    only:
+        - master
+    dependencies: []
+    script:
+        - echo "Building executable"
+        - make LGC
+    artifacts:
+        name: exelinux
+        paths:
+            - build/LGC
+
+# Build the tests and run them
+build_test:
+    stage: test
+    image: gitlab-registry.cern.ch/dataprocessingandanalysis/sus_ci_worker:latest
+    dependencies: []
+    script:
+        - echo "Building tests"
+        - make LGC_Tests
+        - echo "Running the tests"
+        - cd LGC_Tests && ./LGC_Tests
