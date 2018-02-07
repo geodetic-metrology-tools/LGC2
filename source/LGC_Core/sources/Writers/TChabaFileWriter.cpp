@@ -40,7 +40,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream, const TLGCData & pro
 			writePointPairs(createPair(proj, itTree));
 			(*stream) << endl << endl;
 			
-			(*stream) << sep << "COORDONNÉES POINTS REFERENCE (ACTIFS) ANCIEN SYSTÈME DANS LE NOUVEAU SYSTÈME\n" << endl;;
+			(*stream) << sep << "COORDONNÉES POINTS REFERENCE (PASSIF) ANCIEN SYSTÈME DANS LE NOUVEAU SYSTÈME\n" << endl;;
 			// create a empty vector
 			std::vector<LGCAdjustablePoint> emptyVector;
 			writeTransformedPoints(createPair(proj, itTree), emptyVector, true);
@@ -304,6 +304,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		TLOR2LOR transfo = TLOR2LOR(it.second.positionInTree, fProjectData->getTree().begin(), "transfo");
 		//transform coordinates in root
 		transfo.transform(stationRoot);
+		LGCAdjustablePoint ptInRoot(stationRoot,0, 0,0, it.first.getName(),it.first.getReferenceFrame(),it.first.getFrameTreePosition());
 
 		delta d;
 		d.dx =  stationRoot.getX() - it.first.getEstValue(0);
@@ -333,7 +334,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 
 		sumdd2 += pow2(d.dx.getMMetresValue()) + pow2(d.dy.getMMetresValue()) + pow2(d.dz.getMMetresValue());
 
-		writePUNPoint(it.first, d, writeDeltas);
+		writePUNPoint(ptInRoot, d, writeDeltas);
 	}
 	
 	for(auto& itSec:secondary)

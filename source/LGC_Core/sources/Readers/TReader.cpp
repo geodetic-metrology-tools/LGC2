@@ -559,7 +559,7 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 		if (tokLine.empty()) continue;
 
 		// If the line starts with a keyword
-        if(tokLine[0] == "*" && tokLine[1] == INSTR)
+        if(tokLine[0] == "*" && (tokLine[1] == INSTR || tokLine[1] == CHABA))
             return true;
 	}
 	return false;
