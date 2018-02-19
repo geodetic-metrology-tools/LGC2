@@ -125,7 +125,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, TTSTNWriter::getDistanceSensibility<TDSPT, TInstrumentData::TEDM>(&ItDSPT, instrPos, instr));
 
 		//write the res/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual()/ItDSPT.target.sigmaDSpt);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual()/(ItDSPT.target.sigmaDSpt + ItDSPT.target.ppmDSpt * ItDSPT.getDistance() / 1000));
 
 		//write the distance correction
 		if (!ItDSPT.target.distCorrectionAdjustable->isFixed()){
