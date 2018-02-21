@@ -191,6 +191,7 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
+	(*stream) << getSeparator();
 	writeStringSep(getCoordResWidth(), "SX(MM)");
 	writeStringSep(getCoordResWidth(), "SY(MM)");
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
@@ -207,7 +208,6 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 
 		//xyz
 		converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), getSeparator(), itPair.initialValue);
-		(*stream) << getSeparator();
 		
 		//sx sy sz
 		converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz,
