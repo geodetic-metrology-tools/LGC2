@@ -250,7 +250,7 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 	TChabaFileWriter chabaFileWriter(stream.get(), dat);
 
 	if (!dat->getFileLogger().hasErrors())
-		chabaFileWriter.writeFile(stream.get(), *dat);
+		chabaFileWriter.writeFile(stream.get());
 
 }
 

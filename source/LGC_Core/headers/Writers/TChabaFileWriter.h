@@ -27,11 +27,7 @@ class TAdjustableHelmertTransformation;
 using namespace std;
 
 /*!
-Class for writing all files: 
-- writeBestfitResultFile and writeTransformationResultFile write the main results: new coordinates, parameter's values and additionnal information like sigmas, deviations...
-- writeCooFile and writePunchFile write list of transformed points in different format
-- writeInputFilePoints write points used for the calculation (.act and .pas)
-- writeProjectFile write the project file
+Class for writing a result file in CHABA format 
 
 Other (private) functions are used inside the functions described below to write part of the files like title, a list of points, the helmert parameters...
 */
@@ -51,7 +47,7 @@ public:
 	//@}
 
 	/// write .chabaout file for a bestfit calculation
-	void writeFile(TAStreamFormatter* stream, const TLGCData & proj);
+	void writeFile(TAStreamFormatter* stream);
 
 
 private:
@@ -61,25 +57,32 @@ private:
 	/// This function write the transformation details
 	void writeHelmertTransformationDetails(const TAdjustableHelmertTransformation & helmert);
 
-	///Control the writing of transformed passive points which fall within the tolerance
-	void writeTransformedPoints(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> & pairs, const std::vector<LGCAdjustablePoint> & secondary, bool writeDeltas);
+	///write transformed points 
+	void writeTransformedPoints(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> & pairs, bool writeDeltas, TDataTreeIterator itTree);
 
 	///Write all transformed secondary passive points
 	void writeTransformedSecondaryPoints(const std::vector<LGCAdjustablePoint> & secondary);
 
-	///Write active and passive x,y and z coordinates of point pairs before transformation
-	void writePointPairs(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> & pairs);
+	///Write active and passive x,y and z coordinates  before transformation
+	void writeInputPoints(const std::vector<TOBSXYZ> & inputdata);
 
-	///Write points list after transformation
-	void writePUNPoint(const LGCAdjustablePoint & p, delta d, bool writeDeltas);
+	///Write points list
+	void writePUNPoint(const LGCAdjustablePoint & p, TFreeVector sigma, delta d, bool writeDeltas);
 
 	///Write header in out file
-	void writeTitle(const TLGCData &project);
+	void writeTitle();
 
-	///create pair list
-	const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> createPair(const TLGCData &project, TDataTreeIterator itTree);
-	///creat secondary points list
-	const std::vector<LGCAdjustablePoint> createSecPoint(const TLGCData &project, TDataTreeIterator itTree);
+	///create pair list between the OBSXYZ in the require node and the adjustable points to write results (coordinates, sigmas and differences)
+	const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> createPair(TDataTreeIterator itTree);
+	
+	///keep the OBSXYZ list corresponding to the required node to write the input data used
+	const std::vector<TOBSXYZ> keepOBSXYZ( TDataTreeIterator itTree);
+
+	///create secondary points list
+	const std::vector<LGCAdjustablePoint> createSecPoint(TDataTreeIterator itTree);
+
+	///Transform the sigma of the OBSXYZ observations in the root frame
+	TFreeVector transformSigmaInRoot(const TPositionVector ptInSF, TDataTreeIterator itTree, TLength sx, TLength sy, TLength sz);
 };
 
 #endif
