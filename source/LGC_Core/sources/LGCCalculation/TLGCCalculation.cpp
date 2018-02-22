@@ -26,7 +26,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	{
 		// throw std::runtime_error("Data are not consistent, see the output file: " + fData->getFileLogger().getOutputFileLocation() + " for more information.");
 		return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Data are not consistent, see the log file for more information.");
-	}
+	} 
 	try{
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));

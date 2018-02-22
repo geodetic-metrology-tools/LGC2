@@ -1643,9 +1643,14 @@ void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, 
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getVariance());//ecart type
 	(*stream) << endl;
-	(*stream).writeStringLeft(nameWidth, "    "); 
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream) << "(";
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglOffsetsSummary.getResMax());//residu offset max (en mm)
+	(*stream) << " mm)";
+	(*stream) << "(";
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglOffsetsSummary.getResMin());//residu offset min (en mm)
+	(*stream) << " mm)";
 	(*stream) << endl;
 }
 
@@ -1668,9 +1673,14 @@ void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, 
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getMean());//residu moy
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getVariance());//ecart type
 	(*stream) << endl;
-	(*stream).writeStringLeft(nameWidth, "    ");
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream) << "(" ;
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendOffsetsSummary.getResMax());//residu offset max (en mm)
+	(*stream) << " mm)" ;
+	(*stream) << "(";
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendOffsetsSummary.getResMin());//residu offset min (en mm)
+	(*stream) << " mm)";
 	(*stream) << endl;
 }
 
