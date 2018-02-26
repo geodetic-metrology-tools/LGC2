@@ -43,8 +43,8 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "chaba_SPHE.lgc",
-			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "chaba_SPHE.res");
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "OBSXYZ.lgc",
+			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "OBSXYZ.res");
 
 		ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
 
