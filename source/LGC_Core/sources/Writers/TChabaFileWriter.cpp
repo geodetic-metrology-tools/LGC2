@@ -484,10 +484,10 @@ const std::vector<TOBSXYZ> TChabaFileWriter::keepOBSXYZ(TDataTreeIterator itFram
 const std::vector<LGCAdjustablePoint> TChabaFileWriter::createSecPoint(TDataTreeIterator itFrame)
 {
 	std::vector<LGCAdjustablePoint> secondaryPoint; //other points defined in the frame
-	
-	for (auto& pt = fProjectData->getPoints().begin(); pt != fProjectData->getPoints().end(); pt++)
-		if (pt->getFrameTreePosition() == itFrame)
-			secondaryPoint.emplace_back(*pt);
+
+	for (const auto& pt : fProjectData->getPoints())
+		if (pt.getFrameTreePosition() == itFrame)
+			secondaryPoint.emplace_back(pt);
 	
 	return secondaryPoint;
 }
