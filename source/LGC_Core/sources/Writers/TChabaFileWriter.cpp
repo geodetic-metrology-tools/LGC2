@@ -449,9 +449,9 @@ const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> TChabaFileWriter::crea
 			if (!itTree.node->data->measurements.fOBSXYZ.empty())
 				oldPt = { std::begin(itTree.node->data->measurements.fOBSXYZ), std::end(itTree.node->data->measurements.fOBSXYZ) };
 	
-	for (auto& itOBS = oldPt.begin(); itOBS != oldPt.end(); itOBS++)
+	for (const auto& itOBS: oldPt)
 	{
-		const LGCAdjustablePoint& pt = fProjectData->getPoints().getObject(itOBS->station->getName());
+		const LGCAdjustablePoint& pt = fProjectData->getPoints().getObject(itOBS.station->getName());
 		if(pt.getFrameTreePosition().node->data->isROOTNode())
 			newPoint.emplace_back(pt);
 	}
