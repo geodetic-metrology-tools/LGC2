@@ -143,6 +143,18 @@ public:
     virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
 
+class TKeyCHABA : public TAOptionKey {
+public:
+	///Constructor
+	TKeyCHABA(TLGCData& project, int nb_allowed_keywords = nb_allowed_chaba, const char** keywords = allowed_CHABA) : TAOptionKey(project, CHABA)
+	{
+		for (int i(0); i< nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	///Tokenize and initialize options for the calculation
+	virtual void parse(const std::vector<std::string>&, bool activeLine, int);
+};
 
 class TKeyNODUP : public TAOptionKey {
 	public:

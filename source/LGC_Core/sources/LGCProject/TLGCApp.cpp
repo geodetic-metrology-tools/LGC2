@@ -10,6 +10,7 @@
 #include "TFautFileWriter.h"
 #include "TDefaFileWriter.h"
 #include "TCovarFileWriter.h"
+#include "TChabaFileWriter.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -153,6 +154,10 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
 	// Write covariance matrices
 	if (conf.covar.isActive())
         writeCovarFile(dat, outputFileLocation, stream);
+
+	// Write best fit analysis
+	if (conf.chaba.isActive())
+		writeChabaFile(dat, outputFileLocation, stream);
 	
     // Write deform file here to have acces to lgcCalculation
     if(conf.writeDefa.isActive())
@@ -235,6 +240,17 @@ void TLGCApp::writeCovarFile(TLGCData const * const dat, const std::string &outp
 		covarFileWriter.writeFile(*dat);
 	else
 		covarFileWriter.writeFile("Error has occured, see the LGC log file.");
+
+}
+
+/// Write files for covariances
+void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
+{
+	stream->resetStreamName(outputFileLocation + ".chabaOut");
+	TChabaFileWriter chabaFileWriter(stream.get(), dat);
+
+	if (!dat->getFileLogger().hasErrors())
+		chabaFileWriter.writeFile(stream.get());
 
 }
 

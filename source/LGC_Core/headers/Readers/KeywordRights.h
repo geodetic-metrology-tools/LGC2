@@ -94,6 +94,7 @@ namespace {
 #define HIST "HIST"
 #define EREL "EREL"
 #define COVAR "COVAR"
+#define CHABA "CHABA"
 
 	//measurements
 
@@ -134,26 +135,27 @@ namespace {
 	const int nb_allowed_level = 24;
 	const int nb_allowed_scale = 24;
 	//referentials
-	const int nb_allowed_oloc = 23;
-	const int nb_allowed_rs2k = 23;
-	const int nb_allowed_lep = 23;
-	const int nb_allowed_sphe = 23;
+	const int nb_allowed_oloc = 24;
+	const int nb_allowed_rs2k = 24;
+	const int nb_allowed_lep = 24;
+	const int nb_allowed_sphe = 24;
 	//options
-	const int nb_allowed_faut = 27;
-	const int nb_allowed_defa = 27;
-	const int nb_allowed_apri = 27;
-	const int nb_allowed_punc = 27;
-	const int nb_allowed_prec = 27;
-	const int nb_allowed_pres = 27;
-	const int nb_allowed_fmtp = 27;
-	const int nb_allowed_nodup = 27;
-	const int nb_allowed_sobs = 27;
-	const int nb_allowed_hist = 27;
-	const int nb_allowed_erel = 27;
-	const int nb_allowed_simu = 27;
-	const int nb_allowed_libr = 27;
-	const int nb_allowed_allfixed = 24;
-	const int nb_allowed_covar = 27;
+	const int nb_allowed_faut = 28;
+	const int nb_allowed_defa = 28;
+	const int nb_allowed_apri = 28;
+	const int nb_allowed_punc = 28;
+	const int nb_allowed_prec = 28;
+	const int nb_allowed_pres = 28;
+	const int nb_allowed_fmtp = 28;
+	const int nb_allowed_nodup = 28;
+	const int nb_allowed_sobs = 28;
+	const int nb_allowed_hist = 28;
+	const int nb_allowed_erel = 28;
+	const int nb_allowed_simu = 28;
+	const int nb_allowed_libr = 28;
+	const int nb_allowed_allfixed = 25;
+	const int nb_allowed_covar = 28;
+	const int nb_allowed_chaba = 28;
 
 	//header
 	const int nb_allowed_instr = 13; // instruments + points +frame
@@ -252,26 +254,27 @@ namespace {
 	const char* allowed_LEVEL[nb_allowed_level] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
 	const char* allowed_SCALE[nb_allowed_scale] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
 	// Reference systems
-	const char* allowed_OLOC[nb_allowed_oloc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_RS2K[nb_allowed_rs2k] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_LEP[nb_allowed_lep] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_SPHE[nb_allowed_sphe] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
+	const char* allowed_OLOC[nb_allowed_oloc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_RS2K[nb_allowed_rs2k] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_LEP[nb_allowed_lep]   = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_SPHE[nb_allowed_sphe] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
 	// Options
-	const char* allowed_DEFA[nb_allowed_defa] = { APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_APRI[nb_allowed_apri] = { DEFA, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_PREC[nb_allowed_prec] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_PRES[nb_allowed_pres] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_FAUT[nb_allowed_faut] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_PUNC[nb_allowed_punc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_FMTP[nb_allowed_fmtp] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, NODUP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_NODUP[nb_allowed_nodup] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, SOBS, HIST, EREL, COVAR };
-	const char* allowed_SOBS[nb_allowed_sobs] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, EREL, COVAR };
-	const char* allowed_HIST[nb_allowed_hist] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, EREL, COVAR };
-	const char* allowed_EREL[nb_allowed_erel] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, COVAR };
-	const char* allowed_SIMU[nb_allowed_simu] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, LIBR, NODUP, SOBS, HIST, EREL, COVAR, LIBR };
-	const char* allowed_LIBR[nb_allowed_libr] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, COVAR, SIMU };
-	const char* allowed_ALLFIXED[nb_allowed_allfixed] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, NODUP, SOBS, HIST, EREL, SIMU };
-	const char* allowed_COVAR[nb_allowed_covar] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, LIBR, SIMU };
+	const char* allowed_DEFA[nb_allowed_defa] = { APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_APRI[nb_allowed_apri] = { DEFA, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_PREC[nb_allowed_prec] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_PRES[nb_allowed_pres] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_FAUT[nb_allowed_faut] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_PUNC[nb_allowed_punc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_FMTP[nb_allowed_fmtp] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
+	const char* allowed_NODUP[nb_allowed_nodup] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, SOBS, HIST, EREL, COVAR, CHABA };
+	const char* allowed_SOBS[nb_allowed_sobs] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, EREL, COVAR , CHABA};
+	const char* allowed_HIST[nb_allowed_hist] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, EREL, COVAR , CHABA};
+	const char* allowed_EREL[nb_allowed_erel] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, COVAR , CHABA};
+	const char* allowed_SIMU[nb_allowed_simu] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, LIBR, NODUP, SOBS, HIST, EREL, COVAR, LIBR, CHABA };
+	const char* allowed_LIBR[nb_allowed_libr] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, COVAR, SIMU, CHABA };
+	const char* allowed_ALLFIXED[nb_allowed_allfixed] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, NODUP, SOBS, HIST, EREL, SIMU, CHABA };
+	const char* allowed_COVAR[nb_allowed_covar] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, LIBR, SIMU, CHABA };
+	const char* allowed_CHABA[nb_allowed_chaba] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, LIBR, SIMU, COVAR };
 	// Others
 	const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ };
 	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN };

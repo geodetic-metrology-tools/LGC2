@@ -233,6 +233,8 @@ struct TLGCConfig
 	TCoordOut     writePlot;
 	/// Write a file for covariance analysis
 	TBinaryOption covar;
+	/// Write a file for best-fit analysis 
+	TBinaryOption chaba;
 
 	///width of point's name
 	int pointNameWidth = 0;

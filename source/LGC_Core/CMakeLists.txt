@@ -97,6 +97,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Writers/TSimFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TDefaFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TCovarFileWriter.h
+	${CORE_INCLUDE_PATH}/Writers/TChabaFileWriter.h
 )
 
 # Create a variable containing all .cpp files:
@@ -165,6 +166,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/Writers/TSimFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TDefaFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TCovarFileWriter.cpp
+	${CORE_SOURCES_PATH}/Writers/TChabaFileWriter.cpp
 )
 
 

@@ -770,7 +770,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		//RES/SIGMA
 		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaAngl.getRadiansValue()));
 		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / TAngle(ItPLR3D.target.sigmaAngl).getRadiansValue()));
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist));
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist * ItPLR3D.getDistance() / 1000));
 		(*stream) << " | ";
 
 		(*stream) << endl;
@@ -923,7 +923,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
         (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSensibility<TLINE>(&ItDIST, instrPos, instr));
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, 2, (ItDIST.getDistanceResidual() / ItDIST.target.sigmaDist));
+		(*stream).writeDouble(obsResWidth, 2, (ItDIST.getDistanceResidual() / (ItDIST.target.sigmaDist + ItDIST.target.ppmDist * ItDIST.getDistance() / 1000)));
 
 		if (!ItDIST.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated
@@ -995,7 +995,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.getDistanceResidual().getMMetresValue());
 
 		//write the residual/SIGMA
-		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() / ItDHOR.target.sigmaDist);
+		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() / (ItDHOR.target.sigmaDist + ItDHOR.target.ppmDist * ItDHOR.getDistance() / 1000));
 
 		if (!ItDHOR.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated

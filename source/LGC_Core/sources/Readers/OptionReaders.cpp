@@ -87,6 +87,10 @@ void TKeyCOVAR::parse(const std::vector<std::string>&, bool activeLine, int) {
     fconfig.covar = TLGCConfig::TBinaryOption(activeLine);
 }
 
+void TKeyCHABA::parse(const std::vector<std::string>&, bool activeLine, int) {
+	fconfig.chaba = TLGCConfig::TBinaryOption(activeLine);
+}
+
 void TKeyNODUP::parse(const std::vector<std::string>&, bool activeLine, int) {
     fconfig.nodup = TLGCConfig::TBinaryOption(activeLine);
 }

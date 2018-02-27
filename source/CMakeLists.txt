@@ -33,8 +33,8 @@ include("../../SUSoftCMakeCommon/CMakeLists.txt")
 # Set version number and provide a header file with corresponding defines
 # /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
 set (LGC_VERSION_MAJOR 2)
-set (LGC_VERSION_MINOR 01)
-set (LGC_VERSION_PATCH 02)
+set (LGC_VERSION_MINOR 02)
+set (LGC_VERSION_PATCH 00)
 
 # Versions files
 configure_file (
