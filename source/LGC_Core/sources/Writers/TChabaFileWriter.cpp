@@ -36,24 +36,44 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
 
 			// write the input data
 			(*stream) << sep << "DONNÉES D'ENTRÉE\n";
-			(*stream) << sep << "ACTIF\n";
-			writeInputPoints(keepOBSXYZ(fProjectData->getTree().begin())); //first node is root
+			const std::vector<TOBSXYZ> obsActif = keepOBSXYZ(fProjectData->getTree().begin());
+			(*stream) << sep << "ACTIF\n"<<endl;
+			if (!obsActif.empty())
+				writeInputPoints(obsActif); //first node is root
+			else
+				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n"<<endl;
 
-			(*stream) << sep << "PASSIF\n";
-			writeInputPoints(keepOBSXYZ(itTree));
+			const std::vector<TOBSXYZ> obsPassif = keepOBSXYZ(itTree);
+			(*stream) << sep << "PASSIF\n"<<endl;
+			if (!obsPassif.empty())
+				writeInputPoints(obsPassif);
+			else
+				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n";
 			(*stream) << endl << endl;
 
 			//write results
+			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairActif = createPair(fProjectData->getTree().begin());
 			(*stream) << sep << "NOUVELLES COORDONNÉES DES POINTS REFERENCE (ACTIF) \n" << endl;;
-			writeTransformedPoints(createPair(fProjectData->getTree().begin()), true, fProjectData->getTree().begin());
+			if (!pairActif.empty())
+				writeTransformedPoints(pairActif, true, fProjectData->getTree().begin());
+			else
+				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n";
 			(*stream) << endl << endl;
 			
+			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairPassif = createPair(itTree);
 			(*stream) << sep << "COORDONNÉES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTÈME\n" << endl;;
-			writeTransformedPoints(createPair(itTree), true, itTree);
+			if (!pairPassif.empty())
+				writeTransformedPoints(pairPassif, true, itTree);
+			else
+				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n";
 			(*stream) << endl << endl;
-			
-			(*stream) << sep << "COORDONNÉES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTÈME\n" << endl;;
-			writeTransformedSecondaryPoints(createSecPoint(itTree));
+
+			const std::vector<LGCAdjustablePoint> secondaryPts = createSecPoint(itTree);
+			if (!secondaryPts.empty())
+			{
+				(*stream) << sep << "COORDONNÉES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTÈME\n" << endl;;
+				writeTransformedSecondaryPoints(secondaryPts);
+			}
 		}
 	}
 }
@@ -186,7 +206,6 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
 	//Write Column Headings
-	(*stream) << endl;
 	writeStringLeftSep(getNameWidth(), "NOM");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
@@ -230,7 +249,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 
 	//write column headings
 	writeStringLeftSep(getNameWidth(), "NOM");
-	writeStringSep(getCoordWidth(), "X(M)"); 
+	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
 	if (pairs.at(0).first.getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
@@ -239,7 +258,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	writeStringSep(getCoordResWidth(), "SX(MM)");
 	writeStringSep(getCoordResWidth(), "SY(MM)");
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
-		
+
 	if (writeDeltas)
 	{
 		(*stream) << getSeparator();
@@ -248,8 +267,8 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		writeStringSep(getCoordResWidth(), "DZ(MM)");
 		writeStringSep(getCoordResWidth(), "DD(MM)");
 	}
-	(*stream)<<endl;	
-	
+	(*stream) << endl;
+
 	int usablePointCount = 0;
 	TReal sumdd2 = 0.0;
 
@@ -262,11 +281,11 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		TLOR2LOR transfo = TLOR2LOR(it.second.positionInTree, fProjectData->getTree().begin(), "transfo");
 		//transform coordinates in root
 		transfo.transform(stationRoot);
-		LGCAdjustablePoint ptInRoot(stationRoot,0, 0,0, it.first.getName(),it.first.getReferenceFrame(),it.first.getFrameTreePosition());
+		LGCAdjustablePoint ptInRoot(stationRoot, 0, 0, 0, it.first.getName(), it.first.getReferenceFrame(), it.first.getFrameTreePosition());
 
 		delta d;
-		d.dx =  stationRoot.getX() - it.first.getEstValue(0);
-		d.dy =  stationRoot.getY() - it.first.getEstValue(1);
+		d.dx = stationRoot.getX() - it.first.getEstValue(0);
+		d.dy = stationRoot.getY() - it.first.getEstValue(1);
 		d.dz = stationRoot.getZ() - it.first.getEstValue(2);
 
 		sumdd2 += pow2(d.dx.getMMetresValue()) + pow2(d.dy.getMMetresValue()) + pow2(d.dz.getMMetresValue());
@@ -282,13 +301,13 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 			//need to transform sigma in the root
 			sigma = transformSigmaInRoot(it.second.initialValue, itTree, it.second.getXObservedStDev(), it.second.getYObservedStDev(), it.second.getZObservedStDev());
 
-		writePUNPoint(ptInRoot,sigma, d, writeDeltas);
+		writePUNPoint(ptInRoot, sigma, d, writeDeltas);
 	}
-	
-	
+
+
 	//write EMQ from primary passive point information and write it at the bottom of the list
 	double fEMQ = sqrt(sumdd2 / usablePointCount);
-	(*stream)<<endl;
+	(*stream) << endl;
 	if (writeDeltas)
 	{
 		(*stream) << getSeparator() << getSeparator() << getSeparator() << "*** EMQ DD (MM) = " << getSeparator();
