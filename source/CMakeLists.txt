@@ -1,5 +1,5 @@
 #
-# CMake file for LGC2UI
+# CMake file for LGC2
 #
 # To create a solution with this CMake file, you need to first define the following variables in a CMake style file.
 # The path to this file can be setup in the below variable `EXT_LIBS_TXT_PATH`
