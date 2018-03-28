@@ -916,7 +916,7 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 		}
 
 		//keep the first fixed point in root. Now we give a warning message if more than 1 point is CALA and not an error.
-		LGCAdjustablePoint* cala;
+		LGCAdjustablePoint* cala = nullptr;
 		for (auto& itPoint : fData.getPoints())
 			if (itPoint.isFixed() && itPoint.getFrameTreePosition().node->data->isROOTNode())
 			{
@@ -928,7 +928,8 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 				dataConsistent = false;
 				fileLog << TFileLogger::e_logType::LOG_ERROR << "If PDOR keyword used, there must be at least one point defined under CALA in a ROOT node.";
 			}
-
+		if (!cala)
+			exit(1);
 		LGCAdjustablePoint& oriPt = fData.getPoints().getObject(pdor.fptname);
 
 		//initialize pdor measurement function
