@@ -277,9 +277,11 @@ namespace tut
 	template<>
 	void object::test<5>()
 	{
+		set_test_name("Testing ECVE measurement in OLOC");
+		tut::skip("ECVE deactivated for the moment");
+
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
 
-		set_test_name("Testing ECVE measurement in OLOC");
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("./outECVEOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
@@ -329,9 +331,11 @@ namespace tut
 	template<>
 	void object::test<6>()
 	{
+		set_test_name("Testing ECVE measurement in RS2K");
+		tut::skip("ECVE deactivated for the moment");
+
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
 
-		set_test_name("Testing ECVE measurement in RS2K");
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("./outECVERS2K.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
@@ -381,9 +385,11 @@ namespace tut
 	template<>
 	void object::test<7>()
 	{
+		set_test_name("Testing ECVE measurement in LEP");
+		tut::skip("ECVE deactivated for the moment");
+
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
 
-		set_test_name("Testing ECVE measurement in LEP");
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("./outECVELEP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
@@ -433,9 +439,11 @@ namespace tut
 	template<>
 	void object::test<8>()
 	{
+		set_test_name("Testing ECVE measurement in SPHE");
+		tut::skip("ECVE deactivated for the moment");
+
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
 
-		set_test_name("Testing ECVE measurement in SPHE");
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("./outECVESPHE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
@@ -485,9 +493,8 @@ namespace tut
 	void object::test<9>()
 	{
 		set_test_name("Testing ECVE measurement in OLOC");
-#ifndef _WIN32
-		skip();
-#else
+		tut::skip("ECVE deactivated for the moment");
+
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("./outECVE.txt");
@@ -520,7 +527,6 @@ namespace tut
 		ensure_equals("ECVE_line24 x coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getX().getMetresValue(), 20.0, 1e-7);
 		ensure_equals("ECVE_line24 y coordinate should match", dataset.getPoints().getObject("ECVE_line24").getProvisionalValue().getY().getMetresValue(), 0.0, 1e-7);
 		ensure_equals("ECVE_line24 z coordinate should match", dataset.getPoints().getObject("ECVE_line24").getEstimatedValue().getZ().getMetresValue(), 60.0, 1e-7);
-#endif
 	}
 
 	//----------------------------- ECSP --------------------------------//

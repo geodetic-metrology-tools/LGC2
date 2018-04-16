@@ -421,9 +421,11 @@ namespace tut
 	template<>
 	void object::test<10>()
 	{
+		tut::skip("ECVE deactivated for the moment");
+		set_test_name("Testing ECVE measurement");
+
 		std::shared_ptr<TLGCData> projTest(new TLGCData);
 
-		set_test_name("Testing ECVE measurement");
 		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECVE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
