@@ -2,6 +2,7 @@
 #include "TLGCApp.h"
 #include "Utils.h"
 #include "TFileLogger.h"
+#include "Defaults.h"
 
 #ifdef __linux__
 	#include <sys/types.h>
@@ -34,6 +35,7 @@ int main( int argc,  char *argv[]){
 	std::string inputFilePath;
 	std::string inputFilename;
 	std::string outputFilePath;
+	int nMaxIterations = MAX_ITERATIONS;
 
 #ifdef __linux__
 	const std::string logFilePath = getCurrentDirectory()+slash+"LOGFile.log";
@@ -42,12 +44,13 @@ int main( int argc,  char *argv[]){
 #endif
 
 	//std::this_thread::sleep_for(std::chrono::milliseconds(8000));
+	//create a log file to write the error
+
+	TFileLogger logFile(logFilePath, "LGC log file");
+	auto& errorMessages(logFile);
 
 	if (argc == 1)
 	{
-		//create a log file to write the error
-		TFileLogger logFile(logFilePath, "LGC log file");
-		auto& errorMessages(logFile);
 		errorMessages.writeReportHeader("Launch LGC:");
 		errorMessages << TFileLogger::e_logType::LOG_ERROR << "No argument, LGC needs at least the project filepath after the -i flag.";
 	}
@@ -63,7 +66,8 @@ int main( int argc,  char *argv[]){
 				case 'i':
 				case 'I':
 				{
-					if (!argv[i + 1]) { // -I/-i option used, but the input file path was not specified
+					if (!argv[i + 1]) {
+						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-I/-i option used, but the input file path was not specified";
 						break;
 					}
 
@@ -92,7 +96,8 @@ int main( int argc,  char *argv[]){
 				case 'o':
 				case 'O':
 				{
-					if (!argv[i + 1]) { // -O/-o option used, but the output file path was not specified
+					if (!argv[i + 1]) {
+						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-O/-o option used, but the output file path was not specified";
 						break;
 					}
 
@@ -100,7 +105,7 @@ int main( int argc,  char *argv[]){
 
 					// Look if absolute path is used
 #ifdef __linux__    
-					if (outputFilePath.substr(0, 1).compare(slash) != 0 )
+					if (outputFilePath.substr(0, 1).compare(slash) != 0)
 						outputFilePath = getPathDir(inputFilePath) + slash + argv[i + 1];
 
 #else
@@ -113,18 +118,34 @@ int main( int argc,  char *argv[]){
 
 					break;
 				}
+
+				case 'n':
+				case 'N':
+				{
+					if (!argv[i + 1]) {
+						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-N/-n option used, but the maximal number of iterations was not specified";
+						break;
+					}
+					try {
+						nMaxIterations = stoi(argv[i + 1]);
+					}
+					catch (std::invalid_argument& e) {
+						// if no conversion could be performed
+						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-N/-n option used, but the maximal number of iterations is not correctly specified";
+					}
+					break;
+				}
+
+				default:
+					break;
 				}
 			}
 		}
 
 
-
 		if (inputFilename == "" || outputFilePath == ""){
 			if (inputFilePath == "")
 			{
-				//create a log file to write the error
-				TFileLogger logFile(logFilePath, "LGC log file");
-				auto& errorMessages(logFile);
 				errorMessages.writeReportHeader("Launch LGC:");
 				errorMessages << TFileLogger::e_logType::LOG_ERROR << "Error, the input file is not found. Give the path after -i flag";
 				return 1;
@@ -137,7 +158,7 @@ int main( int argc,  char *argv[]){
 
 		try
 		{
-			TLGCApp lgc(inputFilePath, outputFilePath);
+			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
 			return lgc.exec();
 		}
 		catch (const std::runtime_error& ex)

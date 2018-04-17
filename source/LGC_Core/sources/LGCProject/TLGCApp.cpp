@@ -19,10 +19,11 @@
 const string TLGCApp::fCopyright = "Copyright 2015, CERN SU. All rights reserved.";
 
 
-TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLocation):
+TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLocation, const int maxIterations) :
 	fInputFileLoc(infileLocation),
 	fOutputFileLoc(outfileLocation),
-	fStream(nullptr)
+	fStream(nullptr),
+	fMaxIterations(maxIterations)
 {
 	fLoggerFileLoc = fOutputFileLoc.substr(0, fOutputFileLoc.length() - 4) + ".log";  //Cut the extension + the dot(.)
 }
@@ -69,7 +70,7 @@ Behavior TLGCApp::exec()
 	initializeStream(projectData, fOutputFileLoc, fStream);
 
 	//Run the calculation, results are obtained in the 'projectData', 
-	TLGCCalculation lgcCalculation(projectData);
+	TLGCCalculation lgcCalculation(projectData, fMaxIterations);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(new TSimulationOutputFileWriter(fStream.get(), projectData.get()));
 	
 	//if we are here, the reading is well done, clean Behavior and launch calculation
