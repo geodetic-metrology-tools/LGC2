@@ -6,7 +6,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef _LGCAPP_H_
 #define _LGCAPP_H_
 
-
+#include "Defaults.h"
 //STL
 #include <memory>
 #include <string>
@@ -30,7 +30,7 @@ class TLGCApp {
 			\param[in] infileLocation[in] Location of the LGC file including the extension, e.g. C:/temp/net.lgc
 			\param[in] outfileLocation[in] Location of the LGC result files including the extension, e.g. C:/temp/net.out
 		*/
-		TLGCApp(const std::string& infileLocation, const std::string& outfileBasename);
+		TLGCApp(const std::string& infileLocation, const std::string& outfileBasename, const int maxIterations = MAX_ITERATIONS);
 
 		/// Destructor
 		~TLGCApp();
@@ -85,6 +85,7 @@ class TLGCApp {
 		std::string fOutputFileLoc; // Output file extension
 		std::string fLoggerFileLoc; //Location of the input file with extension, e.g. C://Temp//outputLog.log 
 		std::string fNamFile; //Location of the 'name' file
+		int			fMaxIterations; // Maximal number of iterations (fixed by default at 80)
 
 		/// Shared pointer to global stream
 		std::shared_ptr<TAStreamFormatter> fStream;

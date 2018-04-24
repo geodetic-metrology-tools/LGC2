@@ -27,7 +27,7 @@ class TLGCCalculation{
 
 		@param dat[in] LGC project to be processed.
 	*/
-	TLGCCalculation(std::shared_ptr<TLGCData> dat);
+	TLGCCalculation(std::shared_ptr<TLGCData> dat, int maxIterations = MAX_ITERATIONS);
 
 	/*!
 		\brief Calculates results, based on the keywords used (normal calculation, simulation (SIMU), free network adjustmen (LIBR), fixed points and frames (ALLFIXED), etc.)

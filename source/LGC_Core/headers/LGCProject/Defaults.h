@@ -42,6 +42,9 @@ static const char* const INPUT_COMMENT_CHARS = "%$";
 /// Deactivate the oject defined in the line in front of which this character appears
 static const char* const DEACTIVATION_CHAR = "#";
 
+/// Default maximal number of iterations
+static const int MAX_ITERATIONS = 80;
+
 namespace LGC {
 	///Conversion factor for the unitless vector (UVEC and UVD)
 	static const TReal VECCONV = 0.001;
