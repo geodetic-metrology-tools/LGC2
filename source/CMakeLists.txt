@@ -34,7 +34,7 @@ include("../../SUSoftCMakeCommon/CMakeLists.txt")
 # /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
 set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 02)
-set (LGC_VERSION_PATCH 00)
+set (LGC_VERSION_PATCH 00-beta)
 
 # Versions files
 configure_file (
