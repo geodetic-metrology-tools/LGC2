@@ -120,7 +120,7 @@ To build the tests, build the target `LGC_Tests` and run it. We Use TUT to gener
 Contribute
 ----------
 
-SurveyLib is a private CERN repository, thus it doesn't accept contributions from outside CERN.
+LGC2 is a private CERN repository, thus it doesn't accept contributions from outside CERN.
 
 To report an issue (bug, or feature request), follow the [Jira](#jira) subsection. For development, please read on.
 
@@ -138,6 +138,6 @@ Once your PR has been reviewed by another developer and accepted, it can be merg
 
 ### Automatic tests ###
 
-Automatic tests are performed each time you push a commit. These tests include compilation of `ALL_BUILD` target, and running the `UnitTests` target, all on Linux 64 bits, Windows 32 and 64 bits. If the tests don't pass, your PR will not be merged.
+Automatic tests are performed each time you push a commit. These tests include compilation of `ALL_BUILD` target, and running the `LGC_Tests` target, all on Linux 64 bits, Windows 32 and 64 bits. If the tests don't pass, your PR will not be merged.
 
 For each release, when `master` is updated, GitLab-CI will automatically build the installers.
