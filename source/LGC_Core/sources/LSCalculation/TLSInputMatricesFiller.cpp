@@ -56,6 +56,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 				}
 				else
 				{
+					// When Station is not in the ROOT (no V0 and no instrument height to take into account in matrices! -> specific contribution methods!)
 					for (auto& itROM : itTSTN->roms){
 						addHorAngContributionsFrame(itROM, itTSTN, matrices);
 						addSpaDistContributionsFrame(itROM->measDIST, itTSTN, matrices);
@@ -63,6 +64,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 					}
 				}
 			}
+
 
 			//In every node iterate through camera (TCAM) measurements
 			for(auto& itCAM:itTree.node->data->measurements.fCAM){

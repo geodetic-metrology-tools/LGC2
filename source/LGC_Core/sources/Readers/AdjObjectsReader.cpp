@@ -37,8 +37,6 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	if (opts.has("SCL")|| opts.has("SSCL")) scale.set(0,0);
 
 	const auto gon(TAngle::kGons);
-	TransformParameters transfParam;
-	transfParam.tX = TLength(std::stor(tokens[3])); // Translation along X
 	// Create adjustable helmert transformation
 	TAdjustableHelmertTransformation adjTrafo = TAdjustableHelmertTransformation( // Wrapper containing adjustable related information
 			translations, // Bits telling which of the translations are fixed

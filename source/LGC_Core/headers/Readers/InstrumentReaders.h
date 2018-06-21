@@ -22,7 +22,7 @@ namespace {
 
 		if(numTokens != expectedTokens)
 			throw std::runtime_error("Keyword *" + tokens.at(1) + " expects " + std::to_string(expectedTokens-2) + " parameters.");
-		
+		 
 		// check if station exists
 		if (stations.find(tokens.at(2)) != stations.end())
 			throw std::runtime_error("Instrument " + tokens.at(2) + " already exists.");
