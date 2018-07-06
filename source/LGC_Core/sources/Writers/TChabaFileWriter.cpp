@@ -82,7 +82,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 {
 	//obtain attributes stored in parent object
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 	int	coordPrecision = getCoordPrecision();
 	
 	//set output precision for the parameters

@@ -1,5 +1,3 @@
-#include <random>
-
 #include "TLSSimulation.h"
 #include "TLGCData.h"
 #include "TLSInputMatricesFiller.h"
@@ -426,9 +424,5 @@ void	TLSSimulation::getDISTSimValuesInFrame(const TTSTN& station, std::list<TLIN
 
 TReal TLSSimulation::getSimulatedValue(const TReal val, const TReal sigma)
 {
-#ifdef __APPLE__
-    return val + boost::normal_distribution<double>(0, sigma)(engine);
-#else
 	return val + std::normal_distribution<double>(0, sigma)(engine);
-#endif
 }

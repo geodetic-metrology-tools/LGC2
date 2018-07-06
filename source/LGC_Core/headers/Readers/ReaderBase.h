@@ -105,7 +105,7 @@ class TAKeyWord {
 		TLGCData&   proj;	
 
 		/// Contains the keywords which are unauthorized after the current one.
-		vector<std::string> allowed_keywords;
+		std::vector<std::string> allowed_keywords;
 };
 
 

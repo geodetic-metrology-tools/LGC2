@@ -246,7 +246,7 @@ TReal TLGCObsSummary::getVarHiLimit() const {
 
 
 /*! get the histogram data corresponding to the obersation residuals */
-const list<int> TLGCObsSummary::getHistogramData() const {
+const std::list<int> TLGCObsSummary::getHistogramData() const {
     assert(fIsInitialised);
     assert(fCreateHistogram);
     return fHistoData;
@@ -259,7 +259,7 @@ TReal TLGCObsSummary::getHistoLoLimit() const {
     assert(fCreateHistogram);
 
 	// the lower limit is the greater of the lowest residual and -20
-	auto maxval = max( (double) floorq(fHistoList.front()*getHistoScale()) - LITERAL(1.0), -LITERAL(20.0));
+	auto maxval = std::max( (double) floorq(fHistoList.front()*getHistoScale()) - LITERAL(1.0), -LITERAL(20.0));
     return isnotanumber(maxval) ? -LITERAL(20.0) : maxval;
 }
 
@@ -270,7 +270,7 @@ TReal TLGCObsSummary::getHistoHiLimit() const {
     assert(fCreateHistogram);
 
 	// the lower limit is the smaller of the highest residual and 20
-	auto minval = min( (double) ceilq(fHistoList.back()*getHistoScale()) + LITERAL(2.0), LITERAL(20.0));
+	auto minval = std::min( (double) ceilq(fHistoList.back()*getHistoScale()) + LITERAL(2.0), LITERAL(20.0));
     return isnotanumber(minval) ? LITERAL(20.0) : minval;
 }
 

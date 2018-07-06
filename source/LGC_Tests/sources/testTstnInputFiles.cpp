@@ -181,10 +181,10 @@ namespace tut
 			test = "*ANGL\nREF " + refAnglV0Str +"\n PT " +  ptAnglV0Str + "\n";
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
-			stringstream infiler(TestROOT::Param_case_setup2);
+			std::stringstream infiler(TestROOT::Param_case_setup2);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
-			string infile = infiler.str();
+			std::string infile = infiler.str();
 
 			r.read(infiler);
 		
@@ -283,10 +283,10 @@ namespace tut
 			test = "*ANGL\nREF " + refAnglV0Str +"\n PT " +  ptAnglV0Str + "\n PT2 " + pt2AnglV0Str + "\n" ;
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
-			stringstream infiler(TestROOT::Param_case_setup3);
+			std::stringstream infiler(TestROOT::Param_case_setup3);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
-			string infile = infiler.str();
+			std::string infile = infiler.str();
 
 			r.read(infiler);
 		
@@ -386,10 +386,10 @@ namespace tut
 				test = "*PLR3D\nREF " + refAnglV0Str +" 100 141.421356237 \n PT " +  ptAnglV0Str + " 100 100 \n";
 
 				//One POINT and one TSTN (V0) = 4 unknowns)
-				stringstream infiler(TestROOT::Root_PLR_setup2);
+				std::stringstream infiler(TestROOT::Root_PLR_setup2);
 				infiler.seekp(0, std::ios::end);
 				infiler << test;
-				string infile = infiler.str();
+				std::string infile = infiler.str();
 
 				r.read(infiler);
 		
@@ -491,10 +491,10 @@ namespace tut
 			test = "*PLR3D\nREF " + refAnglV0Str + " 100 100 \n PT " + ptAnglV0Str + " 100 100 \n PT2 " + pt2AnglV0Str + " 100 141.421356237 \n";
 
 			//One POINT and one TSTN (V0) = 4 unknowns)
-			stringstream infiler(TestROOT::Root_PLR_setup3);
+			std::stringstream infiler(TestROOT::Root_PLR_setup3);
 			infiler.seekp(0, std::ios::end);
 			infiler << test;
-			string infile = infiler.str();
+			std::string infile = infiler.str();
 
 			r.read(infiler);
 
@@ -550,7 +550,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/output.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Root_PLR_setup2_SEP);
+		std::stringstream infiler(TestROOT::Root_PLR_setup2_SEP);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);

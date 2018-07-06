@@ -17,7 +17,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
@@ -53,7 +53,7 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
@@ -89,7 +89,7 @@ void TOtherMeasurentWriter::writePDORResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
@@ -120,7 +120,7 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
@@ -178,7 +178,7 @@ void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
 
 	//first line
@@ -204,7 +204,7 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -246,9 +246,9 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					angleResidualPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResidualPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//first line
@@ -290,7 +290,7 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					anglePrecision = getAnglePrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -326,7 +326,7 @@ void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//first line
 	this->writeObsTitle(TAB + this->getObsDescriptionFR(TALGCObjectWriter::kOBSXYZ), (int)fOBSXYZ.size());
@@ -439,7 +439,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::list<TDVER>& fDV
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//For each DVER measurement of the station
 	for(auto const& ItDver : fDVER)
@@ -473,8 +473,8 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::list<TORIE>& fOR
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResidualPrecision = max(getAngleResidualPrecision() - 4, 0);
-	string				separator = getSeparator();
+	int					angleResidualPrecision = std::max(getAngleResidualPrecision() - 4, 0);
+	std::string				separator = getSeparator();
 
 
 	//For each orie measurement of the station
@@ -509,7 +509,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRA
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//For each RADI measurement of the station
 	for (auto const& It : fRADI)
@@ -541,7 +541,7 @@ void	TOtherMeasurentWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ>&
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//For each OBSXYZ measurement of the station
 	for (auto const& It : fOBSXYZ)
@@ -595,7 +595,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
@@ -626,7 +626,7 @@ void TOtherMeasurentWriter::writeDVERResultsSynthesis(const TMeasurements &tmeas
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -647,7 +647,7 @@ void TOtherMeasurentWriter::writeORIEResultsSynthesis(const TORIEROM& orieRom, c
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -668,7 +668,7 @@ void TOtherMeasurentWriter::writeRADIResultsSynthesis(const TMeasurements &tmeas
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -689,7 +689,7 @@ void TOtherMeasurentWriter::writeOBSXYZResultsSynthesis(const TMeasurements &tme
 	int					nameWidth = getNameWidth();
 	// int				obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 

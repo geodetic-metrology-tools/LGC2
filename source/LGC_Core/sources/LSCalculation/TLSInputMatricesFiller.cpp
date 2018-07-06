@@ -148,7 +148,7 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - fill of models with 1 equation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -206,7 +206,7 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& dis
 	}
 }
 
-void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>& distMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -255,7 +255,7 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>
 	}
 }
 
-void  TLSInputMatricesFiller::addHorAngContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -315,7 +315,7 @@ void  TLSInputMatricesFiller::addHorAngContributions(shared_ptr<TTSTN::TROM> rom
 	}
 }
 
-void  TLSInputMatricesFiller::addHorAngContributionsFrame(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+void  TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -359,7 +359,7 @@ void  TLSInputMatricesFiller::addHorAngContributionsFrame(shared_ptr<TTSTN::TROM
 	}
 }
 
-void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -414,7 +414,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& ze
 	}
 }
 
-void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND>& zendMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -459,7 +459,7 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND
 	}
 }
 
-void  TLSInputMatricesFiller::addHorDistContributions(const std::list<TLINE>& dhorMeas, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addHorDistContributions(const std::list<TLINE>& dhorMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -513,7 +513,7 @@ bool isProcessOK = true;
 	}
 }
 
-void TLSInputMatricesFiller::addECTHContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -567,7 +567,7 @@ void TLSInputMatricesFiller::addECTHContributions(shared_ptr<TTSTN::TROM> rom, s
 	}
 }
 
-void TLSInputMatricesFiller::addECDIRContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -1197,7 +1197,7 @@ void  TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ>& o
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addPLR3DContributions(shared_ptr<TTSTN::TROM> rom, shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;

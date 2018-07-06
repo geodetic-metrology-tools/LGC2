@@ -20,7 +20,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 */
 struct TMeasurements {
 	/// All total station measurements in the order in which they appeared in the input file
-	std::list<shared_ptr<TTSTN>>  fTSTN;
+	std::list<std::shared_ptr<TTSTN>>  fTSTN;
 
 	/// All electronic distance measurements in the order in which they appeared in the input file
 	std::list<TEDM>   fEDM;

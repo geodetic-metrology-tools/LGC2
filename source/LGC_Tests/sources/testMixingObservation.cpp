@@ -35,7 +35,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(MixObs::ANGL_ZEND_DIST);
+		std::stringstream infiler(MixObs::ANGL_ZEND_DIST);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -69,7 +69,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DHOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(MixObs::ANGL_ZEND_DHOR);
+		std::stringstream infiler(MixObs::ANGL_ZEND_DHOR);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -103,7 +103,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DSPT.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(MixObs::ANGL_ZEND_DSPT);
+		std::stringstream infiler(MixObs::ANGL_ZEND_DSPT);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -133,7 +133,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(MixObs::PDOR_1CALA_GIS);
+		std::stringstream infiler(MixObs::PDOR_1CALA_GIS);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -192,7 +192,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(MixObs::PDOR_1CALA_0);
+		std::stringstream infiler(MixObs::PDOR_1CALA_0);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -254,7 +254,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(MixObs::PDOR_2CALA);
+		std::stringstream infiler(MixObs::PDOR_2CALA);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

@@ -38,7 +38,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOT_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_ROOT_1);
+		std::stringstream infiler(TestCAM::UVD_ROOT_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -67,7 +67,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOT_1_SUBF1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_ROOT_1_SUBF1);
+		std::stringstream infiler(TestCAM::UVD_ROOT_1_SUBF1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -96,7 +96,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOT_1_SUBF2.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_ROOT_1_SUBF2);
+		std::stringstream infiler(TestCAM::UVD_ROOT_1_SUBF2);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -131,7 +131,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOTNOTORIG_1_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_ROOTNOTORIG_1_SUBF);
+		std::stringstream infiler(TestCAM::UVD_ROOTNOTORIG_1_SUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -166,7 +166,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_SUBF_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_SUBF_1);
+		std::stringstream infiler(TestCAM::UVD_SUBF_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -200,7 +200,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_SUBF_2.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_SUBF_2);
+		std::stringstream infiler(TestCAM::UVD_SUBF_2);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -235,7 +235,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_SUBFNOTORIG_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_SUBFNOTORIG_1);
+		std::stringstream infiler(TestCAM::UVD_SUBFNOTORIG_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -270,7 +270,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2ST.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_2ST_ROOT);
+		std::stringstream infiler(TestCAM::UVD_2ST_ROOT);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -299,7 +299,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_2STROOT_SUBF);
+		std::stringstream infiler(TestCAM::UVD_2STROOT_SUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -333,7 +333,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2ST_1STINSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_2ST_1STINSUBF);
+		std::stringstream infiler(TestCAM::UVD_2ST_1STINSUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -367,7 +367,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2STSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVD_2STSUBF);
+		std::stringstream infiler(TestCAM::UVD_2STSUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -405,7 +405,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_ROOT_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_ROOT_1);
+		std::stringstream infiler(TestCAM::UVEC_ROOT_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -435,7 +435,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_ROOT_1_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_ROOT_1_SUBF);
+		std::stringstream infiler(TestCAM::UVEC_ROOT_1_SUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -469,7 +469,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_ROOTNOTORIG_1_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_ROOTNOTORIG_1_SUBF);
+		std::stringstream infiler(TestCAM::UVEC_ROOTNOTORIG_1_SUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -504,7 +504,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_SUBF);
+		std::stringstream infiler(TestCAM::UVEC_SUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -539,7 +539,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_SUBFNOTORIG_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_SUBFNOTORIG_1);
+		std::stringstream infiler(TestCAM::UVEC_SUBFNOTORIG_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -574,7 +574,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2ST_ROOT.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_2ST_ROOT);
+		std::stringstream infiler(TestCAM::UVEC_2ST_ROOT);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -604,7 +604,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_2STROOT_SUBF);
+		std::stringstream infiler(TestCAM::UVEC_2STROOT_SUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -638,7 +638,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2ST_1STINSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_2ST_1STINSUBF);
+		std::stringstream infiler(TestCAM::UVEC_2ST_1STINSUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -671,7 +671,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestCAM::UVEC_2STSUBF);
+		std::stringstream infiler(TestCAM::UVEC_2STSUBF);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

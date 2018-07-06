@@ -6,6 +6,7 @@
 
 
 #include	<ctime>
+#include <string>
 #include	<TSimulationOutputFileWriter.h>
 #include	<TLGCData.h>
 #include	"TAStreamFormatter.h"
@@ -81,7 +82,7 @@ void TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numb
 void TSimulationOutputFileWriter::writeSimHeader(TLGCData &data, int i)
 {
 	TAStreamFormatter* stream = getStream();
-	string separator = getSeparator();
+	std::string separator = getSeparator();
 	
 	//write title
 	(*stream)<<"SIMULATION NUMERO"<<separator<< i <<endl<<
@@ -92,10 +93,10 @@ void TSimulationOutputFileWriter::writeSimHeader(TLGCData &data, int i)
 	writeSigmaAPosteriori(data);
 }
 
-void TSimulationOutputFileWriter::writeSimTableDescription(const string &projTitle, const string &objectType, int i){
+void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &projTitle, const std::string &objectType, int i){
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
-	string origSepar = stream->getSeparator();
+	std::string origSepar = stream->getSeparator();
 	stream->setSeparator("");
 	int nameCoordWidth = getNameWidth();
 	int coordResWidth = this->getCoordResWidth();
@@ -118,7 +119,7 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const string &projTit
 	_tzset();
 #endif
 	today = localtime( &ltime );
-	string essai = ctime( &ltime );
+	std::string essai = ctime( &ltime );
 	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
 	(*stream)<<tmpbuf<<endl<<endl<<endl;
 
@@ -201,7 +202,7 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const string &projTit
 void TSimulationOutputFileWriter::writeSimFRAMEDescription(){
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
-	string origSepar = stream->getSeparator();
+	std::string origSepar = stream->getSeparator();
 	stream->setSeparator("");
 	int nameCoordWidth = getNameWidth();
 	int coordResWidth = this->getCoordResWidth();
@@ -341,7 +342,7 @@ void TSimulationOutputFileWriter::writeRelErrorHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsResWidth = max(getObsResWidth(), 9);
+	int					obsResWidth = std::max(getObsResWidth(), 9);
 
 	// write header
 	(*stream) << endl << endl << endl;
@@ -383,7 +384,7 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 
 
 	ERELStat reducedEREL = calculateStatForEREL(data.getRelError());
@@ -401,7 +402,7 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 		stream->setLengthUnits(TLength::kMillimetres);
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setPrecisionFormat(getLengthPrecision());
-		stream->setWidthFormat(max(getObsResWidth(), 9));
+		stream->setWidthFormat(std::max(getObsResWidth(), 9));
 
 		//sigma L
 		(*stream) << right << reducedEREL.MinErel.at(ptPairIt).getSigmaL() << separator;
@@ -475,7 +476,7 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 {
 
 	ERELStat statForErel;
-	vector<int> numOfPair;
+	std::vector<int> numOfPair;
 
 	for (auto& ptPairIt : ERELdata)
 	{
@@ -549,7 +550,7 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 ////////////////////////////////////////////////////////////
 //STATISTIC
 ////////////////////////////////////////////////////////////
-void TSimulationOutputFileWriter::writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu)
+void TSimulationOutputFileWriter::writeSimPointsSummary(const std::string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu)
 {
 	writeSimTableDescription(projTitle, "POINTS", numbOfSimu);
 
@@ -571,9 +572,9 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 {//write point's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
-	string origSepar = stream->getSeparator();
+	std::string origSepar = stream->getSeparator();
 	stream->setSeparator("");
-	string separator = stream->getSeparator();;
+	std::string separator = stream->getSeparator();;
 
 	int nameCoordWidth = getNameWidth();
 	int coordResWidth = this->getCoordResWidth();
@@ -782,9 +783,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 	//writeframe's data
 	/*We do not want any separator, therefore re-set and in the end of the function returned back to the original setting*/
 	TAStreamFormatter* stream = getStream();
-	string origSepar = stream->getSeparator();
+	std::string origSepar = stream->getSeparator();
 	stream->setSeparator("");
-	string separator = stream->getSeparator();;
+	std::string separator = stream->getSeparator();;
 
 	int nameCoordWidth = getNameWidth();
 	int coordResWidth = this->getCoordResWidth();

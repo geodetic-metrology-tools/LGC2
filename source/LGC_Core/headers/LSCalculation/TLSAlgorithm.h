@@ -45,7 +45,7 @@ public:
 
 protected:
 	/// Pointer to the result matrix extractor
-	shared_ptr<TLSResultsMatricesExtractor> extractor;
+	std::shared_ptr<TLSResultsMatricesExtractor> extractor;
 
 	/// Number of equations
 	int		 fNumberOfIterations;

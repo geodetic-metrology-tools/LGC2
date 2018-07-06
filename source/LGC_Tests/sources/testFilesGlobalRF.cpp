@@ -38,7 +38,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::LEP_Parametric_1ST);
+		std::stringstream infiler(TestROOT::LEP_Parametric_1ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -72,7 +72,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::LEP_Parametric_1STNOTATP0);
+		std::stringstream infiler(TestROOT::LEP_Parametric_1STNOTATP0);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -106,7 +106,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::LEP_Parametric_2ST);
+		std::stringstream infiler(TestROOT::LEP_Parametric_2ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -151,7 +151,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -190,7 +190,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1STSUBFRAME);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1STSUBFRAME);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -235,7 +235,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -273,7 +273,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -319,7 +319,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_1R5E);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_1R5E);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -361,7 +361,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0_1R5E);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_NOTATP0_1R5E);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -396,7 +396,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST_1R5E);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_2ST_1R5E);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -445,7 +445,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -477,7 +477,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -508,7 +508,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1STSUBFRAME);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1STSUBFRAME);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -546,7 +546,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST_NOTATP0);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_PLR3D_1ST_NOTATP0);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -576,7 +576,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_AVcoord);
+		std::stringstream infiler(TestROOT::Param_PLR_Rs2k_Parametric_1ST_AVcoord);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -610,7 +610,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::SPHE_Parametric_1ST);
+		std::stringstream infiler(TestROOT::SPHE_Parametric_1ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -646,7 +646,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::SPHE_Parametric_1STNOTATP0);
+		std::stringstream infiler(TestROOT::SPHE_Parametric_1STNOTATP0);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -681,7 +681,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outputMLA.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestROOT::SPHE_Parametric_2ST);
+		std::stringstream infiler(TestROOT::SPHE_Parametric_2ST);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);

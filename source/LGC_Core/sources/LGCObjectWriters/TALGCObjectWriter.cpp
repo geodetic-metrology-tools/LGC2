@@ -20,7 +20,7 @@ TALGCObjectWriter::~TALGCObjectWriter()
 {//destructor
 }
 
-void	TALGCObjectWriter::writeKeyWord(const string &keyword)
+void	TALGCObjectWriter::writeKeyWord(const std::string &keyword)
 {
 	TAStreamFormatter& stream = this->getStreamRef();
 

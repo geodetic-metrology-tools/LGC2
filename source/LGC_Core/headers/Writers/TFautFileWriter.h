@@ -15,7 +15,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class	TLGCData;
 class	TAStreamFormatter;
 
-using namespace std;
 
 /*!
 	\ingroup Writers
@@ -42,7 +41,7 @@ public:
 		virtual void writeFile(TLGCData const * const);
 
 		///write the lgc file  when there is an error in the project
-		virtual void writeFile(const string error);
+		virtual void writeFile(const std::string error);
 	//@}
 
 private:

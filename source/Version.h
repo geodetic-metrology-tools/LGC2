@@ -12,7 +12,7 @@
 #define LGC_VERSION_PATCH "00-beta"
 
 static std::string getLGCVersion(void) {
-	stringstream ss;
+	std::stringstream ss;
 	ss << "v" << LGC_VERSION_MAJOR  << "." << LGC_VERSION_MINOR << "." << LGC_VERSION_PATCH;
 	
 	return ss.str();

@@ -24,9 +24,9 @@ TLOR2LOR::TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::stri
 void TLOR2LOR::updateTree(){
 	for(unsigned int i=0;i<transformationChain.size();i++){
 		if(transformationChain[i].direct)
-			static_pointer_cast<TDirectTransformation>(transformationChain[i].trafo)->setTransformParam(transformationChain[i].adjTrafo->getEstParam());
+			std::static_pointer_cast<TDirectTransformation>(transformationChain[i].trafo)->setTransformParam(transformationChain[i].adjTrafo->getEstParam());
 		else
-			static_pointer_cast<TInverseTransformation>(transformationChain[i].trafo)->setTransformParam(transformationChain[i].adjTrafo->getEstParam());
+			std::static_pointer_cast<TInverseTransformation>(transformationChain[i].trafo)->setTransformParam(transformationChain[i].adjTrafo->getEstParam());
 	}
 
 	updateTransformation();
@@ -44,11 +44,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 		{
 			//Make partial derivative of the transformation
 			if(transformationChain[positionInChain].direct){ 
-				std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= direct_transformation->getScaleFactor();
 			}
 			else{
-				std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= (1/inverse_transformation->getScaleFactor());
 			}
 		}
@@ -67,11 +67,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 		{
 			//Make partial derivative of the desired transformation
 			if(transformationChain[positionInChain].direct){ 
-				std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= direct_transformation->getScaleFactor();
 			}
 			else{
-				std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= (1/inverse_transformation->getScaleFactor());
 			}
 		}
@@ -88,11 +88,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 		{
 			//Make partial derivative of the desired transformation
 			if(transformationChain[positionInChain].direct){ 
-				std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= direct_transformation->getScaleFactor();
 			}
 			else{
-				std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= (1/inverse_transformation->getScaleFactor());
 			}
 		}
@@ -111,11 +111,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 		{
 			//Make partial derivative of the desired transformation
 			if(transformationChain[positionInChain].direct){ 
-				std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= direct_transformation->getScaleFactor();
 			}
 			else{
-				std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= (1/inverse_transformation->getScaleFactor());
 			}
 		}
@@ -132,11 +132,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 		{
 			//Make partial derivative of the desired transformation
 			if(transformationChain[positionInChain].direct){ 
-				std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= direct_transformation->getScaleFactor();
 			}
 			else{
-				std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= (1/inverse_transformation->getScaleFactor());
 			}
 		}
@@ -155,11 +155,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 		{
 			//Make partial derivative of the desired transformation
 			if(transformationChain[positionInChain].direct){ 
-				std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= direct_transformation->getScaleFactor();
 			}
 			else{
-				std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+				std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 				globalScale *= (1/inverse_transformation->getScaleFactor());
 			}
 		}
@@ -183,13 +183,13 @@ TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string& transfoName, co
 
 		// Make partial derivative of the transformation
 		if(transformationChain[positionInChain].direct){ 
-			std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+			std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
 			TDerivativeTransformation dt = direct_transformation->differentiatedTransformationAngle(angle);
 			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
 		}
 		else{
-			std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+			std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
 			TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationAngle(angle);
 			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
@@ -213,13 +213,13 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 
 		// Make partial derivative of the transformation
 		if(transformationChain[positionInChain].direct){ 
-			std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+			std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
 			TDerivativeTransformation dt = direct_transformation->differentiatedTransformationTranslation(translation);
 			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
 		}
 		else{
-			std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+			std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
 			TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationTranslation(translation);
 			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
@@ -242,13 +242,13 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 
 		// Make partial derivative of the transformation
 		if(transformationChain[positionInChain].direct){ 
-			std::shared_ptr<TDirectTransformation> direct_transformation = static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
+			std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
 			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
 			TDerivativeTransformation dt = direct_transformation->differentiatedTransformationScaleFactor();
 			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
 		}
 		else{
-			std::shared_ptr<TInverseTransformation> inverse_transformation = static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
+			std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
 			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
 			TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationScaleFactor();
 			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));

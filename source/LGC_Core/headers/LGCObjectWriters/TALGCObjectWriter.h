@@ -38,7 +38,7 @@ public:
 		virtual  ~TALGCObjectWriter();
 
 		/// Write the keyword
-		void writeKeyWord(const string &keyword);
+		void writeKeyWord(const std::string &keyword);
 	//@}
 
 protected:

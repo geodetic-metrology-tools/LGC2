@@ -45,7 +45,7 @@ class TAMeasurementKey : public TAKeyWord {
 		}
 
 		/// returns a reference to the current ROM
-		inline shared_ptr<TTSTN::TROM> getROM() const {
+		inline std::shared_ptr<TTSTN::TROM> getROM() const {
 			if(proj.getCurrentNode().measurements.fTSTN.back()->roms.size())
 				return proj.getCurrentNode().measurements.fTSTN.back()->roms.back();
 			else

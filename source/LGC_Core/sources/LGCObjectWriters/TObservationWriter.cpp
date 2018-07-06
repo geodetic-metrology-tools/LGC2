@@ -18,7 +18,7 @@ TObservationWriter::~TObservationWriter()
 }
 
 // write an observation table title
-void	TObservationWriter::writeObsTitle(const string& description, const int numObs)
+void	TObservationWriter::writeObsTitle(const std::string& description, const int numObs)
 {
 	TAStreamFormatter& stream = getStreamRef();
 	//Title
@@ -29,7 +29,7 @@ void	TObservationWriter::writeObsTitle(const string& description, const int numO
 
 void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 	int					obsResWidth = getObsResWidth();
-	int					angleResidualPrecision = max(getAngleResidualPrecision()-3, 0);
+	int					angleResidualPrecision = std::max(getAngleResidualPrecision()-3, 0);
 	TAStreamFormatter	&stream = getStreamRef();
 
 	//Write statistic
@@ -71,7 +71,7 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary& summary,
 void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = max(getLengthResidualPrecision()-2, 0);
+	int					lengthResidualPrecision = std::max(getLengthResidualPrecision()-2, 0);
 	TAStreamFormatter	&stream = getStreamRef();
 	//Write statistic
 	stream << TABs;
@@ -114,7 +114,7 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary& summa
 void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResidualPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	TAStreamFormatter	&stream = getStreamRef();
 	//Write statistic
 	stream << TABs;
@@ -160,7 +160,7 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary& summa
 	return;
 }
 
-void TObservationWriter::writeHisto(const TLGCObsSummary& summary, string description)
+void TObservationWriter::writeHisto(const TLGCObsSummary& summary, std::string description)
 {
 
 	// return if histograms are not to be written out, or if there are too
@@ -172,7 +172,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary& summary, string descri
 		// write out the histogram title and scale factor
 		{
 			int k = summary.getHistoScale();
-			string ech = "";
+			std::string ech = "";
 
 			if (description == "ANGL" ||
 				description == "ZEND" ||
@@ -207,8 +207,8 @@ void TObservationWriter::writeHisto(const TLGCObsSummary& summary, string descri
 		// output the histogram
 		{
 			//get the histogram data and set up begin and end iterators
-			list<int> result = summary.getHistogramData();
-			list<int>::iterator  iter, iterEnd;
+			std::list<int> result = summary.getHistogramData();
+			std::list<int>::iterator  iter, iterEnd;
 			iter = result.begin();
 			iterEnd = result.end();
 			// get the other necessary parameters for the histogram
@@ -276,12 +276,12 @@ void TObservationWriter::writeHisto(const TLGCObsSummary& summary, string descri
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC MEMBER FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void	TObservationWriter::writeReliabilityHeader(	string name1,
-														string name2,
-														string name3,
-														string Observation,
-														string unit1,
-														string unit2)
+void	TObservationWriter::writeReliabilityHeader(std::string name1,
+	std::string name2,
+	std::string name3,
+	std::string Observation,
+	std::string unit1,
+	std::string unit2)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -332,14 +332,14 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic& stat
 {
 	TAStreamFormatter*	stream = getStream();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 
 	// Test the computing: if it failed, write the corresponding error messages
 	if (stat.getAreDetermined(index))
 	{
 		//get zi
 		TReal z = stat.getZi().coeff(index);
-		stream->setf(ios::fixed,ios::floatfield);
+		stream->setf(std::ios::fixed, std::ios::floatfield);
 		// checks that z is between 25% and 60%, and if not, adds some symbols
 		(*stream).writeDouble(obsResWidth,1,100*z);
 				
@@ -408,14 +408,14 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic& stat
 {
 	TAStreamFormatter*	stream = getStream();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 
 	// Test the computing: if it failed, write the corresponding error messages
 	if (stat.getAreDetermined(index))
 	{
 		//get zi
 		TReal z = stat.getZi().coeff(index);
-		stream->setf(ios::fixed, ios::floatfield);
+		stream->setf(std::ios::fixed, std::ios::floatfield);
 		// checks that z is between 25% and 60%, and if not, adds some symbols
 		(*stream).writeDouble(obsResWidth, 1, 100 * z);
 
@@ -493,7 +493,7 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic& stat
 
 // Get the French version of the observation description
 // returns a string with the description
-string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)
+std::string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char* descriptions[] = {
 		"PLR3D",
@@ -526,7 +526,7 @@ string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservatio
 
 // Get the English version of the observation description
 // returns a string with the description
-string	TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key)
+std::string	TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char* descriptions[] = {
 		"PLR3D",

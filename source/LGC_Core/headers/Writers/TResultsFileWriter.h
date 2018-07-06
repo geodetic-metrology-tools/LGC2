@@ -40,7 +40,7 @@ public:
 			virtual void	writeFile();
 
 			/// write the lgc file  when there is an error in the project
-			virtual void	writeFile(const string error);
+			virtual void	writeFile(const std::string error);
 		//@}
 
 protected:
@@ -59,10 +59,10 @@ protected:
 			void	writeDataSummary();
 
 			///  Write the point data summary of the LGC input data
-			void	writePointDataSummary(const string, const int) ;
+			void	writePointDataSummary(const std::string, const int) ;
 
 			///  Write a given measurement data summary of the LGC input data
-			void	writeMeasDataSummary(const string, const int);
+			void	writeMeasDataSummary(const std::string, const int);
 
 			/// Write a summary of the LGC calculation data parameters
 			void	writeCalcDataSummary();

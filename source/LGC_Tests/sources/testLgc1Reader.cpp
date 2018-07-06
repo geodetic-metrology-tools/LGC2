@@ -35,14 +35,14 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/lgc1_ANGL_ZENH.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ANGL_ZENH);
+		std::stringstream infiler(TestLgc1::ANGL_ZENH);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<std::shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		Behavior succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 		
@@ -73,14 +73,14 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/lgc1_ANGL_ZENI.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ANGL_ZENI);
+		std::stringstream infiler(TestLgc1::ANGL_ZENI);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<std::shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		Behavior succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 		
@@ -115,7 +115,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::RS2K_TSTN_DVER);
+		std::stringstream infiler(TestLgc1::RS2K_TSTN_DVER);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -168,7 +168,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::OLOC_DLEV);
+		std::stringstream infiler(TestLgc1::OLOC_DLEV);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -211,7 +211,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outRADI.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::LEP_RADI);
+		std::stringstream infiler(TestLgc1::LEP_RADI);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -264,14 +264,14 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZENI_DTHE_DHOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ANGL_ZENI_DTHE);
+		std::stringstream infiler(TestLgc1::ANGL_ZENI_DTHE);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<std::shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		Behavior succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
@@ -302,14 +302,14 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZENI_DHOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ANGL_ZENI_DHOR);
+		std::stringstream infiler(TestLgc1::ANGL_ZENI_DHOR);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
 
 		TLGCCalculation calcul(projTest);
 		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		std::list<shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
+		std::list<std::shared_ptr<TTSTN>> meas = projTest->getCurrentNode().measurements.fTSTN;
 		Behavior succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
@@ -341,7 +341,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ORIE);
+		std::stringstream infiler(TestLgc1::ORIE);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -386,7 +386,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECTH.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ECTH);
+		std::stringstream infiler(TestLgc1::ECTH);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -430,7 +430,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECVE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ECVE);
+		std::stringstream infiler(TestLgc1::ECVE);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -473,7 +473,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ECHO);
+		std::stringstream infiler(TestLgc1::ECHO);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -517,7 +517,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECSP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLgc1::ECSP);
+		std::stringstream infiler(TestLgc1::ECSP);
 
 		bool succesReading = r.readLgc1File(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

@@ -31,9 +31,9 @@ public:
 	/*!@name Headers */
 	//@{
 		/// Writes TSTN header.
-		void writeTSTNHeader(shared_ptr<TTSTN> tstn);
+		void writeTSTNHeader(std::shared_ptr<TTSTN> tstn);
 		/// Writes V0 (ROM = round of measurement) header.
-		void writeV0Header(shared_ptr<TTSTN::TROM> rom);
+		void writeV0Header(std::shared_ptr<TTSTN::TROM> rom);
 
 		/// Write reliability header for ANGL
 		void	writeANGLReliabilityHeader();
@@ -61,38 +61,38 @@ public:
 	/*!@name Results */
 	//@{
 		///	Writes information about TSTN, its definition, calculated values and each ROM (round of measurements) as well as the observations included.
-		void writeTSTNResults(shared_ptr<TTSTN> tstn);
+		void writeTSTNResults(std::shared_ptr<TTSTN> tstn);
 		///	Writes information about TSTN, its definition, calculated values and each ROM (round of measurements) as well as the observations included.
-		void writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn);
+		void writeTSTNResultsSIMU(std::shared_ptr<TTSTN> tstn);
 
 		/// Write reliability data for ANGL
-		void	writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TANGL>& measANGL);
+		void	writeANGLReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TANGL>& measANGL);
 		/// Write reliability data for ZEND
-		void	writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TZEND>& measZEND);
+		void	writeZENDReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TZEND>& measZEND);
 		/// Write reliability data for DIST
-		void	writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDIST);
+		void	writeDISTReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDIST);
 		/// Write reliability data for PLR
-		void	writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TPLR3D>& measPLR3D);
+		void	writePLRReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TPLR3D>& measPLR3D);
 		/// Write reliability data for DHOR
-		void	writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDHOR);
+		void	writeDHORReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDHOR);
 		/// Write reliability data for ECTH
-		void	writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECTH>& measECTH);
+		void	writeECTHReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECTH>& measECTH);
 		/// Write reliability data for ECDIR
-		void	writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR);
+		void	writeECDIRReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR);
 
 
 		/// Write ANGL synthesis
-        void writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
+        void writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 		/// Write ZEND synthesis
-        void writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
+        void writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 		/// Write DISt and DHOR synthesis
-        void writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom, bool isdhor = false);
+        void writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom, bool isdhor = false);
 		/// Write PLR3D synthesis
-        void writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
+        void writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 		/// Write ECTH synthesis
-        void writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
+        void writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 		/// Write ECDIR synthesis
-        void writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom);
+        void writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 	//@}
 
 	/// Set if ALLFIXED option is used

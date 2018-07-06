@@ -151,7 +151,7 @@ struct TTSTN : public TStatusObject {
 		int  line;
 
 		/// All round of measurements for this instrument. In each ROM a point on different position is measured.
-		std::list<shared_ptr<TROM>> roms;
+		std::list<std::shared_ptr<TROM>> roms;
 
         int stnId{ stnCounter_++ };
 

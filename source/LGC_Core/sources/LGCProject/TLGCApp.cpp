@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
-const string TLGCApp::fCopyright = "Copyright 2015, CERN SU. All rights reserved.";
+const std::string TLGCApp::fCopyright = "Copyright 2015, CERN SU. All rights reserved.";
 
 
 TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLocation, const int maxIterations) :
@@ -270,7 +270,7 @@ void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &output
 /////////////////General information stuff
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // return the software version id string
-const string TLGCApp::getProgId()
+const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
 	id << "LGC2 " << getLGCVersion() << ", version was not compiled against SurveyLib, compiled on " <<   __DATE__ ;
@@ -279,7 +279,7 @@ const string TLGCApp::getProgId()
 
 
 // return the software copyright string
-const string TLGCApp::getCopyright()
+const std::string TLGCApp::getCopyright()
 {
 	return fCopyright;
 }

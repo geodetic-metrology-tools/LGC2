@@ -8,13 +8,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 
 //STL
-#ifdef __linux__
-#include <tr1/random>
-#elif defined(__APPLE__)
-#include <boost/tr1/random.hpp>
-#else
 #include <random>
-#endif
 #include <limits>
 //SURVEYLIB
 #include <Behavior.h>
@@ -63,11 +57,7 @@ private:
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter;
 
 	/// Random numbers generator
-#ifdef __APPLE__
-	tr1::ranlux3_01 engine;
-#else
-	std::tr1::ranlux3_01 engine;
-#endif
+	std::ranlux48 engine;
 
 	/// Convergence criterion
 	TReal  fConvCriteria; 

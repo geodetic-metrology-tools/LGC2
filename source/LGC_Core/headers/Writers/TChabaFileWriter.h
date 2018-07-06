@@ -24,7 +24,6 @@ class TLGCData;
 class TAStreamFormatter;
 class TAStreamFormatter;
 class TAdjustableHelmertTransformation;
-using namespace std;
 
 /*!
 Class for writing a result file in CHABA format 

@@ -73,7 +73,7 @@ struct TECSPROM : public TStatusObject {
 	/// Line of the measurement definition
 	int  line;
 	/// name of the rom
-	string romName;
+	std::string romName;
 
     int romId{ romCounter_++ };
 
@@ -93,7 +93,7 @@ struct TECSPROM : public TStatusObject {
 		line(NO_VALi)
 	{}*/
 
-	TECSPROM(string name) :
+	TECSPROM(std::string name) :
 		romName(name),
 		line(NO_VALi),
 		p1(nullptr),
@@ -101,7 +101,7 @@ struct TECSPROM : public TStatusObject {
 	{}
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECSPROM(string name,const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
+	TECSPROM(std::string name,const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
 		romName(name),
 		p1(&point1),
 		p2(&point2),

@@ -40,13 +40,13 @@ public:
 	//@}
 
 		/// get the descriptive text in French for an observation type
-	    static string	getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key);
+	    static std::string	getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key);
 						
 		/// get the descriptive text in English for an observation type
-		static string	getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key);
+		static std::string	getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key);
 
 		/// write a title of an observation, including description and number of obs.
-		void writeObsTitle(const string& description, const int numObs);
+		void writeObsTitle(const std::string& description, const int numObs);
 
 		/// write summary of statistics for a group of angle measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
 		void writeAngleResultsSummary(const TLGCObsSummary& summary, std::string TABs);
@@ -56,7 +56,7 @@ public:
         void writeUnitlessResultsSummary(const TLGCObsSummary& summary, std::string TABs);
 		
 		/// write a histogram for the group of measurements
-        void writeHisto(const TLGCObsSummary& summary, string description);
+        void writeHisto(const TLGCObsSummary& summary, std::string description);
 
 protected:
 
@@ -64,12 +64,12 @@ protected:
 	/*!@name Protected member functions*/
 	//@{
 		/// write reliability header
-		void	writeReliabilityHeader(	string name1,
-										string name2,
-										string name3,
-										string Observation,
-										string unit1,
-										string unit2);
+		void	writeReliabilityHeader(std::string name1,
+			std::string name2,
+			std::string name3,
+			std::string Observation,
+			std::string unit1,
+			std::string unit2);
 		
 		/// write reliability 
 		void writeReliabilityCC(int index, const TLGCStatistic& stat);

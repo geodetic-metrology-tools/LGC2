@@ -55,10 +55,10 @@ public:
 	/*!@name Acces methods : facade */
 	//@{
 		/*! returns the point 1 name */
-		string	getPoint1Name() const {return fPoint1->getName();}
+	std::string	getPoint1Name() const {return fPoint1->getName();}
 
 		/*! returns the point 2 name*/
-		string	getPoint2Name() const {return fPoint2->getName();}
+	std::string	getPoint2Name() const {return fPoint2->getName();}
 
 		/*! returns the sigma longitudinal */
 		TLength	getSigmaL() const {return fSigmaL;}
@@ -112,7 +112,7 @@ private:
 };
 
 /*! List of relative errors */
-typedef list<TLSCalcRelativeError>			LSRelErrorsContainer;
+typedef std::list<TLSCalcRelativeError>			LSRelErrorsContainer;
 /*! Iterator of the list of relative errors */
 typedef LSRelErrorsContainer::iterator		LSRelErrorIter;
 /*! Const iterator of the list of relative errors */

@@ -747,7 +747,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
-		stringstream infiler(TestLIBR::LIBR_AZDist);
+		std::stringstream infiler(TestLIBR::LIBR_AZDist);
 	
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -789,7 +789,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
-		stringstream infiler(TestLIBR::LIBR_AZDhor);
+		std::stringstream infiler(TestLIBR::LIBR_AZDhor);
 	
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -831,7 +831,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
-		stringstream infiler(TestLIBR::LIBR_PLR);
+		std::stringstream infiler(TestLIBR::LIBR_PLR);
 	
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -873,7 +873,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestLIBR::LIBR_DVER);
+		std::stringstream infiler(TestLIBR::LIBR_DVER);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

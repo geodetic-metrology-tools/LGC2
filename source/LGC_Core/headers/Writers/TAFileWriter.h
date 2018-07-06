@@ -37,10 +37,10 @@ public:
 		//@{
 
 			/// virtual function to write the file with the errors
-			virtual void	writeFile(const string error);
+			virtual void	writeFile(const std::string error);
 
 			///write error to the LGC output file
-			void	writeError(const string error);
+			void	writeError(const std::string error);
 
 		    /// returns project data.
 			const TLGCData*		getDataSet() const {return fProjectData;}

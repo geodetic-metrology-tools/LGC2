@@ -641,7 +641,7 @@ void TDataAnalyzer::assignEOIndices(){
 
 			//Vo is free if at least one ANGL, PLR3D, ECTH or ECDIR is used in Root frame
 			for (auto &rom : tstn->roms){
-				string angleName = node->frame.getName() + "V0" + std::to_string(fData.getAngles().numObjects());
+				std::string angleName = node->frame.getName() + "V0" + std::to_string(fData.getAngles().numObjects());
 
 				if (node->isROOTNode())
 				{
@@ -661,8 +661,8 @@ void TDataAnalyzer::assignEOIndices(){
 
             //If station can rotate freely, we have two angles representing rotation around X a Y axis. Rotation around Z axis is made by the V0, which is Z-axis rotation.
             if(tstn->rot3D){
-                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotX adjustable angle
-                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotY adjustable angle
+                tstn->rotX = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTX" + node->frame.getName() + std::to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotX adjustable angle
+                tstn->rotY = &fData.getAngles().addObject(TAdjustableAngle(::TAngle(0.0, ::TAngle::kGons), false, "ROTY" + node->frame.getName() + std::to_string(numOfTSTN) + std::to_string(tstn->stnId))); // Name of the rotY adjustable angle
 
                 // If ROT3D used, instrument height is fixed and is equal to 0
                 // (NB. These parameters will not affect in lgc1 case,
@@ -676,7 +676,7 @@ void TDataAnalyzer::assignEOIndices(){
             // - LGCv1: add when ZEND is used (there will be only one ROM per each TSTN)
             // - LGCv2: add always
             if(!fData.isLGCv1() || !tstn->roms.front()->measZEND.empty())
-                tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + to_string(numOfTSTN) + std::to_string(tstn->stnId)));
+                tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, "TSTN" + node->frame.getName() + tstn->instrument.ID + std::to_string(numOfTSTN) + std::to_string(tstn->stnId)));
 
             for(auto &rom : tstn->roms){
                 // PLR3D

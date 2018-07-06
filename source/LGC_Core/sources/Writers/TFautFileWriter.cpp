@@ -55,7 +55,7 @@ void	TFautFileWriter::writeFile(TLGCData const * const ds)
 	this->writeOverallReliability(ds);
 }
 
-void TFautFileWriter::writeFile(const string error)
+void TFautFileWriter::writeFile(const std::string error)
 {//write error messages from project
 	writeTitle();
 	writeError(error);
@@ -95,7 +95,7 @@ void	TFautFileWriter::writeTitle()
 	_tzset();
 #endif
 	today = localtime( &ltime );
-	string essai = ctime( &ltime );
+	std::string essai = ctime( &ltime );
 	strftime( tmpbuf, 128,"CALCULATED %d %B %Y %X", today );
 	(*stream)<<tmpbuf<<endl;
 	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
@@ -104,7 +104,7 @@ void	TFautFileWriter::writeTitle()
 void	TFautFileWriter::writeDataSummary()
 {
 	TAStreamFormatter* stream = getStream();
-	string separator = getSeparator();
+	std::string separator = getSeparator();
 
 	TReal S0Aposteriori = fProjectData->getS0APosteriori();
 	TReal S0LowLimit = fProjectData->getChiS0LowLimit();
@@ -128,7 +128,7 @@ void	TFautFileWriter::writeDataSummary()
 
 	//SIGNIFICANCE LEVEL
 	(*stream) << "SIGNIFICANCE LEVEL FOR TESTING WI, ALPHA =";
-	stream->setf(ios::fixed,ios::floatfield);
+	stream->setf(std::ios::fixed, std::ios::floatfield);
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << fAlpha * 100 << " %" << separator;
@@ -150,7 +150,7 @@ void	TFautFileWriter::writeDataSummary()
 void	TFautFileWriter::writeOverallReliability(TLGCData const * const project)
 {
 	TAStreamFormatter* stream =	getStream();
-	string separator = getSeparator();
+	std::string separator = getSeparator();
 
 	TDouble F(project->getStatistics().getOVERALL());
 
