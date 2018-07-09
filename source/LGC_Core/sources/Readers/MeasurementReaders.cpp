@@ -37,7 +37,7 @@ bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& t
 		else if(firstline) //Line starts with '*', but TRGT keyword not used, i.e. taking default taget value from ROM
 			currentTargetApplied = getROM()->defaultTargetId;
 	}
-	catch(exception e) { }
+	catch(std::exception e) { }
 
 	return firstline;
 }
@@ -51,7 +51,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		throw std::runtime_error("Key *TSTN takes at least two arguments: Positioned point ID  and InstrumentID.");
 	
 	// Initialize the station
-	shared_ptr<TTSTN> tstn = make_shared<TTSTN>(fpoints.getObject(tokens.at(2)),
+	std::shared_ptr<TTSTN> tstn = std::make_shared<TTSTN>(fpoints.getObject(tokens.at(2)),
 		finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
 	tstn->line = line;
     tstn->setActive(activeLine);
@@ -280,7 +280,7 @@ void TKeyV0::parse(const std::vector<std::string>& tokens, bool activeLine, int)
     auto tgtId = finstruments.getDevice(stn.targets, opts.getParamS("TRGT", stn.defTarget)).ID;
 
     // Create the ROM:
-    shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(tgtId, nullptr);
+	std::shared_ptr<TTSTN::TROM> rom = std::make_shared<TTSTN::TROM>(tgtId, nullptr);
     rom->setActive(proj.getCurrentNode().measurements.fTSTN.back()->isActive() && activeLine); // Active only if station is active as well
 
 	// set a constant orientation if defined

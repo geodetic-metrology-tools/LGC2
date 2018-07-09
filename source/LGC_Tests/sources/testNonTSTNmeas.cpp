@@ -39,7 +39,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDSPT.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::dspt_1);
+		std::stringstream infiler(TestNonTSTN::dspt_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -69,7 +69,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::dlev_1);
+		std::stringstream infiler(TestNonTSTN::dlev_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -102,7 +102,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::dlev_1_RS2K);
+		std::stringstream infiler(TestNonTSTN::dlev_1_RS2K);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -135,7 +135,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::dlev_2);
+		std::stringstream infiler(TestNonTSTN::dlev_2);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -172,7 +172,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::dlev_3);
+		std::stringstream infiler(TestNonTSTN::dlev_3);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -214,7 +214,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestDVER::OLOC_DVER_cheminement);
+		std::stringstream infiler(TestDVER::OLOC_DVER_cheminement);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -250,7 +250,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestDVER::OLOC_DVER_cheminement_LOR);
+		std::stringstream infiler(TestDVER::OLOC_DVER_cheminement_LOR);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -291,7 +291,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestDVER::RS2K__DVER);
+		std::stringstream infiler(TestDVER::RS2K__DVER);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -337,7 +337,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestDVER::RS2K_TSTN_DVER);
+		std::stringstream infiler(TestDVER::RS2K_TSTN_DVER);
 		
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -390,7 +390,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::echo_1);
+		std::stringstream infiler(TestNonTSTN::echo_1);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -419,7 +419,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::echo_1_plus_on_left_side);
+		std::stringstream infiler(TestNonTSTN::echo_1_plus_on_left_side);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -447,7 +447,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
-		stringstream infiler(TestNonTSTN::echo_2_line_exact);
+		std::stringstream infiler(TestNonTSTN::echo_2_line_exact);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -477,7 +477,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestNonTSTN::orie_SPHE);
+		std::stringstream infiler(TestNonTSTN::orie_SPHE);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -527,7 +527,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestNonTSTN::orie_RS2K);
+		std::stringstream infiler(TestNonTSTN::orie_RS2K);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -577,7 +577,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestNonTSTN::orie_LEP);
+		std::stringstream infiler(TestNonTSTN::orie_LEP);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -627,7 +627,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestNonTSTN::orie_OLOC);
+		std::stringstream infiler(TestNonTSTN::orie_OLOC);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

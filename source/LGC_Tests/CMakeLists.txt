@@ -50,7 +50,7 @@ set(tests_INPUT
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools)
+target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
 
 
 # Copy test files for unit tests

@@ -36,10 +36,10 @@ class TLGCApp {
 		~TLGCApp();
 
 		/// Returns the software id
-		static const string getProgId();
+		static const std::string getProgId();
 
 		/// Returns the software copyright
-		static const string getCopyright();
+		static const std::string getCopyright();
 
 		///Executes the application
 		Behavior exec();
@@ -75,7 +75,7 @@ class TLGCApp {
 		static void writeChabaFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
 
 	private:
-		static const string		fCopyright;
+		static const std::string		fCopyright;
 
 		// Neither copyable nor assignable
 		TLGCApp(const TLGCApp& x);

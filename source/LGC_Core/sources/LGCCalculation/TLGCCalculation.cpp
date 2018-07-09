@@ -42,7 +42,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			fResultsMtr = algorithm->resultMatrices;
 
 	}
-	catch (exception& e)
+	catch (std::exception& e)
 	{
 		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
 	}

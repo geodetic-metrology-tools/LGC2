@@ -18,7 +18,7 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
@@ -56,7 +56,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
 	std::string         TABs3 = stream->getCurrSpaceExtended(2);
@@ -118,7 +118,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
 	std::string         TABs3 = stream->getCurrSpaceExtended(2);
@@ -177,7 +177,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
 	std::string         TABs2 = stream->getCurrSpaceExtended(2);
@@ -243,7 +243,7 @@ void TSCALEWriter::writeECHOSIMUResults(const  TECHOROM& echorom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					lengthPrecision = getLengthPrecision();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
@@ -269,7 +269,7 @@ void TSCALEWriter::writeECVESIMUResults(const  TECVEROM& ecverom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					lengthPrecision = getLengthPrecision();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
@@ -294,7 +294,7 @@ void TSCALEWriter::writeECSPSIMUResults(const  TECSPROM& ecsprom)
 	TAStreamFormatter*	stream = getStream();
     // int				nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
-    string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 	std::string         TAB2 = stream->getCurrSpaceExtended(2);
 
@@ -335,7 +335,7 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 
 
 	//For each ECHO measurement of the station
@@ -370,7 +370,7 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 
 	//For each ECHO measurement of the station
@@ -405,7 +405,7 @@ void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCS
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	for (auto const& ItEcsp : measECSP)
 	{
@@ -439,7 +439,7 @@ void TSCALEWriter::writeSCALESynthesisHeader()
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
@@ -473,7 +473,7 @@ void TSCALEWriter::writeECHOResultsSynthesis(const  TECHOROM& echorom)
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -496,7 +496,7 @@ void TSCALEWriter::writeECVEResultsSynthesis(const  TECVEROM& ecrom)
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -519,7 +519,7 @@ void TSCALEWriter::writeECSPResultsSynthesis(const  TECSPROM& ecrom)
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 

@@ -37,7 +37,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
-		stringstream infiler(TestROOT::Param_setup4);
+		std::stringstream infiler(TestROOT::Param_setup4);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -77,7 +77,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
-		stringstream infiler(TestROOT::PLR3D_setup4);
+		std::stringstream infiler(TestROOT::PLR3D_setup4);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -119,7 +119,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
-		stringstream infiler(TestROOT::Param_setup4_different_z);
+		std::stringstream infiler(TestROOT::Param_setup4_different_z);
 		r.read(infiler);
 		
 		TLGCCalculation calcul(projTest);
@@ -160,7 +160,7 @@ namespace tut
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
 		//One POINT and one TSTN (V0) = 4 unknowns)
-		stringstream infiler(TestROOT::PLR3D_setup4_different_z);
+		std::stringstream infiler(TestROOT::PLR3D_setup4_different_z);
 		r.read(infiler);
 
 		TLGCCalculation calcul(projTest);

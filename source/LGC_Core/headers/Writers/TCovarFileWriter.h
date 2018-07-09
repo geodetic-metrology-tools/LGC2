@@ -22,7 +22,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class TLGCData;
 class TAStreamFormatter;
 
-using namespace std;
 
 
 /*!
@@ -42,7 +41,7 @@ public:
 	//@}
 
 	/// write errors
-	void	writeFile(const string error);
+	void	writeFile(const std::string error);
 	/// write the input file for DEFORM
     void	writeFile(const TLGCData &project);
 

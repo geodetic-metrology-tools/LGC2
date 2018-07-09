@@ -40,7 +40,7 @@ public:
 		virtual void writeFile();
 
 		///write the lgc file  when there is an error in the project
-		virtual void writeFile(const string error);
+		virtual void writeFile(const std::string error);
 	//@} 
 
 protected:

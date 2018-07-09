@@ -22,9 +22,9 @@ class		TLGCData;
 	Provides functions to write different parts of the simulation file.
 */
 struct ERELStat{
-	vector<TLSCalcRelativeError> MinErel;
-	vector<TLSCalcRelativeError> MaxErel;
-	vector<TLSCalcRelativeError> MeanErel;
+	std::vector<TLSCalcRelativeError> MinErel;
+	std::vector<TLSCalcRelativeError> MaxErel;
+	std::vector<TLSCalcRelativeError> MeanErel;
 };
 
 class  TSimulationOutputFileWriter : public TResultsFileWriter
@@ -54,7 +54,7 @@ public:
 			virtual void	writeLastSimResult(TLGCData &project, int numberOfSim);
 
 			/// Write a final TABLE which summarises POINT statistics.
-			virtual void    writeSimPointsSummary(const string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu);
+			virtual void    writeSimPointsSummary(const std::string &projTitle, const std::list<TSimPointSummary>& dataSum, int numbOfSimu);
 
 			/// Write a final TABLE which summarises FRAME statistics.
 			virtual void    writeSimFramesSummary(const std::list<TSimFrameSummary>& dataSum, int numbOfSimu);
@@ -88,7 +88,7 @@ private:
 
 			\param[in] objectType  e.g. Point, DX, DY, DZ, SX, SY, SZ
 		*/
-		void writeSimTableDescription(const string &projTitle, const string &objectType, int i);
+		void writeSimTableDescription(const std::string &projTitle, const std::string &objectType, int i);
 
 		/*! \brief Write simulation calculation header
 

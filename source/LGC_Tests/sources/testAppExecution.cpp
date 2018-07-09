@@ -6,6 +6,7 @@
 #include "TLGCApp.h"
 #include "testNonTSTNmeas.h"
 #include "TLGCCalculation.h"
+#include "Utils.h"
 
 namespace tut
 {

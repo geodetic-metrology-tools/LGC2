@@ -48,34 +48,34 @@ public:
 	//@{
 
 		/// Returns contribution for the Spatial Distance measurement (TDIST)
-		DistMeasContrib	getSpatialDistanceContrib(shared_ptr<TTSTN> station, const TLINE& dist);
+		DistMeasContrib	getSpatialDistanceContrib(std::shared_ptr<TTSTN> station, const TLINE& dist);
 
 		/// Returns contribution for the Spatial Distance measurement (TDIST) for a TSTN in a  frame
-		DistMeasContribFrame	getSpatialDistanceContribInFrame(shared_ptr<TTSTN> station, const TLINE& dist);
+		DistMeasContribFrame	getSpatialDistanceContribInFrame(std::shared_ptr<TTSTN> station, const TLINE& dist);
 
 		/// Returns contribution for the Horizontal Angle measurement (TANGL)
-		AnglMeasContrib	getHorAnglContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
+		AnglMeasContrib	getHorAnglContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
 
 		/// Returns contribution for the Horizontal Angle measurement (TANGL) for a TSTN in a frame
-		AnglMeasContribFrame	getHorAnglContribInFrame(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
+		AnglMeasContribFrame	getHorAnglContribInFrame(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TANGL& angl);
 
 		/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND)
-		AnglMeasContrib	getZenDistContrib(shared_ptr<TTSTN> station, const TZEND& zend);
+		AnglMeasContrib	getZenDistContrib(std::shared_ptr<TTSTN> station, const TZEND& zend);
 
 		/// Returns contribution for the Zenith Distance (Vertical Angle) measurement (TZEND) for a TSTN in a frame
-		AnglMeasContribFrame	getZenDistContribInFrame(shared_ptr<TTSTN> station, const TZEND& zend);
+		AnglMeasContribFrame	getZenDistContribInFrame(std::shared_ptr<TTSTN> station, const TZEND& zend);
 
 		/// Returns contribution for the Horizontal Distance measurement (DHOR), made by a total station (TSTN).
-		HorDistContrib	getHorDistContrib(shared_ptr<TTSTN> station, const TLINE& dhor);
+		HorDistContrib	getHorDistContrib(std::shared_ptr<TTSTN> station, const TLINE& dhor);
 
 		/// Returns contribution for the TPLR3D measurement.
-		PLR3DContrib getPolar3DContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
+		PLR3DContrib getPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
-		ECTHContrib	 getECTHContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
+		ECTHContrib	 getECTHContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
 
 		/// Returns contribution for the offset to a theodolite plane (TECDIR) measurement.
-		ECTHContrib	 getECDIRContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECDIR& ecdir);
+		ECTHContrib	 getECDIRContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECDIR& ecdir);
 	//@}
 
 

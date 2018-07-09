@@ -36,7 +36,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/AZDist.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestAF::AZDist);
+		std::stringstream infiler(TestAF::AZDist);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -111,7 +111,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/AZDist.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestAF::AZDist_RS2K);
+		std::stringstream infiler(TestAF::AZDist_RS2K);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -184,7 +184,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECTH.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
-		stringstream infiler(TestAF::ECTH);
+		std::stringstream infiler(TestAF::ECTH);
 	
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -242,7 +242,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECTHLEP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestAF::ECTH_LEP);
+		std::stringstream infiler(TestAF::ECTH_LEP);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

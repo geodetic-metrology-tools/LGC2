@@ -19,7 +19,6 @@ class	TLGCData;
 class	TAStreamFormatter;
 class TLSResultsMatrices;
 
-using namespace std;
 
 
 /*!
@@ -42,7 +41,7 @@ public:
 		//@}
 
 			/// write errors
-			void	writeFile(const string error);
+			void	writeFile(const std::string error);
 			/// write the input file for DEFORM
 			void	writeFile(const TLGCData &project, TLSResultsMatrices& rm);
 
@@ -61,7 +60,7 @@ private:
     void writeYAnalysis(const TLGCData&);
     void writeZAnalysis(const TLGCData&);
     void writeCALA(const TLGCData&);
-	void write3DPoint(string name, TReal X, TReal Y, TReal Z);
+	void write3DPoint(std::string name, TReal X, TReal Y, TReal Z);
     void writeUpperTriangularCovarianceMatrix(const TLGCData& project, TLSResultsMatrices& rm);
 	
 

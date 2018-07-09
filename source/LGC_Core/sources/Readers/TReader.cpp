@@ -550,7 +550,7 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 	// be sure to omit the byte order mark if there is one
 	skipBOM(lgcStream);
 
-	for (string line; lgcStream.good() && safeGetline(lgcStream, line);) 
+	for (std::string line; lgcStream.good() && safeGetline(lgcStream, line);)
 	{
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));

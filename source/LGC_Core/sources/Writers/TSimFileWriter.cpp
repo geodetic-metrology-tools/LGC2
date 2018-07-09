@@ -38,7 +38,7 @@ TSimFileWriter::~TSimFileWriter()
 // public member functions
 //////////////////////////
 
-void    TSimFileWriter::writeFile(const string error)
+void    TSimFileWriter::writeFile(const std::string error)
 {//write error messages from project
 	writeError(error);
 }
@@ -139,7 +139,7 @@ void	TSimFileWriter::writeHeader()
 void	TSimFileWriter::writeInstrument()
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
 	(*stream) << "*INSTR" << endl;
 	for (auto& itCAMD : data->getInstruments().fCAMD)
@@ -235,7 +235,7 @@ void	TSimFileWriter::writeData(TDataTreeIterator itTree)
 		return;
 
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
 	writeFrameHeader(itTree);
 	writePoint(itTree);
@@ -258,7 +258,7 @@ void	TSimFileWriter::writeData(TDataTreeIterator itTree)
 void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 	stream->setPrecisionFormat(fProjectData->getConfig().outPrecision.digits);
 
 	if ( !frameIt->get()->isROOTNode())
@@ -312,7 +312,7 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 	stream->setPrecisionFormat(data->getConfig().outPrecision.digits);
 
 	bool firstCALA = true;
@@ -474,7 +474,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
 	for (auto meas : frameIt->get()->measurements.fTSTN)
 		writeTSTNMeas(meas);
@@ -536,7 +536,7 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 void TSimFileWriter::writeCAMMeas(TCAM* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     auto edmDefInst = data->getInstruments().fCAMD.at(meas->instrument.ID);
     auto camDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
@@ -653,7 +653,7 @@ void TSimFileWriter::writeCAMMeas(TCAM* meas)
 void TSimFileWriter::writeDVERMeas(TDVER* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     if(!meas->isActive())
         (*stream) << DEACTIVATION_CHAR;
@@ -675,7 +675,7 @@ void TSimFileWriter::writeDVERMeas(TDVER* meas)
 void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
 	auto scaleDefInst = *data->getInstruments().fSCALE.at(meas->measECHO.front().target.ID);
 
@@ -721,7 +721,7 @@ void TSimFileWriter::writeECHOMeas(TECHOROM* meas)
 void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
 	auto scaleDefInst = *data->getInstruments().fSCALE.at(meas->measECVE.front().target.ID);
 
@@ -775,7 +775,7 @@ void TSimFileWriter::writeECVEMeas(TECVEROM* meas)
 void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
 	auto scaleDefInst = *data->getInstruments().fSCALE.at(meas->measECSP.front().target.ID);
 
@@ -824,7 +824,7 @@ void TSimFileWriter::writeECSPMeas(TECSPROM* meas)
 void TSimFileWriter::writeEDMMeas(TEDM* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     auto edmDefInst = *data->getInstruments().fEDM.at(meas->instrument.ID);
     auto romDefTarget = *meas->instrument.targets.at(meas->instrument.defTarget);
@@ -899,7 +899,7 @@ void TSimFileWriter::writeEDMMeas(TEDM* meas)
 void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     auto romDefStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
 
@@ -963,7 +963,7 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL* meas)
 void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     auto polarDefInst = *data->getInstruments().fPOLAR.at(meas->instrument.ID);
     auto romDefTarget = *meas->instrument.targets.at(meas->instrument.defTarget);
@@ -1020,7 +1020,7 @@ void TSimFileWriter::writeORIEMeas(TORIEROM* meas)
 void TSimFileWriter::writeRADIMeas(TRADI* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     if(!meas->isActive())
         (*stream) << DEACTIVATION_CHAR;
@@ -1035,7 +1035,7 @@ void TSimFileWriter::writeRADIMeas(TRADI* meas)
 void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     if(!meas->isActive())
         (*stream) << DEACTIVATION_CHAR;
@@ -1051,10 +1051,10 @@ void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
 
 }
 
-void TSimFileWriter::writeTSTNMeas(shared_ptr<TTSTN> meas)
+void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 {
 	TAStreamFormatter* stream = getStream();
-	string sep = stream->getSeparator();
+	std::string sep = stream->getSeparator();
 
     auto polarDefInst = *data->getInstruments().fPOLAR.at(meas->instrument.ID);
     auto tstnDefTarget = *meas->instrument.targets.at(meas->instrument.defTarget);

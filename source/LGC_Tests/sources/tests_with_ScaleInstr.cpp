@@ -38,7 +38,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECTHOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecth_OLOC);
+		std::stringstream infiler(TestScaleInstr::ecth_OLOC);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -100,7 +100,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECTHLEP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecth_LEP);
+		std::stringstream infiler(TestScaleInstr::ecth_LEP);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -161,7 +161,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECTHRS2K.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecth_RS2K);
+		std::stringstream infiler(TestScaleInstr::ecth_RS2K);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -222,7 +222,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECTHSPHE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecth_SPHE);
+		std::stringstream infiler(TestScaleInstr::ecth_SPHE);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -286,7 +286,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECVEOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecve_OLOC_PtLine);
+		std::stringstream infiler(TestScaleInstr::ecve_OLOC_PtLine);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -340,7 +340,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECVERS2K.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecve_RS2K_PtLine);
+		std::stringstream infiler(TestScaleInstr::ecve_RS2K_PtLine);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -394,7 +394,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECVELEP.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecve_LEP_PtLine);
+		std::stringstream infiler(TestScaleInstr::ecve_LEP_PtLine);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -448,7 +448,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECVESPHE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecve_SPHE_PtLine);
+		std::stringstream infiler(TestScaleInstr::ecve_SPHE_PtLine);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -500,7 +500,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECVE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		stringstream infiler(TestScaleInstr::ecve_OLOC);
+		std::stringstream infiler(TestScaleInstr::ecve_OLOC);
 
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);
@@ -541,7 +541,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("./outECSPOLOC.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
-		stringstream infiler(TestScaleInstr::ecsp_OLOC);
+		std::stringstream infiler(TestScaleInstr::ecsp_OLOC);
 	
 		bool succesReading = r.read(infiler);
 		ensure_equals("Reading file successful", succesReading, true);

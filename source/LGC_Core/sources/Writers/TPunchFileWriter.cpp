@@ -40,7 +40,7 @@ TPunchFileWriter::~TPunchFileWriter()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MEMBER PUBLIC FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void TPunchFileWriter::writeFile(const string error)
+void TPunchFileWriter::writeFile(const std::string error)
 {//write error messages from project
 	writeTitle();
 	writeError(error);
@@ -210,7 +210,7 @@ void TPunchFileWriter::writeTitle()
 	_tzset();
 #endif
 	today = localtime( &ltime );
-	string essai = ctime( &ltime );
+	std::string essai = ctime( &ltime );
 	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
 	(*stream) << "#" << tmpbuf << endl;
 	(*stream)<<"# "<<endl<<endl;
@@ -559,7 +559,7 @@ void TPunchFileWriter::writeXYZData(LGCAdjustablePoint const& point)
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -574,7 +574,7 @@ void TPunchFileWriter::writeXYHData(LGCAdjustablePoint const& point)
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -588,7 +588,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	if (point.getFrameTreePosition()->get()->isROOTNode())
 	{
@@ -754,7 +754,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
 	// int				obsWidth = max(getObsWidth(),11);
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -889,7 +889,7 @@ void TPunchFileWriter::writeXYHNData(LGCAdjustablePoint const& point)
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -922,7 +922,7 @@ void	TPunchFileWriter::writeXYZSigmaData(LGCAdjustablePoint const& point)
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 	int nameWidth = getNameWidth();
 	int coordWidth = getCoordWidth();
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -1000,7 +1000,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	int	nameWidth = getNameWidth();
 	int	coordWidth = getCoordWidth();
 	// int coordResWidth = getCoordResWidth();
-	string separator = stream->getSeparator();
+	std::string separator = stream->getSeparator();
 
 	(*stream).width(1);
 	(*stream) << "";
@@ -1086,7 +1086,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 		stream->writeString(coordWidth, "-1");
 	
 	//OPT
-	string status;
+	std::string status;
 	if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kCala)
 		status = "CALA";
 	else if (point.getSpatialStatus() == TSpatialStatus::ESpatialStatus::kVxyz)

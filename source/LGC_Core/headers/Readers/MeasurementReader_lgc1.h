@@ -68,9 +68,9 @@ protected:
     // create a default EDM
     void createEDMInstrument();
 	//create a TSTN
-	void createTSTN(string stn, int line);
+	void createTSTN(std::string stn, int line);
 	//create a ROM in tstn
-	void createROM(shared_ptr<TTSTN> tstn);
+	void createROM(std::shared_ptr<TTSTN> tstn);
 
 private:
 	TAMeasurementKey_lgc1& operator=(const TAMeasurementKey_lgc1&);
@@ -104,9 +104,9 @@ public:
 private:
 	TAngle sigmaANGL = TAngle(0.0);
 	TAngle constanteANGL = TAngle(0.0);
-	string currentStation = "";
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
+	std::string currentStation = "";
+	std::shared_ptr<TTSTN> currentTSTN;
+	std::shared_ptr<TTSTN::TROM> currentROM;
 };
 
 /// Keyword to process Zenith distance measurement
@@ -131,9 +131,9 @@ public:
 private:
 	TAngle sigmaZEND = TAngle(0.0);
 	TLength IH = TLength(0.0);
-	string currentStation = "";
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
+	std::string currentStation = "";
+	std::shared_ptr<TTSTN> currentTSTN;
+	std::shared_ptr<TTSTN::TROM> currentROM;
 };
 
 /// Keyword to process Zenith distance measurement
@@ -158,9 +158,9 @@ public:
 
 private:
 	TAngle sigmaZEND = TAngle(0.0);
-	string currentStation = "";
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
+	std::string currentStation = "";
+	std::shared_ptr<TTSTN> currentTSTN;
+	std::shared_ptr<TTSTN::TROM> currentROM;
 	bool firstmeas;
 };
 
@@ -189,9 +189,9 @@ private:
 	TLength sigmaDIST = TLength(0.0);
 	TLength dcorr = TLength(0.0); 
 	TLength ppm = TLength(0.0);
-	string currentStation = "";
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
+	std::string currentStation = "";
+	std::shared_ptr<TTSTN> currentTSTN;
+	std::shared_ptr<TTSTN::TROM> currentROM;
 	TAdjustableLength* adjDCorr;
 };
 
@@ -215,7 +215,7 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
-	string currentStation = "";
+	std::string currentStation = "";
     TInstrumentData::TEDM romInstr;
     TInstrumentData::TEDM::TTarget romTarget;
 };
@@ -242,10 +242,10 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
+	std::shared_ptr<TTSTN> currentTSTN;
+	std::shared_ptr<TTSTN::TROM> currentROM;
 	bool firstmeas;
-	string currentStation = "";
+	std::string currentStation = "";
 	TLength sigma = TLength(0.0);
 	TLength dcorr = TLength(0.0);
 
@@ -272,8 +272,8 @@ public:
 
 private:
 	bool firstmeas;
-	string point1 = "";
-	string point2 = "";
+	std::string point1 = "";
+	std::string point2 = "";
 	TLength sigma = TLength(0.0);
 	TLength dcorr = TLength(0.0);
 	
@@ -303,9 +303,9 @@ private:
 	TLength sigmaDIST = TLength(0.0); 
 	TLength dcorr = TLength(0.0);
 	TLength ppm = TLength(0.0);
-	string currentStation = "";
-	shared_ptr<TTSTN> currentTSTN;
-	shared_ptr<TTSTN::TROM> currentROM;
+	std::string currentStation = "";
+	std::shared_ptr<TTSTN> currentTSTN;
+	std::shared_ptr<TTSTN::TROM> currentROM;
 	bool firstmeas;
 };
 
@@ -356,7 +356,7 @@ private:
 	bool fistrDLEV = true;
 	TLength sigma = TLength(0.0);
 	TLength dcorr = TLength(0.0);
-	string currentStation = "";
+	std::string currentStation = "";
 };
 
 
@@ -382,8 +382,8 @@ private:
 	bool firstECHO = true;
 	TLength sigma = TLength(0.0);
 	TLength constante = TLength(0.0);
-	string encrage1 = "";
-	string encrage2 = "";
+	std::string encrage1 = "";
+	std::string encrage2 = "";
 };
 
 /// Keyword to process ECVE measurement
@@ -408,7 +408,7 @@ private:
 	bool fistrECVE = true;
 	TLength sigma = TLength(0.0);
 	TLength constante = TLength(0.0);
-	string ptLine = "";
+	std::string ptLine = "";
 };
 
 /// Keyword to process ORIE -- Gyro-Theodolite Azimut
@@ -430,7 +430,7 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 private:
-	string currentStation = "";
+	std::string currentStation = "";
 	bool fistrORIE = true;
 	TAngle sigma = TAngle(0.0);
 	TAngle constante = TAngle(0.0);

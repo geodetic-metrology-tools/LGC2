@@ -30,7 +30,7 @@ TDefaFileWriter::~TDefaFileWriter()
 {//destructor
 }
 
-void TDefaFileWriter::writeFile(const string)
+void TDefaFileWriter::writeFile(const std::string)
 {
 
 }
@@ -277,7 +277,7 @@ void TDefaFileWriter::writeCALA(const TLGCData &project)
 	}
 }
 
-void TDefaFileWriter::write3DPoint(string name, TReal X, TReal Y, TReal Z)
+void TDefaFileWriter::write3DPoint(std::string name, TReal X, TReal Y, TReal Z)
 {
 	fStream->writeStringLeft(8, name);
 	*fStream << "     ";

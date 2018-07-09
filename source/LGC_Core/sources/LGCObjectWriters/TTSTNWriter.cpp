@@ -10,7 +10,7 @@ TTSTNWriter::TTSTNWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservatio
 TTSTNWriter::~TTSTNWriter(){}
 
 
-void TTSTNWriter::writeTSTNResults(shared_ptr<TTSTN> tstn){
+void TTSTNWriter::writeTSTNResults(std::shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(3);
@@ -57,7 +57,7 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 		////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -377,7 +377,7 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -421,7 +421,7 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//summuray
@@ -462,7 +462,7 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	//summuray
@@ -507,16 +507,16 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 
 }
 
-void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
+void TTSTNWriter::writeTSTNHeader(std::shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
-	string				separator = getSeparator();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	////////////////////////////////////////////////////////////
@@ -561,13 +561,13 @@ void TTSTNWriter::writeTSTNHeader(shared_ptr<TTSTN> tstn){
 	(*stream)<<endl;
 }
 
-void TTSTNWriter::writeV0Header(shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writeV0Header(std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	//////////////////////////////////////
@@ -593,9 +593,9 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writePLRResultsHeader((int)measPLR3D.size()); // write the title line for the observations
@@ -785,9 +785,9 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeANGLResultsHeader((int)measANGL.size()); // write the title line for the observations
@@ -840,9 +840,9 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeZENDResultsHeader((int)measZEND.size()); // write the title line for the observations
@@ -896,7 +896,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -970,7 +970,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -1037,7 +1037,7 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -1089,7 +1089,7 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -1143,7 +1143,7 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 
 
 //------------------ Simu data---------------------------------------------------------------------------
-void TTSTNWriter::writeTSTNResultsSIMU(shared_ptr<TTSTN> tstn){
+void TTSTNWriter::writeTSTNResultsSIMU(std::shared_ptr<TTSTN> tstn){
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
 	std::string        TABs = stream->getCurrSpaceExtended(2);
@@ -1241,14 +1241,14 @@ void	TTSTNWriter::writeECDIRReliabilityHeader()
 
 
 //------------------ Reliability data------------------------------------------------------------------------
-void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TANGL>& measANGL)
+void	TTSTNWriter::writeANGLReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TANGL>& measANGL)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 
 	for(auto const& ItANGL : measANGL)
 	{
@@ -1278,14 +1278,14 @@ void	TTSTNWriter::writeANGLReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;
 }
 
-void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TZEND>& measZEND)
+void	TTSTNWriter::writeZENDReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TZEND>& measZEND)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 
 	for(auto const& ItZEND : measZEND)
 	{
@@ -1313,14 +1313,14 @@ void	TTSTNWriter::writeZENDReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;
 }
 
-void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDIST)
+void	TTSTNWriter::writeDISTReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDIST)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	for(auto const& ItDist : measDIST)
 	{
@@ -1346,16 +1346,16 @@ void	TTSTNWriter::writeDISTReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;	
 }
 
-void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TPLR3D>& measPLR3D)
+void	TTSTNWriter::writePLRReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TPLR3D>& measPLR3D)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					anglePrecision = getAnglePrecision();
-	int					angleResPrecision = max(getAngleResidualPrecision() - 4, 0);
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 
 	for(auto const& ItPLR : measPLR3D)
 	{
@@ -1414,14 +1414,14 @@ void	TTSTNWriter::writePLRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStat
 	return;	
 }
 
-void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDHOR)
+void	TTSTNWriter::writeDHORReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TLINE>& measDHOR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	for(auto const& ItDhor : measDHOR)
 	{
@@ -1447,14 +1447,14 @@ void	TTSTNWriter::writeDHORReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;	
 }
 
-void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECTH>& measECTH)
+void	TTSTNWriter::writeECTHReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECTH>& measECTH)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 
 	for(auto const& ItEcth : measECTH)
 	{
@@ -1480,14 +1480,14 @@ void	TTSTNWriter::writeECTHReliabilityData(shared_ptr<TTSTN> tstn, const TLGCSta
 	return;
 }
 
-void	TTSTNWriter::writeECDIRReliabilityData(shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR)
+void	TTSTNWriter::writeECDIRReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	for (auto const& ItEcsp : measECDIR)
 	{
@@ -1520,7 +1520,7 @@ void TTSTNWriter::writeANGLHeaderSynthesis(){
 	int					nameWidth = getNameWidth();
 	// int				obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
@@ -1549,7 +1549,7 @@ void TTSTNWriter::writeDISTHeaderSynthesis(){
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
@@ -1578,7 +1578,7 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 	std::string         TABs2 = stream->getCurrSpaceExtended(2);
 
@@ -1631,12 +1631,12 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int              lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -1651,12 +1651,12 @@ void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream) << endl;
 }
 
-void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -1671,12 +1671,12 @@ void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, 
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom, bool isdhor){
+void TTSTNWriter::writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom, bool isdhor){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -1691,12 +1691,12 @@ void TTSTNWriter::writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream) << endl;
 }
 
-void TTSTNWriter::writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 	std::string         TABs2 = stream->getCurrSpaceExtended(2);
@@ -1731,12 +1731,12 @@ void TTSTNWriter::writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, s
 
 }
 
-void TTSTNWriter::writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -1751,12 +1751,12 @@ void TTSTNWriter::writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream) << endl;
 }
 
-void TTSTNWriter::writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, shared_ptr<TTSTN::TROM> rom){
+void TTSTNWriter::writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 

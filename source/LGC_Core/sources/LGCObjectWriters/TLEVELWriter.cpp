@@ -14,7 +14,7 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	int					lengthPrecision = getLengthPrecision();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 	int					obsWidth = getObsWidth();
@@ -108,7 +108,7 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	writeDLEVResultsHeader((int)measDLEV.size());
@@ -225,7 +225,7 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL& fLevel, const TLGCStat
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//For each station
 	for (auto const& ItDhor : fLevel.measDLEV)
@@ -264,7 +264,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//For each DLEV measurement of the station
 	for (auto const& ItDLEV : fLevel.measDLEV)
@@ -299,7 +299,7 @@ void TLEVELWriter::writeLEVELSynthesisHeader()
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 
@@ -333,7 +333,7 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 

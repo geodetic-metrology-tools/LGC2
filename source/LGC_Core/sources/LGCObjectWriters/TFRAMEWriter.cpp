@@ -887,7 +887,7 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	int					lengthPrecision =	getLengthPrecision();
 	int					anglePrecision = getAnglePrecision();
 	std::string			TABs = stream->getCurrSpace();
@@ -1075,7 +1075,7 @@ void TFRAMEWriter::writePointType(const std::list<AdjPointIter>& lop, TDataTreeI
 		//We want to write header only if we find out, that at least one point is defined in the particular sub-frame.
 		bool headerWritten = false;	
 
-		string fReferentialName;
+		std::string fReferentialName;
 		if(fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 			fReferentialName = "SPHE";
 		else if(fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
@@ -1108,7 +1108,7 @@ void TFRAMEWriter::writePointType(const std::list<AdjPointIter>& lop, TDataTreeI
 void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformation& frameDef, int transl){
 	assert3D(transl);
 	TAStreamFormatter*	stream = getStream();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision =	getLengthPrecision();
@@ -1449,7 +1449,7 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //HEADER
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const string &refSys, bool localFRAME)
+void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const std::string &refSys, bool localFRAME)
 {
 	TAStreamFormatter*	stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential); 
@@ -1457,10 +1457,10 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 
-	string title ="";
+	std::string title ="";
 	if(status == TSpatialStatus::kCala)
 		{ title = "POINTS DE CALAGE";}
 	if(status == TSpatialStatus::kVz)
@@ -1618,7 +1618,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	int					coordPrecision = this->getCoordPrecision();
 	int					coordResWidth = getCoordResWidth();
 	// int				coordResidualPrecision = this->getCoordErrorPrecision();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 
 	// int coordResPrecision = coordResidualPrecision > 3 ? (coordResidualPrecision - 3) : 0;
 
@@ -1756,7 +1756,7 @@ void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
-	string				sep = getSeparator();
+	std::string				sep = getSeparator();
 
 	const auto& ell(pt->getErrorEllipsoid());
 

@@ -83,7 +83,7 @@ TResultsFileWriter::~TResultsFileWriter()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MEMBER PUBLIC FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void    TResultsFileWriter::writeFile(const string error)
+void    TResultsFileWriter::writeFile(const std::string error)
 {//write error messages from project
     writeTitle();
     writeError(error);
@@ -183,7 +183,7 @@ void    TResultsFileWriter::writeTitle()
 	_tzset();
 #endif
 	today = localtime( &ltime );
-    string essai = ctime( &ltime );
+	std::string essai = ctime( &ltime );
     strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
     (*stream)<<tmpbuf<<endl;
     (*stream)<<"*********************************************************************************************************************************** "<<endl<<endl;
@@ -351,7 +351,7 @@ void    TResultsFileWriter::writeAdjustableObjGeneralInfo(const std::string adjO
  
  
 // write the summary for the number of points of the given description  
-void    TResultsFileWriter::writePointDataSummary(const string description, const int numPts)  
+void    TResultsFileWriter::writePointDataSummary(const std::string description, const int numPts)
 {
     TAStreamFormatter &stream = getStreamRef();
  
@@ -457,7 +457,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
 void    TResultsFileWriter::writeSigmaAPosteriori()
 {
     TAStreamFormatter* stream = getStream();
-    string separator = getSeparator();
+	std::string separator = getSeparator();
  
     TReal S0Aposteriori = fProjectData->getS0APosteriori();
     TReal S0LowLimit = fProjectData->getChiS0LowLimit();
@@ -506,7 +506,7 @@ void    TResultsFileWriter::writeSigmaAPosteriori()
 void    TResultsFileWriter::writeSigmaAPosteriori(const TLGCData& data)
 {
     TAStreamFormatter* stream = getStream();
-    string separator = getSeparator();
+	std::string separator = getSeparator();
  
     TReal S0Aposteriori = data.getS0APosteriori();
     TReal S0LowLimit = data.getChiS0LowLimit();
@@ -582,7 +582,7 @@ void TResultsFileWriter::transfUsingGeoid(TPositionVector& pv, const TRefSystemF
  
  
 // write the summary for the number of measurements of the given description
-void    TResultsFileWriter::writeMeasDataSummary(const string description, const int numObs)  
+void    TResultsFileWriter::writeMeasDataSummary(const std::string description, const int numObs)
 {
     TAStreamFormatter &stream = getStreamRef();
  
@@ -596,7 +596,7 @@ void	TResultsFileWriter::writeRelErrorHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	int					obsResWidth = max(getObsResWidth(), 9);
+	int					obsResWidth = std::max(getObsResWidth(), 9);
 
 	// write header
 	(*stream) << endl << endl << endl;
@@ -636,7 +636,7 @@ void	TResultsFileWriter::writeRelErrorResults(const TLGCData& data)
 
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 
 	for (auto& ptPairIt : data.getRelError())
 	{
@@ -648,7 +648,7 @@ void	TResultsFileWriter::writeRelErrorResults(const TLGCData& data)
 		stream->setLengthUnits(TLength::kMillimetres);
 		stream->setAngleUnits(TAngle::k100MicroGons);
 		stream->setPrecisionFormat(getLengthPrecision());
-		stream->setWidthFormat(max(getObsResWidth(), 9));
+		stream->setWidthFormat(std::max(getObsResWidth(), 9));
 
 		//sigma L
 		(*stream) << right << ptPairIt.getSigmaL() << separator;

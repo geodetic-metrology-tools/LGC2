@@ -31,7 +31,7 @@ TCovarFileWriter::~TCovarFileWriter()
 {//destructor
 }
 
-void TCovarFileWriter::writeFile(const string)
+void TCovarFileWriter::writeFile(const std::string)
 {
 
 }
@@ -122,7 +122,7 @@ void TCovarFileWriter::writeFrameDefinition(TAdjustableHelmertTransformation& fr
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	int					lengthPrecision = getLengthPrecision();
 	int					anglePrecision = getAnglePrecision();
 	std::string			TABs = stream->getCurrSpace();
@@ -175,7 +175,7 @@ void TCovarFileWriter::writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelm
 	TAStreamFormatter*	stream = getStream();
     // int				nameWidth = getNameWidth();
     int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	int					lengthPrecision = getLengthPrecision();
 	// int              anglePrecision = getAnglePrecision();
 	std::string			TABs = stream->getCurrSpace();
@@ -585,7 +585,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(const LGCAdjust
 	TAStreamFormatter*	stream = getStream();
     // int				nameWidth = getNameWidth();
     int					obsWidth = getObsWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	int					lengthPrecision = getLengthPrecision();
 	std::string			TABs = stream->getCurrSpace();
     // int				obsResWidth = getObsResWidth();

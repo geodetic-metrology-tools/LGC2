@@ -18,7 +18,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 class	TLGCProject;
 
-using namespace std;
 
 
 /*!
@@ -45,7 +44,7 @@ public:
 			virtual void	writeFile();
 
 			/// write the lgc file  when there is an error in the project
-			virtual void	writeFile(const string error);
+			virtual void	writeFile(const std::string error);
 		//@}
 
 protected:
@@ -77,7 +76,7 @@ protected:
 	void writeLEVELMeas(TLEVEL* meas);
 	void writeORIEMeas(TORIEROM* meas);
 	void writeRADIMeas(TRADI* meas);
-	void writeTSTNMeas(shared_ptr<TTSTN> meas);
+	void writeTSTNMeas(std::shared_ptr<TTSTN> meas);
 	void writeOBSXYZMeas(TOBSXYZ* meas);
 
 

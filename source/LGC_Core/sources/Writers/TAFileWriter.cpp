@@ -41,11 +41,11 @@ TAFileWriter::~TAFileWriter()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MEMBER PUBLIC FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void	TAFileWriter::writeFile(const string error){
+void	TAFileWriter::writeFile(const std::string error){
 	writeError(error);
 }
 
-void	TAFileWriter::writeError(const string error)
+void	TAFileWriter::writeError(const std::string error)
 {//write error messages from project
 	(*getStream())<<error;
 } 

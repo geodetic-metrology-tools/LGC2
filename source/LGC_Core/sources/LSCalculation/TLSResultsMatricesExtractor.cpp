@@ -1091,7 +1091,7 @@ void TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices& rm)
 			}
 			else
 			{
-				string warning(iterb->first + " et " + iterb->second + " ne sont pas definit dans le meme frame.");
+				std::string warning(iterb->first + " et " + iterb->second + " ne sont pas definit dans le meme frame.");
 				throw std::logic_error(warning);
 			}
 

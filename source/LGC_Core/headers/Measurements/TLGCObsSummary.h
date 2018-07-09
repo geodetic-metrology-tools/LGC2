@@ -75,10 +75,10 @@ public:
     TReal		getVarHiLimit() const;
 
     /// set a string to identify the observation type 
-    void		setObsText(const string keyWord) { fObsText = keyWord; return; }
+    void		setObsText(const std::string keyWord) { fObsText = keyWord; return; }
 
     /// get the observation type 
-    string		getObsText() const { return fObsText; }
+	std::string		getObsText() const { return fObsText; }
 
     /// define if the observation is an angle 
     void		defineAngleObservation() { fAngleType = true; return; };
@@ -93,7 +93,7 @@ public:
     int			getNumberOfObs() const { return fNumberOfObs; }
 
     /// get the histogram data corresponding to the obersation residuals 
-    const list<int>	getHistogramData() const;
+    const std::list<int>	getHistogramData() const;
 
     /// get the lower limit for the histogram data 
     TReal		getHistoLoLimit() const;
@@ -128,7 +128,7 @@ protected:
 
 private:
     // statistics on the observation residuals
-    string			fObsText;
+	std::string			fObsText;
     bool			fAngleType;
     int				fNumberOfObs;
     TReal			fSumRes;
@@ -144,8 +144,8 @@ private:
 
     // histogram data
     static bool     fCreateHistogram;
-    list<TReal>	    fHistoList;
-    list<int>       fHistoData;
+	std::list<TReal>	    fHistoList;
+	std::list<int>       fHistoData;
     int				fNumberOutsideHisto;
 
     bool            fIsInitialised;

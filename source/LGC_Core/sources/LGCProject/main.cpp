@@ -127,7 +127,7 @@ int main( int argc,  char *argv[]){
 						break;
 					}
 					try {
-						nMaxIterations = stoi(argv[i + 1]);
+						nMaxIterations = std::stoi(argv[i + 1]);
 					}
 					catch (std::invalid_argument& e) {
 						// if no conversion could be performed
@@ -163,7 +163,7 @@ int main( int argc,  char *argv[]){
 		}
 		catch (const std::runtime_error& ex)
 		{
-			cout << ex.what() << endl << endl;
+			std::cout << ex.what() << endl << std::endl;
 		}
 	}
 
@@ -179,7 +179,7 @@ void createOutputFile(std::string outFilePath)
 	struct stat st = { 0 };
 	if (stat(outputFileDirectory.c_str(), &st) == -1)
 		if (creat(outputFileDirectory.c_str(),S_IRWXU|S_IRWXG) == -1) {
-			std::cout << "Output directory does not exist and could not be created" << endl;
+			std::cout << "Output directory does not exist and could not be created" << std::endl;
 		}
 #else
 	CreateFile(outputFileDirectory.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);

@@ -131,26 +131,26 @@ void TAMeasurementKey_lgc1::createEDMInstrument() {
 
 }
 
-void TAMeasurementKey_lgc1::createTSTN(string stn, int line)
+void TAMeasurementKey_lgc1::createTSTN(std::string stn, int line)
 {
 	// Initialize the station
-	shared_ptr<TTSTN> tstn = make_shared<TTSTN>(fpoints.getObject(stn), getPolarInstr());
+	std::shared_ptr<TTSTN> tstn = std::make_shared<TTSTN>(fpoints.getObject(stn), getPolarInstr());
 	tstn->line = line;
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);
 }
 
-void TAMeasurementKey_lgc1::createROM(shared_ptr<TTSTN> tstn)
+void TAMeasurementKey_lgc1::createROM(std::shared_ptr<TTSTN> tstn)
 {
 	// Create a new ROM (round of measurements) for the current station with the given default target, v0 is set to be zero
-	shared_ptr<TTSTN::TROM> rom = make_shared<TTSTN::TROM>(getPolarInstr().defTarget, nullptr);
+	std::shared_ptr<TTSTN::TROM> rom = std::make_shared<TTSTN::TROM>(getPolarInstr().defTarget, nullptr);
 	// Add the ROM
 	tstn->roms.emplace_back(rom);
 }
 
 void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, bool, int line)
 {
-    auto storeANGL = [&](shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeANGL = [&](std::shared_ptr<TTSTN::TROM> rom)   // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
@@ -285,7 +285,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
 
 void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, bool, int line)
 {
-    auto storeZENI = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeZENI = [&](std::shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
@@ -409,7 +409,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
 
 void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, bool, int line)
 {
-    auto storeZENH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeZENH = [&](std::shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
@@ -645,7 +645,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
 
 void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, bool, int line)
 {
-    auto storeDIST = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeDIST = [&](std::shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
@@ -977,7 +977,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
 void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, bool, int line)
 {
 
-    auto storeECTH = [&](shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeECTH = [&](std::shared_ptr<TTSTN::TROM> rom) // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
@@ -1150,7 +1150,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
 
 void TKeyDHOR_lgc1::parse(const std::vector<std::string>& tokens, bool, int line)
 {
-    auto storeDHOR = [&](shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
+    auto storeDHOR = [&](std::shared_ptr<TTSTN::TROM> rom)  // FRK 17/11/2016; Suppressed reference "auto&"
 	{
         bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())

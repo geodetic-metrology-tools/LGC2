@@ -340,7 +340,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 		//@}
 
 			/// The optional DHOR measurment 
-			shared_ptr<TDLEV::TDHOR> dhor;
+			std::shared_ptr<TDLEV::TDHOR> dhor;
 
 			/// Allfixed parameter: collimation angle
 			TAngle fAllFixedCollimation;

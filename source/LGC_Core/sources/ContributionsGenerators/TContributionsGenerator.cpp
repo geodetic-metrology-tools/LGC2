@@ -23,7 +23,7 @@ TContributionsGenerator::TContributionsGenerator(TPointTransformer& fPointTransf
 */
 
 //Spatial distance contributions
-DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(shared_ptr<TTSTN> station, const TLINE& dist){
+DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(std::shared_ptr<TTSTN> station, const TLINE& dist){
 //Transform TARGET and STATION from their LOCAL FRAME either to ROOT or to MLA of the station
 	TPositionVector targetPos = dist.targetPos->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(dist.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "TARGET FRAME" to "ROOT"
@@ -98,7 +98,7 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(shared_ptr<TT
 	return contrib;
 }
 
-DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribInFrame(shared_ptr<TTSTN> station, const TLINE& dist) {
+DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribInFrame(std::shared_ptr<TTSTN> station, const TLINE& dist) {
 	fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
 	TPositionVector stationPos = station->instrumentPos->getEstimatedValue();
 
@@ -196,7 +196,7 @@ DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribInFrame(s
 }
 
 // Horizontal angle contributions
-AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl){
+AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TANGL& angl){
 //Transform TARGET and STATION from their LOCAL FRAME either to ROOT or to MLA of the station
 	TPositionVector targetPos = angl.targetPos->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(angl.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "TARGET FRAME" to "ROOT"
@@ -252,7 +252,7 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(shared_ptr<TTSTN> sta
 	return contrib;
 }
 
-AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TANGL& angl) {
+AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TANGL& angl) {
 	fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
 	const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(angl.targetPos->getFrameTreePosition(), station->instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
 	TPositionVector targetPos = angl.targetPos->getEstimatedValue();
@@ -324,7 +324,7 @@ AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(shared_pt
 }
 
 //Zenith distance (vertical angle) contributions
-AnglMeasContrib	TContributionsGenerator::getZenDistContrib(shared_ptr<TTSTN> station, const TZEND& zend){
+AnglMeasContrib	TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN> station, const TZEND& zend){
 //Transform TARGET and STATION from their LOCAL FRAME either to ROOT or to MLA of the station
 	TPositionVector targetPos = zend.targetPos->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(zend.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "TARGET FRAME" to "ROOT"
@@ -398,7 +398,7 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(shared_ptr<TTSTN> sta
 	return contrib;
 }
 
-AnglMeasContribFrame	TContributionsGenerator::getZenDistContribInFrame(shared_ptr<TTSTN> station, const TZEND& zend) {
+AnglMeasContribFrame	TContributionsGenerator::getZenDistContribInFrame(std::shared_ptr<TTSTN> station, const TZEND& zend) {
 	fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
 	const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(zend.targetPos->getFrameTreePosition(), station->instrumentPos->getFrameTreePosition());
 	TPositionVector targetPos = zend.targetPos->getEstimatedValue();
@@ -486,7 +486,7 @@ AnglMeasContribFrame	TContributionsGenerator::getZenDistContribInFrame(shared_pt
 }
 
 //PLR3D Contribution
-PLR3DContrib	TContributionsGenerator::getPolar3DContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D){
+PLR3DContrib	TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D){
 //Transform TARGET and STATION from their LOCAL FRAME either to ROOT or to MLA of the station
 	TPositionVector targetPos = plr3D.targetPos->getEstimatedValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(plr3D.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Target lor" to "ROOT"
@@ -620,7 +620,7 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(shared_ptr<TTSTN> statio
 }
 
 //Horizontal distance contributions, measurement made by TSTN
-HorDistContrib	TContributionsGenerator::getHorDistContrib(shared_ptr<TTSTN> station, const TLINE& dhor){
+HorDistContrib	TContributionsGenerator::getHorDistContrib(std::shared_ptr<TTSTN> station, const TLINE& dhor){
 	TReal calcMeas;
 	TFreeVector coordContribStation(TCoordSysFactory::k3DCartesian);
 	TFreeVector coordContribTarget(TCoordSysFactory::k3DCartesian);
@@ -687,7 +687,7 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(shared_ptr<TTSTN> stat
 }
 
 //ECTH Contribution
-ECTHContrib	 TContributionsGenerator::getECTHContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECTH& ecth){
+ECTHContrib	 TContributionsGenerator::getECTHContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECTH& ecth){
 	///////////////////Transform TARGET and STATION from their's LOR either to ROOT or to MLA of the station///////////////////////////////
 	TPositionVector targetPos = station->instrumentPos->getEstimatedValue(); //position of the scale. Point to measure
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(station->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Get transformation from "Station lor" to "ROOT"
@@ -745,7 +745,7 @@ ECTHContrib	 TContributionsGenerator::getECTHContrib(shared_ptr<TTSTN> station, 
 }
 
 //ECDIR contribution
-ECTHContrib	 TContributionsGenerator::getECDIRContrib(shared_ptr<TTSTN> station, shared_ptr<TTSTN::TROM> rom, const TECDIR& ecdir)
+ECTHContrib	 TContributionsGenerator::getECDIRContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECDIR& ecdir)
 {
 	///////////////////Transform TARGET and STATION from their's LOR to ROOT///////////////////////////////
 	TPositionVector targetPos = station->instrumentPos->getEstimatedValue(); //position of the scale. Point to measure

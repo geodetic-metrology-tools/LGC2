@@ -97,7 +97,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -187,7 +187,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 
 	//For each DSPT measurement of the station
 	for(auto const& ItDspt : fEdm.measDSPT)

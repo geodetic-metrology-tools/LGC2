@@ -23,7 +23,7 @@ void TCAMWriter::writeCAMResults(const TCAM& camera){
 void TCAMWriter::writeCAMHeader(const TCAM& camera){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 
 	////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -234,7 +234,7 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -336,7 +336,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 
 
 	//For each DHOR measurement of the station
@@ -391,7 +391,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthPrecision = getLengthPrecision();
-	int					lengthResPrecision = max(getLengthResidualPrecision()-3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 
 	//For each DHOR measurement of the station
 	for(auto const& ItUvd : fCam.measUVD)
@@ -463,7 +463,7 @@ void TCAMWriter::writeUVDSynthesisHeader()
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream).writeStringLeft(nameWidth, "UVD"); //instrument
@@ -511,7 +511,7 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	string				separator = getSeparator();
+	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	(*stream).writeStringLeft(nameWidth, "UVEC"); //instrument
@@ -553,7 +553,7 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 
@@ -583,7 +583,7 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 	int					nameWidth = getNameWidth();
     // int				obsWidth = getObsWidth();
     int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = max(getLengthResidualPrecision() - 3, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
     // int				lengthPrecision = getLengthPrecision();
     std::string         TABs = stream->getCurrSpaceExtended(1);
 

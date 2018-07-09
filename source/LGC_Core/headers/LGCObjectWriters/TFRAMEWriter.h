@@ -59,7 +59,7 @@ private:
 		/// Writes rotation parameter related stuff
 		void writeRotationParameter(const TAdjustableHelmertTransformation& frameDef, int rot);
 		///Writes header for point summary
-		void writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const string &refSys, bool isLocal);
+		void writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const std::string &refSys, bool isLocal);
 
 		/// Write TSTSN reliability
 		void writeTSTNReliability(TDataTreeIterator frameIt);
