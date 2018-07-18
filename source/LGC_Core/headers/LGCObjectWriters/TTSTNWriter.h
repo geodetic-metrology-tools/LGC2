@@ -137,7 +137,7 @@ private:
 
 	/*!@name Results */
 	//@{
-		void writeANGLResults(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V);
+		void writeANGLResults(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos);
 		void writeZENDResults(const std::list<TZEND>& measZEND, const LGCAdjustablePoint* instrPos);
 		void writeDISTResults(const std::list<TLINE>& measDIST, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos);
 		void writePLRResults(const std::list<TPLR3D>& measPLR3D, const TInstrumentData::TPOLAR& instr, const LGCAdjustablePoint* instrPos, const TAngle& V, const TAngle& rx, const TAngle& ry);
