@@ -26,7 +26,7 @@ void TTSTNWriter::writeTSTNResults(std::shared_ptr<TTSTN> tstn){
 		writeV0Header(ItRoms);
 
 		if(ItRoms->measANGL.size() > 0)
-			writeANGLResults(ItRoms->measANGL, tstn->instrumentPos, V0);
+			writeANGLResults(ItRoms->measANGL, tstn->instrumentPos);
 		
 		if(ItRoms->measZEND.size() > 0)
 			writeZENDResults(ItRoms->measZEND, tstn->instrumentPos);
@@ -615,7 +615,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaAngl.getSignedCCValue());
 
 		//write the estimated ANGL
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL) + V).getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItPLR3D.getAngle(EPLR3DAngles::kANGL) + ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL)).getGonsValue());
 
 		//write the residual ANGL
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getSignedCCValue());
@@ -778,7 +778,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos, const TAngle& V)
+void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAdjustablePoint* instrPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -804,7 +804,7 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItANGL.target.sigmaAngl).getSignedCCValue());
 
 		//write the estimated ANGL
-		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle() + ItANGL.getAngleResidual() + V).getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle()+ ItANGL.getAngleResidual()).getGonsValue());
 
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue());
