@@ -2,7 +2,7 @@
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR 2)
 set (LGC_VERSION_MINOR 02)
-set (LGC_VERSION_PATCH 00-beta)
+set (LGC_VERSION_PATCH "00-beta")
 
 # Versions files
 configure_file (
@@ -13,13 +13,11 @@ configure_file (
 if(MSVC)
 	add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 	add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-	set(CMAKE_CXX_FLAGS "/openmp /EHsc /O2 /W4  /wd4224")
 endif(MSVC)
 
 # Add options to compile with GCC to get more opinions on the code
 if(MINGW)
     message("    Using MinGW")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")
 endif(MINGW)
 
 # Define a variable that contains the path to LGC modules

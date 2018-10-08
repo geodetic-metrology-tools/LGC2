@@ -19,6 +19,12 @@ cmake_minimum_required(VERSION 3.6)
 
 set(PROJECT_NAME LGC)
 
+# Set version number and provide a header file with corresponding defines
+# /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
+set (EXE_VERSION_MAJOR 2)
+set (EXE_VERSION_MINOR 02)
+set (EXE_VERSION_PATCH "00-beta")
+
 #############################################################
 #
 # GLOBAL CONFIGURATION
@@ -27,14 +33,9 @@ set(PROJECT_NAME LGC)
 set(CREATE_DOC ON)
 set(DOXYGEN_CONF_PATH ".")
 set(ENABLE_CONSOLE ON)
+set(CPACK_BUILD ON)
 
 include("../../SUSoftCMakeCommon/CMakeLists.txt")
-
-# Set version number and provide a header file with corresponding defines
-# /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
-set (LGC_VERSION_MAJOR 2)
-set (LGC_VERSION_MINOR 02)
-set (LGC_VERSION_PATCH 00-beta)
 
 # Versions files
 configure_file (
@@ -50,14 +51,12 @@ FIND_PACKAGE(Boost 1.49.0 REQUIRED)
 IF(MSVC)
 	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
-	SET(CMAKE_CXX_FLAGS "/openmp /EHsc /O2 /W4  /wd4224")
 ENDIF(MSVC)
 
 # Add options to compile with GCC to get more opinions on the code
 IF(MINGW)
 message("    Using MinGW")
 	ADD_DEFINITIONS(-D_USE_MATH_DEFINES) #defined variable added FRK 17/11/2016
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra -Wno-reorder -Wfatal-errors -Wno-comments")  
 ENDIF(MINGW)
 
 include_directories (
@@ -101,12 +100,6 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
 
-
-#include the CPack file allows to have PACKAGE in the solution and then to create the package
-if(WIN32)
-	include(${PROJECT_SOURCE_DIR}/CPack.cmake)
-endif()
-
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
 target_link_libraries(${PROJECT_NAME}
@@ -126,5 +119,7 @@ endif()
 ############################
 # INSTALLER PACKAGE:
 if(WIN32)
+	include(${CMAKE_CURRENT_LIST_DIR}/CPack.cmake)
+	include(CPack)
 	create_default_installer()
 endif()
