@@ -1,69 +1,21 @@
 # Installer:
-set(CPACK_PACKAGE_NAME "LGC")
-set(CPACK_PACKAGE_VENDOR "CERN SUSoft")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "LGC")
 
-set(CPACK_PACKAGE_VERSION_MAJOR ${LGC_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${LGC_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${LGC_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+set(CPACK_NSIS_HELP_LINK "https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide")
 
-
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
-
-set(CPACK_NSIS_HELP_LINK "https://espace.cern.ch/SU/GC/default.aspx")
-#set(CPACK_NSIS_URL_INFO_ABOUT "https://wikis.web.cern.ch/wikis/display/SUS/ChaBa+User+Guide+-EN")
-set(CPACK_NSIS_CONTACT "susoft.support@cern.ch")
-set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
-set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
-
-# Directory name in the "Program Files"
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "SUSoft\\\\${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
-#set(CPACK_NSIS_MODIFY_PATH ON)
-# Disable asking for components (there are no subcomponents)
-set(CPACK_MONOLITHIC_INSTALL TRUE)
-# Define the application components: (Obsolete, uses monolithic install)
-set(CPACK_COMPONENTS_ALL application)
-# And the component description
-set(CPACK_COMPONENT_APPLICATION_DISPLAY_NAME "${CPACK_PACKAGE_NAME}")
-# Elements of the menu start folder
-set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
-set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_NAME} "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
-set(CPACK_PACKAGE_NAME "LGC2Installer" )
-# Icon in the add/remove control panel. Must be an .exe file 
-set(CPACK_NSIS_INSTALLED_ICON_NAME ${CPACK_COMPONENT_APPLICATION_DISPLAY_NAME}.exe)
-# Set installer icon (need .ico !!!)
-set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}\\\\..\\\\LGC.ico")
 # set the package header icon for MUI
-SET(CPACK_PACKAGE_ICON "${PROJECT_SOURCE_DIR}\\\\..\\\\LGC.ico")
-#SET(CPACK_NSIS_INSTALLED_ICON_NAME "${PROJECT_SOURCE_DIR}\\\\RabotGUI\\\\resources\\\\su_icon.ico")
-set(CPACK_NSIS_INSTALLED_ICON_NAME ${CPACK_COMPONENT_APPLICATION_DISPLAY_NAME}.exe)
-
-set(CPACK_NSIS_DEFINES "!define MUI_STARTMENUPAGE_DEFAULTFOLDER \\\"${CPACK_PACKAGE_INSTALL_DIRECTORY}\\\"")
-set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
-set(CPACK_PACKAGE_HKLM_REGISTRY_KEY "${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
-
-
-
-set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-	SetOverwrite on
-	ExecWait '\\\"$INSTDIR\\\\vcredist_x64.exe\\\"/install /quiet /norestart'
-")
+set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_LIST_DIR}\\..\\LGC.ico")
+# Set installer icon (need .ico !!!)
+set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_LIST_DIR}\\..\\LGC.ico")
+set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_LIST_DIR}\\..\\LGC.ico")
 
 SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS ${CPACK_NSIS_EXTRA_INSTALL_COMMANDS} "
-    CreateShortcut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Helpfile.lnk' '$INSTDIR\\\\LGCHelp.pdf'
-    CreateShortcut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\OnlineHelp.lnk' 'https://wikis.cern.ch/display/SUS/LGC+Guide+d+Utilisation'
-    WriteRegStr HKLM 'SOFTWARE\\\\${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_HKLM_REGISTRY_KEY}' 'Path' '$INSTDIR'
-    WriteRegStr HKLM 'SOFTWARE\\\\${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_HKLM_REGISTRY_KEY}' 'Product Name' '${CPACK_PACKAGE_DESCRIPTION_SUMMARY} ${CPACK_PACKAGE_VERSION}'
-	WriteRegStr HKLM 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\${CPACK_PACKAGE_INSTALL_REGISTRY_KEY}' 'DisplayName' '${CPACK_PACKAGE_INSTALL_REGISTRY_KEY}'
-	WriteRegStr HKLM 'SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\${CPACK_PACKAGE_INSTALL_REGISTRY_KEY}' 'Publisher' '${CPACK_PACKAGE_VENDOR}'
+	CreateShortcut '$SMPROGRAMS\\$STARTMENU_FOLDER\\OnlineHelp.lnk' 'https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide'
+	WriteRegStr HKLM 'SOFTWARE\\${CPACK_PACKAGE_VENDOR}\\${CPACK_PACKAGE_HKLM_REGISTRY_KEY}' 'Path' '$INSTDIR'
+	WriteRegStr HKLM 'SOFTWARE\\${CPACK_PACKAGE_VENDOR}\\${CPACK_PACKAGE_HKLM_REGISTRY_KEY}' 'Product Name' '${CPACK_PACKAGE_DESCRIPTION_SUMMARY} ${CPACK_PACKAGE_VERSION}'
+	WriteRegStr HKLM 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${CPACK_PACKAGE_INSTALL_REGISTRY_KEY}' 'DisplayName' '${CPACK_PACKAGE_INSTALL_REGISTRY_KEY}'
+	WriteRegStr HKLM 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${CPACK_PACKAGE_INSTALL_REGISTRY_KEY}' 'Publisher' '${CPACK_PACKAGE_VENDOR}'
 ")
 
 SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-Delete \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Helpfile.lnk\\\"
-Delete \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\OnlineHelp.lnk\\\"
+	Delete \"$SMPROGRAMS\\$STARTMENU_FOLDER\\OnlineHelp.lnk\"
 ")
-
-
-# This must always be last!
-include(CPack)
