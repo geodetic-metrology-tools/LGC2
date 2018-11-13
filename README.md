@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.cern.ch/apc/susofts/processing/LGC2/badges/master/pipeline.svg)](https://gitlab.cern.ch/apc/susofts/processing/LGC2/commits/master)
+
 SurveyLib
 =========
 
@@ -42,9 +44,9 @@ Download
 --------
 
 You can download the last version of LGC2 installer here:
-- Linux (64 bits) - executable only: [LGC](https://gitlab.cern.ch/DataProcessingAndAnalysis/LGC2/-/jobs/artifacts/master/raw/LGC?job=linux_release)
-- Windows (64 bits): [LGC2Installer-2.02.00-beta-win64.exe](https://gitlab.cern.ch/DataProcessingAndAnalysis/LGC2/-/jobs/artifacts/master/raw/LGC2Installer-2.02.00-beta-win64.exe?job=windows64_release)
-- Windows (32 bits): [LGC2Installer-2.02.00-beta-win32.exe](https://gitlab.cern.ch/DataProcessingAndAnalysis/LGC2/-/jobs/artifacts/master/raw/LGC2Installer-2.02.00-beta-win32.exe?job=windows32_release)
+- Linux (64 bits) - executable only: [LGC](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC?job=linux_release)
+- Windows (64 bits): [LGC2Installer-2.02.00-beta-win64.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC2Installer-2.02.00-beta-win64.exe?job=windows64_release)
+- Windows (32 bits): [LGC2Installer-2.02.00-beta-win32.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC2Installer-2.02.00-beta-win32.exe?job=windows32_release)
 
 Documentation
 -------------
@@ -83,7 +85,7 @@ LGC2 can be built on Windows or Linux. To do so, you need at least:
 
 For Windows, you can follow the steps in the aforementioned [Getting started with C++](https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=22153013) documentation.
 
-For Linux, you have an example of the needed steps in the [Dockerfile](https://gitlab.cern.ch/DataProcessingAndAnalysis/sus_ci_worker/blob/master/Dockerfile) of the [sus_ci_worker](https://gitlab.cern.ch/DataProcessingAndAnalysis/sus_ci_worker) project (the Docker image used to automatically run the tests on GitLab-CI).
+For Linux, you have an example of the needed steps in the [Dockerfile](https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker/blob/master/Dockerfile) of the [sus_ci_cppworker](https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker) project (the Docker image used to automatically run the tests on GitLab-CI).
 Note that the `devtoolset` trick is only necessary on the CC7 (Cern CentOS 7) as it doesn't provide a C++14 compiler by default.
 
 ### Generate project ###
@@ -115,7 +117,7 @@ you can see that CMake has generated several targets, among others:
 
 ### Tests ###
 
-To build the tests, build the target `LGC_Tests` and run it. We Use TUT to generate unit tests. Note that the tests are automatically performed on Gitlab-CI for each contribution. You can see the results in the [CI page](https://gitlab.cern.ch/DataProcessingAndAnalysis/LGC2/pipelines).
+To build the tests, build the target `LGC_Tests` and run it. We Use TUT to generate unit tests. Note that the tests are automatically performed on Gitlab-CI for each contribution. You can see the results in the [CI page](https://gitlab.cern.ch/apc/susofts/processing/LGC2/pipelines).
 
 Contribute
 ----------

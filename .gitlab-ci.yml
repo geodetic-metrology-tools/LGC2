@@ -1,4 +1,4 @@
-# We use the image https://gitlab.cern.ch/DataProcessingAndAnalysis/sus_ci_worker to build and test.
+# We use the image https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker to build and test.
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -32,7 +32,7 @@ after_script:
 # Build all targets and run the tests
 linux_build_and_test:
     stage: test
-    image: gitlab-registry.cern.ch/dataprocessingandanalysis/sus_ci_worker:latest
+    image: gitlab-registry.cern.ch/apc/susofts/shared/sus_ci_cppworker:latest
     tags:
         - docker
     dependencies: []
@@ -47,7 +47,7 @@ linux_build_and_test:
 # Build and upload the LGC application
 linux_release:
     stage: test
-    image: gitlab-registry.cern.ch/dataprocessingandanalysis/sus_ci_worker:latest
+    image: gitlab-registry.cern.ch/apc/susofts/shared/sus_ci_cppworker:latest
     tags:
         - docker
     only:
