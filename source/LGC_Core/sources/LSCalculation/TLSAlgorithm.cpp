@@ -137,7 +137,7 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 	{
 		TSparseMatrix* UnkCovar = resultMatrices->getUnkCovarMtrx();
 		(*UnkCovar) *= resultMatrices->getSigmaZero2();
-		resultMatrices->setUnkCovarMtrx(UnkCovar);
+		resultMatrices->setUnkCovarMtrx(*UnkCovar);
 	}
 
 	extractor->extractVarCovarParams(*resultMatrices);
