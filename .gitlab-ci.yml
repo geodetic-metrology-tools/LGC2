@@ -98,11 +98,11 @@ windows32_release:
     script:
         - echo "Building executable"
         - msbuild /maxcpucount /p:Configuration=Release PACKAGE.vcxproj
-        - cp LGC2Installer-*.exe ..
+        - cp LGCInstaller-*.exe ..
     artifacts:
         name: win32installer
         paths:
-            - LGC2Installer-*.exe
+            - LGCInstaller-*.exe
 
 # Build all targets and run the tests
 windows64_build_and_test:
@@ -134,8 +134,8 @@ windows64_release:
     script:
         - echo "Building executable"
         - msbuild /maxcpucount /p:Configuration=Release PACKAGE.vcxproj
-        - cp LGC2Installer-*.exe ..
+        - cp LGCInstaller-*.exe ..
     artifacts:
         name: win64installer
         paths:
-            - LGC2Installer-*.exe
+            - LGCInstaller-*.exe
