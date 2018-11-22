@@ -75,6 +75,7 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
 	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/Tools/headers
+	${SURVEYLIB_ROOT}/source/Logs
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcElements
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcParams
@@ -107,6 +108,7 @@ target_link_libraries(${PROJECT_NAME}
 	LSAlgorithms
 	ProjectFramework
 	SpatialObjects
+	Logs
 	Plugins
 )
 

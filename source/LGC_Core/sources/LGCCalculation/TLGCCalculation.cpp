@@ -3,8 +3,9 @@
 #include "TLSSimulation.h"
 #include "TLSAllfixed.h"
 #include <TLSAlgorithm.h>
-#include "TVAbractAlgorithm.h"
+#include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
+#include <Logger.hpp>
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
@@ -15,8 +16,9 @@ TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat, int maxIteration
 ///////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
 ///////////////////////////////////////////////////////////////////////////
-Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter){
-	std::unique_ptr<TVAbractAlgorithm> algorithm;
+Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter)
+{
+	std::unique_ptr<TVAbstractAlgorithm> algorithm;
 	Behavior successCalculation;
 
 	/*Class for analyzing the data.*/

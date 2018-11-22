@@ -11,6 +11,8 @@
 #include "TDefaFileWriter.h"
 #include "TCovarFileWriter.h"
 #include "TChabaFileWriter.h"
+#include <Logger.hpp>
+
 
 
 //////////////////////////////////////////////////////////////////////
@@ -25,7 +27,8 @@ TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLo
 	fStream(nullptr),
 	fMaxIterations(maxIterations)
 {
-	fLoggerFileLoc = fOutputFileLoc.substr(0, fOutputFileLoc.length() - 4) + ".log";  //Cut the extension + the dot(.)
+	
+	fLoggerFileLoc = fOutputFileLoc.substr(0, fOutputFileLoc.length() - 4) + ".log";  // fLoggerFileLoc will become OBSOLETE!
 }
 
 TLGCApp::~TLGCApp()
@@ -41,8 +44,10 @@ Behavior TLGCApp::exec()
 	std::shared_ptr<TLGCData> projectData(new TLGCData);
 
 	//The input file exists, already test in main.cpp.
-	projectData->getFileLogger().setOutputfileLocation(fLoggerFileLoc);
-	projectData->getFileLogger().writeReportHeader("LGC output file");
+	projectData->getFileLogger().setOutputfileLocation(fLoggerFileLoc);  // will become OBSOLETE!
+	projectData->getFileLogger().writeReportHeader("LGC output file");   // will become OBSOLETE!
+	logInfo() << "Starting the adjustment calculations";
+
 
 	//Initialise Behavior with an error during the read
 	Behavior result(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
@@ -172,7 +177,7 @@ void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string 
     stream->resetStreamName(outputFileLocation);
     TResultsFileWriter resultsFileWriter(stream.get(), dat);
 	
-	if (!dat->getFileLogger().hasErrors())
+	if (!Logger::getLogger().hasErrors())
 		resultsFileWriter.writeFile();
 	else
 		resultsFileWriter.writeFile("Error has occured, see the LGC log file.");
@@ -181,7 +186,7 @@ void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string 
 void TLGCApp::writePunchFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {
 	auto writefile = [&](TPunchFileWriter punchFileWriter) {
-		if (!dat->getFileLogger().hasErrors())
+		if (!Logger::getLogger().hasErrors())
 		 punchFileWriter.writeFile();
 	   else
 		punchFileWriter.writeFile("Error has occured, see the LGC log file."); 
@@ -212,7 +217,7 @@ void TLGCApp::writeFautFile(TLGCData const * const dat, const std::string &outpu
     stream->resetStreamName(outputFileLocation + ".err");
     TFautFileWriter fautFileWriter(stream.get(), dat);
 
-	if (!dat->getFileLogger().hasErrors() && dat->fUEOIndices.UIndex != 0)
+	if (!Logger::getLogger().hasErrors() && dat->fUEOIndices.UIndex != 0)
 		fautFileWriter.writeFile(dat);
 	else if (dat->fUEOIndices.UIndex != 0)
 		fautFileWriter.writeFile("No data because there s no unknowns.");
@@ -225,7 +230,7 @@ void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outpu
     stream->resetStreamName(outputFileLocation + ".def");
     TDefaFileWriter defaFileWriter(stream.get(), dat);
 
-	if (!dat->getFileLogger().hasErrors())
+	if (!Logger::getLogger().hasErrors())
 		defaFileWriter.writeFile(*dat, fResMtrx);
 	else
 		defaFileWriter.writeFile("Error has occured, see the LGC log file.");
@@ -237,7 +242,7 @@ void TLGCApp::writeCovarFile(TLGCData const * const dat, const std::string &outp
     stream->resetStreamName(outputFileLocation + ".cov");
     TCovarFileWriter covarFileWriter(stream.get(), dat);
 
-	if (!dat->getFileLogger().hasErrors())
+	if (!Logger::getLogger().hasErrors())
 		covarFileWriter.writeFile(*dat);
 	else
 		covarFileWriter.writeFile("Error has occured, see the LGC log file.");
@@ -250,7 +255,7 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 	stream->resetStreamName(outputFileLocation + ".chabaOut");
 	TChabaFileWriter chabaFileWriter(stream.get(), dat);
 
-	if (!dat->getFileLogger().hasErrors())
+	if (!Logger::getLogger().hasErrors())
 		chabaFileWriter.writeFile(stream.get());
 
 }
@@ -260,7 +265,7 @@ void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &output
     stream->resetStreamName(outputFileLocation + ".sim");
 	TSimFileWriter simFileWriter(stream.get(), dat);
 
-	if (!dat->getFileLogger().hasErrors())
+	if (!Logger::getLogger().hasErrors())
 		simFileWriter.writeFile();
 	else
 		simFileWriter.writeFile("Error has occured, see the LGC log file.");

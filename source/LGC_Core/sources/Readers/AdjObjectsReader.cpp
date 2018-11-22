@@ -61,14 +61,18 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	adjTrafo.getLine() = line;
 			
 	//If at least one of these options is used, create FRAME measurement
-	if(opts.has("STX") || opts.has("STY") || opts.has("STZ") || opts.has("SRX") || opts.has("SRY") || opts.has("SRZ") || opts.has("SSCL") ){
+	if(opts.has("STX") || opts.has("STY") || opts.has("STZ") || opts.has("SRX") || opts.has("SRY") || opts.has("SRZ") || opts.has("SSCL") )
+	{
+		// FRK: Voir units MM ou M ?????
+
+
 		if(opts.has("STX")) adjTrafo.setTranslationStandDev(X, TLength(opts.getParamR("STX") , TLength::EUnits::kMillimetres)); //Value given in mili-metres, but stored in metres
 		if(opts.has("STY")) adjTrafo.setTranslationStandDev(Y, TLength(opts.getParamR("STY") , TLength::EUnits::kMillimetres)); //Value given in mili-metres, but stored in metres
 		if(opts.has("STZ")) adjTrafo.setTranslationStandDev(Z, TLength(opts.getParamR("STZ") , TLength::EUnits::kMillimetres)); //Value given in mili-metres, but stored in metres
 		if(opts.has("SRX")) adjTrafo.setRotationStandDev(X, TAngle(opts.getParamR("SRX"), TAngle::kCCs)); //Value given in cc, stored in angle object
 		if(opts.has("SRY")) adjTrafo.setRotationStandDev(Y, TAngle(opts.getParamR("SRY"), TAngle::kCCs));  //Value given in cc, stored in angle object
 		if(opts.has("SRZ")) adjTrafo.setRotationStandDev(Z, TAngle(opts.getParamR("SRZ"), TAngle::kCCs));  //Value given in cc, stored in angle object
-		if(opts.has("SSCL")) adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M); //Value given in mili-metres, stored in metres
+		if(opts.has("SSCL")) adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M); 
 	}
 
 	// Create a new level in the tree using the current transformation definition.

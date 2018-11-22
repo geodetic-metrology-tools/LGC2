@@ -1303,7 +1303,7 @@ void	TTSTNWriter::writeZENDReliabilityData(std::shared_ptr<TTSTN> tstn, const TL
 		(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.getAngle().getGonsValue());
 
 		//write the sigma ZEND
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaAngl.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaZenD.getSignedCCValue());
 
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());

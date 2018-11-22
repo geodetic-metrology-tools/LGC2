@@ -273,7 +273,7 @@ bool TReader::read(std::istream& lgcStream) {
 		++nline) 
 	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline) + ": ");
+		const string nlinestr("Line " + to_string(nline+1) + ": ");  
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
 
@@ -432,7 +432,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		++nline)
 	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline) + ": ");
+		const string nlinestr("Line " + to_string(nline+1) + ": ");
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
 

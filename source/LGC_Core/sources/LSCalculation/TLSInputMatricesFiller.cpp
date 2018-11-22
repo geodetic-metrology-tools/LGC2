@@ -121,7 +121,8 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 // PRIVATE FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //! initialise the dimensions of the input matrices
-void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TLSInputMatrices* matrices){
+void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TLSInputMatrices* matrices)
+{
 	if ((projData.fUEOIndices.EIndex == 0))
 		throw std::runtime_error("Equation index in LS matrices is null.");
 
@@ -130,19 +131,22 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 
 	bool cnstrObs = false;
 
-	if(projData.getConfig().libre.isActive()){
+	if(projData.getConfig().libre.isActive())
+	{
+		// LIBR option: free network adjustment has been chosen, without any cala or pdor constraints
 		int cnstrNumber = projData.getNumberOfConstraints();
 
 		if (cnstrNumber != 0)
-			matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
+			matrices->initMatrices(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
 		else
 		{
-			matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
+			// With LIBR option, the number of constraints cannot be zero!
+//			matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
 			throw std::runtime_error("LIBR  is used, but no constraints are found.");
 		}
 	}
 	else
-		matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs); 
+		matrices->initMatrices(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs); 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

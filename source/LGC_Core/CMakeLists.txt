@@ -31,7 +31,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCCalculation/TLGCCalculation.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimFrameSummary.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimPointSummary.h
-	${CORE_INCLUDE_PATH}/LGCCalculation/TVAbractAlgorithm.h
+	${CORE_INCLUDE_PATH}/LGCCalculation/TVAbstractAlgorithm.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TALGCObjectWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TTSTNWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TCAMWriter.h

@@ -4,6 +4,7 @@
 #include "TLSCombinedMtdComputer.h"
 #include "TLSWeightedUnkMtdComputer.h"
 #include "TLSCnstMtdComputer.h"
+#include <Logger.hpp>
 
 TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	: fNumberOfIterations(0)
@@ -21,7 +22,7 @@ Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
 
-	extractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
+	fExtractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
 	
 	// identify the constraints necessary, create them
 	if (data.getConfig().libre.isActive())
@@ -51,11 +52,12 @@ Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 
 
 Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
-	TLSInputMatricesFiller* matrFiller,
-	TLSInputMatrices* inputMtr,
-	TALSComputer* computer,
-	int fMaxIterations,
-	TReal convCrit){
+											TLSInputMatricesFiller* matrFiller,
+											TLSInputMatrices* inputMtr,
+											TALSComputer* computer,
+											int fMaxIterations,
+											TReal convCrit)
+{
 	
 
 	bool lastIteration = false;
@@ -83,14 +85,16 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 			if (computationOK)
 			{
+				logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done";
+
 				bool extractOK = false; 
 				if (data.getConfig().libre.isActive())
-					extractOK = extractor->extractResults(*resultMatrices, convCrit, fLibrCnstrGenerator);
+					extractOK = fExtractor->extractResults(*resultMatrices, convCrit, fLibrCnstrGenerator);
 				else
-					extractOK = extractor->extractResults(*resultMatrices, convCrit);
+					extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
 
 				if (extractOK)
-					lastIteration = extractor->lastIteration();
+					lastIteration = fExtractor->lastIteration();
 				else{
 					fileLog << "Problem in LS matrices extraction.\n";
 					return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); //Error during extraction, errors written out already, STOP the calculation.	
@@ -124,12 +128,15 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	}
 }
 
-void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
-	TLSInputMatrices* inputMtr,
-	TALSComputer* computer)
+bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrices* inputMtr, TALSComputer* computer)
 {
-	computer->calcResiduAndVarCovMatrice(inputMtr, resultMatrices);
-	extractor->extractResiduals(*resultMatrices);
+	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices))
+	{
+		logWarning() << "Residual errors and their related variance-covariance matrix could not be estimated!";
+		return false;
+	}
+		
+	fExtractor->extractResiduals(*resultMatrices);
 
 	TReal S0 = sqrt(resultMatrices->getSigmaZero2());
 	// Apply S02 only if APRI is not used and S02 is outside the limits
@@ -140,7 +147,7 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 		resultMatrices->setUnkCovarMtrx(*UnkCovar);
 	}
 
-	extractor->extractVarCovarParams(*resultMatrices);
+	fExtractor->extractVarCovarParams(*resultMatrices);
 	data->setNumberOfLSIterations(fNumberOfIterations);
 
 	/* Store calculated SIGMA A POSTERIORI in TLGCData and limits for it */
@@ -150,6 +157,8 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 
 	if ((data->fUEOIndices.UIndex != 0) && data->getConfig().faut.isActive())
 	{
+		logDebug() << "Computes statistics (Z, W, T, G, NABLA and DELTY)";
+
 		//re-initialize the statictic vectors
 		data->getStatistics().initialiseStatVector(inputMtr);
 		TReal alpha = data->getConfig().faut.alpha / 100;
@@ -161,6 +170,11 @@ void	TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data,
 	}
 
 	if ((data->fUEOIndices.UIndex != 0) && !data->getConfig().erelPairs.empty())
-		extractor->extractRelError(*resultMatrices);
+	{
+		logDebug() << "Statistics have been completed: extracts now the data";
+		fExtractor->extractRelError(*resultMatrices);
+	}
+
+	return true;
 	
 }

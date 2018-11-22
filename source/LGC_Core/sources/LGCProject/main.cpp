@@ -1,58 +1,44 @@
 #include <iostream>
 #include "TLGCApp.h"
-#include "Utils.h"
-#include "TFileLogger.h"
+#include "FileUtils.h"
+#include <FileLogHandler.hpp>
+#include <ConsoleLogHandler.hpp>
+#include <Logger.hpp>
 #include "Defaults.h"
 
+#include "TFileLogger.h"  // Will be obsolete soon
+
+
+
+int main(int argc, char *argv[])
+{
+
+	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
 #ifdef __linux__
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <unistd.h>
-	#include <fcntl.h>
+	const std::string logFilePath2 = getCurrentDirectory() + slash + "LOGFile.log";
 #else
-	#include <windows.h>
-	#include <regex>
-
+	const std::string logFilePath2 = "C:\\temp\\LOGFile.log";
 #endif
+	TFileLogger logFile(logFilePath2, "LGC log file");
+	// **************************************************************************
 
-#include <chrono>
-#include <thread>
+	bool bChangeLogFile = true;
 
-//Create the output file
-void createOutputFile(std::string outputFilePath);
-
-/// Change the path directory path -/ become \ (for windows)
-std::string changePathDir(std::string fPath);
-
-/// Return the directory path - until the last \ or /
-std::string getPathDir(std::string fPath);
-
-/// Return the file path - until the last .
-std::string getPathFile(std::string fPath);
-
-int main( int argc,  char *argv[]){
-
-	std::string inputFilePath;
-	std::string inputFilename;
-	std::string outputFilePath;
+	std::string inputFilePath, outputFilePath, logFilePath;
 	int nMaxIterations = MAX_ITERATIONS;
 
-#ifdef __linux__
-	const std::string logFilePath = getCurrentDirectory()+slash+"LOGFile.log";
-#else
-	const std::string logFilePath = "C:\\temp\\LOGFile.log";
-#endif
+	// Default Log file (it can be changed by the user with the -D option)
+	logFilePath = svlTools::getCurrentDirectory() + slash + "DefaultLogFileLGC.log";
 
-	//std::this_thread::sleep_for(std::chrono::milliseconds(8000));
-	//create a log file to write the error
-
-	TFileLogger logFile(logFilePath, "LGC log file");
-	auto& errorMessages(logFile);
+	// Creates the Logger mechanism (here log to file and console)
+	// IMPORTANT: Use the macros logDebug(), logInfo(), etc everywhere in the project !
+	FileLogHandler *pLogFileHandler = new FileLogHandler(logFilePath);
+	pLogFileHandler->setThreshold(LogMessage::Type::DEBUG);
+	Logger::getLogger().addHandlers(pLogFileHandler,	new ConsoleLogHandler());
 
 	if (argc == 1)
 	{
-		errorMessages.writeReportHeader("Launch LGC:");
-		errorMessages << TFileLogger::e_logType::LOG_ERROR << "No argument, LGC needs at least the project filepath after the -i flag.";
+		logFatal() << "Launch LGC: No argument, LGC needs at least the project filepath after the -i flag.";
 	}
 	else
 	{
@@ -67,29 +53,12 @@ int main( int argc,  char *argv[]){
 				case 'I':
 				{
 					if (!argv[i + 1]) {
-						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-I/-i option used, but the input file path was not specified";
+						logFatal() << "Launch LGC: I/-i option used, but the input file path was not specified.";
 						break;
 					}
 
-					inputFilename = argv[i + 1];
-
 					// Look if absolute path is used
-#ifdef __linux__    
-					if (inputFilename.substr(0, 1).compare(slash) != 0)
-						inputFilePath = getCurrentDirectory() + slash + inputFilename;
-					else
-						inputFilePath = inputFilename;
-
-#else
-					inputFilename = changePathDir(inputFilename);
-
-					std::regex disk("[[:alpha:]]:");
-					if ((regex_match(inputFilename.substr(0, 2), disk) && inputFilename.substr(2, 3).compare("\\")) || inputFilename.substr(0, 1).compare("\\") == 0)
-						inputFilePath = inputFilename;
-					else
-						inputFilePath = getCurrentDirectory() + slash + inputFilename;
-#endif
-
+					inputFilePath = svlTools::getPathFileName(argv[i + 1]);
 					break;
 				}
 
@@ -97,25 +66,12 @@ int main( int argc,  char *argv[]){
 				case 'O':
 				{
 					if (!argv[i + 1]) {
-						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-O/-o option used, but the output file path was not specified";
+						logFatal() << "Launch LGC: -O/-o option used, but the output file path was not specified.";
 						break;
 					}
 
-					outputFilePath = argv[i + 1];
-
 					// Look if absolute path is used
-#ifdef __linux__    
-					if (outputFilePath.substr(0, 1).compare(slash) != 0)
-						outputFilePath = getPathDir(inputFilePath) + slash + argv[i + 1];
-
-#else
-					outputFilePath = changePathDir(outputFilePath);
-
-					if (outputFilePath.substr(0, 3).compare("C:\\") != 0 && outputFilePath.substr(0, 1).compare("\\") != 0)
-						outputFilePath = getCurrentDirectory() + slash + outputFilePath;
-
-#endif
-
+					outputFilePath = svlTools::getPathFileName(argv[i + 1]);
 					break;
 				}
 
@@ -123,7 +79,7 @@ int main( int argc,  char *argv[]){
 				case 'N':
 				{
 					if (!argv[i + 1]) {
-						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-N/-n option used, but the maximal number of iterations was not specified";
+						logFatal() << "Launch LGC: -N/-n option used, but the maximal number of iterations was not specified.";
 						break;
 					}
 					try {
@@ -131,8 +87,27 @@ int main( int argc,  char *argv[]){
 					}
 					catch (std::invalid_argument& e) {
 						// if no conversion could be performed
-						errorMessages << TFileLogger::e_logType::LOG_ERROR << "-N/-n option used, but the maximal number of iterations is not correctly specified";
+						logFatal() << "Launch LGC: -N/-n option used, but the maximal number of iterations is not correctly defined.\nException caught: " << e.what();
 					}
+					break;
+				}
+
+				// Executes the program with DEBUG level messages stored in a LOG file
+				// This log file is by default defined in the temporary folder, or given as an argument following -D option
+				case 'd':
+				case 'D':
+				{
+					// Decreases the Log level to DEBUG level
+					pLogFileHandler->setThreshold(LogMessage::Type::DEBUG);
+
+					// Changes the log file attached to this handler
+					if (argv[i + 1]) 
+					{
+						logFilePath = svlTools::getPathFileName(argv[i + 1]);
+						pLogFileHandler->setLogFile(logFilePath);
+						bChangeLogFile = false;
+					}
+
 					break;
 				}
 
@@ -143,80 +118,40 @@ int main( int argc,  char *argv[]){
 		}
 
 
-		if (inputFilename == "" || outputFilePath == ""){
-			if (inputFilePath == "")
-			{
-				errorMessages.writeReportHeader("Launch LGC:");
-				errorMessages << TFileLogger::e_logType::LOG_ERROR << "Error, the input file is not found. Give the path after -i flag";
-				return 1;
-			}
-			else if (outputFilePath == "")
-				outputFilePath = getPathFile(inputFilePath) + ".res";
+		if (inputFilePath.empty())
+		{
+			logFatal() << "Launch LGC: Error, the input file is not found. Give the path after -i flag.";
+			return 1;
+		}
+		else if (outputFilePath.empty())
+			// Output file becomes the input filename with the ".res" extension
+			outputFilePath = svlTools::getFilePathWithoutExtension(inputFilePath) + ".res";
+
+		svlTools::createOutputFile(outputFilePath);
+
+		// Changes the log file attached to this handler
+		// Log file becomes the input filename with the ".log" extension
+		if (bChangeLogFile)
+		{
+			logFilePath = svlTools::getFilePathWithoutExtension(inputFilePath) + ".log2";
+			pLogFileHandler->setLogFile(logFilePath);
 		}
 
-		createOutputFile(outputFilePath);
-
+		//
+		// Main code for executing the whole calculations
+		//
 		try
 		{
+			logInfo() << "Starting the calculations...";
 			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
 			return lgc.exec();
 		}
 		catch (const std::runtime_error& ex)
 		{
-			std::cout << ex.what() << endl << std::endl;
+			logFatal() << "LGC calculation problem\nException: " << ex.what();
 		}
 	}
 
 
 	return 1;
-}
-
-void createOutputFile(std::string outFilePath)
-{
-	std::string outputFileDirectory = outFilePath.substr(0, outFilePath.find_last_of('\\'));
-	//If does not exist, needs to be created
-#ifdef __linux__
-	struct stat st = { 0 };
-	if (stat(outputFileDirectory.c_str(), &st) == -1)
-		if (creat(outputFileDirectory.c_str(),S_IRWXU|S_IRWXG) == -1) {
-			std::cout << "Output directory does not exist and could not be created" << std::endl;
-		}
-#else
-	CreateFile(outputFileDirectory.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	DWORD ftyp = GetFileAttributesA(outputFileDirectory.c_str());
-	if (ftyp == INVALID_FILE_ATTRIBUTES){ //This means that the directory still does not exist, using default one
-		std::cout << "Output directory does not exist and could not be created";
-	}
-
-#endif
-}
-
-std::string changePathDir(std::string fPath)
-{
-	int found = 1;
-	while (found < fPath.length())
-	{
-		found = (int)fPath.find_first_of("/");
-		if (found == std::string::npos)
-			return fPath;
-		else
-		{
-			fPath = fPath.substr(0, found) + "\\" + fPath.substr(found + 1, fPath.length());
-			found += 1;
-		}
-	}
-	return fPath;
-}
-
-std::string getPathDir(std::string fPath)
-{
-	std::size_t found = fPath.find_last_of(slash);
-	return fPath.substr(0, found);
-}
-
-std::string getPathFile(std::string fPath)
-{
-	std::size_t found = fPath.find_last_of(".");
-	return fPath.substr(0, found);
 }
