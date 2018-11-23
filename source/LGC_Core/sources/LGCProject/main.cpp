@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
 	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
 #ifdef __linux__
-	const std::string logFilePath2 = getCurrentDirectory() + slash + "LOGFile.log";
+	const std::string logFilePath2 = svlTools::getCurrentDirectory() + slash + "LOGFile.log";
 #else
 	const std::string logFilePath2 = "C:\\temp\\LOGFile.log";
 #endif
