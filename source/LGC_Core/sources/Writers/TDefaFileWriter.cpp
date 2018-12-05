@@ -294,7 +294,7 @@ void TDefaFileWriter::writeUpperTriangularCovarianceMatrix(const TLGCData& proje
 	std::list<LGCAdjustablePoint>::const_iterator begin;
 	std::list<LGCAdjustablePoint>::const_iterator end = project.getPoints().end();
 
-	for (int i = 0; i < rm.getUnkCovarMtrx()->rows(); i++)
+	for (int i = 0; i < rm.getUnkCovarMtrxByConst()->rows(); i++)
 	{
 		begin = project.getPoints().begin();
 

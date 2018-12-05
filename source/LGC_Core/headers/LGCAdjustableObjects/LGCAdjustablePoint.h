@@ -9,6 +9,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 //SURVEYLIB
 #include <TAdjustablePoint.h>
+#include <TTreeEntry.h>
 //LGC
 #include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
@@ -150,6 +151,9 @@ public:
 
 		///Transform sigma a posteriori (= estimated precision) in root
 		static TFreeVector transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData);
+
+		/// Returns true if this point is defined in the ROOT frame
+		bool isInRootFrame() { return fFramePosition->get()->isROOTNode(); };
 
 private:
 

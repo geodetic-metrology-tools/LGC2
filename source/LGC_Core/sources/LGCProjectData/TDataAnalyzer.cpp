@@ -3,6 +3,7 @@
 #include <TLGCData.h>
 #include "TAllfixedParamGenerator.h"
 #include <TPointTransformer.h>
+#include <Logger.hpp>
 
 #include "TDist.h" 
 #include <bitset>
@@ -216,14 +217,17 @@ bool TDataAnalyzer::dataConsistent(){
 		predeterminePLR3DV0();
 
 	//Run through point collection and check whether all points were initialized, assign unknown indices at the same time and check that if PDOR used exactly one point in ROOT defined as CALA
-	for (auto& point : fData.getPoints()){	
+	for (auto& point : fData.getPoints())
+	{	
 		//Check whether initialized
-		if(!point.isInitialized()){
+		if(!point.isInitialized())
+		{
+			logCritical() << "Point: " << point.getName() << " is not initialized!";
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!"; 
 			return false;
 		}
 		//Count number of CALA in ROOT
-		if (fData.getConfig().pdor.isActive() && point.getFrameTreePosition()->get()->frame.getName() == "ROOT" && point.isFixed() == true)
+		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
 			nCALAinROOT++;
 
 		if(point.hasStandDeviations()){  //If point has standard deviation assigned 
@@ -904,7 +908,8 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 	const TDataTree& fTree = fData.getTree();
 
 	auto pdor(fData.getConfig().pdor);
-	if (pdor.isActive()){
+	if (pdor.isActive())
+	{
 		//IF PDOR keyword used, point which comes after this keyword must exist and be defined either under POIN or VXY, i.e. variable in X and Y. 
 		if (fData.getPoints().doesObjectExist(pdor.fptname)){
 			auto& pdorPoint(fData.getPoints().getObject(pdor.fptname));

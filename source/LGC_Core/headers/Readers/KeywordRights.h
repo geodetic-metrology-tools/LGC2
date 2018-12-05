@@ -101,13 +101,13 @@ namespace {
 	//
 	const int nb_allowed_tstn = 1;
 	const int nb_allowed_v0 = 7;
-	const int nb_allowed_plr3d = 20;
-	const int nb_allowed_angl = 20;
-	const int nb_allowed_zend = 20;
-	const int nb_allowed_dist = 20;
-	const int nb_allowed_ecth = 20;
-	const int nb_allowed_ecdir = 20;
-	const int nb_allowed_dhor = 20;
+	const int nb_allowed_plr3d = 21;
+	const int nb_allowed_angl = 21;
+	const int nb_allowed_zend = 21;
+	const int nb_allowed_dist = 21;
+	const int nb_allowed_ecth = 21;
+	const int nb_allowed_ecdir = 21;
+	const int nb_allowed_dhor = 21;
 	const int nb_allowed_cam = 2;
 	const int nb_allowed_uvec = 15;
 	const int nb_allowed_uvd = 15;
@@ -218,13 +218,13 @@ namespace {
 	//TSTN measurments
 	const char* allowed_TSTN[nb_allowed_tstn] = { V0 };
 	const char* allowed_V0[nb_allowed_v0] = { PLR3D, ANGL, ZEND, DIST, DHOR, ECTH, ECDIR };
-	const char* allowed_PLR3D[nb_allowed_plr3d] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
-	const char* allowed_ANGL[nb_allowed_angl] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
-	const char* allowed_ZEND[nb_allowed_zend] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
-	const char* allowed_DIST[nb_allowed_dist] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
-	const char* allowed_ECTH[nb_allowed_ecth] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
-	const char* allowed_ECDIR[nb_allowed_ecdir] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
-	const char* allowed_DHOR[nb_allowed_dhor] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_PLR3D[nb_allowed_plr3d] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_ANGL[nb_allowed_angl] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_ZEND[nb_allowed_zend] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_DIST[nb_allowed_dist] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_ECTH[nb_allowed_ecth] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_ECDIR[nb_allowed_ecdir] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
+	const char* allowed_DHOR[nb_allowed_dhor] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END };
 	//CAM measurments
 	const char* allowed_CAM[nb_allowed_cam] = { UVEC, UVD };
 	const char* allowed_UVEC[nb_allowed_uvec] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ };

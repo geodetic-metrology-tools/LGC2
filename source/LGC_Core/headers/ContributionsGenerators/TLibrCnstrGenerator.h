@@ -28,6 +28,9 @@ struct freeCnstrRank { int dx; int dy; int dz; int rx; int ry; int rz; int k; };
 
 class TLibrCnstrGenerator{
 
+	// Pointer to the singleton
+	static TLibrCnstrGenerator* instance;
+
 public:
 	//! Constructor taking a reference to a TPointTransformer and a TLGCData
 	TLibrCnstrGenerator(TPointTransformer& fPointTransfoFunc, const TLGCData& fDataSet);
@@ -42,6 +45,15 @@ public:
 
 	//! Set the coordinates for the centre of gravity of the point data
 	void setEstimatedGravityCenterCoord(TLength x, TLength y, TLength z);
+
+	//! Return the last estimated X of the center of gravity
+	TLength getEstimatedGravityCenterCoordX() { return fXcgEst; }
+
+	//! Return the last estimated Y of the center of gravity
+	TLength getEstimatedGravityCenterCoordY() { return fYcgEst; }
+
+	//! Return the last estimated Z of the center of gravity
+	TLength getEstimatedGravityCenterCoordZ() { return fZcgEst; }
 
 	//! Get the number of free network constraints for the LGC project
 	int getNumberOfConstraint() const;

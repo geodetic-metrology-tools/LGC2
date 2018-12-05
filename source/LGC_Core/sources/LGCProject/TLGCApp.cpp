@@ -48,6 +48,8 @@ Behavior TLGCApp::exec()
 	projectData->getFileLogger().writeReportHeader("LGC output file");   // will become OBSOLETE!
 	logInfo() << "Starting the adjustment calculations";
 
+	// Reinitializes the log counters (warnings, critical errors,...)
+	Logger::getLogger().clearCounters();
 
 	//Initialise Behavior with an error during the read
 	Behavior result(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");

@@ -62,7 +62,8 @@ public:
 
 	\returns TRUE if the process was successful, FALSE otherwise.
 	*/
-	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator fCnstr);
+//	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator& fCnstr);
+	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator* fCnstr);
 
 	/// Returns the boolean that indicates if a new iteration is necessary or not 
 	bool	lastIteration() const;

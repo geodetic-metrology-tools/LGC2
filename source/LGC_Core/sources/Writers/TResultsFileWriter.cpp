@@ -370,6 +370,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
 	if (fProjectData->getConfig().pdor.isActive())
 	{
 		stream << "	(PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
+		// FRK: Rajouter nom du point DPOR + CALA pour éviter toute confusion? (voir SUS-906)
 	}
     stream<<endl;
  

@@ -60,13 +60,13 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 {
 	
 
-	bool lastIteration = false;
+	bool hasReachedCriteria = false;
 	fNumberOfIterations = 0;
 
 	TFileLogger& fileLog = data.getFileLogger();
 
 	// Iterate to find solution
-	while (!lastIteration && fNumberOfIterations < fMaxIterations)
+	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
 	{
 		bool fillOK = false;
 		if (fNumberOfIterations == 0)//First iteration, fill also the weight unknown matrix.
@@ -85,16 +85,16 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 			if (computationOK)
 			{
-				logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done";
+				logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done\n=============================";
 
 				bool extractOK = false; 
 				if (data.getConfig().libre.isActive())
-					extractOK = fExtractor->extractResults(*resultMatrices, convCrit, fLibrCnstrGenerator);
+					extractOK = fExtractor->extractResults(*resultMatrices, convCrit, &fLibrCnstrGenerator);
 				else
 					extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
 
 				if (extractOK)
-					lastIteration = fExtractor->lastIteration();
+					hasReachedCriteria = fExtractor->lastIteration();
 				else{
 					fileLog << "Problem in LS matrices extraction.\n";
 					return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); //Error during extraction, errors written out already, STOP the calculation.	
@@ -103,6 +103,7 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 			else
 			{
 				//Write errors which occured in computer of LS methos
+				logCritical() << "Problem with LS computation: ended at the iteration step" << fNumberOfIterations;
 				fileLog << "Problem with LS computation: " << computer->getError()<< " \n";
 				return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation. Matrix not inverted\n");
 			}
@@ -115,16 +116,19 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		fNumberOfIterations++;
 	}
 
-	// need to look if the convergence criteria is exeded (lastiteration=true) or not (lastiteration=false) at the maximal iteration
-	if (fNumberOfIterations == fMaxIterations && !lastIteration)
+	// Checks if maximal number of iteration steps has been reached without satisfying the converging criteria
+	if (fNumberOfIterations == fMaxIterations && !hasReachedCriteria)
 	{
+		logCritical() << "Maximal number of iteration steps ("<<fMaxIterations<<") has been reached without satisfying the converging criteria!";
 		fileLog << "The calculation is not converging \n";
 		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"The calculation is not converging \n"); //Error during the calculation, errors written out already, STOP the calculation.	
 	}
 	else
 	{
-		computeVarCovarAndReliability(&data, inputMtr, computer);
-		return Behavior();
+		if (computeVarCovarAndReliability(&data, inputMtr, computer))
+			return Behavior();
+		else
+			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"TResidual errors and their related variance-covariance matrix could not be estimated!\n");
 	}
 }
 

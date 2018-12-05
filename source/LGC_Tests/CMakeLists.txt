@@ -52,7 +52,6 @@ add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
 target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
 
-
 # Copy test files for unit tests
 set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFiles)
 file(GLOB_RECURSE test_files_to_copy RELATIVE ${TEST_FILE_DIR} ${TEST_FILE_DIR}/*)
@@ -60,3 +59,5 @@ file(GLOB_RECURSE test_files_to_copy RELATIVE ${TEST_FILE_DIR} ${TEST_FILE_DIR}/
 foreach(test_file ${test_files_to_copy})
 configure_file(${TEST_FILE_DIR}/${test_file} test_files/${test_file} COPYONLY)
 endforeach()
+
+

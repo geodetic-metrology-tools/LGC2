@@ -77,9 +77,9 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 	// compute z
 	TSparseMatrix Z(nbObs,nbEq);
 	if (combinedcase)
-		Z = -1.0**(rm->getResCovarMtrx()) * *(im->getWeightMtrx()) *(im->getSecondDgnMtrx()->transpose());
+		Z = -1.0**(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()) *(im->getSecondDgnMtrx()->transpose());
 	else
-		Z = *(rm->getResCovarMtrx()) * *(im->getWeightMtrx()); // *(im->getSecondDgnMtrx()->transpose());
+		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()); // *(im->getSecondDgnMtrx()->transpose());
 
 	//V = Cw => C=Qvv* P*BT
 	//rm->setIntermediateMatrix2(Z);

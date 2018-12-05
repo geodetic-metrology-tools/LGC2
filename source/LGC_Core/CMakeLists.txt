@@ -122,7 +122,6 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TSCALEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TObservationWriter.cpp
-	${CORE_SOURCES_PATH}/LGCProject/main.cpp
 	${CORE_SOURCES_PATH}/LGCProject/TLGCApp.cpp
 	${CORE_SOURCES_PATH}/LGCProjectData/TLGCStatistic.cpp
 	${CORE_SOURCES_PATH}/LGCProjectData/TLGCData.cpp
@@ -224,4 +223,3 @@ source_group("Writers\\Sources" FILES ${WRITERS_CPP})
 add_library(LGC_Core STATIC ${Core_HEADERS} ${Core_SOURCES})
 # Link static libraries to the current one
 target_link_libraries(LGC_Core  LSAlgorithms ProjectFramework SpatialObjects Tools)
-
