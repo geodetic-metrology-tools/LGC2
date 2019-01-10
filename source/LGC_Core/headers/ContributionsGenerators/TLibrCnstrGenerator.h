@@ -28,8 +28,6 @@ struct freeCnstrRank { int dx; int dy; int dz; int rx; int ry; int rz; int k; };
 
 class TLibrCnstrGenerator{
 
-	// Pointer to the singleton
-	static TLibrCnstrGenerator* instance;
 
 public:
 	//! Constructor taking a reference to a TPointTransformer and a TLGCData
@@ -75,12 +73,6 @@ private:
 	//! add a free network constraint
 	void	addCnstr(const struct isFreeCnstr);
 
-	//! Calculate the Rx value
-	TReal getRxCalcValue(const TAdjustablePoint& ptIt);
-	//! Calculate the Ry value	  
-	TReal getRyCalcValue(const TAdjustablePoint& ptIt);
-	//! Calculate the Rz value	  
-	TReal getRzCalcValue(const TAdjustablePoint& ptIt);
 	//! Calculate the scale value  
 	TReal getScaleCalcValue(const TAdjustablePoint& ptIt);
 	//@}
