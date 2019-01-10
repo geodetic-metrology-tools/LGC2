@@ -1,29 +1,4 @@
-# We use the image https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker to build and test.
-
-variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-
-# One job builds all the targets and run the tests. (x 3: Linux, Windows 32 bits, Windows 64 bits)
-# One job build the installer and save it as an artifact (only on master changes). (x 3: Linux, Windows 32 bits, Windows 64 bits)
-# The jobs are ran in parallel
-stages:
-    - test
-
-before_script:
-    # for cross plateform compatibility, we execute some commands in bash forced
-    # otherwise, we should use "%VARIABLE%" in Windows and "$VARIABLE" in Linux...
-
-    # CMAKEBIN and SUSCMAKEFOLDER is defined by the runner in environment variables.
-    - bash -c "echo SUSCMAKEFOLDER = $SUSCMAKEFOLDER"
-    - bash -c "cp -r \"$SUSCMAKEFOLDER\" .."
-    - mkdir build && cd build
-    - bash -c "echo CMAKEBIN = $CMAKEBIN"
-    - bash -c "echo CMAKEGENERATOR = $CMAKEGENERATOR"
-    - bash -c "$CMAKEBIN -G \"$CMAKEGENERATOR\" -DCMAKE_BUILD_TYPE=RELEASE ../source"
-
-after_script:
-    - rm -rf "./build"
-    - rm -rf "../SUSoftCMakeCommon"
+include: "https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker/raw/master/.gitlab-ci-TEMPLATE.yml"
 
 ##################
 # LINUX BUILDS   #
@@ -31,36 +6,19 @@ after_script:
 
 # Build all targets and run the tests
 linux_build_and_test:
-    stage: test
-    image: gitlab-registry.cern.ch/apc/susofts/shared/sus_ci_cppworker:latest
-    tags:
-        - docker
-    dependencies: []
-    variables:
-        CMAKEGENERATOR: "Unix Makefiles"
     script:
         - echo "Building all targets | -j$(nproc)"
-        - make -j$(nproc) all
+        - $CMAKEBIN --build . -j $(nproc) --config Release
         - echo "Running the tests"
         - cd LGC_Tests && ./LGC_Tests
 
 # Build and upload the LGC application
 linux_release:
-    stage: test
-    image: gitlab-registry.cern.ch/apc/susofts/shared/sus_ci_cppworker:latest
-    tags:
-        - docker
-    only:
-        - master
-    dependencies: []
-    variables:
-        CMAKEGENERATOR: "Unix Makefiles"
     script:
         - echo "Building executable | -j$(nproc)"
-        - make -j$(nproc) LGC
+        - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
         - cp LGC ..
     artifacts:
-        name: exelinux
         paths:
             - LGC
 
@@ -69,73 +27,40 @@ linux_release:
 ##################
 
 # Build all targets and run the tests
-windows32_build_and_test:
-    stage: test
-    tags:
-        - windows
-        - x32
-    dependencies: []
-    variables:
-        CMAKEGENERATOR: "Visual Studio 15 2017"
-    script:
-        - echo "Building all targets"
-        - msbuild /maxcpucount /p:Configuration=Release ALL_BUILD.vcxproj
-        - msbuild /maxcpucount /p:Configuration=Release PACKAGE.vcxproj
-        - echo "Running the tests"
-        - cd LGC_Tests && cp Release/LGC_Tests.exe . && LGC_Tests.exe
-
-# Build and upload the LGC application
-windows32_release:
-    stage: test
-    tags:
-        - windows
-        - x32
-    only:
-        - master
-    dependencies: []
-    variables:
-        CMAKEGENERATOR: "Visual Studio 15 2017"
-    script:
-        - echo "Building executable"
-        - msbuild /maxcpucount /p:Configuration=Release PACKAGE.vcxproj
-        - cp LGCInstaller-*.exe ..
-    artifacts:
-        name: win32installer
-        paths:
-            - LGCInstaller-*.exe
-
-# Build all targets and run the tests
 windows64_build_and_test:
-    stage: test
-    tags:
-        - windows
-        - x64
-    dependencies: []
-    variables:
-        CMAKEGENERATOR: "Visual Studio 15 2017 Win64"
     script:
         - echo "Building all targets"
-        - msbuild /maxcpucount /p:Configuration=Release ALL_BUILD.vcxproj
-        - msbuild /maxcpucount /p:Configuration=Release PACKAGE.vcxproj
+        - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release
+        - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release --target PACKAGE
         - echo "Running the tests"
         - cd LGC_Tests && cp Release/LGC_Tests.exe . && LGC_Tests.exe
 
 # Build and upload the LGC application
 windows64_release:
-    stage: test
-    tags:
-        - windows
-        - x64
-    only:
-        - master
-    dependencies: []
-    variables:
-        CMAKEGENERATOR: "Visual Studio 15 2017 Win64"
     script:
         - echo "Building executable"
-        - msbuild /maxcpucount /p:Configuration=Release PACKAGE.vcxproj
+        - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release --target PACKAGE
         - cp LGCInstaller-*.exe ..
     artifacts:
-        name: win64installer
         paths:
             - LGCInstaller-*.exe
+
+# Build all targets and run the tests
+windows32_build_and_test:
+    extends: windows64_build_and_test
+    tags:
+        - windows
+        - x32
+    variables:
+        CMAKEGENERATOR: "Visual Studio 15 2017"
+
+# Build and upload the LGC application
+windows32_release:
+    extends: windows64_release
+    tags:
+        - windows
+        - x32
+    variables:
+        CMAKEGENERATOR: "Visual Studio 15 2017"
+    artifacts:
+        name: win32installer
