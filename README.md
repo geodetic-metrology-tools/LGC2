@@ -45,8 +45,8 @@ Download
 
 You can download the last version of LGC2 installer here:
 - Linux (64 bits) - executable only: [LGC](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC?job=linux_release)
-- Windows (64 bits): [LGC2Installer-2.02.00-beta-win64.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC2Installer-2.02.00-beta-win64.exe?job=windows64_release)
-- Windows (32 bits): [LGC2Installer-2.02.00-beta-win32.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC2Installer-2.02.00-beta-win32.exe?job=windows32_release)
+- Windows (64 bits): [LGCInstaller-2.02.00-win64.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGCInstaller-2.02.00-win64.exe?job=windows64_release)
+- Windows (32 bits): [LGCInstaller-2.02.00-win32.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGCInstaller-2.02.00-win32.exe?job=windows32_release)
 
 Documentation
 -------------
