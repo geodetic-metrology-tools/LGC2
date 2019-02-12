@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	// Creates the Logger mechanism (here log to file and console)
 	// IMPORTANT: Use the macros logDebug(), logInfo(), etc everywhere in the project !
 	FileLogHandler *pLogFileHandler = new FileLogHandler(logFilePath);
-	pLogFileHandler->setThreshold(LogMessage::Type::DEBUG);
+	pLogFileHandler->setThreshold(LogMessage::Type::INFO);
 	Logger::getLogger().addHandlers(pLogFileHandler,	new ConsoleLogHandler());
 
 	if (argc == 1)
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 		svlTools::createOutputFile(outputFilePath);
 
 		// Changes the log file attached to this handler
-		// Log file becomes the input filename with the ".log" extension
+		// Log file becomes the input filename with the ".log2" extension
 		if (bChangeLogFile)
 		{
 			logFilePath = svlTools::getFilePathWithoutExtension(inputFilePath) + ".log2";
