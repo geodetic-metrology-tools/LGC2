@@ -280,7 +280,7 @@ void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &output
 const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
-	id << "LGC2 " << getLGCVersion() << ", version was not compiled against SurveyLib, compiled on " <<   __DATE__ ;
+	id << "LGC2 " << getLGCVersion() << ", compiled on " <<   __DATE__ ;
 	return id.str();
 }
 
