@@ -15,6 +15,7 @@
 
 TChabaFileWriter::TChabaFileWriter(TAStreamFormatter* stream, const TLGCData* project) : TAFileWriter(stream, project)
 {//constructor
+	stream->setSeparator("   ");
 }
 
 TChabaFileWriter::~TChabaFileWriter()
@@ -35,43 +36,44 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
 			writeHelmertTransformationDetails(itTree.node->data->frame);
 
 			// write the input data
-			(*stream) << sep << "DONNÉES D'ENTRÉE\n";
+			(*stream) << sep << "DONNÉES D'ENTRÉE" << endl << endl;
+			(*stream) << sep << "ACTIF" << endl;
+
 			const std::vector<TOBSXYZ> obsActif = keepOBSXYZ(fProjectData->getTree().begin());
-			(*stream) << sep << "ACTIF\n"<<endl;
 			if (!obsActif.empty())
 				writeInputPoints(obsActif); //first node is root
 			else
-				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n"<<endl;
+				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 
 			const std::vector<TOBSXYZ> obsPassif = keepOBSXYZ(itTree);
-			(*stream) << sep << "PASSIF\n"<<endl;
+			(*stream) << endl << sep << "PASSIF" << endl;
 			if (!obsPassif.empty())
 				writeInputPoints(obsPassif);
 			else
-				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n";
+				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			//write results
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairActif = createPair(fProjectData->getTree().begin());
-			(*stream) << sep << "NOUVELLES COORDONNÉES DES POINTS REFERENCE (ACTIF) \n" << endl;;
+			(*stream) << sep << "NOUVELLES COORDONNÉES DES POINTS REFERENCE (ACTIF)" << endl << endl;
 			if (!pairActif.empty())
 				writeTransformedPoints(pairActif, true, fProjectData->getTree().begin());
 			else
-				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n";
+				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 			
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairPassif = createPair(itTree);
-			(*stream) << sep << "COORDONNÉES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTÈME\n" << endl;;
+			(*stream) << sep << "COORDONNÉES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTÈME" << endl << endl;
 			if (!pairPassif.empty())
 				writeTransformedPoints(pairPassif, true, itTree);
 			else
-				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data\n";
+				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<LGCAdjustablePoint> secondaryPts = createSecPoint(itTree);
 			if (!secondaryPts.empty())
 			{
-				(*stream) << sep << "COORDONNÉES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTÈME\n" << endl;;
+				(*stream) << sep << "COORDONNÉES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTÈME" << endl << endl;
 				writeTransformedSecondaryPoints(secondaryPts);
 			}
 		}
@@ -154,11 +156,6 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream)<<" ";
 	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
-		
-
-
-
-
 
 	(*stream) << sep << "*                                                                                  *" << endl;
 	(*stream) << sep << "*        VECTEUR DE TRANSLATION (M):                                               *" << endl;
@@ -203,6 +200,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 {
 	TAStreamFormatter* stream = getStream();
+	std::string sep = stream->getSeparator();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
 	//Write Column Headings
@@ -210,7 +208,7 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
-	(*stream) << getSeparator();
+	(*stream) << sep << " ";
 	writeStringSep(getCoordResWidth(), "SX(MM)");
 	writeStringSep(getCoordResWidth(), "SY(MM)");
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
@@ -223,17 +221,16 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 		stream->setPrecisionFormat(getCoordPrecision());
 
 		converter.writeName(itPair.station->getName(), getNameWidth());
-		(*stream) << getSeparator();
 
 		//xyz
-		converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), getSeparator(), itPair.initialValue);
+		converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), "", itPair.initialValue);
 		
 		//sx sy sz
 		converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz,
 			getCoordResWidth(),
 			getCoordPrecision(),
 			TLength::EUnits::kMillimetres,
-			getSeparator(),
+			sep,
 			itPair.getXObservedStDev(),
 			itPair.getYObservedStDev(),
 			itPair.getZObservedStDev(),
@@ -246,6 +243,7 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> & pairs, bool writeDeltas, TDataTreeIterator itTree)
 {
 	TAStreamFormatter* stream = getStream();
+	std::string sep = stream->getSeparator();
 
 	//write column headings
 	writeStringLeftSep(getNameWidth(), "NOM");
@@ -254,17 +252,20 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	writeStringSep(getCoordWidth(), "Z(M)");
 	if (pairs.at(0).first.getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		writeStringSep(getCoordWidth(), "H(M)");
-	(*stream) << getSeparator();
+	(*stream) << sep << " " ;
 	writeStringSep(getCoordResWidth(), "SX(MM)");
 	writeStringSep(getCoordResWidth(), "SY(MM)");
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
 
 	if (writeDeltas)
 	{
-		(*stream) << getSeparator();
+		(*stream) << sep ;
 		writeStringSep(getCoordResWidth(), "DX(MM)");
+		(*stream) << sep;
 		writeStringSep(getCoordResWidth(), "DY(MM)");
+		(*stream) << sep;
 		writeStringSep(getCoordResWidth(), "DZ(MM)");
+		(*stream) << sep;
 		writeStringSep(getCoordResWidth(), "DD(MM)");
 	}
 	(*stream) << endl;
@@ -310,9 +311,9 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	(*stream) << endl;
 	if (writeDeltas)
 	{
-		(*stream) << getSeparator() << getSeparator() << getSeparator() << "*** EMQ DD (MM) = " << getSeparator();
+		(*stream) << sep << sep << sep << "*** EMQ DD (MM) = " << sep;
 		writeDouble(7, 4, fEMQ);
-		(*stream) << getSeparator() << "***" << endl;
+		(*stream) << sep << "***" << endl;
 	}
 }
 
@@ -322,6 +323,7 @@ void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdju
 	d.dx = d.dy = d.dz = TLength(0.0);
 
 	TAStreamFormatter* stream = getStream();
+	std::string sep = stream->getSeparator();
 
 	//write column headings
 	writeStringLeftSep(getNameWidth(), "NOM");
@@ -330,7 +332,7 @@ void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdju
 	writeStringSep(getCoordWidth(), "Z(M)");
 	if (secondary.at(0).getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		writeStringSep(getCoordWidth(), "H(M)");
-	(*stream) << getSeparator();
+	(*stream) << sep << " ";
 	writeStringSep(getCoordResWidth(), "SX(MM)");
 	writeStringSep(getCoordResWidth(), "SY(MM)");
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
@@ -343,42 +345,45 @@ void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdju
 void TChabaFileWriter::writePUNPoint(const LGCAdjustablePoint & it, TFreeVector sigma, delta d, bool writeDeltas)
 {
 	TAStreamFormatter* stream = getStream();
-	stream->setLengthUnits(TLength::EUnits::kMetres);
 	std::string sep = stream->getSeparator();
+
+	stream->setLengthUnits(TLength::EUnits::kMetres);
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 	
 	//write the point name
 	converter.writeName(it.getName(), getNameWidth());
-	(*stream) << sep;
 
 	//transform coordinates in root
 	TPositionVector xyhToValue = it.getEstimatedValue();
 	TLOR2LOR transfo = TLOR2LOR(it.getFrameTreePosition(), fProjectData->getTree().begin(), "transfo");
 	transfo.transform(xyhToValue);
 
-	//transform Z in H
-	if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		TXYH2CCS::CCS2XYHs(xyhToValue);
-	else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		TXYH2CCS::CCS2XYHg2000Machine(xyhToValue);
-	else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		TXYH2CCS::CCS2XYHg1985Machine(xyhToValue);
-
-	//write coordinates
-	converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), sep, it.getEstimatedValue());
+	//write coordinates (X,Y,Z and possibly H when non-local reference frame)
+	converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), "", xyhToValue);
 	if (it.getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-		(*stream) << xyhToValue.getH() << sep;
+	{
+		//transform Z in H
+		if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+			TXYH2CCS::CCS2XYHs(xyhToValue);
+		else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			TXYH2CCS::CCS2XYHg2000Machine(xyhToValue);
+		else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			TXYH2CCS::CCS2XYHg1985Machine(xyhToValue);
+
+		(*stream) << xyhToValue.getH();
+	}
+
 
 	//Write point's estimated precision after calculation
 	converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz,
 		getCoordResWidth(),
 		getCoordPrecision(),
 		TLength::EUnits::kMillimetres,
-		sep,
+		"",
 		sigma.getX(),
 		sigma.getY(),
 		sigma.getZ(),
-		"");/*sigma*/
+	    "");/*sigma*/
 
 
 	//write differences
@@ -404,8 +409,8 @@ void TChabaFileWriter::writeTitle()
 	(*stream) << endl;
 	(*stream) << "**********************************************************************************************************" << endl << endl;
 
-	(*stream) << "                                                 " << "LGC - Best-Fit " << TLGCApp::getProgId() << "                                        " << endl;
-	(*stream) << "                                " << "Copyright 2003 - 2016, CERN ACE / SU.All rights reserved." << "                                        " << endl << endl;
+	(*stream) << "     " << "LGC - Best-Fit " << TLGCApp::getProgId() <<  endl;
+	(*stream) << "     " << "Copyright 2003 - 2016, CERN ACE / SU.All rights reserved." << endl << endl;
 
 	(*stream) << "***********************************************************************************************************" << endl;
 	(*stream) << "                                         ----- FICHIER OUTPUT  -----" << endl;
@@ -415,45 +420,41 @@ void TChabaFileWriter::writeTitle()
 
 	time_t ltime;
 	time(&ltime);
-	(*stream) << sep << "Fait: " << sep << ctime(&ltime) << endl;
-
-
-	(*getStream()) << sep << "project path:             " << fProjectData->getConfig().title << "\n";
+	(*stream) << sep << "Calculation date:       " << sep << ctime(&ltime) << endl;
+	(*stream) << sep << "Project path:              " << fProjectData->getConfig().title << endl;
 
 	
-		(*getStream()) << sep << "File referential system:   ";
+		(*stream) << sep << "File referential system:   ";
 		if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCCS)
-			(*getStream()) << ", coordinate system: 3DCartesian, reference frame: kCCS";
+			(*stream) << "Coordinate system: 3DCartesian, reference frame: kCCS" << endl;
 		else
 		{
 			if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-				(*getStream()) << ", coordinate system: 2DPlusH, reference frame: kCERNXYHsSphereSPS\n";
+				(*stream) << "Coordinate system: 2DPlusH, reference frame: kCERNXYHsSphereSPS" << endl;
 			else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-				(*getStream()) << ", coordinate system: 2DPlusH, reference frame: kCernXYHg00Machine\n";
+				(*stream) << "Coordinate system: 2DPlusH, reference frame: kCernXYHg00Machine" << endl;
 			else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-				(*getStream()) << ", coordinate system: 2DPlusH, reference frame: kCernXYHg85Machine\n";
+				(*stream) << "Coordinate system: 2DPlusH, reference frame: kCernXYHg85Machine" << endl;
 			else
-				(*getStream()) << ", coordinate system: 3DCartesian, reference frame: kLocal\n";
+				(*stream) << "Coordinate system: 3DCartesian, reference frame: kLocal" << endl;
 		}
 
-	
-
-	(*getStream()) << sep << "precision: " << fProjectData->getConfig().outPrecision.digits << "\n" << "\n";
+	(*stream) << sep << "Precision (digits): " << fProjectData->getConfig().outPrecision.digits << endl << endl;
 
 	TReal upLimits = fProjectData->getChiS0UpLimit();
 	TReal lowLimits = fProjectData->getChiS0LowLimit();
 	TReal S0 = fProjectData->getS0APosteriori();
 	(*stream) << sep << "S0 A Posteriori: ";
 	fStream->writeDouble(16, 7, S0);
-	(*stream) << "\n";
+	(*stream) << endl;
 	(*stream) << sep << "Fisher's Limits: ";
 	fStream->writeDouble(16, 7, lowLimits);
 	(*stream) << "  -  ";
 	fStream->writeDouble(8, 7, upLimits);
-	(*stream) << "\n";
+	(*stream) << endl;
 
 	if (S0 > upLimits || S0 < lowLimits)
-		(*stream) << sep << " S0 is applied on the sigma \n";
+		(*stream) << sep << sep << "S0 is applied on the sigma " << endl;
 }
 
 const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> TChabaFileWriter::createPair(TDataTreeIterator itFrame)
