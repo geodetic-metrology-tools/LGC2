@@ -72,7 +72,8 @@ Behavior TLGCApp::exec()
 			//throw runtime_error("Errors found in the input file, check the output file: " + fLoggerFileLoc + " for more details.");
 		}
 	}
-	
+	logInfo() << "Input data correctly read";
+
 	//Initialize the writer into the output file.
 	initializeStream(projectData, fOutputFileLoc, fStream);
 
@@ -88,6 +89,7 @@ Behavior TLGCApp::exec()
 	if(result)
         this->saveResults(projectData.get(), fOutputFileLoc, lgcCalculation, fStream);
 
+	logInfo() << "Calculation process ended.";
 	return result;
 }
 
@@ -180,18 +182,31 @@ void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string 
     TResultsFileWriter resultsFileWriter(stream.get(), dat);
 	
 	if (!Logger::getLogger().hasErrors())
+	{
 		resultsFileWriter.writeFile();
+		logInfo() << "Result file:" << stream->getFileName() << "has been written";
+	}
 	else
+	{
 		resultsFileWriter.writeFile("Error has occured, see the LGC log file.");
+		logCritical() << "Result file:" << stream->getFileName() << "has NOT been written";
+	}
 }
 
 void TLGCApp::writePunchFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {
-	auto writefile = [&](TPunchFileWriter punchFileWriter) {
+	auto writefile = [&](TPunchFileWriter punchFileWriter) 
+	{
 		if (!Logger::getLogger().hasErrors())
-		 punchFileWriter.writeFile();
-	   else
-		punchFileWriter.writeFile("Error has occured, see the LGC log file."); 
+		{
+			punchFileWriter.writeFile();
+			logInfo() << "Punch file:" << stream->getFileName() << "has been written";
+		}
+		else
+		{
+			punchFileWriter.writeFile("Error has occured, see the LGC log file."); 
+			logCritical() << "Punch file:" << stream->getFileName() << "has NOT been written";
+		}
 	};
 
 	if (dat->getConfig().writePunch.kOUT1)
@@ -220,11 +235,20 @@ void TLGCApp::writeFautFile(TLGCData const * const dat, const std::string &outpu
     TFautFileWriter fautFileWriter(stream.get(), dat);
 
 	if (!Logger::getLogger().hasErrors() && dat->fUEOIndices.UIndex != 0)
+	{
 		fautFileWriter.writeFile(dat);
+		logInfo() << "Fault file:" << stream->getFileName() << "has been written";
+	}
 	else if (dat->fUEOIndices.UIndex != 0)
+	{
 		fautFileWriter.writeFile("No data because there s no unknowns.");
+		logCritical() << "Fault file:" << stream->getFileName() << "has NOT been written";
+	}
 	else
+	{
 		fautFileWriter.writeFile("Error has occured, see the LGC log file.");
+		logCritical() << "Fault file:" << stream->getFileName() << "has NOT been written";
+	}
 }
 
 void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
@@ -233,9 +257,15 @@ void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outpu
     TDefaFileWriter defaFileWriter(stream.get(), dat);
 
 	if (!Logger::getLogger().hasErrors())
+	{
 		defaFileWriter.writeFile(*dat, fResMtrx);
+		logInfo() << "Def file:" << stream->getFileName() << "has been written";
+	}
 	else
+	{
 		defaFileWriter.writeFile("Error has occured, see the LGC log file.");
+		logCritical() << "Def file:" << stream->getFileName() << "has NOT been written";
+	}
 }
 
 /// Write files for covariances
@@ -245,10 +275,15 @@ void TLGCApp::writeCovarFile(TLGCData const * const dat, const std::string &outp
     TCovarFileWriter covarFileWriter(stream.get(), dat);
 
 	if (!Logger::getLogger().hasErrors())
+	{
 		covarFileWriter.writeFile(*dat);
+		logInfo() << "Covariance file:" << stream->getFileName() << "has been written";
+	}
 	else
+	{
 		covarFileWriter.writeFile("Error has occured, see the LGC log file.");
-
+		logCritical() << "Covariance file:" << stream->getFileName() << "has NOT been written";
+	}
 }
 
 /// Write files for covariances
@@ -258,7 +293,12 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 	TChabaFileWriter chabaFileWriter(stream.get(), dat);
 
 	if (!Logger::getLogger().hasErrors())
+	{
 		chabaFileWriter.writeFile(stream.get());
+		logInfo() << "Chaba output file:" << stream->getFileName() << "has been written";
+	}
+	else
+		logCritical() << "Chaba output file:" << stream->getFileName() << "has NOT been written";
 
 }
 
@@ -268,9 +308,15 @@ void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &output
 	TSimFileWriter simFileWriter(stream.get(), dat);
 
 	if (!Logger::getLogger().hasErrors())
+	{
 		simFileWriter.writeFile();
+		logInfo() << "Simulation file:" << stream->getFileName() << "has been written";
+	}
 	else
+	{
 		simFileWriter.writeFile("Error has occured, see the LGC log file.");
+		logCritical() << "Simulation file:" << stream->getFileName() << "has NOT been written";
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
