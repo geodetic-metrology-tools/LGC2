@@ -24,7 +24,5 @@ int main(int argc, char** argv)
 		std::cout << "Test error: " << e.what() << std::endl;
 	}
 
-	getc(stdin);
-
     return !reporter.all_ok();
 }
