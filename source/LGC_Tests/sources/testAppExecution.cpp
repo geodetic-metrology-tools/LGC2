@@ -31,8 +31,8 @@ namespace tut
 
 		set_test_name("Testing TLGCApp class and nam file reader");
 		
-        TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.lgc2", 
-					    getCurrentDirectory()+ slash + "test_files" + slash + "SimulationTests" + slash + "LIBR_SIMU.out");
+        TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "LIBR_SIMU.lgc2", 
+					    getCurrentDirectory()+ slash + "test_files" + slash + "LIBR_SIMU.out");
 		ensure( "Execution should work", proj.exec() == true);
 	}
 
@@ -44,8 +44,8 @@ namespace tut
 		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
-		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "OBSXYZ.lgc",
-			getCurrentDirectory() + slash + "test_files" + slash + "Calc" + slash + "OBSXYZ.res");
+		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "OBSXYZ.lgc",
+			getCurrentDirectory() + slash + "test_files" + slash + "OBSXYZ.res");
 
 		ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
 
