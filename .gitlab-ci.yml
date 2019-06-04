@@ -1,4 +1,4 @@
-include: "https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker/raw/master/.gitlab-ci-TEMPLATE.yml"
+include: "https://apc-dev.web.cern.ch/ci/scripts/gitlab-ci-susoft.yml"
 
 ##################
 # LINUX BUILDS   #
@@ -6,14 +6,11 @@ include: "https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker/raw/master/
 
 # Build all targets and run the tests
 linux_build_and_test:
-    script:
-        - echo "Building all targets | -j$(nproc)"
-        - $CMAKEBIN --build . -j $(nproc) --config Release
-        - echo "Running the tests"
-        - cd LGC_Tests && ./LGC_Tests
+    extends: .linux_build_and_test
 
 # Build and upload the LGC application
 linux_release:
+    extends: .linux_release
     script:
         - echo "Building executable | -j$(nproc)"
         - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
@@ -28,15 +25,11 @@ linux_release:
 
 # Build all targets and run the tests
 windows64_build_and_test:
-    script:
-        - echo "Building all targets"
-        - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release
-        - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release --target PACKAGE
-        - echo "Running the tests"
-        - cd LGC_Tests && cp Release/LGC_Tests.exe . && LGC_Tests.exe
+    extends: .windows64_build_and_test
 
 # Build and upload the LGC application
 windows64_release:
+    extends: .windows64_release
     script:
         - echo "Building executable"
         - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release --target PACKAGE
