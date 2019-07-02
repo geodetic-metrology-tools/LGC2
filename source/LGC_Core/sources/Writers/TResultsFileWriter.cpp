@@ -346,7 +346,7 @@ void    TResultsFileWriter::writeAdjustableObjGeneralInfo(const std::string adjO
 {
     TAStreamFormatter &stream = getStreamRef();
     stream<<"\t"<< adjObjName << " : " <<numAdj << endl;
-    stream<<"\t Inconuues introduites " << adjObjName << ": "<<numUnkn << endl<<endl;
+    stream<<"\t INCONNUES INTRODUITES " << adjObjName << ": "<<numUnkn << endl<<endl;
 }
  
  
@@ -379,7 +379,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
     stream<<endl;
  
     // NUMBER OF ITERATIONS
-    stream<<"	NUMBER OF ITERATIONS =     "<<fProjectData->getNumberOfLSIterations();
+    stream<<"	NOMBRE D'ITERATIONS =     "<<fProjectData->getNumberOfLSIterations();
     stream<<endl<<endl;
  
     //RESEAU COMPLETEMENT LIBRE ?

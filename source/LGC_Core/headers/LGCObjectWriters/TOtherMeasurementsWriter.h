@@ -48,6 +48,9 @@ public:
 
 		/// Write synthesis results header
 		void writeResultsSynthesisHeader();
+
+		/// Write synthesis results header (CC)
+		void writeResultsSynthesisHeaderAngles();
 	//@}
 
 	/*!@name Results */

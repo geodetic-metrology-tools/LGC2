@@ -619,6 +619,37 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 	(*stream) << endl;
 }
 
+void TOtherMeasurentWriter::writeResultsSynthesisHeaderAngles()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	// int				obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream) << endl;
+}
+
+
 //------------------ Synthesis data---------------------------------------------------------------------------
 void TOtherMeasurentWriter::writeDVERResultsSynthesis(const TMeasurements &tmeas)
 {
