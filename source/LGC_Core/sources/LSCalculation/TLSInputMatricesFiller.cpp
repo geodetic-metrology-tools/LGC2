@@ -1072,6 +1072,9 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 	else
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, 0.0);
 
+	//change if move to a bearing definition, changes also to make in TContributionsGenerator.cpp
+	// isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, contributions.calcmeas);
+
 	// Add weight unknown matrix element
 	if (pdorObs.getSigma() < nullLimit)
 		throw std::runtime_error("Error when filling pdor contribution, variance is zero or too small, can not set weight matrix element.");

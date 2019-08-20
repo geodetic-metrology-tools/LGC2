@@ -1308,6 +1308,16 @@ PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdo
 	//gets calc value and sigma
 	TAngle calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix)));
 
+	//change if move to a bearing definition replace by, changes also to make in TLSInputMatricesFiller
+	//TReal calcmeas;
+	//if (pdorObs.isBearingDefined())
+	//	calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - pdorObs.getBearing().getRadiansValue();
+	//else
+	//{
+	//	calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - (TAngle::aTan2((xRefPro - xFix), (yRefPro - yFix)));
+	//}
+
+
 	//CALCULATION OF THE CONTRIBUTION IN LOCAL INSTRUMENT SYSTEM	
 	TReal a = (yRef - yFix) / powq(D, 2);//xFix coefficient
 	TReal b = -(xRef - xFix) / powq(D, 2);//yFix coefficient
