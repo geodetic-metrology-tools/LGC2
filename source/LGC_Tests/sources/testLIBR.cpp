@@ -766,15 +766,18 @@ namespace tut
 		PT           2342.4313479   4436.2171177   2401.7610678   0.0000   0.0000   0.0000   0.1358   0.0541   0.0291
 		PT2          2283.7020702   4353.5634271   2401.7944936   0.0000   0.0000   0.0000  -0.0327   0.1991  -0.0150
 		*/
-	
+
+		//GKA (11/09/2019): LGC1 and 2 (from 2.03 version) differ in results due to the change of inversion method and solving algorithm.
+		//After further tests on the JIRA case SUS-1421 LGC1 et LGC2 (previous 2.03) highlight the same problems.
+		//The problems are solved with the new inversion method. Decided to relax the criteria for the tests in LIBR comparing LGc1 with LGC2.
 		TPositionVector PT = data.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4313479, 1e-7);
-		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2171177, 1e-7);
-		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 2401.7610678, 1e-7);
+		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4313479, 1e-5);
+		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2171177, 1e-5);
+		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 2401.7610678, 1e-5);
 		TPositionVector STN = data.getPoints().getObject("STN").getEstimatedValue();
-		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7774073, 1e-7);
-		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9463772, 1e-7);
-		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 2401.7426406, 1e-7);
+		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7774073, 1e-5);
+		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9463772, 1e-5);
+		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 2401.7426406, 1e-5);
 	}
 	
 	// test ZEND, DHOR and ANGL in OLOC
@@ -808,15 +811,17 @@ namespace tut
 		PT           2342.4311500   4436.2169968    402.1981941   0.0000   0.0000   0.0000  -0.0621  -0.0667  -0.3795 
 		PT2          2283.7021149   4353.5632603    402.1995478   0.0000   0.0000   0.0000   0.0119   0.0323   0.1895
 		*/
+
+		//GKA (11/09/2019): see comment in the Test 2
 	
 		TPositionVector PT = data.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4311500, 1e-7);
-		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2169968, 1e-7);
-		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 402.1981941, 1e-7);
+		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4311500, 1e-5);
+		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2169968, 1e-5);
+		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 402.1981941, 10e-5);
 		TPositionVector STN = data.getPoints().getObject("STN").getEstimatedValue();
-		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7773786, 1e-7);
-		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9462033, 1e-7);
-		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 402.1981709, 1e-7);
+		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7773786, 1e-5);
+		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9462033, 1e-5);
+		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 402.1981709, 10e-5);
 	}
 	
 	// test PLR in SPHE
@@ -850,15 +855,17 @@ namespace tut
 		PT           2342.4313479   4436.2171177   2401.7610678   0.0000   0.0000   0.0000   0.1358   0.0541   0.0291
 		PT2          2283.7020702   4353.5634271   2401.7944936   0.0000   0.0000   0.0000  -0.0327   0.1991  -0.0150
 		*/
+
+		//GKA (11/09/2019): see comment in the Test 2
 	
 		TPositionVector PT = data.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4313479, 1e-7);
-		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2171177, 1e-7);
-		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 2401.7610678, 1e-7);
+		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4313479, 1e-5);
+		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2171177, 1e-5);
+		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 2401.7610678, 1e-5);
 		TPositionVector STN = data.getPoints().getObject("STN").getEstimatedValue();
-		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7774073, 1e-7);
-		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9463772, 1e-7);
-		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 2401.7426406, 1e-7);
+		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7774073, 1e-5);
+		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9463772, 1e-5);
+		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 2401.7426406, 1e-5);
 	}
 
 	// test DVER in OLOC
@@ -894,13 +901,13 @@ namespace tut
 		*/
 
 		TPositionVector PT = data.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4313995, 1e-7);
-		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2172730, 1e-7);
-		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 402.1495648, 1e-7);
+		ensure_equals("Pt x coordinate should match", PT.getX().getMetresValue(), 2342.4313995, 1e-5);
+		ensure_equals("Pt y coordinate should match", PT.getY().getMetresValue(), 4436.2172730, 1e-5);
+		ensure_equals("Pt z coordinate should match", PT.getZ().getMetresValue(), 402.1495648, 1e-5);
 		TPositionVector STN = data.getPoints().getObject("STN").getEstimatedValue();
-		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7773969, 1e-7);
-		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9464474, 1e-7);
-		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 402.1977888, 1e-7);
+		ensure_equals("STN x coordinate should match", STN.getX().getMetresValue(), 2260.7773969, 1e-5);
+		ensure_equals("STN y coordinate should match", STN.getY().getMetresValue(), 4493.9464474, 1e-5);
+		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 402.1977888, 1e-5);
 	}
 	
 
