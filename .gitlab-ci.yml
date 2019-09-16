@@ -46,6 +46,8 @@ windows32_build_and_test:
         - x32
     variables:
         CMAKEGENERATOR: "Visual Studio 16 2019"
+        CMAKEARCHITECTURE: "-A Win32"
+
 
 # Build and upload the LGC application
 windows32_release:
@@ -55,5 +57,6 @@ windows32_release:
         - x32
     variables:
         CMAKEGENERATOR: "Visual Studio 16 2019"
+        CMAKEARCHITECTURE: "-A Win32"
     artifacts:
         name: win32installer
