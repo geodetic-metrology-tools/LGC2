@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 			logInfo() << "See User Guide: https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide";
 			logInfo() << "Starting the calculations...";
 			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
-			Behavior& b = lgc.exec();
+			Behavior b = lgc.exec();
 			return (bool) b ? 0 : b.code();
 		}
 		catch (const std::runtime_error& ex)
