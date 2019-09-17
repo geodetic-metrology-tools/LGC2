@@ -30,6 +30,10 @@ namespace tut
 	template<>
 	void object::test<1>()
 	{
+#ifdef WIN32
+		tut::skip("doesn't work on 32 bits with MSVC2019");
+#endif
+
 		bool T, F;
 		T = true;
 		F = false;
