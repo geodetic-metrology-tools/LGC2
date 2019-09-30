@@ -1066,11 +1066,8 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 	}
 
 	// Add Misclosure vector's contribution 
-	//if the bearing is not defined, the point of orientation is not moving
-	if (pdorObs.isBearingDefined())
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (pdorObs.getBearing().getRadiansValue() - contributions.calcmeas));
-	else
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, 0.0);
+	// GKA (26/09/2019) : change of definition to a bearing, changes also made in TContributionsGenerator.cpp
+	isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, contributions.calcmeas);
 
 	// Add weight unknown matrix element
 	if (pdorObs.getSigma() < nullLimit)

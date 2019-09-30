@@ -77,14 +77,12 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 	// compute z
 	TSparseMatrix Z(nbObs,nbEq);
 	if (combinedcase)
-		Z = -1.0**(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()) *(im->getSecondDgnMtrx()->transpose());
+		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());
+		// GKA (03/09/2019) : the equation says V = - Qvv * P * Bt * W. With B = -1, the parametric case is retrieved. Restricting the local reliability to the parametric case, gives the same coherent results;
+		// Code before 03/09/19 : Z = -1.0**(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()) *(im->getSecondDgnMtrx()->transpose());
 	else
-		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()); // *(im->getSecondDgnMtrx()->transpose());
-
-	//V = Cw => C=Qvv* P*BT
-	//rm->setIntermediateMatrix2(Z);
-	//rm->saveMatricesToFile(0);
-	//im->saveMatricesToFile(0);
+		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()); 
+		// GKA (03/09/2019) : Qvv * P is defined as the local reliability [0,1] for the parametric model in the litterature. Does that extend for the combined mehod or not? 
 
 	//loop for each unknowns
 	int i = 0;
@@ -151,6 +149,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 	}
 
 	//last observation is for the PDOR
+	//PDOR is considered as an observation and should not be considered as such for the overall network reliability factor computation
 	if (hasPdor)
 		calcOverall(nbObs-1);
 	else
@@ -161,14 +160,14 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 
 
 void    TLGCStatistic::calcOverall(int nbObs)
-{
+{	
 	fOverall = 0.0;
 	int i = 0;
 	while (i<nbObs)
 	{
-		// double k = fZ->coeff(i);
-		if (fAreDetermined->coeff(i))
-			fOverall += powq(1/fZ->coeff(i),2)-1;
+		
+		if (fAreDetermined->coeff(i) )
+			fOverall += powq(fT->coeff(i),2)-1;
 		else
 		{
 			fOverall = NO_VALf;
@@ -177,8 +176,10 @@ void    TLGCStatistic::calcOverall(int nbObs)
 		i++;
 	}
 	if (!isnotanumber(fOverall))
-		fOverall /= (nbObs - 1);
+		// GKA (04/09/19): changed nObs-1 to nobs according to literature
+		fOverall /= nbObs;
 	return;
+	
 }
 
 TLGCStatistic& TLGCStatistic::operator=(const TLGCStatistic &other) {

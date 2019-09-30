@@ -477,7 +477,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "ORIE"); //instrument
 		(*stream) << endl;
-		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeResultsSynthesisHeaderAngles();
 		for (auto& itORIE : tmeas.fORIE)
 			otherMeasWriter.writeORIEResultsSynthesis(itORIE, *itORIE.instrumentPos);
 		//(*stream) << endl;

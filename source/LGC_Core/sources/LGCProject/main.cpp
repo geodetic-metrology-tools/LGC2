@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 		// Log file becomes the input filename with the ".log2" extension
 		if (bChangeLogFile)
 		{
-			logFilePath = svlTools::getFilePathWithoutExtension(inputFilePath) + ".log2";
+			logFilePath = svlTools::getFilePathWithoutExtension(outputFilePath) + ".log2";
 			pLogFileHandler->setLogFile(logFilePath);
 		}
 
@@ -146,14 +146,14 @@ int main(int argc, char *argv[])
 			logInfo() << "See User Guide: https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide";
 			logInfo() << "Starting the calculations...";
 			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
-			return lgc.exec();
+			Behavior b = lgc.exec();
+			return (bool) b ? 0 : b.code();
 		}
 		catch (const std::runtime_error& ex)
 		{
 			logFatal() << "LGC calculation problem\nException: " << ex.what();
 		}
 	}
-
 
 	return 1;
 }

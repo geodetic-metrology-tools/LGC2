@@ -1305,8 +1305,17 @@ PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdo
 	if (D < nullLimit)
 		throw std::logic_error("TContributionsGenerator::getPDORContrib: Division by zero because observation points have identical coordinates.");
 
-	//gets calc value and sigma
-	TAngle calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix)));
+	// GKA (26/09/2019) : change of definition to a bearing, changes also made in TLSInputMatricesFiller
+	TReal calcmeas;
+	if (pdorObs.isBearingDefined())
+		calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - pdorObs.getBearing().getRadiansValue();
+	else
+	{
+		TPositionVector oriPtPro = pdorObs.orientationPt->getProvisionalValue();
+		TReal xRefPro = oriPtPro.getX().getMetresValue();
+		TReal yRefPro = oriPtPro.getY().getMetresValue();
+		calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - (TAngle::aTan2((xRefPro - xFix), (yRefPro - yFix)));
+	}
 
 	//CALCULATION OF THE CONTRIBUTION IN LOCAL INSTRUMENT SYSTEM	
 	TReal a = (yRef - yFix) / powq(D, 2);//xFix coefficient

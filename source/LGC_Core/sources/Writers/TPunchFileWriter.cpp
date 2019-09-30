@@ -1017,6 +1017,9 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	{
 		//eolcomment = $cumul ID comments
 		std::vector<std::string> comments = tokenizefileString(point.eolcomment.substr(1));
+		if(comments.size()<2)
+			stream->writeString(coordWidth, "-1");
+		else
 		stream->writeString(coordWidth, comments.at(1));		
 	}	
 	else
@@ -1080,6 +1083,9 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 	if (!point.eolcomment.compare(0, 1, "$"))
 	{
 		std::vector<std::string> comments = tokenizefileString(point.eolcomment.substr(1));
+		if (comments.size() < 2)
+			stream->writeString(coordWidth, "-1");
+		else
 		stream->writeString(coordWidth, comments.at(0));
 	}
 	else
