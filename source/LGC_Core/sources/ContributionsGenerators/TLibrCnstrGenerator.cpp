@@ -390,13 +390,6 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 	//get point's type used for calculation
 	auto iter = lsds.getPoints().begin();
 	auto iterEnd = lsds.getPoints().end();
-	int numberOfPoints = (int)lsds.getPoints().numObjects();
-
-
-	//n accepte pas la division par un entier???
-	TReal div = numberOfPoints;
-	TReal factor = 1 / div;
-
 
 	////constraints on points
 	int nbCALA = lsds.getPointsDimension(TSpatialStatus::ESpatialStatus::kCala);
@@ -408,6 +401,13 @@ void TLibrCnstrGenerator::initCnstrIdentifier(const TLGCData& lsds)
 
 	int nbORIE = lsds.getMeasurementDimension(TMeasurementsGlobal::kORIE);
 	int nbPDOR = lsds.getMeasurementDimension(TMeasurementsGlobal::kPDOR);
+	
+	//GKA (30/09/2019): old method: int numberOfPoints = (int)lsds.getPoints().numObjects() does not work because includes the wire objects
+	int numberOfPoints = nbCALA + nbPOIN + nbVXY + nbVXZ + nbVYZ + nbVYZ + nbVYZ + nbVZ;
+
+	//n accepte pas la division par un entier???
+	TReal div = numberOfPoints;
+	TReal factor = 1 / div;
 
 	//fill fCnstr
 	switch (nbCALA)

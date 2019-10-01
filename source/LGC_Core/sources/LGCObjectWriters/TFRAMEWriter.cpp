@@ -427,12 +427,15 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 	}
 
 	//DSPT
-    if(tmeas.fECHO.size() > 0)
+    if(tmeas.fEDM.size() > 0)
 	{
 		(*stream) << endl;
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "DSPT"); //instrument
 		(*stream) << endl;
+		edmWriter.writeEDMSynthesisHeader();
+		for (auto& itEDM : tmeas.fEDM)
+			edmWriter.writeDSPTResultsSynthesis(itEDM);
 
         //write global mean
         edmWriter.writeDistanceResultsSummary(tmeas.getDSPTGlobalObsSummary(), TABs);

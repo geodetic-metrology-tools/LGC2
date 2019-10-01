@@ -9,6 +9,59 @@ TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationW
 
 TEDMWriter::~TEDMWriter(){}
 
+//------------------ Synthesis header------------------------------------------------------------------------
+void TEDMWriter::writeEDMSynthesisHeader()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	// int				obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); //plane name
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+
+	(*stream) << endl;
+}
+
+//------------------ Synthesis data--------------------------------------------------------------------------
+void TEDMWriter::writeDSPTResultsSynthesis(const  TEDM& fEdm)
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	const auto& dsptSummary = fEdm.getDSPTObsSummary();
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, fEdm.instrumentPos->getName());  //Reference point
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getResMax());//residu max
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getResMin());//residu min
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getMean());//residu moy
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getVariance());//ecart type
+	(*stream) << endl;
+
+}
 
 //------------------ Result header---------------------------------------------------------------------------
 

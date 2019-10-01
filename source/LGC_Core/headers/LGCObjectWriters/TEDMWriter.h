@@ -37,6 +37,11 @@ public:
 	/// Write reliabilty header
 	void	writeReliabilityHeader();
 
+	/// Write the result synthesis header
+	void writeEDMSynthesisHeader();
+	/// Write the result synthesis for DSPT 
+	void writeDSPTResultsSynthesis(const  TEDM& fEdm);
+
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }
 
