@@ -23,7 +23,7 @@ set(PROJECT_NAME LGC)
 # /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
 set (EXE_VERSION_MAJOR 2)
 set (EXE_VERSION_MINOR 03)
-set (EXE_VERSION_PATCH "00-DEV")
+set (EXE_VERSION_PATCH "00")
 
 #############################################################
 #
