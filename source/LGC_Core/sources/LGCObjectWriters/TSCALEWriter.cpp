@@ -61,23 +61,42 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
 	std::string         TABs3 = stream->getCurrSpaceExtended(2);
 
-
-	(*stream) << endl <<endl;
+	//write header
+	(*stream) << endl ;
 	(*stream)<<TABs1<<"ECHO"<<endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
-	(*stream)<<TABs1;
-	(*stream).writeStringLeft(nameWidth,"REF POINT"); //Reference point
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "REF POINT");
 	(*stream).writeStringLeft(nameWidth, echorom.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(3,"X"); 
+	(*stream).writeStringLeft(nameWidth, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(3,"Y");
+	(*stream).writeStringLeft(nameWidth, "Y (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(3,"Z");
+	(*stream).writeStringLeft(nameWidth, "Z (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
-	(*stream) << endl << endl;
-	///////////////////////////////////////////////////////////////////////////////////
-
+	(*stream) << endl;
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "PARAMETRE DU FIL");
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "X (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0) + echorom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * sin(echorom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue()+M_PI_2));
+	(*stream).writeStringLeft(nameWidth, "Y (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1) + echorom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * cos(echorom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue() + M_PI_2));
+	// Z is not relevant
+	//(*stream).writeStringLeft(nameWidth, "Z (M)");
+	//(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream) << endl;
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "ORIENTATION (GON)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getThetaEstimatedValue().getGonsValue());
+	(*stream).writeStringLeft(nameWidth, "SORIENTATION (CC)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, echorom.fMeasuredPlane->getThetaEstimatedPrecision().getSignedCCValue());
+	(*stream).writeStringLeft(nameWidth, "SNORMALE (MM)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, echorom.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
+	(*stream) << endl;
 
 	//data summury
    this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
