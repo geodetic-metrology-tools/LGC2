@@ -782,7 +782,7 @@ void  TLSInputMatricesFiller::addORIEContributions(const TORIEROM& orieROM, TLSI
 	}
 }
 
-void  TLSInputMatricesFiller::addECHOContributions(const TECHOROM& echoROM, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addECHOContributions(TECHOROM& echoROM, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	ECHOContrib contributions;
 	for(auto itECHO(echoROM.measECHO.begin()); itECHO != echoROM.measECHO.end(); ++itECHO){
@@ -790,6 +790,9 @@ void  TLSInputMatricesFiller::addECHOContributions(const TECHOROM& echoROM, TLSI
 		MatrixIndex obsIdx = itECHO->getFirstObservationIndex();
 
 		contributions = fCGenerator.getECHOContrib(echoROM,*itECHO); //Get the observation contribution
+
+		// Update the sigma 
+		itECHO->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions
 		if(!itECHO->targetPos->isFixed()) 

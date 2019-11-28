@@ -1023,7 +1023,7 @@ ECHOContrib	TContributionsGenerator::getECHOContrib(const TECHOROM& echoROM, con
 
 	TReal refPtDistContrib = 1.0;
 	TReal obsVariance = pow2q(echo.target.sigmaD + echo.getDistance()/1000*echo.target.ppmD) + pow2q(echo.target.sigmaInstrCentering);
-
+	
 	ECHOContrib echoContrib = {calcMeas, stationContrib, thetaContrib, refPtDistContrib, stationTransfContributions, obsVariance};
 	return echoContrib;
 }

@@ -97,7 +97,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	(*stream).writeStringLeft(nameWidth, "SNORMALE (MM)");
 	(*stream).writeDouble(obsWidth, lengthPrecision - 3, echorom.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
 	(*stream) << endl;
-
+	
 	//data summury
    this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 	writeSCALEResultsHeader(); // write the title line for the observations
@@ -112,8 +112,8 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
-
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaCombined.getMMetresValue());//Output value in milimeters [mm], stored in [m]
+		
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance() + ItECHO.getDistanceResidual());//Output value in meters [m], stored in [m]
 
@@ -121,7 +121,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual()/ItECHO.target.sigmaD);//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual()/ ItECHO.target.sigmaCombined);//Output value in meters [m], stored in [m]
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECHO.target.ID);
@@ -373,7 +373,7 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcho.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaCombined.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.getDistanceResidual().getMMetresValue());
 

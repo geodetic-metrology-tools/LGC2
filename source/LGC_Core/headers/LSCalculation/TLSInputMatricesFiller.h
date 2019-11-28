@@ -118,7 +118,7 @@ private:
 		void  addDVERContribution(const std::list<TDVER>& dverMeas, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ECHO measurement. 
-		void addECHOContributions(const TECHOROM& echoRom, TLSInputMatrices*  matrices);
+		void addECHOContributions(TECHOROM& echoRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ECVE measurement. 
 		void addECVEContributions(const TECVEROM& ecveRom, TLSInputMatrices*  matrices);

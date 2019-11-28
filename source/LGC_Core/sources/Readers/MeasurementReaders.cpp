@@ -970,7 +970,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
 		instr.ppmD = TLength(opts.getParamRmm2m("PPM", instr.ppmD));
-		instr.sigmaInstrCentering = TLength(opts.getParamR("ICSE ", instr.sigmaInstrCentering));
+		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
 		
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
