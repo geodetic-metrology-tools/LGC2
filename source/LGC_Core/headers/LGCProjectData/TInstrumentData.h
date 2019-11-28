@@ -143,6 +143,7 @@ class TInstrumentData {
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable;
+				TLength sigmaCombined;		   // [m]
             };
 
             TEDM() = default;

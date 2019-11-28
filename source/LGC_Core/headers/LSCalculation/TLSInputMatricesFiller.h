@@ -112,7 +112,7 @@ private:
 		void  addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the DSPT measurement (spatial measurement done be electronic distance meter) 
-		void  addDSPTContribution(const std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices);
+		void  addDSPTContribution(std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the DVER measurement. 
 		void  addDVERContribution(const std::list<TDVER>& dverMeas, TLSInputMatrices*  matrices);

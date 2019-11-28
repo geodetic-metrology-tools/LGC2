@@ -935,7 +935,7 @@ void TLSInputMatricesFiller::addECSPContributions(const TECSPROM& ecspRom, TLSIn
 	}
 }
 
-void  TLSInputMatricesFiller::addDSPTContribution(const std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -946,6 +946,9 @@ void  TLSInputMatricesFiller::addDSPTContribution(const std::list<TDSPT>& dsptMe
 		obsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getDSPTContrib(edmST, *meas); //Get the observation contribution
+
+		// Update the sigma 
+		meas->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions into a first design matrix
 		if (!edmST.instrumentPos->isFixed())
