@@ -94,6 +94,9 @@ class TInstrumentData {
                 TReal sigmaY;	               // [] unitless
                 TLength sigmaDist;	         // [m]
                 TLength sigmaTargetCentering; // [m]
+				TLength sigmaCombinedX;		   // [m]
+				TLength sigmaCombinedY;		   // [m]
+				TLength sigmaCombinedDist;		   // [m]
             };
 
             TCAMD() = default;

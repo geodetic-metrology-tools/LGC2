@@ -104,9 +104,9 @@ private:
 		void  addECDIRContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add CAMERA UVEC observation
-		void addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices);
+		void addUVECContribution(TCAM& camera, TLSInputMatrices*  matrices);
 		/// Add CAMERA UVD observation
-		void addUVDContribution(const TCAM& camera, TLSInputMatrices*  matrices);
+		void addUVDContribution(TCAM& camera, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the Levelling station, contatining a DLEV and dlev's DHOR measurements.
 		void  addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices);

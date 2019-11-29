@@ -1314,7 +1314,7 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 	}
 }
 
-void TLSInputMatricesFiller::addUVDContribution(const TCAM& camera, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addUVDContribution(TCAM& camera, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
@@ -1325,6 +1325,11 @@ void TLSInputMatricesFiller::addUVDContribution(const TCAM& camera, TLSInputMatr
 		firstObsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getUVDContrib(camera, *meas);
+
+		// Update the sigma 
+		meas->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));
+		meas->target.sigmaCombinedY = TLength(sqrt(contributions.fObsVariance[1]));
+		meas->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance[2]));
 
 		const LGCAdjustablePoint& cameraPos = *camera.instrumentPos;
 		const LGCAdjustablePoint& targetPos = *meas->targetPos;
@@ -1389,7 +1394,7 @@ void TLSInputMatricesFiller::addUVDContribution(const TCAM& camera, TLSInputMatr
 	}
 }
 
-void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addUVECContribution(TCAM& camera, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
@@ -1400,6 +1405,9 @@ void TLSInputMatricesFiller::addUVECContribution(const TCAM& camera, TLSInputMat
 		firstObsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getUVECContrib(camera, *meas);
+
+		meas->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));
+		meas->target.sigmaCombinedY = TLength(sqrt(contributions.fObsVariance[1]));
 
 		const LGCAdjustablePoint& cameraPos = *camera.instrumentPos;
 		const LGCAdjustablePoint& targetPos = *meas->targetPos;
