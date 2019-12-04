@@ -38,6 +38,11 @@ class TInstrumentData {
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
+				TLength sigmaCombinedMetre;		   // [m]
+				TAngle sigmaCombinedRad;		   // [rad]
+				TAngle sigmaCombinedPLRAngl;		   // [rad]
+				TAngle sigmaCombinedPLRZenD;		   // [rad]
+				TLength sigmaCombinedPLRDist;		   // [m]
             };
 
             TPOLAR() = default;

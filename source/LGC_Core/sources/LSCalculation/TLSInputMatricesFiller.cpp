@@ -152,7 +152,7 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - fill of models with 1 equation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -163,7 +163,10 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& dis
 		obsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getSpatialDistanceContrib(station, *meas); //Get the observation contribution
-
+		
+		// Update the sigma 
+		meas->target.sigmaCombinedMetre = TLength(sqrt(contributions.fObsVariance));
+		
 		// Add station's contributions into a first design matrix
 		if(!station->instrumentPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
@@ -210,7 +213,7 @@ void TLSInputMatricesFiller::addSpaDistContributions(const std::list<TLINE>& dis
 	}
 }
 
-void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -221,8 +224,11 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(const std::list<TLINE>
 		obsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getSpatialDistanceContribInFrame(station, *meas); //Get the observation contribution
-
-																					// Add station's contributions into a first design matrix
+				
+		// Update the sigma 
+		meas->target.sigmaCombinedMetre = TLength(sqrt(contributions.fObsVariance));
+		
+		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
 
@@ -270,6 +276,9 @@ void  TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM
 		obsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getHorAnglContrib(station, rom, *meas); //Get the observation contribution
+
+		// Update the sigma 
+		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
 
 		// Add station contributions 
 		if(!station->instrumentPos->isFixed())
@@ -331,6 +340,9 @@ void  TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN:
 
 		contributions = fCGenerator.getHorAnglContribInFrame(station, rom, *meas); //Get the observation contribution
 
+		// Update the sigma 
+		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+
 																				 // Add station contributions 
 		if (!station->instrumentPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
@@ -363,7 +375,7 @@ void  TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN:
 	}
 }
 
-void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 	bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -374,6 +386,9 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& ze
 		obsIdx = meas->getFirstObservationIndex();
 
 		AnglMeasContrib contributions = fCGenerator.getZenDistContrib(station, *meas); //Get the observation contribution
+
+		// Update the sigma 
+		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
 
 		// Add station contributions
 		if(!station->instrumentPos->isFixed())
@@ -418,7 +433,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(const std::list<TZEND>& ze
 	}
 }
 
-void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
+void  TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices) {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -430,7 +445,10 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND
 
 		AnglMeasContribFrame contributions = fCGenerator.getZenDistContribInFrame(station, *meas); //Get the observation contribution
 
-																								 // Add station contributions
+		// Update the sigma 
+		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+		
+		// Add station contributions
 		if (!station->instrumentPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
 
@@ -463,7 +481,7 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(const std::list<TZEND
 	}
 }
 
-void  TLSInputMatricesFiller::addHorDistContributions(const std::list<TLINE>& dhorMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addHorDistContributions(std::list<TLINE>& dhorMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices){
 bool isProcessOK = true; 
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -474,6 +492,9 @@ bool isProcessOK = true;
 		obsIdx = meas->getFirstObservationIndex();
 
 		contributions = fCGenerator.getHorDistContrib(station, *meas); //Get the observation contribution
+		
+		// Update the sigma 
+		meas->target.sigmaCombinedMetre = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station contributions into a first design matrix
 		if(!station->instrumentPos->isFixed())
@@ -528,6 +549,9 @@ void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> r
 		obsIdx = meas.getFirstObservationIndex();
 		
 		contributions = fCGenerator.getECTHContrib(station, rom, meas); //Get the observation contribution
+		
+		// Update the sigma 
+		meas.target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
@@ -582,6 +606,9 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 		obsIdx = meas.getFirstObservationIndex();
 
 		contributions = fCGenerator.getECDIRContrib(station, rom, meas); //Get the observation contribution
+
+		// Update the sigma 
+		meas.target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
@@ -726,7 +753,7 @@ void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLS
 	}
 }
 
-void  TLSInputMatricesFiller::addORIEContributions(const TORIEROM& orieROM, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addORIEContributions(TORIEROM& orieROM, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -737,6 +764,9 @@ void  TLSInputMatricesFiller::addORIEContributions(const TORIEROM& orieROM, TLSI
 		obsIdx = meas.getFirstObservationIndex();
 
 		contributions = fCGenerator.getOrieContrib(orieROM, meas); //Get the observation contribution
+
+		// Update the sigma 
+		meas.target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
 
 		// Add station contributions 
 		if (!orieROM.instrumentPos->isFixed())
@@ -1215,6 +1245,11 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 		firstObsIdx = meas->getFirstObservationIndex();
 		//Get the observation contribution
 		contributions = fCGenerator.getPolar3DContrib(station, rom, *meas);
+
+		// Update the sigma 
+		meas->target.sigmaCombinedPLRAngl = TAngle(sqrt(contributions.fObsVariance[0]));
+		meas->target.sigmaCombinedPLRZenD = TAngle(sqrt(contributions.fObsVariance[1]));
+		meas->target.sigmaCombinedPLRDist = TLength(sqrt(contributions.fObsVariance[2]));
 
 		const LGCAdjustablePoint& stationPos = *station->instrumentPos;
 		const LGCAdjustablePoint& targetPos = *meas->targetPos;

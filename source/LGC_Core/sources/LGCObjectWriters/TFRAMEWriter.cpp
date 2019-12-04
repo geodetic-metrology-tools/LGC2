@@ -1289,6 +1289,25 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 		}
 	}
 
+	//ECTH
+	bool isECDIR = false;
+	for (auto& itTSTN : tmeas.fTSTN)
+	{
+		for (auto const ItRoms : itTSTN->roms)
+		{
+			if (ItRoms->measECDIR.size()>0){
+				if (isECDIR == false)
+				{
+					(*stream) << endl << "ECDIR observations" << endl;
+					tstnWriter.writeECTHReliabilityHeader();
+					isECDIR = true;
+				}
+				tstnWriter.writeECDIRReliabilityData(itTSTN, fProjectData->getStatistics(), ItRoms->measECDIR);
+			}
+		}
+	}
+
+
 	//DHOR
 	bool isDHOR = false;
 	for(auto& itTSTN:tmeas.fTSTN)

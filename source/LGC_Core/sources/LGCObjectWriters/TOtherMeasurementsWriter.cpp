@@ -268,8 +268,8 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 		(*stream).writeDouble(obsWidth, anglePrecision, ItORIE.getAngle().getGonsValue());
 
 		//write the sigma ORIE
-		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
-
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaCombinedRad.getSignedCCValue());
+		
 		//write the estimated ORIE
 		TReal value = ItORIE.getAngle().getGonsValue() + ItORIE.getAngleResidual().getGonsValue();
 		(*stream).writeDouble(obsWidth, anglePrecision, (value >400.0 ? value - 400 : value));
@@ -278,7 +278,7 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
 
 		//write the resi/sigma
-		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue() / ItORIE.target.sigmaAngl.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue() / ItORIE.target.sigmaCombinedRad.getSignedCCValue());
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -493,7 +493,7 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::list<TORIE>& fOR
 		//get the observed ORIE
 		(*stream).writeDouble(obsWidth, anglePrecision, ItORIE.getAngle().getGonsValue());
 		//write the sigma ORIE
-		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaCombinedRad.getSignedCCValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue());
 

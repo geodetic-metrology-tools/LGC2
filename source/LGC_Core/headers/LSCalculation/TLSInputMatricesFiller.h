@@ -83,19 +83,19 @@ private:
 		void addPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the spatial dist. observations 
-		void  addSpaDistContributions(const std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
-		void  addSpaDistContributionsFrame(const std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addSpaDistContributions(std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addSpaDistContributionsFrame(std::list<TLINE>& distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the hor. angle observations 
 		void  addHorAngContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 		void  addHorAngContributionsFrame(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the zenithal angle observations 
-		void  addZenDistContributions(const std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
-		void  addZenDistContributionsFrame(const std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addZenDistContributions(std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addZenDistContributionsFrame(std::list<TZEND>& zendMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the hor. dist. observations 
-		void  addHorDistContributions(const std::list<TLINE>& dhorMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
+		void  addHorDistContributions(std::list<TLINE>& dhorMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ecth observations 
 		void  addECTHContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices*  matrices);
@@ -127,7 +127,7 @@ private:
 		void  addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ORIE measurement. 
-		void addORIEContributions(const TORIEROM& orieRom, TLSInputMatrices*  matrices);
+		void addORIEContributions(TORIEROM& orieRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the PDOR measurement. 
 		void addPDORContributions(const TPdorObs& pdorObs, TLSInputMatrices*  matrices);
