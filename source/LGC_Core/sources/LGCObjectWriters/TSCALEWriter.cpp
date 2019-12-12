@@ -172,7 +172,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECVE.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaCombined.getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECVE.getDistance() + ItECVE.getDistanceResidual());//Output value in meters [m], stored in [m]
@@ -181,7 +181,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.getDistanceResidual().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.getDistanceResidual() / ItECVE.target.sigmaD);//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.getDistanceResidual().getMetresValue() / ItECVE.target.sigmaCombined.getMetresValue());//Output value in meters [m], stored in [m]
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECVE.target.ID);
@@ -238,7 +238,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 			(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
 
 			//write the sigma
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaCombined.getMMetresValue());
 
 			//write the estimated offset
 			(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
@@ -247,7 +247,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
 
 			//write the offset / sigma (TDouble (MM))
-			(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaD));
+			(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual().getMetresValue() / ItECSP.target.sigmaCombined.getMetresValue()));
 			(*stream) << endl;
 
 		}
@@ -408,7 +408,7 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcve.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.target.sigmaCombined.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.getDistanceResidual().getMMetresValue());
 
@@ -441,7 +441,7 @@ void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCS
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcsp.getDistance());
 		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaCombined.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 

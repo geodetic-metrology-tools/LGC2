@@ -109,7 +109,7 @@ private:
 		void addUVDContribution(TCAM& camera, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the Levelling station, contatining a DLEV and dlev's DHOR measurements.
-		void  addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices);
+		void  addLevelStContributions(TLEVEL& levelSt, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the DSPT measurement (spatial measurement done be electronic distance meter) 
 		void  addDSPTContribution(std::list<TDSPT>& dsptMeas, const TEDM& edmST, TLSInputMatrices*  matrices);
@@ -121,10 +121,10 @@ private:
 		void addECHOContributions(TECHOROM& echoRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ECVE measurement. 
-		void addECVEContributions(const TECVEROM& ecveRom, TLSInputMatrices*  matrices);
+		void addECVEContributions( TECVEROM& ecveRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ecth observations 
-		void  addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices);
+		void  addECSPContributions( TECSPROM& ecspRom, TLSInputMatrices*  matrices);
 
 		/// Add the design matrices contributions for the ORIE measurement. 
 		void addORIEContributions(TORIEROM& orieRom, TLSInputMatrices*  matrices);

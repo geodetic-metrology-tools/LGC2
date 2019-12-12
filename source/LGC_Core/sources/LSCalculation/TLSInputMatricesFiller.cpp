@@ -653,7 +653,7 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 }
 
 
-void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addLevelStContributions(TLEVEL& levelSt, TLSInputMatrices*  matrices){
 	DLEVContrib contributions;
 	HorDistContribLEVEL contributionsDHOR;
 
@@ -663,6 +663,9 @@ void  TLSInputMatricesFiller::addLevelStContributions(const TLEVEL& levelSt, TLS
 		MatrixIndex obsIdx = itDLEV->getFirstObservationIndex();
 
 		contributions = fCGenerator.getDLEVContrib(levelSt,*itDLEV); //Get the observation contribution
+
+		// Update the sigma 
+		itDLEV->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
 
 		// Add staff's contributions
 		if(!itDLEV->targetPos->isFixed())
@@ -858,7 +861,7 @@ void  TLSInputMatricesFiller::addECHOContributions(TECHOROM& echoROM, TLSInputMa
 	}
 }
 
-void  TLSInputMatricesFiller::addECVEContributions(const TECVEROM& ecveROM, TLSInputMatrices*  matrices){
+void  TLSInputMatricesFiller::addECVEContributions(TECVEROM& ecveROM, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	ScaleMeasContrib contributions;
 	for (auto itECVE(ecveROM.measECVE.begin()); itECVE != ecveROM.measECVE.end(); ++itECVE){
@@ -867,6 +870,8 @@ void  TLSInputMatricesFiller::addECVEContributions(const TECVEROM& ecveROM, TLSI
 
 		contributions = fCGenerator.getECVEContrib(ecveROM, *itECVE); //Get the observation contribution
 
+		// Update the sigma 
+		itECVE->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
 		
 		// Add point on the line contributions
 		if (!ecveROM.fMeasuredLine->getLinePoint()->isFixed())
@@ -907,7 +912,7 @@ void  TLSInputMatricesFiller::addECVEContributions(const TECVEROM& ecveROM, TLSI
 	}
 }
 
-void TLSInputMatricesFiller::addECSPContributions(const TECSPROM& ecspRom, TLSInputMatrices*  matrices){
+void TLSInputMatricesFiller::addECSPContributions(TECSPROM& ecspRom, TLSInputMatrices*  matrices){
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
@@ -919,6 +924,9 @@ void TLSInputMatricesFiller::addECSPContributions(const TECSPROM& ecspRom, TLSIn
 
 		contributions = fCGenerator.getECSPContrib(ecspRom, itECSP); //Get the observation contribution
 
+		// Update the sigma 
+		itECSP.target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		
 		// Add point on the line contributions
 		if (!ecspRom.p1->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*ecspRom.p1, contributions.fPointLineContrib1, eqIdx, matrices);

@@ -206,6 +206,7 @@ class TInstrumentData {
                 TLength sigmaDCorr;           // [m]
                 TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
                 TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
+				TLength sigmaCombined;
             };
 
             TLEVEL() = default;
