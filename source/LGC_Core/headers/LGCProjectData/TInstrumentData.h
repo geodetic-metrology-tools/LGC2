@@ -261,6 +261,14 @@ class TInstrumentData {
          TLength sigmaInstrCentering;  // [m]
 		 TLength sigmaCombined;		   // [m]
 		};
+
+		struct TINCL {
+			std::string ID;
+			TAngle sigmaAngl;	          // [rad]
+			TAngle AngleCorrectionValue;  // [rad]
+			TAngle sigmaCorrectionValue;  // [rad]
+			TAngle sigmaCombined;		  // [rad]
+		};
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
@@ -272,6 +280,8 @@ class TInstrumentData {
         std::map<std::string, std::shared_ptr<TLEVEL>> fLEVEL;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
+		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
+		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.

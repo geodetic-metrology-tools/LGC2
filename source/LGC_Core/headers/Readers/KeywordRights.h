@@ -49,6 +49,7 @@ namespace {
 #define ORIE "ORIE"
 #define RADI "RADI"
 #define OBSXYZ "OBSXYZ"
+#define INCLY   "INCLY"
 	//points
 #define CALA "CALA"
 #define POIN "POIN"
@@ -63,6 +64,7 @@ namespace {
 #define EDM "EDM"
 #define LEVEL "LEVEL"
 #define SCALE "SCALE"
+#define INCL "INCL"
 	//referential
 #define OLOC "OLOC"
 #define RS2K "RS2K"
@@ -120,6 +122,7 @@ namespace {
 	const int nb_allowed_orie = 13;
 	const int nb_allowed_radi = 13;
 	const int nb_allowed_OBSXYZ = 14;
+	const int nb_allowed_incly = 14;
 	//points
 	const int nb_allowed_cala = 19;
 	const int nb_allowed_poin = 19;
@@ -129,11 +132,12 @@ namespace {
 	const int nb_allowed_vyz = 19;
 	const int nb_allowed_vz = 19;
 	//instruments
-	const int nb_allowed_polar = 24;
-	const int nb_allowed_camd = 24;
-	const int nb_allowed_edm = 24;
-	const int nb_allowed_level = 24;
-	const int nb_allowed_scale = 24;
+	const int nb_allowed_polar = 25;
+	const int nb_allowed_camd = 25;
+	const int nb_allowed_edm = 25;
+	const int nb_allowed_level = 25;
+	const int nb_allowed_scale = 25;
+	const int nb_allowed_incl = 25;
 	//referentials
 	const int nb_allowed_oloc = 24;
 	const int nb_allowed_rs2k = 24;
@@ -158,8 +162,8 @@ namespace {
 	const int nb_allowed_chaba = 28;
 
 	//header
-	const int nb_allowed_instr = 13; // instruments + points +frame
-	const int nb_allowed_frame = 8;
+	const int nb_allowed_instr = 14; // instruments + points +frame
+	const int nb_allowed_frame = 9;
 	const int nb_allowed_ef = 20;
 	const int nb_allowed_end = 0;
 	const int nb_allowed_titr = 4;
@@ -239,6 +243,7 @@ namespace {
 	const char* allowed_ORIE[nb_allowed_orie] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END };
 	const char* allowed_RADI[nb_allowed_radi] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END };
 	const char* allowed_OBSXYZ[nb_allowed_OBSXYZ] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, POIN };
+	const char* allowed_INCLY[nb_allowed_incly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, POIN };
 	//CALA & POIN & others point DEF
 	const char* allowed_CALA[nb_allowed_cala] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END };
 	const char* allowed_POIN[nb_allowed_poin] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END };
@@ -248,11 +253,12 @@ namespace {
 	const char* allowed_VZ[nb_allowed_vz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, FRAME, ENDFRAME, END };
 	const char* allowed_PDOR[nb_allowed_pdor] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END };
 	//Instruments
-	const char* allowed_POLAR[nb_allowed_polar] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
-	const char* allowed_CAMD[nb_allowed_camd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
-	const char* allowed_EDM[nb_allowed_edm] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
-	const char* allowed_LEVEL[nb_allowed_level] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
-	const char* allowed_SCALE[nb_allowed_scale] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, FRAME };
+	const char* allowed_POLAR[nb_allowed_polar] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME };
+	const char* allowed_CAMD[nb_allowed_camd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME };
+	const char* allowed_EDM[nb_allowed_edm] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME };
+	const char* allowed_LEVEL[nb_allowed_level] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME };
+	const char* allowed_SCALE[nb_allowed_scale] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME };
+	const char* allowed_INCL[nb_allowed_incl] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME };
 	// Reference systems
 	const char* allowed_OLOC[nb_allowed_oloc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
 	const char* allowed_RS2K[nb_allowed_rs2k] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
@@ -276,8 +282,8 @@ namespace {
 	const char* allowed_COVAR[nb_allowed_covar] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, LIBR, SIMU, CHABA };
 	const char* allowed_CHABA[nb_allowed_chaba] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, LIBR, SIMU, COVAR };
 	// Others
-	const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ };
-	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN };
+	const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL };
+	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN, INCLY };
 	const char* allowed_ENDFRAME[nb_allowed_ef] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, OBSXYZ };
 	const char* allowed_END[1] = {};
 	const char* allowed_TITR[nb_allowed_titr] = { OLOC, RS2K, LEP, SPHE };

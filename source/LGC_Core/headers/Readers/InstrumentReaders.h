@@ -175,6 +175,25 @@ class TKeySCALE : public TAInstrumentKey {
 	private:
 		TKeySCALE& operator=(const TKeySCALE&);
 };
+
+class TKeyINCL : public TAInstrumentKey {
+public:
+	/*!
+		See \ref TAInstrumentKey::TAInstrumentKey
+	*/
+	TKeyINCL(TLGCData& project, int nb_allowed_keywords = nb_allowed_incl, const char** keywords = allowed_INCL);
+
+	/*!
+		See \ref TKeyINSTR::parse
+	*/
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
+
+	virtual const std::vector<std::string>& parentKeys() const;
+
+private:
+	TKeyINCL& operator=(const TKeyINCL&);
+};
+
 /*! @} End of Doxygen Groups*/
 
 #endif

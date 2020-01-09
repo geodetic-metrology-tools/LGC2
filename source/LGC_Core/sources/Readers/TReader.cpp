@@ -117,7 +117,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyEDM(project)));
 	finterpreters.emplace_back(UPK(new TKeyLEVEL(project)));
 	finterpreters.emplace_back(UPK(new TKeySCALE(project)));
-
+	finterpreters.emplace_back(UPK(new TKeyINCL(project)));
 
 	// Observations Section	
 	/*TSTN*/
