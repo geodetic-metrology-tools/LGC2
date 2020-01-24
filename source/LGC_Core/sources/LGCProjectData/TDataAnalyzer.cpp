@@ -900,6 +900,15 @@ void TDataAnalyzer::assignEOIndices(){
             fData.fUEOIndices.OIndex += 3;
             fData.addToMeasurementNum(TMeasurementsGlobal::kOBSXYZ);
         }
+
+		// INCLY
+		for (auto& inclyrom : measurements.fINCLY)
+			for (auto& incly : inclyrom.measINCLY) {
+				// set indices of LS matrices, ECHO introduces 1 equation and 1 observation
+				incly.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+				incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
+			}
     }
 }
 

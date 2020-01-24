@@ -153,3 +153,22 @@ fXSigmaObsVal(sigX), fYSigmaObsVal(sigY), fZSigmaObsVal(sigZ),
 positionInTree(itTree),
 TAMeas<int>(point, 0)
 {}
+
+/////////////////////////////////////////////////////////////
+////////Inclinometer measurements
+/////////////////////////////////////////////////////////////
+//TINCLY::TINCLY(const LGCAdjustablePoint& station, TInstrumentData::TINCL instr, TAngle v, TDataTreeIterator itTree) :
+//	TAScalarMeas<TInstrumentData::TINCL>(station, instr),
+//	initialValue(v),
+//	fSigmaObsVal(NO_VALf),
+//	fAngleCorrection(0),
+//	fSigmaAngleCorrection(0),
+//	fResidual(NO_VALf), 
+//	positionInTree(itTree)
+//{}
+
+//TINCLY::TINCLY(const LGCAdjustablePoint& stationedPoint, TInstrumentData::TINCL Instr, TAngle obsAngle) :
+//	TAScalarMeas<TInstrumentData::TINCL>(stationedPoint, Instr),
+//	initialValue(obsAngle)
+//{
+//}

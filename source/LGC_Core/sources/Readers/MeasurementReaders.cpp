@@ -1288,3 +1288,56 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 			
 	}
 }
+
+//void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+//{
+//
+//	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+//	if (firstline) {
+//		if (tokens.size() < 3)
+//			throw std::runtime_error("ECHO measurement must have at least 1 entry, the INCL instrument ID");
+//
+//		TINCLYROM inclyRom(nullptr);
+//		inclyRom.line = line;
+//		inclyRom.setActive(activeLine);
+//
+//		proj.getCurrentNode().measurements.fINCLY.emplace_back(inclyRom); //add new round of measurement
+//
+//		//The INCL instrument is only the default one used, it is not stored in TINCLYROM because it is specific for each observation
+//		currentTargetApplied = finstruments.getDevice(finstruments.fINCL, tokens.at(2)).ID;
+//	}
+//	else {
+//		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+//		if (!hasAllParams && !proj.getConfig().sim.isActive())
+//			throw std::runtime_error("INCLY measurement must have at least 2 entries: stationed point ID and observed horizontal offset");
+//
+//		/*This is a position of station point from which the plane is measured in the INCL class it has a 'target' name, since the abstract class is used. Bit confusing to be improved. */
+//		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+//
+//		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+//		currentTargetApplied = opts.getParamS("INCL", currentTargetApplied); //If INCL is used then change ID of CurrentTargetApplied for the following measurements.
+//
+//		TInstrumentData::TINCL instr = finstruments.getDevice(finstruments.fINCL, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+//
+//		instr.sigmaAngl = TAngle(opts.getParamRmm2m("OBSE", instr.sigmaAngl));
+//		instr.AngleCorrectionValue = TAngle(opts.getParamRmm2m("ACORR", instr.AngleCorrectionValue));
+//		instr.sigmaCorrectionValue = TAngle(opts.getParamRmm2m("SACORR", instr.sigmaCorrectionValue));
+//
+//		// Store  the measured value
+//		TINCLY incly(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
+//
+//		TINCLYROM& inclyROMLatest = proj.getCurrentNode().measurements.fINCLY.back();
+//
+//		incly.line = line;
+//		incly.setActive(inclyROMLatest.isActive() && activeLine); // Active only if ROM active as well
+//
+//		inclyROMLatest.measINCLY.emplace_back(incly);
+//
+//
+//		//NODUP used
+//		if (proj.getConfig().nodup.isActive())
+//			for (auto& point : inclyROMLatest.measECHO)
+//				if (stationPoint.getName() == point.targetPos->getName())
+//					throw std::runtime_error("An INCLY measurement is duplicated");
+//	}
+//}

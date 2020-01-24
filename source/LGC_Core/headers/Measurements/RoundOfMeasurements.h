@@ -12,6 +12,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustableLine.h>
 #include "TLGCObsSummary.h"
+#include "TLGCObsSummary.h"
 
 
 /*!
@@ -197,5 +198,43 @@ struct TORIEROM : public TStatusObject {
         static int romCounter_;
 
         TLGCObsSummary orieSummary_;
+};
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of INCLY (TINCLY) measurements made from a single position of the instrument.
+*/
+struct TINCLYROM : public TStatusObject {
+
+	/// All INCLY measurements
+	std::list<TINCLY> measINCLY;
+
+	/// The position of the instrument
+	const LGCAdjustablePoint* instrumentPos;
+
+	/// The instrument that is used on this station
+	TInstrumentData::TINCL     instrument;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getINCLYObsSummary() const;
+
+	TAngle fConstantAngle;
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TINCLYROM(const LGCAdjustablePoint& pos, const TInstrumentData::TINCL& instrument) :
+		instrumentPos(&pos),
+		instrument(instrument),
+		fConstantAngle(0.0, TAngle::EUnits::kGons)
+	{
+	}
+
+private:
+
+	static int romCounter_;
+
+	TLGCObsSummary inclySummary_;
 };
 #endif

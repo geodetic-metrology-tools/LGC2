@@ -4,6 +4,7 @@ int TECHOROM::romCounter_ = 0;
 int TECSPROM::romCounter_ = 0;
 int TECVEROM::romCounter_ = 0;
 int TORIEROM::romCounter_ = 0;
+int TINCLYROM::romCounter_ = 0;
 
 void TECHOROM::initialiseObsSummaries() {
     // First clear the old contents away
@@ -57,6 +58,19 @@ void TORIEROM::initialiseObsSummaries() {
     }
 }
 
+void TINCLYROM::initialiseObsSummaries() {
+	// First clear the old contents away
+	inclySummary_.clear();
+
+	// Add the residuals of each measurement and initialise the obsSummaries:
+	if (measINCLY.size() != 0) {
+		for (auto const& ItINCLY : measINCLY)
+			inclySummary_.addNewResidual(ItINCLY.getAngleResidual().getSignedCCValue());
+
+		inclySummary_.initialise();
+	}
+}
+
 const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
 
 const TLGCObsSummary&  TECSPROM::getECSPObsSummary() const { return ecspSummary_; }
@@ -65,3 +79,4 @@ const TLGCObsSummary&  TECVEROM::getECVEObsSummary() const { return ecveSummary_
 
 const TLGCObsSummary&  TORIEROM::getORIEObsSummary() const { return orieSummary_; }
 
+const TLGCObsSummary& TINCLYROM::getINCLYObsSummary() const { return inclySummary_; }
