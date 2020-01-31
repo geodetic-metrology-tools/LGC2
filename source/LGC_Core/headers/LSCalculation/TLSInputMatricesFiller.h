@@ -24,6 +24,7 @@ class TRADI;
 struct TECHOROM;
 struct TECVEROM;
 struct TORIEROM;
+struct INCLYROM;
 
 /*! 
 	\ingroup LSCalculation
@@ -137,7 +138,10 @@ private:
 
 		/// Add the design matrices contributions for the OBSXYZ measurement. 
 		void addOBSXYZContributions(const std::list<TOBSXYZ>& OBSXYZMeas, TLSInputMatrices*  matrices);
-	//@}
+
+		/// Add the design matrices contributions for the OBSXYZ measurement. 
+		void addINCLYContributions(TINCLYROM& inclyROM, TLSInputMatrices* matrices);
+		//@}
 
 
 	/*!@name Supporting methods*/

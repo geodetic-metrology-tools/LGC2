@@ -209,11 +209,11 @@ struct TINCLYROM : public TStatusObject {
 	/// All INCLY measurements
 	std::list<TINCLY> measINCLY;
 
-	/// The position of the instrument
-	const LGCAdjustablePoint* instrumentPos;
-
 	/// The instrument that is used on this station
 	TInstrumentData::TINCL     instrument;
+
+	/// Line of the measurement definition
+	int  line;
 
 	/// Initialise observation summaries
 	void initialiseObsSummaries();
@@ -224,10 +224,10 @@ struct TINCLYROM : public TStatusObject {
 	TAngle fConstantAngle;
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TINCLYROM(const LGCAdjustablePoint& pos, const TInstrumentData::TINCL& instrument) :
-		instrumentPos(&pos),
+	TINCLYROM(const TInstrumentData::TINCL& instrument) :
 		instrument(instrument),
-		fConstantAngle(0.0, TAngle::EUnits::kGons)
+		fConstantAngle(0.0, TAngle::EUnits::kGons),
+		line(NO_VALi)
 	{
 	}
 

@@ -161,7 +161,7 @@ TDerivativeTransformation TInverseTransformation::differentiatedTransformationAn
 	assert3D(angle);
 	Eigen::Matrix4d m;
 	m.setZero();
-
+	
 	TReal t1 = this->getTranslation(0);
 	TReal t2 = this->getTranslation(1);
 	TReal t3 = this->getTranslation(2);
@@ -216,7 +216,7 @@ TDerivativeTransformation TInverseTransformation::differentiatedTransformationAn
 			m(0,0) = -kappaSin*phiCos;
 			m(0,1) = -kappaSin*phiSin*omegaSin-kappaCos*omegaCos;
 			m(0,2) = -kappaSin*phiSin*omegaCos+kappaCos*omegaSin;
-			m(0,3) = -m(0,0)*t1 - m(0,1)*t2 - m(0,2)*t3;
+			m(0, 3) = -m(0, 0) * t1 - m(0, 1) * t2 - m(0, 2) * t3;
 			m(1,0) = kappaCos*phiCos;
 			m(1,1) = kappaCos*phiSin*omegaSin-kappaSin*omegaCos;
 			m(1,2) = kappaCos*phiSin*omegaCos+kappaSin*omegaSin;
@@ -228,8 +228,6 @@ TDerivativeTransformation TInverseTransformation::differentiatedTransformationAn
 	// set the new matrix to the derivative object
 	return TDerivativeTransformation(m);
 }
-
-
 
 TDerivativeTransformation TInverseTransformation::differentiatedTransformationTranslation(int ti) const{
 	assert3D(ti);

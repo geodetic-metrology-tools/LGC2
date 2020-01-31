@@ -22,6 +22,7 @@ struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
+struct TINCLYROM;
 
 
 /*!
@@ -125,6 +126,9 @@ public:
 
 		/// Returns the contribution for the OBSXYZ measurement
 		OBSXYZContrib  getOBSXYZContrib(const TOBSXYZ& obsxyz);
+
+		///  Returns the contribution for a roll measurement (TINCLY) made by INCL instrument
+		INCLYContrib	getINCLYContrib(const TINCLYROM& inclST, const TINCLY& incly);
 	//@}
 
 
@@ -153,7 +157,15 @@ private:
 	
 		///Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
 		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
-	//@}
+	
+		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
+		void addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
+
+		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
+		//void addRotationsContributionsINCL(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal a, TReal b, TReal c, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
+
+		
+		//@}
 
 };
 #endif 

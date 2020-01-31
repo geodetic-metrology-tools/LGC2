@@ -94,6 +94,10 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 			for (auto& itORIE:itTree.node->data->measurements.fORIE)
 				addORIEContributions(itORIE, matrices);
 
+			//In every node iterate through the INCLY measurements
+			for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
+				addINCLYContributions(itINCLY, matrices);
+
 			addDVERContribution(itTree.node->data->measurements.fDVER, matrices);
 
 			addRADIContributions(itTree.node->data->measurements.fRADI, matrices);
@@ -1236,6 +1240,49 @@ void  TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ>& o
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");
+	}
+}
+
+void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInputMatrices* matrices) {
+	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
+	INCLYContrib contributions;
+
+	for(auto itINCLY(inclyROM.measINCLY.begin()); itINCLY != inclyROM.measINCLY.end(); ++itINCLY) {
+		eqIdx = itINCLY->getFirstEquationIndex();
+		obsIdx = itINCLY->getFirstObservationIndex();
+
+		contributions = fCGenerator.getINCLYContrib(inclyROM, *itINCLY); //Get the observation contribution
+
+		// Update the sigma 
+		itINCLY->target.sigmaCombined = TAngle(sqrt(contributions.fObsVariance));
+
+		// Adding contributions for STATION transformation parameters 
+		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform) {
+			if (!itStTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
+		}
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (-itINCLY->getAngle() - contributions.fCalcMeas));
+
+		auto test = itINCLY->getAngle().getGonsValue();
+		auto teste = contributions.fCalcMeas.getGonsValue();
+		auto mis = test - teste;
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling Incly contribution, variance is zero or too small, can not set weight matrix element.");
+		else {
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of Incly measurement occurred.");
 	}
 }
 

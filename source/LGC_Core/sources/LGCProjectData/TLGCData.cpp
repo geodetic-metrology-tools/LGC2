@@ -168,6 +168,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kOBSXYZ:
 			fMeasInfo.fNumOBSXYZ++;
 			break;
+		case TMeasurementsGlobal::kINCLY:
+			fMeasInfo.fNumINCLY++;
+			break;
 	}
 }
 
@@ -210,6 +213,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumRADI;
 	case TMeasurementsGlobal::kOBSXYZ:
 		return fMeasInfo.fNumOBSXYZ;
+	case TMeasurementsGlobal::kINCLY:
+		return fMeasInfo.fNumINCLY;
 	default:
         return 0;
 	}
@@ -249,6 +254,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumPDOR = 0;
 	fMeasInfo.fNumRADI = 0;
 	fMeasInfo.fNumOBSXYZ = 0;
+	fMeasInfo.fNumINCLY = 0;
 }
 
 void TLGCData::reInitForSIMU(){
@@ -463,6 +469,7 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
                     meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
         }
 
+
         // EDM
         for(auto &edm : entry->measurements.fEDM){
 
@@ -618,6 +625,15 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
             obsxyz.positionInTree = tree_iter;
         }
 
+		// INCLY
+		for (auto& inclyrom : entry->measurements.fINCLY) {
+
+			// Measurements
+			for (auto& meas : inclyrom.measINCLY)
+				if (meas.targetPos)
+					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+		}
+
         // PDOR 
         auto &pdor = entry->measurements.fPDOR;
 
@@ -665,6 +681,13 @@ void TLGCData::copyInstruments(TLGCData const * const src, TLGCData* tgtData){
             // Replace the target in the memory
             tgt.second.reset(new TInstrumentData::TCAMD::TTarget(*tgt.second));
     }
+
+	for (auto& incl : tgtData->instruments.fINCL) {
+
+		// Replace the instrument in the memory
+		incl.second.reset(new TInstrumentData::TINCL(*incl.second));
+
+	}
 
     // EDM targets:
     for(auto &edm : tgtData->instruments.fEDM){

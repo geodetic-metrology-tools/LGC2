@@ -22,6 +22,7 @@ struct TECHOROM;
 struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
+struct TINCLYROM;
 /*!
 	\ingroup LSCalculation
 	\brief  Class responsible for extracting the results from the matrices and updating the appropriate member data of the 
@@ -155,6 +156,9 @@ private:
 
 		/// Sets the OBSXYZ measurement residual.
 		void extractOBSXYZObs(const TLSResultsMatrices& rm, std::list<TOBSXYZ>& obsxyz);
+
+		/// Sets the INCLY measurement residual.
+		void extractINCLYROMObs(const TLSResultsMatrices& rm, TINCLYROM& inclyMeas);
 	//@}
 
 

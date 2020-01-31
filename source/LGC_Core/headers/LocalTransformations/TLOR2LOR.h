@@ -57,6 +57,9 @@ class TLOR2LOR{
 		/// Transforms the point by this transformation
 		TPositionVector& transform(TPositionVector& p) const;
 		
+		/// Transforms the point by this transformation
+		TFreeVector& transform(TFreeVector& p) const;
+
 		/*!
 			\brief Partial derivatives with respect to x0 (x coordinate of the point in the original LOR (local object reference)) .
 
@@ -127,6 +130,17 @@ class TLOR2LOR{
 		TFreeVector partialDerivativesAngle (const std::string& transfoName, const TPositionVector& p, int angle) const;
 		
 		/*!
+		\brief Partial derivatives with respect to angles.
+
+		\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
+		\param[in] p Point which is transformed.
+		\param[in] angle Specification of the the angle (0 - omega (x-axis), 1 - phi (y-axis), 2 - kappa (z-axis)). With respect to this angle is returned partial derivative.
+
+		\returns Partial derivatives of the point 'p' with respect to the "angle".
+		*/
+		TFreeVector partialDerivativesAngleRotOnly(const std::string& transfoName, const TPositionVector& p, int angle) const;
+
+		/*!
 			\brief Partial derivatives with respect to translations.
 
 			\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
@@ -195,8 +209,12 @@ class TLOR2LOR{
 
 		/*! Returns the comulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
 		TTransformation getCumulativeBegin(int positionInChain)const;
+		/*! Returns the comulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
+		TTransformation getCumulativeBeginRotOnly(int positionInChain)const;
 		/*! Returns the comulative matrix which should multiply from right the matrix of partial derivatives (post-multiplication)*/
 		TTransformation getCumulativeEnd(int positionInChain)const;
+		/*! Returns the comulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
+		TTransformation getCumulativeEndRotOnly(int positionInChain)const;
 
 		/*! 
 			Returns a position of given transformation in the "transformationChain"
