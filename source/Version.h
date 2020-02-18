@@ -9,7 +9,7 @@
 
 #define LGC_VERSION_MAJOR "2"
 #define LGC_VERSION_MINOR "03"
-#define LGC_VERSION_PATCH "00"
+#define LGC_VERSION_PATCH "00-01-VERSION-SPECIALE-VRUDE"
 
 static std::string getLGCVersion(void) {
 	std::stringstream ss;

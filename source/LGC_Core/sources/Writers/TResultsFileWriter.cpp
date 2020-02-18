@@ -159,7 +159,8 @@ void    TResultsFileWriter::writeTitle()
     (*stream)<<"                          ***********        *****               *****           ***********                                     "<<endl<<endl<<endl<<endl;
  
     (*stream)<<"*********************************************************************************************************************************** "<<endl;
-    (*stream)<<endl;
+	(*stream) << "************* ATTENTION!! VERSION SPECIALE du 19 FEVRIER 2020 POUR VIVIEN RUDE, NE PAS UTILISER POUR D'AUTRES CALCULS ************* " << endl;
+	(*stream)<<endl;
  
     //write software id.
     (*stream)<<(TLGCApp::getProgId())<<endl;
