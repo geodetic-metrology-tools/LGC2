@@ -1435,9 +1435,11 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	TFreeVector localV(localVertical.getX().getMetresValue() - stationPos.getX().getMetresValue(), localVertical.getY().getMetresValue() - stationPos.getY().getMetresValue(), localVertical.getZ().getMetresValue() - stationPos.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
 
 	//Transform the local vertical in the station LOR
-	const TLOR2LOR& vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), incly.targetPos->getFrameTreePosition()); //Trafo from from CCS LOR to station's LOR
+	const TLOR2LOR& vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), inclST.positionInTree); //Trafo from from CCS LOR to station's LOR
 	vert2stTrafo.transform(localV);
-	
+
+	const TLOR2LOR& stLor2RootTrafoVect = fPointTransfo.getLORTransformation(inclST.positionInTree, fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
+
 	//Compute the calcMeas
 	TReal XSt = localV.getX().getMetresValue();
 	TReal ZSt = localV.getZ().getMetresValue();
@@ -1445,11 +1447,11 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 
 	//Adding the contributions by moving the YZ projected vertical vector in the root frame
 	TFreeVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
-	stLor2RootTrafo.transform(ProjLocalV);
+	stLor2RootTrafoVect.transform(ProjLocalV);
 
 	//TODO: Partial derivative for vectors TLOR2LOR::partialDerivativesAngle, in the meanitime it works with the transformation of the projected positions in the station to the roots
 	TPositionVector TestV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
-	stLor2RootTrafo.transform(TestV);
+	stLor2RootTrafoVect.transform(TestV);
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransfContributions;
 	addINCLContributions(vert2stTrafo, TestV, XSt, ZSt, TransfContributions);

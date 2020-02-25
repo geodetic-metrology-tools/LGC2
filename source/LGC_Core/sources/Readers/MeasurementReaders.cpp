@@ -1297,8 +1297,7 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		if (tokens.size() < 3)
 			throw std::runtime_error("INCLY measurement must have at least 1 entry, the INCL instrument ID");
 
-		TINCLYROM inclyRom(finstruments.getDevice(finstruments.fINCL, tokens.at(2)));
-
+		TINCLYROM inclyRom(finstruments.getDevice(finstruments.fINCL, tokens.at(2)), proj.getCurrentPosition());
 		inclyRom.line = line;
 		inclyRom.setActive(activeLine);
 
@@ -1334,7 +1333,7 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		if (proj.getConfig().nodup.isActive())
 			for (auto& point : inclyROMLatest.measINCLY)
 				if (stationPoint.getName() == point.targetPos->getName())
-					throw std::runtime_error("An ECHO measurement is duplicated");
+					throw std::runtime_error("An INCLY measurement is duplicated");
 		
 		incly.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
 

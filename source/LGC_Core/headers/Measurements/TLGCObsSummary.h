@@ -190,4 +190,12 @@ struct TOBSXYZObsSummary{
     TLGCObsSummary obsZObsSum;
 };
 
+/*!
+\ingroup Measurements
+\brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the INCL observation.
+*/
+struct TINCLObsSummary {
+	TLGCObsSummary anglObsSum;
+};
+
 #endif // SU_LGC_OBS_SUMMARY

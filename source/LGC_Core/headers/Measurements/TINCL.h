@@ -23,7 +23,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 struct TINCL : public TStatusObject {
 
 
-	/// All PLR3D measurements in this ROM
+	/// All INCLY measurements in this ROM
 	std::list<TINCLY> measINCLY;
 
 	//! Initialise the observation summaries
@@ -43,12 +43,17 @@ struct TINCL : public TStatusObject {
 	/// The point on which the instrument resides
 	const LGCAdjustablePoint* instrumentPos;
 
+	/// Line of the station definition
+	int  line;
+
 
 	int stnId{ stnCounter_++ };
 
 	// The station attribute is a copy of the parameter to override defaults
-	TINCL(const TInstrumentData::TINCL& instrument) :
-		instrument(instrument)
+	TINCL(const LGCAdjustablePoint& instrumentPos, const TInstrumentData::TINCL& instrument) :
+		instrument(instrument),
+		instrumentPos(&instrumentPos),
+		line(NO_VALi)
 	{}
 
 private:

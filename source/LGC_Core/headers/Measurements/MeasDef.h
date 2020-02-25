@@ -559,67 +559,6 @@ private:
 	\ingroup Measurements
 	\brief Angle measurement with respect to local vertical (INCLY) made by an inclinometer instrument (TInstrumentData::TINCL).
 */
-
-
-
-
-//class TINCLY : public TAScalarMeas<int, ENoValues, 0, ESingleValue, 1> {
-//public:
-
-	//Position of the point in the subframe (= observation)
-	//TAngle initialValue;
-	//TDataTreeIterator positionInTree;
-
-	/// Line in the input file where this measurement was defined
-	//int line;
-
-	//TINCLY(const LGCAdjustablePoint& pos, TInstrumentData::TSCALE instr, TAngle v) :
-		//TAScalarMeas<int, ENoValues, 0, ESingleValue, 1>(pos, instr,v) {}
-
-	//TINCLY(const LGCAdjustablePoint& pos, int tgt) :
-		//TAScalarMeas(pos, tgt) {}
-
-	//TECHO(const LGCAdjustablePoint& pos, TInstrumentData::TSCALE instr, TLength v) :
-		//TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
-	//TINCLY(const LGCAdjustablePoint& station, TInstrumentData::TINCL instr, TAngle v, TDataTreeIterator itTree);
-
-	/*!@name Access methods*/
-//@{
-	//inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
-//	/// Returns standard deviation of the observed value
-//	inline TAngle getObservedStDev() const { return fSigmaObsVal; }
-//
-//	/// Returns the observed value.
-//	inline TAngle getAngleCorrection() const { return fAngleCorrection; }
-//	inline TAngle getSigmaAngleCorrection() const { return fSigmaAngleCorrection; }
-//
-//	/// Returns standard deviation of the observed value
-//	inline TAngle getResidual() const { return fResidual; }
-//
-//	//@}
-//
-//
-//	/*!@name Settings */
-//	//@{
-//	/// Sets standard deviation of the observed value
-//	inline void setObservedStDev(TAngle stDev) { fSigmaObsVal = stDev; }
-//
-//	inline void setAngleCorrection(TAngle aCorr) { fAngleCorrection = aCorr; }
-//	inline void setSigmaAngleCorrection(TAngle sACorr) { fSigmaAngleCorrection = sACorr; }
-//
-//	inline void setResidual(TAngle res) { fResidual = res; }
-//	//@}
-//
-//private:
-//
-//	TAngle fResidual;
-//	TAngle fSigmaObsVal;
-//	TAngle fAngleCorrection;
-//	TAngle fSigmaAngleCorrection;
-//};
-
-
 class TINCLY : public TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0,
 	ESingleValue, 1>
 {

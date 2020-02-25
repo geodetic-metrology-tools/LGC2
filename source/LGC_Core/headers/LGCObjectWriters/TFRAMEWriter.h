@@ -71,6 +71,8 @@ private:
 		void writeLEVELReliability(TDataTreeIterator frameIt);
 		/// Write SCALE reliability
 		void writeSCALEReliability(TDataTreeIterator frameIt);
+		/// Write INCL reliability
+		void writeINCLReliability(TDataTreeIterator frameIt);
 
 		///Writes specific point
 		void writeResultsPtsData(AdjPointIter pt, bool isLocal);

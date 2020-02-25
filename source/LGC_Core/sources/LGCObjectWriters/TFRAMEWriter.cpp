@@ -13,6 +13,7 @@
 #include "TAStreamFormatter.h"
 #include "TSpatialStatus.h"
 #include <TPointTransformer.h>
+#include "TINCLWriter.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //CONSTRUCTOR / DESTRUCTOR
@@ -71,6 +72,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -133,6 +135,8 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
     for(auto& itEDM : tmeas.fEDM)
         edmWriter.writeEDMResults(itEDM);
 
+	for (auto& itINCLY : tmeas.fINCLY)
+		inclWriter.writeINCLYResults(itINCLY);
 }
 
 void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
@@ -150,6 +154,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -519,6 +524,21 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
         otherMeasWriter.writeDistanceResultsSummary(tmeas.getOBSXYZObsSummary().obsYObsSum, TABs);
         otherMeasWriter.writeDistanceResultsSummary(tmeas.getOBSXYZObsSummary().obsZObsSum, TABs);
 	}
+
+	//INCLY
+	if (tmeas.fINCLY.size() > 0)
+	{
+		(*stream) << endl;
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "INCLY"); //instrument
+		(*stream) << endl;
+		inclWriter.writeINCLSynthesisHeader();
+		for (auto& itINCLY : tmeas.fINCLY)
+			inclWriter.writeINCLYResultsSynthesis(itINCLY);
+
+		//write global mean
+		inclWriter.writeAngleResultsSummary(tmeas.getINCLYGlobalObsSummary(), TABs);
+	}
 }
 
 ///write measurements summary
@@ -535,6 +555,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -716,6 +737,15 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 		(*stream) << endl;
 		otherMeasWriter.writeHisto(RADIsummary, "RADI");
 	}
+
+	//INCLY
+	const auto& INCLYsummary = tmeas.getINCLYGlobalObsSummary();
+
+	if (INCLYsummary.getNumberOfObs() >= 5)
+	{
+		(*stream) << endl;
+		inclWriter.writeHisto(INCLYsummary, "INCLY");
+	}
 }
 
 
@@ -738,6 +768,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -777,6 +808,8 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	for (auto& itEDM : tmeas.fEDM)
 		edmWriter.writeEDMSIMUResults(itEDM);
 
+	for (auto& itINCLY : tmeas.fINCLY)
+		inclWriter.writeINCLYSIMUResults(itINCLY);
 }
 
 void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
@@ -806,6 +839,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 
 
 	writeSCALEReliability(frameIt);
+	writeINCLReliability(frameIt);
 
 	bool  ORIEheaderWritten = false;
 	for (auto& itORIE:tmeas.fORIE)
@@ -1467,6 +1501,30 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 
 }
 
+void TFRAMEWriter::writeINCLReliability(TDataTreeIterator frameIt)
+{
+	TAStreamFormatter* stream = getStream();
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
+
+	auto& tmeas = (*frameIt)->measurements;
+
+	//INCLY
+	bool isincly = false;
+	for (auto itINCLY(tmeas.fINCLY.begin()); itINCLY != tmeas.fINCLY.end(); ++itINCLY)
+	{
+		if (itINCLY->measINCLY.size() > 0) {
+
+			if (isincly == false)
+			{
+				(*stream) << endl << "INCLY observations" << endl;
+				inclWriter.writeINCLYReliabilityHeader();
+				isincly = true;
+			}
+			inclWriter.writeINCLYReliabilityData(*itINCLY, fProjectData->getStatistics(), itINCLY->measINCLY);
+		}
+	}
+
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //HEADER

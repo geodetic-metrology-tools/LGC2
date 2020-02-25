@@ -164,10 +164,10 @@ void TMeasurements::initialiseObsSummaries() {
     }
 
 	// INCLY
-	for (auto& inclyrom : fINCLY) {
+	for (auto &inclyrom : fINCLY) {
 		inclyrom.initialiseObsSummaries();
 
-		allECHOSummaries.push_back(&inclyrom.getINCLYObsSummary());
+		allINCLYSummaries.push_back(&inclyrom.getINCLYObsSummary());
 	}
 
     // Create the global summaries from the collections:
