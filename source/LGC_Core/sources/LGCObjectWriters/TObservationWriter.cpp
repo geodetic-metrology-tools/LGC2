@@ -178,6 +178,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary& summary, std::string d
 				description == "ZEND" ||
 				description == "ORIE" ||
 				description == "PLR3D: ZEND"||
+				description == "INCLY" ||
 				description == "PLR3D: ANGL")/* Angle*/
 				ech = "(CC)";
 			else if (description == "UVD: XVEC" ||

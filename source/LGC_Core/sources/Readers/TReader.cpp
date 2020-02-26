@@ -342,7 +342,7 @@ bool TReader::read(std::istream& lgcStream) {
 				//		outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "TSTN keyword is not allowed in a frame ";
 				//		return !outputMessages.hasErrors();
 				//	}
-				//INCLY keyword is not allowed in the root frame 
+				//INCLY keyword is not allowed in the root frame, can be generalized.
 				if (currenthandler->getKey() == INCLY && (TKeyFRAME::getNumberOfOpenedFrames() == TKeyENDFRAME::getNumberOfClosedFrames())) {
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + currentkey + " keyword is not allowed in the root frame ";
 					return !outputMessages.hasErrors();

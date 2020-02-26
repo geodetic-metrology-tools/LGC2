@@ -116,7 +116,7 @@ void TINCLWriter::writeINCLYSIMUResults(const  TINCLYROM& inclyrom)
 //------------------ Reliability header----------------------------------------------------------------------
 void	TINCLWriter::writeINCLYReliabilityHeader()
 {
-	this->TObservationWriter::writeReliabilityHeader("FRAME","", "", "OBSERVATION", "GON", "MM");
+	this->TObservationWriter::writeReliabilityHeader("FRAME","STATION", "", "OBSERVATION", "GON", "CC");
 	return;
 }
 
@@ -138,8 +138,11 @@ void	TINCLWriter::writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TL
 	{
 		// Observation index to take the right value in the statistic vector
 		int index = ItINCLY.getFirstObservationIndex();
+		
+		//Get the frame name
+		(*stream).writeStringLeft(nameWidth, inclyrom.positionInTree.node->data->frame.getName());
 
-		//get Tg point
+		//get Station point
 		(*stream).writeStringLeft(nameWidth, ItINCLY.targetPos->getName());
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
@@ -206,7 +209,6 @@ void TINCLWriter::writeINCLYResultsSynthesis(const  TINCLYROM& inclyrom)
 
 	//Name of the station linked to the frame 
 	(*stream).writeStringLeft(nameWidth, inclyrom.positionInTree.node->data->frame.getName()); //Reference point
-	(*stream).writeStringLeft(nameWidth, "");
 	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getMean());//residu moy

@@ -12,6 +12,7 @@
 #include "TCovarFileWriter.h"
 #include "TChabaFileWriter.h"
 #include <Logger.hpp>
+#include <TLGCData.h>
 
 
 
@@ -129,12 +130,19 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat, const std::string 
     stream->setCoordSys(TCoordSysFactory::k3DCartesian);
 
     TPointFormat* pointFormat = stream->getPointFormat();
+	//Set the name width to the max width of a name point +1 characters.
 	if (dat->getConfig().pointNameWidth>pointFormat->getNameWidth())
 	{
-		pointFormat->setNameWidth(dat->getConfig().pointNameWidth);
+		pointFormat->setNameWidth(dat->getConfig().pointNameWidth+1);
         stream->setPointFormat(*pointFormat);
 	}
-	
+	//As the name width is used also for frames. Set the name width to the max of of frame name +1 characters, if necessary.
+	for (TDataTreeIterator itTree = dat->getTree().begin(); itTree != dat->getTree().end(); itTree++) {
+		if (itTree->get()->frame.getName().length() >= pointFormat->getNameWidth()) {
+			pointFormat-> setNameWidth(itTree->get()->frame.getName().length() + 1);
+			stream->setPointFormat(*pointFormat);
+		}
+	}
 }
 
 void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLocation, const TLGCCalculation &calculation, std::shared_ptr<TAStreamFormatter> &stream)

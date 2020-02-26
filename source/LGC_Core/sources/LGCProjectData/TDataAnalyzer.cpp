@@ -175,6 +175,15 @@ bool TDataAnalyzer::dataConsistent(){
                 outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
 		}
 
+		for (auto itINCLY(it.node->data.get()->measurements.fINCLY.begin()); itINCLY != it.node->data.get()->measurements.fINCLY.end(); ++itINCLY) {
+			int numberOfMeasurements = (int)itINCLY->measINCLY.size();
+			if (numberOfMeasurements == 0) {
+				itINCLY->setActive(false);
+				const std::string nlinestr("Line " + std::to_string(itINCLY->line + 1) + ": ");
+				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
+			}
+		}
+		cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){
@@ -593,6 +602,21 @@ bool TDataAnalyzer::cleanDeactivated(){
 
             ++ecverom;
         }
+
+		// INCLY
+		for (auto inclyrom = measurements.fINCLY.begin(); inclyrom != measurements.fINCLY.end();) {
+
+			// If INCLYROM not active, remove it:
+			if (!inclyrom->isActive()) {
+				measurements.fINCLY.erase(inclyrom++);
+				continue;
+			}
+
+			if (!rmDeactivated_and_checkTargetPos(inclyrom->measINCLY))
+				return false;
+
+			++inclyrom;
+		}
 
         // If the roms of different types of measurements are not active, clear the rom:
         if(!measurements.dverActive) measurements.fDVER.clear();
