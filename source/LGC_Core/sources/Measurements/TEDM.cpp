@@ -17,3 +17,8 @@ void TEDM::initialiseObsSummaries() {
 }
 
 const TLGCObsSummary& TEDM::getDSPTObsSummary() const { return dsptSummary_; }
+
+const TLGCObsSummary& TEDM::getDSPTObsSummary(std::string text) {
+	dsptSummary_.setObsText(text);
+	return dsptSummary_;
+}

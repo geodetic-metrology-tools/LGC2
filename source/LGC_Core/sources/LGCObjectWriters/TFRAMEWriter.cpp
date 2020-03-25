@@ -14,6 +14,7 @@
 #include "TSpatialStatus.h"
 #include <TPointTransformer.h>
 #include "TINCLWriter.h"
+#include "TMeasurements.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //CONSTRUCTOR / DESTRUCTOR
@@ -81,11 +82,13 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	//Summary
-	(*stream) << TABs << "*** RESUME DES MESURES ***" << endl << endl;
-	writeMeasurementsSummary(frameIt);
-	if (fProjectData->getConfig().histo.isActive())
-		writeHistogramme(frameIt);
-
+	if (frameIt->get()->isROOTNode()) {
+		initialiseAllObsSummaries();
+		(*stream) << TABs << "*** RESUME DES MESURES ***" << endl << endl;
+		writeMeasurementsSummaryRootOnly();
+		if (fProjectData->getConfig().histo.isActive())
+			writeHistogrammeRootOnly();
+	}
 
 	//Measures
 	(*stream) << endl << endl<< TABs << "*** MESURES ***" << endl << endl;
@@ -139,6 +142,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 		inclWriter.writeINCLYResults(itINCLY);
 }
 
+
+//TODO: change the TdataTreeIterator with the proj and iterate inside the method, maybe better to make a new method for that instead of changing the actual one.
+//Method not used anymore since 2.03.
 void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
 	std::string			TABs = stream->getCurrSpace();
@@ -748,6 +754,540 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	}
 }
 
+///write measurements summary in the root only
+void TFRAMEWriter::writeHistogrammeRootOnly() {
+	TAStreamFormatter* stream = getStream();
+	std::string			TABs = stream->getCurrSpace();
+	// int				nameWidth = getNameWidth();
+
+	//Start to write the measurements
+	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
+	tstnWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
+	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	
+	//TSTN
+	//ANGL
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kANGL) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allANGLSummaries_), "ANGL");
+	}
+
+	//ZEND
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kZEND) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allZENDSummaries_), "ZEND");
+	}
+
+	//DIST
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDIST) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allDISTSummaries_), "DIST");
+	}
+
+	//DHOR
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDHOR) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allDHORSummaries_), "DHOR");
+	}
+
+	//PLR3D
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPLR3D) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allPlrANGLSummaries_), "PLR3D: ANGL");
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allPlrZENDSummaries_), "PLR3D: ZEND");
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allPlrDISTSummaries_), "PLR3D: DIST");
+	}
+
+	//ECTH
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECTH) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allECTHSummaries_), "ECTH");
+	}
+
+	//ECDIR
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECDIR) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allECDIRSummaries_), "ECDIR");
+	}
+
+	//BCAM
+	//UVD
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVD) >= 5) {
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvdXSummaries_), "UVD: XVEC");
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvdYSummaries_), "UVD: YVEC");
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvdDSummaries_), "UVD: DIST");
+	}
+
+	//UVEC
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVEC) >= 5) {
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvecXSummaries_), "UVEC: XVEC");
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvecYSummaries_), "UVEC: YVEC");
+	}
+
+	//DLEV
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEV) >= 5) {
+		(*stream) << endl;
+		levelWriter.writeHisto(TLGCObsSummary::merge(allDLEVSummaries_), "DLEV");
+	}
+
+	//DVER
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDVER) >= 5) {
+		(*stream) << endl;
+		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allDVERSummaries_), "DVER");
+	}
+
+	//ECHO
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECHO) >= 5) {
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allECHOSummaries_), "ECHO");
+	}
+
+	//DSPT
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDSPT) >= 5) {
+		(*stream) << endl;
+		tstnWriter.writeHisto(TLGCObsSummary::merge(allDSPTSummaries_), "DSPT");
+	}
+
+	//ECVE
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECVE) >= 5) {
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allECVESummaries_), "ECVE");
+	}
+
+	//ECSP
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECSP) >= 5) {
+		(*stream) << endl;
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allECSPSummaries_), "ECSP");
+	}
+
+	//ORIE
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kORIE) >= 5) {
+		(*stream) << endl;
+		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allORIESummaries_), "ORIE");
+	}
+
+	//RADI
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI) >= 5) {
+		(*stream) << endl;
+		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allRADISummaries_), "RADI");
+	}
+
+	//OBSXYZ
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kOBSXYZ) >= 5) {
+		(*stream) << endl;
+		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allObsxyzXSummaries_), "OBSXYZ: X");
+		(*stream) << endl;
+		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allObsxyzYSummaries_), "OBSXYZ: Y");
+		(*stream) << endl;
+		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allObsxyzZSummaries_), "OBSXYZ: Z");
+	}
+
+	//INCLY
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kINCLY) >= 5) {
+		(*stream) << endl;
+		inclWriter.writeHisto(TLGCObsSummary::merge(allINCLYSummaries_), "INCLY");
+	}
+}
+
+void TFRAMEWriter::initialiseAllObsSummaries() {
+	
+	allRADISummaries_.clear();
+	allPlrANGLSummaries_.clear();
+	allPlrZENDSummaries_.clear();
+	allPlrDISTSummaries_.clear();
+	allANGLSummaries_.clear();
+	allZENDSummaries_.clear();
+	allDISTSummaries_.clear();
+	allDHORSummaries_.clear();
+	allECTHSummaries_.clear();
+	allECDIRSummaries_.clear();
+	allDVERSummaries_.clear();
+	allUvdXSummaries_.clear();
+	allUvdYSummaries_.clear();
+	allUvdDSummaries_.clear();
+	allUvecXSummaries_.clear();
+	allUvecYSummaries_.clear();
+	allDSPTSummaries_.clear();
+	allDLEVSummaries_.clear();
+	allDlevDHORSummaries_.clear();
+	allORIESummaries_.clear();
+	allECHOSummaries_.clear();
+	allECVESummaries_.clear();
+	allECSPSummaries_.clear();
+	allINCLYSummaries_.clear();
+	allObsxyzXSummaries_.clear();
+	allObsxyzYSummaries_.clear();
+	allObsxyzZSummaries_.clear();
+
+	//Tteration through the tree nodes
+	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++) {
+		auto& tmeas = (*itTree)->measurements;
+		if (tmeas.fINCLY.size() > 0)
+			for (auto& itINCLY : tmeas.fINCLY) {
+				allINCLYSummaries_.push_back(&itINCLY.getINCLYObsSummary(itINCLY.positionInTree.node->data->frame.getName()));
+			}
+		
+		//TOCHECK
+		if (tmeas.fOBSXYZ.size() > 0) {
+			//for (auto& itOBSXYZ : tmeas.fOBSXYZ) {
+
+				allObsxyzXSummaries_.push_back(&tmeas.getOBSXYZObsSummary(itTree.node->data->frame.getName()).obsXObsSum);
+				allObsxyzYSummaries_.push_back(&tmeas.getOBSXYZObsSummary(itTree.node->data->frame.getName()).obsYObsSum);
+				allObsxyzZSummaries_.push_back(&tmeas.getOBSXYZObsSummary(itTree.node->data->frame.getName()).obsZObsSum);
+		}
+
+		//TOCHECK
+		if (tmeas.fDVER.size() > 0)
+				allDVERSummaries_.push_back(&tmeas.getDVERObsSummary(itTree.node->data->frame.getName()));
+
+		//TOCHECK
+		if (tmeas.fRADI.size() > 0)
+				allRADISummaries_.push_back(&tmeas.getRADIObsSummary(itTree.node->data->frame.getName()));
+
+		//TOCHECK
+		if (tmeas.fORIE.size() > 0)
+			for (auto& itORIE : tmeas.fORIE)
+				allORIESummaries_.push_back(&itORIE.getORIEObsSummary(itORIE.instrumentPos->getName()));
+
+		if (tmeas.fECSP.size() > 0)
+			for (auto& itECSP : tmeas.fECSP)
+				allECSPSummaries_.push_back(&itECSP.getECSPObsSummary(itECSP.romName));
+
+		if (tmeas.fECVE.size() > 0)
+			for (auto& itECVE : tmeas.fECVE)
+				allECVESummaries_.push_back(&itECVE.getECVEObsSummary(itECVE.fMeasuredLine->getName()));
+
+		if (tmeas.fEDM.size() > 0)
+			for (auto& itEDM : tmeas.fEDM)
+				allDSPTSummaries_.push_back(&itEDM.getDSPTObsSummary(itEDM.instrumentPos->getName()));
+
+		if (tmeas.fECHO.size() > 0)
+			for (auto& itECHO : tmeas.fECHO)
+				allECHOSummaries_.push_back(&itECHO.getECHOObsSummary(itECHO.fMeasuredPlane->getReferencePoint()->getName()));
+
+		if (tmeas.fLEVEL.size() > 0)
+			for (auto& itLEVEL : tmeas.fLEVEL)
+				allDLEVSummaries_.push_back(&itLEVEL.getDLEVObsSummary(itLEVEL.fMeasuredPlane->getReferencePoint()->getName()));
+
+		if (tmeas.fCAM.size() > 0) {
+			for (auto& itCAM : tmeas.fCAM) {
+				std::string stationName = itCAM.instrumentPos->getName();
+				if (itCAM.measUVD.size() > 0) {
+					allUvdXSummaries_.push_back(&itCAM.getUVDObsSummary(stationName).xVectorCompObsSum);
+					allUvdYSummaries_.push_back(&itCAM.getUVDObsSummary(stationName).yVectorCompObsSum);
+					allUvdDSummaries_.push_back(&itCAM.getUVDObsSummary(stationName).distObsSum);
+				}
+				if (itCAM.measUVEC.size() > 0) {
+					allUvecXSummaries_.push_back(&itCAM.getUVECObsSummary(stationName).xVectorCompObsSum);
+					allUvecYSummaries_.push_back(&itCAM.getUVECObsSummary(stationName).yVectorCompObsSum);
+				}
+			}
+		}
+
+		if (tmeas.fTSTN.size() > 0) {
+			for (auto& itTSTN : tmeas.fTSTN) {
+				std::string stationName = itTSTN->instrumentPos->getName();
+				for (auto& itrom : itTSTN->roms) {
+					if (itrom->measANGL.size() > 0)
+						allANGLSummaries_.push_back(&itrom->getANGLObsSummary(stationName));
+					if (itrom->measZEND.size() > 0)
+						allZENDSummaries_.push_back(&itrom->getZENDObsSummary(stationName));
+
+					if (itrom->measDIST.size() > 0)
+						allDISTSummaries_.push_back(&itrom->getDISTObsSummary(stationName));
+
+					if (itrom->measDHOR.size() > 0)
+						allDHORSummaries_.push_back(&itrom->getDHORObsSummary(stationName));
+
+					if (itrom->measPLR3D.size() > 0) {
+						allPlrANGLSummaries_.push_back(&itrom->getPLR3DObsSummary(stationName).anglObsSum);
+						allPlrZENDSummaries_.push_back(&itrom->getPLR3DObsSummary(stationName).zendObsSum);
+						allPlrDISTSummaries_.push_back(&itrom->getPLR3DObsSummary(stationName).distObsSum);
+					}
+					if (itrom->measECTH.size() > 0)
+						allECTHSummaries_.push_back(&itrom->getECTHObsSummary(stationName));
+
+					if (itrom->measECDIR.size() > 0)
+						allECDIRSummaries_.push_back(&itrom->getECDIRObsSummary(stationName));
+				}
+			}
+		}
+	}
+}
+
+
+///write measurements Histogram in the root only
+void TFRAMEWriter::writeMeasurementsSummaryRootOnly() {
+	TAStreamFormatter* stream = getStream();
+	std::string			TABs = stream->getCurrSpace();
+	int					nameWidth = getNameWidth();
+
+	//Start to write the measurements
+	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
+	tstnWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
+	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
+	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
+	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+
+	//ANGL
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kANGL) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ANGL");
+		(*stream) << endl;
+		tstnWriter.writeANGLHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allANGLSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allANGLSummaries_), TABs);
+	}
+
+	//ZEND
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kZEND) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ZEND");
+		(*stream) << endl;
+		tstnWriter.writeANGLHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allZENDSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allZENDSummaries_), TABs);
+	}
+
+	//DIST
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDIST) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DIST");
+		(*stream) << endl;
+		tstnWriter.writeDISTHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allDISTSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDISTSummaries_), TABs);
+	}
+
+	//DHOR
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDHOR) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DHOR");
+		(*stream) << endl;
+		tstnWriter.writeDISTHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allDHORSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDHORSummaries_), TABs);
+	}
+
+	//PLR3D : change of format w.r.t. previous version to keep some consistency
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPLR3D) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "PLR3D: ANGL");
+		(*stream) << endl;
+		tstnWriter.writeANGLHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allPlrANGLSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allPlrANGLSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "PLR3D: ZEND");
+		(*stream) << endl;
+		tstnWriter.writeANGLHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allPlrZENDSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allPlrZENDSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "PLR3D: DIST");
+		(*stream) << endl;
+		tstnWriter.writeDISTHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allPlrDISTSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allPlrDISTSummaries_), TABs);
+
+	}
+
+	//ECTH
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECTH) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECTH");
+		(*stream) << endl;
+		tstnWriter.writeDISTHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allECTHSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECTHSummaries_), TABs);
+	}
+
+	//ECDIR
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECDIR) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECDIR");
+		(*stream) << endl;
+		tstnWriter.writeDISTHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allECDIRSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECDIRSummaries_), TABs);
+	}
+
+		//UVD : change of format w.r.t. previous version to keep some consistency
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVD) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "UVD: XVEC");
+		(*stream) << endl;
+		camWriter.writeResultsSynthesisHeaderUnitless();
+		camWriter.writeDefResultsSynthesis(allUvdXSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		camWriter.writeUnitlessResultsSummary(TLGCObsSummary::merge(allUvdXSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "UVD: YVEC");
+		(*stream) << endl;
+		camWriter.writeResultsSynthesisHeaderUnitless();
+		camWriter.writeDefResultsSynthesis(allUvdYSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		camWriter.writeUnitlessResultsSummary(TLGCObsSummary::merge(allUvdYSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "UVD: DIST");
+		(*stream) << endl;
+		camWriter.writeResultsSynthesisHeaderDistance();
+		camWriter.writeDefResultsSynthesis(allUvdDSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		camWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allUvdDSummaries_), TABs);
+	}
+
+		//UVEC : change of format w.r.t. previous version to keep some consistency
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVEC) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "UVEC: XVEC");
+		(*stream) << endl;
+		camWriter.writeResultsSynthesisHeaderUnitless();
+		camWriter.writeDefResultsSynthesis(allUvecXSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		camWriter.writeUnitlessResultsSummary(TLGCObsSummary::merge(allUvecXSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "UVEC: YVEC");
+		(*stream) << endl;
+		camWriter.writeResultsSynthesisHeaderUnitless();
+		camWriter.writeDefResultsSynthesis(allUvecYSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		camWriter.writeUnitlessResultsSummary(TLGCObsSummary::merge(allUvecYSummaries_), TABs);
+	}
+
+	//DLEV
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEV) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DLEV");
+		(*stream) << endl;
+		levelWriter.writeLEVELSynthesisHeader();
+		levelWriter.writeLEVELResultsSynthesis(allDLEVSummaries_);
+		levelWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDLEVSummaries_), TABs);
+	}
+
+	//DVER
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDVER) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DVER");
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeDefResultsSynthesis(allDVERSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		otherMeasWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDVERSummaries_), TABs);
+	}
+
+	//ECHO
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECHO) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECHO");
+		(*stream) << endl;
+		scaleWriter.writeSCALESynthesisHeader();
+		scaleWriter.writeDefResultsSynthesis(allECHOSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		scaleWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECHOSummaries_), TABs);
+	}
+
+	//DSPT
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDSPT) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "DSPT");
+		(*stream) << endl;
+		edmWriter.writeEDMSynthesisHeader();
+		edmWriter.writeDefResultsSynthesis(allDSPTSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		edmWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDSPTSummaries_), TABs);
+	}
+
+	//ECVE
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECVE) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECVE");
+		(*stream) << endl;
+		scaleWriter.writeSCALESynthesisHeader();
+		scaleWriter.writeDefResultsSynthesis(allECVESummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		scaleWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECVESummaries_), TABs);
+	}
+
+	//ECSP
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECSP) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECSP");
+		(*stream) << endl;
+		scaleWriter.writeSCALESynthesisHeader();
+		scaleWriter.writeDefResultsSynthesis(allECSPSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		scaleWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECSPSummaries_), TABs);
+	}
+
+	//ORIE
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kORIE) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ORIE");
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeaderAngles();
+		otherMeasWriter.writeDefResultsSynthesis(allORIESummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		otherMeasWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allORIESummaries_), TABs);
+	}
+
+	//RADI
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "RADI");
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeDefResultsSynthesis(allRADISummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		otherMeasWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allRADISummaries_), TABs);
+	}
+
+	//OBSXYZ : change of format w.r.t. previous version to keep some consistency
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kOBSXYZ) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "OBSXYZ: X");
+		(*stream) << endl;
+		otherMeasWriter.writeResultsSynthesisHeader();
+		otherMeasWriter.writeDefResultsSynthesis(allObsxyzXSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		otherMeasWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allObsxyzXSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "OBSXYZ: Y");
+		(*stream) << endl;
+		tstnWriter.writeANGLHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allObsxyzYSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allObsxyzYSummaries_), TABs);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "OBSXYZ: Z");
+		(*stream) << endl;
+		tstnWriter.writeDISTHeaderSynthesis();
+		tstnWriter.writeDefResultsSynthesis(allObsxyzZSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allObsxyzZSummaries_), TABs);
+	}
+
+	//INCLY
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kINCLY) > 0) {
+		(*stream) << endl;
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "INCLY"); //instrument
+		(*stream) << endl;
+		inclWriter.writeINCLSynthesisHeader();
+		inclWriter.writeINCLYResultsSynthesis(allINCLYSummaries_);
+		inclWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allINCLYSummaries_), TABs);
+	}
+
+}
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();

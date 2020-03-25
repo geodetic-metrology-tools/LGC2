@@ -348,3 +348,22 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
 	(*stream) << endl;
 
 }
+
+void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> dlevsum)
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItDLEV : dlevsum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItDLEV->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getVariance());//ecart type
+		(*stream) << endl;
+	}
+}

@@ -84,6 +84,11 @@ private:
 		///write measurements summary
 		void writeHistogramme(TDataTreeIterator frameIt);
 		
+		///write measurements summary in the rootOnly
+		void writeMeasurementsSummaryRootOnly();
+		///write Histogramme summary in the rootOnly
+		void writeHistogrammeRootOnly();
+
 		///WriteEllipsHeader
 		void writeEllipsHeader();
 		///WriteEllipsoidHeader
@@ -103,6 +108,39 @@ private:
 		std::list<AdjPointIter> pointVXZ;
 		std::list<AdjPointIter> pointVYZ;
 		std::list<AdjPointIter> pointVZ;
+
+		/// Initialise all observation summaries
+		void initialiseAllObsSummaries();
+
+		//all summaries
+		std::list<const TLGCObsSummary*>
+			allRADISummaries_,
+			allPlrANGLSummaries_,
+			allPlrZENDSummaries_,
+			allPlrDISTSummaries_,
+			allANGLSummaries_,
+			allZENDSummaries_,
+			allDISTSummaries_,
+			allDHORSummaries_,
+			allECTHSummaries_,
+			allECDIRSummaries_,
+			allDVERSummaries_,
+			allUvdXSummaries_,
+			allUvdYSummaries_,
+			allUvdDSummaries_,
+			allUvecXSummaries_,
+			allUvecYSummaries_,
+			allDSPTSummaries_,
+			allDLEVSummaries_,
+			allDlevDHORSummaries_,
+			allORIESummaries_,
+			allECHOSummaries_,
+			allECVESummaries_,
+			allECSPSummaries_,
+			allINCLYSummaries_,
+			allObsxyzXSummaries_,
+			allObsxyzYSummaries_,
+			allObsxyzZSummaries_;
 };
 
 #endif //SU_FRAME_WRITER

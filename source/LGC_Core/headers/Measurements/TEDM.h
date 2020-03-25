@@ -38,6 +38,8 @@ struct TEDM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getDSPTObsSummary() const;
+		const TLGCObsSummary& getDSPTObsSummary(std::string text);
+
 
 		/// Line of the station definition
 		int  line;

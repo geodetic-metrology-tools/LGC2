@@ -1,4 +1,5 @@
 #include "RoundOfMeasurements.h"
+#include "tree.h"
 
 int TECHOROM::romCounter_ = 0;
 int TECSPROM::romCounter_ = 0;
@@ -64,19 +65,44 @@ void TINCLYROM::initialiseObsSummaries() {
 
 	// Add the residuals of each measurement and initialise the obsSummaries:
 	if (measINCLY.size() != 0) {
-		for (auto const& ItINCLY : measINCLY)
+		for (auto const& ItINCLY : measINCLY) {
 			inclySummary_.addNewResidual(ItINCLY.getAngleResidual().getSignedCCValue());
-
+		}
 		inclySummary_.initialise();
 	}
 }
 
 const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
 
+const TLGCObsSummary& TECHOROM::getECHOObsSummary(std::string text) {
+	echoSummary_.setObsText(text);
+	return echoSummary_;
+}
+
 const TLGCObsSummary&  TECSPROM::getECSPObsSummary() const { return ecspSummary_; }
+
+const TLGCObsSummary& TECSPROM::getECSPObsSummary(std::string text) {
+	ecspSummary_.setObsText(text);
+	return ecspSummary_;
+}
 
 const TLGCObsSummary&  TECVEROM::getECVEObsSummary() const { return ecveSummary_; }
 
+const TLGCObsSummary& TECVEROM::getECVEObsSummary(std::string text) {
+	ecveSummary_.setObsText(text);
+	return ecveSummary_;
+}
+
 const TLGCObsSummary&  TORIEROM::getORIEObsSummary() const { return orieSummary_; }
 
+const TLGCObsSummary& TORIEROM::getORIEObsSummary(std::string text) {
+	orieSummary_.setObsText(text);
+	return orieSummary_;
+}
+
 const TLGCObsSummary& TINCLYROM::getINCLYObsSummary() const { return inclySummary_; }
+
+const TLGCObsSummary& TINCLYROM::getINCLYObsSummary(std::string text) { 
+	inclySummary_.setObsText(text);
+	return inclySummary_; 
+}

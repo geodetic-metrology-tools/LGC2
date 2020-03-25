@@ -98,6 +98,7 @@ void TINCLWriter::writeINCLYResults(const  TINCLYROM& inclyrom)
 
 }
 
+
 //------------------ Simu data--------------------------------------------------------------------------
 void TINCLWriter::writeINCLYSIMUResults(const  TINCLYROM& inclyrom)
 {
@@ -216,4 +217,25 @@ void TINCLWriter::writeINCLYResultsSynthesis(const  TINCLYROM& inclyrom)
 	(*stream) << endl;
 
 
+}
+
+
+
+void TINCLWriter::writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> inclysum)
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = getObsResWidth();
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItINCLY : inclysum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItINCLY->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getVariance());//ecart type
+		(*stream) << endl;
+	}
 }

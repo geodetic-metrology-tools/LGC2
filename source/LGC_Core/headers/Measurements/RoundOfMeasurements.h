@@ -12,7 +12,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustableLine.h>
 #include "TLGCObsSummary.h"
-#include "TLGCObsSummary.h"
 
 
 /*!
@@ -32,6 +31,7 @@ struct TECHOROM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getECHOObsSummary() const;
+		const TLGCObsSummary& getECHOObsSummary(std::string text);
 
 		/// Line of the measurement definition
 		int  line;
@@ -70,6 +70,7 @@ struct TECSPROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECSPObsSummary() const;
+	const TLGCObsSummary& getECSPObsSummary(std::string text);
 
 	/// Line of the measurement definition
 	int  line;
@@ -136,6 +137,8 @@ struct TECVEROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECVEObsSummary() const;
+	const TLGCObsSummary& getECVEObsSummary(std::string text);
+
 
 	/// Line of the measurement definition
 	int  line;
@@ -176,6 +179,8 @@ struct TORIEROM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getORIEObsSummary() const;
+		const TLGCObsSummary& getORIEObsSummary(std::string text);
+
 
 		TAngle fConstantAngle;
 
@@ -224,6 +229,7 @@ struct TINCLYROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	const TLGCObsSummary& getINCLYObsSummary() const;
+	const TLGCObsSummary& getINCLYObsSummary(std::string text) ;
 
 	TAngle fConstantAngle;
 

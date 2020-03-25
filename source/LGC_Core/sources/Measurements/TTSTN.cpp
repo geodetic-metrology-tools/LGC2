@@ -74,14 +74,51 @@ void TTSTN::TROM::initialiseObsSummaries() {
 
 const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary() const { return anglSummary_; }
 
+const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary(std::string text) {
+	anglSummary_.setObsText(text);
+	return anglSummary_;
+}
+
 const TLGCObsSummary& TTSTN::TROM::getZENDObsSummary() const { return zendSummary_; }
+
+const TLGCObsSummary& TTSTN::TROM::getZENDObsSummary(std::string text) {
+	zendSummary_.setObsText(text);
+	return zendSummary_;
+}
 
 const TLGCObsSummary&  TTSTN::TROM::getDISTObsSummary() const { return distSummary_; }
 
+const TLGCObsSummary& TTSTN::TROM::getDISTObsSummary(std::string text) {
+	distSummary_.setObsText(text);
+	return distSummary_;
+}
+
 const TLGCObsSummary&  TTSTN::TROM::getDHORObsSummary() const { return dhorSummary_; }
+
+const TLGCObsSummary& TTSTN::TROM::getDHORObsSummary(std::string text) {
+	dhorSummary_.setObsText(text);
+	return dhorSummary_;
+}
 
 const TLGCObsSummary&  TTSTN::TROM::getECTHObsSummary() const { return ecthSummary_; }
 
+const TLGCObsSummary& TTSTN::TROM::getECTHObsSummary(std::string text) {
+	ecthSummary_.setObsText(text);
+	return ecthSummary_;
+}
+
 const TLGCObsSummary&  TTSTN::TROM::getECDIRObsSummary() const { return ecdirSummary_; }
 
+const TLGCObsSummary& TTSTN::TROM::getECDIRObsSummary(std::string text) {
+	ecdirSummary_.setObsText(text);
+	return ecdirSummary_;
+}
+
 const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary() const { return plr3dSummary_; }
+
+const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary(std::string text) {
+	plr3dSummary_.anglObsSum.setObsText(text);
+	plr3dSummary_.zendObsSum.setObsText(text);
+	plr3dSummary_.distObsSum.setObsText(text);
+	return plr3dSummary_;
+}

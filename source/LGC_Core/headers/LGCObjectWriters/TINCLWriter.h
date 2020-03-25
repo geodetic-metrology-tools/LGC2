@@ -10,6 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TObservationWriter.h>
 #include <MeasDef.h>
+#include <TLGCData.h>
 
 struct TINCLYROM;
 class TLGCStatistic;
@@ -48,11 +49,17 @@ public:
 
 	/// Write the result synthesis for INCLY
 	void writeINCLYResultsSynthesis(const  TINCLYROM& inclyrom);
+
+	/// Write the result data for INCLY in all frames 
+	void writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> inclysum);
 	//@}
 
 private:
 	/// Write the result header for INCLY
 	void writeINCLResultsHeader();
+
+	/// Project data
+	const TLGCData* fProjectData;
 };
 
 

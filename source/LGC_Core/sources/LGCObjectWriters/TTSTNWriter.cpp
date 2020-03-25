@@ -1631,6 +1631,23 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
+void TTSTNWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision) {
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItMEAS : meassum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream) << endl;
+	}
+}
+
+
 void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -1650,6 +1667,8 @@ void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getVariance());//ecart type
     (*stream) << endl;
 }
+
+
 
 void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom){
 	TAStreamFormatter*	stream = getStream();

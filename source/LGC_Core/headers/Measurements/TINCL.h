@@ -35,7 +35,7 @@ struct TINCL : public TStatusObject {
 	*/
 	const TLGCObsSummary& getINCLYObsSummary() const;
 
-
+	const TLGCObsSummary& getINCLYObsSummaryAllFrame() const;
 
 	/// The instrument that is used on this station
 	TInstrumentData::TINCL instrument;

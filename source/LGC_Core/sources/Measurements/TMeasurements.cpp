@@ -204,10 +204,26 @@ void TMeasurements::initialiseObsSummaries() {
 
 const TLGCObsSummary& TMeasurements::getDVERObsSummary() const { return dverSummary_; }
 
+const TLGCObsSummary& TMeasurements::getDVERObsSummary(std::string text) {
+	dverSummary_.setObsText(text);
+	return dverSummary_;
+}
+
 const TLGCObsSummary&  TMeasurements::getRADIObsSummary() const { return radiSummary_; }
+
+const TLGCObsSummary& TMeasurements::getRADIObsSummary(std::string text) {
+	radiSummary_.setObsText(text);
+	return radiSummary_;
+}
 
 const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary() const { return obsxyzSummary_; }
 
+const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary(std::string text) {
+	obsxyzSummary_.obsXObsSum.setObsText(text);
+	obsxyzSummary_.obsYObsSum.setObsText(text);
+	obsxyzSummary_.obsZObsSum.setObsText(text);
+	return obsxyzSummary_;
+}
 
 const TPOLARObsSummary& TMeasurements::getPOLARGlobalObsSummary() const { return plrGlobalSummary_; }
 

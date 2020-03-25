@@ -68,10 +68,18 @@ struct TMeasurements {
 
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getDVERObsSummary() const;
-    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getDVERObsSummary(std::string text);
+    
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getRADIObsSummary() const;
-    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getRADIObsSummary(std::string text);
+    
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TOBSXYZObsSummary& getOBSXYZObsSummary() const;
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TOBSXYZObsSummary& getOBSXYZObsSummary(std::string text);
 
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TPOLARObsSummary& getPOLARGlobalObsSummary() const;
@@ -116,6 +124,7 @@ private:
     TLGCObsSummary dverSummary_;
     TLGCObsSummary radiSummary_;
     TOBSXYZObsSummary obsxyzSummary_;
+	TOBSXYZObsSummary obsxyzGlobalSummary_;
 
     // Compound summaries:
     // TSTN:
@@ -140,6 +149,7 @@ private:
     TLGCObsSummary ecveGlobalSummary_;
     TLGCObsSummary ecspGlobalSummary_;
 	TLGCObsSummary inclyGlobalSummary_;
+
 };
 
 #endif // MEASUREMENTS_H_

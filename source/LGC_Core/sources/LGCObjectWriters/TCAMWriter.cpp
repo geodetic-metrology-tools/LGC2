@@ -546,6 +546,66 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream) << endl;
 }
 
+void TCAMWriter::writeResultsSynthesisHeaderUnitless()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	// int				obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream) << endl;
+}
+
+void TCAMWriter::writeResultsSynthesisHeaderDistance()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	// int				obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream) << endl;
+}
+
 //------------------ Synthesis data--------------------------------------------------------------------------
 void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 {
@@ -611,4 +671,20 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 	(*stream) << endl;
 
 
+}
+
+void TCAMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision) {
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItMEAS : meassum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream) << endl;
+	}
 }

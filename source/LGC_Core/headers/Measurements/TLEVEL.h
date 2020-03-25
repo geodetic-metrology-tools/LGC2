@@ -31,8 +31,11 @@ struct TLEVEL : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getDLEVObsSummary() const;
+		const TLGCObsSummary& getDLEVObsSummary(std::string text) ;
+		
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getDHORObsSummary() const;
+		const TLGCObsSummary& getDHORObsSummary(std::string text) ;
 
 		/// The plane which is measured
 		LGCAdjustablePlane* fMeasuredPlane;
