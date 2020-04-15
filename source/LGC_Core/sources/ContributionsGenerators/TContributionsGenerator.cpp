@@ -1179,7 +1179,7 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 	if(fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame){  /*Needs to be calculated in CGRF.*/
 		fPointTransfo.set2MLATransformation(station);
 		fPointTransfo.transformMLA2CGRF(stationC); // transform to CGRF
-
+		
 		fPointTransfo.set2MLATransformation(target);
 		fPointTransfo.transformMLA2CGRF(targetC);  // transform to CGRF
 
@@ -1212,6 +1212,9 @@ DVERContrib	TContributionsGenerator::getDVERContrib(const TDVER& dver){
 	
 	TFreeVector targetContrib = getPointContributions(tgLor2RootTrafo, targetC.getX().getMetresValue(),targetC.getY().getMetresValue(),targetC.getZ().getMetresValue());
 	addTransformationsContributions(tgLor2RootTrafo,targetLOR, 0, 0, 1, targetTransfContributions);
+
+	//Reset the CGRF status (can have other effect on the code)
+	fPointTransfo.setCGRF(false);
 
 	DVERContrib dverC =  { dh, stationContrib, targetContrib, stationTransfContributions, targetTransfContributions, pow2q( dver.getObservedStDev())};
 	

@@ -18,6 +18,7 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	int					lengthPrecision = getLengthPrecision();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 	int					obsWidth = getObsWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	////////////////////////////////////////////////////////////
 	//first line
@@ -29,12 +30,20 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF POINT"); //Reference point
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(3, "X");
+	(*stream).writeStringLeft(11, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(3, "Y");
+	(*stream).writeStringLeft(11, "Y (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(3, "Z");
+	(*stream).writeStringLeft(11, "Z (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream) << endl;
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "PLANE");
+	(*stream).writeStringLeft(11, "HDIST (MM)");
+	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPtDistEstimatedValue().getMMetresValue());
+	(*stream).writeStringLeft(11, "SHDIST (MM)");
+	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 }
@@ -360,10 +369,10 @@ void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> d
 	for (auto const& ItDLEV : dlevsum) {
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItDLEV->getObsText()); //Reference point
-		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getResMax());//residu max
-		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getResMin());//residu min
-		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, obsResWidth, ItDLEV->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getVariance());//ecart type
 		(*stream) << endl;
 	}
 }

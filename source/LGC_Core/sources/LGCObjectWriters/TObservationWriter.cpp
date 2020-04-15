@@ -71,7 +71,7 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary& summary,
 void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = std::max(getLengthResidualPrecision()-2, 0);
+	int					lengthResidualPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	TAStreamFormatter	&stream = getStreamRef();
 	//Write statistic
 	stream << TABs;

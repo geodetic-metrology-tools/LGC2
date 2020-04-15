@@ -88,11 +88,11 @@ void TCovarFileWriter::writePoints(const LGCAdjustablePoint &point)
 	//Writting point: name X Y Z
 	fStream->writeStringLeft(nameWidth, point.getName());
 	(*stream) << TABs;
-	fStream->writeDouble(20, 16, point.getEstimatedValue().getX());
+	fStream->writeDouble(28, 16, point.getEstimatedValue().getX());
 	(*stream) << TABs;
-	fStream->writeDouble(20, 16, point.getEstimatedValue().getY());
+	fStream->writeDouble(28, 16, point.getEstimatedValue().getY());
 	(*stream) << TABs;
-	fStream->writeDouble(20, 16, point.getEstimatedValue().getZ());
+	fStream->writeDouble(28, 16, point.getEstimatedValue().getZ());
 	(*stream) << endl;
 
 
