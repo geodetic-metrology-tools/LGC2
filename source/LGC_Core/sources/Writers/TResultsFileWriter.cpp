@@ -117,7 +117,7 @@ void    TResultsFileWriter::writeFile()
 	}
 
 	//FIN DE FICHIER
-	(*stream) << "*** FIN DE FICHIER ***";
+	(*stream) << "*** FIN DE FICHIER ***\n";
 }
  
  
