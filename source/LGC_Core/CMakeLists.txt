@@ -37,6 +37,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TCAMWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TLEVELWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TEDMWriter.h
+	${CORE_INCLUDE_PATH}/LGCObjectWriters/TINCLWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TFRAMEWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TSCALEWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.h
@@ -73,6 +74,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Measurements/TTSTN.h
 	${CORE_INCLUDE_PATH}/Measurements/TAMeas.h
 	${CORE_INCLUDE_PATH}/Measurements/TEDM.h
+	${CORE_INCLUDE_PATH}/Measurements/TINCL.h
 	${CORE_INCLUDE_PATH}/Measurements/TLEVEL.h
 	${CORE_INCLUDE_PATH}/Measurements/TCAM.h
 	${CORE_INCLUDE_PATH}/Measurements/TUVEC.h
@@ -117,7 +119,8 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TTSTNWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TCAMWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TLEVELWriter.cpp
-	${CORE_SOURCES_PATH}/LGCObjectWriters/TEDMWriter.cpp	
+	${CORE_SOURCES_PATH}/LGCObjectWriters/TEDMWriter.cpp
+	${CORE_SOURCES_PATH}/LGCObjectWriters/TINCLWriter.cpp	
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TFRAMEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TSCALEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.cpp
@@ -147,6 +150,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/Measurements/TLGCObsSummary.cpp
 	${CORE_SOURCES_PATH}/Measurements/TTSTN.cpp
 	${CORE_SOURCES_PATH}/Measurements/TCAM.cpp
+	${CORE_SOURCES_PATH}/Measurements/TINCL.cpp
 	${CORE_SOURCES_PATH}/Measurements/TLEVEL.cpp
 	${CORE_SOURCES_PATH}/Measurements/TEDM.cpp
 	${CORE_SOURCES_PATH}/Measurements/RoundOfMeasurements.cpp
