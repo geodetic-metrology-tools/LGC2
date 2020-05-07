@@ -60,11 +60,16 @@ void TPointTransformer::transform2MLA(TFreeVector& fv){
 	fla2mla.transform(fv);
 }
 
-// used only for the dver measurements
+// used only for the dver and incl measurements
 void TPointTransformer::transformMLA2CGRF(TFreeVector& fv){
 	fla2mla.transformInverse(fv);
 	filg2ila.transformInverse(fv);
 	fcgrf2ilg.transformInverse(fv);
+}
+
+// used only for the incl measurements
+void TPointTransformer::transformCGRF2CCS(TFreeVector& fv) {
+	fccs2cgrf.transformInverse(fv);
 }
 
 // returns index of a transformation with given name in the 'fLORTrafo' vector, if vector does not include this transformation, function \returns -1

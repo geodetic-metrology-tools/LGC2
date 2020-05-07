@@ -61,8 +61,11 @@ public:
 	///Sets new origin of the transformation to MLA system
 	void set2MLATransformation(TPositionVector originInCCS);
 
-	///Transform a free vector fromo a MLA system to CGRF - used only for the dver measurements
+	///Transform a free vector fromo a MLA system to CGRF - used only for the dver and incl measurements
 	void transformMLA2CGRF(TFreeVector& fv);
+
+	///Transform a free vector fromo a CGRF system to CCS - used only for the incl measurements
+	void transformCGRF2CCS(TFreeVector& fv);
 
 	///Transform a position vector into a MLA system
 	void transform2MLA(TPositionVector& pv);

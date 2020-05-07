@@ -1267,10 +1267,6 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (-itINCLY->getAngle() - contributions.fCalcMeas));
 
-		auto test = itINCLY->getAngle().getGonsValue();
-		auto teste = contributions.fCalcMeas.getGonsValue();
-		auto mis = test - teste;
-
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)
 			throw std::runtime_error("Error when filling Incly contribution, variance is zero or too small, can not set weight matrix element.");

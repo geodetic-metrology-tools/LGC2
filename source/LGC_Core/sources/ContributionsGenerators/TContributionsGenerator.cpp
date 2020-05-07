@@ -1400,66 +1400,48 @@ OBSXYZContrib  TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ& OBSXYZ)
 //INCLY contribution
 INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, const TINCLY& incly)
 {
-	//TODO: Works only if the station point is defined in the frame of the INCLY for now.
+	fPointTransfo.setMLA(false);
 
 	//Transform the point of meeasure to the Root frame
 	TPositionVector stationPos = incly.targetPos->getEstimatedValue(); //get the position of the station
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(incly.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
-	stLor2RootTrafo.transform(stationPos);
-	
-	//Creating the Local Vertical vector
-	TPositionVector localVertical = stationPos;
+	const TLOR2LOR& ptLor2RootTrafo = fPointTransfo.getLORTransformation(incly.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
+	ptLor2RootTrafo.transform(stationPos);
 
+	//Creating the Local Vertical vector (no change if OLOC)
+	TFreeVector stationV(0,0,1, TCoordSysFactory::k3DCartesian);
+
+	//Express te local vertical if MLA is used
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
-		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS) {
-			TXYH2CCS::CCS2XYHs(stationPos);
-			localVertical.setH(stationPos.getH() + TLength(1));
-			TXYH2CCS::XYHs2CCS(stationPos);
-			TXYH2CCS::XYHs2CCS(localVertical);
-			localVertical.setX(localVertical.getX() - stationPos.getX());
-		}
-		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine) {
-			TXYH2CCS::CCS2XYHg2000Machine(stationPos);
-			localVertical.setH(stationPos.getH() + TLength(1));
-			TXYH2CCS::XYHg2000Machine2CCS(stationPos);
-			TXYH2CCS::XYHg2000Machine2CCS(localVertical);
-		}
-		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine) {
-			TXYH2CCS::CCS2XYHg1985Machine(stationPos);	
-			localVertical.setH(stationPos.getH() + TLength(1));
-			TXYH2CCS::XYHg1985Machine2CCS(stationPos);
-			TXYH2CCS::XYHg1985Machine2CCS(localVertical);
-		}
+		fPointTransfo.set2MLATransformation(stationPos);
+		fPointTransfo.transformMLA2CGRF(stationV);
+		fPointTransfo.transformCGRF2CCS(stationV);
 	}
-	else {
-		localVertical.setZ(stationPos.getZ() + TLength(1));
-	}
-
-	TFreeVector localV(localVertical.getX().getMetresValue() - stationPos.getX().getMetresValue(), localVertical.getY().getMetresValue() - stationPos.getY().getMetresValue(), localVertical.getZ().getMetresValue() - stationPos.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
-
+	
 	//Transform the local vertical in the station LOR
 	const TLOR2LOR& vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), inclST.positionInTree); //Trafo from from CCS LOR to station's LOR
-	vert2stTrafo.transform(localV);
+	vert2stTrafo.transform(stationV);
 
-	const TLOR2LOR& stLor2RootTrafoVect = fPointTransfo.getLORTransformation(inclST.positionInTree, fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
+	//Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
+	TReal XSt = stationV.getX().getMetresValue();
+	TReal ZSt = stationV.getZ().getMetresValue();
+	TAngle calcMeas =  TAngle::aTan2(-XSt, ZSt) - incly.target.AngleCorrectionValue;
+	
+	//Add the transformation contribution
 
-	//Compute the calcMeas
-	TReal XSt = localV.getX().getMetresValue();
-	TReal ZSt = localV.getZ().getMetresValue();
-	TAngle calcMeas =  TReal(-1) * TAngle::aTan2(XSt, ZSt);
+	//Transform the projected vector from the station frame to the rootframe
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(inclST.positionInTree, fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
+	TPositionVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
 
-	//Adding the contributions by moving the YZ projected vertical vector in the root frame
-	TFreeVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
-	stLor2RootTrafoVect.transform(ProjLocalV);
+	//Other method possible: use Partial derivative for vectors TLOR2LOR::partialDerivativesAngle (TO develop) with:
+	//TFreeVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
 
-	//TODO: Partial derivative for vectors TLOR2LOR::partialDerivativesAngle, in the meanitime it works with the transformation of the projected positions in the station to the roots
-	TPositionVector TestV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
-	stLor2RootTrafoVect.transform(TestV);
+	stLor2RootTrafo.transform(ProjLocalV);
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransfContributions;
-	addINCLContributions(vert2stTrafo, TestV, XSt, ZSt, TransfContributions);
+	addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt, TransfContributions);
 
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue());
+	
 	INCLYContrib contrib = { calcMeas, TransfContributions, obsVariance };
 	return contrib;
 }
@@ -1833,9 +1815,8 @@ void TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, con
 		omegaContrib = -1.0 * ((omegaPD.getX().getMetresValue()) * denominator - numerator * (omegaPD.getZ().getMetresValue())) / (pow2q(numerator) + pow2q(denominator));
 		phiContrib = -1.0 * ((phiPD.getX().getMetresValue()) * denominator - numerator * (phiPD.getZ().getMetresValue())) / (pow2q(numerator) + pow2q(denominator));
 		kappaContrib = -1.0 * ((kappaPD.getX().getMetresValue()) * denominator - numerator * (kappaPD.getZ().getMetresValue())) / (pow2q(numerator) + pow2q(denominator));
+		scaleContrib = -1.0 * ((scalePD.getX().getMetresValue()) * denominator - numerator * (scalePD.getZ().getMetresValue())) / (pow2q(numerator) + pow2q(denominator));
 
-		//TODO:ScaleContrib
-		scaleContrib = 0;
 		TransformationContrib trContrib = { TFreeVector(omegaContrib, phiContrib, kappaContrib, TCoordSysFactory::k3DCartesian), TFreeVector(0,0,0,TCoordSysFactory::k3DCartesian),scaleContrib };
 		transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it->adjTrafo, trContrib));
 	}
