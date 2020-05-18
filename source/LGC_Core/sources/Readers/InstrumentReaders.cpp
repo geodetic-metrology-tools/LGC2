@@ -300,13 +300,15 @@ void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 	using namespace LGC;
 
 	auto& incls(finstruments.fINCL);
-	checkInstrument(6, incls, tokens);
+	checkInstrument(8, incls, tokens);
 
 	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL{
 		tokens.at(2),
 		TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
 		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kGons),
-		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kCCs)
+		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kCCs),
+		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kCCs)
 		});
 
 	// store the new invlinometer

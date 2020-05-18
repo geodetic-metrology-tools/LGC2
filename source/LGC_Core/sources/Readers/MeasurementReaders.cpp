@@ -1317,13 +1317,20 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		// look up the stationed point, i.e. the target
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
+		currentTargetApplied = opts.getParamS("INSTR", currentTargetApplied); //If TINCL is used then change ID of CurrentTargetApplied for the following measurements.
+
 		// get a station reference to update default values
-		TInstrumentData::TINCL& instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
+		TInstrumentData::TINCL instrument = finstruments.getDevice(finstruments.fINCL, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+
+		// get a station reference to update default values
+		//TInstrumentData::TINCL instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
 
 		instrument.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE",instrument.sigmaAngl));
-		instrument.AngleCorrectionValue = TAngle(opts.getParamRgon2rad("ACORR", instrument.AngleCorrectionValue));
-		instrument.sigmaCorrectionValue = TAngle(opts.getParamRcc2rad("SACORR", instrument.sigmaCorrectionValue));
-
+		instrument.angleCorrectionValue = TAngle(opts.getParamRgon2rad("AC", instrument.angleCorrectionValue));
+		instrument.sigmaCorrectionValue = TAngle(opts.getParamRcc2rad("ACSE", instrument.sigmaCorrectionValue));
+		instrument.refAngleCorrectionValue = TAngle(opts.getParamRgon2rad("RF", instrument.refAngleCorrectionValue));
+		instrument.refSigmaCorrectionValue = TAngle(opts.getParamRcc2rad("RFSE", instrument.refSigmaCorrectionValue));
+			
 		// set measurement value
 		TINCLY incly(stationPoint, instrument);
 

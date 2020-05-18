@@ -1424,10 +1424,10 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	//Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
 	TReal XSt = stationV.getX().getMetresValue();
 	TReal ZSt = stationV.getZ().getMetresValue();
-	TAngle calcMeas =  TAngle::aTan2(-XSt, ZSt) - incly.target.AngleCorrectionValue;
+	TAngle calcMeas =  TAngle::aTan2(-XSt, ZSt) - incly.target.angleCorrectionValue - incly.target.refAngleCorrectionValue;
 	
 	//Add the transformation contribution
-
+	
 	//Transform the projected vector from the station frame to the rootframe
 	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(inclST.positionInTree, fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
 	TPositionVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -1440,7 +1440,7 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransfContributions;
 	addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt, TransfContributions);
 
-	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue());
+	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 	
 	INCLYContrib contrib = { calcMeas, TransfContributions, obsVariance };
 	return contrib;

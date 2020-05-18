@@ -265,8 +265,10 @@ class TInstrumentData {
 		struct TINCL {
 			std::string ID;
 			TAngle sigmaAngl;	          // [rad]
-			TAngle AngleCorrectionValue;  // [rad]
+			TAngle angleCorrectionValue;  // [rad]
 			TAngle sigmaCorrectionValue;  // [rad]
+			TAngle refAngleCorrectionValue;  // [rad]
+			TAngle refSigmaCorrectionValue;  // [rad]
 			TAngle sigmaCombined;		  // [rad]
 		};
 		
