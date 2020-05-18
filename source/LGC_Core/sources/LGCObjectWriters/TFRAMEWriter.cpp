@@ -1469,13 +1469,13 @@ void	TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	if(status == TSpatialStatus::kVz)
 		{ title = "POINTS VARIABLES EN Z UNIQUEMENT";}
 	if(status == TSpatialStatus::kVxy)
-		{ title = "POINTS INVARIABLE EN Z";}
+		{ title = "POINTS INVARIABLES EN Z";}
 	if(status == TSpatialStatus::kVxz)
-		{ title = "POINTS INVARIABLE EN Y";}
+		{ title = "POINTS INVARIABLES EN Y";}
 	if(status == TSpatialStatus::kVyz)
-		{ title = "POINTS INVARIABLE EN X";}
+		{ title = "POINTS INVARIABLES EN X";}
 	if(status == TSpatialStatus::kVxyz)
-		{ title = "POINTS VARIABLE EN XYZ";}
+		{ title = "POINTS VARIABLES EN XYZ";}
 
 	(*stream)<<endl;
 
