@@ -32,6 +32,11 @@ void TINCLWriter::writeINCLResultsHeader()
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
 	(*stream).writeString(obsResWidth, "RES/SIG");    //residual/sigma
 	(*stream).writeString(nameWidth, "INCL ID");    //inclinometer ID
+	(*stream).writeString(obsResWidth, "OBSE"); //OBSE value
+	(*stream).writeString(obsWidth, "AC");    //AC value
+	(*stream).writeString(obsResWidth, "ACSE");    //ACSE Value
+	(*stream).writeString(obsWidth, "RF");    //RF value
+	(*stream).writeString(obsResWidth, "RFSE");    //RFSE value
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +49,11 @@ void TINCLWriter::writeINCLResultsHeader()
 	(*stream).writeString(obsResWidth, "(CC)"); //residual
 	(*stream).writeString(obsResWidth, "");    //residual/sigma
 	(*stream).writeString(nameWidth, "");    //inclinometer ID
-
+	(*stream).writeString(obsResWidth, "(CC)"); //OBSE
+	(*stream).writeString(obsWidth, "(GON)"); //AC
+	(*stream).writeString(obsResWidth, "(CC)"); //ACSE
+	(*stream).writeString(obsWidth, "(GON)"); //RF
+	(*stream).writeString(obsResWidth, "(CC)"); //RFSE
 	(*stream) << endl;
 }
 
@@ -76,22 +85,37 @@ void TINCLWriter::writeINCLYResults(const  TINCLYROM& inclyrom)
 		(*stream).writeStringLeft(nameWidth, ItINCLY.targetPos->getName());
 
 		//write the observed angle
-		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue());//Output value in gradians [gon], stored in [gon]
+		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue());//Output value in gradians [gon], stored in [rad]
 
 		//write the sigma angle
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombinedAngle.getSignedCCValue());//Output value in cc [cc], stored in [gon]
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombinedAngle.getSignedCCValue());//Output value in cc [cc], stored in [rad]
 
 		//write the estimated angle
-		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue() + ItINCLY.getAngleResidual().getGonsValue());//Output value in gradians [gon], stored in [gon]
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItINCLY.getAngle() + ItINCLY.getAngleResidual()).getGonsValue());//Output value in gradians [gon], stored in [rad]
 
 		//write the residual
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getSignedCCValue());//Output value in cc [cc], stored in [gon]
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getSignedCCValue());//Output value in cc [cc], stored in [rad]
 
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getRadiansValue() / ItINCLY.target.sigmaCombinedAngle.getRadiansValue());//Output value unitless
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItINCLY.target.ID);
+
+		//write the OBSE
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaAngl.getSignedCCValue());//Output value in cc [cc], stored in [rad]
+
+		//write the AC
+		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.target.refAngleCorrectionValue.getGonsValue());//Output value in gon [gon], stored in [rad]
+
+		//write the ACSE
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCorrectionValue.getSignedCCValue());//Output value in cc [cc], stored in [rad]
+
+		//write the RF
+		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.target.refAngleCorrectionValue.getGonsValue());//Output value in gon [gon], stored in [rad]
+
+		//write the RFSE
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.refSigmaCorrectionValue.getSignedCCValue());//Output value in cc [cc], stored in [rad]
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -148,7 +172,7 @@ void	TINCLWriter::writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TL
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
 
-		//get the observed distance
+		//get the observed angle
 		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue());
 		//get the standard deviation
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombinedAngle.getSignedCCValue());
