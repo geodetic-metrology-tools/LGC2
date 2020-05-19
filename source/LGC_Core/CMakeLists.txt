@@ -74,7 +74,6 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Measurements/TTSTN.h
 	${CORE_INCLUDE_PATH}/Measurements/TAMeas.h
 	${CORE_INCLUDE_PATH}/Measurements/TEDM.h
-	${CORE_INCLUDE_PATH}/Measurements/TINCL.h
 	${CORE_INCLUDE_PATH}/Measurements/TLEVEL.h
 	${CORE_INCLUDE_PATH}/Measurements/TCAM.h
 	${CORE_INCLUDE_PATH}/Measurements/TUVEC.h
@@ -150,7 +149,6 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/Measurements/TLGCObsSummary.cpp
 	${CORE_SOURCES_PATH}/Measurements/TTSTN.cpp
 	${CORE_SOURCES_PATH}/Measurements/TCAM.cpp
-	${CORE_SOURCES_PATH}/Measurements/TINCL.cpp
 	${CORE_SOURCES_PATH}/Measurements/TLEVEL.cpp
 	${CORE_SOURCES_PATH}/Measurements/TEDM.cpp
 	${CORE_SOURCES_PATH}/Measurements/RoundOfMeasurements.cpp

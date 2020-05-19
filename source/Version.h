@@ -8,8 +8,8 @@
 #include <sstream>
 
 #define LGC_VERSION_MAJOR "2"
-#define LGC_VERSION_MINOR "04"
-#define LGC_VERSION_PATCH "00-dev"
+#define LGC_VERSION_MINOR "03"
+#define LGC_VERSION_PATCH "01-dev"
 
 static std::string getLGCVersion(void) {
 	std::stringstream ss;

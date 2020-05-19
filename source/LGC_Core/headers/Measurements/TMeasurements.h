@@ -12,7 +12,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TTSTN.h>
 #include <TLEVEL.h>
 #include <TCAM.h>
-#include <TINCL.h>
 #include <RoundOfMeasurements.h>
 
 /*!

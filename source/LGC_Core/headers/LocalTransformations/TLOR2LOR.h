@@ -128,17 +128,6 @@ class TLOR2LOR{
 			\returns Partial derivatives of the point 'p' with respect to the "angle".
 		*/
 		TFreeVector partialDerivativesAngle (const std::string& transfoName, const TPositionVector& p, int angle) const;
-		
-		/*!
-		\brief Partial derivatives with respect to angles.
-
-		\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
-		\param[in] p Point which is transformed.
-		\param[in] angle Specification of the the angle (0 - omega (x-axis), 1 - phi (y-axis), 2 - kappa (z-axis)). With respect to this angle is returned partial derivative.
-
-		\returns Partial derivatives of the point 'p' with respect to the "angle".
-		*/
-		TFreeVector partialDerivativesAngleRotOnly(const std::string& transfoName, const TPositionVector& p, int angle) const;
 
 		/*!
 			\brief Partial derivatives with respect to translations.
@@ -209,12 +198,8 @@ class TLOR2LOR{
 
 		/*! Returns the comulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
 		TTransformation getCumulativeBegin(int positionInChain)const;
-		/*! Returns the comulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
-		TTransformation getCumulativeBeginRotOnly(int positionInChain)const;
 		/*! Returns the comulative matrix which should multiply from right the matrix of partial derivatives (post-multiplication)*/
 		TTransformation getCumulativeEnd(int positionInChain)const;
-		/*! Returns the comulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
-		TTransformation getCumulativeEndRotOnly(int positionInChain)const;
 
 		/*! 
 			Returns a position of given transformation in the "transformationChain"
