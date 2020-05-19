@@ -801,7 +801,7 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle()).getGonsValue());
 
 		//write the sigma ANGL
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.target.sigmaCombinedRad.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.target.sigmaCombinedAngle.getSignedCCValue());
 
 		//write the estimated ANGL
 		(*stream).writeDouble(obsWidth, anglePrecision, (ItANGL.getAngle()+ ItANGL.getAngleResidual()).getGonsValue());
@@ -814,7 +814,7 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.getAngleResidual().getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, 2, (ItANGL.getAngleResidual().getRadiansValue() / ItANGL.target.sigmaCombinedRad.getRadiansValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItANGL.getAngleResidual().getRadiansValue() / ItANGL.target.sigmaCombinedAngle.getRadiansValue()));
 
 		//write TARGET ID
 		(*stream).writeString(nameWidth, ItANGL.target.ID);
@@ -856,7 +856,7 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 		(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.getAngle().getGonsValue());
 
 		//write the sigma ZEND
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaCombinedRad.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaCombinedAngle.getSignedCCValue());
 
 		//write the estimated ZEND
 		(*stream).writeDouble(obsWidth, anglePrecision, (ItZEND.getAngle() + ItZEND.getAngleResidual()).getGonsValue());
@@ -869,7 +869,7 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.getAngleResidual().getRadiansValue()*dist*M2MM);
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItZEND.getAngleResidual().getRadiansValue() / ItZEND.target.sigmaCombinedRad.getRadiansValue()));
+		(*stream).writeDouble(obsResWidth, angleResPrecision, (ItZEND.getAngleResidual().getRadiansValue() / ItZEND.target.sigmaCombinedAngle.getRadiansValue()));
 
 		//write TARGET ID
 		(*stream).writeString(nameWidth, ItZEND.target.ID);
@@ -911,7 +911,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance());
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.sigmaCombinedMetre.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.sigmaCombinedDist.getMMetresValue());
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.getDistance() + ItDIST.getDistanceResidual());
@@ -923,7 +923,7 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
         (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSensibility<TLINE>(&ItDIST, instrPos, instr));
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.getDistanceResidual().getMetresValue() / ItDIST.target.sigmaCombinedMetre.getMetresValue() ) );
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.getDistanceResidual().getMetresValue() / ItDIST.target.sigmaCombinedDist.getMetresValue() ) );
 		
 		if (!ItDIST.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated
@@ -986,7 +986,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance());
 
 		//write the sigma DHOR
-        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.sigmaCombinedMetre.getMMetresValue());//Output value in meters [mm], stored in [m]
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.sigmaCombinedDist.getMMetresValue());//Output value in meters [mm], stored in [m]
 
 		//write the estimated DHOR
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.getDistance() + ItDHOR.getDistanceResidual());
@@ -995,7 +995,7 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.getDistanceResidual().getMMetresValue());
 
 		//write the residual/SIGMA
-		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() / ItDHOR.target.sigmaCombinedMetre.getMetresValue());
+		(*stream).writeDouble(obsResWidth, 2, ItDHOR.getDistanceResidual() / ItDHOR.target.sigmaCombinedDist.getMetresValue());
 
 		if (!ItDHOR.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated
@@ -1055,7 +1055,7 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECTH.getDistance());
 
 		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaCombinedDist.getMMetresValue());
 		
 		//write the estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECTH.getDistance() + ItECTH.getDistanceResidual()));
@@ -1064,7 +1064,7 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.getDistanceResidual().getMMetresValue());
 
 		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECTH.getDistanceResidual() / ItECTH.target.sigmaCombined.getMetresValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItECTH.getDistanceResidual() / ItECTH.target.sigmaCombinedDist.getMetresValue()));
 
 		//write azimut
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.obsHorAngle.getGonsValue());
@@ -1107,7 +1107,7 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
 
 		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaCombinedDist.getMMetresValue());
 	
 		//write the estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
@@ -1116,7 +1116,7 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
 
 		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaCombined.getMetresValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaCombinedDist.getMetresValue()));
 
 		//write angle
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsHorAngle.getGonsValue());
@@ -1268,7 +1268,7 @@ void	TTSTNWriter::writeANGLReliabilityData(std::shared_ptr<TTSTN> tstn, const TL
 		(*stream).writeDouble(obsWidth, anglePrecision, ItANGL.getAngle().getGonsValue());
 
 		//write the sigma ANGL
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.target.sigmaCombinedRad.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.target.sigmaCombinedAngle.getSignedCCValue());
 		
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.getAngleResidual().getSignedCCValue());
@@ -1303,7 +1303,7 @@ void	TTSTNWriter::writeZENDReliabilityData(std::shared_ptr<TTSTN> tstn, const TL
 		(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.getAngle().getGonsValue());
 
 		//write the sigma ZEND
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaCombinedRad.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaCombinedAngle.getSignedCCValue());
 
 		//write the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.getAngleResidual().getSignedCCValue());
@@ -1337,7 +1337,7 @@ void	TTSTNWriter::writeDISTReliabilityData(std::shared_ptr<TTSTN> tstn, const TL
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDist.getDistance());
 		//get the standard deviation
-        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDist.target.sigmaCombinedMetre.getMMetresValue());
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDist.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDist.getDistanceResidual().getMMetresValue());
 		
@@ -1438,7 +1438,7 @@ void	TTSTNWriter::writeDHORReliabilityData(std::shared_ptr<TTSTN> tstn, const TL
 		//get the observed DHOR
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDhor.getDistance());
 		//get the standard deviation
-        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.target.sigmaCombinedMetre.getMMetresValue());
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDhor.getDistanceResidual().getMMetresValue());
 
@@ -1471,7 +1471,7 @@ void	TTSTNWriter::writeECTHReliabilityData(std::shared_ptr<TTSTN> tstn, const TL
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcth.getDistance());
 		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcth.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItEcth.getDistanceResidual().getMMetresValue());
 
@@ -1504,7 +1504,7 @@ void	TTSTNWriter::writeECDIRReliabilityData(std::shared_ptr<TTSTN> tstn, const T
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcsp.getDistance());
 		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 

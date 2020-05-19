@@ -134,13 +134,13 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 		// mesured offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistance());
 		//sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaCombinedDist.getMMetresValue());
 		//estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistanceResidual() + ItDlev.getDistance());
 		//residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMMetresValue());
 		//residual/sima
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMetresValue() / ItDlev.target.sigmaCombined.getMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMetresValue() / ItDlev.target.sigmaCombinedDist.getMetresValue());
 
 		//Collimation angle
 		if (!instr.collAngleAdjustable->isFixed())
@@ -291,7 +291,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDLEV.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.getDistanceResidual().getMMetresValue());
 

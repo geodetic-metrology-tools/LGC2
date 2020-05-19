@@ -169,7 +169,7 @@ void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE>& distMeas,
 		contributions = fCGenerator.getSpatialDistanceContrib(station, *meas); //Get the observation contribution
 		
 		// Update the sigma 
-		meas->target.sigmaCombinedMetre = TLength(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 		
 		// Add station's contributions into a first design matrix
 		if(!station->instrumentPos->isFixed())
@@ -230,7 +230,7 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE>& dist
 		contributions = fCGenerator.getSpatialDistanceContribInFrame(station, *meas); //Get the observation contribution
 				
 		// Update the sigma 
-		meas->target.sigmaCombinedMetre = TLength(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 		
 		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
@@ -282,7 +282,7 @@ void  TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM
 		contributions = fCGenerator.getHorAnglContrib(station, rom, *meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 		// Add station contributions 
 		if(!station->instrumentPos->isFixed())
@@ -345,7 +345,7 @@ void  TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN:
 		contributions = fCGenerator.getHorAnglContribInFrame(station, rom, *meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 																				 // Add station contributions 
 		if (!station->instrumentPos->isFixed())
@@ -392,7 +392,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND>& zendMeas
 		AnglMeasContrib contributions = fCGenerator.getZenDistContrib(station, *meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 		// Add station contributions
 		if(!station->instrumentPos->isFixed())
@@ -450,7 +450,7 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND>& zen
 		AnglMeasContribFrame contributions = fCGenerator.getZenDistContribInFrame(station, *meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas->target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 		
 		// Add station contributions
 		if (!station->instrumentPos->isFixed())
@@ -498,7 +498,7 @@ bool isProcessOK = true;
 		contributions = fCGenerator.getHorDistContrib(station, *meas); //Get the observation contribution
 		
 		// Update the sigma 
-		meas->target.sigmaCombinedMetre = TLength(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station contributions into a first design matrix
 		if(!station->instrumentPos->isFixed())
@@ -555,7 +555,7 @@ void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> r
 		contributions = fCGenerator.getECTHContrib(station, rom, meas); //Get the observation contribution
 		
 		// Update the sigma 
-		meas.target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		meas.target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
@@ -612,7 +612,7 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 		contributions = fCGenerator.getECDIRContrib(station, rom, meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas.target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		meas.target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
@@ -669,7 +669,7 @@ void  TLSInputMatricesFiller::addLevelStContributions(TLEVEL& levelSt, TLSInputM
 		contributions = fCGenerator.getDLEVContrib(levelSt,*itDLEV); //Get the observation contribution
 
 		// Update the sigma 
-		itDLEV->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		itDLEV->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
 		// Add staff's contributions
 		if(!itDLEV->targetPos->isFixed())
@@ -773,7 +773,7 @@ void  TLSInputMatricesFiller::addORIEContributions(TORIEROM& orieROM, TLSInputMa
 		contributions = fCGenerator.getOrieContrib(orieROM, meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas.target.sigmaCombinedRad = TAngle(sqrt(contributions.fObsVariance));
+		meas.target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 		// Add station contributions 
 		if (!orieROM.instrumentPos->isFixed())
@@ -829,7 +829,7 @@ void  TLSInputMatricesFiller::addECHOContributions(TECHOROM& echoROM, TLSInputMa
 		contributions = fCGenerator.getECHOContrib(echoROM,*itECHO); //Get the observation contribution
 
 		// Update the sigma 
-		itECHO->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		itECHO->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions
 		if(!itECHO->targetPos->isFixed()) 
@@ -875,7 +875,7 @@ void  TLSInputMatricesFiller::addECVEContributions(TECVEROM& ecveROM, TLSInputMa
 		contributions = fCGenerator.getECVEContrib(ecveROM, *itECVE); //Get the observation contribution
 
 		// Update the sigma 
-		itECVE->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		itECVE->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 		
 		// Add point on the line contributions
 		if (!ecveROM.fMeasuredLine->getLinePoint()->isFixed())
@@ -929,7 +929,7 @@ void TLSInputMatricesFiller::addECSPContributions(TECSPROM& ecspRom, TLSInputMat
 		contributions = fCGenerator.getECSPContrib(ecspRom, itECSP); //Get the observation contribution
 
 		// Update the sigma 
-		itECSP.target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		itECSP.target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 		
 		// Add point on the line contributions
 		if (!ecspRom.p1->isFixed())
@@ -990,7 +990,7 @@ void  TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT>& dsptMeas, co
 		contributions = fCGenerator.getDSPTContrib(edmST, *meas); //Get the observation contribution
 
 		// Update the sigma 
-		meas->target.sigmaCombined = TLength(sqrt(contributions.fObsVariance));
+		meas->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
 		// Add station's contributions into a first design matrix
 		if (!edmST.instrumentPos->isFixed())
@@ -1256,7 +1256,7 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 		contributions = fCGenerator.getINCLYContrib(inclyROM, *itINCLY); //Get the observation contribution
 
 		// Update the sigma 
-		itINCLY->target.sigmaCombined = TAngle(sqrt(contributions.fObsVariance));
+		itINCLY->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 		// Adding contributions for STATION transformation parameters 
 		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform) {

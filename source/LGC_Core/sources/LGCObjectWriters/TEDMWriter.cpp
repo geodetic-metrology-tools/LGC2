@@ -182,7 +182,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DSPT
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaCombined.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaCombinedDist.getMMetresValue());
 
 		//write the estimated DSPT
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.getDistance() + ItDSPT.getDistanceResidual());//Output value in meters [m], stored in [m]
@@ -194,7 +194,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, TTSTNWriter::getDistanceSensibility<TDSPT, TInstrumentData::TEDM>(&ItDSPT, instrPos, instr));
 
 		//write the res/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual() / ItDSPT.target.sigmaCombined);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual() / ItDSPT.target.sigmaCombinedDist);
 	
 		//write the distance correction
 		if (!ItDSPT.target.distCorrectionAdjustable->isFixed()){
@@ -274,7 +274,7 @@ void TEDMWriter::writeReliabilityData(const TEDM& fEdm , const TLGCStatistic& st
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItDspt.getDistance());
 		//get the standard deviation
-        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDspt.target.sigmaCombined.getMMetresValue());
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, ItDspt.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItDspt.getDistanceResidual().getMMetresValue());
 

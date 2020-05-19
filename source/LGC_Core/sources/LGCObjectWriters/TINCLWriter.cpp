@@ -79,7 +79,7 @@ void TINCLWriter::writeINCLYResults(const  TINCLYROM& inclyrom)
 		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue());//Output value in gradians [gon], stored in [gon]
 
 		//write the sigma angle
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombined.getSignedCCValue());//Output value in cc [cc], stored in [gon]
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombinedAngle.getSignedCCValue());//Output value in cc [cc], stored in [gon]
 
 		//write the estimated angle
 		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue() + ItINCLY.getAngleResidual().getGonsValue());//Output value in gradians [gon], stored in [gon]
@@ -88,7 +88,7 @@ void TINCLWriter::writeINCLYResults(const  TINCLYROM& inclyrom)
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getSignedCCValue());//Output value in cc [cc], stored in [gon]
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getRadiansValue() / ItINCLY.target.sigmaCombined.getRadiansValue());//Output value unitless
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getRadiansValue() / ItINCLY.target.sigmaCombinedAngle.getRadiansValue());//Output value unitless
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItINCLY.target.ID);
@@ -151,7 +151,7 @@ void	TINCLWriter::writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TL
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombined.getSignedCCValue());
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCombinedAngle.getSignedCCValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.getAngleResidual().getSignedCCValue());
 

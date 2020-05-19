@@ -38,8 +38,8 @@ class TInstrumentData {
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
-				TLength sigmaCombinedMetre;		   // [m]
-				TAngle sigmaCombinedRad;		   // [rad]
+				TLength sigmaCombinedDist;		   // [m]
+				TAngle sigmaCombinedAngle;		   // [rad]
 				TAngle sigmaCombinedPLRAngl;		   // [rad]
 				TAngle sigmaCombinedPLRZenD;		   // [rad]
 				TLength sigmaCombinedPLRDist;		   // [m]
@@ -151,7 +151,7 @@ class TInstrumentData {
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable;
-				TLength sigmaCombined;		   // [m]
+				TLength sigmaCombinedDist;		   // [m]
             };
 
             TEDM() = default;
@@ -206,7 +206,7 @@ class TInstrumentData {
                 TLength sigmaDCorr;           // [m]
                 TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
                 TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
-				TLength sigmaCombined;
+				TLength sigmaCombinedDist;
             };
 
             TLEVEL() = default;
@@ -259,7 +259,7 @@ class TInstrumentData {
          TLength distCorrectionValue;  // [m]
          TLength sigmaDCorr;           // [m]
          TLength sigmaInstrCentering;  // [m]
-		 TLength sigmaCombined;		   // [m]
+		 TLength sigmaCombinedDist;		   // [m]
 		};
 
 		struct TINCL {
@@ -269,7 +269,7 @@ class TInstrumentData {
 			TAngle sigmaCorrectionValue;  // [rad]
 			TAngle refAngleCorrectionValue;  // [rad]
 			TAngle refSigmaCorrectionValue;  // [rad]
-			TAngle sigmaCombined;		  // [rad]
+			TAngle sigmaCombinedAngle;		  // [rad]
 		};
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
