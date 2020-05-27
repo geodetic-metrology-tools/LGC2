@@ -1431,19 +1431,16 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	//Transform the projected vector from the station frame to the rootframe
 	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(inclST.positionInTree, fPointTransfo.getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
 	TPositionVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
+	stLor2RootTrafo.transform(ProjLocalV);
 
 	//Other method possible: use Partial derivative for vectors TLOR2LOR::partialDerivativesAngle (TO develop) with:
 	//TFreeVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
-
-	stLor2RootTrafo.transform(ProjLocalV);
-
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransfContributions;
-	addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt, TransfContributions);
-
+	
+	//Compute the variance of the observation
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 	
-	INCLYContrib contrib = { calcMeas, TransfContributions, obsVariance };
-	return contrib;
+	// CalcMeas, transformationContributions, variance
+	return { calcMeas, addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt) , obsVariance };
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1790,7 +1787,7 @@ void TContributionsGenerator::addUVDTgTransfContributionsCamera(const TLOR2LOR& 
 	}
 }
 
-void TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib) {
+decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator) {
 	const std::vector<TLOR2LOR::TransformAndParams>& trafoChain = lorTrafo.getTransformationChain();
 	
 	std::string transformationName;
@@ -1800,10 +1797,12 @@ void TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, con
 	TFreeVector kappaPD(TCoordSysFactory::k3DCartesian);
 
 	TReal omegaContrib, phiContrib, kappaContrib, scaleContrib;
+	
+	decltype(INCLYContrib::fStTransformContrib) transfContrib;
 
 	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
-	for (auto it(trafoChain.begin()); it != trafoChain.end(); ++it) {
-		std::string transformationName = it->adjTrafo->getName();
+	for (const auto& it : trafoChain) {
+		std::string transformationName = it.adjTrafo->getName();
 		omegaPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 0);
 		phiPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 1);
 		kappaPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 2);
@@ -1818,7 +1817,9 @@ void TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, con
 		scaleContrib = -1.0 * ((scalePD.getX().getMetresValue()) * denominator - numerator * (scalePD.getZ().getMetresValue())) / (pow2q(numerator) + pow2q(denominator));
 
 		TransformationContrib trContrib = { TFreeVector(omegaContrib, phiContrib, kappaContrib, TCoordSysFactory::k3DCartesian), TFreeVector(0,0,0,TCoordSysFactory::k3DCartesian),scaleContrib };
-		transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it->adjTrafo, trContrib));
+		transfContrib.emplace_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it.adjTrafo, trContrib));
 	}
+
+	return transfContrib;
 }
 

@@ -1631,7 +1631,7 @@ void TTSTNWriter::writePLRRHeaderynthesis(){
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TTSTNWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision) {
+void TTSTNWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(1);

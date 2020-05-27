@@ -25,7 +25,7 @@ public:
 	/// Constructor
 	TINCLWriter(TAStreamFormatter& stream, bool hist);
 	///Destructor
-	virtual ~TINCLWriter();
+	virtual ~TINCLWriter() override;
 
 	/*!@name Headers */
 	//@{
@@ -45,13 +45,13 @@ public:
 	void writeINCLYSIMUResults(const  TINCLYROM& inclyrom);
 
 	/// Write reliability data for ECHO 
-	void	writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TLGCStatistic& stat, const std::list<TINCLY> measINCLY);
+	void	writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TLGCStatistic& stat, const std::list<TINCLY> &measINCLY);
 
 	/// Write the result synthesis for INCLY
 	void writeINCLYResultsSynthesis(const  TINCLYROM& inclyrom);
 
 	/// Write the result data for INCLY in all frames 
-	void writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> inclysum);
+	void writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> &inclysum);
 	//@}
 
 private:

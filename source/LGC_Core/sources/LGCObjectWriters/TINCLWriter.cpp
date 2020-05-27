@@ -148,7 +148,7 @@ void	TINCLWriter::writeINCLYReliabilityHeader()
 
 
 //------------------ Reliability data----------------------------------------------------------------------
-void	TINCLWriter::writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TLGCStatistic& stat, const std::list<TINCLY> measINCLY)
+void	TINCLWriter::writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TLGCStatistic& stat, const std::list<TINCLY> &measINCLY)
 {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -245,7 +245,7 @@ void TINCLWriter::writeINCLYResultsSynthesis(const  TINCLYROM& inclyrom)
 
 
 
-void TINCLWriter::writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> inclysum)
+void TINCLWriter::writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> &inclysum)
 {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();

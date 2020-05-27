@@ -488,7 +488,7 @@ public:
 	TKeyINCLY(TLGCData& project, int nb_allowed_keywords = nb_allowed_incly, const char** keywords = allowed_INCLY) :
 		TAMeasurementKey(project, INCLY)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
+		for (int i = 0; i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
 	}
 

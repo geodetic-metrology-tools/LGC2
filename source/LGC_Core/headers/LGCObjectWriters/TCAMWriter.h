@@ -62,7 +62,7 @@ public:
 		void writeUVDResultsSynthesis(const TCAM& camera);
 
 		/// Write Default results synthesis
-		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision);
+		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
 	//@}
 
 

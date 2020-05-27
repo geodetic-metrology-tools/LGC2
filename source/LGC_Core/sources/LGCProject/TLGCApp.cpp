@@ -137,12 +137,14 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat, const std::string 
         stream->setPointFormat(*pointFormat);
 	}
 	//As the name width is used also for frames. Set the name width to the max of of frame name +1 characters, if necessary.
-	for (TDataTreeIterator itTree = dat->getTree().begin(); itTree != dat->getTree().end(); itTree++) {
-		if (itTree->get()->frame.getName().length() >= pointFormat->getNameWidth()) {
-			pointFormat-> setNameWidth(itTree->get()->frame.getName().length() + 1);
+	for (const auto& itTree : dat->getTree())
+	{
+		if (itTree.get()->frame.getName().length() >= pointFormat->getNameWidth()) {
+			pointFormat->setNameWidth(itTree.get()->frame.getName().length() + 1);
 			stream->setPointFormat(*pointFormat);
 		}
 	}
+
 }
 
 void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLocation, const TLGCCalculation &calculation, std::shared_ptr<TAStreamFormatter> &stream)

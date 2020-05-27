@@ -74,49 +74,49 @@ void TTSTN::TROM::initialiseObsSummaries() {
 
 const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary() const { return anglSummary_; }
 
-const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary(std::string text) {
+const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary(std::string text) noexcept {
 	anglSummary_.setObsText(text);
 	return anglSummary_;
 }
 
 const TLGCObsSummary& TTSTN::TROM::getZENDObsSummary() const { return zendSummary_; }
 
-const TLGCObsSummary& TTSTN::TROM::getZENDObsSummary(std::string text) {
+const TLGCObsSummary& TTSTN::TROM::getZENDObsSummary(std::string text) noexcept {
 	zendSummary_.setObsText(text);
 	return zendSummary_;
 }
 
 const TLGCObsSummary&  TTSTN::TROM::getDISTObsSummary() const { return distSummary_; }
 
-const TLGCObsSummary& TTSTN::TROM::getDISTObsSummary(std::string text) {
+const TLGCObsSummary& TTSTN::TROM::getDISTObsSummary(std::string text) noexcept {
 	distSummary_.setObsText(text);
 	return distSummary_;
 }
 
 const TLGCObsSummary&  TTSTN::TROM::getDHORObsSummary() const { return dhorSummary_; }
 
-const TLGCObsSummary& TTSTN::TROM::getDHORObsSummary(std::string text) {
+const TLGCObsSummary& TTSTN::TROM::getDHORObsSummary(std::string text) noexcept {
 	dhorSummary_.setObsText(text);
 	return dhorSummary_;
 }
 
 const TLGCObsSummary&  TTSTN::TROM::getECTHObsSummary() const { return ecthSummary_; }
 
-const TLGCObsSummary& TTSTN::TROM::getECTHObsSummary(std::string text) {
+const TLGCObsSummary& TTSTN::TROM::getECTHObsSummary(std::string text) noexcept {
 	ecthSummary_.setObsText(text);
 	return ecthSummary_;
 }
 
 const TLGCObsSummary&  TTSTN::TROM::getECDIRObsSummary() const { return ecdirSummary_; }
 
-const TLGCObsSummary& TTSTN::TROM::getECDIRObsSummary(std::string text) {
+const TLGCObsSummary& TTSTN::TROM::getECDIRObsSummary(std::string text) noexcept {
 	ecdirSummary_.setObsText(text);
 	return ecdirSummary_;
 }
 
 const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary() const { return plr3dSummary_; }
 
-const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary(std::string text) {
+const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary(std::string text) noexcept {
 	plr3dSummary_.anglObsSum.setObsText(text);
 	plr3dSummary_.zendObsSum.setObsText(text);
 	plr3dSummary_.distObsSum.setObsText(text);

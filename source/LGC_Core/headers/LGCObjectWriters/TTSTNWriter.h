@@ -81,7 +81,7 @@ public:
 		void	writeECDIRReliabilityData(std::shared_ptr<TTSTN> tstn, const TLGCStatistic& stat, const std::list<TECDIR>& measECDIR);
 
 		/// Write Default synthesis
-		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision);
+		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
 		/// Write ANGL synthesis
         void writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 		/// Write ZEND synthesis

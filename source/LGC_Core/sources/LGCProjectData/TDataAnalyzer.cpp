@@ -175,11 +175,11 @@ bool TDataAnalyzer::dataConsistent(){
                 outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
 		}
 
-		for (auto itINCLY(it.node->data.get()->measurements.fINCLY.begin()); itINCLY != it.node->data.get()->measurements.fINCLY.end(); ++itINCLY) {
-			int numberOfMeasurements = (int)itINCLY->measINCLY.size();
+		for (auto& itINCLY : it.node->data.get()->measurements.fINCLY) {
+			int numberOfMeasurements = (int)itINCLY.measINCLY.size();
 			if (numberOfMeasurements == 0) {
-				itINCLY->setActive(false);
-				const std::string nlinestr("Line " + std::to_string(itINCLY->line + 1) + ": ");
+				itINCLY.setActive(false);
+				const std::string nlinestr("Line " + std::to_string(itINCLY.line + 1) + ": ");
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
 			}
 		}
@@ -604,7 +604,8 @@ bool TDataAnalyzer::cleanDeactivated(){
         }
 
 		// INCLY
-		for (auto inclyrom = measurements.fINCLY.begin(); inclyrom != measurements.fINCLY.end();) {
+		auto inclyrom = measurements.fINCLY.begin();
+		while (inclyrom != measurements.fINCLY.end()){
 
 			// If INCLYROM not active, remove it:
 			if (!inclyrom->isActive()) {

@@ -570,11 +570,13 @@ public:
 
 	TINCLY(const LGCAdjustablePoint& pos, TInstrumentData::TINCL tgt) :
 		TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>(pos, tgt){}
-
 	//@}
 
+	///Destructor
+	~TINCLY() override = default;
+
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
 };
 #endif

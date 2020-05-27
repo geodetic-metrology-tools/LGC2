@@ -358,7 +358,7 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
 
 }
 
-void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> dlevsum)
+void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> &dlevsum)
 {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();

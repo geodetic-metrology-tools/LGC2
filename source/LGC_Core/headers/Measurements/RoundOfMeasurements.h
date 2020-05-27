@@ -31,7 +31,7 @@ struct TECHOROM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getECHOObsSummary() const;
-		const TLGCObsSummary& getECHOObsSummary(std::string text);
+		const TLGCObsSummary& getECHOObsSummary(std::string text) noexcept;
 
 		/// Line of the measurement definition
 		int  line;
@@ -70,7 +70,7 @@ struct TECSPROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECSPObsSummary() const;
-	const TLGCObsSummary& getECSPObsSummary(std::string text);
+	const TLGCObsSummary& getECSPObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
 	int  line;
@@ -137,7 +137,7 @@ struct TECVEROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECVEObsSummary() const;
-	const TLGCObsSummary& getECVEObsSummary(std::string text);
+	const TLGCObsSummary& getECVEObsSummary(std::string text) noexcept;
 
 
 	/// Line of the measurement definition
@@ -179,7 +179,7 @@ struct TORIEROM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getORIEObsSummary() const;
-		const TLGCObsSummary& getORIEObsSummary(std::string text);
+		const TLGCObsSummary& getORIEObsSummary(std::string text) noexcept;
 
 
 		TAngle fConstantAngle;
@@ -217,21 +217,13 @@ struct TINCLYROM : public TStatusObject {
 	/// The instrument that is used on this station
 	TInstrumentData::TINCL     instrument;
 
+	TAngle fConstantAngle;
+
 	/// Line of the measurement definition
 	int  line;
-
-	int romId{ romCounter_++ };
+	int romId = TINCLYROM::romCounter_++;
 
 	TDataTreeIterator positionInTree;
-
-	/// Initialise observation summaries
-	void initialiseObsSummaries();
-
-	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	const TLGCObsSummary& getINCLYObsSummary() const;
-	const TLGCObsSummary& getINCLYObsSummary(std::string text) ;
-
-	TAngle fConstantAngle;
 
 	/// the station attribute is a copy of the parameter to override defaults
 	TINCLYROM(const TInstrumentData::TINCL& instrument, TDataTreeIterator itTree) :
@@ -241,6 +233,13 @@ struct TINCLYROM : public TStatusObject {
 		positionInTree(itTree)
 	{
 	}
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getINCLYObsSummary() const;
+	const TLGCObsSummary& getINCLYObsSummary(std::string text) noexcept;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
 private:
 

@@ -511,14 +511,13 @@ void TLSResultsMatricesExtractor::extractOBSXYZObs(const TLSResultsMatrices& rm,
 
 void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices& rm, TINCLYROM& inclyMeas)
 {
-	for (auto itINCLY(inclyMeas.measINCLY.begin()); itINCLY != inclyMeas.measINCLY.end(); ++itINCLY)
-	{
-		MatrixIndex obsUidx = itINCLY->getFirstObservationIndex();
+	for (auto& itINCLY : inclyMeas.measINCLY) {
+		MatrixIndex obsUidx = itINCLY.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVectByConst()->size())
-			itINCLY->setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx)));
+			itINCLY.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx)));
 		else
 		{
-			logCritical() << "INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itINCLY->line << ")";
+			logCritical() << "INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itINCLY.line << ")";
 			throw std::runtime_error("INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 		}
 	}

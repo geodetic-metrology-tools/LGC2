@@ -159,12 +159,8 @@ private:
 		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 	
 		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
-		void addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
+		decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator);
 
-		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
-		//void addRotationsContributionsINCL(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal a, TReal b, TReal c, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
-
-		
 		//@}
 
 };

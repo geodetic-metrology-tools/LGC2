@@ -62,11 +62,11 @@ struct TCAM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		const TUVDObsSummary& getUVDObsSummary() const;
-		const TUVDObsSummary& getUVDObsSummary(std::string text);
+		const TUVDObsSummary& getUVDObsSummary(std::string text) noexcept;
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 		const TUVECObsSummary& getUVECObsSummary() const;
-		const TUVECObsSummary& getUVECObsSummary(std::string text);
+		const TUVECObsSummary& getUVECObsSummary(std::string text) noexcept;
 
 
     private:

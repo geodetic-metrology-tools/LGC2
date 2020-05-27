@@ -43,7 +43,7 @@ void TEDMWriter::writeEDMSynthesisHeader()
 }
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TEDMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision) {
+void TEDMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(1);

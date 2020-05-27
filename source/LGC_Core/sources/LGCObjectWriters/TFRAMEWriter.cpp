@@ -941,8 +941,6 @@ void TFRAMEWriter::initialiseAllObsSummaries() {
 		
 		//TOCHECK
 		if (tmeas.fOBSXYZ.size() > 0) {
-			//for (auto& itOBSXYZ : tmeas.fOBSXYZ) {
-
 				allObsxyzXSummaries_.push_back(&tmeas.getOBSXYZObsSummary(itTree.node->data->frame.getName()).obsXObsSum);
 				allObsxyzYSummaries_.push_back(&tmeas.getOBSXYZObsSummary(itTree.node->data->frame.getName()).obsYObsSum);
 				allObsxyzZSummaries_.push_back(&tmeas.getOBSXYZObsSummary(itTree.node->data->frame.getName()).obsZObsSum);
@@ -1867,7 +1865,7 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 	bool isECDIR = false;
 	for (auto& itTSTN : tmeas.fTSTN)
 	{
-		for (auto const ItRoms : itTSTN->roms)
+		for (auto const &ItRoms : itTSTN->roms)
 		{
 			if (ItRoms->measECDIR.size()>0){
 				if (isECDIR == false)
@@ -2050,9 +2048,9 @@ void TFRAMEWriter::writeINCLReliability(TDataTreeIterator frameIt)
 
 	//INCLY
 	bool isincly = false;
-	for (auto itINCLY(tmeas.fINCLY.begin()); itINCLY != tmeas.fINCLY.end(); ++itINCLY)
+	for (auto &itINCLY :tmeas.fINCLY)
 	{
-		if (itINCLY->measINCLY.size() > 0) {
+		if (itINCLY.measINCLY.size() > 0) {
 
 			if (isincly == false)
 			{
@@ -2060,7 +2058,7 @@ void TFRAMEWriter::writeINCLReliability(TDataTreeIterator frameIt)
 				inclWriter.writeINCLYReliabilityHeader();
 				isincly = true;
 			}
-			inclWriter.writeINCLYReliabilityData(*itINCLY, fProjectData->getStatistics(), itINCLY->measINCLY);
+			inclWriter.writeINCLYReliabilityData(itINCLY, fProjectData->getStatistics(), itINCLY.measINCLY);
 		}
 	}
 

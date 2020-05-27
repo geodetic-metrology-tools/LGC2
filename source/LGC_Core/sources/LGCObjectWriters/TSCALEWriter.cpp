@@ -486,7 +486,7 @@ void TSCALEWriter::writeSCALESynthesisHeader()
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TSCALEWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision) {
+void TSCALEWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(1);

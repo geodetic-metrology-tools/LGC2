@@ -72,7 +72,7 @@ public:
 		void writeECSPResultsSynthesis(const TECSPROM& ecsprom);
 		
 		//Write Default results data
-		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision);
+		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
 
 		//@}
 

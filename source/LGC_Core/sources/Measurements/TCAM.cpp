@@ -39,7 +39,7 @@ void TCAM::initialiseObsSummaries() {
 
 const TUVDObsSummary& TCAM::getUVDObsSummary() const { return uvdSummary_; }
 
-const TUVDObsSummary& TCAM::getUVDObsSummary(std::string text) {
+const TUVDObsSummary& TCAM::getUVDObsSummary(std::string text) noexcept {
 	uvdSummary_.xVectorCompObsSum.setObsText(text);
 	uvdSummary_.yVectorCompObsSum.setObsText(text);
 	uvdSummary_.distObsSum.setObsText(text);
@@ -48,7 +48,7 @@ const TUVDObsSummary& TCAM::getUVDObsSummary(std::string text) {
 
 const TUVECObsSummary& TCAM::getUVECObsSummary() const { return uvecSummary_; }
 
-const TUVECObsSummary& TCAM::getUVECObsSummary(std::string text) {
+const TUVECObsSummary& TCAM::getUVECObsSummary(std::string text) noexcept {
 	uvecSummary_.xVectorCompObsSum.setObsText(text);
 	uvecSummary_.yVectorCompObsSum.setObsText(text);
 	return uvecSummary_;

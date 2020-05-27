@@ -651,7 +651,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeaderAngles()
 
 
 //------------------ Synthesis data---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> meassum, int obsResWidth, int ResPrecision) {
+void TOtherMeasurentWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(1);

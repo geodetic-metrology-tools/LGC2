@@ -1249,23 +1249,23 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 	MatrixIndex obsIdx = -1;
 	INCLYContrib contributions;
 
-	for(auto itINCLY(inclyROM.measINCLY.begin()); itINCLY != inclyROM.measINCLY.end(); ++itINCLY) {
-		eqIdx = itINCLY->getFirstEquationIndex();
-		obsIdx = itINCLY->getFirstObservationIndex();
+	for (auto& itINCLY : inclyROM.measINCLY) {
+		eqIdx = itINCLY.getFirstEquationIndex();
+		obsIdx = itINCLY.getFirstObservationIndex();
 
-		contributions = fCGenerator.getINCLYContrib(inclyROM, *itINCLY); //Get the observation contribution
+		contributions = fCGenerator.getINCLYContrib(inclyROM, itINCLY); //Get the observation contribution
 
 		// Update the sigma 
-		itINCLY->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
+		itINCLY.target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 		// Adding contributions for STATION transformation parameters 
-		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform) {
-			if (!itStTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform->first, itStTransform->second, eqIdx, matrices);
+		for (auto& itStTransform : contributions.fStTransformContrib) {
+			if (!itStTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, eqIdx, matrices);
 		}
-
+		
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (-itINCLY->getAngle() - contributions.fCalcMeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (-itINCLY.getAngle() - contributions.fCalcMeas));
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)

@@ -49,7 +49,7 @@ public:
 
 		/// Write results synthesis
 		void writeLEVELResultsSynthesis(const TLEVEL& fLevel);
-		void writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> dlevsum);
+		void writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> &dlevsum);
 	//@}
 
 	/// Set if ALLFIXED option is used
