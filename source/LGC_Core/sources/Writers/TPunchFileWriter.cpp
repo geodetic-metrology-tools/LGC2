@@ -253,6 +253,7 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
 	int					coordResWidth = getCoordResWidth();
+	int					covCoordPrec = 2 * getCoordPrecision() + 1;
 
 	if (fData->getConfig().useApriori.isActive())
 		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
@@ -275,14 +276,14 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	(*stream).writeString(coordResWidth, "SZ ");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "COVXY");
-	(*stream).writeString(coordResWidth, "COVXZ");
-	(*stream).writeString(coordResWidth, "COVYZ");
+	(*stream).writeString(covCoordPrec, "COVXY");
+	(*stream).writeString(covCoordPrec, "COVXZ");
+	(*stream).writeString(covCoordPrec, "COVYZ");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "DX ");
-	(*stream).writeString(coordResWidth, "DY ");
-	(*stream).writeString(coordResWidth, "DZ ");
+	(*stream).writeString(coordWidth, "DX ");
+	(*stream).writeString(coordWidth, "DY ");
+	(*stream).writeString(coordWidth, "DZ ");
 	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,14 +301,14 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "(MM2)");
-	(*stream).writeString(coordResWidth, "(MM2)");
-	(*stream).writeString(coordResWidth, "(MM2)");
+	(*stream).writeString(covCoordPrec, "(MM2)");
+	(*stream).writeString(covCoordPrec, "(MM2)");
+	(*stream).writeString(covCoordPrec, "(MM2)");
 	(*stream).width(1);
 	(*stream) << "";
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream).writeString(coordResWidth, "(MM)");
+	(*stream).writeString(coordWidth, "(MM)");
+	(*stream).writeString(coordWidth, "(MM)");
+	(*stream).writeString(coordWidth, "(MM)");
 	(*stream) << endl << endl;
 	return;
 }
@@ -342,9 +343,9 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	stream->writeString(coordWidth, "LONGUEUR X");
 	stream->writeString(coordWidth, "LONGUEUR Y");
 	stream->writeString(coordWidth, "LONGUEUR Z");
-	stream->writeString(coordResWidth, "DX");
-	stream->writeString(coordResWidth, "DY");
-	stream->writeString(coordResWidth, "DZ");
+	stream->writeString(coordWidth, "DX");
+	stream->writeString(coordWidth, "DY");
+	stream->writeString(coordWidth, "DZ");
 
 	*stream << endl;
 
@@ -361,9 +362,9 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	stream->writeString(coordWidth, "(MM)");// Axis length
 	stream->writeString(coordWidth, "(MM)");// Axis length
 	stream->writeString(1,""); //just to align unit with the title
-	stream->writeString(coordResWidth, "(MM)");// delta
-	stream->writeString(coordResWidth, "(MM)");// delta
-	stream->writeString(coordResWidth, "(MM)");// delta
+	stream->writeString(coordWidth, "(MM)");// delta
+	stream->writeString(coordWidth, "(MM)");// delta
+	stream->writeString(coordWidth, "(MM)");// delta
 	(*stream) << endl;
 
 	return;
@@ -588,8 +589,10 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 	TAStreamFormatter* stream = getStream();
 	TPointConverter converter (stream, fProjectData->getConfig().referential);
 	int					nameWidth = getNameWidth();
+	int					covCoordPrec = 2 * getCoordPrecision() + 1;
+	
 	std::string separator = stream->getSeparator();
-
+	
 	if (point.getFrameTreePosition()->get()->isROOTNode())
 	{
 		(*stream).width(1);
@@ -608,22 +611,21 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 			TLength::kMillimetres,
 			separator,
 			TLength(point.getXEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
-			TLength(point.getXEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
+			TLength(point.getYEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
 			TLength(point.getZEstPrecision().getMMetresValue(), TLength::EUnits::kMillimetres),
 			" ");
 		(*stream).width(1);
 		(*stream) << "";
-		//Covariance 
+		//Covariance
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			getCoordResWidth(),
-			getCoordPrecision(),
-			TLength::kMillimetres,
+			covCoordPrec,
+			covCoordPrec-6,
+			TLength::kMetres,
 			separator,
-			TLength(point.getXYCovar(), TLength::EUnits::kMillimetres),
-			TLength(point.getXZCovar(), TLength::EUnits::kMillimetres),
-			TLength(point.getYZCovar(), TLength::EUnits::kMillimetres),
+			TLength(point.getXYCovar(), TLength::EUnits::kMetres) * TReal(1e6),
+			TLength(point.getXZCovar(), TLength::EUnits::kMetres) * TReal(1e6),
+			TLength(point.getYZCovar(), TLength::EUnits::kMetres) * TReal(1e6),
 			" ", true);
-
 
 		(*stream).width(1);
 		(*stream) << "";
@@ -635,9 +637,9 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 		{
 			TXYH2CCS::XYHs2CCS(xyzValue);
 			converter.writeCoordinateParam(point.getSpatialStatus(),
-				getCoordResWidth(),
+				getCoordWidth(),
 				getCoordPrecision(),
-				TLength::kMillimetres,
+				TLength::EUnits::kMillimetres,
 				separator,
 				point.getDXValue(),
 				point.getDYValue(),
@@ -648,9 +650,9 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 		{
 			TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
 			converter.writeCoordinateParam(point.getSpatialStatus(),
-				getCoordResWidth(),
+				getCoordWidth(),
 				getCoordPrecision(),
-				TLength::kMillimetres,
+				TLength::EUnits::kMillimetres,
 				separator,
 				point.getDXValue(),
 				point.getDYValue(),
@@ -662,9 +664,9 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 			TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
 			converter.writeCoordinateParam(point.getSpatialStatus(),
-				getCoordResWidth(),
+				getCoordWidth(),
 				getCoordPrecision(),
-				TLength::kMillimetres,
+				TLength::EUnits::kMillimetres,
 				separator,
 				point.getDXValue(),
 				point.getDYValue(),
@@ -673,9 +675,9 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 		}
 		else
 			converter.writeCoordinateParam(point.getSpatialStatus(),
-			getCoordResWidth(),
+			getCoordWidth(),
 			getCoordPrecision(),
-			TLength::kMillimetres,
+				TLength::EUnits::kMillimetres,
 			separator,
 			point.getDXValue(),
 			point.getDYValue(),
@@ -732,7 +734,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 
 		//Delta
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			getCoordResWidth(),
+			getCoordWidth(),
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -820,7 +822,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 	{
 		TXYH2CCS::XYHs2CCS(xyzValue);
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			coordWidth,
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -833,7 +835,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 	{
 		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			coordWidth,
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -847,7 +849,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordResWidth,
+			coordWidth,
 			getCoordPrecision(),
 			TLength::kMillimetres,
 			separator,
@@ -858,7 +860,7 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 	}
 	else
 		converter.writeCoordinateParam(point.getSpatialStatus(),
-		coordResWidth,
+		coordWidth,
 		getCoordPrecision(),
 		TLength::kMillimetres,
 		separator,

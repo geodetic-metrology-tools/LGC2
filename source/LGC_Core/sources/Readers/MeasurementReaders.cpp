@@ -970,7 +970,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
 		instr.ppmD = TLength(opts.getParamRmm2m("PPM", instr.ppmD));
-		instr.sigmaInstrCentering = TLength(opts.getParamR("ICSE ", instr.sigmaInstrCentering));
+		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
 		
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
@@ -1286,5 +1286,66 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			obsxyz.eolcomment = tokens.back();
 			
+	}
+}
+
+void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+{
+
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline) {
+		if (tokens.size() < 3)
+			throw std::runtime_error("INCLY measurement must have at least 1 entry, the INCL instrument ID");
+
+		TINCLYROM inclyRom(finstruments.getDevice(finstruments.fINCL, tokens.at(2)), proj.getCurrentPosition());
+		inclyRom.line = line;
+		inclyRom.setActive(activeLine);
+
+		proj.getCurrentNode().measurements.fINCLY.emplace_back(inclyRom); //add new round of measurement
+
+		//The INCL instrument is only the default one used, it is not stored in TINCLYROM because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fINCL, tokens.at(2)).ID;
+	}
+	else {
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+		if (!hasAllParams && !proj.getConfig().sim.isActive())
+			throw std::runtime_error("INCLY measurement must have at least 2 entries: stationed point ID and observed horizontal offset");
+	
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		// look up the stationed point, i.e. the target
+		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+
+		currentTargetApplied = opts.getParamS("INSTR", currentTargetApplied); //If TINCL is used then change ID of CurrentTargetApplied for the following measurements.
+
+		// get a station reference to update default values
+		TInstrumentData::TINCL instrument = finstruments.getDevice(finstruments.fINCL, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+
+		// get a station reference to update default values
+		//TInstrumentData::TINCL instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
+
+		instrument.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE",instrument.sigmaAngl));
+		instrument.angleCorrectionValue = TAngle(opts.getParamRgon2rad("AC", instrument.angleCorrectionValue));
+		instrument.sigmaCorrectionValue = TAngle(opts.getParamRcc2rad("ACSE", instrument.sigmaCorrectionValue));
+		instrument.refAngleCorrectionValue = TAngle(opts.getParamRgon2rad("RF", instrument.refAngleCorrectionValue));
+		instrument.refSigmaCorrectionValue = TAngle(opts.getParamRcc2rad("RFSE", instrument.refSigmaCorrectionValue));
+			
+		// set measurement value
+		TINCLY incly(stationPoint, instrument);
+
+		TINCLYROM& inclyROMLatest = proj.getCurrentNode().measurements.fINCLY.back();
+		
+		//NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto& point : inclyROMLatest.measINCLY)
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("An INCLY measurement is duplicated");
+		
+		incly.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
+
+		incly.line = line;
+		incly.setActive(proj.getCurrentNode().measurements.fINCLY.back().isActive() && activeLine); // Active only if ROM active as well
+		proj.getCurrentNode().measurements.fINCLY.back().measINCLY.emplace_back(incly);
 	}
 }

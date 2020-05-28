@@ -31,6 +31,7 @@ struct TECHOROM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getECHOObsSummary() const;
+		const TLGCObsSummary& getECHOObsSummary(std::string text) noexcept;
 
 		/// Line of the measurement definition
 		int  line;
@@ -69,6 +70,7 @@ struct TECSPROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECSPObsSummary() const;
+	const TLGCObsSummary& getECSPObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
 	int  line;
@@ -135,6 +137,8 @@ struct TECVEROM : public TStatusObject {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECVEObsSummary() const;
+	const TLGCObsSummary& getECVEObsSummary(std::string text) noexcept;
+
 
 	/// Line of the measurement definition
 	int  line;
@@ -175,6 +179,8 @@ struct TORIEROM : public TStatusObject {
 
 		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
         const TLGCObsSummary& getORIEObsSummary() const;
+		const TLGCObsSummary& getORIEObsSummary(std::string text) noexcept;
+
 
 		TAngle fConstantAngle;
 
@@ -197,5 +203,48 @@ struct TORIEROM : public TStatusObject {
         static int romCounter_;
 
         TLGCObsSummary orieSummary_;
+};
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of INCLY (TINCLY) measurements made from a single position of the instrument.
+*/
+struct TINCLYROM : public TStatusObject {
+
+	/// All INCLY measurements
+	std::list<TINCLY> measINCLY;
+
+	/// The instrument that is used on this station
+	TInstrumentData::TINCL     instrument;
+
+	TAngle fConstantAngle;
+
+	/// Line of the measurement definition
+	int  line;
+	int romId = TINCLYROM::romCounter_++;
+
+	TDataTreeIterator positionInTree;
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TINCLYROM(const TInstrumentData::TINCL& instrument, TDataTreeIterator itTree) :
+		instrument(instrument),
+		fConstantAngle(0.0, TAngle::EUnits::kGons),
+		line(NO_VALi),
+		positionInTree(itTree)
+	{
+	}
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getINCLYObsSummary() const;
+	const TLGCObsSummary& getINCLYObsSummary(std::string text) noexcept;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
+
+private:
+
+	static int romCounter_;
+
+	TLGCObsSummary inclySummary_;
 };
 #endif

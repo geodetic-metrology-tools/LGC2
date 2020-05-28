@@ -188,7 +188,7 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getX().getMetresValue());
 
 		//write the sigma X vector component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaX * M2MM); /*Unitless, delete or replace with appropriate conversion*/
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaCombinedX.getMMetresValue()); /*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated X vector component
       (*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getX().getMetresValue() + ItUVD.getXCompVectorResidual());
@@ -201,7 +201,7 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
       (*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getY().getMetresValue());
 
 		//write the sigma Y vector component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaY * M2MM); /*Unitless, delete or replace with appropriate conversion*/
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaCombinedY.getMMetresValue()); /*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated Y vector component
       (*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getVectorValue().getY().getMetresValue() + ItUVD.getYCompVectorResidual());
@@ -215,7 +215,7 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 
 		//write the sigma DIST
 		//Output sigmadist, Output value in meters [mm], stored in [m], lower the precision because it of the m2mm conversion
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaDist.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.target.sigmaCombinedDist.getMMetresValue());
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVD.getDistance() + ItUVD.getDistanceResidual());
@@ -258,7 +258,7 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getX());
 
 		//write the sigma X vector component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaX* M2MM);/*Unitless, delete or replace with appropriate conversion*/
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaCombinedX.getMMetresValue());/*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated X vector component
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getX() + ItUVEC.getXCompVectorResidual());
@@ -271,7 +271,7 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getY());
 
 		//write the sigma Y vector component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaY* M2MM);/*Unitless, delete or replace with appropriate conversion*/
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.target.sigmaCombinedY.getMMetresValue());/*Unitless, delete or replace with appropriate conversion*/
 
 		//write the estimated Y vector component
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUVEC.getVectorValue().getY() + ItUVEC.getYCompVectorResidual());
@@ -356,7 +356,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		//get the observed i component
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUvec.getVectorValue().getX());
 		//get the sigma of i component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaX* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaCombinedX.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvec.getXCompVectorResidual()* M2MM);
 
@@ -375,7 +375,7 @@ void	TCAMWriter::writeUVECReliabilityData(const TCAM& fCam, const TLGCStatistic&
 		//get the observed j component
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUvec.getVectorValue().getY());
 		//get the sigma of j component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaY* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.target.sigmaCombinedY.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvec.getYCompVectorResidual()* M2MM);
 
@@ -406,11 +406,11 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		(*stream).writeStringLeft(nameWidth, ItUvd.targetPos->getName());
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
-
+		
 		//get the observed i component
       (*stream).writeDouble(obsWidth, lengthPrecision, ItUvd.getVectorValue().getX());
 		//get the sigma of i component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaX* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaCombinedX.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getXCompVectorResidual()* M2MM);
 
@@ -428,7 +428,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		//get the observed j component
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItUvd.getVectorValue().getY());
 		//get the sigma of j component
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaY* M2MM);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaCombinedX.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getYCompVectorResidual()* M2MM);
 
@@ -446,7 +446,7 @@ void	TCAMWriter::writeUVDReliabilityData(const TCAM& fCam, const TLGCStatistic& 
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItUvd.getDistance());
 		//get the sigma of dist component
-		 (*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaDist.getMMetresValue());
+		 (*stream).writeDouble(obsResWidth, lengthResPrecision, ItUvd.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItUvd.getDistanceResidual().getMMetresValue());
 
@@ -546,6 +546,66 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream) << endl;
 }
 
+void TCAMWriter::writeResultsSynthesisHeaderUnitless()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	// int				obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, "(--)");
+	(*stream) << endl;
+}
+
+void TCAMWriter::writeResultsSynthesisHeaderDistance()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	// int				obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	std::string				separator = getSeparator();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+
+	////////////////////////////////////////////////////////////
+	//First line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
+	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream) << endl;
+	///////////////////////////////////////////////////////////////////////////////////
+	//second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream).writeString(obsResWidth, "(MM)");
+	(*stream) << endl;
+}
+
 //------------------ Synthesis data--------------------------------------------------------------------------
 void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
 {
@@ -611,4 +671,20 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
 	(*stream) << endl;
 
 
+}
+
+void TCAMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItMEAS : meassum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream) << endl;
+	}
 }

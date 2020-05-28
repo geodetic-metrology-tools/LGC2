@@ -69,42 +69,49 @@ struct TTSTN : public TStatusObject {
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
 			const TPOLARObsSummary& getPLR3DObsSummary() const;
+			const TPOLARObsSummary& getPLR3DObsSummary(std::string text) noexcept;
 
 			/*!
 				\returns Summary of all the ANGL measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
             const TLGCObsSummary& getANGLObsSummary() const;
+			const TLGCObsSummary& getANGLObsSummary(std::string text) noexcept;
 
 			/*!
 				\returns Summary of all the ZEND measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
             const TLGCObsSummary& getZENDObsSummary() const;
+			const TLGCObsSummary& getZENDObsSummary(std::string text) noexcept;
 
 			/*!
 				\returns Summary of all the DIST measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
             const TLGCObsSummary& getDISTObsSummary() const;
+			const TLGCObsSummary& getDISTObsSummary(std::string text) noexcept;
 
 			/*!
 				\returns Summary of all the DHOR measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
             const TLGCObsSummary& getDHORObsSummary() const;
+			const TLGCObsSummary& getDHORObsSummary(std::string text) noexcept;
 
 			/*!
 				\returns Summary of all the ECTH measurements.
 				\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
             const TLGCObsSummary& getECTHObsSummary() const;
+			const TLGCObsSummary& getECTHObsSummary(std::string text) noexcept;
 
 			/*!
 			\returns Summary of all the ECSP measurements.
 			\note This function can be called only when the calculation is finished and the residuals of the observations are already set.
 			*/
             const TLGCObsSummary& getECDIRObsSummary() const;
+			const TLGCObsSummary& getECDIRObsSummary(std::string text) noexcept;
 
 			/// Each ROM has a default target that is inherited to the measurements
 			TROM(std::string defTargetId, TAdjustableAngle* v0)

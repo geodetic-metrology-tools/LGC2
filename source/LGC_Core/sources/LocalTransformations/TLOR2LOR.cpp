@@ -37,6 +37,11 @@ TPositionVector& TLOR2LOR::transform(TPositionVector& p) const{
 	return p;
 }
 
+TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
+	transfo.transform(p);
+	return p;
+}
+
  TFreeVector TLOR2LOR::partDerivWRespToX0() const{
 	try{
 		TReal globalScale = 1;

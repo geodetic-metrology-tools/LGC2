@@ -57,6 +57,9 @@ class TLOR2LOR{
 		/// Transforms the point by this transformation
 		TPositionVector& transform(TPositionVector& p) const;
 		
+		/// Transforms the point by this transformation
+		TFreeVector& transform(TFreeVector& p) const;
+
 		/*!
 			\brief Partial derivatives with respect to x0 (x coordinate of the point in the original LOR (local object reference)) .
 
@@ -125,7 +128,7 @@ class TLOR2LOR{
 			\returns Partial derivatives of the point 'p' with respect to the "angle".
 		*/
 		TFreeVector partialDerivativesAngle (const std::string& transfoName, const TPositionVector& p, int angle) const;
-		
+
 		/*!
 			\brief Partial derivatives with respect to translations.
 

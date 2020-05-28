@@ -71,7 +71,7 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary& summary,
 void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary& summary, std::string TABs){
 
 	int					obsResWidth = getObsResWidth();
-	int					lengthResidualPrecision = std::max(getLengthResidualPrecision()-2, 0);
+	int					lengthResidualPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	TAStreamFormatter	&stream = getStreamRef();
 	//Write statistic
 	stream << TABs;
@@ -178,6 +178,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary& summary, std::string d
 				description == "ZEND" ||
 				description == "ORIE" ||
 				description == "PLR3D: ZEND"||
+				description == "INCLY" ||
 				description == "PLR3D: ANGL")/* Angle*/
 				ech = "(CC)";
 			else if (description == "UVD: XVEC" ||
@@ -515,6 +516,7 @@ std::string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObser
 		"POINT D'ORIENTATION (PDOR)",
 		"CONTRAINTES RADIALES (RADI)",
 		"CONTRAINTES 3D SUR UN POINT (OBSXYZ)",
+		"INCLINAISONS/VERTICALE (INCLY)"
 
 	};
 
@@ -547,7 +549,8 @@ std::string	TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObser
 		"ORIENTATIONS (ORIE)",
 		"POINT OF ORIENTATION (PDOR)",
 		"RADIAL CONSTRAINTS (RADI)",
-		"3D CONSTRAINTS FOR POINTS (OBSXYZ)"
+		"3D CONSTRAINTS FOR POINTS (OBSXYZ)",
+		"ROTATIONS/GRAVITY (INCLY)"
 		//"NoObs"
 	};
 

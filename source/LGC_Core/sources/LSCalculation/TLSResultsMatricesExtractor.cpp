@@ -178,6 +178,10 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 
 			//Extract OBSXYZ residuals
 			extractOBSXYZObs(rm, itTree.node->data->measurements.fOBSXYZ);
+
+			//In every node iterate through the INCLYROM's measurements
+			for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
+				extractINCLYROMObs(rm, itINCLY);
 		}
 	}
 	catch (std::exception const & excp)
@@ -505,6 +509,19 @@ void TLSResultsMatricesExtractor::extractOBSXYZObs(const TLSResultsMatrices& rm,
 	}
 }
 
+void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices& rm, TINCLYROM& inclyMeas)
+{
+	for (auto& itINCLY : inclyMeas.measINCLY) {
+		MatrixIndex obsUidx = itINCLY.getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVectByConst()->size())
+			itINCLY.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx)));
+		else
+		{
+			logCritical() << "INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itINCLY.line << ")";
+			throw std::runtime_error("INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+		}
+	}
+}
 ///////////////////////////////////////////////////////////////
 // Methods relative to the adjustable objects
 ///////////////////////////////////////////////////////////////

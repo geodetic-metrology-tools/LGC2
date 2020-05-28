@@ -18,6 +18,7 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	int					lengthPrecision = getLengthPrecision();
 	std::string        TABs = stream->getCurrSpaceExtended(1);
 	int					obsWidth = getObsWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	////////////////////////////////////////////////////////////
 	//first line
@@ -29,12 +30,20 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF POINT"); //Reference point
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(3, "X");
+	(*stream).writeStringLeft(11, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(3, "Y");
+	(*stream).writeStringLeft(11, "Y (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(3, "Z");
+	(*stream).writeStringLeft(11, "Z (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream) << endl;
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "PLANE");
+	(*stream).writeStringLeft(11, "HDIST (MM)");
+	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPtDistEstimatedValue().getMMetresValue());
+	(*stream).writeStringLeft(11, "SHDIST (MM)");
+	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 }
@@ -125,13 +134,13 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 		// mesured offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistance());
 		//sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaCombinedDist.getMMetresValue());
 		//estimated offset
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistanceResidual() + ItDlev.getDistance());
 		//residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMMetresValue());
 		//residual/sima
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual() / ItDlev.target.sigmaD);
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMetresValue() / ItDlev.target.sigmaCombinedDist.getMetresValue());
 
 		//Collimation angle
 		if (!instr.collAngleAdjustable->isFixed())
@@ -282,7 +291,7 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL& fLevel, const TLGCStat
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDLEV.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.getDistanceResidual().getMMetresValue());
 
@@ -347,4 +356,23 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getVariance());//ecart type
 	(*stream) << endl;
 
+}
+
+void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> &dlevsum)
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItDLEV : dlevsum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItDLEV->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getVariance());//ecart type
+		(*stream) << endl;
+	}
 }

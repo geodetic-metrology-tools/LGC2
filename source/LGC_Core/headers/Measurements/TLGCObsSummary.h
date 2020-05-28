@@ -75,16 +75,16 @@ public:
     TReal		getVarHiLimit() const;
 
     /// set a string to identify the observation type 
-    void		setObsText(const std::string keyWord) { fObsText = keyWord; return; }
+    void		setObsText(std::string keyWord) noexcept { fObsText = keyWord;  }
 
     /// get the observation type 
 	std::string		getObsText() const { return fObsText; }
 
     /// define if the observation is an angle 
-    void		defineAngleObservation() { fAngleType = true; return; };
+    void		defineAngleObservation() { fAngleType = true; };
 
     /// define if the observation is a length 
-    void		defineLengthObservation() { fAngleType = false; return; };
+    void		defineLengthObservation() { fAngleType = false; };
 
     /// indicate if the summary is for an angle type measurement or a length type measurement 
     bool		isAngleType() const { return fAngleType; }

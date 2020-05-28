@@ -397,6 +397,15 @@ struct AnglMeasContribFrame{
 
 	TReal		fObsVariance; //!< Variance of the observation
 };
+
+struct INCLYContrib {
+	TAngle	fCalcMeas;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the angle measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+
+	TReal		fObsVariance; //!< Variance of the observation
+};
 #endif
 
 

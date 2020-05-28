@@ -554,5 +554,29 @@ private:
 	TLength fZSigmaObsVal;
 };
 
+//--------------------------  INCL measurement--------------------------------------------
+/*!
+	\ingroup Measurements
+	\brief Angle measurement with respect to local vertical (INCLY) made by an inclinometer instrument (TInstrumentData::TINCL).
+*/
+class TINCLY : public TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0,
+	ESingleValue, 1>
+{
+public:
 
+
+	/*!@name Constructors */
+	//@{
+
+	TINCLY(const LGCAdjustablePoint& pos, TInstrumentData::TINCL tgt) :
+		TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>(pos, tgt){}
+	//@}
+
+	///Destructor
+	~TINCLY() override = default;
+
+	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
+	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+};
 #endif

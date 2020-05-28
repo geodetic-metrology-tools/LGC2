@@ -42,6 +42,9 @@ public:
 	/// Write the result synthesis for DSPT 
 	void writeDSPTResultsSynthesis(const  TEDM& fEdm);
 
+	//Write Default results data
+	void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
+
 	/// Set if ALLFIXED option is used
 	void setAllfixed(bool fBool){ isAllfixed = fBool; }
 

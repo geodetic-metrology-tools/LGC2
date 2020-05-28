@@ -38,6 +38,11 @@ class TInstrumentData {
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
+				TLength sigmaCombinedDist;		   // [m]
+				TAngle sigmaCombinedAngle;		   // [rad]
+				TAngle sigmaCombinedPLRAngl;		   // [rad]
+				TAngle sigmaCombinedPLRZenD;		   // [rad]
+				TLength sigmaCombinedPLRDist;		   // [m]
             };
 
             TPOLAR() = default;
@@ -94,6 +99,9 @@ class TInstrumentData {
                 TReal sigmaY;	               // [] unitless
                 TLength sigmaDist;	         // [m]
                 TLength sigmaTargetCentering; // [m]
+				TLength sigmaCombinedX;		   // [m]
+				TLength sigmaCombinedY;		   // [m]
+				TLength sigmaCombinedDist;		   // [m]
             };
 
             TCAMD() = default;
@@ -143,6 +151,7 @@ class TInstrumentData {
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable;
+				TLength sigmaCombinedDist;		   // [m]
             };
 
             TEDM() = default;
@@ -197,6 +206,7 @@ class TInstrumentData {
                 TLength sigmaDCorr;           // [m]
                 TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
                 TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
+				TLength sigmaCombinedDist;
             };
 
             TLEVEL() = default;
@@ -249,6 +259,17 @@ class TInstrumentData {
          TLength distCorrectionValue;  // [m]
          TLength sigmaDCorr;           // [m]
          TLength sigmaInstrCentering;  // [m]
+		 TLength sigmaCombinedDist;		   // [m]
+		};
+
+		struct TINCL {
+			std::string ID;
+			TAngle sigmaAngl;	          // [rad]
+			TAngle angleCorrectionValue;  // [rad]
+			TAngle sigmaCorrectionValue;  // [rad]
+			TAngle refAngleCorrectionValue;  // [rad]
+			TAngle refSigmaCorrectionValue;  // [rad]
+			TAngle sigmaCombinedAngle;		  // [rad]
 		};
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
@@ -261,6 +282,8 @@ class TInstrumentData {
         std::map<std::string, std::shared_ptr<TLEVEL>> fLEVEL;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
+		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
+		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.

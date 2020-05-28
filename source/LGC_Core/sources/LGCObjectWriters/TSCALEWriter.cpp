@@ -61,24 +61,43 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
 	std::string         TABs3 = stream->getCurrSpaceExtended(2);
 
-
-	(*stream) << endl <<endl;
+	//write header
+	(*stream) << endl ;
 	(*stream)<<TABs1<<"ECHO"<<endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
-	(*stream)<<TABs1;
-	(*stream).writeStringLeft(nameWidth,"REF POINT"); //Reference point
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "REF POINT");
 	(*stream).writeStringLeft(nameWidth, echorom.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeString(3,"X"); 
+	(*stream).writeStringLeft(nameWidth, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeString(3,"Y");
+	(*stream).writeStringLeft(nameWidth, "Y (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeString(3,"Z");
+	(*stream).writeStringLeft(nameWidth, "Z (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
-	(*stream) << endl << endl;
-	///////////////////////////////////////////////////////////////////////////////////
-
-
+	(*stream) << endl;
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "PARAMETRE DU FIL");
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "X (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0) + echorom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * sin(echorom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue()+M_PI_2));
+	(*stream).writeStringLeft(nameWidth, "Y (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(1) + echorom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * cos(echorom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue() + M_PI_2));
+	// Z is not relevant
+	//(*stream).writeStringLeft(nameWidth, "Z (M)");
+	//(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream) << endl;
+	(*stream) << TABs1;
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "ORIENTATION (GON)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getThetaEstimatedValue().getGonsValue());
+	(*stream).writeStringLeft(nameWidth, "SORIENTATION (CC)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, echorom.fMeasuredPlane->getThetaEstimatedPrecision().getSignedCCValue());
+	(*stream).writeStringLeft(nameWidth, "SNORMALE (MM)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, echorom.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
+	(*stream) << endl;
+	
 	//data summury
    this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 	writeSCALEResultsHeader(); // write the title line for the observations
@@ -93,8 +112,8 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
-
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaCombinedDist.getMMetresValue());//Output value in milimeters [mm], stored in [m]
+		
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECHO.getDistance() + ItECHO.getDistanceResidual());//Output value in meters [m], stored in [m]
 
@@ -102,7 +121,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual()/ItECHO.target.sigmaD);//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.getDistanceResidual()/ ItECHO.target.sigmaCombinedDist);//Output value in meters [m], stored in [m]
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECHO.target.ID);
@@ -153,7 +172,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECVE.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaCombinedDist.getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECVE.getDistance() + ItECVE.getDistanceResidual());//Output value in meters [m], stored in [m]
@@ -162,7 +181,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.getDistanceResidual().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.getDistanceResidual() / ItECVE.target.sigmaD);//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.getDistanceResidual().getMetresValue() / ItECVE.target.sigmaCombinedDist.getMetresValue());//Output value in meters [m], stored in [m]
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECVE.target.ID);
@@ -219,7 +238,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 			(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
 
 			//write the sigma
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaCombinedDist.getMMetresValue());
 
 			//write the estimated offset
 			(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
@@ -228,7 +247,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
 
 			//write the offset / sigma (TDouble (MM))
-			(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaD));
+			(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual().getMetresValue() / ItECSP.target.sigmaCombinedDist.getMetresValue()));
 			(*stream) << endl;
 
 		}
@@ -354,7 +373,7 @@ void	TSCALEWriter::writeECHOReliabilityData(const  TECHOROM& echorom, const TLGC
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision,ItEcho.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcho.getDistanceResidual().getMMetresValue());
 
@@ -389,7 +408,7 @@ void	TSCALEWriter::writeECVEReliabilityData(const  TECVEROM& ecverom, const TLGC
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcve.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcve.getDistanceResidual().getMMetresValue());
 
@@ -422,7 +441,7 @@ void	TSCALEWriter::writeECSPReliabilityData(const TECSPROM& ecsprom, const TLGCS
 		//get the observed DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcsp.getDistance());
 		//get the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaD.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcsp.getDistanceResidual().getMMetresValue());
 
@@ -467,6 +486,23 @@ void TSCALEWriter::writeSCALESynthesisHeader()
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
+void TSCALEWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	std::string         TABs = stream->getCurrSpaceExtended(1);
+
+	for (auto const& ItMEAS : meassum) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); //Reference point
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream) << endl;
+	}
+}
+
+
 void TSCALEWriter::writeECHOResultsSynthesis(const  TECHOROM& echorom)
 {
 	TAStreamFormatter*	stream = getStream();

@@ -1068,27 +1068,27 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
     if(meas->rot3D)
         (*stream) << "ROT3D" << sep;
+	else{
+		if(meas->instrumentHeightAdjustable)
+		{
+		    if(meas->instrumentHeightAdjustable->isFixed())
+		    {
+		        (*stream) << "IHFIX" << sep;
+		        if(meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
+					(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
 
-    if(meas->instrumentHeightAdjustable)
-    {
-        if(meas->instrumentHeightAdjustable->isFixed())
-        {
-            (*stream) << "IHFIX" << sep;
-            if(meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
-				(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
+		        if(meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
+		            (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+		    }
+		} else if(meas->ihfix){
+		    (*stream) << "IHFIX" << sep;
+		    if(meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
+		        (*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
 
-            if(meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
-                (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
-        }
-    } else if(meas->ihfix){
-        (*stream) << "IHFIX" << sep;
-        if(meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
-            (*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
-
-        if(meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
-            (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
-    }
-
+		    if(meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
+		        (*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+		}
+	}
     if(tstnDefTarget.ID != polarDefInst.defTarget)
         (*stream) << "TRGT" << sep
         << tstnDefTarget.ID << sep;

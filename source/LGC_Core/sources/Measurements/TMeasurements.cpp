@@ -30,6 +30,7 @@ void TMeasurements::initialiseObsSummaries() {
     echoGlobalSummary_.clear();
     ecveGlobalSummary_.clear();
     ecspGlobalSummary_.clear();
+	inclyGlobalSummary_.clear();
 
     // Add the residuals of each measurement and initialise the summaries:
 
@@ -87,7 +88,8 @@ void TMeasurements::initialiseObsSummaries() {
         allORIESummaries,
         allECHOSummaries,
         allECVESummaries,
-        allECSPSummaries;
+        allECSPSummaries,
+		allINCLYSummaries;
 
     // TSTN
     for(auto &tstn : fTSTN)
@@ -161,6 +163,13 @@ void TMeasurements::initialiseObsSummaries() {
         allECSPSummaries.push_back(&ecsprom.getECSPObsSummary());
     }
 
+	// INCLY
+	for (auto &inclyrom : fINCLY) {
+		inclyrom.initialiseObsSummaries();
+
+		allINCLYSummaries.push_back(&inclyrom.getINCLYObsSummary());
+	}
+
     // Create the global summaries from the collections:
 
     // TSTN:
@@ -189,15 +198,32 @@ void TMeasurements::initialiseObsSummaries() {
     echoGlobalSummary_ = TLGCObsSummary::merge(allECHOSummaries);
     ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
     ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
+	inclyGlobalSummary_ = TLGCObsSummary::merge(allINCLYSummaries);
 
 }
 
 const TLGCObsSummary& TMeasurements::getDVERObsSummary() const { return dverSummary_; }
 
+const TLGCObsSummary& TMeasurements::getDVERObsSummary(std::string text) {
+	dverSummary_.setObsText(text);
+	return dverSummary_;
+}
+
 const TLGCObsSummary&  TMeasurements::getRADIObsSummary() const { return radiSummary_; }
+
+const TLGCObsSummary& TMeasurements::getRADIObsSummary(std::string text) {
+	radiSummary_.setObsText(text);
+	return radiSummary_;
+}
 
 const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary() const { return obsxyzSummary_; }
 
+const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary(std::string text) {
+	obsxyzSummary_.obsXObsSum.setObsText(text);
+	obsxyzSummary_.obsYObsSum.setObsText(text);
+	obsxyzSummary_.obsZObsSum.setObsText(text);
+	return obsxyzSummary_;
+}
 
 const TPOLARObsSummary& TMeasurements::getPOLARGlobalObsSummary() const { return plrGlobalSummary_; }
 
@@ -232,3 +258,5 @@ const TLGCObsSummary& TMeasurements::getECHOGlobalObsSummary() const { return ec
 const TLGCObsSummary& TMeasurements::getECVEGlobalObsSummary() const { return ecveGlobalSummary_; }
 
 const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ecspGlobalSummary_; }
+
+const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }

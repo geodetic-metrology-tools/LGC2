@@ -22,7 +22,7 @@ public:
 
 	/*!@name Enum Observation Types Definitions*/
 	//@{
-		enum ELGCObservations {kPLR3D, kUVEC, kUVD, kANGL, kZEND, kDIST, kECTH, kECDIR, kDHOR, kDSPT, kDLEV, kDVER, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI,kOBSXYZ, ALWAYS_LAST};
+		enum ELGCObservations {kPLR3D, kUVEC, kUVD, kANGL, kZEND, kDIST, kECTH, kECDIR, kDHOR, kDSPT, kDLEV, kDVER, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI,kOBSXYZ,kINCLY, ALWAYS_LAST};
 	//@}
 
 

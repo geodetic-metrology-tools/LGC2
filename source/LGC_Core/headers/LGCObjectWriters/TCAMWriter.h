@@ -36,6 +36,11 @@ public:
 		void writeUVECSynthesisHeader();
 		/// Write the UVD synthesis header
 		void writeUVDSynthesisHeader();
+
+		/// Write the Unitless synthesis header
+		void writeResultsSynthesisHeaderUnitless();
+		/// Write the Distance synthesis header
+		void writeResultsSynthesisHeaderDistance();
 	//@}
 
 	/*!@name Results */
@@ -55,6 +60,9 @@ public:
 		void writeUVECResultsSynthesis(const TCAM& camera);
 		/// Write UVD results synthesis
 		void writeUVDResultsSynthesis(const TCAM& camera);
+
+		/// Write Default results synthesis
+		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
 	//@}
 
 

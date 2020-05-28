@@ -286,3 +286,37 @@ const std::vector<std::string>& TKeySCALE::parentKeys() const {
 	p.push_back(INSTR);
 	return p;
 }
+
+//////////////////////
+// INCL  instrument //
+//////////////////////
+TKeyINCL::TKeyINCL(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAInstrumentKey(project, INCL)
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+	using namespace LGC;
+
+	auto& incls(finstruments.fINCL);
+	checkInstrument(8, incls, tokens);
+
+	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL{
+		tokens.at(2),
+		TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
+		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kCCs),
+		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kCCs)
+		});
+
+	// store the new invlinometer
+	incls.insert(std::make_pair(tokens.at(2), i));
+}
+
+const std::vector<std::string>& TKeyINCL::parentKeys() const {
+	static std::vector<std::string> p(1);
+	p.push_back(INSTR);
+	return p;
+}

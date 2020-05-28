@@ -66,6 +66,9 @@ public:
 		/// Write OBSXYZ results data
 		void writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ);
 
+		//Write Default results data
+		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
+
 		/// Write DVER simulations
         void writeDVERSIMUResults(const TMeasurements &tmeas);
 		/// Write RADI simulations

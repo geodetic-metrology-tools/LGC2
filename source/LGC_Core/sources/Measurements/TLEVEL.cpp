@@ -23,5 +23,15 @@ void TLEVEL::initialiseObsSummaries() {
 
 const TLGCObsSummary&  TLEVEL::getDLEVObsSummary() const { return dlevSummary_; }
 
+const TLGCObsSummary& TLEVEL::getDLEVObsSummary(std::string text) noexcept {
+	dlevSummary_.setObsText(text);
+	return dlevSummary_;
+}
 
 const TLGCObsSummary&  TLEVEL::getDHORObsSummary() const { return dhorSummary_; }
+
+const TLGCObsSummary& TLEVEL::getDHORObsSummary(std::string text) noexcept {
+	dhorSummary_.setObsText(text);
+	return dhorSummary_;
+}
+
