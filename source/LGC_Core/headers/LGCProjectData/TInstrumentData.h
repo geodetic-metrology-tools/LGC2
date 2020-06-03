@@ -271,6 +271,13 @@ class TInstrumentData {
 			TAngle refSigmaCorrectionValue;  // [rad]
 			TAngle sigmaCombinedAngle;		  // [rad]
 		};
+
+        struct THLSR {
+            std::string ID;
+            TLength sigmaD;               // [m]
+            TLength sigmaInstrHeight;     // [m]
+            TLength sigmaInstrCentering;  // [m]
+        };
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
@@ -284,7 +291,8 @@ class TInstrumentData {
         std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
 		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
-
+        /// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
+        std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.
 			This failsafe lookup function throws if the desired instrument is not found.

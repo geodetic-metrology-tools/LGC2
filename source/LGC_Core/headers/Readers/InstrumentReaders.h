@@ -199,6 +199,23 @@ public:
 
 };
 
+class TKeyHLSR : public TAInstrumentKey {
+public:
+	/*!
+		See \ref TAInstrumentKey::TAInstrumentKey
+	*/
+	TKeyHLSR(TLGCData& project, int nb_allowed_keywords = nb_allowed_hlsr, const char** keywords = allowed_HLSR);
+
+	/*!
+		See \ref TKeyINSTR::parse
+	*/
+	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int);
+
+	virtual const std::vector<std::string>& parentKeys() const;
+
+private:
+	TKeyHLSR& operator=(const TKeyHLSR&);
+};
 /*! @} End of Doxygen Groups*/
 
 #endif
