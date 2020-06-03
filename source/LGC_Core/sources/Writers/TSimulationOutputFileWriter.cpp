@@ -583,10 +583,7 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	// Table data line 1
 	//write name
 	(*stream).writeStringLeft(nameCoordWidth,simPt.getAdjustablePoint()->getName());
-	std::stringstream result;
-	const std::vector<int>& ID = simPt.getAdjustablePoint()->getFrameTreePosition().node->data.get()->ID;
-	std::copy(ID.begin(), ID.end(), std::ostream_iterator<int>(result));
-	(*stream).writeStringLeft(nameCoordWidth,simPt.getAdjustablePoint()->getFrameTreePosition().node->data.get()->frame.getName() + " (" + result.str() + ")");
+	(*stream).writeStringLeft(nameCoordWidth,simPt.getAdjustablePoint()->getFrameTreePosition().node->data.get()->frame.getName());
 
 	//get delta from LGC simulations' results
 	TFreeVector deltaMoy = simPt.getSumRes() * (LITERAL(1.0)/i);
@@ -619,9 +616,9 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	else
 	{
 		(*stream).writeString(5, "");
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 		(*stream).writeString(7, "");
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 	}
 
 
@@ -635,9 +632,9 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	else
 	{
 		(*stream).writeString(5, "");
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 		(*stream).writeString(7, "");
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 	}
 
 
@@ -651,9 +648,9 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	else
 	{
 		(*stream).writeString(5, "");
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 		(*stream).writeString(7, "");
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 	}
 
 	(*stream).writeString(2,"");
@@ -663,7 +660,7 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	}
 	else
 	{
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 	}
 
 	if (!simPt.getAdjustablePoint()->isCoordinateFixed(1))
@@ -672,7 +669,7 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	}
 	else
 	{
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 	}
 
 	if (!simPt.getAdjustablePoint()->isCoordinateFixed(2))
@@ -681,14 +678,19 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary& simP
 	}
 	else
 	{
-		(*stream).writeString(coordResWidth, "");
+		(*stream).writeString(coordResWidth, "*");
 	}
 	(*stream) << endl;
 
 
 	// Table data line 2
 	(*stream).writeStringLeft(nameCoordWidth, "");
-	(*stream).writeString(nameCoordWidth,"");
+
+	std::stringstream result;
+	const std::vector<int>& ID = simPt.getAdjustablePoint()->getFrameTreePosition().node->data.get()->ID;
+	std::copy(ID.begin(), ID.end(), std::ostream_iterator<int>(result));
+
+	(*stream).writeStringLeft(nameCoordWidth, "(" + result.str() + ")");
 
 	if (!simPt.getAdjustablePoint()->isCoordinateFixed(0))
 	{
@@ -827,7 +829,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 	stream->setWidthFormat(coordResWidth);
 	stream->setPrecisionFormat(coordResPrecision);
 
-	int precisionMM = coordResPrecision > 5 ? (coordResPrecision - 5) : 0; //This is because the values are outputted in [mm] 
+	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	
 	if(!simFr.getAdjustableTransformation()->isFixed())
 	{
 
@@ -836,167 +840,167 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(0))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.tX.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMax.tX.getMMetresValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.tX.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.tX.getMMetresValue());
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(1))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.tY.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMax.tY.getMMetresValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.tY.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.tY.getMMetresValue());
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(2))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.tZ.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMax.tZ.getMMetresValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.tZ.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.tZ.getMMetresValue());
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 
 		//D rotations
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(0))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.omega.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMax.omega.getSignedCCValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.omega.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMoy.omega.getSignedCCValue());
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(1))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.phi.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMax.phi.getSignedCCValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.phi.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMoy.phi.getSignedCCValue());
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(2))
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.kappa.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMax.kappa.getSignedCCValue());
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.kappa.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMoy.kappa.getSignedCCValue());
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 
 		//D scale
 		if(!simFr.getAdjustableTransformation()->isScaleFixed())
 		{
 			(*stream).writeString(5,"MAX");
-			writeDouble(coordResWidth, precisionMM, deltaMax.scale * M2MM);
+			writeDouble(coordResWidth, lengthResPrecision, deltaMax.scale * M2MM);
 			(*stream).writeString(7,"MOYEN");
-			writeDouble(coordResWidth, precisionMM, deltaMoy.scale * M2MM);
+			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.scale * M2MM);
 		}
 		else
 		{
 			(*stream).writeString(5, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 			(*stream).writeString(7, "");
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 
 		//sigma
 		(*stream).writeString(2,"");
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(0))
 		{
-			writeDouble(coordResWidth, precisionMM, stx);
+			writeDouble(coordResWidth, lengthResPrecision, stx);
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(1))
 		{
-			writeDouble(coordResWidth, precisionMM, sty); 
+			writeDouble(coordResWidth, lengthResPrecision, sty);
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(2))
 		{
-			writeDouble(coordResWidth, precisionMM, stz); 
+			writeDouble(coordResWidth, lengthResPrecision, stz);
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(0))
 		{
-			writeDouble(coordResWidth, precisionMM, srx); 
+			writeDouble(coordResWidth, angleResPrecision, srx);
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(1))
 		{
-			writeDouble(coordResWidth, precisionMM, sry); 
+			writeDouble(coordResWidth, angleResPrecision, sry);
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(2))
 		{
-			writeDouble(coordResWidth, precisionMM, srz); 
+			writeDouble(coordResWidth, angleResPrecision, srz);
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 		if(!simFr.getAdjustableTransformation()->isScaleFixed())
 		{
-			writeDouble(coordResWidth, precisionMM, simFr.getAdjustableTransformation()->getEstimatedPrecisionScale() * M2MM); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, lengthResPrecision, simFr.getAdjustableTransformation()->getEstimatedPrecisionScale() * M2MM); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
-			(*stream).writeString(coordResWidth, "");
+			(*stream).writeString(coordResWidth, "*");
 		}
 
 		(*stream) << endl;
@@ -1007,9 +1011,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(0))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.tX.getMMetresValue() );
+			writeDouble(coordResWidth, lengthResPrecision, deltaMin.tX.getMMetresValue() );
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadtx);
+			writeDouble(coordResWidth, lengthResPrecision, sigmadtx);
 		}
 		else
 		{
@@ -1022,9 +1026,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(1))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.tY.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMin.tY.getMMetresValue());
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadty);
+			writeDouble(coordResWidth, lengthResPrecision, sigmadty);
 		}
 		else
 		{
@@ -1037,9 +1041,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(2))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.tZ.getMMetresValue());
+			writeDouble(coordResWidth, lengthResPrecision, deltaMin.tZ.getMMetresValue());
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadtz);
+			writeDouble(coordResWidth, lengthResPrecision, sigmadtz);
 		}
 		else
 		{
@@ -1053,9 +1057,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(0))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.omega.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMin.omega.getSignedCCValue());
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadrx * RAD2CC);
+			writeDouble(coordResWidth, angleResPrecision, sigmadrx * RAD2CC);
 		}
 		else
 		{
@@ -1068,9 +1072,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(1))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.phi.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMin.phi.getSignedCCValue());
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadry * RAD2CC);
+			writeDouble(coordResWidth, angleResPrecision, sigmadry * RAD2CC);
 		}
 		else
 		{
@@ -1083,9 +1087,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(2))
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.kappa.getSignedCCValue());
+			writeDouble(coordResWidth, angleResPrecision, deltaMin.kappa.getSignedCCValue());
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadrz * RAD2CC);
+			writeDouble(coordResWidth, angleResPrecision, sigmadrz * RAD2CC);
 		}
 		else
 		{
@@ -1099,9 +1103,9 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		if(!simFr.getAdjustableTransformation()->isScaleFixed())
 		{
 			(*stream).writeString(5,"MIN");
-			writeDouble(coordResWidth, precisionMM, deltaMin.scale * M2MM);
+			writeDouble(coordResWidth, lengthResPrecision, deltaMin.scale * M2MM);
 			(*stream).writeString(7,"SIGMA");
-			writeDouble(coordResWidth, precisionMM, sigmadscl * M2MM);
+			writeDouble(coordResWidth, lengthResPrecision, sigmadscl * M2MM);
 		}
 		else
 		{
@@ -1115,7 +1119,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		(*stream).writeString(2,"R");
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(0))
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadtx/stx); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, lengthResPrecision, sigmadtx/stx); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
@@ -1123,7 +1127,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		}
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(1))
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadty/sty); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, lengthResPrecision, sigmadty/sty); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
@@ -1131,7 +1135,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		}
 		if(!simFr.getAdjustableTransformation()->isTranslationFixed(2))
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadtz/stz); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, lengthResPrecision, sigmadtz/stz); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
@@ -1139,7 +1143,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		}
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(0))
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadrx * RAD2CC / srx); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, angleResPrecision, sigmadrx * RAD2CC / srx); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
@@ -1147,7 +1151,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		}
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(1))
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadry * RAD2CC / sry); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, angleResPrecision, sigmadry * RAD2CC / sry); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
@@ -1155,7 +1159,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		}
 		if(!simFr.getAdjustableTransformation()->isRotationFixed(2))
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadrz * RAD2CC / srz); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, angleResPrecision, sigmadrz * RAD2CC / srz); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{
@@ -1163,7 +1167,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary& simF
 		}
 		if(!simFr.getAdjustableTransformation()->isScaleFixed())
 		{
-			writeDouble(coordResWidth, precisionMM, sigmadscl / simFr.getAdjustableTransformation()->getEstimatedPrecisionScale()); //This is unitless, but we want the same precision as for [mm]
+			writeDouble(coordResWidth, lengthResPrecision, sigmadscl / simFr.getAdjustableTransformation()->getEstimatedPrecisionScale()); //This is unitless, but we want the same precision as for [mm]
 		}
 		else
 		{

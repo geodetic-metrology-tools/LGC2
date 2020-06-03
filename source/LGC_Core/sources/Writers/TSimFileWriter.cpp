@@ -227,6 +227,17 @@ void	TSimFileWriter::writeInstrument()
 			<< itSCALE.second->sigmaInstrCentering.getMMetresValue() << sep
 			<<endl;
 	}		
+
+	for (auto& itINCL : data->getInstruments().fINCL)
+	{
+		(*stream) << "*INCL " << itINCL.second->ID << sep
+			<< itINCL.second->sigmaAngl.getSignedCCValue() << sep
+			<< itINCL.second->angleCorrectionValue.getGonsValue() << sep
+			<< itINCL.second->sigmaCorrectionValue.getSignedCCValue() << sep
+			<< itINCL.second->refAngleCorrectionValue.getGonsValue() << sep
+			<< itINCL.second->refSigmaCorrectionValue.getSignedCCValue() << sep
+			<< endl;
+	}
 }
 
 void	TSimFileWriter::writeData(TDataTreeIterator itTree)
@@ -398,7 +409,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					(*stream) << "*POIN" << endl;
 				}
 				writeXYZorH(point);
-                (*stream) << endl;
 
                 // NB. June 2017:
                 // With the new observation OBSXYZ the standard deviations
@@ -528,6 +538,12 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		(*stream) << "*OBSXYZ" << endl;
 		for (auto& meas : frameIt->get()->measurements.fOBSXYZ)
 			writeOBSXYZMeas(&meas);
+	}
+
+	if (!frameIt->get()->measurements.fINCLY.empty())
+	{
+		for (auto& meas : frameIt->get()->measurements.fINCLY)
+			writeINCLYMeas(&meas);
 	}
 
 }
@@ -1524,5 +1540,59 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 	}
 }
 
+void TSimFileWriter::writeINCLYMeas(TINCLYROM* meas)
+{
+	TAStreamFormatter* stream = getStream();
+	std::string sep = stream->getSeparator();
 
+	auto inclDefInst = *data->getInstruments().fINCL.at(meas->measINCLY.front().target.ID);
+
+	if (!meas->isActive())
+		(*stream) << DEACTIVATION_CHAR;
+
+	(*stream) << "*INCLY" << sep
+		<< inclDefInst.ID << endl;
+
+	//write the list of measurements for the line
+	for (auto& itINCLY : meas->measINCLY)
+	{
+		if (!itINCLY.isActive())
+			(*stream) << DEACTIVATION_CHAR;
+
+		(*stream) << itINCLY.targetPos->getName() << sep
+			<< itINCLY.getAngle().getGonsValue() << sep;
+
+		if (itINCLY.target.ID != inclDefInst.ID)
+			(*stream) << "INSTR" << sep
+			<< itINCLY.target.ID << sep;
+
+		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
+		if (itINCLY.target.ID != inclDefInst.ID)
+			inclDefInst = itINCLY.target;
+
+		if (itINCLY.target.sigmaAngl != inclDefInst.sigmaAngl)
+			(*stream) << "OBSE" << sep
+			<< itINCLY.target.sigmaAngl.getSignedCCValue() << sep;
+
+		if (itINCLY.target.angleCorrectionValue != inclDefInst.angleCorrectionValue)
+			(*stream) << "AC" << sep
+			<< itINCLY.target.angleCorrectionValue.getGonsValue() << sep;
+
+		if (itINCLY.target.sigmaCorrectionValue != inclDefInst.sigmaCorrectionValue)
+			(*stream) << "ACSE" << sep
+			<< itINCLY.target.sigmaCorrectionValue.getSignedCCValue() << sep;
+
+		if (itINCLY.target.refAngleCorrectionValue != inclDefInst.refAngleCorrectionValue)
+			(*stream) << "RF" << sep
+			<< itINCLY.target.refAngleCorrectionValue.getGonsValue() << sep;
+
+		if (itINCLY.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
+			(*stream) << "RFSE" << sep
+			<< itINCLY.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
+
+		(*stream) << endl;
+
+	
+	}
+}
 

@@ -1342,7 +1342,8 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An INCLY measurement is duplicated");
 		
-		incly.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
+		if (hasAllParams)
+			incly.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
 
 		incly.line = line;
 		incly.setActive(proj.getCurrentNode().measurements.fINCLY.back().isActive() && activeLine); // Active only if ROM active as well

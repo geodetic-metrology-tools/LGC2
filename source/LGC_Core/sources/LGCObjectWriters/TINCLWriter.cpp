@@ -134,6 +134,10 @@ void TINCLWriter::writeINCLYSIMUResults(const  TINCLYROM& inclyrom)
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
+	(*stream) << TABs << "INCLY" << endl; 
+
+	writeAngleResultsSummary(inclyrom.getINCLYObsSummary(), stream->getCurrSpaceExtended(2));
+
 }
 
 

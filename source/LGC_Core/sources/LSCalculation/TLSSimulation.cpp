@@ -231,6 +231,9 @@ void TLSSimulation::simulateValues()
 		//No instrument for DVER measurements
 		getDVERSimValues(itTree.node->data->measurements.fDVER);
 
+		//In every node iterate through the INCLY's measurements
+		for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
+			getINCLYSimValues(itINCLY, itINCLY.measINCLY);
 	}
 }
 
@@ -419,6 +422,14 @@ void	TLSSimulation::getDISTSimValuesInFrame(const TTSTN& station, std::list<TLIN
 		TReal calcVal = fSimObs.getDISTCalcMeasInFrame(station, itDIST.targetPos, itDIST.target.targetHt, itDIST.target.distCorrectionAdjustable->getEstimatedValue());
 		TReal sigma = itDIST.target.sigmaDist;
 		itDIST.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
+	}
+}
+
+void TLSSimulation::getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly) {
+	for (auto& itINCLY : incly) {
+		TReal calcVal = fSimObs.getINCLYCalcMeas(inclyROM, itINCLY);
+		TReal sigma = itINCLY.target.sigmaAngl;
+		itINCLY.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
 }
 

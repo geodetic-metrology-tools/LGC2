@@ -102,6 +102,8 @@ private:
 	void	getUVDSimValues(TCAM& camera);
 	void	getUVECSimValues(TCAM& camera);
 
+	void    getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly);
+
 	/// Return a biased value (correct measurement + small error)
 	TReal   getSimulatedValue(const TReal val, const TReal sigma);
 
