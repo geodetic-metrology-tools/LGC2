@@ -101,7 +101,7 @@ public:
 	TReal getDVERCalcMeas(const TDVER& dver);
 
 	/// Returns the INCLY measurement calculated meas in RADIANS [rad]
-	TReal getINCLYCalcMeas(const TINCLYROM& înclyROM, const TINCLY& incly);
+	TReal getINCLYCalcMeas(const TINCLYROM& inclyROM, const TINCLY& incly);
 
 	//@}
 

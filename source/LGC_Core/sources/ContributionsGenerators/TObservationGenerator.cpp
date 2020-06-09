@@ -521,7 +521,7 @@ TReal TObservationGenerator::getDVERCalcMeas(const TDVER& dver){
 }
 
 
-TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& înclyROM, const TINCLY& incly) {
+TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const TINCLY& incly) {
 	fPointTransfo->setMLA(false);
 
 	//Transform the point of meeasure to the Root frame
@@ -540,7 +540,7 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& înclyROM, const T
 	}
 
 	//Transform the local vertical in the station LOR
-	const TLOR2LOR& vert2stTrafo = fPointTransfo->getLORTransformation(fPointTransfo->getTree()->begin(), înclyROM.positionInTree); //Trafo from from CCS LOR to station's LOR
+	const TLOR2LOR& vert2stTrafo = fPointTransfo->getLORTransformation(fPointTransfo->getTree()->begin(), inclyROM.positionInTree); //Trafo from from CCS LOR to station's LOR
 	vert2stTrafo.transform(stationV);
 
 	//Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
