@@ -197,7 +197,7 @@ void TPunchFileWriter::writeTitle()
 	//write title
 	(*stream)<<"# "<<endl;
 	(*stream) << "#" << (fProjectData->getConfig().title) << endl;
-	(*stream) << "#" << endl;
+	(*stream) << "#"  << endl;
 
 	//write time
 	char tmpbuf[128];
@@ -213,7 +213,16 @@ void TPunchFileWriter::writeTitle()
 	std::string essai = ctime( &ltime );
 	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
 	(*stream) << "#" << tmpbuf << endl;
-	(*stream)<<"# "<<endl<<endl;
+	(*stream) << "#";
+	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+		(*stream) << "*SPHE";
+	else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+		(*stream) << "*LEP";
+	else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+		(*stream) << "*RS2K";
+	else 
+		(*stream) << "*OLOC";
+	(*stream) <<endl<<endl;
 
 }
 
