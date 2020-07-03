@@ -127,8 +127,10 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	{
 		if (computeVarCovarAndReliability(&data, inputMtr, computer))
 			return Behavior();
-		else
+		else{
+			fileLog << TFileLogger::e_logType::LOG_ERROR << "TResidual errors and their related variance-covariance matrix could not be estimated (Matrix inversion Problem)!";
 			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"TResidual errors and their related variance-covariance matrix could not be estimated!\n");
+		}
 	}
 }
 
