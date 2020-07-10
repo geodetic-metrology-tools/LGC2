@@ -22,6 +22,7 @@ struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
+struct TINCLYROM;
 
 
 /*!
@@ -98,6 +99,9 @@ public:
 
 	/// Returns the the DVER measurement calculated meas in meter [m]
 	TReal getDVERCalcMeas(const TDVER& dver);
+
+	/// Returns the INCLY measurement calculated meas in RADIANS [rad]
+	TReal getINCLYCalcMeas(const TINCLYROM& inclyROM, const TINCLY& incly);
 
 	//@}
 

@@ -78,7 +78,7 @@ protected:
 	void writeRADIMeas(TRADI* meas);
 	void writeTSTNMeas(std::shared_ptr<TTSTN> meas);
 	void writeOBSXYZMeas(TOBSXYZ* meas);
-
+	void writeINCLYMeas(TINCLYROM* meas);
 
 	/// Project data
 	const TLGCData* data;
