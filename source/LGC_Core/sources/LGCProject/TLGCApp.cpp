@@ -140,7 +140,7 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat, const std::string 
 	for (const auto& itTree : dat->getTree())
 	{
 		if (itTree.get()->frame.getName().length() >= pointFormat->getNameWidth()) {
-			pointFormat->setNameWidth(itTree.get()->frame.getName().length() + 1);
+			pointFormat->setNameWidth((int)itTree.get()->frame.getName().length() + 1);
 			stream->setPointFormat(*pointFormat);
 		}
 	}
