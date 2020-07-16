@@ -110,6 +110,12 @@ class LGCAdjustableObjectCollection {
             objects.remove(obj);
         }
 
+		template<class UnaryPredicate>
+		void removeObjectIf(UnaryPredicate p)
+		{
+			objects.remove_if(p);
+		}
+
 		/// Returns The reference to the last adjustable object
 		T& back() {
 			return objects.back();

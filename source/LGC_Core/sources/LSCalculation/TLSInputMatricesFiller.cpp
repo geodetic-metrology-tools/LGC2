@@ -389,7 +389,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND>& zendMeas
 		eqIdx = meas->getFirstEquationIndex(); 
 		obsIdx = meas->getFirstObservationIndex();
 
-		AnglMeasContrib contributions = fCGenerator.getZenDistContrib(station, *meas); //Get the observation contribution
+		contributions = fCGenerator.getZenDistContrib(station, *meas); //Get the observation contribution
 
 		// Update the sigma 
 		meas->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
@@ -447,7 +447,7 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND>& zen
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
-		AnglMeasContribFrame contributions = fCGenerator.getZenDistContribInFrame(station, *meas); //Get the observation contribution
+		contributions = fCGenerator.getZenDistContribInFrame(station, *meas); //Get the observation contribution
 
 		// Update the sigma 
 		meas->target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));

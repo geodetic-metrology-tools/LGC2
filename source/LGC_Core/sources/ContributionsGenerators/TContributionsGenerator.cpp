@@ -295,7 +295,7 @@ AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(std::shar
 
 	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
 	for (auto it(trafoChain.begin()); it != trafoChain.end(); ++it) {
-		std::string transformationName = it->adjTrafo->getName();
+		transformationName = it->adjTrafo->getName();
 		omegaDerivative = tg2stTrafo.partialDerivativesAngle(transformationName, targetPos, 0);
 		phiDerivative = tg2stTrafo.partialDerivativesAngle(transformationName, targetPos, 1);
 		kappaDerivative = tg2stTrafo.partialDerivativesAngle(transformationName, targetPos, 2);
@@ -455,7 +455,7 @@ AnglMeasContribFrame	TContributionsGenerator::getZenDistContribInFrame(std::shar
 	TFreeVector t3Derivative(TCoordSysFactory::k3DCartesian);
 	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
 	for (auto it(trafoChain.begin()); it != trafoChain.end(); ++it) {
-		std::string transformationName = it->adjTrafo->getName();
+		transformationName = it->adjTrafo->getName();
 
 		omegaDerivative = tg2stTrafo.partialDerivativesAngle(transformationName, targetPos, 0);
 		phiDerivative = tg2stTrafo.partialDerivativesAngle(transformationName, targetPos, 1);
@@ -1754,7 +1754,7 @@ void TContributionsGenerator::addUVDTgTransfContributionsCamera(const TLOR2LOR& 
 
 		// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
 		for(auto it(trafoChain.begin()); it != trafoChain.end(); ++it){
-			std::string transformationName = it->adjTrafo->getName();
+			transformationName = it->adjTrafo->getName();
 
 			//Contributions for rotations : Omega, Phi and Kappa
 			omegaDerivative = transformations.partialDerivativesAngle(transformationName, pointPos, 0);
@@ -1802,7 +1802,7 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 
 	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
 	for (const auto& it : trafoChain) {
-		std::string transformationName = it.adjTrafo->getName();
+		transformationName = it.adjTrafo->getName();
 		omegaPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 0);
 		phiPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 1);
 		kappaPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 2);

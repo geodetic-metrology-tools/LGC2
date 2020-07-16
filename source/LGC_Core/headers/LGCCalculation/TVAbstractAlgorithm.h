@@ -22,7 +22,7 @@ public:
 	TVAbstractAlgorithm() : resultMatrices(nullptr){};
 
 	/// This virtual base class destructor does nothing since this is an interface.
-	~TVAbstractAlgorithm() {}
+	virtual ~TVAbstractAlgorithm() {}
 
 
 	/// abstarct funtion to run the calculation

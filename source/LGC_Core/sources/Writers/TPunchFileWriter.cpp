@@ -328,7 +328,6 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					coordWidth = getCoordWidth();
-	int					coordResWidth = getCoordResWidth();
 	// int				obsWidth = max(getObsWidth(), 11);
 
 	if (fData->getConfig().useApriori.isActive())
@@ -988,7 +987,6 @@ void	TPunchFileWriter::writeXYZSigmaData(LGCAdjustablePoint const& point)
 		//transform sigma in root
 		TFreeVector sigmaRoot;
 		sigmaRoot = point.transformSigmaInRoot(point, fProjectData);
-		TAStreamFormatter*	stream = getStream();
 
 		stream->setLengthUnits(TLength::kMillimetres);
 		stream->setWidthFormat(getCoordResWidth());

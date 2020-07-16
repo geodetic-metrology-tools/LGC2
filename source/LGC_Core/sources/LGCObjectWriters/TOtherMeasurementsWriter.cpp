@@ -381,10 +381,10 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const TMeasurements &tmeas)
 void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& orieRom)
 {
 	TAStreamFormatter*	stream = getStream();
-	std::string        TAB = stream->getCurrSpaceExtended(1);
+	std::string        STAB = stream->getCurrSpaceExtended(1);
 	std::string        TABs = stream->getCurrSpaceExtended(2);
 
-	(*stream) << TAB << "CONTRAINTES D ORIENTATION";
+	(*stream) << STAB << "CONTRAINTES D ORIENTATION";
 	//Write definition of ROM
 	(*stream) << endl << endl;
     this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)orieRom.measORIE.size());

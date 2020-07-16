@@ -127,9 +127,6 @@ void TINCLWriter::writeINCLYResults(const  TINCLYROM& inclyrom)
 void TINCLWriter::writeINCLYSIMUResults(const  TINCLYROM& inclyrom)
 {
 	TAStreamFormatter* stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					anglePrecision = getAnglePrecision();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 

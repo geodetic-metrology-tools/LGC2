@@ -27,7 +27,7 @@ fileWriter(fResFileWriter)
 
 }
 
-Behavior TLSSimulation::run(TLGCData& data, int fMaxIterations)
+Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 {
 	TLSAlgorithm lsCalc(data);
 	Behavior calcOK;
@@ -39,7 +39,7 @@ Behavior TLSSimulation::run(TLGCData& data, int fMaxIterations)
 	// Run through the first simulation
 	try {
 		simulateValues();
-		calcOK = lsCalc.run(data, fMaxIterations);
+		calcOK = lsCalc.run(data, maxIterations);
 
 		if (calcOK)
 		{
@@ -72,7 +72,7 @@ Behavior TLSSimulation::run(TLGCData& data, int fMaxIterations)
 
 			// compute the ls results for the current simulation
 			simulateValues();
-			calcOK = lsCalc.run(data, fMaxIterations);
+			calcOK = lsCalc.run(data, maxIterations);
 
 			// Updates the values for the 2 final tables (Points and Frames summaries)
 			updateResValues();
@@ -142,8 +142,8 @@ void TLSSimulation::updateResValues(){
 	for (auto& frameSum : fFrameSummaries){
 		TransformParameters estimatedParam = frameSum.getAdjustableTransformation()->getEstParam();
 		TransformParameters provisionalParam = frameSum.getAdjustableTransformation()->getProvParam();
-		TransformParameters res = estimatedParam - provisionalParam;
-		frameSum.addNewResValue(res);
+		TransformParameters result = estimatedParam - provisionalParam;
+		frameSum.addNewResValue(result);
 	}
 
     // Reinitialise the observation summaries
