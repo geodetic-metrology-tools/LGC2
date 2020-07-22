@@ -579,4 +579,22 @@ public:
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
 };
+//--------------------------  HLSR measurement--------------------------------------------
+/*!
+	\ingroup Measurements
+	\brief Veritcal distance to a water surface (ECWS) made by a hlsr instrument (TInstrumentData::THLSR).
+*/
+class TECWS : public TAScalarMeas<TInstrumentData::THLSR> {
+public:
+	/*!@name Constructors */
+	//@{
+	TECWS(const LGCAdjustablePoint& pos, TInstrumentData::THLSR instr) :
+		TAScalarMeas<TInstrumentData::THLSR>(pos, instr) {}
+	TECWS(const LGCAdjustablePoint& pos, TInstrumentData::THLSR instr, TLength obsVal) :
+		TAScalarMeas<TInstrumentData::THLSR>(pos, instr, obsVal) {}
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement, THLSR introduces 1 equation.*/
+	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
+};
 #endif

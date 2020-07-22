@@ -50,6 +50,7 @@ namespace {
 #define RADI "RADI"
 #define OBSXYZ "OBSXYZ"
 #define INCLY   "INCLY"
+#define ECWS "ECWS"
 	//points
 #define CALA "CALA"
 #define POIN "POIN"
@@ -104,16 +105,16 @@ namespace {
 	//
 	const int nb_allowed_tstn = 1;
 	const int nb_allowed_v0 = 7;
-	const int nb_allowed_plr3d = 22;
-	const int nb_allowed_angl = 22;
-	const int nb_allowed_zend = 22;
-	const int nb_allowed_dist = 22;
-	const int nb_allowed_ecth = 22;
-	const int nb_allowed_ecdir = 22;
-	const int nb_allowed_dhor = 22;
+	const int nb_allowed_plr3d = 23;
+	const int nb_allowed_angl = 23;
+	const int nb_allowed_zend = 23;
+	const int nb_allowed_dist = 23;
+	const int nb_allowed_ecth = 23;
+	const int nb_allowed_ecdir = 23;
+	const int nb_allowed_dhor = 23;
 	const int nb_allowed_cam = 2;
-	const int nb_allowed_uvec = 16;
-	const int nb_allowed_uvd = 16;
+	const int nb_allowed_uvec = 17;
+	const int nb_allowed_uvd = 17;
 	const int nb_allowed_dspt = 15;
 	const int nb_allowed_dlev = 14;
 	const int nb_allowed_dver = 14;
@@ -124,22 +125,23 @@ namespace {
 	const int nb_allowed_radi = 14;
 	const int nb_allowed_OBSXYZ = 15;
 	const int nb_allowed_incly = 15;
+	const int nb_allowed_ecws = 14;
 	//points
-	const int nb_allowed_cala = 20;
-	const int nb_allowed_poin = 20;
-	const int nb_allowed_pdor = 20;
-	const int nb_allowed_vxy = 20;
-	const int nb_allowed_vxz = 20;
-	const int nb_allowed_vyz = 20;
-	const int nb_allowed_vz = 20;
+	const int nb_allowed_cala = 21;
+	const int nb_allowed_poin = 21;
+	const int nb_allowed_pdor = 21;
+	const int nb_allowed_vxy = 21;
+	const int nb_allowed_vxz = 21;
+	const int nb_allowed_vyz = 21;
+	const int nb_allowed_vz = 21;
 	//instruments
-	const int nb_allowed_polar = 26;
-	const int nb_allowed_camd = 26;
-	const int nb_allowed_edm = 26;
-	const int nb_allowed_level = 26;
-	const int nb_allowed_scale = 26;
-	const int nb_allowed_incl = 26;
-	const int nb_allowed_hlsr = 26;
+	const int nb_allowed_polar = 27;
+	const int nb_allowed_camd = 27;
+	const int nb_allowed_edm = 27;
+	const int nb_allowed_level = 27;
+	const int nb_allowed_scale = 27;
+	const int nb_allowed_incl = 27;
+	const int nb_allowed_hlsr = 27;
 	//referentials
 	const int nb_allowed_oloc = 24;
 	const int nb_allowed_rs2k = 24;
@@ -224,17 +226,17 @@ namespace {
 	//TSTN measurments
 	const char* allowed_TSTN[nb_allowed_tstn] = { V0 };
 	const char* allowed_V0[nb_allowed_v0] = { PLR3D, ANGL, ZEND, DIST, DHOR, ECTH, ECDIR };
-	const char* allowed_PLR3D[nb_allowed_plr3d] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
-	const char* allowed_ANGL[nb_allowed_angl] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
-	const char* allowed_ZEND[nb_allowed_zend] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
-	const char* allowed_DIST[nb_allowed_dist] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
-	const char* allowed_ECTH[nb_allowed_ecth] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
-	const char* allowed_ECDIR[nb_allowed_ecdir] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
-	const char* allowed_DHOR[nb_allowed_dhor] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
+	const char* allowed_PLR3D[nb_allowed_plr3d] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
+	const char* allowed_ANGL[nb_allowed_angl] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
+	const char* allowed_ZEND[nb_allowed_zend] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
+	const char* allowed_DIST[nb_allowed_dist] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
+	const char* allowed_ECTH[nb_allowed_ecth] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
+	const char* allowed_ECDIR[nb_allowed_ecdir] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
+	const char* allowed_DHOR[nb_allowed_dhor] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ECWS };
 	//CAM measurments
 	const char* allowed_CAM[nb_allowed_cam] = { UVEC, UVD };
-	const char* allowed_UVEC[nb_allowed_uvec] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ,INCLY };
-	const char* allowed_UVD[nb_allowed_uvd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ,INCLY };
+	const char* allowed_UVEC[nb_allowed_uvec] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ,INCLY,ECWS };
+	const char* allowed_UVD[nb_allowed_uvd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ,INCLY,ECWS };
 	// Others measurments
 	const char* allowed_DSPT[nb_allowed_dspt] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY };
 	const char* allowed_DLEV[nb_allowed_dlev] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY };
@@ -246,22 +248,23 @@ namespace {
 	const char* allowed_RADI[nb_allowed_radi] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY };
 	const char* allowed_OBSXYZ[nb_allowed_OBSXYZ] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, POIN,INCLY };
 	const char* allowed_INCLY[nb_allowed_incly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA,INCLY, POIN };
+	const char* allowed_ECWS[nb_allowed_ecws] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY };
 	//CALA & POIN & others point DEF
-	const char* allowed_CALA[nb_allowed_cala] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY };
-	const char* allowed_POIN[nb_allowed_poin] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY };
-	const char* allowed_VXY[nb_allowed_vxy] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY };
-	const char* allowed_VXZ[nb_allowed_vxz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VYZ, VZ, FRAME, ENDFRAME, END, INCLY };
-	const char* allowed_VYZ[nb_allowed_vyz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VZ, FRAME, ENDFRAME, END, INCLY };
-	const char* allowed_VZ[nb_allowed_vz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, FRAME, ENDFRAME, END, INCLY };
-	const char* allowed_PDOR[nb_allowed_pdor] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END, INCLY };
+	const char* allowed_CALA[nb_allowed_cala] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ECWS };
+	const char* allowed_POIN[nb_allowed_poin] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ECWS };
+	const char* allowed_VXY[nb_allowed_vxy] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ECWS };
+	const char* allowed_VXZ[nb_allowed_vxz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ECWS };
+	const char* allowed_VYZ[nb_allowed_vyz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VZ, FRAME, ENDFRAME, END, INCLY, ECWS };
+	const char* allowed_VZ[nb_allowed_vz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, FRAME, ENDFRAME, END, INCLY, ECWS };
+	const char* allowed_PDOR[nb_allowed_pdor] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END, INCLY, ECWS };
 	//Instruments
-	const char* allowed_POLAR[nb_allowed_polar] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
-	const char* allowed_CAMD[nb_allowed_camd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
-	const char* allowed_EDM[nb_allowed_edm] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
-	const char* allowed_LEVEL[nb_allowed_level] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
-	const char* allowed_SCALE[nb_allowed_scale] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
-	const char* allowed_INCL[nb_allowed_incl] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
-	const char* allowed_HLSR[nb_allowed_hlsr] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME };
+	const char* allowed_POLAR[nb_allowed_polar] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
+	const char* allowed_CAMD[nb_allowed_camd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
+	const char* allowed_EDM[nb_allowed_edm] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
+	const char* allowed_LEVEL[nb_allowed_level] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
+	const char* allowed_SCALE[nb_allowed_scale] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
+	const char* allowed_INCL[nb_allowed_incl] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
+	const char* allowed_HLSR[nb_allowed_hlsr] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, FRAME, ECWS };
 	// Reference systems
 	const char* allowed_OLOC[nb_allowed_oloc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};
 	const char* allowed_RS2K[nb_allowed_rs2k] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR , CHABA};

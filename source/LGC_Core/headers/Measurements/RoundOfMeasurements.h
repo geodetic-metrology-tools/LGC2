@@ -247,4 +247,44 @@ private:
 
 	TLGCObsSummary inclySummary_;
 };
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of ECWS (TECWS) measurements, which are measuring a single Plane.
+*/
+struct TECWSROM : public TStatusObject {
+
+	/// All ECWS measurements, measuring the 'fMeasuredWS'
+	std::list<TECWS> measECWS;
+
+	//Measured vertical distanced
+	TLength* fMeasuredWS;
+	//1-sigma precision of the water surface
+	TLength* fSigmaWS;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getECWSObsSummary() const;
+	const TLGCObsSummary& getECWSObsSummary(std::string text) noexcept;
+
+	/// Line of the measurement definition
+	int  line;
+
+	int romId{ romCounter_++ };
+
+	/// the station attribute is a copy of the parameter to override defaults
+	TECWSROM(TLength* measECWS, TLength* measSigmaWS) :
+		fMeasuredWS(measECWS),
+		fSigmaWS(measSigmaWS),
+		line(NO_VALi)
+	{}
+
+private:
+
+	static int romCounter_;
+
+	TLGCObsSummary ecwsSummary_;
+};
 #endif
