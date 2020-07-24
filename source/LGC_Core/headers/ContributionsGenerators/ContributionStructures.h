@@ -406,6 +406,13 @@ struct INCLYContrib {
 
 	TReal		fObsVariance; //!< Variance of the observation
 };
+
+struct ECWSContrib {
+	TReal			fCalcMeas;
+	TReal			fSigmaWS;
+
+	TReal			fObsVariance;
+};
 #endif
 
 
