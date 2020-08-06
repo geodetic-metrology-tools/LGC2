@@ -23,6 +23,7 @@ struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
 struct TINCLYROM;
+struct TECWSROM;
 /*!
 	\ingroup LSCalculation
 	\brief  Class responsible for extracting the results from the matrices and updating the appropriate member data of the 
@@ -159,6 +160,9 @@ private:
 
 		/// Sets the INCLY measurement residual.
 		void extractINCLYROMObs(const TLSResultsMatrices& rm, TINCLYROM& inclyMeas);
+
+		/// Sets the ECWS measurement residual.
+		void extractECWSROMObs(const TLSResultsMatrices& rm, TECWSROM& ecwsMeas);
 	//@}
 
 

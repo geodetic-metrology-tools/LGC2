@@ -1461,11 +1461,10 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 	//Obs equation
 	TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
 
-	//Point and transformation
-//	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> snrTransfContributions;
-//	TFreeVector stationContrib = getPointContributions(snrPTLor2RootTrafo, -cosq(theta), sinq(theta), 0.0);
+
 	ECWSContrib ecwsContrib = { calcMeas, dWS, obsWSSigma};
 	return ecwsContrib;
+
 }
 
 //////////////////////////////////////////////////////////////////////

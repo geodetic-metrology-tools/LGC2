@@ -171,6 +171,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kINCLY:
 			fMeasInfo.fNumINCLY++;
 			break;
+        case TMeasurementsGlobal::kECWS:
+            fMeasInfo.fNumECWS++;
+            break;
 	}
 }
 

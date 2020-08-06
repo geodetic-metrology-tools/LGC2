@@ -25,6 +25,7 @@ struct TECHOROM;
 struct TECVEROM;
 struct TORIEROM;
 struct INCLYROM;
+struct TECWSROM;
 
 /*! 
 	\ingroup LSCalculation
@@ -139,8 +140,12 @@ private:
 		/// Add the design matrices contributions for the OBSXYZ measurement. 
 		void addOBSXYZContributions(const std::list<TOBSXYZ>& OBSXYZMeas, TLSInputMatrices*  matrices);
 
-		/// Add the design matrices contributions for the OBSXYZ measurement. 
+		/// Add the design matrices contributions for the INCLY measurement. 
 		void addINCLYContributions(TINCLYROM& inclyROM, TLSInputMatrices* matrices);
+
+		/// Add the design matrices contributions for the ECWS measurement. 
+		void addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices);
+
 		//@}
 
 
