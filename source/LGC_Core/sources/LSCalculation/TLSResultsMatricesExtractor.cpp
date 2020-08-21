@@ -62,17 +62,17 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 
 	try
 	{
-/*		bool pt = extractPointParams(rm, convCrit);
+		// Updating all the parameters for next itération.
+		bool pt = extractPointParams(rm, convCrit);
 		bool angl = extractAngleParams(rm, convCrit);
 		bool pln = extractPlaneParams(rm, convCrit);
 		bool len = extractLengthParams(rm, convCrit);
 		bool trf = extractTransformationParams(rm, convCrit);
 		bool ln = extractLineParams(rm, convCrit);
 
+		//the test is done on all parameters, if we wish to relax the LIBR, it can be done on only the point coordinates
 		if ((pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive())
-			fLastIteration = true; */
-
-		fLastIteration = extractPointParams(rm, convCrit);  // Instead of all above criteria tests!
+			fLastIteration = true;
 	}
 	catch (std::exception const & excp)
 	{
