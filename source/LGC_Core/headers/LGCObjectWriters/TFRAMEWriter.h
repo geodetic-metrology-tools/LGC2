@@ -73,6 +73,8 @@ private:
 		void writeSCALEReliability(TDataTreeIterator frameIt);
 		/// Write INCL reliability
 		void writeINCLReliability(TDataTreeIterator frameIt);
+		/// Write HLSR reliability
+		void writeHLSRReliability(TDataTreeIterator frameIt);
 
 		///Writes specific point
 		void writeResultsPtsData(AdjPointIter pt, bool isLocal);
@@ -138,6 +140,7 @@ private:
 			allECVESummaries_,
 			allECSPSummaries_,
 			allINCLYSummaries_,
+			allECWSSummaries_,
 			allObsxyzXSummaries_,
 			allObsxyzYSummaries_,
 			allObsxyzZSummaries_;

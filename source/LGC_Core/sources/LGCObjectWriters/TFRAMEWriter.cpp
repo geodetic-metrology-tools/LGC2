@@ -14,6 +14,7 @@
 #include "TSpatialStatus.h"
 #include <TPointTransformer.h>
 #include "TINCLWriter.h"
+#include "THLSRWriter.h"
 #include "TMeasurements.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -131,7 +133,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
     if(!tmeas.fOBSXYZ.empty())
     {
-        (*stream) << endl;
+        (*stream) << endl; 
         otherMeasWriter.writeOBSXYZResults(tmeas.fOBSXYZ);
     }
 
@@ -140,6 +142,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	for (auto& itINCLY : tmeas.fINCLY)
 		inclWriter.writeINCLYResults(itINCLY);
+
+	for (auto& itECWS : tmeas.fECWS)
+		hlsrWriter.writeECWSResults(itECWS);
 }
 
 
@@ -161,6 +166,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -545,6 +551,22 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		//write global mean
 		inclWriter.writeAngleResultsSummary(tmeas.getINCLYGlobalObsSummary(), TABs);
 	}
+
+//	//ECWS
+//	if (tmeas.fECWS.size() > 0)
+//	{
+//		(*stream) << endl;
+//		(*stream) << TABs;
+//		(*stream).writeStringLeft(nameWidth, "ECWS"); //instrument
+//		(*stream) << endl;
+//		scaleWriter.writeHLSRSynthesisHeader();
+//		for (auto& itECHO : tmeas.fECHO)
+//			scaleWriter.writeECWSResultsSynthesis(itECHO);
+//		//(*stream) << endl;
+//
+//		//write global mean
+//		scaleWriter.writeDistanceResultsSummary(tmeas.getECHOGlobalObsSummary(), TABs);
+//	}
 }
 
 ///write measurements summary
@@ -783,7 +805,7 @@ void TFRAMEWriter::writeHistogrammeRootOnly() {
 		tstnWriter.writeHisto(TLGCObsSummary::merge(allZENDSummaries_), "ZEND");
 	}
 
-	//DIST
+	//DIST	
 	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDIST) >= 5) {
 		(*stream) << endl;
 		tstnWriter.writeHisto(TLGCObsSummary::merge(allDISTSummaries_), "DIST");
@@ -2063,6 +2085,30 @@ void TFRAMEWriter::writeINCLReliability(TDataTreeIterator frameIt)
 	}
 
 }
+//void TFRAMEWriter::writeHLSRReliability(TDataTreeIterator frameIt)
+//{
+	//TAStreamFormatter* stream = getStream();
+	//THLSRWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
+
+	//auto& tmeas = (*frameIt)->measurements;
+
+	//HLSR
+	//bool isincly = false;
+	//for (auto& itINCLY : tmeas.fINCLY)
+	//{
+	//	if (itINCLY.measINCLY.size() > 0) {
+
+		//	if (isincly == false)
+		//	{
+		//		(*stream) << endl << "INCLY observations" << endl;
+		//		inclWriter.writeINCLYReliabilityHeader();
+		//		isincly = true;
+		//	}
+		//	inclWriter.writeINCLYReliabilityData(itINCLY, fProjectData->getStatistics(), itINCLY.measINCLY);
+		//}
+	//}
+
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //HEADER
@@ -2412,4 +2458,3 @@ void TFRAMEWriter::transfXYZ2XYH(TPositionVector& pv, const TRefSystemFactory::E
 		else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::CCS2XYHg1985Machine(pv);
 }
-

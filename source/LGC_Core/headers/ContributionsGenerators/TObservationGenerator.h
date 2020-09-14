@@ -23,6 +23,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
+struct TECWS;
 
 
 /*!
@@ -102,6 +103,9 @@ public:
 
 	/// Returns the INCLY measurement calculated meas in RADIANS [rad]
 	TReal getINCLYCalcMeas(const TINCLYROM& inclyROM, const TINCLY& incly);
+	/// Returns the TECWS measurement calculated meas in meters [m]
+
+	TReal getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws);
 
 	//@}
 

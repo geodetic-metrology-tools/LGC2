@@ -551,3 +551,24 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const T
 	
 	return calcMeas;
 }
+
+TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {
+
+	//Get the measured distance to the water surface
+	TReal dWS = ecwsROM.fMeasuredWS->getMetresValue(); // Distance from the reference point to the WS
+
+	//Get the observed WS 1-sigma precision
+	TReal obsWSSigma = ecwsROM.fSigmaWS->getMMetresValue();
+
+	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
+
+	//Staton point defined at root frame
+	const TLOR2LOR& snrPTLor2RootTrafo = fPointTransfo->getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin());
+	snrPTLor2RootTrafo.transform(snrPoint);
+
+	//Obs equation
+	TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
+	return calcMeas;
+}
+
+

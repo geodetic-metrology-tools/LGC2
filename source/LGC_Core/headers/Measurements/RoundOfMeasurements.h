@@ -257,6 +257,9 @@ struct TECWSROM : public TStatusObject {
 	/// All ECWS measurements, measuring the 'fMeasuredWS'
 	std::list<TECWS> measECWS;
 
+	/// The instrument that is used on this station
+	TInstrumentData::THLSR     instrument;
+
 	//Measured vertical distanced
 	TLength* fMeasuredWS;
 	//1-sigma precision of the water surface
@@ -275,9 +278,15 @@ struct TECWSROM : public TStatusObject {
 	int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECWSROM(TLength* measECWS, TLength* measSigmaWS) :
-		fMeasuredWS(measECWS),
-		fSigmaWS(measSigmaWS),
+	//ECWSROM(TLength* measECWS, TLength* measSigmaWS) :
+	//	fMeasuredWS(measECWS),
+	//	fSigmaWS(measSigmaWS),
+	//	line(NO_VALi)
+	//}
+	TECWSROM(const TInstrumentData::THLSR& instrument) :
+		instrument(instrument),
+		fMeasuredWS(nullptr),
+		fSigmaWS(nullptr),
 		line(NO_VALi)
 	{}
 

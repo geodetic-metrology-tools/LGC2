@@ -86,11 +86,11 @@ void TECWSROM::initialiseObsSummaries() {
     }
 }
 
-const TLGCObsSummary&  TECWSROM::getECWSObsSummary() const { return ecwsSummary_; }
+const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
 
-const TLGCObsSummary& TECWSROM::getECWSObsSummary(std::string text)  noexcept {
-	ecwsSummary_.setObsText(text);
-	return ecwsSummary_;
+const TLGCObsSummary& TECHOROM::getECHOObsSummary(std::string text)  noexcept {
+    echoSummary_.setObsText(text);
+	return echoSummary_;
 }
 
 const TLGCObsSummary&  TECSPROM::getECSPObsSummary() const { return ecspSummary_; }

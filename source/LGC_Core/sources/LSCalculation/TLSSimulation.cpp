@@ -432,6 +432,14 @@ void TLSSimulation::getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCL
 		itINCLY.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
 }
+		
+void TLSSimulation::getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws) {
+	for (auto& itECWS : ecws) {
+		TReal calcVal = fSimObs.getECWSCalcMeas(ecwsROM, itECWS);
+		TReal sigma = itECWS.target.sigmaD;
+		itECWS.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
+	}
+}
 
 TReal TLSSimulation::getSimulatedValue(const TReal val, const TReal sigma)
 {

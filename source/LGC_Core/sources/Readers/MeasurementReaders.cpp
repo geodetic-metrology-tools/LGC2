@@ -1357,8 +1357,8 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 		if (tokens.size() < 3)
 			throw std::runtime_error("ECWS measurement must have at least 2 entries, the HLSR instrument ID and the water surface standard error");
 
-		TECWSROM ecwsRom(nullptr);
-		ecwsRom.line = line;
+		TECWSROM ecwsRom(finstruments.getDevice(finstruments.fHLSR, tokens.at(2)));
+		ecwsRom.line= line;
 		ecwsRom.setActive(activeLine);
 
 		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement

@@ -58,6 +58,9 @@ struct TMeasurements {
 	/// All INCLY measurements in the order in which they appeared in the input file
 	std::list<TINCLYROM> fINCLY;
 
+    /// All INCLY measurements in the order in which they appeared in the input file
+    std::list<TECWSROM> fECWS;
+
     bool dverActive{ true }; ///< activation status of the DVER rom
     bool radiActive{ true }; ///< activation status of the RADI rom
     bool obsxyzActive{ true }; ///< activation status of the OBSXYZ rom
@@ -117,6 +120,7 @@ struct TMeasurements {
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	const TLGCObsSummary& getINCLYGlobalObsSummary() const;
+
 
 private:
 
