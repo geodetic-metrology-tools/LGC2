@@ -14,7 +14,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <string>
 //LGC
 #include <TAFileWriter.h>
-#include "TMeasurements.h"wild
+#include "TMeasurements.h"
 
 class	TLGCProject;
 

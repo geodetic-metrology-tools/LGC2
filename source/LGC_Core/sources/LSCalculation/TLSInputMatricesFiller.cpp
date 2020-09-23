@@ -1288,6 +1288,8 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 
 void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices) {
 	bool isProcessOK = true;
+	MatrixIndex eqIdx = -1;
+	MatrixIndex obsIdx = -1;
 	ECWSContrib contributions;
 	for (auto itECWS(ecwsROM.measECWS.begin()); itECWS != ecwsROM.measECWS.end(); ++itECWS) {
 		MatrixIndex eqIdx = itECWS->getFirstEquationIndex();
