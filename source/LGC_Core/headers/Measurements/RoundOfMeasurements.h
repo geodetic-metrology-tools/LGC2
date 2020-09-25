@@ -277,12 +277,7 @@ struct TECWSROM : public TStatusObject {
 
 	int romId{ romCounter_++ };
 
-	/// the station attribute is a copy of the parameter to override defaults
-	//ECWSROM(TLength* measECWS, TLength* measSigmaWS) :
-	//	fMeasuredWS(measECWS),
-	//	fSigmaWS(measSigmaWS),
-	//	line(NO_VALi)
-	//}
+
 	TECWSROM(const TInstrumentData::THLSR& instrument) :
 		instrument(instrument),
 		fMeasuredWS(nullptr),

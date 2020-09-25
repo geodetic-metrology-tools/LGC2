@@ -933,6 +933,15 @@ void TDataAnalyzer::assignEOIndices(){
 				incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
+        
+        // INCLY
+        for (auto& inclyrom : measurements.fECWS)
+            for (auto& incly : inclyrom.measECWS) {
+                // set indices of LS matrices, ECWS introduces 1 equation and 1 observation
+                incly.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
+            }
     }
 }
 
