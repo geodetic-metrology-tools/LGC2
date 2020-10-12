@@ -121,6 +121,9 @@ struct TMeasurements {
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	const TLGCObsSummary& getINCLYGlobalObsSummary() const;
 
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECWSGlobalObsSummary() const;
+
 
 private:
 
@@ -152,6 +155,7 @@ private:
     TLGCObsSummary ecveGlobalSummary_;
     TLGCObsSummary ecspGlobalSummary_;
 	TLGCObsSummary inclyGlobalSummary_;
+    TLGCObsSummary ecwsGlobalSummary_;
 
 };
 

@@ -10,7 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TObservationWriter.h>
 #include <MeasDef.h>
-#include <TLGCData.h>
+//#include <TLGCData.h>
 
 struct TECWSROM;
 class TLGCStatistic;
@@ -25,15 +25,15 @@ public:
 	/// Constructor
 	THLSRWriter(TAStreamFormatter& stream, bool hist);
 	///Destructor
-	virtual ~THLSRWriter() override;
+	virtual ~THLSRWriter();
 
 	/*!@name Headers */
 	//@{
 	//	/// Write reliability header for ECWS 
-	//void	writeECWSReliabilityHeader();
+	void writeECWSReliabilityHeader();
 
 	///// Write the result synthesis header
-	//void writeHLSRSynthesisHeader();
+	void writeHLSRSynthesisHeader();
 	//@}
 
 	/*!@name Results */
@@ -42,27 +42,29 @@ public:
 	void writeECWSResults(const  TECWSROM& ecwsrom);
 
 	/// Write the simulated result data for ECWS 
-	//void writeECWSSIMUResults(const  TECWSROM& ecwsrom);
+	void writeECWSSIMUResults(const  TECWSROM& ecwsrom);
 
 	///// Write reliability data for ECWS 
-	//void	writeECWSReliabilityData(const  TECWSROM& ecwsrom, const TLGCStatistic& stat, const std::list<TECWS>& measECWS);
+	void  writeECWSReliabilityData(const TLGCStatistic& stat, const std::list<TECWS>& measECWS);
 
 	///// Write the result synthesis for ECWS
-	//void writeECWSResultsSynthesis(const  TECWSROM& ecwsrom);
+    void writeECWSRResultsSynthesis(const  TECWSROM& ecwsrom);
 
 	///// Write the result data for ECWS in all frames 
-	//void writeECWSResultsSynthesis(std::list<const TLGCObsSummary*>& ecwssum);
+	//void writeECWSRResultsSynthesis(std::list<const TLGCObsSummary*>& ecwssum);
 	////@}
 
 	////Write Default results data
-	//void writeDefResultsSynthesis(std::list<const TLGCObsSummary*>& meassum, int obsResWidth, int ResPrecision);
+	void writeDefResultsSynthesis(std::list<const TLGCObsSummary*>& meassum, int obsResWidth, int ResPrecision);
+
+	/// Set if ALLFIXED option is used
+	//void setAllfixed(bool fBool) { isAllfixed = fBool; }
 
 private:
 	/// Write the result header for HLSR
 	void writeHLSRResultsHeader();
 
-	/// Project data
-	const TLGCData* fProjectData;
+	//bool isAllfixed;
 };
 
 

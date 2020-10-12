@@ -76,8 +76,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
-
-    auto &tmeas = (*frameIt)->measurements;
+	//hlsrWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
+    
+	auto &tmeas = (*frameIt)->measurements;
 
 	//If PDOR
 	if (tmeas.fPDOR.isInitialised())
@@ -552,21 +553,21 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		inclWriter.writeAngleResultsSummary(tmeas.getINCLYGlobalObsSummary(), TABs);
 	}
 
-//	//ECWS
-//	if (tmeas.fECWS.size() > 0)
-//	{
-//		(*stream) << endl;
-//		(*stream) << TABs;
-//		(*stream).writeStringLeft(nameWidth, "ECWS"); //instrument
-//		(*stream) << endl;
-//		scaleWriter.writeHLSRSynthesisHeader();
-//		for (auto& itECHO : tmeas.fECHO)
-//			scaleWriter.writeECWSResultsSynthesis(itECHO);
-//		//(*stream) << endl;
-//
-//		//write global mean
-//		scaleWriter.writeDistanceResultsSummary(tmeas.getECHOGlobalObsSummary(), TABs);
-//	}
+	//ECWS
+	if (tmeas.fECWS.size() > 0)
+	{
+		(*stream) << endl;
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECWS"); //instrument
+		(*stream) << endl;
+		hlsrWriter.writeHLSRSynthesisHeader();
+		for (auto& itECWS : tmeas.fECWS)
+			hlsrWriter.writeECWSRResultsSynthesis(itECWS);
+		
+//	
+		//write global mean
+		hlsrWriter.writeDistanceResultsSummary(tmeas.getECWSGlobalObsSummary(), TABs);
+	}
 }
 
 ///write measurements summary
@@ -584,7 +585,7 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
-
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
     auto &tmeas = (*frameIt)->measurements;
 
 	//TSTN
@@ -774,6 +775,15 @@ void TFRAMEWriter::writeHistogramme(TDataTreeIterator frameIt){
 		(*stream) << endl;
 		inclWriter.writeHisto(INCLYsummary, "INCLY");
 	}
+
+	//ECWS
+	const auto& ECWSsummary = tmeas.getECWSGlobalObsSummary();
+
+	if (ECWSsummary.getNumberOfObs() >= 5)
+	{
+		(*stream) << endl;
+		hlsrWriter.writeHisto(ECWSsummary, "ECWS");
+	}
 }
 
 ///write measurements summary in the root only
@@ -791,6 +801,7 @@ void TFRAMEWriter::writeHistogrammeRootOnly() {
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	
 	//TSTN
 	//ANGL
@@ -921,6 +932,12 @@ void TFRAMEWriter::writeHistogrammeRootOnly() {
 		(*stream) << endl;
 		inclWriter.writeHisto(TLGCObsSummary::merge(allINCLYSummaries_), "INCLY");
 	}
+
+	////ECWS
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWS) >= 5) {
+		(*stream) << endl;
+		hlsrWriter.writeHisto(TLGCObsSummary::merge(allECWSSummaries_), "ECWS");
+	}
 }
 
 void TFRAMEWriter::initialiseAllObsSummaries() {
@@ -949,6 +966,7 @@ void TFRAMEWriter::initialiseAllObsSummaries() {
 	allECVESummaries_.clear();
 	allECSPSummaries_.clear();
 	allINCLYSummaries_.clear();
+	allECWSSummaries_.clear();
 	allObsxyzXSummaries_.clear();
 	allObsxyzYSummaries_.clear();
 	allObsxyzZSummaries_.clear();
@@ -1000,7 +1018,12 @@ void TFRAMEWriter::initialiseAllObsSummaries() {
 		if (tmeas.fLEVEL.size() > 0)
 			for (auto& itLEVEL : tmeas.fLEVEL)
 				allDLEVSummaries_.push_back(&itLEVEL.getDLEVObsSummary(itLEVEL.fMeasuredPlane->getReferencePoint()->getName()));
-
+		
+		//TOCHECK
+		if (tmeas.fECWS.size() > 0)
+			for (auto& itECWS : tmeas.fECWS)
+				allECWSSummaries_.push_back(&itECWS.getECWSObsSummary(itECWS.instrument.ID));
+		
 		if (tmeas.fCAM.size() > 0) {
 			for (auto& itCAM : tmeas.fCAM) {
 				std::string stationName = itCAM.instrumentPos->getName();
@@ -1065,6 +1088,7 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly() {
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
 	//ANGL
 	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kANGL) > 0) {
@@ -1307,6 +1331,15 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly() {
 		inclWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allINCLYSummaries_), TABs);
 	}
 
+	////ECWS
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWS) > 0) {
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECWS");
+		(*stream) << endl;
+		hlsrWriter.writeHLSRSynthesisHeader();
+		hlsrWriter.writeDefResultsSynthesis(allECWSSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		hlsrWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECWSSummaries_), TABs);
+	}
 }
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
@@ -1329,6 +1362,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive());
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -1370,7 +1404,10 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 	for (auto& itINCLY : tmeas.fINCLY)
 		inclWriter.writeINCLYSIMUResults(itINCLY);
-}
+
+	for (auto& itECWS : tmeas.fECWS)
+		hlsrWriter.writeECWSSIMUResults(itECWS);
+}	
 
 void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	TAStreamFormatter*	stream = getStream();
@@ -1400,6 +1437,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 
 	writeSCALEReliability(frameIt);
 	writeINCLReliability(frameIt);
+	writeHLSRReliability(frameIt);
 
 	bool  ORIEheaderWritten = false;
 	for (auto& itORIE:tmeas.fORIE)
@@ -2085,30 +2123,30 @@ void TFRAMEWriter::writeINCLReliability(TDataTreeIterator frameIt)
 	}
 
 }
-//void TFRAMEWriter::writeHLSRReliability(TDataTreeIterator frameIt)
-//{
-	//TAStreamFormatter* stream = getStream();
-	//THLSRWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
+void TFRAMEWriter::writeHLSRReliability(TDataTreeIterator frameIt)
+{
+	TAStreamFormatter* stream = getStream();
+	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive());
 
-	//auto& tmeas = (*frameIt)->measurements;
+	auto& tmeas = (*frameIt)->measurements;
 
-	//HLSR
-	//bool isincly = false;
-	//for (auto& itINCLY : tmeas.fINCLY)
-	//{
-	//	if (itINCLY.measINCLY.size() > 0) {
+	//ECWS
+	bool isecws = false;
+	for (auto& itECWS : tmeas.fECWS)
+	{
+		if (itECWS.measECWS.size() > 0) {
 
-		//	if (isincly == false)
-		//	{
-		//		(*stream) << endl << "INCLY observations" << endl;
-		//		inclWriter.writeINCLYReliabilityHeader();
-		//		isincly = true;
-		//	}
-		//	inclWriter.writeINCLYReliabilityData(itINCLY, fProjectData->getStatistics(), itINCLY.measINCLY);
-		//}
-	//}
+			if (isecws == false)
+			{
+				(*stream) << endl << "ECWS observations" << endl;
+				hlsrWriter.writeECWSReliabilityHeader();
+				isecws = true;
+			}
+			hlsrWriter.writeECWSReliabilityData(fProjectData->getStatistics(), itECWS.measECWS);
+		}
+	}
 
-//}
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 //HEADER

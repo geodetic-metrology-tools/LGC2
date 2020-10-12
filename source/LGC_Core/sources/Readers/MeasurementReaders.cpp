@@ -1361,6 +1361,9 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 		ecwsRom.line= line;
 		ecwsRom.setActive(activeLine);
 
+		//Read the WS sigma
+		ecwsRom.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+
 		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement
 
 		//The HLSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
@@ -1374,6 +1377,7 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 		/*This is a position of station point from which the plane is measured in the ECWS class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
+		
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		currentTargetApplied = opts.getParamS("HLSR", currentTargetApplied); //If HLSR is used then change ID of CurrentTargetApplied for the following measurements.
 
@@ -1386,11 +1390,15 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 
 		// Store  the measured value
 		TECWS ecws(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
-
 		TECWSROM& ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
+
+		ecwsROMLatest.sigmaWS = TLength(opts.getParamRmm2m("WSSE", ecwsROMLatest.sigmaWS));
+
 
 		ecws.line = line;
 		ecws.setActive(ecwsROMLatest.isActive() && activeLine); // Active only if ROM active as well
+
+		
 
 		ecwsROMLatest.measECWS.emplace_back(ecws);
 

@@ -555,10 +555,10 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const T
 TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {
 
 	//Get the measured distance to the water surface
-	TReal dWS = ecwsROM.fMeasuredWS->getMetresValue(); // Distance from the reference point to the WS
+	TReal dWS = ecws.getObservedOffset().getMetresValue(); // Distance from the reference point to the WS
 
 	//Get the observed WS 1-sigma precision
-	TReal obsWSSigma = ecwsROM.fSigmaWS->getMMetresValue();
+	TReal obsWSSigma = ecwsROM.sigmaWS;
 
 	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
 

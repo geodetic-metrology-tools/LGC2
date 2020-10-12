@@ -254,16 +254,16 @@ private:
 */
 struct TECWSROM : public TStatusObject {
 
-	/// All ECWS measurements, measuring the 'fMeasuredWS'
+	/// All ECWS measurements, measuring the water surface distance
 	std::list<TECWS> measECWS;
 
 	/// The instrument that is used on this station
-	TInstrumentData::THLSR     instrument;
+	TInstrumentData::THLSR    instrument;
 
 	//Measured vertical distanced
-	TLength* fMeasuredWS;
+	//TLength* fMeasuredWS;
 	//1-sigma precision of the water surface
-	TLength* fSigmaWS;
+	TLength sigmaWS;
 
 	/// Initialise observation summaries
 	void initialiseObsSummaries();
@@ -278,10 +278,10 @@ struct TECWSROM : public TStatusObject {
 	int romId{ romCounter_++ };
 
 
-	TECWSROM(const TInstrumentData::THLSR& instrument) :
-		instrument(instrument),
-		fMeasuredWS(nullptr),
-		fSigmaWS(nullptr),
+	TECWSROM(const TInstrumentData::THLSR& inst) :
+		instrument(inst),
+		//fMeasuredWS(measWS),
+		sigmaWS(0.0, TLength::EUnits::kMillimetres),
 		line(NO_VALi)
 	{}
 

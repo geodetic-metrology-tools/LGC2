@@ -260,3 +260,5 @@ const TLGCObsSummary& TMeasurements::getECVEGlobalObsSummary() const { return ec
 const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ecspGlobalSummary_; }
 
 const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }
+
+const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }

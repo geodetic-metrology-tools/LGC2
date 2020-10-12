@@ -1301,7 +1301,7 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 		itECWS->target.sigmaD= TLength(sqrt(contributions.fObsVariance));
 
 		// Adding controbution to the water surface distance
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWS->getMMetresValue(), contributions.fCalcMeas);
+		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, itECWS->getDistance(), contributions.fCalcMeas);
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));

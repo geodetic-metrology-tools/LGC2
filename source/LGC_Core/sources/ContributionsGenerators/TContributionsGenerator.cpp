@@ -1447,10 +1447,10 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
 	
 	//Get the measured distance to the water surface
-	TReal dWS = ecwsROM.fMeasuredWS->getMetresValue(); // Distance from the reference point to the WS
+	TReal dWS = ecws.getObservedOffset().getMetresValue(); // Distance from the reference point to the WS
 	
 	//Get the observed WS 1-sigma precision
-	TReal obsWSSigma = ecwsROM.fSigmaWS->getMMetresValue();
+	TReal obsWSSigma = ecwsROM.sigmaWS;
 
 	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
 
@@ -1461,8 +1461,10 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 	//Obs equation
 	TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
 
+	//Compute the variance of the observation
+	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
 
-	ECWSContrib ecwsContrib = { calcMeas, dWS, obsWSSigma};
+	ECWSContrib ecwsContrib = { calcMeas, obsWSSigma, obsVariance };
 	return ecwsContrib;
 
 }

@@ -580,21 +580,66 @@ public:
 
 };
 //--------------------------  HLSR measurement--------------------------------------------
-/*!
-	\ingroup Measurements
-	\brief Veritcal distance to a water surface (ECWS) made by a hlsr instrument (TInstrumentData::THLSR).
-*/
+
+
 class TECWS : public TAScalarMeas<TInstrumentData::THLSR> {
 public:
+	///Pointer to the first point
+	const LGCAdjustablePoint* station;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
 	/*!@name Constructors */
 	//@{
-	TECWS(const LGCAdjustablePoint& pos, TInstrumentData::THLSR instr) :
-		TAScalarMeas<TInstrumentData::THLSR>(pos, instr) {}
-	TECWS(const LGCAdjustablePoint& pos, TInstrumentData::THLSR instr, TLength obsVal) :
-		TAScalarMeas<TInstrumentData::THLSR>(pos, instr, obsVal) {}
+	TECWS(const LGCAdjustablePoint& station, TInstrumentData::THLSR instr, TLength obsVal):
+		TAScalarMeas<TInstrumentData::THLSR>(station, instr, obsVal) {}
+
 	//@}
 
-	/// Returns the last LS-matrices equation index of this measurement, THLSR introduces 1 equation.*/
-	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
+	/*!@name Access methods*/
+	//@{
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+	/// Returns the observed value.
+	//inline TLength getDistanceCorrection() const { return fDistanceCorrection; }
+
+	/// Returns standard deviation of the observed value
+	//inline TLength getObservedStDev() const { return fSigmaObsVal; }
+	//@}
+
+
+	/*!@name Settings */
+	//@{
+		/// Returns the observed value.*/
+	/// Returns the observed value: FRK should we return a mean values when several distances stored in this TAScalarMeas object???
+	inline TLength getObservedOffset() const { return distances[0]; }
+
+	/// Returns the a priori standard deviation of the observed value (provided by the user in the input file)
+	inline TLength getSigma0Offset() const { return target.sigmaD; }
+
+	/// Return the sigma of the water surface
+	//inline TLength getSigmaWS() const { return distancesResiduals[0]; }
+
+	//@}
+
+
+
+	/*!@name Settings */
+	//@{
+		/// Sets the observed value.*/
+//	inline void setObservedDistance(TLength dist) { fObsDist = dist; }
+
+	/// Sets standard deviation of the observed value
+//	inline void setSigmaDistance(TLength sigmaD) { fSigDist = sigmaD; }
+	//@}
+
+private:
+	// The observed distance
+//	TLength fObsDist;
+	// Standard deviation of the observed value
+//	TLength fSigDist;
 };
+
+
 #endif
