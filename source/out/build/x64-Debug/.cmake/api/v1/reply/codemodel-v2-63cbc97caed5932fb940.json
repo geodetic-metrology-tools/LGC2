@@ -1,0 +1,288 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						10
+					]
+				},
+				{
+					"build" : "svlLogs",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/Logs",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "svlLSAlgorithms",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "svlPlugins",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/Plugins",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "svlProjectFramework",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/ProjectFramework",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "svlSpatialObjects",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "svlSpatialObjDLL",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjDLL",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "svlTools",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/Tools",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "LGC_Core",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "LGC_Core",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "LGC_Tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "LGC_Tests",
+					"targetIndexes" : 
+					[
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9
+					],
+					"name" : "LGC",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "LGC::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-LGC-Debug-f2347f9778117641b828.json",
+					"name" : "LGC",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "LGC_Core::@54c805fcbbb728cb20a6",
+					"jsonFile" : "target-LGC_Core-Debug-f0b29526546d09670d3a.json",
+					"name" : "LGC_Core",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "LGC_Tests::@127fe8fd8eca52c0cd09",
+					"jsonFile" : "target-LGC_Tests-Debug-55e047f15aa48c3d2ab6.json",
+					"name" : "LGC_Tests",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "LSAlgorithms::@de4a25f777b6229f4f3d",
+					"jsonFile" : "target-LSAlgorithms-Debug-069ea06e0f8ac1884e22.json",
+					"name" : "LSAlgorithms",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "Logs::@688c70caea2ecd45f6c8",
+					"jsonFile" : "target-Logs-Debug-b06b514213586aa4cc6c.json",
+					"name" : "Logs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "Plugins::@f791b5a9399db2da2745",
+					"jsonFile" : "target-Plugins-Debug-77eb1a80e00b2c1b7900.json",
+					"name" : "Plugins",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "ProjectFramework::@e87a51ddc2b5f272fff2",
+					"jsonFile" : "target-ProjectFramework-Debug-066aad2c544e2771a303.json",
+					"name" : "ProjectFramework",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "SpatialObjDLL::@f91cbfd72d3cc7eb1f10",
+					"jsonFile" : "target-SpatialObjDLL-Debug-c9bf691b631830be63b0.json",
+					"name" : "SpatialObjDLL",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "SpatialObjects::@8953465d5c1c7f46e315",
+					"jsonFile" : "target-SpatialObjects-Debug-ae1fe3a334c8fdede4b9.json",
+					"name" : "SpatialObjects",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "Tools::@780a0448595b36de1a93",
+					"jsonFile" : "target-Tools-Debug-561adc0a6c8129fc2333.json",
+					"name" : "Tools",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "doc::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-doc-Debug-c76d58b8d424c43fa7fa.json",
+					"name" : "doc",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/mcoppofr/susoft/LGC2/source/out/build/x64-Debug",
+		"source" : "C:/Users/mcoppofr/susoft/LGC2/source"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

@@ -1,0 +1,1732 @@
+{
+	"archive" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64",
+				"role" : "flags"
+			}
+		]
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "svlSpatialObjects/SpatialObjects.lib"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include_directories",
+			"ADD_DEFINITIONS"
+		],
+		"files" : 
+		[
+			"C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 269,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 62,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 53,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 52,
+				"parent" : 2
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /Zc:__cplusplus /cgthreads8 /MP /W4 /DEBUG /Od -std:c++17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "_CRT_SECURE_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCAdjustableObjects"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LSCalculation"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Readers"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/ContributionsGenerators"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Measurements"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LocalTransformations"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProject"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProjectData"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCCalculation"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Writers"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCObjectWriters"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Tests/headers"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/boost_1_72_0"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Tools/headers"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Logs"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/AdjustableObjects"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcElements"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcParams"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/Converters"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/FiltersAndFormats"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/ProjectData"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/StreamFormatters"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/AffineTransformations"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/MathematicalConcepts"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/RefFrameTransformations"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ShortestPath"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialMeasurments"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialObj"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialSystems"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/tut-framework-2016-12-19/include"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/eigen-eigen-323c052e1731"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71,
+				72,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89
+			]
+		}
+	],
+	"folder" : 
+	{
+		"name" : "SurveyLib"
+	},
+	"id" : "SpatialObjects::@8953465d5c1c7f46e315",
+	"name" : "SpatialObjects",
+	"nameOnDisk" : "SpatialObjects.lib",
+	"paths" : 
+	{
+		"build" : "svlSpatialObjects",
+		"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "AffineTransformations\\Sources",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		},
+		{
+			"name" : "MathematicalConcepts\\Sources",
+			"sourceIndexes" : 
+			[
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29
+			]
+		},
+		{
+			"name" : "ReferenceSurfaces\\Sources",
+			"sourceIndexes" : 
+			[
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48
+			]
+		},
+		{
+			"name" : "RefFrameTransformations\\Sources",
+			"sourceIndexes" : 
+			[
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63,
+				64,
+				65,
+				66,
+				67
+			]
+		},
+		{
+			"name" : "ShortestPath\\Sources",
+			"sourceIndexes" : 
+			[
+				68,
+				69,
+				70,
+				71,
+				72,
+				73,
+				74,
+				75
+			]
+		},
+		{
+			"name" : "SpatialObj\\Sources",
+			"sourceIndexes" : 
+			[
+				76,
+				77,
+				78,
+				79,
+				80,
+				81,
+				82,
+				83,
+				84
+			]
+		},
+		{
+			"name" : "SpatialSystems\\Sources",
+			"sourceIndexes" : 
+			[
+				85,
+				86,
+				87,
+				88,
+				89
+			]
+		},
+		{
+			"name" : "AffineTransformations\\Headers",
+			"sourceIndexes" : 
+			[
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98
+			]
+		},
+		{
+			"name" : "MathematicalConcepts\\Headers",
+			"sourceIndexes" : 
+			[
+				99,
+				100,
+				101,
+				102,
+				103,
+				104,
+				105,
+				106,
+				107,
+				108,
+				109,
+				110,
+				111,
+				112,
+				113,
+				114,
+				115,
+				116,
+				117,
+				118,
+				119,
+				120,
+				121,
+				122
+			]
+		},
+		{
+			"name" : "ReferenceSurfaces\\Headers",
+			"sourceIndexes" : 
+			[
+				123,
+				124,
+				125,
+				126,
+				127,
+				128,
+				129,
+				130,
+				131,
+				132,
+				133,
+				134,
+				135,
+				136,
+				137,
+				138,
+				139,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147,
+				148,
+				149
+			]
+		},
+		{
+			"name" : "RefFrameTransformations\\Headers",
+			"sourceIndexes" : 
+			[
+				150,
+				151,
+				152,
+				153,
+				154,
+				155,
+				156,
+				157,
+				158,
+				159,
+				160,
+				161,
+				162,
+				163,
+				164,
+				165,
+				166,
+				167,
+				168,
+				169,
+				170,
+				171
+			]
+		},
+		{
+			"name" : "ShortestPath\\Headers",
+			"sourceIndexes" : 
+			[
+				172,
+				173,
+				174,
+				175,
+				176,
+				177,
+				178,
+				179,
+				180,
+				181,
+				182
+			]
+		},
+		{
+			"name" : "SpatialObj\\Headers",
+			"sourceIndexes" : 
+			[
+				183,
+				184,
+				185,
+				186,
+				187,
+				188,
+				189,
+				190,
+				191,
+				192
+			]
+		},
+		{
+			"name" : "SpatialSystems\\Headers",
+			"sourceIndexes" : 
+			[
+				193,
+				194,
+				195,
+				196,
+				197,
+				198
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TAAffineTransformation.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TAffineTransformWrapper.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TCompositeAffTransform.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/THelmertTransformation.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TReflection.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TRotation.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TScaleFactor.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/AffineTransformations/TTranslation.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/Quad.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/T2DCartesianCoordSys.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/T2DCartesianPlusHSys.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/T3DCartesianCoordSys.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/T3DMatrix.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TACoordinateSystem.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TACoordSysMatrix.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TACoordSysVector.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TAngle.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TColumnVector.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TCoordSysFactory.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TDist.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TDouble.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TFreeVector.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TGeodeticCoordSys.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TLength.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TMatrix.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TMatrixImpl.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TPositionVector.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TRotationMatrix.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TScalar.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/MathematicalConcepts/TSparseMatrix.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/T3DLocalRefFrame.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TA2DPlus1MapProjection.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TA3DEuclideanRefFrame.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TAGeoidModel.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TAModifiedLocalAstronomicalRF.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TAReferenceFrame.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TCernGridGeoid.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TCernParabolicGeoid.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TCernSphereGeoid.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TGeodeticRefFrame.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TGeoidValues.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TGraphLocalAstronomicalRF.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TGraphMLARF.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TModifiedLocalAstronomicalRF.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TModifiedLocalGeodeticRF.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TReferenceEllipsoid.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TX0Y0HeProjection.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TXYHeProjection.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ReferenceSurfaces/TXYHgProjection.cpp",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TARefFrameTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TGC2LGTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TGC2MLATransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/THelmertRefFrameTransform.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TLA2LGTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TLambert93Transformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TLG2GCTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TLG2LATransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TMLA2GCTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TMLA2XYHeTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TMLA2XYHsTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TRGF93CC46Transformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TX0Y0He2XYHeTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TXYHe2MLATransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TXYHe2X0Y0HeTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TXYHe2XYHgTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TXYHg2XYHeTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TXYHs2MLATransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/RefFrameTransformations/TXYH2CCS.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TGraph.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TLocalSystemOrigin.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TRefFrameInfo.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TRefFrameWrapper.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TRefSystemFactory.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TTransformWrapper.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TCoordSysInfo.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/ShortestPath/TAngularUnitsInfo.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/SpatialObjFns.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TASpatialPtListener.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TSpatialLine.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TSpatialLineName.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TSpatialPlane.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TSpatialPlaneName.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TSpatialPoint.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TSpatialPointName.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialObj/TVSpatialPtListener.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialSystems/TASpatialAttribute.cpp",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialSystems/TSpatialOrientation.cpp",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialSystems/TSpatialPosition.cpp",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialSystems/TSpatialStatus.cpp",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/sources/SpatialSystems/TSpatialVector.cpp",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TAAffineTransformation.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TAffineTransformWrapper.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TCompositeAffTransform.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/THelmertTransformation.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TReflection.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TRotation.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TScaleFactor.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TTranslation.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/AffineTransformations/TVAffineTransformation.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/Quad.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/T2DCartesianCoordSys.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/T2DCartesianPlusHSys.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/T3DCartesianCoordSys.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/T3DMatrix.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TACoordinateSystem.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TACoordSysMatrix.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TACoordSysVector.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TAngle.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TColumnVector.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TConstants.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TCoordSysFactory.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TDist.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TDouble.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TFreeVector.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TGeodeticCoordSys.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TLength.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TMatrix.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TMatrixImpl.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TPositionVector.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TRotationMatrix.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TScalar.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TSparseMatrix.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/MathematicalConcepts/TVCoordinateSystem.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/T3DLocalRefFrame.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TA2DPlus1MapProjection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TA3DEuclideanRefFrame.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TAGeoidModel.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TAModifiedLocalAstronomicalRF.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TAReferenceFrame.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TCernGridGeoid.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TCernParabolicGeoid.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TCernSphereGeoid.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TGeodeticRefFrame.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TGeoidValues.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TGraphLocalAstronomicalRF.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TGraphMLARF.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TLambert93Projection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TLV03Projection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TLV95Projection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TModifiedLocalAstronomicalRF.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TModifiedLocalGeodeticRF.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TNotInLepGridException.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TReferenceEllipsoid.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TReferenceFrameServer.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TRGF93CC46Projection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TVGeoidModel.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TVReferenceFrame.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TX0Y0HeProjection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TXYHeProjection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces/TXYHgProjection.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TARefFrameTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TGC2LGTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TGC2MLATransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/THelmertRefFrameTransform.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TLA2LGTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TLambert93Transformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TLG2GCTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TLG2LATransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TMLA2GCTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TMLA2XYHeTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TMLA2XYHsTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TRGF93CC46Transformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TVRefFrameTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TVTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TX0Y0He2XYHeTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TXYHe2MLATransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TXYHe2X0Y0HeTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TXYHe2XYHgTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TXYHg2XYHeTransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TXYHs2MLATransformation.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/TXYH2CCS.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/RefFrameTransformations/GeodeticConstants.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/DynamicPriorityQueue.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/PtrGreater.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TGraph.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TLocalSystemOrigin.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TRefFrameInfo.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TRefFrameWrapper.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TRefSystemFactory.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TTransformWrapper.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TNotInGraphException.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TCoordSysInfo.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/ShortestPath/TAngularUnitsInfo.h",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/SpatialObjFns.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TASpatialPtListener.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TPtrWrapper.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TSpatialLine.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TSpatialLineName.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TSpatialPlane.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TSpatialPlaneName.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TSpatialPoint.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TSpatialPointName.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialObj/TVSpatialPtListener.h",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialSystems/counted_ptr.h",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialSystems/TASpatialAttribute.h",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialSystems/TSpatialOrientation.h",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialSystems/TSpatialPosition.h",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialSystems/TSpatialStatus.h",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/SpatialObjects/headers/SpatialSystems/TSpatialVector.h",
+			"sourceGroupIndex" : 13
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

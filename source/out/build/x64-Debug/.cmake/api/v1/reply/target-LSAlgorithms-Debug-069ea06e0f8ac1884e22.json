@@ -1,0 +1,646 @@
+{
+	"archive" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64",
+				"role" : "flags"
+			}
+		]
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "svlLSAlgorithms/LSAlgorithms.lib"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"ADD_LIBRARY",
+			"target_link_libraries",
+			"include_directories",
+			"ADD_DEFINITIONS"
+		],
+		"files" : 
+		[
+			"C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 68,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 71,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 62,
+				"parent" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 53,
+				"parent" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 52,
+				"parent" : 4
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /Zc:__cplusplus /cgthreads8 /MP /W4 /DEBUG /Od -std:c++17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 6,
+					"define" : "_CRT_SECURE_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 7,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCAdjustableObjects"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LSCalculation"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Readers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/ContributionsGenerators"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Measurements"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LocalTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProject"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProjectData"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCCalculation"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Writers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCObjectWriters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Tests/headers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/boost_1_72_0"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Tools/headers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Logs"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/AdjustableObjects"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcElements"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcParams"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/Converters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/FiltersAndFormats"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/ProjectData"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/StreamFormatters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/AffineTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/MathematicalConcepts"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/RefFrameTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ShortestPath"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialMeasurments"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialObj"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialSystems"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/tut-framework-2016-12-19/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/eigen-eigen-323c052e1731"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "Logs::@688c70caea2ecd45f6c8"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "SpatialObjects::@8953465d5c1c7f46e315"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Tools::@780a0448595b36de1a93"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "SurveyLib"
+	},
+	"id" : "LSAlgorithms::@de4a25f777b6229f4f3d",
+	"name" : "LSAlgorithms",
+	"nameOnDisk" : "LSAlgorithms.lib",
+	"paths" : 
+	{
+		"build" : "svlLSAlgorithms",
+		"source" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "AdjustableObject\\Headers",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6
+			]
+		},
+		{
+			"name" : "CalcElements\\Headers",
+			"sourceIndexes" : 
+			[
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17
+			]
+		},
+		{
+			"name" : "CalcParams\\Headers",
+			"sourceIndexes" : 
+			[
+				18,
+				19,
+				20,
+				21,
+				22,
+				23
+			]
+		},
+		{
+			"name" : "AdjustableObject\\Sources",
+			"sourceIndexes" : 
+			[
+				24,
+				25,
+				26,
+				27,
+				28
+			]
+		},
+		{
+			"name" : "CalcElements\\Sources",
+			"sourceIndexes" : 
+			[
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37
+			]
+		},
+		{
+			"name" : "CalcParams\\Sources",
+			"sourceIndexes" : 
+			[
+				38,
+				39,
+				40,
+				41,
+				42,
+				43
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TAdjustablePoint.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TVAdjustableObject.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TAdjustableHelmertTransformation.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TAdjustableAngle.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TAdjustableScalar.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TAdjustableLength.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/AdjustableObjects/TTransformParameters.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TALSCalcParameter.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TALSComputer.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSCalcWorkingUnknown.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSInputMatrices.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSParametricMtdComputer.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSWeightedUnkMtdComputer.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSCombinedMtdComputer.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSCnstMtdComputer.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/TLSResultsMatrices.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/UEOIndices.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcElements/QuantileFunctions.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcParams/TLSCalcFreeVectorParam.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcParams/TLSCalcLengthParam.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcParams/TLSCalcOrientationParam.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcParams/TLSCalcPosVectorParam.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcParams/TLSCalcScalarParam.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/headers/CalcParams/TLSCalcWorkingPosVec.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/AdjustableObjects/TAdjustablePoint.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/AdjustableObjects/TAdjustableHelmertTransformation.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/AdjustableObjects/TAdjustableAngle.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/AdjustableObjects/TAdjustableScalar.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/AdjustableObjects/TAdjustableLength.cpp",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TALSCalcParameter.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TALSComputer.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TLSInputMatrices.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TLSParametricMtdComputer.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TLSWeightedUnkMtdComputer.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TLSCombinedMtdComputer.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TLSCnstMtdComputer.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/TLSResultsMatrices.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcElements/QuantileFunctions.cpp",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcParams/TLSCalcFreeVectorParam.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcParams/TLSCalcLengthParam.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcParams/TLSCalcOrientationParam.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcParams/TLSCalcPosVectorParam.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcParams/TLSCalcScalarParam.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/SurveyLib/source/LSAlgorithms/sources/CalcParams/TLSCalcWorkingPosVec.cpp",
+			"sourceGroupIndex" : 5
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

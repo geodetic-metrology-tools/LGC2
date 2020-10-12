@@ -1,0 +1,1462 @@
+{
+	"archive" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64",
+				"role" : "flags"
+			}
+		]
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "LGC_Core/LGC_Core.lib"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"include_directories",
+			"ADD_DEFINITIONS"
+		],
+		"files" : 
+		[
+			"LGC_Core/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 227,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 229,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 62,
+				"parent" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 53,
+				"parent" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 52,
+				"parent" : 4
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /Zc:__cplusplus /cgthreads8 /MP /W4 /DEBUG /Od -std:c++17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 6,
+					"define" : "_CRT_SECURE_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 7,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCAdjustableObjects"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LSCalculation"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Readers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/ContributionsGenerators"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Measurements"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LocalTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProject"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProjectData"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCCalculation"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Writers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCObjectWriters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Tests/headers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/boost_1_72_0"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Tools/headers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Logs"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/AdjustableObjects"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcElements"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcParams"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/Converters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/FiltersAndFormats"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/ProjectData"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/StreamFormatters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/AffineTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/MathematicalConcepts"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/RefFrameTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ShortestPath"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialMeasurments"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialObj"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialSystems"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/tut-framework-2016-12-19/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/eigen-eigen-323c052e1731"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				82,
+				83,
+				84,
+				85,
+				86,
+				87,
+				88,
+				89,
+				90,
+				91,
+				92,
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				102,
+				103,
+				104,
+				105,
+				106,
+				107,
+				108,
+				109,
+				110,
+				111,
+				112,
+				113,
+				114,
+				115,
+				116,
+				117,
+				118,
+				119,
+				120,
+				121,
+				122,
+				123,
+				124,
+				125,
+				126,
+				127,
+				128,
+				129,
+				130,
+				131,
+				132,
+				133,
+				134,
+				135,
+				136,
+				137,
+				138,
+				139,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "LSAlgorithms::@de4a25f777b6229f4f3d"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Logs::@688c70caea2ecd45f6c8"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "ProjectFramework::@e87a51ddc2b5f272fff2"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "SpatialObjects::@8953465d5c1c7f46e315"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Tools::@780a0448595b36de1a93"
+		}
+	],
+	"id" : "LGC_Core::@54c805fcbbb728cb20a6",
+	"name" : "LGC_Core",
+	"nameOnDisk" : "LGC_Core.lib",
+	"paths" : 
+	{
+		"build" : "LGC_Core",
+		"source" : "LGC_Core"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "ContributionsGenerators\\Headers",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5
+			]
+		},
+		{
+			"name" : "LGCAdjustableObjects\\Headers",
+			"sourceIndexes" : 
+			[
+				6,
+				7,
+				8,
+				9
+			]
+		},
+		{
+			"name" : "LGCCalculation\\Headers",
+			"sourceIndexes" : 
+			[
+				10,
+				11,
+				12,
+				13
+			]
+		},
+		{
+			"name" : "LGCObjectWriters\\Headers",
+			"sourceIndexes" : 
+			[
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24
+			]
+		},
+		{
+			"name" : "LGCProject\\Headers",
+			"sourceIndexes" : 
+			[
+				25,
+				26,
+				27,
+				28
+			]
+		},
+		{
+			"name" : "LGCProjectData\\Headers",
+			"sourceIndexes" : 
+			[
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37
+			]
+		},
+		{
+			"name" : "LocalTransformations\\Headers",
+			"sourceIndexes" : 
+			[
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47
+			]
+		},
+		{
+			"name" : "LSCalculation\\Headers",
+			"sourceIndexes" : 
+			[
+				48,
+				49,
+				50,
+				51,
+				52
+			]
+		},
+		{
+			"name" : "Measurements\\Headers",
+			"sourceIndexes" : 
+			[
+				53,
+				54,
+				55,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61,
+				62,
+				63
+			]
+		},
+		{
+			"name" : "Readers\\Headers",
+			"sourceIndexes" : 
+			[
+				64,
+				65,
+				66,
+				67,
+				68,
+				69,
+				70,
+				71
+			]
+		},
+		{
+			"name" : "Writers\\Headers",
+			"sourceIndexes" : 
+			[
+				72,
+				73,
+				74,
+				75,
+				76,
+				77,
+				78,
+				79,
+				80,
+				81
+			]
+		},
+		{
+			"name" : "ContributionsGenerators\\Sources",
+			"sourceIndexes" : 
+			[
+				82,
+				83,
+				84,
+				85,
+				86
+			]
+		},
+		{
+			"name" : "LGCAdjustableObjects\\Sources",
+			"sourceIndexes" : 
+			[
+				87,
+				88,
+				89
+			]
+		},
+		{
+			"name" : "LGCCalculation\\Sources",
+			"sourceIndexes" : 
+			[
+				90,
+				91,
+				92
+			]
+		},
+		{
+			"name" : "LGCObjectWriters\\Sources",
+			"sourceIndexes" : 
+			[
+				93,
+				94,
+				95,
+				96,
+				97,
+				98,
+				99,
+				100,
+				101,
+				102,
+				103
+			]
+		},
+		{
+			"name" : "LGCProject\\Sources",
+			"sourceIndexes" : 
+			[
+				104
+			]
+		},
+		{
+			"name" : "LGCProjectData\\Sources",
+			"sourceIndexes" : 
+			[
+				105,
+				106,
+				107,
+				108,
+				109
+			]
+		},
+		{
+			"name" : "LocalTransformations\\Sources",
+			"sourceIndexes" : 
+			[
+				110,
+				111,
+				112,
+				113,
+				114,
+				115,
+				116,
+				117,
+				118
+			]
+		},
+		{
+			"name" : "LSCalculation\\Sources",
+			"sourceIndexes" : 
+			[
+				119,
+				120,
+				121,
+				122,
+				123
+			]
+		},
+		{
+			"name" : "Measurements\\Sources",
+			"sourceIndexes" : 
+			[
+				124,
+				125,
+				126,
+				127,
+				128,
+				129,
+				130,
+				131
+			]
+		},
+		{
+			"name" : "Readers\\Sources",
+			"sourceIndexes" : 
+			[
+				132,
+				133,
+				134,
+				135,
+				136,
+				137
+			]
+		},
+		{
+			"name" : "Writers\\Sources",
+			"sourceIndexes" : 
+			[
+				138,
+				139,
+				140,
+				141,
+				142,
+				143,
+				144,
+				145,
+				146,
+				147
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/ContributionsGenerators/TContributionsGenerator.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/ContributionsGenerators/ContributionStructures.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/ContributionsGenerators/TPointTransformer.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/ContributionsGenerators/TObservationGenerator.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/ContributionsGenerators/TAllfixedParamGenerator.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/ContributionsGenerators/TLibrCnstrGenerator.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCAdjustableObjects/LGCAdjustablePoint.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCAdjustableObjects/LGCAdjustableLine.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCAdjustableObjects/LGCAdjustablePlane.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCAdjustableObjects/LGCAdjustableObjectCollection.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCCalculation/TLGCCalculation.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCCalculation/TSimFrameSummary.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCCalculation/TSimPointSummary.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCCalculation/TVAbstractAlgorithm.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TALGCObjectWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TTSTNWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TCAMWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TLEVELWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TEDMWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TINCLWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/THLSRWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TFRAMEWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TSCALEWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TOtherMeasurementsWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCObjectWriters/TObservationWriter.h",
+			"sourceGroupIndex" : 3
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProject/TLGCApp.h",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProject/Global.h",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProject/Defaults.h",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProject/DoxygenModulesDefinitions.h",
+			"sourceGroupIndex" : 4
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/tree.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TTreeEntry.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TLGCStatistic.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TLGCData.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TLGCConfig.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TInstrumentData.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TDataAnalyzer.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TFileLogger.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LGCProjectData/TLSCalcRelativeError.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TTransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TTransformParameters.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TDirectTransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TInverseTransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TDerivativeTransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TLOR2LOR.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TCCS2CGRFTransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TCGRF2LGTransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TILG2ILATransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LocalTransformations/TLA2MLATransformation.h",
+			"sourceGroupIndex" : 6
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LSCalculation/TLSInputMatricesFiller.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LSCalculation/TLSResultsMatricesExtractor.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LSCalculation/TLSAlgorithm.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LSCalculation/TLSSimulation.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/LSCalculation/TLSAllfixed.h",
+			"sourceGroupIndex" : 7
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TMeasurements.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TTSTN.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TAMeas.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TEDM.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TLEVEL.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TCAM.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TUVEC.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TUVD.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/TLGCObsSummary.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/MeasDef.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Measurements/RoundOfMeasurements.h",
+			"sourceGroupIndex" : 8
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/AdjObjectsReader.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/InstrumentReaders.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/TReader.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/MeasurementReaders.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/OptionReaders.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/ReaderBase.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/KeywordRights.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Readers/MeasurementReader_lgc1.h",
+			"sourceGroupIndex" : 9
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TAFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TResultsFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TPunchFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TFautFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TInputFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TSimulationOutputFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TSimFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TDefaFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TCovarFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"path" : "LGC_Core/headers/Writers/TChabaFileWriter.h",
+			"sourceGroupIndex" : 10
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/ContributionsGenerators/TContributionsGenerator.cpp",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/ContributionsGenerators/TPointTransformer.cpp",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/ContributionsGenerators/TObservationGenerator.cpp",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/ContributionsGenerators/TAllfixedParamGenerator.cpp",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/ContributionsGenerators/TLibrCnstrGenerator.cpp",
+			"sourceGroupIndex" : 11
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCAdjustableObjects/LGCAdjustablePoint.cpp",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCAdjustableObjects/LGCAdjustableLine.cpp",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCAdjustableObjects/LGCAdjustablePlane.cpp",
+			"sourceGroupIndex" : 12
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCCalculation/TLGCCalculation.cpp",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCCalculation/TSimPointSummary.cpp",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCCalculation/TSimFrameSummary.cpp",
+			"sourceGroupIndex" : 13
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TALGCObjectWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TTSTNWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TCAMWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TLEVELWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TEDMWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TINCLWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/THLSRWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TFRAMEWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TSCALEWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TOtherMeasurementsWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCObjectWriters/TObservationWriter.cpp",
+			"sourceGroupIndex" : 14
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProject/TLGCApp.cpp",
+			"sourceGroupIndex" : 15
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProjectData/TLGCStatistic.cpp",
+			"sourceGroupIndex" : 16
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProjectData/TLGCData.cpp",
+			"sourceGroupIndex" : 16
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProjectData/TDataAnalyzer.cpp",
+			"sourceGroupIndex" : 16
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProjectData/TFileLogger.cpp",
+			"sourceGroupIndex" : 16
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProjectData/TLSCalcRelativeError.cpp",
+			"sourceGroupIndex" : 16
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TTransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TDirectTransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TInverseTransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TDerivativeTransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TLOR2LOR.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TCCS2CGRFTransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TCGRF2LGTransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TILG2ILATransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LocalTransformations/TLA2MLATransformation.cpp",
+			"sourceGroupIndex" : 17
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LSCalculation/TLSInputMatricesFiller.cpp",
+			"sourceGroupIndex" : 18
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LSCalculation/TLSResultsMatricesExtractor.cpp",
+			"sourceGroupIndex" : 18
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LSCalculation/TLSAlgorithm.cpp",
+			"sourceGroupIndex" : 18
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LSCalculation/TLSSimulation.cpp",
+			"sourceGroupIndex" : 18
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LSCalculation/TLSAllfixed.cpp",
+			"sourceGroupIndex" : 18
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/TMeasurements.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/MeasDef.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/TLGCObsSummary.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/TTSTN.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/TCAM.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/TLEVEL.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/TEDM.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Measurements/RoundOfMeasurements.cpp",
+			"sourceGroupIndex" : 19
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Readers/TReader.cpp",
+			"sourceGroupIndex" : 20
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Readers/AdjObjectsReader.cpp",
+			"sourceGroupIndex" : 20
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Readers/InstrumentReaders.cpp",
+			"sourceGroupIndex" : 20
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Readers/MeasurementReaders.cpp",
+			"sourceGroupIndex" : 20
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Readers/OptionReaders.cpp",
+			"sourceGroupIndex" : 20
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Readers/MeasurementReader_lgc1.cpp",
+			"sourceGroupIndex" : 20
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TAFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TResultsFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TPunchFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TFautFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TInputFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TSimulationOutputFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TSimFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TDefaFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TCovarFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/Writers/TChabaFileWriter.cpp",
+			"sourceGroupIndex" : 21
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

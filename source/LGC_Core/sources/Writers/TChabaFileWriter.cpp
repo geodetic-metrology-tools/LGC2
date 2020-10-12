@@ -94,7 +94,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	int scalePrecision = coordPrecision + 7;
 
 	//set up a rotation matrix 
-	TRotation rot(TRotationMatrix::ERotationType::kRxyz, helmert.getEstRotation(0).getRadiansValue(), helmert.getEstRotation(1).getRadiansValue(), helmert.getEstRotation(2).getRadiansValue());
+	TRotation rot(TRotationMatrix::ERotationType::kRzxy, helmert.getEstRotation(0).getRadiansValue(), helmert.getEstRotation(1).getRadiansValue(), helmert.getEstRotation(2).getRadiansValue());
 
 	//set output units for different types of measurement
 	stream->setPrecisionFormat(4);

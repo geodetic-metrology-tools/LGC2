@@ -1,0 +1,363 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "LGC.exe"
+		},
+		{
+			"path" : "LGC.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"install",
+			"create_default_installer",
+			"target_link_libraries",
+			"include_directories",
+			"ADD_DEFINITIONS"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"C:/Users/mcoppofr/susoft/SUSoftCMakeCommon/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 105,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 126,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 189,
+				"parent" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 106,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 62,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 53,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 52,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1   /Zc:__cplusplus /cgthreads8 /MP /W4 /DEBUG /Od -std:c++17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 6,
+					"define" : "_CRT_SECURE_NO_DEPRECATE"
+				},
+				{
+					"backtrace" : 7,
+					"define" : "_SCL_SECURE_NO_WARNINGS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCAdjustableObjects"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LSCalculation"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Readers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/ContributionsGenerators"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Measurements"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LocalTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProject"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCProjectData"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCCalculation"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/Writers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Core/headers/LGCObjectWriters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/LGC_Tests/headers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/boost_1_72_0"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Tools/headers"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/Logs"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/AdjustableObjects"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcElements"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/LSAlgorithms/headers/CalcParams"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/Converters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/FiltersAndFormats"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/ProjectData"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/ProjectFramework/headers/StreamFormatters"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/AffineTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/MathematicalConcepts"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ReferenceSurfaces"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/RefFrameTransformations"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/ShortestPath"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialMeasurments"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialObj"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/LGC2/source/../SurveyLib/source/SpatialObjects/headers/SpatialSystems"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/tut-framework-2016-12-19/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Users/mcoppofr/susoft/ext/eigen-eigen-323c052e1731"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "LSAlgorithms::@de4a25f777b6229f4f3d"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Logs::@688c70caea2ecd45f6c8"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "ProjectFramework::@e87a51ddc2b5f272fff2"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Plugins::@f791b5a9399db2da2745"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "SpatialObjects::@8953465d5c1c7f46e315"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "LGC_Core::@54c805fcbbb728cb20a6"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Tools::@780a0448595b36de1a93"
+		}
+	],
+	"id" : "LGC::@6890427a1f51a3e7e1df",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 3,
+				"path" : "."
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "C:/Users/mcoppofr/susoft/LGC2/source/out/install/x64-Debug"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/machine:x64 /SUBSYSTEM:CONSOLE /debug /INCREMENTAL /subsystem:console",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlLogs  -LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlLSAlgorithms  -LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlPlugins  -LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlProjectFramework  -LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlSpatialObjects  -LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlSpatialObjDLL  -LIBPATH:C:\\Users\\mcoppofr\\susoft\\LGC2\\source\\out\\build\\x64-Debug\\svlTools",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "LGC_Core\\LGC_Core.lib svlLSAlgorithms\\LSAlgorithms.lib svlProjectFramework\\ProjectFramework.lib svlSpatialObjects\\SpatialObjects.lib svlLogs\\Logs.lib svlPlugins\\Plugins.lib svlTools\\Tools.lib svlLogs\\Logs.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "LGC",
+	"nameOnDisk" : "LGC.exe",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "LGC_Core/sources/LGCProject/main.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}
