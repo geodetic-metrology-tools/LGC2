@@ -234,6 +234,10 @@ void TLSSimulation::simulateValues()
 		//In every node iterate through the INCLY's measurements
 		for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
 			getINCLYSimValues(itINCLY, itINCLY.measINCLY);
+
+		//In every node iterate through the ECWS's measurements
+		for (auto& itECWS : itTree.node->data->measurements.fECWS)
+			getECWSSimValues(itECWS, itECWS.measECWS);
 	}
 }
 

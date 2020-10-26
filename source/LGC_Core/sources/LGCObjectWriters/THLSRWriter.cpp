@@ -74,12 +74,10 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 	(*stream) << TABs << "ECWS" << endl;
 
 
-	////write the distance to the water surface
-	//(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.fMeasuredWS->getMMetresValue()); //Output value in mm
-
-	//write the WSSE
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.sigmaWS); //Output value in mm
-
+	////write the the water surface sigma
+	//(*stream).writeString(nameWidth, "SIGMA WS");
+	//h(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.sigmaWS); //Output value in mm
+	
 	//data summury
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
 	writeHLSRResultsHeader(); // write the title line for the observations
@@ -95,7 +93,7 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWS.getDistance());//Output value in meters [m], stored in [m]
 
 		//write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaD.getMMetresValue());//Output value in milimeters [mm], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaCombinedDist.getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the estimated DIST
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWS.getDistance() + ItECWS.getDistanceResidual());//Output value in meters [m], stored in [m]
@@ -104,7 +102,7 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.getDistanceResidual().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 
 		//write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.getDistanceResidual() / ItECWS.target.sigmaD);//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.getDistanceResidual() / ItECWS.target.sigmaCombinedDist);//Output value in meters [m], stored in [m]
 
 		//write the OBSE
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaD.getMMetresValue());//Output value in mm
@@ -116,7 +114,7 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaInstrCentering.getMMetresValue());//Output value in mm
 
 		//write the ICSE
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.sigmaWS);//Output value in mm
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaWS.getMMetresValue());//Output value in mm
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECWS.target.ID);
@@ -145,7 +143,9 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 			(*stream).writeStringLeft(nameWidth, "REFERENCE POINT"); //Reference point
 			(*stream).writeStringLeft(nameWidth, ItECWS.targetPos->getName()); //Reference point
 			(*stream).writeString(nameWidth, "DISTANCE TO WS (MM)");
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItECWS.getObservedOffset().getMMetresValue());
+			(*stream).writeDouble(obsWidth, lengthPrecision, ItECWS.getDistance().getMMetresValue());
+				
+				//getObservedOffset().getMMetresValue());
 			(*stream) << endl << endl;
 		}
 

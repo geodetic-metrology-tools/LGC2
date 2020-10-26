@@ -1356,13 +1356,17 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 	if (firstline) {
 		if (tokens.size() < 3)
 			throw std::runtime_error("ECWS measurement must have at least 2 entries, the HLSR instrument ID and the water surface standard error");
+		
+		//TInstrumentData::THLSR instrTemp = finstruments.getDevice(finstruments.fHLSR, tokens.at(2));
+		//instrTemp.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		//
+		TECWSROM ecwsRom(finstruments.getDevice(finstruments.fHLSR, tokens.at(2)), TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
 
-		TECWSROM ecwsRom(finstruments.getDevice(finstruments.fHLSR, tokens.at(2)));
 		ecwsRom.line= line;
 		ecwsRom.setActive(activeLine);
 
 		//Read the WS sigma
-		ecwsRom.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		//ecwsRom.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 
 		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement
 
@@ -1382,23 +1386,23 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 		currentTargetApplied = opts.getParamS("HLSR", currentTargetApplied); //If HLSR is used then change ID of CurrentTargetApplied for the following measurements.
 
 		TInstrumentData::THLSR instr = finstruments.getDevice(finstruments.fHLSR, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		TECWSROM& ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
+
 
 		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
 		instr.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instr.sigmaInstrHeight));
 		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
-		
+		instr.sigmaWS = TLength(ecwsROMLatest.sigmaWS.getMetresValue());
+		instr.sigmaWS = TLength(opts.getParamRmm2m("WSSE", instr.sigmaWS));
+
 
 		// Store  the measured value
 		TECWS ecws(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
-		TECWSROM& ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
-
-		ecwsROMLatest.sigmaWS = TLength(opts.getParamRmm2m("WSSE", ecwsROMLatest.sigmaWS));
-
+		
+		//ecwsROMLatest.sigmaWS = TLength(opts.getParamRmm2m("WSSE", ecwsROMLatest.sigmaWS));
 
 		ecws.line = line;
 		ecws.setActive(ecwsROMLatest.isActive() && activeLine); // Active only if ROM active as well
-
-		
 
 		ecwsROMLatest.measECWS.emplace_back(ecws);
 

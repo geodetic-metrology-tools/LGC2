@@ -587,6 +587,8 @@ public:
 	///Pointer to the first point
 	const LGCAdjustablePoint* station;
 
+	const LGCAdjustablePoint* wsHeight;
+
 	/// Line in the input file where this measurement was defined
 	int line;
 
@@ -595,6 +597,9 @@ public:
 	TECWS(const LGCAdjustablePoint& station, TInstrumentData::THLSR instr, TLength obsVal):
 		TAScalarMeas<TInstrumentData::THLSR>(station, instr, obsVal) {}
 
+
+	///Destructor
+	~TECWS() override = default;
 	//@}
 
 	/*!@name Access methods*/
@@ -618,8 +623,6 @@ public:
 	/// Returns the a priori standard deviation of the observed value (provided by the user in the input file)
 	inline TLength getSigma0Offset() const { return target.sigmaD; }
 
-	/// Return the sigma of the water surface
-	//inline TLength getSigmaWS() const { return distancesResiduals[0]; }
 
 	//@}
 

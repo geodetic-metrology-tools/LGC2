@@ -1105,7 +1105,7 @@ void TSimFileWriter::writeECWSMeas(TECWSROM* meas)
 			<< itECWS.target.sigmaInstrHeight.getMMetresValue()<< sep;
 
 		if (itECWS.target.sigmaInstrCentering != hlsrDefInst.sigmaInstrCentering)
-			(*stream) << "IHSE" << sep
+			(*stream) << "ICSE" << sep
 			<< itECWS.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;

@@ -558,7 +558,8 @@ TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECW
 	TReal dWS = ecws.getObservedOffset().getMetresValue(); // Distance from the reference point to the WS
 
 	//Get the observed WS 1-sigma precision
-	TReal obsWSSigma = ecwsROM.sigmaWS;
+	//TReal obsWSSigma = ecwsROM.sigmaWS;
+	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
 
 	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
 
@@ -567,7 +568,9 @@ TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECW
 	snrPTLor2RootTrafo.transform(snrPoint);
 
 	//Obs equation
-	TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
+	//TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
+	TReal calcMeas = snrPoint.getZ().getMetresValue();
+
 	return calcMeas;
 }
 

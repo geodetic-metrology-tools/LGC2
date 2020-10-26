@@ -278,10 +278,10 @@ struct TECWSROM : public TStatusObject {
 	int romId{ romCounter_++ };
 
 
-	TECWSROM(const TInstrumentData::THLSR& inst) :
+	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS) :
 		instrument(inst),
 		//fMeasuredWS(measWS),
-		sigmaWS(0.0, TLength::EUnits::kMillimetres),
+		sigmaWS(sigmaWS),
 		line(NO_VALi)
 	{}
 

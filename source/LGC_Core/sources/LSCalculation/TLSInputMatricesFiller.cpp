@@ -1286,11 +1286,14 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 	}
 }
 
+
+
 void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices) {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
 	ECWSContrib contributions;
+
 	for (auto itECWS(ecwsROM.measECWS.begin()); itECWS != ecwsROM.measECWS.end(); ++itECWS) {
 		MatrixIndex eqIdx = itECWS->getFirstEquationIndex();
 		MatrixIndex obsIdx = itECWS->getFirstObservationIndex();
@@ -1298,14 +1301,21 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 		contributions = fCGenerator.getECWSContrib(ecwsROM, *itECWS); //Get the observation contribution
 
 		// Update the sigma 
-		itECWS->target.sigmaD= TLength(sqrt(contributions.fObsVariance));
+		itECWS->target.sigmaCombinedDist= TLength(sqrt(contributions.fObsVariance));
 
-		// Adding controbution to the water surface distance
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, itECWS->getDistance(), contributions.fCalcMeas);
+	
+		
+		for (auto itStationTransform(contributions.fStTransformContrib.begin()); itStationTransform != contributions.fStTransformContrib.end(); ++itStationTransform) {
+			if (!itStationTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStationTransform->first, itStationTransform->second, eqIdx, matrices);
+		}
+
 
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (contributions.fCalcMeas - itECWS->getDistance()));
 
+		
+		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)
 			throw std::runtime_error("Error when filling ECWS contribution, variance is zero or too small, can not set weight matrix element.");
 		else {

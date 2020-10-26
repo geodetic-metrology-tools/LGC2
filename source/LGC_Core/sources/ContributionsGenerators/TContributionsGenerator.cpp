@@ -1443,31 +1443,45 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	return { calcMeas, addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt) , obsVariance };
 }
 
-//ECWS contribution
+////ECWS contribution
 ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
 	
 	//Get the measured distance to the water surface
-	TReal dWS = ecws.getObservedOffset().getMetresValue(); // Distance from the reference point to the WS
+	//TReal dWS = 0.0; // to reffer to the water surfaxe height
 	
 	//Get the observed WS 1-sigma precision
-	TReal obsWSSigma = ecwsROM.sigmaWS;
+	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
 
 	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
+
+	TFreeVector wsHeight(0, 0, 0, TCoordSysFactory::k3DCartesian);
+
+
+	//Express te WS height if MLA is used
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		fPointTransfo.set2MLATransformation(snrPoint);
+		fPointTransfo.transformMLA2CGRF(wsHeight);
+		fPointTransfo.transformCGRF2CCS(wsHeight);
+	}
 
 	//Staton point defined at root frame
 	const TLOR2LOR& snrPTLor2RootTrafo = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 	snrPTLor2RootTrafo.transform(snrPoint);
 
 	//Obs equation
-	TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
+	TReal calcMeas = wsHeight.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
+
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stTransfContributions;
 
 	//Compute the variance of the observation
 	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
 
-	ECWSContrib ecwsContrib = { calcMeas, obsWSSigma, obsVariance };
+	ECWSContrib ecwsContrib = { calcMeas, obsWSSigma, stTransfContributions ,obsVariance };
 	return ecwsContrib;
 
 }
+
+
 
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)

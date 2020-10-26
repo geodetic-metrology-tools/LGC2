@@ -277,6 +277,8 @@ class TInstrumentData {
             TLength sigmaD;               // [m]
             TLength sigmaInstrHeight;     // [m]
             TLength sigmaInstrCentering;  // [m]
+            TLength sigmaWS;             // [m]
+            TLength sigmaCombinedDist;	 // [m]
         };
 		
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.

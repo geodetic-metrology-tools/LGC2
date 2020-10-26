@@ -183,6 +183,16 @@ bool TDataAnalyzer::dataConsistent(){
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
 			}
 		}
+
+        for (auto& itECWS : it.node->data.get()->measurements.fECWS) {
+            int numberOfMeasurements = (int)itECWS.measECWS.size();
+            if (numberOfMeasurements == 0) {
+                itECWS.setActive(false);
+                const std::string nlinestr("Line " + std::to_string(itECWS.line + 1) + ": ");
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
+            }
+        }
+        
 		cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
@@ -619,6 +629,22 @@ bool TDataAnalyzer::cleanDeactivated(){
 			++inclyrom;
 		}
 
+        // ECWS
+        auto ecwsrom = measurements.fECWS.begin();
+        while (ecwsrom != measurements.fECWS.end()) {
+
+            // If ECWSROM not active, remove it:
+            if (!ecwsrom->isActive()) {
+                measurements.fECWS.erase(ecwsrom++);
+                continue;
+            }
+
+            if (!rmDeactivated_and_checkTargetPos(ecwsrom->measECWS))
+                return false;
+
+            ++ecwsrom;
+        }
+
         // If the roms of different types of measurements are not active, clear the rom:
         if(!measurements.dverActive) measurements.fDVER.clear();
         if(!measurements.radiActive) measurements.fRADI.clear();
@@ -934,12 +960,12 @@ void TDataAnalyzer::assignEOIndices(){
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
         
-        // INCLY
-        for (auto& inclyrom : measurements.fECWS)
-            for (auto& incly : inclyrom.measECWS) {
+        // ECWS
+        for (auto& ecwsrom : measurements.fECWS)
+            for (auto& ecws : ecwsrom.measECWS) {
                 // set indices of LS matrices, ECWS introduces 1 equation and 1 observation
-                incly.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-                incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                ecws.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
                 fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
             }
     }

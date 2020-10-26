@@ -89,7 +89,8 @@ void TMeasurements::initialiseObsSummaries() {
         allECHOSummaries,
         allECVESummaries,
         allECSPSummaries,
-		allINCLYSummaries;
+		allINCLYSummaries,
+        allECWSSummaries;
 
     // TSTN
     for(auto &tstn : fTSTN)
@@ -170,6 +171,14 @@ void TMeasurements::initialiseObsSummaries() {
 		allINCLYSummaries.push_back(&inclyrom.getINCLYObsSummary());
 	}
 
+    // ECWS
+    for (auto& ecwsrom : fECWS) {
+        ecwsrom.initialiseObsSummaries();
+
+        allECWSSummaries.push_back(&ecwsrom.getECWSObsSummary());
+    }
+
+
     // Create the global summaries from the collections:
 
     // TSTN:
@@ -199,6 +208,7 @@ void TMeasurements::initialiseObsSummaries() {
     ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
     ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
 	inclyGlobalSummary_ = TLGCObsSummary::merge(allINCLYSummaries);
+    ecwsGlobalSummary_ = TLGCObsSummary::merge(allECWSSummaries);
 
 }
 
