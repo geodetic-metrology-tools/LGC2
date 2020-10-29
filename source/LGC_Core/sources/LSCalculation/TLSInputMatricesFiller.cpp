@@ -1301,7 +1301,6 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 		// Update the sigma 
 		itECWS->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
 
-
 		// Add station's contributions
 		if (!itECWS->targetPos->isFixed())
 			isProcessOK = isProcessOK && addPointContribution(*itECWS->targetPos, contributions.fStationContrib, eqIdx, matrices); /*'Target' in ECHO means station, there is no real target in ECHO.*/
@@ -1314,7 +1313,6 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 
 		// Adding controbution to a WS Height, which is at any case variable
 		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fRefWSContrib);
-
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (contributions.fCalcMeas - itECWS->getDistance()));

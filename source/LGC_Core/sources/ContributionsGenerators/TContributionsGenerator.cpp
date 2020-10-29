@@ -1466,18 +1466,19 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 	}
 
 	//Staton point defined at root frame
-	const TLOR2LOR& snrPTRoot2LorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
+
+	const TLOR2LOR& snrPTRoot2LorTrafo = fPointTransfo.getLORTransformation( fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
 	snrPTRoot2LorTrafo.transform(Test);
 
 	const TLOR2LOR& Up = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
-
+	
 	//Obs equation
-	TReal calcMeas = Test.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
+	TReal calcMeas =   Test.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stTransfContributions;
-	TFreeVector stationContrib = getPointContributions(Up, 0, 0, -1);
-	addTransformationsContributions(Up, ecws.targetPos->getEstimatedValue(), 0, 0, -1, stTransfContributions);
-
+	TFreeVector stationContrib = getPointContributions(Up, 0,0, -1);
+	addTransformationsContributions(Up, ecws.targetPos->getEstimatedValue(),0, 0, -1, stTransfContributions);
+	
 	TReal refPtDistContrib = 1.0;
 
 	//Compute the variance of the observation
