@@ -1255,16 +1255,16 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly() {
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "OBSXYZ: X");
 		(*stream) << endl;
-		otherMeasWriter.writeResultsSynthesisHeader();
+		tstnWriter.writeDISTHeaderSynthesis();
 		otherMeasWriter.writeDefResultsSynthesis(allObsxyzXSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
 		otherMeasWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allObsxyzXSummaries_), TABs);
 
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "OBSXYZ: Y");
 		(*stream) << endl;
-		tstnWriter.writeANGLHeaderSynthesis();
+		tstnWriter.writeDISTHeaderSynthesis();
 		tstnWriter.writeDefResultsSynthesis(allObsxyzYSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
-		tstnWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allObsxyzYSummaries_), TABs);
+		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allObsxyzYSummaries_), TABs);
 
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "OBSXYZ: Z");
