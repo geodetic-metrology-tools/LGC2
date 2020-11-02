@@ -554,22 +554,31 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const T
 
 TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {
 
+	fPointTransfo->setMLA(false);
 	//Get the measured distance to the water surface
-	TReal dWS = ecws.getObservedOffset().getMetresValue(); // Distance from the reference point to the WS
+	//TReal dWS = 0.0; // to reffer to the water surfaxe height
 
 	//Get the observed WS 1-sigma precision
-	//TReal obsWSSigma = ecwsROM.sigmaWS;
 	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
 
 	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
+
+	TFreeVector wsHeight(0, 0, 0, TCoordSysFactory::k3DCartesian);
+
+
+	//Express te WS height if MLA is used
+	if (fPointTransfo->getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		fPointTransfo->set2MLATransformation(snrPoint);
+		fPointTransfo->transformMLA2CGRF(wsHeight);
+		fPointTransfo->transformCGRF2CCS(wsHeight);
+	}
 
 	//Staton point defined at root frame
 	const TLOR2LOR& snrPTLor2RootTrafo = fPointTransfo->getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin());
 	snrPTLor2RootTrafo.transform(snrPoint);
 
 	//Obs equation
-	//TReal calcMeas = snrPoint.getZ().getMetresValue() - dWS;
-	TReal calcMeas = snrPoint.getZ().getMetresValue();
+	TReal calcMeas = wsHeight.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
 
 	return calcMeas;
 }

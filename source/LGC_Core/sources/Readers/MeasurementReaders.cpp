@@ -1360,8 +1360,7 @@ void TKeyECWS::parse(const std::vector<std::string> & tokens, bool activeLine, i
 		//TInstrumentData::THLSR instrTemp = finstruments.getDevice(finstruments.fHLSR, tokens.at(2));
 		//instrTemp.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
 		//
-		TECWSROM ecwsRom(finstruments.getDevice(finstruments.fHLSR, tokens.at(2)), TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres));
-
+		TECWSROM ecwsRom(finstruments.getDevice(finstruments.fHLSR, tokens.at(2)), TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), nullptr);
 		ecwsRom.line= line;
 		ecwsRom.setActive(activeLine);
 

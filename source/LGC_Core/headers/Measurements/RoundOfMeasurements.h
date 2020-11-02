@@ -20,35 +20,35 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 */
 struct TECHOROM : public TStatusObject {
 
-		/// All ECHO measurements, measuring the 'fmeasuredPlane'
-		std::list<TECHO> measECHO;
+	/// All ECHO measurements, measuring the 'fmeasuredPlane'
+	std::list<TECHO> measECHO;
 
-		//Measured vertical plane
-		LGCAdjustablePlane* fMeasuredPlane;
+	//Measured vertical plane
+	LGCAdjustablePlane* fMeasuredPlane;
 
-        /// Initialise observation summaries
-        void initialiseObsSummaries();
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
-		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-        const TLGCObsSummary& getECHOObsSummary() const;
-		const TLGCObsSummary& getECHOObsSummary(std::string text) noexcept;
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getECHOObsSummary() const;
+	const TLGCObsSummary& getECHOObsSummary(std::string text) noexcept;
 
-		/// Line of the measurement definition
-		int  line;
+	/// Line of the measurement definition
+	int  line;
 
-        int romId{ romCounter_++ };
+	int romId{ romCounter_++ };
 
-		/// the station attribute is a copy of the parameter to override defaults
-		TECHOROM(LGCAdjustablePlane *measPlane) :
-			fMeasuredPlane(measPlane),
-			line(NO_VALi)
-			{}
+	/// the station attribute is a copy of the parameter to override defaults
+	TECHOROM(LGCAdjustablePlane* measPlane) :
+		fMeasuredPlane(measPlane),
+		line(NO_VALi)
+	{}
 
 private:
 
-    static int romCounter_;
+	static int romCounter_;
 
-    TLGCObsSummary echoSummary_;
+	TLGCObsSummary echoSummary_;
 };
 
 /*!
@@ -65,11 +65,11 @@ struct TECSPROM : public TStatusObject {
 	const LGCAdjustablePoint* p1;
 	const LGCAdjustablePoint* p2;
 
-    /// Initialise observation summaries
-    void initialiseObsSummaries();
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-    const TLGCObsSummary& getECSPObsSummary() const;
+	const TLGCObsSummary& getECSPObsSummary() const;
 	const TLGCObsSummary& getECSPObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
@@ -77,7 +77,7 @@ struct TECSPROM : public TStatusObject {
 	/// name of the rom
 	std::string romName;
 
-    int romId{ romCounter_++ };
+	int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
 	/*TECSPROM(LGCAdjustableLine& measLine) :
@@ -103,7 +103,7 @@ struct TECSPROM : public TStatusObject {
 	{}
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECSPROM(std::string name,const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
+	TECSPROM(std::string name, const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
 		romName(name),
 		p1(&point1),
 		p2(&point2),
@@ -112,9 +112,9 @@ struct TECSPROM : public TStatusObject {
 
 private:
 
-    static int romCounter_;
+	static int romCounter_;
 
-    TLGCObsSummary ecspSummary_;
+	TLGCObsSummary ecspSummary_;
 };
 
 /*!
@@ -129,34 +129,34 @@ struct TECVEROM : public TStatusObject {
 	//Measured vertical plane
 	LGCAdjustableLine* fMeasuredLine;
 
-    /// Point on the measured line
-    LGCAdjustablePoint const * fPtLine;
+	/// Point on the measured line
+	LGCAdjustablePoint const* fPtLine;
 
-    /// Initialise observation summaries
-    void initialiseObsSummaries();
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-    const TLGCObsSummary& getECVEObsSummary() const;
+	const TLGCObsSummary& getECVEObsSummary() const;
 	const TLGCObsSummary& getECVEObsSummary(std::string text) noexcept;
 
 
 	/// Line of the measurement definition
 	int  line;
 
-    int romId{ romCounter_++ };
+	int romId{ romCounter_++ };
 
 	/// the station attribute is a copy of the parameter to override defaults
-    TECVEROM(LGCAdjustablePoint const * ptLine) :
+	TECVEROM(LGCAdjustablePoint const* ptLine) :
 		fMeasuredLine(nullptr),
-        fPtLine(ptLine),
+		fPtLine(ptLine),
 		line(NO_VALi)
 	{}
 
 private:
 
-    static int romCounter_;
+	static int romCounter_;
 
-    TLGCObsSummary ecveSummary_;
+	TLGCObsSummary ecveSummary_;
 };
 
 /*!
@@ -165,44 +165,44 @@ private:
 */
 struct TORIEROM : public TStatusObject {
 
-		/// All ORIE measurements
-		std::list<TORIE> measORIE;
+	/// All ORIE measurements
+	std::list<TORIE> measORIE;
 
-		/// The position of the instrument
-		const LGCAdjustablePoint* instrumentPos;
+	/// The position of the instrument
+	const LGCAdjustablePoint* instrumentPos;
 
-		/// The instrument that is used on this station
-		TInstrumentData::TPOLAR     instrument;
+	/// The instrument that is used on this station
+	TInstrumentData::TPOLAR     instrument;
 
-        /// Initialise observation summaries
-        void initialiseObsSummaries();
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
-		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-        const TLGCObsSummary& getORIEObsSummary() const;
-		const TLGCObsSummary& getORIEObsSummary(std::string text) noexcept;
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getORIEObsSummary() const;
+	const TLGCObsSummary& getORIEObsSummary(std::string text) noexcept;
 
 
-		TAngle fConstantAngle;
+	TAngle fConstantAngle;
 
-		/// Line of the measurement definition
-		int  line;
+	/// Line of the measurement definition
+	int  line;
 
-        int romId{ romCounter_++ };
+	int romId{ romCounter_++ };
 
-		/// the station attribute is a copy of the parameter to override defaults
-		TORIEROM(const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
-			instrumentPos(&pos),
-			instrument(instrument),
-			line(NO_VALi),
-			fConstantAngle(0.0, TAngle::EUnits::kGons)
-		{
-		}
+	/// the station attribute is a copy of the parameter to override defaults
+	TORIEROM(const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
+		instrumentPos(&pos),
+		instrument(instrument),
+		line(NO_VALi),
+		fConstantAngle(0.0, TAngle::EUnits::kGons)
+	{
+	}
 
-    private:
-        
-        static int romCounter_;
+private:
 
-        TLGCObsSummary orieSummary_;
+	static int romCounter_;
+
+	TLGCObsSummary orieSummary_;
 };
 
 /*!
@@ -260,6 +260,9 @@ struct TECWSROM : public TStatusObject {
 	/// The instrument that is used on this station
 	TInstrumentData::THLSR    instrument;
 
+	//Measured vertical plane
+	TAdjustableLength* fMeasuredWSHeight;
+
 	//Measured vertical distanced
 	//TLength* fMeasuredWS;
 	//1-sigma precision of the water surface
@@ -278,12 +281,13 @@ struct TECWSROM : public TStatusObject {
 	int romId{ romCounter_++ };
 
 
-	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS) :
+	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS, TAdjustableLength* MeasuredHeight) :
 		instrument(inst),
-		//fMeasuredWS(measWS),
+		fMeasuredWSHeight(MeasuredHeight),
 		sigmaWS(sigmaWS),
 		line(NO_VALi)
 	{}
+
 
 private:
 

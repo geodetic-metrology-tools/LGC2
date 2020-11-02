@@ -10,9 +10,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
    \file
    \ingroup ContributionsGenerators
 
-   	In this header file, structures holding contributions for every observation type are kept.
+	In this header file, structures holding contributions for every observation type are kept.
 	Distances and positions are treated in METERS [m], angles, if TAngle class is not used, are treated in RADIANS [rad].
-	
+
 */
 
 //SURVEYLIB
@@ -24,7 +24,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 	\brief Contributions for transformation parameters (rotations, translations, scale).
 */
-struct TransformationContrib{
+struct TransformationContrib {
 	TFreeVector fRotationContrib; //!< Omega (Rx), Phi (Ry) and Kappa (Rz) contributions
 	TFreeVector fTranslContrib; //!< Tx, Ty, Tz contributions
 	TReal		fScaleContrib; //!< Scale contribution
@@ -35,7 +35,7 @@ struct TransformationContrib{
 
 	\brief  Contributions for a point in observation models consisting of 3 equations (currently used for PLR3D, UVD).
 */
-struct Point3DContrib{
+struct Point3DContrib {
 	TFreeVector firstEqPtContrib; //!< x,y,z point coordinate contributions for the FIRST equation
 	TFreeVector secondEqPtContrib; //!< x,y,z point's coordinate contributions  for a SECOND equation
 	TFreeVector thirdEqPtContrib; //!< x,y,z point's coordinate contributions  for a THIRD equation
@@ -46,10 +46,10 @@ struct Point3DContrib{
 
 	\brief  Contributions for a transformation in observation models consisting of 3 equations (currently used for PLR3D, UVD).
 */
-struct TransformationContrib3D{
-	TransformationContrib	firstEquationTransContrib; 
+struct TransformationContrib3D {
+	TransformationContrib	firstEquationTransContrib;
 	TransformationContrib	secondEquationTransContrib;
-	TransformationContrib	thirdEquationTransContrib; 
+	TransformationContrib	thirdEquationTransContrib;
 };
 
 /*!
@@ -57,8 +57,8 @@ struct TransformationContrib3D{
 
 	\brief  Contribution for a transformation in observation models consisting of 2 equations (currently used for UVEC).
 */
-struct TransformationContrib2D{
-	TransformationContrib	firstEquationTransContrib; 
+struct TransformationContrib2D {
+	TransformationContrib	firstEquationTransContrib;
 	TransformationContrib	secondEquationTransContrib;
 };
 
@@ -67,15 +67,15 @@ struct TransformationContrib2D{
 
 	\brief Contributions for Spatial Distance (DIST) measurement made by a total station (TTSTN).
 */
-struct DistMeasContrib{
-	TReal		fCalcMeas; 
+struct DistMeasContrib {
+	TReal		fCalcMeas;
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the DIST measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;  
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
 
 	TReal		fHIContrib; //!< Instrument (station) height contribution
 	TReal		fDistCorrection; //!< Distance correction
@@ -88,15 +88,15 @@ struct DistMeasContrib{
 
 	\brief Contributions used for both the TANGL and the TZEND measurement types made by a total station (TTSTN).
 */
-struct AnglMeasContrib{
+struct AnglMeasContrib {
 	TAngle	fCalcMeas;
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the angle measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the angle measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
 
 	TReal		fHIContrib; //!< Instrument (station) height contribution
 	TReal		fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
@@ -109,15 +109,15 @@ struct AnglMeasContrib{
 
 	\brief Contributions for the TDHOR measurement made by a total station (TTSTN).
 */
-struct HorDistContrib{
+struct HorDistContrib {
 	TReal		fCalcMeas;
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
 
 	TReal		fDistCorrection; //!< Distance correction
 	TReal		fObsVariance;
@@ -128,13 +128,13 @@ struct HorDistContrib{
 
 	\brief Contributions for the TDHOR measurement introduced as a part of the TDLEV measurement
 */
-struct HorDistContribLEVEL{
+struct HorDistContribLEVEL {
 	TReal		fCalcMeas;
-	TFreeVector fStaffContrib; 
+	TFreeVector fStaffContrib;
 	TFreeVector fRefPtContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STAFF into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStaffTransformContrib;  
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStaffTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform Reference Point into the node, where the DHOR measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
 };
@@ -144,14 +144,14 @@ struct HorDistContribLEVEL{
 
 	\brief Contribution for the levelling (TDLEV) measurement.
 */
-struct DLEVContrib{
+struct DLEVContrib {
 	TReal		fCalcMeas;
 	TFreeVector	fStaffContrib;
 	TFreeVector	fRefPtContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform STAFF into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStaffTransformContrib;  
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStaffTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform Reference Point into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
 
 	TReal		fRefPtDistContrib;
 	TReal		fCollAngleContrib;   //!< Contribution of the collimination angle
@@ -164,15 +164,15 @@ struct DLEVContrib{
 
 	\brief Contributions for the levelling (TDVER) measurement.
 */
-struct DVERContrib{
+struct DVERContrib {
 	TReal			fCalcMeas;
 	TFreeVector	    fStCoordContrib;
 	TFreeVector	    fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the DVER measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DVER measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
 
 	TReal		fObsVariance;
 };
@@ -183,14 +183,14 @@ struct DVERContrib{
 
 	\brief Contributions for the TECHO measurement.
 */
-struct ECHOContrib{
+struct ECHOContrib {
 	TReal		fCalcMeas;
 	TFreeVector	fStationContrib;
 	TReal		fThetaPlaneAngleContrib;  //!< Contribution to the THETA angle of the plane in radians [rad]
 	TReal		fRefPtDistContrib; //!< Contribution to a distance of a referenece point from the plane
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECHO measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 
 	TReal		fObsVariance;
 };
@@ -200,7 +200,7 @@ struct ECHOContrib{
 
 \brief Contributions for the TECVE measurement.
 */
-struct ScaleMeasContrib{
+struct ScaleMeasContrib {
 	TReal		fCalcMeas;
 	TFreeVector	fStationContrib;
 	TFreeVector	fPointLineContrib;
@@ -217,7 +217,7 @@ struct ScaleMeasContrib{
 
 \brief Contributions for the TECSP measurement.
 */
-struct ECSPContrib{
+struct ECSPContrib {
 	TReal		fCalcMeas;
 	TFreeVector	fStationContrib;
 	TFreeVector	fPointLineContrib1;
@@ -239,18 +239,18 @@ struct ECSPContrib{
 
 	\brief Contributions for the TECTH measurement.
 */
-struct ECTHContrib{
+struct ECTHContrib {
 	TReal		fCalcMeas;
 	TFreeVector	fTSTNPtContrib; /*Reference point for the PLANE*/
 	TFreeVector	fScaleStationPtContrib;
 
 	TReal		fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
 
-	TReal		fDistanceCorrectionContrib; 
+	TReal		fDistanceCorrectionContrib;
 
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTSTNPtTransformContrib;  
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTSTNPtTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECTH measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 
 	TReal		fObsVariance;
 };
@@ -260,14 +260,14 @@ struct ECTHContrib{
 
 	\brief Contributions for the TPLR3D measurement made by a total station (TTSTN).
 */
-struct PLR3DContrib{
+struct PLR3DContrib {
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib; 	
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
 
 	TReal       fInstrHeightContrib[3];	 //!< Instrument (station) height contribution for the First, Second and Third equation respectively.
 	TReal       fV0Contrib[3];	//!< V0 contribution for the First, Second and Third equation respectively.
@@ -287,12 +287,12 @@ struct PLR3DContrib{
 
 	\brief Contributions for the TUVD measurement made by a camera (TCAM).
 */
-struct UVDContrib{
+struct UVDContrib {
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the UVD measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib; 			
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
 
 	TReal		fXCompContrib[3]; //!< X vector component contribution for the First, Second and Third equation respectively.
 	TReal		fYCompContrib[3]; //!< Y vector component contribution for the First, Second and Third equation respectively.
@@ -307,34 +307,34 @@ struct UVDContrib{
 
 	\brief Contributions for the TUVEC measurement made by a camera (TCAM).
 */
-struct UVECContrib{
+struct UVECContrib {
 	TFreeVector fStCoordContribFirstEq;  //!< x,y,z station coordinate contributions for the First equation
 	TFreeVector fStCoordContribSecondEq; //!< x,y,z station coordinate contributions for the Second equation
 
 	TFreeVector fTgCoordContribFirstEq; //!< x,y,z target coordinate contributions for the First equation
 	TFreeVector fTgCoordContribSecondEq; //!< x,y,z target coordinate contributions for the Second equation
 
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib2D>> fTgTransformContrib;		
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib2D>> fTgTransformContrib;
 
 	TReal		fXCompContrib[2]; //!< X vector component contribution for the First and Second equation respectively.
 	TReal		fYCompContrib[2]; //!< Y vector component contribution for the First and Second equation respectively.
 
 	TReal	    fMisclosureVector[2];  //!< Misclosure vector of the First and Second equation respectively.
 	TReal		fObsVariance[2];  //!< Variances for the First and Second equation respectively.
-}; 
+};
 
 /*!
 	\ingroup ContributionsGenerators
 
 	\brief \returns calculation measurement values for the UVD observation.
 */
-struct UVDCalcMeas{
+struct UVDCalcMeas {
 	TFreeVector	fMeasuredVector;
 	TReal		fsDistance;
 };
 
 
-struct PLR3DCalcMeas{
+struct PLR3DCalcMeas {
 	TReal	dist;
 	TReal	phi;
 	TReal	theta;
@@ -345,7 +345,7 @@ struct PLR3DCalcMeas{
 
 \brief Contributions for orientation measurement (PDOR, RADI).
 */
-struct PtOrientationContrib{
+struct PtOrientationContrib {
 	TFreeVector oriPointContrib; //contribution for the oritented point
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the root.
@@ -360,7 +360,7 @@ struct PtOrientationContrib{
 
 \brief Contributions for the point observation OBSXYZ.
 */
-struct OBSXYZContrib{
+struct OBSXYZContrib {
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform the point into the root.
@@ -371,7 +371,7 @@ struct OBSXYZContrib{
 
 
 
-struct DistMeasContribFrame{
+struct DistMeasContribFrame {
 	TReal		fCalcMeas;
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
@@ -384,7 +384,7 @@ struct DistMeasContribFrame{
 
 	TReal		fObsVariance; //!< Variance of the observation
 };
-struct AnglMeasContribFrame{
+struct AnglMeasContribFrame {
 	TAngle	fCalcMeas;
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
@@ -409,13 +409,12 @@ struct INCLYContrib {
 
 struct ECWSContrib {
 	TReal			fCalcMeas;
-	TReal			fSigmaWS;
+	TFreeVector	    fStationContrib;
+
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 
-
+	TReal		    fRefWSContrib;
 	TReal			fObsVariance;
 };
 #endif
-
-
