@@ -1446,24 +1446,12 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 ////ECWS contribution
 ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
 
-	//Get the measured distance to the water surface
-	//TReal dWS = 0.0; // to reffer to the water surfaxe height
 
-	//Get the observed WS 1-sigma precision
 	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
 
 	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
 
-	TFreeVector wsHeight(0, 0, 0, TCoordSysFactory::k3DCartesian);
-
 	TPositionVector Test(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
-
-	//Express te WS height if MLA is used
-	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
-		fPointTransfo.set2MLATransformation(snrPoint);
-		fPointTransfo.transformMLA2CGRF(wsHeight);
-		fPointTransfo.transformCGRF2CCS(wsHeight);
-	}
 
 	//Staton point defined at root frame
 
