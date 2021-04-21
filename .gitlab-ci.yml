@@ -1,4 +1,6 @@
-include: "https://apc-dev.web.cern.ch/ci/scripts/gitlab-ci-susoft.yml"
+include:
+  - project: 'apc/common/gitlab-ci-utils'
+    file: 'ci/scripts/gitlab-ci-susoft.yml'
 
 ##################
 # LINUX BUILDS   #
