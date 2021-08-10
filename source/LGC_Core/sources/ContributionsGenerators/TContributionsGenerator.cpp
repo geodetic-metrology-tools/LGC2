@@ -246,7 +246,7 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 	addTransformationsContributions(tgLor2RootTrafo, angl.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0/pow2q(dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
+	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
 
 	AnglMeasContrib  contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance};
 	return contrib;
@@ -317,7 +317,7 @@ AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(std::shar
 	}
 
 	// Variance calculation
-	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / pow2q(dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
+	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
 
 	AnglMeasContribFrame  contrib = { calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, 0.0, variance };
 	return contrib;
@@ -603,7 +603,7 @@ PLR3DContrib	TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 
 	//Variance calcualtion
 	// ANGL
-	contrib.fObsVariance[0] = pow2q(plr3D.target.sigmaAngl.getRadiansValue()) + (1.0/pow2q(dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering));
+	contrib.fObsVariance[0] = pow2q(plr3D.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering));
 	// ZEND
 	contrib.fObsVariance[1] = pow2q(plr3D.target.sigmaZenD.getRadiansValue()) + (((pow2q(dX) + pow2q(dY))*pow2q(dZ))/(powq(distance3D,6)*pow2q(sinPhi))) * 
 					(pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering)) +
@@ -1280,7 +1280,7 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 	addTransformationsContributions(tgLor2RootTrafo, orie.targetPos->getEstimatedValue(), -abc.getX().getMetresValue(), -abc.getY().getMetresValue(), -abc.getZ().getMetresValue(), targetTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(orie.target.sigmaAngl.getRadiansValue()) + (1.0 / pow2q(dist2)) * (pow2q(orieROM.instrument.sigmaInstrCentering) + pow2q(orie.target.sigmaTargetCentering));
+	TReal variance = pow2q(orie.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(orieROM.instrument.sigmaInstrCentering) + pow2q(orie.target.sigmaTargetCentering));
 
 	AnglMeasContrib  contrib = { calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance };
 	return contrib;
