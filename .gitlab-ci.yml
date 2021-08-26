@@ -41,27 +41,3 @@ windows64_release:
     artifacts:
         paths:
             - LGCInstaller-*.exe
-
-# Build all targets and run the tests
-windows32_build_and_test:
-    extends: windows64_build_and_test
-    tags:
-        - windows
-        - x32
-    variables:
-        CMAKEGENERATOR: "Visual Studio 16 2019"
-        CMAKEARCHITECTURE: "-A Win32"
-
-
-# Build and upload the LGC application
-windows32_release:
-    extends: windows64_release
-    needs: ["windows32_build_and_test"]
-    tags:
-        - windows
-        - x32
-    variables:
-        CMAKEGENERATOR: "Visual Studio 16 2019"
-        CMAKEARCHITECTURE: "-A Win32"
-    artifacts:
-        name: win32installer
