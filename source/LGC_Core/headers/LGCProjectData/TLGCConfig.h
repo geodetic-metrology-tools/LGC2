@@ -42,31 +42,37 @@ struct TLGCConfig
 		Stores the options that are related to simulation
 		input and output.
 	*/
+
 	class TSimulation : public TBinaryOption {
 		public:
 			/// The number of simulations to perform
 			int  numSims;
+			/// The seed number for the pseudo-random number generation/engine
+			int  numSeed;
 			/// write an output file that can be used as an imput file again
 			bool writeLGCFile;
 
 			/// The default constructor disables simulations. 
-			//Disable simulation means that ignoreMeasurements should be, by default, set to FALSE not TRUE!
-			TSimulation() : 
+			// Disable simulation means that ignoreMeasurements should be, by default, set to FALSE not TRUE!
+			TSimulation() :
 				TBinaryOption(),
 				numSims(0),
+				numSeed(0),
 				writeLGCFile(false) {}
-			/*! 
-				\brief This constructor sets the default values for enabled simulations.
+			/*!
+			\brief This constructor sets the default values for enabled simulations.
 
-				\param n The number of simulations to run
-				\param ignoreMeas The measurement values in the input file are ignored
+			\param n The number of simulations to run
+			\param s The seed number
+			\param ignoreMeas The measurement values in the input file are ignored
 			*/
-			TSimulation(int n) :
+			TSimulation(int n, int s) :
 				TBinaryOption(true),
 				numSims(n),
+				numSeed(s),
 				writeLGCFile(false) {}
 	};
-	
+
 	/*!
 		Controls the blunder detection module.
 	*/

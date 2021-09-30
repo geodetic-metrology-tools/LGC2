@@ -31,12 +31,18 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 {
 	TLSAlgorithm lsCalc(data);
 	Behavior calcOK;
-	engine.seed();
+
+	// (VV) Get the seed number
+	int seedNumber = fData.getConfig().sim.numSeed;
+	// (VV) Feed the seed number into the random number engine
+	engine.seed(seedNumber);
+
 
 	int numOfSimMade = 0;
 	int totalNumOfSimul = fData.getConfig().sim.numSims;
 
 	// Run through the first simulation
+
 	try {
 		simulateValues();
 		calcOK = lsCalc.run(data, maxIterations);
