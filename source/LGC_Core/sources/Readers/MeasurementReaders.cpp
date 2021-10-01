@@ -356,13 +356,29 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 
 		proj.setCombinedCaseCalcUsed();   //PLR3D measurement processed, need to use Combined Case LS calculation
 
+
 		if (hasAllParams) { //Store value if it is not a simulation
-			plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons),kANGL);
-			plr.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons),kZEND);
+			
+			// (VV) Here we will check whether the angle measurements are performed 
+			// (VV) in the first face (left circle) or in the second face (right circle) of the theodolite (total station, tracker).
+			// (VV) The tokens arleady contain the angle measurements in radians in the range (-pi, pi), therefore,
+			// (VV) the zenith angle in the first face is positive and the zenith anlge in the second face is negative.
+
+			// (VV) If the zenith angle is positive (or equal to zero) then just copy the angle values.
+			if (TAngle(std::stor(tokens.at(2)), TAngle::kGons) >= TAngle(0, TAngle::kGons)) { // 
+				plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons), kANGL);
+				plr.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons), kZEND);
+			}
+			// (VV) If the zenith angle is negative (right circle) then we store the equivalent values of the left circle.
+			else {
+				plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons) + TAngle(200.0, TAngle::kGons), kANGL);  // (VV) either -200 or +200 has the same result.
+				plr.setAngle(TAngle(400.0, TAngle::kGons) - TAngle(std::stor(tokens.at(2)), TAngle::kGons), kZEND);
+			}
 			plr.setDistance(TLength(std::stor(tokens.at(3))));
 		}
 		//Ad this PLR3D measurement to TSTN's ROM 
 		getROM()->measPLR3D.emplace_back(plr);
+
 	}
 }
 
@@ -481,10 +497,25 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			zend.eolcomment = tokens.back();
 
-		if (hasAllParams)
-			zend.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
+		
+		if (hasAllParams) {
 
+			// (VV) Here we will check whether the angle measurements are performed 
+			// (VV) in the first face (left circle) or in the second face (right circle) of the theodolite (total station, tracker).
+			// (VV) The tokens arleady contain the angle measurements in radians in the range (-pi, pi), therefore,
+			// (VV) the zenith angle in the first face is positive and the zenith anlge in the second face is negative.
+
+			// (VV) If the zenith angle is positive (or equal to zero) then just copy the angle values.
+			if (TAngle(std::stor(tokens.at(1)), TAngle::kGons) >= TAngle(0, TAngle::kGons)) {
+				zend.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
+			}
+			// (VV) If the zenith angle is negative (right circle) then we store the equivalent values of the left circle.
+			else {
+				zend.setAngle(TAngle(400.0, TAngle::kGons) - TAngle(std::stor(tokens.at(1)), TAngle::kGons));
+			}
+		}
 		getROM()->measZEND.emplace_back(zend);
+		
 	}
 }
 
