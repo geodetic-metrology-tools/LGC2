@@ -32,6 +32,9 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	(*stream).writeString(obsResWidth,	"RESIDU"); //residual
 	(*stream).writeString(obsResWidth,	"RES/SIG");    //residual/sigma
 	(*stream).writeString(nameWidth,	"SCALE ID");    //scale ID
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma for ECHO and ECVE
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error for ECHO and ECVE
+	(*stream).writeString(obsResWidth, "ICSE"); // instrument centering sigma for ECHO and ECVE
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +47,9 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	(*stream).writeString(obsResWidth,	"(MM)"); //residual
 	(*stream).writeString(obsResWidth,	"");    //residual/sigma
 	(*stream).writeString(nameWidth,	"");    //scale ID
-
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma for ECHO and ECVE
+	(*stream).writeString(obsResWidth, "(MM/KM)");     // observation PPM error for ECHO and ECVE
+	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering sigma for ECHO and ECVE
 	(*stream)<<endl;
 }
 
@@ -125,6 +130,16 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECHO.target.ID);
+
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaD.getMMetresValue());
+
+		//Write the ppm of the angle observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.ppmD.getMMetresValue());
+
+		//Write the sigma of the target centering (ICSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaInstrCentering.getMMetresValue());
+
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -185,6 +200,16 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECVE.target.ID);
+
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaD.getMMetresValue());
+
+		//Write the ppm of the angle observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.ppmD.getMMetresValue());
+
+		//Write the sigma of the target centering (ICSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaInstrCentering.getMMetresValue());
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -209,11 +234,15 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	////////////////////////////////////////////////////////////
 	(*stream) << TABs2;
 	(*stream).writeStringLeft(nameWidth, "POINT"); //second point's Name
-	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECTH
-	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECTH
-	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECTH
-	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECTH
+	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECSP
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECSP
+	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECSP
+	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECSP
 	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma
+	(*stream).writeString(nameWidth, "SCALE ID");    //scale ID
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ECSP
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error ECSP
+	(*stream).writeString(obsResWidth, "ICSE"); // instrument centering sigma
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -224,6 +253,10 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	(*stream).writeString(obsWidth, "(M)"); //estimated 
 	(*stream).writeString(obsResWidth, "(MM)"); //offset 
 	(*stream).writeString(obsResWidth, ""); //offset/sigma	
+	(*stream).writeString(nameWidth, "");    //scale ID
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma ECSP
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // observation PPM error ECSP
+	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering sigma
 	(*stream) << endl;
 
 		//For each measurement of the station
@@ -248,6 +281,19 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 
 			//write the offset / sigma (TDouble (MM))
 			(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual().getMetresValue() / ItECSP.target.sigmaCombinedDist.getMetresValue()));
+
+			//write the scale ID
+			(*stream).writeString(nameWidth, ItECSP.target.ID);
+
+			//Write the sigma of the distance observation (OBSE)
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaD.getMMetresValue());
+
+			//Write the ppm of the angle observation (PPM)
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.ppmD.getMMetresValue());
+
+			//Write the sigma of the target centering (ICSE)
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaInstrCentering.getMMetresValue());
+
 			(*stream) << endl;
 
 		}

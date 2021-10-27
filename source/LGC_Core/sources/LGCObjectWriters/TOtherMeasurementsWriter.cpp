@@ -31,6 +31,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	(*stream).writeString(obsWidth, "CALCULE"); //estimated dver 
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
 	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	(*stream).writeString(obsWidth, "DCOR");      //DVER: distance correction value 
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +44,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	(*stream).writeString(obsWidth, "(M)"); //estimated dver
 	(*stream).writeString(obsResWidth, "(MM)"); //residual
 	(*stream).writeString(obsResWidth, "");    //residual/sigma
-
+	(*stream).writeString(obsWidth, "(M)");    //DVER: distance correction value 
 	(*stream) << endl;
 }
 
@@ -67,7 +68,10 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	(*stream).writeString(obsWidth, "CALCULE"); //estimated orie 
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
 	(*stream).writeString(obsResWidth, "RES/SIG");//residu/sigma
-	(*stream) << endl;
+	(*stream).writeString(nameWidth, "TRGT");     //Name of the target
+	(*stream).writeString(obsResWidth, "OBSE");   // observation sigma ORIE
+	(*stream).writeString(obsResWidth, "TCSE");   // target centering sigma
+	(*stream) << endl; 
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -78,8 +82,10 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	(*stream).writeString(obsResWidth, "(CC)"); //sigma observed value
 	(*stream).writeString(obsWidth, "(GON)"); //estimated orie
 	(*stream).writeString(obsResWidth, "(CC)"); //residual
-	(*stream).writeString(obsResWidth, "");    //residu/sigma
-
+	(*stream).writeString(obsResWidth, "");     //residu/sigma
+	(*stream).writeString(nameWidth, "");       //TARGET ID
+	(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ORIE
+	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
 	(*stream) << endl;
 }
 
@@ -233,8 +239,11 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 		//write the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual().getMMetresValue());//Output value in meters [mm], stored in [m]
 
-		//write the residual/sigam
+		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDVER.getDistanceResidual() / ItDVER.getObservedStDev());//Output value in meters [mm], stored in [m]
+
+		//write the distance correction value 
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDVER.getDistanceCorrection());//Output value in meters [m], stored in [m]
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -248,6 +257,7 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 	int					obsResWidth = getObsResWidth();
 	int					angleResidualPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -279,6 +289,16 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 
 		//write the resi/sigma
 		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.getAngleResidual().getSignedCCValue() / ItORIE.target.sigmaCombinedAngle.getSignedCCValue());
+
+		//write TARGET ID
+		(*stream).writeString(nameWidth, ItORIE.target.ID);
+
+		//Write the sigma of the angle observation (OBSE)
+		(*stream).writeDouble(obsResWidth, angleResidualPrecision, ItORIE.target.sigmaAngl.getSignedCCValue());
+
+		//Write the sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItORIE.target.sigmaTargetCentering.getMMetresValue());
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;

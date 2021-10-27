@@ -124,7 +124,12 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma 
 	(*stream).writeString(obsWidth, "CONST"); //dist corr
 	(*stream).writeString(obsResWidth, "SCONST"); //sigma of provisional dist corr
-	(*stream).writeString(obsWidth, "H_PRISME"); //prism's height 	 
+	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
+	(*stream).writeString(obsWidth, "H_TRGT"); //provisional target height
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma DSPT
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error DSPT
+	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
+	(*stream).writeString(obsResWidth, "THSE"); // target height sigma 
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +144,12 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	(*stream).writeString(obsResWidth, ""); //res/sigma
 	(*stream).writeString(obsWidth, "(M)"); //provisional dist corr
 	(*stream).writeString(obsResWidth, "(MM)"); //sigma of provisional dist corr
-	(*stream).writeString(obsWidth, "(M)"); //prism's height
+	(*stream).writeString(nameWidth, ""); //TARGET ID
+	(*stream).writeString(obsWidth, "(M)"); //provisional target height
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma DSPT
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // observation PPM error DSPT
+	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // target height sigma
 	(*stream) << endl;
 
 	return;
@@ -218,8 +228,23 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 			(*stream).writeString(obsResWidth, "FIXED");
 		}
 
+		//write TARGET ID
+		(*stream).writeString(nameWidth, ItDSPT.target.ID);
+
 		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.target.targetHt);//Output value in meters [m], stored in [m]
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDSPT.target.targetHt); //Output value in meters [m], stored in [m]
+
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaDSpt.getMMetresValue());
+
+		//Write the ppm of the angle observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.ppmDSpt.getMMetresValue());
+
+		//Write the sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaTargetCentering.getMMetresValue());
+
+		//Write the sigma of the target height (THSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaTargetHt.getMMetresValue());
 
 		(*stream)<<endl;
 	}

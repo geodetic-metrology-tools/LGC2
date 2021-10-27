@@ -103,11 +103,19 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 			(*stream) << " | ";
 		}
 		(*stream).writeStringLeft(nameWidth, "");
-		(*stream).writeString(obsWidth, "TARGET");
+		(*stream).writeStringLeft(obsWidth, "");
+		(*stream).writeString(obsResWidth, "TARGET");
+		(*stream).writeStringLeft(obsResWidth, "");
 		(*stream) << " | ";
-		(*stream).writeStringLeft(obsResWidth, "");
+		(*stream).writeString(obsResWidth, "");
 		(*stream).writeString(obsResWidth, "RES/SIG");
-		(*stream).writeStringLeft(obsResWidth, "");
+		(*stream).writeString(obsResWidth, "");
+		(*stream) << " | ";
+		(*stream).writeString(obsResWidth, "");
+		(*stream).writeString(obsResWidth, "OBSE");
+		(*stream).writeString(obsResWidth, "");
+		(*stream) << " | ";
+		(*stream).writeString(obsResWidth, "DIST");  // observation PPM error for DIST
 		(*stream) << " | ";
 		(*stream) <<endl;
 
@@ -163,11 +171,21 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		(*stream).writeString(nameWidth, "TRGT"); //Name of the target used
 		(*stream).writeString(obsWidth, "H_TRGT"); //target height
+		(*stream).writeString(obsResWidth, "THSE"); //target height sigma 
+		(*stream).writeString(obsResWidth, "TCSE"); //target centering sigma
 		(*stream) << " | ";
 
 		(*stream).writeString(obsResWidth, "ANGL"); //residual/sigma
 		(*stream).writeString(obsResWidth, "ZEND"); //residual/sigma
 		(*stream).writeString(obsResWidth, "DIST"); //residual/sigma
+		(*stream) << " | ";
+
+		(*stream).writeString(obsResWidth, "ANGL"); //observation sigma ANGL
+		(*stream).writeString(obsResWidth, "ZEND"); //observation sigma ZEND
+		(*stream).writeString(obsResWidth, "DIST"); //observation sigma DIST
+		(*stream) << " | ";
+
+		(*stream).writeString(obsResWidth, "PPM"); // observation PPM error for DIST
 		(*stream) << " | ";
 
 		(*stream)<<endl;
@@ -220,11 +238,21 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		(*stream).writeString(nameWidth, ""); //TARGET ID
 		(*stream).writeString(obsWidth, "(M)"); //height of the target
+		(*stream).writeString(obsResWidth, "(MM)"); //target height sigma 
+		(*stream).writeString(obsResWidth, "(MM)"); //target centering sigma
 		(*stream) << " | ";
 
-		(*stream).writeString(obsResWidth, "");
-		(*stream).writeString(obsResWidth, "");
-		(*stream).writeString(obsResWidth, "");
+		(*stream).writeString(obsResWidth, ""); // residual / sigma
+		(*stream).writeString(obsResWidth, ""); // residual / sigma
+		(*stream).writeString(obsResWidth, ""); // residual / sigma
+		(*stream) << " | ";
+
+		(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ANGL
+		(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ZEND
+		(*stream).writeString(obsResWidth, "(MM)"); // observation sigma DIST
+		(*stream) << " | ";
+
+		(*stream).writeString(obsResWidth, "(MM/KM)");     // observation PPM error for DIST
 		(*stream) << " | ";
 
 		(*stream)<<endl;
@@ -252,7 +280,9 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"ECART"); //ecart
 	(*stream).writeString(obsResWidth,	"RES"); //residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
-	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	// (*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ANGL
+	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
 	(*stream)<<endl;	
@@ -268,7 +298,9 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //ecart
 	(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
 	(*stream).writeString(nameWidth,""); //TARGET ID
-	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	// (*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ANGL
+	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: v0
 	(*stream)<<endl;
@@ -296,7 +328,10 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"ECART"); //ecart
 	(*stream).writeString(obsResWidth,	"RES"); //residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
-	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	(*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ZEND
+	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
+	(*stream).writeString(obsResWidth, "THSE"); // target height sigma 
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
 	(*stream)<<endl;	
@@ -314,6 +349,9 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"/SIG"); //residual/sigma
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ZEND
+	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // target height sigma 
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
 	(*stream)<<endl;
@@ -343,7 +381,11 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth,	"CONST"); //dist corr
 	(*stream).writeString(obsResWidth,	"SCONST"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
-	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	(*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma DIST
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error DIST
+	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
+	(*stream).writeString(obsResWidth, "THSE"); // target height sigma
 	if (isAllfixed)
 	{
 		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
@@ -364,6 +406,10 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth,""); //TARGET ID
 	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma DIST
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // observation PPM error DIST
+	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // target height sigma
 	if (isAllfixed)
 	{
 		(*stream).writeString(obsWidth, "(M)"); //allfixed parameter: hi
@@ -395,7 +441,10 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "CONST"); //dist corr
 	(*stream).writeString(obsResWidth, "SCONST"); //sigma of provisional dist corr
 	(*stream).writeString(nameWidth, "TRGT"); //Name of the target
-	(*stream).writeString(obsWidth,	"H_TGT"); //provisional target height
+	// (*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma DHOR
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error DHOR
+	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -411,7 +460,10 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "(M)"); //provisional dist corr
 	(*stream).writeString(obsResWidth, "(MM)"); //sigma of provisional dist corr
 	(*stream).writeStringLeft(nameWidth,""); //TARGET ID
-	(*stream).writeString(obsWidth,	"(M)"); //target height
+	// (*stream).writeString(obsWidth,	"(M)"); //target height
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma DHOR
+	(*stream).writeString(obsResWidth, "(MM/KM)");     // observation PPM error DHOR
+	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
 	(*stream)<<endl;
 }
 
@@ -436,9 +488,13 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"RESIDU"); //offset ECTH
 	(*stream).writeString(obsResWidth,	"RES/SIG"); //offset/sigma
 	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
+	(*stream).writeString(nameWidth, "SCALE"); // SCALE ID
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ECTH
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error ECTH
+	(*stream).writeString(obsResWidth, "ICSE"); // instrument centering sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
-	(*stream)<<endl;	
+	(*stream) << endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -450,35 +506,41 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth,	"(MM)"); //offset ECTH
 	(*stream).writeString(obsResWidth,	""); //offset/sigma
 	(*stream).writeString(obsWidth, "(GON)"); //azimut
+	(*stream).writeStringLeft(nameWidth, ""); // SCALE ID
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma ECTH
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // observation PPM error ECTH
+	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering sigma
 	if (isAllfixed)
-		(*stream).writeString(obsWidth, "(GONS)"); //allfixed parameter: v0
-	(*stream)<<endl;
+		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
+	(*stream) << endl;
 
 }
 
 void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 {
-	TAStreamFormatter*	stream = getStream();
+	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
-
 	//summuray
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECDIR), nOObs);
-
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POINT"); //second point's Name
-	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECTH
-	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECTH
-	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECTH
-	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECTH
+	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECDIR
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECDIR
+	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECDIR
+	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECDIR
 	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma
 	(*stream).writeString(obsWidth, "AZIMUT"); //azimut
 	(*stream).writeString(obsWidth, "ZEND"); //zenithal distance
+	(*stream).writeString(nameWidth, "SCALE"); // SCALE ID
+	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ECDIR
+	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error ECDIR
+	(*stream).writeString(obsResWidth, "ICSE"); // instrument centering sigma
 	if (isAllfixed)
 	{
 		(*stream).writeString(obsWidth, "V0 1st solution"); //allfixed parameter: v0
@@ -490,13 +552,17 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); //station
-	(*stream).writeString(obsWidth, "(M)"); //mesured ECTH
-	(*stream).writeString(obsResWidth, "(MM)"); //sigma ECTH
-	(*stream).writeString(obsWidth, "(M)"); //estimated ECTH
-	(*stream).writeString(obsResWidth, "(MM)"); //offset ECTH
+	(*stream).writeString(obsWidth, "(M)"); //mesured ECDIR
+	(*stream).writeString(obsResWidth, "(MM)"); //sigma ECDIR
+	(*stream).writeString(obsWidth, "(M)"); //estimated ECDIR
+	(*stream).writeString(obsResWidth, "(MM)"); //offset ECDIR
 	(*stream).writeString(obsResWidth, ""); //offset/sigma
 	(*stream).writeString(obsWidth, "(GON)"); //azimut
 	(*stream).writeString(obsWidth, "(GON)"); //zenithal distance
+	(*stream).writeStringLeft(nameWidth, ""); // SCALE ID
+	(*stream).writeString(obsResWidth, "(MM)"); // observation sigma ECDIR
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // observation PPM error ECDIR
+	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering sigma
 	if (isAllfixed)
 	{
 		(*stream).writeString(obsWidth, "(GON)"); //allfixed parameter: v0
@@ -764,13 +830,30 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		(*stream).writeString(nameWidth, ItPLR3D.target.ID);
 		//height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItPLR3D.target.targetHt);
-
+		//sigma of the target height (THSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.sigmaTargetHt.getMMetresValue());
+		//sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.sigmaTargetCentering.getMMetresValue());
 		(*stream) << " | ";
 
 		//RES/SIGMA
 		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaCombinedPLRAngl.getRadiansValue()));
 		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / ItPLR3D.target.sigmaCombinedPLRZenD.getRadiansValue()));
 		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual() / ItPLR3D.target.sigmaCombinedPLRDist.getMetresValue()));
+		(*stream) << " | ";
+
+		//OBSERVATION STANDARD ERROR (OBSE)
+		//Write the sigma of the angle observation (ANGL)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaAngl.getSignedCCValue());
+		//Write the sigma of the angle observation (ZEND)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItPLR3D.target.sigmaZenD.getSignedCCValue());
+		//Write the sigma of the angle observation (DIST)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.sigmaDist.getMMetresValue());
+		(*stream) << " | ";
+
+		//DISTANCE PPM ERROR (PPM)
+		//Write the ppm of the distance observation (DIST)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.ppmDist.getMMetresValue());
 		(*stream) << " | ";
 
 		(*stream) << endl;
@@ -820,8 +903,14 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 		(*stream).writeString(nameWidth, ItANGL.target.ID);
 
 		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt);
-
+		// (*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt);
+		
+		//Write the sigma of the angle observation (OBSE)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.target.sigmaAngl.getSignedCCValue());
+		
+		//Write the sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.target.sigmaTargetCentering.getMMetresValue());
+		
 		//write allfixed parameter
 		if (isAllfixed)
 			if (!isnotanumber(ItANGL.fAllFixedV0))
@@ -877,6 +966,14 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItZEND.target.targetHt);
 
+		//Write the sigma of the angle observation (OBSE)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItZEND.target.sigmaZenD.getSignedCCValue());
+
+		//Write the sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.target.sigmaTargetCentering.getMMetresValue());
+
+		//Write the sigma of the target height (THSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItZEND.target.sigmaTargetHt.getMMetresValue());
 
 		//write allfixed parameter
 		if (isAllfixed)
@@ -951,6 +1048,18 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 		//write the target height
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDIST.target.targetHt);
 
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.sigmaDist.getMMetresValue());
+
+		//Write the ppm of the angle observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.ppmDist.getMMetresValue());
+
+		//Write the sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.sigmaTargetCentering.getMMetresValue());
+
+		//Write the sigma of the target height (THSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.target.sigmaTargetHt.getMMetresValue());
+
 		//write allfixed parameter
 		if (isAllfixed){
 			if (!isnotanumber(ItDIST.fAllFixedHi))
@@ -1020,10 +1129,18 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 
 		//write TARGET ID
 		(*stream).writeString(nameWidth, ItDHOR.target.ID);
+		
 		//write the target height
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.targetHt);
+		// (*stream).writeDouble(obsWidth, lengthPrecision, ItDHOR.target.targetHt);
 
-		//write allfixed parameter
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.sigmaDist.getMMetresValue());
+		
+		//Write the ppm of the distance observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.ppmDist.getMMetresValue());
+		
+		//Write the sigma of the target centering (TCSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.sigmaTargetCentering.getMMetresValue());
 
 		(*stream) << endl;
 	}
@@ -1043,7 +1160,7 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 
 	writeECTHResultsHeader((int)measECTH.size());
 
-	//For each DHOR measurement of the station
+	//For each ECTH measurement of the station
 	for (auto const& ItECTH : measECTH)
 	{
 		(*stream) << TABs;
@@ -1069,6 +1186,18 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 		//write azimut
 		(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.obsHorAngle.getGonsValue());
 
+		//write SCALE ID
+		(*stream).writeString(nameWidth, ItECTH.target.ID);
+
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaD.getMMetresValue());
+
+		//Write the ppm of the angle observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.ppmD.getMMetresValue());
+
+		//Write the sigma of the target centering (ICSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECTH.target.sigmaInstrCentering.getMMetresValue());
+		
 		//write allfixed parameter
 		if (isAllfixed)
 			if (!isnotanumber(ItECTH.fAllFixedV0))
@@ -1095,50 +1224,50 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 
 	writeECDIRResultsHeader((int)measECDIR.size());
 
-	//For each DHOR measurement of the station
-	for (auto const& ItECSP : measECDIR)
+	//For each ECDIR measurement of the station
+	for (auto const& ItECDIR : measECDIR)
 	{
 		(*stream) << TABs;
 
 		//write Point
-		(*stream).writeStringLeft(nameWidth, ItECSP.targetPos->getName());
-
+		(*stream).writeStringLeft(nameWidth, ItECDIR.targetPos->getName());
 		//write the observed offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECSP.getDistance());
-
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECDIR.getDistance());
 		//write the sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaCombinedDist.getMMetresValue());
-	
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECDIR.target.sigmaCombinedDist.getMMetresValue());
+
 		//write the estimated offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECSP.getDistance() + ItECSP.getDistanceResidual()));
-
+		(*stream).writeDouble(obsWidth, lengthPrecision, (ItECDIR.getDistance() + ItECDIR.getDistanceResidual()));
 		//write the offset (mm) after calculation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.getDistanceResidual().getMMetresValue());
-
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECDIR.getDistanceResidual().getMMetresValue());
 		//write the offset / sigma (TDouble (MM))
-		(*stream).writeDouble(obsResWidth, 2, (ItECSP.getDistanceResidual() / ItECSP.target.sigmaCombinedDist.getMetresValue()));
-
+		(*stream).writeDouble(obsResWidth, 2, (ItECDIR.getDistanceResidual() / ItECDIR.target.sigmaCombinedDist.getMetresValue()));
 		//write angle
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsHorAngle.getGonsValue());
-		(*stream).writeDouble(obsWidth, anglePrecision, ItECSP.obsVertAngle.getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, ItECDIR.obsHorAngle.getGonsValue());
+		(*stream).writeDouble(obsWidth, anglePrecision, ItECDIR.obsVertAngle.getGonsValue());
+		//write SCALE ID
+		(*stream).writeString(nameWidth, ItECDIR.target.ID);
+		//Write the sigma of the distance observation (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECDIR.target.sigmaD.getMMetresValue());
+		//Write the ppm of the angle observation (PPM)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECDIR.target.ppmD.getMMetresValue());
+		//Write the sigma of the target centering (ICSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECDIR.target.sigmaInstrCentering.getMMetresValue());
 
 		//write allfixed parameter
-        if(isAllfixed){
-            if(!isnotanumber(ItECSP.fAllFixedV0[0]))
-                (*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[0].getGonsValue());
-            else
-                (*stream).writeString(obsWidth, "FIXED");
-
-            if(!isnotanumber(ItECSP.fAllFixedV0[1]))
-                (*stream).writeDouble(obsWidth, anglePrecision, ItECSP.fAllFixedV0[1].getGonsValue());
-            else
-                (*stream).writeString(obsWidth, "FIXED");
-        }
-
+		if (isAllfixed) {
+			if (!isnotanumber(ItECDIR.fAllFixedV0[0]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECDIR.fAllFixedV0[0].getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+			if (!isnotanumber(ItECDIR.fAllFixedV0[1]))
+				(*stream).writeDouble(obsWidth, anglePrecision, ItECDIR.fAllFixedV0[1].getGonsValue());
+			else
+				(*stream).writeString(obsWidth, "FIXED");
+		}
 		(*stream) << endl;
 	}
 	(*stream) << endl;
-
 }
 
 
