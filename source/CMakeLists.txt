@@ -99,6 +99,7 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
+ADD_SUBDIRECTORY(LGC_ObjectSerialization)
 ADD_SUBDIRECTORY(LGC_Tests)
 
 # INSTALL for creation of the LGC2 installer

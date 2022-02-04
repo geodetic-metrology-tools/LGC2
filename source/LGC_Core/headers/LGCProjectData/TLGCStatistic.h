@@ -13,6 +13,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <Defaults.h>
 
+#include <LGC_ObjectSerialization/source/Serializer.hpp>
+
 class TLSInputMatrices;
 class TLSResultsMatrices;
 
@@ -21,14 +23,17 @@ class TLSResultsMatrices;
 
 	Statistics definitions
 */
-class TLGCStatistic{
+class TLGCStatistic : public Serializable{
 
 public:	
 	TLGCStatistic();
 	~TLGCStatistic();
 
-    ///Computes the statistic vector
+	///Computes the statistic vector
 	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor);
+
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 
 	/// Access to eventual error 
 	std::string		getError() const { return fError; }

@@ -19,9 +19,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TLGCStatistic.h>
 #include <TTreeEntry.h>
 #include <TLSCalcRelativeError.h>
+#include <Serializer.hpp>
 
 /*! Counter of points based on the type */
-struct TPointGlobal{
+struct TPointGlobal : public Serializable {
 	int	fNumCala;
 	int	fNumVx;
 	int	fNumVy;
@@ -30,11 +31,14 @@ struct TPointGlobal{
 	int	fNumVxz;
 	int	fNumVyz;
 	int	fNumVxyz;
+
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
 };
 
 /*! Counter of measurements based on the type */
-struct TMeasurementsGlobal{
-	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI, kOBSXYZ, kINCLY,kECWS};
+struct TMeasurementsGlobal : public Serializable {
+	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI, kOBSXYZ, kINCLY, kECWS};
 
 	int	fNumANGL;
 	int	fNumZEND;
@@ -57,6 +61,9 @@ struct TMeasurementsGlobal{
 	int fNumOBSXYZ;
 	int fNumINCLY;
 	int fNumECWS;
+
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
 };
 
 
@@ -70,7 +77,7 @@ struct TMeasurementsGlobal{
 	by grouping together everything that is needed so the interaction with the LGC modules 
 	is reduced to ineracting with a single object.
 */ 
-class TLGCData{
+class TLGCData : public Serializable {
 public:
 	/*!
 		The default constructor provides a tree which consists only of the root node 
@@ -229,6 +236,10 @@ public:
         bool isLGCv1() const { return islgc1; }
 
         void setLGCv1(bool set) { islgc1 = set; }
+		
+        // Inherited via Serializable
+        virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
+
 private:
 
     /// Copy the frametree structure from *src* to *tgt*
@@ -285,11 +296,20 @@ private:
 	// If standard deviations to points or frames assigned
 	bool fhasStandardDeviations;
 
-	struct TLSRelatedInfo{
+	struct TLSRelatedInfo : public Serializable {
 		int fNumberOfLSIterations;
 		TReal fS0APosteriori;
 		TReal fChiLoLimit;
 		TReal fChiUpLimit;
+
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper& obj) const
+		{
+			obj.addProperty("fNumberOfLSIterations", fNumberOfLSIterations);
+			obj.addProperty("fS0APosteriori", fS0APosteriori);
+			obj.addProperty("fChiLoLimit", fChiLoLimit);
+			obj.addProperty("fChiUpLimit", fChiUpLimit);
+		};
 	};
 
 	TLSRelatedInfo fLSRelatedInfo;

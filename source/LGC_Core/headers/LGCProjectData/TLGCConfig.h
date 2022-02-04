@@ -237,6 +237,8 @@ struct TLGCConfig
 	TCoordOut     writePunch;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
 	TCoordOut     writePlot;
+	/// Write a file with adjustment results ,see \ref CoordOut for format details
+	TBinaryOption writeSerializedObject = false;
 	/// Write a file for covariance analysis
 	TBinaryOption covar;
 	/// Write a file for best-fit analysis 
