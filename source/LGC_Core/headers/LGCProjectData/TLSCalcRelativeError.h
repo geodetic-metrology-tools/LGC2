@@ -12,14 +12,14 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 //LGC
 #include "TAdjustablePoint.h"
-
+#include <Serializer.hpp>
 /*!
 \ingroup LGCProjectData
 
 Class for writing the relative error between a list of points.
 */
 
-class TLSCalcRelativeError {
+class TLSCalcRelativeError : public Serializable {
 
 public:
 
@@ -108,6 +108,9 @@ private:
 	TLength			fSigmaR; /*!< radial (transversal) error */
 	TLength			fSigmaZ; /*!< error in the height difference*/
 	TAngle			fSigmaV; /*!< error in the vertical angle */
+
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
 	//@}
 };
 

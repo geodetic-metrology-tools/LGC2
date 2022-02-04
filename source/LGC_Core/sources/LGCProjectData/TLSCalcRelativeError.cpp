@@ -81,9 +81,21 @@ void TLSCalcRelativeError::setSigmaV(TAngle sv) {
 	fSigmaV = sv;
 	return;
 }
+
 // sets the error in the height difference 
 void TLSCalcRelativeError::setSigmaZ(TLength sz) {
 
 	fSigmaZ = sz;
 	return;
+}
+
+void TLSCalcRelativeError::serialize(SerializerObject::SerializationHelper& obj) const
+{
+	obj.addProperty("fPoint1/position vector iterator for the 1st point", fPoint1);
+	obj.addProperty("fPoint2/position vector iterator for the 2nd point", fPoint2);
+	obj.addProperty("fSigmaL/longitudinal error", fSigmaL);
+	obj.addProperty("fSigmaG/error in orientation", fSigmaG);
+	obj.addProperty("fSigmaR/radial (transversal) error", fSigmaR);
+	obj.addProperty("fSigmaZ/error in the height difference", fSigmaZ);
+	obj.addProperty("fSigmaV/error in the vertical angle", fSigmaV);
 }

@@ -13,13 +13,14 @@
 #include "TChabaFileWriter.h"
 #include <Logger.hpp>
 #include <TLGCData.h>
+#include <Serializer_yaml.hpp>
 
 
 
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
-const std::string TLGCApp::fCopyright = "Copyright 2015, CERN SU. All rights reserved.";
+const std::string TLGCApp::fCopyright = "Copyright 2022, CERN SU. All rights reserved.";
 
 
 TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLocation, const int maxIterations) :
@@ -183,6 +184,8 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
     if(conf.writeDefa.isActive())
         writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
 
+	// Write data YAML file
+	writeYamlFile(dat, outputFileLocation);
 }
 
 void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
@@ -310,6 +313,16 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 	else
 		logCritical() << "Chaba output file:" << stream->getFileName() << "has NOT been written";
 
+}
+
+void TLGCApp::writeYamlFile(TLGCData const* const dat, const std::string& outputFileLocation)
+{
+	yamlSerializerObject ser;
+	SerializerObject::SerializationHelper obj = ser.getSerializationHelper(outputFileLocation);
+	obj.addProperty("LGC_DATA", *dat);
+
+	std::ofstream fout(outputFileLocation+".yaml");
+	fout << ser.getStringRepresentation();
 }
 
 void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
