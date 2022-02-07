@@ -768,9 +768,9 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		(*stream) << " | ";
 
 		//RES/SIGMA
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaAngl.getRadiansValue()));
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / TAngle(ItPLR3D.target.sigmaAngl).getRadiansValue()));
-		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual()) / (ItPLR3D.target.sigmaDist + ItPLR3D.target.ppmDist * ItPLR3D.getDistance() / 1000));
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() / ItPLR3D.target.sigmaCombinedPLRAngl.getRadiansValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getAngleResidual(EPLR3DAngles::kZEND).getRadiansValue() / ItPLR3D.target.sigmaCombinedPLRZenD.getRadiansValue()));
+		(*stream).writeDouble(obsResWidth, 2, (ItPLR3D.getDistanceResidual() / ItPLR3D.target.sigmaCombinedPLRDist.getMetresValue()));
 		(*stream) << " | ";
 
 		(*stream) << endl;
