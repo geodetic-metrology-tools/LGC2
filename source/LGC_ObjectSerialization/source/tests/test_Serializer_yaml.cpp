@@ -36,42 +36,86 @@ namespace tut
 	{
 		set_test_name("Serializer_yaml: Primitives");
 
-		serobj.addProperty("header", std::string("I am the header!"));
-		serobj.addProperty("vec", std::vector<int>{1, 2, 3, 4});
-		serobj.addProperty("int", 1);
-		serobj.addProperty("str", "cstyle");
-		serobj.addProperty("strstd", std::string("std"));
-		serobj.addProperty("list", std::list<double>{1, 2, 3});
-		serobj.addProperty("map", std::map<std::string, int>{ {"foo", 42}, { "bar", 3 }});
-		serobj.addProperty("vecpair", std::vector<std::pair<std::string, bool>>{ {"yes", true}, { "no", false }});
-		serobj.addProperty("pair", std::pair<std::string, std::string>{"yes", "no"});
-		serobj.addProperty("pairvecpair", std::pair<std::string, std::vector<std::pair<std::string, bool>>>{"first", { {"yes", true}, {"no", false} }});
-		// obj.addProperty("listvecpair", std::list<std::vector<std::pair<std::string, bool>>>{{{"yes", true}}, {{"no", false}}, {{"yes", true}, {"no", false}}});
-		ensure_equals(test_header + R"""(header: I am the header!
-vec:
+		serobj.addProperty("t1_header", std::string("I am the header!"));
+		serobj.addProperty("t2_vec", std::vector<int>{1, 2, 3, 4});
+		serobj.addProperty("t3_int", 1);
+		serobj.addProperty("t4_str", "cstyle");
+		serobj.addProperty("t5_strstd", std::string("std"));
+		serobj.addProperty("t6_list", std::list<double>{1, 2, 3});
+		serobj.addProperty("t7_map", std::map<std::string, int>{ {"foo", 42}, { "bar", 3 }});
+		serobj.addProperty("t8_mapvec", std::map<std::string, std::vector<int>>{ {"foo", { 42, 1, 2 }}, { "bar", {3, 5} }});
+		serobj.addProperty("t9_pair", std::pair<std::string, std::string>{"pairkey", "pairvalue"});
+		serobj.addProperty("t10_vecpair", std::vector<std::pair<std::string, bool>>{ {"pair1", true}, { "pair2", false }});
+		serobj.addProperty("t11_pairvecpair", std::pair<std::string, std::vector<std::pair<std::string, bool>>>{"pairTop", { {"pairsub1", true}, {"pairsub2", false} }});
+		serobj.addProperty("t12_listvecpair", std::list<std::vector<std::pair<std::string, bool>>>{ { {"pair1", true}}, { {"pair2", false} }, { {"pair31", true}, {"pair32", false} }});
+		serobj.addProperty("t13_pairvecmaplistpair", std::pair < std::string, std::vector<std::map<std::string, std::list<std::pair<std::string, int>>>>>
+		{ "toppair",
+			{ { {"map1key1" , {{"pair1", 1}, {"pair2", 2}, {"pair3", 3}}}, {"map2key2" , {{"pair1", 1}}} },
+			{ {"map2key1" , {{"pair1", 1}, {"pair2", 2}, {"pair3", 3}, {"pair4", 4}, {"pair5", 5}}} },
+			{ {"map3key1" , {{"pair1", 1}}}, {"map3key2" , {{"pair1", 1}}}, {"map3key3" , {{"pair1", 1}}}, {"map3key4" , {{"pair1", 1}}} },
+			} }
+		);
+
+		ensure_equals(test_header + R"""(t1_header: I am the header!
+t2_vec:
   - 1
   - 2
   - 3
   - 4
-int: 1
-str: cstyle
-strstd: std
-list:
+t3_int: 1
+t4_str: cstyle
+t5_strstd: std
+t6_list:
   - 1
   - 2
   - 3
-map:
+t7_map:
   bar: 3
   foo: 42
-vecpair:
-  yes: true
-  no: false
-pair:
-  yes: no
-pairvecpair:
-  first:
-    yes: true
-    no: false)""",
+t8_mapvec:
+  bar:
+    - 3
+    - 5
+  foo:
+    - 42
+    - 1
+    - 2
+t9_pair:
+  pairkey: pairvalue
+t10_vecpair:
+  pair1: true
+  pair2: false
+t11_pairvecpair:
+  pairTop:
+    pairsub1: true
+    pairsub2: false
+t12_listvecpair:
+  - pair1: true
+  - pair2: false
+  - pair31: true
+    pair32: false
+t13_pairvecmaplistpair:
+  toppair:
+    - map1key1:
+        pair1: 1
+        pair2: 2
+        pair3: 3
+      map2key2:
+        pair1: 1
+    - map2key1:
+        pair1: 1
+        pair2: 2
+        pair3: 3
+        pair4: 4
+        pair5: 5
+    - map3key1:
+        pair1: 1
+      map3key2:
+        pair1: 1
+      map3key3:
+        pair1: 1
+      map3key4:
+        pair1: 1)""",
 			ser.getStringRepresentation());
 	}
 

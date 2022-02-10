@@ -13,6 +13,11 @@ void yamlSerializerObject::startObject(const std::string& name)
 	doc << YAML::Key << name << YAML::BeginMap;
 }
 
+void yamlSerializerObject::startObject()
+{
+	doc << YAML::BeginMap;
+}
+
 void yamlSerializerObject::endObject()
 {
 	doc << YAML::EndMap;
@@ -21,6 +26,11 @@ void yamlSerializerObject::endObject()
 void yamlSerializerObject::startArray(const std::string& name)
 {
 	doc << YAML::Key << name << YAML::BeginSeq;
+}
+
+void yamlSerializerObject::startArray()
+{
+	doc << YAML::BeginSeq;
 }
 
 void yamlSerializerObject::endArray()

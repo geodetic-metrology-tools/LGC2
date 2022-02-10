@@ -19,8 +19,10 @@ public:
 
 protected:
 	virtual void startObject(const std::string& name) override;
+	virtual void startObject() override;
 	virtual void endObject() override;
 	virtual void startArray(const std::string& name) override;
+	virtual void startArray() override;
 	virtual void endArray() override;
 	virtual void startPrimitive(const std::string& name) override;
 	virtual void endPrimitive() override {}
@@ -33,19 +35,6 @@ protected:
 	virtual void addValue(bool value) override { doc << value; }
 	virtual void addValue(const std::string& value) override { doc << value; }
 	virtual void addValue(char const* value) override { doc << value; }
-
-private:
-	template<class T>
-	static void addPrimitive(YAML::Emitter& doc, const std::string& name, const T value)
-	{
-		doc << YAML::Key << name << YAML::Value << value;
-	}
-
-	template<class T>
-	static void addContainer(YAML::Emitter& doc, const std::string& name, const T& value)
-	{
-		doc << YAML::Key << name << YAML::BeginSeq << YAML::Flow << value << YAML::EndSeq;
-	}
 
 private:
 	YAML::Emitter doc;
