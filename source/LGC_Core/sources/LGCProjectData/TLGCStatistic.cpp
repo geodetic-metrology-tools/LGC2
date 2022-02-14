@@ -7,7 +7,7 @@
 #include "TLSInputMatrices.h"
 #include "TSparseMatrix.h"
 #include <TConstants.h>
-
+#include <vector>
 
 #ifndef isnotanumber
 #define isnotanumber(x) ((x)!=(x))
@@ -33,6 +33,20 @@ fGValue(nullptr)
 // destructor
 /////////////
 TLGCStatistic::~TLGCStatistic(){
+}
+
+void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fZ", std::vector<double>(fZ->data(), fZ->data() + fZ->size()));
+	obj.addProperty("fW", std::vector<double>(fW->data(), fW->data() + fW->size()));
+	obj.addProperty("fDelty", std::vector<double>(fDelty->data(), fDelty->data() + fDelty->size()));
+	obj.addProperty("fNablaValue", std::vector<double>(fNablaValue->data(), fNablaValue->data() + fNablaValue->size()));
+	obj.addProperty("fGValue", std::vector<double>(fGValue->data(), fGValue->data() + fGValue->size()));
+	obj.addProperty("fOverall", fOverall);
+	obj.addProperty("fAreDetermined", std::vector<double>(fAreDetermined->data(), fAreDetermined->data() + fAreDetermined->size()));
+	obj.addProperty("fWToCompute", fWToCompute);
+	obj.addProperty("fGToCompute", std::vector<double>(fGToCompute->data(), fGToCompute->data() + fGToCompute->size()));
+	obj.addProperty("fDeltaComputed", std::vector<double>(fDeltaComputed->data(), fDeltaComputed->data() + fDeltaComputed->size()));
 }
 
 

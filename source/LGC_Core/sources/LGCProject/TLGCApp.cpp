@@ -185,7 +185,8 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
         writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
 
 	// Write data YAML file
-	writeYamlFile(dat, outputFileLocation);
+    if(conf.writeSerializedObject.isActive())
+		writeYamlFile(dat, outputFileLocation);
 }
 
 void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)

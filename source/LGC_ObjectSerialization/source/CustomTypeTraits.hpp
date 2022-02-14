@@ -15,7 +15,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 template<class...>
 struct make_void { using type = void; };
 template<typename... T> using void_t = typename make_void<T...>::type;
-
 template<class, class T>
 struct type_sink { typedef T type; };
 template<class E, class T = void>
@@ -45,17 +44,11 @@ T* to_ptr(T* obj) { return obj; } // pointer to pointer
 /* ######### CUSTOM TYPE TRAITS ######### */
 // is pair
 template<class T>
-struct is_pair : std::false_type
-{
-};
+struct is_pair : std::false_type {};
 template<class T, class U>
-struct is_pair<std::pair<T, U>> : std::true_type
-{
-};
+struct is_pair<std::pair<T, U>> : std::true_type {};
 template<class T>
-struct is_pair_t : is_pair<typename std::decay<T>::type>
-{
-};
+struct is_pair_t : is_pair<typename std::decay<T>::type> {};
 
 // is map
 template<class T, class = void>

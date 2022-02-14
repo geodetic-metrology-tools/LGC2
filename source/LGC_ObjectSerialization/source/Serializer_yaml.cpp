@@ -1,14 +1,15 @@
 #include "Serializer_yaml.hpp"
+
 #include <yaml-cpp/stlemitter.h>
 
 std::string yamlSerializerObject::getStringRepresentation()
 {
 	if (doc.good())
 		return doc.c_str();
-	return "ERROR";
+	return "SERIALIZATION_ERROR";
 }
 
-void yamlSerializerObject::startObject(const std::string& name)
+void yamlSerializerObject::startObject(const std::string &name)
 {
 	doc << YAML::Key << name << YAML::BeginMap;
 }
@@ -23,7 +24,7 @@ void yamlSerializerObject::endObject()
 	doc << YAML::EndMap;
 }
 
-void yamlSerializerObject::startArray(const std::string& name)
+void yamlSerializerObject::startArray(const std::string &name)
 {
 	doc << YAML::Key << name << YAML::BeginSeq;
 }
@@ -38,7 +39,7 @@ void yamlSerializerObject::endArray()
 	doc << YAML::EndSeq;
 }
 
-void yamlSerializerObject::startPrimitive(const std::string& name)
+void yamlSerializerObject::startPrimitive(const std::string &name)
 {
 	doc << YAML::Key << name << YAML::Value;
 }

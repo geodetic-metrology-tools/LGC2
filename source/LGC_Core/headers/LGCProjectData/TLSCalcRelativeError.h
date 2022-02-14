@@ -40,6 +40,9 @@ public:
 		virtual ~TLSCalcRelativeError();
 	//@}
 
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+
 	/*! Overloaded equality operator */
 	bool operator==(const TLSCalcRelativeError& right);
 
@@ -108,9 +111,6 @@ private:
 	TLength			fSigmaR; /*!< radial (transversal) error */
 	TLength			fSigmaZ; /*!< error in the height difference*/
 	TAngle			fSigmaV; /*!< error in the vertical angle */
-
-	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
 	//@}
 };
 

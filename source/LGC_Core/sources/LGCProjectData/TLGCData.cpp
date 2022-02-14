@@ -777,10 +777,11 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
-	//obj.addProperty("LSRelErrorsContainer/ListOfRelativeErrors", fRelError);
+	obj.addProperty("LSRelErrorsContainer/ListOfRelativeErrors", fRelError);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("TPointGlobal/CounterOfPoints", fPointInfo);
 	obj.addProperty("TMeasurementsGlobal/CounterOfMeasures", fMeasInfo);
+	obj.addProperty("TLGCStatistic", stat);
 }
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const
