@@ -34,7 +34,7 @@ namespace tut
 	template<>
 	void testobject::test<1>()
 	{
-		set_test_name("Serializer_yaml: Primitives");
+		set_test_name("Serializer_yaml: Primitives and containers serialization test");
 
 		serobj.addProperty("t1_header", std::string("I am the header!"));
 		serobj.addProperty("t2_vec", std::vector<int>{1, 2, 3, 4});
@@ -123,7 +123,7 @@ t13_pairvecmaplistpair:
 	template<>
 	void testobject::test<2>()
 	{
-		set_test_name("Serializer_yaml: Custom Classes");
+		set_test_name("Serializer_yaml: Custom Classes, `serialize` method test");
 
 		class PrecisionData : public Serializable
 		{
@@ -201,6 +201,93 @@ t13_pairvecmaplistpair:
       - 1.22
       - 1.3
       - 1.5)""",
+			ser.getStringRepresentation());
+	}
+
+	template<>
+	template<>
+	void testobject::test<3>()
+	{
+		set_test_name("Serializer_yaml: container of Custom classes, treating pointers and references the same");
+
+		class Point : public Serializable
+		{
+		public:
+			Point(int precision, int x, int y, std::string name, std::vector<double> coefficients) : precision(precision), x(x), y(y), name(name), coefficients(coefficients) {}
+
+			virtual void serialize(SerializerObject::SerializationHelper& obj) const override {
+				obj.addProperty("precision", precision);
+				obj.addProperty("x", x);
+				obj.addProperty("y", y);
+				obj.addProperty("name", name);
+				obj.addProperty("coefficients", coefficients);
+			}
+
+		private:
+			int precision;
+			int x;
+			int y;
+			std::string name;
+			std::vector<double> coefficients;
+		};
+
+		std::vector<std::pair<std::string, Point>> points{
+			{"p1", {1, 2, 3, "point1", {1, 2}}},
+			{"p2", {1, 2, 3, "point2", {1, 2, 3}}},
+			{"p3", {1, 2, 3, "point3", {}}},
+			{"p4", {1, 2, 3, "point4", {1, 2, 3, 4, 5, 6}}},
+		};
+		std::vector < std::pair<std::string, Point*>> points_pointer{
+			{"p1", new Point(1, 2, 3, "point1", {1, 2})},
+			{"p2", new Point(1, 2, 3, "point2", {1, 2, 3})},
+			{"p3", new Point(1, 2, 3, "point3", {})},
+			{"p4", new Point(1, 2, 3, "point4", {1, 2, 3, 4, 5, 6})},
+		};
+
+		serobj.addProperty("reference_vs_pointer", points);
+
+		yamlSerializerObject ser2;
+		SerializerObject::SerializationHelper serobj2 = ser2.getSerializationHelper("Test");
+		serobj2.addProperty("reference_vs_pointer", points_pointer);
+
+		ensure_equals(ser.getStringRepresentation(), ser2.getStringRepresentation());
+		ensure_equals(test_header + R"""(reference_vs_pointer:
+  p1:
+    precision: 1
+    x: 2
+    y: 3
+    name: point1
+    coefficients:
+      - 1
+      - 2
+  p2:
+    precision: 1
+    x: 2
+    y: 3
+    name: point2
+    coefficients:
+      - 1
+      - 2
+      - 3
+  p3:
+    precision: 1
+    x: 2
+    y: 3
+    name: point3
+    coefficients:
+      []
+  p4:
+    precision: 1
+    x: 2
+    y: 3
+    name: point4
+    coefficients:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6)""",
 			ser.getStringRepresentation());
 	}
 

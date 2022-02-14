@@ -16,7 +16,8 @@ public:
 	class SerializationHelper
 	{
 	public:
-		SerializationHelper(SerializerObject& ser, const std::string& name) : ser(ser) { ser.startObject(name); }
+		SerializationHelper(SerializerObject& ser, const std::string& name) : ser(ser), isSubObject(true) { ser.startObject(name); }
+		SerializationHelper(SerializerObject& ser) : ser(ser) { ser.startObject(); }
 		~SerializationHelper() { ser.endObject(); }
 
 		template<typename T>
@@ -27,10 +28,12 @@ public:
 
 	protected:
 		SerializerObject& ser;
+		bool isSubObject = false;
 	};
 
 public:
 	SerializationHelper getSerializationHelper(const std::string& objectName) { return SerializationHelper(*this, objectName); }
+	SerializationHelper getSerializationHelper() { return SerializationHelper(*this); }
 	virtual std::string getStringRepresentation() = 0;
 
 protected:
@@ -59,7 +62,7 @@ protected:
 	// ADD PROPERTY
 	// Primitive
 	template<typename T>
-	typename std::enable_if<!std::is_base_of<Serializable, T>::value
+	typename std::enable_if<!is_Serializable<T>::value
 		&& !is_pair_t<T>::value
 		&& ((is_iterable_container<T>::value&& is_string<T>::value)
 			|| !is_iterable_container<T>::value)>::type
@@ -71,14 +74,21 @@ protected:
 	}
 	// Serializable class
 	template<typename T>
-	typename std::enable_if<std::is_base_of<Serializable, T>::value>::type addProperty(const std::string& name, const T& o)
+	typename std::enable_if<is_Serializable<T>::value>::type addProperty(const std::string& name, const T& o)
 	{
 		SerializerObject::SerializationHelper serHelper = getSerializationHelper(name); // implicit startObject
-		o.serialize(serHelper); // implicit endObject in destructor
+		to_ptr(o)->serialize(serHelper); // implicit endObject in destructor
+	}
+	// Serializable class
+	template<typename T>
+	typename std::enable_if<is_Serializable<T>::value>::type addProperty(const T& o)
+	{
+		SerializerObject::SerializationHelper serHelper = getSerializationHelper(); // implicit startObject
+		to_ptr(o)->serialize(serHelper); // implicit endObject in destructor
 	}
 	// Map, and container of maps/pairs
 	template<typename T>
-	typename std::enable_if<!std::is_base_of<Serializable, T>::value
+	typename std::enable_if<!is_Serializable<T>::value
 		&& !is_string<T>::value
 		&& is_iterable_container<T>::value
 		&& (has_mapped_type<T>::value
@@ -91,7 +101,7 @@ protected:
 	}
 	// Map, and container of maps/pairs (overload to dynamically adjust the type for nested structures)
 	template<typename T>
-	typename std::enable_if<!std::is_base_of<Serializable, T>::value
+	typename std::enable_if<!is_Serializable<T>::value
 		&& !is_string<T>::value
 		&& is_iterable_container<T>::value
 		&& (has_mapped_type<T>::value
@@ -113,7 +123,7 @@ protected:
 	}
 	// Container (no maps, no pairs in subiterable)
 	template<typename T>
-	typename std::enable_if<!std::is_base_of<Serializable, T>::value
+	typename std::enable_if<!is_Serializable<T>::value
 		&& !is_string<T>::value&& is_iterable_container<T>::value
 		&& (!has_mapped_type<T>::value
 			&& !is_pair_t<T>::value
@@ -134,10 +144,11 @@ protected:
 	{
 		addProperty(p.first, p.second);
 	}
-	// If subelement container (adapt the type  (i.e. Object/Array) depending on the container type
+	// If Serializable elements or elements are also containers (adapt the type  (i.e. Object/Array) depending on the container type)
 	template<typename T>
 	typename std::enable_if<is_iterable_container<T>::value
-		&& is_iterable_container<typename T::value_type>::value>::type addValue(const T& container)
+		&& (is_iterable_container<typename T::value_type>::value
+			|| is_Serializable<typename T::value_type>::value)>::type addValue(const T& container)
 	{
 		for (const auto& t : container)
 			addProperty(t);
@@ -145,7 +156,8 @@ protected:
 	// If basic element - primitive or pair - just addValue
 	template<typename T>
 	typename std::enable_if<is_iterable_container<T>::value
-		&& !is_iterable_container<typename T::value_type>::value>::type addValue(const T& container)
+		&& !is_iterable_container<typename T::value_type>::value
+		&& !is_Serializable<typename T::value_type>::value>::type addValue(const T& container)
 	{
 		for (const auto& t : container)
 			addValue(t);

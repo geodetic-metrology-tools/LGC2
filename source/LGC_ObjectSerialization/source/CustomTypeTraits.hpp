@@ -36,6 +36,11 @@ struct inner_type<T, void_t<typename T::value_type>>
 template<class T>
 using inner_type_t = typename inner_type<T>::type;
 
+// Regardless of type treat it as a pointer
+template<typename T>
+T* to_ptr(T& obj) { return &obj; } // ref to point
+template<typename T>
+T* to_ptr(T* obj) { return obj; } // pointer to pointer
 
 /* ######### CUSTOM TYPE TRAITS ######### */
 // is pair
@@ -57,6 +62,17 @@ template<class T, class = void>
 struct has_mapped_type : std::false_type {};
 template<class T>
 struct has_mapped_type<T, type_sink_t<typename T::mapped_type>> : std::true_type {};
+
+// is Serializable class, pointer or not
+class Serializable;
+template<class T, class = void>
+struct is_Serializable : std::false_type {};
+template<typename T>
+struct is_Serializable<T, typename std::enable_if<
+	std::is_base_of<Serializable, T>::value
+	|| std::is_base_of<Serializable, typename std::remove_pointer<T>::type>::value
+>::type> : std::true_type {};
+
 
 // is iterable
 template<class T, class = void>
