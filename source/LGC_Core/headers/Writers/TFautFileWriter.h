@@ -60,6 +60,8 @@ private:
 
 	/// Total reliability if possible 
 		void	writeOverallReliability(TLGCData const * const project);
+	/// Network Degrees of freedom (DOF)
+		void    writeNetworkDOF(TLGCData const* const project);
 
 	/*!@name Private Attribute*/
 	//@{

@@ -49,7 +49,9 @@ public:
 	const TVector&			getGi() const {return *fGValue.get();}
 	/// Returns the global reliability
 	const TReal				getOVERALL() const {return fOverall;}
-	 //@}
+	/// Returns the degrees of freedom
+	const TReal				getDOF() const {return fDegreesOfFreedom;}
+	//@}
 
 	/// Returns TRUE if reliabilities have been calculated
 	bool		getAreDetermined(int index) const {return (*fAreDetermined)(index) != 0;}
@@ -71,6 +73,8 @@ public:
 private:
 	///Calculate the overall
 	void    calcOverall(int nbObs);
+	///Calculate the degrees of freedom
+	void    calcDegreesOfFreedom(int nbObs);
 
 	std::string			fError;		/*!< errors during calculation */
 
@@ -84,6 +88,7 @@ private:
 	std::unique_ptr<TVector>		fNablaValue; /*!< Value for greatest undetected error */
 	std::unique_ptr<TVector>		fGValue; /*!< Value for estimation of the gross-error made with the statistic wi */
 	TReal							fOverall; /*!< global network reliability */
+	TReal							fDegreesOfFreedom; /*!< network degrees of freedom */
 
 	std::unique_ptr<TVector>		fAreDetermined; /*!< indicates if the error detection params can be computed */
 	bool							fWToCompute; /*!< Indicates if the w param is to compute: false if simulation */
