@@ -155,6 +155,8 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 	else
 		calcOverall(nbObs);
 
+	calcDegreesOfFreedom(nbObs);
+
 	return;
 }
 
@@ -182,6 +184,25 @@ void    TLGCStatistic::calcOverall(int nbObs)
 	
 }
 
+
+void TLGCStatistic::calcDegreesOfFreedom(int nbObs)
+{
+	fDegreesOfFreedom = 0.0;
+	int i = 0;
+	while (i < nbObs)
+	{
+		if (fAreDetermined->coeff(i))
+		{
+			// Sum of the elements of the fZ vector (fZ->coeff(i)) for each observation i (see above the line '(*fZ)(i) = Z.coeff(i, i);').
+			// The fZ vector consists of the diagonal elements of the matrix Z = Qvv * P (see above the line 'Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());'). 
+			fDegreesOfFreedom += fZ->coeff(i);
+		}
+		i++;
+	}
+	return;
+}
+
+
 TLGCStatistic& TLGCStatistic::operator=(const TLGCStatistic &other) {
     if(this == &other)
         return *this;
@@ -194,6 +215,7 @@ TLGCStatistic& TLGCStatistic::operator=(const TLGCStatistic &other) {
     fNablaValue.reset(other.fNablaValue ? new TVector(*other.fNablaValue) : nullptr);
     fGValue.reset(other.fGValue ? new TVector(*other.fGValue) : nullptr);
     fOverall = other.fOverall;
+	fDegreesOfFreedom = other.fDegreesOfFreedom;
 
     fAreDetermined.reset(other.fAreDetermined ? new TVector(*other.fAreDetermined) : nullptr);
     fWToCompute = other.fWToCompute;

@@ -53,6 +53,7 @@ void	TFautFileWriter::writeFile(TLGCData const * const ds)
 	}
 
 	this->writeOverallReliability(ds);
+	this->writeNetworkDOF(ds);
 }
 
 void TFautFileWriter::writeFile(const std::string error)
@@ -147,9 +148,10 @@ void	TFautFileWriter::writeDataSummary()
 
 }
 
-void	TFautFileWriter::writeOverallReliability(TLGCData const * const project)
+
+void	TFautFileWriter::writeOverallReliability(TLGCData const* const project)
 {
-	TAStreamFormatter* stream =	getStream();
+	TAStreamFormatter* stream = getStream();
 	std::string separator = getSeparator();
 
 	TDouble F(project->getStatistics().getOVERALL());
@@ -161,10 +163,25 @@ void	TFautFileWriter::writeOverallReliability(TLGCData const * const project)
 		stream->precision(4);
 		(*stream) << right << F.getValue() << " * * *";
 	}
-	else 
+	else
 	{
 		(*stream) << "* * * INDETERMINATE OVERALL NETWORK RELIABILITY FACTOR * * *";
 	}
 	(*stream) << endl << endl;
 }
 
+
+void	TFautFileWriter::writeNetworkDOF(TLGCData const* const project)
+{
+	TAStreamFormatter* stream = getStream();
+	std::string separator = getSeparator();
+
+	TDouble F(project->getStatistics().getDOF());
+
+	(*stream) << "\n\n" << "* * * NETWORK DEGREES OF FREEDOM: " << separator;
+	stream->width(stream->getObsFormat()->getObsResidualWidth());
+	stream->precision(0);
+	(*stream) << right << F.getValue() << " * * *";
+
+	(*stream) << endl << endl;
+}
