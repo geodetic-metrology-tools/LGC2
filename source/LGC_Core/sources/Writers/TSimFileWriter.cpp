@@ -468,7 +468,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 			case TSpatialStatus::ESpatialStatus::kVz:
 				if (firstVZ)
 				{
-					firstCALA = false;
+					firstVZ = false;
 					(*stream) << "*VZ" << endl;
 				}
 				writeXYZorH(point);
