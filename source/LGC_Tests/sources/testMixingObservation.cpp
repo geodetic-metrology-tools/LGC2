@@ -115,12 +115,14 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		//results with lgc1: 99.9347599     99.9416635     99.9270390
 		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
-      ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.9347599, 1e-7);
-      ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 99.9416635, 1e-7);
-      ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.9270390, 1e-7);
- 	}
+
+		// Results for TSTN ICSE value = 1.0, after the bug fix decribed in SUS-1880.
+
+		ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.9347090, 1e-7);
+		ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 99.9417144, 1e-7);
+		ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.9270390, 1e-7);
+	}
 
 	template<>
 	template<>
