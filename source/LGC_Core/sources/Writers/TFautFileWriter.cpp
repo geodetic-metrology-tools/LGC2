@@ -156,18 +156,17 @@ void	TFautFileWriter::writeOverallReliability(TLGCData const* const project)
 
 	TDouble F(project->getStatistics().getOVERALL());
 
-	if (F.getValue() != NO_VALf)
+	if (!isnan(F.getValue()))
 	{
-		(*stream) << "* * * OVERALL NETWORK RELIABILITY FACTOR: " << separator;
+		(*stream) << "\n\n" << "* * * OVERALL NETWORK RELIABILITY FACTOR: " << separator;
 		stream->width(stream->getObsFormat()->getObsResidualWidth());
 		stream->precision(4);
 		(*stream) << right << F.getValue() << " * * *";
 	}
 	else
 	{
-		(*stream) << "* * * INDETERMINATE OVERALL NETWORK RELIABILITY FACTOR * * *";
+		(*stream) << "\n\n" << "* * * INDETERMINATE OVERALL NETWORK RELIABILITY FACTOR * * *";
 	}
-	(*stream) << endl << endl;
 }
 
 
