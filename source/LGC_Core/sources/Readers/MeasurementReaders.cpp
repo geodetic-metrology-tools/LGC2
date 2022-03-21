@@ -71,7 +71,7 @@ void TKeyTSTN::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	tstn->rot3D = opts.has("ROT3D");
 
 	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
-	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
+	instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
 
 	//emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);

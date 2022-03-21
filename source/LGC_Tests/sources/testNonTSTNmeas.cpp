@@ -349,30 +349,26 @@ namespace tut
 
 		const TLGCData& dataset = calcul.getData();
 
-		// Results with LGC1
-		/*              X            Y            Z              H
-		  PT     -934.3289435    10514.1302755     2413.7946543      419.9998124  0.6305   1.0423   0.0704
-		 PT2     -895.6502606    10421.8383549     2413.0328245      419.1000422  0.7538   1.4660   0.0706
-		V0 = 399.9999208  => we expected here 0.02349 gon
-		*/
+		// Results for TSTN ICSE value = 1.0, after the bug fix decribed in SUS-1880.
+
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match",PT.getX().getMetresValue(), -934.3289435  , 1e-7);
-		ensure_equals("Pt y coordinate should match",PT.getY().getMetresValue(), 10514.1302755, 1e-7);
-		ensure_equals("Pt z coordinate should match",PT.getZ().getMetresValue(), 2413.7946543   , 1e-7);
+		ensure_equals("PT x coordinate should match", PT.getX().getMetresValue(), -934.3289437, 1e-7);
+		ensure_equals("PT y coordinate should match", PT.getY().getMetresValue(), 10514.1302754, 1e-7);
+		ensure_equals("PT z coordinate should match", PT.getZ().getMetresValue(), 2413.7946543, 1e-7);
 		//sigma are store in m in lgc2
-		ensure_equals("Pt sx should match",dataset.getPoints().getObject("PT").getXEstPrecision(), 0.00063  , 1e-5);
-		ensure_equals("Pt sy should match",dataset.getPoints().getObject("PT").getYEstPrecision(), 0.00104, 1e-5);
-		ensure_equals("Pt sz should match",dataset.getPoints().getObject("PT").getZEstPrecision(), 0.00007  , 1e-5);
+		ensure_equals("PT sx should match", dataset.getPoints().getObject("PT").getXEstPrecision(), 0.001244, 1e-5);
+		ensure_equals("PT sy should match", dataset.getPoints().getObject("PT").getYEstPrecision(), 0.001714, 1e-5);
+		ensure_equals("PT sz should match", dataset.getPoints().getObject("PT").getZEstPrecision(), 0.000071, 1e-5);
 
 		TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
-		ensure_equals("Pt x coordinate should match",PT2.getX().getMetresValue(), -895.6502606, 1e-7);
-		ensure_equals("Pt y coordinate should match",PT2.getY().getMetresValue(), 10421.8383549, 1e-7);
-		ensure_equals("Pt z coordinate should match",PT2.getZ().getMetresValue(), 2413.0328245  , 1e-7);
+		ensure_equals("PT2 x coordinate should match", PT2.getX().getMetresValue(), -895.6502597, 1e-7);
+		ensure_equals("PT2 y coordinate should match", PT2.getY().getMetresValue(), 10421.8383546, 1e-7);
+		ensure_equals("PT2 z coordinate should match", PT2.getZ().getMetresValue(), 2413.0328245, 1e-7);
 		//sigma are store in m in lgc2
-		ensure_equals("PT2 sx should match",dataset.getPoints().getObject("PT2").getXEstPrecision(), 0.00075  , 1e-5);
-		ensure_equals("PT2 sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision(), 0.00147, 1e-5);
-		ensure_equals("PT2 sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision(), 0.00007  , 1e-5);
-		
+		ensure_equals("PT2 sx should match", dataset.getPoints().getObject("PT2").getXEstPrecision(), 0.001362, 1e-5);
+		ensure_equals("PT2 sy should match", dataset.getPoints().getObject("PT2").getYEstPrecision(), 0.002205, 1e-5);
+		ensure_equals("PT2 sz should match", dataset.getPoints().getObject("PT2").getZEstPrecision(), 0.000071, 1e-5);
+
 		//TReal ST1_V0 = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
 		//ensure_equals("V0 calculation should match for total station ST1", ST1_V0, 0.02349, 1e-5);
 	}

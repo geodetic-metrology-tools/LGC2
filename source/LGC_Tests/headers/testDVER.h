@@ -116,9 +116,9 @@ namespace TestDVER {
 	"Testing Input Matrices Filler.\n"
 	"*RS2K\n"
 	"*FAUT\n"
-
+	"*PREC 7\n"
 	"*INSTR\n"
-	"*POLAR TS1 T1 0.0 0.1 0.1 0\n"
+	"*POLAR TS1 T1 0.0 0.1 1.0 0\n"
 	"T1  5  5  0.5  0.0	  0  0.0  0.0  0.0  0.0  0.0 \n"
 
 	"*CALA\n"
