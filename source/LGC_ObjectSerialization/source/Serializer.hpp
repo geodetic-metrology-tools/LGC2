@@ -76,6 +76,9 @@ public:
 	 * @param objectName of the new object/structure, if empty - a new object without name is assumed that is most likely an element of some container
 	 */
 	SerializationHelper getSerializationHelper(const std::string &objectName = std::string()) { return SerializationHelper(*this, objectName); }
+	/**
+	* Get string representation of the serialized contents.
+	*/
 	virtual std::string getStringRepresentation() = 0;
 
 protected:
@@ -90,20 +93,10 @@ protected:
 	virtual void startPrimitive(const std::string &name) = 0;
 	virtual void endPrimitive() = 0;
 
-	// value related
-	virtual void addValue(int value) = 0;
-	virtual void addValue(double value) = 0;
-	virtual void addValue(float value) = 0;
-	virtual void addValue(char value) = 0;
-	virtual void addValue(wchar_t value) = 0;
-	virtual void addValue(bool value) = 0;
-	virtual void addValue(const std::string &value) = 0;
-	virtual void addValue(const char *value) = 0;
-
 	/* *************** */
 	/*   ADD_PROPERTY  */
 	/* *************** */
-	//		Add some new property, can be primitive, Serializable, map/container of maps, pair, container
+	//	Add some new property, can be primitive, Serializable, map/container of maps, pair, container
 
 	// clang-format off
 	// Primitive - !Serializable && !pair && !pointer && ((container && is_string) || !container))
@@ -173,7 +166,7 @@ protected:
 		// clang-format on
 		addProperty(const T &value, const std::string &name = std::string())
 	{
-		name.empty() ? startObject() : startArray(name);
+		name.empty() ? startArray() : startArray(name);
 		addValue(value);
 		endArray();
 	}
@@ -181,7 +174,17 @@ protected:
 	/* ************** */
 	/*    ADD_VALUE   */
 	/* ************** */
-	// 	   Helpers to dispatch the types based on the sub-element (pair or container)
+	// Helpers to dispatch the types based on the sub-element (pair or container)
+
+	// primitive value related
+	virtual void addValue(int value) = 0;
+	virtual void addValue(double value) = 0;
+	virtual void addValue(float value) = 0;
+	virtual void addValue(char value) = 0;
+	virtual void addValue(wchar_t value) = 0;
+	virtual void addValue(bool value) = 0;
+	virtual void addValue(const std::string &value) = 0;
+	virtual void addValue(const char *value) = 0;
 
 	// Pair - make an object of it
 	template<typename K, typename V>

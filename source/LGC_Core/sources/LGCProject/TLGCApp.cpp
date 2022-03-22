@@ -14,6 +14,7 @@
 #include <Logger.hpp>
 #include <TLGCData.h>
 #include <Serializer_yaml.hpp>
+#include <Serializer_json.hpp>
 
 
 
@@ -185,8 +186,8 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
         writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
 
 	// Write data YAML file
-    if(conf.writeSerializedObject.isActive())
-		writeYamlFile(dat, outputFileLocation);
+	if (conf.writeSerializedObject.isActive())
+		writeJsonFile(dat, outputFileLocation);
 }
 
 void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
@@ -323,6 +324,16 @@ void TLGCApp::writeYamlFile(TLGCData const* const dat, const std::string& output
 	obj.addProperty("LGC_DATA", *dat);
 
 	std::ofstream fout(outputFileLocation+".yaml");
+	fout << ser.getStringRepresentation();
+}
+
+void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+{
+	jsonSerializerObject ser;
+	SerializerObject::SerializationHelper obj = ser.getSerializationHelper(outputFileLocation);
+	obj.addProperty("LGC_DATA", *dat);
+
+	std::ofstream fout(outputFileLocation + ".json");
 	fout << ser.getStringRepresentation();
 }
 

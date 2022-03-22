@@ -5,33 +5,32 @@
 
 #include <tut/tut.hpp>
 
-#include "Serializer_yaml.hpp"
+#include "Serializer_json.hpp"
 
 namespace tut
 {
-struct yaml_shared_data
+struct json_shared_data
 {
-	yamlSerializerObject ser;
+	jsonSerializerObject ser;
 	SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
-	const std::string yaml_header = "---\n";
 };
 
-typedef test_group<yaml_shared_data> tg;
-tg yamlSerializerObject_test_group("Test Serializer_yaml class.");
+typedef test_group<json_shared_data> tg;
+tg jsonSerializerObject_test_group("Test Serializer_json class.");
 typedef tg::object testobject;
 } // namespace tut
 
 namespace tut
 {
 /* *********************** */
-/*     YAML SERIALIZER     */
+/*     JSON SERIALIZER     */
 /* *********************** */
 
 template<>
 template<>
 void testobject::test<1>()
 {
-	set_test_name("Serializer_yaml: Primitives and containers serialization test");
+	set_test_name("Serializer_json: Primitives and containers serialization test");
 
 	serobj.addProperty("t1_header", std::string("I am the header!"));
 	serobj.addProperty("t2_vec", std::vector<int>{1, 2, 3, 4});
@@ -53,66 +52,7 @@ void testobject::test<1>()
 				{{"map3key1", {{"pair1", 1}}}, {"map3key2", {{"pair1", 1}}}, {"map3key3", {{"pair1", 1}}}, {"map3key4", {{"pair1", 1}}}},
 			}});
 
-	ensure_equals(yaml_header + R"""(t1_header: I am the header!
-t2_vec:
-  - 1
-  - 2
-  - 3
-  - 4
-t3_int: 1
-t4_str: cstyle
-t5_strstd: std
-t6_list:
-  - 1
-  - 2
-  - 3
-t7_map:
-  bar: 3
-  foo: 42
-t8_mapvec:
-  bar:
-    - 3
-    - 5
-  foo:
-    - 42
-    - 1
-    - 2
-t9_pair:
-  pairkey: pairvalue
-t10_vecpair:
-  pair1: true
-  pair2: false
-t11_pairvecpair:
-  pairTop:
-    pairsub1: true
-    pairsub2: false
-t12_listvecpair:
-  - pair1: true
-  - pair2: false
-  - pair31: true
-    pair32: false
-t13_pairvecmaplistpair:
-  toppair:
-    - map1key1:
-        pair1: 1
-        pair2: 2
-        pair3: 3
-      map2key2:
-        pair1: 1
-    - map2key1:
-        pair1: 1
-        pair2: 2
-        pair3: 3
-        pair4: 4
-        pair5: 5
-    - map3key1:
-        pair1: 1
-      map3key2:
-        pair1: 1
-      map3key3:
-        pair1: 1
-      map3key4:
-        pair1: 1)""",
+	ensure_equals(R"""({"t1_header":"I am the header!","t2_vec":[1,2,3,4],"t3_int":1,"t4_str":"cstyle","t5_strstd":"std","t6_list":[1.0,2.0,3.0],"t7_map":{"bar":3,"foo":42},"t8_mapvec":{"bar":[3,5],"foo":[42,1,2]},"t9_pair":{"pairkey":"pairvalue"},"t10_vecpair":{"pair1":true,"pair2":false},"t11_pairvecpair":{"pairTop":{"pairsub1":true,"pairsub2":false}},"t12_listvecpair":[{"pair1":true},{"pair2":false},{"pair31":true,"pair32":false}],"t13_pairvecmaplistpair":{"toppair":[{"map1key1":{"pair1":1,"pair2":2,"pair3":3},"map2key2":{"pair1":1}},{"map2key1":{"pair1":1,"pair2":2,"pair3":3,"pair4":4,"pair5":5}},{"map3key1":{"pair1":1},"map3key2":{"pair1":1},"map3key3":{"pair1":1},"map3key4":{"pair1":1}}]}})""",
 		ser.getStringRepresentation());
 }
 
@@ -120,7 +60,7 @@ template<>
 template<>
 void testobject::test<2>()
 {
-	set_test_name("Serializer_yaml: Serializable classes `serialize` method test");
+	set_test_name("Serializer_json: Serializable classes `serialize` method test");
 
 	class PrecisionData : public Serializable
 	{
@@ -172,32 +112,7 @@ void testobject::test<2>()
 	};
 
 	serobj.addProperty("Data", Data());
-	ensure_equals(yaml_header + R"""(Data:
-  input_name: input.lgc
-  output_name: output.lgc
-  origin: MLA
-  measures:
-    - 1
-    - 2
-    - 3
-    - 4
-  precision_scale:
-    precision: 5
-  precision_digit:
-    precision: 3
-  gridData:
-    grid:
-      - 10
-      - 20
-      - 30
-      - 40
-      - 50
-    grid_height:
-      - 1.2
-      - 1.25
-      - 1.22
-      - 1.3
-      - 1.5)""",
+	ensure_equals(R"""({"Data":{"input_name":"input.lgc","output_name":"output.lgc","origin":"MLA","measures":[1,2,3,4],"precision_scale":{"precision":5},"precision_digit":{"precision":3},"gridData":{"grid":[10,20,30,40,50],"grid_height":[1.2,1.25,1.22,1.3,1.5]}}})""",
 		ser.getStringRepresentation());
 }
 
@@ -205,7 +120,7 @@ template<>
 template<>
 void testobject::test<3>()
 {
-	set_test_name("Serializer_yaml: container of Serializable classes, pointer and reference test");
+	set_test_name("serializer_json: container of serializable classes, pointer and reference test");
 
 	class Point : public Serializable
 	{
@@ -246,48 +161,12 @@ void testobject::test<3>()
 
 	serobj.addProperty("reference_vs_pointer", points);
 
-	yamlSerializerObject ser2;
+	jsonSerializerObject ser2;
 	SerializerObject::SerializationHelper serobj2 = ser2.getSerializationHelper();
 	serobj2.addProperty("reference_vs_pointer", points_pointer);
 
 	ensure_equals(ser.getStringRepresentation(), ser2.getStringRepresentation());
-	ensure_equals(yaml_header + R"""(reference_vs_pointer:
-  p1:
-    precision: 1
-    x: 2
-    y: 3
-    name: point1
-    coefficients:
-      - 1
-      - 2
-  p2:
-    precision: 1
-    x: 2
-    y: 3
-    name: point2
-    coefficients:
-      - 1
-      - 2
-      - 3
-  p3:
-    precision: 1
-    x: 2
-    y: 3
-    name: point3
-    coefficients:
-      []
-  p4:
-    precision: 1
-    x: 2
-    y: 3
-    name: point4
-    coefficients:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6)""",
+	ensure_equals(R"""({"reference_vs_pointer":{"p1":{"precision":1,"x":2,"y":3,"name":"point1","coefficients":[1.0,2.0]},"p2":{"precision":1,"x":2,"y":3,"name":"point2","coefficients":[1.0,2.0,3.0]},"p3":{"precision":1,"x":2,"y":3,"name":"point3","coefficients":[]},"p4":{"precision":1,"x":2,"y":3,"name":"point4","coefficients":[1.0,2.0,3.0,4.0,5.0,6.0]}}})""",
 		ser.getStringRepresentation());
 }
 
@@ -295,12 +174,13 @@ template<>
 template<>
 void testobject::test<4>()
 {
-	set_test_name("Serializer_yaml: Primitive pointer");
+	set_test_name("Serializer_json: Primitive pointer");
 
 	double *pointer_double = new double(6);
 
 	serobj.addProperty("pointer_double", pointer_double);
-	ensure_equals(yaml_header + R"""(pointer_double: 6)""", ser.getStringRepresentation());
+	ensure_equals(R"""({"pointer_double":6.0})""",
+		ser.getStringRepresentation());
 
 	// cleanup - not ideal since ensure may fail
 	delete pointer_double;

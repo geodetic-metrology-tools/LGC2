@@ -3,18 +3,25 @@
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
-#ifndef _SERIALIZER_YAML
-#define _SERIALIZER_YAML
+#ifndef _SERIALIZER_JSON
+#define _SERIALIZER_JSON
 
 #include <memory>
 
 #include "Serializer.hpp"
 
-class yamlSerializerObject : public SerializerObject
+/**
+ * The main quirk of this Serializer is that due it is building the tree bottom-up (from the leaves) and when last element
+ * on the stack is meant to be finished (@endObject) then it is finally added to the document.
+ * Adding is invalidating the previous @rapidjson::Value but thanks to that there is no overhead (it is a move operation).
+ *
+ * This serializer is much faster than @Serializer_yaml.
+ */
+class jsonSerializerObject : public SerializerObject
 {
 public:
-	yamlSerializerObject();
-	~yamlSerializerObject();
+	jsonSerializerObject();
+	~jsonSerializerObject();
 
 	virtual std::string getStringRepresentation() override;
 
@@ -26,7 +33,7 @@ protected:
 	virtual void startArray() override;
 	virtual void endArray() override;
 	virtual void startPrimitive(const std::string &name) override;
-	virtual void endPrimitive() override {}
+	virtual void endPrimitive() override;
 
 	virtual void addValue(int value) override;
 	virtual void addValue(double value) override;
@@ -39,8 +46,8 @@ protected:
 
 private:
 	/** pimpl */
-	class _yamlSerializerObject_pimpl;
-	std::unique_ptr<_yamlSerializerObject_pimpl> _pimpl;
+	class _jsonSerializerObject_pimpl;
+	std::unique_ptr<_jsonSerializerObject_pimpl> _pimpl;
 };
 
 #endif

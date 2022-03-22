@@ -6,6 +6,7 @@ set(tests_HEADERS
 # Create a variable containing all .cpp files:
 set(tests_SOURCES
 	main.cpp
+	test_Serializer_json.cpp
 	test_Serializer_yaml.cpp
 )
 
