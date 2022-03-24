@@ -382,7 +382,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
     stream<<endl;
  
     // NUMBER OF ITERATIONS
-    stream<<"	NOMBRE D'ITERATIONS =     "<<fProjectData->getNumberOfLSIterations();
+    stream<<"	NOMBRE D'ITERATIONS =    "<<fProjectData->getNumberOfLSIterations();
     stream<<endl<<endl;
  
     //RESEAU COMPLETEMENT LIBRE ?

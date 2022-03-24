@@ -122,7 +122,7 @@ namespace {
 	const int nb_allowed_orie = 14;
 	const int nb_allowed_radi = 14;
 	const int nb_allowed_OBSXYZ = 15;
-	const int nb_allowed_incly = 15;
+	const int nb_allowed_incly = 16;
 	//points
 	const int nb_allowed_cala = 20;
 	const int nb_allowed_poin = 20;
@@ -243,7 +243,7 @@ namespace {
 	const char* allowed_ORIE[nb_allowed_orie] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY };
 	const char* allowed_RADI[nb_allowed_radi] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY };
 	const char* allowed_OBSXYZ[nb_allowed_OBSXYZ] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, POIN,INCLY };
-	const char* allowed_INCLY[nb_allowed_incly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA,INCLY, POIN };
+	const char* allowed_INCLY[nb_allowed_incly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, INCLY, POIN, OBSXYZ };
 	//CALA & POIN & others point DEF
 	const char* allowed_CALA[nb_allowed_cala] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY };
 	const char* allowed_POIN[nb_allowed_poin] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY };
