@@ -7,6 +7,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #define _CUSTOM_TYPE_TRAITS
 
 #include <string>
+#include <memory>
 
 // clang-format off
 
@@ -86,6 +87,30 @@ struct is_string<T, typename std::enable_if<std::is_same_v<T, std::string> ||
 	std::is_same_v<char const *, typename std::decay<T>::type> || 
 	std::is_same_v<char *, typename std::decay<T>::type>
 	>::type> : std::true_type {};
+
+//// Pointers
+template <typename T>
+struct is_unique_ptr : std::false_type{};
+template <typename T>
+struct is_unique_ptr<std::unique_ptr<T>> : std::true_type{};
+template <typename T>
+struct is_shared_ptr : std::false_type{};
+template <typename T>
+struct is_shared_ptr<std::shared_ptr<T>> : std::true_type{};
+template <typename T>
+struct is_weak_ptr : std::false_type{};
+template <typename T>
+struct is_weak_ptr<std::weak_ptr<T>> : std::true_type{};
+
+template<typename T, class = void>
+struct is_any_pointer: std::false_type {};
+template<typename T>
+struct is_any_pointer<T, typename std::enable_if<
+	std::is_pointer<T>::value
+	|| is_weak_ptr<T>::value
+	|| is_shared_ptr<T>::value
+	|| is_unique_ptr<T>::value>
+::type> : std::true_type {};
 
 // clang-format on
 #endif

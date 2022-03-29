@@ -37,7 +37,9 @@ TLGCStatistic::~TLGCStatistic(){
 
 void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("fZ", std::vector<double>(fZ->data(), fZ->data() + fZ->size()));
+	//obj.addProperty("fZ", std::vector<double>(fZ->data(), fZ->data() + fZ->size()));
+	//obj.addProperty("fZ", fZ->data());
+	//obj.addProperty("fZ", fZ);
 	obj.addProperty("fW", std::vector<double>(fW->data(), fW->data() + fW->size()));
 	obj.addProperty("fDelty", std::vector<double>(fDelty->data(), fDelty->data() + fDelty->size()));
 	obj.addProperty("fNablaValue", std::vector<double>(fNablaValue->data(), fNablaValue->data() + fNablaValue->size()));

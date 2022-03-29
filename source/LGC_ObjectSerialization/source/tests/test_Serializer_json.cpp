@@ -5,6 +5,8 @@
 
 #include <tut/tut.hpp>
 
+#include <math.h>
+
 #include "Serializer_json.hpp"
 
 namespace tut
@@ -177,13 +179,26 @@ void testobject::test<4>()
 	set_test_name("Serializer_json: Primitive pointer");
 
 	double *pointer_double = new double(6);
+	std::unique_ptr<double> unique_double = std::make_unique<double>(6);
+	std::shared_ptr<double> shared_double = std::make_shared<double>(6);
 
 	serobj.addProperty("pointer_double", pointer_double);
-	ensure_equals(R"""({"pointer_double":6.0})""",
-		ser.getStringRepresentation());
+	serobj.addProperty("unique_double", unique_double);
+	serobj.addProperty("shared_double", shared_double);
+	ensure_equals(R"""({"pointer_double":6.0,"unique_double":6.0,"shared_double":6.0})""", ser.getStringRepresentation());
 
 	// cleanup - not ideal since ensure may fail
 	delete pointer_double;
+}
+
+template<>
+template<>
+void testobject::test<5>()
+{
+	set_test_name("Serializer_json: Nan test");
+
+	serobj.addProperty("Nan_is_not_valid_json", std::numeric_limits<double>::quiet_NaN());
+	ensure_equals(R"""({"Nan_is_not_valid_json":null})""", ser.getStringRepresentation());
 }
 
 } // namespace tut

@@ -298,9 +298,15 @@ void testobject::test<4>()
 	set_test_name("Serializer_yaml: Primitive pointer");
 
 	double *pointer_double = new double(6);
+	std::unique_ptr<double> unique_double = std::make_unique<double>(6);
+	std::shared_ptr<double> shared_double = std::make_shared<double>(6);
 
 	serobj.addProperty("pointer_double", pointer_double);
-	ensure_equals(yaml_header + R"""(pointer_double: 6)""", ser.getStringRepresentation());
+	serobj.addProperty("unique_double", unique_double);
+	serobj.addProperty("shared_double", shared_double);
+	ensure_equals(yaml_header + R"""(pointer_double: 6
+unique_double: 6
+shared_double: 6)""", ser.getStringRepresentation());
 
 	// cleanup - not ideal since ensure may fail
 	delete pointer_double;

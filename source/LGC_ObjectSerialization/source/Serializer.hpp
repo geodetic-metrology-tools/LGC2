@@ -103,7 +103,7 @@ protected:
 	template<typename T>
 	typename std::enable_if<!is_Serializable<T>::value 
 		&& !is_pair_t<T>::value 
-		&& !std::is_pointer<T>::value
+		&& !is_any_pointer<T>::value
 		&& ((is_iterable_container<T>::value 
 			&& is_string<T>::value) 
 			|| !is_iterable_container<T>::value)>::type
@@ -116,7 +116,7 @@ protected:
 	}
 	// Primitive pointer - !Serializable && is_pointer
 	template<typename T>
-	typename std::enable_if<!is_Serializable<T>::value && std::is_pointer<T>::value>::type
+	typename std::enable_if<!is_Serializable<T>::value && is_any_pointer<T>::value>::type
 		// clang-format on
 		addProperty(const T &value, const std::string &name = std::string())
 	{
