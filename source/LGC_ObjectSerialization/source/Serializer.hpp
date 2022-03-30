@@ -47,11 +47,11 @@ public:
 		 * @param name of the object, if empty - a new object without name is assumed that is most likely an element of some container
 		 * @param ser SerializerObject used for serialization
 		 */
-		SerializationHelper(SerializerObject &ser, const std::string &name = std::string()) : ser(ser) { name.empty() ? ser.startObject() : ser.startObject(name); }
+		SerializationHelper(SerializerObject &ser) : ser(ser) {}
 		/**
 		 * Calls @SerializerObject::endObject
 		 */
-		~SerializationHelper() { ser.endObject(); }
+		~SerializationHelper() {}
 
 		/**
 		 * Calls @addProperty methods of @SerializerObject with a templated argument
@@ -75,12 +75,13 @@ public:
 	 *
 	 * @param objectName of the new object/structure, if empty - a new object without name is assumed that is most likely an element of some container
 	 */
-	SerializationHelper getSerializationHelper(const std::string &objectName = std::string()) { return SerializationHelper(*this, objectName); }
+	SerializationHelper getSerializationHelper() { return SerializationHelper(*this); }
 	/**
 	* Get string representation of the serialized contents.
 	*/
 	virtual std::string getStringRepresentation() = 0;
 
+// clang-format on
 protected:
 	// Virtual functions
 	// structure related
@@ -107,68 +108,47 @@ protected:
 		&& ((is_iterable_container<T>::value 
 			&& is_string<T>::value) 
 			|| !is_iterable_container<T>::value)>::type
-		// clang-format on
 		addProperty(const T &value, const std::string &name = std::string())
 	{
 		startPrimitive(name);
 		addValue(value);
 		endPrimitive();
 	}
-	// Primitive pointer - !Serializable && is_pointer
+	// Primitive pointer
 	template<typename T>
-	typename std::enable_if<!is_Serializable<T>::value && is_any_pointer<T>::value>::type
+	typename std::enable_if<is_any_pointer<T>::value>::type
 		// clang-format on
 		addProperty(const T &value, const std::string &name = std::string())
 	{
-		startPrimitive(name);
-		addValue(*value);
-		endPrimitive();
+		addProperty(*value, name);
 	}
 	// Serializable class
 	template<typename T>
 	typename std::enable_if<is_Serializable<T>::value>::type addProperty(const T &o, const std::string &name = std::string())
 	{
-		SerializerObject::SerializationHelper serHelper = getSerializationHelper(name); // implicit startObject
-		to_ptr(o)->serialize(serHelper); // implicit endObject in destructor
+		startObject(name);
+		SerializerObject::SerializationHelper serHelper = getSerializationHelper();
+		to_ptr(o)->serialize(serHelper);
+		endObject();
 	}
-	// Map, and container of maps/pairs - !Serializable && !is_string && container && (is_map || element_is_pair)
-	// clang-format off
+	//// Container
 	template<typename T>
-	typename std::enable_if<!is_Serializable<T>::value 
-		&& !is_string<T>::value 
-		&& is_iterable_container<T>::value 
-		&& (has_mapped_type<T>::value 
-			|| is_pair_t<typename T::value_type>::value)>::type
+	typename std::enable_if<!is_string<T>::value 
+		&& is_iterable_container<T>::value>::type
 		// clang-format on
 		addProperty(const T &value, const std::string &name = std::string())
 	{
-		name.empty() ? startObject() : startObject(name);
+		startArray(name);
 		addValue(value);
-		endObject();
+		endArray();
 	}
 	// Pair
 	template<typename T>
 	typename std::enable_if<is_pair_t<T>::value>::type addProperty(const T &value, const std::string &name = std::string())
 	{
-		name.empty() ? startObject() : startObject(name);
+		startObject(name);
 		addValue(value);
 		endObject();
-	}
-	// Container (no maps, no pairs in subiterable) - !Serializable && !is_string && container && !is_map && !is_pair && !element_is_pair
-	// clang-format off
-	template<typename T>
-	typename std::enable_if<!is_Serializable<T>::value 
-		&& !is_string<T>::value 
-		&& is_iterable_container<T>::value
-		&& !has_mapped_type<T>::value 
-		&& !is_pair_t<T>::value 
-		&& !is_pair_t<typename T::value_type>::value>::type
-		// clang-format on
-		addProperty(const T &value, const std::string &name = std::string())
-	{
-		name.empty() ? startArray() : startArray(name);
-		addValue(value);
-		endArray();
 	}
 
 	/* ************** */
@@ -186,14 +166,13 @@ protected:
 	virtual void addValue(const std::string &value) = 0;
 	virtual void addValue(const char *value) = 0;
 
-	// Pair - make an object of it
+	// If pair
 	template<typename K, typename V>
 	void addValue(const std::pair<K, V> &p)
 	{
 		addProperty(p.second, p.first);
 	}
-	// If Serializable elements or elements are also containers (adapt the type  (i.e. Object/Array) depending on the container type)
-	// clang-format off
+	// If container of containers or Serializables
 	template<typename T>
 	typename std::enable_if<is_iterable_container<T>::value 
 		&& (is_iterable_container<typename T::value_type>::value 
@@ -204,8 +183,7 @@ protected:
 		for (const auto &t : container)
 			addProperty(t);
 	}
-	// If basic element - primitive or pair - just addValue
-	// clang-format off
+	// If container of primitives
 	template<typename T>
 	typename std::enable_if<is_iterable_container<T>::value 
 		&& !is_iterable_container<typename T::value_type>::value 
@@ -217,6 +195,8 @@ protected:
 			addValue(t);
 	}
 };
+// clang-format off
+
 
 class Serializable
 {

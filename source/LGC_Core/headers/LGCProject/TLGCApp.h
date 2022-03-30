@@ -77,7 +77,6 @@ class TLGCApp {
 		static void writeChabaFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
 
 		/// Write serialization files
-		static void writeYamlFile(TLGCData const* const dat, const std::string& outputFileLocation);
 		static void writeJsonFile(TLGCData const* const dat, const std::string &outputFileLocation);
 
 	private:

@@ -13,7 +13,6 @@
 #include "TChabaFileWriter.h"
 #include <Logger.hpp>
 #include <TLGCData.h>
-#include <Serializer_yaml.hpp>
 #include <Serializer_json.hpp>
 
 
@@ -185,7 +184,7 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
     if(conf.writeDefa.isActive())
         writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
 
-	// Write data YAML file
+	// Write serialized object file
 	if (conf.writeSerializedObject.isActive())
 		writeJsonFile(dat, outputFileLocation);
 }
@@ -317,21 +316,11 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 
 }
 
-void TLGCApp::writeYamlFile(TLGCData const* const dat, const std::string& outputFileLocation)
-{
-	yamlSerializerObject ser;
-	SerializerObject::SerializationHelper obj = ser.getSerializationHelper(outputFileLocation);
-	obj.addProperty("LGC_DATA", *dat);
-
-	std::ofstream fout(outputFileLocation+".yaml");
-	fout << ser.getStringRepresentation();
-}
-
 void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 {
 	jsonSerializerObject ser;
-	SerializerObject::SerializationHelper obj = ser.getSerializationHelper(outputFileLocation);
-	obj.addProperty("LGC_DATA", *dat);
+	SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+	obj.addProperty("LGC_DATA", dat);
 
 	std::ofstream fout(outputFileLocation + ".json");
 	fout << ser.getStringRepresentation();

@@ -14,8 +14,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
  * The main quirk of this Serializer is that due it is building the tree bottom-up (from the leaves) and when last element
  * on the stack is meant to be finished (@endObject) then it is finally added to the document.
  * Adding is invalidating the previous @rapidjson::Value but thanks to that there is no overhead (it is a move operation).
- *
- * This serializer is much faster than @Serializer_yaml.
  */
 class jsonSerializerObject : public SerializerObject
 {

@@ -782,6 +782,8 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("TPointGlobal/CounterOfPoints", fPointInfo);
 	obj.addProperty("TMeasurementsGlobal/CounterOfMeasures", fMeasInfo);
 	obj.addProperty("TLGCStatistic", stat);
+	//Eigen::MatrixXd exampleMatrix(10 * 10, 10);
+	//obj.addProperty("exampleMatrix", exampleMatrix.reshaped()); // for now just as a flattened plain vector
 }
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const

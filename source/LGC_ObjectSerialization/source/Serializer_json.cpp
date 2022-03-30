@@ -26,11 +26,6 @@ public:
 public:
 	std::deque<JSonObject> stack;
 	rapidjson::Document doc;
-	/**
-	 * If defined it will be the first node containing all other members. If not then all the members will be directly
-	 * defined without an outer object.
-	 */
-	std::string rootName;
 };
 
 template<typename T>
@@ -63,6 +58,7 @@ typename std::enable_if<std::is_floating_point<T>::value>::type addToValue(rapid
 
 jsonSerializerObject::jsonSerializerObject() : _pimpl(std::make_unique<_jsonSerializerObject_pimpl>())
 {
+	_pimpl->doc.SetObject();
 }
 
 jsonSerializerObject::~jsonSerializerObject()
@@ -79,18 +75,7 @@ std::string jsonSerializerObject::getStringRepresentation()
 
 void jsonSerializerObject::startObject(const std::string &name)
 {
-	if (_pimpl->doc.IsObject())
-	{
-		_pimpl->stack.push_back(JSonObject(name, rapidjson::kObjectType));
-		return;
-	}
-
-	// Initialization of the root node and tree
-	_pimpl->rootName = name;
-	_pimpl->doc.SetObject();
-	if (!_pimpl->rootName.empty())
-		_pimpl->doc.AddMember(rapidjson::Value(name, _pimpl->doc.GetAllocator()), rapidjson::Value(rapidjson::kObjectType), _pimpl->doc.GetAllocator());
-	_pimpl->doc.GetObject();
+	_pimpl->stack.push_back(JSonObject(name, rapidjson::kObjectType));
 }
 
 void jsonSerializerObject::startObject()
@@ -105,20 +90,26 @@ void jsonSerializerObject::endObject()
 		return;
 
 	JSonObject &lastElement = _pimpl->getLastObject();
+	auto &allocator = _pimpl->doc.GetAllocator();
 
 	if (_pimpl->stack.size() == 1)
 	{
-		rapidjson::Value &root = _pimpl->rootName.empty() ? _pimpl->doc : _pimpl->doc[_pimpl->rootName];
-		root.AddMember(rapidjson::Value(lastElement.name, _pimpl->doc.GetAllocator()), lastElement.value, _pimpl->doc.GetAllocator());
+		_pimpl->doc.AddMember(rapidjson::Value(lastElement.name, allocator), lastElement.value, allocator);
 	}
 	else
 	{
 		JSonObject &parentElement = *(_pimpl->stack.end() - 2);
 
-		if (parentElement.value.IsArray())
-			parentElement.value.PushBack(lastElement.value, _pimpl->doc.GetAllocator());
+		if (parentElement.value.IsArray() && lastElement.name.empty())
+			parentElement.value.PushBack(lastElement.value, allocator);
+		else if (parentElement.value.IsArray() && !lastElement.name.empty())
+		{
+			rapidjson::Value obj(rapidjson::kObjectType);
+			obj.AddMember(rapidjson::Value(lastElement.name, allocator), lastElement.value, allocator);
+			parentElement.value.PushBack(obj, allocator);
+		}
 		else
-			parentElement.value.AddMember(rapidjson::Value(lastElement.name, _pimpl->doc.GetAllocator()), lastElement.value, _pimpl->doc.GetAllocator());
+			parentElement.value.AddMember(rapidjson::Value(lastElement.name, allocator), lastElement.value, allocator);
 	}
 
 	_pimpl->stack.pop_back();

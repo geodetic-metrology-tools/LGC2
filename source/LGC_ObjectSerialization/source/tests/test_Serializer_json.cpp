@@ -54,7 +54,7 @@ void testobject::test<1>()
 				{{"map3key1", {{"pair1", 1}}}, {"map3key2", {{"pair1", 1}}}, {"map3key3", {{"pair1", 1}}}, {"map3key4", {{"pair1", 1}}}},
 			}});
 
-	ensure_equals(R"""({"t1_header":"I am the header!","t2_vec":[1,2,3,4],"t3_int":1,"t4_str":"cstyle","t5_strstd":"std","t6_list":[1.0,2.0,3.0],"t7_map":{"bar":3,"foo":42},"t8_mapvec":{"bar":[3,5],"foo":[42,1,2]},"t9_pair":{"pairkey":"pairvalue"},"t10_vecpair":{"pair1":true,"pair2":false},"t11_pairvecpair":{"pairTop":{"pairsub1":true,"pairsub2":false}},"t12_listvecpair":[{"pair1":true},{"pair2":false},{"pair31":true,"pair32":false}],"t13_pairvecmaplistpair":{"toppair":[{"map1key1":{"pair1":1,"pair2":2,"pair3":3},"map2key2":{"pair1":1}},{"map2key1":{"pair1":1,"pair2":2,"pair3":3,"pair4":4,"pair5":5}},{"map3key1":{"pair1":1},"map3key2":{"pair1":1},"map3key3":{"pair1":1},"map3key4":{"pair1":1}}]}})""",
+	ensure_equals(R"""({"t1_header":"I am the header!","t2_vec":[1,2,3,4],"t3_int":1,"t4_str":"cstyle","t5_strstd":"std","t6_list":[1.0,2.0,3.0],"t7_map":[{"bar":3},{"foo":42}],"t8_mapvec":[{"bar":[3,5]},{"foo":[42,1,2]}],"t9_pair":{"pairkey":"pairvalue"},"t10_vecpair":[{"pair1":true},{"pair2":false}],"t11_pairvecpair":{"pairTop":[{"pairsub1":true},{"pairsub2":false}]},"t12_listvecpair":[[{"pair1":true}],[{"pair2":false}],[{"pair31":true},{"pair32":false}]],"t13_pairvecmaplistpair":{"toppair":[[{"map1key1":[{"pair1":1},{"pair2":2},{"pair3":3}]},{"map2key2":[{"pair1":1}]}],[{"map2key1":[{"pair1":1},{"pair2":2},{"pair3":3},{"pair4":4},{"pair5":5}]}],[{"map3key1":[{"pair1":1}]},{"map3key2":[{"pair1":1}]},{"map3key3":[{"pair1":1}]},{"map3key4":[{"pair1":1}]}]]}})""",
 		ser.getStringRepresentation());
 }
 
@@ -98,8 +98,8 @@ void testobject::test<2>()
 			obj.addProperty("output_name", output_name);
 			obj.addProperty("origin", origin);
 			obj.addProperty("measures", measures);
-			obj.addProperty("precision_scale", *precision_scale);
-			obj.addProperty("precision_digit", *precision_digit);
+			obj.addProperty("precision_scale", precision_scale);
+			obj.addProperty("precision_digit", precision_digit);
 			obj.addProperty("gridData", gridData);
 		}
 
@@ -150,9 +150,9 @@ void testobject::test<3>()
 
 	std::vector<std::pair<std::string, Point>> points{
 		{"p1", {1, 2, 3, "point1", {1, 2}}},
-		{"p2", {1, 2, 3, "point2", {1, 2, 3}}},
-		{"p3", {1, 2, 3, "point3", {}}},
-		{"p4", {1, 2, 3, "point4", {1, 2, 3, 4, 5, 6}}},
+		{"p2", {2, 3, 4, "point2", {1, 2, 3}}},
+		{"p3", {3, 4, 5, "point3", {}}},
+		{"p4", {4, 5, 6, "point4", {1, 2, 3, 4, 5, 6}}},
 	};
 	std::vector<std::pair<std::string, Point *>> points_pointer{
 		{"p1", &points[0].second},
@@ -161,14 +161,13 @@ void testobject::test<3>()
 		{"p4", &points[3].second},
 	};
 
-	serobj.addProperty("reference_vs_pointer", points);
-
 	jsonSerializerObject ser2;
 	SerializerObject::SerializationHelper serobj2 = ser2.getSerializationHelper();
+	serobj.addProperty("reference_vs_pointer", points);
 	serobj2.addProperty("reference_vs_pointer", points_pointer);
 
 	ensure_equals(ser.getStringRepresentation(), ser2.getStringRepresentation());
-	ensure_equals(R"""({"reference_vs_pointer":{"p1":{"precision":1,"x":2,"y":3,"name":"point1","coefficients":[1.0,2.0]},"p2":{"precision":1,"x":2,"y":3,"name":"point2","coefficients":[1.0,2.0,3.0]},"p3":{"precision":1,"x":2,"y":3,"name":"point3","coefficients":[]},"p4":{"precision":1,"x":2,"y":3,"name":"point4","coefficients":[1.0,2.0,3.0,4.0,5.0,6.0]}}})""",
+	ensure_equals(R"""({"reference_vs_pointer":[{"p1":{"precision":1,"x":2,"y":3,"name":"point1","coefficients":[1.0,2.0]}},{"p2":{"precision":2,"x":3,"y":4,"name":"point2","coefficients":[1.0,2.0,3.0]}},{"p3":{"precision":3,"x":4,"y":5,"name":"point3","coefficients":[]}},{"p4":{"precision":4,"x":5,"y":6,"name":"point4","coefficients":[1.0,2.0,3.0,4.0,5.0,6.0]}}]})""",
 		ser.getStringRepresentation());
 }
 
@@ -185,6 +184,7 @@ void testobject::test<4>()
 	serobj.addProperty("pointer_double", pointer_double);
 	serobj.addProperty("unique_double", unique_double);
 	serobj.addProperty("shared_double", shared_double);
+
 	ensure_equals(R"""({"pointer_double":6.0,"unique_double":6.0,"shared_double":6.0})""", ser.getStringRepresentation());
 
 	// cleanup - not ideal since ensure may fail

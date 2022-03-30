@@ -57,37 +57,6 @@ struct has_mapped_type : std::false_type {};
 template<class T>
 struct has_mapped_type<T, type_sink_t<typename T::mapped_type>> : std::true_type {};
 
-// is Serializable class, pointer or not
-class Serializable;
-template<class T, class = void>
-struct is_Serializable : std::false_type {};
-template<typename T>
-struct is_Serializable<T, typename std::enable_if<
-	std::is_base_of<Serializable, T>::value
-	|| std::is_base_of<Serializable, typename std::remove_pointer<T>::type>::value
->::type> : std::true_type {};
-
-
-// is iterable
-template<class T, class = void>
-struct is_iterable_container : std::false_type {};
-template<typename T>
-// For some reason MSVC was misbehaving when using type_sink here compared to for example gcc
-// Therefore, void_t was used, although type_sink should be sufficient
-struct is_iterable_container<T, void_t<
-	decltype(std::begin(std::declval<T>())),
-	decltype(std::end(std::declval<T>()))
-	>> : std::true_type {};
-
-// is string (and char variants)
-template<class T, class = void>
-struct is_string : std::false_type{};
-template<typename T>
-struct is_string<T, typename std::enable_if<std::is_same_v<T, std::string> || 
-	std::is_same_v<char const *, typename std::decay<T>::type> || 
-	std::is_same_v<char *, typename std::decay<T>::type>
-	>::type> : std::true_type {};
-
 //// Pointers
 template <typename T>
 struct is_unique_ptr : std::false_type{};
@@ -111,6 +80,38 @@ struct is_any_pointer<T, typename std::enable_if<
 	|| is_shared_ptr<T>::value
 	|| is_unique_ptr<T>::value>
 ::type> : std::true_type {};
+
+// is Serializable class
+class Serializable;
+template<class T, class = void>
+struct is_Serializable : std::false_type {};
+template<typename T>
+struct is_Serializable<T, typename std::enable_if<
+	std::is_base_of<Serializable, T>::value
+>::type> : std::true_type {};
+
+// is iterable
+template<class T, class = void>
+struct is_iterable_container : std::false_type {};
+template<typename T>
+// For some reason MSVC was misbehaving when using type_sink here compared to for example gcc
+// Therefore, void_t was used, although type_sink should be sufficient
+struct is_iterable_container<T, void_t<
+	decltype(std::begin(std::declval<T>())),
+	decltype(std::end(std::declval<T>()))
+>> : std::true_type {};
+// is string (and char variants)
+template<class T, class = void>
+struct is_string : std::false_type{};
+template<typename T>
+struct is_string<T, typename std::enable_if<
+	is_iterable_container<T>::value && (
+	std::is_same_v<T, std::string> || 
+	std::is_same_v<char const *, typename std::decay<T>::type> || 
+	std::is_same_v<char *, typename std::decay<T>::type>)
+>::type> : std::true_type {};
+
+
 
 // clang-format on
 #endif

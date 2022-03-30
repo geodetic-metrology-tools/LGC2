@@ -37,18 +37,16 @@ TLGCStatistic::~TLGCStatistic(){
 
 void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	//obj.addProperty("fZ", std::vector<double>(fZ->data(), fZ->data() + fZ->size()));
-	//obj.addProperty("fZ", fZ->data());
-	//obj.addProperty("fZ", fZ);
-	obj.addProperty("fW", std::vector<double>(fW->data(), fW->data() + fW->size()));
-	obj.addProperty("fDelty", std::vector<double>(fDelty->data(), fDelty->data() + fDelty->size()));
-	obj.addProperty("fNablaValue", std::vector<double>(fNablaValue->data(), fNablaValue->data() + fNablaValue->size()));
-	obj.addProperty("fGValue", std::vector<double>(fGValue->data(), fGValue->data() + fGValue->size()));
+	obj.addProperty("fZ", fZ);
+	obj.addProperty("fW", fW);
+	obj.addProperty("fDelty", fDelty);
+	obj.addProperty("fNablaValue", fNablaValue);
+	obj.addProperty("fGValue", fGValue);
 	obj.addProperty("fOverall", fOverall);
-	obj.addProperty("fAreDetermined", std::vector<double>(fAreDetermined->data(), fAreDetermined->data() + fAreDetermined->size()));
+	obj.addProperty("fAreDetermined", fAreDetermined);
 	obj.addProperty("fWToCompute", fWToCompute);
-	obj.addProperty("fGToCompute", std::vector<double>(fGToCompute->data(), fGToCompute->data() + fGToCompute->size()));
-	obj.addProperty("fDeltaComputed", std::vector<double>(fDeltaComputed->data(), fDeltaComputed->data() + fDeltaComputed->size()));
+	obj.addProperty("fGToCompute", fGToCompute);
+	obj.addProperty("fDeltaComputed", fDeltaComputed);
 }
 
 

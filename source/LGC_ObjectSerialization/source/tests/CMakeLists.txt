@@ -7,7 +7,6 @@ set(tests_HEADERS
 set(tests_SOURCES
 	main.cpp
 	test_Serializer_json.cpp
-	test_Serializer_yaml.cpp
 )
 
 # Create an executable from sources:

@@ -21,18 +21,14 @@ add_library(${PROJECT_NAME} STATIC
 	source/Serializer.hpp 
 	source/Serializer_json.hpp 
 	source/Serializer_json.cpp 
-	source/Serializer_yaml.hpp 
-	source/Serializer_yaml.cpp 
 	source/CustomTypeTraits.hpp
 )
 
-add_dependencies(${PROJECT_NAME}
-	yaml-cpp
-)
-target_link_libraries(${PROJECT_NAME}
-	yaml-cpp
+#add_dependencies(${PROJECT_NAME}
+#)
+#target_link_libraries(${PROJECT_NAME}
 	#rapidjson TODO
-)
+#)
 add_definitions(-DRAPIDJSON_HAS_STDSTRING) # TODO
 
 target_include_directories(${PROJECT_NAME} PUBLIC 
