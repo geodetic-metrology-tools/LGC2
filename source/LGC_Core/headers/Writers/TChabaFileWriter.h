@@ -54,7 +54,7 @@ private:
 	TChabaFileWriter();
 
 	/// This function write the transformation details
-	void writeHelmertTransformationDetails(const TAdjustableHelmertTransformation & helmert);
+	void writeHelmertTransformationDetails(const TAdjustableHelmertTransformation & helmert, const std::vector<int>& ID);
 
 	///write transformed points 
 	void writeTransformedPoints(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> & pairs, bool writeDeltas, TDataTreeIterator itTree);
