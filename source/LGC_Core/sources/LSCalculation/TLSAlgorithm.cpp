@@ -4,6 +4,7 @@
 #include "TLSCombinedMtdComputer.h"
 #include "TLSWeightedUnkMtdComputer.h"
 #include "TLSCnstMtdComputer.h"
+#include "TLSConsistencyCheck.h"
 #include <Logger.hpp>
 
 TLSAlgorithm::TLSAlgorithm(TLGCData& data)
@@ -70,13 +71,25 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	{
 		bool fillOK = false;
 		if (fNumberOfIterations == 0)//First iteration, fill also the weight unknown matrix.
+		{
 			fillOK = matrFiller->fillMatrices(&data, true, inputMtr);
+		}
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
 
 		//fill part of the free constraints
 		if (data.getConfig().libre.isActive())
 			fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
+
+		if (data.getConfig().consCheck.isActive() && fNumberOfIterations==0){
+			// Check for inconsistencies leading to ambiguous least square problems
+			// libr constraint matrices are necessary if there is a
+			// constraint
+			TLSConsCheck consCheck(data, *inputMtr);
+			if (!consCheck.getResultStatus()) {
+				return Behavior(Behavior::BehaviorCode::ERR_consistencyCheck, L"Problem with measurement configuration.\n");	
+			}
+		}
 
 		if (fillOK)
 		{		
