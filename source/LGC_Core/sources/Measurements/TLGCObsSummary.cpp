@@ -63,8 +63,8 @@ void	TLGCObsSummary::clear()
 	fMean = LITERAL(0.0);
 	fMeanLoLimit = LITERAL(0.0);
 	fMeanHiLimit = LITERAL(0.0);
-    fResMin = 100.0;
-    fResMax = 0.0;
+    fResMin = std::numeric_limits<float>::max();
+    fResMax = std::numeric_limits<float>::lowest();
 	fSumRes2 = LITERAL(0.0);
 	fVariance = LITERAL(0.0);
 	fVarLoLimit = LITERAL(0.0);
