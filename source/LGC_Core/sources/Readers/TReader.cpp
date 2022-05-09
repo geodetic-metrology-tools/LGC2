@@ -380,6 +380,33 @@ bool TReader::read(std::istream& lgcStream) {
 	}
 
 
+	// CHECK FRAMES WITH THE NAME "ROOT" AND DUPLICATE FRAME NAMES
+
+	std::vector<std::string> frameNames;	// Declare a vector of strings for the names of the frames
+	std::vector<int> frameLines;			// Declare a vector of integers for the lines of the *FRAME keywords
+
+	// Iterate the frames
+	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
+	{
+		// In each iteration append the frame name and the *FRAME line (it is the actual line number minus one)
+		frameNames.push_back(itTree->get()->frame.getName());
+		frameLines.push_back(itTree->get()->frame.getLine());
+
+		if (frameNames.size() > 1 && frameNames.back().compare("ROOT") == 0)
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "The frame name \"ROOT\" at line " + to_string(frameLines.back() + 1) + " cannot be used.";
+		}
+
+		// Iterate the vector starting from the second item, i.e., the second frame name.
+		for (std::size_t i = 2; i < frameNames.size(); ++i) {
+			if (frameNames.back().compare(frameNames[i - 1]) == 0)
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frames at lines " + to_string(frameLines[i - 1] + 1) + \
+					" and " + to_string(frameLines.back() + 1) + " have the same name: \"" + frameNames.back() + "\".";
+			}
+		}
+	}
+
     project.setLGCv1(false);
 
 	return !outputMessages.hasErrors();
