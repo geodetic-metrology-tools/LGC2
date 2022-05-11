@@ -33,7 +33,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
 		if (itTree->get()->frame.getName() != "ROOT")
 		{
 			// write transformation parameters
-			writeHelmertTransformationDetails(itTree.node->data->frame);
+			writeHelmertTransformationDetails(itTree.node->data->frame, itTree.node->data->ID);
 
 			// write the input data
 			(*stream) << sep << "DONNÉES D'ENTRÉE" << endl << endl;
@@ -80,7 +80,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
 	}
 }
 
-void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmertTransformation & helmert)
+void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmertTransformation & helmert, const std::vector<int>& ID)
 {
 	//obtain attributes stored in parent object
 	TAStreamFormatter* stream = getStream();
@@ -102,10 +102,19 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	stream->setLengthUnits(TLength::kMetres);
 	stream->setWidthFormat(17);
 
-
+	std::string nameID;
+	for (std::vector<int>::const_iterator it = ID.begin(); it != ID.end(); ++it)
+	{
+		if (it == ID.begin())
+			nameID += std::to_string(*it);
+		else
+			nameID += "_" + std::to_string(*it);
+	}
 	
 	//write the results table 
-	(*stream)<<endl;
+	(*stream) << endl;
+	(*stream) << sep << "FRAME\t" << helmert.getName() << "  ID(" << nameID << ")" << endl;
+	(*stream) << endl;
 	(*stream)<<sep<<"**************** INFORMATION CONCERNANT LES PARAMETRES CALCULÉS ********************"<<endl;
 	(*stream)<<sep<<"*                                                                                  *"<<endl;
 	(*stream)<<sep<<"*                         TERMES DE LA MATRICE DE ROTATION:                        *"<<endl;
