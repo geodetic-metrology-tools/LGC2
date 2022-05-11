@@ -1,8 +1,8 @@
 # Configure version when called from UI
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR "2")
-set (LGC_VERSION_MINOR "03")
-set (LGC_VERSION_PATCH "02-dev")
+set (LGC_VERSION_MINOR "4")
+set (LGC_VERSION_PATCH "0")
 
 # Versions files
 configure_file (
