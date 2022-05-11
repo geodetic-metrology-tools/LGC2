@@ -71,12 +71,19 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "COLLIMATION");   //DLEV: collimation angle
 	(*stream).writeString(obsResWidth, "SCOLL");         //DLEV: sigma of collimation angle
 
-	(*stream).writeString(obsWidth, "OBSDHOR");       //DHOR: mesurement
-	(*stream).writeString(obsResWidth, "SDHOR");     //DHOR: sigma 
+	(*stream).writeString(obsWidth, "DHOR");          //DHOR: mesurement
+	(*stream).writeString(obsResWidth, "DSE");        //DHOR: sigma 
 	(*stream).writeString(obsWidth, "CALCDHOR");      //DHOR: estimation  
-	(*stream).writeString(obsResWidth, "RESDHOR");   //DHOR: residual
-	(*stream).writeString(obsResWidth, "RES/SIG");   //DHOR: residual/sigma
-	(*stream).writeString(obsWidth, "HStaff"); //Vertical offset of the staff
+	(*stream).writeString(obsResWidth, "RESDHOR");    //DHOR: residual
+	(*stream).writeString(obsResWidth, "RES/SIG");    //DHOR: residual/sigma
+
+	(*stream).writeString(obsWidth, "CONST");         //DHOR: Distance correction
+	(*stream).writeString(obsResWidth, "SCONST");     //DHOR: 1-Sigma precision for the distance correction 
+	(*stream).writeString(obsResWidth, "OBSE");       //DHOR: 1-sigma precision for the vertical distance observation 
+	(*stream).writeString(obsResWidth, "PPM");        //DHOR: ppm value for the distance correction 
+	(*stream).writeString(obsWidth, "H_TRGT");         //DHOR: Vertical offset of the staff
+	(*stream).writeString(obsResWidth, "THSE");       //DHOR: 1-sigma precision for the vertical offset of the staff
+
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -92,11 +99,19 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "CC");      //DLEV: sigma collimation angle
 
 	(*stream).writeString(obsWidth, "(M)");     //DHOR: mesurement
-	(*stream).writeString(obsResWidth, "(MM)");//DHOR: sigma 
+	(*stream).writeString(obsResWidth, "(MM)"); //DHOR: sigma 
 	(*stream).writeString(obsWidth, "(M)");     //DHOR: estimation  
-	(*stream).writeString(obsResWidth, "(MM)");  //DHOR: residual
-	(*stream).writeString(obsResWidth, "");      //DHOR: residual/sigma
-	(*stream).writeString(obsWidth, "(M)"); //Vertical offset of the staff
+	(*stream).writeString(obsResWidth, "(MM)"); //DHOR: residual
+	(*stream).writeString(obsResWidth, "");     //DHOR: residual/sigma
+
+	(*stream).writeString(obsWidth, "(M)");     //DHOR: Distance correction
+	(*stream).writeString(obsResWidth, "(MM)"); //DHOR: 1-Sigma precision for the distance correction 
+	(*stream).writeString(obsResWidth, "(MM)"); //DHOR: 1-sigma precision for the vertical distance observation 
+	(*stream).writeString(obsResWidth, "(MM/KM)");     //DHOR: ppm value for the distance correction 
+	(*stream).writeString(obsWidth, "(M)");     //DHOR: Vertical offset of the staff
+	(*stream).writeString(obsResWidth, "(MM)"); //DHOR: 1-sigma precision for the vertical offset of the staff
+
+
 	(*stream) << endl;
 }
 
@@ -189,8 +204,13 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 			(*stream).writeString(obsResWidth, "");
 
 		}
-		//Vertical offset of the staff
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.target.staffHt);
+
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.target.distCorrectionValue.getMetresValue());   //DHOR: Distance correction
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaDCorr.getMMetresValue());     //DHOR: 1-Sigma precision for the distance correction 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaD.getMMetresValue());         //DHOR: 1-sigma precision for the vertical distance observation 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.ppmD.getMMetresValue());           //DHOR: ppm value for the distance correction 
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.target.staffHt.getMetresValue());               //DHOR: Vertical offset of the staff
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaStaffHt.getMMetresValue());   //DHOR: 1-sigma precision for the vertical offset of the staff
 
 		(*stream) << endl;
 	}
