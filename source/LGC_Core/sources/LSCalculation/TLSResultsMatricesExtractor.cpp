@@ -533,14 +533,6 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& r
 	int nParamsOutsideCriteria = 0;
 	int nParamsTotal = 0;
 
-	TReal numberOfPoints = (TReal)fDataSet->getPoints().numObjects();
-	TReal factor = LITERAL(1.0) / numberOfPoints;
-
-	TLength zero(LITERAL(0.0));
-	TLength xcg = zero;
-	TLength ycg = zero;
-	TLength zcg = zero;
-
 	for (auto& point : fDataSet->getPoints())
 	{
 		if (point.hasVariable()) {
@@ -562,34 +554,10 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& r
 					critNotExceeded = false;
 				}
 			}
-
-			if (fDataSet->getConfig().libre.isActive())
-			{
-				// update the estimated centre of Gravity for the data points
-				xcg = xcg + (point.getEstimatedValue().getX() * factor);
-				ycg = ycg + (point.getEstimatedValue().getY() * factor);
-				zcg = zcg + (point.getEstimatedValue().getZ() * factor);
-			}
 		}
 	}
 	logDebug() << "Checking converging criteria on point parameters: " << nParamsOutsideCriteria << "of" << nParamsTotal << "coordinates outside criteria (" << convCrit << ")";
 
-	if (fDataSet->getConfig().libre.isActive())
-	{
-/*		TLength xcgLast = freeCnstr->getEstimatedGravityCenterCoordX();
-		TLength ycgLast = freeCnstr->getEstimatedGravityCenterCoordY();
-		TLength zcgLast = freeCnstr->getEstimatedGravityCenterCoordZ(); */
-
-		freeCnstr->setEstimatedGravityCenterCoord(xcg, ycg, zcg);
-		logDebug() << "Updated Gravity Center: Xg=" << xcg << " ; Yg =" << ycg << " ; Zg=" << zcg;
-		//fDataSet->setFreeConstraints(cnstr);
-
-/*		if ((fabsq(xcgLast - xcg) <= convCrit) && (fabsq(ycgLast - ycg) <= convCrit) && (fabsq(zcgLast - zcg) <= convCrit))
-		{
-			logDebug() << "Free network adjustment: reached the criteria on the estimated center of gravity!";
-			critNotExceeded = true;
-		} */
-	}
 	return critNotExceeded;
 }
 
