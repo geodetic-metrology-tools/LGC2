@@ -135,6 +135,8 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 	yGEstim /= nYpts;
 	zGEstim /= nZpts;
 
+	logDebug() << "Updated Gravity Center: Xg=" << xGEstim << " ; Yg =" << yGEstim << " ; Zg=" << zGEstim;
+
 	// If we want to come back to previous method (use precalculted center of gravity), simply decomment the following lines!
 /*	xGEstim = fXcgEst.getMetresValue();
 	yGEstim = fYcgEst.getMetresValue();
@@ -298,61 +300,43 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 	//dx constraint coefficient
 	if (fCnstrVector.dx)
 	{
-		double a = -sumDX;
-		//	double a = -1.0 * nbrPts * (fXcgEst.getMetresValue() - fXcg.getMetresValue());
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dx, a);
-		logDebug() << "W2[" << fCnstrNumber.dx << "] = " << a << "  (misclosure-constraint on center of gravity position Xg)";
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dx, 0);
 	}
 
 	//dy constraint coefficient
 	if (fCnstrVector.dy)
 	{
-		double a = -sumDY;
-		//	double a = -1.0 * nbrPts * (fYcgEst.getMetresValue() - fYcg.getMetresValue());
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dy, a);
-		logDebug() << "W2[" << fCnstrNumber.dy << "] = " << a << "  (misclosure-constraint on center of gravity position Yg)";
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dy, 0);
 	}
 
 	//dz constraint coefficient
 	if (fCnstrVector.dz)
 	{
-		double a = -sumDZ;
-		//	double a = -1.0 * nbrPts * (fZcgEst.getMetresValue() - fZcg.getMetresValue());
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dz, a);
-		logDebug() << "W2[" << fCnstrNumber.dz << "] = " << a << "  (misclosure-constraint on center of gravity position Zg)";
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dz, 0);
 	}
 
 	//rx constraint coefficient
 	if (fCnstrVector.rx)
 	{
-		double rx = -1.0 * vectSumMoments[0];
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rx, rx);
-		logDebug() << "W2[" << fCnstrNumber.rx << "] = " << rx << "  (misclosure-constraint along X of momenta-sum)";
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rx, 0);
 	}
 
 	//ry constraint coefficient
 	if (fCnstrVector.ry)
 	{
-		double ry = -1.0 * vectSumMoments[1];
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.ry, ry);
-		logDebug() << "W2[" << fCnstrNumber.ry << "] = " << ry << "  (misclosure-constraint along Y of momenta-sum)";
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.ry, 0);
 	}
 
 	//rz constraint coefficient
 	if (fCnstrVector.rz)
 	{
-		double rz = -1.0 * vectSumMoments[2];
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rz, rz);
-		logDebug() << "W2[" << fCnstrNumber.rz << "] = " << rz << "  (misclosure-constraint along Z of momenta-sum)";
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rz, 0);
 	}
 
 	//scale constraint coefficient
 	if (fCnstrVector.k)
 	{
-		double k = -1.0 * ech;
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.k, k);
-		logDebug() << "W2[" << fCnstrNumber.k << "] = " << k << "  (misclosure-constraint on the scale-parameter)";
-
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.k, 0);
 	}
 
 	return successfullyProcessed;
