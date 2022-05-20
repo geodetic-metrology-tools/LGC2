@@ -48,6 +48,12 @@ SET(SURVEYLIB_ROOT ${PROJECT_SOURCE_DIR}/../SurveyLib)
 
 FIND_PACKAGE(Boost 1.49.0 REQUIRED)
 
+# FIND ADDITIONAL LIBRARIES
+# These next operations make use of the .cmake files shipped with Eigen3
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../../ext/eigen/cmake")
+find_package(SPQR REQUIRED)
+find_package(CHOLMOD REQUIRED)
+
 IF(MSVC)
 	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
@@ -61,9 +67,6 @@ ENDIF(MINGW)
 
 include_directories (
 	SYSTEM
-	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SPQR/Include
-	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/CHOLMOD/Include
-	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SuiteSparse_config
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Readers
@@ -76,6 +79,9 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Writers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
+	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SPQR/Include
+	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/CHOLMOD/Include
+	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SuiteSparse_config
 	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/Logs
@@ -114,6 +120,8 @@ target_link_libraries(${PROJECT_NAME}
 	Logs
 	Plugins
 )
+#target_link_libraries(${PROJECT_NAME} Optimization ${CHOLMOD_LIBRARIES} ${SPQR_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${CHOLMOD_LIBRARIES} ${SPQR_LIBRARIES})
 
 ############################
 # MSVC:
