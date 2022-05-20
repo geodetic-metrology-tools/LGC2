@@ -61,6 +61,9 @@ ENDIF(MINGW)
 
 include_directories (
 	SYSTEM
+	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SPQR/Include
+	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/CHOLMOD/Include
+	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SuiteSparse_config
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Readers

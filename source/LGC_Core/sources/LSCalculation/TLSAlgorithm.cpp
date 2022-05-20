@@ -5,6 +5,7 @@
 #include "TLSWeightedUnkMtdComputer.h"
 #include "TLSCnstMtdComputer.h"
 #include <Logger.hpp>
+#include <Eigen/SPQRSupport>
 
 TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	: fNumberOfIterations(0)
@@ -80,6 +81,9 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 		if (fillOK)
 		{
+			// test SPQR
+			Eigen::SparseMatrix<double> first = *inputMtr->getCnstrFirstDgnMtrx();
+			Eigen::SPQR<Eigen::SparseMatrix<double>> qrMat(first);
 			// compute solution 
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
 
