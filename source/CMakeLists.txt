@@ -79,9 +79,6 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Writers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
-	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SPQR/Include
-	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/CHOLMOD/Include
-	${CMAKE_SOURCE_DIR}/../../ext/SuiteSparse/SuiteSparse_config
 	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/Logs
@@ -102,6 +99,7 @@ include_directories (
 	${SURVEYLIB_ROOT}/source/SpatialObjects/headers/SpatialSystems
 	${TUT_INCLUDE_PATH}
 	${EIGEN_INCLUDE_PATH}
+	/usr/include/suitesparse
 )
 
 INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
@@ -120,8 +118,7 @@ target_link_libraries(${PROJECT_NAME}
 	Logs
 	Plugins
 )
-#target_link_libraries(${PROJECT_NAME} Optimization ${CHOLMOD_LIBRARIES} ${SPQR_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${CHOLMOD_LIBRARIES} ${SPQR_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${SPQR_LIBRARIES})
 
 ############################
 # MSVC:

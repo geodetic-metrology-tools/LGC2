@@ -82,8 +82,10 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		if (fillOK)
 		{
 			// test SPQR
-			Eigen::SparseMatrix<double> first = *inputMtr->getCnstrFirstDgnMtrx();
+			std::cout<<"Test spqr"<<std::endl;
+			Eigen::SparseMatrix<double> first = *inputMtr->getFirstDgnMtrx();
 			Eigen::SPQR<Eigen::SparseMatrix<double>> qrMat(first);
+			std::cout<<"qr comp with spqr finished."<<std::endl;
 			// compute solution 
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
 
