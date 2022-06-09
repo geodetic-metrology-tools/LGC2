@@ -9,7 +9,7 @@ include:
 # Build all targets and run the tests
 linux_build_and_test:
     extends: .linux_build_and_test
-    before_script: sudo yum -y install suitesparse
+    before_script: yum -y install suitesparse
 
 # Build and upload the LGC application
 linux_release:
