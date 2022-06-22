@@ -546,6 +546,8 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 			writeINCLYMeas(&meas);
 	}
 
+	for (auto& meas : frameIt->get()->measurements.fECWS)
+		writeECWSMeas(&meas);
 }
 
 
@@ -1065,6 +1067,52 @@ void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
 		<< meas->getZObservedStDev().getMMetresValue() << endl;
 
 
+}
+
+void TSimFileWriter::writeECWSMeas(TECWSROM* meas)
+{
+	TAStreamFormatter* stream = getStream();
+	std::string sep = stream->getSeparator();
+
+	auto hlsrDefInst = *data->getInstruments().fHLSR.at(meas->measECWS.front().target.ID);
+
+	if (!meas->isActive())
+		(*stream) << DEACTIVATION_CHAR;
+
+	(*stream) << "*ECWS" << sep
+		<< hlsrDefInst.ID << endl;
+
+	//write the list of measurements for the line
+	for (auto& itECWS : meas->measECWS)
+	{
+		if (!itECWS.isActive())
+			(*stream) << DEACTIVATION_CHAR;
+
+		(*stream) << itECWS.targetPos->getName() << sep
+			<< itECWS.getDistance().getMetresValue() << sep;
+
+		if (itECWS.target.ID != hlsrDefInst.ID)
+			(*stream) << "" << sep
+			<< itECWS.target.ID << sep;
+
+		if (itECWS.target.sigmaD != hlsrDefInst.sigmaD)
+			(*stream) << "OBSE" << sep
+			<< itECWS.target.sigmaD.getMMetresValue() << sep;
+
+		if (itECWS.target.sigmaInstrHeight != hlsrDefInst.sigmaInstrHeight)
+			(*stream) << "IHSE" << sep
+			<< itECWS.target.sigmaInstrHeight.getMMetresValue() << sep;
+
+		if (itECWS.target.sigmaInstrCentering != hlsrDefInst.sigmaInstrCentering)
+			(*stream) << "ICSE" << sep
+			<< itECWS.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+		(*stream) << endl;
+
+		// Update the default target if necessary
+		if (itECWS.target.ID != hlsrDefInst.ID)
+			hlsrDefInst = itECWS.target;
+	}
 }
 
 void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)

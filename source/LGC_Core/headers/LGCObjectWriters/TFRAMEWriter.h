@@ -1,6 +1,6 @@
 
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -73,6 +73,8 @@ private:
 		void writeSCALEReliability(TDataTreeIterator frameIt);
 		/// Write INCL reliability
 		void writeINCLReliability(TDataTreeIterator frameIt);
+		/// Write HLSR reliability
+		void writeHLSRReliability(TDataTreeIterator frameIt);
 
 		///Writes specific point
 		void writeResultsPtsData(AdjPointIter pt, bool isLocal);
@@ -138,6 +140,7 @@ private:
 			allECVESummaries_,
 			allECSPSummaries_,
 			allINCLYSummaries_,
+			allECWSSummaries_,
 			allObsxyzXSummaries_,
 			allObsxyzYSummaries_,
 			allObsxyzZSummaries_;

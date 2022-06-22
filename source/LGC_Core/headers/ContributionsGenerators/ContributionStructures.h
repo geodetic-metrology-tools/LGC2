@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -405,6 +405,18 @@ struct INCLYContrib {
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
 
 	TReal		fObsVariance; //!< Variance of the observation
+};
+
+
+struct ECWSContrib{
+	TReal			fCalcMeas;
+	TFreeVector	    fStationContrib;
+
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+
+	TReal		    fRefWSContrib;
+	TReal			fObsVariance;
 };
 #endif
 

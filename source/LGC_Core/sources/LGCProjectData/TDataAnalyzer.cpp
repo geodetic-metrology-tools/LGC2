@@ -183,6 +183,52 @@ bool TDataAnalyzer::dataConsistent(){
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
 			}
 		}
+
+        for (auto& itECWS : it.node->data.get()->measurements.fECWS) {
+            int numberOfMeasurements = (int)itECWS.measECWS.size();
+            if (numberOfMeasurements == 0) {
+                itECWS.setActive(false);
+                const std::string nlinestr("Line " + std::to_string(itECWS.line + 1) + ": ");
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
+            }
+        }
+
+        //INIT THE PARAMETER TO CHECK
+        for (auto itECWS(it.node->data.get()->measurements.fECWS.begin()); itECWS != it.node->data.get()->measurements.fECWS.end(); ++itECWS) {
+
+            TReal referencePoint = 0;
+            for (auto itECWSMeas(itECWS->measECWS.begin()); itECWSMeas != itECWS->measECWS.end(); ++itECWSMeas) {
+
+                TPositionVector stationPos = itECWSMeas->targetPos->getEstimatedValue();
+                TLOR2LOR transformation(itECWSMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                transformation.transform(stationPos);
+
+                //Warning:
+                //in this version the measured distance to the WS is ignored, to be added before making the transformation to the Root system, TBD
+                //normally getH for non OLOC function, TBD 
+                referencePoint += stationPos.getZ().getMetresValue();
+
+                //add simulation
+                //if (!fData.getConfig().sim.isActive())
+                //	initialRefPtDistance += itECHOMeas->getDistance();
+            }
+
+            int numberOfMeasurements = (int)itECWS->measECWS.size();
+
+            if (numberOfMeasurements > 0) {
+
+                referencePoint /= numberOfMeasurements;
+
+
+                //TBD, naming of the length instead of "adjlen" if name of the WS is defined otherwise look at how it is done in ECHO
+                ///TAdjustableLength adjLength(TLength(referencePoint, TLength::EUnits::kMetres), false, "adjlen");
+                TAdjustableLength adjLength(TLength(0, TLength::EUnits::kMetres), false, "adjlen");
+                itECWS->fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
+            }
+            else
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
+        }
+
 		cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
@@ -619,6 +665,22 @@ bool TDataAnalyzer::cleanDeactivated(){
 			++inclyrom;
 		}
 
+        // ECWS
+        auto ecwsrom = measurements.fECWS.begin();
+        while (ecwsrom != measurements.fECWS.end()) {
+
+            // If ECWSROM not active, remove it:
+            if (!ecwsrom->isActive()) {
+                measurements.fECWS.erase(ecwsrom++);
+                continue;
+            }
+
+            if (!rmDeactivated_and_checkTargetPos(ecwsrom->measECWS))
+                return false;
+
+            ++ecwsrom;
+        }
+
         // If the roms of different types of measurements are not active, clear the rom:
         if(!measurements.dverActive) measurements.fDVER.clear();
         if(!measurements.radiActive) measurements.fRADI.clear();
@@ -933,6 +995,15 @@ void TDataAnalyzer::assignEOIndices(){
 				incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
+
+        // ECWS
+        for (auto& ecwsrom : measurements.fECWS)
+            for (auto& ecws : ecwsrom.measECWS) {
+                // set indices of LS matrices, ECWS introduces 1 equation and 1 observation
+                ecws.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
+            }
     }
 }
 

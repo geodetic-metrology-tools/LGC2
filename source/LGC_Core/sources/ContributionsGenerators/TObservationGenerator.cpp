@@ -551,3 +551,22 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const T
 	
 	return calcMeas;
 }
+
+TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {
+
+	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
+
+	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
+
+	TPositionVector Test(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+
+	//Obs equation
+	TReal calcMeas = Test.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
+
+	TReal refPtDistContrib = 1.0;
+
+	//Compute the variance of the observation
+	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
+
+	return calcMeas;
+}

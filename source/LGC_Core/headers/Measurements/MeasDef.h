@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -579,4 +579,70 @@ public:
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
 };
+
+//--------------------------  HLSR measurement--------------------------------------------
+
+
+class TECWS : public TAScalarMeas<TInstrumentData::THLSR> {
+public:
+	///Pointer to the first point
+	const LGCAdjustablePoint* station;
+
+	const LGCAdjustablePoint* wsHeight;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/*!@name Constructors */
+	//@{
+	TECWS(const LGCAdjustablePoint& station, TInstrumentData::THLSR instr, TLength obsVal) :
+		TAScalarMeas<TInstrumentData::THLSR>(station, instr, obsVal) {}
+
+
+	///Destructor
+	~TECWS() override = default;
+	//@}
+
+	/*!@name Access methods*/
+	//@{
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+	/// Returns the observed value.
+	//inline TLength getDistanceCorrection() const { return fDistanceCorrection; }
+
+	/// Returns standard deviation of the observed value
+	//inline TLength getObservedStDev() const { return fSigmaObsVal; }
+	//@}
+
+
+	/*!@name Settings */
+	//@{
+		/// Returns the observed value.*/
+	/// Returns the observed value: FRK should we return a mean values when several distances stored in this TAScalarMeas object???
+	inline TLength getObservedOffset() const { return distances[0]; }
+
+	/// Returns the a priori standard deviation of the observed value (provided by the user in the input file)
+	inline TLength getSigma0Offset() const { return target.sigmaD; }
+
+
+	//@}
+
+
+
+	/*!@name Settings */
+	//@{
+		/// Sets the observed value.*/
+//	inline void setObservedDistance(TLength dist) { fObsDist = dist; }
+
+	/// Sets standard deviation of the observed value
+//	inline void setSigmaDistance(TLength sigmaD) { fSigDist = sigmaD; }
+	//@}
+
+private:
+	// The observed distance
+//	TLength fObsDist;
+	// Standard deviation of the observed value
+//	TLength fSigDist;
+};
+
 #endif

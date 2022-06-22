@@ -1443,6 +1443,39 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	return { calcMeas, addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt) , obsVariance };
 }
 
+////ECWS contribution
+ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
+
+	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
+
+	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
+
+	TPositionVector Test(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+
+	//Staton point defined at root frame
+
+	const TLOR2LOR& snrPTRoot2LorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
+	snrPTRoot2LorTrafo.transform(Test);
+
+	const TLOR2LOR& Up = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+
+	//Obs equation
+	TReal calcMeas = Test.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
+
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stTransfContributions;
+	TFreeVector stationContrib = getPointContributions(Up, 0, 0, -1);
+	addTransformationsContributions(Up, ecws.targetPos->getEstimatedValue(), 0, 0, -1, stTransfContributions);
+
+	TReal refPtDistContrib = 1.0;
+
+	//Compute the variance of the observation
+	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
+
+	ECWSContrib ecwsContrib = { calcMeas, stationContrib, stTransfContributions , refPtDistContrib, obsVariance };
+	return ecwsContrib;
+
+}
+
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
 //////////////////////////////////////////////////////////////////////

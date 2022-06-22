@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -23,6 +23,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
+struct TECWSROM;
 
 
 /*!
@@ -129,6 +130,9 @@ public:
 
 		///  Returns the contribution for a roll measurement (TINCLY) made by INCL instrument
 		INCLYContrib	getINCLYContrib(const TINCLYROM& inclST, const TINCLY& incly);
+
+		///  Returns the contribution the measured distance to a water surface (ECWS) made by the HLS instrument
+		ECWSContrib	getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws);
 	//@}
 
 
