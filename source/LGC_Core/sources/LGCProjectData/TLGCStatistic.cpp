@@ -75,7 +75,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 	double res = 0;
 
 	// compute z
-	TSparseMatrix Z(nbObs,nbEq);
+	TDenseMatrix Z(nbObs,nbEq);
 	if (combinedcase)
 		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());
 		// GKA (03/09/2019) : the equation says V = - Qvv * P * Bt * W. With B = -1, the parametric case is retrieved. Restricting the local reliability to the parametric case, gives the same coherent results;

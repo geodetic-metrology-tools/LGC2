@@ -168,6 +168,7 @@ void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE>& distMeas,
 	DistMeasContrib contributions;
 
 	for(auto meas(distMeas.begin()); meas != distMeas.end(); ++meas){
+		// These indices should be equal as the residuals are associated with the measurements
 		eqIdx = meas->getFirstEquationIndex(); 
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -215,7 +216,7 @@ void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE>& distMeas,
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
@@ -267,7 +268,7 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE>& dist
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of Spatial Distance measurement occurred.");
@@ -330,7 +331,7 @@ void  TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM
 				isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal angle (ANGL) measurement.");
@@ -377,7 +378,7 @@ void  TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN:
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal angle (ANGL) measurement.");
@@ -435,7 +436,7 @@ void  TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND>& zendMeas
 		}
 
 		// Adding the contribution to the second design matrix , -1 on the diagonal
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Zenith Distance (vertical angle) measurement.");
@@ -483,7 +484,7 @@ void  TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND>& zen
 		}
 
 		// Adding the contribution to the second design matrix , -1 on the diagonal
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Zenith Distance (vertical angle) measurement.");
@@ -540,7 +541,7 @@ bool isProcessOK = true;
 		}
 
 		// Adding the contribution to the second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal distance measurement.");
@@ -597,7 +598,7 @@ void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> r
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of ECTH measurement occurred.");
@@ -654,7 +655,7 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of ECDIR measurement occurred.");
@@ -714,7 +715,7 @@ void  TLSInputMatricesFiller::addLevelStContributions(TLEVEL& levelSt, TLSInputM
 		}
 
 		// Adding the contribution to the second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 
 		// In a case that optional DHOR measurement is done
@@ -748,7 +749,7 @@ void  TLSInputMatricesFiller::addLevelStContributions(TLEVEL& levelSt, TLSInputM
 				isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdxHd,  -1.0 * (itDLEV->dhor->getDistance() - contributionsDHOR.fCalcMeas));
 
 				// Adding the contribution to the second design matrix
-				isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdxHd, obsIdxHd, -1.0);
+				isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdxHd, -Eigen::MatrixXd::Identity(1,1));
 
 				if(!isnotanumber(itDLEV->dhor->getDHORSigma())){
 					isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdxHd, obsIdxHd, 1.0/pow2q(itDLEV->dhor->getDHORSigma()));
@@ -817,7 +818,7 @@ void  TLSInputMatricesFiller::addORIEContributions(TORIEROM& orieROM, TLSInputMa
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of Horizontal angle (ANGL) measurement.");
@@ -863,7 +864,7 @@ void  TLSInputMatricesFiller::addECHOContributions(TECHOROM& echoROM, TLSInputMa
 		}
 
 		// Adding the contribution to the second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if(!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of ECHO.");
@@ -914,7 +915,7 @@ void  TLSInputMatricesFiller::addECVEContributions(TECVEROM& ecveROM, TLSInputMa
 		}
 
 		// Adding the contribution to the second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of ECVE.");
@@ -975,7 +976,7 @@ void TLSInputMatricesFiller::addECSPContributions(TECSPROM& ecspRom, TLSInputMat
 		}
 
 		//add second design matrix contribution
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of ECSP measurement occurred.");
@@ -1032,7 +1033,7 @@ void  TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT>& dsptMeas, co
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of DSPT measurement occurred.");
@@ -1082,7 +1083,7 @@ void  TLSInputMatricesFiller::addDVERContribution(const std::list<TDVER>& dverMe
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of DVER measurement occurred.");
@@ -1130,7 +1131,7 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs& pdorObs, TLSIn
 		isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(pdorObs.getSigma().getRadiansValue()));
 	}
 
-	isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+	isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 	if (!isProcessOK)
 		throw std::runtime_error("Error occurred during filling input design matrices of PDOR measurement.");
@@ -1175,7 +1176,7 @@ void  TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI>& radiM
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(meas->getObservedStDev()));
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");
@@ -1240,8 +1241,7 @@ void  TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ>& o
 		}
 
 	
-		for (int i = 0; i<3; i++)
-			isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + i, firstEqIdx + i, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, -Eigen::MatrixXd::Identity(3,3));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of RADI measurement occurred.");
@@ -1280,7 +1280,7 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of Incly measurement occurred.");
@@ -1324,7 +1324,7 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 		}
 
 		// Adding the contribution to the second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(eqIdx, -Eigen::MatrixXd::Identity(1,1));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error occurred during filling input design matrices of ECWS.");
@@ -1393,12 +1393,12 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 			}
 		}
 
-		// Setting contributions for observations into a second design matrix
+		Eigen::MatrixXd block(3,3);
 		for(int i = 0; i<3;i++){
-			isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + i , firstObsIdx, contributions.fThetaContrib[i]); // Theta contrib for the first,second and third equation
-			isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + i, firstObsIdx + 1, contributions.fPhiContrib[i]); // Phi contrib for the first,second and third equation
-			isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + i, firstObsIdx + 2, contributions.fDistAndCsContrib[i]); // Distance contrib for the first,second and third equation
+			block.row(i)<<contributions.fThetaContrib[i], contributions.fPhiContrib[i], contributions.fDistAndCsContrib[i];
 		}
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, block);
+
 
 		//Setting the misclosure vector elements
 		for(int i = 0; i<3; i++)
@@ -1493,17 +1493,14 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM& camera, TLSInputMatrices* 
 		}
 
 		// Setting contributions for observations into a second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx, contributions.fXCompContrib[0]);  // X vector component contribution (i), first eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx, contributions.fXCompContrib[1]); // X vector component contribution (i), second eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 2, firstObsIdx, contributions.fXCompContrib[2]); // X vector component contribution (i), third eq
+		Eigen::MatrixXd block(3,3);
+		for (int i =0; i<3; i++){
+			block.row(i)<<contributions.fXCompContrib[i],  contributions.fYCompContrib[i], contributions.fDistContrib[i];
+		}
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, block);
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx + 1, contributions.fYCompContrib[0]); // Y vector component contribution (j), first eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx + 1, contributions.fYCompContrib[1]); // Y vector component contribution (j), second eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 2, firstObsIdx + 1, contributions.fYCompContrib[2]); // Y vector component contribution (j), third eq
 
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx + 2, contributions.fDistContrib[0]); // dist contrib, first eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx + 2, contributions.fDistContrib[1]); //dist contrib, second eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 2, firstObsIdx + 2, contributions.fDistContrib[2]); //dist contrib, second eq
+
 
 		//Setting the misclosure vector elements
 		for(int i = 0; i<3; i++)
@@ -1568,11 +1565,11 @@ void TLSInputMatricesFiller::addUVECContribution(TCAM& camera, TLSInputMatrices*
 		}
 
 		// Setting contributions for observations into a second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx, contributions.fXCompContrib[0]);  // X vector component contribution (i), first eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx, contributions.fXCompContrib[1]); // X vector component contribution (i), second eq
-
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx, firstObsIdx + 1, contributions.fYCompContrib[0]); // Y vector component contribution (j), first eq
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(firstEqIdx + 1, firstObsIdx + 1, contributions.fYCompContrib[1]); // Y vector component contribution (j), second eq
+		Eigen::MatrixXd block(2,2);
+		for(int i = 0; i<2;i++){
+			block.row(i)<<contributions.fXCompContrib[i], contributions.fYCompContrib[i];
+		}
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, block);
 
 		//Setting the misclosure vector elements
 		for(int i = 0; i<2; i++)
