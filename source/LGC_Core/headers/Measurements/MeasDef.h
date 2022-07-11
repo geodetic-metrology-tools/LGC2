@@ -598,7 +598,6 @@ public:
 	TECWS(const LGCAdjustablePoint& station, TInstrumentData::THLSR instr, TLength obsVal) :
 		TAScalarMeas<TInstrumentData::THLSR>(station, instr, obsVal) {}
 
-
 	///Destructor
 	~TECWS() override = default;
 	//@}

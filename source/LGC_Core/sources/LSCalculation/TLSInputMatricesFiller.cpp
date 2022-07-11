@@ -1302,20 +1302,19 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 
 		// Add station's contributions
 		if (!itECWS->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*itECWS->targetPos, contributions.fStationContrib, eqIdx, matrices); /*'Target' in ECHO means station, there is no real target in ECHO.*/
-
+			isProcessOK = isProcessOK && addPointContribution(*itECWS->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+																		   
 		// Adding contributions for STATION transformation parameters 
-		for (auto itStationTransform(contributions.fStTransformContrib.begin()); itStationTransform != contributions.fStTransformContrib.end(); ++itStationTransform) {
-			if (!itStationTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itStationTransform->first, itStationTransform->second, eqIdx, matrices);
+		for (auto& itStTransform : contributions.fWSTransformContrib) {
+			if (!itStTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, eqIdx, matrices);
 		}
 
 		// Adding controbution to a WS Height, which is at any case variable
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fRefWSContrib);
+		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fWSContrib);
 
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (contributions.fCalcMeas - itECWS->getDistance()));
-
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)

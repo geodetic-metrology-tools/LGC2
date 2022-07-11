@@ -263,8 +263,6 @@ struct TECWSROM : public TStatusObject {
 	//Measured vertical plane
 	TAdjustableLength* fMeasuredWSHeight;
 
-	//Measured vertical distanced
-	//TLength* fMeasuredWS;
 	//1-sigma precision of the water surface
 	TLength sigmaWS;
 
@@ -277,8 +275,7 @@ struct TECWSROM : public TStatusObject {
 
 	/// Line of the measurement definition
 	int  line;
-
-	int romId{ romCounter_++ };
+	int romId = TECWSROM::romCounter_++;
 
 
 	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS, TAdjustableLength* MeasuredHeight) :

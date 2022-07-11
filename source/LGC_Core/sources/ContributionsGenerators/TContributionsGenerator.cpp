@@ -1445,33 +1445,52 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 
 ////ECWS contribution
 ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
+	fPointTransfo.setMLA(false);
+	/* OLOC CASE :
+	- take Z WS
+	ZWS --> Z sensor (transformation at the place of the sensor)
+	equation: Z sensor - station
+	add transorformation and point contributions for water surface height and station.
+	* Geodetic case
+	- H WS
+	first step, change the H into Z at the place of the sensor --> continue with normal case.
+	
+	see ECHO, INCLY and UVD
+	How to initialize the Water surface height? Idea: normally should be defined by a Length. either add to this length another variable (case ECHO) or play directly with this length;
+	- user defined initialization?
+	- take all the points measured and average them (+ average of the measurments?)
+	
+	Check the implementation of the indexes.
+	*/
 
-	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
 
-	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
-
-	TPositionVector Test(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
-
-	//Staton point defined at root frame
-
-	const TLOR2LOR& snrPTRoot2LorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
-	snrPTRoot2LorTrafo.transform(Test);
-
-	const TLOR2LOR& Up = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	TPositionVector wsPos(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+	const TLOR2LOR& refPTLor2RootTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
+	refPTLor2RootTrafo.transform(wsPos);
+	wsPos.setX(TLength(0));
+	wsPos.setY(TLength(0));
 
 	//Obs equation
-	TReal calcMeas = Test.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
+	TPositionVector targetPoint = ecws.targetPos->getEstimatedValue();
 
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stTransfContributions;
-	TFreeVector stationContrib = getPointContributions(Up, 0, 0, -1);
-	addTransformationsContributions(Up, ecws.targetPos->getEstimatedValue(), 0, 0, -1, stTransfContributions);
+	TReal calcMeas =  wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
+	
+	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	
+	//Target must be defined in the frame
+	TFreeVector referencePTContrib(0,0,-1,TCoordSysFactory::ECoordSys::k3DCartesian);
 
-	TReal refPtDistContrib = 1.0;
+	// WS is defined in the root necessarily
+	TReal wsContrib = getPointContributions(stLor2RootTrafo, 0, 0, 1).getZ();
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> wsContribTransfContributions;
+	addTransformationsContributions(refPTLor2RootTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
 
 	//Compute the variance of the observation
+	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
+
 	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
 
-	ECWSContrib ecwsContrib = { calcMeas, stationContrib, stTransfContributions , refPtDistContrib, obsVariance };
+	ECWSContrib ecwsContrib = { calcMeas, referencePTContrib, wsContribTransfContributions , wsContrib, obsVariance };
 	return ecwsContrib;
 
 }

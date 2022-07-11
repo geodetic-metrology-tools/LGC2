@@ -72,8 +72,10 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 	//write header
 	(*stream) << endl;
 	(*stream) << TABs << "ECWS" << endl;
+	(*stream) << TABs << "HAUTEUR SURFACE D'EAU (M):" << TABs;
 	(*stream).writeDouble(obsWidth, lengthPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedValue().getMetresValue());//Output value in meters [m], stored in [m]
 	(*stream) << endl;
+	(*stream) << TABs << "PRECISION HAUTEUR SURFACE D'EAU (MM):" << TABs;
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedPrecision().getMMetresValue());//Output value in milimeters [mm], stored in [m]
 	(*stream) << endl;
 

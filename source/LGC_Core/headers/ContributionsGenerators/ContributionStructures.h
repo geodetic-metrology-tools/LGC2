@@ -410,12 +410,12 @@ struct INCLYContrib {
 
 struct ECWSContrib{
 	TReal			fCalcMeas;
-	TFreeVector	    fStationContrib;
+	TFreeVector		fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWSTransformContrib;
 
-	TReal		    fRefWSContrib;
+	TReal		    fWSContrib;
 	TReal			fObsVariance;
 };
 #endif
