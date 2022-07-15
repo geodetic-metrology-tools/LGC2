@@ -1022,7 +1022,7 @@ void TFRAMEWriter::initialiseAllObsSummaries() {
 		
 		if (tmeas.fECWS.size() > 0)
 			for (auto& itECWS : tmeas.fECWS)
-				allECWSSummaries_.push_back(&itECWS.getECWSObsSummary(itECWS.instrument.ID)); //To check .ID or get name????
+				allECWSSummaries_.push_back(&itECWS.getECWSObsSummary(itECWS.fMeasuredWSHeight->getName()));
 
 		if (tmeas.fCAM.size() > 0) {
 			for (auto& itCAM : tmeas.fCAM) {

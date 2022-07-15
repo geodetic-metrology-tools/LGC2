@@ -260,6 +260,9 @@ struct TECWSROM : public TStatusObject {
 	/// The instrument that is used on this station
 	TInstrumentData::THLSR    instrument;
 
+	/// name of the rom
+	std::string romName;
+
 	//Measured vertical plane
 	TAdjustableLength* fMeasuredWSHeight;
 
@@ -278,10 +281,11 @@ struct TECWSROM : public TStatusObject {
 	int romId = TECWSROM::romCounter_++;
 
 
-	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS, TAdjustableLength* MeasuredHeight) :
+	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS, TAdjustableLength *MeasuredHeight) :
 		instrument(inst),
 		fMeasuredWSHeight(MeasuredHeight),
 		sigmaWS(sigmaWS),
+		romName("NULL"),
 		line(NO_VALi)
 	{}
 

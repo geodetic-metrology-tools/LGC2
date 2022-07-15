@@ -1390,17 +1390,23 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		if (tokens.size() < 3)
 			throw std::runtime_error("ECWS measurement must have at least 2 entries, the HLSR instrument ID and the water surface standard error");
 
-		//TInstrumentData::THLSR instrTemp = finstruments.getDevice(finstruments.fHLSR, tokens.at(2));
-		//instrTemp.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		//
+
 		TECWSROM ecwsRom(finstruments.getDevice(finstruments.fHLSR, tokens.at(2)), TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), nullptr);
+
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		ecwsRom.line = line;
 		ecwsRom.setActive(activeLine);
 
 		//Read the WS sigma
-		//ecwsRom.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-
+		ecwsRom.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
+		
+		if (opts.has("WSID"))
+			ecwsRom.romName = opts.getParam("WSID");
+		else
+			ecwsRom.romName = "ECWS_line" + std::to_string(line);
+	
+		//TBD: Check if the name is unique 
 		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement
 
 		//The HLSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
@@ -1425,25 +1431,24 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
 		instr.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instr.sigmaInstrHeight));
 		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
-		instr.sigmaWS = TLength(ecwsROMLatest.sigmaWS.getMetresValue());
-		instr.sigmaWS = TLength(opts.getParamRmm2m("WSSE", instr.sigmaWS));
-
-
+		
+		if (opts.has("WSSE"))
+			instr.sigmaWS = TLength(opts.getParamRmm2m("WSSE", instr.sigmaWS));
+		else
+			instr.sigmaWS = TLength(ecwsROMLatest.sigmaWS.getMetresValue());
+	
 		// Store  the measured value
 		TECWS ecws(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
-
-		//ecwsROMLatest.sigmaWS = TLength(opts.getParamRmm2m("WSSE", ecwsROMLatest.sigmaWS));
-
-		ecws.line = line;
-		ecws.setActive(ecwsROMLatest.isActive() && activeLine); // Active only if ROM active as well
-
-		ecwsROMLatest.measECWS.emplace_back(ecws);
-
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
 			for (auto& point : ecwsROMLatest.measECWS)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECWS measurement is duplicated");
+
+		ecws.line = line;
+		ecws.setActive(ecwsROMLatest.isActive() && activeLine); // Active only if ROM active as well
+
+		ecwsROMLatest.measECWS.emplace_back(ecws);
 	}
 }

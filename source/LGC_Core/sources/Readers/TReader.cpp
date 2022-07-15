@@ -349,6 +349,11 @@ bool TReader::read(std::istream& lgcStream) {
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + currentkey + " keyword is not allowed in the root frame ";
 					return !outputMessages.hasErrors();
 				}
+
+				if (currenthandler->getKey() == ECWS && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames())) {
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + currentkey + " keyword is only allowed in the root frame ";
+					return !outputMessages.hasErrors();
+				}
 			}
 			catch (std::exception const& excp) {
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();

@@ -4,6 +4,7 @@
 #include "TAllfixedParamGenerator.h"
 #include <TPointTransformer.h>
 #include <Logger.hpp>
+#include "TXYH2CCS.h"
 
 #include "TDist.h" 
 #include <bitset>
@@ -18,6 +19,7 @@ bool TDataAnalyzer::dataConsistent(){
 	outputMessages.writeReportHeader("Data consistency check:");
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
+    TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 	
     // Clean the data:
     if(!cleanDeactivated()){
@@ -196,17 +198,30 @@ bool TDataAnalyzer::dataConsistent(){
         //INIT THE PARAMETER TO CHECK
         for (auto itECWS(it.node->data.get()->measurements.fECWS.begin()); itECWS != it.node->data.get()->measurements.fECWS.end(); ++itECWS) {
 
-            TReal referencePoint = 0;
+            TReal referencelength = 0;
+
             for (auto itECWSMeas(itECWS->measECWS.begin()); itECWSMeas != itECWS->measECWS.end(); ++itECWSMeas) {
 
                 TPositionVector stationPos = itECWSMeas->targetPos->getEstimatedValue();
                 TLOR2LOR transformation(itECWSMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
                 transformation.transform(stationPos);
+                auto refFrame = fPointTransfo.getRefFrame();
 
+                if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+                    if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+                        TXYH2CCS::CCS2XYHg2000Machine(stationPos);
+                    else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+                        TXYH2CCS::CCS2XYHg1985Machine(stationPos);
+                    else
+                        TXYH2CCS::CCS2XYHs(stationPos);
+                    referencelength += stationPos.getH().getMetresValue();
+                }
+                else {
+                    referencelength += stationPos.getZ().getMetresValue();
+                }
                 //Warning:
                 //in this version the measured distance to the WS is ignored, to be added before making the transformation to the Root system, TBD
-                //normally getH for non OLOC function, TBD 
-                referencePoint += stationPos.getZ().getMetresValue();
+                //normally getH for non OLOC function, TBD
 
                 //add simulation
                 //if (!fData.getConfig().sim.isActive())
@@ -217,16 +232,15 @@ bool TDataAnalyzer::dataConsistent(){
 
             if (numberOfMeasurements > 0) {
 
-                referencePoint /= numberOfMeasurements;
+                referencelength /= numberOfMeasurements;
+                
+                //TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, "ECWS_line" + std::to_string(itECWS->line));
+                TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS->romName.data());
 
-
-                //TBD, naming of the length instead of "adjlen" if name of the WS is defined otherwise look at how it is done in ECHO
-                ///TAdjustableLength adjLength(TLength(referencePoint, TLength::EUnits::kMetres), false, "adjlen");
-                TAdjustableLength adjLength(TLength(0, TLength::EUnits::kMetres), false, "adjlen");
                 itECWS->fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
             }
             else
-                outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
         }
 
 		cleanDeactivated();

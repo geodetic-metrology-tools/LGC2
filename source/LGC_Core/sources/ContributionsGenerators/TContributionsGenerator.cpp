@@ -1464,26 +1464,46 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 	*/
 
 
-	TPositionVector wsPos(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
-	const TLOR2LOR& refPTLor2RootTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
-	refPTLor2RootTrafo.transform(wsPos);
-	wsPos.setX(TLength(0));
-	wsPos.setY(TLength(0));
+
+	
+
+	//Transforamtions
+	const TLOR2LOR& Lor2RootTrafo = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	const TLOR2LOR& Root2LorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
+
+	//Transform the target Point in the root
+	TPositionVector targetPointInRoot = ecws.targetPos->getEstimatedValue();
+	Lor2RootTrafo.transform(targetPointInRoot);
+	
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	auto refFrame = fPointTransfo.getRefFrame();
+	//TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k2DCartesian);
+	TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
+		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			TXYH2CCS::XYHg2000Machine2CCS(wsPos);
+		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			TXYH2CCS::XYHg1985Machine2CCS(wsPos);
+		else
+			TXYH2CCS::XYHs2CCS(wsPos);
+	}	
 
 	//Obs equation
+	Root2LorTrafo.transform(wsPos);
 	TPositionVector targetPoint = ecws.targetPos->getEstimatedValue();
-
 	TReal calcMeas =  wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
 	
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 	
 	//Target must be defined in the frame
 	TFreeVector referencePTContrib(0,0,-1,TCoordSysFactory::ECoordSys::k3DCartesian);
 
 	// WS is defined in the root necessarily
-	TReal wsContrib = getPointContributions(stLor2RootTrafo, 0, 0, 1).getZ();
+	TReal wsContrib = getPointContributions(Lor2RootTrafo, 0, 0, 1).getZ();
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> wsContribTransfContributions;
-	addTransformationsContributions(refPTLor2RootTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
+	//for the OLOC: addTransformationsContributions(Root2LorTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
+	addTransformationsContributions(Lor2RootTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
 
 	//Compute the variance of the observation
 	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
