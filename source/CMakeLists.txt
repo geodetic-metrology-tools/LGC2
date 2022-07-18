@@ -34,6 +34,7 @@ set(CREATE_DOC ON)
 set(DOXYGEN_CONF_PATH ".")
 set(ENABLE_CONSOLE ON)
 set(CPACK_BUILD ON)
+set(USE_SERIALIZER ON)
 
 include("../../SUSoftCMakeCommon/CMakeLists.txt")
 
@@ -99,7 +100,6 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
-ADD_SUBDIRECTORY(LGC_ObjectSerialization)
 ADD_SUBDIRECTORY(LGC_Tests)
 
 # INSTALL for creation of the LGC2 installer
