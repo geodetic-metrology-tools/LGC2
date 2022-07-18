@@ -9,11 +9,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //STL
 #include <memory>
 //SURVEYLIB
+#include <Serializer.hpp>
 #include <TSparseMatrix.h>
 //LGC
 #include <Defaults.h>
 
-#include <LGC_ObjectSerialization/source/Serializer.hpp>
 
 class TLSInputMatrices;
 class TLSResultsMatrices;
