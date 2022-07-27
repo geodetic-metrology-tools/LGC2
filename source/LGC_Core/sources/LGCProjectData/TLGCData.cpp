@@ -821,3 +821,11 @@ void TPointGlobal::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("fNumVyz", fNumVyz);
 	obj.addProperty("fNumVxyz", fNumVxyz);
 }
+
+void TLGCData::TLSRelatedInfo::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fNumberOfLSIterations", fNumberOfLSIterations);
+	obj.addProperty("fS0APosteriori", fS0APosteriori);
+	obj.addProperty("fChiLoLimit", fChiLoLimit);
+	obj.addProperty("fChiUpLimit", fChiUpLimit);
+};

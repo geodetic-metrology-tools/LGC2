@@ -300,13 +300,7 @@ private:
 		TReal fChiUpLimit;
 
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper& obj) const
-		{
-			obj.addProperty("fNumberOfLSIterations", fNumberOfLSIterations);
-			obj.addProperty("fS0APosteriori", fS0APosteriori);
-			obj.addProperty("fChiLoLimit", fChiLoLimit);
-			obj.addProperty("fChiUpLimit", fChiUpLimit);
-		};
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 	};
 
 	TLSRelatedInfo fLSRelatedInfo;
