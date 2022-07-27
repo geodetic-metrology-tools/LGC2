@@ -56,7 +56,7 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		auto& targets(finstruments.fPOLAR[currentStation]->targets);
 		checkTarget(11, targets, tokens);				
 				
-        auto t = std::make_shared<TInstrumentData::TPOLAR::TTarget>(TInstrumentData::TPOLAR::TTarget{
+        auto t = std::make_shared<TInstrumentData::TPOLAR::TTarget>(TInstrumentData::TPOLAR::TTarget(
             tokens.at(0),
             TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kCCs), // given in cc, transform to rad
             TAngle(std::stor(tokens.at(2)), TAngle::EUnits::kCCs), // given in cc, transform to rad
@@ -69,7 +69,7 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             TLength(std::stor(tokens[9]), TLength::EUnits::kMetres),
             TLength(std::stor(tokens[10]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
             nullptr
-        });
+        ));
 
 		// store the new target
 		targets[tokens.at(0)] = t;
@@ -117,13 +117,13 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 		auto& targets(finstruments.fCAMD[currentStation]->targets);
 		checkTarget(5, targets, tokens);				
 				
-        auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget{
+        auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget(
             tokens.at(0),
             std::stor(tokens.at(1))  * VECCONV, // unitless 
             std::stor(tokens.at(2))  * VECCONV, // unitless 
             TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
             TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
-        });
+        ));
 
 		// store the new target
 		targets[tokens.at(0)] = t;				
@@ -173,7 +173,7 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/,
 		auto& targets(finstruments.fEDM[currentStation]->targets);
 		checkTarget(9, targets, tokens);	
 
-        auto t = std::make_shared<TInstrumentData::TEDM::TTarget>(TInstrumentData::TEDM::TTarget{
+        auto t = std::make_shared<TInstrumentData::TEDM::TTarget>(TInstrumentData::TEDM::TTarget(
             tokens.at(0),
             TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
@@ -184,7 +184,7 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/,
             TLength(std::stor(tokens[7]), TLength::EUnits::kMetres),
             TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres),
             nullptr
-        });
+        ));
 	
 		// store the new target
 		targets[tokens.at(0)] = t;
@@ -232,7 +232,7 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		auto & targets(finstruments.fLEVEL[currentStation]->targets);
 		checkTarget(7, targets, tokens);		
 
-        auto t = std::make_shared<TInstrumentData::TLEVEL::TTarget>(TInstrumentData::TLEVEL::TTarget{
+        auto t = std::make_shared<TInstrumentData::TLEVEL::TTarget>(TInstrumentData::TLEVEL::TTarget(
             tokens.at(0),
             TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
@@ -240,7 +240,7 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens[5]), TLength::EUnits::kMetres),
             TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres)
-        });
+        ));
 
 		// store the new target
 		targets[tokens.at(0)] = t;
@@ -268,14 +268,14 @@ void TKeySCALE::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	auto& scales(finstruments.fSCALE);
 	checkInstrument(8, scales, tokens);
 
-    auto s = std::make_shared<TInstrumentData::TSCALE>(TInstrumentData::TSCALE{
+    auto s = std::make_shared<TInstrumentData::TSCALE>(TInstrumentData::TSCALE(
         tokens.at(2),
         TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
         TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
         TLength(std::stor(tokens[5]), TLength::EUnits::kMetres),
         TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
         TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres)
-    });
+    ));
 
 	// store the new scale
 	scales.insert(std::make_pair(tokens.at(2), s));
@@ -302,14 +302,14 @@ void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 	auto& incls(finstruments.fINCL);
 	checkInstrument(8, incls, tokens);
 
-	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL{
+	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL(
 		tokens.at(2),
 		TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
 		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kGons),
 		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kCCs),
 		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kGons),
 		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kCCs)
-		});
+		));
 
 	// store the new inclinometer
 	incls.insert(std::make_pair(tokens.at(2), i));
@@ -337,13 +337,13 @@ void TKeyHLSR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 	auto& hlsrs(finstruments.fHLSR);
 	checkInstrument(6, hlsrs, tokens);
 
-	auto h = std::make_shared<TInstrumentData::THLSR>(TInstrumentData::THLSR{
+	auto h = std::make_shared<TInstrumentData::THLSR>(TInstrumentData::THLSR(
 		tokens.at(2),
 		TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
 		TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
 		TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres)
 
-		});
+		));
 
 	// store the new hlsr
 	hlsrs.insert(std::make_pair(tokens.at(2), h));

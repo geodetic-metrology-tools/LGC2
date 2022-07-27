@@ -809,14 +809,35 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
-	obj.addProperty("LSRelErrorsContainer/ListOfRelativeErrors", fRelError);
+	obj.addProperty("instruments", instruments);
+
+	obj.addProperty("angles", angles);
+	obj.addProperty("lengths", lengths);	
+		
+	obj.addProperty("points", points);
+	obj.addProperty("lines", lines);
+	obj.addProperty("planes", planes);
+	
+
+	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
+	
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
-	obj.addProperty("TPointGlobal/CounterOfPoints", fPointInfo);
-	obj.addProperty("TMeasurementsGlobal/CounterOfMeasures", fMeasInfo);
+	obj.addProperty("fMeasInfo", fMeasInfo);
+	obj.addProperty("fPointInfo", fPointInfo);
+	obj.addProperty("fRelError", fRelError);
+	obj.addProperty("fUEOIndices", fUEOIndices);
+	
+	
+	obj.addProperty("islgc1", islgc1);
+
 	obj.addProperty("TLGCStatistic", stat);
-	//obj.addProperty("fCovMat", fCovMat);
-	//Eigen::MatrixXd exampleMatrix(10 * 10, 10);
-	//obj.addProperty("exampleMatrix", exampleMatrix.reshaped()); // for now just as a flattened plain vector
+
+	Eigen::MatrixXd exampleMatrix(5, 3);
+	std::stringstream ss;
+	ss << exampleMatrix;
+	obj.addProperty("exampleMatrix", ss.str()); 
+	Eigen::Vector3d exampleVector(1, 2, 3);
+	obj.addProperty("exampleVector", exampleVector); 
 }
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const
@@ -854,3 +875,11 @@ void TPointGlobal::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("fNumVyz", fNumVyz);
 	obj.addProperty("fNumVxyz", fNumVxyz);
 }
+
+void TLGCData::TLSRelatedInfo::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fNumberOfLSIterations", fNumberOfLSIterations);
+	obj.addProperty("fS0APosteriori", fS0APosteriori);
+	obj.addProperty("fChiLoLimit", fChiLoLimit);
+	obj.addProperty("fChiUpLimit", fChiUpLimit);
+};

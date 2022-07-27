@@ -14,6 +14,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TPositionVector.h>
 #include <TFreeVector.h>
 
+
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
 class LGCAdjustablePoint;
 
 ///////////////////////////
@@ -24,7 +29,12 @@ class LGCAdjustablePoint;
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a line object defined through a point (TPositionVector) on a line and a line vector (TFreeVector).
 */
+
+#ifdef USE_SERIALIZER
+class LGCAdjustableLine : public Serializable, public TVAdjustableObject
+#else
 class LGCAdjustableLine : public TVAdjustableObject
+#endif // USE_SERIALIZER
 {
 public:
 	/*!@name Constructors*/
@@ -147,7 +157,10 @@ public:
 
 		void reInitialise();
 	//@}
-
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
 private:
 

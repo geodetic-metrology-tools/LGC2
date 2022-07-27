@@ -10,11 +10,16 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TAngle.h>
 #include <TLength.h>
 
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
 /*!
 	\ingroup LocalTransformations
 	\brief Structure which stores parameters of an helmert transformation.
 */
-struct TransformParameters{
+struct TransformParameters : public Serializable
+{
 	TAngle omega; //!< Rotation about the X axis
 	TAngle phi;  //!< Rotation about the Y axis
 	TAngle kappa; //!< Rotation about the Z axis 
@@ -26,6 +31,9 @@ struct TransformParameters{
 	TReal scale; //!< The unitless scale factor
 
 	TransformParameters() : omega(TAngle(0.0)), phi(TAngle(0.0)), kappa(TAngle(0.0)), tX(TLength(0.0)), tY(TLength(0.0)), tZ(TLength(0.0)), scale(TReal(1.0)) {};
+
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 
 	/// Overlading  comparition operator for TransformParameters
 	bool operator==(const TransformParameters& p) {
@@ -94,4 +102,21 @@ struct TransformParameters{
 	}
 };
 
+inline void TransformParameters::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	
+	obj.addProperty("kappa", kappa);
+	obj.addProperty("omega", omega);
+	obj.addProperty("phi", phi);
+	
+	obj.addProperty("scale", scale);
+	
+	obj.addProperty("tX", tX);
+	obj.addProperty("tY", tY);	
+	obj.addProperty("tZ", tZ);
+
+};
+
 #endif
+
+

@@ -35,6 +35,7 @@ set(DOXYGEN_CONF_PATH ".")
 set(ENABLE_CONSOLE ON)
 set(CPACK_BUILD ON)
 set(USE_SERIALIZER ON)
+add_compile_definitions(USE_SERIALIZER=${USE_SERIALIZER})
 
 include("../../SUSoftCMakeCommon/CMakeLists.txt")
 

@@ -19,7 +19,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TLGCStatistic.h>
 #include <TTreeEntry.h>
 #include <TLSCalcRelativeError.h>
-#include <Serializer.hpp>
+
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
 
 /*! Counter of points based on the type */
 struct TPointGlobal : public Serializable {
@@ -303,13 +306,7 @@ private:
 		TReal fChiUpLimit;
 
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper& obj) const
-		{
-			obj.addProperty("fNumberOfLSIterations", fNumberOfLSIterations);
-			obj.addProperty("fS0APosteriori", fS0APosteriori);
-			obj.addProperty("fChiLoLimit", fChiLoLimit);
-			obj.addProperty("fChiUpLimit", fChiUpLimit);
-		};
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 	};
 
 	TLSRelatedInfo fLSRelatedInfo;

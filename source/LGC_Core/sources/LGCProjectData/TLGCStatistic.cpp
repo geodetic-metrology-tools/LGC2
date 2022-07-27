@@ -37,16 +37,18 @@ TLGCStatistic::~TLGCStatistic(){
 
 void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("fZ", fZ);
-	obj.addProperty("fW", fW);
-	obj.addProperty("fDelty", fDelty);
-	obj.addProperty("fNablaValue", fNablaValue);
-	obj.addProperty("fGValue", fGValue);
-	obj.addProperty("fOverall", fOverall);
 	obj.addProperty("fAreDetermined", fAreDetermined);
-	obj.addProperty("fWToCompute", fWToCompute);
-	obj.addProperty("fGToCompute", fGToCompute);
+	obj.addProperty("fDegreesOfFreedom", fDegreesOfFreedom);
 	obj.addProperty("fDeltaComputed", fDeltaComputed);
+	obj.addProperty("fDelty", fDelty);
+	obj.addProperty("fGToCompute", fGToCompute);
+	obj.addProperty("fGValue", fGValue);
+	obj.addProperty("fNablaValue", fNablaValue);
+	obj.addProperty("fOverall", fOverall);
+	obj.addProperty("fT", fT);
+	obj.addProperty("fW", fW);
+	obj.addProperty("fWToCompute", fWToCompute);
+	obj.addProperty("fZ", fZ);
 }
 
 

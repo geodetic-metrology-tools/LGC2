@@ -150,3 +150,26 @@ void LGCAdjustableLine::setDefaults(){
 	uidx_lineVector[1] = -1;
 	uidx_lineVector[2] = -1;
 }
+
+
+#ifdef USE_SERIALIZER
+void LGCAdjustableLine::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fInit", fInit);
+	obj.addProperty("fixedStateLineVectorX", fixedStateLineVector[0]);
+	obj.addProperty("fixedStateLineVectorY", fixedStateLineVector[1]);
+	obj.addProperty("fixedStateLineVectorZ", fixedStateLineVector[2]);
+
+	obj.addProperty("fLinePoint", fLinePoint);
+	obj.addProperty("fLineVectorCorrection", fLineVectorCorrection);
+	obj.addProperty("fLineVectorCovariance", fLineVectorCovariance);
+
+	obj.addProperty("fLineVectorEstimatedPrecision", fLineVectorEstimatedPrecision);
+	obj.addProperty("fLineVectorEstimatedValue", fLineVectorEstimatedValue);
+	obj.addProperty("fLineVectorProvisionalValue", fLineVectorProvisionalValue);
+	obj.addProperty("fName", fName);
+	obj.addProperty("fReferencePointPosition", fReferencePointPosition);
+
+	obj.addProperty("uidx_lineVector", uidx_lineVector);
+}
+#endif // USE_SERIALIZER

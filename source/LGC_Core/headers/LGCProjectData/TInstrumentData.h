@@ -13,6 +13,12 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //SURVEYLIB
 #include <TAdjustableLength.h>
 #include <TAdjustableAngle.h>
+
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
+
 /*!
 	\ingroup LGCProjectData
 
@@ -20,12 +26,49 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	This data is then used to create proper instrument objects (TSTN, CAM, TLEVEL or TEDM).
 	Values given in the input file can be in various units, but they are transformed during reading into metres[m] (lengths) or radians[rads] (angles), in whose they are stored.
 */
-class TInstrumentData {
+class TInstrumentData : public Serializable 
+{
 	public:
-		class TPOLAR {
+	class TPOLAR : public Serializable
+	{
 		public:
-            struct TTarget {
-
+		    struct TTarget : public Serializable
+		    {
+				TTarget(std::string ID = "",
+					TAngle sigmaAngl = TAngle(),
+				    TAngle sigmaZenD = TAngle(),
+				    TLength sigmaDist = TLength(),
+				    TLength ppmDist = TLength(),
+				    bool distCorrectionUnknown = false,
+				    TLength distCorrectionValue = TLength(),
+				    TLength sigmaDCorr = TLength(),
+				    TLength sigmaTargetCentering = TLength(),
+				    TLength targetHt = TLength(),
+				    TLength sigmaTargetHt = TLength(),
+					TAdjustableLength *distCorrectionAdjustable = nullptr,
+				    TLength sigmaCombinedDist = TLength(),
+				    TAngle sigmaCombinedAngle = TAngle(),
+				    TAngle sigmaCombinedPLRAngl = TAngle(),
+				    TAngle sigmaCombinedPLRZenD = TAngle(),
+				    TLength sigmaCombinedPLRDist = TLength()) :
+				    ID(ID),
+					sigmaAngl(sigmaAngl),
+					sigmaZenD(sigmaZenD),
+				    sigmaDist(sigmaDist),
+				    ppmDist(ppmDist),
+				    distCorrectionUnknown(distCorrectionUnknown),
+				    distCorrectionValue(distCorrectionValue),
+				    sigmaDCorr(sigmaDCorr),
+				    sigmaTargetCentering(sigmaTargetCentering),
+				    targetHt(targetHt),
+				    sigmaTargetHt(sigmaTargetHt),
+				    distCorrectionAdjustable(distCorrectionAdjustable),
+				    sigmaCombinedDist(sigmaCombinedDist),
+				    sigmaCombinedAngle(sigmaCombinedAngle),
+				    sigmaCombinedPLRAngl(sigmaCombinedPLRAngl),
+				    sigmaCombinedPLRZenD(sigmaCombinedPLRZenD),
+				    sigmaCombinedPLRDist(sigmaCombinedPLRDist){};
+					
                 std::string ID;
                 TAngle sigmaAngl;	            // [rad]
                 TAngle sigmaZenD;	            // [rad]
@@ -43,6 +86,11 @@ class TInstrumentData {
 				TAngle sigmaCombinedPLRAngl;		   // [rad]
 				TAngle sigmaCombinedPLRZenD;		   // [rad]
 				TLength sigmaCombinedPLRDist;		   // [m]
+            
+                #ifdef USE_SERIALIZER
+				    // Inherited via Serializable
+				    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+                #endif
             };
 
             TPOLAR() = default;
@@ -82,6 +130,11 @@ class TInstrumentData {
                 return *this;
             }
 
+            #ifdef USE_SERIALIZER
+			    // Inherited via Serializable
+			    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+            #endif
+
 			std::string ID;
 			std::string defTarget;
 			TLength instrHeight;          // [m]
@@ -92,8 +145,27 @@ class TInstrumentData {
 		};
 
 		//Definition of camera parameters
-		struct TCAMD {
-            struct TTarget {
+		struct TCAMD : public Serializable
+		{
+			struct TTarget : public Serializable
+            {
+				TTarget(std::string ID = "",
+					TReal sigmaX = 0,
+					TReal sigmaY = 0,
+					TLength sigmaDist = TLength(),
+					TLength sigmaTargetCentering = TLength(),
+					TLength sigmaCombinedX = TLength(),
+					TLength sigmaCombinedY = TLength(),
+					TLength sigmaCombinedDist = TLength()) :
+					ID(ID),
+					sigmaX(sigmaX),
+					sigmaY(sigmaY),
+					sigmaDist(sigmaDist),
+					sigmaTargetCentering(sigmaTargetCentering),
+					sigmaCombinedX(sigmaCombinedX),
+					sigmaCombinedY(sigmaCombinedY),
+					sigmaCombinedDist(sigmaCombinedDist){};
+
                 std::string ID;
                 TReal sigmaX;	               // [] unitless
                 TReal sigmaY;	               // [] unitless
@@ -102,6 +174,11 @@ class TInstrumentData {
 				TLength sigmaCombinedX;		   // [m]
 				TLength sigmaCombinedY;		   // [m]
 				TLength sigmaCombinedDist;		   // [m]
+
+				#ifdef USE_SERIALIZER
+				    // Inherited via Serializable
+				    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+                #endif
             };
 
             TCAMD() = default;
@@ -133,153 +210,260 @@ class TInstrumentData {
                 return *this;
             }
 
+            #ifdef USE_SERIALIZER
+			    // Inherited via Serializable
+			    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+            #endif
+
 			std::string ID;
 			std::string defTarget;
 			TLength sigmaInstrCentering; // [m]
             std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
-		struct TEDM {
-            struct TTarget {
-                std::string ID;
-                TLength sigmaDSpt;            // [m] sigma of the distance
-                TLength ppmDSpt;              // [m]
-                bool  distCorrectionUnknown;
-                TLength distCorrectionValue;  // [m]
-                TLength sigmaDCorr;           // [m]
-                TLength sigmaTargetCentering; // [m]
-                TLength targetHt;             // [m]
-                TLength sigmaTargetHt;        // [m]
-                TAdjustableLength* distCorrectionAdjustable;
-				TLength sigmaCombinedDist;		   // [m]
-            };
+		struct TEDM : public Serializable
+		{
+			struct TTarget : public Serializable
+			{
+				TTarget(std::string ID = "",
+					TLength sigmaDSpt = TLength(),
+					TLength ppmDSpt = TLength(),
+					bool distCorrectionUnknown = false,
+					TLength distCorrectionValue = TLength(),
+					TLength sigmaDCorr = TLength(),
+					TLength sigmaTargetCentering = TLength(),
+					TLength targetHt = TLength(),
+					TLength sigmaTargetHt = TLength(),
+					TAdjustableLength *distCorrectionAdjustable = nullptr,
+					TLength sigmaCombinedDist = TLength()) :
+					ID(ID),
+					sigmaDSpt(sigmaDSpt),
+					ppmDSpt(ppmDSpt),
+					distCorrectionUnknown(distCorrectionUnknown),
+					distCorrectionValue(distCorrectionValue),
+					sigmaDCorr(sigmaDCorr),
+					sigmaTargetCentering(sigmaTargetCentering),
+					targetHt(targetHt),
+					sigmaTargetHt(sigmaTargetHt),
+					distCorrectionAdjustable(distCorrectionAdjustable),
+					sigmaCombinedDist(sigmaCombinedDist){};
 
-            TEDM() = default;
-            TEDM(
-                const std::string &instr_id,
-                const std::string &defTgt,
-                const TLength &instrH,
-                const TLength &sigmaInstrH,
-                const TLength &sigmaInstrCent)
-                : ID(instr_id)
-                , defTarget(defTgt)
-                , instrHeight(instrH)
-                , sigmaInstrHeight(sigmaInstrH)
-                , sigmaInstrCentering(sigmaInstrCent) {}
+				std::string ID;
+				TLength sigmaDSpt; // [m] sigma of the distance
+				TLength ppmDSpt; // [m]
+				bool distCorrectionUnknown;
+				TLength distCorrectionValue; // [m]
+				TLength sigmaDCorr; // [m]
+				TLength sigmaTargetCentering; // [m]
+				TLength targetHt; // [m]
+				TLength sigmaTargetHt; // [m]
+				TAdjustableLength *distCorrectionAdjustable;
+				TLength sigmaCombinedDist; // [m]
 
-            TEDM(const TEDM& instr)
-            {
-                *this = instr; // Use the assignment operator to have the targets deep copied
-            }
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			};
 
-            TEDM& operator=(const TEDM &other){
-                if(this == &other) return *this;
+			TEDM() = default;
+			TEDM(const std::string &instr_id, const std::string &defTgt, const TLength &instrH, const TLength &sigmaInstrH, const TLength &sigmaInstrCent) :
+				ID(instr_id), defTarget(defTgt), instrHeight(instrH), sigmaInstrHeight(sigmaInstrH), sigmaInstrCentering(sigmaInstrCent)
+			{
+			}
 
-                ID = other.ID;
-                defTarget = other.defTarget;
-                instrHeight = other.instrHeight;
-                sigmaInstrHeight = other.sigmaInstrHeight;
-                sigmaInstrCentering = other.sigmaInstrCentering;
-                targets = other.targets;
+			TEDM(const TEDM &instr)
+			{
+				*this = instr; // Use the assignment operator to have the targets deep copied
+			}
 
-                for(auto &tgt : targets)
-                    // Replace the target in the memory
-                    tgt.second.reset(new TTarget(*tgt.second));
+			TEDM &operator=(const TEDM &other)
+			{
+				if (this == &other)
+					return *this;
 
-                return *this;
-            }
+				ID = other.ID;
+				defTarget = other.defTarget;
+				instrHeight = other.instrHeight;
+				sigmaInstrHeight = other.sigmaInstrHeight;
+				sigmaInstrCentering = other.sigmaInstrCentering;
+				targets = other.targets;
+
+				for (auto &tgt : targets)
+					// Replace the target in the memory
+					tgt.second.reset(new TTarget(*tgt.second));
+
+				return *this;
+			}
 
 			std::string ID;
 			std::string defTarget;
-			TLength instrHeight;         // [m]
-			TLength sigmaInstrHeight;    // [m]
+			TLength instrHeight; // [m]
+			TLength sigmaInstrHeight; // [m]
 			TLength sigmaInstrCentering; // [m]
-            std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
+			std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
+
+			#ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 		};
 
-		struct TLEVEL {
-            struct TTarget {
-                std::string ID;
-                TLength sigmaD;               // [m]
-                TLength ppmD;                 // [m]
-                TLength distCorrectionValue;  // [m]
-                TLength sigmaDCorr;           // [m]
-                TLength staffHt;              // [m] i.e vertical offset of the staff = staff height 
-                TLength sigmaStaffHt;         // [m] standard deviation of the vertical offset of the staff
+
+		struct TLEVEL : public Serializable
+		{
+			struct TTarget : public Serializable
+			{
+				TTarget(std::string ID = "",
+					TLength sigmaD = TLength(),
+					TLength ppmD = TLength(),
+					TLength distCorrectionValue = TLength(),
+					TLength sigmaDCorr = TLength(),
+					TLength staffHt = TLength(),
+					TLength sigmaStaffHt = TLength(),
+					TLength sigmaCombinedDist = TLength()) :
+					ID(ID),
+					sigmaD(sigmaD),
+					ppmD(ppmD),
+					distCorrectionValue(distCorrectionValue),
+					sigmaDCorr(sigmaDCorr),
+					staffHt(staffHt),
+					sigmaStaffHt(sigmaStaffHt),
+					sigmaCombinedDist(sigmaCombinedDist){};
+
+				std::string ID;
+				TLength sigmaD; // [m]
+				TLength ppmD; // [m]
+				TLength distCorrectionValue; // [m]
+				TLength sigmaDCorr; // [m]
+				TLength staffHt; // [m] i.e vertical offset of the staff = staff height
+				TLength sigmaStaffHt; // [m] standard deviation of the vertical offset of the staff
 				TLength sigmaCombinedDist;
-            };
 
-            TLEVEL() = default;
-            TLEVEL(
-                const std::string &instr_id,
-                const std::string &defStaff,
-                const bool &collAnglUnknown,
-                const TAngle &collAnglVal,
-                TAdjustableAngle* collAnglAdj)
-                : ID(instr_id)
-                , defStaffID(defStaff)
-                , collAngleUnknown(collAnglUnknown)
-                , collAngleValue(collAnglVal)
-                , collAngleAdjustable(collAnglAdj) {}
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			};
 
-            TLEVEL(const TLEVEL& instr)
-            {
-                *this = instr; // Use the assignment operator to have the targets deep copied
-            }
+			TLEVEL() = default;
+			TLEVEL(const std::string &instr_id, const std::string &defStaff, const bool &collAnglUnknown, const TAngle &collAnglVal, TAdjustableAngle *collAnglAdj) :
+				ID(instr_id), defStaffID(defStaff), collAngleUnknown(collAnglUnknown), collAngleValue(collAnglVal), collAngleAdjustable(collAnglAdj)
+			{
+			}
 
-            TLEVEL& operator=(const TLEVEL &other){
-                if(this == &other) return *this;
+			TLEVEL(const TLEVEL &instr)
+			{
+				*this = instr; // Use the assignment operator to have the targets deep copied
+			}
 
-                ID = other.ID;
-                defStaffID = other.defStaffID;
-                collAngleUnknown = other.collAngleUnknown;
-                collAngleValue = other.collAngleValue;
-                collAngleAdjustable = other.collAngleAdjustable;
-                targets = other.targets;
+			TLEVEL &operator=(const TLEVEL &other)
+			{
+				if (this == &other)
+					return *this;
 
-                for(auto &tgt : targets)
-                    // Replace the target in the memory
-                    tgt.second.reset(new TTarget(*tgt.second));
+				ID = other.ID;
+				defStaffID = other.defStaffID;
+				collAngleUnknown = other.collAngleUnknown;
+				collAngleValue = other.collAngleValue;
+				collAngleAdjustable = other.collAngleAdjustable;
+				targets = other.targets;
 
-                return *this;
-            }
+				for (auto &tgt : targets)
+					// Replace the target in the memory
+					tgt.second.reset(new TTarget(*tgt.second));
+
+				return *this;
+			}
 
 			std::string ID;
 			std::string defStaffID;
 			bool collAngleUnknown;
-			TAngle collAngleValue;           // [rad]
-			TAdjustableAngle* collAngleAdjustable;
-            std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
+			TAngle collAngleValue; // [rad]
+			TAdjustableAngle *collAngleAdjustable;
+			std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
+
+			#ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 		};
 
-		struct TSCALE {
-		 std::string ID;
-         TLength sigmaD;               // [m]
-         TLength ppmD;                 // [m]
-         TLength distCorrectionValue;  // [m]
-         TLength sigmaDCorr;           // [m]
-         TLength sigmaInstrCentering;  // [m]
-		 TLength sigmaCombinedDist;		   // [m]
-		};
+		struct TSCALE : public Serializable
+		{
+			TSCALE(std::string ID = "",
+				TLength sigmaD = TLength(),
+				TLength ppmD = TLength(),
+				TLength distCorrectionValue = TLength(),
+				TLength sigmaDCorr = TLength(),
+				TLength sigmaInstrCentering = TLength(),
+				TLength sigmaCombinedDist = TLength()) :
+				ID(ID),
+				sigmaD(sigmaD),
+				ppmD(ppmD),
+				distCorrectionValue(distCorrectionValue),
+				sigmaDCorr(sigmaDCorr),
+				sigmaInstrCentering(sigmaInstrCentering),
+				sigmaCombinedDist(sigmaCombinedDist){};
 
-		struct TINCL {
 			std::string ID;
-			TAngle sigmaAngl;	          // [rad]
-			TAngle angleCorrectionValue;  // [rad]
-			TAngle sigmaCorrectionValue;  // [rad]
-			TAngle refAngleCorrectionValue;  // [rad]
-			TAngle refSigmaCorrectionValue;  // [rad]
-			TAngle sigmaCombinedAngle;		  // [rad]
+			TLength sigmaD; // [m]
+			TLength ppmD; // [m]
+			TLength distCorrectionValue; // [m]
+			TLength sigmaDCorr; // [m]
+			TLength sigmaInstrCentering; // [m]
+			TLength sigmaCombinedDist; // [m]
+
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 		};
-		
-        struct THLSR {
-            std::string ID;
-            TLength sigmaDist;               // [m]
-            TLength sigmaInstrHeight;     // [m]
-            TLength sigmaInstrCentering;  // [m]
-            TLength sigmaWS;             // [m]
-            TLength sigmaCombinedDist;	 // [m]
-        };
+
+		struct TINCL : public Serializable
+		{
+			TINCL(std::string ID = "",
+				TAngle sigmaAngl = TAngle(),
+				TAngle angleCorrectionValue = TAngle(),
+				TAngle sigmaCorrectionValue = TAngle(),
+				TAngle refAngleCorrectionValue = TAngle(),
+				TAngle refSigmaCorrectionValue = TAngle(),
+				TAngle sigmaCombinedAngle = TAngle()) :
+				ID(ID),
+				sigmaAngl(sigmaAngl),
+				angleCorrectionValue(angleCorrectionValue),
+				sigmaCorrectionValue(sigmaCorrectionValue),
+				refAngleCorrectionValue(refAngleCorrectionValue),
+				refSigmaCorrectionValue(refSigmaCorrectionValue),
+				sigmaCombinedAngle(sigmaCombinedAngle){};
+
+			std::string ID;
+			TAngle sigmaAngl; // [rad]
+			TAngle angleCorrectionValue; // [rad]
+			TAngle sigmaCorrectionValue; // [rad]
+			TAngle refAngleCorrectionValue; // [rad]
+			TAngle refSigmaCorrectionValue; // [rad]
+			TAngle sigmaCombinedAngle; // [rad]
+
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		};
+
+		struct THLSR : public Serializable
+		{
+			THLSR(std::string ID = "",
+				TLength sigmaDist = TLength(),
+				TLength sigmaInstrHeight = TLength(),
+				TLength sigmaInstrCentering = TLength(),
+				TLength sigmaWS = TLength(),
+				TLength sigmaCombinedDist = TLength()) :
+				ID(ID), sigmaDist(sigmaDist), sigmaInstrHeight(sigmaInstrHeight), sigmaInstrCentering(sigmaInstrCentering), sigmaWS(sigmaWS), sigmaCombinedDist(sigmaCombinedDist){};
+
+			std::string ID;
+			TLength sigmaDist;
+			TLength sigmaInstrHeight;
+			TLength sigmaInstrCentering;
+			TLength sigmaWS;
+			TLength sigmaCombinedDist;
+
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		};
+
 
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
@@ -313,5 +497,168 @@ class TInstrumentData {
 
 			return *it->second;
 		}
+
+        #ifdef USE_SERIALIZER
+            // Inherited via Serializable
+		    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+        #endif
 };
+
+
+#ifdef USE_SERIALIZER
+    inline void TInstrumentData::serialize(SerializerObject::SerializationHelper &obj) const
+    {
+		obj.addProperty("fCAMD", fCAMD);
+		obj.addProperty("fEDM", fEDM);
+		obj.addProperty("fHLSR", fHLSR);
+		obj.addProperty("fINCL", fINCL);
+		obj.addProperty("fLEVEL", fLEVEL);
+		obj.addProperty("fPOLAR", fPOLAR);		
+		obj.addProperty("fSCALE", fSCALE);
+    }
+
+	inline void TInstrumentData::TPOLAR::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("constAngle", constAngle);
+		obj.addProperty("defTarget", defTarget);
+		obj.addProperty("ID", ID);
+		obj.addProperty("instrHeight", instrHeight);
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
+		obj.addProperty("targets", targets);
+	}
+
+	
+	inline void TInstrumentData::TPOLAR::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (distCorrectionAdjustable)
+			obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
+		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
+		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("ID", ID);
+		obj.addProperty("ppmDist", ppmDist);
+
+		obj.addProperty("sigmaAngl", sigmaAngl);
+		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
+		obj.addProperty("sigmaCombinedPLRAngl", sigmaCombinedPLRAngl);
+		obj.addProperty("sigmaCombinedPLRDist", sigmaCombinedPLRDist);
+		
+		obj.addProperty("sigmaCombinedPLRZenD", sigmaCombinedPLRZenD);
+		obj.addProperty("sigmaDCorr", sigmaDCorr);
+		obj.addProperty("sigmaDist", sigmaDist);
+		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering);
+		obj.addProperty("sigmaTargetHt", sigmaTargetHt);
+
+		obj.addProperty("sigmaZenD", sigmaZenD);
+		obj.addProperty("targetHt", targetHt);
+		
+	}
+	
+	inline void TInstrumentData::TCAMD::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("defTarget", defTarget);
+		obj.addProperty("ID", ID);
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+		obj.addProperty("targets", targets);
+	}
+
+	inline void TInstrumentData::TCAMD::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("ID", ID);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
+		obj.addProperty("sigmaCombinedX", sigmaCombinedX);
+		obj.addProperty("sigmaCombinedY", sigmaCombinedY);
+		obj.addProperty("sigmaDist", sigmaDist);
+		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering);
+		obj.addProperty("sigmaX", sigmaX);
+		obj.addProperty("sigmaY", sigmaY);
+	}
+
+	inline void TInstrumentData::TEDM::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("defTarget", defTarget);
+		obj.addProperty("ID", ID);
+		obj.addProperty("instrHeight", instrHeight);
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
+		obj.addProperty("targets", targets);
+	}
+
+	inline void TInstrumentData::TEDM::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (distCorrectionAdjustable)
+			obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
+		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
+		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("ID", ID);
+		obj.addProperty("ppmDSpt", ppmDSpt);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
+		obj.addProperty("sigmaDCorr", sigmaDCorr);
+		obj.addProperty("sigmaDSpt", sigmaDSpt);
+		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering);
+		obj.addProperty("sigmaTargetHt", sigmaTargetHt);
+		obj.addProperty("targetHt", targetHt);
+	}
+
+	inline void TInstrumentData::TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (collAngleAdjustable)
+			obj.addProperty("collAngleAdjustable", collAngleAdjustable);
+		obj.addProperty("collAngleUnknown", collAngleUnknown);
+		obj.addProperty("collAngleValue", collAngleValue);
+		obj.addProperty("defStaffID", defStaffID);
+		obj.addProperty("ID", ID);
+		obj.addProperty("targets", targets);
+	}
+
+	inline void TInstrumentData::TLEVEL::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("ID", ID);
+		obj.addProperty("ppmD", ppmD);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
+		obj.addProperty("sigmaD", sigmaD);
+		obj.addProperty("sigmaDCorr", sigmaDCorr);
+		obj.addProperty("sigmaStaffHt", sigmaStaffHt);
+		obj.addProperty("staffHt", staffHt);
+	}
+
+	inline void TInstrumentData::TSCALE::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("ID", ID);
+		obj.addProperty("ppmD", ppmD);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
+		obj.addProperty("sigmaD", sigmaD);
+		obj.addProperty("sigmaDCorr", sigmaDCorr);
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+	}
+
+	inline void TInstrumentData::TINCL::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("angleCorrectionValue", angleCorrectionValue);
+		obj.addProperty("ID", ID);
+		obj.addProperty("refAngleCorrectionValue", refAngleCorrectionValue);
+		obj.addProperty("refSigmaCorrectionValue", refSigmaCorrectionValue);
+		obj.addProperty("sigmaAngl", sigmaAngl);
+		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle);
+		obj.addProperty("sigmaCorrectionValue", sigmaCorrectionValue);
+	}
+
+	inline void TInstrumentData::THLSR::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("ID", ID);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
+		obj.addProperty("sigmaDist", sigmaDist);
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
+		obj.addProperty("sigmaWS", sigmaWS);
+	}
+
+#endif // USE_SERIALIZER
+
+
+
+
 #endif
