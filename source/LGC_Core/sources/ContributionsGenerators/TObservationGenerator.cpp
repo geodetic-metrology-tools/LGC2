@@ -554,19 +554,31 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const T
 
 TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {
 
-	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
+	//Transforamtions
+	const TLOR2LOR& Lor2RootTrafo = fPointTransfo->getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin());
+	const TLOR2LOR& Root2LorTrafo = fPointTransfo->getLORTransformation(fPointTransfo->getTree()->begin(), ecws.targetPos->getFrameTreePosition());
 
-	TPositionVector snrPoint = ecws.targetPos->getEstimatedValue();
+	//Transform the target Point in the root
+	TPositionVector targetPointInRoot = ecws.targetPos->getEstimatedValue();
+	Lor2RootTrafo.transform(targetPointInRoot);
 
-	TPositionVector Test(0, 0, ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	auto refFrame = fPointTransfo->getRefFrame();
+	TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
+		if (fPointTransfo->getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			TXYH2CCS::XYHg2000Machine2CCS(wsPos);
+		else if (fPointTransfo->getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			TXYH2CCS::XYHg1985Machine2CCS(wsPos);
+		else
+			TXYH2CCS::XYHs2CCS(wsPos);
+	}
 
 	//Obs equation
-	TReal calcMeas = Test.getZ().getMetresValue() - snrPoint.getZ().getMetresValue();
-
-	TReal refPtDistContrib = 1.0;
-
-	//Compute the variance of the observation
-	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
-
+	Root2LorTrafo.transform(wsPos);
+	TPositionVector targetPoint = ecws.targetPos->getEstimatedValue();
+	TReal calcMeas = wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
+	
 	return calcMeas;
 }

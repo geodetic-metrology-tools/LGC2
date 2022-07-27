@@ -564,8 +564,7 @@ void TFRAMEWriter::writeMeasurementsSummary(TDataTreeIterator frameIt){
 		for (auto& itECWS : tmeas.fECWS)
 			hlsrWriter.writeECWSRResultsSynthesis(itECWS);
 
-		//	
-				//write global mean
+		//write global mean
 		hlsrWriter.writeDistanceResultsSummary(tmeas.getECWSGlobalObsSummary(), TABs);
 	}
 }
@@ -2145,7 +2144,7 @@ void TFRAMEWriter::writeHLSRReliability(TDataTreeIterator frameIt)
 				hlsrWriter.writeECWSReliabilityHeader();
 				isecws = true;
 			}
-			hlsrWriter.writeECWSReliabilityData(fProjectData->getStatistics(), itECWS.measECWS);
+			hlsrWriter.writeECWSReliabilityData(itECWS, fProjectData->getStatistics(), itECWS.measECWS);
 		}
 	}
 

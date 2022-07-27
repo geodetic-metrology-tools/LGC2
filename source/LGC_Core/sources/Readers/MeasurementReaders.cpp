@@ -1406,7 +1406,12 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		else
 			ecwsRom.romName = "ECWS_line" + std::to_string(line);
 	
-		//TBD: Check if the name is unique 
+		//Check if the name is unique 
+		for (auto& itRomName : proj.getCurrentNode().measurements.fECWS)
+			if(itRomName.romName == ecwsRom.romName)
+				throw std::runtime_error("Water Surface Names must be unique: "+ ecwsRom.romName + " is duplicated");
+
+		//check if the name is unique, the ECWS can only be in the root.
 		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement
 
 		//The HLSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
@@ -1420,15 +1425,22 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		/*This is a position of station point from which the plane is measured in the ECWS class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
-
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
-		currentTargetApplied = opts.getParamS("HLSR", currentTargetApplied); //If HLSR is used then change ID of CurrentTargetApplied for the following measurements.
+
+		std::string currentTarget = currentTargetApplied; //Take the current target, which is used
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
+		if (opts.has("INSTR")) {
+			auto currentTarget = opts.getParam("INSTR");
+			currentTargetApplied = currentTarget;
+		}
+
+		//currentTargetApplied = opts.getParamS("INSTR", currentTargetApplied); //If HLSR is used then change ID of CurrentTargetApplied for the following measurements.
 
 		TInstrumentData::THLSR instr = finstruments.getDevice(finstruments.fHLSR, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
 		TECWSROM& ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
 
 
-		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
+		instr.sigmaDist = TLength(opts.getParamRmm2m("OBSE", instr.sigmaDist));
 		instr.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instr.sigmaInstrHeight));
 		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
 		

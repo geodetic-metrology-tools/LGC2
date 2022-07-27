@@ -446,7 +446,7 @@ void TLSSimulation::getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCL
 void TLSSimulation::getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws) {
 	for (auto& itECWS : ecws) {
 		TReal calcVal = fSimObs.getECWSCalcMeas(ecwsROM, itECWS);
-		TReal sigma = itECWS.target.sigmaD;
+		TReal sigma = itECWS.target.sigmaDist;
 		itECWS.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
 }

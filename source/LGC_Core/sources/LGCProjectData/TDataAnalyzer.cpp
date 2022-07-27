@@ -195,13 +195,13 @@ bool TDataAnalyzer::dataConsistent(){
             }
         }
 
-        //INIT THE PARAMETER TO CHECK
+        //Initialisation of the water surface height
         for (auto itECWS(it.node->data.get()->measurements.fECWS.begin()); itECWS != it.node->data.get()->measurements.fECWS.end(); ++itECWS) {
 
             TReal referencelength = 0;
 
             for (auto itECWSMeas(itECWS->measECWS.begin()); itECWSMeas != itECWS->measECWS.end(); ++itECWSMeas) {
-
+                                 
                 TPositionVector stationPos = itECWSMeas->targetPos->getEstimatedValue();
                 TLOR2LOR transformation(itECWSMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
                 transformation.transform(stationPos);
@@ -219,13 +219,12 @@ bool TDataAnalyzer::dataConsistent(){
                 else {
                     referencelength += stationPos.getZ().getMetresValue();
                 }
-                //Warning:
-                //in this version the measured distance to the WS is ignored, to be added before making the transformation to the Root system, TBD
-                //normally getH for non OLOC function, TBD
 
-                //add simulation
-                //if (!fData.getConfig().sim.isActive())
-                //	initialRefPtDistance += itECHOMeas->getDistance();
+                if (!fData.getConfig().sim.isActive()) {
+                    TFreeVector measValue(0, 0, itECWSMeas->getDistance(), TCoordSysFactory::ECoordSys::k3DCartesian);
+                    transformation.transform(measValue);
+                    referencelength += measValue.getZ().getMetresValue();
+                }
             }
 
             int numberOfMeasurements = (int)itECWS->measECWS.size();
@@ -234,7 +233,6 @@ bool TDataAnalyzer::dataConsistent(){
 
                 referencelength /= numberOfMeasurements;
                 
-                //TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, "ECWS_line" + std::to_string(itECWS->line));
                 TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS->romName.data());
 
                 itECWS->fMeasuredWSHeight = &fData.getLength().addObject(adjLength);

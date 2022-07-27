@@ -104,7 +104,6 @@ private:
 
 	void    getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly);
 
-	// ECWS measurements
 	void    getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws);
 
 	/// Return a biased value (correct measurement + small error)

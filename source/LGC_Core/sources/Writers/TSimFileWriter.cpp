@@ -238,6 +238,15 @@ void	TSimFileWriter::writeInstrument()
 			<< itINCL.second->refSigmaCorrectionValue.getSignedCCValue() << sep
 			<< endl;
 	}
+
+	for (auto& itHLSR : data->getInstruments().fHLSR)
+	{
+		(*stream) << "*HLSR " << itHLSR.second->ID << sep
+			<< itHLSR.second->sigmaDist.getMMetresValue() << sep
+			<< itHLSR.second->sigmaInstrHeight.getMMetresValue() << sep
+			<< itHLSR.second->sigmaInstrCentering.getMMetresValue() << sep
+			<< endl;
+	}
 }
 
 void	TSimFileWriter::writeData(TDataTreeIterator itTree)
@@ -520,6 +529,9 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 	for (auto& meas : frameIt->get()->measurements.fORIE)
 		writeORIEMeas(&meas);
 
+	for (auto& meas : frameIt->get()->measurements.fECWS)
+		writeECWSMeas(&meas);
+
 	if (!frameIt->get()->measurements.fRADI.empty())
 	{
         if(!frameIt->get()->measurements.radiActive)
@@ -546,8 +558,6 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 			writeINCLYMeas(&meas);
 	}
 
-	for (auto& meas : frameIt->get()->measurements.fECWS)
-		writeECWSMeas(&meas);
 }
 
 
@@ -1080,8 +1090,11 @@ void TSimFileWriter::writeECWSMeas(TECWSROM* meas)
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << "*ECWS" << sep
-		<< hlsrDefInst.ID << endl;
-
+		<< hlsrDefInst.ID << sep
+		<< meas->sigmaWS.getMMetresValue() << sep
+		<< "WSID" << sep
+		<< meas->romName << endl; ;
+	
 	//write the list of measurements for the line
 	for (auto& itECWS : meas->measECWS)
 	{
@@ -1092,12 +1105,16 @@ void TSimFileWriter::writeECWSMeas(TECWSROM* meas)
 			<< itECWS.getDistance().getMetresValue() << sep;
 
 		if (itECWS.target.ID != hlsrDefInst.ID)
-			(*stream) << "" << sep
-			<< itECWS.target.ID << sep;
+			(*stream) << "INSTR" << sep
+				<< itECWS.target.ID << sep;
 
-		if (itECWS.target.sigmaD != hlsrDefInst.sigmaD)
+		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
+		if (itECWS.target.ID != hlsrDefInst.ID)
+			hlsrDefInst = *data->getInstruments().fHLSR.at(itECWS.target.ID);
+
+		if (itECWS.target.sigmaDist != hlsrDefInst.sigmaDist)
 			(*stream) << "OBSE" << sep
-			<< itECWS.target.sigmaD.getMMetresValue() << sep;
+			<< itECWS.target.sigmaDist.getMMetresValue() << sep;
 
 		if (itECWS.target.sigmaInstrHeight != hlsrDefInst.sigmaInstrHeight)
 			(*stream) << "IHSE" << sep
@@ -1107,11 +1124,11 @@ void TSimFileWriter::writeECWSMeas(TECWSROM* meas)
 			(*stream) << "ICSE" << sep
 			<< itECWS.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-		(*stream) << endl;
+		if (itECWS.target.sigmaWS != meas->sigmaWS)
+			(*stream) << "WSSE" << sep
+			<< itECWS.target.sigmaWS.getMMetresValue() << sep;
 
-		// Update the default target if necessary
-		if (itECWS.target.ID != hlsrDefInst.ID)
-			hlsrDefInst = itECWS.target;
+		(*stream) << endl;
 	}
 }
 
@@ -1616,7 +1633,7 @@ void TSimFileWriter::writeINCLYMeas(TINCLYROM* meas)
 
 		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
 		if (itINCLY.target.ID != inclDefInst.ID)
-			inclDefInst = itINCLY.target;
+			inclDefInst = *data->getInstruments().fINCL.at(itINCLY.target.ID);
 
 		if (itINCLY.target.sigmaAngl != inclDefInst.sigmaAngl)
 			(*stream) << "OBSE" << sep

@@ -274,7 +274,7 @@ class TInstrumentData {
 		
         struct THLSR {
             std::string ID;
-            TLength sigmaD;               // [m]
+            TLength sigmaDist;               // [m]
             TLength sigmaInstrHeight;     // [m]
             TLength sigmaInstrCentering;  // [m]
             TLength sigmaWS;             // [m]

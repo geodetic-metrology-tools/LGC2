@@ -1445,27 +1445,8 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 
 ////ECWS contribution
 ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
+	// No need for MLA Transformation in ECWS
 	fPointTransfo.setMLA(false);
-	/* OLOC CASE :
-	- take Z WS
-	ZWS --> Z sensor (transformation at the place of the sensor)
-	equation: Z sensor - station
-	add transorformation and point contributions for water surface height and station.
-	* Geodetic case
-	- H WS
-	first step, change the H into Z at the place of the sensor --> continue with normal case.
-	
-	see ECHO, INCLY and UVD
-	How to initialize the Water surface height? Idea: normally should be defined by a Length. either add to this length another variable (case ECHO) or play directly with this length;
-	- user defined initialization?
-	- take all the points measured and average them (+ average of the measurments?)
-	
-	Check the implementation of the indexes.
-	*/
-
-
-
-	
 
 	//Transforamtions
 	const TLOR2LOR& Lor2RootTrafo = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
@@ -1476,9 +1457,8 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 	Lor2RootTrafo.transform(targetPointInRoot);
 	
 
-	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	// The WS Height is expressed in the root, can be either in a geodetic system or in a local reference frame
 	auto refFrame = fPointTransfo.getRefFrame();
-	//TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k2DCartesian);
 	TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
 	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
 		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
@@ -1490,25 +1470,37 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 			TXYH2CCS::XYHs2CCS(wsPos);
 	}	
 
+	//Target must be defined in the frame where the WPS sensor is
+	TFreeVector referencePTContrib(0, 0, -1, TCoordSysFactory::ECoordSys::k3DCartesian);
+
+	// WS is defined in the root necessarily
+	TReal wsContrib = getPointContributions(Lor2RootTrafo, 0, 0, 1).getZ();
+
+	//Add the contribtion of the WS to the transformation
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> wsContribTransfContributions;
+	addTransformationsContributions(Root2LorTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
+
 	//Obs equation
 	Root2LorTrafo.transform(wsPos);
 	TPositionVector targetPoint = ecws.targetPos->getEstimatedValue();
 	TReal calcMeas =  wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
 	
-	
-	//Target must be defined in the frame
-	TFreeVector referencePTContrib(0,0,-1,TCoordSysFactory::ECoordSys::k3DCartesian);
+	//Compute the variance related to the instrument centering w.r.t water surface
+	TFreeVector stationV(0, 0, 1, TCoordSysFactory::k3DCartesian);
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		fPointTransfo.set2MLATransformation(targetPointInRoot);
+		fPointTransfo.transformMLA2CGRF(stationV);
+		fPointTransfo.transformCGRF2CCS(stationV);
+	}
+	Root2LorTrafo.transform(stationV);
 
-	// WS is defined in the root necessarily
-	TReal wsContrib = getPointContributions(Lor2RootTrafo, 0, 0, 1).getZ();
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> wsContribTransfContributions;
-	//for the OLOC: addTransformationsContributions(Root2LorTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
-	addTransformationsContributions(Lor2RootTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
+	TAngle incliWS(acos(abs(stationV.getZ().getMetresValue())));
+
+	//PI/2 causes a huge Sigma value : OK with the behavior
+	TReal  instrCenterSigma = tan(incliWS.getRadiansValue()) * ecws.target.sigmaInstrCentering.getMetresValue();
 
 	//Compute the variance of the observation
-	TReal obsWSSigma = ecws.target.sigmaWS.getMetresValue();
-
-	TReal obsVariance = pow2q(ecws.target.sigmaD.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(obsWSSigma) + pow2q(ecws.target.sigmaInstrCentering.getMetresValue());
+	TReal obsVariance = pow2q(ecws.target.sigmaDist.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(ecws.target.sigmaWS.getMetresValue()) + pow2q(instrCenterSigma);
 
 	ECWSContrib ecwsContrib = { calcMeas, referencePTContrib, wsContribTransfContributions , wsContrib, obsVariance };
 	return ecwsContrib;

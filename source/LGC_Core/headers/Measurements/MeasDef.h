@@ -602,46 +602,8 @@ public:
 	~TECWS() override = default;
 	//@}
 
-	/*!@name Access methods*/
-	//@{
+	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
-	/// Returns the observed value.
-	//inline TLength getDistanceCorrection() const { return fDistanceCorrection; }
-
-	/// Returns standard deviation of the observed value
-	//inline TLength getObservedStDev() const { return fSigmaObsVal; }
-	//@}
-
-
-	/*!@name Settings */
-	//@{
-		/// Returns the observed value.*/
-	/// Returns the observed value: FRK should we return a mean values when several distances stored in this TAScalarMeas object???
-	inline TLength getObservedOffset() const { return distances[0]; }
-
-	/// Returns the a priori standard deviation of the observed value (provided by the user in the input file)
-	inline TLength getSigma0Offset() const { return target.sigmaD; }
-
-
-	//@}
-
-
-
-	/*!@name Settings */
-	//@{
-		/// Sets the observed value.*/
-//	inline void setObservedDistance(TLength dist) { fObsDist = dist; }
-
-	/// Sets standard deviation of the observed value
-//	inline void setSigmaDistance(TLength sigmaD) { fSigDist = sigmaD; }
-	//@}
-
-private:
-	// The observed distance
-//	TLength fObsDist;
-	// Standard deviation of the observed value
-//	TLength fSigDist;
 };
 
 #endif

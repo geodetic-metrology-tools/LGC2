@@ -70,20 +70,8 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 
 
 	//write header
-	(*stream) << endl;
-	(*stream) << TABs << "ECWS" << endl;
-	(*stream) << TABs << "HAUTEUR SURFACE D'EAU (M):" << TABs;
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedValue().getMetresValue());//Output value in meters [m], stored in [m]
-	(*stream) << endl;
-	(*stream) << TABs << "PRECISION HAUTEUR SURFACE D'EAU (MM):" << TABs;
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedPrecision().getMMetresValue());//Output value in milimeters [mm], stored in [m]
-	(*stream) << endl;
-
-
-	////write the the water surface sigma
-	//(*stream).writeString(nameWidth, "SIGMA WS");
-	//h(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.sigmaWS); //Output value in mm
-
+	writeHLSRHeader(ecwsrom);
+	
 	//data summury
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
 	writeHLSRResultsHeader(); // write the title line for the observations
@@ -111,7 +99,7 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.getDistanceResidual() / ItECWS.target.sigmaCombinedDist);//Output value in meters [m], stored in [m]
 
 		//write the OBSE
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaD.getMMetresValue());//Output value in mm
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaDist.getMMetresValue());//Output value in mm
 
 		//write the IHSE
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWS.target.sigmaInstrHeight.getMMetresValue());//Output value in mm
@@ -135,29 +123,44 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 void THLSRWriter::writeECWSSIMUResults(const  TECWSROM& ecwsrom)
 {
 	TAStreamFormatter* stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsWidth = getObsWidth();
-	int					lengthPrecision = getLengthPrecision();
-	std::string				separator = getSeparator();
+	//std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
+	
+	writeHLSRHeader(ecwsrom);
 
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
+	(*stream) << TABs << "ECWS" << endl;
 
-	for (auto const& ItECWS : ecwsrom.measECWS) {
-
-		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, "REFERENCE POINT"); //Reference point
-		(*stream).writeStringLeft(nameWidth, ItECWS.targetPos->getName()); //Reference point
-		(*stream).writeString(nameWidth, "DISTANCE TO WS (MM)");
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWS.getDistance().getMMetresValue());
-
-		//getObservedOffset().getMMetresValue());
-		(*stream) << endl << endl;
-	}
-
-	writeDistanceResultsSummary(ecwsrom.getECWSObsSummary(), stream->getCurrSpaceExtended(2));
+	if (ecwsrom.measECWS.size() > 0)
+		writeDistanceResultsSummary(ecwsrom.getECWSObsSummary(), stream->getCurrSpaceExtended(2));
 }
 
+//------------------ Result header---------------------------------------------------------------------------
+
+void THLSRWriter::writeHLSRHeader(const  TECWSROM& ecwsrom)
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsWidth = getObsWidth();
+	int					obsResWidth = getObsResWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	int					lengthPrecision = getLengthPrecision();
+	std::string         TABs = stream->getCurrSpaceExtended(2);
+
+
+	//write header
+	(*stream) << "\n";
+	(*stream) << TABs << "ECWS" << "\n";
+	(*stream) << TABs << "NOM SURFACE D'EAU:" << TABs;
+	(*stream).writeStringLeft(nameWidth, ecwsrom.fMeasuredWSHeight->getName());
+	(*stream) << "\n";
+	(*stream) << TABs << "HAUTEUR SURFACE D'EAU (M):" << TABs;
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedValue().getMetresValue());//Output value in meters [m], stored in [m]
+	(*stream) << "\n";
+	(*stream) << TABs << "PRECISION HAUTEUR SURFACE D'EAU (MM):" << TABs;
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedPrecision().getMMetresValue());//Output value in milimeters [mm], stored in [m]
+	(*stream) << endl;
+}
 
 //------------------ Synthesis header------------------------------------------------------------------------
 void THLSRWriter::writeHLSRSynthesisHeader()
@@ -212,10 +215,8 @@ void THLSRWriter::writeECWSRResultsSynthesis(const  TECWSROM& ecwsrom)
 {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
-	// int				obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
-	// int				lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
 	const auto& ecwsSummary = ecwsrom.getECWSObsSummary();
@@ -241,7 +242,7 @@ void	THLSRWriter::writeECWSReliabilityHeader()
 
 
 //------------------ Reliability data----------------------------------------------------------------------
-void	THLSRWriter::writeECWSReliabilityData(const TLGCStatistic& stat, const std::list<TECWS>& measECWS)
+void	THLSRWriter::writeECWSReliabilityData(const  TECWSROM& ecwsrom, const TLGCStatistic& stat, const std::list<TECWS>& measECWS)
 {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -250,15 +251,15 @@ void	THLSRWriter::writeECWSReliabilityData(const TLGCStatistic& stat, const std:
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
-
-	//For each ECHO measurement of the station
+	//For each ECWS measurement of the station
 	for (auto const& ItEcws : measECWS)
 	{
 		// Observation index to take the right value in the statistic vector
 		int index = ItEcws.getFirstObservationIndex();
 
-		// get Ref  Point 
-		(*stream).writeStringLeft(nameWidth, ItEcws.targetPos->getName());
+		// get water surface reference
+ 		(*stream).writeStringLeft(nameWidth, ecwsrom.fMeasuredWSHeight->getName());
+
 		//get Tg point
 		(*stream).writeStringLeft(nameWidth, ItEcws.targetPos->getName());
 		// get Point 3
@@ -267,7 +268,7 @@ void	THLSRWriter::writeECWSReliabilityData(const TLGCStatistic& stat, const std:
 		//get the observed distance
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItEcws.getDistance());
 		//get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcws.targetPos->getStandDev(0));
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcws.target.sigmaCombinedDist.getMMetresValue());
 		//get the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItEcws.getDistanceResidual().getMMetresValue());
 

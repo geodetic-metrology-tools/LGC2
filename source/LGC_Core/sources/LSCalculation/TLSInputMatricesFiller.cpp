@@ -1314,7 +1314,10 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fWSContrib);
 
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));
+		int test = -1;
+		//if (itECWS->line == 12 || itECWS->line == 17)
+			//test = 1;
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, test * (itECWS->getDistance() - contributions.fCalcMeas));
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)

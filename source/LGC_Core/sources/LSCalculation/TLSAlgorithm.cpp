@@ -82,11 +82,7 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		{
 			// compute solution 
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
-			if (fNumberOfIterations == 0) {
-				inputMtr->saveMatricesToFile(1);
-				resultMatrices->saveMatricesToFile(1);
-			}
-				
+	
 
 			if (computationOK)
 			{
