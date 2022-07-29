@@ -779,6 +779,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
 	obj.addProperty("LSRelErrorsContainer/ListOfRelativeErrors", fRelError);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
+	obj.addProperty("fUEOIndices", fUEOIndices);
 	obj.addProperty("TPointGlobal/CounterOfPoints", fPointInfo);
 	obj.addProperty("TMeasurementsGlobal/CounterOfMeasures", fMeasInfo);
 	obj.addProperty("TLGCStatistic", stat);
