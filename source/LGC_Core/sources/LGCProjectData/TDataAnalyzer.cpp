@@ -193,55 +193,43 @@ bool TDataAnalyzer::dataConsistent(){
                 const std::string nlinestr("Line " + std::to_string(itECWS.line + 1) + ": ");
                 outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
             }
-        }
+            else {
+                //Initialisation of the water surface height
+                TReal referencelength = 0;
+                for (auto& itECWSMeas: itECWS.measECWS) {
+                    TPositionVector stationPos = itECWSMeas.targetPos->getEstimatedValue();
+                    TLOR2LOR transformation(itECWSMeas.targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                    transformation.transform(stationPos);
+                    auto refFrame = fPointTransfo.getRefFrame();
 
-        //Initialisation of the water surface height
-        for (auto itECWS(it.node->data.get()->measurements.fECWS.begin()); itECWS != it.node->data.get()->measurements.fECWS.end(); ++itECWS) {
+                    if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+                        if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+                            TXYH2CCS::CCS2XYHg2000Machine(stationPos);
+                        else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+                            TXYH2CCS::CCS2XYHg1985Machine(stationPos);
+                        else
+                            TXYH2CCS::CCS2XYHs(stationPos);
+                        referencelength += stationPos.getH().getMetresValue();
+                    }
+                    else {
+                        referencelength += stationPos.getZ().getMetresValue();
+                    }
 
-            TReal referencelength = 0;
-
-            for (auto itECWSMeas(itECWS->measECWS.begin()); itECWSMeas != itECWS->measECWS.end(); ++itECWSMeas) {
-                                 
-                TPositionVector stationPos = itECWSMeas->targetPos->getEstimatedValue();
-                TLOR2LOR transformation(itECWSMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-                transformation.transform(stationPos);
-                auto refFrame = fPointTransfo.getRefFrame();
-
-                if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
-                    if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-                        TXYH2CCS::CCS2XYHg2000Machine(stationPos);
-                    else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-                        TXYH2CCS::CCS2XYHg1985Machine(stationPos);
-                    else
-                        TXYH2CCS::CCS2XYHs(stationPos);
-                    referencelength += stationPos.getH().getMetresValue();
+                    if (!fData.getConfig().sim.isActive()) {
+                        TFreeVector measValue(0, 0, itECWSMeas.getDistance(), TCoordSysFactory::ECoordSys::k3DCartesian);
+                        transformation.transform(measValue);
+                        referencelength += measValue.getZ().getMetresValue();
+                    }
                 }
-                else {
-                    referencelength += stationPos.getZ().getMetresValue();
-                }
-
-                if (!fData.getConfig().sim.isActive()) {
-                    TFreeVector measValue(0, 0, itECWSMeas->getDistance(), TCoordSysFactory::ECoordSys::k3DCartesian);
-                    transformation.transform(measValue);
-                    referencelength += measValue.getZ().getMetresValue();
-                }
-            }
-
-            int numberOfMeasurements = (int)itECWS->measECWS.size();
-
-            if (numberOfMeasurements > 0) {
-
                 referencelength /= numberOfMeasurements;
-                
-                TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS->romName.data());
 
-                itECWS->fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
+                TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS.romName.data());
+
+                itECWS.fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
             }
-            else
-                outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
         }
 
-		cleanDeactivated();
+        cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){

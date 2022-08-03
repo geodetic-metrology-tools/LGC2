@@ -4,8 +4,6 @@
 ///////////////////////////////////////////////////////
 // TKeyFRAME
 ///////////////////////////////////////////////////////
-int TKeyENDFRAME::fNumberOfFramesClosed = 0;
-
 TKeyFRAME::TKeyFRAME(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAKeyWord(FRAME, project)
 {			
 	for(int i(0) ; i< nb_allowed_keywords ; i++)
@@ -92,16 +90,13 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		throw std::runtime_error("Either \"TZ\" flag or \"TRZ\" option used, both are not allowed");
 	if(opts.has("SCL") && opts.has("SSCL"))
 		throw std::runtime_error("Either \"SCL\" flag or \"SSCL\" option used, both are not allowed");
-
-	fNumberOfFramesOpened++;
 }
 
 ///////////////////////////////////////////////////////
 // TKeyENDFRAME
 ///////////////////////////////////////////////////////
-int TKeyFRAME::fNumberOfFramesOpened = 0;
 TKeyENDFRAME::TKeyENDFRAME(TLGCData& project, int nb_allowed_keywords, const char** keywords): TAKeyWord(ENDFRAME, project)
-{			
+{		
 	for(int i(0) ; i< nb_allowed_keywords ; i++)
 		allowed_keywords.emplace_back(keywords[i]);
 }
@@ -109,9 +104,13 @@ TKeyENDFRAME::TKeyENDFRAME(TLGCData& project, int nb_allowed_keywords, const cha
 void TKeyENDFRAME::parse(const std::vector<std::string>& tokens, bool, int) {
 	if (tokens.size() != 2 &&  tokens[2].at(0) != '%')  // More then 2 and at the same time the third is not comment
 		throw std::runtime_error("Key *ENDFRAME expects no arguments.");
+	
+	// Throw an error if the *ENDFRAME keyword is in the root.
+	if (proj.getCurrentNode().ID.size() == 1) {
+		throw std::runtime_error("key *ENDFRAME is not allowed in ROOT Frame");
+	}
 
 	proj.moveUp();
-	fNumberOfFramesClosed++;
 }
 
 ///////////////////////////////////////////////////////

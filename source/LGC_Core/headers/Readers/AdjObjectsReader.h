@@ -29,17 +29,8 @@ class TKeyFRAME : public TAKeyWord {
 		///	Parse line with the frame definition.
         virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
-		///Returns the number of frames that were created
-		static int getNumberOfOpenedFrames() {return fNumberOfFramesOpened;};
-
-		/// Resets the number of ENDFRAME keyword
-		static void resetFrameCounter(){ fNumberOfFramesOpened = 0; }
-
 	private:
 		TKeyFRAME& operator=(const TKeyFRAME&);
-
-		///counter of number of frames introduced, to chceck if all *FRAMES were properly closed
-		static int fNumberOfFramesOpened; 	
 };
 
 
@@ -55,15 +46,6 @@ class TKeyENDFRAME : public TAKeyWord {
 			\throws runtime_error if arguments in *ENDFRAME line (there should be nothing else)
 		*/
 		virtual void parse(const std::vector<std::string>& tokens, bool, int);
-
-		///Returns the number of frames that were closed
-		static int getNumberOfClosedFrames() {return fNumberOfFramesClosed;};
-		
-		/// Resets the number of ENDFRAME keyword
-		static void resetEndFrameCounter(){ fNumberOfFramesClosed = 0; }
-
-	private:
-		static int fNumberOfFramesClosed; 
 };
 
 

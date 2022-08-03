@@ -45,7 +45,6 @@ class TReader {
 		
 		/// Not asignable, contains reference
 		TReader& operator=(const TReader&);
-
 		
 };
 #endif

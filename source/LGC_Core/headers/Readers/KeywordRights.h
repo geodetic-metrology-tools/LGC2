@@ -66,7 +66,7 @@ namespace {
 #define LEVEL "LEVEL"
 #define SCALE "SCALE"
 #define INCL "INCL"
-#define HLSR   "HLSR"
+#define HLSR "HLSR"
 	//referential
 #define OLOC "OLOC"
 #define RS2K "RS2K"

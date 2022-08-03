@@ -15,6 +15,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class TUVEC;
 class TUVD;
 class TPdorObs;
+class TECWS;
 struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
@@ -23,7 +24,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
-struct TECWS;
+
 
 
 /*!

@@ -263,7 +263,7 @@ struct TECWSROM : public TStatusObject {
 	/// name of the rom
 	std::string romName;
 
-	//Measured vertical plane
+	//Measured water surface height, non-owning pointer
 	TAdjustableLength* fMeasuredWSHeight;
 
 	//1-sigma precision of the water surface
@@ -277,7 +277,7 @@ struct TECWSROM : public TStatusObject {
 	const TLGCObsSummary& getECWSObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
-	int  line;
+	int line;
 	int romId = TECWSROM::romCounter_++;
 
 
@@ -285,7 +285,7 @@ struct TECWSROM : public TStatusObject {
 		instrument(inst),
 		fMeasuredWSHeight(MeasuredHeight),
 		sigmaWS(sigmaWS),
-		romName("NULL"),
+		romName(""),
 		line(NO_VALi)
 	{}
 

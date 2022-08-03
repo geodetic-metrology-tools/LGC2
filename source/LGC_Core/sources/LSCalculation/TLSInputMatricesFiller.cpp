@@ -1289,13 +1289,12 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 
 void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices) {
 	bool isProcessOK = true;
-	ECWSContrib contributions;
 
 	for (auto itECWS(ecwsROM.measECWS.begin()); itECWS != ecwsROM.measECWS.end(); ++itECWS) {
 		MatrixIndex eqIdx = itECWS->getFirstEquationIndex();
 		MatrixIndex obsIdx = itECWS->getFirstObservationIndex();
 
-		contributions = fCGenerator.getECWSContrib(ecwsROM, *itECWS); //Get the observation contribution
+		ECWSContrib contributions = fCGenerator.getECWSContrib(ecwsROM, *itECWS); //Get the observation contribution
 
 		// Update the sigma 
 		itECWS->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
@@ -1314,10 +1313,7 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fWSContrib);
 
 		// Set Misclosure vector
-		int test = -1;
-		//if (itECWS->line == 12 || itECWS->line == 17)
-			//test = 1;
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, test * (itECWS->getDistance() - contributions.fCalcMeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)

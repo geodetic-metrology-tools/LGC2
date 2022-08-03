@@ -123,7 +123,6 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 void THLSRWriter::writeECWSSIMUResults(const  TECWSROM& ecwsrom)
 {
 	TAStreamFormatter* stream = getStream();
-	//std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 	
 	writeHLSRHeader(ecwsrom);

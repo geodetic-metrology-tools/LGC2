@@ -10,7 +10,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TObservationWriter.h>
 #include <MeasDef.h>
-//#include <TLGCData.h>
 
 struct TECWSROM;
 class TLGCStatistic;

@@ -657,9 +657,10 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
         for (auto& ecwsrom : entry->measurements.fECWS) {
 
             // Measurements
-            for (auto& meas : ecwsrom.measECWS)
+            for (auto& meas : ecwsrom.measECWS) {
                 if (meas.targetPos)
                     meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+            }      
         }
     }
 }

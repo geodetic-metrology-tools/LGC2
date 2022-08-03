@@ -350,7 +350,6 @@ void TKeyHLSR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 }
 
 const std::vector<std::string>& TKeyHLSR::parentKeys() const {
-	static std::vector<std::string> p(1);
-	p.push_back(INSTR);
+	static std::vector<std::string> p{ INSTR };
 	return p;
 }

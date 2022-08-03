@@ -1494,7 +1494,12 @@ ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, con
 	}
 	Root2LorTrafo.transform(stationV);
 
-	TAngle incliWS(acos(abs(stationV.getZ().getMetresValue())));
+	//case in test where the z Value is >1 due to numerical errors, makes the acos crash
+	auto zValue = abs(stationV.getZ().getMetresValue());
+	if (zValue > 1)
+		zValue = 1;
+
+	TAngle incliWS(acos(zValue));
 
 	//PI/2 causes a huge Sigma value : OK with the behavior
 	TReal  instrCenterSigma = tan(incliWS.getRadiansValue()) * ecws.target.sigmaInstrCentering.getMetresValue();
