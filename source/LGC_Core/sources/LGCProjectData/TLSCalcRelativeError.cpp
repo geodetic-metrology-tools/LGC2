@@ -92,8 +92,8 @@ void TLSCalcRelativeError::setSigmaZ(TLength sz) {
 void TLSCalcRelativeError::serialize(SerializerObject::SerializationHelper& obj) const
 {
 	// Requires modifying SurveyLib
-	//obj.addProperty("fPoint1/position vector iterator for the 1st point", fPoint1);
-	//obj.addProperty("fPoint2/position vector iterator for the 2nd point", fPoint2);
+	obj.addProperty("fPoint1/position vector iterator for the 1st point", fPoint1);
+	obj.addProperty("fPoint2/position vector iterator for the 2nd point", fPoint2);
 	obj.addProperty("fSigmaL/longitudinal error", fSigmaL);
 	obj.addProperty("fSigmaG/error in orientation", fSigmaG);
 	obj.addProperty("fSigmaR/radial (transversal) error", fSigmaR);
