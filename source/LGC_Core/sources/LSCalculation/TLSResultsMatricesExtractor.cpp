@@ -26,6 +26,7 @@ TLSResultsMatricesExtractor::~TLSResultsMatricesExtractor()
 ****************************************************************************************************************/
 bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, TReal convCrit)
 {
+	fLastIteration = false;
 	bool successfullExtraction = true;
 	logDebug() << "Extract resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices";
 	try
