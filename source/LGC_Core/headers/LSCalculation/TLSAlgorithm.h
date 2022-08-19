@@ -6,7 +6,8 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #ifndef TLS_ALGORITHM
 #define TLS_ALGORITHM
 
-
+//STL
+#include <random>
 //SURVEYLIB
 #include <TALSComputer.h>
 #include <Behavior.h>
@@ -35,6 +36,8 @@ public:
 	/// Return number of iterations made
 	int		getNumberOfIterations() { return fNumberOfIterations; }
 
+	/// Random numbers generator
+	std::ranlux48 engine;
 
 protected:
 	/// Pointer to the result matrix extractor
@@ -46,6 +49,9 @@ protected:
 	/// Flag if S a posteriori variance exists
 	bool	 fS0APosterioriVariances;
 
+
+	// for FRAS stress test
+	void manipulate_ECWS_measurements(TLGCData* data);
 
 	/// Iterate to the solution
 	Behavior iterate2Solution(TLGCData& data,

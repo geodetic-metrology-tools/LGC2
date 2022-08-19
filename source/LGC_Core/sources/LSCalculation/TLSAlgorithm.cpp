@@ -4,6 +4,8 @@
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
+#include <Logger.hpp>
+#include <chrono>
 
 TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosterioriVariances(false), fPointTransformer(&data.getTree(), data.getConfig().referential)
 {
@@ -11,7 +13,8 @@ TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosteri
 	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
 }
 
-Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
+
+Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 {
 	std::unique_ptr<TALSComputer> computer;
 	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential, data));
@@ -27,12 +30,56 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 		computer->activateStrictThreshold();
 	}
 
+	
+	// FRAS Mockup: loop over 1. manipulate measurements to simulate updated measurements 2. solve with iterate2solution
+	// for random numbers
+	engine.seed(1);
 	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	for (int i = 0; i < 1000; i++) {
+		std::cout << "Starting Fras Mockup iteration " << i << std::endl;
+		// manipulate ECWS measurements in data structure
+		manipulate_ECWS_measurements(&data);
+		// update matrix filler
+		// std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
+
+		// iterate to new solution from there
+		auto start = std::chrono::high_resolution_clock::now();
+		computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+		auto stop = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+		std::cout << "Terminated in " << duration.count() << " ms." << std::endl;
+
+	}
 
 	return computationIsOK;
 }
 
-Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *matrFiller, TLSInputMatrices *inputMtr, TALSComputer *computer, int fMaxIterations, TReal convCrit)
+void TLSAlgorithm::manipulate_ECWS_measurements(TLGCData* data) {
+	// FRAS-Mockup:
+	// apply random perturbation to each ECWS measurement, as it is done in a simulation
+	
+	// iterate over frame tree
+	for (TDataTreeIterator itTree = data->getTree().begin(); itTree != data->getTree().end(); itTree++) {
+		// iterate over water level measurement rounds in that frame
+		for (auto& itECWSrom : itTree.node->data->measurements.fECWS) {
+			// iterate over single measurements
+			for (auto itECWS(itECWSrom.measECWS.begin()); itECWS != itECWSrom.measECWS.end(); ++itECWS) {
+				TLength oldMeas = itECWS->getDistance();
+				// itECWS->setDistance(2 * aux);
+				TReal sigma = itECWS->target.sigmaDist;
+				TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;
+				itECWS->setDistance(newMeas);
+			}
+		}
+	}
+}
+
+Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
+											TLSInputMatricesFiller* matrFiller,
+											TLSInputMatrices* inputMtr,
+											TALSComputer* computer,
+											int fMaxIterations,
+											TReal convCrit)
 {
 	bool hasReachedCriteria = false;
 	fNumberOfIterations = 0;
@@ -105,6 +152,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 	}
 	else
 	{
+		std::cout << "Adjustment terminated after " << fNumberOfIterations << " iterations."<<std::endl;
 		if (computeVarCovarAndReliability(&data, inputMtr, computer))
 			return Behavior();
 		else
