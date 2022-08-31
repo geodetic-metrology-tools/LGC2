@@ -777,11 +777,17 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
-	obj.addProperty("LSRelErrorsContainer/ListOfRelativeErrors", fRelError);
+	obj.addProperty("fCombinedCase", fCombinedCase);
+	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
+	
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
+	obj.addProperty("fMeasInfo", fMeasInfo);
+	obj.addProperty("fNumberOfConstraints", fNumberOfConstraints);
+	obj.addProperty("fPointInfo", fPointInfo);
+	obj.addProperty("fRelError", fRelError);
 	obj.addProperty("fUEOIndices", fUEOIndices);
-	obj.addProperty("TPointGlobal/CounterOfPoints", fPointInfo);
-	obj.addProperty("TMeasurementsGlobal/CounterOfMeasures", fMeasInfo);
+	
+		
 	obj.addProperty("TLGCStatistic", stat);
 	//Eigen::MatrixXd exampleMatrix(10 * 10, 10);
 	//obj.addProperty("exampleMatrix", exampleMatrix.reshaped()); // for now just as a flattened plain vector
