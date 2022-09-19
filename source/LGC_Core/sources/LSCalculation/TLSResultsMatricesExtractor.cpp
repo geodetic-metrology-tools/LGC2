@@ -182,6 +182,10 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			//In every node iterate through the INCLYROM's measurements
 			for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
 				extractINCLYROMObs(rm, itINCLY);
+
+			//In every node iterate through the ECWSROM's measurements
+			for (auto& itECWS : itTree.node->data->measurements.fECWS)
+				extractECWSROMObs(rm, itECWS);
 		}
 	}
 	catch (std::exception const & excp)
@@ -522,6 +526,22 @@ void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices& r
 		}
 	}
 }
+
+void TLSResultsMatricesExtractor::extractECWSROMObs(const TLSResultsMatrices& rm, TECWSROM& ecwsMeas)
+{
+	for (auto itECWS(ecwsMeas.measECWS.begin()); itECWS != ecwsMeas.measECWS.end(); ++itECWS)
+	{
+		MatrixIndex obsUidx = itECWS->getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVectByConst()->size())
+			itECWS->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
+		else
+		{
+			logCritical() << "ECWS observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itECWS->line << ")";
+			throw std::runtime_error("ECWS observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////
 // Methods relative to the adjustable objects
 ///////////////////////////////////////////////////////////////

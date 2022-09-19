@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -58,6 +58,9 @@ struct TMeasurements {
 	/// All INCLY measurements in the order in which they appeared in the input file
 	std::list<TINCLYROM> fINCLY;
 
+    /// All ECWS measurements in the order in which they appeared in the input file
+    std::list<TECWSROM> fECWS;
+
     bool dverActive{ true }; ///< activation status of the DVER rom
     bool radiActive{ true }; ///< activation status of the RADI rom
     bool obsxyzActive{ true }; ///< activation status of the OBSXYZ rom
@@ -114,9 +117,10 @@ struct TMeasurements {
     const TLGCObsSummary& getECVEGlobalObsSummary() const;
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECSPGlobalObsSummary() const;
-
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	const TLGCObsSummary& getINCLYGlobalObsSummary() const;
+    /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+    const TLGCObsSummary& getECWSGlobalObsSummary() const;
 
 private:
 
@@ -148,6 +152,7 @@ private:
     TLGCObsSummary ecveGlobalSummary_;
     TLGCObsSummary ecspGlobalSummary_;
 	TLGCObsSummary inclyGlobalSummary_;
+    TLGCObsSummary ecwsGlobalSummary_;
 
 };
 

@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -579,4 +579,31 @@ public:
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
 };
+
+//--------------------------  HLSR measurement--------------------------------------------
+
+
+class TECWS : public TAScalarMeas<TInstrumentData::THLSR> {
+public:
+	///Pointer to the first point
+	const LGCAdjustablePoint* station;
+
+	const LGCAdjustablePoint* wsHeight;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/*!@name Constructors */
+	//@{
+	TECWS(const LGCAdjustablePoint& station, TInstrumentData::THLSR instr, TLength obsVal) :
+		TAScalarMeas<TInstrumentData::THLSR>(station, instr, obsVal) {}
+
+	///Destructor
+	~TECWS() override = default;
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+};
+
 #endif

@@ -32,6 +32,7 @@ set(tests_SOURCES
 	sources/testLIBR.cpp
 	sources/testLgc1Reader.cpp
 	sources/testINCL.cpp
+	sources/testHLSR.cpp
 )
 
 set(tests_INPUT
@@ -48,6 +49,7 @@ set(tests_INPUT
 	headers/testLIBR.h
 	headers/testLgc1Reader.h
 	headers/testINCL.h
+	headers/testHLSR.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})

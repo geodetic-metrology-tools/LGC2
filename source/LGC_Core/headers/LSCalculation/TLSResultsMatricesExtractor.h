@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -23,6 +23,8 @@ struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
 struct TINCLYROM;
+struct TECWSROM;
+
 /*!
 	\ingroup LSCalculation
 	\brief  Class responsible for extracting the results from the matrices and updating the appropriate member data of the 
@@ -159,6 +161,9 @@ private:
 
 		/// Sets the INCLY measurement residual.
 		void extractINCLYROMObs(const TLSResultsMatrices& rm, TINCLYROM& inclyMeas);
+
+		/// Sets the ECWS measurement residual.
+		void extractECWSROMObs(const TLSResultsMatrices& rm, TECWSROM& ecwsMeas);
 	//@}
 
 

@@ -551,3 +551,34 @@ TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const T
 	
 	return calcMeas;
 }
+
+TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {
+
+	//Transforamtions
+	const TLOR2LOR& Lor2RootTrafo = fPointTransfo->getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin());
+	const TLOR2LOR& Root2LorTrafo = fPointTransfo->getLORTransformation(fPointTransfo->getTree()->begin(), ecws.targetPos->getFrameTreePosition());
+
+	//Transform the target Point in the root
+	TPositionVector targetPointInRoot = ecws.targetPos->getEstimatedValue();
+	Lor2RootTrafo.transform(targetPointInRoot);
+
+	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	auto refFrame = fPointTransfo->getRefFrame();
+	TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
+		if (fPointTransfo->getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			TXYH2CCS::XYHg2000Machine2CCS(wsPos);
+		else if (fPointTransfo->getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			TXYH2CCS::XYHg1985Machine2CCS(wsPos);
+		else
+			TXYH2CCS::XYHs2CCS(wsPos);
+	}
+
+	//Obs equation
+	Root2LorTrafo.transform(wsPos);
+	TPositionVector targetPoint = ecws.targetPos->getEstimatedValue();
+	TReal calcMeas = wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
+	
+	return calcMeas;
+}

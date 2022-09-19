@@ -79,9 +79,11 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 			fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
 
 		if (fillOK)
-		{
+		{		
+
 			// compute solution 
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
+	
 
 			if (computationOK)
 			{

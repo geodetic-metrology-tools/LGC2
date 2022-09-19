@@ -1443,6 +1443,75 @@ INCLYContrib  TContributionsGenerator::getINCLYContrib(const TINCLYROM& inclST, 
 	return { calcMeas, addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt) , obsVariance };
 }
 
+////ECWS contribution
+ECWSContrib	TContributionsGenerator::getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws) {
+	// No need for MLA Transformation in ECWS
+	fPointTransfo.setMLA(false);
+
+	//Transforamtions
+	const TLOR2LOR& Lor2RootTrafo = fPointTransfo.getLORTransformation(ecws.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	const TLOR2LOR& Root2LorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecws.targetPos->getFrameTreePosition());
+
+	//Transform the target Point in the root
+	TPositionVector targetPointInRoot = ecws.targetPos->getEstimatedValue();
+	Lor2RootTrafo.transform(targetPointInRoot);
+	
+
+	// The WS Height is expressed in the root, can be either in a geodetic system or in a local reference frame
+	auto refFrame = fPointTransfo.getRefFrame();
+	TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
+	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
+		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			TXYH2CCS::XYHg2000Machine2CCS(wsPos);
+		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			TXYH2CCS::XYHg1985Machine2CCS(wsPos);
+		else
+			TXYH2CCS::XYHs2CCS(wsPos);
+	}	
+
+	//Target must be defined in the frame where the WPS sensor is
+	TFreeVector referencePTContrib(0, 0, -1, TCoordSysFactory::ECoordSys::k3DCartesian);
+
+	// WS is defined in the root necessarily
+	TReal wsContrib = getPointContributions(Lor2RootTrafo, 0, 0, 1).getZ();
+
+	//Add the contribtion of the WS to the transformation
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> wsContribTransfContributions;
+	addTransformationsContributions(Root2LorTrafo, wsPos, 0, 0, 1, wsContribTransfContributions);
+
+	//Obs equation
+	Root2LorTrafo.transform(wsPos);
+	TPositionVector targetPoint = ecws.targetPos->getEstimatedValue();
+	TReal calcMeas =  wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
+	
+	//Compute the variance related to the instrument centering w.r.t water surface
+	TFreeVector stationV(0, 0, 1, TCoordSysFactory::k3DCartesian);
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+		fPointTransfo.set2MLATransformation(targetPointInRoot);
+		fPointTransfo.transformMLA2CGRF(stationV);
+		fPointTransfo.transformCGRF2CCS(stationV);
+	}
+	Root2LorTrafo.transform(stationV);
+
+	//case in test where the z Value is >1 due to numerical errors, makes the acos crash
+	auto zValue = abs(stationV.getZ().getMetresValue());
+	if (zValue > 1)
+		zValue = 1;
+
+	TAngle incliWS(acos(zValue));
+
+	//PI/2 causes a huge Sigma value : OK with the behavior
+	TReal  instrCenterSigma = tan(incliWS.getRadiansValue()) * ecws.target.sigmaInstrCentering.getMetresValue();
+
+	//Compute the variance of the observation
+	TReal obsVariance = pow2q(ecws.target.sigmaDist.getMetresValue()) + pow2q(ecws.target.sigmaInstrHeight.getMetresValue()) + pow2q(ecws.target.sigmaWS.getMetresValue()) + pow2q(instrCenterSigma);
+
+	ECWSContrib ecwsContrib = { calcMeas, referencePTContrib, wsContribTransfContributions , wsContrib, obsVariance };
+	return ecwsContrib;
+
+}
+
 //////////////////////////////////////////////////////////////////////
 // CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
 //////////////////////////////////////////////////////////////////////

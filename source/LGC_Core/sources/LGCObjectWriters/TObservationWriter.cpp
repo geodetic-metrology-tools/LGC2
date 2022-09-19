@@ -516,8 +516,8 @@ std::string	TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObser
 		"POINT D'ORIENTATION (PDOR)",
 		"CONTRAINTES RADIALES (RADI)",
 		"CONTRAINTES 3D SUR UN POINT (OBSXYZ)",
-		"INCLINAISONS/VERTICALE (INCLY)"
-
+		"INCLINAISONS/VERTICALE (INCLY)",
+		"ECART SURFACE D'EAU (ECWS)"
 	};
 
 	static_assert((sizeof(descriptions)/sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");
@@ -550,7 +550,8 @@ std::string	TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObser
 		"POINT OF ORIENTATION (PDOR)",
 		"RADIAL CONSTRAINTS (RADI)",
 		"3D CONSTRAINTS FOR POINTS (OBSXYZ)",
-		"ROTATIONS/GRAVITY (INCLY)"
+		"ROTATIONS/GRAVITY (INCLY)",
+		"OFFSET TO WATER SURFACE (ECWS)"
 		//"NoObs"
 	};
 

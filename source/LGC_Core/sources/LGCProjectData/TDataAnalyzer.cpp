@@ -4,6 +4,7 @@
 #include "TAllfixedParamGenerator.h"
 #include <TPointTransformer.h>
 #include <Logger.hpp>
+#include "TXYH2CCS.h"
 
 #include "TDist.h" 
 #include <bitset>
@@ -18,6 +19,7 @@ bool TDataAnalyzer::dataConsistent(){
 	outputMessages.writeReportHeader("Data consistency check:");
 	int lastUidx = 0; //Unknown indices
 	const TDataTree& fTree = fData.getTree();
+    TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 	
     // Clean the data:
     if(!cleanDeactivated()){
@@ -183,7 +185,51 @@ bool TDataAnalyzer::dataConsistent(){
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
 			}
 		}
-		cleanDeactivated();
+
+        for (auto& itECWS : it.node->data.get()->measurements.fECWS) {
+            int numberOfMeasurements = (int)itECWS.measECWS.size();
+            if (numberOfMeasurements == 0) {
+                itECWS.setActive(false);
+                const std::string nlinestr("Line " + std::to_string(itECWS.line + 1) + ": ");
+                outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
+            }
+            else {
+                //Initialisation of the water surface height
+                TReal referencelength = 0;
+                for (auto& itECWSMeas: itECWS.measECWS) {
+                    TPositionVector stationPos = itECWSMeas.targetPos->getEstimatedValue();
+                    TLOR2LOR transformation(itECWSMeas.targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+                    transformation.transform(stationPos);
+                    auto refFrame = fPointTransfo.getRefFrame();
+
+                    if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
+                        if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+                            TXYH2CCS::CCS2XYHg2000Machine(stationPos);
+                        else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+                            TXYH2CCS::CCS2XYHg1985Machine(stationPos);
+                        else
+                            TXYH2CCS::CCS2XYHs(stationPos);
+                        referencelength += stationPos.getH().getMetresValue();
+                    }
+                    else {
+                        referencelength += stationPos.getZ().getMetresValue();
+                    }
+
+                    if (!fData.getConfig().sim.isActive()) {
+                        TFreeVector measValue(0, 0, itECWSMeas.getDistance(), TCoordSysFactory::ECoordSys::k3DCartesian);
+                        transformation.transform(measValue);
+                        referencelength += measValue.getZ().getMetresValue();
+                    }
+                }
+                referencelength /= numberOfMeasurements;
+
+                TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS.romName.data());
+
+                itECWS.fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
+            }
+        }
+
+        cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE){
@@ -619,6 +665,22 @@ bool TDataAnalyzer::cleanDeactivated(){
 			++inclyrom;
 		}
 
+        // ECWS
+        auto ecwsrom = measurements.fECWS.begin();
+        while (ecwsrom != measurements.fECWS.end()) {
+
+            // If ECWSROM not active, remove it:
+            if (!ecwsrom->isActive()) {
+                measurements.fECWS.erase(ecwsrom++);
+                continue;
+            }
+
+            if (!rmDeactivated_and_checkTargetPos(ecwsrom->measECWS))
+                return false;
+
+            ++ecwsrom;
+        }
+
         // If the roms of different types of measurements are not active, clear the rom:
         if(!measurements.dverActive) measurements.fDVER.clear();
         if(!measurements.radiActive) measurements.fRADI.clear();
@@ -933,6 +995,15 @@ void TDataAnalyzer::assignEOIndices(){
 				incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
+
+        // ECWS
+        for (auto& ecwsrom : measurements.fECWS)
+            for (auto& ecws : ecwsrom.measECWS) {
+                // set indices of LS matrices, ECWS introduces 1 equation and 1 observation
+                ecws.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+                ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+                fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
+            }
     }
 }
 

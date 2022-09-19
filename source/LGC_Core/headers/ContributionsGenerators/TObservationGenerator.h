@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 
 
@@ -15,6 +15,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class TUVEC;
 class TUVD;
 class TPdorObs;
+class TECWS;
 struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
@@ -23,6 +24,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
+
 
 
 /*!
@@ -102,6 +104,9 @@ public:
 
 	/// Returns the INCLY measurement calculated meas in RADIANS [rad]
 	TReal getINCLYCalcMeas(const TINCLYROM& inclyROM, const TINCLY& incly);
+
+	/// Returns the TECWS measurement calculated meas in meters [m]
+	TReal getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws);
 
 	//@}
 

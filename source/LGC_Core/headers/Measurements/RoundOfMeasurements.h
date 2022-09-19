@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -246,5 +246,54 @@ private:
 	static int romCounter_;
 
 	TLGCObsSummary inclySummary_;
+};
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of ECWS (TECWS) measurements, which are measuring a single Plane.
+*/
+struct TECWSROM : public TStatusObject {
+
+	/// All ECWS measurements, measuring the water surface distance
+	std::list<TECWS> measECWS;
+
+	/// The instrument that is used on this station
+	TInstrumentData::THLSR    instrument;
+
+	/// name of the rom
+	std::string romName;
+
+	//Measured water surface height, non-owning pointer
+	TAdjustableLength* fMeasuredWSHeight;
+
+	//1-sigma precision of the water surface
+	TLength sigmaWS;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getECWSObsSummary() const;
+	const TLGCObsSummary& getECWSObsSummary(std::string text) noexcept;
+
+	/// Line of the measurement definition
+	int line;
+	int romId = TECWSROM::romCounter_++;
+
+
+	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS, TAdjustableLength *MeasuredHeight) :
+		instrument(inst),
+		fMeasuredWSHeight(MeasuredHeight),
+		sigmaWS(sigmaWS),
+		romName(""),
+		line(NO_VALi)
+	{}
+
+
+private:
+
+	static int romCounter_;
+
+	TLGCObsSummary ecwsSummary_;
 };
 #endif

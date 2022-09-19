@@ -240,6 +240,10 @@ void TLSSimulation::simulateValues()
 		//In every node iterate through the INCLY's measurements
 		for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
 			getINCLYSimValues(itINCLY, itINCLY.measINCLY);
+
+		//In every node iterate through the ECWS's measurements
+		for (auto& itECWS : itTree.node->data->measurements.fECWS)
+			getECWSSimValues(itECWS, itECWS.measECWS);
 	}
 }
 
@@ -436,6 +440,14 @@ void TLSSimulation::getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCL
 		TReal calcVal = fSimObs.getINCLYCalcMeas(inclyROM, itINCLY);
 		TReal sigma = itINCLY.target.sigmaAngl;
 		itINCLY.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
+	}
+}
+
+void TLSSimulation::getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws) {
+	for (auto& itECWS : ecws) {
+		TReal calcVal = fSimObs.getECWSCalcMeas(ecwsROM, itECWS);
+		TReal sigma = itECWS.target.sigmaDist;
+		itECWS.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
 	}
 }
 

@@ -171,6 +171,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kINCLY:
 			fMeasInfo.fNumINCLY++;
 			break;
+        case TMeasurementsGlobal::kECWS:
+            fMeasInfo.fNumECWS++;
+            break;
 	}
 }
 
@@ -215,6 +218,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumOBSXYZ;
 	case TMeasurementsGlobal::kINCLY:
 		return fMeasInfo.fNumINCLY;
+    case TMeasurementsGlobal::kECWS:
+        return fMeasInfo.fNumECWS;
 	default:
         return 0;
 	}
@@ -255,6 +260,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumRADI = 0;
 	fMeasInfo.fNumOBSXYZ = 0;
 	fMeasInfo.fNumINCLY = 0;
+    fMeasInfo.fNumECWS = 0;
 }
 
 void TLGCData::reInitForSIMU(){
@@ -646,6 +652,16 @@ void TLGCData::copyTree(TLGCData const * const src, TLGCData* tgt){
 
         if(pdor.targetPos)
             pdor.targetPos = &tgt->points.getObject(pdor.targetPos->getName());
+
+        // ECWS
+        for (auto& ecwsrom : entry->measurements.fECWS) {
+
+            // Measurements
+            for (auto& meas : ecwsrom.measECWS) {
+                if (meas.targetPos)
+                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+            }      
+        }
     }
 }
 
@@ -722,6 +738,11 @@ void TLGCData::copyInstruments(TLGCData const * const src, TLGCData* tgtData){
     for(auto &scale : tgtData->instruments.fSCALE)
         // Replace the instrument in the memory
         scale.second.reset(new TInstrumentData::TSCALE(*scale.second));
+
+    //HLSR instrument
+    for (auto& hlsr : tgtData->instruments.fHLSR)
+        // Replace the instrument in the memory
+        hlsr.second.reset(new TInstrumentData::THLSR(*hlsr.second));
 }
 
 void TLGCData::updateAdjustableObjectsPointers(TLGCData* d){

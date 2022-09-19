@@ -118,6 +118,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyLEVEL(project)));
 	finterpreters.emplace_back(UPK(new TKeySCALE(project)));
 	finterpreters.emplace_back(UPK(new TKeyINCL(project)));
+	finterpreters.emplace_back(UPK(new TKeyHLSR(project)));
 
 	// Observations Section	
 	/*TSTN*/
@@ -175,6 +176,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyRADI(project)));
 	finterpreters.emplace_back(UPK(new TKeyOBSXYZ(project)));
 	finterpreters.emplace_back(UPK(new TKeyINCLY(project)));
+	finterpreters.emplace_back(UPK(new TKeyECWS(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDMES_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDVER_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDLEV_lgc1(project)));
@@ -184,6 +186,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters_lgc1.emplace_back(UPK(new TKeyORIE_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyRADI_lgc1(project)));
 	
+
 	finterpreters.emplace_back(UPK(new TKeyFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyENDFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyTITR(project)));
@@ -342,11 +345,6 @@ bool TReader::read(std::istream& lgcStream) {
 				//		outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "TSTN keyword is not allowed in a frame ";
 				//		return !outputMessages.hasErrors();
 				//	}
-				//INCLY keyword is not allowed in the root frame, can be generalized.
-				if (currenthandler->getKey() == INCLY && (TKeyFRAME::getNumberOfOpenedFrames() == TKeyENDFRAME::getNumberOfClosedFrames())) {
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + currentkey + " keyword is not allowed in the root frame ";
-					return !outputMessages.hasErrors();
-				}
 			}
 			catch (std::exception const& excp) {
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
@@ -376,12 +374,9 @@ bool TReader::read(std::istream& lgcStream) {
 		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
 	}
 
-	if(TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames())
+	if(project.getCurrentNode().ID.size() != 1)
 	{
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "The number of opened frames (*FRAME) and closed frames (*ENDFRAME) must be equal!";
-		// Reset frame counter following to an inconsistency
-		TKeyFRAME::resetFrameCounter();
-		TKeyENDFRAME::resetEndFrameCounter();
 	}
 
 

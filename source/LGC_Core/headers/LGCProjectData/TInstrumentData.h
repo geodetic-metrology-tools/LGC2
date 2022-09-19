@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -272,6 +272,15 @@ class TInstrumentData {
 			TAngle sigmaCombinedAngle;		  // [rad]
 		};
 		
+        struct THLSR {
+            std::string ID;
+            TLength sigmaDist;               // [m]
+            TLength sigmaInstrHeight;     // [m]
+            TLength sigmaInstrCentering;  // [m]
+            TLength sigmaWS;             // [m]
+            TLength sigmaCombinedDist;	 // [m]
+        };
+
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
 		/// All available camera instruments, accessible by their ID. See \ref getDevice for failsave lookup.
@@ -284,6 +293,8 @@ class TInstrumentData {
         std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
 		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
+        /// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
+        std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.

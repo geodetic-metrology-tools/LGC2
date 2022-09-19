@@ -98,6 +98,11 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 			for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
 				addINCLYContributions(itINCLY, matrices);
 
+
+			//In every node iterate through the ECWS measurements
+			for (auto& itECWS : itTree.node->data->measurements.fECWS)
+				addECWSContributions(itECWS, matrices);
+
 			addDVERContribution(itTree.node->data->measurements.fDVER, matrices);
 
 			addRADIContributions(itTree.node->data->measurements.fRADI, matrices);
@@ -1281,6 +1286,51 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 			throw std::runtime_error("Error when filling input design matrices of Incly measurement occurred.");
 	}
 }
+
+void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices) {
+	bool isProcessOK = true;
+
+	for (auto itECWS(ecwsROM.measECWS.begin()); itECWS != ecwsROM.measECWS.end(); ++itECWS) {
+		MatrixIndex eqIdx = itECWS->getFirstEquationIndex();
+		MatrixIndex obsIdx = itECWS->getFirstObservationIndex();
+
+		ECWSContrib contributions = fCGenerator.getECWSContrib(ecwsROM, *itECWS); //Get the observation contribution
+
+		// Update the sigma 
+		itECWS->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
+
+		// Add station's contributions
+		if (!itECWS->targetPos->isFixed())
+			isProcessOK = isProcessOK && addPointContribution(*itECWS->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+																		   
+		// Adding contributions for STATION transformation parameters 
+		for (auto& itStTransform : contributions.fWSTransformContrib) {
+			if (!itStTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, eqIdx, matrices);
+		}
+
+		// Adding controbution to a WS Height, which is at any case variable
+		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fWSContrib);
+
+		// Set Misclosure vector
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling ECWS contribution, variance is zero or too small, can not set weight matrix element.");
+		else {
+			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		// Adding the contribution to the second design matrix
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxElement(eqIdx, obsIdx, -1.0);
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error occurred during filling input design matrices of ECWS.");
+	}
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation

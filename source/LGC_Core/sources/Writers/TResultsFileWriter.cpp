@@ -279,7 +279,8 @@ void    TResultsFileWriter::writeDataSummary()
 	int fNumPDOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPDOR);
 	int fNumRADI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI);
 	int fNumINCLY = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kINCLY);
- 
+    int fNumECWS = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWS);
+
 	(*stream) << endl << "MESURES :" << endl << endl;
     if(fNumHorAng != 0)
         writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kANGL), fNumHorAng);    
@@ -337,7 +338,10 @@ void    TResultsFileWriter::writeDataSummary()
 	
 	if (fNumINCLY != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kINCLY), fNumINCLY);
- 
+
+    if (fNumECWS != 0)
+        writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECWS), fNumECWS);
+
     //FIN DE FICHIER
     (*stream)<<endl<<"*** STATISTIQUES ***";
     (*stream)<<endl<<endl;

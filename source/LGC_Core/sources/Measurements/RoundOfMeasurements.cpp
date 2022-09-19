@@ -6,6 +6,7 @@ int TECSPROM::romCounter_ = 0;
 int TECVEROM::romCounter_ = 0;
 int TORIEROM::romCounter_ = 0;
 int TINCLYROM::romCounter_ = 0;
+int TECWSROM::romCounter_ = 0;
 
 void TECHOROM::initialiseObsSummaries() {
     // First clear the old contents away
@@ -72,6 +73,19 @@ void TINCLYROM::initialiseObsSummaries() {
 	}
 }
 
+void TECWSROM::initialiseObsSummaries() {
+    // First clear the old contents away
+    ecwsSummary_.clear();
+
+    // Add the residuals of each measurement and initialise the obsSummaries:
+    if (measECWS.size() != 0) {
+        for (auto const& ItECWSROM : measECWS)
+            ecwsSummary_.addNewResidual(ItECWSROM.getDistanceResidual().getMMetresValue());
+
+        ecwsSummary_.initialise();
+    }
+}
+
 const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
 
 const TLGCObsSummary& TECHOROM::getECHOObsSummary(std::string text)  noexcept {
@@ -105,4 +119,11 @@ const TLGCObsSummary& TINCLYROM::getINCLYObsSummary() const { return inclySummar
 const TLGCObsSummary& TINCLYROM::getINCLYObsSummary(std::string text) noexcept {
 	inclySummary_.setObsText(text);
 	return inclySummary_; 
+}
+
+const TLGCObsSummary& TECWSROM::getECWSObsSummary() const { return ecwsSummary_; }
+
+const TLGCObsSummary& TECWSROM::getECWSObsSummary(std::string text)  noexcept {
+    ecwsSummary_.setObsText(text);
+    return ecwsSummary_;
 }

@@ -320,3 +320,36 @@ const std::vector<std::string>& TKeyINCL::parentKeys() const {
 	p.push_back(INSTR);
 	return p;
 }
+
+
+//////////////////////
+// HLSR instrument //
+//////////////////////
+TKeyHLSR::TKeyHLSR(TLGCData& project, int nb_allowed_keywords, const char** keywords) : TAInstrumentKey(project, HLSR)
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeyHLSR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+	using namespace LGC;
+
+	auto& hlsrs(finstruments.fHLSR);
+	checkInstrument(6, hlsrs, tokens);
+
+	auto h = std::make_shared<TInstrumentData::THLSR>(TInstrumentData::THLSR{
+		tokens.at(2),
+		TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
+		TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
+		TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres)
+
+		});
+
+	// store the new hlsr
+	hlsrs.insert(std::make_pair(tokens.at(2), h));
+}
+
+const std::vector<std::string>& TKeyHLSR::parentKeys() const {
+	static std::vector<std::string> p{ INSTR };
+	return p;
+}
