@@ -232,8 +232,9 @@ void TPunchFileWriter::writeTitle()
 		(*stream) << "*RS2K";
 	else 
 		(*stream) << "*OLOC";
-	(*stream) <<endl<<endl;
-
+	(*stream) << endl;
+	(*stream) << "%" << endl;
+	(*stream) << "%" << endl;
 }
 
 
@@ -246,8 +247,8 @@ void	TPunchFileWriter::writeXYZHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -256,12 +257,13 @@ void	TPunchFileWriter::writeXYZHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -275,16 +277,23 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	int					covCoordPrec = 2 * getCoordPrecision() + 1;
 
 	if (fData->getConfig().useApriori.isActive())
-		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
-	else
-		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl << endl;
-
+	{
+		(*stream) << "%";
+		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl;
+		(*stream) << "%" << endl;
+	}
+	else 
+	{
+		(*stream) << "%";
+		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl;
+		(*stream) << "%" << endl;
+	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -308,7 +317,7 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
@@ -328,7 +337,8 @@ void	TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	(*stream).writeString(coordWidth, "(MM)");
 	(*stream).writeString(coordWidth, "(MM)");
 	(*stream).writeString(coordWidth, "(MM)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -341,15 +351,24 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	// int				obsWidth = max(getObsWidth(), 11);
 
 	if (fData->getConfig().useApriori.isActive())
-		(*stream) << "LES ELLIPSES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl << endl;
+	{
+		(*stream) << "%";
+		(*stream) << "LES ELLIPSES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl;
+		(*stream) << "%" << endl;
+	}
 	else
-		(*stream) << "LES ELLIPSES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl << endl;
-
+	{
+		(*stream) << "%";
+		(*stream) << "LES ELLIPSES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl;
+		(*stream) << "%" << endl;
+	}
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
-	//First line	
-	(*stream).writeString(nameWidth, "NOM  ");
+	//First line
+	(*stream).width(1);
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM  ");
 	stream->writeString(coordWidth, "X");
 	stream->writeString(coordWidth, "Y");
 	stream->writeString(coordWidth, "Z");
@@ -369,6 +388,8 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
+	(*stream).width(1);
+	(*stream) << "%";
 	stream->writeString(nameWidth, "");//Nom
 	stream->writeString(coordWidth, "(M)");// coordianate
 	stream->writeString(coordWidth, "(M)");// coordianate
@@ -384,7 +405,7 @@ void	TPunchFileWriter::writeXYZErrorEllHeader()
 	stream->writeString(coordWidth, "(MM)");// delta
 	stream->writeString(coordWidth, "(MM)");// delta
 	(*stream) << endl;
-
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -398,8 +419,8 @@ void	TPunchFileWriter::writeXYHHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "H ");
@@ -408,12 +429,13 @@ void	TPunchFileWriter::writeXYHHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -427,8 +449,8 @@ void	TPunchFileWriter::writeXYZHHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -438,13 +460,14 @@ void	TPunchFileWriter::writeXYZHHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -457,8 +480,8 @@ void	TPunchFileWriter::writeXYHNHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "H ");
@@ -468,13 +491,14 @@ void	TPunchFileWriter::writeXYHNHeader()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -486,8 +510,8 @@ void	TPunchFileWriter::writeXYZHNHeader()
 
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -497,14 +521,15 @@ void	TPunchFileWriter::writeXYZHNHeader()
 
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -517,8 +542,8 @@ void	TPunchFileWriter::writeXYZSigmaHeader()
 
 	//First line
 	(*stream).width(1);
-	(*stream) << "";
-	(*stream).writeString(nameWidth, "NOM");
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -529,7 +554,7 @@ void	TPunchFileWriter::writeXYZSigmaHeader()
 
 	//second line : units
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeString(nameWidth, "");
 	(*stream).writeString(coordWidth, "(M)");
 	(*stream).writeString(coordWidth, "(M)");
@@ -537,7 +562,8 @@ void	TPunchFileWriter::writeXYZSigmaHeader()
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
 	(*stream).writeString(coordResWidth, "(MM)");
-	(*stream) << endl << endl;
+	(*stream) << endl;
+	(*stream) << "%" << endl;
 	return;
 }
 
@@ -549,8 +575,9 @@ void	TPunchFileWriter::writeCooHeader()
 	int	coordWidth = getCoordWidth();
 	// int coordResWidth = getCoordResWidth();
 
+	//First line
 	(*stream).width(1);
-	(*stream) << "";
+	(*stream) << "%";
 	(*stream).writeStringLeft(nameWidth, "NOM");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
@@ -564,7 +591,22 @@ void	TPunchFileWriter::writeCooHeader()
 	(*stream).writeString(coordWidth, "DZ ");
 	(*stream).writeString(coordWidth, "DCUM ");
 	(*stream).writeString(nameWidth, "OPTION ");
-	(*stream) << endl<< endl;
+	(*stream) << endl;
+
+	//second line : units
+	(*stream).width(1);
+	(*stream) << "%";
+	(*stream).writeString(nameWidth, "");
+	(*stream).writeString(coordWidth, "(M)");
+	(*stream).writeString(coordWidth, "(M)");
+	(*stream).writeString(coordWidth, "(M)");
+	(*stream).writeString(coordWidth, "");
+	(*stream).writeString(coordWidth, "(MM)");
+	(*stream).writeString(coordWidth, "(MM)");
+	(*stream).writeString(coordWidth, "(MM)");
+	(*stream) << endl;
+	(*stream) << "%" << endl;
+
 	return;
 }
 
