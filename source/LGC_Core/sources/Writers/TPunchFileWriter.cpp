@@ -53,6 +53,16 @@ void TPunchFileWriter::writeFile()
 	this->writeTitle();
 
 	this->writePoints();
+
+	// Write the FRAME TRANSFORMATION PARAMETERS section only if there are more frames than "ROOT".
+	if (fProjectData->getNumberOfFrames() > 1)
+	{
+		this->writeFrameSectionTitle();
+		this->writeFrameSectionHeader();
+		this->writeFrameSectionData();
+	}
+
+
 }
 
 void TPunchFileWriter::writePoints()
@@ -1139,3 +1149,141 @@ TReal TPunchFileWriter::getN(LGCAdjustablePoint const& point)
 	pos.setCoordinates(point.getEstimatedValue());
 	return geoid->getN(pos).getMetresValue();
 }
+
+
+void TPunchFileWriter::writeFrameSectionTitle()
+{
+	TAStreamFormatter* stream = getStream();
+
+	(*stream) << "%" << endl;
+	(*stream) << "%" << endl;
+	(*stream).width(1);
+	(*stream) << "%";
+	(*stream) << "FRAME TRANSFORMATION PARAMETERS" << endl;
+	(*stream) << "%" << endl;
+}
+
+
+void TPunchFileWriter::writeFrameSectionHeader()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					paramWidth = getObsWidth() + 8;
+	int					coefWidth = 6;
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//Header line 1
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "FRAME_NAME");
+	(*stream).writeStringLeft(nameWidth, "FRAME_ID");
+	(*stream).writeString(paramWidth, "TX");
+	(*stream).writeString(paramWidth, "TY");
+	(*stream).writeString(paramWidth, "TZ");
+	(*stream).writeString(paramWidth, "RX");
+	(*stream).writeString(paramWidth, "RY");
+	(*stream).writeString(paramWidth, "RZ");
+	(*stream).writeString(paramWidth, "SCL");
+	(*stream).writeString(coefWidth, "(TX)");
+	(*stream).writeString(coefWidth, "(TY)");
+	(*stream).writeString(coefWidth, "(TZ)");
+	(*stream).writeString(coefWidth, "(RX)");
+	(*stream).writeString(coefWidth, "(RY)");
+	(*stream).writeString(coefWidth, "(RZ)");
+	(*stream).writeString(coefWidth, "(SCL)");
+	(*stream) << endl;
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//Header line 2
+	(*stream) << "%";
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeString(paramWidth, "(M)");
+	(*stream).writeString(paramWidth, "(M)");
+	(*stream).writeString(paramWidth, "(M)");
+	(*stream).writeString(paramWidth, "(GON)");
+	(*stream).writeString(paramWidth, "(GON)");
+	(*stream).writeString(paramWidth, "(GON)");
+	(*stream) << endl;
+	(*stream) << "%" << endl;
+	return;
+}
+
+
+void TPunchFileWriter::writeFrameSectionData()
+{
+	TAStreamFormatter* stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					paramWidth = getObsWidth() + 8;
+	int					coefWidth = 6;
+	int					anglePrecision = getAnglePrecision() + 5;
+	int					lengthPrecision = getLengthPrecision() + 5;
+
+	//Tteration through the tree nodes
+	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++) {
+
+		if (itTree->get()->frame.getName() != "ROOT")
+		{
+			std::string nameID;
+			for (std::vector<int>::const_iterator it = itTree->get()->ID.begin(); it != itTree->get()->ID.end(); ++it)
+			{
+				if (it == itTree->get()->ID.begin())
+					nameID += std::to_string(*it);
+				else
+					nameID += "_" + std::to_string(*it);
+			}
+
+			(*stream).width(1);
+			(*stream) << "";
+			(*stream).writeStringLeft(nameWidth, itTree->get()->frame.getName());
+			(*stream).writeStringLeft(nameWidth, nameID);
+
+
+			// Write the translation values (TX, TY, TZ)
+			for (int coef = 0; coef < 3; coef++)
+			{
+				if (!itTree->get()->frame.isTranslationFixed(coef)) {
+					(*stream).writeDouble(paramWidth, lengthPrecision, itTree->get()->frame.getEstTranslation(coef));
+				}
+				else {
+					(*stream).writeDouble(paramWidth, lengthPrecision, itTree->get()->frame.getProvTranslation(coef));
+				}
+			}
+			
+			// Write the rotation values (RX, RY, RZ)
+			for (int coef = 0; coef < 3; coef++)
+			{
+				if (!itTree->get()->frame.isRotationFixed(coef)) {
+					(*stream).writeDouble(paramWidth, anglePrecision, itTree->get()->frame.getEstRotation(coef).getGonsValue());
+				}
+				else {
+					(*stream).writeDouble(paramWidth, anglePrecision, itTree->get()->frame.getProvRotation(coef).getGonsValue());
+				}
+			}
+
+			// Write the scale value (SCL)
+			if (!itTree->get()->frame.isScaleFixed()) {
+				(*stream).writeDouble(paramWidth, anglePrecision, itTree->get()->frame.getEstScale());
+			}
+			else {
+				(*stream).writeDouble(paramWidth, anglePrecision, itTree->get()->frame.getProvScale());
+			}
+
+			// Write the translation values status (Fixed = 1, Estimated = 0)
+			for (int coef = 0; coef < 3; coef++)
+			{
+				(*stream).writeString(coefWidth, std::to_string(itTree->get()->frame.isTranslationFixed(coef)));
+			}
+			// Write the rotation values status (Fixed = 1, Estimated = 0)
+			for (int coef = 0; coef < 3; coef++)
+			{
+				(*stream).writeString(coefWidth, std::to_string(itTree->get()->frame.isRotationFixed(coef)));
+			}
+			// Write the scale values status (Fixed = 1, Estimated = 0)
+			(*stream).writeString(coefWidth, std::to_string(itTree->get()->frame.isScaleFixed()));
+			
+			(*stream) << endl;
+		}
+	}
+
+	return;
+}
+
