@@ -65,7 +65,7 @@ void TLGCStatistic::clearVectors(){
 	fDeltaComputed.reset(nullptr);
 }
 
-void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm, bool hasPdor, bool combinedcase)
+void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* im, TLSResultsMatrices* rm, bool hasPdor)
 {
 	int nbObs = im->getNbrObservations();
 	int nbEq = im->getNbrEquations();
@@ -76,13 +76,7 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 
 	// compute z
 	TDenseMatrix Z(nbObs,nbEq);
-	if (combinedcase)
-		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());
-		// GKA (03/09/2019) : the equation says V = - Qvv * P * Bt * W. With B = -1, the parametric case is retrieved. Restricting the local reliability to the parametric case, gives the same coherent results;
-		// Code before 03/09/19 : Z = -1.0**(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()) *(im->getSecondDgnMtrx()->transpose());
-	else
-		Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx()); 
-		// GKA (03/09/2019) : Qvv * P is defined as the local reliability [0,1] for the parametric model in the litterature. Does that extend for the combined mehod or not? 
+	Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());
 
 	//loop for each unknowns
 	int i = 0;

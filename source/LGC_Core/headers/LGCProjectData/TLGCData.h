@@ -169,12 +169,6 @@ public:
 		/// Number of unkowns, equations and observations.
 		UEOIndices	fUEOIndices; 
 
-
-		/// Set the use of combined case to true
-		void setCombinedCaseCalcUsed() {fCombinedCase = true;}
-		/// Return if we used combined case
-		bool isCombinedCaseUsed() {return fCombinedCase;}
-
 		/// Sets the number of LS iterations.
 		void setNumberOfLSIterations(int noi) {fLSRelatedInfo.fNumberOfLSIterations = noi;}
 		///	Returns The number of LS iterations made to reach the solution.
@@ -283,8 +277,6 @@ private:
 	// contains references: not assignable
 	TLGCData& operator=(const TLGCData&);
 
-	// Combined case if at least one PLR3D measurement appeared
-	bool fCombinedCase;
 	// If standard deviations to points or frames assigned
 	bool fhasStandardDeviations;
 	/// Number of constraints introduced, for free network adjustment.

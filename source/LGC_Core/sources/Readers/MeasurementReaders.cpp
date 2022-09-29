@@ -259,7 +259,6 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 			uvd.setDistance(TLength(std::stor(tokens.at(4))));
 		}
 
-		proj.setCombinedCaseCalcUsed();
 		//Store this UVEC measurement
 		getCAM().measUVD.emplace_back(uvd);
 	}
@@ -354,7 +353,6 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			plr.eolcomment = tokens.back();
 
-		proj.setCombinedCaseCalcUsed();   //PLR3D measurement processed, need to use Combined Case LS calculation
 
 
 		if (hasAllParams) { //Store value if it is not a simulation
@@ -1148,7 +1146,6 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
-		proj.setCombinedCaseCalcUsed(); //Combined case used
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())

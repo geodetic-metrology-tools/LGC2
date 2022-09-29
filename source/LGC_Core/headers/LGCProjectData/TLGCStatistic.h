@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -28,7 +28,7 @@ public:
 	~TLGCStatistic();
 
     ///Computes the statistic vector
-	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor, bool combinedcase);
+	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor);
 
 	/// Access to eventual error 
 	std::string		getError() const { return fError; }
