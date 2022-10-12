@@ -5,6 +5,7 @@
 #include <ConsoleLogHandler.hpp>
 #include <Logger.hpp>
 #include "Defaults.h"
+#include "TDummy.h"
 
 #include "TFileLogger.h"  // Will be obsolete soon
 
@@ -12,6 +13,8 @@
 
 int main(int argc, char *argv[])
 {
+	HelloWorld hello;
+	hello.PrintHelloWorld();
 
 	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
 #ifdef __linux__
