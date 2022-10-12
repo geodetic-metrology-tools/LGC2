@@ -60,6 +60,7 @@ ENDIF(MINGW)
 
 include_directories (
 	SYSTEM
+	${CMAKE_SOURCE_DIR}/LGC_API/headers/
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
 	${CMAKE_SOURCE_PATH}/LGC_Core/headers/LGCConstraintObjects
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
@@ -99,10 +100,12 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
+ADD_SUBDIRECTORY(LGC_API)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
 target_link_libraries(${PROJECT_NAME}
+	LGC_API
 	LGC_Core
 	LSAlgorithms
 	ProjectFramework
