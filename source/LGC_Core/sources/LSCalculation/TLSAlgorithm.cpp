@@ -1,10 +1,7 @@
 #include <TLSAlgorithm.h>
 #include "TLSInputMatricesFiller.h"
-#include "TLSParametricMtdComputer.h"
-#include "TLSCombinedMtdComputer.h"
-#include "TLSWeightedUnkMtdComputer.h"
-#include "TLSCnstMtdComputer.h"
 #include "TLSConsistencyCheck.h"
+#include "TLSUniversalMtdComputer.h"
 #include <Logger.hpp>
 
 TLSAlgorithm::TLSAlgorithm(TLGCData& data)
@@ -33,18 +30,8 @@ Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 	}
 
 
-	//choose LS algorithm
-	if (fLibrCnstrGenerator.getNumberOfConstraint() != 0)
-		computer.reset(new TLSCnstMtdComputer());
-	else
-	{
-		/*if (data.hasStandDeviations())
-			computer.reset(new TLSWeightedUnkMtdComputer());
-		else */if (data.isCombinedCaseUsed())
-			computer.reset(new TLSCombinedMtdComputer());
-		else
-			computer.reset(new TLSParametricMtdComputer());
-	}
+	// use the universal LS algorithm for parametric, combined and constrained case.
+	computer.reset(new TLSUniversalMtdComputer());
 
 	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
@@ -186,7 +173,7 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrice
 		TReal beta = data->getConfig().faut.beta / 100;
 
 		//compute statistics (Z, W, T, G, NABLA and DELTY)
-		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive(), data->isCombinedCaseUsed());
+		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());
 		
 	}
 

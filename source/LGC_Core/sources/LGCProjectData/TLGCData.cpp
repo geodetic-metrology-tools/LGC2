@@ -2,7 +2,6 @@
 
 TLGCData::TLGCData() 
     : fileLogger(std::make_shared<TFileLogger>())
-    , fCombinedCase(false)
     , fhasStandardDeviations(false)
     , fNumberOfConstraints(0) {
         fLSRelatedInfo.fNumberOfLSIterations = 0;
@@ -309,7 +308,6 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
 
     // Copy configuration:
     d->config = config;
-    d->fCombinedCase = fCombinedCase;
     d->fhasStandardDeviations = fhasStandardDeviations;
     d->fNumberOfConstraints = fNumberOfConstraints;
     d->fLSRelatedInfo = fLSRelatedInfo;

@@ -138,24 +138,11 @@ void   TLSInputMatricesFiller::initMatriceDimension(const TLGCData& projData, TL
 	if ((projData.fUEOIndices.OIndex == 0))
 		throw std::runtime_error("Observation index in LS matrices is null.");	
 
-	bool cnstrObs = false;
-
-	if(projData.getConfig().libre.isActive())
-	{
-		// LIBR option: free network adjustment has been chosen, without any cala or pdor constraints
-		int cnstrNumber = projData.getNumberOfConstraints();
-
-		if (cnstrNumber != 0)
-			matrices->initMatrices(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
-		else
-		{
-			// With LIBR option, the number of constraints cannot be zero!
-//			matrices->setDimensions(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs, cnstrNumber);
-			throw std::runtime_error("LIBR  is used, but no constraints are found.");
-		}
+	int cnstrNumber = projData.getNumberOfConstraints();
+	matrices->initMatrices(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex,  cnstrNumber);
+	if (projData.getConfig().libre.isActive() && cnstrNumber == 0) {
+		throw std::runtime_error("LIBR  is used, but no constraints are found.");
 	}
-	else
-		matrices->initMatrices(projData.fUEOIndices.UIndex, projData.fUEOIndices.EIndex, projData.fUEOIndices.OIndex, cnstrObs); 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
