@@ -91,6 +91,13 @@ protected:
 	// write the points 'XYH, ID, displacement, DCUM, option data
 	void writeCooData(LGCAdjustablePoint const& point);
 
+	/// write the title of the FRAME section
+	void writeFrameSectionTitle();
+	/// write the header of the FRAME section
+	void writeFrameSectionHeader();
+	/// write the data of the FRAME section
+	void writeFrameSectionData();
+
 
 	///Calulate N value
 	TReal getN(LGCAdjustablePoint const& point);
