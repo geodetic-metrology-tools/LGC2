@@ -234,6 +234,10 @@ void TKeyEREL::parse(const std::vector<std::string>& tokens, bool activeLine, in
     // Set the usage of histogram in obsSummary
     TLGCObsSummary::createHistogram(activeLine);
 }
+void TKeyCONSI::parse(const std::vector<std::string>&, bool activeLine, int) {
+    fconfig.consCheck = TLGCConfig::TBinaryOption(activeLine);
+}
+
 
  void TKeyPREC::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	if (tokens.size() != 3)

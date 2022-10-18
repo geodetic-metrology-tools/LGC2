@@ -241,6 +241,8 @@ struct TLGCConfig
 	TBinaryOption covar;
 	/// Write a file for best-fit analysis 
 	TBinaryOption chaba;
+	/// Make a consistency check to find groups of unidentifiable objects
+	TBinaryOption consCheck;
 
 	///width of point's name
 	int pointNameWidth = 0;

@@ -1,0 +1,315 @@
+#include <TSparseMatrix.h>
+#include <TLSAlgorithm.h>
+#include <Logger.hpp>
+#include <TVAdjustableObject.h>
+#include <Eigen/LU>
+#include <TLSConsistencyCheck.h>
+
+using namespace std;
+
+// constructor
+TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
+{
+    if (!data.getConfig().libre.isActive()) {
+        firstDgnMatrix = (*inputMtr.getFirstDgnMtrx()).toDense();
+    }
+    else
+    {
+        TDenseMatrix A = (*inputMtr.getFirstDgnMtrx()).toDense();
+        TDenseMatrix A2 = (*inputMtr.getCnstrFirstDgnMtrx()).toDense();
+        firstDgnMatrix.resize(A.rows() + A2.rows(), A.cols());
+        //add the constraint matrix
+        firstDgnMatrix << A, A2;
+    }
+    // initialize object data, neighbors, Nullspace
+    initialize(data);
+
+    // identify connected groups of kernel
+    set<set<int>> connectedGroups = identifyConnectedKernelGroups();
+    int dimKern;
+    if (nullspace.isZero()) {
+        dimKern = 0;
+    }
+    else {
+        dimKern = nullspace.cols();
+    }
+
+    auto& outputMessages(data.getFileLogger());
+    outputMessages.writeReportHeader("Geometry consistency check:");
+    if (dimKern > 0) {
+        outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
+        logCritical() << "The Nullspace of the first design matrix is nonzero. There are groups of unidentifiable objects and the estimation problem has no unique solution.";
+        logWarning() << "There are " << connectedGroups.size() << " connected Groups of unidentifiable objects.";
+    }
+    else
+    {
+        outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
+        resultStatus = true;
+        logWarning() << "No identifiability-problems detected.";
+    }
+
+    int nGroup = 0;
+    for (auto group : connectedGroups) {
+        TDenseMatrix kernGroup = computeKernelWrtObjectSet(group);
+        // generate warning log for this group
+        generateGroupWarning(group, kernGroup, nGroup);
+        nGroup++;
+    }
+}
+
+void TLSConsCheck::generateGroupWarning(const set<int> group, const TDenseMatrix kernGroup, const int groupNumber) {
+    // Generate warning message listing the objects and the directions
+    // corrsponding to the degrees of freedom
+    // To improve readability of the output ignore components below threshold.
+    double plottingThreshold = 1e-12;
+    stringstream groupHeader;
+    groupHeader << string(100, '=');
+    logWarning() << groupHeader.str();
+    int dimKernGroup = kernGroup.cols();
+    logWarning() << "Group " << groupNumber << " with" << group.size() << "objects and" << dimKernGroup << "Degrees of Freedom:";
+    stringstream directionHeader;
+    directionHeader << setw(14) << " Type" << setw(31) << "Object Name" << " | ";
+    for (int k = 0; k < dimKernGroup; k++) {
+        directionHeader << setw(10) << "Direction " << "d_" << k << " | ";
+    }
+    int lineWidth = directionHeader.tellp();
+    logWarning() << directionHeader.str();
+    logWarning() << string(lineWidth, '-');
+    // loop over objects in group
+    for (auto obj : group) {
+        stringstream msg;
+        msg.precision(6);
+        msg << scientific;
+        // loop over dimensions of object
+        for (int k = 0; k < objectIndices[obj].size(); k++) {
+            msg << setw(1) << objectIndices[obj].size() << "-dim." << setw(8) << objectTypes[obj] << " " << setw(30) << objectNames[obj] << " | ";
+            // loop over degrees of freedom of group
+            for (int j = 0; j < dimKernGroup; j++) {
+                double d = kernGroup(objectIndices[obj][k], j);
+                msg << setw(13) << d * (fabs(d) > plottingThreshold) << " | ";
+            }
+            logWarning() << msg.str();
+            msg.str("");
+        }
+        msg << string(lineWidth, '-');
+        logWarning() << msg.str();
+    }
+    //get external connections
+    pair<set<int>, int> extCon = externalConnections(group);
+    set<int> external = extCon.first;
+    int nConnections = extCon.second;
+    if (external.size() > 0) {
+        logWarning() << "This group is connected via" << nConnections << "measurements/constraints to the following" << external.size() << "objects";
+        for (auto object : external) {
+            logWarning() << setw(12) << objectTypes[object] << setw(25) << objectNames[object];
+        }
+    }
+    else {
+        logWarning() << "This group is isolated from the rest of the objects.";
+    }
+
+}
+
+
+bool TLSConsCheck::getResultStatus() {
+    return resultStatus;
+}
+set<set<int>> TLSConsCheck::identifyConnectedKernelGroups() {
+    set<set<int>> connectedGroups;
+    for (auto obj : nullspaceObjects) {
+        // only search for nontrivial objects
+        set<int> group = getConnectedKernelGroup(obj);
+        connectedGroups.insert(group);
+    }
+    return connectedGroups;
+}
+
+set<int> TLSConsCheck::getConnectedKernelGroup(int i) {
+    // get the connected group of object i
+    set<int> group({ i });
+    set<int> newGroup;
+    set<int> added({ i });
+    while (added.size() > 0) {
+        newGroup = group;
+        for (auto object : added) {
+            // add the neighbors of objs that were added in the previous round that are in the kernel
+            for (auto toBeInserted : kernelNeighbors[object]) {
+                newGroup.insert(toBeInserted);
+            }
+        }
+        //check which points have been added
+        added.clear();
+        set_difference(newGroup.begin(), newGroup.end(), group.begin(), group.end(), inserter(added, added.begin()));
+        group = newGroup;
+    }
+    return group;
+}
+
+void TLSConsCheck::initialize(const TLGCData& data)
+{
+    for (auto object : data.getPoints())
+    {
+        addObject(object, "Point");
+    }
+    for (auto object : data.getLines())
+    {
+        addObject(object, "Line");
+    }
+    for (auto object : data.getAngles())
+    {
+        addObject(object, "Angle");
+    }
+    for (auto object : data.getPlanes())
+    {
+        addObject(object, "Plane");
+    }
+    for (auto object : data.getLength())
+    {
+        addObject(object, "Length");
+    }
+    // now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
+    // as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
+    for (auto it(data.getTree().begin()); it != data.getTree().end(); ++it) {
+        auto trafo(it.node->data.get()->frame);
+        addObject(trafo, "Transformation");
+    }
+
+    // compute neighbors
+    // initialize neighbors
+    for (auto object : objectNames) {
+        set<int> empty;
+        neighbors.push_back(empty);
+        kernelNeighbors.push_back(empty);
+    }
+    for (int row = 0; row < firstDgnMatrix.rows(); row++) {
+        set<int> contributingToRow = contributingObjects(firstDgnMatrix(row, Eigen::indexing::all).transpose());
+        for (auto object : contributingToRow) {
+            for (auto objectToInsert : contributingToRow) {
+                neighbors[object].insert(objectToInsert);
+            }
+        }
+    }
+    // compute Kernel
+    set<int> allObjects;
+    for (int i = 0; i < objectNames.size(); i++) { allObjects.insert(i); }
+    nullspace = computeKernelWrtObjectSet(allObjects);
+
+    // compute kernelNeighbors (only allow connections to objects contributing
+    // to kernel)
+    nullspaceObjects = contributingObjects(nullspace);
+    for (int i = 0; i < objectNames.size(); i++) {
+        // kernelNeighbors are neighbors and contribute to kernel
+        for (auto object : neighbors[i]) {
+            if (nullspaceObjects.count(object) > 0) {
+                kernelNeighbors[i].insert(object);
+            }
+        }
+    }
+}
+void TLSConsCheck::addObject(TVAdjustableObject& object, string objectType)
+{
+    // add name, type and indices
+    objectNames.push_back(object.getName());
+    objectTypes.push_back(objectType);
+    vector<int> aux(0);
+    for (int i = 0; i < object.getNumUnkn(); i++)
+    {
+        aux.push_back(object.getFirstUidx() + i);
+    }
+    objectIndices.push_back(aux);
+}
+
+TDenseMatrix TLSConsCheck::computeKernelWrtObjectSet(set<int> test_set)
+{
+
+    // get only the columns of the first design matrix that correspond to the test_set of objects
+    vector<int> testIndices = indicesFromSet(test_set);
+    TDenseMatrix firstDense = firstDgnMatrix;
+    TDenseMatrix firstWithTestIndices = firstDense(Eigen::indexing::all, testIndices);
+    // compute kernel representation of this matrix
+    // with pullpivlu
+    Eigen::FullPivLU<TDenseMatrix> lu(firstWithTestIndices);
+    lu.setThreshold(pivotThreshold);
+    TDenseMatrix kernWrtIndices = lu.kernel();
+    if (kernWrtIndices.isZero()) {
+        // if only the zero matrix is returned by eigen, the nullspace has dimension 0
+        kernWrtIndices.conservativeResize(firstDense.cols(), 0);
+    }
+    TDenseMatrix backProjectedKernel = TDenseMatrix::Zero(firstDense.rows(), kernWrtIndices.cols());
+
+    backProjectedKernel(testIndices, Eigen::indexing::all) = kernWrtIndices;
+
+    return backProjectedKernel;
+}
+vector<int> TLSConsCheck::indicesFromSet(set<int> objectSet)
+{
+    // construct indices vector from object set
+    vector<int> indicesVector;
+    for (int object : objectSet)
+    {
+        for (int index : objectIndices[object])
+        {
+            indicesVector.push_back(index);
+        }
+    }
+    return indicesVector;
+}
+
+set<int> TLSConsCheck::objectsFromIndices(vector<int> x)
+{
+    // create eigen vector with 1 at the corresponding places
+    Eigen::VectorXd aux(firstDgnMatrix.cols());
+    aux.setZero();
+    aux(x) = Eigen::VectorXd::Ones(x.size());
+    return contributingObjects(aux);
+}
+
+set<int> TLSConsCheck::contributingObjects(TDenseMatrix M) {
+    // get objects such that M has at least one column that is nonzero on that object-row
+    set<int> contributing;
+    for (int i = 0; i < objectNames.size(); i++) {
+        TDenseMatrix aux;
+        aux = M(objectIndices[i], Eigen::indexing::all);
+        if (!aux.isZero()) {
+            contributing.insert(i);
+        }
+    }
+    return contributing;
+}
+
+
+pair<set<int>, int> TLSConsCheck::externalConnections(set<int> group) {
+    // for a given group of objects compute the objects in the complement that are connected to this group
+    set<int> externalConnectedObjects;
+    int nConnections = 0;
+
+    set<int> complementOfGroup;
+    for (int i = 0; i < objectNames.size(); i++) {
+        if (group.count(i) == 0) {
+            //i is not in group
+            complementOfGroup.insert(i);
+        }
+    }
+    vector<int> internalIndices = indicesFromSet(group);
+    vector<int> externalIndices = indicesFromSet(complementOfGroup);
+
+    for (int row = 0; row < firstDgnMatrix.rows(); row++) {
+        TDenseMatrix v = firstDgnMatrix(row, Eigen::placeholders::all).transpose();
+        set<int> contributing = contributingObjects(v);
+        bool dependsOnGroup = !(v(internalIndices, 0).isZero());
+        bool dependsOnComplement = !(v(externalIndices, 0).isZero());
+
+        if (dependsOnGroup && dependsOnComplement) {
+            // the measurement involves internal and external objects
+            nConnections++;
+            for (auto object : contributing) {
+                if (group.count(object) == 0) {
+                    externalConnectedObjects.insert(object);
+                }
+            }
+        }
+    }
+
+    return { externalConnectedObjects, nConnections };
+}
+

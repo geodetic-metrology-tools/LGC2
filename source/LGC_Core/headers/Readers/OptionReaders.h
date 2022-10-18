@@ -272,6 +272,20 @@ class TKeyHIST : public TAOptionKey {
 		///Tokenize and initialize options for the output processing
         virtual void parse(const std::vector<std::string>&, bool activeLine, int);
 };
+class TKeyCONSI : public TAOptionKey {
+	public:
+		///Constructor
+		TKeyCONSI(TLGCData& project, int nb_allowed_keywords = nb_allowed_cons_check, const char** keywords = allowed_CONSI) : TAOptionKey(project, CONSI)
+		{
+			for (int i(0); i< nb_allowed_keywords; i++)
+				allowed_keywords.emplace_back(keywords[i]);
+
+		}
+
+		///Tokenize and initialize options for the output processing
+        virtual void parse(const std::vector<std::string>&, bool activeLine, int);
+};
+
 
 class TKeyPREC : public TAOptionKey {
 	public:
