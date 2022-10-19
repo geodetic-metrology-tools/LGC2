@@ -311,7 +311,7 @@ void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kCCs)
 		});
 
-	// store the new invlinometer
+	// store the new inclinometer
 	incls.insert(std::make_pair(tokens.at(2), i));
 }
 
