@@ -1,0 +1,158 @@
+---
+DisableFormat: false
+---
+### GLOBAL ###
+Language: Cpp
+Standard: Cpp11
+
+### ALIGNMENTS ###
+# always deactivated
+AlignAfterOpenBracket: DontAlign
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: DontAlign
+AlignOperands: false
+AlignTrailingComments: false
+DerivePointerAlignment : false
+
+### CODE ON SINGLE LINE ###
+# always deactivated, except for inline functions inside a class definition
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+### NEW LINES ###
+# new line if more than 170 characters
+# new line before and after '{' or '}'
+# arithmetic operators start the new line (if necessary)
+ColumnLimit: 170
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+# Backward compatibility for MSVC 2017
+#AlwaysBreakTemplateDeclarations: Yes
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: false
+BreakAfterJavaFieldAnnotations: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: AfterColon
+# Doesn't exist in MSVC 2017
+#BreakInheritanceList: AfterColon
+# Not defined
+#BreakStringLiterals: false
+BinPackArguments: true
+BinPackParameters: false
+# Not defined
+#CommentPragmas: 
+CompactNamespaces: true
+ReflowComments: true
+
+### INDENTATION ###
+# indentation is done with tabs
+# tabs are 4 characters wide
+# AccessModifierOffset: Negative value because we use tabs
+AccessModifierOffset: -4
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+IndentCaseLabels: false
+# Can't use in MSVC; Use the line below.
+#IndentPPDirectives: BeforeHash
+IndentPPDirectives: AfterHash
+IndentWrappedFunctionNames: true
+IndentWidth: 4
+TabWidth: 4
+NamespaceIndentation: None
+UseTab: ForContinuationAndIndentation
+
+### SPACES ###
+# c++11 style (no space before or after braces when used like parentheses)
+Cpp11BracedListStyle: true
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+# Doesn't exist in MSVC 2017
+#SpaceBeforeCpp11BracedList: false
+#SpaceBeforeCtorInitializerColon: true
+#SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+# Doesn't exist in MSVC 2017
+#SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+
+### SORTING ###
+# we sort includes and using declarations
+# includes are automatically grouped and sorted
+IncludeBlocks: Regroup
+IncludeCategories:
+  # TUT
+  - Regex: '^<tut\/tut(_.+)?.hpp>$'
+    Priority: 6
+  # QScintilla
+  - Regex: '^<Qsci\/qsci[[:lower:]]+.h>$'
+    Priority: 5
+  # Qt
+  - Regex: '^<Q[[:upper:]][[:alnum:]]+>$'
+    Priority: 4
+  # Eigen
+  - Regex: '^<Eigen\/[[:upper:]][[:alnum:]]+>$'
+    Priority: 3
+  # Boost
+  - Regex: '^<boost\/.+\.hpp>$'
+    Priority: 2
+  # STL
+  - Regex: '^<[[:lower:]_]+>$'
+    Priority: 1
+  # local includes
+  - Regex: '^".+\.h(pp)?"$'
+    Priority: 10
+  # internal global includes
+  - Regex: '^<.+\.h(pp)?>$'
+    Priority: 9
+IncludeIsMainRegex: '$'
+SortIncludes: true
+SortUsingDeclarations: true
+
+### EMPTY LINES ###
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+
+### TWEAKING ###
+PenaltyBreakAssignment: 100
+PenaltyBreakBeforeFirstCallParameter: 0
+PenaltyBreakComment: 100
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakString: 100
+# Doesn't exist in MSVC 2017
+#PenaltyBreakTemplateDeclaration: 0
+PenaltyExcessCharacter: 1
+PenaltyReturnTypeOnItsOwnLine: 20
+
+### MISCELLANEOUS ###
+FixNamespaceComments: true
+PointerAlignment: Right
+---
