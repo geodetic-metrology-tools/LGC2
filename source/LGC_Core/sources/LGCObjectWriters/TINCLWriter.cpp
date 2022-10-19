@@ -106,7 +106,7 @@ void TINCLWriter::writeINCLYResults(const  TINCLYROM& inclyrom)
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaAngl.getSignedCCValue());//Output value in cc [cc], stored in [rad]
 
 		//write the AC
-		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.target.refAngleCorrectionValue.getGonsValue());//Output value in gon [gon], stored in [rad]
+		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.target.angleCorrectionValue.getGonsValue());//Output value in gon [gon], stored in [rad]
 
 		//write the ACSE
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaCorrectionValue.getSignedCCValue());//Output value in cc [cc], stored in [rad]
