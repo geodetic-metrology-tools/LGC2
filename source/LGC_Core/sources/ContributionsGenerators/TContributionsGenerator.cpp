@@ -1354,7 +1354,7 @@ PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 	TReal xe = estimated.getX().getMetresValue();
 	TReal ye = estimated.getY().getMetresValue();
 
-	TAngle bear = radi.getAngleCnstr();
+	TAngle bear = radi.getAngleCnstr() + radi.getConstAngle();
 
 
 	//gets calc value and sigma

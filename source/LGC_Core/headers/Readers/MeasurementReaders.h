@@ -459,6 +459,7 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 	TLength sigma;
+	TAngle constAngle;
 };
 
 

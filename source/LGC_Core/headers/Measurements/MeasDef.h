@@ -395,24 +395,29 @@ public:
 	//@{
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
-	/// Returns standard deviation of the observed value
+	/// Return the standard deviation of the observed value
 	inline TLength getObservedStDev() const { return fSigmaObsVal; }
 
-	/// Returns standard deviation of the observed value
+	/// Return the constant value
+	inline TAngle getConstAngle() const { return fConstAngleVal; }
+
+	/// Return the residual angle constraint
 	inline TLength getResidual() const { return fResidual; }
 
-	/// Returns standard deviation of the observed value
+	/// Return the angle constraint value
 	inline TAngle getAngleCnstr() const { return fAngleCnstr; }
 	//@}
 
 
 	/*!@name Settings */
 	//@{
-	/// Sets standard deviation of the observed value
+	/// Set the standard deviation of the observed value
 	inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
-	/// Returns standard deviation of the observed value
+	/// Set the constant angle
+	inline void setConstAngle(TAngle constAngle) { fConstAngleVal = constAngle; }
+	/// Set the residual angle constraint
 	inline void setResidual(TLength res) { fResidual = res; }
-    /// Setter for the bearing value
+    /// Set the angle constraint value
     inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
 
@@ -423,6 +428,8 @@ private:
 	TLength fResidual;
 	// Standard deviation of the observed value
 	TLength fSigmaObsVal;
+	// Constant angle
+	TAngle fConstAngleVal{0};
 };
 /*!
 \ingroup Measurements
