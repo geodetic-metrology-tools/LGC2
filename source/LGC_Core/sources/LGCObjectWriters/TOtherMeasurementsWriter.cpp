@@ -138,6 +138,8 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
 	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	(*stream).writeString(obsResWidth, "OBSE"); //observation standard error 
+	(*stream).writeString(obsWidth, "ACST"); //constant angle
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +150,8 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	(*stream).writeString(obsResWidth, "(MM)"); //sigma observed value
 	(*stream).writeString(obsResWidth, "(MM)"); //residual
 	(*stream).writeString(obsResWidth, "");    //residual/sigma
-
+	(*stream).writeString(obsResWidth, "(MM)"); //observation standard error 
+	(*stream).writeString(obsWidth, "(GON)"); //constant angle
 	(*stream) << endl;
 }
 
@@ -336,6 +339,12 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getResidual() / It.getObservedStDev());
+
+		//write the observation standard error (OBSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getObservedStDev().getMMetresValue());
+
+		//write the constant angle (ACST)
+		(*stream).writeDouble(obsWidth, anglePrecision, It.getConstAngle().getGonsValue());
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -543,7 +552,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRA
 		(*stream).writeStringLeft(nameWidth, "");
 
 		//get the bearing 
-		(*stream).writeDouble(obsWidth, lengthPrecision, It.getAngleCnstr());
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.getAngleCnstr() + It.getConstAngle());
 		//get the standard deviation
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getObservedStDev().getMMetresValue());
 		//get the residual

@@ -671,8 +671,8 @@ namespace tut
 			//
 			// RADI
 			TKeyRADI radi(proj);
-			radi.parse(tokenizefileString("*RADI"), true, -1);
-			radi.parse(tokenizefileString("P1 100.0 SIGMA 0.01"), true, -1);
+			radi.parse(tokenizefileString("*RADI 1"), true, -1);
+			radi.parse(tokenizefileString("P1 100.0 OBSE 0.01"), true, -1);
 			const auto& radiM(proj.getCurrentNode().measurements.fRADI.back());
 			ensure_equals("Point name should match", radiM.station->getName(), "P1");
 			ensure_equals("bearing should match", radiM.getAngleCnstr().getGonsValue(), 100.0, 1e-7);
@@ -684,14 +684,20 @@ namespace tut
 			ensure_equals("bearing should match", radiM2.getAngleCnstr().getGonsValue(), 150.0, 1e-7);
 			ensure_equals("sigma should match", radiM2.getObservedStDev().getMMetresValue(), 1.0);
 
+			radi.parse(tokenizefileString("P3 350.0  ACST  100"), true, -1);
+			const auto &radiM3(proj.getCurrentNode().measurements.fRADI.back());
+			ensure_equals("Point name should match", radiM3.station->getName(), "P3");
+			ensure_equals("bearing should match", radiM3.getAngleCnstr().getGonsValue(), 350.0, 1e-7);
+			ensure_equals("constant angle should match", radiM3.getConstAngle().getGonsValue(), 100.0, 1e-7);
+
 			TKeyRADI radi2(proj);
-			radi2.parse(tokenizefileString("*RADI 2"), true, -1);
+			radi2.parse(tokenizefileString("*RADI 2   ACST 100"), true, -1);
 			radi2.parse(tokenizefileString("P3 100.0"), true, -1);
 			const auto& radi2M(proj.getCurrentNode().measurements.fRADI.back());
 			ensure_equals("Point name should match", radi2M.station->getName(), "P3");
 			ensure_equals("bearing should match", radi2M.getAngleCnstr().getGonsValue(), 100.0, 1e-7);
 			ensure_equals("sigma should match", radi2M.getObservedStDev().getMMetresValue(), 2.0);
-
+			ensure_equals("constant angle should match", radi2M.getConstAngle().getGonsValue(), 100.0, 1e-7);
 
 			//OBSXYZ
 			TKeyOBSXYZ cobsXYZ(proj);

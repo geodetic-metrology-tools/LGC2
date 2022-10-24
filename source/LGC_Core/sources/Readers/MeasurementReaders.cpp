@@ -1237,10 +1237,14 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	//On first line nothing appears so far: to be discussed
 	if (firstline)
 	{
-		if (tokens.size() > 2)
-			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+		if (tokens.size() < 3)
+			throw std::runtime_error("RADI measurement must have at least 1 entry, the sigma value");
 		else
-			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
+			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
+		
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		constAngle = TAngle(opts.getParamRgon2rad("ACST", 0.0));
 
         // Update the activation status of the RADI rom:
         proj.getCurrentNode().measurements.radiActive = activeLine;
@@ -1260,10 +1264,8 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		auto& radi(proj.getCurrentNode().measurements.fRADI.back());
 		
-		if (opts.has("SIGMA"))
-			radi.setObservedStDev(TLength(opts.getParamRmm2m("SIGMA", proj.getCurrentNode().measurements.fRADI.back().getObservedStDev())));
-		else
-			radi.setObservedStDev(sigma);
+		radi.setObservedStDev(TLength(opts.getParamRmm2m("OBSE", sigma)));
+		radi.setConstAngle(TAngle(opts.getParamRgon2rad("ACST", constAngle)));
 
 		radi.line = line;
         radi.setActive(proj.getCurrentNode().measurements.radiActive && activeLine); // Active only if ROM active as well
