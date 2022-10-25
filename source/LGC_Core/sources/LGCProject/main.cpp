@@ -5,7 +5,7 @@
 #include <ConsoleLogHandler.hpp>
 #include <Logger.hpp>
 #include "Defaults.h"
-#include "Tmonitor.h"
+#include "TMonitor.h"
 
 #include "TFileLogger.h"  // Will be obsolete soon
 
