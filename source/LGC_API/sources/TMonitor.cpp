@@ -3,8 +3,13 @@
 #include <TLGCData.h>
 #include <TReader.h>
 #include "TLGCCalculation.h"
+#include "TVAbstractAlgorithm.h"
+#include <TLSAlgorithm.h>
+#include "TLSSimulation.h"
 #include <Behavior.h>
 #include "FileUtils.h"
+#include "TDataAnalyzer.h"
+#include "TLSResultsMatrices.h"
 
 using namespace std;
 
@@ -12,7 +17,7 @@ void TMonitor::BasicObject()
 {	// for random numbers
 	engine.seed(1);
 
-	cout << "Hello World!\n";
+	cout << "Starting monitor!\n";
 	std::shared_ptr<TLGCData> projTest(new TLGCData);
 	TReader r(projTest);
 
@@ -24,15 +29,39 @@ void TMonitor::BasicObject()
 
 	std::ifstream inputFileStream (inputFilePath, std::ifstream::in);
 	bool succesReading = r.read(inputFileStream);
-	TLGCCalculation calcul(projTest);
-	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	//TLGCCalculation calcul(projTest);
+	//std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 	//Behavior succesCalc = calcul.computeResults(fileWriter);
-	for (int i = 0; i < 1000; i++) {
-		// compute
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		// manipulate measurements
+	//for (int i = 0; i < 1000; i++) {
+	//	// compute
+	//	//Behavior succesCalc = calcul.computeResults(fileWriter);
+	//	succesCalc = calcul.computeResults(fileWriter);
+	//	// manipulate measurements
+	//	TMonitor::manipulate_ECWS_measurements(projTest.get());
+	//}
+	std::unique_ptr<TVAbstractAlgorithm> algorithm;
+	Behavior successCalculation;
+	/*Class for analyzing the data.*/
+	TDataAnalyzer analyzer(*projTest.get());
+	std::cout << analyzer.dataConsistent()<<std::endl;
+	algorithm.reset(new TLSAlgorithm(*projTest.get()));
+	TLSResultsMatrices *results(nullptr);
+	int n = 10000;
+	for (int i = 0; i < n; i++)
+	{
+		successCalculation = algorithm->run(*projTest.get(), 80);
 		TMonitor::manipulate_ECWS_measurements(projTest.get());
+		std::cout << "Iteration " << i << std::endl;
+		if (successCalculation)
+		{
+			results = algorithm->resultMatrices;
+		}
 	}
+
+	// if (successCalculation)
+    //     fResultsMtr = algorithm->resultMatrices;
+
+
 
 }
 
@@ -48,9 +77,9 @@ void TMonitor::manipulate_ECWS_measurements(TLGCData *data) {
 			// iterate over single measurements
 			for (auto itECWS(itECWSrom.measECWS.begin()); itECWS != itECWSrom.measECWS.end(); ++itECWS) {
 				TLength oldMeas = itECWS->getDistance();
-                if (i == 0) {
-                std:cout << oldMeas << std::endl;
-                }
+                // if (i == 0) {
+                // std:cout << oldMeas << std::endl;
+                // }
 				// itECWS->setDistance(2 * aux);
 				TReal sigma = itECWS->target.sigmaDist;
 				TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;

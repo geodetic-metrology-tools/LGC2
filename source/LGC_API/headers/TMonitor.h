@@ -8,9 +8,9 @@ using namespace std;
 class TMonitor
 {
 public:
-    void TMonitor::BasicObject();
+    void BasicObject();
     // for FRAS stress test
-    void TMonitor::manipulate_ECWS_measurements(TLGCData *data);
+    void manipulate_ECWS_measurements(TLGCData *data);
 	/// Random numbers generator
 	std::ranlux48 engine;
 };
