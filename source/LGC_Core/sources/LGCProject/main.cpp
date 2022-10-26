@@ -7,15 +7,19 @@
 #include <Logger.hpp>
 #include "Defaults.h"
 #include "TMonitor.h"
+#include <chrono>
 
 #include "TFileLogger.h"  // Will be obsolete soon
-
+using namespace std::chrono;
 
 
 int main(int argc, char *argv[])
 {
-
+    auto start = high_resolution_clock::now();
     TMonitor mockup;
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+    std::cout << "Elapsed time (ms): " << duration.count() << std::endl;
 
 //
 //	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
