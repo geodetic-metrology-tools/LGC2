@@ -1643,60 +1643,52 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 	(*stream)<<endl;
 }
 
-void TFRAMEWriter::writePoints(TDataTreeIterator frameIt){
+void TFRAMEWriter::writePoints(TDataTreeIterator frameIt)
+{
 	bool localNode = false;
+	bool errorEllipseActive = fProjectData->getConfig().errorEllipses.isActive();
 
-	if(frameIt->get()->isROOTNode())
+	if (frameIt->get()->isROOTNode())
 		localNode = false;
 	else
 		localNode = true;
 
 	writePointType(pointCALA, frameIt, TSpatialStatus::kCala, localNode);
-	
+
 	writePointType(pointVXYZ, frameIt, TSpatialStatus::kVxyz, localNode);
-	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVXYZ.empty()))
+
+	// Ellipsoid and Ellips data only in the root frame
+	if (errorEllipseActive && !pointVXYZ.empty() && !localNode)
 	{
-		//write ellipsoidal error
+		// write ellipsoidal error
 		writeEllipsoidHeader();
 
-		for (auto& it : pointVXYZ)
+		for (auto &it : pointVXYZ)
 			writeEllipsoidData(it);
 	}
-	
-	writePointType(pointVXY, frameIt, TSpatialStatus::kVxy, localNode);
-	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVXY.empty()))
-	{
-		//write ellips error
-		writeEllipsHeader();
 
-		for (auto& it : pointVXY)
-			writeEllipsData(it);
-	}
+	auto writeEllipse = [this, localNode, errorEllipseActive](std::list<AdjPointIter> &points) {
+		if (errorEllipseActive && !points.empty() && !localNode)
+		{
+			// write ellips error
+			writeEllipsHeader();
+			for (auto &it : points)
+				writeEllipsData(it);
+		}
+	};
+
+	writePointType(pointVXY, frameIt, TSpatialStatus::kVxy, localNode);
+	writeEllipse(pointVXY);
 
 	writePointType(pointVXZ, frameIt, TSpatialStatus::kVxz, localNode);
-	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVXZ.empty()))
-	{
-		//write ellips error
-		writeEllipsHeader();
+	writeEllipse(pointVXZ);
 
-		for (auto& it : pointVXZ)
-			writeEllipsData(it);
-	}
-	
 	writePointType(pointVYZ, frameIt, TSpatialStatus::kVyz, localNode);
-	if (fProjectData->getConfig().errorEllipses.isActive() && (!pointVYZ.empty()))
-	{
-		//write ellips error
-		writeEllipsHeader();
+	writeEllipse(pointVYZ);
 
-		for (auto& it : pointVYZ)
-			writeEllipsData(it);
-	}
-	
 	writePointType(pointVZ, frameIt, TSpatialStatus::kVz, localNode);
 
-
-	*getStream()<<endl;
+	*getStream() << endl;
 }
 
 
@@ -2253,6 +2245,7 @@ void TFRAMEWriter::writeEllipsHeader()
 	stream->writeString(coordWidth, "SEMI-MAJ.(A)");
 	stream->writeString(coordWidth, "SEMI-MIN.(B)");
 	stream->writeString(coordWidth, "ORIE. OF (A)");
+	stream->writeStringLeft(nameWidth, "SYSTEME");
 
 	*stream << endl;
 
@@ -2270,16 +2263,16 @@ void TFRAMEWriter::writeEllipsHeader()
 
 void TFRAMEWriter::writeEllipsoidHeader()
 {
-	TAStreamFormatter*	stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
-	int					nameWidth = getNameWidth();
-	int					coordWidth = getCoordWidth();
+	int nameWidth = getNameWidth();
+	int coordWidth = getCoordWidth();
 
-	*stream << endl<< "ABSOLUTE ERROR ELLIPSOIDS" << endl;
+	*stream << endl << "ABSOLUTE ERROR ELLIPSOIDS" << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
-	//First line
+	// First line
 	stream->writeStringLeft(nameWidth, "NOM");
 	// Direction vectors: (+0.000, -0.000, +0.000) => 24
 	const int vecwidth(24);
@@ -2289,20 +2282,20 @@ void TFRAMEWriter::writeEllipsoidHeader()
 	stream->writeString(coordWidth, "LONGUEUR X");
 	stream->writeString(coordWidth, "LONGUEUR Y");
 	stream->writeString(coordWidth, "LONGUEUR Z");
-
+	stream->writeStringLeft(nameWidth, "SYSTEME");
 	*stream << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
-	//second line : units
-	stream->writeString(nameWidth, "");//Nom
-	stream->writeString(vecwidth, "");//Direction
-	stream->writeString(vecwidth, "");//Direction
-	stream->writeString(vecwidth, "");//Direction
-	stream->writeString(coordWidth, "(MM)");// Axis length
-	stream->writeString(coordWidth, "(MM)");// Axis length
-	stream->writeString(coordWidth, "(MM)");// Axis length
+	// second line : units
+	stream->writeString(nameWidth, ""); // Nom
+	stream->writeString(vecwidth, ""); // Direction
+	stream->writeString(vecwidth, ""); // Direction
+	stream->writeString(vecwidth, ""); // Direction
+	stream->writeString(coordWidth, "(MM)"); // Axis length
+	stream->writeString(coordWidth, "(MM)"); // Axis length
+	stream->writeString(coordWidth, "(MM)"); // Axis length
 
-	*stream  << endl;
+	*stream << endl;
 
 	return;
 }
@@ -2436,33 +2429,34 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	(*stream)<<endl; //end line
 }
 
-void TFRAMEWriter::writeEllipsData(AdjPointIter& pt)
+void TFRAMEWriter::writeEllipsData(AdjPointIter &pt)
 {
-	TAStreamFormatter*	stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
-	int					nameWidth = getNameWidth();
-	int					coordWidth = getCoordWidth();
-	int					coordResWidth = getCoordResWidth();
+	int nameWidth = getNameWidth();
+	int coordWidth = getCoordWidth();
+	int coordResWidth = getCoordResWidth();
 
 	stream->writeStringLeft(nameWidth, pt->getName());
 	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllMajorAxis().getMMetresValue());
 	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllMinorAxis().getMMetresValue());
 	stream->writeDouble(coordWidth, coordResWidth, pt->getErrorEllGis().getGonsValue());
+	stream->writeStringLeft(nameWidth, pt->getFrameTreePosition().node->data->frame.getName());
 	*stream << endl;
 }
 
-void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
+void TFRAMEWriter::writeEllipsoidData(AdjPointIter &pt)
 {
-	TAStreamFormatter*	stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
-	int					nameWidth = getNameWidth();
-	int					coordWidth = getCoordWidth();
-	int					coordResWidth = getCoordResWidth();
-	std::string				sep = getSeparator();
+	int nameWidth = getNameWidth();
+	int coordWidth = getCoordWidth();
+	int coordResWidth = getCoordResWidth();
+	std::string sep = getSeparator();
 
-	const auto& ell(pt->getErrorEllipsoid());
+	const auto &ell(pt->getErrorEllipsoid());
 
 	const int vecwidth(24);
 	char vecstr[32]; // format the vector output here and write as a string
@@ -2474,9 +2468,10 @@ void TFRAMEWriter::writeEllipsoidData(AdjPointIter& pt)
 	stream->writeString(vecwidth, vecstr);
 	sprintf(vecstr, "(% .3f  % .3f  % .3f)", ell.vz[0], ell.vz[1], ell.vz[2]);
 	stream->writeString(vecwidth, vecstr);
-	stream->writeDouble(coordWidth, coordResWidth, ell.lx*M2MM);
-	stream->writeDouble(coordWidth, coordResWidth, ell.ly*M2MM);
-	stream->writeDouble(coordWidth, coordResWidth, ell.lz*M2MM);
+	stream->writeDouble(coordWidth, coordResWidth, ell.lx * M2MM);
+	stream->writeDouble(coordWidth, coordResWidth, ell.ly * M2MM);
+	stream->writeDouble(coordWidth, coordResWidth, ell.lz * M2MM);
+	stream->writeStringLeft(nameWidth, pt->getFrameTreePosition().node->data->frame.getName());
 	*stream << endl;
 }
 
@@ -2498,4 +2493,3 @@ void TFRAMEWriter::transfXYZ2XYH(TPositionVector& pv, const TRefSystemFactory::E
 		else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 			TXYH2CCS::CCS2XYHg1985Machine(pv);
 }
-
