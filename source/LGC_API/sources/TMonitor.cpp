@@ -17,30 +17,22 @@ using namespace std;
 TMonitor::TMonitor()
 {
     initialize();
-    std::unique_ptr<TVAbstractAlgorithm> algorithm;
-    Behavior successCalculation;
-    /*Class for analyzing the data.*/
-    TDataAnalyzer analyzer(*project.get());
-    std::cout << analyzer.dataConsistent() << std::endl;
-
-    algorithm.reset(new TLSAlgorithm(*project.get()));
-    TLSResultsMatrices* results(nullptr);
-    int n = 1000;
-    for (int i = 0; i < n; i++)
-    {
-        successCalculation = algorithm->run(*project.get(), 80);
-        manipulate_ECWS_measurements(*project.get());
-        std::cout << "Iteration " << i << std::endl;
-        if (successCalculation)
-        {
-            results = algorithm->resultMatrices;
-        }
-    }
-
 }
 
-
-void TMonitor::initialize() {
+void TMonitor::adjust(){ 
+    Behavior successCalculation;
+	TLSResultsMatrices *results(nullptr);
+	successCalculation = TMonitor::algorithm->run(*project.get(), 80);
+	manipulate_ECWS_measurements(*project.get());
+	if (successCalculation)
+	{
+		results = algorithm->resultMatrices;
+	}
+	std::cout << "Adjustment method finished." << std::endl;
+}
+void TMonitor::initialize() { 
+	Behavior successCalculation;
+    
 	std::cout << "Creating monitoring object.\n";
 	// for random numbers
 	engine.seed(1);
@@ -56,6 +48,12 @@ void TMonitor::initialize() {
 
 	std::ifstream inputFileStream (inputFilePath, std::ifstream::in);
 	bool succesReading = r.read(inputFileStream);
+	/*Class for analyzing the data.*/
+    TDataAnalyzer analyzer(*project.get());
+    std::cout << analyzer.dataConsistent() << std::endl;
+
+
+    algorithm.reset(new TLSAlgorithm(*project.get()));
 	std::cout << "Monitor object initialized." << std::endl;
 
 }
