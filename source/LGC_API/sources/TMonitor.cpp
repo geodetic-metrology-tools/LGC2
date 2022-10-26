@@ -13,65 +13,60 @@
 
 using namespace std;
 
-void TMonitor::BasicObject()
-{	// for random numbers
+// constructor
+TMonitor::TMonitor()
+{
+    initialize();
+    std::unique_ptr<TVAbstractAlgorithm> algorithm;
+    Behavior successCalculation;
+    /*Class for analyzing the data.*/
+    TDataAnalyzer analyzer(*project.get());
+    std::cout << analyzer.dataConsistent() << std::endl;
+    algorithm.reset(new TLSAlgorithm(*project.get()));
+    TLSResultsMatrices* results(nullptr);
+    int n = 1000000;
+    for (int i = 0; i < n; i++)
+    {
+        successCalculation = algorithm->run(*project.get(), 80);
+        TMonitor::manipulate_ECWS_measurements(*project.get());
+        std::cout << "Iteration " << i << std::endl;
+        if (successCalculation)
+        {
+            results = algorithm->resultMatrices;
+        }
+    }
+
+}
+
+
+void TMonitor::initialize() {
+	std::cout << "Creating monitoring object.\n";
+	// for random numbers
 	engine.seed(1);
-
-	cout << "Starting monitor!\n";
 	std::shared_ptr<TLGCData> projTest(new TLGCData);
-	TReader r(projTest);
+	project = projTest;
+	TReader r(project);
 
-	projTest->getFileLogger().setOutputfileLocation("C:/Temp/Fras_Test.txt");
-	projTest->getFileLogger().writeReportHeader("Fras output file");
+	project->getFileLogger().setOutputfileLocation("C:/Temp/Fras_Test.txt");
+	project->getFileLogger().writeReportHeader("Fras output file");
 
 	// Testfile is LB_calcul_3D_CCS_IP_8_HLS_4.lgc
 	std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
 
 	std::ifstream inputFileStream (inputFilePath, std::ifstream::in);
 	bool succesReading = r.read(inputFileStream);
-	//TLGCCalculation calcul(projTest);
-	//std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-	//Behavior succesCalc = calcul.computeResults(fileWriter);
-	//for (int i = 0; i < 1000; i++) {
-	//	// compute
-	//	//Behavior succesCalc = calcul.computeResults(fileWriter);
-	//	succesCalc = calcul.computeResults(fileWriter);
-	//	// manipulate measurements
-	//	TMonitor::manipulate_ECWS_measurements(projTest.get());
-	//}
-	std::unique_ptr<TVAbstractAlgorithm> algorithm;
-	Behavior successCalculation;
-	/*Class for analyzing the data.*/
-	TDataAnalyzer analyzer(*projTest.get());
-	std::cout << analyzer.dataConsistent()<<std::endl;
-	algorithm.reset(new TLSAlgorithm(*projTest.get()));
-	TLSResultsMatrices *results(nullptr);
-	int n = 10000;
-	for (int i = 0; i < n; i++)
-	{
-		successCalculation = algorithm->run(*projTest.get(), 80);
-		TMonitor::manipulate_ECWS_measurements(projTest.get());
-		std::cout << "Iteration " << i << std::endl;
-		if (successCalculation)
-		{
-			results = algorithm->resultMatrices;
-		}
-	}
-
-	// if (successCalculation)
-    //     fResultsMtr = algorithm->resultMatrices;
-
-
+	std::cout << "Monitor object initialized." << std::endl;
 
 }
 
 
-void TMonitor::manipulate_ECWS_measurements(TLGCData *data) {
+
+void TMonitor::manipulate_ECWS_measurements(TLGCData &data) {
 	// FRAS-Mockup:
 	// apply random perturbation to each ECWS measurement, as it is done in a simulation
 	int i = 0;
 	// iterate over frame tree
-	for (TDataTreeIterator itTree = data->getTree().begin(); itTree != data->getTree().end(); itTree++) {
+	for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++) {
 		// iterate over water level measurement rounds in that frame
 		for (auto& itECWSrom : itTree.node->data->measurements.fECWS) {
 			// iterate over single measurements
