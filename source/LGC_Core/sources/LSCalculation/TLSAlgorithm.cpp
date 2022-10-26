@@ -81,6 +81,7 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		}
 		fNumberOfIterations++;
 	}
+    std::cout << fNumberOfIterations << " linear LS iterations" << std::endl;
 
 	// Checks if maximal number of iteration steps has been reached without satisfying the converging criteria
 	if (fNumberOfIterations == fMaxIterations && !hasReachedCriteria)

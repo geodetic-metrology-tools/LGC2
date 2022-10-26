@@ -22,13 +22,14 @@ TMonitor::TMonitor()
     /*Class for analyzing the data.*/
     TDataAnalyzer analyzer(*project.get());
     std::cout << analyzer.dataConsistent() << std::endl;
+
     algorithm.reset(new TLSAlgorithm(*project.get()));
     TLSResultsMatrices* results(nullptr);
-    int n = 1000000;
+    int n = 1000;
     for (int i = 0; i < n; i++)
     {
         successCalculation = algorithm->run(*project.get(), 80);
-        TMonitor::manipulate_ECWS_measurements(*project.get());
+        manipulate_ECWS_measurements(*project.get());
         std::cout << "Iteration " << i << std::endl;
         if (successCalculation)
         {
