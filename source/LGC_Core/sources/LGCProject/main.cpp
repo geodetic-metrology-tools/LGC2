@@ -6,7 +6,6 @@
 #include <ConsoleLogHandler.hpp>
 #include <Logger.hpp>
 #include "Defaults.h"
-#include "TMonitor.h"
 
 #include "TFileLogger.h"  // Will be obsolete soon
 
@@ -14,17 +13,6 @@
 
 int main(int argc, char *argv[])
 {
-	TMonitor hello;
-	hello.BasicObject();
-
-	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
-#ifdef __linux__
-	const std::string logFilePath2 = svlTools::getCurrentDirectory() + slash + "LOGFile.log";
-#else
-	const std::string logFilePath2 = "C:\\temp\\LOGFile.log";
-#endif
-	TFileLogger logFile(logFilePath2, "LGC log file");
-	// **************************************************************************
 
 	bool bChangeLogFile = true;
 
