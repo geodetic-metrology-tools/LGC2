@@ -1,26 +1,26 @@
-#include <iostream>
-//STL
+// STL
 #include <random>
+
 #include <TLGCData.h>
+
 #include "TVAbstractAlgorithm.h"
 
-
-using namespace std;
 class TMonitor
 {
 public:
-    TMonitor();
-    // for FRAS stress test
-    void manipulate_ECWS_measurements();
-    void initialize();
-    void adjust();
-    // void adjust();
+	// constructor
+	TMonitor();
+	// access to measurements, for updating observations
+	void manipulate_ECWS_measurements();
+	// triggering the adjustment claculation
+	void adjust();
+
+private:
+	// LGC adjustment algorithm used by adjust method
+	std::unique_ptr<TVAbstractAlgorithm> algorithm;
+	// containing measurement configuration, observations, estimates
+	std::shared_ptr<TLGCData> project;
 	/// Random numbers generator
 	std::ranlux48 engine;
-    std::shared_ptr<TLGCData> project;
-    //TLGCData project;
-private:
-    // algorithm should be a member that is used by an "adjust method"
-    std::unique_ptr<TVAbstractAlgorithm> algorithm;
-
+	void initialize();
 };
