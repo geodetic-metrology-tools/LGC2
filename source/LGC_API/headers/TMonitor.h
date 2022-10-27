@@ -11,7 +11,7 @@ class TMonitor
 public:
     TMonitor();
     // for FRAS stress test
-    void manipulate_ECWS_measurements(TLGCData &data);
+    void manipulate_ECWS_measurements();
     void initialize();
     void adjust();
     // void adjust();
