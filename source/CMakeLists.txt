@@ -22,7 +22,7 @@ set(PROJECT_NAME LGC)
 # Set version number and provide a header file with corresponding defines
 # /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
 set (EXE_VERSION_MAJOR "2")
-set (EXE_VERSION_MINOR "4")
+set (EXE_VERSION_MINOR "5")
 set (EXE_VERSION_PATCH "0")
 
 #############################################################
