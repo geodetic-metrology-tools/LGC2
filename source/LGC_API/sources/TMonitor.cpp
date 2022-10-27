@@ -22,8 +22,8 @@ TMonitor::TMonitor()
 void TMonitor::adjust(){ 
     Behavior successCalculation;
 	TLSResultsMatrices *results(nullptr);
+	//manipulate_ECWS_measurements();
 	successCalculation = TMonitor::algorithm->run(*project.get(), 80);
-	manipulate_ECWS_measurements(*project.get());
 	if (successCalculation)
 	{
 		results = algorithm->resultMatrices;
@@ -60,12 +60,12 @@ void TMonitor::initialize() {
 
 
 
-void TMonitor::manipulate_ECWS_measurements(TLGCData &data) {
+void TMonitor::manipulate_ECWS_measurements() {
 	// FRAS-Mockup:
 	// apply random perturbation to each ECWS measurement, as it is done in a simulation
 	int i = 0;
 	// iterate over frame tree
-	for (TDataTreeIterator itTree = data.getTree().begin(); itTree != data.getTree().end(); itTree++) {
+	for (TDataTreeIterator itTree = project.get()->getTree().begin(); itTree != project.get()->getTree().end(); itTree++) {
 		// iterate over water level measurement rounds in that frame
 		for (auto& itECWSrom : itTree.node->data->measurements.fECWS) {
 			// iterate over single measurements
