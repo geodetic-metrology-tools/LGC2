@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
 {
     auto start = high_resolution_clock::now();
     TMonitor mockup;
-    for (int i=0;i<10000;i++){
+    for (int i=0;i<100;i++){
+        mockup.manipulate_ECWS_measurements();
         mockup.adjust();
         std::cout << "Fras iteration " << i << std::endl;
     }
