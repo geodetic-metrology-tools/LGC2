@@ -1,28 +1,30 @@
-#include <iostream>
 #include "TMonitor.h"
-#include <TLGCData.h>
-#include <TReader.h>
-#include "TLGCCalculation.h"
-#include "TVAbstractAlgorithm.h"
-#include <TLSAlgorithm.h>
-#include "TLSSimulation.h"
+
+#include <iostream>
+
 #include <Behavior.h>
+#include <TLGCData.h>
+#include <TLSAlgorithm.h>
+#include <TReader.h>
+
 #include "FileUtils.h"
 #include "TDataAnalyzer.h"
+#include "TLGCCalculation.h"
 #include "TLSResultsMatrices.h"
-
-using namespace std;
+#include "TLSSimulation.h"
+#include "TVAbstractAlgorithm.h"
 
 // constructor
 TMonitor::TMonitor()
 {
-    initialize();
+	initialize();
 }
 
-void TMonitor::adjust(){ 
-    Behavior successCalculation;
+void TMonitor::adjust()
+{
+	Behavior successCalculation;
 	TLSResultsMatrices *results(nullptr);
-	//manipulate_ECWS_measurements();
+	// manipulate_ECWS_measurements();
 	successCalculation = TMonitor::algorithm->run(*project.get(), 80);
 	if (successCalculation)
 	{
@@ -30,9 +32,10 @@ void TMonitor::adjust(){
 	}
 	std::cout << "Adjustment method finished." << std::endl;
 }
-void TMonitor::initialize() { 
+void TMonitor::initialize()
+{
 	Behavior successCalculation;
-    
+
 	std::cout << "Creating monitoring object.\n";
 	// for random numbers
 	engine.seed(1);
@@ -46,34 +49,34 @@ void TMonitor::initialize() {
 	// Testfile is LB_calcul_3D_CCS_IP_8_HLS_4.lgc
 	std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
 
-	std::ifstream inputFileStream (inputFilePath, std::ifstream::in);
+	std::ifstream inputFileStream(inputFilePath, std::ifstream::in);
 	bool succesReading = r.read(inputFileStream);
 	/*Class for analyzing the data.*/
-    TDataAnalyzer analyzer(*project.get());
-    std::cout << analyzer.dataConsistent() << std::endl;
+	TDataAnalyzer analyzer(*project.get());
+	std::cout << analyzer.dataConsistent() << std::endl;
 
-
-    algorithm.reset(new TLSAlgorithm(*project.get()));
+	algorithm.reset(new TLSAlgorithm(*project.get()));
 	std::cout << "Monitor object initialized." << std::endl;
-
 }
 
-
-
-void TMonitor::manipulate_ECWS_measurements() {
+void TMonitor::manipulate_ECWS_measurements()
+{
 	// FRAS-Mockup:
 	// apply random perturbation to each ECWS measurement, as it is done in a simulation
 	int i = 0;
 	// iterate over frame tree
-	for (TDataTreeIterator itTree = project.get()->getTree().begin(); itTree != project.get()->getTree().end(); itTree++) {
+	for (TDataTreeIterator itTree = project.get()->getTree().begin(); itTree != project.get()->getTree().end(); itTree++)
+	{
 		// iterate over water level measurement rounds in that frame
-		for (auto& itECWSrom : itTree.node->data->measurements.fECWS) {
+		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
+		{
 			// iterate over single measurements
-			for (auto itECWS(itECWSrom.measECWS.begin()); itECWS != itECWSrom.measECWS.end(); ++itECWS) {
+			for (auto itECWS(itECWSrom.measECWS.begin()); itECWS != itECWSrom.measECWS.end(); ++itECWS)
+			{
 				TLength oldMeas = itECWS->getDistance();
-                // if (i == 0) {
-                // std:cout << oldMeas << std::endl;
-                // }
+				// if (i == 0) {
+				// std:cout << oldMeas << std::endl;
+				// }
 				// itECWS->setDistance(2 * aux);
 				TReal sigma = itECWS->target.sigmaDist;
 				TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;
