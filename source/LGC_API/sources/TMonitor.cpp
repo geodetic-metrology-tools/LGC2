@@ -24,7 +24,6 @@ void TMonitor::adjust()
 {
 	Behavior successCalculation;
 	TLSResultsMatrices *results(nullptr);
-	// manipulate_ECWS_measurements();
 	successCalculation = TMonitor::algorithm->run(*project.get(), 80);
 	if (successCalculation)
 	{
@@ -85,4 +84,5 @@ void TMonitor::manipulate_ECWS_measurements()
 			}
 		}
 	}
+	std::cout << "Measurements manipulated." << std::endl;
 }

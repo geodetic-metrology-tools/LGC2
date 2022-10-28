@@ -1,15 +1,14 @@
-#include <filesystem>
+#include <chrono>
 #include <iostream>
-#include "TLGCApp.h"
-#include "FileUtils.h"
-#include <FileLogHandler.hpp>
+
 #include <ConsoleLogHandler.hpp>
+#include <FileLogHandler.hpp>
 #include <Logger.hpp>
+
 #include "Defaults.h"
 
 #include "TFileLogger.h"  // Will be obsolete soon
 using namespace std::chrono;
-
 
 int main(int argc, char *argv[])
 {
