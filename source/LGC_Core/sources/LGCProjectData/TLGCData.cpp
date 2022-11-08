@@ -777,7 +777,6 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
-	obj.addProperty("fCombinedCase", fCombinedCase);
 	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
 	
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
@@ -789,8 +788,13 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	
 		
 	obj.addProperty("TLGCStatistic", stat);
-	//Eigen::MatrixXd exampleMatrix(10 * 10, 10);
-	//obj.addProperty("exampleMatrix", exampleMatrix.reshaped()); // for now just as a flattened plain vector
+
+	Eigen::MatrixXd exampleMatrix(5, 3);
+	std::stringstream ss;
+	ss << exampleMatrix;
+	obj.addProperty("exampleMatrix", ss.str()); 
+	Eigen::Vector3d exampleVector(1, 2, 3);
+	obj.addProperty("exampleVector", exampleVector); 
 }
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const
