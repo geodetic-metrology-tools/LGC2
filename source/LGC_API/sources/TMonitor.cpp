@@ -36,8 +36,6 @@ void TMonitor::initialize()
 	Behavior successCalculation;
 
 	std::cout << "Creating monitoring object.\n";
-	// for random numbers
-	engine.seed(1);
 	std::shared_ptr<TLGCData> projTest(new TLGCData);
 	project = projTest;
 	TReader r(project);
@@ -55,15 +53,14 @@ void TMonitor::initialize()
 	std::cout << analyzer.dataConsistent() << std::endl;
 
 	algorithm.reset(new TLSAlgorithm(*project.get()));
+	// make measurements easy accessible
+	createMeasurementReferences();
 	std::cout << "Monitor object initialized." << std::endl;
 }
 
-void TMonitor::manipulate_ECWS_measurements()
+void TMonitor::createMeasurementReferences()
 {
-	// FRAS-Mockup:
-	// apply random perturbation to each ECWS measurement, as it is done in a simulation
-	int i = 0;
-	// iterate over frame tree
+	// go through the frame tree, collect all ecws measurements
 	for (TDataTreeIterator itTree = project.get()->getTree().begin(); itTree != project.get()->getTree().end(); itTree++)
 	{
 		// iterate over water level measurement rounds in that frame
@@ -72,17 +69,32 @@ void TMonitor::manipulate_ECWS_measurements()
 			// iterate over single measurements
 			for (auto itECWS(itECWSrom.measECWS.begin()); itECWS != itECWSrom.measECWS.end(); ++itECWS)
 			{
-				TLength oldMeas = itECWS->getDistance();
-				// if (i == 0) {
-				// std:cout << oldMeas << std::endl;
-				// }
-				// itECWS->setDistance(2 * aux);
-				TReal sigma = itECWS->target.sigmaDist;
-				TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;
-				itECWS->setDistance(newMeas);
-				i++;
+				// add reference, Linenumber as key at first, shall be a unique measurement/sensor id at a later stage
+				ecws.insert({std::to_string(itECWS->line), *itECWS});
 			}
 		}
 	}
-	std::cout << "Measurements manipulated." << std::endl;
+}
+void TMonitor::updateMeas(std::string id, double value)
+{
+	// manipulate the corresponding measurement by accesing it via the reference map.
+	// check if id exists
+	if (ecws.count(id) > 0)
+	{
+		ecws.at(id).get().setDistance(TLength(value));
+	}
+	else
+	{
+		std::cout << "Measurement ID " << id << " does not exist." << std::endl;
+	}
+}
+
+std::vector<std::string> TMonitor::getMeasIds()
+{
+	std::vector<std::string> theIds;
+	for (auto aux : ecws)
+	{
+		theIds.push_back(aux.first);
+	}
+	return theIds;
 }
