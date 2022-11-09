@@ -45,7 +45,8 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	fNumberOfIterations = 0;
 
 	TFileLogger &fileLog = data.getFileLogger();
-	
+
+	fMaxIterations = 1000;
 	// Iterate to find solution
 	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
 	{
