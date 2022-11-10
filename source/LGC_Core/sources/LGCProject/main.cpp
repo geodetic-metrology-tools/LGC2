@@ -27,10 +27,13 @@ int main(int argc, char *argv[])
 		for (auto aux : theIds)
 		{
 			// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
-			TLength oldMeas = mockup.ecws.at(aux).getDistance();
-			TReal sigma = mockup.ecws.at(aux).target.sigmaDist;
+			TLength oldMeas = mockup.measRefs.ECWS.at(aux).getDistance();
+			TReal sigma = mockup.measRefs.ECWS.at(aux).target.sigmaDist;
 			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;
 			mockup.updateMeas(aux, double(newMeas));
+			//std::cout << newMeas << std::endl;
+			//std::cout << mockup.measRefs.ECWS.at(aux).getDistance() << std::endl;
+
 		}
 		mockup.adjust();
 	}
