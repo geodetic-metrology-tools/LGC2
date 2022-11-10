@@ -81,7 +81,7 @@ void TMonitor::updateMeas(std::string id, double value)
 	// check if id exists
 	if (ecws.count(id) > 0)
 	{
-		ecws.at(id).get().setDistance(TLength(value));
+		ecws.at(id).setDistance(TLength(value));
 	}
 	else
 	{

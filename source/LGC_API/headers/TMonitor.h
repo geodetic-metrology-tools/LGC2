@@ -16,7 +16,7 @@ public:
 	void adjust();
 	// containing maps to measurement object references
 	// should probably be private. is public to make the previous measurements available in the mockup
-	std::unordered_map<std::string, std::reference_wrapper<TECWS>> ecws;
+	std::unordered_map<std::string, TECWS &> ecws;
 
 private:
 	// LGC adjustment algorithm used by adjust method
