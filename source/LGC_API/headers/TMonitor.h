@@ -29,6 +29,8 @@ public:
 	// should probably be private. is public to make the previous measurements available in the mockup
 	struct
 	{
+		// the measurement types
+		std::unordered_map<std::string, std::string> types;
 		// rather maps to one class higher (TScalar, TPosition??)
 		// Polar type
 		std::unordered_map<std::string, TANGL &> ANGL;
@@ -53,7 +55,7 @@ public:
 		// INCL Type
 		std::unordered_map<std::string, TINCLY &> INCLY;
 		// HLSR Type
-		std::unordered_map<std::string, TECWS &> ECWS;
+		std::unordered_map<std::string, TECWS&> ECWS;
 		// "No" type
 		std::unordered_map<std::string, TDVER &> DVER;
 		std::unordered_map<std::string, TRADI &> RADI;
@@ -65,6 +67,9 @@ public:
 	// are methods like getEstimatedValue, getEstParam () helmert trafos
 	struct
 	{
+		// the parameter types
+		std::unordered_map<std::string, std::string> types;
+		// the parameter references
 		std::unordered_map<std::string, LGCAdjustablePoint &> POINTS;
 		std::unordered_map<std::string, LGCAdjustableLine &> LINES;
 		std::unordered_map<std::string, TAdjustableAngle &> ANGLES;
