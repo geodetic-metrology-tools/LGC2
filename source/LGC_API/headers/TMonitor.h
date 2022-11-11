@@ -1,3 +1,12 @@
+/*
+© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
+*/
+
+#ifndef TMONITOR
+#define TMONITOR
+
+
 // STL
 #include <Eigen/Dense>
 
@@ -11,7 +20,7 @@ public:
 	// constructor
 	TMonitor();
 	// access to measurements, for updating observations
-	void updateMeas(std::string, double);
+	void updateMeas(std::string, Eigen::VectorXd);
 	// get Meas IDs
 	std::vector<std::string> getMeasIds();
 	// triggering the adjustment claculation
@@ -20,6 +29,7 @@ public:
 	// should probably be private. is public to make the previous measurements available in the mockup
 	struct
 	{
+		// rather maps to one class higher (TScalar, TPosition??)
 		// Polar type
 		std::unordered_map<std::string, TANGL &> ANGL;
 		std::unordered_map<std::string, TZEND &> ZEND;
@@ -49,6 +59,19 @@ public:
 		std::unordered_map<std::string, TRADI &> RADI;
 		std::unordered_map<std::string, TOBSXYZ &> OBSXYZ;
 	} measRefs;
+	// containing maps to parameter object references
+	// should probably be private.
+	// maybe needs to be more specific as a method a la getEstimate does not exists, rather there 
+	// are methods like getEstimatedValue, getEstParam () helmert trafos
+	struct
+	{
+		std::unordered_map<std::string, LGCAdjustablePoint &> POINTS;
+		std::unordered_map<std::string, LGCAdjustableLine &> LINES;
+		std::unordered_map<std::string, TAdjustableAngle &> ANGLES;
+		std::unordered_map<std::string, LGCAdjustablePlane &> PLANES;
+		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
+		std::unordered_map<std::string, TAdjustableHelmertTransformation &> TRAFOS;
+	} paramRefs;
 
 private:
 	// LGC adjustment algorithm used by adjust method
@@ -58,4 +81,8 @@ private:
 	void initialize();
 	// create a map for easy access to references to measurement objects without the need to go thrugh the frame tree
 	void createMeasurementReferences();
+	// create a map for easy access to references to parameter objects.
+	void createParameterReferences();
 };
+
+#endif

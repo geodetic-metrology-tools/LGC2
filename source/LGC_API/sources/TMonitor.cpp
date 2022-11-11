@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <Eigen/Dense>
+
 #include <Behavior.h>
 #include <TLGCData.h>
 #include <TLSAlgorithm.h>
@@ -24,12 +26,16 @@ void TMonitor::adjust()
 {
 	Behavior successCalculation;
 	TLSResultsMatrices *results(nullptr);
-	successCalculation = TMonitor::algorithm->run(*project.get(), 80);
+	successCalculation = algorithm->run(*project.get(), 80);
 	if (successCalculation)
 	{
 		results = algorithm->resultMatrices;
+		std::cout << "Adjustment method finished succesfully." << std::endl;
 	}
-	std::cout << "Adjustment method finished." << std::endl;
+	else
+	{
+		std::cout << "Problems occured during Adjustment method." << std::endl;
+	}
 }
 void TMonitor::initialize()
 {
@@ -55,9 +61,40 @@ void TMonitor::initialize()
 	algorithm.reset(new TLSAlgorithm(*project.get()));
 	// make measurements easy accessible
 	createMeasurementReferences();
+	createParameterReferences();
 	std::cout << "Monitor object initialized." << std::endl;
 }
-
+void TMonitor::createParameterReferences()
+{
+	for (auto &object : project.get()->getPoints())
+	{
+		paramRefs.POINTS.insert({object.getName(), object});
+	}
+	for (auto &object : project.get()->getLines())
+	{
+		paramRefs.LINES.insert({object.getName(), object});
+	}
+	for (auto &object : project.get()->getAngles())
+	{
+		paramRefs.ANGLES.insert({object.getName(), object});
+	}
+	for (auto &object : project.get()->getPlanes())
+	{
+		paramRefs.PLANES.insert({object.getName(), object});
+	}
+	for (auto &object : project.get()->getLength())
+	{
+		paramRefs.LENGTHS.insert({object.getName(), object});
+	}
+	// now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
+	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
+	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)
+	{
+		auto trafo(it.node->data.get()->frame);
+		//std::cout << trafo.getName() << std::endl;
+		paramRefs.TRAFOS.insert({trafo.getName(), trafo});
+	}
+}
 void TMonitor::createMeasurementReferences()
 {
 	for (TDataTreeIterator itTree = project.get()->getTree().begin(); itTree != project.get()->getTree().end(); itTree++)
@@ -179,13 +216,15 @@ void TMonitor::createMeasurementReferences()
 		}
 	}
 }
-void TMonitor::updateMeas(std::string id, double value)
+void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
 	// check if id exists
+
 	if (measRefs.ECWS.count(id) > 0)
 	{
-		measRefs.ECWS.at(id).setDistance(TLength(value));
+		measRefs.ECWS.at(id).setDistance(TLength(measurementVector[0]));
+		return;
 	}
 	else
 	{
