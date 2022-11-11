@@ -69,22 +69,27 @@ void TMonitor::createParameterReferences()
 	for (auto &object : project.get()->getPoints())
 	{
 		paramRefs.POINTS.insert({object.getName(), object});
+		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 	for (auto &object : project.get()->getLines())
 	{
 		paramRefs.LINES.insert({object.getName(), object});
+		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 	for (auto &object : project.get()->getAngles())
 	{
 		paramRefs.ANGLES.insert({object.getName(), object});
+		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 	for (auto &object : project.get()->getPlanes())
 	{
 		paramRefs.PLANES.insert({object.getName(), object});
+		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 	for (auto &object : project.get()->getLength())
 	{
 		paramRefs.LENGTHS.insert({object.getName(), object});
+		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 	// now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
@@ -93,6 +98,7 @@ void TMonitor::createParameterReferences()
 		auto trafo(it.node->data.get()->frame);
 		//std::cout << trafo.getName() << std::endl;
 		paramRefs.TRAFOS.insert({trafo.getName(), trafo});
+		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 }
 void TMonitor::createMeasurementReferences()
@@ -106,25 +112,46 @@ void TMonitor::createMeasurementReferences()
 			for (auto itROM : itTSTN->roms)
 			{
 				for (auto &itANGL : itROM->measANGL)
+				{
 					measRefs.ANGL.insert({std::to_string(itANGL.line), itANGL});
+					measRefs.types.insert({std::to_string(itANGL.line), "ANGL"});
+				}
 
 				for (auto &itZEND : itROM->measZEND)
+				{
 					measRefs.ZEND.insert({std::to_string(itZEND.line), itZEND});
+					measRefs.types.insert({std::to_string(itZEND.line), "ZEND"});
+
+				}
 
 				for (auto &itDIST : itROM->measDIST)
+				{
 					measRefs.DIST.insert({std::to_string(itDIST.line), itDIST});
-
+					measRefs.types.insert({std::to_string(itDIST.line), "DIST" });
+				}
 				for (auto &itECTH : itROM->measECTH)
+				{
 					measRefs.ECTH.insert({std::to_string(itECTH.line), itECTH});
+					measRefs.types.insert({std::to_string(itECTH.line), "ECTH"});
+				}
 
 				for (auto &itECDIR : itROM->measECDIR)
+				{
 					measRefs.ECDIR.insert({std::to_string(itECDIR.line), itECDIR});
+					measRefs.types.insert({std::to_string(itECDIR.line), "ECDIR"});
+				}
 
 				for (auto &itDHOR : itROM->measDHOR)
+				{
 					measRefs.DHOR.insert({std::to_string(itDHOR.line), itDHOR});
+					measRefs.types.insert({std::to_string(itDHOR.line), "DHOR"});
+				}
 
 				for (auto &itPLR3D : itROM->measPLR3D)
+				{
 					measRefs.PLR3D.insert({std::to_string(itPLR3D.line), itPLR3D});
+					measRefs.types.insert({std::to_string(itPLR3D.line), "PLR3D"});
+				}
 				// what about ORIEs?
 			}
 		}
@@ -133,24 +160,36 @@ void TMonitor::createMeasurementReferences()
 		for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM)
 		{
 			for (auto &itUVD : itCAM->measUVD)
+			{
 				measRefs.UVD.insert({std::to_string(itUVD.line), itUVD});
+				measRefs.types.insert({std::to_string(itUVD.line), "UVD"});
+			}
 
 			for (auto &itUVEC : itCAM->measUVEC)
+			{
 				measRefs.UVEC.insert({std::to_string(itUVEC.line), itUVEC});
+				measRefs.types.insert({std::to_string(itUVEC.line), "UVEC"});
+			}
 		}
 		// In every node iterate through the EDM's measurements
 		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
 		{
 			// Iterate through DSPT measurements
 			for (auto &itDSPT : itEDM->measDSPT) // TYPO in original implementation
+			{
 				measRefs.DSPT.insert({std::to_string(itDSPT.line), itDSPT});
+				measRefs.types.insert({std::to_string(itDSPT.line), "DSPT"});
+			}
 		}
 		// In every node iterate through the LEVEL's measurements
 		for (auto &itLEVEL : itTree.node->data->measurements.fLEVEL)
 		{
 			for (auto &itDLEV : itLEVEL.measDLEV)
 			{
-				measRefs.DLEV.insert({std::to_string(itDLEV.line), itDLEV});
+				{
+					measRefs.DLEV.insert({std::to_string(itDLEV.line), itDLEV});
+					measRefs.types.insert({std::to_string(itDLEV.line), "DLEV"});
+				}
 			}
 		}
 		// In every node iterate through the ECHOROM's measurements
@@ -158,7 +197,10 @@ void TMonitor::createMeasurementReferences()
 		{
 			for (auto &itECHO : itECHOrom.measECHO)
 			{
-				measRefs.ECHO.insert({std::to_string(itECHO.line), itECHO});
+				{
+					measRefs.ECHO.insert({std::to_string(itECHO.line), itECHO});
+					measRefs.types.insert({std::to_string(itECHO.line), "ECHO"});
+				}
 			}
 		}
 		// In every node iterate through the ECVEROM's measurements
@@ -166,7 +208,10 @@ void TMonitor::createMeasurementReferences()
 		{
 			for (auto &itECVE : itECVErom.measECVE)
 			{
-				measRefs.ECVE.insert({std::to_string(itECVE.line), itECVE});
+				{
+					measRefs.ECVE.insert({std::to_string(itECVE.line), itECVE});
+					measRefs.types.insert({std::to_string(itECVE.line), "ECVE"});
+				}
 			}
 			// for (auto itECVE(itECVErom.measECVE.begin()); itECVE != itECVErom.measECVE.end(); ++itECVE)
 			//{
@@ -178,26 +223,41 @@ void TMonitor::createMeasurementReferences()
 		{
 			for (auto &itORIE : itORIErom.measORIE)
 			{
-				measRefs.ORIE.insert({std::to_string(itORIE.line), itORIE});
+				{
+					measRefs.ORIE.insert({std::to_string(itORIE.line), itORIE});
+					measRefs.types.insert({std::to_string(itORIE.line), "ORIE"});
+				}
 			}
 		}
 		for (auto &itDVER : itTree.node->data->measurements.fDVER)
 		{
-			measRefs.DVER.insert({std::to_string(itDVER.line), itDVER});
+			{
+				measRefs.DVER.insert({std::to_string(itDVER.line), itDVER});
+				measRefs.types.insert({std::to_string(itDVER.line), "DVER"});
+			}
 		}
 		for (auto &itRADI : itTree.node->data->measurements.fRADI)
 		{
-			measRefs.RADI.insert({std::to_string(itRADI.line), itRADI});
+			{
+				measRefs.RADI.insert({std::to_string(itRADI.line), itRADI});
+				measRefs.types.insert({std::to_string(itRADI.line), "RADI"});
+			}
 		}
 		for (auto &itOBSXYZ : itTree.node->data->measurements.fOBSXYZ)
 		{
-			measRefs.OBSXYZ.insert({std::to_string(itOBSXYZ.line), itOBSXYZ});
+			{
+				measRefs.OBSXYZ.insert({std::to_string(itOBSXYZ.line), itOBSXYZ});
+				measRefs.types.insert({std::to_string(itOBSXYZ.line), "OBSXYZ"});
+			}
 		}
 		for (auto &itINCLYrom : itTree.node->data->measurements.fINCLY)
 		{
 			for (auto &itINCLY : itINCLYrom.measINCLY)
 			{
-				measRefs.INCLY.insert({std::to_string(itINCLY.line), itINCLY});
+				{
+					measRefs.INCLY.insert({std::to_string(itINCLY.line), itINCLY});
+					measRefs.types.insert({std::to_string(itINCLY.line), "INCLY"});
+				}
 			}
 		}
 		// for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
@@ -211,7 +271,10 @@ void TMonitor::createMeasurementReferences()
 		{
 			for (auto &itECWS : itECWSrom.measECWS)
 			{
-				measRefs.ECWS.insert({std::to_string(itECWS.line), itECWS});
+				{
+					measRefs.ECWS.insert({std::to_string(itECWS.line), itECWS});
+					measRefs.types.insert({std::to_string(itECWS.line), "ECWS"});
+				}
 			}
 		}
 	}
