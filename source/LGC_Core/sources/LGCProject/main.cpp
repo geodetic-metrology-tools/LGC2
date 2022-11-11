@@ -30,9 +30,9 @@ int main(int argc, char *argv[])
 			TLength oldMeas = mockup.measRefs.ECWS.at(aux).getDistance();
 			TReal sigma = mockup.measRefs.ECWS.at(aux).target.sigmaDist;
 			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;
-			mockup.updateMeas(aux, double(newMeas));
-			//std::cout << newMeas << std::endl;
-			//std::cout << mockup.measRefs.ECWS.at(aux).getDistance() << std::endl;
+			Eigen::VectorXd new_measurement(1);
+			new_measurement(0)=(double) newMeas;
+			mockup.updateMeas(aux, new_measurement);
 
 		}
 		mockup.adjust();
