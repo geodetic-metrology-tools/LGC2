@@ -43,10 +43,14 @@ int main(int argc, char *argv[])
 			mockup.updateMeas(ecwsId, new_measurement);
 		}
 		mockup.adjust();
+		auto currentTime = high_resolution_clock::now();
+		auto duration = duration_cast<milliseconds>(currentTime- start);
+		std::cout << "\r Fras iteration " << i << ", elapsed time " << (double) duration.count()/1000 << " s";
 	}
 	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<milliseconds>(stop - start);
-	std::cout << "Elapsed time (ms): " << duration.count() << std::endl;
+	auto duration = duration_cast<seconds>(stop - start);
+	std::cout << std::endl;
+	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 
 	return 1;
 }
