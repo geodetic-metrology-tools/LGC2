@@ -74,31 +74,31 @@ void TMonitor::createParameterReferences()
 	for (auto &object : project.get()->getLines())
 	{
 		paramRefs.LINES.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "POINT"});
+		paramRefs.types.insert({object.getName(), "LINE"});
 	}
 	for (auto &object : project.get()->getAngles())
 	{
 		paramRefs.ANGLES.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "POINT"});
+		paramRefs.types.insert({object.getName(), "ANGLE"});
 	}
 	for (auto &object : project.get()->getPlanes())
 	{
 		paramRefs.PLANES.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "POINT"});
+		paramRefs.types.insert({object.getName(), "PLANE"});
 	}
 	for (auto &object : project.get()->getLength())
 	{
 		paramRefs.LENGTHS.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "POINT"});
+		paramRefs.types.insert({object.getName(), "LENGTH"});
 	}
 	// now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
 	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)
 	{
-		auto trafo(it.node->data.get()->frame);
-		//std::cout << trafo.getName() << std::endl;
-		paramRefs.TRAFOS.insert({trafo.getName(), trafo});
-		paramRefs.types.insert({object.getName(), "POINT"});
+		auto object(it.node->data.get()->frame);
+		// std::cout << object.getName() << std::endl;
+		paramRefs.TRAFOS.insert({object.getName(), object});
+		paramRefs.types.insert({object.getName(), "TRAFO"});
 	}
 }
 void TMonitor::createMeasurementReferences()
@@ -121,13 +121,12 @@ void TMonitor::createMeasurementReferences()
 				{
 					measRefs.ZEND.insert({std::to_string(itZEND.line), itZEND});
 					measRefs.types.insert({std::to_string(itZEND.line), "ZEND"});
-
 				}
 
 				for (auto &itDIST : itROM->measDIST)
 				{
 					measRefs.DIST.insert({std::to_string(itDIST.line), itDIST});
-					measRefs.types.insert({std::to_string(itDIST.line), "DIST" });
+					measRefs.types.insert({std::to_string(itDIST.line), "DIST"});
 				}
 				for (auto &itECTH : itROM->measECTH)
 				{
@@ -283,15 +282,122 @@ void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
 	// check if id exists
+	if (measRefs.types.count(id) == 0)
+	{
+		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		return;
+	}
 
-	if (measRefs.ECWS.count(id) > 0)
+	string type = measRefs.types.at(id);
+	if (type == "ANGL")
+	{
+		measRefs.ANGL.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		return;
+	}
+	else if (type == "ZEND")
+	{
+		measRefs.ZEND.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		return;
+	}
+	else if (type == "DIST")
+	{
+		measRefs.DIST.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "ECTH")
+	{
+		measRefs.ECTH.at(id).setDistance(TLength(measurementVector[0]));
+		// return;
+	}
+	else if (type == "ECDIR")
+	{
+		measRefs.ECDIR.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "DHOR")
+	{
+		measRefs.DHOR.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "PLR3D")
+	{
+		measRefs.PLR3D.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons), kANGL);
+		measRefs.PLR3D.at(id).setAngle(TAngle(measurementVector[1], TAngle::kGons), kZEND);
+		measRefs.PLR3D.at(id).setDistance(TLength(measurementVector[2]));
+		return;
+	}
+	else if (type == "ORIE")
+	{
+		measRefs.ORIE.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		return;
+	}
+	else if (type == "UVEC")
+	{
+		TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		measRefs.UVEC.at(id).setVectorMeasurement(direction);
+		return;
+	}
+	else if (type == "UVD")
+	{
+		TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		TLength distance(measurementVector[3]);
+		measRefs.UVD.at(id).setVectorMeasurement(direction);
+		measRefs.UVD.at(id).setDistance(distance);
+		return;
+	}
+	else if (type == "DSPT")
+	{
+		measRefs.DSPT.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "DLEV")
+	{
+		// ignoring DHOR
+		measRefs.DLEV.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "ECHO")
+	{
+		measRefs.ECHO.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "ECSP")
+	{
+		measRefs.ECSP.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "ECVE")
+	{
+		measRefs.ECVE.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "INCLY")
+	{
+		measRefs.INCLY.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		return;
+	}
+	else if (type == "ECWS")
 	{
 		measRefs.ECWS.at(id).setDistance(TLength(measurementVector[0]));
 		return;
 	}
-	else
+	else if (type == "DVER")
 	{
-		std::cout << "Measurement ID " << id << " does not exist." << std::endl;
+		measRefs.DVER.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "RADI")
+	{
+		std::cout << "RADI is not a real measurement" << std::endl;
+		// measRefs.RADI.at(id).set(TAngle(measurementVector[0]));
+		return;
+	}
+	else if (type == "OBSXYZ")
+	{
+		TPositionVector obsVector(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::ECoordSys::k3DCartesian);
+		// using a setter methof for obsxyz
+		measRefs.OBSXYZ.at(id).setObservedVector(obsVector);
+		return;
 	}
 }
 

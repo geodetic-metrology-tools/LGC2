@@ -644,6 +644,8 @@ public:
 
 	/*!@name Settings */
 	//@{
+	/// set the "observation"
+	inline void setObservedVector(TPositionVector obsVector) { initialValue = obsVector; }
 	/// Sets standard deviation of the observed value
 	inline void setXObservedStDev(TLength stDev){ fXSigmaObsVal = stDev; }
 	inline void setYObservedStDev(TLength stDev){ fYSigmaObsVal = stDev; }
