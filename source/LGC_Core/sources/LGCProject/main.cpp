@@ -19,21 +19,28 @@ int main(int argc, char *argv[])
 	std::ranlux48 engine;
 	engine.seed(1);
 	auto start = high_resolution_clock::now();
-	TMonitor mockup;
+	std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
+	TMonitor mockup(inputFilePath);
 	// get the ids so the controlling object (will be the Fras instance) knows them.
-	std::vector<std::string> theIds = mockup.getMeasIds();
+	std::vector<std::string> ecwsIds = mockup.getECWSMeasIds();
+	// first save the original measurements
+	std::unordered_map<std::string, double> originalMeasurements;
+	for (auto id : ecwsIds)
+	{
+		originalMeasurements.insert({id, mockup.measRefs.ECWS.at(id).getDistance()});
+	}
 	for (int i = 0; i < 100; i++)
 	{
-		for (auto aux : theIds)
+		for (auto aux : mockup.measRefs.ECWS)
 		{
+			std::string ecwsId = aux.first;
 			// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
-			TLength oldMeas = mockup.measRefs.ECWS.at(aux).getDistance();
-			TReal sigma = mockup.measRefs.ECWS.at(aux).target.sigmaDist;
-			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + oldMeas;
+			//TLength oldMeas = mockup.measRefs.ECWS.at(ecwsId).getDistance();
+			TReal sigma = mockup.measRefs.ECWS.at(ecwsId).target.sigmaDist;
+			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(ecwsId));
 			Eigen::VectorXd new_measurement(1);
 			new_measurement(0)=(double) newMeas;
-			mockup.updateMeas(aux, new_measurement);
-
+			mockup.updateMeas(ecwsId, new_measurement);
 		}
 		mockup.adjust();
 	}
