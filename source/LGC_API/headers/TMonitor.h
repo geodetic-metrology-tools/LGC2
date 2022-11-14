@@ -18,11 +18,11 @@ class TMonitor
 {
 public:
 	// constructor
-	TMonitor();
+	TMonitor(std::string inputFilePath);
 	// access to measurements, for updating observations
 	void updateMeas(std::string, Eigen::VectorXd);
 	// get Meas IDs
-	std::vector<std::string> getMeasIds();
+	std::vector<std::string> getECWSMeasIds();
 	// triggering the adjustment claculation
 	void adjust();
 	// containing maps to measurement object references
@@ -77,6 +77,8 @@ public:
 		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
 		std::unordered_map<std::string, TAdjustableHelmertTransformation &> TRAFOS;
 	} paramRefs;
+
+	std::string inputFilePath;
 
 private:
 	// LGC adjustment algorithm used by adjust method
