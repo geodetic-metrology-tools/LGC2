@@ -31,7 +31,7 @@ void TMonitor::adjust()
 	if (successCalculation)
 	{
 		results = algorithm->resultMatrices;
-		std::cout << "Adjustment method finished succesfully." << std::endl;
+		//std::cout << "Adjustment method finished succesfully." << std::endl;
 	}
 	else
 	{
