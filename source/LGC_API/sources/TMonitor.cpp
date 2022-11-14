@@ -17,8 +17,9 @@
 #include "TVAbstractAlgorithm.h"
 
 // constructor
-TMonitor::TMonitor()
+TMonitor::TMonitor(std::string configFile)
 {
+	inputFilePath = configFile;
 	initialize();
 }
 
@@ -39,6 +40,7 @@ void TMonitor::adjust()
 }
 void TMonitor::initialize()
 {
+
 	Behavior successCalculation;
 
 	std::cout << "Creating monitoring object.\n";
@@ -50,7 +52,7 @@ void TMonitor::initialize()
 	project->getFileLogger().writeReportHeader("Fras output file");
 
 	// Testfile is LB_calcul_3D_CCS_IP_8_HLS_4.lgc
-	std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
+	//std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
 
 	std::ifstream inputFileStream(inputFilePath, std::ifstream::in);
 	bool succesReading = r.read(inputFileStream);
@@ -401,7 +403,7 @@ void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 	}
 }
 
-std::vector<std::string> TMonitor::getMeasIds()
+std::vector<std::string> TMonitor::getECWSMeasIds()
 {
 	std::vector<std::string> theIds;
 	for (auto aux : measRefs.ECWS)
