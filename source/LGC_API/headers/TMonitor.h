@@ -21,6 +21,8 @@ public:
 	TMonitor(std::string inputFilePath);
 	// access to measurements, for updating observations
 	void updateMeas(std::string, Eigen::VectorXd);
+	// get estimate of parameter
+	Eigen::VectorXd getEstimate(std::string);
 	// get Meas IDs
 	std::vector<std::string> getECWSMeasIds();
 	// triggering the adjustment claculation
