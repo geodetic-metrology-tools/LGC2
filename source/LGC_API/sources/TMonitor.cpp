@@ -403,6 +403,73 @@ void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 	}
 }
 
+Eigen::VectorXd TMonitor::getEstimate(std::string paramId)
+{
+	if (paramRefs.types.count(paramId) == 0)
+	{
+		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+	}
+	// get type and return result
+	if (paramRefs.types.at(paramId) == "POINT")
+	{
+		TPositionVector result = paramRefs.POINTS.at(paramId).getEstimatedValue();
+		Eigen::VectorXd vector(3);
+		vector[0] = (double)result.getX();
+		vector[1] = (double)result.getY();
+		vector[2] = (double)result.getZ();
+		return vector;
+	}
+	else if (paramRefs.types.at(paramId) == "LINE")
+	{
+		// how many dimensions does this have??	
+		TFreeVector result = paramRefs.LINES.at(paramId).getLineVectorEstimatedValue();
+		Eigen::VectorXd vector(3);
+		vector[0] = (double)result.getX();
+		vector[1] = (double)result.getY();
+		vector[2] = (double)result.getZ();
+
+		return vector;
+	}
+	else if (paramRefs.types.at(paramId) == "ANGLE")
+	{
+		Eigen::VectorXd resultVector(1);
+		resultVector[0]=(paramRefs.ANGLES.at(paramId).getEstimatedValue());
+
+		return resultVector;
+	}
+	else if (paramRefs.types.at(paramId) == "PLANE")
+	{
+		Eigen::VectorXd resultVector(3);
+		resultVector[0] = (double)paramRefs.PLANES.at(paramId).getRefPtDistEstimatedValue();
+		resultVector[1] = (double)paramRefs.PLANES.at(paramId).getPhiEstimatedValue();
+		resultVector[2] = (double)paramRefs.PLANES.at(paramId).getThetaEstimatedValue();
+
+		return resultVector;
+	}
+	else if (paramRefs.types.at(paramId) == "LENGTH")
+	{
+		Eigen::VectorXd resultVector(1);
+		resultVector[0] = (double)paramRefs.LENGTHS.at(paramId).getEstimatedValue();
+
+		return resultVector;
+	}
+	else if (paramRefs.types.at(paramId) == "TRAFO")
+	{
+		Eigen::VectorXd resultVector(7);
+		resultVector[0] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().kappa;
+		resultVector[1] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().omega;
+		resultVector[2] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().phi;
+		resultVector[3] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tX;
+		resultVector[4] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tY;
+		resultVector[5] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tZ;
+		resultVector[6] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().scale;
+
+		return resultVector;
+	}
+
+
+}
+
 std::vector<std::string> TMonitor::getECWSMeasIds()
 {
 	std::vector<std::string> theIds;
