@@ -19,7 +19,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TLGCStatistic.h>
 #include <TTreeEntry.h>
 #include <TLSCalcRelativeError.h>
-#include <Serializer.hpp>
+
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
 
 /*! Counter of points based on the type */
 struct TPointGlobal : public Serializable {
