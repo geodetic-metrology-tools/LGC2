@@ -392,7 +392,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
     //RESEAU COMPLETEMENT LIBRE ?
 	if (fProjectData->getConfig().libre.isActive())
 	{
-		if (fProjectData->getNumberOfConstraints() != 0)
+		if (fProjectData->fUEOIndices.CIndex != 0)
 		{
 			stream << "             ************************************";
 			stream << endl;

@@ -166,8 +166,8 @@ public:
 	/*!@name Least squares/solution calculation related stuff.*/
 	//@{
 
-		/// Number of unkowns, equations and observations.
-		UEOIndices	fUEOIndices; 
+		/// Number of unkowns, equations, observations and constraints.
+		UEOIndices fUEOIndices; 
 
 		/// Sets the number of LS iterations.
 		void setNumberOfLSIterations(int noi) {fLSRelatedInfo.fNumberOfLSIterations = noi;}
@@ -187,11 +187,6 @@ public:
 		TReal getChiS0LowLimit() const{return fLSRelatedInfo.fChiLoLimit;}
 		/// Returns the upper limit of the S0 range
 		TReal getChiS0UpLimit() const{return fLSRelatedInfo.fChiUpLimit;}
-
-		/// Sets the constraint number
-		void setNumberOfConstraints(int numOfCnstr) {fNumberOfConstraints = numOfCnstr;}
-		/// Returns the constraint number
-		int getNumberOfConstraints() const {return fNumberOfConstraints;}
 
 		/// Sets if the standard deviation are used to TRUE
 		void setStandDevUsed() {fhasStandardDeviations = true;}
@@ -279,8 +274,6 @@ private:
 
 	// If standard deviations to points or frames assigned
 	bool fhasStandardDeviations;
-	/// Number of constraints introduced, for free network adjustment.
-	int		fNumberOfConstraints;
 
 	struct TLSRelatedInfo{
 		int fNumberOfLSIterations;

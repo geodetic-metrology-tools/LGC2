@@ -11,6 +11,12 @@ TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	,fLibrCnstrGenerator(fPointTransformer, data)
 {
 	delete resultMatrices;
+	// identify the constraints necessary, create them
+	if (data.getConfig().libre.isActive())
+	{
+		fLibrCnstrGenerator.initCnstrIdentifier(data);
+		data.fUEOIndices.CIndex = fLibrCnstrGenerator.getNumberOfConstraint();
+	}
 	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
 }
 
@@ -22,12 +28,6 @@ Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 
 	fExtractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
 	
-	// identify the constraints necessary, create them
-	if (data.getConfig().libre.isActive())
-	{
-		fLibrCnstrGenerator.initCnstrIdentifier(data);
-		data.setNumberOfConstraints(fLibrCnstrGenerator.getNumberOfConstraint());
-	}
 
 
 	// use the universal LS algorithm for parametric, combined and constrained case.
