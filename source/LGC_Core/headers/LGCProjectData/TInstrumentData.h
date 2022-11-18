@@ -13,6 +13,12 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //SURVEYLIB
 #include <TAdjustableLength.h>
 #include <TAdjustableAngle.h>
+
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
+
 /*!
 	\ingroup LGCProjectData
 
@@ -20,11 +26,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	This data is then used to create proper instrument objects (TSTN, CAM, TLEVEL or TEDM).
 	Values given in the input file can be in various units, but they are transformed during reading into metres[m] (lengths) or radians[rads] (angles), in whose they are stored.
 */
-class TInstrumentData {
+class TInstrumentData {//: public Serializable {
 	public:
-		class TPOLAR {
+	class TPOLAR {
 		public:
-            struct TTarget {
+			struct TTarget {
 
                 std::string ID;
                 TAngle sigmaAngl;	            // [rad]
@@ -272,15 +278,22 @@ class TInstrumentData {
 			TAngle sigmaCombinedAngle;		  // [rad]
 		};
 		
-        struct THLSR {
+        struct THLSR {//: public Serializable {
             std::string ID;
             TLength sigmaDist;               // [m]
             TLength sigmaInstrHeight;     // [m]
             TLength sigmaInstrCentering;  // [m]
             TLength sigmaWS;             // [m]
             TLength sigmaCombinedDist;	 // [m]
+/*
+            #ifdef USE_SERIALIZER
+			    // Inherited via Serializable
+			    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
+*/
         };
 
+        int Var = 10000000;
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
 		/// All available camera instruments, accessible by their ID. See \ref getDevice for failsave lookup.
@@ -313,5 +326,30 @@ class TInstrumentData {
 
 			return *it->second;
 		}
+/*
+        #ifdef USE_SERIALIZER
+            // Inherited via Serializable
+		    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+        #endif
+*/
 };
+
+/*
+#ifdef USE_SERIALIZER
+    inline void TInstrumentData::serialize(SerializerObject::SerializationHelper &obj) const
+    {
+		obj.addProperty("Var", Var);
+		obj.addProperty("fHLSR", fHLSR);
+    }
+#endif // USE_SERIALIZER
+	
+#ifdef USE_SERIALIZER
+	inline void TInstrumentData::THLSR::serialize(SerializerObject::SerializationHelper &obj) const
+    {
+		obj.addProperty("ID", ID);
+    }
+#endif // USE_SERIALIZER
+*/
+
+
 #endif

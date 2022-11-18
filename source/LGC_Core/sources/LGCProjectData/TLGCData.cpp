@@ -777,24 +777,15 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
-
-	obj.addProperty("angles", angles.getObject("ROOTV1"));
-	obj.addProperty("angles", angles.getObject("ROOTV2"));
-	obj.addProperty("angles", angles.getObject("ROOTV3"));
-	obj.addProperty("angles", angles.getObject("ROOTV4"));
-	obj.addProperty("angles", angles.getObject("ROOTV5"));
-	obj.addProperty("angles", angles.getObject("ROOTV6"));
-
 	obj.addProperty("instruments", instruments);
 
-	//obj.addProperty("angles", angles);
-	//obj.addProperty("lengths", lengths);	
+	obj.addProperty("angles", angles);
+	obj.addProperty("lengths", lengths);	
 		
-	//obj.addProperty("lines", lines);
-	//obj.addProperty("planes", planes);
-	//obj.addProperty("points", points);
-
-	obj.addProperty("points", points.getObject("Q2SW"));
+	obj.addProperty("points", points);
+	obj.addProperty("lines", lines);
+	obj.addProperty("planes", planes);
+	
 
 	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
 	

@@ -183,13 +183,4 @@ private:
 	void setDefaults();
 	bool fInit;
 };
-
-
-#ifdef USE_SERIALIZER
-inline void LGCAdjustableLine::serialize(SerializerObject::SerializationHelper &obj) const
-{
-}
-#endif // USE_SERIALIZER
-
-
 #endif //TADJUSTABLE_LINE_N

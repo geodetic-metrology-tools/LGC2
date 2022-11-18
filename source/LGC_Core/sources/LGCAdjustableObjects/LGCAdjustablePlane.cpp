@@ -114,3 +114,36 @@ void LGCAdjustablePlane::reInitialise(){
 	fCorrectionPhi.setRadiansValue(0.0);
 	fEstPrecisionPhi.setRadiansValue(0.0);
 }
+
+
+#ifdef USE_SERIALIZER
+void LGCAdjustablePlane::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fCorrectionPhi", fCorrectionPhi);
+	obj.addProperty("fCorrectionRefPtDist", fCorrectionRefPtDist);
+	obj.addProperty("fCorrectionTheta", fCorrectionTheta);
+	obj.addProperty("fEstPrecisionPhi", fEstPrecisionPhi);
+	obj.addProperty("fEstPrecisionRefPtDist", fEstPrecisionRefPtDist);
+
+	obj.addProperty("fEstPrecisionTheta", fEstPrecisionTheta);
+	obj.addProperty("fEstValPhi", fEstValPhi);
+	obj.addProperty("fEstValRefPointDist", fEstValRefPointDist);
+	obj.addProperty("fEstValTheta", fEstValTheta);
+	obj.addProperty("fInitialized", fInitialized);
+
+	obj.addProperty("fName", fName);
+	obj.addProperty("fPhiFixed", fPhiFixed);
+	obj.addProperty("fProvValPhi", fProvValPhi);
+	obj.addProperty("fProvValRefPtDist", fProvValRefPtDist);
+	obj.addProperty("fProvValTheta", fProvValTheta);
+
+	obj.addProperty("fReferencePoint", fReferencePoint);
+	obj.addProperty("fRefPtDistFixed", fRefPtDistFixed);
+	obj.addProperty("fThetaFixed", fThetaFixed);
+	obj.addProperty("uidx_Phi", uidx_Phi);
+	obj.addProperty("uidx_rpDistance", uidx_rpDistance);
+
+	obj.addProperty("uidx_Theta", uidx_Theta);
+}
+#endif // USE_SERIALIZER
+

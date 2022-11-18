@@ -247,15 +247,4 @@ private:
 
 	bool fInitialized;
 };
-
-
-
-
-#ifdef USE_SERIALIZER
-inline void LGCAdjustablePlane::serialize(SerializerObject::SerializationHelper &obj) const
-{
-}
-#endif // USE_SERIALIZER
-
-
 #endif //TADJUSTABLE_PLANE

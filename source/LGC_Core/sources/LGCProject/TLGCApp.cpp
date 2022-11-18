@@ -320,6 +320,12 @@ void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &output
 {
 	jsonSerializerObject ser;
 	SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+	obj.addProperty("fCopyright", fCopyright);
+	//obj.addProperty("fInputFileLoc", fInputFileLoc);
+	//obj.addProperty("fOutputFileLoc", fOutputFileLoc);
+	//obj.addProperty("fLoggerFileLoc", fLoggerFileLoc);
+	//obj.addProperty("fNamFile", fNamFile);
+	//obj.addProperty("fMaxIterations", fMaxIterations);
 	obj.addProperty("LGC_DATA", dat);
 
 	std::ofstream fout(outputFileLocation + ".json");

@@ -12,11 +12,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustablePoint.h>
 
-
-//#ifdef USE_SERIALIZER
-//#	include <Serializer.hpp>
-//#endif // USE_SERIALIZER
-
 class TAdjustableScalar;
 class TAdjustableHelmertTransformation;
 class TAdjustableAngle;
@@ -33,13 +28,10 @@ class TAdjustableLength;
 */
 template<typename T>
 
-//#ifdef USE_SERIALIZER
-//class LGCAdjustableObjectCollection : public Serializable
-//#else
 class LGCAdjustableObjectCollection
-//#endif // USE_SERIALIZER
 {
 	public:
+		typedef T value_type;
 
 		/// Default constructor creating an empty collection
 		LGCAdjustableObjectCollection() {}
@@ -166,12 +158,7 @@ class LGCAdjustableObjectCollection
 		typename std::list<T>::const_iterator cend() const {
 			return objects.cend();
 		}
-/*
-#ifdef USE_SERIALIZER
-		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-#endif
-*/
+
 	protected:
 
 		/// Returns The  object position in the collection by its name
@@ -199,16 +186,5 @@ typedef LGCAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollec
 typedef LGCAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;
 
 typedef std::list<LGCAdjustablePoint>::const_iterator AdjPointIter;
-
-
-
-
-/*
-#ifdef USE_SERIALIZER
-inline void LGCAdjustableObjectCollection<TAdjustableAngle>::serialize(SerializerObject::SerializationHelper &obj) const
-{
-}
-#endif // USE_SERIALIZER
-*/
 
 #endif
