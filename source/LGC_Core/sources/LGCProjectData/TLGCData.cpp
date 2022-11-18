@@ -2,8 +2,9 @@
 
 TLGCData::TLGCData() 
     : fileLogger(std::make_shared<TFileLogger>())
-    , fhasStandardDeviations(false)
-    , fNumberOfConstraints(0) {
+    , fhasStandardDeviations(false) 
+    , fUEOIndices({0,0,0,0})
+{
         fLSRelatedInfo.fNumberOfLSIterations = 0;
 	    setDefaultValues();
         config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
@@ -226,10 +227,6 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 
 void TLGCData::setDefaultValues() {
 
-	fUEOIndices.EIndex = 0;
-	fUEOIndices.OIndex = 0;
-	fUEOIndices.UIndex = 0;
-
 	fPointInfo.fNumCala = 0;
 	fPointInfo.fNumVx = 0;
 	fPointInfo.fNumVy = 0;
@@ -309,7 +306,7 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
     // Copy configuration:
     d->config = config;
     d->fhasStandardDeviations = fhasStandardDeviations;
-    d->fNumberOfConstraints = fNumberOfConstraints;
+    d->fUEOIndices = fUEOIndices;
     d->fLSRelatedInfo = fLSRelatedInfo;
     d->fPointInfo = fPointInfo;
     d->fMeasInfo = fMeasInfo;
