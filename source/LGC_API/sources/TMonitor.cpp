@@ -402,6 +402,154 @@ void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 		return;
 	}
 }
+Eigen::VectorXd TMonitor::getMeas(std::string id)
+{
+	// manipulate the corresponding measurement by accesing it via the reference map.
+	// check if id exists
+	if (measRefs.types.count(id) == 0)
+	{
+		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		Eigen::VectorXd result(1);
+		result[0] = 0;
+		return result;
+	}
+
+	string type = measRefs.types.at(id);
+	if (type == "ANGL")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double) measRefs.ANGL.at(id).getAngle());
+		return result;
+	}
+	else if (type == "ZEND")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double) measRefs.ZEND.at(id).getAngle());
+		return result;
+	}
+	else if (type == "DIST")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double) measRefs.DIST.at(id).getDistance());
+		return result;
+	}
+	else if (type == "ECTH")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double) measRefs.ECTH.at(id).getDistance());
+		return result;
+	}
+	else if (type == "ECDIR")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double) measRefs.ECDIR.at(id).getDistance());
+		return result;
+	}
+	else if (type == "DHOR")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double) measRefs.DHOR.at(id).getDistance());
+		return result;
+	}
+	else if (type == "PLR3D")
+	{
+		Eigen::VectorXd result(3);
+		result << measRefs.PLR3D.at(id).getAngle(kANGL), measRefs.PLR3D.at(id).getAngle(kZEND), measRefs.PLR3D.at(id).getDistance();
+		return result;
+	}
+	else if (type == "ORIE")
+	{
+		Eigen::VectorXd result(1);
+		result << measRefs.ORIE.at(id).getAngle();
+		return result;
+	}
+	else if (type == "UVEC")
+	{
+		Eigen::VectorXd result(3);
+		result *= 0;
+		// NOT implemented
+		// measRefs.UVEC.at(id).getVectorValue();
+		// TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		// measRefs.UVEC.at(id).setVectorMeasurement(direction);
+		return result;
+	}
+	else if (type == "UVD")
+	{	
+		Eigen::VectorXd result(3);
+		result *= 0;
+		// NOT implemented
+		// TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		// TLength distance(measurementVector[3]);
+		// measRefs.UVD.at(id).setVectorMeasurement(direction);
+		// measRefs.UVD.at(id).setDistance(distance);
+		return result;
+	}
+	else if (type == "DSPT")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.DSPT.at(id).getDistance();
+		return result;
+	}
+	else if (type == "DLEV")
+	{
+		// ignoring DHOR
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.DHOR.at(id).getDistance();
+		return result;
+	}
+	else if (type == "ECHO")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECHO.at(id).getDistance();
+		return result;
+	}
+	else if (type == "ECSP")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECSP.at(id).getDistance();
+		return result;
+	}
+	else if (type == "ECVE")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECVE.at(id).getDistance();
+		return result;
+	}
+	else if (type == "INCLY")
+	{
+		Eigen::VectorXd result(1);
+		result[0]=measRefs.INCLY.at(id).getAngle();
+		return result;
+	}
+	else if (type == "ECWS")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECWS.at(id).getDistance();
+		return result;
+	}
+	else if (type == "DVER")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.DVER.at(id).getDistance();
+		return result;
+	}
+	else if (type == "RADI")
+	{
+		Eigen::VectorXd result(0);
+		result *= 0;
+		std::cout << "RADI is not a real measurement" << std::endl;
+		// measRefs.RADI.at(id).set(TAngle(measurementVector[0]));
+		// NOT IMPLEMENTED
+		return result;
+	}
+	else if (type == "OBSXYZ")
+	{
+		Eigen::VectorXd result(3);
+		result *= 0;
+		// NOT IMPLEMENTED
+		return result;
+	}
+}
 
 Eigen::VectorXd TMonitor::getEstimate(std::string paramId)
 {

@@ -27,20 +27,18 @@ int main(int argc, char *argv[])
 	std::unordered_map<std::string, double> originalMeasurements;
 	for (auto id : ecwsIds)
 	{
-		originalMeasurements.insert({id, mockup.measRefs.ECWS.at(id).getDistance()});
+		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
 	}
 	for (int i = 0; i < 100; i++)
 	{
-		for (auto aux : mockup.measRefs.ECWS)
+		for (auto id: ecwsIds)
 		{
-			std::string ecwsId = aux.first;
 			// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
-			//TLength oldMeas = mockup.measRefs.ECWS.at(ecwsId).getDistance();
-			TReal sigma = mockup.measRefs.ECWS.at(ecwsId).target.sigmaDist;
-			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(ecwsId));
+			TReal sigma(0.00003);
+			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(id));
 			Eigen::VectorXd new_measurement(1);
 			new_measurement(0)=(double) newMeas;
-			mockup.updateMeas(ecwsId, new_measurement);
+			mockup.updateMeas(id, new_measurement);
 		}
 		mockup.adjust();
 		auto currentTime = high_resolution_clock::now();
