@@ -3,8 +3,8 @@
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
-#ifndef TMONITOR
-#define TMONITOR
+#ifndef TMONITORIMPL
+#define TMONITORIMPL
 
 
 // STL
@@ -14,11 +14,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #include "TVAbstractAlgorithm.h"
 
-class TMonitor
+class TMonitorImpl
 {
 public:
 	// constructor
-	TMonitor(std::string inputFilePath);
+	TMonitorImpl(std::string inputFilePath);
 	// access to measurements, for updating observations
 	void updateMeas(std::string, Eigen::VectorXd);
 	// get estimate of parameter
