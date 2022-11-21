@@ -23,12 +23,18 @@ public:
 	void updateMeas(std::string, Eigen::VectorXd);
 	// get estimate of parameter
 	Eigen::VectorXd getEstimate(std::string);
+	// get measurement
+	Eigen::VectorXd getMeas(std::string);
 	// get Meas IDs
 	std::vector<std::string> getECWSMeasIds();
 	// triggering the adjustment claculation
 	void adjust();
 	// containing maps to measurement object references
 	// should probably be private. is public to make the previous measurements available in the mockup
+
+	std::string inputFilePath;
+
+private:	
 	struct
 	{
 		// the measurement types
@@ -57,15 +63,16 @@ public:
 		// INCL Type
 		std::unordered_map<std::string, TINCLY &> INCLY;
 		// HLSR Type
-		std::unordered_map<std::string, TECWS&> ECWS;
+		std::unordered_map<std::string, TECWS &> ECWS;
 		// "No" type
 		std::unordered_map<std::string, TDVER &> DVER;
 		std::unordered_map<std::string, TRADI &> RADI;
 		std::unordered_map<std::string, TOBSXYZ &> OBSXYZ;
 	} measRefs;
+	
 	// containing maps to parameter object references
 	// should probably be private.
-	// maybe needs to be more specific as a method a la getEstimate does not exists, rather there 
+	// maybe needs to be more specific as a method a la getEstimate does not exists, rather there
 	// are methods like getEstimatedValue, getEstParam () helmert trafos
 	struct
 	{
@@ -80,9 +87,6 @@ public:
 		std::unordered_map<std::string, TAdjustableHelmertTransformation &> TRAFOS;
 	} paramRefs;
 
-	std::string inputFilePath;
-
-private:
 	// LGC adjustment algorithm used by adjust method
 	std::unique_ptr<TVAbstractAlgorithm> algorithm;
 	// containing measurement configuration, observations, estimates
