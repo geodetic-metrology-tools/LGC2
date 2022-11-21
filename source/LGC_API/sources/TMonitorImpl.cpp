@@ -1,4 +1,4 @@
-#include "TMonitor.h"
+#include "TMonitorImpl.h"
 
 #include <iostream>
 
@@ -17,13 +17,13 @@
 #include "TVAbstractAlgorithm.h"
 
 // constructor
-TMonitor::TMonitor(std::string configFile)
+TMonitorImpl::TMonitorImpl(std::string configFile)
 {
 	inputFilePath = configFile;
 	initialize();
 }
 
-void TMonitor::adjust()
+void TMonitorImpl::adjust()
 {
 	Behavior successCalculation;
 	TLSResultsMatrices *results(nullptr);
@@ -38,7 +38,7 @@ void TMonitor::adjust()
 		std::cout << "Problems occured during Adjustment method." << std::endl;
 	}
 }
-void TMonitor::initialize()
+void TMonitorImpl::initialize()
 {
 
 	Behavior successCalculation;
@@ -66,7 +66,7 @@ void TMonitor::initialize()
 	createParameterReferences();
 	std::cout << "Monitor object initialized." << std::endl;
 }
-void TMonitor::createParameterReferences()
+void TMonitorImpl::createParameterReferences()
 {
 	for (auto &object : project.get()->getPoints())
 	{
@@ -103,7 +103,7 @@ void TMonitor::createParameterReferences()
 		paramRefs.types.insert({object.getName(), "TRAFO"});
 	}
 }
-void TMonitor::createMeasurementReferences()
+void TMonitorImpl::createMeasurementReferences()
 {
 	for (TDataTreeIterator itTree = project.get()->getTree().begin(); itTree != project.get()->getTree().end(); itTree++)
 	{
@@ -280,7 +280,7 @@ void TMonitor::createMeasurementReferences()
 		}
 	}
 }
-void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
+void TMonitorImpl::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
 	// check if id exists
@@ -402,7 +402,7 @@ void TMonitor::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 		return;
 	}
 }
-Eigen::VectorXd TMonitor::getMeas(std::string id)
+Eigen::VectorXd TMonitorImpl::getMeas(std::string id)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
 	// check if id exists
@@ -551,7 +551,7 @@ Eigen::VectorXd TMonitor::getMeas(std::string id)
 	}
 }
 
-Eigen::VectorXd TMonitor::getEstimate(std::string paramId)
+Eigen::VectorXd TMonitorImpl::getEstimate(std::string paramId)
 {
 	if (paramRefs.types.count(paramId) == 0)
 	{
@@ -618,7 +618,7 @@ Eigen::VectorXd TMonitor::getEstimate(std::string paramId)
 
 }
 
-std::vector<std::string> TMonitor::getECWSMeasIds()
+std::vector<std::string> TMonitorImpl::getECWSMeasIds()
 {
 	std::vector<std::string> theIds;
 	for (auto aux : measRefs.ECWS)
