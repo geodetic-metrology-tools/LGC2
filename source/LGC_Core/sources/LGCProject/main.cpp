@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
 	std::ranlux48 engine;
 	engine.seed(1);
 	auto start = high_resolution_clock::now();
-	std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
+	//std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
+	std::string inputFilePath = svlTools::getPathFileName("../SC.lgc2");
 	TMonitorImpl mockup(inputFilePath);
 	// get the ids so the controlling object (will be the Fras instance) knows them.
 	std::vector<std::string> ecwsIds = mockup.getECWSMeasIds();
@@ -34,7 +35,8 @@ int main(int argc, char *argv[])
 		for (auto id: ecwsIds)
 		{
 			// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
-			TReal sigma(0.00003);
+			//TReal sigma(0.00003);
+			TReal sigma(0.03);
 			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(id));
 			Eigen::VectorXd new_measurement(1);
 			new_measurement(0)=(double) newMeas;
@@ -43,7 +45,12 @@ int main(int argc, char *argv[])
 		mockup.adjust();
 		auto currentTime = high_resolution_clock::now();
 		auto duration = duration_cast<milliseconds>(currentTime- start);
-		std::cout << "\r Fras iteration " << i << ", elapsed time " << (double) duration.count()/1000 << " s";
+		// get exemplary parameter
+		// not unique!!	"A-TAP.HLS1";
+		std::string parameterName = "B-TAP.WPS2";
+		std::cout << "\r Fras iteration " << i << ", elapsed time " << (double)duration.count() / 1000 << " s. "
+				  << " Estimate of  " << parameterName << " = " << mockup.getEstimate(parameterName).transpose() << " Covariance (diagonal elements) "
+				  << mockup.getEstimateCovar(parameterName).transpose() << " Sigma 0 a-posteriori = " << mockup.getSigma0() << std::flush;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);

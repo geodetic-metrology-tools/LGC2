@@ -404,7 +404,7 @@ void TMonitorImpl::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 }
 Eigen::VectorXd TMonitorImpl::getMeas(std::string id)
 {
-	// manipulate the corresponding measurement by accesing it via the reference map.
+	// get observation value
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
@@ -616,6 +616,78 @@ Eigen::VectorXd TMonitorImpl::getEstimate(std::string paramId)
 	}
 
 
+}
+Eigen::VectorXd TMonitorImpl::getEstimateCovar(std::string paramId)
+{
+	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
+	if (paramRefs.types.count(paramId) == 0)
+	{
+		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+	}
+	// get type and return result
+	if (paramRefs.types.at(paramId) == "POINT")
+	{
+		// get precisions, the diagonal covar elements are the square roots
+		Eigen::VectorXd vector(3);
+		vector[0] = pow((double) paramRefs.POINTS.at(paramId).getXEstPrecision(),2);
+		vector[1] = pow((double) paramRefs.POINTS.at(paramId).getYEstPrecision(),2);
+		vector[2] = pow((double) paramRefs.POINTS.at(paramId).getZEstPrecision(),2);
+		return vector;
+	}
+	else if (paramRefs.types.at(paramId) == "LINE")
+	{
+		// how many dimensions does this have??	
+		TFreeVector result = paramRefs.LINES.at(paramId).getLineVectorEstimatedValue();
+		Eigen::VectorXd vector(3);
+		vector[0] = (double)result.getX();
+		vector[1] = (double)result.getY();
+		vector[2] = (double)result.getZ();
+
+		return vector;
+	}
+	else if (paramRefs.types.at(paramId) == "ANGLE")
+	{
+		Eigen::VectorXd resultVector(1);
+		resultVector[0]=(paramRefs.ANGLES.at(paramId).getEstimatedValue());
+
+		return resultVector;
+	}
+	else if (paramRefs.types.at(paramId) == "PLANE")
+	{
+		Eigen::VectorXd resultVector(3);
+		resultVector[0] = (double)paramRefs.PLANES.at(paramId).getRefPtDistEstimatedValue();
+		resultVector[1] = (double)paramRefs.PLANES.at(paramId).getPhiEstimatedValue();
+		resultVector[2] = (double)paramRefs.PLANES.at(paramId).getThetaEstimatedValue();
+
+		return resultVector;
+	}
+	else if (paramRefs.types.at(paramId) == "LENGTH")
+	{
+		Eigen::VectorXd resultVector(1);
+		resultVector[0] = (double)paramRefs.LENGTHS.at(paramId).getEstimatedValue();
+
+		return resultVector;
+	}
+	else if (paramRefs.types.at(paramId) == "TRAFO")
+	{
+		Eigen::VectorXd resultVector(7);
+		resultVector[0] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().kappa;
+		resultVector[1] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().omega;
+		resultVector[2] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().phi;
+		resultVector[3] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tX;
+		resultVector[4] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tY;
+		resultVector[5] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tZ;
+		resultVector[6] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().scale;
+
+		return resultVector;
+	}
+
+
+}
+
+double TMonitorImpl::getSigma0()
+{
+	return project->getS0APosteriori();
 }
 
 std::vector<std::string> TMonitorImpl::getECWSMeasIds()
