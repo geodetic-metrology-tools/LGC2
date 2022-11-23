@@ -23,8 +23,14 @@ public:
 	void updateMeas(std::string, Eigen::VectorXd);
 	// get estimate of parameter
 	Eigen::VectorXd getEstimate(std::string);
+	// get diagonal elements of covariances of the estimated parameters
+	Eigen::VectorXd getEstimateCovar(std::string);
 	// get measurement
 	Eigen::VectorXd getMeas(std::string);
+	// get diagonal elements of covariances of the measurement residuals
+	Eigen::VectorXd getResidualCovar(std::string);
+	// get the sigma0 after adjustment
+	double getSigma0();
 	// get Meas IDs
 	std::vector<std::string> getECWSMeasIds();
 	// triggering the adjustment claculation
