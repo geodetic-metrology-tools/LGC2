@@ -32,10 +32,9 @@ class TInstrumentData : public Serializable
 	class TPOLAR : public Serializable
 	{
 		public:
-		    struct TTarget //: public Serializable
+		    struct TTarget : public Serializable
 		    {
-				/*
-			    TTarget(std::string ID = "",
+				TTarget(std::string ID = "",
 					TAngle sigmaAngl = TAngle(),
 				    TAngle sigmaZenD = TAngle(),
 				    TLength sigmaDist = TLength(),
@@ -45,8 +44,8 @@ class TInstrumentData : public Serializable
 				    TLength sigmaDCorr = TLength(),
 				    TLength sigmaTargetCentering = TLength(),
 				    TLength targetHt = TLength(),
-				    TLength sigmaTargetH = TLength(),
-				    TAdjustableLength *distCorrectionAdjustable = new TAdjustableLength(),
+				    TLength sigmaTargetHt = TLength(),
+					TAdjustableLength *distCorrectionAdjustable = nullptr,
 				    TLength sigmaCombinedDist = TLength(),
 				    TAngle sigmaCombinedAngle = TAngle(),
 				    TAngle sigmaCombinedPLRAngl = TAngle(),
@@ -69,7 +68,7 @@ class TInstrumentData : public Serializable
 				    sigmaCombinedPLRAngl(sigmaCombinedPLRAngl),
 				    sigmaCombinedPLRZenD(sigmaCombinedPLRZenD),
 				    sigmaCombinedPLRDist(sigmaCombinedPLRDist){};
-					*/
+					
                 std::string ID;
                 TAngle sigmaAngl;	            // [rad]
                 TAngle sigmaZenD;	            // [rad]
@@ -90,7 +89,7 @@ class TInstrumentData : public Serializable
             
                 #ifdef USE_SERIALIZER
 				    // Inherited via Serializable
-				    //virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
                 #endif
             };
 
@@ -235,7 +234,7 @@ class TInstrumentData : public Serializable
 					TLength sigmaTargetCentering = TLength(),
 					TLength targetHt = TLength(),
 					TLength sigmaTargetHt = TLength(),
-					TAdjustableLength *distCorrectionAdjustable = new TAdjustableLength(),
+					TAdjustableLength *distCorrectionAdjustable = nullptr,
 					TLength sigmaCombinedDist = TLength()) :
 					ID(ID),
 					sigmaDSpt(sigmaDSpt),
@@ -526,13 +525,14 @@ class TInstrumentData : public Serializable
 		obj.addProperty("instrHeight", instrHeight);
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
 		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
-		//obj.addProperty("targets", targets);
+		obj.addProperty("targets", targets);
 	}
 
-	/*
+	
 	inline void TInstrumentData::TPOLAR::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
+		if (distCorrectionAdjustable)
+			obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
 		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
 		obj.addProperty("distCorrectionValue", distCorrectionValue);
 		obj.addProperty("ID", ID);
@@ -554,8 +554,7 @@ class TInstrumentData : public Serializable
 		obj.addProperty("targetHt", targetHt);
 		
 	}
-	*/
-
+	
 	inline void TInstrumentData::TCAMD::serialize(SerializerObject::SerializationHelper &obj) const
 	{
 		obj.addProperty("defTarget", defTarget);
@@ -588,7 +587,8 @@ class TInstrumentData : public Serializable
 
 	inline void TInstrumentData::TEDM::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
+		if (distCorrectionAdjustable)
+			obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
 		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
 		obj.addProperty("distCorrectionValue", distCorrectionValue);
 		obj.addProperty("ID", ID);
@@ -603,7 +603,8 @@ class TInstrumentData : public Serializable
 
 	inline void TInstrumentData::TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("collAngleAdjustable", collAngleAdjustable);
+		if (collAngleAdjustable)
+			obj.addProperty("collAngleAdjustable", collAngleAdjustable);
 		obj.addProperty("collAngleUnknown", collAngleUnknown);
 		obj.addProperty("collAngleValue", collAngleValue);
 		obj.addProperty("defStaffID", defStaffID);
