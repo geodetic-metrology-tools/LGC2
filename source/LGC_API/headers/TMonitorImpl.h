@@ -27,6 +27,8 @@ public:
 	Eigen::VectorXd getEstimateCovar(std::string);
 	// get measurement
 	Eigen::VectorXd getMeas(std::string);
+	// get residuals
+	Eigen::VectorXd getResidual(std::string);
 	// get diagonal elements of covariances of the measurement residuals
 	Eigen::VectorXd getResidualCovar(std::string);
 	// get the sigma0 after adjustment

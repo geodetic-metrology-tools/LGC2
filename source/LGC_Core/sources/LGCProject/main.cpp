@@ -30,13 +30,14 @@ int main(int argc, char *argv[])
 	{
 		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
 	}
-	for (int i = 0; i < 100; i++)
+	// Simulating a monitoring scenario
+	for (int i = 0; i < 10000; i++)
 	{
 		for (auto id: ecwsIds)
 		{
 			// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
 			//TReal sigma(0.00003);
-			TReal sigma(0.03);
+			TReal sigma(0.003);
 			TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(id));
 			Eigen::VectorXd new_measurement(1);
 			new_measurement(0)=(double) newMeas;
@@ -48,13 +49,14 @@ int main(int argc, char *argv[])
 		// get exemplary parameter
 		// not unique!!	"A-TAP.HLS1";
 		std::string parameterName = "B-TAP.WPS2";
-		std::cout << "\r Fras iteration " << i << ", elapsed time " << (double)duration.count() / 1000 << " s. "
-				  << " Estimate of  " << parameterName << " = " << mockup.getEstimate(parameterName).transpose() << " Covariance (diagonal elements) "
+
+		// Print some results
+		std::cout << "\r Fras iteration " <<std::setw(5)<< i << std::setprecision(5) << ", elapsed time "  << (double)duration.count() / 1000 << " s. "
+				  << " Estimate of  " << parameterName << " = " <<std::setprecision(8)<<mockup.getEstimate(parameterName).transpose() << " Covariance (diagonal elements) "
 				  << mockup.getEstimateCovar(parameterName).transpose() << " Sigma 0 a-posteriori = " << mockup.getSigma0() << std::flush;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
-	std::cout << std::endl;
 	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 
 	return 1;
