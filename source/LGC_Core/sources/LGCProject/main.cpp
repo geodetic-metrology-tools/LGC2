@@ -11,10 +11,16 @@
 #include "TFileLogger.h" // Will be obsolete soon
 #include "TLGCApp.h"
 #include "TMonitorImpl.h"
+#include "DummyImpl.h"
 using namespace std::chrono;
 
 int main(int argc, char *argv[])
 {
+
+	DummyImpl test;
+	test.setNumber(7);
+	test.printResult();
+
 	// for random numbers
 	std::ranlux48 engine;
 	engine.seed(1);
@@ -31,7 +37,7 @@ int main(int argc, char *argv[])
 		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
 	}
 	// Simulating a monitoring scenario
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		for (auto id: ecwsIds)
 		{
