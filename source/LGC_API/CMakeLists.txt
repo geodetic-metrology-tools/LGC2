@@ -9,11 +9,14 @@ SET(API_SOURCES_PATH 	${PROJECT_SOURCE_DIR}/LGC_API/sources)
 # Create a variable containing all .h files:
 set(API_HEADERS 	
 	${API_INCLUDE_PATH}/TMonitorImpl.h
+	${API_INCLUDE_PATH}/DummyImpl.h
+	${API_INCLUDE_PATH}/Dummy.h
 )
 
 # Create a variable containing all .cpp files:
 set(API_SOURCES
 	${API_SOURCES_PATH}/TMonitorImpl.cpp
+	${API_SOURCES_PATH}/DummyImpl.cpp
 )
 
 
