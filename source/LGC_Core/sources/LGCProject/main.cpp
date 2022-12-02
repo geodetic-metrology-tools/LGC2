@@ -17,7 +17,7 @@ using namespace std::chrono;
 int main(int argc, char *argv[])
 {
 
-	DummyImpl test;
+	Dummy test;
 	test.setNumber(7);
 	test.printResult();
 

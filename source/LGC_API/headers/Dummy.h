@@ -17,7 +17,7 @@ public:
 
 private:	
 	class DummyImpl;
-	std::shared_ptr<DummyImpl> impl_;
+	std::unique_ptr<DummyImpl> impl_;
 };
 
 #endif

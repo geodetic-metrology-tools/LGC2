@@ -7,11 +7,10 @@
 #include <Eigen/Dense>
 #include "Dummy.h"
 
-class DummyImpl
+class Dummy::DummyImpl
 {
 public:
 	// constructor
-	DummyImpl();
 	void setNumber(int);
 	void printResult();
 
