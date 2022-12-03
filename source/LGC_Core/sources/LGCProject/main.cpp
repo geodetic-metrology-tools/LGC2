@@ -11,7 +11,8 @@
 #include "TFileLogger.h" // Will be obsolete soon
 #include "TLGCApp.h"
 #include "TMonitorImpl.h"
-#include "DummyImpl.h"
+#include "Moni.h"
+#include "Dummy.h"
 using namespace std::chrono;
 
 int main(int argc, char *argv[])
@@ -27,6 +28,10 @@ int main(int argc, char *argv[])
 	auto start = high_resolution_clock::now();
 	//std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
 	std::string inputFilePath = svlTools::getPathFileName("../SC.lgc2");
+	
+	
+	Moni jauche(inputFilePath);
+	
 	TMonitorImpl mockup(inputFilePath);
 	// get the ids so the controlling object (will be the Fras instance) knows them.
 	std::vector<std::string> ecwsIds = mockup.getECWSMeasIds();
