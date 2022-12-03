@@ -21,6 +21,19 @@ public:
 	// constructor
 	MoniImpl(std::string path) : inputFilePath(path) { MoniImpl::initialize(); }
 	~MoniImpl() = default;
+	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
+	// get measurement
+	Eigen::VectorXd getMeas(std::string id);
+	// triggering the adjustment claculation
+	void adjust();
+	// get estimate of parameter
+	Eigen::VectorXd getEstimate(std::string);
+	// get diagonal elements of covariances of the estimated parameters
+	Eigen::VectorXd getEstimateCovar(std::string);
+	// get the sigma0 after adjustment
+	double getSigma0();
+	// get Meas IDs
+	std::vector<std::string> getECWSMeasIds();
 
 private:
 	void initialize();
