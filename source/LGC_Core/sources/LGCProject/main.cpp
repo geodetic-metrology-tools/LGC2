@@ -10,9 +10,7 @@
 #include "FileUtils.h"
 #include "TFileLogger.h" // Will be obsolete soon
 #include "TLGCApp.h"
-#include "TMonitorImpl.h"
 #include "Moni.h"
-#include "Dummy.h"
 using namespace std::chrono;
 
 int main(int argc, char *argv[])
@@ -28,7 +26,6 @@ int main(int argc, char *argv[])
 	
 	Moni mockup(inputFilePath);
 	
-	//TMonitorImpl mockup(inputFilePath);
 	// get the ids so the controlling object (will be the Fras instance) knows them.
 	std::vector<std::string> ecwsIds = mockup.getECWSMeasIds();
 	// first save the original measurements
