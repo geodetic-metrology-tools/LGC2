@@ -18,10 +18,6 @@ using namespace std::chrono;
 int main(int argc, char *argv[])
 {
 
-	Dummy test;
-	test.setNumber(7);
-	test.printResult();
-
 	// for random numbers
 	std::ranlux48 engine;
 	engine.seed(1);
@@ -30,9 +26,9 @@ int main(int argc, char *argv[])
 	std::string inputFilePath = svlTools::getPathFileName("../SC.lgc2");
 	
 	
-	Moni jauche(inputFilePath);
+	Moni mockup(inputFilePath);
 	
-	TMonitorImpl mockup(inputFilePath);
+	//TMonitorImpl mockup(inputFilePath);
 	// get the ids so the controlling object (will be the Fras instance) knows them.
 	std::vector<std::string> ecwsIds = mockup.getECWSMeasIds();
 	// first save the original measurements
@@ -42,7 +38,7 @@ int main(int argc, char *argv[])
 		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
 	}
 	// Simulating a monitoring scenario
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		for (auto id: ecwsIds)
 		{
