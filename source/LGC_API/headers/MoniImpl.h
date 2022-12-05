@@ -37,8 +37,8 @@ public:
 
 private:
 	void initialize();
-	void Moni::MoniImpl::createParameterReferences();
-	void Moni::MoniImpl::createMeasurementReferences();
+	void createParameterReferences();
+	void createMeasurementReferences();
 
 
 	std::string inputFilePath;
