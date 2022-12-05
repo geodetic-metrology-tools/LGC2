@@ -5,6 +5,7 @@
 
 #include <Eigen/Dense>
 #include <string>
+#include <memory>
 
 class Moni
 {
