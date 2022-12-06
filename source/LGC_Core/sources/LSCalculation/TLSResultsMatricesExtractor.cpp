@@ -469,13 +469,16 @@ void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, s
 
 void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices& rm, TPdorObs& pdorObs)
 {
-	MatrixIndex obsUidx = pdorObs.getFirstObservationIndex();
-	if (obsUidx < rm.getResidualsVectByConst()->size())
-		pdorObs.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx), TAngle::EUnits::kRadians));
-	else
+	if (pdorObs.isInitialised())
 	{
-		logCritical() << "PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions";
-		throw std::runtime_error("PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+		MatrixIndex obsUidx = pdorObs.getFirstObservationIndex();
+		if (obsUidx < rm.getResidualsVectByConst()->size())
+			pdorObs.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx), TAngle::EUnits::kRadians));
+		else
+		{
+			logCritical() << "PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions";
+			throw std::runtime_error("PDOR observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+		}
 	}
 }
 

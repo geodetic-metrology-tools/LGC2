@@ -1053,15 +1053,12 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 		};
 
 		// Go in root node to initialize pdor
-		if (fData.getCurrentNode().isROOTNode() && !fData.getCurrentNode().measurements.fPDOR.isInitialised())
-			initialize(fData.getCurrentNode().measurements.fPDOR);
-		else
-			for (auto it(fTree.begin()); it != fTree.end(); ++it)
-				if (it.node->data->isROOTNode() && !it.node->data->measurements.fPDOR.isInitialised())
-				{
-					initialize(it.node->data->measurements.fPDOR);
-					break;
-				}
+		for (auto it(fTree.begin()); it != fTree.end(); ++it)
+			if (it.node->data->isROOTNode() && !it.node->data->measurements.fPDOR.isInitialised())
+			{
+				initialize(it.node->data->measurements.fPDOR);
+				break;
+			}
 	}
 }
 
