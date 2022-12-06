@@ -57,5 +57,6 @@ private:
 	void writeFrameUpperTriangularCovarianceMatrix(TAdjustableHelmertTransformation&);
 	void writePointUpperTriangularCovarianceMatrix(const LGCAdjustablePoint&);
 
+
 };
 #endif

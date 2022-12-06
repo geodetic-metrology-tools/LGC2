@@ -288,6 +288,8 @@ public:
 	bool isLGCv1() const { return islgc1; }
 
 	void setLGCv1(bool set) { islgc1 = set; }
+		/*!	\brief Saves all the Unknows index in a file 	*/
+		void saveUEOIndicesToFile(int nbIter, std::string path) const;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable

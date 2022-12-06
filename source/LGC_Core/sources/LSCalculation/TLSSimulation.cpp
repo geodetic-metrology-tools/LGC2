@@ -40,6 +40,11 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 	int numOfSimMade = 0;
 	int totalNumOfSimul = fData.getConfig().sim.numSims;
 
+	if (totalNumOfSimul == 1)
+		lsCalc.lastSimu = true;
+	else
+		lsCalc.lastSimu = false;
+
 	// Run through the first simulation
 
 	try {
@@ -85,6 +90,10 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 
 			// compute the ls results for the current simulation
 			simulateValues();
+
+			if (numOfSimMade == totalNumOfSimul - 1)
+				lsCalc.lastSimu = true;
+
 			calcOK = lsCalc.run(data, maxIterations);
 
 			// Updates the values for the 2 final tables (Points and Frames summaries)
@@ -127,6 +136,7 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
 		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 	}
+
 	return calcOK;
 
 }

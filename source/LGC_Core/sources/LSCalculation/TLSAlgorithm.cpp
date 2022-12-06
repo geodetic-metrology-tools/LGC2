@@ -4,7 +4,7 @@
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
 
-TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosterioriVariances(false), fPointTransformer(&data.getTree(), data.getConfig().referential)
+TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosterioriVariances(false), fPointTransformer(&data.getTree(), data.getConfig().referential),lastSimu(true)
 {
 	delete resultMatrices;
 	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
@@ -28,6 +28,18 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 
 	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
+	if (lastSimu)
+	{	
+		// set output path for the full covariance matrix
+		auto outputPath = data.getFileLogger().getOutputFileLocation();
+		outputPath = outputPath.substr(0, outputPath.size() - 4);
+
+		resultMatrices->saveMatricesToFile(0, outputPath + ".resmat");
+
+		// inputMtr.get()->saveMatricesToFile(0);
+		data.saveUEOIndicesToFile(0, outputPath + "_ucov.ind");
+		Eigen::saveMarket(*resultMatrices->getUnkCovarMtrxByConst(), outputPath + "_ucov.mtx");
+	}
 	return computationIsOK;
 }
 

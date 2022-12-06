@@ -901,3 +901,68 @@ void TLGCData::TLSRelatedInfo::serialize(ObjectSerializer &obj) const
 };
 
 #endif // USE_SERIALIZER
+
+
+void TLGCData::saveUEOIndicesToFile(int nbIter, std::string path) const
+{
+	std::ostringstream oss;
+
+	oss << path;
+	std::string fileName = oss.str();
+
+	std::ofstream of(fileName.c_str(), std::ios::out);
+	if (!of)
+	{
+		std::cout << "Impossible d'ouvrir le fichier " << path << '\n';
+		std::exit(1);
+	}
+	of << std::setprecision(9);
+
+	for (auto &point : points)
+	{
+		of << "POINT"
+		   << "\t";
+		of << point.getName() << "\t";
+		for (int i = 0; i < 3; i++)
+		{
+	        if (point.isCoordinateFixed(i))
+				of << "-1" << "\t";
+			else
+				of << point.getCoordinateUnknIndex(i) << "\t";
+		}
+		of << std::endl;
+		
+	}
+
+    
+	for (auto nodeIt(tree.begin()); nodeIt != tree.end(); ++nodeIt)
+	{
+		auto currentFrame = nodeIt->get()->frame;
+		of << "FRAME"
+		   << "\t";
+		of << currentFrame.getName() << "\t";
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (currentFrame.isTranslationFixed(i))
+				of << "-1" << "\t";
+			else
+				of << currentFrame.getTranslationUnknIndex(i) << "\t";
+		}
+
+        for (int i = 0; i < 3; i++)
+		{
+			if (currentFrame.isRotationFixed(i))
+				of << "-1"<< "\t";
+			else
+				of << currentFrame.getRotationUnknIndex(i) << "\t";
+		}
+
+        if (currentFrame.isScaleFixed())
+			of << "-1"
+			   << "\t";
+		else
+			of << currentFrame.getScaleUnknIndex() << "\t";
+		of << std::endl;
+	}
+}

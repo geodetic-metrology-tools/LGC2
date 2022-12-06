@@ -9,7 +9,7 @@
 
 #define LGC_VERSION_MAJOR "2"
 #define LGC_VERSION_MINOR "8"
-#define LGC_VERSION_PATCH "beta_1_Apriori_covariances"
+#define LGC_VERSION_PATCH "beta_1_Apriori_covariances_Leonard"
 
 static std::string getLGCVersion(void) {
 	std::stringstream ss;

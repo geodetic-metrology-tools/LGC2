@@ -34,6 +34,7 @@ public:
 
 	/// Return number of iterations made
 	int		getNumberOfIterations() { return fNumberOfIterations; }
+	bool	lastSimu;
 
 
 protected:
