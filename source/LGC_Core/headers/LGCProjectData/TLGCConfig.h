@@ -238,7 +238,7 @@ struct TLGCConfig
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
 	TCoordOut     writePlot;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
-	TBinaryOption writeSerializedObject = true; // test fail for now with this enabled, i.e. cannot serialize empty vectors, matrices, etc.
+	TBinaryOption writeSerializedObject = false; // test fail for now with this enabled, i.e. cannot serialize empty vectors, matrices, etc.
 	/// Write a file for covariance analysis
 	TBinaryOption covar;
 	/// Write a file for best-fit analysis 

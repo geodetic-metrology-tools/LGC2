@@ -6,6 +6,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef LGC2_TTREE_ENTRY_H
 #define LGC2_TTREE_ENTRY_H
 
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
 
 //SURVEYLIB
 #include <TAdjustableHelmertTransformation.h>
@@ -27,7 +31,12 @@ Every point stored in the collection keeps an iterator to the node, where was de
 Only the measurements are kept directly in the tree nodes since they are really unique
 to each level of the tree.
 */
-struct TTreeEntry {
+#ifdef USE_SERIALIZER
+struct TTreeEntry : public Serializable
+#else
+struct TTreeEntry
+#endif // USE_SERIALIZER
+{
 	/// Unique ID of a tree node.
   	std::vector<int> ID; 
  
@@ -46,6 +55,16 @@ struct TTreeEntry {
 			{} 
 
 	~TTreeEntry() {}
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override 
+	{ 
+		obj.addProperty("ID", ID);
+		obj.addProperty("frame", frame);
+		obj.addProperty("measurements", measurements);
+	}
+#endif
 
 };
 
