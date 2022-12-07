@@ -271,3 +271,11 @@ const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ec
 const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }
 
 const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }
+
+#ifdef USE_SERIALIZER
+// Inherited via Serializable
+void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("measurement", true);
+}
+#endif

@@ -318,18 +318,25 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 
 void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 {
-	jsonSerializerObject ser;
-	SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
-	obj.addProperty("fCopyright", fCopyright);
-	//obj.addProperty("fInputFileLoc", fInputFileLoc);
-	//obj.addProperty("fOutputFileLoc", fOutputFileLoc);
-	//obj.addProperty("fLoggerFileLoc", fLoggerFileLoc);
-	//obj.addProperty("fNamFile", fNamFile);
-	//obj.addProperty("fMaxIterations", fMaxIterations);
-	obj.addProperty("LGC_DATA", dat);
+	if (!Logger::getLogger().hasErrors())
+	{
+		jsonSerializerObject ser;
+		SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+		obj.addProperty("fCopyright", fCopyright);
+		// obj.addProperty("fInputFileLoc", fInputFileLoc);
+		// obj.addProperty("fOutputFileLoc", fOutputFileLoc);
+		// obj.addProperty("fLoggerFileLoc", fLoggerFileLoc);
+		// obj.addProperty("fNamFile", fNamFile);
+		// obj.addProperty("fMaxIterations", fMaxIterations);
+		obj.addProperty("LGC_DATA", dat);
 
-	std::ofstream fout(outputFileLocation + ".json");
-	fout << ser.getStringRepresentation();
+		std::ofstream fout(outputFileLocation + ".json");
+		fout << ser.getStringRepresentation();
+	}
+	else
+	{
+		logCritical() << "Result file:" << outputFileLocation << "has NOT been written";
+	}
 }
 
 void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)

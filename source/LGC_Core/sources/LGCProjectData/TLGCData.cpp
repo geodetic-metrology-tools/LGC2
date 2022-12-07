@@ -807,6 +807,8 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("exampleMatrix", ss.str()); 
 	Eigen::Vector3d exampleVector(1, 2, 3);
 	obj.addProperty("exampleVector", exampleVector); 
+
+	obj.addProperty("tree", tree);
 }
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const

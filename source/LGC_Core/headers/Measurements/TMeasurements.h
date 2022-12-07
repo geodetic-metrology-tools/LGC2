@@ -6,6 +6,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef MEASUREMENTS_H_
 #define MEASUREMENTS_H_
 
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
 
 //LGC
 #include <TEDM.h>
@@ -18,7 +22,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	\ingroup Measurements
 	The measurement class bundles all possible measurements together. Every node of the tree of local frames has one class of this type.
 */
-struct TMeasurements {
+#ifdef USE_SERIALIZER
+	struct TMeasurements : public Serializable
+#else
+	struct TMeasurements
+#endif // USE_SERIALIZER
+{
+
 	/// All total station measurements in the order in which they appeared in the input file
 	std::list<std::shared_ptr<TTSTN>>  fTSTN;
 
@@ -121,6 +131,12 @@ struct TMeasurements {
 	const TLGCObsSummary& getINCLYGlobalObsSummary() const;
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECWSGlobalObsSummary() const;
+
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
 private:
 
