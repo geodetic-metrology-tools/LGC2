@@ -54,6 +54,7 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 
@@ -83,6 +84,8 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "PPM");        //DHOR: ppm value for the distance correction 
 	(*stream).writeString(obsWidth, "H_TRGT");         //DHOR: Vertical offset of the staff
 	(*stream).writeString(obsResWidth, "THSE");       //DHOR: 1-sigma precision for the vertical offset of the staff
+
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 
 	(*stream) << endl;
 
@@ -131,6 +134,7 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthPrecision = getLengthPrecision();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -212,6 +216,8 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.target.staffHt.getMetresValue());               //DHOR: Vertical offset of the staff
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaStaffHt.getMMetresValue());   //DHOR: 1-sigma precision for the vertical offset of the staff
 
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItDlev.obsID);
 		(*stream) << endl;
 	}
 	(*stream) << endl;

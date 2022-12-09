@@ -57,6 +57,7 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -116,6 +117,8 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth, "");
 		(*stream) << " | ";
 		(*stream).writeString(obsResWidth, "DIST");  // observation PPM error for DIST
+		(*stream) << " | ";
+		if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 		(*stream) << " | ";
 		(*stream) <<endl;
 
@@ -187,6 +190,9 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 
 		(*stream).writeString(obsResWidth, "PPM"); // observation PPM error for DIST
 		(*stream) << " | ";
+		
+		(*stream).writeString(obsIdWidth, ""); // observation ID
+		(*stream) << " | ";
 
 		(*stream)<<endl;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -255,6 +261,9 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth, "(MM/KM)");     // observation PPM error for DIST
 		(*stream) << " | ";
 
+		(*stream).writeString(obsIdWidth, ""); // observation ID
+		(*stream) << " | ";
+
 		(*stream)<<endl;
 }
 
@@ -264,6 +273,8 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
+
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -285,6 +296,7 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -312,6 +324,7 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -334,6 +347,7 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "THSE"); // target height sigma 
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +377,7 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -390,6 +405,7 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	{
 		(*stream).writeString(obsWidth, "HI"); //allfixed parameter: hi
 	}
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -423,6 +439,7 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -445,7 +462,8 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma DHOR
 	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error DHOR
 	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
-	(*stream)<<endl;	
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
+	(*stream) << endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -473,6 +491,7 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -494,6 +513,7 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "ICSE"); // instrument centering sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "V0"); //allfixed parameter: v0
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -522,6 +542,7 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 	//summuray
@@ -546,6 +567,7 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 		(*stream).writeString(obsWidth, "V0 1st solution"); //allfixed parameter: v0
 		(*stream).writeString(obsWidth, "2nd solution"); //allfixed parameter: v0
 	}
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -658,6 +680,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					anglePrecision = getAnglePrecision();
 	int					angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					lengthPrecision = getLengthPrecision();
@@ -856,6 +879,11 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.target.ppmDist.getMMetresValue());
 		(*stream) << " | ";
 
+		//ID
+		//Write the Measurement identifier
+		(*stream).writeString(obsIdWidth, ItPLR3D.obsID);
+		(*stream) << " | ";
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -917,6 +945,9 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL>& measANGL, const LGCAd
 				(*stream).writeDouble(obsWidth, anglePrecision, ItANGL.fAllFixedV0.getGonsValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
+
+		// Write the ID of the observation
+		(*stream).writeString(ItANGL.obsID.length(), ItANGL.obsID);
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -981,6 +1012,8 @@ void TTSTNWriter::writeZENDResults(const std::list<TZEND>& measZEND, const LGCAd
 				(*stream).writeDouble(obsWidth, anglePrecision, ItZEND.fAllFixedHi);
 			else
 				(*stream).writeString(obsWidth, "FIXED");
+		// Write the ID of the observation
+		(*stream).writeString(ItZEND.obsID.length(), ItZEND.obsID);
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -1067,7 +1100,8 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 			else
 				(*stream).writeString(obsWidth, "FIXED");
 		}
-
+		// Write the ID of the observation
+		(*stream).writeString(ItDIST.obsID.length(), ItDIST.obsID);
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -1141,6 +1175,9 @@ void TTSTNWriter::writeDHORResults(const std::list<TLINE>& measDHOR)
 		
 		//Write the sigma of the target centering (TCSE)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDHOR.target.sigmaTargetCentering.getMMetresValue());
+		
+		// Write the ID of the observation
+		(*stream).writeString(ItDHOR.obsID.length(), ItDHOR.obsID);
 
 		(*stream) << endl;
 	}
@@ -1204,6 +1241,9 @@ void TTSTNWriter::writeECTHResults(const std::list<TECTH>& measECTH, const LGCAd
 				(*stream).writeDouble(obsWidth, anglePrecision, ItECTH.fAllFixedV0.getGonsValue());
 			else
 				(*stream).writeString(obsWidth, "FIXED");
+		
+		// Write the ID of the observation
+		(*stream).writeString(ItECTH.obsID.length(), ItECTH.obsID);
 
 		(*stream) << endl;
 	}
@@ -1265,6 +1305,10 @@ void TTSTNWriter::writeECDIRResults(const std::list<TECDIR>& measECDIR, const LG
 			else
 				(*stream).writeString(obsWidth, "FIXED");
 		}
+
+		// Write the ID of the observation
+		(*stream).writeString(ItECDIR.obsID.length(), ItECDIR.obsID);
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;

@@ -123,6 +123,7 @@ void TLGCApp::initializeStream(std::shared_ptr<TLGCData> dat, const std::string 
 	TDataParameters dataParam;
 	dataParam.setRefFrame(TRefSystemFactory::ERefFrame::kCCS); //default param because not redefine
 	dataParam.setPrecision( dat->getConfig().outPrecision.digits);
+	dataParam.setObsIdWidth(dat->getConfig().obsIDwidth);
 
 	TADataSet tads(resultFileParam, dataParam);
     stream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));

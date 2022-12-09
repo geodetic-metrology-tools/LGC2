@@ -385,6 +385,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 	std::vector<std::string> frameNames;	// Declare a vector of strings for the names of the frames
 	std::vector<int> frameLines;			// Declare a vector of integers for the lines of the *FRAME keywords
+	std::vector<std::string> listObsId;		// Declare a vector of strings for the names of the frames
 
 	// Iterate the frames
 	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
@@ -406,8 +407,9 @@ bool TReader::read(std::istream& lgcStream) {
 					" and " + to_string(frameLines.back() + 1) + " have the same name: \"" + frameNames.back() + "\".";
 			}
 		}
-	}
 
+		if (duplicateObsId(itTree, listObsId, outputMessages)) break;
+	}
     project.setLGCv1(false);
 
 	return !outputMessages.hasErrors();
@@ -591,5 +593,63 @@ bool TReader::isLgc2File(std::istream& lgcStream)
         if(tokLine[0] == "*" && (tokLine[1] == INSTR || tokLine[1] == CHABA))
             return true;
 	}
+	return false;
+}
+
+/// Check that there is no duplicated observation ID
+bool TReader::duplicateObsId(TDataTreeIterator itTree, std::vector<std::string> &listObsId, TFileLogger &outputMessages)
+{
+	// Iterate the observations
+	for (auto const &i : itTree->get()->measurements.fTSTN)
+		for (auto const &j : i.get()->roms)
+		{
+			std::for_each(j.get()->measANGL.begin(), j.get()->measANGL.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measZEND.begin(), j.get()->measZEND.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measDIST.begin(), j.get()->measDIST.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measDHOR.begin(), j.get()->measDHOR.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measECTH.begin(), j.get()->measECTH.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measECDIR.begin(), j.get()->measECDIR.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measPLR3D.begin(), j.get()->measPLR3D.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+		}
+	for (auto const &i : itTree->get()->measurements.fEDM)
+		std::for_each(i.measDSPT.begin(), i.measDSPT.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fLEVEL)
+		std::for_each(i.measDLEV.begin(), i.measDLEV.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fCAM)
+	{
+		std::for_each(i.measUVD.begin(), i.measUVD.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measUVEC.begin(), i.measUVEC.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	}
+	for (auto const &i : itTree->get()->measurements.fDVER)
+		listObsId.push_back(i.obsID);
+	for (auto const &i : itTree->get()->measurements.fORIE)
+		std::for_each(i.measORIE.begin(), i.measORIE.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fECHO)
+		std::for_each(i.measECHO.begin(), i.measECHO.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fECVE)
+		std::for_each(i.measECVE.begin(), i.measECVE.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fECSP)
+		std::for_each(i.measECSP.begin(), i.measECSP.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	listObsId.push_back(itTree->get()->measurements.fPDOR.obsID);
+	for (auto const &i : itTree->get()->measurements.fRADI)
+		listObsId.push_back(i.obsID);
+	for (auto const &i : itTree->get()->measurements.fOBSXYZ)
+		listObsId.push_back(i.obsID);
+	for (auto const &i : itTree->get()->measurements.fINCLY)
+		std::for_each(i.measINCLY.begin(), i.measINCLY.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fECWS)
+		std::for_each(i.measECWS.begin(), i.measECWS.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+
+	// Check for duplicates
+	std::sort(listObsId.begin(), listObsId.end());
+	for (int i = 1; i < listObsId.size(); i++)
+	{
+		if (listObsId[i - 1] == listObsId[i] && listObsId[i] != "")
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Observation ID " + listObsId[i] + " is duplicated\".";
+			return true;
+		}
+	}
+
 	return false;
 }

@@ -32,7 +32,6 @@ class TReader {
 		bool readLgc1File(std::istream& lgcStream);
 		bool isLgc2File(std::istream& lgcStream);
 
-
 	private:
 		/// All lgc2 keyword handler objects.
 		std::vector< std::unique_ptr<TAKeyWord> > finterpreters;
@@ -46,5 +45,7 @@ class TReader {
 		/// Not asignable, contains reference
 		TReader& operator=(const TReader&);
 		
+		/// Check that there is no duplicated observation ID
+		bool duplicateObsId(TDataTreeIterator itTree, std::vector<std::string>& listObsId, TFileLogger& outputMessages);
 };
 #endif

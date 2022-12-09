@@ -57,6 +57,9 @@ class TAMeas : public TStatusObject {
 		/// Line in the input file where this measurement was defined
 		int line;
 
+		/// Observation identifier: identification of specific measurement
+		std::string obsID;
+
 		/// DB comment after the measurement definition
 		std::string eolcomment;
 

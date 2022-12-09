@@ -18,6 +18,7 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -35,6 +36,7 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma for ECHO and ECVE
 	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error for ECHO and ECVE
 	(*stream).writeString(obsResWidth, "ICSE"); // instrument centering sigma for ECHO and ECVE
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream)<<endl;	
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +63,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
@@ -140,6 +143,9 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 		//Write the sigma of the target centering (ICSE)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECHO.target.sigmaInstrCentering.getMMetresValue());
 
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItECHO.obsID);
+
 		(*stream)<<endl;
 	}
 	(*stream)<<endl;
@@ -152,6 +158,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
@@ -210,6 +217,9 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 		//Write the sigma of the target centering (ICSE)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECVE.target.sigmaInstrCentering.getMMetresValue());
 
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItECVE.obsID);
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -221,6 +231,7 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs1 = stream->getCurrSpaceExtended(1);
@@ -293,6 +304,9 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 
 			//Write the sigma of the target centering (ICSE)
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECSP.target.sigmaInstrCentering.getMMetresValue());
+
+			// Write the observation identifier
+			(*stream).writeString(obsIdWidth, ItECSP.obsID);
 
 			(*stream) << endl;
 

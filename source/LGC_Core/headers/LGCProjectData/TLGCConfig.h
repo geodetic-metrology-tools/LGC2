@@ -246,6 +246,8 @@ struct TLGCConfig
 
 	///width of point's name
 	int pointNameWidth = 0;
+	///width of observation's ID
+	int obsIDwidth = 0;
 
 	/*
 	Checklist: 

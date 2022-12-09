@@ -18,6 +18,7 @@ void THLSRWriter::writeHLSRResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -36,6 +37,7 @@ void THLSRWriter::writeHLSRResultsHeader()
 	(*stream).writeString(obsResWidth, "ICSE"); //ICSE value
 	(*stream).writeString(obsResWidth, "WSSE"); //WSSE value
 	(*stream).writeString(nameWidth, "HLSR ID");    //hlsr ID
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +66,7 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -112,6 +115,9 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 
 		//write the scale ID
 		(*stream).writeString(nameWidth, ItECWS.target.ID);
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItECWS.obsID);
 
 		(*stream) << endl;
 	}
