@@ -180,7 +180,20 @@ void TObservationWriter::writeHisto(const TLGCObsSummary& summary, std::string d
 				description == "PLR3D: ZEND"||
 				description == "INCLY" ||
 				description == "PLR3D: ANGL")/* Angle*/
-				ech = "(CC)";
+			{
+				switch (k)
+				{
+				case 1:
+					ech = "(CC)";
+					break;
+				case 10:
+					ech = "(1/10 CC)";
+					break;
+				case 100:
+					ech = "(1/100 CC)";
+					break;
+				}
+			}
 			else if (description == "UVD: XVEC" ||
 				description == "UVD: YVEC"||
 				description == "UVEC: XVEC" ||
