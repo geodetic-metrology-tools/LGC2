@@ -17,6 +17,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -32,6 +33,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
 	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
 	(*stream).writeString(obsWidth, "DCOR");      //DVER: distance correction value 
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID");      //Observation ID
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +56,7 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -71,6 +74,7 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	(*stream).writeString(nameWidth, "TRGT");     //Name of the target
 	(*stream).writeString(obsResWidth, "OBSE");   // observation sigma ORIE
 	(*stream).writeString(obsResWidth, "TCSE");   // target centering sigma
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID");   // observation ID
 	(*stream) << endl; 
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +99,7 @@ void TOtherMeasurentWriter::writePDORResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -107,6 +112,7 @@ void TOtherMeasurentWriter::writePDORResultsHeader()
 	(*stream).writeString(obsWidth, "OBSERVE"); //observed bearing
 	(*stream).writeString(obsWidth, "CALCULE"); //estimated bearing 
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); //observation id
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +132,7 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
@@ -140,6 +147,7 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
 	(*stream).writeString(obsResWidth, "OBSE"); //observation standard error 
 	(*stream).writeString(obsWidth, "ACST"); //constant angle
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); //observation id
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -160,6 +168,7 @@ void TOtherMeasurentWriter::writeOBSXYZResultsHeader()
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 
 	////////////////////////////////////////////////////////////
 	//First line
@@ -168,6 +177,7 @@ void TOtherMeasurentWriter::writeOBSXYZResultsHeader()
 	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
 	(*stream).writeString(obsResWidth, "RESIDU"); //residual
 	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -213,6 +223,7 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					lengthPrecision = getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -247,6 +258,9 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 
 		//write the distance correction value 
 		(*stream).writeDouble(obsWidth, lengthPrecision, ItDVER.getDistanceCorrection());//Output value in meters [m], stored in [m]
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItDVER.obsID);
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -258,6 +272,7 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					angleResidualPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int					anglePrecision = getAnglePrecision();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
@@ -302,6 +317,9 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 		//Write the sigma of the target centering (TCSE)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItORIE.target.sigmaTargetCentering.getMMetresValue());
 
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItORIE.obsID);
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -313,6 +331,7 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int					anglePrecision = getAnglePrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -345,6 +364,10 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 
 		//write the constant angle (ACST)
 		(*stream).writeDouble(obsWidth, anglePrecision, It.getConstAngle().getGonsValue());
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, It.obsID);
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;
@@ -355,6 +378,7 @@ void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	//first line
@@ -373,6 +397,8 @@ void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getXResidual().getMMetresValue());
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getXResidual() / It.getXObservedStDev());
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, It.obsID);
 		(*stream) << endl;
 
 		//Y
@@ -381,6 +407,7 @@ void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYObservedStDev().getMMetresValue());
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYResidual().getMMetresValue());
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYResidual() / It.getYObservedStDev());
+		(*stream).writeString(obsIdWidth, It.obsID);
 		(*stream) << endl;
 		//Z
 		(*stream) << TAB;
@@ -388,6 +415,7 @@ void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getZObservedStDev().getMMetresValue());
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getZResidual().getMMetresValue());
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getZResidual() / It.getZObservedStDev());
+		(*stream).writeString(obsIdWidth, It.obsID);
 		(*stream) << endl;
 	}
 	(*stream) << endl;

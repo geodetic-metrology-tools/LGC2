@@ -12,7 +12,13 @@
 
 namespace tut
 {
-    struct test_CAM{};
+    struct test_CAM
+	{
+		test_CAM() : projTest(std::make_shared<TLGCData>()), r(projTest) {}
+
+		std::shared_ptr<TLGCData> projTest;
+		TReader r;
+	};
     typedef test_group<test_CAM> factory;
     typedef factory::object object;
 }
@@ -31,10 +37,7 @@ namespace tut
 	template<>
 	void object::test<1>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION at origin");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOT_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -60,10 +63,7 @@ namespace tut
 	template<>
 	void object::test<2>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION at origin, CALA in fixed SUB");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOT_1_SUBF1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -89,10 +89,7 @@ namespace tut
 	template<>
 	void object::test<3>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION at origin, CALA in free SUBF");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOT_1_SUBF2.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -124,10 +121,7 @@ namespace tut
 	template<>
 	void object::test<4>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION not at origin, CALA in free SUBF");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_ROOTNOTORIG_1_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -159,10 +153,7 @@ namespace tut
 	template<>
 	void object::test<5>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION not at origin in free SUBF");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_SUBF_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -193,10 +184,7 @@ namespace tut
 	template<>
 	void object::test<6>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION in free SUBF");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_SUBF_2.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -228,10 +216,7 @@ namespace tut
 	template<>
 	void object::test<7>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 1 STATION not at the origin in free SUBF");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_SUBFNOTORIG_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -263,10 +248,7 @@ namespace tut
 	template<>
 	void object::test<8>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 2 STATIONS in ROOT, 1 POIN to determine ");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2ST.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -292,10 +274,7 @@ namespace tut
 	template<>
 	void object::test<9>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 2 STATIONS ROOT, CALA points in SUBFRAME ");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -326,10 +305,7 @@ namespace tut
 	template<>
 	void object::test<10>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 2 STATIONS with 1 in subf, 1 POIN to determine ");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2ST_1STINSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -360,10 +336,7 @@ namespace tut
 	template<>
 	void object::test<11>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVD, 2 STATIONS in subf, 1 POIN to determine ");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2STSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -392,16 +365,63 @@ namespace tut
 
  	}
 
+	template<>
+	template<>
+	void object::test<12>()
+	{
+		set_test_name("Testing UVD, 2 STATIONS in subf, 1 POIN to determine and read observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVD_2STSUBF_id.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestCAM::UVD_2STSUBF_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+		TDataTreeIterator frameIt = projTest->getTree().begin();
+		int maxObsIdLength = 0;
+		int i = 0;
+		// Check the observation ID and the max observation ID length
+		frameIt++;
+		std::vector<std::string> ctrlIDf1{"BCAM1_P1", "BCAM1_P3", "BCAM1_P4", "BCAM1_P2VAR"};
+		for (auto const &data : frameIt.node->data->measurements.fCAM.begin()->measUVD)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlIDf1[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		frameIt++;
+		i = 0;
+		std::vector<std::string> ctrlIDf2{"BCAM1_STN2_P2VAR", "BCAM1_STN2_P1", "BCAM1_STN2_P4", "BCAM1_STN2_P3"};
+		for (auto const &data : frameIt.node->data->measurements.fCAM.begin()->measUVD)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlIDf2[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+		
+	}
+
 	//------------------------------------------ UVEC -------------------------------------------------//
 
 	template<>
 	template<>
-	void object::test<12>()
+	void object::test<13>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 1 STATION at origin");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_ROOT_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -426,12 +446,9 @@ namespace tut
 
 	template<>
 	template<>
-	void object::test<13>()
+	void object::test<14>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 1 STATION at origin, CALA in fixed SUB");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_ROOT_1_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -460,12 +477,9 @@ namespace tut
 	
 	template<>
 	template<>
-	void object::test<14>()
+	void object::test<15>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 1 STATION at origin, POIN in SUBF with RZ rotation");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_ROOTNOTORIG_1_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -494,13 +508,9 @@ namespace tut
 
 	template<>
 	template<>
-	void object::test<15>()
+	void object::test<16>()
 	{ 
-		
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 1 STATION at origin in subf,1 POIN");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -530,12 +540,9 @@ namespace tut
 
 	template<>
 	template<>
-	void object::test<16>()
+	void object::test<17>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 1 STATION not at origin in subf,1 POIN");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_SUBFNOTORIG_1.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -565,12 +572,9 @@ namespace tut
 
 	template<>
 	template<>
-	void object::test<17>()
+	void object::test<18>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 2 STATIONS in root");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2ST_ROOT.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -595,12 +599,9 @@ namespace tut
 #if 0
 	template<>
 	template<>
-	void object::test<18>()
+	void object::test<19>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 2 STATIONS in root, points in subf");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -629,12 +630,9 @@ namespace tut
 
 	template<>
 	template<>
-	void object::test<19>()
+	void object::test<20>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 2 STATIONS 1 in root 1 in subf");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2ST_1STINSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -662,12 +660,9 @@ namespace tut
 
 	template<>
 	template<>
-	void object::test<20>()
+	void object::test<21>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing UVEC, 2 STATIONS in subf");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STSUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -695,5 +690,55 @@ namespace tut
 		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 0.0  , 1e-7);
 
  	}
+
+	template<>
+	template<>
+	void object::test<22>()
+	{
+		set_test_name("Testing UVEC, 2 STATIONS in subf and read observation id");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STSUBF_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestCAM::UVEC_2STSUBF_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+		TDataTreeIterator frameIt = projTest->getTree().begin();
+		int maxObsIdLength = 0;
+		int i = 0;
+
+		// Check the observation ID and the max observation ID length
+		frameIt++;
+		std::vector<std::string> ctrlIDf1{"STN_BCAM1_P1", "STN_BCAM1_P3", "STN_BCAM1_P4", "STN_BCAM1_P2VAR"};
+		for (auto const &data : frameIt.node->data->measurements.fCAM.begin()->measUVEC)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlIDf1[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		frameIt++;
+		std::vector<std::string> ctrlIDf2{"STN2_BCAM1_P2VAR", "STN2_BCAM1_P1", "STN2_BCAM1_P4", "STN2_BCAM1_P3"};
+		i = 0;
+		for (auto const &data : frameIt.node->data->measurements.fCAM.begin()->measUVEC)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlIDf2[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+	}
 
 }

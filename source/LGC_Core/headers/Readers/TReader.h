@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -32,7 +32,6 @@ class TReader {
 		bool readLgc1File(std::istream& lgcStream);
 		bool isLgc2File(std::istream& lgcStream);
 
-
 	private:
 		/// All lgc2 keyword handler objects.
 		std::vector< std::unique_ptr<TAKeyWord> > finterpreters;
@@ -46,5 +45,10 @@ class TReader {
 		/// Not asignable, contains reference
 		TReader& operator=(const TReader&);
 		
+		/// Vector of all observation ID
+		std::vector<std::string> updateListObsID(TDataTreeIterator itTree);
+
+		/// Check that there is no duplicated observation ID
+		bool hasDuplicateObsId(TDataTreeIterator itTree, std::vector<std::string>& listObsId, TFileLogger& outputMessages);
 };
 #endif

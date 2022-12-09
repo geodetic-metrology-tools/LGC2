@@ -46,6 +46,7 @@ void TCAMWriter::writeUVDResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -76,6 +77,8 @@ void TCAMWriter::writeUVDResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "SDIST"); //sigma DIST
 	(*stream).writeString(obsWidth, "CALCDIST"); //estimated DIST 
 	(*stream).writeString(obsResWidth, "RESDIST"); //residual
+
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 
 	(*stream) << endl;
 
@@ -110,6 +113,7 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -132,6 +136,8 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "SYV"); //sigma y vector component
 	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
 	(*stream).writeString(obsResWidth, "RESYV"); //residual 
+
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 
 	(*stream) << endl;
 
@@ -161,6 +167,7 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -223,6 +230,9 @@ void TCAMWriter::writeUVDResults(const std::list<TUVD>& measUVD)
 		//write the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVD.getDistanceResidual().getMMetresValue()); /*Unitless, delete or replace with appropriate conversion*/
 
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItUVD.obsID);
+
 		(*stream)<<endl;
 		}
 		(*stream)<<endl;
@@ -234,6 +244,7 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -278,6 +289,9 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC>& measUVEC)
 
 		//write the residual X vector component
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItUVEC.getYCompVectorResidual()* M2MM);/*Unitless, delete or replace with appropriate conversion*/
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItUVEC.obsID);
 
 		(*stream)<<endl;
 	}

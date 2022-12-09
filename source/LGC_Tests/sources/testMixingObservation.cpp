@@ -12,7 +12,13 @@
 
 namespace tut
 {
-    struct test_MixingObs{};
+    struct test_MixingObs
+	{
+	test_MixingObs() : projTest(std::make_shared<TLGCData>()), r(projTest) {}
+
+	std::shared_ptr<TLGCData> projTest;
+	TReader r;
+	};
     typedef test_group<test_MixingObs> factory;
     typedef factory::object object;
 }
@@ -28,10 +34,7 @@ namespace tut
 	template<>
 	void object::test<1>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ANGL_ZEND_DIST");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -62,10 +65,7 @@ namespace tut
 	template<>
 	void object::test<2>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ANGL_ZEND_DHOR");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DHOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -96,10 +96,7 @@ namespace tut
 	template<>
 	void object::test<3>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ANGL_ZEND_DSPT");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DSPT.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -128,10 +125,7 @@ namespace tut
 	template<>
 	void object::test<4>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing PDOR");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -187,10 +181,7 @@ namespace tut
 	template<>
 	void object::test<5>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing PDOR");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -249,10 +240,7 @@ namespace tut
 	template<>
 	void object::test<6>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing PDOR");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -307,10 +295,7 @@ namespace tut
 	template<>
 	void object::test<7>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing if only one PDOR is active");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -340,10 +325,7 @@ namespace tut
 	template<>
 	void object::test<8>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing if all PDORs are uninitialized when PDOR is inactive.");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -370,5 +352,85 @@ namespace tut
 		ensure_equals("No node should contain an initialized PDOR", numberInitializedPDOR, 0);
 	}
 
+	template<>
+	template<>
+	void object::test<9>()
+	{
+		set_test_name("Testing ANGL_ZEND_DIST observation ID reading");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST_id.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-};
+		std::stringstream infiler(MixObs::ANGL_ZEND_DIST_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+		
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID and the max observation ID length
+		int maxObsIdLength = 0;
+		int i = 0;
+		std::vector<std::string> ctrlIDangl{"STN_ANGL_P1", "STN_ANGL_P2", "STN_ANGL_P3", "STN_ANGL_P4"};
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measANGL)
+		{
+			ensure_equals("The ANGL observation ID is correct", data.obsID, ctrlIDangl[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		std::vector<std::string> ctrlIDzend{"STN_TS1_ZEND_P1", "STN_ZEND_P2", "STN_ZEND_P3", "STN_ZEND_P4"};
+		i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measZEND)
+		{
+			ensure_equals("The ZEND observation ID is correct", data.obsID, ctrlIDzend[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		std::vector<std::string> ctrlIDdist{"STN_DIST_P1", "STN_DIST_P2", "STN_DIST_P3", "STN_DIST_P4"};
+		i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measDIST)
+		{
+			ensure_equals("The DIST observation ID is correct", data.obsID, ctrlIDdist[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		std::vector<std::string> ctrlIDdhor{"STN_DHOR_P1", "STN_DHOR_P2", "STN_DHOR_P3", "STN_DHOR_P4"};
+		i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measDHOR)
+		{
+			ensure_equals("The DHOR observation ID is correct", data.obsID, ctrlIDdhor[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		std::vector<std::string> ctrlIDecth{"ECTH_SC1_P1", "ECTH_SC1_P2", "ECTH_SC1_P3", "ECTH_SC1_P4"};
+		i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measECTH)
+		{
+			ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDecth[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+	}
+	};

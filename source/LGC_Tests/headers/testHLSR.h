@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -1184,6 +1184,20 @@ namespace TestHLSR {
 		"*ENDFRAME                                                                                                                                                                                   \n"
 		"*ENDFRAME                                                                                                                                                                                   \n"
 		"*END                                                                                                                                                                                        \n"
+		;
+
+		/*Test ID keyword*/
+		char const* const ECWS_ID =
+		"*TITR\n"
+		"T1\n"
+		"*OLOC\n"
+		"*INSTR\n"
+		"*HLSR HL_SNSR_1   0.01   0   0  \n"
+		"*CALA\n"
+		"PT1 0 0 0\n"
+		"*ECWS   HL_SNSR_1   0.010000   WSID   WATER0001 \n"
+		"PT1 0.2 ID HL_SNSR_1_PT1\n"
+		"*END\n"
 		;
 
 }

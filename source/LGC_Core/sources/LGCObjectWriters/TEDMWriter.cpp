@@ -110,6 +110,7 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
@@ -130,6 +131,7 @@ void	TEDMWriter::writeDSPTResultsHeader(const int)
 	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error DSPT
 	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
 	(*stream).writeString(obsResWidth, "THSE"); // target height sigma 
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -176,6 +178,7 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 	int					nameWidth = getNameWidth();
 	int					obsWidth = getObsWidth();
 	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsResWidth();
 	int					lengthResPrecision = std::max(getLengthResidualPrecision()-3, 0);
 	int					lengthPrecision =	getLengthPrecision();
 	std::string         TABs = stream->getCurrSpaceExtended(2);
@@ -245,6 +248,9 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 
 		//Write the sigma of the target height (THSE)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.target.sigmaTargetHt.getMMetresValue());
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItDSPT.obsID);
 
 		(*stream)<<endl;
 	}

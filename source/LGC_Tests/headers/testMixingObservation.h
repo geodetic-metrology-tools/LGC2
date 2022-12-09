@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -48,6 +48,54 @@ namespace MixObs {
 				"P2 173.01743\n"
 				"P3 299.90492\n"
 				"P4 282.72046\n"
+	;
+
+	char const *const ANGL_ZEND_DIST_id = 
+	"*TITR\n"
+	"Testing Input Matrices Filler.\n"
+	"*OLOC\n"
+	"*FAUT\n"
+
+	"*INSTR\n"
+	"*POLAR TS1 T2 0.0 0.0 0.0 0\n"
+	"T2  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0 \n"
+	"*SCALE SC1 1.0 0.0 0.0 0.0 0.0				   \n"
+	"*CALA\n"
+		"STN  0 0 0\n"
+		"P1  0 100 100\n"			
+		"P3  100 200 200\n"		
+		"P4  0 200 200\n"
+
+	"*POIN\n"
+		"P2 200.005 150.056 100.1\n" /* Correct values: 100 100 100*/
+
+	"*TSTN STN TS1 IHFIX\n"
+		"*V0\n"
+			"*ANGL\n"
+				"P1  0.04506 ID STN_ANGL_P1\n"
+				"P2 49.99911 ID STN_ANGL_P2\n"
+				"P3 29.51324 ID STN_ANGL_P3\n"
+				"P4  0.14677 ID STN_ANGL_P4\n"
+			"*ZEND\n"
+				"P1 49.99345 ID STN_TS1_ZEND_P1\n"
+				"P2 60.81738 ID STN_ZEND_P2\n"
+				"P3 53.53918 ID STN_ZEND_P3\n"
+				"P4 50.00874 ID STN_ZEND_P4\n"
+			"*DIST\n"
+				"P1 141.66117 ID STN_DIST_P1\n"
+				"P2 173.01743 ID STN_DIST_P2\n"
+				"P3 299.90492 ID STN_DIST_P3\n"
+				"P4 282.72046 ID STN_DIST_P4\n"
+			"*DHOR\n"
+				"P1 100.00001 ID STN_DHOR_P1\n"
+				"P2 141.42139 ID STN_DHOR_P2\n"
+				"P3 223.60680 ID STN_DHOR_P3\n"
+				"P4 199.99999 ID STN_DHOR_P4\n"
+			"*ECTH   100.00000 SC1\n"
+				"P1 0.3 ID ECTH_SC1_P1		\n"
+				"P2 0.40002 ID ECTH_SC1_P2	\n"
+				"P3 0.3 ID ECTH_SC1_P3		\n"
+				"P4 -0.3 ID ECTH_SC1_P4		\n"
 	;
 
 	/*TSTN ANGL and ZEND, we replace DIST by DHOR*/

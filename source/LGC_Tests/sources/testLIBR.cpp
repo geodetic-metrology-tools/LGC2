@@ -13,7 +13,13 @@
 
 namespace tut
 {
-	struct test_LIBR{};
+	struct test_LIBR
+	{
+	test_LIBR() : projTest(std::make_shared<TLGCData>()), r(projTest) {}
+
+	std::shared_ptr<TLGCData> projTest;
+	TReader r;
+	};
 	typedef test_group<test_LIBR> factory;
 	typedef factory::object object;
 }
@@ -744,10 +750,7 @@ namespace tut
 	template<>
 	void object::test<2>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-	
 		set_test_name("Testing AZD measurement in SPHE");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
@@ -789,10 +792,7 @@ namespace tut
 	template<>
 	void object::test<3>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-	
 		set_test_name("Testing AZDhor measurement in OLOC");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
@@ -833,10 +833,7 @@ namespace tut
 	template<>
 	void object::test<4>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-	
 		set_test_name("Testing PLR measurement in SPHE");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 	
@@ -877,10 +874,7 @@ namespace tut
 	template<>
 	void object::test<5>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing DVER measurement in oloc");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -914,6 +908,53 @@ namespace tut
 		ensure_equals("STN z coordinate should match", STN.getZ().getMetresValue(), 402.1977888, 1e-5);
 	}
 	
+	// test PLR3D observation ID reading
+	template<>
+	template<>
+	void object::test<6>()
+	{
+		set_test_name("Testing PLR3D observation ID reading");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/LIBR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
 
+		std::stringstream infiler(TestLIBR::LIBR_PLR_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &data = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID and the max observation ID length
+		int maxObsIdLength = 0;
+		int i = 0;
+		std::vector<std::string> ctrlIDtstn1{"PLR3D_ST2_1", "PLR3D_REF_1", "PLR3D_PT_1"};
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measPLR3D)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlIDtstn1[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		std::vector<std::string> ctrlIDtstn2{"PLR3D_STN_1", "PLR3D_REF_2", "PLR3D_PT2_1"};
+		i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fTSTN.back().get()->roms.begin()->get()->measPLR3D)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlIDtstn2[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+	}
 
 };

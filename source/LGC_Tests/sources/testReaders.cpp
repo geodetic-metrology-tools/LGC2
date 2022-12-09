@@ -438,7 +438,7 @@ namespace tut
 			// PLR3D
 			TKeyPLR3D plr(proj);
             plr.parse(tokenizefileString("*PLR3D TRGT PT8"), true, -1);
-            plr.parse(tokenizefileString("P2 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
+            plr.parse(tokenizefileString("P2 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17 ID PolarSequence"), true, -1);
 			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTargetId, "PT9");
 			ensure_equals("Target of this measurement taken implicitly from *PLR3D", ts1->roms.back()->measPLR3D.back().target.ID, "PT8");
 
@@ -454,6 +454,7 @@ namespace tut
 			ensure_equals(plrmeas.target.sigmaZenD.getRadiansValue(), 15 * CC2RAD);
 			ensure_equals(plrmeas.target.sigmaDist, 16* MM2M);
 			ensure_equals(plrmeas.target.ppmDist, 17* MM2M);
+			ensure_equals(plrmeas.obsID, "PolarSequence");
 
             plr.parse(tokenizefileString("P3 1 2 3 TRGT PT2 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
 			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTargetId, "PT9");
@@ -472,7 +473,7 @@ namespace tut
             ang.parse(tokenizefileString("P2 88 OBSE 21 TCSE 22"), true, -1);
 			ensure_equals("ANGL deafault target should be taken from ROM", ts1->roms.back()->measANGL.back().target.ID, "PT9");
 
-            ang.parse(tokenizefileString("P3 88 TRGT PT7 OBSE 21 TCSE 22"), true, -1);
+            ang.parse(tokenizefileString("P3 88 TRGT PT7 OBSE 21 TCSE 22 ID Angle1"), true, -1);
 			ensure_equals("Default target in this ROM should not be affected",  ts1->roms.back()->defaultTargetId, "PT9");
 			ensure_equals("ANGL target of this measurement updated", ts1->roms.back()->measANGL.back().target.ID, "PT7");
 
@@ -480,11 +481,12 @@ namespace tut
 			ensure_distance(angmeas.getAngle().getGonsValue(), 88.0, 1e-8);
 			ensure_equals(angmeas.target.sigmaAngl.getRadiansValue(), 21 * CC2RAD);
 			ensure_equals(angmeas.target.sigmaTargetCentering, 22 * MM2M);
+			ensure_equals(angmeas.obsID, "Angle1");
 			//
 			// ZEND
 			TKeyZEND zend(proj);
             zend.parse(tokenizefileString("*ZEND TRGT PT8"), true, -1);
-            zend.parse(tokenizefileString("P2 22 OBSE 31 TH 32 THSE 33 TCSE 34"), true, -1);
+            zend.parse(tokenizefileString("P2 22 OBSE 31 TH 32 THSE 33 TCSE 34 ID zDist1"), true, -1);
 			ensure_equals("Target of this measurement taken from *ZEND",  ts1->roms.back()->measZEND.back().target.ID, "PT8");
 			const auto& zendmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measZEND.back());
 			ensure_equals(zendmeas.targetPos->getName(), "P2");
@@ -492,6 +494,7 @@ namespace tut
 			ensure_equals(zendmeas.target.targetHt, 32);
 			ensure_equals(zendmeas.target.sigmaTargetHt, 33 * MM2M);
 			ensure_equals(zendmeas.target.sigmaTargetCentering, 34 * MM2M);
+			ensure_equals(zendmeas.obsID, "zDist1");
 
             zend.parse(tokenizefileString("P3 22 TRGT PT7 OBSE 31 TH 32 THSE 33 TCSE 34"), true, -1);
 			ensure_equals("Target of this measurement updated ZEND",  ts1->roms.back()->measZEND.back().target.ID, "PT7");
@@ -502,7 +505,7 @@ namespace tut
             v1.parse(tokenizefileString("*V0"), true, -1);
 			TKeyDIST dist(proj);
             dist.parse(tokenizefileString("*DIST"), true, -1);
-            dist.parse(tokenizefileString("P2 40 OBSE 41 PPM 42 TH 43 THSE 44 TCSE 45"), true, -1);
+            dist.parse(tokenizefileString("P2 40 OBSE 41 PPM 42 TH 43 THSE 44 TCSE 45 ID Dist1"), true, -1);
 			ensure_equals("Default target taken from new ROM, which takes default target implicitly from TSTN", ts1->roms.back()->measDIST.back().target.ID, "PT2");
 
 			const auto& distmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDIST.back());
@@ -511,11 +514,12 @@ namespace tut
 			ensure_equals(distmeas.target.targetHt, 43);
 			ensure_equals(distmeas.target.sigmaTargetHt, 44 * MM2M);
 			ensure_equals(distmeas.target.sigmaTargetCentering, 45 * MM2M);
+			ensure_equals(distmeas.obsID, "Dist1");
 			//
 			// ECTH
 			TKeyECTH ecth(proj);
             ecth.parse(tokenizefileString("*ECTH 1 SC1"), true, -1);
-            ecth.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
+            ecth.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5 ID Ecart1"), true, -1);
 			const auto& ecthmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH.back());
 			ensure_equals(ecthmeas.targetPos->getName(), "P2");
 			ensure_equals(ecthmeas.obsHorAngle.getGonsValue(), 1);
@@ -524,6 +528,7 @@ namespace tut
 			ensure_equals(ecthmeas.target.ppmD, 0.1 * MM2M);
 			ensure_equals(ecthmeas.target.sigmaInstrCentering, 0.5 * MM2M);
 			ensure_equals(ecthmeas.getDistance(), 1.1);
+			ensure_equals(ecthmeas.obsID, "Ecart1");
 			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE,"SC1").sigmaInstrCentering, 5 * MM2M);
 
             ecth.parse(tokenizefileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
@@ -541,13 +546,14 @@ namespace tut
             dhor.parse(tokenizefileString("*DHOR"), true, -1);
             dhor.parse(tokenizefileString("P2 50 TRGT PT7 OBSE 51 PPM 52 TCSE 53"), true, -1);
 			ensure_equals("Target of the measurement should match", ts1->roms.back()->measDHOR.back().target.ID, "PT7");
-            dhor.parse(tokenizefileString("P2 50 OBSE 51 PPM 52 TCSE 53"), true, -1);
+            dhor.parse(tokenizefileString("P2 50 OBSE 51 PPM 52 TCSE 53 ID HoriDist1"), true, -1);
 			ensure_equals("Target implicitly taken from previous measurement", ts1->roms.back()->measDHOR.back().target.ID, "PT7");
 
 			const auto& dhormeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDHOR.back());
 			ensure_equals(dhormeas.target.sigmaDist, 51 * MM2M);
 			ensure_equals(dhormeas.target.ppmDist, 52 * MM2M);
 			ensure_equals(dhormeas.target.sigmaTargetCentering, 53 * MM2M);
+			ensure_equals(dhormeas.obsID, "HoriDist1");
 			
 			// non-TSTN measurements
 
@@ -563,7 +569,7 @@ namespace tut
 			ensure_equals("DPST default target updated",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET2");
             dspt.parse(tokenizefileString("P3 63 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), true, -1);
 			ensure_equals("DPST default target implicitly taken from preceding",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET2");
-            dspt.parse(tokenizefileString("P3 63 TRGT ET1 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), true, -1);
+            dspt.parse(tokenizefileString("P3 63 TRGT ET1 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68 ID Dist1"), true, -1);
 			ensure_equals("DPST default target updated",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET1");
 
 			const auto& dspPOLAR(proj.getCurrentNode().measurements.fEDM.back().instrument);
@@ -578,23 +584,25 @@ namespace tut
 			ensure_equals(dsptmeas.target.targetHt, 66);
 			ensure_equals(dsptmeas.target.sigmaTargetHt, 67 * MM2M);
 			ensure_equals(dsptmeas.target.sigmaTargetCentering, 68 * MM2M);
+			ensure_equals(dsptmeas.obsID, "Dist1");
 			// ensure_equals("Adjustable distance correction should be valid and unchanged", dsptmeas.target.distCorrectionAdjustable->getProvisionalValue(), 3.0);
 			//
 			// DVER
 			TKeyDVER dver(proj);
             dver.parse(tokenizefileString("*DVER"), true, -1);
-            dver.parse(tokenizefileString("P2 P3 2.0 OBSE 0.01"), true, -1);
+            dver.parse(tokenizefileString("P2 P3 2.0 OBSE 0.01 ID DistVer1"), true, -1);
 			const auto& dverM(proj.getCurrentNode().measurements.fDVER.back());
 			ensure_equals("Point coordinates should match", dverM.station->getProvisionalValue().getX().getMetresValue(), 1);
 			ensure_equals("Point coordinates should match", dverM.targetPos->getProvisionalValue().getX().getMetresValue(),1);
 			ensure_equals("Point coordinates should match", dverM.getObservedStDev(), 0.01 * MM2M);
-
+			ensure_equals("Point coordinates should match", dverM.getObservedStDev(), 0.01 * MM2M);
+			ensure_equals("Observation ID should match", dverM.obsID, "DistVer1");
 			//
 			// DLEV
 			TKeyDLEV dlev(proj);
 
             dlev.parse(tokenizefileString("*DLEV LI1 RefPt P2"), true, -1);
-            dlev.parse(tokenizefileString("P1 5 DHOR 1.0 TRGT ST2 OBSE 0.1 PPM 0.01 TH 1.0 THSE 0.1 DSE 0.1"), true, -1);
+            dlev.parse(tokenizefileString("P1 5 DHOR 1.0 TRGT ST2 OBSE 0.1 PPM 0.01 TH 1.0 THSE 0.1 DSE 0.1 ID LevelObs1"), true, -1);
             dlev.parse(tokenizefileString("P3 6"), true, -1);
 
 			const auto& levelRound(proj.getCurrentNode().measurements.fLEVEL.back());
@@ -608,6 +616,7 @@ namespace tut
 			ensure_equals("Measured vertical distance should match", firstDLEVMeasurement.getDistance(),5);
 			ensure_equals("Target should be overidden", firstDLEVMeasurement.target.ID,"ST2");
 			ensure_equals("Target's ppm value should be overidden", firstDLEVMeasurement.target.ppmD, 0.01 * MM2M);
+			ensure_equals("Observation ID should match", firstDLEVMeasurement.obsID, "LevelObs1");
 
 			auto& firstDLEVMeasurement2(*(std::next(levelRound.measDLEV.begin(), 1)));
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(),"P3");
@@ -623,7 +632,7 @@ namespace tut
 			// ECVE
 			TKeyECVE ecve(proj);
 			ecve.parse(tokenizefileString("*ECVE SC1 PtLine P2"), true, -1);
-			ecve.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
+			ecve.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5 ID OffsetToRef1"), true, -1);
 			const auto& ecvemeas(proj.getCurrentNode().measurements.fECVE.back().measECVE.back());
 			ensure_equals(ecvemeas.targetPos->getName(), "P2");
 			ensure_equals(ecvemeas.target.ID, "SC1");
@@ -631,6 +640,7 @@ namespace tut
 			ensure_equals(ecvemeas.target.ppmD, 0.1 * MM2M);
 			ensure_equals(ecvemeas.target.sigmaInstrCentering, 0.5 * MM2M);
 			ensure_equals(ecvemeas.getDistance(), 1.1);
+			ensure_equals(ecvemeas.obsID, "OffsetToRef1");
 			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
 
 			ecve.parse(tokenizefileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
@@ -649,7 +659,7 @@ namespace tut
 			pr1.parse(tokenizefileString("B 0 2 3"), true, -1);
 			TKeyECSP ecsp(proj);
 			ecsp.parse(tokenizefileString("*ECSP A B SC1 "), true, -1);
-			ecsp.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
+			ecsp.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5 ID DistToRef1"), true, -1);
 			const auto& ecspmeas(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
 			ensure_equals(ecspmeas.targetPos->getName(), "P2");
 			ensure_equals(ecspmeas.target.ID, "SC1");
@@ -657,6 +667,7 @@ namespace tut
 			ensure_equals(ecspmeas.target.ppmD, 0.1 * MM2M);
 			ensure_equals(ecspmeas.target.sigmaInstrCentering, 0.5 * MM2M);
 			ensure_equals(ecspmeas.getDistance(), 1.1);
+			ensure_equals(ecspmeas.obsID, "DistToRef1");
 			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
 
 			ecsp.parse(tokenizefileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
@@ -672,11 +683,12 @@ namespace tut
 			// RADI
 			TKeyRADI radi(proj);
 			radi.parse(tokenizefileString("*RADI 1"), true, -1);
-			radi.parse(tokenizefileString("P1 100.0 OBSE 0.01"), true, -1);
+			radi.parse(tokenizefileString("P1 100.0 OBSE 0.01 ID RadialConstraint1"), true, -1);
 			const auto& radiM(proj.getCurrentNode().measurements.fRADI.back());
 			ensure_equals("Point name should match", radiM.station->getName(), "P1");
 			ensure_equals("bearing should match", radiM.getAngleCnstr().getGonsValue(), 100.0, 1e-7);
 			ensure_equals("sigma should match", radiM.getObservedStDev().getMMetresValue(), 0.01);
+			ensure_equals("Observation ID should match", radiM.obsID, "RadialConstraint1");
 
 			radi.parse(tokenizefileString("P2 150.0"), true, -1);
 			const auto& radiM2(proj.getCurrentNode().measurements.fRADI.back());
@@ -702,7 +714,7 @@ namespace tut
 			//OBSXYZ
 			TKeyOBSXYZ cobsXYZ(proj);
 			cobsXYZ.parse(tokenizefileString("*OBSXYZ"), true, -1);
-			cobsXYZ.parse(tokenizefileString("P2 1 2 3 0.1 0.5 0.8"), true, -1);
+			cobsXYZ.parse(tokenizefileString("P2 1 2 3 0.1 0.5 0.8 ID 3Dobs1"), true, -1);
 			const auto& obsXYZM(proj.getCurrentNode().measurements.fOBSXYZ.back());
 			ensure_equals("Point name should match", obsXYZM.station->getName(), "P2");
 			ensure_equals("obs_X should match", obsXYZM.obsValue.getX(), 1);
@@ -711,6 +723,7 @@ namespace tut
 			ensure_equals("SX should match", obsXYZM.getXObservedStDev().getMMetresValue(), 0.1);
 			ensure_equals("SY should match", obsXYZM.getYObservedStDev().getMMetresValue(), 0.5);
 			ensure_equals("SZ should match", obsXYZM.getZObservedStDev().getMMetresValue(), 0.8);
+			ensure_equals("Observation ID should match", obsXYZM.obsID, "3Dobs1");
 
 			////////////////////////////////////
 			//Testing FRAME measurements

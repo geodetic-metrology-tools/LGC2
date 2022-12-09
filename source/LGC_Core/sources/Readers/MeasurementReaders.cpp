@@ -159,6 +159,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TUVEC uvec(obspt, tgt);
 		uvec.line = line;
         uvec.setActive(getCAM().uvecActive && activeLine); // Active only if ROM is active as well
+		uvec.obsID = std::string(opts.getParamS("ID", uvec.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -235,6 +236,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 		TUVD uvd(obspt, tgt);
 		uvd.line = line;
         uvd.setActive(getCAM().uvdActive && activeLine); // Active only if ROM is active as well
+		uvd.obsID = std::string(opts.getParamS("ID", uvd.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -347,6 +349,7 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		TPLR3D plr(obspt, tgt);
 		plr.line = line;
         plr.setActive(getROM()->plrActive && activeLine); // Active only if ROM is active as well
+		plr.obsID = std::string(opts.getParamS("ID", plr.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -427,6 +430,7 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TANGL angl(obspt, tgt);
 		angl.line = line;
         angl.setActive(getROM()->anglActive && activeLine); // Active only if ROM is active as well
+		angl.obsID = std::string(opts.getParamS("ID", angl.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -489,6 +493,7 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TZEND zend(obspt, tgt);
 		zend.line = line;
         zend.setActive(getROM()->zendActive && activeLine); // Active only if ROM is active as well
+		zend.obsID = std::string(opts.getParamS("ID", zend.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -570,6 +575,7 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		dist.line = line;
         dist.setActive(getROM()->distActive && activeLine); // Active only if ROM is active as well
+		dist.obsID = std::string(opts.getParamS("ID", dist.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -631,7 +637,8 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 	   ecth.line = line;
        ecth.setActive(getROM()->ecthActive && activeLine); // Active only if ROM is active as well
-
+	   ecth.obsID = std::string(opts.getParamS("ID", ecth.obsID));
+	   
 	   	//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -692,7 +699,8 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 
 		ecdir.line = line;
         ecdir.setActive(getROM()->ecdirActive && activeLine); // Active only if ROM is active as well
-
+		ecdir.obsID = std::string(opts.getParamS("ID", ecdir.obsID));
+		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -749,6 +757,7 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		auto& dhor(getROM()->measDHOR.back());
 		dhor.line = line;
         dhor.setActive(getROM()->dhorActive && activeLine); // Active only if ROM is active as well
+		dhor.obsID = std::string(opts.getParamS("ID", dhor.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -829,6 +838,7 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, in
         auto& dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
         dspt.line = line;
         dspt.setActive(proj.getCurrentNode().measurements.fEDM.back().isActive() && activeLine); // Active only if station active as well
+		dspt.obsID = std::string(opts.getParamS("ID", dspt.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -877,7 +887,8 @@ void TKeyDVER::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		dver.line = line;
         dver.setActive(proj.getCurrentNode().measurements.dverActive && activeLine); // Active only if ROM active as well
-
+		dver.obsID = std::string(opts.getParamS("ID", dver.obsID));
+		
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -962,6 +973,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		dlev.line = line;
         dlev.setActive(levelGrOfMeas.isActive() && activeLine); // Active only if station active as well
+		dlev.obsID = std::string(opts.getParamS("ID", dlev.obsID));
 
 		levelGrOfMeas.measDLEV.emplace_back(dlev);
 	}
@@ -1008,6 +1020,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		echo.line = line;
         echo.setActive(echoROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		echo.obsID = std::string(opts.getParamS("ID", echo.obsID));
 
 		echoROMLatest.measECHO.emplace_back(echo);
 
@@ -1080,6 +1093,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
         
         ecve.line = line;
         ecve.setActive(ecveROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		ecve.obsID = std::string(opts.getParamS("ID", ecve.obsID));
 
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
@@ -1143,6 +1157,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
         
         ecsp.line = line;
         ecsp.setActive(ecspROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		ecsp.obsID = std::string(opts.getParamS("ID", ecsp.obsID));
 
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
@@ -1217,6 +1232,7 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		orie.line = line;
         orie.setActive(proj.getCurrentNode().measurements.fORIE.back().isActive() && activeLine); // Active only if ROM active as well
+		orie.obsID = std::string(opts.getParamS("ID", orie.obsID));
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
@@ -1269,7 +1285,8 @@ void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		radi.line = line;
         radi.setActive(proj.getCurrentNode().measurements.radiActive && activeLine); // Active only if ROM active as well
-		
+		radi.obsID = std::string(opts.getParamS("ID", radi.obsID));
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -1296,6 +1313,9 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A OBSXYZ measurements must have at least 7 entries: "
 			"One point, 3 observed coordinates, and 3 sigmas");
+		
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fOBSXYZ.emplace_back(
@@ -1310,7 +1330,8 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		auto& obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
 		obsxyz.line = line;
         obsxyz.setActive(proj.getCurrentNode().measurements.obsxyzActive && activeLine); // Active only if ROM active as well
-		
+		obsxyz.obsID = std::string(opts.getParamS("ID", obsxyz.obsID));
+
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
@@ -1381,6 +1402,8 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 
 		incly.line = line;
 		incly.setActive(proj.getCurrentNode().measurements.fINCLY.back().isActive() && activeLine); // Active only if ROM active as well
+		incly.obsID = std::string(opts.getParamS("ID", incly.obsID));
+
 		proj.getCurrentNode().measurements.fINCLY.back().measINCLY.emplace_back(incly);
 	}
 }
@@ -1467,6 +1490,7 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		ecws.line = line;
 		ecws.setActive(ecwsROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		ecws.obsID = std::string(opts.getParamS("ID", ecws.obsID));
 
 		ecwsROMLatest.measECWS.emplace_back(ecws);
 	}
