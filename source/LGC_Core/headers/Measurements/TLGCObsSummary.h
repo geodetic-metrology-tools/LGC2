@@ -14,12 +14,19 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TALGCObjectWriter.h>
 
+#ifdef USE_SERIALIZER
+    #include <Serializer.hpp>
+#endif // USE_SERIALIZER
 
 /*!
 \ingroup Measurements
 \brief Class containing summary data for a given observation type in a LS calculation. Mean, standard error, confidence limits and histogram information.
 */
-class  TLGCObsSummary
+#ifdef USE_SERIALIZER
+class TLGCObsSummary : public Serializable
+#else
+class TLGCObsSummary
+#endif // USE_SERIALIZER
 {
 public:
     /*!@name Constructors and Destructors */
@@ -118,7 +125,10 @@ public:
     static void createHistogram(bool create){ fCreateHistogram = create; }
 
     //@}
-
+    #ifdef USE_SERIALIZER
+	    // Inherited via Serializable
+	    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+    #endif
 
 protected:
 
@@ -155,39 +165,98 @@ private:
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the TPLR3D observation.
 */
-struct TPOLARObsSummary{
+#ifdef USE_SERIALIZER
+struct TPOLARObsSummary : public Serializable
+#else
+struct TPOLARObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary distObsSum;
     TLGCObsSummary anglObsSum;
     TLGCObsSummary zendObsSum;
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("distObsSum", distObsSum);
+		obj.addProperty("anglObsSum", anglObsSum);
+		obj.addProperty("zendObsSum", zendObsSum);
+	}
+#endif
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVD observation.
 */
-struct TUVDObsSummary{
+#ifdef USE_SERIALIZER
+struct TUVDObsSummary : public Serializable
+#else
+struct TUVDObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary distObsSum;
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("distObsSum", distObsSum);
+		obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+		obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+	}
+#endif
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVEC observation.
 */
-struct TUVECObsSummary{
+#ifdef USE_SERIALIZER
+struct TUVECObsSummary : public Serializable
+#else
+struct TUVECObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("xVectorCompObsSum", xVectorCompObsSum);
+		obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+	}
+#endif
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the OBSXYZ observation.
 */
-struct TOBSXYZObsSummary{
+#ifdef USE_SERIALIZER
+struct TOBSXYZObsSummary : public Serializable
+#else
+struct TOBSXYZObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary obsXObsSum;
     TLGCObsSummary obsYObsSum;
     TLGCObsSummary obsZObsSum;
+    
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("obsXObsSum", obsXObsSum);
+		obj.addProperty("obsYObsSum", obsYObsSum);
+		obj.addProperty("obsZObsSum", obsZObsSum);
+	}
+#endif
 };
 
 #endif // SU_LGC_OBS_SUMMARY

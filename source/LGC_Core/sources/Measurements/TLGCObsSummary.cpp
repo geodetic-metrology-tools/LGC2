@@ -340,3 +340,29 @@ TLGCObsSummary TLGCObsSummary::merge(const std::list<const TLGCObsSummary*> &sum
     if(isAnyInitialised) summary.initialise();
     return summary;
 }
+
+#ifdef USE_SERIALIZER
+void TLGCObsSummary::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAngleType", fAngleType);
+	obj.addProperty("fCreateHistogram", fCreateHistogram);
+	obj.addProperty("fHistoData", fHistoData);
+	obj.addProperty("fHistoList", fHistoList);
+	obj.addProperty("fIsInitialised", fIsInitialised);
+	obj.addProperty("fMean", fMean);
+	obj.addProperty("fMeanHiLimit", fMeanHiLimit);
+	obj.addProperty("fMeanLoLimit", fMeanLoLimit);
+	obj.addProperty("fNumberOfObs", fNumberOfObs);
+	obj.addProperty("fNumberOutsideHisto", fNumberOutsideHisto);
+	obj.addProperty("fObsText", fObsText);
+	obj.addProperty("fResMax", fResMax);
+	obj.addProperty("fResMin", fResMin);
+	obj.addProperty("fSumRes", fSumRes);
+	obj.addProperty("fSumRes2", fSumRes2);
+	obj.addProperty("fVarHiLimit", fVarHiLimit);
+	obj.addProperty("fVariance", fVariance);
+	obj.addProperty("fVarLoLimit", fVarLoLimit);
+}
+#endif // USE_SERIALIZER
+
+
