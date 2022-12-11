@@ -276,6 +276,46 @@ const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ec
 // Inherited via Serializable
 void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("measurement", true);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("dhorGlobalSummary_", dhorGlobalSummary_);
+	obj.addProperty("distGlobalSummary_", distGlobalSummary_);
+	obj.addProperty("dlevDHORGlobalSummary_", dlevDHORGlobalSummary_);
+	obj.addProperty("dlevGlobalSummary_", dlevGlobalSummary_);
+	obj.addProperty("dsptGlobalSummary_", dsptGlobalSummary_);
+	obj.addProperty("dverSummary_", dverSummary_);
+	obj.addProperty("ecdirGlobalSummary_", ecdirGlobalSummary_);
+	obj.addProperty("echoGlobalSummary_", echoGlobalSummary_);
+	obj.addProperty("ecspGlobalSummary_", ecspGlobalSummary_);
+	obj.addProperty("ecthGlobalSummary_", ecthGlobalSummary_);
+	obj.addProperty("ecveGlobalSummary_", ecveGlobalSummary_);
+	obj.addProperty("ecwsGlobalSummary_", ecwsGlobalSummary_);
+	obj.addProperty("inclyGlobalSummary_", inclyGlobalSummary_);
+	obj.addProperty("orieGlobalSummary_", orieGlobalSummary_);
+	obj.addProperty("radiSummary_", radiSummary_);
+	obj.addProperty("zendGlobalSummary_", zendGlobalSummary_);
+
+    obj.addProperty("dverActive", dverActive);
+	obj.addProperty("obsxyzActive", obsxyzActive);
+	obj.addProperty("radiActive", radiActive);
+
+    obj.addProperty("obsxyzGlobalSummary_", obsxyzGlobalSummary_);
+	obj.addProperty("obsxyzSummary_", obsxyzSummary_);
+    
+	obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
+	obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
+	obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+
+	/*
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	*/
+
+    
+
+
 }
 #endif
