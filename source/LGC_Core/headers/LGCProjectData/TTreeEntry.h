@@ -58,7 +58,7 @@ struct TTreeEntry
 
 #ifdef USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override 
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override
 	{ 
 		obj.addProperty("ID", ID);
 		obj.addProperty("frame", frame);

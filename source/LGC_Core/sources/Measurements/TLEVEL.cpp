@@ -35,3 +35,19 @@ const TLGCObsSummary& TLEVEL::getDHORObsSummary(std::string text) noexcept {
 	return dhorSummary_;
 }
 
+#ifdef USE_SERIALIZER
+// Inherited via Serializable
+void TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("dhorSummary_", dhorSummary_);
+	obj.addProperty("dlevSummary_", dlevSummary_);
+	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
+	//obj.addProperty("fRefPt", fRefPt);
+	obj.addProperty("hasDHOR", hasDHOR);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("measDLEV", measDLEV);
+	obj.addProperty("stnCounter_", stnCounter_);
+	obj.addProperty("stnId", stnId);
+}
+#endif

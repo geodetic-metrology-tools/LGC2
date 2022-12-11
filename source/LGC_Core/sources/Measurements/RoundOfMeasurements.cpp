@@ -127,3 +127,77 @@ const TLGCObsSummary& TECWSROM::getECWSObsSummary(std::string text)  noexcept {
     ecwsSummary_.setObsText(text);
     return ecwsSummary_;
 }
+
+#ifdef USE_SERIALIZER
+// Inherited via Serializable
+
+void TECHOROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("echoSummary_", echoSummary_);
+	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
+	obj.addProperty("line", line);
+	obj.addProperty("measECHO", measECHO);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+}
+
+void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecspSummary_", ecspSummary_);
+	obj.addProperty("line", line);
+	obj.addProperty("line", measECSP);
+	//obj.addProperty("p1", p1);
+	//obj.addProperty("p2", p2);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+	obj.addProperty("romName", romName);
+}
+
+void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecveSummary_", ecveSummary_);
+	obj.addProperty("fMeasuredLine", fMeasuredLine);
+	//obj.addProperty("fPtLine", fPtLine);
+	obj.addProperty("line", line);
+	obj.addProperty("measECVE", measECVE);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+}
+
+void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fConstantAngle", fConstantAngle);
+	obj.addProperty("instrument", instrument);
+	//obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("line", line);
+	obj.addProperty("measORIE", measORIE);
+	obj.addProperty("orieSummary_", orieSummary_);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+}
+
+void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fConstantAngle", fConstantAngle);
+	obj.addProperty("inclySummary_", inclySummary_);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("measINCLY", measINCLY);
+	//obj.addProperty("positionInTree", positionInTree);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+}
+
+void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecwsSummary_", ecwsSummary_);
+	obj.addProperty("fMeasuredWSHeight", fMeasuredWSHeight);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("measECWS", measECWS);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+	obj.addProperty("romName", romName);
+	obj.addProperty("sigmaWS", sigmaWS);
+}
+#endif

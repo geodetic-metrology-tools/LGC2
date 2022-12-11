@@ -809,37 +809,33 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
-	obj.addProperty("instruments", instruments);
-
 	obj.addProperty("angles", angles);
-	obj.addProperty("lengths", lengths);	
-		
-	obj.addProperty("points", points);
-	obj.addProperty("lines", lines);
-	obj.addProperty("planes", planes);
-	
-
+	// obj.addProperty("comments", comments);
+	// obj.addProperty("config", config);
 	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
-	
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("fMeasInfo", fMeasInfo);
 	obj.addProperty("fPointInfo", fPointInfo);
 	obj.addProperty("fRelError", fRelError);
 	obj.addProperty("fUEOIndices", fUEOIndices);
-	
-	
+	obj.addProperty("instruments", instruments);
 	obj.addProperty("islgc1", islgc1);
-
+	obj.addProperty("lengths", lengths);
+	obj.addProperty("lines", lines);
+	obj.addProperty("planes", planes);
+	obj.addProperty("points", points);
+	// obj.addProperty("pos", pos);
 	obj.addProperty("TLGCStatistic", stat);
+	obj.addProperty("tree", tree);
 
+	
 	Eigen::MatrixXd exampleMatrix(5, 3);
 	std::stringstream ss;
 	ss << exampleMatrix;
 	obj.addProperty("exampleMatrix", ss.str()); 
 	Eigen::Vector3d exampleVector(1, 2, 3);
 	obj.addProperty("exampleVector", exampleVector); 
-
-	obj.addProperty("tree", tree);
+	
 }
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const

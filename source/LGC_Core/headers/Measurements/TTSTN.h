@@ -119,6 +119,11 @@ struct TTSTN : public TStatusObject {
                 , v0(v0)
                 , defaultTargetId(defTargetId) {}
 
+#ifdef USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
         private:
 
             static int romCounter_;
@@ -180,6 +185,11 @@ struct TTSTN : public TStatusObject {
 			rotY(nullptr)
 
 		{}
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
     private:
 

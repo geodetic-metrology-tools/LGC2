@@ -60,6 +60,13 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		TAngle fAllFixedRx[2];
 		/// Allfixed parameter: Ry
 		TAngle fAllFixedRy[2];
+
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+		
 };
 		
 /*! 
@@ -79,6 +86,11 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*! 
@@ -98,6 +110,11 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*! 
@@ -119,7 +136,11 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 		TLength fAllFixedCs;
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
-		
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*! 
@@ -144,6 +165,11 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 /*!
 \ingroup Measurements
@@ -168,6 +194,11 @@ public:
 
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0[2];
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*!
@@ -207,6 +238,11 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 
 		/// Allfixed parameter: distance correction
 		TLength fAllFixedCs;
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 //--------------------------  SCALE measurement--------------------------------------------
@@ -290,6 +326,11 @@ class TDVER  : public TAScalarMeas<int>{
       inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
 	//@}
 
+#ifdef USE_SERIALIZER
+	  // Inherited via Serializable
+	  virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 	private:
 		// The distance correction
 		TLength fDistanceCorrection;
@@ -321,6 +362,11 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				/// Stes DHOR sigma
             inline void setDHORSigma(TLength sigma){ dhorSigma = sigma; }
 
+			#ifdef USE_SERIALIZER
+						// Inherited via Serializable
+						virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+			#endif
+
 			private:
 				/*Optinal horizontal distance sigma which can be assigned to a DHOR measurement inside DLEV.*/
 				TLength dhorSigma;
@@ -344,6 +390,11 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 			/// Allfixed parameter: collimation angle
 			TAngle fAllFixedCollimation;
+
+#ifdef USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 //--------------------------  Orientation measurement--------------------------------------------
@@ -421,6 +472,11 @@ public:
     inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
 
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 private:
 	// The angle constraint
 	TAngle fAngleCnstr;
@@ -487,6 +543,10 @@ public:
 	void setAngleResidual(const TAngle& a) { fbearingResidual = a; }
 	//@}
 	
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 
 private:
 	// Standard deviation of the observed value
@@ -550,6 +610,11 @@ public:
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
 
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 private:
 	// The residual angle constraint
 	TLength fXResidual;
@@ -611,6 +676,11 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 #endif

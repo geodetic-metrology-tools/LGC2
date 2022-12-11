@@ -276,6 +276,49 @@ const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ec
 // Inherited via Serializable
 void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("measurement", true);
+	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	obj.addProperty("dhorGlobalSummary_", dhorGlobalSummary_);
+	obj.addProperty("distGlobalSummary_", distGlobalSummary_);
+	obj.addProperty("dlevDHORGlobalSummary_", dlevDHORGlobalSummary_);
+	obj.addProperty("dlevGlobalSummary_", dlevGlobalSummary_);
+	obj.addProperty("dsptGlobalSummary_", dsptGlobalSummary_);
+	obj.addProperty("dverSummary_", dverSummary_);
+	obj.addProperty("ecdirGlobalSummary_", ecdirGlobalSummary_);
+	obj.addProperty("echoGlobalSummary_", echoGlobalSummary_);
+	obj.addProperty("ecspGlobalSummary_", ecspGlobalSummary_);
+	obj.addProperty("ecthGlobalSummary_", ecthGlobalSummary_);
+	obj.addProperty("ecveGlobalSummary_", ecveGlobalSummary_);
+	obj.addProperty("ecwsGlobalSummary_", ecwsGlobalSummary_);
+	obj.addProperty("inclyGlobalSummary_", inclyGlobalSummary_);
+	obj.addProperty("orieGlobalSummary_", orieGlobalSummary_);
+	obj.addProperty("radiSummary_", radiSummary_);
+	obj.addProperty("zendGlobalSummary_", zendGlobalSummary_);
+
+    obj.addProperty("dverActive", dverActive);
+	obj.addProperty("obsxyzActive", obsxyzActive);
+	obj.addProperty("radiActive", radiActive);
+
+    obj.addProperty("obsxyzGlobalSummary_", obsxyzGlobalSummary_);
+	obj.addProperty("obsxyzSummary_", obsxyzSummary_);
+    
+	obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
+	obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
+	obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+
+    obj.addProperty("fCAM", fCAM);	
+	obj.addProperty("fDVER", fDVER);
+	obj.addProperty("fECHO", fECHO);
+	obj.addProperty("fECSP", fECSP);
+	obj.addProperty("fECVE", fECVE);
+	obj.addProperty("fECWS", fECWS);
+	obj.addProperty("fEDM", fEDM);
+	obj.addProperty("fINCLY", fINCLY);
+	obj.addProperty("fLEVEL", fLEVEL);
+	obj.addProperty("fOBSXYZ", fOBSXYZ);
+	obj.addProperty("fORIE", fORIE);
+	obj.addProperty("fPDOR", fPDOR);
+	obj.addProperty("fRADI", fRADI);
+	obj.addProperty("fLEVEL", fLEVEL);
+	//obj.addProperty("fTSTN", fTSTN);
 }
 #endif
