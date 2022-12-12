@@ -522,6 +522,16 @@ class TInstrumentData
 		};
 
 
+        struct TWPSR {
+			std::string ID;
+			TLength sigmaX; // [m]
+			TLength sigmaZ; // [m]
+			TLength sigmaInstrCenteringX; // [m]
+			TLength sigmaInstrCenteringZ; // [m]
+			TLength sigmaCombinedX; // [m]
+			TLength sigmaCombinedZ; // [m]
+		};
+
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
 		/// All available camera instruments, accessible by their ID. See \ref getDevice for failsave lookup.
@@ -536,6 +546,8 @@ class TInstrumentData
 		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
         /// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
+		/// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
+		std::map<std::string, std::shared_ptr<TWPSR>> fWPSR;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.

@@ -32,6 +32,8 @@ void TMeasurements::initialiseObsSummaries() {
     ecspGlobalSummary_.clear();
 	inclyGlobalSummary_.clear();
     ecwsGlobalSummary_.clear();
+	ecwiGlobalSummary_.xObsSum.clear();
+	ecwiGlobalSummary_.zObsSum.clear();
 
     // Add the residuals of each measurement and initialise the summaries:
 
@@ -91,7 +93,9 @@ void TMeasurements::initialiseObsSummaries() {
         allECVESummaries,
         allECSPSummaries,
 		allINCLYSummaries,
-        allECWSSummaries;
+        allECWSSummaries, 
+        allEcwiXSummaries, 
+        allEcwiZSummaries;
 
     // TSTN
     for(auto &tstn : fTSTN)
@@ -179,6 +183,14 @@ void TMeasurements::initialiseObsSummaries() {
         allECWSSummaries.push_back(&ecwsrom.getECWSObsSummary());
     }
 
+    // ECWI
+	for (auto &ecwirom : fECWI)
+	{
+		ecwirom.initialiseObsSummaries();
+		allEcwiXSummaries.push_back(&ecwirom.getECWIObsSummary().xObsSum);
+		allEcwiZSummaries.push_back(&ecwirom.getECWIObsSummary().zObsSum);
+	}
+
     // Create the global summaries from the collections:
 
     // TSTN:
@@ -198,6 +210,10 @@ void TMeasurements::initialiseObsSummaries() {
     uvdGlobalSummary_.distObsSum = TLGCObsSummary::merge(allUvdDSummaries);
     uvecGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvecXSummaries);
     uvecGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvecYSummaries);
+
+    //WPSR
+	ecwiGlobalSummary_.xObsSum = TLGCObsSummary::merge(allEcwiXSummaries);
+	ecwiGlobalSummary_.zObsSum = TLGCObsSummary::merge(allEcwiZSummaries);
 
     // Other:
     dsptGlobalSummary_ = TLGCObsSummary::merge(allDSPTSummaries);
@@ -271,6 +287,8 @@ const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ec
 const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }
 
 const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }
+
+const TECWIObsSummary& TMeasurements::getECWIGlobalObsSummary() const {	return ecwiGlobalSummary_; }
 
 #if USE_SERIALIZER
 // Inherited via Serializable

@@ -217,6 +217,26 @@ private:
 	TKeyHLSR& operator=(const TKeyHLSR&);
 };
 
+class TKeyWPSR : public TAInstrumentKey
+{
+public:
+	/*!
+		See \ref TAInstrumentKey::TAInstrumentKey
+	*/
+	TKeyWPSR(TLGCData &project, int nb_allowed_keywords = nb_allowed_wpsr, const char **keywords = allowed_WPSR);
+
+	/*!
+		See \ref TKeyINSTR::parse
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int);
+
+	virtual const std::vector<std::string> &parentKeys() const;
+
+private:
+	TKeyWPSR &operator=(const TKeyWPSR &);
+};
+
+
 /*! @} End of Doxygen Groups*/
 
 #endif

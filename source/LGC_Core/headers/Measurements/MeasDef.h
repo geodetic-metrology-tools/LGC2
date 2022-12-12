@@ -717,4 +717,39 @@ public:
 #endif
 };
 
+
+//--------------------------  WPSR measurement--------------------------------------------
+/// Two angle values of a PLR3D measurement
+enum EECWIDistances
+{
+	kX, ///< horizontal direction
+	kZ ///< zenith distance
+};
+
+
+class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>
+{
+public:
+	/// Pointer to the first point
+	const LGCAdjustablePoint *station;
+
+	/// Line in the input file where this measurement was defined
+	int line;
+
+	/*!@name Constructors */
+	//@{
+	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : 
+		TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr){};
+
+	/// Destructor
+	~TECWI() override = default;
+	//@}
+
+	/// Returns the last LS-matrices equation index of this measurement (PLR3D introduces 3 equations)
+	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 1; }
+
+	/// Returns the last observation index of this measurement (PLR3D introduces 3 observations, order is defined to be: theta, phi, s-distance).
+	inline MatrixIndex getLastObservationIndex() const { return fFirstObservationIndex + 1; }
+};
+
 #endif

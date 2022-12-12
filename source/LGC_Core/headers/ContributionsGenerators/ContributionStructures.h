@@ -418,6 +418,23 @@ struct ECWSContrib{
 	TReal		    fWSContrib;
 	TReal			fObsVariance;
 };
+
+struct ECWIContrib
+{
+	TReal fMisclosureVector[2]; //!< Misclosure vector of the First, Second and Third equation respectively.
+	TFreeVector fStationContrib[2];
+	TReal fThetaPlaneAngleContrib[2]; //!< Contribution to the THETA angle of the plane in radians [rad]
+	TReal fRefPtDistContrib[2]; //!< Contribution to a distance of a referenece point from the plane
+	TReal fZPlaneDistContrib[2]; //!< Contribution to a distance of a referenece point from the plane
+	TReal fPitchAngleContrib[2]; //!< Contribution to a distance of a referenece point from the plane
+
+	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
+	//std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fSTransformContrib;
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fSTransformContribFirstEq;
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fSTransformContribSecondEq;
+	//should be a 2D trans contrib
+	TReal fSAGContrib[2];
+	TReal fObsVariance[2];
+
+};
 #endif
-
-

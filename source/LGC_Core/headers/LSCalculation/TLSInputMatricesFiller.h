@@ -26,6 +26,7 @@ struct TECVEROM;
 struct TORIEROM;
 struct INCLYROM;
 struct TECWSROM;
+struct TECWIROM;
 
 /*! 
 	\ingroup LSCalculation
@@ -145,6 +146,9 @@ private:
 
 		/// Add the design matrices contributions for the ECWS measurement. 
 		void addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices);
+
+		/// Add the design matrices contributions for the ECWI measurement.
+		void addECWIContributions(TECWIROM &ecwiROM, TLSInputMatrices *matrices);
 
 		//@}
 

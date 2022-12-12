@@ -40,6 +40,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TINCLWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TFRAMEWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/THLSRWriter.h
+	${CORE_INCLUDE_PATH}/LGCObjectWriters/TWPSRWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TSCALEWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TObservationWriter.h
@@ -124,6 +125,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TINCLWriter.cpp	
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TFRAMEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/THLSRWriter.cpp
+	${CORE_SOURCES_PATH}/LGCObjectWriters/TWPSRWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TSCALEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TObservationWriter.cpp

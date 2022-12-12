@@ -71,6 +71,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
     /// All ECWS measurements in the order in which they appeared in the input file
     std::list<TECWSROM> fECWS;
 
+    /// All ECWI measurements in the order in which they appeared in the input file
+	std::list<TECWIROM> fECWI;
+
     bool dverActive{ true }; ///< activation status of the DVER rom
     bool radiActive{ true }; ///< activation status of the RADI rom
     bool obsxyzActive{ true }; ///< activation status of the OBSXYZ rom
@@ -131,6 +134,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	const TLGCObsSummary& getINCLYGlobalObsSummary() const;
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECWSGlobalObsSummary() const;
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TECWIObsSummary& getECWIGlobalObsSummary() const;
 
 
 #if USE_SERIALIZER
@@ -159,6 +164,9 @@ private:
     TUVDObsSummary uvdGlobalSummary_;
     TUVECObsSummary uvecGlobalSummary_;
 
+    //WPSR:
+	TECWIObsSummary ecwiGlobalSummary_;
+     
     // Other:
     TLGCObsSummary dsptGlobalSummary_;
     TLGCObsSummary dlevGlobalSummary_;
@@ -169,7 +177,6 @@ private:
     TLGCObsSummary ecspGlobalSummary_;
 	TLGCObsSummary inclyGlobalSummary_;
     TLGCObsSummary ecwsGlobalSummary_;
-
 };
 
 #endif // MEASUREMENTS_H_

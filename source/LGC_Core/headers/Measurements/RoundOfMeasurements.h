@@ -325,4 +325,76 @@ private:
 
 	TLGCObsSummary ecwsSummary_;
 };
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of ECWI (TECWI) measurements, which are measuring a single Plane.
+*/
+struct TECWIROM : public TStatusObject
+{
+	/// All ECHO measurements, measuring the 'fmeasuredPlane'
+	std::list<TECWI> measECWI;
+
+	/// The instrument that is used on this station
+	TInstrumentData::TWPSR instrument;
+
+	// Measured vertical plane
+	LGCAdjustablePlane *fMeasuredPlane;
+
+	// Measured SAG, non-owning pointer
+	TAdjustableLength *fMeasuredSAG;
+
+	// Measured SAG, non-owning pointer
+	TAdjustableAngle *fMeasuredPitch;
+
+	/// First anchor point
+	const LGCAdjustablePoint *anchorPtFirst;
+
+	/// Second anchor point
+	const LGCAdjustablePoint *anchorPtSecond;
+
+	// 1-sigma precision of the water surface
+	TLength sigmaSAG;
+
+	// provisional SAG
+	TLength provSAG;
+
+	/// name of the rom
+	std::string romName;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TECWIObsSummary &getECWIObsSummary() const;
+	const TECWIObsSummary &getECWIObsSummary(std::string text) noexcept;
+
+	/// Line of the measurement definition
+	int line;
+	int romId = TECWIROM::romCounter_++;
+
+	TECWIROM(const TInstrumentData::TWPSR &inst,
+		LGCAdjustablePlane *measPlane,
+		TLength sigmaSAG, TLength provSAG,
+		TAdjustableLength *MeasuredSAG,
+		const LGCAdjustablePoint &anchor1,
+		const LGCAdjustablePoint &anchor2) :
+		instrument(inst), 
+		fMeasuredPlane(measPlane), 
+		fMeasuredSAG(MeasuredSAG),
+		fMeasuredPitch(nullptr),
+		sigmaSAG(sigmaSAG), 
+		provSAG(provSAG),
+		anchorPtFirst(&anchor1), 
+		anchorPtSecond(&anchor2),
+		romName(""), 
+		line(NO_VALi)
+	{
+	}
+
+private:
+	static int romCounter_;
+
+	TECWIObsSummary ecwiSummary_;
+};
 #endif

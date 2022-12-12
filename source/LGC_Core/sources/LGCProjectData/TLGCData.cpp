@@ -203,6 +203,8 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
         case TMeasurementsGlobal::kECWS:
             fMeasInfo.fNumECWS++;
             break;
+		case TMeasurementsGlobal::kECWI:
+			fMeasInfo.fNumECWI++;
 	}
 }
 
@@ -249,6 +251,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumINCLY;
     case TMeasurementsGlobal::kECWS:
         return fMeasInfo.fNumECWS;
+	case TMeasurementsGlobal::kECWI:
+		return fMeasInfo.fNumECWI;
 	default:
 		return 0;
 	}
@@ -286,6 +290,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumOBSXYZ = 0;
 	fMeasInfo.fNumINCLY = 0;
     fMeasInfo.fNumECWS = 0;
+	fMeasInfo.fNumECWI = 0;
 }
 
 const TSparseMatrix *TLGCData::getCovMatByConst() const noexcept
@@ -692,6 +697,17 @@ void TLGCData::copyTree(TLGCData const* const src, TLGCData* tgt) {
                     meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
             }      
         }
+
+         // ECWI
+		for (auto &ecwirom : entry->measurements.fECWI)
+		{
+			// Measurements
+			for (auto &meas : ecwirom.measECWI)
+			{
+				if (meas.targetPos)
+					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+			}
+		}
     }
 }
 
@@ -773,6 +789,11 @@ void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
     for (auto& hlsr : tgtData->instruments.fHLSR)
         // Replace the instrument in the memory
         hlsr.second.reset(new TInstrumentData::THLSR(*hlsr.second));
+
+    //WPSR instrument
+	for (auto &wpsr : tgtData->instruments.fWPSR)
+		// Replace the instrument in the memory
+		wpsr.second.reset(new TInstrumentData::TWPSR(*wpsr.second));
 }
 
 void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {

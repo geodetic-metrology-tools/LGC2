@@ -270,4 +270,14 @@ struct TOBSXYZObsSummary
 #endif
 };
 
+/*!
+\ingroup Measurements
+\brief A structure containing observation summaries (TLGCObsSummary) of the two observations of the ECWI observation.
+*/
+struct TECWIObsSummary
+{
+	TLGCObsSummary xObsSum;
+	TLGCObsSummary zObsSum;
+};
+
 #endif // SU_LGC_OBS_SUMMARY

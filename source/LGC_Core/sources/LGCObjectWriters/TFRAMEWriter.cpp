@@ -15,6 +15,7 @@
 #include <TPointTransformer.h>
 #include "TINCLWriter.h"
 #include "THLSRWriter.h"
+#include "TWPSRWriter.h"
 #include "TMeasurements.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,6 +77,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -145,6 +147,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	for (auto& itECWS : tmeas.fECWS)
 		hlsrWriter.writeECWSResults(itECWS);
+
+	for (auto &itECWI : tmeas.fECWI)
+		wpsrWriter.writeECWIResults(itECWI);
 }
 
 

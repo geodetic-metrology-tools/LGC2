@@ -24,6 +24,7 @@ struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
 struct TECWSROM;
+struct TECWIROM;
 
 
 /*!
@@ -133,6 +134,10 @@ public:
 
 		///  Returns the contribution the measured distance to a water surface (ECWS) made by the HLS instrument
 		ECWSContrib	getECWSContrib(const TECWSROM& ecwsROM, const TECWS& ecws);
+
+		///  Returns the contribution for the measured distances to a wire (ECWI) made by the WPS instrument
+		ECWIContrib getECWIContrib(const TECWIROM &ecwiROM, const TECWI &ecwi);
+
 	//@}
 
 

@@ -8,6 +8,7 @@ int TECVEROM::romCounter_ = 0;
 int TORIEROM::romCounter_ = 0;
 int TINCLYROM::romCounter_ = 0;
 int TECWSROM::romCounter_ = 0;
+int TECWIROM::romCounter_ = 0;
 
 void TECHOROM::initialiseObsSummaries() {
     // First clear the old contents away
@@ -87,6 +88,26 @@ void TECWSROM::initialiseObsSummaries() {
     }
 }
 
+void TECWIROM::initialiseObsSummaries()
+{
+	// First clear the old contents away
+	ecwiSummary_.xObsSum.clear();
+	ecwiSummary_.zObsSum.clear();
+
+	// Add the residuals of each measurement and initialise the obsSummaries:
+	if (measECWI.size() != 0)
+	{
+		for (auto const &ItECWIROM : measECWI)
+		{
+			ecwiSummary_.xObsSum.addNewResidual(ItECWIROM.getDistanceResidual(EECWIDistances::kX).getMMetresValue());
+			ecwiSummary_.xObsSum.addNewResidual(ItECWIROM.getDistanceResidual(EECWIDistances::kZ).getMMetresValue());
+		}
+
+		ecwiSummary_.xObsSum.initialise();
+		ecwiSummary_.zObsSum.initialise();
+	}
+}
+
 const TLGCObsSummary&  TECHOROM::getECHOObsSummary() const { return echoSummary_; }
 
 const TLGCObsSummary& TECHOROM::getECHOObsSummary(std::string text)  noexcept {
@@ -127,6 +148,18 @@ const TLGCObsSummary& TECWSROM::getECWSObsSummary() const { return ecwsSummary_;
 const TLGCObsSummary& TECWSROM::getECWSObsSummary(std::string text)  noexcept {
     ecwsSummary_.setObsText(text);
     return ecwsSummary_;
+}
+
+const TECWIObsSummary &TECWIROM::getECWIObsSummary() const
+{
+	return ecwiSummary_;
+}
+
+const TECWIObsSummary &TECWIROM::getECWIObsSummary(std::string text) noexcept
+{
+	ecwiSummary_.xObsSum.setObsText(text);
+	ecwiSummary_.zObsSum.setObsText(text);
+	return ecwiSummary_;
 }
 
 #if USE_SERIALIZER

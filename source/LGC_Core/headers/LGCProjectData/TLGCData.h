@@ -53,7 +53,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	struct TMeasurementsGlobal
 #endif // USE_SERIALIZER
 {
-	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI, kOBSXYZ, kINCLY, kECWS};
+	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI, kOBSXYZ, kINCLY, kECWS, kECWI};
 
 	int	fNumANGL;
 	int	fNumZEND;
@@ -76,6 +76,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	int fNumOBSXYZ;
 	int fNumINCLY;
 	int fNumECWS;
+	int fNumECWI;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable

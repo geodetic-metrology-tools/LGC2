@@ -229,6 +229,73 @@ bool TDataAnalyzer::dataConsistent(){
             }
         }
 
+        //TBD loop over ECWI to initialise th plane and distance to it. inspire yourself with the ECHO process. Here shall we define also tje first and second point for the SAG computation.
+		for (auto &itECWI : it.node->data.get()->measurements.fECWI)
+		{
+			TReal referencePoint[3] = {0, 0, 0};
+			TReal initialRefPtDistance = 0.0;
+			TPositionVector firstAnchorPos = itECWI.anchorPtFirst->getEstimatedValue();
+			TLOR2LOR firstAnchor2Root(itECWI.anchorPtFirst->getFrameTreePosition(), fTree.begin(), "FirstAnchor2ROOT");
+			firstAnchor2Root.transform(firstAnchorPos);
+
+            referencePoint[0] += firstAnchorPos.getX().getMetresValue();
+			referencePoint[1] += firstAnchorPos.getY().getMetresValue();
+			referencePoint[2] += firstAnchorPos.getZ().getMetresValue();
+
+			TPositionVector secondAnchorPos = itECWI.anchorPtSecond->getEstimatedValue();
+			TLOR2LOR secondAnchor2Root(itECWI.anchorPtSecond->getFrameTreePosition(), fTree.begin(), "SecondAnchor2ROOT");
+			secondAnchor2Root.transform(secondAnchorPos);
+
+            //get also the distances to better the result.
+
+            referencePoint[0] += secondAnchorPos.getX().getMetresValue();
+			referencePoint[1] += secondAnchorPos.getY().getMetresValue();
+			referencePoint[2] += secondAnchorPos.getZ().getMetresValue();
+
+            referencePoint[0] /= 2;
+			referencePoint[1] /= 2;
+			referencePoint[2] /= 2;
+
+
+            /*Fixed reference point for the ECWI measurement*/
+            TPositionVector refPointVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian);
+            
+            /* set it up in the correct system*/
+			if (fData.getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+			{
+				TXYH2CCS::CCS2XYHs(refPointVector);
+				refPointVector.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
+			}
+			else if (fData.getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			{
+				TXYH2CCS::CCS2XYHg2000Machine(refPointVector);
+				refPointVector.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
+			}
+			else if (fData.getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			{
+				TXYH2CCS::CCS2XYHg1985Machine(refPointVector);
+				refPointVector.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
+			}
+				
+			LGCAdjustablePoint &rp = fData.getPoints().addObject(
+				LGCAdjustablePoint(refPointVector, true, true, false,
+					"ECWI_line" + std::to_string(itECWI.line), fData.getConfig().referential, fTree.begin()));
+
+            /*Calculation of the initial approximation value for the theta angle of the plane. (to be updated with the value of the anchors? problem if not here)*/
+			TReal thetaLineVectorAngle = atan2q(secondAnchorPos.getX().getMetresValue() - firstAnchorPos.getX().getMetresValue(),
+				secondAnchorPos.getY().getMetresValue() - firstAnchorPos.getY().getMetresValue());
+			auto name = itECWI.romName;
+			itECWI.fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(
+				&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
+
+			TAdjustableLength adjLength(itECWI.provSAG, false, name);
+
+			itECWI.fMeasuredSAG = &fData.getLength().addObject(adjLength);
+
+            //initializing TBD ( test with +1 and 200gons)
+            TAdjustableAngle adjPitch(TAngle(0), false, name);
+            itECWI.fMeasuredPitch = &fData.getAngles().addObject(adjPitch);
+		}
         cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
@@ -681,6 +748,23 @@ bool TDataAnalyzer::cleanDeactivated(){
             ++ecwsrom;
         }
 
+        // ECWI
+		auto ecwirom = measurements.fECWI.begin();
+		while (ecwirom != measurements.fECWI.end())
+		{
+			// If ECWIROM not active, remove it:
+			if (!ecwirom->isActive())
+			{
+				measurements.fECWI.erase(ecwirom++);
+				continue;
+			}
+
+			if (!rmDeactivated_and_checkTargetPos(ecwirom->measECWI))
+				return false;
+
+			++ecwirom;
+		}
+
         // If the roms of different types of measurements are not active, clear the rom:
         if(!measurements.dverActive) measurements.fDVER.clear();
         if(!measurements.radiActive) measurements.fRADI.clear();
@@ -1004,6 +1088,20 @@ void TDataAnalyzer::assignEOIndices(){
                 ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
                 fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
             }
+
+		// ECWI
+		for (auto &ecwirom : measurements.fECWI)
+		{
+			for (auto &ecwi : ecwirom.measECWI)
+			{
+				// set indices of LS matrices, ECWI introduces 2 equations and 2 observations
+				ecwi.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+				ecwi.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+				fData.fUEOIndices.EIndex += 2;
+				fData.fUEOIndices.OIndex += 2;
+				fData.addToMeasurementNum(TMeasurementsGlobal::kECWI);
+			}
+        }
     }
 }
 
