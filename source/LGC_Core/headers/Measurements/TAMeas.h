@@ -15,6 +15,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TInstrumentData.h>
 
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
 class LGCAdjustablePoint;
 
 /// Enum for the case that no value of a certain type is measured in \ref TAScalarMeas.
@@ -34,8 +38,12 @@ enum ESingleValue {
 					of the observed target. May be set to int and supplied with 0 if no target is used.
 */
 template<typename TTarget>
-class TAMeas : public TStatusObject {
-
+#ifdef USE_SERIALIZER
+class TAMeas : public Serializable, public TStatusObject
+#else
+class TAMeas : public TStatusObject
+#endif // USE_SERIALIZER
+{
     private:
         
         static int measCounter;
@@ -101,6 +109,20 @@ class TAMeas : public TStatusObject {
 			/// Sets LS matrices OBSERVATION index of the first observation of this measurement
 			void setFirstObservationIndex(MatrixIndex firstObservationIndex){fFirstObservationIndex = firstObservationIndex;}
 		//@}
+#ifdef USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override
+			{
+				obj.addProperty("eolcomment", eolcomment);
+				obj.addProperty("fFirstEquationIndex", fFirstEquationIndex);
+				obj.addProperty("fFirstObservationIndex", fFirstObservationIndex);
+				obj.addProperty("line", line);
+				obj.addProperty("measCounter", measCounter);
+				obj.addProperty("measId", measId);
+				obj.addProperty("target", target);
+				//obj.addProperty("targetPos", targetPos);
+			}
+#endif
 };
 
 template<typename TTarget>
@@ -217,6 +239,16 @@ class TAScalarMeas : public TAMeas<TTarget>
 				anglesResiduals[id] = a;
 			}
 		//@}
+#ifdef USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override
+			{
+				obj.addProperty("angles", angles);
+				obj.addProperty("anglesResiduals", anglesResiduals);
+				obj.addProperty("distances", distances);
+				obj.addProperty("distancesResiduals", distancesResiduals);
+			}
+#endif
 };
 
 /*!
@@ -301,6 +333,15 @@ class TAVectorMeas : public TAMeas<TTarget>
 		const TReal getYCompVectorResidual() const {
 			return YcompResidual;
 		}
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override
+		{
+			obj.addProperty("vector", vector);
+			obj.addProperty("XcompResidual", XcompResidual);
+			obj.addProperty("YcompResidual", YcompResidual);
+		}
+#endif
 };
 
 #endif
