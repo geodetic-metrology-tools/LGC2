@@ -199,7 +199,7 @@ TDerivativeTransformation TInverseTransformation::differentiatedTransformationAn
 			break;
 	case 1:
 			m(0,0) = -kappaCos*phiSin;
-			m(0,1) = -kappaCos*phiSin*omegaSin;
+			m(0,1) = kappaCos*phiCos*omegaSin;
 			m(0,2) = kappaCos*phiCos*omegaCos;
 			m(0,3) = -m(0,0)*t1 - m(0,1)*t2 - m(0,2)*t3;
 			m(1,0) = -kappaSin*phiSin;
