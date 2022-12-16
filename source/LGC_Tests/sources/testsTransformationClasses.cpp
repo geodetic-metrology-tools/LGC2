@@ -715,7 +715,7 @@ namespace tut
 		Eigen::Matrix4d rotY;
 		rotY.setZero();
 		rotY(0,0) = -kappaCos*phiSin;
-		rotY(0,1) = -kappaCos*phiSin*omegaSin;
+		rotY(0,1) = kappaCos*phiCos*omegaSin;
 		rotY(0,2) = kappaCos*phiCos*omegaCos;
 		rotY(0,3) = -rotY(0,0)*param1.tX - rotY(0,1)*param1.tY - rotY(0,2)*param1.tZ;
 		rotY(1,0) = -kappaSin*phiSin;
@@ -912,6 +912,129 @@ namespace tut
 		a.transform(vector_to_transform);
 
 		// To Do
+	}
+
+	// Test partial derivatives with respect to angles using the chainrule
+	template<>
+	template<>
+	void object::test<20>()
+	{
+		using namespace LGC;
+		set_test_name("Testing angle partial derivatives");
+		auto GON(TAngle::kGons);		
+		TDirectTransformation transfo;
+		TransformParameters param;
+		param.omega = TAngle(10, GON);
+		param.phi = TAngle(20, GON);
+		param.kappa = TAngle(30, GON);
+		param.tX = TLength(1.0);
+		param.tY = TLength(2.0);
+		param.tZ = TLength(3.0);
+		param.scale = 4;
+		transfo.setTransformParam(param);
+
+		TPositionVector point(1, 2, 3, k3DCartesian);
+		TInverseTransformation transfoInv;
+		transfoInv.setTransformParam(param);
+		TPositionVector pointInverse = transfoInv * point;
+		// compute partial derivatives with respect to p of (p,x)->H(p,H_inv(p,x))
+		// (all partial derivatives with respect to helmert parameters need to vanish because the map is equal to (p,x)->x and thus does not depend on p)
+		for (int i = 0; i < 3; i++)
+		{
+			// partial derivative wrt position is scale*rotationmatrix, get rotation matrix from homogenuous trafo matrix
+			TDenseMatrix dHdxAtPointInverse(3, 3);
+			TDenseMatrix Mhomogenous = transfo.getMatrix();
+			dHdxAtPointInverse = transfo.getScaleFactor() * Mhomogenous.topLeftCorner(3, 3);
+			TDerivativeTransformation dInvHdp = transfoInv.differentiatedTransformationAngle(i);
+			Eigen::VectorXd dinvHdpAtPoint(3);
+			dinvHdpAtPoint << (dInvHdp * point).getX() , (dInvHdp * point).getY() , (dInvHdp * point).getZ();
+			TDerivativeTransformation dHdp = transfo.differentiatedTransformationAngle(i);
+			Eigen::VectorXd dHdpAtPointInverse(3);
+			dHdpAtPointInverse << (dHdp * pointInverse).getX(), (dHdp * pointInverse).getY(), (dHdp * pointInverse).getZ();
+			Eigen::VectorXd testZero = dHdpAtPointInverse + dHdxAtPointInverse * dinvHdpAtPoint;
+			ensure("Partial derivatives with respect to angles need to satisfy chain rule", testZero.isZero());
+		}
+	}
+
+	// Test partial derivatives with respect to translations using the chainrule
+	template<>
+	template<>
+	void object::test<21>()
+	{
+		using namespace LGC;
+		set_test_name("Testing translation partial derivatives");
+		auto GON(TAngle::kGons);		
+		TDirectTransformation transfo;
+		TransformParameters param;
+		param.omega = TAngle(10, GON);
+		param.phi = TAngle(20, GON);
+		param.kappa = TAngle(30, GON);
+		param.tX = TLength(1.0);
+		param.tY = TLength(2.0);
+		param.tZ = TLength(3.0);
+		param.scale = 4;
+		transfo.setTransformParam(param);
+
+		TPositionVector point(1, 2, 3, k3DCartesian);
+		TInverseTransformation transfoInv;
+		transfoInv.setTransformParam(param);
+		TPositionVector pointInverse = transfoInv * point;
+		// compute partial derivatives with respect to p of (p,x)->H(p,H_inv(p,x))
+		// (all partial derivatives with respect to helmert parameters need to vanish because the map is equal to (p,x)->x and thus does not depend on p)
+		for (int i = 0; i < 3; i++)
+		{
+			// partial derivative wrt position is scale*rotationmatrix, get rotation matrix from homogenuous trafo matrix
+			TDenseMatrix dHdxAtPointInverse(3, 3);
+			TDenseMatrix Mhomogenous = transfo.getMatrix();
+			dHdxAtPointInverse = transfo.getScaleFactor() * Mhomogenous.topLeftCorner(3, 3);
+			TDerivativeTransformation dInvHdp = transfoInv.differentiatedTransformationTranslation(i);
+			Eigen::VectorXd dinvHdpAtPoint(3);
+			dinvHdpAtPoint << (dInvHdp * point).getX() , (dInvHdp * point).getY() , (dInvHdp * point).getZ();
+			TDerivativeTransformation dHdp = transfo.differentiatedTransformationTranslation(i);
+			Eigen::VectorXd dHdpAtPointInverse(3);
+			dHdpAtPointInverse << (dHdp * pointInverse).getX(), (dHdp * pointInverse).getY(), (dHdp * pointInverse).getZ();
+			Eigen::VectorXd testZero = dHdpAtPointInverse + dHdxAtPointInverse * dinvHdpAtPoint;
+			ensure("Partial derivatives with respect to translations need to satisfy chain rule", testZero.isZero());
+		}
+	}
+	
+	// Test partial derivatives with respect to scale using the chainrule
+	template<>
+	template<>
+	void object::test<22>()
+	{
+		using namespace LGC;
+		set_test_name("Testing scale partial derivatives");
+		auto GON(TAngle::kGons);		
+		TDirectTransformation transfo;
+		TransformParameters param;
+		param.omega = TAngle(10, GON);
+		param.phi = TAngle(20, GON);
+		param.kappa = TAngle(30, GON);
+		param.tX = TLength(1.0);
+		param.tY = TLength(2.0);
+		param.tZ = TLength(3.0);
+		param.scale = 4;
+		transfo.setTransformParam(param);
+
+		TPositionVector point(1, 2, 3, k3DCartesian);
+		TInverseTransformation transfoInv;
+		transfoInv.setTransformParam(param);
+		TPositionVector pointInverse = transfoInv * point;
+		// compute partial derivatives with respect to p of (p,x)->H(p,H_inv(p,x))
+		// (all partial derivatives with respect to helmert parameters need to vanish because the map is equal to (p,x)->x and thus does not depend on p)
+		// partial derivative wrt position is scale*rotationmatrix, get rotation matrix from homogenuous trafo matrix
+		TDenseMatrix dHdxAtPointInverse(3, 3);
+		TDenseMatrix Mhomogenous = transfo.getMatrix();
+		dHdxAtPointInverse = transfo.getScaleFactor() * Mhomogenous.topLeftCorner(3, 3);
+		TDerivativeTransformation dInvHdp = transfoInv.differentiatedTransformationScaleFactor();
+		Eigen::VectorXd dinvHdpAtPoint(3);
+		dinvHdpAtPoint << (dInvHdp * point).getX(), (dInvHdp * point).getY(), (dInvHdp * point).getZ();
+		TDerivativeTransformation dHdp = transfo.differentiatedTransformationScaleFactor();
+		Eigen::VectorXd dHdpAtPointInverse(3);
+		dHdpAtPointInverse << (dHdp * pointInverse).getX(), (dHdp * pointInverse).getY(), (dHdp * pointInverse).getZ();
+		Eigen::VectorXd testZero = dHdpAtPointInverse + dHdxAtPointInverse * dinvHdpAtPoint;
+		ensure("Partial derivative with respect to scale need to satisfy chain rule", testZero.isZero());
 	}
 
 }
