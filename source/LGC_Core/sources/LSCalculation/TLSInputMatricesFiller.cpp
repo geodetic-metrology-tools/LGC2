@@ -48,7 +48,7 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 
 			// check if a "slave" constraint has to be applied
 			auto& frame(itTree.node->data.get()->frame);
-			// check if it is a "SLAVE" frame 
+			// check if it is a "SLAVE" frame a
 			std::string framename = frame.getName();
 			std::string slavename = "SLAVE";
 			if (framename.rfind(slavename, 0) == 0)
@@ -99,49 +99,49 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 					{
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getRotationUnknIndex(0), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstRotation(0));
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.rx - frame.getEstRotation(0)));
 						cIdx++;
 					}		
 					if (!frame.isRotationFixed(1))
 					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
+						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.ryIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getRotationUnknIndex(1), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstRotation(1));
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.ry - frame.getEstRotation(1)));
 						cIdx++;
 					}				
 					if (!frame.isRotationFixed(2))
 					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
+						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rzIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getRotationUnknIndex(2), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstRotation(2));
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.rz - frame.getEstRotation(2)));
 						cIdx++;
 					}		
 					if (!frame.isTranslationFixed(0))
 					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
+						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.txIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getTranslationUnknIndex(0), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstTranslation(0));
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.tx - frame.getEstTranslation(0)));
 						cIdx++;
 					}		
 					if (!frame.isTranslationFixed(1))
 					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
+						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.tyIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getTranslationUnknIndex(1), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstTranslation(1));
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.ty - frame.getEstTranslation(1)));
 						cIdx++;
 					}			
 					if (!frame.isTranslationFixed(2))
 					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
+						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.tzIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getTranslationUnknIndex(2), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstTranslation(2));
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.tz - frame.getEstTranslation(2)));
 						cIdx++;
 					}				
 					if (!frame.isScaleFixed())
 					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
+						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.scaleIdx, 1);
 						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getScaleUnknIndex(), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, slaveData.rx - frame.getEstScale());
+						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.scale - frame.getEstScale()));
 						cIdx++;
 					}	
 
