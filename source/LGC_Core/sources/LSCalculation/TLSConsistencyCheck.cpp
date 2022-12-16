@@ -10,7 +10,8 @@ using namespace std;
 // constructor
 TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 {
-    if (!data.getConfig().libre.isActive()) {
+    //if (!data.getConfig().libre.isActive()) {
+    if (data.fUEOIndices.CIndex==0){
         firstDgnMatrix = (*inputMtr.getFirstDgnMtrx()).toDense();
     }
     else

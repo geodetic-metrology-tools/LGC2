@@ -6,6 +6,8 @@
 #include <Logger.hpp>
 #include "TXYH2CCS.h"
 
+#include <algorithm>
+
 #include "TDist.h" 
 #include <bitset>
 
@@ -59,8 +61,22 @@ bool TDataAnalyzer::dataConsistent(){
 
 	//Run through tree and check that whether all frames were initialized, assign unknown indices
 	//It is necessary to firstly iterate over the tree, because a Reference point might be created in DLEV measurement and measured plane is initialized
+	int slaveFrames = 0;
 	for (auto it( fTree.begin()); it != fTree.end(); ++it){	
-		auto& frame(it.node->data.get()->frame);
+        auto& frame(it.node->data.get()->frame);
+        // check if it is a "SLAVE" frame 
+        std::string framename = frame.getName();
+		std::string slavename = "SLAVE";
+		if (framename.rfind(slavename,0)==0)
+		{
+            // set dimension and increment counter
+            // count dimensions
+			int dim = 7
+				- (int(frame.isRotationFixed(0)) + int(frame.isRotationFixed(1)) + int(frame.isRotationFixed(2)) + int(frame.isTranslationFixed(0))
+					+ int(frame.isTranslationFixed(1)) + int(frame.isTranslationFixed(2)) + int(frame.isScaleFixed()));
+			fData.slaveFrames.dimSlave = dim;
+			slaveFrames++;
+		}
 		if(!frame.isInitialized()){
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frame: " +	frame.getName() + " is not initialized!"; 
 			return false;
@@ -267,6 +283,10 @@ bool TDataAnalyzer::dataConsistent(){
 
 	}
 
+    // set number of slave frames
+	fData.slaveFrames.numberSlaveFrames = slaveFrames;
+    // set number of constraints
+	fData.fUEOIndices.CIndex += (fData.slaveFrames.numberSlaveFrames - 1) * fData.slaveFrames.dimSlave;
 	//cannot predetermine V0 in simulation and LIBR
 	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
 		predeterminePLR3DV0();
@@ -410,9 +430,9 @@ bool TDataAnalyzer::dataConsistent(){
 		}
 	}
 
-	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
-				", EQUATIONS = " + std::to_string(fData.fUEOIndices.EIndex) + ". LS calculation can not work. Add measurements or fix some unknowns"; 
+	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex+fData.fUEOIndices.CIndex){
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations+constraints, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
+				", EQUATIONS+Constraints = " + std::to_string(fData.fUEOIndices.EIndex+fData.fUEOIndices.CIndex) + ". LS calculation can not work. Add measurements or fix some unknowns"; 
 		return false;
 	}
 

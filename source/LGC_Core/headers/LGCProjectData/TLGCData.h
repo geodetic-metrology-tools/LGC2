@@ -229,7 +229,14 @@ public:
         bool isLGCv1() const { return islgc1; }
 
         void setLGCv1(bool set) { islgc1 = set; }
-private:
+		// frames that end with SLAVE. Their defining helmert parameters shall be constrained to be equal across all SLAVE frames
+		struct 
+		{
+			int numberSlaveFrames;
+			int dimSlave;
+		} slaveFrames;
+
+	private:
 
     /// Copy the frametree structure from *src* to *tgt*
     static void copyTree(TLGCData const * const src, TLGCData* tgt);
