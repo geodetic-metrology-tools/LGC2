@@ -106,7 +106,7 @@ void object::test<4>()
 	bool succesReading = reader.read(infiler);
 	ensure_equals("Reading file successful", succesReading, true);
 
-	TLSInputMatricesFiller matrFiller(&projTest->getTree(), projTest->getConfig().referential);
+	TLSInputMatricesFiller matrFiller(&projTest->getTree(), projTest->getConfig().referential, *projTest.get());
 	TLSInputMatrices im;
 	TDataAnalyzer analyzer(*projTest);
 	analyzer.dataConsistent();

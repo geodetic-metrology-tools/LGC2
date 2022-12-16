@@ -3,6 +3,7 @@
 #include <TLGCData.h>
 #include "TAllfixedParamGenerator.h"
 #include <TPointTransformer.h>
+#include "TLibrCnstrGenerator.h"
 #include <Logger.hpp>
 #include "TXYH2CCS.h"
 
@@ -18,6 +19,7 @@ bool TDataAnalyzer::dataConsistent(){
 	auto& outputMessages(fData.getFileLogger());
 	outputMessages.writeReportHeader("Data consistency check:");
 	int lastUidx = 0; //Unknown indices
+	int lastCidx = 0; //Constraint indices
 	const TDataTree& fTree = fData.getTree();
     TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 	
@@ -57,12 +59,39 @@ bool TDataAnalyzer::dataConsistent(){
 
 	checkPDOR(outputMessages, consistent);
 
+    // set constraint dimensions
+	if (fData.getConfig().libre.isActive())
+	{
+		TLibrCnstrGenerator librCnstrGenerator(fPointTransfo, fData);
+		librCnstrGenerator.initCnstrIdentifier(fData);
+		lastCidx += librCnstrGenerator.getNumberOfConstraint();
+	}
+	// check for slave group constraints
+	// remove groups with no added constraints
+	fData.getSlaveGroups().remove_if([](LGCFrameConstraintGroup group) {
+		bool isTrivialGroup = group.getConstraintDimension() == 0;
+		if (isTrivialGroup)
+		{
+			logWarning() << "Slave group" << group.getGroupName() << "is ignored as it adds no constraints.";
+		}
+		return isTrivialGroup;
+	});
+	// set the indices for the slave groups
+	for (auto groupIt = fData.getSlaveGroups().begin(); groupIt != fData.getSlaveGroups().end(); groupIt++)
+	{
+		groupIt->setFirstCIndex(lastCidx);
+		lastCidx += groupIt->getConstraintDimension();
+	}
+	fData.fUEOIndices.CIndex = lastCidx;
+
 	//Run through tree and check that whether all frames were initialized, assign unknown indices
 	//It is necessary to firstly iterate over the tree, because a Reference point might be created in DLEV measurement and measured plane is initialized
 	for (auto it( fTree.begin()); it != fTree.end(); ++it){	
-		auto& frame(it.node->data.get()->frame);
-		if(!frame.isInitialized()){
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frame: " +	frame.getName() + " is not initialized!"; 
+        auto &frame(it.node->data.get()->frame);
+
+		if (!frame.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frame: " + frame.getName() + " is not initialized!";
 			return false;
 		}
 		//Assign unknown indices
@@ -441,15 +470,15 @@ bool TDataAnalyzer::dataConsistent(){
 
 			//free frame
 			if (!frame.isFixed() || frame.hasStandDev()){
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "LIBR options cannot cannot have free subframe";
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "LIBR options cannot have free subframe";
 				return false;
 			}
 		}
 	}
 
-	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
-				", EQUATIONS = " + std::to_string(fData.fUEOIndices.EIndex) + ". LS calculation can not work. Add measurements or fix some unknowns"; 
+	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex+fData.fUEOIndices.CIndex){
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations+constraints, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
+				", EQUATIONS+CONSTRAINTS = " + std::to_string(fData.fUEOIndices.EIndex+fData.fUEOIndices.CIndex) + ". LS calculation can not work. Add measurements or fix some unknowns."; 
 		return false;
 	}
 

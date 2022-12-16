@@ -34,15 +34,19 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	if (opts.has("RZ") || opts.has("SRZ")) rotations.set(2,0);
 	if (opts.has("SCL")|| opts.has("SSCL")) scale.set(0,0);
 
+
+
 	const auto gon(TAngle::kGons);
 	TransformParameters transfParam;
 	transfParam.tX = TLength(std::stor(tokens[3])); // Translation along X
+
+	std::string trafoName = tokens[2];
 	// Create adjustable helmert transformation
 	TAdjustableHelmertTransformation adjTrafo = TAdjustableHelmertTransformation( // Wrapper containing adjustable related information
 			translations, // Bits telling which of the translations are fixed
 			rotations,     // Bits telling which of the rotations around an axis are fixed
 			scale,  // Bit telling whether scale is fixed
-			tokens[2] //Transformation name
+			trafoName //Transformation name
 		);
 
 	adjTrafo.setParam(    // The transformation itself
@@ -73,8 +77,34 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		if(opts.has("SSCL")) adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M); 
 	}
 
+
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
+
+   	// check for "Slave" frames
+	if (opts.has("SLAVE"))
+	{
+		std::string groupName = opts.getParam("SLAVE");
+		// does this slave group already exist?
+		bool groupAlreadyExists{false};
+		for (LGCFrameConstraintGroup& group : proj.getSlaveGroups())
+		{
+			if (group.getGroupName() == groupName)
+			{
+				groupAlreadyExists = true;
+				group.addFrameToGroup(adjTrafo.getName(), proj);
+			}
+		}
+		if (!groupAlreadyExists)
+		{
+			LGCFrameConstraintGroup newGroup;
+			newGroup.setGroupName(groupName);
+			newGroup.addFrameToGroup(adjTrafo.getName(), proj);
+			proj.getSlaveGroups().push_back(newGroup);
+		}
+
+	}
+
 
 	if(opts.has("RX") && opts.has("SRX"))
 		throw std::runtime_error("Either \"RX\" flag or \"SRX\" option used, both are not allowed");

@@ -334,6 +334,17 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 		else if (!frameIt->get()->frame.isScaleFixed())
 			(*stream) << "SCL" << sep;
 
+		// check if it is part of a slave group
+		for (LGCFrameConstraintGroup group : fProjectData->getSlaveGroups())
+		{
+			if (group.isPartOfGroup(frameIt->get()->frame.getName()))
+			{
+				(*stream) << "SLAVE" << sep;
+				(*stream) << group.getGroupName() << sep;
+				break;
+			}
+		}
+
 		(*stream) << endl;
 
 	}

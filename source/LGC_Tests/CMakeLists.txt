@@ -1,5 +1,6 @@
 include_directories(${CMAKE_SOURCE_DIR}
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
+					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCConstraintObjects
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCCalculation
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
@@ -37,6 +38,7 @@ set(tests_SOURCES
 	sources/testWPSR.cpp
 	sources/testJSON.cpp
 	sources/testSimulation.cpp
+	sources/testSlaveConstraints.cpp
 	sources/testEREL.cpp
 )
 
@@ -58,6 +60,7 @@ set(tests_INPUT
 	headers/testCONSI.h
 	headers/testWPSR.h
 	headers/testSimulation.h
+	headers/testSlaveConstraints.h
 	headers/testEREL.h
 )
 

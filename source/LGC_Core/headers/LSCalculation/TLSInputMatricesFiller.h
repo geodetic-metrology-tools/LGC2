@@ -11,8 +11,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <vector>
 //LGC
 #include <TContributionsGenerator.h>
+#include <TLibrCnstrGenerator.h>
 #include <TPointTransformer.h>
 #include <Global.h>
+#include <TLGCData.h>
+
 
 class TLSInputMatrices;
 class TLGCData;
@@ -45,7 +48,7 @@ public :
 			\param[in] tree Tree of local object reference frames.
 			\param[in] referentiel Global reference frame of the project.
 		*/
-		TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel);
+		TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel, const TLGCData& data);
 
 		/// Destructor 
 		 ~TLSInputMatricesFiller();
@@ -68,6 +71,8 @@ private:
 	/// Equality operator: not implemented 
 	TLSInputMatricesFiller& operator=( const TLSInputMatricesFiller& right );
 	
+	/// Contribution generator for the free network
+	TLibrCnstrGenerator fLibrCnstrGenerator;
 	/// Contributions generator, used to calculated the contributions to be inserted into the input matrices.
 	TContributionsGenerator  fCGenerator;
 
@@ -79,6 +84,9 @@ private:
  
 	/// Fills the weight unknown matrix.
 	bool	fillWeightUnkMtrx(TLGCData* projData, TLSInputMatrices* matrices);
+
+	// fill in the slave constraints
+	bool fillSlaveConstraints(TLGCData* projData, TLSInputMatrices* matrices);
 
 	/*!@name Methods to add the design matrix contributions for each type of observation*/
 	//@{

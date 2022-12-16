@@ -6,6 +6,7 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #ifndef TLS_CONSI_H
 #define TLS_CONSI_H
 
+#include <TLGCData.h>
 #include <TVAdjustableObject.h>
 
 #include "TSparseMatrix.h"

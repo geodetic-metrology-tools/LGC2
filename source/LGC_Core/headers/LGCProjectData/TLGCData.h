@@ -1,6 +1,6 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
+© Copyright CERN 2000-2023. All rights reserved. This software is released under a CERN proprietary software license.
+Any permission to use it shall be granted in writing. Request shall be addressed to CERN through mail-KT@cern.ch
 */
 
 #ifndef _LGC_DATA_H_
@@ -14,6 +14,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TMeasurements.h>
 #include <TLGCConfig.h>
 #include <LGCAdjustableObjectCollection.h>
+#include <LGCFrameConstraintGroup.h>
 #include <Global.h>
 #include <TFileLogger.h>
 #include <TLGCStatistic.h>
@@ -84,16 +85,15 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #endif // USE_SERIALIZER
 };
 
-
 /**
 	\ingroup LGCProjectData
 
 	\brief This composite can be seen as PROJECT DATA, containing everything that is needed.
 
 	This is a compound for the classes that are pushed around during the execution of the
-	program. It makes the handling of points, measurements, insruments and frames easier
+	program. It makes the handling of points, measurements, instruments and frames easier
 	by grouping together everything that is needed so the interaction with the LGC modules 
-	is reduced to ineracting with a single object.
+	is reduced to interacting with a single object.
 */ 
 
 #if USE_SERIALIZER
@@ -130,7 +130,7 @@ public:
 		/// Adds a new level to the tree passing the local transformation that led to this level.
 		TTreeEntry& addChild(TAdjustableHelmertTransformation* trafo);
 
-		/// Returns the LGCData structure of the input files containing measurments
+		/// Returns the LGCData structure of the input files containing measurements
 		TDataTree& getTree() {return tree;}
 		TDataTree const& getTree() const {return tree;}
 
@@ -147,24 +147,29 @@ public:
 	//@{
 		/// Returns the vector/ collection of all the adjustable points
 		LGCAdjustablePointCollection& getPoints() {return points;}
-		/// Returns a contant reference of the vector/ collection of all the adjustable points
+		/// Returns a constant reference of the vector/ collection of all the adjustable points
 		LGCAdjustablePointCollection const& getPoints() const {return points;}
 		/// Returns the vector/ collection of all the adjustable lines
 		LGCAdjustableLineCollection& getLines() {return lines;}
-		/// Returns a contant reference of the vector/ collection of all the adjustable lines
+		/// Returns a constant reference of the vector/ collection of all the adjustable lines
 		LGCAdjustableLineCollection const& getLines() const {return lines;}
 		/// Returns the vector/ collection of all the adjustable planes
 		LGCAdjustablePlaneCollection& getPlanes() {return planes;}
-		/// Returns a contant reference of the vector/ collection of all the adjustable planes
+		/// Returns a constant reference of the vector/ collection of all the adjustable planes
 		LGCAdjustablePlaneCollection const& getPlanes() const {return planes;}
 		/// Returns the vector/ collection of all the adjustable angles
 		TAdjustableAngleCollection& getAngles() {return angles;}
-		/// Returns a contant reference of the vector/ collection of all the adjustable angles
+		/// Returns a constant reference of the vector/ collection of all the adjustable angles
 		TAdjustableAngleCollection const& getAngles() const {return angles;}
 		/// Returns the vector/ collection of all the adjustable lengths
 		TAdjustableLengthCollection& getLength() {return lengths;}
-		/// Returns a contant reference of the vector/ collection of all the adjustable lengths
+		/// Returns a constant reference of the vector/ collection of all the adjustable lengths
 		TAdjustableLengthCollection const& getLength() const {return lengths;}
+
+		// Returns list of to the frame Constraint groups
+		std::list<LGCFrameConstraintGroup>& getSlaveGroups() { return slaveGroups; }
+		/// Returns a constant reference of the Constraint groups
+		std::list<LGCFrameConstraintGroup> const& getSlaveGroups() const { return slaveGroups; }
 
 	
 		/// Returns the instruments defined
@@ -173,9 +178,9 @@ public:
 		TInstrumentData const& getInstruments() const {return instruments;}
 
 
-		/// Returns the project confifuration
+		/// Returns the project configuration
 		TLGCConfig& getConfig() {return config;}
-		/// Returns a constant reference on  project confifuration
+		/// Returns a constant reference on  project configuration
 		TLGCConfig const& getConfig() const {return config;}
 
 		/// Returns the reference on statistics of the project
@@ -185,12 +190,12 @@ public:
 
 		/// Returns the file logger used to write on an output file
 		LSRelErrorsContainer& getRelError() { return fRelError; }
-		/// Returns the constant referrence on file logger used to write on an output file
+		/// Returns the constant reference on file logger used to write on an output file
 		LSRelErrorsContainer const& getRelError() const { return fRelError; }
 
 		/// Returns the file logger used to write on an output file
 		TFileLogger& getFileLogger() {return *fileLogger;}
-		/// Returns the constant referrence on file logger used to write on an output file
+		/// Returns the constant reference on file logger used to write on an output file
 		TFileLogger const& getFileLogger() const {return *fileLogger;}
 	
 		/// Retrieves the comments
@@ -203,7 +208,7 @@ public:
 	/*!@name Least squares/solution calculation related stuff.*/
 	//@{
 
-		/// Number of unkowns, equations, observations and constraints.
+		/// Number of unknowns, equations, observations and constraints.
 		UEOIndices fUEOIndices; 
 
 		/// Sets the number of LS iterations.
@@ -232,7 +237,7 @@ public:
 	//@}
 
 
-	/*!@name Counters of points and measurments related functions.*/
+	/*!@name Counters of points and measurements related functions.*/
 	//@{
 		///	Increase the total number of points defined under specific keyword (TSpatialStatus::ESpatialStatus).
 		void addToPointNum(TSpatialStatus::ESpatialStatus status);
@@ -260,6 +265,7 @@ public:
         bool isLGCv1() const { return islgc1; }
 
         void setLGCv1(bool set) { islgc1 = set; }
+
 		
 #if USE_SERIALIZER
 		// Inherited via Serializable
@@ -290,12 +296,13 @@ private:
 		/// Adjustable lengths are collected globally
 		TAdjustableLengthCollection lengths;
 	//@}
-	
+		//vector containing data associated to frame constraint groups
+		std::list<LGCFrameConstraintGroup> slaveGroups;
 
        
     bool islgc1{false};
 
-	/// Represents the hierachical structure of the file and stores the measurements
+	/// Represents the hierarchical structure of the file and stores the measurements
 	TDataTree tree;
 	
 	// current position in the tree
@@ -307,7 +314,7 @@ private:
 	/// Exactly one instrument section per project
 	TInstrumentData instruments;
 
-	/// Provides writing functionalities for writing errors, warnings, which occured in any stage.
+	/// Provides writing functionalities for writing errors, warnings, which occurred in any stage.
 	std::shared_ptr<TFileLogger> fileLogger;
 
 	/// Statistic output

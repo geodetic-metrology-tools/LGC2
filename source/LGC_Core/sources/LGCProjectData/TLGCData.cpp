@@ -378,7 +378,8 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
 }
 
 
-void TLGCData::copyTree(TLGCData const* const src, TLGCData* tgt) {
+void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
+{
 
 	// Copy the tree structure/form:
 	tgt->tree = src->tree;
@@ -843,6 +844,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("fCovMat", fCovMat);
+	obj.addProperty("slaveGroups", slaveGroups);
 }
 
 

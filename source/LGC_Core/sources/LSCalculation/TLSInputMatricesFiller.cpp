@@ -7,12 +7,19 @@
 #include "TLSInputMatrices.h"
 #include "TDataAnalyzer.h"
 #include <TLGCData.h>
+#include <Logger.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCTOR / DESTRUCTOR
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel) : fPointTransformer(tree, referentiel), fCGenerator(fPointTransformer)
-{}
+TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree* tree, const TRefSystemFactory::ERefFrame& referentiel, const TLGCData& data) : fPointTransformer(tree, referentiel),
+fCGenerator(fPointTransformer), fLibrCnstrGenerator(fPointTransformer, data)
+{
+	if (data.getConfig().libre.isActive())
+	{
+		fLibrCnstrGenerator.initCnstrIdentifier(data);
+	}
+}
 
 
 TLSInputMatricesFiller::~TLSInputMatricesFiller()
@@ -29,12 +36,21 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 	try{
 		//Input matrices have to be initialized each time they are filled.
 		initMatriceDimension(*projData, matrices);
-		//Contribution generator transformations need to update the transformations it stores.
+		// Contribution generator transformations need to update the transformations it stores.
 		fPointTransformer.updateTransformations();
 
+		if (projData->getConfig().libre.isActive())
+		{
+			//fill the libr constraints
+			fillOK &= fLibrCnstrGenerator.processFreeCnstr(*matrices);
+		}
+
+
 		//If weight unknown matrix should be filled
-		if(fillWeightUnkn)
-			fillOK = fillOK && fillWeightUnkMtrx(projData, matrices);
+		if (fillWeightUnkn)
+			fillOK &= fillWeightUnkMtrx(projData, matrices);
+
+		fillOK &= fillSlaveConstraints(projData, matrices);
 
 		//Itteration through the nodes of the tree
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++){		
@@ -1752,6 +1768,70 @@ bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatri
 			}
 		}
 	}
+	return fillOK;
+}
+
+bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices)
+{
+	bool fillOK = true;
+	auto& outputMessages(projData->getFileLogger());
+	try
+	{
+		// iterate over all slave groups
+		for (LGCFrameConstraintGroup slaveGroup : projData->getSlaveGroups())
+		{
+			int cIdx = slaveGroup.getFirstCIndex();
+			// check if group has more then one frame
+			if (slaveGroup.slaves.size() == 1)
+			{
+				logWarning() << "Slave group " << slaveGroup.getGroupName() << " does not add any constraint.";
+			}
+			else
+			{
+				TAdjustableHelmertTransformation &masterFrame = projData->locateNode(slaveGroup.slaves.front()).node->data.get()->frame;
+				// iterate over the non-master frames
+				for (auto slaveIt = ++slaveGroup.slaves.begin(); slaveIt != slaveGroup.slaves.end(); slaveIt++)
+				{
+					{
+						TAdjustableHelmertTransformation &slaveFrame = projData->locateNode(*slaveIt).node->data.get()->frame;
+						for (int idx = 0; idx < 3; idx++)
+						{
+							if (!masterFrame.isTranslationFixed(idx))
+							{
+								double translMisclosure= masterFrame.getEstTranslation(idx).getMetresValue() - slaveFrame.getEstTranslation(idx).getMetresValue();
+								matrices->setCnstrMisclosureVectorElement(cIdx, translMisclosure);
+								matrices->setCnstrFirstDgnMtrxElement(cIdx, masterFrame.getTranslationUnknIndex(idx), 1);
+								matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getTranslationUnknIndex(idx), -1);
+								cIdx++;
+							}
+							if (!masterFrame.isRotationFixed(idx))
+							{
+								double rotMisclosure= masterFrame.getEstRotation(idx).getRadiansValue() - slaveFrame.getEstRotation(idx).getRadiansValue();
+								matrices->setCnstrMisclosureVectorElement(cIdx, rotMisclosure);
+								matrices->setCnstrFirstDgnMtrxElement(cIdx, masterFrame.getRotationUnknIndex(idx), 1);
+								matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getRotationUnknIndex(idx), -1);
+								cIdx++;
+							}
+						}
+						if (!masterFrame.isScaleFixed())
+						{
+							double misclosure = masterFrame.getEstScale() - slaveFrame.getEstScale();
+							matrices->setCnstrMisclosureVectorElement(cIdx, misclosure);
+							matrices->setCnstrFirstDgnMtrxElement(cIdx, masterFrame.getScaleUnknIndex(), 1);
+							matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getScaleUnknIndex(), -1);
+							cIdx++;
+						}
+					}
+				}
+			}
+		}
+	}
+	catch (std::exception const &excp)
+	{
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << excp.what();
+		fillOK = false;
+	}
+
 	return fillOK;
 }
 

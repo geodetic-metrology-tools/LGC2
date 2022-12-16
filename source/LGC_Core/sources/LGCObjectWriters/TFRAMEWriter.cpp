@@ -904,12 +904,21 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string& name, const std::vector<i
 		else
 			nameID += "_"+ std::to_string(*it);
 	}
-
+	std::string slaveNote{""};
+	for (LGCFrameConstraintGroup group : fProjectData->getSlaveGroups())
+	{
+		if (group.isPartOfGroup(name))
+		{
+			slaveNote = " NOTE: This Frame belongs to Slave Group \"" + group.getGroupName() + "\"";
+			break;
+		}
+	}
 
 	(*stream)<<endl<<endl;
 	(*stream)<<TABs;
-	(*stream).writeStringLeft(nameWidth,"FRAME\t" + name + "  ID(" + nameID + ")");
+	(*stream).writeStringLeft(nameWidth, "FRAME\t" + name + "  ID(" + nameID + ")" + slaveNote);
 	(*stream)<<endl;
+
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
 	if ( ID.size() != 1 ) //Only for ROOT it is equal to 1 and in this case we do not want to write out the header

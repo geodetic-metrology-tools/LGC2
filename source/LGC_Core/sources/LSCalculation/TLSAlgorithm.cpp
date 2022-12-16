@@ -8,22 +8,15 @@ TLSAlgorithm::TLSAlgorithm(TLGCData& data)
 	: fNumberOfIterations(0)
 	, fS0APosterioriVariances(false)
 	,fPointTransformer(&data.getTree(), data.getConfig().referential)
-	,fLibrCnstrGenerator(fPointTransformer, data)
 {
 	delete resultMatrices;
-	// identify the constraints necessary, create them
-	if (data.getConfig().libre.isActive())
-	{
-		fLibrCnstrGenerator.initCnstrIdentifier(data);
-		data.fUEOIndices.CIndex = fLibrCnstrGenerator.getNumberOfConstraint();
-	}
 	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
 }
 
 Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 {
 	std::unique_ptr<TALSComputer> computer;
-	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
+	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential, data));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
 
 	fExtractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
@@ -64,14 +57,8 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
 
-		//fill part of the free constraints
-		if (data.getConfig().libre.isActive())
-			fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
-
 		if (data.getConfig().consCheck.isActive() && fNumberOfIterations==0){
 			// Check for inconsistencies leading to ambiguous least square problems
-			// libr constraint matrices are necessary if there is a
-			// constraint
 			TLSConsCheck consCheck(data, *inputMtr);
 			if (!consCheck.getResultStatus()) {
 				return Behavior(Behavior::BehaviorCode::ERR_consistencyCheck, L"Problem with measurement configuration.\n");	
@@ -80,7 +67,6 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 		if (fillOK)
 		{		
-
 			// compute solution 
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
 	

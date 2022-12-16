@@ -2,6 +2,7 @@ include_directories(${CMAKE_SOURCE_DIR}
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCCalculation
+					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCConstraintObjects
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCProject
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCProjectData
@@ -33,6 +34,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimPointSummary.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TVAbstractAlgorithm.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TALGCObjectWriter.h
+	${CORE_INCLUDE_PATH}/LGCConstraintObjects/LGCFrameConstraintGroup.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TTSTNWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TCAMWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TLEVELWriter.h
@@ -117,6 +119,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCCalculation/TLGCCalculation.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimPointSummary.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimFrameSummary.cpp
+	${CORE_SOURCES_PATH}/LGCConstraintObjects/LGCFrameConstraintGroup.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TALGCObjectWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TTSTNWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TCAMWriter.cpp
@@ -182,6 +185,7 @@ set(Core_SOURCES
 file(GLOB CONTRIBUTIONSGENERATORS_H ${CORE_INCLUDE_PATH}/ContributionsGenerators/*.*)
 file(GLOB LGCADJOBJECT_H ${CORE_INCLUDE_PATH}/LGCAdjustableObjects/*.*)
 file(GLOB LGCCALCULATION_H ${CORE_INCLUDE_PATH}/LGCCalculation/*.*)
+file(GLOB LGCCONSTRAINTOBJECTS_H ${CORE_INCLUDE_PATH}/LGCConstraintObjects/*.*)
 file(GLOB LGCOBJECTWRITERS_H ${CORE_INCLUDE_PATH}/LGCObjectWriters/*.*)
 file(GLOB LGCProject_H ${CORE_INCLUDE_PATH}/LGCProject/*.*)
 file(GLOB LGCProjectData_H ${CORE_INCLUDE_PATH}/LGCProjectData/*.*)
@@ -194,6 +198,7 @@ file(GLOB WRITERS_H ${CORE_INCLUDE_PATH}/Writers/*.* )
 file(GLOB CONTRIBUTIONSGENERATORS_CPP ${CORE_SOURCES_PATH}/ContributionsGenerators/*.*)
 file(GLOB LGCADJOBJECT_CPP ${CORE_SOURCES_PATH}/LGCAdjustableObjects/*.*)
 file(GLOB LGCCALCULATION_CPP ${CORE_SOURCES_PATH}/LGCCalculation/*.*)
+file(GLOB LGCCONSTRAINTOBJECTS_CPP ${CORE_SOURCES_PATH}/LGCConstraintObjects/*.*)
 file(GLOB LGCOBJECTWRITERS_CPP ${CORE_SOURCES_PATH}/LGCObjectWriters/*.*)
 file(GLOB LGCProject_CPP ${CORE_SOURCES_PATH}/LGCProject/*.*)
 file(GLOB LGCProjectData_CPP ${CORE_SOURCES_PATH}/LGCProjectData/*.*)
@@ -206,6 +211,7 @@ file(GLOB WRITERS_CPP ${CORE_SOURCES_PATH}/Writers/*.*)
 source_group("ContributionsGenerators\\Headers" FILES ${CONTRIBUTIONSGENERATORS_H})
 source_group("LGCAdjustableObjects\\Headers" FILES ${LGCADJOBJECT_H})
 source_group("LGCCalculation\\Headers" FILES ${LGCCALCULATION_H})
+source_group("LGCConstraintObjects\\Headers" FILES ${LGCCONSTRAINTOBJECTS_H})
 source_group("LGCObjectWriters\\Headers" FILES ${LGCOBJECTWRITERS_H})
 source_group("LGCProject\\Headers" FILES ${LGCProject_H})
 source_group("LGCProjectData\\Headers" FILES ${LGCProjectData_H})
@@ -218,6 +224,7 @@ source_group("Writers\\Headers" FILES ${WRITERS_H})
 source_group("ContributionsGenerators\\Sources" FILES ${CONTRIBUTIONSGENERATORS_CPP})
 source_group("LGCAdjustableObjects\\Sources" FILES ${LGCADJOBJECT_CPP})
 source_group("LGCCalculation\\Sources" FILES ${LGCCALCULATION_CPP})
+source_group("LGCConstraintObjects\\Sources" FILES ${LGCCONSTRAINTOBJECTS_CPP})
 source_group("LGCObjectWriters\\Sources" FILES ${LGCOBJECTWRITERS_CPP})
 source_group("LGCProject\\Sources" FILES ${LGCProject_CPP})
 source_group("LGCProjectData\\Sources" FILES ${LGCProjectData_CPP})

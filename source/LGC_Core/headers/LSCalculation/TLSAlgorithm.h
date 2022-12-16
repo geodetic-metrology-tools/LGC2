@@ -13,7 +13,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TVAbstractAlgorithm.h>
 #include <TLSResultsMatricesExtractor.h>
-#include <TLibrCnstrGenerator.h>
+#include <TPointTransformer.h>
 #include <TLSConsistencyCheck.h>
 
 class TLSInputMatricesFiller;
@@ -59,8 +59,6 @@ protected:
 	bool computeVarCovarAndReliability(TLGCData* data, TLSInputMatrices* inputMtr, TALSComputer* computer);
 
 private:
-	/// Contribution generator for the free network
-	TLibrCnstrGenerator fLibrCnstrGenerator;
 
 	/// Allow transformations between the usual reference frame
 	TPointTransformer fPointTransformer;
