@@ -43,7 +43,7 @@ static const char* const INPUT_COMMENT_CHARS = "%$";
 static const char* const DEACTIVATION_CHAR = "#";
 
 /// Default maximal number of iterations
-static const int MAX_ITERATIONS = 80;
+static const int MAX_ITERATIONS = 100;
 
 namespace LGC {
 	///Conversion factor for the unitless vector (UVEC and UVD)
