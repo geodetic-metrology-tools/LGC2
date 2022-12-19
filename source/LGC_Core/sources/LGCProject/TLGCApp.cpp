@@ -367,6 +367,8 @@ const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
 	id << "LGC2 " << getLGCVersion() << ", compiled on " <<   __DATE__ ;
+	id << std::endl << "EXPERIMENTAL Version for constraining frames with 'SLAVE' prefix to have equal Helmert parameters.";
+	id << std::endl << "All SLAVE frames need equal free parameters and only the free parameters are constrained to be equal - the others are fixed as usual at the 'provisional' values.";
 	return id.str();
 }
 
