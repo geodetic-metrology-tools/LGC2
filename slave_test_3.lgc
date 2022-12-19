@@ -1,0 +1,18 @@
+*TITR
+test with two nested frames that are forced to have the same defining helmert paramaters.
+to go from (1 0 0) (coord of point Z in subframe) to (0 0 1) (coord of Z in rootframe) with a RY rotation needs 100 gon.
+As both SLAVE frames are nested and forced to be equal, they will divide the 100 gon rotation into two equal 50 gon rotations.
+*OLOC
+*CONSI
+*APRI
+*PREC 6
+*INSTR
+*CALA
+Z 0 0 1
+*FRAME SLAVE_1 0 0 0 0 0 0 1 RY 
+*FRAME SLAVE_2 0 0 0 0 0 0 1 RY 
+*OBSXYZ 
+Z 1 0 0 1.00 1.00 1.00
+*ENDFRAME
+*ENDFRAME
+*END

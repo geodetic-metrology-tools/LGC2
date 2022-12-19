@@ -1,20 +1,24 @@
 *TITR
-keyword issue test
+X Y and Z are observed from subframes SLAVE_1, SLAVE_2 and SLAVE_3 respectively.
+There are 3*7 = 21 degrees of freedom for the three frames - the problem has no solution because there are only 9 observations for 21 degrees of freedom..
+By using the SLAVE prefix on the frames, LGC adds constraints:
+Helmert parameters of SLAVE_1 = Helmert Parameters of SLAVE_2
+and
+Helmert parameters of SLAVE_1 = Helmert Parameters of SLAVE_3
+(the first SLAVE frame is the master and any other SLAVE frame is forced to have the same helmert parameters)
+In the example this introduces 2*7 constraints and the problem becomes solvable: 7 degrees of freedom vs 9 observations.
 *OLOC
 *CONSI
 *APRI
 *PREC 6
 *INSTR
 *CALA
-%Zero 0 0 0
 X 1 0 0
 Y 0 1 0
 Z 0 0 1
-%XYZ 1 1 1 
 *FRAME SLAVE_1 1 2 3 100 20 30 1 TX TY TZ RX RY RZ SCL
 *OBSXYZ 
 X 1 0 0 6.66 6.66 6.66
-%XYZ 1 1 1 1 1 1
 *ENDFRAME
 *FRAME SLAVE_2 4 5 6 400 40 30 3 TX TY TZ RX RY RZ SCL
 *OBSXYZ
