@@ -1308,21 +1308,12 @@ PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdo
 	if (D < nullLimit)
 		throw std::logic_error("TContributionsGenerator::getPDORContrib: Division by zero because observation points have identical coordinates.");
 
-	// GKA (26/09/2019) : change of definition to a bearing, changes also made in TLSInputMatricesFiller
-	TReal calcmeas;
-	if (pdorObs.isBearingDefined())
-		calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - pdorObs.getBearing().getRadiansValue();
-	else
-	{
-		TPositionVector oriPtPro = pdorObs.orientationPt->getProvisionalValue();
-		TReal xRefPro = oriPtPro.getX().getMetresValue();
-		TReal yRefPro = oriPtPro.getY().getMetresValue();
-		calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - (TAngle::aTan2((xRefPro - xFix), (yRefPro - yFix)));
-	}
+	// When no bearing is set in th input file, one is set in TDataAnalyzer w.r.t provisional values
+	TReal calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - pdorObs.getBearing().getRadiansValue();
 
-	//CALCULATION OF THE CONTRIBUTION IN LOCAL INSTRUMENT SYSTEM	
-	TReal a = (yRef - yFix) / powq(D, 2);//xFix coefficient
-	TReal b = -(xRef - xFix) / powq(D, 2);//yFix coefficient
+	// Calculation of the contributions in the local instrument system
+	TReal a = (yRef - yFix) / powq(D, 2); // derivative w.r.t xFix
+	TReal b = -(xRef - xFix) / powq(D, 2); // derivative w.r.t yFix
 	TReal c = 0.0;
 
 
