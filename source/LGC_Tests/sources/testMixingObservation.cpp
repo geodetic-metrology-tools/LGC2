@@ -302,4 +302,73 @@ namespace tut
 		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 1.4892, 1e-4);
 		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 0.7709, 1e-4);
 	}
+
+	template<>
+	template<>
+	void object::test<7>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing if only one PDOR is active");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(MixObs::PDOR_2CALA);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		// now the TDataAnalyzer has set the PDORS
+		// iterate over frame tree and check if PDOR is only initialised once.
+		int numberInitializedPDOR = 0;
+		// Iteration through nodes of the LOR tree
+		for (TDataTreeIterator  itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
+		{
+			if (itTree.node->data->measurements.fPDOR.isInitialised())
+			{
+				numberInitializedPDOR++;
+			}
+		}
+		ensure_equals("There should be exactly one node with initialized PDOR", numberInitializedPDOR, 1);
+	}
+
+	template<>
+	template<>
+	void object::test<8>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing if all PDORs are uninitialized when PDOR is inactive.");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		//load example without PDOR
+		std::stringstream infiler(MixObs::ANGL_ZEND_DIST);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+		ensure_equals("PDOR should be inactive", projTest->getConfig().pdor.isActive(), false);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		// now the TDataAnalyzer has set the PDORS
+		int numberInitializedPDOR = 0;
+		// Iteration through nodes of the LOR tree
+		for (TDataTreeIterator  itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
+		{
+			if (itTree.node->data->measurements.fPDOR.isInitialised())
+			{
+				numberInitializedPDOR++;
+			}
+		}
+		ensure_equals("No node should contain an initialized PDOR", numberInitializedPDOR, 0);
+	}
+
+
 };
