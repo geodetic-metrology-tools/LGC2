@@ -153,3 +153,115 @@ fXSigmaObsVal(sigX), fYSigmaObsVal(sigY), fZSigmaObsVal(sigZ),
 positionInTree(itTree),
 TAMeas<int>(point, 0)
 {}
+
+
+
+#ifdef USE_SERIALIZER
+
+void TPLR3D::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedCs", fAllFixedCs);
+	obj.addProperty("fAllFixedHi", fAllFixedHi);
+	obj.addProperty("fAllFixedRx", fAllFixedRx);
+	obj.addProperty("fAllFixedRy", fAllFixedRy);
+	obj.addProperty("fAllFixedV0", fAllFixedV0);
+}
+
+void TANGL::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedV0", fAllFixedV0);
+}
+
+void TZEND::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedHi", fAllFixedHi);
+}
+
+void TLINE::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedCs", fAllFixedCs);
+	obj.addProperty("fAllFixedHi", fAllFixedHi);
+}
+
+void TECTH::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedV0", fAllFixedV0);
+	obj.addProperty("obsHorAngle", obsHorAngle);
+}
+
+void TECDIR::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedV0", fAllFixedV0);
+	obj.addProperty("obsHorAngle", obsHorAngle);
+	obj.addProperty("obsVertAngle", obsVertAngle);
+}
+
+void TDSPT::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAllFixedCs", fAllFixedCs);
+}
+
+void TDVER::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fDistanceCorrection", fDistanceCorrection);
+	obj.addProperty("fSigmaObsVal", fSigmaObsVal);
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+}
+
+void TDLEV::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("dhor", dhor);
+	obj.addProperty("fAllFixedCollimation", fAllFixedCollimation);
+}
+
+void TRADI::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fAngleCnstr", fAngleCnstr);
+	obj.addProperty("fConstAngleVal", fConstAngleVal);
+	obj.addProperty("fResidual", fResidual);
+	obj.addProperty("fSigmaObsVal", fSigmaObsVal);
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+}
+
+void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("calaPt", calaPt);
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fbearing", fbearing);
+	obj.addProperty("fbearingResidual", fbearingResidual);
+	obj.addProperty("fDefined", fDefined);
+	obj.addProperty("fIsInitialise", fIsInitialise);
+	obj.addProperty("fSigmaObsVal", fSigmaObsVal);
+	obj.addProperty("line", line);
+	obj.addProperty("orientationPt", orientationPt);
+}
+
+void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fXResidual", fXResidual);
+	obj.addProperty("fXSigmaObsVal", fXSigmaObsVal);
+	obj.addProperty("fYResidual", fYResidual);
+	obj.addProperty("fYSigmaObsVal", fYSigmaObsVal);
+	obj.addProperty("fZResidual", fZResidual);
+	obj.addProperty("fZSigmaObsVal", fZSigmaObsVal);
+	obj.addProperty("initialValue", initialValue);
+	obj.addProperty("line", line);
+	//obj.addProperty("positionInTree", positionInTree);
+	obj.addProperty("station", station);
+}
+
+void TECWS::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+	obj.addProperty("wsHeight", wsHeight);
+}
+
+#endif
+
+

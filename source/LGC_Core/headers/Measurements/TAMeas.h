@@ -14,10 +14,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <UEOIndices.h>
 //LGC
 #include <TInstrumentData.h>
+//#include <LGCAdjustablePoint.h>
 
-#ifdef USE_SERIALIZER
-#	include <Serializer.hpp>
-#endif // USE_SERIALIZER
+
 
 class LGCAdjustablePoint;
 
@@ -38,11 +37,8 @@ enum ESingleValue {
 					of the observed target. May be set to int and supplied with 0 if no target is used.
 */
 template<typename TTarget>
-#ifdef USE_SERIALIZER
-class TAMeas : public Serializable, public TStatusObject
-#else
+
 class TAMeas : public TStatusObject
-#endif // USE_SERIALIZER
 {
     private:
         
@@ -61,7 +57,7 @@ class TAMeas : public TStatusObject
 			
 		/// Pointer to the observed point on which the target is positioned
 		const LGCAdjustablePoint* targetPos; 
-
+		      
 		/// Line in the input file where this measurement was defined
 		int line;
 
