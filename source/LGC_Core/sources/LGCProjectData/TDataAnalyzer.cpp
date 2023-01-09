@@ -1041,9 +1041,28 @@ void TDataAnalyzer::checkPDOR(TFileLogger& fileLog, bool dataConsistent)
 			exit(1);
 		LGCAdjustablePoint& oriPt = fData.getPoints().getObject(pdor.fptname);
 
+		// Calculate the bearing w.r.t the provisional values when not specified in the input file
+		if (!pdor.hasBearing)
+		{
+			TPositionVector station = cala->getProvisionalValue();
+			TLOR2LOR transformationStToRoot(cala->getFrameTreePosition(), fTree.begin(), "Station2ROOT");
+			transformationStToRoot.transform(station);
+
+			TReal xFix = station.getX().getMetresValue();
+			TReal yFix = station.getY().getMetresValue();
+
+			TPositionVector target = oriPt.getProvisionalValue();
+			TLOR2LOR transformationTgToRoot(oriPt.getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+			transformationTgToRoot.transform(target);
+
+			TReal xRefPro = target.getX().getMetresValue();
+			TReal yRefPro = target.getY().getMetresValue();
+
+			pdor.fgis = (TAngle::aTan2((xRefPro - xFix), (yRefPro - yFix)));
+		}
+
 		//initialize pdor measurement function
 		auto initialize = [&](TPdorObs& pdor_meas) {
-
 			pdor_meas.Initialise(*cala, oriPt, pdor.fgis, pdor.hasBearing);
 			pdor_meas.setFirstEquationIndex(fData.fUEOIndices.EIndex);
 			pdor_meas.setFirstObservationIndex(fData.fUEOIndices.OIndex);
