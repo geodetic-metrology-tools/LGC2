@@ -122,3 +122,56 @@ const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary(std::string text) noexce
 	plr3dSummary_.distObsSum.setObsText(text);
 	return plr3dSummary_;
 }
+
+
+#ifdef USE_SERIALIZER
+// Inherited via Serializable
+void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ihfix", ihfix);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("instrumentHeightAdjustable", instrumentHeightAdjustable);
+	//obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("line", line);
+	//obj.addProperty("roms", roms);
+	obj.addProperty("rot3D", rot3D);
+	obj.addProperty("rotX", rotX);
+	obj.addProperty("rotY", rotY);
+	obj.addProperty("stnCounter_", stnCounter_);
+	obj.addProperty("stnId", stnId);
+}
+#endif
+
+#ifdef USE_SERIALIZER
+// Inherited via Serializable
+void TTSTN::TROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("acst", acst);
+	obj.addProperty("anglActive", anglActive);
+	obj.addProperty("anglSummary_", anglSummary_);
+	obj.addProperty("defaultTargetId", defaultTargetId);
+	obj.addProperty("dhorActive", dhorActive);
+	obj.addProperty("dhorSummary_", dhorSummary_);
+	obj.addProperty("distActive", distActive);
+	obj.addProperty("distSummary_", distSummary_);
+	obj.addProperty("ecdirActive", ecdirActive);
+	obj.addProperty("ecdirSummary_", ecdirSummary_);
+	obj.addProperty("ecthActive", ecthActive);
+	obj.addProperty("ecthSummary_", ecthSummary_);
+	obj.addProperty("measANGL", measANGL);
+	obj.addProperty("measDHOR", measDHOR);
+	obj.addProperty("measDIST", measDIST);
+	obj.addProperty("measECDIR", measECDIR);
+	obj.addProperty("measECTH", measECTH);
+	obj.addProperty("measPLR3D", measPLR3D);
+	obj.addProperty("measZEND", measZEND);
+	obj.addProperty("plr3dSummary_", plr3dSummary_);
+	obj.addProperty("plrActive", plrActive);
+	obj.addProperty("romCounter_", romCounter_);
+	obj.addProperty("romId", romId);
+	obj.addProperty("v0", v0);
+	obj.addProperty("zendActive", zendActive);
+	obj.addProperty("zendSummary_", zendSummary_);
+}
+#endif
+
