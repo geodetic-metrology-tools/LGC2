@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -514,6 +514,47 @@ namespace TestNonTSTN {
 		"*END												\n"
 
 		;
+	
+	char const *const OBSXYZ_subframe =
 
-}
+		"*TITR\n"
+		"Test for correct OBSXYZ handling of measurements in rotated subframes\n"
+		"see SUS-2095\n"
+		"*OLOC\n"
+		"*CONSI\n"
+		"*PREC 7\n"
+		"*INSTR\n"
+		"*POIN\n"
+		"Zero 0 0 0 \n"
+		"*OBSXYZ\n"
+		"Zero 0 0.001 0  0.1 1 0.1\n"
+		"*FRAME Rot_Z 0 0 0 0 0 100 1\n"
+		"*OBSXYZ\n"
+		"Zero	0.001 0 0 1 0.1 0.1 \n"
+		"% this corresponds to an *OBSXYZ measurement\n"
+		"% Zero 0 -0.001 0 0.1 1 0.1 \n"
+		"% defined in the root frame (symmetric negative of the other OBSXYZ, considering the 100 gon RZ rotation)\n"
+		"% so the estimation should be (0,0,0)\n"
+		"*ENDFRAME\n"
+		"*END\n";
+
+	char const *const OBSXYZ_weights =
+
+		"*TITR\n"
+		"OBSXYZ weights handling\n"
+		"*OLOC\n"
+		"*INSTR\n"
+		"*CALA\n"
+		"UX  1 0 0\n"
+		"UY  0 1 0\n"
+		"UZ  0 0 1\n"
+		"*FRAME TESTFRAME 0 0 0 0 0 0 1 RX RY RZ \n"
+		"*OBSXYZ\n"
+		"UX  0 -1 0  1  1  1\n"
+		"UY  1 1000 0  1  1000000  1\n"
+		"UZ  0 0 1  1  1  1\n"
+		"*ENDFRAME\n"
+		"*END\n";
+
+	}
 #endif
