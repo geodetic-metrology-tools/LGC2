@@ -305,17 +305,20 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
 	obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
 
-	/*
-	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
-	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
-	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
-	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
-	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
-	obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
-	*/
-
-    
-
-
+    obj.addProperty("fCAM", fCAM);	
+	obj.addProperty("fDVER", fDVER);
+	obj.addProperty("fECHO", fECHO);
+	obj.addProperty("fECSP", fECSP);
+	obj.addProperty("fECVE", fECVE);
+	obj.addProperty("fECWS", fECWS);
+	obj.addProperty("fEDM", fEDM);
+	obj.addProperty("fINCLY", fINCLY);
+	obj.addProperty("fLEVEL", fLEVEL);
+	obj.addProperty("fOBSXYZ", fOBSXYZ);
+	obj.addProperty("fORIE", fORIE);
+	obj.addProperty("fPDOR", fPDOR);
+	obj.addProperty("fRADI", fRADI);
+	obj.addProperty("fLEVEL", fLEVEL);
+	//obj.addProperty("fTSTN", fTSTN);
 }
 #endif

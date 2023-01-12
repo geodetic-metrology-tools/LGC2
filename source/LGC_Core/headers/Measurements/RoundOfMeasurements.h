@@ -44,7 +44,12 @@ struct TECHOROM : public TStatusObject {
 			line(NO_VALi)
 			{}
 
-private:
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
+	private:
 
     static int romCounter_;
 
@@ -110,6 +115,11 @@ struct TECSPROM : public TStatusObject {
 		line(NO_VALi)
 	{}
 
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
 private:
 
     static int romCounter_;
@@ -151,6 +161,11 @@ struct TECVEROM : public TStatusObject {
         fPtLine(ptLine),
 		line(NO_VALi)
 	{}
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
 private:
 
@@ -198,6 +213,11 @@ struct TORIEROM : public TStatusObject {
 		{
 		}
 
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
     private:
         
         static int romCounter_;
@@ -240,6 +260,11 @@ struct TINCLYROM : public TStatusObject {
 
 	/// Initialise observation summaries
 	void initialiseObsSummaries();
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
 private:
 
@@ -289,6 +314,10 @@ struct TECWSROM : public TStatusObject {
 		line(NO_VALi)
 	{}
 
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
 private:
 

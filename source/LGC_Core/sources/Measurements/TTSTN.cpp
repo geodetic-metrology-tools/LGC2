@@ -133,7 +133,7 @@ void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("instrumentHeightAdjustable", instrumentHeightAdjustable);
 	//obj.addProperty("instrumentPos", instrumentPos);
 	obj.addProperty("line", line);
-	//obj.addProperty("roms", roms);
+	//obj.addProperty("roms");
 	obj.addProperty("rot3D", rot3D);
 	obj.addProperty("rotX", rotX);
 	obj.addProperty("rotY", rotY);

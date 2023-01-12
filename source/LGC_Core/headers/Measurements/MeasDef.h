@@ -362,6 +362,11 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				/// Stes DHOR sigma
             inline void setDHORSigma(TLength sigma){ dhorSigma = sigma; }
 
+			#ifdef USE_SERIALIZER
+						// Inherited via Serializable
+						virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+			#endif
+
 			private:
 				/*Optinal horizontal distance sigma which can be assigned to a DHOR measurement inside DLEV.*/
 				TLength dhorSigma;
