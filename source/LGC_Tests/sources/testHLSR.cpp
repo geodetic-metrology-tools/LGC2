@@ -317,4 +317,31 @@ namespace tut
 		ensure_equals("Computation should have 3 equations", dataset.fUEOIndices.EIndex, 3);
 		ensure_equals("Computation should have 3 observations", dataset.fUEOIndices.OIndex, 3);
 	}
+
+	template<>
+	template<>
+	void object::test<10>()
+	{
+		set_test_name("Testing reading observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/HLSR_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestHLSR::ECWS_ID);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID
+		ensure_equals("The observation ID is HL_SNSR_1_PT1", tree.begin()->get()->measurements.fECWS.begin()->measECWS.begin()->obsID, "HL_SNSR_1_PT1"); 
+		ensure_equals("The length of the observation ID is 13", dataset.getConfig().obsIDwidth, (int)tree.begin()->get()->measurements.fECWS.begin()->measECWS.begin()->obsID.size());
+	}
 }

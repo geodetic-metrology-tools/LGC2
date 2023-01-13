@@ -35,6 +35,32 @@ namespace TestDVER {
 		"pt4  pt5   40\n"
 	;
 
+	char const *const OLOC_DVER_cheminement_id =
+	"*TITR\n"
+	"Testing ID for DVER observation.\n"
+	"*OLOC\n"
+
+	"*CALA\n"
+		"stn	0   0	0\n" 
+		"pt5	305	10	50\n"
+
+	"*VZ\n"
+		"pt0	50	0	9.0\n" //we expect Z = 10
+		"pt1	100	10	50\n" //we expect Z = 50
+		"pt2	140	-10	15.0\n" //we expect Z = 20
+		"pt3	200	0	0.5\n"  //we expect Z = 0
+		"pt4	255	5	10\n" //we expect Z = 10
+
+	"*DVER\n"
+		"stn  pt1 50 ID STN_pt1\n"
+		"stn  pt0   10 ID STN_pt0\n"
+		"pt0  pt1   40 ID pt0_pt1\n"
+		"pt1  pt2  -30 ID pt1_pt2\n"
+		"pt2  pt3  -20 ID pt2_pt3\n"
+		"pt3  pt4   10 ID pt3_pt4\n"
+		"pt4  pt5   40 ID pt4_pt5\n"
+	;
+
 	char const *const OLOC_DVER_cheminement_LOR =
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"

@@ -31,6 +31,29 @@ namespace TestNonTSTN {
 		"*DSPT STN2 EDM1\n"
 			"PT 100\n"	
 			;
+
+	char const *const dspt_id = 
+		"*TITR\n"
+		"Reading ID for DSPT observation.\n"
+		"*OLOC\n"
+		"*FAUT\n"
+
+		"*INSTR\n"
+		"*EDM EDM1 ET1 0.0 0.1 0.1\n"
+		"ET1  0.7  0.0 0 0.0 0.05 0.1 0 0.1\n"
+
+		"*CALA\n"
+			"STN  0 0 0\n"
+			"STN2  0 0 200\n"
+
+		"*VZ\n"
+			"PT  0 0 50\n" /*Correct value is 0 0 100*/   /*If greater then 200 or smaller then 0 a failure case is reached, when target point has the same coordinates as the station one*/
+
+		"*DSPT STN EDM1\n"
+			"PT 100 ID EDM1_STN_PT\n"
+		"*DSPT STN2 EDM1\n"
+			"PT 100 ID EDM1_STN2_PT\n"	
+			;
 //----------------------------- DLEV --------------------------------//
 	/*Reference point given*/
 	char const *const dlev_1 = 
@@ -60,7 +83,32 @@ namespace TestNonTSTN {
 			"PTCAL2 -699.99999999 \n"
 			"PT 50 \n"
 		;
+		
+	char const *const dlev_id = 
+		"*TITR\n"
+		"Testing ID for DLEV observation.\n"
+		"*OLOC\n"
+		"*FAUT\n"
 
+		"*INSTR\n"
+		"*LEVEL LEV1 DLS1 0 0.0\n" 
+		"DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
+
+		"*CALA\n"
+			"STN  0 0 0\n"
+			"REF  0 0 200\n"
+			"PTCAL1  200 10 130\n"
+			"PTCAL2  250 10 800\n"
+
+		"*VZ\n"
+			"PT  0 0 20\n" /* Correct solution 0 0 50*/ 
+
+		"*DLEV LEV1 RefPt REF\n" //Calculated distance of the reference point is 100m, measurement of a plane
+			"STN 100 ID LEV1_STN \n"
+			"PTCAL1 -30.000000001 ID LEV1_PTCAL1 \n"
+			"PTCAL2 -699.99999999 ID LEV1_PTCAL2 \n"
+			"PT 50 ID LEV1_PT \n"
+		;
      char const *const dlev_1_RS2K = 
               "*TITR\n"
               "Testing Input Matrices Filler.\n"
@@ -218,6 +266,32 @@ namespace TestNonTSTN {
 
 		;
 
+	char const *const echo_id = 
+		"*TITR\n"
+		"Testing ID for ECHO observation.\n"
+		"*OLOC\n"
+		"*FAUT\n"
+		"*PUNC\n"
+
+		"*INSTR\n"
+		"*SCALE SCL1 0.8 0.1 0.0 0.0 0.0\n"
+
+		"*CALA\n"
+			"REF1  100 0 0\n"
+			"REF2  120 20 0\n"
+			"REF3  150 50 0\n"
+			"REF4  130 80 0\n"
+			"REF5  100 100 0\n"
+
+
+		"*ECHO SCL1\n"
+			"REF1 -100 ID SCL1_REF1\n"
+			"REF2 -120 ID SCL1_REF1\n"
+			"REF3 -150 ID SCL1_REF3\n"
+			"REF4 -130 ID SCL1_REF4 \n"
+			"REF5 -100 ID SCL1_REF5\n"
+
+		;
 
 	char const *const echo_1_plus_on_left_side = 
 		"*TITR\n"
@@ -514,6 +588,41 @@ namespace TestNonTSTN {
 		"*END												\n"
 
 		;
+
+		char const *const orie_id =
+		"*TITR												\n"
+		"Testing ID for ORIE observation.					\n"
+		"*OLOC												\n"
+		"*PREC 7											\n"
+		"*APRI										    	\n"
+		"*INSTR											\n"
+		"*POLAR TS2 T2 0.0 0.0 0.0 0						\n"
+		"T2  5.0  5.0  0.5  0.0  0  0.0  0.0  0.0  0.0  0.0\n"
+		"*EDM EDM1 ET1 0.0 0.0 0.0							\n"
+		"ET1  0.2  0.0 0 0.0 0.0 0.0 0 0.0					\n"
+		"*CALA												\n"
+		"A_1   2000.00000   2100.00001   449.9992104		\n"
+		"*VXY \n "
+		"B_1   2029.38926   2140.45085   449.9994201	\n"
+		"C_1   2058.77853   2180.90170   450.0000212	\n"
+		"D_1   2088.16779   2221.35255   450.0010136	\n"
+		"E_1   2117.55705   2261.80340   450.0023975	\n"
+		"*DSPT   B_1  EDM1		\n"
+		"A_1   50.00001	ID DSPT_B_1-A_1	\n"
+		"C_1   50.00003	ID DSPT_B_1-C_1	\n"
+		"*DSPT   D_1  EDM1		\n"
+		"C_1   50.00002 ID DSPT_D_1-C_1		\n"
+		"E_1   50.00000	ID DSPT_D_1-E_1	\n"
+		"*ORIE  B_1  TS2   5	\n"
+		"A_1   277.77864 ID ORIE_B_1-A_1		\n"
+		"C_1   77.77865	ID ORIE_B_1-C_1	\n"
+		"*ORIE  C_1  TS2   5	\n"
+		"B_1   277.77867 ID ORIE_C_1-B_1		\n"
+		"D_1   77.77864	 ID ORIE_C_1-D_1       \n"
+		"*END					\n"
+
+		;
+
 
 }
 #endif
