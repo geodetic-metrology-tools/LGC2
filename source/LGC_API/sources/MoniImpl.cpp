@@ -131,43 +131,43 @@ void Moni::MoniImpl::createMeasurementReferences()
 			{
 				for (auto &itANGL : itROM->measANGL)
 				{
-					measRefs.ANGL.insert({std::to_string(itANGL.line), itANGL});
-					measRefs.types.insert({std::to_string(itANGL.line), "ANGL"});
+					measRefs.ANGL.insert({itANGL.obsID, itANGL});
+					measRefs.types.insert({itANGL.obsID, "ANGL"});
 				}
 
 				for (auto &itZEND : itROM->measZEND)
 				{
-					measRefs.ZEND.insert({std::to_string(itZEND.line), itZEND});
-					measRefs.types.insert({std::to_string(itZEND.line), "ZEND"});
+					measRefs.ZEND.insert({itZEND.obsID, itZEND});
+					measRefs.types.insert({itZEND.obsID, "ZEND"});
 				}
 
 				for (auto &itDIST : itROM->measDIST)
 				{
-					measRefs.DIST.insert({std::to_string(itDIST.line), itDIST});
-					measRefs.types.insert({std::to_string(itDIST.line), "DIST"});
+					measRefs.DIST.insert({itDIST.obsID, itDIST});
+					measRefs.types.insert({itDIST.obsID, "DIST"});
 				}
 				for (auto &itECTH : itROM->measECTH)
 				{
-					measRefs.ECTH.insert({std::to_string(itECTH.line), itECTH});
-					measRefs.types.insert({std::to_string(itECTH.line), "ECTH"});
+					measRefs.ECTH.insert({itECTH.obsID, itECTH});
+					measRefs.types.insert({itECTH.obsID, "ECTH"});
 				}
 
 				for (auto &itECDIR : itROM->measECDIR)
 				{
-					measRefs.ECDIR.insert({std::to_string(itECDIR.line), itECDIR});
-					measRefs.types.insert({std::to_string(itECDIR.line), "ECDIR"});
+					measRefs.ECDIR.insert({itECDIR.obsID, itECDIR});
+					measRefs.types.insert({itECDIR.obsID, "ECDIR"});
 				}
 
 				for (auto &itDHOR : itROM->measDHOR)
 				{
-					measRefs.DHOR.insert({std::to_string(itDHOR.line), itDHOR});
-					measRefs.types.insert({std::to_string(itDHOR.line), "DHOR"});
+					measRefs.DHOR.insert({itDHOR.obsID, itDHOR});
+					measRefs.types.insert({itDHOR.obsID, "DHOR"});
 				}
 
 				for (auto &itPLR3D : itROM->measPLR3D)
 				{
-					measRefs.PLR3D.insert({std::to_string(itPLR3D.line), itPLR3D});
-					measRefs.types.insert({std::to_string(itPLR3D.line), "PLR3D"});
+					measRefs.PLR3D.insert({itPLR3D.obsID, itPLR3D});
+					measRefs.types.insert({itPLR3D.obsID, "PLR3D"});
 				}
 				// what about ORIEs?
 			}
@@ -178,14 +178,14 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itUVD : itCAM->measUVD)
 			{
-				measRefs.UVD.insert({std::to_string(itUVD.line), itUVD});
-				measRefs.types.insert({std::to_string(itUVD.line), "UVD"});
+				measRefs.UVD.insert({itUVD.obsID, itUVD});
+				measRefs.types.insert({itUVD.obsID, "UVD"});
 			}
 
 			for (auto &itUVEC : itCAM->measUVEC)
 			{
-				measRefs.UVEC.insert({std::to_string(itUVEC.line), itUVEC});
-				measRefs.types.insert({std::to_string(itUVEC.line), "UVEC"});
+				measRefs.UVEC.insert({itUVEC.obsID, itUVEC});
+				measRefs.types.insert({itUVEC.obsID, "UVEC"});
 			}
 		}
 		// In every node iterate through the EDM's measurements
@@ -194,8 +194,8 @@ void Moni::MoniImpl::createMeasurementReferences()
 			// Iterate through DSPT measurements
 			for (auto &itDSPT : itEDM->measDSPT) // TYPO in original implementation
 			{
-				measRefs.DSPT.insert({std::to_string(itDSPT.line), itDSPT});
-				measRefs.types.insert({std::to_string(itDSPT.line), "DSPT"});
+				measRefs.DSPT.insert({itDSPT.obsID, itDSPT});
+				measRefs.types.insert({itDSPT.obsID, "DSPT"});
 			}
 		}
 		// In every node iterate through the LEVEL's measurements
@@ -203,10 +203,8 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itDLEV : itLEVEL.measDLEV)
 			{
-				{
-					measRefs.DLEV.insert({std::to_string(itDLEV.line), itDLEV});
-					measRefs.types.insert({std::to_string(itDLEV.line), "DLEV"});
-				}
+				measRefs.DLEV.insert({itDLEV.obsID, itDLEV});
+				measRefs.types.insert({itDLEV.obsID, "DLEV"});
 			}
 		}
 		// In every node iterate through the ECHOROM's measurements
@@ -214,10 +212,8 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itECHO : itECHOrom.measECHO)
 			{
-				{
-					measRefs.ECHO.insert({std::to_string(itECHO.line), itECHO});
-					measRefs.types.insert({std::to_string(itECHO.line), "ECHO"});
-				}
+				measRefs.ECHO.insert({itECHO.obsID, itECHO});
+				measRefs.types.insert({itECHO.obsID, "ECHO"});
 			}
 		}
 		// In every node iterate through the ECVEROM's measurements
@@ -225,73 +221,48 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itECVE : itECVErom.measECVE)
 			{
-				{
-					measRefs.ECVE.insert({std::to_string(itECVE.line), itECVE});
-					measRefs.types.insert({std::to_string(itECVE.line), "ECVE"});
-				}
+				measRefs.ECVE.insert({itECVE.obsID, itECVE});
+				measRefs.types.insert({itECVE.obsID, "ECVE"});
 			}
-			// for (auto itECVE(itECVErom.measECVE.begin()); itECVE != itECVErom.measECVE.end(); ++itECVE)
-			//{
-			//	measRefs.ECVE.insert({std::to_string(itECVE->line), *itECVE});
-			// }
 		}
 		// In every node iterate through the ORIEROM's measurements
 		for (auto &itORIErom : itTree.node->data->measurements.fORIE)
 		{
 			for (auto &itORIE : itORIErom.measORIE)
 			{
-				{
-					measRefs.ORIE.insert({std::to_string(itORIE.line), itORIE});
-					measRefs.types.insert({std::to_string(itORIE.line), "ORIE"});
-				}
+				measRefs.ORIE.insert({itORIE.obsID, itORIE});
+				measRefs.types.insert({itORIE.obsID, "ORIE"});
 			}
 		}
 		for (auto &itDVER : itTree.node->data->measurements.fDVER)
 		{
-			{
-				measRefs.DVER.insert({std::to_string(itDVER.line), itDVER});
-				measRefs.types.insert({std::to_string(itDVER.line), "DVER"});
-			}
+			measRefs.DVER.insert({itDVER.obsID, itDVER});
+			measRefs.types.insert({itDVER.obsID, "DVER"});
 		}
 		for (auto &itRADI : itTree.node->data->measurements.fRADI)
 		{
-			{
-				measRefs.RADI.insert({std::to_string(itRADI.line), itRADI});
-				measRefs.types.insert({std::to_string(itRADI.line), "RADI"});
-			}
+			measRefs.RADI.insert({itRADI.obsID, itRADI});
+			measRefs.types.insert({itRADI.obsID, "RADI"});
 		}
 		for (auto &itOBSXYZ : itTree.node->data->measurements.fOBSXYZ)
 		{
-			{
-				measRefs.OBSXYZ.insert({std::to_string(itOBSXYZ.line), itOBSXYZ});
-				measRefs.types.insert({std::to_string(itOBSXYZ.line), "OBSXYZ"});
-			}
+			measRefs.OBSXYZ.insert({itOBSXYZ.obsID, itOBSXYZ});
+			measRefs.types.insert({itOBSXYZ.obsID, "OBSXYZ"});
 		}
 		for (auto &itINCLYrom : itTree.node->data->measurements.fINCLY)
 		{
 			for (auto &itINCLY : itINCLYrom.measINCLY)
 			{
-				{
-					measRefs.INCLY.insert({std::to_string(itINCLY.line), itINCLY});
-					measRefs.types.insert({std::to_string(itINCLY.line), "INCLY"});
-				}
+				measRefs.INCLY.insert({itINCLY.obsID, itINCLY});
+				measRefs.types.insert({itINCLY.obsID, "INCLY"});
 			}
 		}
-		// for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
-		// {
-		// 	for (auto itECWS(itECWSrom.measECWS.begin()); itECWS != itECWSrom.measECWS.end(); ++itECWS)
-		// 	{
-		// 		measRefs.ECWS.insert({std::to_string(itECWS->line), *itECWS});
-		// 	}
-		// }
 		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
 		{
 			for (auto &itECWS : itECWSrom.measECWS)
 			{
-				{
-					measRefs.ECWS.insert({std::to_string(itECWS.line), itECWS});
-					measRefs.types.insert({std::to_string(itECWS.line), "ECWS"});
-				}
+				measRefs.ECWS.insert({itECWS.obsID, itECWS});
+				measRefs.types.insert({itECWS.obsID, "ECWS"});
 			}
 		}
 	}
