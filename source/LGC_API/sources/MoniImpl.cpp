@@ -39,6 +39,11 @@ Eigen::VectorXd Moni::getEstimateCovar(std::string id)
 {
 	return pimpl_->getEstimateCovar(id);
 }
+// get diagonal elements of covariances of the estimated parameters transformed to a subframe
+Eigen::VectorXd Moni::getEstimateCovar(std::string id, std::string frameName)
+{
+	return pimpl_->getEstimateCovar(id,frameName);
+}
 // get Meas IDs
 std::vector<std::string> Moni::getECWSMeasIds()
 {
@@ -641,63 +646,52 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId)
 	{
 		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
 	}
+	if (!(paramRefs.types.at(paramId) == "POINT"))
+	{
+		std::cout << "Covariance extraction only allowed for Points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
+	}
+
+	Eigen::VectorXd vector(3);
 	// get type and return result
 	if (paramRefs.types.at(paramId) == "POINT")
 	{
 		// get precisions, the diagonal covar elements are the square roots
-		Eigen::VectorXd vector(3);
-		vector[0] = pow((double) paramRefs.POINTS.at(paramId).getXEstPrecision(),2);
-		vector[1] = pow((double) paramRefs.POINTS.at(paramId).getYEstPrecision(),2);
-		vector[2] = pow((double) paramRefs.POINTS.at(paramId).getZEstPrecision(),2);
-		return vector;
+		vector[0] = pow((double)paramRefs.POINTS.at(paramId).getXEstPrecision(), 2);
+		vector[1] = pow((double)paramRefs.POINTS.at(paramId).getYEstPrecision(), 2);
+		vector[2] = pow((double)paramRefs.POINTS.at(paramId).getZEstPrecision(), 2);
 	}
-	else if (paramRefs.types.at(paramId) == "LINE")
+
+	return vector;
+}
+
+Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId, std::string frameName)
+{
+	Eigen::VectorXd vector(3);
+	vector.setZero();
+	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
+	if (paramRefs.types.count(paramId) == 0)
 	{
-		// how many dimensions does this have??	
-		TFreeVector result = paramRefs.LINES.at(paramId).getLineVectorEstimatedValue();
-		Eigen::VectorXd vector(3);
-		vector[0] = (double)result.getX();
-		vector[1] = (double)result.getY();
-		vector[2] = (double)result.getZ();
-
-		return vector;
+		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
 	}
-	else if (paramRefs.types.at(paramId) == "ANGLE")
+	if (!(paramRefs.types.at(paramId) == "POINT"))
 	{
-		Eigen::VectorXd resultVector(1);
-		resultVector[0]=(paramRefs.ANGLES.at(paramId).getEstimatedValue());
-
-		return resultVector;
+		std::cout << "Covariance transformations only allowed for Points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
 	}
-	else if (paramRefs.types.at(paramId) == "PLANE")
+	if (!(frameName == "ROOT"))
 	{
-		Eigen::VectorXd resultVector(3);
-		resultVector[0] = (double)paramRefs.PLANES.at(paramId).getRefPtDistEstimatedValue();
-		resultVector[1] = (double)paramRefs.PLANES.at(paramId).getPhiEstimatedValue();
-		resultVector[2] = (double)paramRefs.PLANES.at(paramId).getThetaEstimatedValue();
-
-		return resultVector;
+		std::cout << "Covariance transformations only allowed to \"ROOT\" frame, but destination frame is " << frameName << "." << std::endl;
 	}
-	else if (paramRefs.types.at(paramId) == "LENGTH")
+	LGCAdjustablePoint point = paramRefs.POINTS.at(paramId);
+	TFreeVector transformedCovar = point.transformSigmaInRoot(point, project.get());
+	// get type and return result
+	if (paramRefs.types.at(paramId) == "POINT")
 	{
-		Eigen::VectorXd resultVector(1);
-		resultVector[0] = (double)paramRefs.LENGTHS.at(paramId).getEstimatedValue();
-
-		return resultVector;
-	}
-	else if (paramRefs.types.at(paramId) == "TRAFO")
-	{
-		Eigen::VectorXd resultVector(7);
-		resultVector[0] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().kappa;
-		resultVector[1] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().omega;
-		resultVector[2] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().phi;
-		resultVector[3] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tX;
-		resultVector[4] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tY;
-		resultVector[5] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tZ;
-		resultVector[6] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().scale;
-
-		return resultVector;
+		// get precisions, the diagonal covar elements are the square roots
+		// these are the Sigmas, still need to take the swuare for the diagonal elements
+		vector[0] = pow((double)transformedCovar.getX(),2);
+		vector[1] = pow((double)transformedCovar.getY(),2);
+		vector[2] = pow((double)transformedCovar.getZ(),2);
 	}
 
-
+	return vector;
 }
