@@ -34,6 +34,11 @@ Eigen::VectorXd Moni::getEstimate(std::string id)
 {
 	return pimpl_->getEstimate(id);
 }
+// get estimate of parameter in subframe
+Eigen::VectorXd Moni::getEstimate(std::string id, std::string frameName)
+{
+	return pimpl_->getEstimate(id, frameName);
+}
 // get diagonal elements of covariances of the estimated parameters
 Eigen::VectorXd Moni::getEstimateCovar(std::string id)
 {
@@ -637,6 +642,31 @@ Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId)
 	}
 
 
+}
+// get estimate in subframe
+Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId, std::string frameName)
+{
+	Eigen::VectorXd vector(3);
+	vector.setZero();
+	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
+	if (paramRefs.types.count(paramId) == 0)
+	{
+		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+	}
+	if (!(paramRefs.types.at(paramId) == "POINT"))
+	{
+		std::cout << "Extracion in subframes only allowed for points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
+	}
+	if (!(frameName == "ROOT"))
+	{
+		std::cout << "Transformations only allowed to \"ROOT\" frame, but destination frame is " << frameName << "." << std::endl;
+	}
+	TPositionVector point = paramRefs.POINTS.at(paramId).getEstimatedValue();
+	TPointTransformer fPointTransfo(&project->getTree(), project->getConfig().referential);
+	const TLOR2LOR &lorTrafo = fPointTransfo.getLORTransformation(paramRefs.POINTS.at(paramId).getFrameTreePosition(), project->getTree().begin());
+	lorTrafo.transform(point);
+	vector << (double)point.getX(), (double)point.getY(), (double)point.getZ();
+	return vector;
 }
 
 Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId)
