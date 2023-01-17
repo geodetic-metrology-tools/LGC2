@@ -55,10 +55,12 @@ int main(int argc, char *argv[])
 		std::string parameterName = "B-TAP.WPS2";
 
 		// Print some results
-		std::cout << "\r Fras iteration " <<std::setw(5)<< i << std::setprecision(5) << ", elapsed time "  << (double)duration.count() / 1000 << " s. "
-				  << " Estimate of  " << parameterName << " = " <<std::setprecision(8)<<mockup.getEstimate(parameterName).transpose() << " Covariance (diagonal elements) "
-				  << mockup.getEstimateCovar(parameterName).transpose() << " Sigma 0 a-posteriori = " << mockup.getSigma0() << std::flush;
-		std::cout << "Covar in Root=" << mockup.getEstimateCovar(parameterName, "ROOT").transpose() << std::endl;
+		std::cout << "\r Fras iteration " << std::setw(5) << i << std::setprecision(5) << ", elapsed time " << (double)duration.count() / 1000 << " s. " << std::endl
+				  << "in Sub frame " << parameterName << " = " << std::setprecision(8) << mockup.getEstimate(parameterName).transpose() << "     Precisions "
+				  << mockup.getEstimateCovar(parameterName).transpose() << " Sigma_0 = " << mockup.getSigma0() << std::endl;
+		std::cout << std::setw(5) << std::setprecision(8) << "in Rootframe " << parameterName << " = " << std::setprecision(8)
+				  << mockup.getEstimate(parameterName, "ROOT").transpose() << "     Precisions " << mockup.getEstimateCovar(parameterName, "ROOT").transpose()
+				  << " Sigma_0 = " << mockup.getSigma0() << std::endl;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);

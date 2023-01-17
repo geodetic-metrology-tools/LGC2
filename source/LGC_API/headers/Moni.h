@@ -17,6 +17,8 @@ public:
 	void adjust();
 	// get estimate of parameter
 	Eigen::VectorXd getEstimate(std::string);
+	// get estimate of parameter in subframe
+	Eigen::VectorXd getEstimate(std::string, std::string);
 	// get diagonal elements of covariances of the estimated parameters
 	Eigen::VectorXd getEstimateCovar(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
