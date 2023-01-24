@@ -729,4 +729,66 @@ namespace tut
 		ensure_equals("Estimated RZ should be 300 gon", result.kappa.getGonsValue(), 300.0, 1e-7);
 	}
 
+
+	template<>
+	template<>
+	void object::test<22>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing Sigma2Root/Sigma2Subframe using OBSXYZ");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outOBSXYZ_sigma2root.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::OBSXYZ_sigma2root);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData& dataset = calcul.getData();
+		LGCAdjustablePoint point = dataset.getPoints().getObject("Test2");
+		// point is a cala point in subframe, so it has covariance 0 there. We test if its covariance in root is correct and equal to the obsxyz covar.
+		TFreeVector sigmaInRoot = point.transformSigmaInRoot(point,projTest.get());
+		ensure_equals("X Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getX(), 0.004);
+		ensure_equals("Y Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getY(), 0.005);
+		ensure_equals("Z Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getZ(), 0.006);
+
+		// test transformation 200 gon rot around to subframe that flips x and y precisions signs -> precisions should remain the same	
+		TFreeVector sigmaInSubframeFlippedSign = point.transformSigma(point, projTest.get(), "RotZ200");
+		ensure_equals("X Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getX(), 0.004);
+		ensure_equals("Y Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getY(), 0.005);
+		ensure_equals("Z Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getZ(), 0.006);
+	
+		// test transformation to subframe that switches x and y precisions
+		TFreeVector sigmaInSubframeSwitched= point.transformSigma(point, projTest.get(), "RotZ100");
+		ensure_equals("X Precision transformation to subframe problem", sigmaInSubframeSwitched.getX(), 0.005);
+		ensure_equals("Y Precision transformation to subframe problem", sigmaInSubframeSwitched.getY(), 0.004);
+		ensure_equals("Z Precision transformation to subframe problem", sigmaInSubframeSwitched.getZ(), 0.006);
+
+		// test transformation to subframe where point is defined (no transformation should happen)
+		TFreeVector sigmaInSubframe = point.transformSigma(point, projTest.get(), "Testframe3");
+		ensure_equals("X Precision trivial transformation problem", sigmaInSubframe.getX(), point.getXEstPrecision());
+		ensure_equals("Y Precision trivial transformation problem", sigmaInSubframe.getY(), point.getYEstPrecision());
+		ensure_equals("Z Precision trivial transformation problem", sigmaInSubframe.getZ(), point.getZEstPrecision());
+
+		// call transformation function for non existing frame
+		try
+		{
+			TFreeVector sigmaSubframe = point.transformSigma(point, projTest.get(), "NonExistingFrameName");
+			fail("Expect exception because destination frame does not exist.");
+		}
+		catch (std::exception const &excp)
+		{
+			std::string test = excp.what();
+			ensure_equals("Wrong exception thrown", test, "Frame not found");
+		}
+	}
+
 }
+

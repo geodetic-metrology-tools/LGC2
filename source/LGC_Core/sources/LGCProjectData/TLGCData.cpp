@@ -20,9 +20,38 @@ TLGCData::TLGCData()
 	n.ID = std::vector<int> (1);
 	n.ID[0] = 1;
 	n.frame.setName("ROOT");
+
+    // covar Matrix
+	fCovMat = new TSparseMatrix;
 }
 
-TTreeEntry& TLGCData::addChild(TAdjustableHelmertTransformation* transfo) {
+TLGCData::~TLGCData(){
+    // should be done in addition to default destructor
+	delete fCovMat;
+	fCovMat = nullptr;
+}
+
+TDataTreeIterator TLGCData::locateNode(std::string frameName) const
+{
+	// Find the frame iterator with the corresponding frame name
+	TDataTreeIterator lastNodeIter = getTree().end();
+	TDataTreeIterator currentNodeIter = getTree().begin();
+	while (currentNodeIter != lastNodeIter)
+	{
+		if (currentNodeIter.node->data.get()->frame.getName() == frameName)
+		{
+			break;
+		}
+		currentNodeIter++;
+	}
+	if (currentNodeIter == lastNodeIter)
+		throw std::runtime_error("Frame not found");
+
+	return currentNodeIter;
+}
+
+TTreeEntry &TLGCData::addChild(TAdjustableHelmertTransformation *transfo)
+{
 	pos = tree.append_child(pos, TDataSPtr(new TTreeEntry()));
 	auto& n(getCurrentNode());
 	n.frame = *transfo;
@@ -259,6 +288,11 @@ void TLGCData::setDefaultValues() {
     fMeasInfo.fNumECWS = 0;
 }
 
+const TSparseMatrix *TLGCData::getCovMatByConst() const noexcept
+{
+	return fCovMat;
+}
+
 void TLGCData::reInitForSIMU(){
 	for (auto& point : points)
 		point.reInitialise();
@@ -319,6 +353,7 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
     
     // Copy statistics:
     d->stat = stat;
+	d->fCovMat = fCovMat;
 
     // Copy relative errors:
     for(const auto &erelPair : fRelError){

@@ -264,6 +264,77 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 	catch(std::runtime_error ex){throw ex;}
  }
 
+ std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR::getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const
+ {
+	 // create the Jacobian of the Helmert transformation with respect to all 7 parameters
+	 std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoContrib;
+	 TFreeVector omegaDerivative(TCoordSysFactory::k3DCartesian);
+	 TFreeVector phiDerivative(TCoordSysFactory::k3DCartesian);
+	 TFreeVector kappaDerivative(TCoordSysFactory::k3DCartesian);
+	 TFreeVector t1Derivative(TCoordSysFactory::k3DCartesian);
+	 TFreeVector t2Derivative(TCoordSysFactory::k3DCartesian);
+	 TFreeVector t3Derivative(TCoordSysFactory::k3DCartesian);
+	 TFreeVector scaleDeriv(TCoordSysFactory::k3DCartesian);
+	 auto toVector = [](TFreeVector vIn) {
+		 TVector vector(3);
+		 vector << vIn.getX(), vIn.getY(), vIn.getZ();
+		 return vector;
+	 };
+
+
+	 // Iterate through the transformations, calculate contributions and store the contributiojn for every transformation
+	 for (auto it(transformationChain.begin()); it != transformationChain.end(); ++it)
+	 {
+		 std::string transformationName = it->adjTrafo->getName();
+
+		 // Contributions for rotations : Omega, Phi and Kappa
+		 omegaDerivative = partialDerivativesAngle(transformationName, pos, 0);
+		 phiDerivative = partialDerivativesAngle(transformationName, pos, 1);
+		 kappaDerivative = partialDerivativesAngle(transformationName, pos, 2);
+
+		 // Contributions for translation: X, Y and Z coordinate
+		 t1Derivative = partialDerivativesTranslation(transformationName, pos, 0);
+		 t2Derivative = partialDerivativesTranslation(transformationName, pos, 1);
+		 t3Derivative = partialDerivativesTranslation(transformationName, pos, 2);
+
+		 scaleDeriv = partialDerivativesScale(transformationName, pos);
+
+		 TDenseMatrix singleContrib(3, 7);
+		 singleContrib.setZero();
+		 singleContrib.col(0) = toVector(t1Derivative);
+		 singleContrib.col(1) = toVector(t2Derivative);
+		 singleContrib.col(2) = toVector(t3Derivative);
+		 singleContrib.col(3) = toVector(omegaDerivative);
+		 singleContrib.col(4) = toVector(phiDerivative);
+		 singleContrib.col(5) = toVector(kappaDerivative);
+		 singleContrib.col(6) = toVector(scaleDeriv);
+		 trafoContrib.push_back(std::pair<TAdjustableHelmertTransformation, TDenseMatrix>(*it->adjTrafo, singleContrib));
+	 }
+
+	 return trafoContrib;
+ }
+
+ TDenseMatrix TLOR2LOR::getPartialDerivativeWrtPosition(const TPositionVector &pos) const
+ {
+	 auto toVector = [](TFreeVector vIn) {
+		 TVector vector(3);
+		 // getMetresValue() not necessary because default is meter
+		 vector << vIn.getX(), vIn.getY(), vIn.getZ();
+		 return vector;
+	 };
+
+	 TFreeVector partDerWRespToX0 = partDerivWRespToX0();
+	 TFreeVector partDerWRespToY0 = partDerivWRespToY0();
+	 TFreeVector partDerWRespToZ0 = partDerivWRespToZ0();
+	 TDenseMatrix pointContrib(3, 3);
+	 pointContrib.setZero();
+	 pointContrib.col(0) = toVector(partDerWRespToX0);
+	 pointContrib.col(1) = toVector(partDerWRespToY0);
+	 pointContrib.col(2) = toVector(partDerWRespToZ0);
+
+	 return pointContrib;
+ }
+
 ///////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS
 ///////////////////////////////////////////////////////////////////////////

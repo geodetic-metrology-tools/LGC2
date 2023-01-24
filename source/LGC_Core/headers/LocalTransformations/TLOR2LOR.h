@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -10,6 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TTransformation.h>
 #include <Global.h>
+#include "TSparseMatrix.h"
 
 class TAdjustableHelmertTransformation;
 
@@ -149,6 +150,13 @@ class TLOR2LOR{
 			\returns Partial derivatives of the point 'p' with respect to the scale factor.
 		*/
 		TFreeVector partialDerivativesScale(const std::string& transfoName, const TPositionVector& p) const;
+
+		// compute the derivatives of the Lor2Lor chain with respect to all involved helmert parameters, as in the Contributions generator (=dH(p1,p2,...,pn,x)/d(p1,p2,..,pn))
+		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const;
+		
+		// compute the derivative of the Lor2Lor chain with respect to the coordinates of the tranformed point
+		TDenseMatrix getPartialDerivativeWrtPosition(const TPositionVector &pos) const;
+
 
 		/// Returns Source Node, the node of the tree from which is transformed.
 		inline TDataTreeIterator getFromNode() const {return fFromNode;};

@@ -515,46 +515,77 @@ namespace TestNonTSTN {
 
 		;
 	
-	char const *const OBSXYZ_subframe =
+	char const *const OBSXYZ_subframe = R"(*TITR
+Test for correct OBSXYZ handling of measurements in rotated subframes
+see SUS-2095
+*OLOC
+*CONSI
+*PREC 7
+*INSTR
+*POIN
+Zero 0 0 0 
+*OBSXYZ
+Zero 0 0.001 0  0.1 1 0.1
+*FRAME Rot_Z 0 0 0 0 0 100 1
+*OBSXYZ
+Zero	0.001 0 0 1 0.1 0.1 
+% this corresponds to an *OBSXYZ measurement
+% Zero 0 -0.001 0 0.1 1 0.1 
+% defined in the root frame (symmetric negative of the other OBSXYZ, considering the 100 gon RZ rotation)
+% so the estimation should be (0,0,0)
+*ENDFRAME
+*END
+)";
 
-		"*TITR\n"
-		"Test for correct OBSXYZ handling of measurements in rotated subframes\n"
-		"see SUS-2095\n"
-		"*OLOC\n"
-		"*CONSI\n"
-		"*PREC 7\n"
-		"*INSTR\n"
-		"*POIN\n"
-		"Zero 0 0 0 \n"
-		"*OBSXYZ\n"
-		"Zero 0 0.001 0  0.1 1 0.1\n"
-		"*FRAME Rot_Z 0 0 0 0 0 100 1\n"
-		"*OBSXYZ\n"
-		"Zero	0.001 0 0 1 0.1 0.1 \n"
-		"% this corresponds to an *OBSXYZ measurement\n"
-		"% Zero 0 -0.001 0 0.1 1 0.1 \n"
-		"% defined in the root frame (symmetric negative of the other OBSXYZ, considering the 100 gon RZ rotation)\n"
-		"% so the estimation should be (0,0,0)\n"
-		"*ENDFRAME\n"
-		"*END\n";
+	char const *const OBSXYZ_weights = R"(*TITR
+OBSXYZ weights handling
+*OLOC
+*INSTR
+*CALA
+UX  1 0 0
+UY  0 1 0
+UZ  0 0 1
+*FRAME TESTFRAME 0 0 0 0 0 0 1 RX RY RZ 
+*OBSXYZ
+UX  0 -1 0  1  1  1
+UY  1 1000 0  1  1000000  1
+UZ  0 0 1  1  1  1
+*ENDFRAME
+*END
+)";
 
-	char const *const OBSXYZ_weights =
-
-		"*TITR\n"
-		"OBSXYZ weights handling\n"
-		"*OLOC\n"
-		"*INSTR\n"
-		"*CALA\n"
-		"UX  1 0 0\n"
-		"UY  0 1 0\n"
-		"UZ  0 0 1\n"
-		"*FRAME TESTFRAME 0 0 0 0 0 0 1 RX RY RZ \n"
-		"*OBSXYZ\n"
-		"UX  0 -1 0  1  1  1\n"
-		"UY  1 1000 0  1  1000000  1\n"
-		"UZ  0 0 1  1  1  1\n"
-		"*ENDFRAME\n"
-		"*END\n";
+	char const *const OBSXYZ_sigma2root = R"(*TITR
+Test Sigma2Root function through subframes
+Points Test1 and Test2 have the same observations, but Test 2 is a cala in a subframe
+As the points have the same observations when viewed from the root frame they should hav ethe same covariances
+*OLOC
+*APRI
+*PREC 7
+*CONSI
+*INSTR
+*POIN
+Test1 0 0 0
+*OBSXYZ
+Test1 1 2 3 4 5 6
+Test2 1 2 3 4 5 6
+*FRAME Testframe1 0 0 0 30 0 0 1 TX 
+*FRAME Testframe2 0 0 0 0 40 0 1 TY
+*FRAME Testframe3 0 0 0 0 0 50 1 TZ
+*CALA
+Test2 3 2 1
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*FRAME RotZ200 0 0 0 0 0 200 1 
+*CALA
+Zero200 0 0 0
+*ENDFRAME
+*FRAME RotZ100 0 0 0 0 0 100 1 
+*CALA
+Zero100 0 0 0
+*ENDFRAME
+*END
+)";
 
 	}
 #endif

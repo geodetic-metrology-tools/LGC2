@@ -167,6 +167,7 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 ****************************************************************************************************************/
 void TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices& rm)
 {
+	extractFullCovar(rm);
 	extractPointVarCovar(rm);
 	extractAngleVar(rm);
 	extractLengthVar(rm);
@@ -673,6 +674,11 @@ bool	TLSResultsMatricesExtractor::lastIteration() const {
 //////////////////////////////////////////////////////////////////////////////////
 // extract var. and covar. params
 //////////////////////////////////////////////////////////////////////////////////
+void TLSResultsMatricesExtractor::extractFullCovar(const TLSResultsMatrices &rm)
+{
+	fDataSet->setCovMat(*rm.getUnkCovarMtrx());
+}
+
 void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices& rm)
 {
 	for (auto& point : fDataSet->getPoints()) {

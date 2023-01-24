@@ -79,6 +79,9 @@ namespace tut
 		p.setCorrection(3,1.0);
 		ensure_equals("Last uidx is on 4th position", p.getCorrection(1).getMetresValue(), 1.0);
 		ensure_equals("Last uidx is on 4th position", p.getEstimatedValue().getY().getMetresValue(), 3.0);
+		ensure_equals("Point has two unknowns", p.getRelativeUnknIndices().size(), 2);
+		ensure_equals("First active point place is 1", p.getRelativeUnknIndices().at(0), 1);
+		ensure_equals("Second active point place is 2", p.getRelativeUnknIndices().at(1), 2);
 
 
 		TPositionVector position2(1.0,2.0,3.0,TCoordSysFactory::ECoordSys::k2DPlusH);
@@ -107,6 +110,10 @@ namespace tut
 		ensure_equals("Coordinates fixed state should match",pH.getCoordinateUnknIndex(0), 5);
 		ensure_equals("Coordinates fixed state should match",pH.getCoordinateUnknIndex(1), 6);
 		ensure_THROW(pH.getCoordinateUnknIndex(2), std::logic_error);
+	
+		ensure_equals("Point has two unknowns", pH.getRelativeUnknIndices().size(), 2);
+		ensure_equals("First active point place is 0", pH.getRelativeUnknIndices().at(0), 0);
+		ensure_equals("Second active point place is 1", pH.getRelativeUnknIndices().at(1), 1);
 
 
 		ensure_THROW(pH.getStandDev(0), std::runtime_error);
@@ -175,6 +182,30 @@ namespace tut
 		ensure_equals("Correction should match", adjLength.getEstimatedPrecision(), 0.01);
 
 		//Testing TAdjustableAngle
+
+		// Testing AdjustableHelmertTransformation
+		TransformParameters par;
+		auto GON(TAngle::kGons);		
+		par.omega = TAngle(10.0, GON);
+		par.phi = TAngle(20.0, GON);
+		par.kappa = TAngle(30.0, GON);
+		par.tX = TLength(1.0);
+		par.tY = TLength(2.0);
+		par.tZ = TLength(3.0);
+		par.scale = 2;
+		std::bitset<3> transFixed(std::string("101"));
+		std::bitset<3> rotFixed(std::string("010"));
+		std::bitset<1> scaleFixed(std::string("0"));
+		TAdjustableHelmertTransformation adjTrafo(par, transFixed, rotFixed, scaleFixed, "TrafoName");
+		ensure_equals("Degree of Freedom is 4", adjTrafo.getNumUnkn(), 4);
+		ensure_equals("Trafo has 4 unknown indices", adjTrafo.getRelativeUnknIndices().size(), 4);
+		ensure_equals("1. Trafo unknown is at place 1", adjTrafo.getRelativeUnknIndices().at(0), 1);
+		ensure_equals("2. Trafo unknown is at place 3", adjTrafo.getRelativeUnknIndices().at(1), 3);
+		ensure_equals("3. Trafo unknown is at place 5", adjTrafo.getRelativeUnknIndices().at(2), 5);
+		ensure_equals("4. Trafo unknown is at place 6", adjTrafo.getRelativeUnknIndices().at(3), 6);
+		ensure_equals("Name should match", adjTrafo.getName(), "TrafoName");
+		ensure_equals("Trafo should be initialized", adjTrafo.isInitialized(), true);
+
 	}
 
 	// Test measurments

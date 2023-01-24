@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -151,6 +151,9 @@ public:
 
 		///Transform sigma a posteriori (= estimated precision) in root
 		static TFreeVector transformSigmaInRoot(const LGCAdjustablePoint& pv, const TLGCData* fData);
+		///Transform sigma a posteriori (= estimated precision) to arbitrary subframe
+		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame);
+		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const std::string toFrame);
 
 		/// Returns true if this point is defined in the ROOT frame
 		bool isInRootFrame() { return fFramePosition->get()->isROOTNode(); };

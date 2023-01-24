@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -78,6 +78,9 @@ public:
 	*/
 	TLGCData();
 
+	// destructor
+	~TLGCData();
+
 
 	/*!@name Methods related to the TREE OF FRAMES.*/
 	//@{
@@ -89,6 +92,9 @@ public:
 
 		/// Returns current iterator position in the tree.
 		inline TDataTreeIterator getCurrentPosition(){return pos;}
+
+		/// Returns the iterator of a frame via its name
+		TDataTreeIterator locateNode(std::string frameName) const;
 
 		/// Adds a new level to the tree passing the local transformation that led to this level.
 		TTreeEntry& addChild(TAdjustableHelmertTransformation* trafo);
@@ -213,6 +219,10 @@ public:
         /// Sets default values for number of points, measuremets, etc.
         void setDefaultValues();
 
+		/// Covariance matrix needed for transformation of covariances along chains of helmert trafos
+		const TSparseMatrix *getCovMatByConst() const noexcept; 
+		void setCovMat(TSparseMatrix &mat) { *fCovMat = mat; }
+
         /// Creates a deep copy of the data and returns a shared pointer to it
         std::shared_ptr<TLGCData> clone() const;
 
@@ -285,6 +295,8 @@ private:
 	TLSRelatedInfo fLSRelatedInfo;
 	TPointGlobal   fPointInfo;
 	TMeasurementsGlobal fMeasInfo;
+
+	TSparseMatrix* fCovMat;
 
 	/// Comments lines, with their line number as Key
 	std::map<int, std::string> comments;
