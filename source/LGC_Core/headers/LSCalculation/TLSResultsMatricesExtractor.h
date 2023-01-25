@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -12,7 +12,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 class TLGCData;
 class TLSResultsMatrices;
-class TLibrCnstrGenerator;
 class TUVD;
 class TUVEC;
 class TPdorObs;
@@ -55,18 +54,6 @@ public:
 		\returns TRUE if the process was successful, FALSE otherwise. 
 	*/
 	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit);
-
-	/*!
-	\brief Extracts the solution from the results matrices for a free network, updates the adjustable objects.
-
-	\param[in] rm Result matrices.
-	\param[in] convCrit LS convergence criterium.
-	\param[in] fCnstr Constraints generator.
-
-	\returns TRUE if the process was successful, FALSE otherwise.
-	*/
-//	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator& fCnstr);
-	bool	extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator* fCnstr);
 
 	/// Returns the boolean that indicates if a new iteration is necessary or not 
 	bool	lastIteration() const;
@@ -169,7 +156,6 @@ private:
 
 	TLGCData*				fDataSet;			/*!< pointer to a project data*/
 	bool					fLastIteration;		/*!< indicates if the convergence criteria has been exceeded and if a new iteration is necessary (default value = false)*/
-	TLibrCnstrGenerator* freeCnstr; /*!< pointer to a LIBR constraint generator*/
 };
 #endif
 

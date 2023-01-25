@@ -90,10 +90,7 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 				logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done\n=============================";
 
 				bool extractOK = false; 
-				if (data.getConfig().libre.isActive())
-					extractOK = fExtractor->extractResults(*resultMatrices, convCrit, &fLibrCnstrGenerator);
-				else
-					extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
+				extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
 
 				if (extractOK)
 					hasReachedCriteria = fExtractor->lastIteration();
