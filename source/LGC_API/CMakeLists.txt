@@ -1,9 +1,10 @@
-include_directories(${CMAKE_SOURCE_DIR}
-					${CMAKE_SOURCE_DIR}/LGC_API/headers/
+PROJECT (LGC_API)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/
 )
 
-SET(API_INCLUDE_PATH 	${PROJECT_SOURCE_DIR}/LGC_API/headers)
-SET(API_SOURCES_PATH 	${PROJECT_SOURCE_DIR}/LGC_API/sources)
+SET(API_INCLUDE_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/headers/)
+SET(API_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources)
 					
 					
 # Create a variable containing all .h files:
@@ -29,6 +30,14 @@ source_group("\\Sources" FILES ${API_CPP})
 
 
 # Create a static library from sources:
-add_library(LGC_API STATIC ${API_HEADERS} ${API_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${API_HEADERS} ${API_SOURCES})
+target_link_libraries(	${PROJECT_NAME}
+	LGC_Core
+	LSAlgorithms
+	ProjectFramework
+	SpatialObjects
+	Logs
+	Plugins
+)
 # Link static libraries to the current one
 #target_link_libraries(LGC_Core  LSAlgorithms ProjectFramework SpatialObjects Tools)

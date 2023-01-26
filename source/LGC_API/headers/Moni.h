@@ -10,25 +10,25 @@
 class Moni
 {
 public:
-	Moni(std::string inputFilePath);
-	~Moni();
-	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
+	__declspec(dllexport) Moni(std::string inputFilePath);
+	__declspec(dllexport) ~Moni();
+	__declspec(dllexport) void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// triggering the adjustment claculation
-	void adjust();
+	__declspec(dllexport) void adjust();
 	// get estimate of parameter
-	Eigen::VectorXd getEstimate(std::string);
+	__declspec(dllexport) Eigen::VectorXd getEstimate(std::string);
 	// get estimate of parameter in subframe
-	Eigen::VectorXd getEstimate(std::string, std::string);
+	__declspec(dllexport) Eigen::VectorXd getEstimate(std::string, std::string);
 	// get diagonal elements of covariances of the estimated parameters
-	Eigen::VectorXd getEstimateCovar(std::string);
+	__declspec(dllexport) Eigen::VectorXd getEstimateCovar(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
-	Eigen::VectorXd getEstimateCovar(std::string pointName, std::string frameName);
+	__declspec(dllexport) Eigen::VectorXd getEstimateCovar(std::string pointName, std::string frameName);
 	// get Meas IDs
-	std::vector<std::string> getECWSMeasIds();
+	__declspec(dllexport) std::vector<std::string> getECWSMeasIds();
 	// get measurement
-	Eigen::VectorXd getMeas(std::string id);
+	__declspec(dllexport) Eigen::VectorXd getMeas(std::string id);
 	// get the sigma0 after adjustment
-	double getSigma0();
+	__declspec(dllexport) double getSigma0();
 	
 private:
 	class MoniImpl;
