@@ -24,6 +24,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
+struct TECWSROM;
 
 
 

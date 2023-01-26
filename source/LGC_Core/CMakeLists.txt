@@ -150,6 +150,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSConsistencyCheck.cpp
     ${CORE_SOURCES_PATH}/Measurements/TMeasurements.cpp
 	${CORE_SOURCES_PATH}/Measurements/MeasDef.cpp
+	${CORE_SOURCES_PATH}/Measurements/TAMeas.cpp
 	${CORE_SOURCES_PATH}/Measurements/TLGCObsSummary.cpp
 	${CORE_SOURCES_PATH}/Measurements/TTSTN.cpp
 	${CORE_SOURCES_PATH}/Measurements/TCAM.cpp

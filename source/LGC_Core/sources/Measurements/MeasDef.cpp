@@ -235,7 +235,8 @@ void TRADI::serialize(SerializerObject::SerializationHelper &obj) const
 
 void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	//obj.addProperty("calaPt", calaPt);
+	if (calaPt)
+		obj.addProperty("calaPt", calaPt);
 	obj.addProperty("eolcomment", eolcomment);
 	obj.addProperty("fbearing", fbearing);
 	obj.addProperty("fbearingResidual", fbearingResidual);
@@ -243,7 +244,8 @@ void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fIsInitialise", fIsInitialise);
 	obj.addProperty("fSigmaObsVal", fSigmaObsVal);
 	obj.addProperty("line", line);
-	//obj.addProperty("orientationPt", orientationPt);
+	if (orientationPt)
+		obj.addProperty("orientationPt", orientationPt);
 }
 
 void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const

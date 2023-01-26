@@ -1,4 +1,5 @@
 #include "TEDM.h"
+#include <LGCAdjustablePoint.h>
 
 int TEDM::stnCounter_ = 0;
 
@@ -29,7 +30,7 @@ void TEDM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("dsptSummary_", dsptSummary_);
 	obj.addProperty("instrument", instrument);
-	//obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("instrumentPos", instrumentPos);
 	obj.addProperty("line", line);
 	obj.addProperty("measDSPT", measDSPT);
 	obj.addProperty("stnCounter_", stnCounter_);

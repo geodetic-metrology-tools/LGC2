@@ -13,6 +13,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TInstrumentData.h>
 #include <MeasDef.h>
 #include "TLGCObsSummary.h"
+#include <LGCAdjustablePoint.h>
 
 /*!
 	\ingroup Measurements
