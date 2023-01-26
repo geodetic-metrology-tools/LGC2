@@ -9,7 +9,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 //SURVEYLIB
 #include <TAdjustablePoint.h>
-#include <TTreeEntry.h>
 //LGC
 #include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
@@ -102,6 +101,11 @@ public:
 		*/
 		int virtual getCoordinateUnknIndex(int d) const;
 
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
 	//@}
 
 	/*!@name Settings */
@@ -156,7 +160,7 @@ public:
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const std::string toFrame);
 
 		/// Returns true if this point is defined in the ROOT frame
-		bool isInRootFrame() { return fFramePosition->get()->isROOTNode(); };
+		bool isInRootFrame();
 
 private:
 

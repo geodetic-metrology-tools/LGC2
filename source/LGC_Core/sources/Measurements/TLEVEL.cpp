@@ -1,4 +1,5 @@
 #include "TLEVEL.h"
+#include <LGCAdjustablePoint.h>
 
 int TLEVEL::stnCounter_ = 0;
 
@@ -42,7 +43,7 @@ void TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("dhorSummary_", dhorSummary_);
 	obj.addProperty("dlevSummary_", dlevSummary_);
 	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
-	//obj.addProperty("fRefPt", fRefPt);
+	obj.addProperty("fRefPt", fRefPt);
 	obj.addProperty("hasDHOR", hasDHOR);
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);

@@ -810,7 +810,7 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
 	obj.addProperty("angles", angles);
-	// obj.addProperty("comments", comments);
+	obj.addProperty("comments", comments);
 	// obj.addProperty("config", config);
 	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
@@ -824,7 +824,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("lines", lines);
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
-	// obj.addProperty("pos", pos);
+	obj.addProperty("pos", pos);
 	obj.addProperty("TLGCStatistic", stat);
 	obj.addProperty("tree", tree);
 

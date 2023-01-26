@@ -1,4 +1,5 @@
 #include "RoundOfMeasurements.h"
+#include <LGCAdjustablePoint.h>
 #include "tree.h"
 
 int TECHOROM::romCounter_ = 0;
@@ -146,8 +147,8 @@ void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("ecspSummary_", ecspSummary_);
 	obj.addProperty("line", line);
 	obj.addProperty("line", measECSP);
-	//obj.addProperty("p1", p1);
-	//obj.addProperty("p2", p2);
+	obj.addProperty("p1", p1);
+	obj.addProperty("p2", p2);
 	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 	obj.addProperty("romName", romName);
@@ -157,7 +158,7 @@ void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("ecveSummary_", ecveSummary_);
 	obj.addProperty("fMeasuredLine", fMeasuredLine);
-	//obj.addProperty("fPtLine", fPtLine);
+	obj.addProperty("fPtLine", fPtLine);
 	obj.addProperty("line", line);
 	obj.addProperty("measECVE", measECVE);
 	obj.addProperty("romCounter_", romCounter_);
@@ -168,7 +169,7 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("fConstantAngle", fConstantAngle);
 	obj.addProperty("instrument", instrument);
-	//obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("instrumentPos", instrumentPos);
 	obj.addProperty("line", line);
 	obj.addProperty("measORIE", measORIE);
 	obj.addProperty("orieSummary_", orieSummary_);

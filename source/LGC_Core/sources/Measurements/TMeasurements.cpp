@@ -319,6 +319,6 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fPDOR", fPDOR);
 	obj.addProperty("fRADI", fRADI);
 	obj.addProperty("fLEVEL", fLEVEL);
-	//obj.addProperty("fTSTN", fTSTN);
+	obj.addProperty("fTSTN", fTSTN);
 }
 #endif

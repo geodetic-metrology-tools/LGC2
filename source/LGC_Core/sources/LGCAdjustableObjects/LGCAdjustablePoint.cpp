@@ -2,6 +2,7 @@
 #include <Eigen/Eigenvalues>
 #include "LGCAdjustablePoint.h"
 #include "TXYH2CCS.h"
+#include <TTreeEntry.h>
 
 #include <TPointTransformer.h>
 #include <TLGCData.h>
@@ -196,6 +197,17 @@ int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
 		throw std::logic_error("Trying to get unknown index from fixed coordinate.");
 }
 
+
+#ifdef USE_SERIALIZER
+// Inherited via Serializable
+void LGCAdjustablePoint::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAdjustablePoint::serialize(obj);
+	obj.addProperty("allfixedParam", allfixedParam);
+	//obj.addProperty("fFramePosition", fFramePosition);
+}
+#endif
+
 TFreeVector LGCAdjustablePoint::transformSigmaInRoot(const LGCAdjustablePoint &pv, const TLGCData *fData)
 {
 	return transformSigma(pv, fData, fData->getTree().begin());
@@ -204,6 +216,11 @@ TFreeVector LGCAdjustablePoint::transformSigmaInRoot(const LGCAdjustablePoint &p
 TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint &pv, const TLGCData *fData, const std::string toFrame)
 {
 	return transformSigma(pv, fData, fData->locateNode(toFrame));
+}
+
+bool LGCAdjustablePoint::isInRootFrame()
+{
+	return fFramePosition->get()->isROOTNode();
 }
 
 TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame)

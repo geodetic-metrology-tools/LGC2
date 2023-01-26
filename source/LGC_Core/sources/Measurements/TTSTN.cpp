@@ -131,9 +131,9 @@ void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("ihfix", ihfix);
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("instrumentHeightAdjustable", instrumentHeightAdjustable);
-	//obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("instrumentPos", instrumentPos);
 	obj.addProperty("line", line);
-	//obj.addProperty("roms");
+	obj.addProperty("roms", roms);
 	obj.addProperty("rot3D", rot3D);
 	obj.addProperty("rotX", rotX);
 	obj.addProperty("rotY", rotY);
@@ -146,6 +146,7 @@ void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
 // Inherited via Serializable
 void TTSTN::TROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
+	TStatusObject::serialize(obj);
 	obj.addProperty("acst", acst);
 	obj.addProperty("anglActive", anglActive);
 	obj.addProperty("anglSummary_", anglSummary_);

@@ -14,8 +14,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <UEOIndices.h>
 //LGC
 #include <TInstrumentData.h>
-//#include <LGCAdjustablePoint.h>
-
 
 
 class LGCAdjustablePoint;
@@ -37,7 +35,6 @@ enum ESingleValue {
 					of the observed target. May be set to int and supplied with 0 if no target is used.
 */
 template<typename TTarget>
-
 class TAMeas : public TStatusObject
 {
     private:
@@ -98,6 +95,11 @@ class TAMeas : public TStatusObject
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
 			virtual MatrixIndex getLastEquationIndex() const = 0;
 
+#ifdef USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 		//@}
 
 		/*!@name Setting methods */
@@ -108,20 +110,6 @@ class TAMeas : public TStatusObject
 			/// Sets LS matrices OBSERVATION index of the first observation of this measurement
 			void setFirstObservationIndex(MatrixIndex firstObservationIndex){fFirstObservationIndex = firstObservationIndex;}
 		//@}
-#ifdef USE_SERIALIZER
-			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override
-			{
-				obj.addProperty("eolcomment", eolcomment);
-				obj.addProperty("fFirstEquationIndex", fFirstEquationIndex);
-				obj.addProperty("fFirstObservationIndex", fFirstObservationIndex);
-				obj.addProperty("line", line);
-				obj.addProperty("measCounter", measCounter);
-				obj.addProperty("measId", measId);
-				obj.addProperty("target", target);
-				//obj.addProperty("targetPos", targetPos);
-			}
-#endif
 };
 
 template<typename TTarget>
@@ -186,8 +174,8 @@ class TAScalarMeas : public TAMeas<TTarget>
       TAScalarMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, TLength value) :
 			TAMeas<TTarget>(targetPos, tgt)
 		{
-			static_assert(numDistances==1, "This works only for single distance values.");
-			distances[0] = value;
+			if constexpr (std::is_same_v<TEnumDistance, ESingleValue>)
+				distances[0] = value;
 		}
 
 		/// The virtual base destructor does nothing.
@@ -237,17 +225,11 @@ class TAScalarMeas : public TAMeas<TTarget>
 			void setAngleResidual(const TAngle& a, TEnumAngle id=kValue) {
 				anglesResiduals[id] = a;
 			}
-		//@}
+
 #ifdef USE_SERIALIZER
-			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override
-			{
-				obj.addProperty("angles", angles);
-				obj.addProperty("anglesResiduals", anglesResiduals);
-				obj.addProperty("distances", distances);
-				obj.addProperty("distancesResiduals", distancesResiduals);
-			}
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif
+		//@}
 };
 
 /*!
@@ -333,13 +315,7 @@ class TAVectorMeas : public TAMeas<TTarget>
 			return YcompResidual;
 		}
 #ifdef USE_SERIALIZER
-		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override
-		{
-			obj.addProperty("vector", vector);
-			obj.addProperty("XcompResidual", XcompResidual);
-			obj.addProperty("YcompResidual", YcompResidual);
-		}
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif
 };
 
