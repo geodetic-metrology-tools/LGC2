@@ -52,6 +52,11 @@ IF(MSVC)
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
 ENDIF(MSVC)
 
+# set -fpic compiler flag for linux
+IF(NOT MSVC)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ENDIF(NOT MSVC)
+
 # Add options to compile with GCC to get more opinions on the code
 IF(MINGW)
 message("    Using MinGW")
