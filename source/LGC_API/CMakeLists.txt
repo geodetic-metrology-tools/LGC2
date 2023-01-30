@@ -1,5 +1,6 @@
 PROJECT (LGC_API)
 
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/
 )
 
@@ -29,7 +30,7 @@ source_group("\\Headers" FILES ${API_H})
 source_group("\\Sources" FILES ${API_CPP})
 
 
-# Create a static library from sources:
+# Create a dynamic library from sources:
 add_library(${PROJECT_NAME} SHARED ${API_HEADERS} ${API_SOURCES})
 target_link_libraries(	${PROJECT_NAME}
 	LGC_Core
@@ -39,5 +40,12 @@ target_link_libraries(	${PROJECT_NAME}
 	Logs
 	Plugins
 )
-# Link static libraries to the current one
-#target_link_libraries(LGC_Core  LSAlgorithms ProjectFramework SpatialObjects Tools)
+
+# set default build type
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_API.dll")
+
+#message("from " "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/LGC_API.dll" " to " "${CMAKE_BINARY_DIR}/LGC_API.dll" )
