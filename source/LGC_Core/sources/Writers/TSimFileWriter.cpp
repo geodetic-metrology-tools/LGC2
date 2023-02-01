@@ -1069,9 +1069,9 @@ void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ* meas)
         (*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << meas->station->getName() << sep
-		<< meas->initialValue.getX() << sep
-		<< meas->initialValue.getY() << sep
-		<< meas->initialValue.getZ() << sep
+		<< meas->obsValue.getX() << sep
+		<< meas->obsValue.getY() << sep
+		<< meas->obsValue.getZ() << sep
 		<< meas->getXObservedStDev().getMMetresValue() << sep
 		<< meas->getYObservedStDev().getMMetresValue() << sep
 		<< meas->getZObservedStDev().getMMetresValue() << endl;

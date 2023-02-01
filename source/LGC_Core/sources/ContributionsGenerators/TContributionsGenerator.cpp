@@ -1365,27 +1365,35 @@ PtOrientationContrib	TContributionsGenerator::getRADIContrib(const TRADI& radi)
 	return{ estimatedPointContrib, festimatedPtTransformContrib, calcmeas };
 }
 
-//OBSXYZ contribution
-OBSXYZContrib  TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ& OBSXYZ)
+// OBSXYZ contribution
+OBSXYZContrib TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ &OBSXYZ)
 {
-	TPositionVector estimated = OBSXYZ.station->getEstimatedValue();  //tgt
-	TPositionVector prov = OBSXYZ.initialValue;  //stn
-	const TLOR2LOR& stLor2RootTrafo = fPointTransfo.getLORTransformation(OBSXYZ.positionInTree, OBSXYZ.station->getFrameTreePosition()); // Transform to frame in which point is defined 
-	stLor2RootTrafo.transform(prov);
+	TPositionVector obsPoint = OBSXYZ.station->getEstimatedValue(); // observed point in frame where point is defined
+	TPositionVector obs = OBSXYZ.obsValue; // observation value
+	const TLOR2LOR &obsPoint2ObsTrafo = fPointTransfo.getLORTransformation(OBSXYZ.station->getFrameTreePosition(), OBSXYZ.positionInTree); // Transform to frame from which the point is observed
+	obsPoint2ObsTrafo.transform(obsPoint);
 
-	//ets calc value
-	TReal dx = (estimated.getX().getMetresValue() - prov.getX().getMetresValue());
-	TReal dy = (estimated.getY().getMetresValue() - prov.getY().getMetresValue());
-	TReal dz = (estimated.getZ().getMetresValue() - prov.getZ().getMetresValue());
+	// point transformed to observation frame minus observation (misclosure)
+	TFreeVector misclosure = obsPoint - obs;
 
-	//Contributions for the coordinates
-	Point3DContrib coordContribStation = { TFreeVector(1.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian), TFreeVector(0.0, 1.0, 0.0, TCoordSysFactory::k3DCartesian), TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::k3DCartesian) };
+	// Contributions from the coordinates of the observed point
+	TFreeVector firstEq(obsPoint2ObsTrafo.partDerivWRespToX0(0), obsPoint2ObsTrafo.partDerivWRespToY0(0), obsPoint2ObsTrafo.partDerivWRespToZ0(0), TCoordSysFactory::k3DCartesian);
+	TFreeVector secondEq(obsPoint2ObsTrafo.partDerivWRespToX0(1), obsPoint2ObsTrafo.partDerivWRespToY0(1), obsPoint2ObsTrafo.partDerivWRespToZ0(1), TCoordSysFactory::k3DCartesian);
+	TFreeVector thirdEq(obsPoint2ObsTrafo.partDerivWRespToX0(2), obsPoint2ObsTrafo.partDerivWRespToY0(2), obsPoint2ObsTrafo.partDerivWRespToZ0(2), TCoordSysFactory::k3DCartesian);
 
-	//Fill transformation contributions
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> TransfContributions;
-	addUVDTgTransfContributionsCamera(stLor2RootTrafo, OBSXYZ.initialValue, TransfContributions);
+	Point3DContrib coordContribObsPoint = {firstEq, secondEq, thirdEq};
 
-	return{ coordContribStation, TransfContributions, { dx, dy, dz } };
+	// Contributions of transformation parameters
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> transfContributions;
+	TFreeVector unitX(1.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian);
+	TFreeVector unitY(0.0, 1.0, 0.0, TCoordSysFactory::k3DCartesian);
+	TFreeVector unitZ(0.0, 0.0, 1.0, TCoordSysFactory::k3DCartesian);
+
+	// Contributions are computed in frame of observation, so no trafo to MLA. Flag used in addTransformationsContributions3D
+	fPointTransfo.setMLA(false);
+	addTransformationsContributions3D(obsPoint2ObsTrafo, OBSXYZ.station->getEstimatedValue(), unitX, unitY, unitZ, transfContributions);
+
+	return {coordContribObsPoint, transfContributions, misclosure};
 }
 
 //INCLY contribution

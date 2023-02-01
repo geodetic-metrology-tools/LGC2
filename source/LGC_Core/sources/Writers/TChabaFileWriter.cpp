@@ -232,7 +232,7 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 		converter.writeName(itPair.station->getName(), getNameWidth());
 
 		//xyz
-		converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), "", itPair.initialValue);
+		converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), "", itPair.obsValue);
 		
 		//sx sy sz
 		converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz,
@@ -287,7 +287,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		++usablePointCount;
 
 		//write the transformed coordinates of the passive point (coordinates in the root frame)
-		TPositionVector stationRoot = it.second.initialValue;
+		TPositionVector stationRoot = it.second.obsValue;
 		TLOR2LOR transfo = TLOR2LOR(it.second.positionInTree, fProjectData->getTree().begin(), "transfo");
 		//transform coordinates in root
 		transfo.transform(stationRoot);
@@ -309,7 +309,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		}
 		else
 			//need to transform sigma in the root
-			sigma = transformSigmaInRoot(it.second.initialValue, itTree, it.second.getXObservedStDev(), it.second.getYObservedStDev(), it.second.getZObservedStDev());
+			sigma = transformSigmaInRoot(it.second.obsValue, itTree, it.second.getXObservedStDev(), it.second.getYObservedStDev(), it.second.getZObservedStDev());
 
 		writePUNPoint(ptInRoot, sigma, d, writeDeltas);
 	}

@@ -507,7 +507,7 @@ public:
 	///Pointer to the point
 	const LGCAdjustablePoint* station;
 	//Position of the point in the subframe (= observation)
-	TPositionVector initialValue;
+	TPositionVector obsValue;
 	TDataTreeIterator positionInTree;
 
 	/// Line in the input file where this measurement was defined

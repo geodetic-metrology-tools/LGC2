@@ -705,9 +705,9 @@ namespace tut
 			cobsXYZ.parse(tokenizefileString("P2 1 2 3 0.1 0.5 0.8"), true, -1);
 			const auto& obsXYZM(proj.getCurrentNode().measurements.fOBSXYZ.back());
 			ensure_equals("Point name should match", obsXYZM.station->getName(), "P2");
-			ensure_equals("obs_X should match", obsXYZM.initialValue.getX(), 1);
-			ensure_equals("obs_Y should match", obsXYZM.initialValue.getY(), 2);
-			ensure_equals("obs_Z should match", obsXYZM.initialValue.getZ(), 3);
+			ensure_equals("obs_X should match", obsXYZM.obsValue.getX(), 1);
+			ensure_equals("obs_Y should match", obsXYZM.obsValue.getY(), 2);
+			ensure_equals("obs_Z should match", obsXYZM.obsValue.getZ(), 3);
 			ensure_equals("SX should match", obsXYZM.getXObservedStDev().getMMetresValue(), 0.1);
 			ensure_equals("SY should match", obsXYZM.getYObservedStDev().getMMetresValue(), 0.5);
 			ensure_equals("SZ should match", obsXYZM.getZObservedStDev().getMMetresValue(), 0.8);

@@ -11,6 +11,8 @@
 #include "TLGCCalculation.h"
 #include "TXYH2CCS.h"
 #include "TLOR2LOR.h"
+#include "TAdjustableHelmertTransformation.h"
+#include "TTransformParameters.h"
 #include <Behavior.h>
 
 namespace tut
@@ -661,4 +663,70 @@ namespace tut
 		ensure_equals("G_1 Sx should match", dataset.getPoints().getObject("G_1").getXEstPrecision().getMMetresValue(), 0.5245, 1e-4);
 		ensure_equals("G_1 Sy should match", dataset.getPoints().getObject("G_1").getYEstPrecision().getMMetresValue(), 0.7104, 1e-4);
 	}
+
+	template<>
+	template<>
+	void object::test<20>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing OBSXYZ with rotated subframe");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outOBSXYZ_subframe.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::OBSXYZ_subframe);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData& dataset = calcul.getData();
+
+		TPositionVector Zero = dataset.getPoints().getObject("Zero").getEstimatedValue();
+		ensure_equals("Point \"Zero\" x coordinate should match", Zero.getX().getMetresValue(), 0, 1e-7);
+		ensure_equals("Point \"Zero\" y coordinate should match", Zero.getY().getMetresValue(), 0, 1e-7);
+		ensure_equals("Point \"Zero\" z coordinate should match", Zero.getZ().getMetresValue(), 0, 1e-7);
+	}
+
+	template<>
+	template<>
+	void object::test<21>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+		set_test_name("Testing OBSXYZ weights handling");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outOBSXYZ_weights.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::OBSXYZ_weights);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+		TDataTree tree = projTest->getTree();
+
+		TDataTreeIterator frameIterator = dataset.getTree().begin();
+		frameIterator++;
+		// Check the estimated Helmert rotation Parameters
+		TAdjustableHelmertTransformation frameTrafo(frameIterator.node->data.get()->frame);
+		TransformParameters result = frameTrafo.getEstParam();
+
+		// Only RZ rotation should be nonzero.
+		ensure_equals("Estimated RX should be 0 gon", result.omega.getGonsValue(), 0.0, 1e-7);
+		ensure_equals("Estimated RY should be 0 gon", result.phi.getGonsValue(), 0.0, 1e-7);
+		ensure_equals("Estimated RZ should be 300 gon", result.kappa.getGonsValue(), 300.0, 1e-7);
+	}
+
 }

@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -363,10 +363,10 @@ struct PtOrientationContrib{
 struct OBSXYZContrib{
 	Point3DContrib fTgCoordContrib;
 
-	/// Vector of contributions in pairs with transformations, which are used to transform the point into the root.
+	/// Vector of contributions in pairs with transformations, which are used to transform the observed point into the observation frame.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
 
-	TReal	    fMisclosureVector[3]; //!< Misclosure vector of the First, Second and Third equation respectively.
+	TFreeVector fMisclosureVector; //!< Misclosure vector of the First, Second and Third equation respectively.
 };
 
 
