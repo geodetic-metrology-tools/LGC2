@@ -45,7 +45,8 @@ target_link_libraries(	${PROJECT_NAME}
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
+if(WIN32)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_API.dll")
+endif()
 
-#message("from " "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/LGC_API.dll" " to " "${CMAKE_BINARY_DIR}/LGC_API.dll" )
