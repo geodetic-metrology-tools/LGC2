@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 
 
@@ -16,6 +16,7 @@ class TUVEC;
 class TUVD;
 class TPdorObs;
 class TECWS;
+class TOBSXYZ;
 struct TLEVEL;
 struct TEDM;
 struct TECHOROM;
@@ -75,7 +76,7 @@ public:
 	/// Returns the the TUVEC measurement calculaded measurement value
 	TFreeVector getUVECCalcMeas(const TCAM& camera, const TUVEC& uvec);
 
-	/// Returns the TUVD measurement calculaded measurement value
+	/// Returns the TUVD measurement calculated measurement value
 	UVDCalcMeas getUVDCalcMeas(const TCAM& camera, const TUVD& uvec);
 
 	/// Returns the TDLEV measurement calculated meas in meters [m]
@@ -107,6 +108,9 @@ public:
 
 	/// Returns the TECWS measurement calculated meas in meters [m]
 	TReal getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws);
+
+	/// Returns the OBSXYZ calculated meas in meters [m]
+	TPositionVector getOBSXYZCalcMeas(const TOBSXYZ& obsxyz);
 
 	//@}
 
