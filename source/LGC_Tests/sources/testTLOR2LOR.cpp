@@ -514,6 +514,69 @@ namespace tut
 		ensure_equals("PD (2) should match",pd3.getZ().getMetresValue(), 1,1e-8);
 	}
 
+	// Test derivative methods along "long" chain (5 trafos)
+	template<>
+	template<>
+	void object::test<6>()
+	{
+		using namespace LGC;
+		set_test_name("Testing derivative methods along Helmert Transformation chain");
+
+		std::shared_ptr<TLGCData> proj (new TLGCData);
+
+		TReader r(proj);
+		stringstream infile(LOR2LORInputFiles::plateFileOrig);
+		r.read(infile);				
+		TDataTree tree = proj->getTree();
+
+		//////////////////////////////////////////////////////////////////////////////////////////////
+		TLOR2LOR forward(tree,"P6","P5","FPT2FREF");
+		TLOR2LOR backward(tree,"P5","P6","FREFFPT2");
+
+
+		TPositionVector startPoint(50, 60, 70, TCoordSysFactory::ECoordSys::k3DCartesian);
+		TPositionVector endPoint(50, 60, 70, TCoordSysFactory::ECoordSys::k3DCartesian);
+		forward.transform(endPoint);
+
+		// Testing chain rule of alpha*beta(=Identity) where beta:(p,x)->(p,forward(p,x)), alpha:(p,x)->(p,backward(p,x)). p are the parameters defining the helmert trafos of the chain
+		int numberTrafos = forward.getTransformationChain().size();
+		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> forwardHelmertSensitivities = forward.getPartialDerivativesWrtHelmertParameters(startPoint);
+		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> backwardHelmertSensitivities = backward.getPartialDerivativesWrtHelmertParameters(endPoint);
+		TDenseMatrix forwardPointSensitivity = forward.getPartialDerivativeWrtPosition(startPoint);
+		TDenseMatrix backwardPointSensitivity = backward.getPartialDerivativeWrtPosition(endPoint);
+		// prepare derivative of forward and backward with respect to Helmert parameters
+		TDenseMatrix dforwardDparameters(3, 7 * numberTrafos);
+		dforwardDparameters.setZero();
+		TDenseMatrix dbackwardDparameters(3, 7 * numberTrafos);
+		dbackwardDparameters.setZero();
+		int counter = 0;
+		for (auto pair: forwardHelmertSensitivities)
+		{
+			dforwardDparameters.middleCols(counter * 7, 7) = pair.second;
+			counter++;
+		}
+		counter--;
+		// now we go the chain backwards so to ensure same indices we have to start filling at the end
+		for (auto pair: backwardHelmertSensitivities)
+		{
+			dbackwardDparameters.middleCols(counter * 7, 7) = pair.second;
+			counter--;
+		}
+
+		// compute the derivative of alpha*beta with chainrule
+		TDenseMatrix Zero(numberTrafos * 7, numberTrafos * 7);
+		Zero.setZero();
+		TDenseMatrix Id3(3, 3);
+		Id3.setZero();
+		// evaluate the chainrule
+		Zero = dbackwardDparameters + backwardPointSensitivity * dforwardDparameters;
+		Id3 = backwardPointSensitivity * forwardPointSensitivity;
+
+		TDenseMatrix referenceId3(3, 3);
+		referenceId3.setIdentity();
+		ensure("ChainRule Test along Trafo chain violated.", Zero.isZero());
+		ensure("ChainRule Test along Trafo chain violated.", (Id3 - referenceId3).isZero());
+	}
 //Change the value in the partial derivatives with respect to rotations
 #if 0
 		template<>

@@ -84,6 +84,7 @@ private:
 
 	/*!@name Methods responsible for final extraction of variances covariances in order to be filled into the adjustable objects. */
 	//@{
+		void extractFullCovar(const TLSResultsMatrices& rm);
 		void extractPointVarCovar(const TLSResultsMatrices& rm);
 		void extractAngleVar(const TLSResultsMatrices& rm);
 		void extractLengthVar(const TLSResultsMatrices& rm);
