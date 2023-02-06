@@ -779,7 +779,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
 	obj.addProperty("angles", angles);
 	obj.addProperty("comments", comments);
-	// obj.addProperty("config", config);
+	//obj.addProperty("config", config);
 	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("fMeasInfo", fMeasInfo);
@@ -796,16 +796,15 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("pos", pos);
 	obj.addProperty("TLGCStatistic", stat);
 	obj.addProperty("tree", tree);
-
-	
-	Eigen::MatrixXd exampleMatrix(5, 3);
-	std::stringstream ss;
-	ss << exampleMatrix;
-	obj.addProperty("exampleMatrix", ss.str()); 
-	Eigen::Vector3d exampleVector(1, 2, 3);
-	obj.addProperty("exampleVector", exampleVector); 
-	
 }
+
+
+//Eigen::MatrixXd exampleMatrix(5, 3);
+//std::stringstream ss;
+//ss << exampleMatrix;
+//obj.addProperty("exampleMatrix", ss.str());
+//Eigen::Vector3d exampleVector(1, 2, 3);
+//obj.addProperty("exampleVector", exampleVector); 
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const
 {
