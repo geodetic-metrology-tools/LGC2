@@ -1,15 +1,13 @@
 #include "TLSResultsMatricesExtractor.h"
 #include <TLGCData.h>
 #include "TLSResultsMatrices.h"
-#include "TLibrCnstrGenerator.h"
 #include "TLSCalcRelativeError.h"
 #include <Logger.hpp>
 
 
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData* fData) :
 	fDataSet(fData),
-	fLastIteration(false),
-	freeCnstr(nullptr)
+	fLastIteration(false)
 {}
 
 TLSResultsMatricesExtractor::~TLSResultsMatricesExtractor()
@@ -27,6 +25,7 @@ TLSResultsMatricesExtractor::~TLSResultsMatricesExtractor()
 bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, TReal convCrit)
 {
 	bool successfullExtraction = true;
+	fLastIteration = false;
 	logDebug() << "Extract resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices";
 	try
 	{
@@ -37,40 +36,6 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 		bool trf = extractTransformationParams(rm, convCrit);
 		bool ln = extractLineParams(rm, convCrit);
 
-		if ((pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive())
-			fLastIteration = true;
-	}
-	catch (std::exception const & excp)
-	{
-		logWarning() << "Could not extract properly resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices. Exception caught:" << excp.what();
-		successfullExtraction = false;
-		return successfullExtraction;
-	}
-	return successfullExtraction;
-}
-
-/****************************************************************************************************************
-	Public Method: extractResults
-	Method only used for Free adjustments
-	Extracts resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices
-****************************************************************************************************************/
-bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, TReal convCrit, TLibrCnstrGenerator* fCnstr)
-{
-	bool successfullExtraction = true;
-	freeCnstr = fCnstr;   
-	logDebug() << "Extract resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices";
-
-	try
-	{
-		// Updating all the parameters for next itération.
-		bool pt = extractPointParams(rm, convCrit);
-		bool angl = extractAngleParams(rm, convCrit);
-		bool pln = extractPlaneParams(rm, convCrit);
-		bool len = extractLengthParams(rm, convCrit);
-		bool trf = extractTransformationParams(rm, convCrit);
-		bool ln = extractLineParams(rm, convCrit);
-
-		//the test is done on all parameters, if we wish to relax the LIBR, it can be done on only the point coordinates
 		if ((pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive())
 			fLastIteration = true;
 	}
@@ -90,7 +55,7 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 {
 	bool successfullExtraction = true;
-	logDebug() << "Extract residues from calculated matrices";
+	logDebug() << "Extract residuals from calculated matrices";
 
 	try
 	{
