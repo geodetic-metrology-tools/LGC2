@@ -217,9 +217,9 @@ void TDLEV::TDHOR::serialize(SerializerObject::SerializationHelper &obj) const
 
 void TDLEV::serialize(SerializerObject::SerializationHelper &obj) const
 {
+	TAScalarMeas::serialize(obj);
 	obj.addProperty("dhor", dhor);
 	obj.addProperty("fAllFixedCollimation", fAllFixedCollimation);
-	TAScalarMeas::serialize(obj);
 }
 
 void TRADI::serialize(SerializerObject::SerializationHelper &obj) const

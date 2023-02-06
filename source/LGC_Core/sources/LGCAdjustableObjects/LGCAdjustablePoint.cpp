@@ -204,7 +204,8 @@ void LGCAdjustablePoint::serialize(SerializerObject::SerializationHelper &obj) c
 {
 	TAdjustablePoint::serialize(obj);
 	obj.addProperty("allfixedParam", allfixedParam);
-	//obj.addProperty("fFramePosition", fFramePosition);
+	obj.addProperty("fFramePosition_ID", fFramePosition.node->data.get()->ID);
+	obj.addProperty("fFramePosition_Name", fFramePosition.node->data.get()->frame.getName());
 }
 #endif
 
