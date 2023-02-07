@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
  	for (auto id: ecwsIds)
  	{
  		// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
- 		//TReal sigma(0.00003);
- 		TReal sigma(0.003);
+        // ECWS sigma = 0.001 mm = 1e-6m
+ 		TReal sigma(1e-6);
  		TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(id));
  		Eigen::VectorXd new_measurement(1);
  		new_measurement(0)=(double) newMeas;
