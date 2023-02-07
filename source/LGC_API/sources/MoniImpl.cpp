@@ -40,14 +40,14 @@ Eigen::VectorXd Moni::getEstimate(std::string id, std::string frameName)
 	return pimpl_->getEstimate(id, frameName);
 }
 // get diagonal elements of covariances of the estimated parameters
-Eigen::VectorXd Moni::getEstimateCovar(std::string id)
+Eigen::VectorXd Moni::getEstimatePrec(std::string id)
 {
-	return pimpl_->getEstimateCovar(id);
+	return pimpl_->getEstimatePrec(id);
 }
 // get diagonal elements of covariances of the estimated parameters transformed to a subframe
-Eigen::VectorXd Moni::getEstimateCovar(std::string id, std::string frameName)
+Eigen::VectorXd Moni::getEstimatePrec(std::string id, std::string frameName)
 {
-	return pimpl_->getEstimateCovar(id,frameName);
+	return pimpl_->getEstimatePrec(id,frameName);
 }
 // get Meas IDs
 std::vector<std::string> Moni::getECWSMeasIds()
@@ -277,6 +277,21 @@ void Moni::MoniImpl::createMeasurementReferences()
 		}
 	}
 }
+
+Eigen::VectorXd Moni::MoniImpl::toVectorXd(TFreeVector freeVector)
+{
+	Eigen::VectorXd vector(3);
+	vector << (double)freeVector.getX(), (double)freeVector.getY(), (double)freeVector.getZ();
+	return vector;
+}
+
+Eigen::VectorXd Moni::MoniImpl::toVectorXd(TPositionVector posVector)
+{
+	Eigen::VectorXd vector(3);
+	vector << (double)posVector.getX(), (double)posVector.getY(), (double)posVector.getZ();
+	return vector;
+}
+
 void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
@@ -587,22 +602,22 @@ Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId)
 	if (paramRefs.types.at(paramId) == "POINT")
 	{
 		TPositionVector result = paramRefs.POINTS.at(paramId).getEstimatedValue();
-		Eigen::VectorXd vector(3);
-		vector[0] = (double)result.getX();
-		vector[1] = (double)result.getY();
-		vector[2] = (double)result.getZ();
-		return vector;
+	//	Eigen::VectorXd vector=;
+	//	vector[0] = (double)result.getX();
+	//	vector[1] = (double)result.getY();
+	//	vector[2] = (double)result.getZ();
+		return toVectorXd(result);
 	}
 	else if (paramRefs.types.at(paramId) == "LINE")
 	{
 		// how many dimensions does this have??	
 		TFreeVector result = paramRefs.LINES.at(paramId).getLineVectorEstimatedValue();
-		Eigen::VectorXd vector(3);
-		vector[0] = (double)result.getX();
-		vector[1] = (double)result.getY();
-		vector[2] = (double)result.getZ();
+		//Eigen::VectorXd vector(3);
+		//vector[0] = (double)result.getX();
+		//vector[1] = (double)result.getY();
+		//vector[2] = (double)result.getZ();
 
-		return vector;
+		return toVectorXd(result);
 	}
 	else if (paramRefs.types.at(paramId) == "ANGLE")
 	{
@@ -665,11 +680,11 @@ Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId, std::string fra
 	TPointTransformer fPointTransfo(&project->getTree(), project->getConfig().referential);
 	const TLOR2LOR &lorTrafo = fPointTransfo.getLORTransformation(paramRefs.POINTS.at(paramId).getFrameTreePosition(), project->getTree().begin());
 	lorTrafo.transform(point);
-	vector << (double)point.getX(), (double)point.getY(), (double)point.getZ();
-	return vector;
+	//vector << (double)point.getX(), (double)point.getY(), (double)point.getZ();
+	return toVectorXd(point);
 }
 
-Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId)
+Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string paramId)
 {
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
 	if (paramRefs.types.count(paramId) == 0)
@@ -686,18 +701,17 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId)
 	if (paramRefs.types.at(paramId) == "POINT")
 	{
 		// get precisions, the diagonal covar elements are the square roots
-		vector[0] = pow((double)paramRefs.POINTS.at(paramId).getXEstPrecision(), 2);
-		vector[1] = pow((double)paramRefs.POINTS.at(paramId).getYEstPrecision(), 2);
-		vector[2] = pow((double)paramRefs.POINTS.at(paramId).getZEstPrecision(), 2);
+		Eigen::VectorXd covar(3);
+		covar << (double)paramRefs.POINTS.at(paramId).getXEstPrecision(), (double)paramRefs.POINTS.at(paramId).getYEstPrecision(),
+			(double)paramRefs.POINTS.at(paramId).getZEstPrecision();
+		vector = covar.array().pow(2);
 	}
 
 	return vector;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId, std::string frameName)
+Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string paramId, std::string frameName)
 {
-	Eigen::VectorXd vector(3);
-	vector.setZero();
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
 	if (paramRefs.types.count(paramId) == 0)
 	{
@@ -707,21 +721,9 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateCovar(std::string paramId, std::strin
 	{
 		std::cout << "Covariance transformations only allowed for Points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
 	}
-	if (!(frameName == "ROOT"))
-	{
-		std::cout << "Covariance transformations only allowed to \"ROOT\" frame, but destination frame is " << frameName << "." << std::endl;
-	}
 	LGCAdjustablePoint point = paramRefs.POINTS.at(paramId);
-	TFreeVector transformedCovar = point.transformSigmaInRoot(point, project.get());
-	// get type and return result
-	if (paramRefs.types.at(paramId) == "POINT")
-	{
-		// get precisions, the diagonal covar elements are the square roots
-		// these are the Sigmas, still need to take the swuare for the diagonal elements
-		vector[0] = pow((double)transformedCovar.getX(),2);
-		vector[1] = pow((double)transformedCovar.getY(),2);
-		vector[2] = pow((double)transformedCovar.getZ(),2);
-	}
+	Eigen::VectorXd transformedCovar = toVectorXd(point.transformSigma(point, project.get(),frameName));
+	Eigen::VectorXd prec = transformedCovar.array().pow(2);
 
-	return vector;
+	return prec;
 }

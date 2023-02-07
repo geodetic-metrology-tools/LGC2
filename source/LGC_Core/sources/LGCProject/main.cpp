@@ -57,10 +57,14 @@ int main(int argc, char *argv[])
  	// Print some results
  	std::cout << "\r Fras iteration " << std::setw(5) << i << std::setprecision(5) << ", elapsed time " << (double)duration.count() / 1000 << " s. " << std::endl
  			  << "in Sub frame " << parameterName << " = " << std::setprecision(8) << mockup.getEstimate(parameterName).transpose() << "     Precisions "
- 			  << mockup.getEstimateCovar(parameterName).transpose() << " Sigma_0 = " << mockup.getSigma0() << std::endl;
+ 			  << mockup.getEstimatePrec(parameterName).transpose() << " Sigma_0 = " << mockup.getSigma0() << std::endl;
  	std::cout << std::setw(5) << std::setprecision(8) << "in Rootframe " << parameterName << " = " << std::setprecision(8)
- 			  << mockup.getEstimate(parameterName, "ROOT").transpose() << "     Precisions " << mockup.getEstimateCovar(parameterName, "ROOT").transpose()
+ 			  << mockup.getEstimate(parameterName, "ROOT").transpose() << "     Precisions " << mockup.getEstimatePrec(parameterName, "ROOT").transpose()
  			  << " Sigma_0 = " << mockup.getSigma0() << std::endl;
+	std::cout << "Precision via normal method in subframe" << mockup.getEstimatePrec(parameterName).transpose() << std::endl;
+	std::cout << "Precision via trafo to subframe method" << mockup.getEstimatePrec(parameterName, "WIRE.RIGHT.DOF").transpose() << std::endl;
+	std::cout << "Precision via trafo to subframe method in some other frame" << mockup.getEstimatePrec(parameterName, "ROOT").transpose() << std::endl;
+
  }
  auto stop = high_resolution_clock::now();
  auto duration = duration_cast<seconds>(stop - start);
