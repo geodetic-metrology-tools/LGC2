@@ -28,9 +28,9 @@ public:
 	// get estimate of parameter in subframe
 	DECLSPEC Eigen::VectorXd getEstimate(std::string, std::string);
 	// get diagonal elements of covariances of the estimated parameters
-	DECLSPEC Eigen::VectorXd getEstimateCovar(std::string);
+	DECLSPEC Eigen::VectorXd getEstimatePrec(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
-	DECLSPEC Eigen::VectorXd getEstimateCovar(std::string pointName, std::string frameName);
+	DECLSPEC Eigen::VectorXd getEstimatePrec(std::string pointName, std::string frameName);
 	// get Meas IDs
 	DECLSPEC std::vector<std::string> getECWSMeasIds();
 	// get measurement

@@ -31,9 +31,9 @@ public:
 	// get estimate of parameter in a subframe
 	Eigen::VectorXd getEstimate(std::string, std::string frameName);
 	// get diagonal elements of covariances of the estimated parameters
-	Eigen::VectorXd getEstimateCovar(std::string);
+	Eigen::VectorXd getEstimatePrec(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
-	Eigen::VectorXd getEstimateCovar(std::string pointName, std::string frameName);
+	Eigen::VectorXd getEstimatePrec(std::string pointName, std::string frameName);
 	// get the sigma0 after adjustment
 	double getSigma0();
 	// get Meas IDs
@@ -43,6 +43,10 @@ private:
 	void initialize();
 	void createParameterReferences();
 	void createMeasurementReferences();
+
+	// helper methods for concversion to Eigen vector
+	Eigen::VectorXd toVectorXd(TFreeVector);
+	Eigen::VectorXd toVectorXd(TPositionVector);
 
 
 	std::string inputFilePath;
