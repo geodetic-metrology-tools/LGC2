@@ -49,6 +49,13 @@ Eigen::VectorXd Moni::getEstimatePrec(std::string id, std::string frameName)
 {
 	return pimpl_->getEstimatePrec(id,frameName);
 }
+// get estimated residual
+Eigen::VectorXd Moni::getEstimateResidual(std::string obsId)
+{
+	return pimpl_->getEstimateResidual(obsId);
+}
+
+
 // get Meas IDs
 std::vector<std::string> Moni::getECWSMeasIds()
 {
@@ -414,6 +421,155 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 		return;
 	}
 }
+Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
+{
+	// manipulate the corresponding measurement by accesing it via the reference map.
+	// check if id exists
+	if (measRefs.types.count(id) == 0)
+	{
+		Eigen::VectorXd res(1);
+		res << -1;
+		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		return res;
+	}
+
+	string type = measRefs.types.at(id);
+	if (type == "ANGL")
+	{
+		Eigen::VectorXd res(1);
+		res<<(double) measRefs.ANGL.at(id).getAngleResidual();
+		return res;
+	}
+	else if (type == "ZEND")
+	{
+		Eigen::VectorXd res(1);
+		res<<(double) measRefs.ZEND.at(id).getAngleResidual();
+		return res;
+	}
+	else if (type == "DIST")
+	{
+		Eigen::VectorXd res(1);
+		res << (double)measRefs.DIST.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ECTH")
+	{
+		Eigen::VectorXd res(1);
+		// what kind of residual ? distance, angle?
+		res << measRefs.ECTH.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ECDIR")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.ECDIR.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "DHOR")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.DHOR.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "PLR3D")
+	{
+		Eigen::VectorXd res(3);
+		res << measRefs.PLR3D.at(id).getAngleResidual(kANGL), measRefs.PLR3D.at(id).getAngleResidual(kZEND), measRefs.PLR3D.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ORIE")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.ORIE.at(id).getAngleResidual();
+		return res;
+	}
+	else if (type == "UVEC")
+	{
+		// to be checked! 
+		Eigen::VectorXd res(2);
+		res << measRefs.UVEC.at(id).getXCompVectorResidual(), measRefs.UVEC.at(id).getYCompVectorResidual();
+		//TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		//measRefs.UVEC.at(id).setVectorMeasurement(direction);
+		return res;
+	}
+	else if (type == "UVD")
+	{
+		// to be checked, particular the order! 
+		Eigen::VectorXd res(3);
+		res << measRefs.UVD.at(id).getXCompVectorResidual(), measRefs.UVD.at(id).getYCompVectorResidual(), measRefs.UVD.at(id).getDistanceResidual();
+		//TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		//TLength distance(measurementVector[3]);
+		//measRefs.UVD.at(id).setVectorMeasurement(direction);
+		//measRefs.UVD.at(id).setDistance(distance);
+		return res;
+	}
+	else if (type == "DSPT")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.DSPT.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "DLEV")
+	{
+		// ignoring DHOR
+		Eigen::VectorXd res(1);
+		res << measRefs.DLEV.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ECHO")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.ECHO.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ECSP")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.ECSP.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ECVE")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.ECVE.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "INCLY")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.INCLY.at(id).getAngleResidual();
+		return res;
+	}
+	else if (type == "ECWS")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.ECWS.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "DVER")
+	{
+		Eigen::VectorXd res(1);
+		res << measRefs.DVER.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "RADI")
+	{
+		Eigen::VectorXd res(1);
+		res << -1;
+		std::cout << "RADI is not a real measurement" << std::endl;
+		// measRefs.RADI.at(id).set(TAngle(measurementVector[0]));
+		return res;
+	}
+	else if (type == "OBSXYZ")
+	{
+		Eigen::VectorXd res(3);
+		res << measRefs.OBSXYZ.at(id).getXResidual(), measRefs.OBSXYZ.at(id).getYResidual(), measRefs.OBSXYZ.at(id).getZResidual();
+		return res;
+	}
+	Eigen::VectorXd resDummy(1);
+	resDummy << -1;
+}
+
 void Moni::MoniImpl::adjust()
 {
 	Behavior successCalculation;

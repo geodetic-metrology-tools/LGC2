@@ -34,6 +34,8 @@ public:
 	Eigen::VectorXd getEstimatePrec(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
 	Eigen::VectorXd getEstimatePrec(std::string pointName, std::string frameName);
+	// get estimated residual
+	Eigen::VectorXd getEstimateResidual(std::string obsName);
 	// get the sigma0 after adjustment
 	double getSigma0();
 	// get Meas IDs
