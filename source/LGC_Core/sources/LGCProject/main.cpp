@@ -1,7 +1,7 @@
 #include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <random>
-#include <iomanip>
 
 //#include <ConsoleLogHandler.hpp>
 //#include <FileLogHandler.hpp>

@@ -766,6 +766,8 @@ Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId)
 		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
 	}
 	// get type and return result
+	// for now this method relies on unique parameter names
+	// in case there are objects of different type with identical parameter name, the first object with matching name will be taken
 	if (paramRefs.types.at(paramId) == "POINT")
 	{
 		TPositionVector result = paramRefs.POINTS.at(paramId).getEstimatedValue();
