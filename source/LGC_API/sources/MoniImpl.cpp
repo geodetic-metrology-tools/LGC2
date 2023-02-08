@@ -848,30 +848,29 @@ Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string pointId, std::string fra
 	return toVectorXd(point);
 }
 
-Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string paramId)
+Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string pointId)
 {
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
-	if (paramRefs.types.count(paramId) == 0)
+	if (paramRefs.types.count(pointId) == 0)
 	{
-		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+		std::cout << "No parameter with Id " << pointId << " found" << std::endl;
 	}
-	if (!(paramRefs.types.at(paramId) == "POINT"))
+	if (!(paramRefs.types.at(pointId) == "POINT"))
 	{
-		std::cout << "Covariance extraction only allowed for Points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
+		std::cout << "Covariance extraction only allowed for Points, but Object is of type " << paramRefs.types.at(pointId) << "." << std::endl;
 	}
 
-	Eigen::VectorXd vector(3);
+	Eigen::VectorXd prec(3);
+	prec.setZero();
 	// get type and return result
-	if (paramRefs.types.at(paramId) == "POINT")
+	if (paramRefs.types.at(pointId) == "POINT")
 	{
 		// get precisions, the diagonal covar elements are the square roots
-		Eigen::VectorXd covar(3);
-		covar << (double)paramRefs.POINTS.at(paramId).getXEstPrecision(), (double)paramRefs.POINTS.at(paramId).getYEstPrecision(),
-			(double)paramRefs.POINTS.at(paramId).getZEstPrecision();
-		vector = covar.array().pow(2);
+		prec << (double)paramRefs.POINTS.at(pointId).getXEstPrecision(), (double)paramRefs.POINTS.at(pointId).getYEstPrecision(),
+			(double)paramRefs.POINTS.at(pointId).getZEstPrecision();
 	}
 
-	return vector;
+	return prec;
 }
 
 Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string paramId, std::string frameName)
@@ -886,8 +885,7 @@ Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string paramId, std::string
 		std::cout << "Covariance transformations only allowed for Points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
 	}
 	LGCAdjustablePoint point = paramRefs.POINTS.at(paramId);
-	Eigen::VectorXd transformedCovar = toVectorXd(point.transformSigma(point, project.get(),frameName));
-	Eigen::VectorXd prec = transformedCovar.array().pow(2);
+	Eigen::VectorXd prec = toVectorXd(point.transformSigma(point, project.get(),frameName));
 
 	return prec;
 }
