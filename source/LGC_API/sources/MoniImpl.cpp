@@ -25,9 +25,13 @@ void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 	pimpl_->updateMeas(id, measurementVector);
 }
 // triggering the adjustment claculation
-void Moni::adjust()
+bool Moni::adjust()
 {
-	pimpl_->adjust();
+	return pimpl_->adjust();
+}
+bool Moni::getStatus()
+{
+	return pimpl_->getStatus();
 }
 // get estimate of parameter
 Eigen::VectorXd Moni::getEstimate(std::string id)
@@ -74,6 +78,7 @@ double Moni::getSigma0()
 // actual Implementation
 void Moni::MoniImpl::initialize()
 {
+	estimationStatus = false;
 	Behavior successCalculation;
 	std::cout << "Creating monitoring object with LGC input file "<< inputFilePath << std::endl;
 	std::shared_ptr<TLGCData> projTest(new TLGCData);
@@ -301,6 +306,9 @@ Eigen::VectorXd Moni::MoniImpl::toVectorXd(TPositionVector posVector)
 
 void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
+
+	// reset estimationStatus to false as soon as new measurement data is supplied
+	estimationStatus = false;
 	// manipulate the corresponding measurement by accesing it via the reference map.
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
@@ -570,7 +578,7 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	resDummy << -1;
 }
 
-void Moni::MoniImpl::adjust()
+bool Moni::MoniImpl::adjust()
 {
 	Behavior successCalculation;
 	TLSResultsMatrices *results(nullptr);
@@ -578,13 +586,16 @@ void Moni::MoniImpl::adjust()
 	if (successCalculation)
 	{
 		results = algorithm->resultMatrices;
+		estimationStatus = true;
 		//std::cout << "Adjustment method finished succesfully." << std::endl;
 	}
 	else
 	{
 		std::cout << "Problems occured during Adjustment method." << std::endl;
 	}
+	return estimationStatus;
 }
+
 std::vector<std::string> Moni::MoniImpl::getECWSMeasIds()
 {
 	std::vector<std::string> theIds;
@@ -814,29 +825,26 @@ Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId)
 
 
 }
-// get estimate in subframe
-Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId, std::string frameName)
+// get point estimate in subframe
+Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string pointId, std::string frameName)
 {
-	Eigen::VectorXd vector(3);
-	vector.setZero();
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
-	if (paramRefs.types.count(paramId) == 0)
+	if (paramRefs.types.count(pointId) == 0)
 	{
-		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+		std::cout << "No parameter with Id " << pointId << " found" << std::endl;
 	}
-	if (!(paramRefs.types.at(paramId) == "POINT"))
+	if (!(paramRefs.types.at(pointId) == "POINT"))
 	{
-		std::cout << "Extracion in subframes only allowed for points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
+		std::cout << "Extracion in subframes only allowed for points, but Object is of type " << paramRefs.types.at(pointId) << "." << std::endl;
 	}
 	if (!(frameName == "ROOT"))
 	{
 		std::cout << "Transformations only allowed to \"ROOT\" frame, but destination frame is " << frameName << "." << std::endl;
 	}
-	TPositionVector point = paramRefs.POINTS.at(paramId).getEstimatedValue();
+	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();
 	TPointTransformer fPointTransfo(&project->getTree(), project->getConfig().referential);
-	const TLOR2LOR &lorTrafo = fPointTransfo.getLORTransformation(paramRefs.POINTS.at(paramId).getFrameTreePosition(), project->getTree().begin());
+	const TLOR2LOR &lorTrafo = fPointTransfo.getLORTransformation(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->getTree().begin());
 	lorTrafo.transform(point);
-	//vector << (double)point.getX(), (double)point.getY(), (double)point.getZ();
 	return toVectorXd(point);
 }
 

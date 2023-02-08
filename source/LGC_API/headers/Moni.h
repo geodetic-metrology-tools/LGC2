@@ -22,7 +22,9 @@ public:
 	DECLSPEC ~Moni();
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// triggering the adjustment claculation
-	DECLSPEC void adjust();
+	DECLSPEC bool adjust();
+	// for checking the estimation status
+	DECLSPEC bool getStatus();
 	// get estimate of parameter
 	DECLSPEC Eigen::VectorXd getEstimate(std::string);
 	// get estimate of parameter in subframe
