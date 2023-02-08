@@ -25,7 +25,9 @@ public:
 	// get measurement
 	Eigen::VectorXd getMeas(std::string id);
 	// triggering the adjustment claculation
-	void adjust();
+	bool adjust();
+	// for checking the estimation status
+	bool getStatus() { return estimationStatus; };
 	// get estimate of parameter
 	Eigen::VectorXd getEstimate(std::string);
 	// get estimate of parameter in a subframe
@@ -95,8 +97,8 @@ private:
 	
 	// containing maps to parameter object references
 	// should probably be private.
-	// maybe needs to be more specific as a method a la getEstimate does not exists, rather there
-	// are methods like getEstimatedValue, getEstParam () helmert trafos
+	// maybe needs to be more specific as a universal method a la getEstimate does not exists in LGC, rather there
+	// are methods like getEstimatedValue, getEstParam etc..
 	struct
 	{
 		// the parameter types
@@ -109,6 +111,10 @@ private:
 		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
 		std::unordered_map<std::string, TAdjustableHelmertTransformation &> TRAFOS;
 	} paramRefs;
+
+	// status of estimation. True if estimation results are ready for extraction.
+	// False if not (after calling updateMeas or if estimation failed)
+	bool estimationStatus;
 
 
 };

@@ -1,28 +1,28 @@
 #include <chrono>
 #include <iostream>
 #include <random>
+#include <iomanip>
 
-#include <ConsoleLogHandler.hpp>
-#include <FileLogHandler.hpp>
-#include <Logger.hpp>
+//#include <ConsoleLogHandler.hpp>
+//#include <FileLogHandler.hpp>
+//#include <Logger.hpp>
 
-#include "Defaults.h"
-#include "FileUtils.h"
-#include "TFileLogger.h" // Will be obsolete soon
-#include "TLGCApp.h"
+//#include "Defaults.h"
+//#include "FileUtils.h"
+//#include "TFileLogger.h" // Will be obsolete soon
+//#include "TLGCApp.h"
 #include "Moni.h"
 using namespace std::chrono;
 
 int main(int argc, char *argv[])
 {
 
- // for random numbers
+ // for simulation of random perturbations 
  std::ranlux48 engine;
+ // reproducibility
  engine.seed(1);
  auto start = high_resolution_clock::now();
- //std::string inputFilePath = svlTools::getPathFileName("../LB_calcul_3D_CCS_IP_8_HLS_4.lgc");
- std::string inputFilePath = svlTools::getPathFileName("../SC.lgc2");
- 
+ std::string inputFilePath = "../SC.lgc2";
  
  Moni mockup(inputFilePath);
  
@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
  {
  	originalMeasurements.insert({id, mockup.getMeas(id)[0]});
  }
+ bool status = false;
  // Simulating a monitoring scenario
  for (int i = 0; i < 1000; i++)
  {
@@ -41,13 +42,14 @@ int main(int argc, char *argv[])
  	{
  		// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
         // ECWS sigma = 0.001 mm = 1e-6m
- 		TReal sigma(1e-6);
- 		TLength newMeas = TLength(std::normal_distribution<double>(0, sigma)(engine)) + TLength(originalMeasurements.at(id));
+ 		double sigma(1e-6);
+ 		double newMeas(std::normal_distribution<double>(0, sigma)(engine) + originalMeasurements.at(id));
  		Eigen::VectorXd new_measurement(1);
- 		new_measurement(0)=(double) newMeas;
+		new_measurement(0) = newMeas;
  		mockup.updateMeas(id, new_measurement);
  	}
- 	mockup.adjust();
+
+ 	status = mockup.adjust();
  	auto currentTime = high_resolution_clock::now();
  	auto duration = duration_cast<milliseconds>(currentTime- start);
  	// get exemplary parameter
