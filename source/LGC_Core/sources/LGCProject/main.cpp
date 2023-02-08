@@ -1,76 +1,73 @@
 #include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <random>
-#include <iomanip>
 
-//#include <ConsoleLogHandler.hpp>
-//#include <FileLogHandler.hpp>
-//#include <Logger.hpp>
-
-//#include "Defaults.h"
-//#include "FileUtils.h"
-//#include "TFileLogger.h" // Will be obsolete soon
-//#include "TLGCApp.h"
+// the monitoring class
 #include "Moni.h"
 using namespace std::chrono;
 
 int main(int argc, char *argv[])
 {
+	// for simulation of random perturbations
+	std::ranlux48 engine;
+	// reproducibility
+	engine.seed(1);
+	auto start = high_resolution_clock::now();
+	std::string inputFilePath = "../SC.lgc2";
 
- // for simulation of random perturbations 
- std::ranlux48 engine;
- // reproducibility
- engine.seed(1);
- auto start = high_resolution_clock::now();
- std::string inputFilePath = "../SC.lgc2";
- 
- Moni mockup(inputFilePath);
- 
- // get the ids so the controlling object (will be the Fras instance) knows them.
- std::vector<std::string> ecwsIds = mockup.getECWSMeasIds();
- // first save the original measurements
- std::unordered_map<std::string, double> originalMeasurements;
- for (auto id : ecwsIds)
- {
- 	originalMeasurements.insert({id, mockup.getMeas(id)[0]});
- }
- bool status = false;
- // Simulating a monitoring scenario
- for (int i = 0; i < 1000; i++)
- {
- 	for (auto id: ecwsIds)
- 	{
- 		// simulate new measurements by taking the old ones and add a perturbation with standard deviation sigma
-        // ECWS sigma = 0.001 mm = 1e-6m
- 		double sigma(1e-6);
- 		double newMeas(std::normal_distribution<double>(0, sigma)(engine) + originalMeasurements.at(id));
- 		Eigen::VectorXd new_measurement(1);
-		new_measurement(0) = newMeas;
- 		mockup.updateMeas(id, new_measurement);
- 	}
+	Moni mockup(inputFilePath);
 
- 	status = mockup.adjust();
- 	auto currentTime = high_resolution_clock::now();
- 	auto duration = duration_cast<milliseconds>(currentTime- start);
- 	// get exemplary parameter
- 	// not unique!!	"A-TAP.HLS1";
- 	std::string parameterName = "B-TAP.WPS2";
+	// the IDs for the observations we want to maniupualte during the monitoring
+	std::vector<std::string> ecwsIds = {"meas1", "meas2", "meas3", "meas4", "meas5", "meas6", "meas7", "meas8"};
+	// first save the original measurements
+	std::unordered_map<std::string, double> originalMeasurements;
+	for (auto id : ecwsIds)
+	{
+		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
+	}
+	bool status = false;
 
- 	// Print some results
- 	std::cout << "\r Fras iteration " << std::setw(5) << i << std::setprecision(5) << ", elapsed time " << (double)duration.count() / 1000 << " s. " << std::endl
- 			  << "in Sub frame " << parameterName << " = " << std::setprecision(8) << mockup.getEstimate(parameterName).transpose() << "     Precisions "
- 			  << mockup.getEstimatePrec(parameterName).transpose() << " Sigma_0 = " << mockup.getSigma0() << std::endl;
- 	std::cout << std::setw(5) << std::setprecision(8) << "in Rootframe " << parameterName << " = " << std::setprecision(8)
- 			  << mockup.getEstimate(parameterName, "ROOT").transpose() << "     Precisions " << mockup.getEstimatePrec(parameterName, "ROOT").transpose()
- 			  << " Sigma_0 = " << mockup.getSigma0() << std::endl;
-	std::cout << "Precision via normal method in subframe" << mockup.getEstimatePrec(parameterName).transpose() << std::endl;
-	std::cout << "Precision via trafo to subframe method" << mockup.getEstimatePrec(parameterName, "WIRE.RIGHT.DOF").transpose() << std::endl;
-	std::cout << "Precision via trafo to subframe method in some other frame" << mockup.getEstimatePrec(parameterName, "ROOT").transpose() << std::endl;
+	// Simulating a monitoring scenario
+	for (int i = 0; i < 1000; i++)
+	{
+		for (auto id : ecwsIds)
+		{
+			// simulate new measurements by taking the original values and add a perturbation with standard deviation sigma
+			// ECWS sigma = 0.001 mm = 1e-6m
+			double sigma(1e-6);
+			double newMeas(std::normal_distribution<double>(0, sigma)(engine) + originalMeasurements.at(id));
+			Eigen::VectorXd new_measurement(1);
+			new_measurement(0) = newMeas;
+			mockup.updateMeas(id, new_measurement);
+		}
 
- }
- auto stop = high_resolution_clock::now();
- auto duration = duration_cast<seconds>(stop - start);
- std::cout << "Elapsed time (s): " << duration.count() << std::endl;
+		status = mockup.adjust();
+		auto currentTime = high_resolution_clock::now();
+		auto duration = duration_cast<milliseconds>(currentTime - start);
+		// get exemplary parameter estimates
+		// std::string pointName = "B-TAP.WPS2";
+		// std::string pointName = "B-TAP.HLS1";
+		std::string pointName = "A-TAP.HLS1";
+		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getEstimate(pointName) << std::endl;
+		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getEstimate(pointName, "ROOT") << std::endl;
+		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
+		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getEstimatePrec(pointName) << std::endl;
+		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with unceratin parameters involved
+		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
+				  << mockup.getEstimatePrec(pointName, "ROOT") << std::endl;
+
+		// get exemplary measurement residual
+		std::string obsName = "meas1";
+		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
+
+		// get sigmaZero
+		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
+
+	}
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<seconds>(stop - start);
+	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 
 	return 1;
 }
