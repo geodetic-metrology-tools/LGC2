@@ -12,6 +12,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TTransformation.h>
 #include <TTransformParameters.h>
 
+//SurveyLib
+#include <TSparseMatrix.h>
+
 /*!
 	\ingroup LocalTransformations
 	\brief Class representing a STEP UP in the tree of local frames, this is the transformation which is used to define a node of the tree with respect to its parent.
@@ -36,6 +39,8 @@ public:
 		TDerivativeTransformation differentiatedTransformationAngle(int angle) const;
 		TDerivativeTransformation differentiatedTransformationTranslation(int ti) const;
 		TDerivativeTransformation differentiatedTransformationScaleFactor() const;
+		TDenseMatrix getPartialDerivativeWrtPosition() const;
+		TDenseMatrix getPartialDerivativeWrtHelmertParameters(const TPositionVector& pos) const;
 	//@}
 
 	/*!@name Set methods */

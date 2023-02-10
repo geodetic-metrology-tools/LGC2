@@ -234,6 +234,43 @@ TDerivativeTransformation TDirectTransformation::differentiatedTransformationSca
 	return TDerivativeTransformation(m);
 }
 
+TDenseMatrix TDirectTransformation::getPartialDerivativeWrtPosition() const
+{
+	// the partial derivative wrt position is the M matrix (=rotation part) times the scale factor
+	TDenseMatrix posDeriv(3, 3);
+	posDeriv = (getMatrix().topLeftCorner(3,3)) * getScaleFactor();
+	return posDeriv;
+}
+
+TDenseMatrix TDirectTransformation::getPartialDerivativeWrtHelmertParameters(const TPositionVector& pos) const
+{
+	// we use the derivative transformations to compute the partial derivatives
+	TDerivativeTransformation dt1 = differentiatedTransformationTranslation(0);
+	TDerivativeTransformation dt2 = differentiatedTransformationTranslation(1);
+	TDerivativeTransformation dt3 = differentiatedTransformationTranslation(2);
+	TDerivativeTransformation domega = differentiatedTransformationAngle(0);
+	TDerivativeTransformation dphi = differentiatedTransformationAngle(1);
+	TDerivativeTransformation dkappa = differentiatedTransformationAngle(2);
+	TDerivativeTransformation dscale = differentiatedTransformationScaleFactor();
+
+	auto toVector = [](TFreeVector vIn) {
+		TVector vector(3);
+		vector << vIn.getX(), vIn.getY(), vIn.getZ();
+		return vector;
+	};
+	TDenseMatrix helmertDeriv(3, 7);
+	helmertDeriv.setZero();
+	helmertDeriv.col(0) = toVector(dt1 * pos);
+	helmertDeriv.col(1) = toVector(dt2 * pos);
+	helmertDeriv.col(2) = toVector(dt3 * pos);
+	helmertDeriv.col(3) = toVector(domega * pos);
+	helmertDeriv.col(4) = toVector(dphi * pos);
+	helmertDeriv.col(5) = toVector(dkappa * pos);
+	helmertDeriv.col(6) = toVector(dscale * pos);
+
+	return helmertDeriv;
+}
+
 bool TDirectTransformation::transform(TRotationMatrix& rm) const{
 	TCoordSysFactory::ECoordSys k3DCart = TCoordSysFactory::ECoordSys::k3DCartesian;
 	bool result = false;

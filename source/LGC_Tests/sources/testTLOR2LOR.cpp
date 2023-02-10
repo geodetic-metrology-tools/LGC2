@@ -542,8 +542,8 @@ namespace tut
 		int numberTrafos = forward.getTransformationChain().size();
 		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> forwardHelmertSensitivities = forward.getPartialDerivativesWrtHelmertParameters(startPoint);
 		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> backwardHelmertSensitivities = backward.getPartialDerivativesWrtHelmertParameters(endPoint);
-		TDenseMatrix forwardPointSensitivity = forward.getPartialDerivativeWrtPosition(startPoint);
-		TDenseMatrix backwardPointSensitivity = backward.getPartialDerivativeWrtPosition(endPoint);
+		TDenseMatrix forwardPointSensitivity = forward.getPartialDerivativeWrtPosition();
+		TDenseMatrix backwardPointSensitivity = backward.getPartialDerivativeWrtPosition();
 		// prepare derivative of forward and backward with respect to Helmert parameters
 		TDenseMatrix dforwardDparameters(3, 7 * numberTrafos);
 		dforwardDparameters.setZero();

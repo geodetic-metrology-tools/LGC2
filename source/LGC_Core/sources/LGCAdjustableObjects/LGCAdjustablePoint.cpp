@@ -224,7 +224,7 @@ TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, con
 
 	TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
 	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivatives = completeTrafo.getPartialDerivativesWrtHelmertParameters(ptInSF);
-	TDenseMatrix ptJac = completeTrafo.getPartialDerivativeWrtPosition(ptInSF);
+	TDenseMatrix ptJac = completeTrafo.getPartialDerivativeWrtPosition();
 	
 	TSparseMatrix jac(3, fData->fUEOIndices.UIndex);
 	jac.setZero();

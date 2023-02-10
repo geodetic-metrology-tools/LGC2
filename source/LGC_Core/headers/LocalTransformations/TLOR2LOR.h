@@ -154,8 +154,8 @@ class TLOR2LOR{
 		// compute the derivatives of the Lor2Lor chain with respect to all involved helmert parameters, as in the Contributions generator (=dH(p1,p2,...,pn,x)/d(p1,p2,..,pn))
 		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const;
 		
-		// compute the derivative of the Lor2Lor chain with respect to the coordinates of the tranformed point
-		TDenseMatrix getPartialDerivativeWrtPosition(const TPositionVector &pos) const;
+		// compute the derivative of the Lor2Lor chain with respect to the coordinates of the tranformed point, independant of point position
+		TDenseMatrix getPartialDerivativeWrtPosition() const;
 
 
 		/// Returns Source Node, the node of the tree from which is transformed.

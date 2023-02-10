@@ -314,7 +314,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 	 return trafoContrib;
  }
 
- TDenseMatrix TLOR2LOR::getPartialDerivativeWrtPosition(const TPositionVector &pos) const
+ TDenseMatrix TLOR2LOR::getPartialDerivativeWrtPosition() const
  {
 	 auto toVector = [](TFreeVector vIn) {
 		 TVector vector(3);
