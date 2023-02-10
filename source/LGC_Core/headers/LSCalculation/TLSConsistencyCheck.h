@@ -60,6 +60,10 @@ private:
     // write a warning message
     void generateGroupWarning(const set<int> component, const TDenseMatrix kernGroup, const int groupNumber);
 
+    // compute the Jacobian of a master helmert transformation acting on all points transformed to the root coordinates.
+	TDenseMatrix getMasterJacobian(const TLGCData& data);
+    // transform the nullspace elements to point movements in the root frame
+	TDenseMatrix getInsensitiveDirectionsInRoot(const TLGCData &data);
 
 };
 

@@ -4,6 +4,8 @@
 #include <TVAdjustableObject.h>
 #include <Eigen/LU>
 #include <TLSConsistencyCheck.h>
+#include <TLOR2LOR.h>
+#include <TDirectTransformation.h>
 
 using namespace std;
 
@@ -23,6 +25,13 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
     }
     // initialize object data, neighbors, Nullspace
     initialize(data);
+
+    // test if some Nullspace direction can be explained by a Helmert transformation
+	if (nullspace.cols() > 0)
+	{
+		TDenseMatrix masterJacobian = getMasterJacobian(data);
+		TDenseMatrix insensitiveDirections = getInsensitiveDirectionsInRoot(data);
+	}
 
     // identify connected groups of kernel
     set<set<int>> connectedGroups = identifyConnectedKernelGroups();
@@ -108,6 +117,78 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const TDenseMatrix
         logWarning() << "This group is isolated from the rest of the objects.";
     }
 
+}
+
+TDenseMatrix TLSConsCheck::getMasterJacobian(const TLGCData &data)
+{
+	// create the "Master" Helmert transformation object acting on the Root frame
+	// equal to the identity transformation
+	// for our purpose we use the default constructor of TDirectTransformation, which gives an identity transformation
+	TDirectTransformation masterTrafo;
+	// total number of points, independant of degrees of freedom of point
+	int numberOfPoints = data.getPoints().numObjects();
+	TDenseMatrix masterJacobian(3 * numberOfPoints, 7);
+	TDataTree tree = data.getTree();
+	// iterate over all adjustable points
+	int pointCounter = 0;
+	for (const auto &point : data.getPoints())
+	{
+		// transform point to root coordinates
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), tree.begin(), "pointTrafo");
+		TPositionVector positionInRoot = point.getEstimatedValue();
+		sub2Root.transform(positionInRoot);
+		TDenseMatrix ptJacobian(3, 7);
+		ptJacobian = masterTrafo.getPartialDerivativeWrtHelmertParameters(positionInRoot);
+		masterJacobian.block(3 * pointCounter, 0, 3, 7) = ptJacobian;
+		pointCounter++;
+	}
+	return masterJacobian;
+}
+
+TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
+{
+    // translate the Nullspace of the first design matrix to insensitive directions in the Root frame
+    // for each point, the chain of transformations to root (inlcuding their sensitivities) have to be considered
+	// total number of points, independant of degrees of freedom of point
+	int numberOfPoints = data.getPoints().numObjects();
+	int dimNullspace = nullspace.cols();
+	TDenseMatrix insensitiveDirections(3 * numberOfPoints, dimNullspace);
+	TDataTree tree = data.getTree();
+	int pointCounter = 0;
+	for (const auto &point : data.getPoints())
+	{
+		TPositionVector positionInSubframe = point.getEstimatedValue();
+		// get the transformation to root
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), tree.begin(), "pointTrafo");
+		TDenseMatrix ptJacobian(3, dimNullspace);
+		// the derivative corresponding to the point itself
+		TDenseMatrix ptInSubframeMovement(3, dimNullspace);
+		ptInSubframeMovement.setZero();
+		if (point.getNumUnkn() > 0)
+		{
+			ptInSubframeMovement(point.getRelativeUnknIndices(), Eigen::indexing::all) = nullspace.block(point.getFirstUidx(), 0, point.getNumUnkn(), dimNullspace);
+			ptJacobian = (sub2Root.getPartialDerivativeWrtPosition()) * ptInSubframeMovement;
+		}
+		// the contributions from the chain of transformations
+		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> chainSensitivities = sub2Root.getPartialDerivativesWrtHelmertParameters(positionInSubframe);
+		for (auto &pair : chainSensitivities)
+		{
+			TAdjustableHelmertTransformation trafo = pair.first;
+			TDenseMatrix partDerivWrtParameters = pair.second;
+			if (trafo.getNumUnkn() > 0)
+			{
+				TDenseMatrix Hp(3, trafo.getNumUnkn());
+				Hp.setZero();
+				Hp = partDerivWrtParameters(Eigen::indexing::all, trafo.getRelativeUnknIndices());
+				TDenseMatrix helmertDirections(trafo.getNumUnkn(), dimNullspace);
+				helmertDirections = nullspace.block(trafo.getFirstUidx(), 0, trafo.getNumUnkn(), dimNullspace);
+				ptJacobian += Hp * helmertDirections;
+			}
+		}
+        insensitiveDirections.block(pointCounter*3,0,3,dimNullspace)=ptJacobian;
+		pointCounter++;
+	}
+	return insensitiveDirections;
 }
 
 
