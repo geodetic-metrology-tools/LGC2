@@ -66,9 +66,9 @@ void	TLGCObsSummary::clear()
     fResMin = std::numeric_limits<float>::max();
     fResMax = std::numeric_limits<float>::lowest();
 	fSumRes2 = LITERAL(0.0);
-	fVariance = LITERAL(0.0);
-	fVarLoLimit = LITERAL(0.0);
-	fVarHiLimit = LITERAL(0.0);
+	fStdev = LITERAL(0.0);
+	fStdLoLimit = LITERAL(0.0);
+	fStdHiLimit = LITERAL(0.0);
 	fHistoList.clear();
     fHistoData.clear();
 	fNumberOutsideHisto = 0;
@@ -94,15 +94,15 @@ void TLGCObsSummary::initialise() {
         //calculate the mean
         fMean = (fSumRes) / (fNumberOfObs);
 
-    // determine the variance for the observation residuals
+    // determine the standard deviation for the observation residuals
     if(fNumberOfObs > 1)
-        //calculate the variance
-        fVariance = sqrtq((fSumRes2 - (fSumRes)*(fSumRes) / fNumberOfObs) / (fNumberOfObs - 1));
+        //calculate the standard deviation
+		fStdev = sqrtq((fSumRes2 - (fSumRes) * (fSumRes) / fNumberOfObs) / (fNumberOfObs - 1));
 
     //Degree of freedom
     int dof = fNumberOfObs - 1;
 
-    // Calculate the mean low and high limits, and the variance high and low limits
+    // Calculate the mean low and high limits, and the standard deviation high and low limits
     if(dof > 0)
     {
         TReal prob, STLo, STHi, chiLo, chiHi;
@@ -112,19 +112,19 @@ void TLGCObsSummary::initialise() {
 
         // calculate the confidence limits from the Student T distribution
         STLo = deviates_students_t_lower_tail(1 - prob, dof);
-        fMeanLoLimit = STLo * fVariance / sqrtq(TReal(fNumberOfObs));
+        fMeanLoLimit = STLo * fStdev / sqrtq(TReal(fNumberOfObs));
 
         // calculate the confidence limits from the Student T distribution
         STHi = deviates_students_t_upper_tail(1 - prob, dof);
-        fMeanHiLimit = STHi * fVariance / sqrtq(TReal(fNumberOfObs));
+		fMeanHiLimit = STHi * fStdev / sqrtq(TReal(fNumberOfObs));
 
         // chi test coefficients
         chiLo = deviates_chi_sq(prob, dof);
-        fVarLoLimit = fVariance * sqrtq(dof / chiLo);
+		fStdLoLimit = fStdev * sqrtq(dof / chiLo);
 
         // chi test coefficients
         chiHi = deviates_chi_sq(1 - prob, dof);
-        fVarHiLimit = fVariance * sqrtq(dof / chiHi);
+		fStdHiLimit = fStdev * sqrtq(dof / chiHi);
     }
 
 
@@ -225,24 +225,24 @@ TReal TLGCObsSummary::getResMax() const {
     return fResMax;
 }
 
-/*!get the variance for the residuals */
-TReal TLGCObsSummary::getVariance() const {
+/*!get the standard deviation for the residuals */
+TReal TLGCObsSummary::getStdev() const {
     assert(fIsInitialised);
-    return fVariance;
+    return fStdev;
 }
 
 
-/* get the lower confidence limit for the variance */
-TReal TLGCObsSummary::getVarLoLimit() const {
+/* get the lower confidence limit for the standard deviation */
+TReal TLGCObsSummary::getStdLoLimit() const {
     assert(fIsInitialised);
-	return fVarLoLimit;
+	return fStdLoLimit;
 }
 
 
-/* get the upper confidence limit for the variance */
-TReal TLGCObsSummary::getVarHiLimit() const {
+/* get the upper confidence limit for the standard deviation */
+TReal TLGCObsSummary::getStdHiLimit() const {
     assert(fIsInitialised);
-	return fVarHiLimit;
+	return fStdHiLimit;
 }
 
 
@@ -282,11 +282,11 @@ int TLGCObsSummary::getHistoScale() const
     assert(fCreateHistogram);
 
 	int k = 1;
-	if(getVariance()<=1)
+	if(getStdev()<=1)
 	{
 		k = 10;
 	}
-	if(getVariance()<=LITERAL(0.1))
+	if (getStdev() <= LITERAL(0.1))
 	{
 		k = 100;
 	}

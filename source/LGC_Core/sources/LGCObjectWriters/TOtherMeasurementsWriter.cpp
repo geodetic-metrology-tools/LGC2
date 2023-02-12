@@ -691,7 +691,7 @@ void TOtherMeasurentWriter::writeDefResultsSynthesis(std::list<const TLGCObsSumm
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }
@@ -714,7 +714,7 @@ void TOtherMeasurentWriter::writeDVERResultsSynthesis(const TMeasurements &tmeas
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dverSummary.getStdev()); // ecart type 
 	(*stream) << endl;
 }
 
@@ -735,7 +735,7 @@ void TOtherMeasurentWriter::writeORIEResultsSynthesis(const TORIEROM& orieRom, c
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, orieSummary.getStdev()); // ecart type 
 	(*stream) << endl;
 }
 
@@ -756,7 +756,7 @@ void TOtherMeasurentWriter::writeRADIResultsSynthesis(const TMeasurements &tmeas
     (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, radiSummary.getStdev()); // ecart type 
 	(*stream) << endl;
 }
 
@@ -779,20 +779,20 @@ void TOtherMeasurentWriter::writeOBSXYZResultsSynthesis(const TMeasurements &tme
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, Xsummary.getStdev()); // ecart type 
 	(*stream) << endl;
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "all_OBSXYZ_Y"); //Reference point
     (*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, Ysummary.getStdev()); // ecart type 
 	(*stream) << endl;
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "all_OBSXYZ_Z"); //Reference point
     (*stream).writeDouble(obsResWidth, lengthResPrecision, Zsummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, Zsummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, Zsummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, Zsummary.getVariance());//ecart type 
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, Zsummary.getStdev()); // ecart type 
 	(*stream) << endl;
 }

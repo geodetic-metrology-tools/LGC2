@@ -54,15 +54,15 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary& summary,
 	stream<<"ECART-TYPE   =  ";
 	stream.width( obsResWidth );
 	stream.precision(angleResidualPrecision);
-	stream << summary.getVariance() ;
+	stream << summary.getStdev();
 	stream << getSeparator();
 
 	//variance of residuals statistical test limits
 	stream<<" CC :  LIMITES DE CONFIANCE A 95.0 = (";
 	stream.precision(angleResidualPrecision);
-	stream << summary.getVarLoLimit()<<", ";
+	stream << summary.getStdLoLimit()<<", ";
 	stream.precision(angleResidualPrecision);
-	stream << summary.getVarHiLimit()<<")";
+	stream << summary.getStdHiLimit()<<")";
 	stream << getSeparator();
 	stream << endl <<endl;
 
@@ -96,15 +96,15 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary& summa
 	stream<<"ECART-TYPE   =  ";
 	stream.width( obsResWidth );
 	stream.precision(lengthResidualPrecision);
-	stream << summary.getVariance() ;
+	stream << summary.getStdev();
 	stream<<getSeparator();
 
 	//variance of residuals statistical test limits
 	stream<<" MM :  LIMITES DE CONFIANCE A 95.0 = (";
 	stream.precision(lengthResidualPrecision);
-	stream << summary.getVarLoLimit()<<", ";
+	stream << summary.getStdLoLimit()<<", ";
 	stream.precision(lengthResidualPrecision);
-	stream << summary.getVarHiLimit()<<")";
+	stream << summary.getStdHiLimit()<<")";
 	stream<<getSeparator();
 	stream<<endl<<endl;;
 
@@ -139,15 +139,15 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary& summa
 	stream<<"ECART-TYPE   =  ";
 	stream.width( obsResWidth );
 	stream.precision(lengthResidualPrecision);
-	stream << summary.getVariance() ;
+	stream << summary.getStdev();
 	stream<<getSeparator();
 
 	//variance of residuals statistical test limits
 	stream<<" [] :  LIMITES DE CONFIANCE A 95.0 = (";
 	stream.precision(lengthResidualPrecision);
-	stream << summary.getVarLoLimit()<<", ";
+	stream << summary.getStdLoLimit()<<", ";
 	stream.precision(lengthResidualPrecision);
-	stream << summary.getVarHiLimit()<<")";
+	stream << summary.getStdHiLimit()<<")";
 	stream<<getSeparator();
 	stream<<endl<<endl;;
 

@@ -54,7 +54,7 @@ void TEDMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meas
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }
@@ -74,7 +74,7 @@ void TEDMWriter::writeDSPTResultsSynthesis(const  TEDM& fEdm)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 }

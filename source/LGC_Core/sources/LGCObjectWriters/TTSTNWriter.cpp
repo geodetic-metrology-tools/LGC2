@@ -1771,7 +1771,7 @@ void TTSTNWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &mea
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }
@@ -1793,7 +1793,7 @@ void TTSTNWriter::writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getStdev()); // ecart type
     (*stream) << endl;
 }
 
@@ -1815,7 +1815,7 @@ void TTSTNWriter::writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getStdev()); // ecart type
 	(*stream) << endl;
 }
 
@@ -1835,7 +1835,7 @@ void TTSTNWriter::writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getVariance());//ecart type}
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, lineSummary.getStdev()); // ecart type}
     (*stream) << endl;
 }
 
@@ -1859,7 +1859,7 @@ void TTSTNWriter::writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, s
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, anglSummary.getStdev()); // ecart type
 	//ZEND
 	if (obsWidth < 13)
 		(*stream) << TABs2;
@@ -1868,13 +1868,13 @@ void TTSTNWriter::writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, s
     (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, zendSummary.getStdev()); // ecart type
 	(*stream) << TABs;
 	//DIST
     (*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, distSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 }
@@ -1895,7 +1895,7 @@ void TTSTNWriter::writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, 
     (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecthSummary.getStdev()); // ecart type
     (*stream) << endl;
 }
 
@@ -1915,6 +1915,6 @@ void TTSTNWriter::writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos,
     (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecdirSummary.getStdev()); // ecart type
     (*stream) << endl;
 }
