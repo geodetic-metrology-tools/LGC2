@@ -12,8 +12,12 @@ using namespace std;
 // constructor
 TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 {
+	TSparseMatrix A4(data.fUEOIndices.EIndex + data.fUEOIndices.CIndex, data.fUEOIndices.UIndex);
+	A4.topRows(data.fUEOIndices.EIndex) = *inputMtr.getFirstDgnMtrx();
+	A4.bottomRows(data.fUEOIndices.CIndex) = *inputMtr.getCnstrFirstDgnMtrx();
     if (!data.getConfig().libre.isActive()) {
         firstDgnMatrix = (*inputMtr.getFirstDgnMtrx()).toDense();
+		firstDgnMatrixSparse = *inputMtr.getFirstDgnMtrx();
     }
     else
     {
@@ -21,24 +25,26 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
         TDenseMatrix A2 = (*inputMtr.getCnstrFirstDgnMtrx()).toDense();
         firstDgnMatrix.resize(A.rows() + A2.rows(), A.cols());
         //add the constraint matrix
+
         firstDgnMatrix << A, A2;
     }
     // initialize object data, neighbors, Nullspace
     initialize(data);
 
+	std::cout << "First Design Matrix=" << std::endl << firstDgnMatrix << std::endl;
     // test if some Nullspace direction can be explained by a Helmert transformation
 	if (nullspace.cols() > 0)
 	{
 		TDenseMatrix masterJacobian = getMasterJacobian(data);
-		// std::cout << "Master Jacobian=" << std ::endl << masterJacobian << std::endl;
-		// std::cout << "rank=" << masterJacobian.fullPivHouseholderQr().rank() << std::endl;
+		std::cout << "Master Jacobian=" << std ::endl << masterJacobian << std::endl;
+		std::cout << "rank=" << masterJacobian.fullPivHouseholderQr().rank() << std::endl;
 		TDenseMatrix insensitiveDirections = getInsensitiveDirectionsInRoot(data);
-		// std::cout << "Nullspace Movements Jacobian=" << std ::endl << insensitiveDirections << std::endl;
-		// std::cout << "rank=" << insensitiveDirections.fullPivHouseholderQr().rank() << std::endl;
-		TDenseMatrix combined(masterJacobian.rows() , masterJacobian.cols() + insensitiveDirections.cols());
+		std::cout << "Nullspace Movements Jacobian=" << std ::endl << insensitiveDirections << std::endl;
+		std::cout << "rank=" << insensitiveDirections.fullPivHouseholderQr().rank() << std::endl;
+		TDenseMatrix combined(masterJacobian.rows(), masterJacobian.cols() + insensitiveDirections.cols());
 		combined.leftCols(masterJacobian.cols()) = masterJacobian;
 		combined.rightCols(insensitiveDirections.cols()) = insensitiveDirections;
-		// std::cout << "combined rank=" << combined.fullPivHouseholderQr().rank() << std::endl;
+		 std::cout << "combined rank=" << combined.fullPivHouseholderQr().rank() << std::endl;
         // test if nullspace directions can be explained with master movements
 		for (int i = 0; i < insensitiveDirections.cols(); i++)
 		{
@@ -183,6 +189,7 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
 		// get the transformation to root
 		TLOR2LOR sub2Root(point.getFrameTreePosition(), tree.begin(), "pointTrafo");
 		TDenseMatrix ptJacobian(3, dimNullspace);
+		ptJacobian.setZero();
 		// the derivative corresponding to the point itself
 		TDenseMatrix ptInSubframeMovement(3, dimNullspace);
 		ptInSubframeMovement.setZero();
@@ -251,6 +258,7 @@ void TLSConsCheck::whichConstraintsDoWeNeed(Eigen::VectorXd combi)
 		std::cout << "a scaling ";
 	}
 	std::cout<<std::endl;
+	std::cout << "adding a constraint prohibiting any of these movements will eliminate this degree of freedom."<< std::endl;
 
 }
 
@@ -439,6 +447,23 @@ pair<set<int>, int> TLSConsCheck::externalConnections(set<int> group) {
 
     for (int row = 0; row < firstDgnMatrix.rows(); row++) {
         TDenseMatrix v = firstDgnMatrix(row, Eigen::placeholders::all).transpose();
+        // here we rather should take the sparsity pattern instead of the actual entries.
+        // because in pathological cases a observation can depend on a parameter but the derivative wrt to this parameter is zero
+        // this then can lead to the message that the associated parameter is "disconnected", see 'wrongly_disconnected.lgc2'
+	// 	std::cout << firstDgnMatrixSparse.row(row) << std::endl;
+	// 	std::cout << firstDgnMatrix.row(row) << std::endl;
+	// 	std::cout << firstDgnMatrixSparse.nonZeros() << std::endl;
+	// 	std::cout << firstDgnMatrix << std::endl;
+	// 	std::cout << firstDgnMatrixSparse << std::endl;
+//		int start_index = firstDgnMatrixSparse.outerIndexPtr()[row];
+//		int end_index = firstDgnMatrixSparse.outerIndexPtr()[row + 1];
+//		int nnz = end_index - start_index;
+//		const int *col_indices = firstDgnMatrixSparse.innerIndexPtr() + start_index;
+//		for (int i = 0; i < nnz; i++)
+//		{
+//			std::cout << col_indices[i] << std::endl;
+//		}
+
         set<int> contributing = contributingObjects(v);
         bool dependsOnGroup = !(v(internalIndices, 0).isZero());
         bool dependsOnComplement = !(v(externalIndices, 0).isZero());
