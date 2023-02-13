@@ -25,7 +25,7 @@ private:
     // used for Eigen LU decomposition
     double pivotThreshold = 1e-6;
     // the first design matrix here is the first design matrix of the measurements and the first design matrix of the constraints (if present)
-    TDenseMatrix firstDgnMatrix;
+    Eigen::SparseMatrix<double,Eigen::RowMajor> firstDgnMatrix;
 	TSparseMatrix firstDgnMatrixSparse;
     // vector of object names
     vector<string> objectNames;
@@ -66,7 +66,6 @@ private:
 	TDenseMatrix getInsensitiveDirectionsInRoot(const TLGCData &data);
     // checking the coefficients nneded to linear combine a insensitive direction from master frame movements
 	void whichConstraintsDoWeNeed(TVector combi);
-
 };
 
 #endif

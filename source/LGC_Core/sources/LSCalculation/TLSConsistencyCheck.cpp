@@ -12,39 +12,27 @@ using namespace std;
 // constructor
 TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 {
-	TSparseMatrix A4(data.fUEOIndices.EIndex + data.fUEOIndices.CIndex, data.fUEOIndices.UIndex);
-	A4.topRows(data.fUEOIndices.EIndex) = *inputMtr.getFirstDgnMtrx();
-	A4.bottomRows(data.fUEOIndices.CIndex) = *inputMtr.getCnstrFirstDgnMtrx();
-    if (!data.getConfig().libre.isActive()) {
-        firstDgnMatrix = (*inputMtr.getFirstDgnMtrx()).toDense();
-		firstDgnMatrixSparse = *inputMtr.getFirstDgnMtrx();
-    }
-    else
-    {
-        TDenseMatrix A = (*inputMtr.getFirstDgnMtrx()).toDense();
-        TDenseMatrix A2 = (*inputMtr.getCnstrFirstDgnMtrx()).toDense();
-        firstDgnMatrix.resize(A.rows() + A2.rows(), A.cols());
-        //add the constraint matrix
-
-        firstDgnMatrix << A, A2;
-    }
-    // initialize object data, neighbors, Nullspace
+	Eigen::SparseMatrix<double, Eigen::RowMajor> A(data.fUEOIndices.EIndex + data.fUEOIndices.CIndex, data.fUEOIndices.UIndex);
+	A.topRows(data.fUEOIndices.EIndex) = *inputMtr.getFirstDgnMtrx();
+	A.bottomRows(data.fUEOIndices.CIndex) = *inputMtr.getCnstrFirstDgnMtrx();
+	
+    firstDgnMatrix = A;
     initialize(data);
 
-	std::cout << "First Design Matrix=" << std::endl << firstDgnMatrix << std::endl;
+	std::cout << "First Design Matrix=" << std::endl << firstDgnMatrix.toDense() << std::endl;
     // test if some Nullspace direction can be explained by a Helmert transformation
 	if (nullspace.cols() > 0)
 	{
 		TDenseMatrix masterJacobian = getMasterJacobian(data);
-		std::cout << "Master Jacobian=" << std ::endl << masterJacobian << std::endl;
-		std::cout << "rank=" << masterJacobian.fullPivHouseholderQr().rank() << std::endl;
+		// std::cout << "Master Jacobian=" << std ::endl << masterJacobian << std::endl;
+		// std::cout << "rank=" << masterJacobian.fullPivHouseholderQr().rank() << std::endl;
 		TDenseMatrix insensitiveDirections = getInsensitiveDirectionsInRoot(data);
-		std::cout << "Nullspace Movements Jacobian=" << std ::endl << insensitiveDirections << std::endl;
-		std::cout << "rank=" << insensitiveDirections.fullPivHouseholderQr().rank() << std::endl;
+		// std::cout << "Nullspace Movements Jacobian=" << std ::endl << insensitiveDirections << std::endl;
+		// std::cout << "rank=" << insensitiveDirections.fullPivHouseholderQr().rank() << std::endl;
 		TDenseMatrix combined(masterJacobian.rows(), masterJacobian.cols() + insensitiveDirections.cols());
 		combined.leftCols(masterJacobian.cols()) = masterJacobian;
 		combined.rightCols(insensitiveDirections.cols()) = insensitiveDirections;
-		 std::cout << "combined rank=" << combined.fullPivHouseholderQr().rank() << std::endl;
+		// std::cout << "combined rank=" << combined.fullPivHouseholderQr().rank() << std::endl;
         // test if nullspace directions can be explained with master movements
 		for (int i = 0; i < insensitiveDirections.cols(); i++)
 		{
@@ -220,6 +208,7 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
 	return insensitiveDirections;
 }
 
+
 void TLSConsCheck::whichConstraintsDoWeNeed(Eigen::VectorXd combi)
 {
 	if (!(combi.size() == 7))
@@ -333,8 +322,8 @@ void TLSConsCheck::initialize(const TLGCData& data)
         neighbors.push_back(empty);
         kernelNeighbors.push_back(empty);
     }
-    for (int row = 0; row < firstDgnMatrix.rows(); row++) {
-        set<int> contributingToRow = contributingObjects(firstDgnMatrix(row, Eigen::indexing::all).transpose());
+    for (int i = 0; i < firstDgnMatrix.rows(); i++) {
+        set<int> contributingToRow = contributingObjects(firstDgnMatrix.row(i).transpose());
         for (auto object : contributingToRow) {
             for (auto objectToInsert : contributingToRow) {
                 neighbors[object].insert(objectToInsert);
@@ -445,28 +434,23 @@ pair<set<int>, int> TLSConsCheck::externalConnections(set<int> group) {
     vector<int> internalIndices = indicesFromSet(group);
     vector<int> externalIndices = indicesFromSet(complementOfGroup);
 
-    for (int row = 0; row < firstDgnMatrix.rows(); row++) {
-        TDenseMatrix v = firstDgnMatrix(row, Eigen::placeholders::all).transpose();
-        // here we rather should take the sparsity pattern instead of the actual entries.
-        // because in pathological cases a observation can depend on a parameter but the derivative wrt to this parameter is zero
-        // this then can lead to the message that the associated parameter is "disconnected", see 'wrongly_disconnected.lgc2'
-	// 	std::cout << firstDgnMatrixSparse.row(row) << std::endl;
-	// 	std::cout << firstDgnMatrix.row(row) << std::endl;
-	// 	std::cout << firstDgnMatrixSparse.nonZeros() << std::endl;
-	// 	std::cout << firstDgnMatrix << std::endl;
-	// 	std::cout << firstDgnMatrixSparse << std::endl;
-//		int start_index = firstDgnMatrixSparse.outerIndexPtr()[row];
-//		int end_index = firstDgnMatrixSparse.outerIndexPtr()[row + 1];
-//		int nnz = end_index - start_index;
-//		const int *col_indices = firstDgnMatrixSparse.innerIndexPtr() + start_index;
-//		for (int i = 0; i < nnz; i++)
-//		{
-//			std::cout << col_indices[i] << std::endl;
-//		}
 
-        set<int> contributing = contributingObjects(v);
-        bool dependsOnGroup = !(v(internalIndices, 0).isZero());
-        bool dependsOnComplement = !(v(externalIndices, 0).isZero());
+    for (int row = 0; row < firstDgnMatrix.rows(); row++) {
+        vector<int> colIndices;
+		for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(firstDgnMatrix, row); it; ++it)
+		{
+			colIndices.emplace_back(it.col());
+		}
+
+		set<int> contributing = objectsFromIndices(colIndices);
+		TDenseMatrix indicesMarker(firstDgnMatrix.rows(), 1);
+		indicesMarker.setZero();
+		for (auto j : colIndices)
+		{
+			indicesMarker(j) = 1;
+		}
+        bool dependsOnGroup = !(indicesMarker(internalIndices, 0).isZero());
+        bool dependsOnComplement = !(indicesMarker(externalIndices, 0).isZero());
 
         if (dependsOnGroup && dependsOnComplement) {
             // the measurement involves internal and external objects
