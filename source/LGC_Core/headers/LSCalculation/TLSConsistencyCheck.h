@@ -64,6 +64,8 @@ private:
 	TDenseMatrix getMasterJacobian(const TLGCData& data);
     // transform the nullspace elements to point movements in the root frame
 	TDenseMatrix getInsensitiveDirectionsInRoot(const TLGCData &data);
+    // checking the coefficients nneded to linear combine a insensitive direction from master frame movements
+	void whichConstraintsDoWeNeed(TVector combi);
 
 };
 

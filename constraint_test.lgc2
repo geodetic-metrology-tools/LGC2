@@ -1,0 +1,43 @@
+*TITR
+Goal: Test the ambiguos Helmert transformation detector
+*OLOC
+*PREC 7
+*CONSI
+*INSTR
+%*POLAR TS1 T1 0.0 0.0 0.0 0						
+%T1  5.0  5.0  0.5  0.0  0  0.0  0.0  0.0  0.0  0.0
+*EDM EDM1 ET1 0.0 0.0 0.0		
+ET1  0.1  0.0 0 0.0 0.0 0.0 0 0.0	
+% three points with distance 1 to each other -> they will form a uniform triangle but this triangle can be moved around
+*POIN
+P0 1 2 5 
+P1 8 16 32
+P2 64 128 256
+*DSPT P0 EDM1
+P1 1
+P2 1
+P1 1
+P2 1
+*DSPT P1 EDM1
+P0 1
+P2 1
+P0 1
+P2 1
+*DSPT P2 EDM1
+P0 1
+P1 1
+P0 1
+P1 1
+
+%*OBSXYZ
+%P0 0 0 0 1 1 1
+%*ORIE P0 TS1
+%P1 0
+%*FRAME Subframe 0 0 0 0 0 200 1
+%*POIN
+%P1 -2 0 0
+%*ORIE P1 TS1
+%P0 0
+
+%*ENDFRAME
+*END

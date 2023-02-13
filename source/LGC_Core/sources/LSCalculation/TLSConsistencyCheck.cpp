@@ -30,7 +30,29 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 	if (nullspace.cols() > 0)
 	{
 		TDenseMatrix masterJacobian = getMasterJacobian(data);
+		// std::cout << "Master Jacobian=" << std ::endl << masterJacobian << std::endl;
+		// std::cout << "rank=" << masterJacobian.fullPivHouseholderQr().rank() << std::endl;
 		TDenseMatrix insensitiveDirections = getInsensitiveDirectionsInRoot(data);
+		// std::cout << "Nullspace Movements Jacobian=" << std ::endl << insensitiveDirections << std::endl;
+		// std::cout << "rank=" << insensitiveDirections.fullPivHouseholderQr().rank() << std::endl;
+		TDenseMatrix combined(masterJacobian.rows() , masterJacobian.cols() + insensitiveDirections.cols());
+		combined.leftCols(masterJacobian.cols()) = masterJacobian;
+		combined.rightCols(insensitiveDirections.cols()) = insensitiveDirections;
+		// std::cout << "combined rank=" << combined.fullPivHouseholderQr().rank() << std::endl;
+        // test if nullspace directions can be explained with master movements
+		for (int i = 0; i < insensitiveDirections.cols(); i++)
+		{
+			// test if i-th column of nullspace dirs is in span of master dirs
+			Eigen::VectorXd b = insensitiveDirections.col(i);
+			Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
+			// std::cout << (masterJacobian * test - b).norm() << std::endl;
+			if ((masterJacobian * test - b).norm() < 1e-8)
+			{
+				std::cout << i << "-th column of Nullspace Movements can be explained as" << std::endl;
+			}
+            //print the helmert trafos that explain the movement
+			whichConstraintsDoWeNeed(test);
+		}
 	}
 
     // identify connected groups of kernel
@@ -189,6 +211,47 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
 		pointCounter++;
 	}
 	return insensitiveDirections;
+}
+
+void TLSConsCheck::whichConstraintsDoWeNeed(Eigen::VectorXd combi)
+{
+	if (!(combi.size() == 7))
+	{
+		std::cout << "linear combination needs to have 7 coefficients because a Helmert transformation has 7 coefficients." << std::endl;
+		return;
+	}
+	double threshold = 1e-6;
+	std::cout << "a linear combination of ";
+	if (abs(combi(0)) > threshold)
+	{
+		std::cout << "a x-translation, ";
+	}
+	if (abs(combi(1)) > threshold)
+	{
+		std::cout << "a y-translation, ";
+	}
+	if (abs(combi(2)) > threshold)
+	{
+		std::cout << "a z-translation, ";
+	}
+	if (abs(combi(3)) > threshold)
+	{
+		std::cout << "a rotation around x, ";
+	}
+	if (abs(combi(4)) > threshold)
+	{
+		std::cout << "a rotation around y, ";
+	}
+	if (abs(combi(5)) > threshold)
+	{
+		std::cout << "a rotation around z, ";
+	}
+	if (abs(combi(6)) > threshold)
+	{
+		std::cout << "a scaling ";
+	}
+	std::cout<<std::endl;
+
 }
 
 
