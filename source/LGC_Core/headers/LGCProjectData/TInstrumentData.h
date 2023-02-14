@@ -519,39 +519,38 @@ class TInstrumentData : public Serializable
 
 	inline void TInstrumentData::TPOLAR::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("constAngle", constAngle);
+		obj.addProperty("constAngle", constAngle.getRadiansValue());
 		obj.addProperty("defTarget", defTarget);
 		obj.addProperty("ID", ID);
-		obj.addProperty("instrHeight", instrHeight);
-		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
-		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
+		obj.addProperty("instrHeight", instrHeight.getMetresValue());
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
+		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
 		obj.addProperty("targets", targets);
 	}
 
 	
 	inline void TInstrumentData::TPOLAR::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		if (distCorrectionAdjustable)
-			obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
+		obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
 		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
-		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("distCorrectionValue", distCorrectionValue.getMetresValue());
 		obj.addProperty("ID", ID);
-		obj.addProperty("ppmDist", ppmDist);
+		obj.addProperty("ppmDist", ppmDist.getMetresValue());
 
-		obj.addProperty("sigmaAngl", sigmaAngl);
-		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle);
-		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
-		obj.addProperty("sigmaCombinedPLRAngl", sigmaCombinedPLRAngl);
-		obj.addProperty("sigmaCombinedPLRDist", sigmaCombinedPLRDist);
+		obj.addProperty("sigmaAngl", sigmaAngl.getRadiansValue());
+		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle.getRadiansValue());
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
+		obj.addProperty("sigmaCombinedPLRAngl", sigmaCombinedPLRAngl.getRadiansValue());
+		obj.addProperty("sigmaCombinedPLRDist", sigmaCombinedPLRDist.getMetresValue());
 		
-		obj.addProperty("sigmaCombinedPLRZenD", sigmaCombinedPLRZenD);
-		obj.addProperty("sigmaDCorr", sigmaDCorr);
-		obj.addProperty("sigmaDist", sigmaDist);
-		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering);
-		obj.addProperty("sigmaTargetHt", sigmaTargetHt);
+		obj.addProperty("sigmaCombinedPLRZenD", sigmaCombinedPLRZenD.getRadiansValue());
+		obj.addProperty("sigmaDCorr", sigmaDCorr.getMetresValue());
+		obj.addProperty("sigmaDist", sigmaDist.getMetresValue());
+		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering.getMetresValue());
+		obj.addProperty("sigmaTargetHt", sigmaTargetHt.getMetresValue());
 
-		obj.addProperty("sigmaZenD", sigmaZenD);
-		obj.addProperty("targetHt", targetHt);
+		obj.addProperty("sigmaZenD", sigmaZenD.getRadiansValue());
+		obj.addProperty("targetHt", targetHt.getMetresValue());
 		
 	}
 	
@@ -559,18 +558,18 @@ class TInstrumentData : public Serializable
 	{
 		obj.addProperty("defTarget", defTarget);
 		obj.addProperty("ID", ID);
-		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 		obj.addProperty("targets", targets);
 	}
 
 	inline void TInstrumentData::TCAMD::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
 	{
 		obj.addProperty("ID", ID);
-		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
-		obj.addProperty("sigmaCombinedX", sigmaCombinedX);
-		obj.addProperty("sigmaCombinedY", sigmaCombinedY);
-		obj.addProperty("sigmaDist", sigmaDist);
-		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
+		obj.addProperty("sigmaCombinedX", sigmaCombinedX.getMetresValue());
+		obj.addProperty("sigmaCombinedY", sigmaCombinedY.getMetresValue());
+		obj.addProperty("sigmaDist", sigmaDist.getMetresValue());
+		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering.getMetresValue());
 		obj.addProperty("sigmaX", sigmaX);
 		obj.addProperty("sigmaY", sigmaY);
 	}
@@ -579,34 +578,32 @@ class TInstrumentData : public Serializable
 	{
 		obj.addProperty("defTarget", defTarget);
 		obj.addProperty("ID", ID);
-		obj.addProperty("instrHeight", instrHeight);
-		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
-		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
+		obj.addProperty("instrHeight", instrHeight.getMetresValue());
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
+		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
 		obj.addProperty("targets", targets);
 	}
 
 	inline void TInstrumentData::TEDM::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		if (distCorrectionAdjustable)
-			obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
+		obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
 		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
-		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("distCorrectionValue", distCorrectionValue.getMetresValue());
 		obj.addProperty("ID", ID);
-		obj.addProperty("ppmDSpt", ppmDSpt);
-		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
-		obj.addProperty("sigmaDCorr", sigmaDCorr);
-		obj.addProperty("sigmaDSpt", sigmaDSpt);
-		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering);
-		obj.addProperty("sigmaTargetHt", sigmaTargetHt);
-		obj.addProperty("targetHt", targetHt);
+		obj.addProperty("ppmDSpt", ppmDSpt.getMetresValue());
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
+		obj.addProperty("sigmaDCorr", sigmaDCorr.getMetresValue());
+		obj.addProperty("sigmaDSpt", sigmaDSpt.getMetresValue());
+		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering.getMetresValue());
+		obj.addProperty("sigmaTargetHt", sigmaTargetHt.getMetresValue());
+		obj.addProperty("targetHt", targetHt.getMetresValue());
 	}
 
 	inline void TInstrumentData::TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		if (collAngleAdjustable)
-			obj.addProperty("collAngleAdjustable", collAngleAdjustable);
+		obj.addProperty("collAngleAdjustable", collAngleAdjustable);
 		obj.addProperty("collAngleUnknown", collAngleUnknown);
-		obj.addProperty("collAngleValue", collAngleValue);
+		obj.addProperty("collAngleValue", collAngleValue.getRadiansValue());
 		obj.addProperty("defStaffID", defStaffID);
 		obj.addProperty("ID", ID);
 		obj.addProperty("targets", targets);
@@ -614,51 +611,48 @@ class TInstrumentData : public Serializable
 
 	inline void TInstrumentData::TLEVEL::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("distCorrectionValue", distCorrectionValue.getMetresValue());
 		obj.addProperty("ID", ID);
-		obj.addProperty("ppmD", ppmD);
-		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
-		obj.addProperty("sigmaD", sigmaD);
-		obj.addProperty("sigmaDCorr", sigmaDCorr);
-		obj.addProperty("sigmaStaffHt", sigmaStaffHt);
-		obj.addProperty("staffHt", staffHt);
+		obj.addProperty("ppmD", ppmD.getMetresValue());
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
+		obj.addProperty("sigmaD", sigmaD.getMetresValue());
+		obj.addProperty("sigmaDCorr", sigmaDCorr.getMetresValue());
+		obj.addProperty("sigmaStaffHt", sigmaStaffHt.getMetresValue());
+		obj.addProperty("staffHt", staffHt.getMetresValue());
 	}
 
 	inline void TInstrumentData::TSCALE::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("distCorrectionValue", distCorrectionValue);
+		obj.addProperty("distCorrectionValue", distCorrectionValue.getMetresValue());
 		obj.addProperty("ID", ID);
-		obj.addProperty("ppmD", ppmD);
-		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
-		obj.addProperty("sigmaD", sigmaD);
-		obj.addProperty("sigmaDCorr", sigmaDCorr);
-		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
+		obj.addProperty("ppmD", ppmD.getMetresValue());
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
+		obj.addProperty("sigmaD", sigmaD.getMetresValue());
+		obj.addProperty("sigmaDCorr", sigmaDCorr.getMetresValue());
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 	}
 
 	inline void TInstrumentData::TINCL::serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("angleCorrectionValue", angleCorrectionValue);
+		obj.addProperty("angleCorrectionValue", angleCorrectionValue.getRadiansValue());
 		obj.addProperty("ID", ID);
-		obj.addProperty("refAngleCorrectionValue", refAngleCorrectionValue);
-		obj.addProperty("refSigmaCorrectionValue", refSigmaCorrectionValue);
-		obj.addProperty("sigmaAngl", sigmaAngl);
-		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle);
-		obj.addProperty("sigmaCorrectionValue", sigmaCorrectionValue);
+		obj.addProperty("refAngleCorrectionValue", refAngleCorrectionValue.getRadiansValue());
+		obj.addProperty("refSigmaCorrectionValue", refSigmaCorrectionValue.getRadiansValue());
+		obj.addProperty("sigmaAngl", sigmaAngl.getRadiansValue());
+		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle.getRadiansValue());
+		obj.addProperty("sigmaCorrectionValue", sigmaCorrectionValue.getRadiansValue());
 	}
 
 	inline void TInstrumentData::THLSR::serialize(SerializerObject::SerializationHelper &obj) const
 	{
 		obj.addProperty("ID", ID);
-		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist);
-		obj.addProperty("sigmaDist", sigmaDist);
-		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering);
-		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight);
-		obj.addProperty("sigmaWS", sigmaWS);
+		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
+		obj.addProperty("sigmaDist", sigmaDist.getMetresValue());
+		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
+		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
+		obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
 	}
 
 #endif // USE_SERIALIZER
-
-
-
 
 #endif

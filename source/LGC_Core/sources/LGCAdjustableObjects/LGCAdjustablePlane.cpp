@@ -119,23 +119,24 @@ void LGCAdjustablePlane::reInitialise(){
 #ifdef USE_SERIALIZER
 void LGCAdjustablePlane::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("fCorrectionPhi", fCorrectionPhi);
-	obj.addProperty("fCorrectionRefPtDist", fCorrectionRefPtDist);
-	obj.addProperty("fCorrectionTheta", fCorrectionTheta);
-	obj.addProperty("fEstPrecisionPhi", fEstPrecisionPhi);
-	obj.addProperty("fEstPrecisionRefPtDist", fEstPrecisionRefPtDist);
+	TVAdjustableObject::serialize(obj);
+	obj.addProperty("fCorrectionPhi", fCorrectionPhi.getRadiansValue());
+	obj.addProperty("fCorrectionRefPtDist", fCorrectionRefPtDist.getMetresValue());
+	obj.addProperty("fCorrectionTheta", fCorrectionTheta.getRadiansValue());
+	obj.addProperty("fEstPrecisionPhi", fEstPrecisionPhi.getRadiansValue());
+	obj.addProperty("fEstPrecisionRefPtDist", fEstPrecisionRefPtDist.getMetresValue());
 
-	obj.addProperty("fEstPrecisionTheta", fEstPrecisionTheta);
-	obj.addProperty("fEstValPhi", fEstValPhi);
-	obj.addProperty("fEstValRefPointDist", fEstValRefPointDist);
-	obj.addProperty("fEstValTheta", fEstValTheta);
+	obj.addProperty("fEstPrecisionTheta", fEstPrecisionTheta.getRadiansValue());
+	obj.addProperty("fEstValPhi", fEstValPhi.getRadiansValue());
+	obj.addProperty("fEstValRefPointDist", fEstValRefPointDist.getMetresValue());
+	obj.addProperty("fEstValTheta", fEstValTheta.getRadiansValue());
 	obj.addProperty("fInitialized", fInitialized);
 
 	obj.addProperty("fName", fName);
 	obj.addProperty("fPhiFixed", fPhiFixed);
-	obj.addProperty("fProvValPhi", fProvValPhi);
-	obj.addProperty("fProvValRefPtDist", fProvValRefPtDist);
-	obj.addProperty("fProvValTheta", fProvValTheta);
+	obj.addProperty("fProvValPhi", fProvValPhi.getRadiansValue());
+	obj.addProperty("fProvValRefPtDist", fProvValRefPtDist.getMetresValue());
+	obj.addProperty("fProvValTheta", fProvValTheta.getRadiansValue());
 
 	obj.addProperty("fReferencePoint", fReferencePoint);
 	obj.addProperty("fRefPtDistFixed", fRefPtDistFixed);

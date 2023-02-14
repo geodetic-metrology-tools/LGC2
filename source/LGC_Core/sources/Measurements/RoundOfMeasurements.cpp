@@ -167,7 +167,7 @@ void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
 
 void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("fConstantAngle", fConstantAngle);
+	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("instrumentPos", instrumentPos);
 	obj.addProperty("line", line);
@@ -179,7 +179,7 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 
 void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("fConstantAngle", fConstantAngle);
+	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
 	obj.addProperty("inclySummary_", inclySummary_);
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);
@@ -199,6 +199,6 @@ void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 	obj.addProperty("romName", romName);
-	obj.addProperty("sigmaWS", sigmaWS);
+	obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
 }
 #endif

@@ -7,7 +7,6 @@
 template<typename TTarget>
 void TAMeas<TTarget>::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	TStatusObject::serialize(obj);
 	obj.addProperty("eolcomment", eolcomment);
 	obj.addProperty("fFirstEquationIndex", fFirstEquationIndex);
 	obj.addProperty("fFirstObservationIndex", fFirstObservationIndex);
@@ -31,6 +30,7 @@ template<typename TTarget, typename TEnumDistance, int numDistances, typename TE
 void TAScalarMeas<TTarget, TEnumDistance, numDistances, TEnumAngle, numAngles>::serialize(
 	SerializerObject::SerializationHelper &obj) const
 {
+	TAMeas<TTarget>::serialize(obj);
 	obj.addProperty("angles", angles);
 	obj.addProperty("anglesResiduals", anglesResiduals);
 	obj.addProperty("distances", distances);

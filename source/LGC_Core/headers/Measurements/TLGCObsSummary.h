@@ -179,9 +179,12 @@ struct TPOLARObsSummary
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("distObsSum", distObsSum);
-		obj.addProperty("anglObsSum", anglObsSum);
-		obj.addProperty("zendObsSum", zendObsSum);
+		if (distObsSum.getNumberOfObs())
+		    obj.addProperty("distObsSum", distObsSum);
+		if (anglObsSum.getNumberOfObs())
+			obj.addProperty("anglObsSum", anglObsSum);
+		if (zendObsSum.getNumberOfObs())
+			obj.addProperty("zendObsSum", zendObsSum);
 	}
 #endif
 };
@@ -204,9 +207,12 @@ struct TUVDObsSummary
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("distObsSum", distObsSum);
-		obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
-		obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+		if (distObsSum.getNumberOfObs())
+			obj.addProperty("distObsSum", distObsSum);
+		if (yVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+		if (yVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
 	}
 #endif
 };
@@ -228,8 +234,10 @@ struct TUVECObsSummary
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("xVectorCompObsSum", xVectorCompObsSum);
-		obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+		if (xVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("xVectorCompObsSum", xVectorCompObsSum);
+		if (yVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
 	}
 #endif
 };
@@ -252,9 +260,12 @@ struct TOBSXYZObsSummary
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
-		obj.addProperty("obsXObsSum", obsXObsSum);
-		obj.addProperty("obsYObsSum", obsYObsSum);
-		obj.addProperty("obsZObsSum", obsZObsSum);
+		if (obsXObsSum.getNumberOfObs())
+			obj.addProperty("obsXObsSum", obsXObsSum);
+		if (obsYObsSum.getNumberOfObs())
+			obj.addProperty("obsYObsSum", obsYObsSum);
+		if (obsZObsSum.getNumberOfObs())
+			obj.addProperty("obsZObsSum", obsZObsSum);
 	}
 #endif
 };

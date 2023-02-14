@@ -155,6 +155,7 @@ void LGCAdjustableLine::setDefaults(){
 #ifdef USE_SERIALIZER
 void LGCAdjustableLine::serialize(SerializerObject::SerializationHelper &obj) const
 {
+	TVAdjustableObject::serialize(obj);
 	obj.addProperty("fInit", fInit);
 	obj.addProperty("fixedStateLineVectorX", fixedStateLineVector[0]);
 	obj.addProperty("fixedStateLineVectorY", fixedStateLineVector[1]);

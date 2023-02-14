@@ -824,7 +824,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("lines", lines);
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
-	obj.addProperty("pos", pos);
+	//obj.addProperty("pos", pos);
 	obj.addProperty("TLGCStatistic", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("fCovMat", fCovMat);

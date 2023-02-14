@@ -26,11 +26,8 @@ class LGCAdjustablePoint;
 	Plane is defined throught a Reference Point (LGCAdjustablePoint), distance of this Reference point (TLength) from the plane and two angles (TAngle) defining the normal vector of the plane.
 */
 
-#ifdef USE_SERIALIZER
-class LGCAdjustablePlane : public Serializable, public TVAdjustableObject
-#else
+
 class LGCAdjustablePlane : public TVAdjustableObject
-#endif // USE_SERIALIZER
 {
 public:
 	/*!@name Constructors/Initialization */

@@ -216,6 +216,13 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		TAScalarMeas::serialize(obj); 
+	}
+#endif
 };
 
 //--------------------------  EDM measurement--------------------------------------------
@@ -262,6 +269,13 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 
 		/// Returns the last LS-matrices equation index of this measurement, TECHO introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex()const {return getFirstEquationIndex();}
+
+#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+			TAScalarMeas::serialize(obj); 
+		}
+#endif
 };
 
 
@@ -281,6 +295,13 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, TECVE introduces 1 equation.*/
 	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
+
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		TAScalarMeas::serialize(obj); 
+	}
+#endif
 };
 
 //--------------------------  Levelling measurement--------------------------------------------
@@ -418,6 +439,13 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 			/// Returns standard deviation of the observed value
 			inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 		//@}
+
+#ifdef USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+				TAScalarMeas::serialize(obj); 
+			}
+#endif
 };
 
 /*!
@@ -650,6 +678,12 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
+#ifdef USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		TAScalarMeas::serialize(obj);
+	}
+#endif
 };
 
 //--------------------------  HLSR measurement--------------------------------------------

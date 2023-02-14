@@ -49,8 +49,8 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 	  virtual void serialize(SerializerObject::SerializationHelper &obj) const override
 	  {
 		  TAVectorMeas<TInstrumentData::TCAMD::TTarget>::serialize(obj);
-		  obj.addProperty("sdist", sdist);
-		  obj.addProperty("sdistResidual", sdistResidual);
+		  obj.addProperty("sdist", sdist.getMetresValue());
+		  obj.addProperty("sdistResidual", sdistResidual.getMetresValue());
 	  }
 #endif
 

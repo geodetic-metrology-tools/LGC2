@@ -147,7 +147,7 @@ void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
 void TTSTN::TROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	TStatusObject::serialize(obj);
-	obj.addProperty("acst", acst);
+	obj.addProperty("acst", acst.getRadiansValue());
 	obj.addProperty("anglActive", anglActive);
 	obj.addProperty("anglSummary_", anglSummary_);
 	obj.addProperty("defaultTargetId", defaultTargetId);
