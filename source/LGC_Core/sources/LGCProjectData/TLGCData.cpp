@@ -827,15 +827,9 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("pos", pos);
 	obj.addProperty("TLGCStatistic", stat);
 	obj.addProperty("tree", tree);
+	obj.addProperty("fCovMat", fCovMat);
 }
 
-
-//Eigen::MatrixXd exampleMatrix(5, 3);
-//std::stringstream ss;
-//ss << exampleMatrix;
-//obj.addProperty("exampleMatrix", ss.str());
-//Eigen::Vector3d exampleVector(1, 2, 3);
-//obj.addProperty("exampleVector", exampleVector); 
 
 void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const
 {
