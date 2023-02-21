@@ -39,7 +39,7 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 			// test if i-th column of nullspace dirs is in span of master dirs
 			Eigen::VectorXd b = insensitiveDirections.col(i);
 			Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
-			std::cout << (masterJacobian * test - b).norm() << std::endl;
+			// std::cout << (masterJacobian * test - b).norm() << std::endl;
 			if ((masterJacobian * test - b).norm() < 1e-8)
 			{
 				std::cout << i << "-th column of Nullspace Movements can be explained as" << std::endl;
@@ -75,14 +75,29 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 
     int nGroup = 0;
     for (auto group : connectedGroups) {
-        TDenseMatrix kernGroup = computeKernelWrtObjectSet(group);
+        //TDenseMatrix kernGroup = computeKernelWrtObjectSet(group);
+		vector<int> groupIndices = indicesFromSet(group);
+		TDenseMatrix kernGroup_aux = nullspace(groupIndices, Eigen::indexing::all);
+		TDenseMatrix kernGroup(nullspace.rows(), nullspace.cols());
+		kernGroup.setZero();
+        // zero columns have to be deleted otherwise every group will be shown as it has the same dof as the whole configuration
+		kernGroup(groupIndices, Eigen::indexing::all) = kernGroup_aux;
+		vector<TDenseMatrix> kernGroupBaseVectors;
+		for (int i = 0; i < kernGroup.cols();i++)
+		{
+			if (kernGroup.col(i).norm() > 1e-8)
+			{
+				kernGroupBaseVectors.push_back(kernGroup.col(i));
+			}
+		}
+        //TDenseMatrix kernGroup = computeKernelWrtObjectSet(group);
         // generate warning log for this group
-        generateGroupWarning(group, kernGroup, nGroup);
+		generateGroupWarning(group, kernGroupBaseVectors, nGroup);
         nGroup++;
     }
 }
 
-void TLSConsCheck::generateGroupWarning(const set<int> group, const TDenseMatrix kernGroup, const int groupNumber) {
+void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDenseMatrix> kernGroupBaseVectors, const int groupNumber) {
     // Generate warning message listing the objects and the directions
     // corrsponding to the degrees of freedom
     // To improve readability of the output ignore components below threshold.
@@ -90,7 +105,7 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const TDenseMatrix
     stringstream groupHeader;
     groupHeader << string(100, '=');
     logWarning() << groupHeader.str();
-    int dimKernGroup = kernGroup.cols();
+    int dimKernGroup = kernGroupBaseVectors.size();
     logWarning() << "Group " << groupNumber << " with" << group.size() << "objects and" << dimKernGroup << "Degrees of Freedom:";
     stringstream directionHeader;
     directionHeader << setw(14) << " Type" << setw(31) << "Object Name" << " | ";
@@ -110,7 +125,7 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const TDenseMatrix
             msg << setw(1) << objectIndices[obj].size() << "-dim." << setw(8) << objectTypes[obj] << " " << setw(30) << objectNames[obj] << " | ";
             // loop over degrees of freedom of group
             for (int j = 0; j < dimKernGroup; j++) {
-                double d = kernGroup(objectIndices[obj][k], j);
+                double d = kernGroupBaseVectors.at(j)(objectIndices[obj][k]);
                 msg << setw(13) << d * (fabs(d) > plottingThreshold) << " | ";
             }
             logWarning() << msg.str();
@@ -374,7 +389,8 @@ TDenseMatrix TLSConsCheck::computeKernelWrtObjectSet(set<int> test_set)
     TDenseMatrix kernWrtIndices = lu.kernel();
     if (kernWrtIndices.isZero()) {
         // if only the zero matrix is returned by eigen, the nullspace has dimension 0
-        kernWrtIndices.conservativeResize(firstDense.cols(), 0);
+//        kernWrtIndices.conservativeResize(firstDense.cols(), 0);
+        kernWrtIndices.conservativeResize(firstWithTestIndices.cols(), 0);
     }
     TDenseMatrix backProjectedKernel = TDenseMatrix::Zero(firstDense.rows(), kernWrtIndices.cols());
 

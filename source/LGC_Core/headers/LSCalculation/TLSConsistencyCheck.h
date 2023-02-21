@@ -59,7 +59,7 @@ private:
     // get set of object indices from the complement of a group that are connected to this group
     pair<set<int>, int> externalConnections(set<int> group);
     // write a warning message
-    void generateGroupWarning(const set<int> component, const TDenseMatrix kernGroup, const int groupNumber);
+    void generateGroupWarning(const set<int> component, const vector<TDenseMatrix> kernGroupBaseVectors, const int groupNumber);
     // compute the Jacobian of a master helmert transformation acting on all points transformed to the root coordinates.
 	TDenseMatrix getMasterJacobian(const TLGCData& data);
     // transform the nullspace elements to point movements in the root frame
