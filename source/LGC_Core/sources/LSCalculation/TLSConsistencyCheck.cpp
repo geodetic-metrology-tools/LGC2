@@ -19,7 +19,7 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
     firstDgnMatrix = A;
     initialize(data);
 
-	std::cout << "First Design Matrix=" << std::endl << firstDgnMatrix.toDense() << std::endl;
+	//std::cout << "First Design Matrix=" << std::endl << firstDgnMatrix.toDense() << std::endl;
     // test if some Nullspace direction can be explained by a Helmert transformation
 	if (nullspace.cols() > 0)
 	{
@@ -39,13 +39,13 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 			// test if i-th column of nullspace dirs is in span of master dirs
 			Eigen::VectorXd b = insensitiveDirections.col(i);
 			Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
-			// std::cout << (masterJacobian * test - b).norm() << std::endl;
+			std::cout << (masterJacobian * test - b).norm() << std::endl;
 			if ((masterJacobian * test - b).norm() < 1e-8)
 			{
 				std::cout << i << "-th column of Nullspace Movements can be explained as" << std::endl;
+				// print the helmert trafos that explain the movement
+				whichConstraintsDoWeNeed(test);
 			}
-            //print the helmert trafos that explain the movement
-			whichConstraintsDoWeNeed(test);
 		}
 	}
 
