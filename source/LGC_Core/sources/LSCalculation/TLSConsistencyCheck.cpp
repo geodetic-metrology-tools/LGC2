@@ -38,13 +38,24 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 		{
 			// test if i-th column of nullspace dirs is in span of master dirs
 			Eigen::VectorXd b = insensitiveDirections.col(i);
-			Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
-			// std::cout << (masterJacobian * test - b).norm() << std::endl;
-			if ((masterJacobian * test - b).norm() < 1e-8)
+			if (b.norm() < 1e-10)
 			{
-				std::cout << i << "-th column of Nullspace Movements can be explained as" << std::endl;
-				// print the helmert trafos that explain the movement
-				whichConstraintsDoWeNeed(test);
+				logWarning() << "The " << i << "-th column of the Nullspace corresponds to stationary root coordinates. This can happen if the root coordinates are computable but the subframe coordinates cannot be computed because they are free and the subframe is also free."
+							 << std::endl;
+			}
+			else
+			{
+                // now we test if the movement can be explained by a helmert transformation of all points
+				Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
+				logWarning() << "Helmert trafo-test (zero values indicate that a movement can be explained by a helmert transformation )=" << (masterJacobian * test - b).norm()
+							 << std::endl;
+				logWarning() << test.transpose() << std::endl;
+				if ((masterJacobian * test - b).norm() < 1e-8)
+				{
+					logWarning() << i << "-th column of Nullspace Movements can be explained as" << std::endl;
+					// print the helmert trafos that explain the movement
+					whichConstraintsDoWeNeed(test);
+				}
 			}
 		}
 	}
@@ -228,41 +239,41 @@ void TLSConsCheck::whichConstraintsDoWeNeed(Eigen::VectorXd combi)
 {
 	if (!(combi.size() == 7))
 	{
-		std::cout << "linear combination needs to have 7 coefficients because a Helmert transformation has 7 coefficients." << std::endl;
+		logWarning() << "linear combination needs to have 7 coefficients because a Helmert transformation has 7 coefficients." << std::endl;
 		return;
 	}
 	double threshold = 1e-6;
-	std::cout << "a linear combination of ";
+	logWarning() << "a linear combination of ";
 	if (abs(combi(0)) > threshold)
 	{
-		std::cout << "a x-translation, ";
+		logWarning() << "a x-translation, ";
 	}
 	if (abs(combi(1)) > threshold)
 	{
-		std::cout << "a y-translation, ";
+		logWarning() << "a y-translation, ";
 	}
 	if (abs(combi(2)) > threshold)
 	{
-		std::cout << "a z-translation, ";
+		logWarning() << "a z-translation, ";
 	}
 	if (abs(combi(3)) > threshold)
 	{
-		std::cout << "a rotation around x, ";
+		logWarning() << "a rotation around x, ";
 	}
 	if (abs(combi(4)) > threshold)
 	{
-		std::cout << "a rotation around y, ";
+		logWarning() << "a rotation around y, ";
 	}
 	if (abs(combi(5)) > threshold)
 	{
-		std::cout << "a rotation around z, ";
+		logWarning() << "a rotation around z, ";
 	}
 	if (abs(combi(6)) > threshold)
 	{
-		std::cout << "a scaling ";
+		logWarning() << "a scaling ";
 	}
-	std::cout<<std::endl;
-	std::cout << "adding a constraint prohibiting any of these movements will eliminate this degree of freedom."<< std::endl;
+	logWarning()<<std::endl;
+	logWarning() << "adding a constraint prohibiting any of these movements will eliminate this degree of freedom."<< std::endl;
 
 }
 
