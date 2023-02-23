@@ -65,14 +65,14 @@ public:
     /// Get the maximum residual of the added residuals
     TReal       getResMax() const;
 
-    /// get the variance for the residuals 
-    TReal		getVariance() const;
+    /// get the standard deviation for the residuals 
+    TReal		getStdev() const;
 
-    /// get the lower confidence limit for the variance 
-    TReal		getVarLoLimit() const;
+    /// get the lower confidence limit for the standard deviation 
+    TReal		getStdLoLimit() const;
 
-    /// get the upper confidence limit for the variance 
-    TReal		getVarHiLimit() const;
+    /// get the upper confidence limit for the standard deviation 
+    TReal		getStdHiLimit() const;
 
     /// set a string to identify the observation type 
     void		setObsText(std::string keyWord) noexcept { fObsText = keyWord;  }
@@ -138,9 +138,9 @@ private:
     TReal           fResMin;
     TReal           fResMax;
     TReal			fSumRes2;
-    TReal			fVariance;
-    TReal			fVarLoLimit;
-    TReal			fVarHiLimit;
+    TReal			fStdev;
+    TReal			fStdLoLimit;
+    TReal			fStdHiLimit;
 
     // histogram data
     static bool     fCreateHistogram;

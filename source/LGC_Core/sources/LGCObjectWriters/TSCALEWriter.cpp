@@ -543,7 +543,7 @@ void TSCALEWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &me
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }
@@ -566,7 +566,7 @@ void TSCALEWriter::writeECHOResultsSynthesis(const  TECHOROM& echorom)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, echoSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 
@@ -589,7 +589,7 @@ void TSCALEWriter::writeECVEResultsSynthesis(const  TECVEROM& ecrom)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecveSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 
@@ -612,7 +612,7 @@ void TSCALEWriter::writeECSPResultsSynthesis(const  TECSPROM& ecrom)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecspSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 

@@ -204,7 +204,7 @@ void THLSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*>& mea
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }
@@ -225,7 +225,7 @@ void THLSRWriter::writeECWSRResultsSynthesis(const  TECWSROM& ecwsrom)
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getResMax());//residu max
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 

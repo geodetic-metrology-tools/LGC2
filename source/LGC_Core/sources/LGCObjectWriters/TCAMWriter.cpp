@@ -626,12 +626,12 @@ void TCAMWriter::writeUVECResultsSynthesis(const TCAM& camera)
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecXSummary.getStdev()); // ecart type
 	//Y
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvecYSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 
@@ -657,17 +657,17 @@ void TCAMWriter::writeUVDResultsSynthesis(const TCAM& camera)
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdXSummary.getStdev()); // ecart type
 	//Y
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdYSummary.getStdev()); // ecart type
 	//D
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getResMin());//residu min
     (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getMean());//residu moy
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, uvdDSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 
@@ -684,7 +684,7 @@ void TCAMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meas
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }

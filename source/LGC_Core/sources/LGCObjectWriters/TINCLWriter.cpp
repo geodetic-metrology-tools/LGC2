@@ -229,7 +229,7 @@ void TINCLWriter::writeINCLYResultsSynthesis(const TINCLYROM &inclyrom)
 	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getResMax()); // residu max
 	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getResMin()); // residu min
 	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getMean()); // residu moy
-	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getVariance()); // ecart type
+	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getStdev()); // ecart type
 	(*stream) << endl;
 }
 
@@ -248,7 +248,7 @@ void TINCLWriter::writeINCLYResultsSynthesis(std::list<const TLGCObsSummary *> &
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getResMax()); // residu max
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getResMin()); // residu min
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getVariance()); // ecart type
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }

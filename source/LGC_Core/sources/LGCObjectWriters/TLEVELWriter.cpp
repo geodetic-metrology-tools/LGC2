@@ -373,7 +373,7 @@ void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
     (*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getResMax());//residu max
     (*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getResMin());//residu min
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getVariance());//ecart type
+	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getStdev()); // ecart type
 	(*stream) << endl;
 
 }
@@ -392,7 +392,7 @@ void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> &
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMax());//residu max
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMin());//residu min
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getVariance());//ecart type
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }
