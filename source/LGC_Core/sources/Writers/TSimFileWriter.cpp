@@ -247,6 +247,16 @@ void	TSimFileWriter::writeInstrument()
 			<< itHLSR.second->sigmaInstrCentering.getMMetresValue() << sep
 			<< endl;
 	}
+
+	for (auto &itWPSR : data->getInstruments().fWPSR)
+	{
+		(*stream) << "*WPSR " << itWPSR.second->ID << sep 
+			<< itWPSR.second->sigmaX.getMMetresValue() << sep 
+			<< itWPSR.second->sigmaZ.getMMetresValue() << sep
+			<< itWPSR.second->sigmaCombinedX.getMMetresValue() << sep 
+			<< itWPSR.second->sigmaCombinedZ.getMMetresValue() << sep 
+			<< endl;
+	}
 }
 
 void	TSimFileWriter::writeData(TDataTreeIterator itTree)
@@ -531,6 +541,9 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 
 	for (auto& meas : frameIt->get()->measurements.fECWS)
 		writeECWSMeas(&meas);
+
+	for (auto& meas : frameIt->get()->measurements.fECWI)
+		writeECWIMeas(&meas);
 
 	if (!frameIt->get()->measurements.fRADI.empty())
 	{
@@ -1132,6 +1145,51 @@ void TSimFileWriter::writeECWSMeas(TECWSROM* meas)
 	}
 }
 
+void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
+{
+	TAStreamFormatter *stream = getStream();
+	std::string sep = stream->getSeparator();
+
+	auto wpsrDefInst = *data->getInstruments().fWPSR.at(meas->measECWI.front().target.ID);
+
+	if (!meas->isActive())
+		(*stream) << DEACTIVATION_CHAR;
+
+	(*stream) << "*ECWI" << sep << wpsrDefInst.ID << sep << meas->sagAdjustable->getProvisionalValue().getMetresValue() << sep << meas->sigmaWire.getMMetresValue() << sep
+			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName << endl;
+
+	// write the list of measurements for the line
+	for (auto &itECWI : meas->measECWI)
+	{
+		if (!itECWI.isActive())
+			(*stream) << DEACTIVATION_CHAR;
+
+		(*stream) << itECWI.targetPos->getName() << sep << itECWI.getDistance(EECWIDistances::kX).getMetresValue() << sep
+				  << itECWI.getDistance(EECWIDistances::kZ).getMetresValue() << sep;
+
+		if (itECWI.target.ID != wpsrDefInst.ID)
+			(*stream) << "INSTR" << sep << itECWI.target.ID << sep;
+
+		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
+		if (itECWI.target.ID != wpsrDefInst.ID)
+			wpsrDefInst = *data->getInstruments().fWPSR.at(itECWI.target.ID);
+
+		if (itECWI.target.sigmaX != wpsrDefInst.sigmaX)
+			(*stream) << "XSE" << sep << itECWI.target.sigmaX.getMMetresValue() << sep;
+
+		if (itECWI.target.sigmaZ != wpsrDefInst.sigmaZ)
+			(*stream) << "ZSE" << sep << itECWI.target.sigmaZ.getMMetresValue() << sep;
+
+		if (itECWI.target.sigmaInstrCenteringX != wpsrDefInst.sigmaInstrCenteringX)
+			(*stream) << "XICSE" << sep << itECWI.target.sigmaInstrCenteringX.getMMetresValue() << sep;
+
+		if (itECWI.target.sigmaInstrCenteringZ != wpsrDefInst.sigmaInstrCenteringZ)
+			(*stream) << "ZICSE" << sep << itECWI.target.sigmaInstrCenteringZ.getMMetresValue() << sep;
+
+		(*stream) << endl;
+	}
+}
+
 void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 {
 	TAStreamFormatter* stream = getStream();
@@ -1660,4 +1718,3 @@ void TSimFileWriter::writeINCLYMeas(TINCLYROM* meas)
 	
 	}
 }
-

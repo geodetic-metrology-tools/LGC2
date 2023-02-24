@@ -376,7 +376,12 @@ void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 		TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
 		TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), 
 		TLength(std::stor(tokens.at(5)), TLength::EUnits::kMillimetres), 
-		TLength(std::stor(tokens.at(6)), TLength::EUnits::kMillimetres)
+		TLength(std::stor(tokens.at(6)), TLength::EUnits::kMillimetres), 
+		TLength(0),
+		TLength(0), 
+		TLength(0),
+		TLength(0),
+		TLength(0)
 	});
 
 	// store the new wpsr

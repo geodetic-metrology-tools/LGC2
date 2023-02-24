@@ -67,7 +67,7 @@ namespace tut
 	template<>
 	void object::test<3>()
 	{
-		set_test_name("Testing ECWS, Water Surface name duplicate)");
+		set_test_name("Testing ECWS, Water Surface name duplicate");
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/HLSR_PARSE_4.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 

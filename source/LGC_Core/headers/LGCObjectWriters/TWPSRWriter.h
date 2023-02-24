@@ -5,11 +5,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 */
 
 #ifndef SU_WPSR_WRITER
-#	define SU_WPSR_WRITER
+#define SU_WPSR_WRITER
 
 // LGC
-#	include <MeasDef.h>
-#	include <TObservationWriter.h>
+#include <MeasDef.h>
+#include <TObservationWriter.h>
 
 struct TECWIROM;
 class TLGCStatistic;
@@ -45,9 +45,6 @@ public:
 
 	///// Write reliability data for ECWI
 	void writeECWIReliabilityData(const TECWIROM &ecwirom, const TLGCStatistic &stat, const std::list<TECWI> &measECWI);
-
-	///// Write the result synthesis for ECWI
-	void writeECWIResultsSynthesis(const TECWIROM &ecwirom);
 
 	////Write Default results data
 	void writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &meassum, int obsResWidth, int ResPrecision);

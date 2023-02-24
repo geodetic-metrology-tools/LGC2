@@ -1336,66 +1336,56 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 		itECWI->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));
 		itECWI->target.sigmaCombinedZ = TLength(sqrt(contributions.fObsVariance[1]));
 
-		// Add station's contributions
+		// Adding station's contributions
 		if (!itECWI->targetPos->isFixed())
 		{
-			isProcessOK = isProcessOK && addPointContribution(*itECWI->targetPos, contributions.fStationContrib[0], firstEqIdx, matrices);
-			isProcessOK = isProcessOK && addPointContribution(*itECWI->targetPos, contributions.fStationContrib[1], firstEqIdx+1, matrices);
+			isProcessOK &= addPointContribution(*itECWI->targetPos, contributions.fStCoordContrib[0], firstEqIdx, matrices)
+				&& addPointContribution(*itECWI->targetPos, contributions.fStCoordContrib[1], firstEqIdx + 1, matrices);
 		}
-			
 
-		// Adding contributions for STATION transformation parameters
-		/* for (auto &itStTransform : contributions.fSTransformContrib)
+		// Adding contributions to the transformation parameters
+		for (auto &itStTransform : contributions.fWireFirstEqTransformContrib)
 		{
 			if (!itStTransform.first.isFixed())
 			{
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second.firstEquationTransContrib, firstEqIdx, matrices);
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second.thirdEquationTransContrib, firstEqIdx+1, matrices);
-			}
-		}
-		*/
-
-		 for (auto &itStTransform : contributions.fSTransformContribFirstEq)
-		{
-			if (!itStTransform.first.isFixed())
-			{
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, firstEqIdx, matrices);
+				isProcessOK &= addTransformationContribution(itStTransform.first, itStTransform.second, firstEqIdx, matrices);
 			}
 		}
 
-		for (auto &itStTransform : contributions.fSTransformContribSecondEq)
+		for (auto &itStTransform : contributions.fWireSecondEqTransformContrib)
 		{
 			if (!itStTransform.first.isFixed())
 			{
-				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, firstEqIdx+1, matrices);
+				isProcessOK &= addTransformationContribution(itStTransform.first, itStTransform.second, firstEqIdx + 1, matrices);
 			}
 		}
 
 		// Setting the misclosure vector elements
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx, -1.0 * (itECWI->getDistance(EECWIDistances::kX) - contributions.fMisclosureVector[0]));
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx +1 , -1.0 * (itECWI->getDistance(EECWIDistances::kZ) - contributions.fMisclosureVector[1]));
+		isProcessOK &= matrices->setMisclosureVectorElement(firstEqIdx, -1.0 * (itECWI->getDistance(EECWIDistances::kX) - contributions.fCalcMeas[0]))
+			&& matrices->setMisclosureVectorElement(firstEqIdx + 1, -1.0 * (itECWI->getDistance(EECWIDistances::kZ) - contributions.fCalcMeas[1]));
 
-		// Adding controbution to a theta angle, which is for ECWI always variable (in the first version)
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fMeasuredPlane->getThetaUnknIndex(), contributions.fThetaPlaneAngleContrib[0]);
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx+1, ecwiROM.fMeasuredPlane->getThetaUnknIndex(), contributions.fThetaPlaneAngleContrib[1]);
+		// Adding controbution to the wire Bearing angle (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[1]);
 
-		// Adding controbution to a reference point distance, which is at any case variable (in the first version)
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib[0]);
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib[1]);
+		// Adding controbution to the wire DRefX (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[1]);
 
-		// Adding controbution to a Z plane, which is at any case variable (in the first version)
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fMeasuredPlane->getReferencePoint()->getCoordinateUnknIndex(2), contributions.fZPlaneDistContrib[0]);
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fMeasuredPlane->getReferencePoint()->getCoordinateUnknIndex(2), contributions.fZPlaneDistContrib[1]);
+		// Adding controbution to the wire DRefZ (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[1]);
 
-		// Adding controbution to pitch angle, which is at any case variable (in the first version)
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fMeasuredPitch->getFirstUidx(), contributions.fPitchAngleContrib[0]);
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fMeasuredPitch->getFirstUidx(), contributions.fPitchAngleContrib[1]);
+		// Adding controbution to the wire Slope (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[1]);
 
-
-
-		// Adding controbution to the SAG, which is at any case variable (in the first version, on this unkn index?)
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fMeasuredSAG->getFirstUidx(), contributions.fSAGContrib[0]);
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fMeasuredSAG->getFirstUidx(), contributions.fSAGContrib[1]);
+		// Adding controbution to the wire SAG (variable or fixed)
+		if (!ecwiROM.sagfix)
+		{
+			isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[0])
+				&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[1]);
+		}
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance[0] < nullLimit || contributions.fObsVariance[1] < nullLimit)
@@ -1404,19 +1394,17 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + i, firstObsIdx + i, 1.0 / contributions.fObsVariance[i]);
-				isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + i, firstObsIdx + i, contributions.fObsVariance[i]);
+				isProcessOK &= matrices->setWeightMtrxElement(firstObsIdx + i, firstObsIdx + i, 1.0 / contributions.fObsVariance[i])
+					&& matrices->setWeightInvMtrxElement(firstObsIdx + i, firstObsIdx + i, contributions.fObsVariance[i]);
 			}
 		}
 
 		// Adding the contribution to the second design matrix
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, -Eigen::MatrixXd::Identity(2, 2));
+		isProcessOK &= matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, -Eigen::MatrixXd::Identity(2, 2));
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of ECWI measurement occurred.");
-
-		// TO continue with addcontribution to SAG, add contribution to plan parameter, second design matrix, misclosure and weight
-	}		
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

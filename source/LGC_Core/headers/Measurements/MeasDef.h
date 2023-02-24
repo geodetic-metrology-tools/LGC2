@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -719,14 +719,18 @@ public:
 
 
 //--------------------------  WPSR measurement--------------------------------------------
-/// Two angle values of a PLR3D measurement
+
+/// Two distance values of a ECWI measurement
 enum EECWIDistances
 {
-	kX, ///< horizontal direction
-	kZ ///< zenith distance
+	kX, ///< Distance along the X-Axis in the station's frame
+	kZ ///< Distance along the Z-Axis in the station's frame
 };
 
-
+/*!
+	\ingroup Measurements
+	\brief 2 Distance measurements made by a Wire Positionning Sensor instrument (TInstrumentData::TWPSR).
+*/
 class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>
 {
 public:
@@ -738,17 +742,16 @@ public:
 
 	/*!@name Constructors */
 	//@{
-	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : 
-		TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr){};
+	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr){};
 
 	/// Destructor
 	~TECWI() override = default;
 	//@}
 
-	/// Returns the last LS-matrices equation index of this measurement (PLR3D introduces 3 equations)
+	/// Returns the last LS-matrices equation index of this measurement (ECWI introduces 2 equations)
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 1; }
 
-	/// Returns the last observation index of this measurement (PLR3D introduces 3 observations, order is defined to be: theta, phi, s-distance).
+	/// Returns the last observation index of this measurement (ECWI introduces 2 observations, order is defined to be: X, Z).
 	inline MatrixIndex getLastObservationIndex() const { return fFirstObservationIndex + 1; }
 };
 

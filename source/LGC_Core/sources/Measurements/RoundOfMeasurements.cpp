@@ -100,7 +100,7 @@ void TECWIROM::initialiseObsSummaries()
 		for (auto const &ItECWIROM : measECWI)
 		{
 			ecwiSummary_.xObsSum.addNewResidual(ItECWIROM.getDistanceResidual(EECWIDistances::kX).getMMetresValue());
-			ecwiSummary_.xObsSum.addNewResidual(ItECWIROM.getDistanceResidual(EECWIDistances::kZ).getMMetresValue());
+			ecwiSummary_.zObsSum.addNewResidual(ItECWIROM.getDistanceResidual(EECWIDistances::kZ).getMMetresValue());
 		}
 
 		ecwiSummary_.xObsSum.initialise();

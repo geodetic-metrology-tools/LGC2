@@ -1,10 +1,11 @@
+#include "TWPSRWriter.h"
+
 #include <Global.h>
 #include <TAMeas.h>
 
 #include "LGCAdjustablePoint.h"
 #include "RoundOfMeasurements.h"
 #include "TAStreamFormatter.h"
-#include "TWPSRWriter.h"
 #include "TObservationFormat.h"
 
 TWPSRWriter::TWPSRWriter(TAStreamFormatter &stream, bool /*hist*/) : TObservationWriter(stream)
@@ -22,6 +23,7 @@ void TWPSRWriter::writeWPSRResultsHeader()
 	int nameWidth = getNameWidth();
 	int obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
+	int obsIdWidth = getObsIdWidth();
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
@@ -29,17 +31,24 @@ void TWPSRWriter::writeWPSRResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the wpsr
-	(*stream).writeString(obsWidth, "X:OBSERVE"); // mesured ws distance
-	(*stream).writeString(obsResWidth, "X:SIGMA"); // sigma DIST
-	(*stream).writeString(obsWidth, "X:CALCULE"); // estimated offset
-	(*stream).writeString(obsResWidth, "X:RESIDU"); // residual
-	(*stream).writeString(obsResWidth, "X:RES/SIG"); // residual/sigma
-	(*stream).writeString(obsWidth, "Z:OBSERVE"); // mesured ws distance
-	(*stream).writeString(obsResWidth, "Z:SIGMA"); // sigma DIST
-	(*stream).writeString(obsWidth, "Z:CALCULE"); // estimated offset
-	(*stream).writeString(obsResWidth, "Z:RESIDU"); // residual
-	(*stream).writeString(obsResWidth, "Z:RES/SIG"); // residual/sigma
+	(*stream).writeString(obsWidth, "OBSX"); // mesured ws distance
+	(*stream).writeString(obsResWidth, "SX"); // sigma DIST
+	(*stream).writeString(obsWidth, "CALCX"); // estimated offset
+	(*stream).writeString(obsResWidth, "RESX"); // residual
+	(*stream).writeString(obsResWidth, "RESX/SX"); // residual/sigma
+	(*stream).writeString(obsWidth, "OBSX"); // mesured ws distance
+	(*stream).writeString(obsResWidth, "SZ"); // sigma DIST
+	(*stream).writeString(obsWidth, "CALCZ"); // estimated offset
+	(*stream).writeString(obsResWidth, "RESZ"); // residual
+	(*stream).writeString(obsResWidth, "RESZ/SZ"); // residual/sigma
+	(*stream).writeString(obsResWidth, "XSE"); // OBSE value for Z
+	(*stream).writeString(obsResWidth, "XICSE"); // instrument centering X sigma
+	(*stream).writeString(obsResWidth, "ZSE"); // OBSE value for Z
+	(*stream).writeString(obsResWidth, "ZICSE"); // instrument centering Z sigma
+	(*stream).writeString(obsResWidth, "WISE"); // wire sigma
 	(*stream).writeString(nameWidth, "WPSR ID"); // wpsr ID
+	if (obsIdWidth != 0)
+		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +65,11 @@ void TWPSRWriter::writeWPSRResultsHeader()
 	(*stream).writeString(obsWidth, "(M)"); // estimated offset
 	(*stream).writeString(obsResWidth, "(MM)"); // residual
 	(*stream).writeString(obsResWidth, ""); // residual/sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // OBSE value for Z
+	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering X sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // OBSE value for Z
+	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering Z sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // Wire sigma
 	(*stream).writeString(nameWidth, ""); // wpsr ID
 
 	(*stream) << endl;
@@ -68,6 +82,7 @@ void TWPSRWriter::writeECWIResults(const TECWIROM &ecwirom)
 	int nameWidth = getNameWidth();
 	int obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
+	int obsIdWidth = getObsIdWidth();
 	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	int lengthPrecision = getLengthPrecision();
 	std::string TABs = stream->getCurrSpaceExtended(2);
@@ -85,64 +100,83 @@ void TWPSRWriter::writeECWIResults(const TECWIROM &ecwirom)
 		// write TARGET POSITION
 		(*stream).writeStringLeft(nameWidth, ItECWI.targetPos->getName());
 
-		// write the observed DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX)); // Output value in meters [m], stored in [m]
+		// write the observed X Distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX)); 
 
-		// write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedX.getMMetresValue()); // Output value in milimeters [mm], stored in [m]
+		// write the sigma X Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedX.getMMetresValue()); 
 
-		auto test = ItECWI.getDistanceResidual(EECWIDistances::kX);
-		// write the estimated DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX) + ItECWI.getDistanceResidual(EECWIDistances::kX)); // Output value in meters [m], stored in [m]
+		// write the estimated X Distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX) + ItECWI.getDistanceResidual(EECWIDistances::kX)); 
 
-		// write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX).getMMetresValue()); // Output value in milimeters [mm], stored in [m]
+		// write the residual for X Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX).getMMetresValue()); 
 
-		// write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision,ItECWI.getDistanceResidual(EECWIDistances::kX) / ItECWI.target.sigmaCombinedX); // Output value in meters [m], stored in [m]
+		// write the residual/sigma for X Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX) / ItECWI.target.sigmaCombinedX); 
 
-		// write the observed DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ)); // Output value in meters [m], stored in [m]
+		// write the observed Z Distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ)); 
 
-		// write the sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedZ.getMMetresValue()); // Output value in milimeters [mm], stored in [m]
+		// write the sigma Z Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedZ.getMMetresValue()); 
 
-		// write the estimated DIST
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ) + ItECWI.getDistanceResidual(EECWIDistances::kZ)); // Output value in meters [m], stored in [m]
+		// write the estimated Z Distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ) + ItECWI.getDistanceResidual(EECWIDistances::kZ)); 
 
-		// write the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ).getMMetresValue()); // Output value in milimeters [mm], stored in [m]
+		// write the residual for Z Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ).getMMetresValue()); 
 
-		// write the residual/sigma
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ) / ItECWI.target.sigmaCombinedZ); // Output value in meters [m], stored in [m]
+		// write the residual/sigma for Z Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ) / ItECWI.target.sigmaCombinedZ);
+
+		// write the OBSE for X Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaX.getMMetresValue()); 
+
+		// write the Instrument Centering for X Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaInstrCenteringX.getMMetresValue()); 
+
+		// write the OBSE for Z Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaZ.getMMetresValue());
+
+		// write the Instrument Centering for Z Distance
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaInstrCenteringZ.getMMetresValue()); 
+
+		// write the precision of the wire
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaWire.getMMetresValue()); 
 
 		// write the scale ID
 		(*stream).writeString(nameWidth, ItECWI.target.ID);
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItECWI.obsID);
 
 		(*stream) << endl;
 	}
 	(*stream) << endl;
 }
-//------------------ Simu data--------------------------------------------------------------------------
 
+//------------------ Simu data--------------------------------------------------------------------------
 void TWPSRWriter::writeECWISIMUResults(const TECWIROM &ecwirom)
 {
 	TAStreamFormatter *stream = getStream();
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI), (int)ecwirom.measECWI.size());
+
 	writeWPSRHeader(ecwirom);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI), (int)ecwirom.measECWI.size());
-	(*stream) << TABs << "ECWI" << endl;
-
-	/* to activate when simu dev
 	if (ecwirom.measECWI.size() > 0)
-		writeDistanceResultsSummary(ecwirom.getECWIObsSummary(), stream->getCurrSpaceExtended(2));
-	*/
+	{
+		const auto &summary = ecwirom.getECWIObsSummary();
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI) + ": X", (int)ecwirom.measECWI.size());
+		writeDistanceResultsSummary(summary.xObsSum, TABs);
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI) + ": Z", (int)ecwirom.measECWI.size());
+		writeDistanceResultsSummary(summary.zObsSum, TABs);
+	}
 }
 
 //------------------ Result header---------------------------------------------------------------------------
-
 void TWPSRWriter::writeWPSRHeader(const TECWIROM &ecwirom)
 {
 	TAStreamFormatter *stream = getStream();
@@ -157,68 +191,67 @@ void TWPSRWriter::writeWPSRHeader(const TECWIROM &ecwirom)
 	(*stream) << "\n";
 	(*stream) << TABs << "ECWI"
 			  << "\n";
-
-		///////////////////////////////////////////////////////////////////////////////////
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "REF POINT");
-	(*stream).writeStringLeft(nameWidth, ecwirom.fMeasuredPlane->getReferencePoint()->getName());
+	(*stream).writeStringLeft(nameWidth, "NOM DU FIL");
+	(*stream).writeStringLeft(nameWidth, ecwirom.romName);
+	(*stream) << "\n";
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "PARAMETRE FIL");
 	(*stream).writeStringLeft(nameWidth, "X (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.referencePoint.getX().getMetresValue());
 	(*stream).writeStringLeft(nameWidth, "Y (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.referencePoint.getY().getMetresValue());
 	(*stream).writeStringLeft(nameWidth, "Z (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
-	(*stream) << endl;
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "PARAMETRE DU FIL");
-	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "X (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision,
-		ecwirom.fMeasuredPlane->getReferencePoint()->getEstValue(0)
-			+ ecwirom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * sin(ecwirom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue() + M_PI_2));
-	(*stream).writeStringLeft(nameWidth, "Y (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision,
-		ecwirom.fMeasuredPlane->getReferencePoint()->getEstValue(1)
-			+ ecwirom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * cos(ecwirom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue() + M_PI_2));
-	// Z is not relevant
-	//(*stream).writeStringLeft(nameWidth, "Z (M)");
-	//(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
-	(*stream) << endl;
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.referencePoint.getZ().getMetresValue());
+	(*stream) << "\n";
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "ORIENTATION (GON)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredPlane->getThetaEstimatedValue().getGonsValue());
-	(*stream).writeStringLeft(nameWidth, "SORIENTATION (CC)");
-	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fMeasuredPlane->getThetaEstimatedPrecision().getSignedCCValue());
-	(*stream).writeStringLeft(nameWidth, "NORMALE (MM)");
-	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fMeasuredPlane->getRefPtDistEstimatedValue().getMMetresValue());
-	(*stream).writeStringLeft(nameWidth, "SNORMALE (MM)");
-	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
-	(*stream) << endl;
+	(*stream).writeStringLeft(nameWidth, "GISEMENT (GON)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireBearing->getEstimatedValue().getGonsValue());
+	(*stream).writeStringLeft(nameWidth, "SGISEMENT (CC)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fWireBearing->getEstimatedPrecision().getSignedCCValue());
+	(*stream).writeStringLeft(nameWidth, "PENTE (GON)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireSlope->getEstimatedValue().getGonsValue());
+	(*stream).writeStringLeft(nameWidth, "SPENTE (CC)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireSlope->getEstimatedPrecision().getSignedCCValue());
+	(*stream) << "\n";
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
+	(*stream).writeStringLeft(nameWidth, "DX (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireDx->getEstimatedValue().getMetresValue());
+	(*stream).writeStringLeft(nameWidth, "SDX (MM)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fWireDx->getEstimatedPrecision().getMMetresValue());
+	(*stream).writeStringLeft(nameWidth, "DZ (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireDz->getEstimatedValue().getMetresValue());
+	(*stream).writeStringLeft(nameWidth, "SDZ (MM)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fWireDz->getEstimatedPrecision().getMMetresValue());
+	(*stream) << "\n";
+	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "SAG (mm)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredSAG->getEstimatedValue().getMMetresValue());
-	(*stream).writeStringLeft(nameWidth, "SIGMA SAG (mm)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredSAG->getEstimatedPrecision().getMMetresValue());
+	(*stream).writeStringLeft(nameWidth, "SAGFIX");
+	TReal sigmaSag;
+	if (ecwirom.sagfix)
+	{
+		(*stream).writeString(obsWidth, "TRUE");
+		sigmaSag = ecwirom.instrument.sigmaSagWire.getMMetresValue();
+	}
+	else
+	{
+		(*stream).writeString(obsWidth, "FALSE");
+		sigmaSag = ecwirom.sagAdjustable->getEstimatedPrecision().getMMetresValue();
+	}
+	(*stream).writeStringLeft(nameWidth, "SAG (M)");
+	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.sagAdjustable->getEstimatedValue().getMetresValue());
+	(*stream).writeStringLeft(nameWidth, "SSAG (MM)");
+	(*stream).writeDouble(obsWidth, lengthPrecision - 3, sigmaSag);
 	(*stream) << endl;
-	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "SLOPE (GON)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredPitch->getEstimatedValue().getGonsValue());
-	(*stream).writeStringLeft(nameWidth, "SIGMA SLOPE (CC)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fMeasuredPitch->getEstimatedPrecision().getSignedCCValue());
 }
 
 //------------------ Synthesis header------------------------------------------------------------------------
 void TWPSRWriter::writeWPSRSynthesisHeader()
 {
-	// TO DO
 	TAStreamFormatter *stream = getStream();
 	int nameWidth = getNameWidth();
-	// int				obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(1);
@@ -234,7 +267,7 @@ void TWPSRWriter::writeWPSRSynthesisHeader()
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
-	// second line
+	// Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
 	(*stream).writeString(obsResWidth, "(MM)");
@@ -246,7 +279,6 @@ void TWPSRWriter::writeWPSRSynthesisHeader()
 }
 void TWPSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &meassum, int obsResWidth, int ResPrecision)
 {
-	// TO DO
 	TAStreamFormatter *stream = getStream();
 	int nameWidth = getNameWidth();
 	std::string TABs = stream->getCurrSpaceExtended(1);
@@ -258,42 +290,70 @@ void TWPSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &me
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residu max
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residu min
 		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getVariance()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
 		(*stream) << endl;
 	}
-}
-
-void TWPSRWriter::writeECWIResultsSynthesis(const TECWIROM &ecwirom)
-{
-	TAStreamFormatter *stream = getStream();
-	int nameWidth = getNameWidth();
-	int obsResWidth = getObsResWidth();
-	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
-	std::string TABs = stream->getCurrSpaceExtended(1);
-
-	const auto &ecwiSummary = ecwirom.getECWIObsSummary();
-	/* TO DO
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, ecwiSummary.getObsText()); // Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwiSummary.getResMax()); // residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwiSummary.getResMin()); // residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwiSummary.getMean()); // residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwiSummary.getVariance()); // ecart type
-	(*stream) << endl;
-	*/
 }
 
 //------------------ Reliability header----------------------------------------------------------------------
 void TWPSRWriter::writeECWIReliabilityHeader()
 {
-	/*TO DO*/
-	this->TObservationWriter::writeReliabilityHeader("PT REF", "STATION", "", "OBSERVATION", "M", "MM");
+	this->TObservationWriter::writeReliabilityHeader("WIRE", "STATION", "", "OBS_X", "M", "MM");
+	this->TObservationWriter::writeReliabilityHeader("WIRE", "STATION", "", "OBS_Z", "M", "MM");
 	return;
 }
 
 //------------------ Reliability data----------------------------------------------------------------------
 void TWPSRWriter::writeECWIReliabilityData(const TECWIROM &ecwirom, const TLGCStatistic &stat, const std::list<TECWI> &measECWI)
 {
-	/*TO DO*/
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	int obsResWidth = getObsResWidth();
+	int lengthPrecision = getLengthPrecision();
+	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+
+	// For each ECWS measurement of the station
+	for (auto const &itEcwi : measECWI)
+	{
+		// Observation index to take the right value in the statistic vector
+		int index = itEcwi.getFirstObservationIndex();
+
+		// get water surface reference
+		(*stream).writeStringLeft(nameWidth, ecwirom.romName);
+
+		// get Station point
+		(*stream).writeStringLeft(nameWidth, itEcwi.targetPos->getName());
+
+		// get Point 3
+		(*stream).writeStringLeft(nameWidth, "");
+
+		//------------------- 1rst obs----------------------------------------------------//
+		// get the observed distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, itEcwi.getDistance(EECWIDistances::kX));
+		// get the standard deviation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itEcwi.target.sigmaCombinedX.getMMetresValue());
+		// get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itEcwi.getDistanceResidual(EECWIDistances::kX).getMMetresValue());
+
+		writeReliabilityMM(index, stat);
+
+		//------------------- 2nd obs----------------------------------------------------//
+		index = index + 1;
+
+		// indentation to not repeat the station / wire names
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
+
+		// get the observed distance
+		(*stream).writeDouble(obsWidth, lengthPrecision, itEcwi.getDistance(EECWIDistances::kZ));
+		// get the standard deviation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itEcwi.target.sigmaCombinedZ.getMMetresValue());
+		// get the residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itEcwi.getDistanceResidual(EECWIDistances::kZ).getMMetresValue());
+
+		writeReliabilityMM(index, stat);
+	}
 	return;
 }

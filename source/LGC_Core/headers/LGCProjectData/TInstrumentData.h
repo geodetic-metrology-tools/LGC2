@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -522,12 +522,16 @@ class TInstrumentData
 		};
 
 
-        struct TWPSR {
+		struct TWPSR
+		{
 			std::string ID;
 			TLength sigmaX; // [m]
 			TLength sigmaZ; // [m]
 			TLength sigmaInstrCenteringX; // [m]
 			TLength sigmaInstrCenteringZ; // [m]
+			TLength sagWire; // [m]
+			TLength sigmaSagWire; // [m]
+			TLength sigmaWire; // [m]
 			TLength sigmaCombinedX; // [m]
 			TLength sigmaCombinedZ; // [m]
 		};
@@ -544,9 +548,9 @@ class TInstrumentData
         std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
 		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
-        /// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-        std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
 		/// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
+		std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
+		/// All available wps instruments, accessible by their ID. See \ref getDevice for failsave lookup.
 		std::map<std::string, std::shared_ptr<TWPSR>> fWPSR;
 
 		/*!

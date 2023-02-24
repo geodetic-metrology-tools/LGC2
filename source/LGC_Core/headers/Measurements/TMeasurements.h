@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -135,7 +135,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECWSGlobalObsSummary() const;
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	const TECWIObsSummary& getECWIGlobalObsSummary() const;
+	const TECWIObsSummary &getECWIGlobalObsSummary() const;
 
 
 #if USE_SERIALIZER
@@ -164,8 +164,8 @@ private:
     TUVDObsSummary uvdGlobalSummary_;
     TUVECObsSummary uvecGlobalSummary_;
 
-    //WPSR:
-	TECWIObsSummary ecwiGlobalSummary_;
+    // WPSR:
+    TECWIObsSummary ecwiGlobalSummary_;
      
     // Other:
     TLGCObsSummary dsptGlobalSummary_;

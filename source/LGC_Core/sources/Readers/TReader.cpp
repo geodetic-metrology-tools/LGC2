@@ -655,6 +655,8 @@ std::vector<std::string> TReader::updateListObsID(TDataTreeIterator itTree)
 		std::for_each(i.measINCLY.begin(), i.measINCLY.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
 	for (auto const &i : itTree->get()->measurements.fECWS)
 		std::for_each(i.measECWS.begin(), i.measECWS.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+	for (auto const &i : itTree->get()->measurements.fECWI)
+		std::for_each(i.measECWI.begin(), i.measECWI.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
 
 	return listObsId;
 }

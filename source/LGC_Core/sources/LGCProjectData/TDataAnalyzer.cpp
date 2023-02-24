@@ -229,72 +229,42 @@ bool TDataAnalyzer::dataConsistent(){
             }
         }
 
-        //TBD loop over ECWI to initialise th plane and distance to it. inspire yourself with the ECHO process. Here shall we define also tje first and second point for the SAG computation.
 		for (auto &itECWI : it.node->data.get()->measurements.fECWI)
 		{
+			// Create the fixed reference point for the wire
 			TReal referencePoint[3] = {0, 0, 0};
-			TReal initialRefPtDistance = 0.0;
 			TPositionVector firstAnchorPos = itECWI.anchorPtFirst->getEstimatedValue();
+
 			TLOR2LOR firstAnchor2Root(itECWI.anchorPtFirst->getFrameTreePosition(), fTree.begin(), "FirstAnchor2ROOT");
 			firstAnchor2Root.transform(firstAnchorPos);
-
-            referencePoint[0] += firstAnchorPos.getX().getMetresValue();
-			referencePoint[1] += firstAnchorPos.getY().getMetresValue();
-			referencePoint[2] += firstAnchorPos.getZ().getMetresValue();
 
 			TPositionVector secondAnchorPos = itECWI.anchorPtSecond->getEstimatedValue();
 			TLOR2LOR secondAnchor2Root(itECWI.anchorPtSecond->getFrameTreePosition(), fTree.begin(), "SecondAnchor2ROOT");
 			secondAnchor2Root.transform(secondAnchorPos);
 
-            //get also the distances to better the result.
+			// Fixed reference point for the ECWI measurement
+			TPositionVector refPointVector = (TFreeVector(firstAnchorPos) + TFreeVector(secondAnchorPos)) * 0.5;
+	
+			// Calculation of the initial approximated values for the wire bearing and slope
+			TFreeVector anchorVector = secondAnchorPos - firstAnchorPos;
+			TReal bearingLineVectorAngle = atan2q(anchorVector.getX().getMetresValue(), anchorVector.getY().getMetresValue());
+			TReal slopeLineVectorAngle = atan2q(-anchorVector.getZ().getMetresValue(), anchorVector.getHorDist().getMetresValue());
 
-            referencePoint[0] += secondAnchorPos.getX().getMetresValue();
-			referencePoint[1] += secondAnchorPos.getY().getMetresValue();
-			referencePoint[2] += secondAnchorPos.getZ().getMetresValue();
+			// Create the Adjustable Objects
+			std::string name = itECWI.romName + "_" + itECWI.anchorPtFirst->getName() + "_" + itECWI.anchorPtSecond->getName();
 
-            referencePoint[0] /= 2;
-			referencePoint[1] /= 2;
-			referencePoint[2] /= 2;
+			itECWI.referencePoint = refPointVector;
 
+			itECWI.fWireDx = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DX"));
+			itECWI.fWireDz = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DZ"));
 
-            /*Fixed reference point for the ECWI measurement*/
-            TPositionVector refPointVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian);
-            
-            /* set it up in the correct system*/
-			if (fData.getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-			{
-				TXYH2CCS::CCS2XYHs(refPointVector);
-				refPointVector.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
-			}
-			else if (fData.getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-			{
-				TXYH2CCS::CCS2XYHg2000Machine(refPointVector);
-				refPointVector.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
-			}
-			else if (fData.getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-			{
-				TXYH2CCS::CCS2XYHg1985Machine(refPointVector);
-				refPointVector.setCoordSys(TCoordSysFactory::ECoordSys::k2DPlusH);
-			}
-				
-			LGCAdjustablePoint &rp = fData.getPoints().addObject(
-				LGCAdjustablePoint(refPointVector, true, true, false,
-					"ECWI_line" + std::to_string(itECWI.line), fData.getConfig().referential, fTree.begin()));
+			itECWI.sagAdjustable = &fData.getLength().addObject(TAdjustableLength(itECWI.instrument.sagWire, itECWI.sagfix, name + "_SAG"));
 
-            /*Calculation of the initial approximation value for the theta angle of the plane. (to be updated with the value of the anchors? problem if not here)*/
-			TReal thetaLineVectorAngle = atan2q(secondAnchorPos.getX().getMetresValue() - firstAnchorPos.getX().getMetresValue(),
-				secondAnchorPos.getY().getMetresValue() - firstAnchorPos.getY().getMetresValue());
-			auto name = itECWI.romName;
-			itECWI.fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(
-				&rp, TLength(initialRefPtDistance), TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
+			TAdjustableAngle adjBearing(TAngle(bearingLineVectorAngle), false, name + "_BEARING");
+			itECWI.fWireBearing = &fData.getAngles().addObject(adjBearing);
 
-			TAdjustableLength adjLength(itECWI.provSAG, false, name);
-
-			itECWI.fMeasuredSAG = &fData.getLength().addObject(adjLength);
-
-            //initializing TBD ( test with +1 and 200gons)
-            TAdjustableAngle adjPitch(TAngle(0), false, name);
-            itECWI.fMeasuredPitch = &fData.getAngles().addObject(adjPitch);
+			TAdjustableAngle adjSlope(TAngle(slopeLineVectorAngle), false, name + "_SLOPE");
+			itECWI.fWireSlope = &fData.getAngles().addObject(adjSlope);
 		}
         cleanDeactivated();
 

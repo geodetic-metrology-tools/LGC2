@@ -5,8 +5,9 @@
 #include "TXYH2CCS.h"
 
 
-TObservationGenerator::TObservationGenerator(TPointTransformer& pPointTransfo) : fPointTransfo(&pPointTransfo)
-{}
+TObservationGenerator::TObservationGenerator(TPointTransformer &pPointTransfo) : fPointTransfo(&pPointTransfo), fCGenerator(*fPointTransfo)
+{
+}
 
 //////////////////////////////////////////
 /// Functions for Calculation Meas
@@ -581,6 +582,12 @@ TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECW
 	TReal calcMeas = wsPos.getZ().getMetresValue() - targetPoint.getZ().getMetresValue();
 	
 	return calcMeas;
+}
+
+ECWICalcMeas TObservationGenerator::getECWICalcMeas(const TECWIROM &ecwiROM, const TECWI &ecwi)
+{
+	ECWIContrib contributions = fCGenerator.getECWIContrib(ecwiROM, ecwi);
+	return {contributions.fCalcMeas[0], contributions.fCalcMeas[1]};
 }
 
 TPositionVector TObservationGenerator::getOBSXYZCalcMeas(const TOBSXYZ &obsxyz)

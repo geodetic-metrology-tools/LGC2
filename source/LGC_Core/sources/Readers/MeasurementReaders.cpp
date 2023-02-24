@@ -1507,25 +1507,23 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		if (proj.getCurrentNode().ID.size() != 1)
 		{
 			throw std::runtime_error("ECWI keyword is only allowed in the root frame");
-		}		
-		
+		}
 
-
-		//for the time been, the anchor points need to be defined in the input file, should it be updated to automatic in the future in Tdataanalyzer? pro: less input file command, con: well if a measurement is deactivated the following of the sag over time is BS
-		TECWIROM ecwiRom(finstruments.getDevice(finstruments.fWPSR, tokens.at(2)), nullptr, TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
-			TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), nullptr,
+		TECWIROM ecwiRom(finstruments.getDevice(finstruments.fWPSR, tokens.at(2)), TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
 			fpoints.getObject(tokens.at(5)), fpoints.getObject(tokens.at(6)));
+
+		ecwiRom.instrument.sigmaWire = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
 
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		ecwiRom.line = line;
-		ecwiRom.setActive(activeLine);			
-		
+		ecwiRom.setActive(activeLine);
 
 		if (opts.has("WIID"))
 			ecwiRom.romName = opts.getParam("WIID");
 		else
 			ecwiRom.romName = "ECWI_line" + std::to_string(line);
+
 		// Check if the name is unique
 		for (auto &itRomName : proj.getCurrentNode().measurements.fECWI)
 		{
@@ -1533,7 +1531,16 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 				throw std::runtime_error("Wire Names must be unique: " + ecwiRom.romName + " is duplicated");
 		}
 
-		// check if the name is unique, the ECWS can only be in the root.
+		// Check if the wire sag is fixed
+		ecwiRom.sagfix = opts.has("SAGFIX");
+		ecwiRom.instrument.sagWire = TLength(std::stor(tokens.at(3)));
+
+		// Look for optional "SAGSE" flag only if the "SAGFIX" flag used, ignore otherwise
+		if (ecwiRom.sagfix)
+		{
+			ecwiRom.instrument.sigmaSagWire = TLength(opts.getParamRmm2m("SAGSE", ecwiRom.instrument.sigmaSagWire));
+		}
+
 		proj.getCurrentNode().measurements.fECWI.emplace_back(ecwiRom); // add new round of measurement
 
 		// The WPSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
@@ -1557,7 +1564,7 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 			currentTargetApplied = currentTarget;
 		}
 
-		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, currentTargetApplied); // Throws exception if instrument not found, catched on the top level
+		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, currentTargetApplied); // Throws exception if instrument not found, caught on the top level
 		TECWIROM &ecwiROMLatest = proj.getCurrentNode().measurements.fECWI.back();
 
 		instr.sigmaX = TLength(opts.getParamRmm2m("XSE", instr.sigmaX));
@@ -1565,15 +1572,9 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		instr.sigmaInstrCenteringX = TLength(opts.getParamRmm2m("XICSE", instr.sigmaInstrCenteringX));
 		instr.sigmaInstrCenteringZ = TLength(opts.getParamRmm2m("ZICSE", instr.sigmaInstrCenteringZ));
 
-		//add also a way to change the Wire SAG prec
-		//if (opts.has("WISE"))
-		//	instr.sigmaWS = TLength(opts.getParamRmm2m("WSSE", instr.sigmaWS));
-		//else
-		//	instr.sigmaWS = TLength(ecwsROMLatest.sigmaWS.getMetresValue());
-		
 		// Store  the measured value
 		TECWI ecwi(stationPoint, instr);
-		
+
 		ecwi.setDistance(TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))), EECWIDistances::kX);
 		ecwi.setDistance(TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))), EECWIDistances::kZ);
 
@@ -1588,10 +1589,11 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		}
 
 		ecwi.line = line;
+		ecwi.obsID = std::string(opts.getParamS("ID", ecwi.obsID));
+
 		ecwi.setActive(ecwiROMLatest.isActive() && activeLine); // Active only if ROM active as well
 
 		ecwiROMLatest.measECWI.emplace_back(ecwi);
-		
 	}
 }
 

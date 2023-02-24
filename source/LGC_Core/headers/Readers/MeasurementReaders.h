@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -520,7 +520,7 @@ public:
 	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 };
 
-/// Keyword to process ECWI -- ECart-wire measurements
+/// Keyword to process ECWI -- ECart-WIre measurements
 class TKeyECWI : public TAMeasurementKey
 {
 public:

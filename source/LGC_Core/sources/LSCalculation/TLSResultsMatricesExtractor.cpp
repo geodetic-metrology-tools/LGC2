@@ -523,7 +523,7 @@ void TLSResultsMatricesExtractor::extractECWIROMObs(const TLSResultsMatrices &rm
 		if (obsUidx + 1 < rm.getResidualsVectByConst()->size())
 		{
 			itECWI->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)), EECWIDistances::kX);
-			itECWI->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx+1)), EECWIDistances::kZ);
+			itECWI->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx + 1)), EECWIDistances::kZ);
 		}
 		else
 		{

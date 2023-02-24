@@ -200,17 +200,20 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kINCLY:
 			fMeasInfo.fNumINCLY++;
 			break;
-        case TMeasurementsGlobal::kECWS:
-            fMeasInfo.fNumECWS++;
-            break;
+		case TMeasurementsGlobal::kECWS:
+			fMeasInfo.fNumECWS++;
+			break;
 		case TMeasurementsGlobal::kECWI:
 			fMeasInfo.fNumECWI++;
+			break;
 	}
 }
 
 
-int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const {
-	switch (type) {
+int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const
+{
+	switch (type)
+	{
 	case TMeasurementsGlobal::kANGL:
 		return fMeasInfo.fNumANGL;
 	case TMeasurementsGlobal::kZEND:
@@ -249,8 +252,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumOBSXYZ;
 	case TMeasurementsGlobal::kINCLY:
 		return fMeasInfo.fNumINCLY;
-    case TMeasurementsGlobal::kECWS:
-        return fMeasInfo.fNumECWS;
+	case TMeasurementsGlobal::kECWS:
+		return fMeasInfo.fNumECWS;
 	case TMeasurementsGlobal::kECWI:
 		return fMeasInfo.fNumECWI;
 	default:
@@ -258,8 +261,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 	}
 }
 
-void TLGCData::setDefaultValues() {
-
+void TLGCData::setDefaultValues()
+{
 	fPointInfo.fNumCala = 0;
 	fPointInfo.fNumVx = 0;
 	fPointInfo.fNumVy = 0;
@@ -289,7 +292,7 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumRADI = 0;
 	fMeasInfo.fNumOBSXYZ = 0;
 	fMeasInfo.fNumINCLY = 0;
-    fMeasInfo.fNumECWS = 0;
+	fMeasInfo.fNumECWS = 0;
 	fMeasInfo.fNumECWI = 0;
 }
 
@@ -698,7 +701,7 @@ void TLGCData::copyTree(TLGCData const* const src, TLGCData* tgt) {
             }      
         }
 
-         // ECWI
+		// ECWI
 		for (auto &ecwirom : entry->measurements.fECWI)
 		{
 			// Measurements
@@ -790,7 +793,7 @@ void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
         // Replace the instrument in the memory
         hlsr.second.reset(new TInstrumentData::THLSR(*hlsr.second));
 
-    //WPSR instrument
+	// WPSR instrument
 	for (auto &wpsr : tgtData->instruments.fWPSR)
 		// Replace the instrument in the memory
 		wpsr.second.reset(new TInstrumentData::TWPSR(*wpsr.second));

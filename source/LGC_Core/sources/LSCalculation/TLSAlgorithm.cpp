@@ -80,7 +80,7 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 
 		if (fillOK)
 		{		
-			inputMtr->saveMatricesToFile(0);
+
 			// compute solution 
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
 	
@@ -112,24 +112,6 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 			fileLog << "Matrices filling was not successful.\n";
 			return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Matrices filling was not successful.\n");
 		}
-		/*
-		auto frameTree = data.getTree();
-		TDataTreeIterator frameIt = frameTree.begin();
-		auto romIt = frameIt.node->data->measurements.fECWI.begin();
-		auto dref = romIt->fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue();
-		auto beraing = romIt->fMeasuredPlane->getThetaEstimatedValue().getGonsValue();
-		auto Zwire = romIt->fMeasuredPlane->getReferencePoint()->getEstimatedValue().getZ().getMetresValue();
-		auto slope = romIt->fMeasuredPitch->getEstimatedValue().getGonsValue();
-		auto sag = romIt->fMeasuredSAG->getEstimatedValue().getMetresValue();
-		frameIt += 36;
-		auto test = frameIt.node->data->frame.getEstParam();
-		auto tx = frameIt.node->data->frame.getEstTranslation(0).getMetresValue();
-		auto tz = frameIt.node->data->frame.getEstTranslation(2).getMetresValue();
-		auto rx = frameIt.node->data->frame.getEstRotation(0).getGonsValue();
-		auto rz = frameIt.node->data->frame.getEstRotation(2).getGonsValue();
-		frameIt += 1;
-		auto ry = frameIt.node->data->frame.getEstRotation(1).getGonsValue();
-		*/
 		fNumberOfIterations++;
 	}
 

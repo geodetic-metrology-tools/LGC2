@@ -1,14 +1,14 @@
 /*
 © Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
+*/
 
-
-*/#ifndef TSIMOBSERVATION_GENERATOR_H
+#ifndef TSIMOBSERVATION_GENERATOR_H
 #define TSIMOBSERVATION_GENERATOR_H
 
-
-//LGC
+// LGC
 #include <ContributionStructures.h>
+#include <TContributionsGenerator.h>
 #include <TPointTransformer.h>
 #include <TTSTN.h>
 
@@ -26,8 +26,7 @@ struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
 struct TECWSROM;
-
-
+struct TECWIROM;
 
 /*!
 \ingroup ContributionsGenerators
@@ -113,11 +112,16 @@ public:
 	/// Returns the OBSXYZ calculated meas in meters [m]
 	TPositionVector getOBSXYZCalcMeas(const TOBSXYZ& obsxyz);
 
+	/// Returns the TECWI measurements calculated meas in meters [m]
+	ECWICalcMeas getECWICalcMeas(const TECWIROM &ecwiROM, const TECWI &ecwi);
+
 	//@}
 
 private:
 	/// Pointer to a TPointTransformationFunctions
 	TPointTransformer* fPointTransfo;
 
+	// Contributions generator, used to calculated the calcmeas.
+	TContributionsGenerator fCGenerator;
 };
 #endif 

@@ -408,33 +408,40 @@ struct INCLYContrib {
 };
 
 
-struct ECWSContrib{
-	TReal			fCalcMeas;
-	TFreeVector		fTgCoordContrib;
+struct ECWSContrib
+{
+	TReal fCalcMeas;
+	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWSTransformContrib;
 
-	TReal		    fWSContrib;
-	TReal			fObsVariance;
+	TReal fWSContrib;
+	TReal fObsVariance;
 };
 
 struct ECWIContrib
 {
-	TReal fMisclosureVector[2]; //!< Misclosure vector of the First, Second and Third equation respectively.
-	TFreeVector fStationContrib[2];
-	TReal fThetaPlaneAngleContrib[2]; //!< Contribution to the THETA angle of the plane in radians [rad]
-	TReal fRefPtDistContrib[2]; //!< Contribution to a distance of a referenece point from the plane
-	TReal fZPlaneDistContrib[2]; //!< Contribution to a distance of a referenece point from the plane
-	TReal fPitchAngleContrib[2]; //!< Contribution to a distance of a referenece point from the plane
+	TReal fCalcMeas[2];
+	TFreeVector fStCoordContrib[2];
 
-	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
-	//std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fSTransformContrib;
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fSTransformContribFirstEq;
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fSTransformContribSecondEq;
-	//should be a 2D trans contrib
-	TReal fSAGContrib[2];
+	// Wire Contributions
+	TReal fBearingWireContrib[2]; //!< Contribution to the Bearing angle of the wire
+	TReal fSlopeWireContrib[2]; //!< Contribution to the Slope angle of the wire
+	TReal fDRefXDistContrib[2]; //!< Contribution to the X offset from the ref. Point to the wire
+	TReal fDRefZDistContrib[2]; //!< Contribution to the Z offset from the ref. Point to the wire
+	TReal fSagContrib[2]; //!< Contribution to the sag of the wire
+
+	/// Vector of contributions in pairs with transformations, which are used to transform the wire in the Station Frame
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWireFirstEqTransformContrib;
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWireSecondEqTransformContrib;
+
 	TReal fObsVariance[2];
+};
 
+struct ECWICalcMeas
+{
+	TReal fMeasuredX;
+	TReal fMeasuredZ;
 };
 #endif

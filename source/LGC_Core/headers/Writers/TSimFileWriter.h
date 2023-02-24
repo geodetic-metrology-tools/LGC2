@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -80,6 +80,7 @@ protected:
 	void writeOBSXYZMeas(TOBSXYZ* meas);
 	void writeINCLYMeas(TINCLYROM* meas);
 	void writeECWSMeas(TECWSROM* meas);
+	void writeECWIMeas(TECWIROM* meas);
 
 	/// Project data
 	const TLGCData* data;
