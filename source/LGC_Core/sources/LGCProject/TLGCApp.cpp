@@ -186,7 +186,7 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
         writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
 
 	// Write serialized object file
-	if (conf.writeSerializedObject.isActive())
+	if (conf.json.isActive())
 		writeJsonFile(dat, outputFileLocation);
 }
 

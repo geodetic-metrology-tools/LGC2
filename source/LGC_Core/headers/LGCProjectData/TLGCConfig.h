@@ -236,15 +236,15 @@ struct TLGCConfig
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
 	TCoordOut     writePunch;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
-	TCoordOut     writePlot;
-	/// Write a file with adjustment results ,see \ref CoordOut for format details
-	TBinaryOption writeSerializedObject = true;
+	TCoordOut     writePlot;;
 	/// Write a file for covariance analysis
 	TBinaryOption covar;
 	/// Write a file for best-fit analysis 
 	TBinaryOption chaba;
 	/// Make a consistency check to find groups of unidentifiable objects
 	TBinaryOption consCheck;
+	/// Make a json serialized object
+	TBinaryOption json;
 
 	///width of point's name
 	int pointNameWidth = 0;

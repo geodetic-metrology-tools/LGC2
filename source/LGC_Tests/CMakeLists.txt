@@ -34,6 +34,7 @@ set(tests_SOURCES
 	sources/testINCL.cpp
 	sources/testHLSR.cpp
 	sources/testCONSI.cpp
+	sources/testJSON.cpp
 	sources/testSimulation.cpp
 )
 
