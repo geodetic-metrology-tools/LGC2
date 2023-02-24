@@ -624,10 +624,7 @@ namespace tut
 	template<>
 	void object::test<20>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing OBSXYZ with rotated subframe");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outOBSXYZ_subframe.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -653,10 +650,7 @@ namespace tut
 	template<>
 	void object::test<21>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing OBSXYZ weights handling");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outOBSXYZ_weights.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -690,10 +684,7 @@ namespace tut
 	template<>
 	void object::test<22>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing Sigma2Root/Sigma2Subframe using OBSXYZ");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outOBSXYZ_sigma2root.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
