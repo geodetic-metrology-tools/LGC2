@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2020. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -146,6 +146,56 @@ namespace TestINCL {
 		"BEAM_XT03.BDB.0900.S	100	100	100\n"
 		"*INCLY test\n"
 		"BEAM_XT03.BDB.0900.T -0.0070028174960434\n"
+		"*ENDFRAME\n"
+		"*ENDFRAME\n"
+		"*ENDFRAME\n"
+		"*END\n"
+		;
+
+	/*One INCLY in subframe, point S dummy. Test INCLY observation ID reading	*/
+	char const* const INCLY_SUBF_5_id =
+		"*TITR\n"
+		"T6\n"
+		"*RS2K\n"
+		"*PREC 7\n"
+		"*INSTR\n"
+		"*INCL test 35 0 0 0 0\n"
+		"*FRAME	RSTB_XT03.BDB.0900	1863.6859	2293.21034	2437.48859	0.00128521258824983	0.00177433336363522 -113.494599963348	1\n"
+		"*FRAME	RSTRI_XT03.BDB.0900	0.00039 -0.00041	0.00012	0.0228	0	399.98986	1\n"
+		"*FRAME	RSTR_XT03.BDB.0900	0	0	0	0	0	0	1  RY\n"
+		"*CALA\n"
+		"BEAM_XT03.BDB.0900.E	0	0	0\n"
+		"BEAM_XT03.BDB.0900.T	0.5	0.5  0.5\n"
+		"BEAM_XT03.BDB.0900.S	100	100	100\n"
+		"*INCLY test\n"
+		"BEAM_XT03.BDB.0900.T -0.0070028174960434 ID test.BEAM_XT03.BDB.0900.T\n"
+		"*ENDFRAME\n"
+		"*ENDFRAME\n"
+		"*ENDFRAME\n"
+		"*END\n"
+		;
+
+	/*One INCLY in subframe, point S dummy, Station moving declared in anoter frame, more complex structure. Test OBSXYZ observation ID reading */
+	char const* const INCLY_SUBF_4_xyzID =
+		"*TITR\n"
+		"T5\n"
+		"*RS2K\n"
+		"*PREC 7\n"
+		"*INSTR\n"
+		"*INCL test 35 0 0 0 0\n"
+		"*FRAME	RSTB_XT03.BDB.0900	1863.6859	2293.21034	2437.48859	0.00128521258824983	0.00177433336363522 -113.494599963348	1\n"
+		"*FRAME	RSTB2_XT03.BDB.0900	-1865	-2292	-2433	-0.00	-0.001 113.4	1\n"
+		"*POIN\n"
+		"BEAM_XT03.BDB.0900.E	0	0	0\n"
+		"*ENDFRAME\n"
+		"*FRAME	RSTRI_XT03.BDB.0900	0.00039 -0.00041	0.00012	0.0228	0	399.98986	1\n"
+		"*FRAME	RSTR_XT03.BDB.0900	0	0	0	0	0	0	1  RY\n"
+		"*CALA\n"
+		"BEAM_XT03.BDB.0900.S	100	100	100\n"
+		"*OBSXYZ\n"
+		"BEAM_XT03.BDB.0900.E 0 0 0 0.0001 0.0001 0.0001 ID XYZ.BEAM_XT03.BDB.0900.E\n"
+		"*INCLY test\n"
+		"BEAM_XT03.BDB.0900.E -0.0070028174960434\n"
 		"*ENDFRAME\n"
 		"*ENDFRAME\n"
 		"*ENDFRAME\n"

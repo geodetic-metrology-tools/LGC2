@@ -17,7 +17,12 @@
 
 namespace tut
 {
-    struct test_nonTSTN{};
+    struct test_nonTSTN{
+		test_nonTSTN() : projTest(std::make_shared<TLGCData>()), r(projTest) {}
+
+		std::shared_ptr<TLGCData> projTest;
+		TReader r;
+	};
     typedef test_group<test_nonTSTN> factory;
     typedef factory::object object;
 }
@@ -34,10 +39,7 @@ namespace tut
 	template<>
 	void object::test<1>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing DSPT measurement");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDSPT.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -64,10 +66,7 @@ namespace tut
 	template<>
 	void object::test<2>()
 	{ 
-
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
 		set_test_name("Testing DLEV measurement 3");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -97,10 +96,7 @@ namespace tut
 	template<>
 	void object::test<3>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing DLEV measurement 3");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -130,10 +126,7 @@ namespace tut
 	template<>
 	void object::test<4>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing DLEV measurement RP not given");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -167,10 +160,7 @@ namespace tut
 	template<>
 	void object::test<5>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing DLEV measurement RP not given, St not in ROOT");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV3.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -209,10 +199,7 @@ namespace tut
 	template<>
 	void object::test<7>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("DVER in OLOC");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -245,10 +232,7 @@ namespace tut
 	template<>
 	void object::test<8>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("DVER in OLOC + FREE LOR");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -286,10 +270,7 @@ namespace tut
 	template<>
 	void object::test<9>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("DVER in RS2K");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -331,11 +312,7 @@ namespace tut
 	void object::test<11>()
 	{
 		// Works, 1 station, ZEND, DIST and ANGL calculated in MLA system, 4 iterations
-
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("DVER + TSTN in RS2K");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDVER.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -381,10 +358,7 @@ namespace tut
 	template<>
 	void object::test<13>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("ECHO plane paralel with y-axis,measurements on the right side (-)");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -410,10 +384,7 @@ namespace tut
 	template<>
 	void object::test<14>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("ECHO plane paralel with y-axis, measurements on the left side (+)");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -438,10 +409,7 @@ namespace tut
 	template<>
 	void object::test<15>()
 	{ 
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("ECHO exact line measurement, meas on the right (-)");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outECHO.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 		
@@ -468,10 +436,7 @@ namespace tut
 	template<>
 	void object::test<16>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ORIE measurement in SPHE");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -518,10 +483,7 @@ namespace tut
 	template<>
 	void object::test<17>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ORIE measurement in RS2K");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -568,10 +530,7 @@ namespace tut
 	template<>
 	void object::test<18>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ORIE measurement in LEP");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -618,10 +577,7 @@ namespace tut
 	template<>
 	void object::test<19>()
 	{
-		std::shared_ptr<TLGCData> projTest(new TLGCData);
-
 		set_test_name("Testing ORIE measurement in OLOC");
-		TReader r(projTest);
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outORIE.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -790,5 +746,207 @@ namespace tut
 		}
 	}
 
-}
+	//--------------------- Test ID keyword -------------------------//
 
+	template<>
+	template<>
+	void object::test<23>()
+	{
+		set_test_name("Testing reading DSPT observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/DSPT_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::dspt_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID
+		std::vector<std::string> ctrlIDdspt{"EDM1_STN_PT", "EDM1_STN2_PT"};
+		std::list<TDSPT>::iterator itDspt = tree.begin()->get()->measurements.fEDM.begin()->measDSPT.begin();
+		for (std::size_t i = 0; i < tree.begin()->get()->measurements.fEDM.begin()->measDSPT.size(); i++)
+		{
+			ensure_equals("The ECTH observation ID is correct", itDspt->obsID, ctrlIDdspt[i]);
+			itDspt++;
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth,
+			std::max((int)tree.begin()->get()->measurements.fEDM.begin()->measDSPT.begin()->obsID.size(),
+				(int)tree.begin()->get()->measurements.fEDM.back().measDSPT.begin()->obsID.size()));
+	}
+
+	template<>
+	template<>
+	void object::test<24>()
+	{
+		set_test_name("Testing reading DLEV observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/DLEV_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::dlev_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID and the max observation ID length
+		std::vector<std::string> ctrlIDdlev{"LEV1_STN", "LEV1_PTCAL1", "LEV1_PTCAL2", "LEV1_PT"};
+		int maxObsIdLength = 0;
+		int i = 0;
+		for (auto const& data : tree.begin()->get()->measurements.fLEVEL.begin()->measDLEV)
+		{
+			ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDdlev[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth,maxObsIdLength);
+	}
+
+	template<>
+	template<>
+	void object::test<25>()
+	{
+		set_test_name("Testing reading DVER observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/DVER_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestDVER::OLOC_DVER_cheminement_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID and the max observation ID length
+		std::vector<std::string> ctrlID{"STN_pt1", "STN_pt0", "pt0_pt1", "pt1_pt2", "pt2_pt3", "pt3_pt4", "pt4_pt5"};
+		int maxObsIdLength = 0;
+		int i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fDVER)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlID[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+	}
+
+	template<>
+	template<>
+	void object::test<26>()
+	{
+		set_test_name("Testing reading ECHO observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECHO_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::echo_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading fail : duplicate observation ID ", succesReading, false);
+	}
+
+	template<>
+	template<>
+	void object::test<27>()
+	{
+		set_test_name("Testing reading ORIE observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ORIE_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::orie_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+		
+		// Check the observation ID and the max observation ID length
+		std::vector<std::string> ctrlID{"ORIE_B_1-A_1", "ORIE_B_1-C_1", "ORIE_C_1-B_1", "ORIE_C_1-D_1"};
+		int maxObsIdLength = 0;
+		int i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fORIE.begin()->measORIE)
+		{
+			ensure_equals("The observation ID is correct", data.obsID, ctrlID[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+	}
+
+
+	template<>
+	template<>
+	void object::test<28>()
+	{
+		set_test_name("Testing reading RADI observation ID");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/RADI_ID.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::radi_id);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData &dataset = calcul.getData();
+
+		TDataTree tree = projTest->getTree();
+
+		// Check the observation ID and the max observation ID length
+		std::vector<std::string> ctrlIDradi{"RADI.0.01_PBASE.3", "RADI.0.01_PBASE.4", "RADI.0.01_PBASE.5"};
+		int maxObsIdLength = 0;
+		int i = 0;
+		for (auto const &data : tree.begin()->get()->measurements.fRADI)
+		{
+			ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDradi[i]);
+			i++;
+			if (data.obsID.size() > maxObsIdLength)
+			{
+				maxObsIdLength = data.obsID.size();
+			}
+		}
+		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+	}
+	}

@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -181,5 +181,35 @@ namespace TestLIBR {
 		"STN STN2 -0.049791									 \n" 
 		"*END													 \n" 
 	; 
+
+	char const *const LIBR_PLR_id =
+		"*TITR\n"
+		"Testing Input Matrices Filler.\n"
+		"*SPHE\n"
+		"*PREC 7\n"
+		"*LIBR\n"
+		"*INSTR\n"
+		"*POLAR TS1 T1 0.0 0.0 0.0 0\n"
+		"T1  5  5  0.5  0.5  0  0.0  0.0  0.0  0.0  0.0\n"
+		"*POIN\n"
+		"STN  2260.77736999979 4493.94616999989 402.197788807562\n"
+		"REF  2203.04826079728 4412.29233446857 402.198573563337\n"
+		"STN2  2284.70210292283 4354.56322804373 402.199358321128\n"
+		"PT  2342.43121212581 4436.21706357459 402.19857356349\n"
+		"PT2  2283.70210292195 4353.56322804373 402.199358321128\n"
+		"*TSTN STN TS1 IHFIX\n"
+		"*V0\n"
+		"*PLR3D\n"
+		"STN2     189.1779908   99.9999882     141.4219572 ID PLR3D_ST2_1\n"
+		"REF      239.1778383   99.9999354     100.0003740 ID PLR3D_REF_1\n"
+		"PT       139.1780079   99.9999915     100.0001688 ID PLR3D_PT_1\n"
+		"*TSTN STN2 TS1 IHFIX\n"
+		"*V0\n"
+		"*PLR3D\n"
+		"STN      389.1781395    100.0013861    141.4213366 ID PLR3D_STN_1\n"
+		"REF      339.1780103    100.0009627     99.9993092 ID PLR3D_REF_2\n"
+		"PT2      250.0001218    100.0000393      1.4137913 ID PLR3D_PT2_1\n"
+		"*END\n"
+		;
 }
 #endif

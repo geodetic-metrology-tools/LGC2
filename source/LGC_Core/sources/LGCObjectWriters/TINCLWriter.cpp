@@ -23,6 +23,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	int nameWidth = getNameWidth();
 	int obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
+	int obsIdWidth = getObsIdWidth();
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
@@ -41,6 +42,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	(*stream).writeString(obsResWidth, "ACSE"); // ACSE Value
 	(*stream).writeString(obsWidth, "RF"); // RF value
 	(*stream).writeString(obsResWidth, "RFSE"); // RFSE value
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +70,7 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 	int nameWidth = getNameWidth();
 	int obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
+	int obsIdWidth = getObsIdWidth();
 	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int anglePrecision = getAnglePrecision();
 	std::string TABs = stream->getCurrSpaceExtended(2);
@@ -118,6 +121,10 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 
 		// write the RFSE
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.refSigmaCorrectionValue.getSignedCCValue()); // Output value in cc [cc], stored in [rad]
+	
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItINCLY.obsID);
+
 		(*stream) << endl;
 	}
 	(*stream) << endl;

@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -390,6 +390,50 @@ namespace TestCAM {
 	"*ENDFRAME\n"
 
 	;
+
+	//Testing UVD, 2 STATIONS in subf, 1 POIN to determine with obs ID
+	char const *const UVD_2STSUBF_id = 
+	"*TITR\n"
+	"Testing Input Matrices Filler.\n"
+	"*OLOC\n"
+	"*PREC 7\n"
+
+	"*INSTR\n"
+	"*CAMD BCAM1 T1 0.0\n"
+	"T1  5  5  0.5  0.5 \n"
+
+	"*CALA\n"
+		"P1  0 100 100\n"			
+		"P3  100 200 200\n"		
+		"P4  0 200 200\n"	
+	"*POIN\n"
+		"P2VAR 200.005 150.056 100.1\n" /* Correct values: 100 100 100*/
+
+	"*FRAME f1 0.0 0 0 0.0 0.0 390.0  1 RZ\n"  //expect RZ=0
+	"*CALA\n"
+		"STN  0 0 0\n"
+	"*CAM STN BCAM1 IHFIX\n"
+		"*UVD\n"
+			"P1  0  0.70710678118  0.70710678118  141.421356237 ID BCAM1_P1\n"
+			"P3  0.333333333333333333 0.666666666666666666 0.666666666666666666  300 ID BCAM1_P3\n"
+			"P4  0 0.7071067811865475244008 0.7071067811865475244008  282.84271247461900976 ID BCAM1_P4\n"
+			"P2VAR  0.577350269189625764 0.577350269189625764 0.577350269189625764  173.205080756887729352 ID BCAM1_P2VAR\n"
+	"*ENDFRAME\n"
+
+	"*FRAME f2 100.0 0 0 0.0 0.0 10  1 RZ\n"  //expect RZ=0
+	"*CALA\n"
+		"STN2  0 0 0\n"
+
+	"*CAM STN2 BCAM1 IHFIX\n"
+		"*UVD\n"
+			"P2VAR  0  0.70710678118  0.70710678118  141.421356237 ID BCAM1_STN2_P2VAR\n"
+			"P1  -0.577350269189625764 0.577350269189625764 0.577350269189625764  173.205080756887729352 ID BCAM1_STN2_P1\n"
+			"P4  -0.333333333333333333 0.666666666666666666 0.666666666666666666  300 ID BCAM1_STN2_P4\n"
+			"P3  0	0.7071067811865475244008 0.7071067811865475244008  282.84271247461900976 ID BCAM1_STN2_P3\n"
+
+	"*ENDFRAME\n"
+
+	;
 //------------------------------------------ UVEC -------------------------------------------------//
 	/*One camera in a ROOT and one POIN to be determined, UVEC*/
 	char const *const UVEC_ROOT_1 = 
@@ -584,7 +628,7 @@ namespace TestCAM {
 	"*ENDFRAME\n"
 	;
 
-	//Testing UVD, 2 STATIONS in ROOT, 1 POIN to determine
+	//Testing UVEC, 2 STATIONS in ROOT, 1 POIN to determine
 	char const *const UVEC_2ST_ROOT = 
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"
@@ -623,7 +667,7 @@ namespace TestCAM {
 
 	;
 
-	//Testing UVD, 2 STATIONS ROOT, CALA points in SUBFRAME
+	//Testing UVEC, 2 STATIONS ROOT, CALA points in SUBFRAME
 	char const *const UVEC_2STROOT_SUBF = 
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"
@@ -666,7 +710,7 @@ namespace TestCAM {
 
 	;
 
-	//Testing UVD, 2 STATIONS with 1 in subf, 1 POIN to determine
+	//Testing UVEC, 2 STATIONS with 1 in subf, 1 POIN to determine
 	char const *const UVEC_2ST_1STINSUBF = 
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"
@@ -710,7 +754,7 @@ namespace TestCAM {
 
 	;
 
-	//Testing UVD, 2 STATIONS in subf, 1 POIN to determine
+	//Testing UVEC, 2 STATIONS in subf, 1 POIN to determine
 	char const *const UVEC_2STSUBF = 
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"
@@ -751,6 +795,52 @@ namespace TestCAM {
 			"P1  -0.577350269189625764 0.577350269189625764 0.577350269189625764\n"
 			"P4  -0.333333333333333333 0.666666666666666666 0.666666666666666666\n"
 			"P3  0	0.7071067811865475244008 0.7071067811865475244008\n"
+
+	"*ENDFRAME\n"
+
+	;
+
+	//Testing UVEC, 2 STATIONS in subf, 1 POIN to determine with obs ID
+	char const *const UVEC_2STSUBF_id = 
+	"*TITR\n"
+	"Testing Input Matrices Filler.\n"
+	"*OLOC\n"
+	"*PREC 7\n"
+
+	"*INSTR\n"
+	"*CAMD BCAM1 T1 0.0\n"
+	"T1  5  5  0.5  0.5 \n"
+	"*EDM ED1 V1 0 0.001 0.001 \n"
+	"V1 0.5 0 0 0 0.001 0.001 0 0.001\n"
+
+	"*CALA\n"
+		"P1  0 100 100\n"			
+		"P3  100 200 200\n"		
+		"P4  0 200 200\n"	
+	"*POIN\n"
+		"P2VAR 200.005 150.056 100.1\n" /* Correct values: 100 100 100*/
+
+	"*FRAME f1 0.0 0 0 0.0 0.0 390.0  1 RZ\n" /* Correct values in subframe: Rz=0*/
+	"*CALA\n"
+		"STN  0 0 0\n"
+	"*CAM STN BCAM1 IHFIX\n"
+		"*UVEC\n"
+			"P1  0  0.70710678118  0.70710678118 ID STN_BCAM1_P1\n"
+			"P3  0.333333333333333333 0.666666666666666666 0.666666666666666666 ID STN_BCAM1_P3\n"
+			"P4  0 0.7071067811865475244008 0.7071067811865475244008 ID STN_BCAM1_P4\n"
+			"P2VAR  0.577350269189625764 0.577350269189625764 0.577350269189625764 ID STN_BCAM1_P2VAR\n"
+	"*ENDFRAME\n"
+
+	"*FRAME f2 100.0 0 0 0.0 0.0 10  1 RZ\n" /* Correct values in subframe: Rz=0*/
+	"*CALA\n"
+		"STN2  0 0 0\n"
+
+	"*CAM STN2 BCAM1 IHFIX\n"
+		"*UVEC\n"
+			"P2VAR  0  0.70710678118  0.70710678118 ID STN2_BCAM1_P2VAR\n"
+			"P1  -0.577350269189625764 0.577350269189625764 0.577350269189625764 ID STN2_BCAM1_P1\n"
+			"P4  -0.333333333333333333 0.666666666666666666 0.666666666666666666 ID STN2_BCAM1_P4\n"
+			"P3  0	0.7071067811865475244008 0.7071067811865475244008 ID STN2_BCAM1_P3\n"
 
 	"*ENDFRAME\n"
 
