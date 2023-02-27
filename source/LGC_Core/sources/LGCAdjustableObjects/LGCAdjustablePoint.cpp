@@ -226,7 +226,7 @@ TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, con
 	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivatives = completeTrafo.getPartialDerivativesWrtHelmertParameters(ptInSF);
 	TDenseMatrix ptJac = completeTrafo.getPartialDerivativeWrtPosition(ptInSF);
 	
-	TDenseMatrix jac(3, fData->fUEOIndices.UIndex);
+	TSparseMatrix jac(3, fData->fUEOIndices.UIndex);
 	jac.setZero();
 	// assemble unknown Jacobian of transformation
 	// sensitivity wrt trafo parameters
@@ -236,16 +236,16 @@ TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, con
 		TDenseMatrix trafoJac = pair.second;
 		if (trafo.getNumUnkn() > 0)
 		{
-			jac.middleCols(trafo.getFirstUidx(), trafo.getNumUnkn()) = trafoJac(Eigen::indexing::all, trafo.getRelativeUnknIndices());
+			jac.middleCols(trafo.getFirstUidx(), trafo.getNumUnkn()) = (trafoJac(Eigen::indexing::all, trafo.getRelativeUnknIndices())).sparseView();
 		}
 	}
 	// sensitivity wrt transformed point
 	if (pv.getNumUnkn() > 0)
 	{
-		jac.middleCols(pv.getFirstUidx(), pv.getNumUnkn()) = ptJac(Eigen::indexing::all, pv.getRelativeUnknIndices());
+		jac.middleCols(pv.getFirstUidx(), pv.getNumUnkn()) = (ptJac(Eigen::indexing::all, pv.getRelativeUnknIndices())).sparseView();
 	}
 	// covariance can now be assembled
-	TDenseMatrix ptCovar = jac * covar * jac.transpose();
+	TDenseMatrix ptCovar = (jac * covar) * jac.transpose();
 
 	// extract variance in subframe
 	// return the modified sigma in subframe
