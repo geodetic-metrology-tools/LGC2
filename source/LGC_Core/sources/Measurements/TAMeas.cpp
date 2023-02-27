@@ -14,7 +14,11 @@ void TAMeas<TTarget>::serialize(SerializerObject::SerializationHelper &obj) cons
 	obj.addProperty("measCounter", measCounter);
 	obj.addProperty("measId", measId);
 	obj.addProperty("target", target);
-	obj.addProperty("targetPos", targetPos);
+	if (targetPos)
+	{
+		obj.addProperty("targetPos", targetPos->getName());
+	}
+	
 }
 // Explicit template instantiation
 template class TAMeas<TInstrumentData::TPOLAR::TTarget>;

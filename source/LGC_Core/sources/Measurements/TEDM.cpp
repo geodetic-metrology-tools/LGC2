@@ -30,7 +30,7 @@ void TEDM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("dsptSummary_", dsptSummary_);
 	obj.addProperty("instrument", instrument);
-	obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
 	obj.addProperty("measDSPT", measDSPT);
 	obj.addProperty("stnCounter_", stnCounter_);

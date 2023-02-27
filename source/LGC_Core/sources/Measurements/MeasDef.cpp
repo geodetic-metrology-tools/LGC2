@@ -246,7 +246,7 @@ void TRADI::serialize(SerializerObject::SerializationHelper &obj) const
 void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	TAMeas<int>::serialize(obj);
-	obj.addProperty("calaPt", calaPt);
+	obj.addProperty("calaPt", calaPt->getName());
 	obj.addProperty("eolcomment", eolcomment);
 	obj.addProperty("fbearing", fbearing.getRadiansValue());
 	obj.addProperty("fbearingResidual", fbearingResidual.getRadiansValue());
@@ -254,7 +254,7 @@ void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fIsInitialise", fIsInitialise);
 	obj.addProperty("fSigmaObsVal", fSigmaObsVal.getRadiansValue());
 	obj.addProperty("line", line);
-	obj.addProperty("orientationPt", orientationPt);
+	obj.addProperty("orientationPt", orientationPt->getName());
 }
 
 void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const

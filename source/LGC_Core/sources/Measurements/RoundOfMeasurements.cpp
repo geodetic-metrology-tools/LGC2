@@ -169,7 +169,7 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
 	obj.addProperty("instrument", instrument);
-	obj.addProperty("instrumentPos", instrumentPos);
+	obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
 	obj.addProperty("measORIE", measORIE);
 	obj.addProperty("orieSummary_", orieSummary_);
