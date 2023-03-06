@@ -9,6 +9,7 @@
 #include "testCAM.h"
 #include "TLGCCalculation.h"
 #include <Behavior.h>
+#include <cmath>
 
 namespace tut
 {
@@ -565,7 +566,7 @@ namespace tut
 
 		TDataTreeIterator frameIt =  dataset.getTree().begin();
 		frameIt++;
-		ensure_equals("Rotation about z-axis should match",frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 400.0  , 1e-7);
+		ensure_equals("Rotation about z-axis should match", std::fmod(frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 400.0), 0.0, 1e-7);
 		ensure_equals("Translation about x-axis should match",frameIt.node->data->frame.getEstTranslation(0), 100.0  , 1e-7);
 
  	}
