@@ -359,9 +359,9 @@ void TLGCObsSummary::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fResMin", fResMin);
 	obj.addProperty("fSumRes", fSumRes);
 	obj.addProperty("fSumRes2", fSumRes2);
-	obj.addProperty("fVarHiLimit", fVarHiLimit);
-	obj.addProperty("fVariance", fVariance);
-	obj.addProperty("fVarLoLimit", fVarLoLimit);
+	obj.addProperty("fStdHiLimit", fStdHiLimit);
+	obj.addProperty("fStdev", fStdev);
+	obj.addProperty("fStdLoLimit", fStdLoLimit);
 }
 #endif // USE_SERIALIZER
 

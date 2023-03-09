@@ -11,6 +11,7 @@ void TAMeas<TTarget>::serialize(SerializerObject::SerializationHelper &obj) cons
 	obj.addProperty("fFirstEquationIndex", fFirstEquationIndex);
 	obj.addProperty("fFirstObservationIndex", fFirstObservationIndex);
 	obj.addProperty("line", line);
+	obj.addProperty("obsID", obsID);
 	obj.addProperty("measCounter", measCounter);
 	obj.addProperty("measId", measId);
 	obj.addProperty("target", target);

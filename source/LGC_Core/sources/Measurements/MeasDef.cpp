@@ -268,8 +268,9 @@ void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fZResidual", fZResidual.getMetresValue());
 	obj.addProperty("fZSigmaObsVal", fZSigmaObsVal.getMetresValue());
 	obj.addProperty("line", line);
-	//obj.addProperty("positionInTree", positionInTree);
 	obj.addProperty("station", station);
+	obj.addProperty("obsValue", obsValue);
+	//obj.addProperty("positionInTree", positionInTree);
 }
 
 void TECWS::serialize(SerializerObject::SerializationHelper &obj) const
