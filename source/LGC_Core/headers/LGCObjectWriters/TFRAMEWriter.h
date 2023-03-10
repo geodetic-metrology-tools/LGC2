@@ -1,6 +1,5 @@
-
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -80,12 +79,7 @@ private:
 		void writeResultsPtsData(AdjPointIter pt, bool isLocal);
 		///Writes points of the same type
 		void writePointType(const std::list<AdjPointIter>& lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type, bool localNode);
-		
-		///write measurements summary
-		void writeMeasurementsSummary(TDataTreeIterator frameIt);
-		///write measurements summary
-		void writeHistogramme(TDataTreeIterator frameIt);
-		
+				
 		///write measurements summary in the rootOnly
 		void writeMeasurementsSummaryRootOnly();
 		///write Histogramme summary in the rootOnly

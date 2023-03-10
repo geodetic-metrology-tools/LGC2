@@ -219,26 +219,6 @@ void TINCLWriter::writeINCLSynthesisHeader()
 }
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TINCLWriter::writeINCLYResultsSynthesis(const TINCLYROM &inclyrom)
-{
-	TAStreamFormatter *stream = getStream();
-	int nameWidth = getNameWidth();
-	int obsResWidth = getObsResWidth();
-	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
-	std::string TABs = stream->getCurrSpaceExtended(1);
-
-	const auto &inclySummary = inclyrom.getINCLYObsSummary();
-
-	(*stream) << TABs;
-
-	// Name of the station linked to the frame
-	(*stream).writeStringLeft(nameWidth, inclyrom.positionInTree.node->data->frame.getName()); // Reference point
-	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getResMax()); // residu max
-	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getResMin()); // residu min
-	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getMean()); // residu moy
-	(*stream).writeDouble(obsResWidth, angleResPrecision, inclySummary.getStdev()); // ecart type
-	(*stream) << endl;
-}
 
 void TINCLWriter::writeINCLYResultsSynthesis(std::list<const TLGCObsSummary *> &inclysum)
 {

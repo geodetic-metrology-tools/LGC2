@@ -215,29 +215,6 @@ void THLSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*>& mea
 	}
 }
 
-
-void THLSRWriter::writeECWSRResultsSynthesis(const  TECWSROM& ecwsrom)
-{
-	TAStreamFormatter* stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(1);
-
-	const auto& ecwsSummary = ecwsrom.getECWSObsSummary();
-
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, ecwsSummary.getObsText()); //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getResMax());//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getResMin());//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsSummary.getStdev()); // ecart type
-	(*stream) << endl;
-
-
-}
-
-
 //------------------ Reliability header----------------------------------------------------------------------
 void	THLSRWriter::writeECWSReliabilityHeader()
 {

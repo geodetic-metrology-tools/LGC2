@@ -1,6 +1,5 @@
-
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -39,8 +38,6 @@ public:
 
 	/// Write the result synthesis header
 	void writeEDMSynthesisHeader();
-	/// Write the result synthesis for DSPT 
-	void writeDSPTResultsSynthesis(const  TEDM& fEdm);
 
 	//Write Default results data
 	void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
