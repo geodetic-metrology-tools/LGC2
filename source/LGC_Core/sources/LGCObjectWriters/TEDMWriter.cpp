@@ -59,26 +59,6 @@ void TEDMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meas
 	}
 }
 
-void TEDMWriter::writeDSPTResultsSynthesis(const  TEDM& fEdm)
-{
-	TAStreamFormatter* stream = getStream();
-	int					nameWidth = getNameWidth();
-	int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
-	std::string         TABs = stream->getCurrSpaceExtended(1);
-
-	const auto& dsptSummary = fEdm.getDSPTObsSummary();
-
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, fEdm.instrumentPos->getName());  //Reference point
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getResMax());//residu max
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getResMin());//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dsptSummary.getStdev()); // ecart type
-	(*stream) << endl;
-
-}
-
 //------------------ Result header---------------------------------------------------------------------------
 
 void TEDMWriter::writeEDMHeader(const TEDM& fEdm)

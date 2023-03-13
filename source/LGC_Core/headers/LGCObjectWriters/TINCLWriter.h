@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -44,11 +44,8 @@ public:
 	/// Write the simulated result data for INCLY 
 	void writeINCLYSIMUResults(const  TINCLYROM& inclyrom);
 
-	/// Write reliability data for ECHO 
-	void	writeINCLYReliabilityData(const  TINCLYROM& inclyrom, const TLGCStatistic& stat, const std::list<TINCLY> &measINCLY);
-
-	/// Write the result synthesis for INCLY
-	void writeINCLYResultsSynthesis(const  TINCLYROM& inclyrom);
+	/// Write reliability data for INCLY
+	void writeINCLYReliabilityData(const TINCLYROM &inclyrom, const TLGCStatistic &stat, const std::list<TINCLY> &measINCLY);
 
 	/// Write the result data for INCLY in all frames 
 	void writeINCLYResultsSynthesis(std::list<const TLGCObsSummary*> &inclysum);

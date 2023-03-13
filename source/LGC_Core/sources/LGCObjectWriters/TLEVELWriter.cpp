@@ -362,27 +362,6 @@ void TLEVELWriter::writeLEVELSynthesisHeader()
 
 
 //------------------ Synthesis data--------------------------------------------------------------------------
-void TLEVELWriter::writeLEVELResultsSynthesis(const TLEVEL& fLevel)
-{
-	TAStreamFormatter*	stream = getStream();
-	int					nameWidth = getNameWidth();
-    // int				obsWidth = getObsWidth();
-    int					obsResWidth = getObsResWidth();
-	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
-    // int				lengthPrecision = getLengthPrecision();
-    std::string         TABs = stream->getCurrSpaceExtended(1);
-
-    const auto &dlevSummary = fLevel.getDLEVObsSummary();
-
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName()); //Reference point
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getResMax());//residu max
-    (*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getResMin());//residu min
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getMean());//residu moy
-	(*stream).writeDouble(obsResWidth, lengthResPrecision, dlevSummary.getStdev()); // ecart type
-	(*stream) << endl;
-
-}
 
 void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary*> &dlevsum)
 {

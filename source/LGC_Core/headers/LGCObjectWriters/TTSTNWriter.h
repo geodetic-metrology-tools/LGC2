@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -81,18 +81,6 @@ public:
 
 		/// Write Default synthesis
 		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);
-		/// Write ANGL synthesis
-        void writeANGLResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
-		/// Write ZEND synthesis
-        void writeZENDResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
-		/// Write DISt and DHOR synthesis
-        void writeDISTResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom, bool isdhor = false);
-		/// Write PLR3D synthesis
-        void writePLRResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
-		/// Write ECTH synthesis
-        void writeECTHResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
-		/// Write ECDIR synthesis
-        void writeECDIRResultsSynthesis(const LGCAdjustablePoint* instrPos, std::shared_ptr<TTSTN::TROM> rom);
 	//@}
 
 	/// Set if ALLFIXED option is used

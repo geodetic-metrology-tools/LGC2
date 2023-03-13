@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -84,15 +84,6 @@ public:
         void writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat);
 		/// Write OBSXYZ reliability data
 		void writeOBSXYZReliabilityData(const std::list<TOBSXYZ>& fOBSXYZ, const TLGCStatistic& stat);
-
-		/// Write DVER synthesis data
-        void writeDVERResultsSynthesis(const TMeasurements &tmeas);
-		/// Write ORIE synthesis data
-        void writeORIEResultsSynthesis(const TORIEROM& orieRom, const LGCAdjustablePoint& instPos);
-		/// Write RADI synthesis data
-        void writeRADIResultsSynthesis(const TMeasurements &tmeas);
-		/// Write OBSXYZ synthesis data
-        void writeOBSXYZResultsSynthesis(const TMeasurements &tmeas);
 	//@}
 
 };
