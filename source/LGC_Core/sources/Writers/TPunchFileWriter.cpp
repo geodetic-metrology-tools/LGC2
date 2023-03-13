@@ -1147,7 +1147,7 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 		if (comments.size() < 2)
 			stream->writeString(coordWidth, "-1");
 		else
-		stream->writeString(coordWidth, comments.at(0));
+			stream->writeDouble(coordWidth, 3, std::stod(comments.at(0)));
 	}
 	else
 		stream->writeString(coordWidth, "-1");
