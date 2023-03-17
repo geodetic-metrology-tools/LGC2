@@ -272,7 +272,7 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
         insensitiveDirections.block(pointCounter*3,0,3,dimNullspace)=ptJacobian;
 		pointCounter++;
 	}
-	std::cout << insensitiveDirections << std::endl;
+//	std::cout << insensitiveDirections << std::endl;
 	return insensitiveDirections;
 }
 
@@ -512,11 +512,21 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 //        kernWrtIndices.conservativeResize(firstDense.cols(), 0);
         nullspace.conservativeResize(firstDense.cols(), 0);
     }
-    //TDenseMatrix backProjectedKernel = TDenseMatrix::Zero(firstDense.rows(), kernWrtIndices.cols());
 
-    //backProjectedKernel(testIndices, Eigen::indexing::all) = kernWrtIndices;
+	vector<int> confirmedNullspaceVectors;
+	// check if the proposed vectors are really in the nullspace
+	for (int j = 0; j < nullspace.cols(); j++)
+	{
+		double testZero = (firstDgnMatrix * nullspace.col(j)).norm();
+		if (testZero < 1e-7)
+		{
+			confirmedNullspaceVectors.push_back(j);
+		}
+	}
+	TDenseMatrix confirmedNullspace(nullspace.cols(), confirmedNullspaceVectors.size());
+	confirmedNullspace = nullspace(Eigen::indexing::all, confirmedNullspaceVectors);
 
-    return nullspace;
+    return confirmedNullspace;
 }
 vector<int> TLSConsCheck::indicesFromSet(set<int> objectSet)
 {
