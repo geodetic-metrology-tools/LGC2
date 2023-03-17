@@ -40,12 +40,18 @@ private:
     TDenseMatrix nullspace;
     // objects contributing to Nullspace
     set<int> nullspaceObjects;
+    // Master Jacobian
+	TDenseMatrix masterJacobian;
+	TDenseMatrix insensitiveRootDirections;
 
     // convert set of object-indices to variable indices
     vector<int> indicesFromSet(set<int> objectSet);
     // get set of object indices from variable indices
     set<int> objectsFromIndices(vector<int> x);
     void initialize(const TLGCData& data);
+    // compute sensitivities of a helmert transformation acting on all points (MasterJacbobian, in root coordinates)
+    // and transform Nullspace to directions in root coordinates (InsensitiveRootDirections)
+	void computeMasterJacobianAndInsensitiveRootDirections(const TLGCData& data);
     void addObject(TVAdjustableObject& object, string objectType);
     // compute Nullspace representation for a given set of objects
     TDenseMatrix computeNullspace();

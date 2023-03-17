@@ -18,17 +18,16 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 	
     firstDgnMatrix = A;
     initialize(data);
+    computeMasterJacobianAndInsensitiveRootDirections(data);
 
     // test if some Nullspace direction can be explained by a Helmert transformation
 	if (nullspace.cols() > 0)
 	{
-		TDenseMatrix masterJacobian = getMasterJacobian(data);
-		TDenseMatrix insensitiveDirections = getInsensitiveDirectionsInRoot(data);
         // test if nullspace directions can be explained with master movements
-		for (int i = 0; i < insensitiveDirections.cols(); i++)
+		for (int i = 0; i < insensitiveRootDirections.cols(); i++)
 		{
 			// test if i-th column of nullspace directions is in span of master directions
-			Eigen::VectorXd b = insensitiveDirections.col(i);
+			Eigen::VectorXd b = insensitiveRootDirections.col(i);
 			if (b.norm() < 1e-10)
 			{
 				logWarning() << "The " << i << "-th column of the Nullspace corresponds to stationary root coordinates. This can happen if the coordinates viewd from root are computable but the subframe coordinates cannot be computed because they are free and the subframe is also free."
@@ -375,7 +374,12 @@ void TLSConsCheck::initialize(const TLGCData& data)
         }
     }
 }
-void TLSConsCheck::addObject(TVAdjustableObject& object, string objectType)
+void TLSConsCheck::computeMasterJacobianAndInsensitiveRootDirections(const TLGCData &data)
+{
+	masterJacobian = getMasterJacobian(data);
+	insensitiveRootDirections = getInsensitiveDirectionsInRoot(data);
+}
+void TLSConsCheck::addObject(TVAdjustableObject &object, string objectType)
 {
     // add name, type and indices
     objectNames.push_back(object.getName());
