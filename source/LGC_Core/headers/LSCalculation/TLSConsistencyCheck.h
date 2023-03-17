@@ -26,7 +26,6 @@ private:
     double pivotThreshold = 1e-6;
     // the first design matrix here is the first design matrix of the measurements and the first design matrix of the constraints (if present)
     Eigen::SparseMatrix<double,Eigen::RowMajor> firstDgnMatrix;
-	TSparseMatrix firstDgnMatrixSparse;
     // vector of object names
     vector<string> objectNames;
     // vector of object types (line, angle, trafo etc.)
@@ -36,7 +35,7 @@ private:
     // vector of sets of object neighbors (connected via measurement or constraint)
     vector<set<int>> neighbors;
     // vector of sets of neighbors restricted to objects that contribute to Nullspace of first design matrix
-    vector<set<int>> kernelNeighbors;
+    vector<set<int>> nullspaceNeighbors;
     // matrix representation of Kernel of first design matrix & constraints
     TDenseMatrix nullspace;
     // objects contributing to Nullspace
@@ -49,13 +48,13 @@ private:
     void initialize(const TLGCData& data);
     void addObject(TVAdjustableObject& object, string objectType);
     // compute Nullspace representation for a given set of objects
-    TDenseMatrix computeKernelWrtObjectSet(set<int> objectSet);
+    TDenseMatrix computeNullspace();
     // get set of objects that contribute to matrix
     set<int> contributingObjects(TDenseMatrix);
     // compute all connected object groups that contribute to the Nullspace
-    set<set<int>> identifyConnectedKernelGroups();
+    set<set<int>> identifyConnectedNullspaceGroups();
     // get set of object indices of the Nullspace connected to certain object in the Nullspace
-    set<int> getConnectedKernelGroup(int);
+    set<int> getConnectedNullspaceGroup(int);
     // get set of object indices from the complement of a group that are connected to this group
     pair<set<int>, int> externalConnections(set<int> group);
     // write a warning message
@@ -66,6 +65,8 @@ private:
 	TDenseMatrix getInsensitiveDirectionsInRoot(const TLGCData &data);
     // checking the coefficients nneded to linear combine a insensitive direction from master frame movements
 	void whichConstraintsDoWeNeed(TVector combi);
+    // return column indices from sparsity pattern of a row of a sparse  matrix
+    vector<int> getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber);
 };
 
 #endif

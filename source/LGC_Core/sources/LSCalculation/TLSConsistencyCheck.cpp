@@ -19,28 +19,19 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
     firstDgnMatrix = A;
     initialize(data);
 
-	//std::cout << "First Design Matrix=" << std::endl << firstDgnMatrix.toDense() << std::endl;
     // test if some Nullspace direction can be explained by a Helmert transformation
 	if (nullspace.cols() > 0)
 	{
 		TDenseMatrix masterJacobian = getMasterJacobian(data);
-		// std::cout << "Master Jacobian=" << std ::endl << masterJacobian << std::endl;
-		// std::cout << "rank=" << masterJacobian.fullPivHouseholderQr().rank() << std::endl;
 		TDenseMatrix insensitiveDirections = getInsensitiveDirectionsInRoot(data);
-		// std::cout << "Nullspace Movements Jacobian=" << std ::endl << insensitiveDirections << std::endl;
-		// std::cout << "rank=" << insensitiveDirections.fullPivHouseholderQr().rank() << std::endl;
-		TDenseMatrix combined(masterJacobian.rows(), masterJacobian.cols() + insensitiveDirections.cols());
-		combined.leftCols(masterJacobian.cols()) = masterJacobian;
-		combined.rightCols(insensitiveDirections.cols()) = insensitiveDirections;
-		// std::cout << "combined rank=" << combined.fullPivHouseholderQr().rank() << std::endl;
         // test if nullspace directions can be explained with master movements
 		for (int i = 0; i < insensitiveDirections.cols(); i++)
 		{
-			// test if i-th column of nullspace dirs is in span of master dirs
+			// test if i-th column of nullspace directions is in span of master directions
 			Eigen::VectorXd b = insensitiveDirections.col(i);
 			if (b.norm() < 1e-10)
 			{
-				logWarning() << "The " << i << "-th column of the Nullspace corresponds to stationary root coordinates. This can happen if the root coordinates are computable but the subframe coordinates cannot be computed because they are free and the subframe is also free."
+				logWarning() << "The " << i << "-th column of the Nullspace corresponds to stationary root coordinates. This can happen if the coordinates viewd from root are computable but the subframe coordinates cannot be computed because they are free and the subframe is also free."
 							 << std::endl;
 			}
 			else
@@ -61,7 +52,7 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 	}
 
     // identify connected groups of kernel
-    set<set<int>> connectedGroups = identifyConnectedKernelGroups();
+    set<set<int>> connectedGroups = identifyConnectedNullspaceGroups();
     int dimKern;
     if (nullspace.isZero()) {
         dimKern = 0;
@@ -91,7 +82,7 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 		TDenseMatrix kernGroup_aux = nullspace(groupIndices, Eigen::indexing::all);
 		TDenseMatrix kernGroup(nullspace.rows(), nullspace.cols());
 		kernGroup.setZero();
-        // zero columns have to be deleted otherwise every group will be shown as it has the same dof as the whole configuration
+        // zero columns have to be deleted otherwise every group will be shown as it has the same degrees of freedom as the whole configuration
 		kernGroup(groupIndices, Eigen::indexing::all) = kernGroup_aux;
 		vector<TDenseMatrix> kernGroupBaseVectors;
 		for (int i = 0; i < kernGroup.cols();i++)
@@ -234,6 +225,18 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
 	return insensitiveDirections;
 }
 
+vector<int> TLSConsCheck::getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber)
+{
+	vector<int> colIndices;
+	// use the sparsity pattern
+	for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(M, rowNumber); it; ++it)
+	{
+		colIndices.emplace_back(it.col());
+	}
+
+	return colIndices;
+}
+
 
 void TLSConsCheck::whichConstraintsDoWeNeed(Eigen::VectorXd combi)
 {
@@ -281,17 +284,17 @@ void TLSConsCheck::whichConstraintsDoWeNeed(Eigen::VectorXd combi)
 bool TLSConsCheck::getResultStatus() {
     return resultStatus;
 }
-set<set<int>> TLSConsCheck::identifyConnectedKernelGroups() {
+set<set<int>> TLSConsCheck::identifyConnectedNullspaceGroups() {
     set<set<int>> connectedGroups;
     for (auto obj : nullspaceObjects) {
         // only search for nontrivial objects
-        set<int> group = getConnectedKernelGroup(obj);
+        set<int> group = getConnectedNullspaceGroup(obj);
         connectedGroups.insert(group);
     }
     return connectedGroups;
 }
 
-set<int> TLSConsCheck::getConnectedKernelGroup(int i) {
+set<int> TLSConsCheck::getConnectedNullspaceGroup(int i) {
     // get the connected group of object i
     set<int> group({ i });
     set<int> newGroup;
@@ -300,7 +303,7 @@ set<int> TLSConsCheck::getConnectedKernelGroup(int i) {
         newGroup = group;
         for (auto object : added) {
             // add the neighbors of objs that were added in the previous round that are in the kernel
-            for (auto toBeInserted : kernelNeighbors[object]) {
+            for (auto toBeInserted : nullspaceNeighbors[object]) {
                 newGroup.insert(toBeInserted);
             }
         }
@@ -346,29 +349,28 @@ void TLSConsCheck::initialize(const TLGCData& data)
     for (auto object : objectNames) {
         set<int> empty;
         neighbors.push_back(empty);
-        kernelNeighbors.push_back(empty);
+        nullspaceNeighbors.push_back(empty);
     }
     for (int i = 0; i < firstDgnMatrix.rows(); i++) {
-        set<int> contributingToRow = contributingObjects(firstDgnMatrix.row(i).transpose());
+		vector<int> colIndices = getIndicesOfRow(firstDgnMatrix, i);
+		set<int> contributingToRow = objectsFromIndices(colIndices);
+        //set<int> contributingToRow = contributingObjects(firstDgnMatrix.row(i).transpose());
         for (auto object : contributingToRow) {
             for (auto objectToInsert : contributingToRow) {
                 neighbors[object].insert(objectToInsert);
             }
         }
     }
-    // compute Kernel
-    set<int> allObjects;
-    for (int i = 0; i < objectNames.size(); i++) { allObjects.insert(i); }
-    nullspace = computeKernelWrtObjectSet(allObjects);
+    nullspace = computeNullspace();
 
-    // compute kernelNeighbors (only allow connections to objects contributing
+    // compute nullspaceNeighbors (only allow connections to objects contributing
     // to kernel)
     nullspaceObjects = contributingObjects(nullspace);
     for (int i = 0; i < objectNames.size(); i++) {
-        // kernelNeighbors are neighbors and contribute to kernel
+        // nullspaceNeighbors are neighbors and contribute to kernel
         for (auto object : neighbors[i]) {
             if (nullspaceObjects.count(object) > 0) {
-                kernelNeighbors[i].insert(object);
+                nullspaceNeighbors[i].insert(object);
             }
         }
     }
@@ -386,28 +388,27 @@ void TLSConsCheck::addObject(TVAdjustableObject& object, string objectType)
     objectIndices.push_back(aux);
 }
 
-TDenseMatrix TLSConsCheck::computeKernelWrtObjectSet(set<int> test_set)
+TDenseMatrix TLSConsCheck::computeNullspace()
 {
 
     // get only the columns of the first design matrix that correspond to the test_set of objects
-    vector<int> testIndices = indicesFromSet(test_set);
     TDenseMatrix firstDense = firstDgnMatrix;
-    TDenseMatrix firstWithTestIndices = firstDense(Eigen::indexing::all, testIndices);
+    //TDenseMatrix firstWithTestIndices = firstDense(Eigen::indexing::all, testIndices);
     // compute kernel representation of this matrix
     // with pullpivlu
-    Eigen::FullPivLU<TDenseMatrix> lu(firstWithTestIndices);
+    Eigen::FullPivLU<TDenseMatrix> lu(firstDense);
     lu.setThreshold(pivotThreshold);
-    TDenseMatrix kernWrtIndices = lu.kernel();
-    if (kernWrtIndices.isZero()) {
+    TDenseMatrix nullspace= lu.kernel();
+    if (nullspace.isZero()) {
         // if only the zero matrix is returned by eigen, the nullspace has dimension 0
 //        kernWrtIndices.conservativeResize(firstDense.cols(), 0);
-        kernWrtIndices.conservativeResize(firstWithTestIndices.cols(), 0);
+        nullspace.conservativeResize(firstDense.cols(), 0);
     }
-    TDenseMatrix backProjectedKernel = TDenseMatrix::Zero(firstDense.rows(), kernWrtIndices.cols());
+    //TDenseMatrix backProjectedKernel = TDenseMatrix::Zero(firstDense.rows(), kernWrtIndices.cols());
 
-    backProjectedKernel(testIndices, Eigen::indexing::all) = kernWrtIndices;
+    //backProjectedKernel(testIndices, Eigen::indexing::all) = kernWrtIndices;
 
-    return backProjectedKernel;
+    return nullspace;
 }
 vector<int> TLSConsCheck::indicesFromSet(set<int> objectSet)
 {
@@ -464,11 +465,8 @@ pair<set<int>, int> TLSConsCheck::externalConnections(set<int> group) {
 
     for (int row = 0; row < firstDgnMatrix.rows(); row++) {
         vector<int> colIndices;
-		for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(firstDgnMatrix, row); it; ++it)
-		{
-			colIndices.emplace_back(it.col());
-		}
-
+        // use sparsity pattern to compute connections
+		colIndices = getIndicesOfRow(firstDgnMatrix, row);
 		set<int> contributing = objectsFromIndices(colIndices);
 		TDenseMatrix indicesMarker(firstDgnMatrix.rows(), 1);
 		indicesMarker.setZero();
