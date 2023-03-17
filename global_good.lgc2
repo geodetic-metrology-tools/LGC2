@@ -1,0 +1,25 @@
+*TITR
+Testing a example where the coordinates in root can be estimated (partially) but not at the same time with the free TZ transaltion
+*OLOC
+*PREC 7
+*CONSI
+*INSTR
+
+*EDM EDM1 ET1 0.0 0.0 0.0		
+ET1  0.1  0.0 0 0.0 0.0 0.0 0 0.0	
+
+*CALA
+P0 0 0 0 
+*FRAME test 0 0 0 0 0 0 1 TX TY TZ
+*POIN
+P1 0 0 1
+*ENDFRAME
+*DSPT P0 EDM1
+P1 1
+P1 1
+P1 1
+*DSPT P1 EDM1
+P0 1
+P0 1
+P0 1
+*END

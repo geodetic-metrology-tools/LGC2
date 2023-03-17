@@ -17,38 +17,42 @@ TLSConsCheck::TLSConsCheck(TLGCData& data, const TLSInputMatrices& inputMtr)
 	A.bottomRows(data.fUEOIndices.CIndex) = *inputMtr.getCnstrFirstDgnMtrx();
 	
     firstDgnMatrix = A;
+
     initialize(data);
     computeMasterJacobianAndInsensitiveRootDirections(data);
 
-    // test if some Nullspace direction can be explained by a Helmert transformation
-	if (nullspace.cols() > 0)
-	{
-        // test if nullspace directions can be explained with master movements
-		for (int i = 0; i < insensitiveRootDirections.cols(); i++)
-		{
-			// test if i-th column of nullspace directions is in span of master directions
-			Eigen::VectorXd b = insensitiveRootDirections.col(i);
-			if (b.norm() < 1e-10)
-			{
-				logWarning() << "The " << i << "-th column of the Nullspace corresponds to stationary root coordinates. This can happen if the coordinates viewd from root are computable but the subframe coordinates cannot be computed because they are free and the subframe is also free."
-							 << std::endl;
-			}
-			else
-			{
-                // now we test if the movement can be explained by a helmert transformation of all points
-				Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
-				logWarning() << "Helmert trafo-test (zero values indicate that a movement can be explained by a helmert transformation )=" << (masterJacobian * test - b).norm()
-							 << std::endl;
-				logWarning() << test.transpose() << std::endl;
-				if ((masterJacobian * test - b).norm() < 1e-8)
-				{
-					logWarning() << i << "-th column of Nullspace Movements can be explained as" << std::endl;
-					// print the helmert trafos that explain the movement
-					whichConstraintsDoWeNeed(test);
-				}
-			}
-		}
-	}
+	//
+	// Test if there is a Trafo that acts on ALL points and explains the directions
+	//
+	// // test if some Nullspace direction can be explained by a Helmert transformation
+	// if (nullspace.cols() > 0)
+	// {
+	// 	// test if nullspace directions can be explained with master movements
+	// 	for (int i = 0; i < insensitiveRootDirections.cols(); i++)
+	// 	{
+	// 		// test if i-th column of nullspace directions is in span of master directions
+	// 		Eigen::VectorXd b = insensitiveRootDirections.col(i);
+	// 		if (b.norm() < 1e-10)
+	// 		{
+	// 			logWarning() << "The " << i << "-th column of the Nullspace corresponds to stationary root coordinates. This can happen if the coordinates viewd from root are computable but the subframe coordinates cannot be computed because they are free and the subframe is also free."
+	// 						 << std::endl;
+	// 		}
+	// 		else
+	// 		{
+	// 			// now we test if the movement can be explained by a helmert transformation of all points
+	// 			Eigen::VectorXd test = masterJacobian.fullPivHouseholderQr().solve(b);
+	// 			logWarning() << "Helmert trafo-test (zero values indicate that a movement can be explained by a helmert transformation )=" << (masterJacobian * test - b).norm()
+	// 						 << std::endl;
+	// 			logWarning() << test.transpose() << std::endl;
+	// 			if ((masterJacobian * test - b).norm() < 1e-8)
+	// 			{
+	// 				logWarning() << i << "-th column of Nullspace Movements can be explained as" << std::endl;
+	// 				// print the helmert trafos that explain the movement
+	// 				whichConstraintsDoWeNeed(test);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
     // identify connected groups of kernel
     set<set<int>> connectedGroups = identifyConnectedNullspaceGroups();
@@ -107,11 +111,15 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDens
     groupHeader << string(100, '=');
     logWarning() << groupHeader.str();
     int dimKernGroup = kernGroupBaseVectors.size();
-    logWarning() << "Group " << groupNumber << " with" << group.size() << "objects and" << dimKernGroup << "Degrees of Freedom:";
+	set<int> pointsInGroup = getPoints(group);
+	logWarning() << "Group " << groupNumber << " with" << group.size() << "object(s) (including" << pointsInGroup.size() << "point(s)) and " << dimKernGroup
+				 << " Degree(s) of Freedom : ";
     stringstream directionHeader;
-    directionHeader << setw(14) << " Type" << setw(31) << "Object Name" << " | ";
+	directionHeader << setw(22) << " Type "
+					<< "|" << setw(29) << "Object Name"
+					<< " | ";
     for (int k = 0; k < dimKernGroup; k++) {
-        directionHeader << setw(10) << "Direction " << "d_" << k << " | ";
+        directionHeader << setw(17) << "Direction " << "d_" << k << " | ";
     }
     int lineWidth = directionHeader.tellp();
     logWarning() << directionHeader.str();
@@ -123,11 +131,11 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDens
         msg << scientific;
         // loop over dimensions of object
         for (int k = 0; k < objectIndices[obj].size(); k++) {
-            msg << setw(1) << objectIndices[obj].size() << "-dim." << setw(8) << objectTypes[obj] << " " << setw(30) << objectNames[obj] << " | ";
+            msg << setw(1) << objectIndices[obj].size() << "-dim." << setw(15) << objectTypes[obj] << " | " << setw(28) << objectNames[obj] << " | ";
             // loop over degrees of freedom of group
             for (int j = 0; j < dimKernGroup; j++) {
                 double d = kernGroupBaseVectors.at(j)(objectIndices[obj][k]);
-                msg << setw(13) << d * (fabs(d) > plottingThreshold) << " | ";
+                msg << setw(20) << d * (fabs(d) > plottingThreshold) << " | ";
             }
             logWarning() << msg.str();
             msg.str("");
@@ -135,6 +143,47 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDens
         msg << string(lineWidth, '-');
         logWarning() << msg.str();
     }
+    // check if the movement of the points in this group can be explained by a helmert transformation, only makes sense if group has at least 2 points
+	if (pointsInGroup.size() > 1)
+    {
+		logWarning() << "These directions correspond to a linear combination of Helmert transformations acting on these points (in Root coordinates)";
+		int nPoints = pointsInGroup.size();
+		TDenseMatrix helmertMovementsInRoot(3 * nPoints, 7);
+        // total indices of the points (each point has 3 dimensions, no matter if cala, POIN, VX etc. sensitivities in computation of masterJac take that into acccount.)
+		vector<int> totalPointIndices;
+		for (int j = 0; j < nPoints; j++)
+		{
+			totalPointIndices.push_back(j * 3);
+			totalPointIndices.push_back(j * 3 + 1);
+			totalPointIndices.push_back(j * 3 + 2);
+		}
+		helmertMovementsInRoot = masterJacobian(totalPointIndices, Eigen::indexing::all);
+		stringstream msg;
+		msg.precision(6);
+		msg << scientific;
+		msg << setw(54) << "involved Transformations |";
+		// check each column of the group-nullspace
+		for (int j=0; j<insensitiveRootDirections.cols(); j++)
+		{
+			TVector pointNullspaceVector = insensitiveRootDirections(totalPointIndices, j);
+            // can it be expressed by the span of the helmertMovements?
+			Eigen::VectorXd linComb = helmertMovementsInRoot.fullPivHouseholderQr().solve(pointNullspaceVector);
+			bool isInSpan = ((helmertMovementsInRoot * linComb- pointNullspaceVector).norm()<1e-7);
+			if (isInSpan)
+			{
+				string helmertString;
+				for (auto comp: involvedHelmertComponents(linComb))
+				{
+					helmertString.append(comp);
+					helmertString.append(" ");
+				}
+				msg << setw(22) << helmertString << "|";
+				//logWarning() << "Involved Helmert transformations: "<<msg.str();
+			}
+		}
+		logWarning() << msg.str();
+	}
+
     //get external connections
     pair<set<int>, int> extCon = externalConnections(group);
     set<int> external = extCon.first;
@@ -146,7 +195,7 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDens
         }
     }
     else {
-        logWarning() << "This group is isolated from the rest of the objects.";
+        logWarning() << "This group is isolated from the rest of the (adjustable) objects.";
     }
 
 }
@@ -160,6 +209,7 @@ TDenseMatrix TLSConsCheck::getMasterJacobian(const TLGCData &data)
 	// total number of points, independant of degrees of freedom of point
 	int numberOfPoints = data.getPoints().numObjects();
 	TDenseMatrix masterJacobian(3 * numberOfPoints, 7);
+	masterJacobian.setZero();
 	TDataTree tree = data.getTree();
 	// iterate over all adjustable points
 	int pointCounter = 0;
@@ -185,6 +235,7 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
 	int numberOfPoints = data.getPoints().numObjects();
 	int dimNullspace = nullspace.cols();
 	TDenseMatrix insensitiveDirections(3 * numberOfPoints, dimNullspace);
+	insensitiveDirections.setZero();
 	TDataTree tree = data.getTree();
 	int pointCounter = 0;
 	for (const auto &point : data.getPoints())
@@ -221,6 +272,7 @@ TDenseMatrix TLSConsCheck::getInsensitiveDirectionsInRoot(const TLGCData &data)
         insensitiveDirections.block(pointCounter*3,0,3,dimNullspace)=ptJacobian;
 		pointCounter++;
 	}
+	std::cout << insensitiveDirections << std::endl;
 	return insensitiveDirections;
 }
 
@@ -234,6 +286,45 @@ vector<int> TLSConsCheck::getIndicesOfRow(const Eigen::SparseMatrix<double, Eige
 	}
 
 	return colIndices;
+}
+
+vector<string> TLSConsCheck::involvedHelmertComponents(TVector linComb)
+{
+	vector<string> components;
+	if (linComb.rows() != 7)
+	{
+		std::logic_error("Linear combination of Helmert derivatives has to have 7 components.)");
+	}
+	double threshold = 1e-7;
+	if (fabs(linComb(0)) > threshold)
+	{
+		components.push_back("TX");
+	}
+	if (fabs(linComb(1)) > threshold)
+	{
+		components.push_back("TY");
+	}
+	if (fabs(linComb(2)) > threshold)
+	{
+		components.push_back("TZ");
+	}
+	if (fabs(linComb(3)) > threshold)
+	{
+		components.push_back("RX");
+	}
+	if (fabs(linComb(4)) > threshold)
+	{
+		components.push_back("RY");
+	}
+	if (fabs(linComb(5)) > threshold)
+	{
+		components.push_back("RZ");
+	}
+	if (fabs(linComb(6)) > threshold)
+	{
+		components.push_back("SCL");
+	}
+	return components;
 }
 
 
@@ -390,6 +481,19 @@ void TLSConsCheck::addObject(TVAdjustableObject &object, string objectType)
         aux.push_back(object.getFirstUidx() + i);
     }
     objectIndices.push_back(aux);
+}
+
+set<int> TLSConsCheck::getPoints(set<int> group)
+{
+	set<int> points;
+	for (int j : group)
+	{
+		if (objectTypes[j] == "Point")
+		{
+			points.insert(j);
+		}
+	}
+	return points;
 }
 
 TDenseMatrix TLSConsCheck::computeNullspace()

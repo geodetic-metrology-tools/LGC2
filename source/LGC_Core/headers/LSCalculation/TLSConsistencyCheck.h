@@ -53,6 +53,8 @@ private:
     // and transform Nullspace to directions in root coordinates (InsensitiveRootDirections)
 	void computeMasterJacobianAndInsensitiveRootDirections(const TLGCData& data);
     void addObject(TVAdjustableObject& object, string objectType);
+    // get  points in group
+	set<int> getPoints(set<int> group);
     // compute Nullspace representation for a given set of objects
     TDenseMatrix computeNullspace();
     // get set of objects that contribute to matrix
@@ -73,6 +75,7 @@ private:
 	void whichConstraintsDoWeNeed(TVector combi);
     // return column indices from sparsity pattern of a row of a sparse  matrix
     vector<int> getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber);
+	vector<string> involvedHelmertComponents(TVector linComb);
 };
 
 #endif
