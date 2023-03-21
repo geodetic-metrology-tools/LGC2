@@ -39,12 +39,12 @@ private:
 	//TLGCData fData;
 	TLSInputMatricesFiller fMatFiller;
 	void setParameters(Eigen::VectorXd para);
-	// void setPointParams(Eigen::VectorXd para);
-	// void setAngleParams(Eigen::VectorXd para);
-	// void setPlaneParams(Eigen::VectorXd para);
-	// void setLengthParams(Eigen::VectorXd para);
-	// void setTransformationParams(Eigen::VectorXd para);
-	// void setLineParams(Eigen::VectorXd para);
+	void setPointParams(Eigen::VectorXd para);
+	void setAngleParams(Eigen::VectorXd para);
+	void setPlaneParams(Eigen::VectorXd para);
+	void setLengthParams(Eigen::VectorXd para);
+	void setTransformationParams(Eigen::VectorXd para);
+	void setLineParams(Eigen::VectorXd para);
 
 
 
