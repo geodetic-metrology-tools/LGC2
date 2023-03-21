@@ -27,6 +27,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	std::unique_ptr<TVAbstractAlgorithm> algorithm;
 	Behavior successCalculation;
 
+
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fData.get());
 	// Checks whether the data are consistent, assign unknown indices and initialize uninitialized objects (points, lines, planes), reference poiints for certain observations, etc.
@@ -43,11 +44,15 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			it->transformProvisionalCoordinates(fData.get());
 		}
 
-		TLSEvaluator eval(*fData.get());
-		Eigen::VectorXd test(fData->fUEOIndices.UIndex);
-		test.setZero();
-		Eigen::VectorXd result(fData->fUEOIndices.EIndex);
-		//result = eval.evaluate(test);
+		{
+			std::shared_ptr<TLGCData> aux = fData->clone();
+			TLSEvaluator eval(aux);
+			Eigen::VectorXd test(fData->fUEOIndices.UIndex);
+			test.setZero();
+			Eigen::VectorXd result(fData->fUEOIndices.EIndex);
+			result = eval.evaluate(test);
+			std::cout << result << std::endl;
+		}
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
