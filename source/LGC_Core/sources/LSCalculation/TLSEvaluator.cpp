@@ -4,10 +4,19 @@
 #include "TLSUniversalMtdComputer.h"
 #include <Logger.hpp>
 
-TLSEvaluator::TLSEvaluator(TLGCData& data)
+TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : fMatFiller(&data->getTree(), data->getConfig().referential)
 {
 	// create a copy of the LGCData object to use it for manipulating parameter and observation values
-	fData = data.clone();
+	// std::shared_ptr<TLGCData> aux = data->clone();
+	fData = data->clone();
+
+	//TLSInputMatricesFiller fMatFiller(&fData->getTree(), fData->getConfig().referential);
+	//TLSInputMatricesFiller matFiller(&fData->getTree(), fData->getConfig().referential);
+//	matFiller = aux;
+	//std::shared_ptr<TLSInputMatricesFiller> matFiller(new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential));
+	//matrixFiller(&fData->getTree(), fData->getConfig().referential);
+
+
 	//// identify the constraints necessary, create them
 	//if (data.getConfig().libre.isActive())
 	//{
@@ -16,12 +25,21 @@ TLSEvaluator::TLSEvaluator(TLGCData& data)
 	//}
 }
 
+
 Eigen::VectorXd TLSEvaluator::evaluate(Eigen::VectorXd parameter)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
 	setParameters(parameter);
-	Eigen::VectorXd result(fData->fUEOIndices.EIndex);
-	result.setZero();
+	//Eigen::VectorXd result(fData->fUEOIndices.EIndex);
+	TLSInputMatrices matrices;
+	matrices.initMatrices(fData->fUEOIndices);
+	//matrices->initMatrices(fData->fUEOIndices);
+	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
+	Eigen::VectorXd result = matrices.getMisclosureVctr();
+
+	//fMatFiller.fillMatrices();
+	//matrixFiller.
+	//result.setZero();
 	// 2. call inputmatrixfiller
 	// 3. get result from inputmatrices object
 	return result;
