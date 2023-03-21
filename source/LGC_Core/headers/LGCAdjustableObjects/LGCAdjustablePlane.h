@@ -185,8 +185,9 @@ public:
 	/// Set the refPt to *point*
 	void setReferencePoint(const LGCAdjustablePoint *point) { fReferencePoint = point; }
 
-	///	See \ref TVAdjustableObject::setCorrection
-	virtual void setCorrection(int idx, TReal value);
+		///	See \ref TVAdjustableObject::setCorrection
+		virtual void setCorrection(int idx, TReal value);
+		virtual void setEstVal(int idx, TReal value);
 
 	/// Sets the estimated precision after calculation
 	void setEstimatedPrecision(int idx, TReal value);
