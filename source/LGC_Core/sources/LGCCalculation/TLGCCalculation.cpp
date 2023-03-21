@@ -3,6 +3,7 @@
 #include "TLSSimulation.h"
 #include "TLSAllfixed.h"
 #include <TLSAlgorithm.h>
+#include <TLSEvaluator.h>
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
@@ -35,6 +36,12 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		{
 			it->transformProvisionalCoordinates(fData.get());
 		}
+
+		TLSEvaluator eval(*fData.get());
+		Eigen::VectorXd test(fData->fUEOIndices.UIndex);
+		test.setZero();
+		Eigen::VectorXd result(fData->fUEOIndices.EIndex);
+		//result = eval.evaluate(test);
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 

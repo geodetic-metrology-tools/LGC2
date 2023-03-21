@@ -75,6 +75,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSSimulation.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSAllfixed.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSConsistencyCheck.h
+	${CORE_INCLUDE_PATH}/LSCalculation/TLSEvaluator.h
 	${CORE_INCLUDE_PATH}/Measurements/TMeasurements.h
 	${CORE_INCLUDE_PATH}/Measurements/TTSTN.h
 	${CORE_INCLUDE_PATH}/Measurements/TAMeas.h
@@ -153,6 +154,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSSimulation.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAllfixed.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSConsistencyCheck.cpp
+	${CORE_SOURCES_PATH}/LSCalculation/TLSEvaluator.cpp
     ${CORE_SOURCES_PATH}/Measurements/TMeasurements.cpp
 	${CORE_SOURCES_PATH}/Measurements/MeasDef.cpp
 	${CORE_SOURCES_PATH}/Measurements/TAMeas.cpp
