@@ -123,6 +123,31 @@ void LGCAdjustableLine::setCorrection(int idx, TReal value) {
 	throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
+void LGCAdjustableLine::setEstVal(int idx, TReal value) {
+
+   TLength val(value);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (uidx_lineVector[i] == idx)
+		{
+			if (i == 0)
+			{
+				fLineVectorEstimatedValue.setX(val);
+			}
+			else if (i == 1)
+			{
+				fLineVectorEstimatedValue.setY(val);
+			}
+			else
+			{
+				fLineVectorEstimatedValue.setZ(val);
+			}
+			return;
+		}
+	}
+	throw std::logic_error("Invalid unknown index in parameter access.");
+}
 
 /*! Sets the estimated precision after calculation to a line's point.*/
 void	LGCAdjustableLine::setLineVectorEstimatedPrecision(int idx, TReal value){
