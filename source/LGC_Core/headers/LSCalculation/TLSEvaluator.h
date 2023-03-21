@@ -15,6 +15,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TLSResultsMatricesExtractor.h>
 #include <TLibrCnstrGenerator.h>
 #include <TLSConsistencyCheck.h>
+#include "TLSInputMatricesFiller.h"
 
 #include <Eigen/Dense>
 
@@ -29,12 +30,14 @@ class TLSEvaluator
 {
 
 public:
-	TLSEvaluator(TLGCData& data);
+	TLSEvaluator(std::shared_ptr<TLGCData> data);
 	Eigen::VectorXd evaluate(Eigen::VectorXd parameter);
 
 private:
 	// a copy of data for maipulating parameter and observation values.
 	std::shared_ptr<TLGCData> fData;
+	//TLGCData fData;
+	TLSInputMatricesFiller fMatFiller;
 	void setParameters(Eigen::VectorXd para);
 	// void setPointParams(Eigen::VectorXd para);
 	// void setAngleParams(Eigen::VectorXd para);
