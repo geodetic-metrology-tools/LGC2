@@ -198,6 +198,7 @@ public:
 
 		///	See \ref TVAdjustableObject::setCorrection
 		virtual void setCorrection(int idx, TReal value);
+		virtual void setEstVal(int idx, TReal value);
 
 
 		/// Sets the estimated precision after calculation 
