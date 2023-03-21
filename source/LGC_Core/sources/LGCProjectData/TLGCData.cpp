@@ -26,10 +26,10 @@ TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fUEOIndices(
 	fCovMat = new TSparseMatrix;
 }
 
-TLGCData::~TLGCData()
-{
-	// should be done in addition to default destructor
-	delete fCovMat;
+TLGCData::~TLGCData(){
+    // should be done in addition to default destructor
+    // this delete generates a problem when cloning the data ..
+	//   delete fCovMat;
 	fCovMat = nullptr;
 }
 
