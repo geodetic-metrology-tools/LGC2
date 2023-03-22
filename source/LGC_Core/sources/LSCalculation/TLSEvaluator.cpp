@@ -3,6 +3,8 @@
 #include "TLSConsistencyCheck.h"
 #include "TLSUniversalMtdComputer.h"
 #include <Logger.hpp>
+#include <Eigne/Dense>
+#include "TAdjustableHelmertTransformation.h"
 
 TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : fMatFiller(&data->getTree(), data->getConfig().referential)
 {
@@ -39,6 +41,23 @@ Eigen::VectorXd TLSEvaluator::evaluate(Eigen::VectorXd parameter)
    	Eigen::VectorXd result = matrices.getMisclosureVctr();
 	return result;
 }
+
+Eigen::VectorXd TLSEvaluator::getEstParams()
+{
+	Eigen::VectorXd result(fData->fUEOIndices.UIndex);
+	result.setZero();
+	getPointParams(result);
+	getAngleParams(result);
+	getPlaneParams(result);
+	getLengthParams(result);
+	getTransformationParams(result);
+	getLineParams(result);
+
+	return result;
+
+}
+
+
 void TLSEvaluator::setParameters(Eigen::VectorXd para)
 {
 	// check if dimension is correct
@@ -58,7 +77,7 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para)
 
 }
 
- void TLSEvaluator::setPointParams(Eigen::VectorXd para)
+void TLSEvaluator::setPointParams(Eigen::VectorXd para)
 {
 	for (auto &point : fData->getPoints())
 	{
@@ -77,94 +96,214 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para)
 	}
 }
 
- void TLSEvaluator::setAngleParams(Eigen::VectorXd para)
+void TLSEvaluator::setAngleParams(Eigen::VectorXd para)
 {
-
-	for (auto& angle : fData->getAngles()) {
-		if (!angle.isFixed()) {
-			MatrixIndex	unknIdx = angle.getFirstUidx();	//first=last only one unknown fo angle class
-//			if (unknIdx >= rm.getSolutionVectByConst()->size())
-//				throw std::runtime_error("Unknown index of an angle: " + angle.getName() + " exceeds matrix dimensions!");
-//
+	for (auto &angle : fData->getAngles())
+	{
+		if (!angle.isFixed())
+		{
+			MatrixIndex unknIdx = angle.getFirstUidx(); // first=last only one unknown fo angle class
+			//			if (unknIdx >= rm.getSolutionVectByConst()->size())
+			//				throw std::runtime_error("Unknown index of an angle: " + angle.getName() + " exceeds matrix dimensions!");
+			//
 			angle.setEstVal(unknIdx, para(unknIdx));
 		}
 	}
 }
 
-
- void TLSEvaluator::setPlaneParams(Eigen::VectorXd para)
+void TLSEvaluator::setPlaneParams(Eigen::VectorXd para)
 {
-//	logDebug() << "Extract parameters of the adjustable planes from the calculated matrices";
-//
-//	bool critNotExceeded = true;
-//
-	for (auto& plane : fData->getPlanes()) {
-		if (plane.hasVariable()) {
-			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); unknIdx++) {
-//				if (unknIdx >= rm.getSolutionVectByConst()->size())
-//					throw std::runtime_error("Unknown index of a plane: " + plane.getName() + " exceeds matrix dimensions!");
-//
+	//	logDebug() << "Extract parameters of the adjustable planes from the calculated matrices";
+	//
+	//	bool critNotExceeded = true;
+	//
+	for (auto &plane : fData->getPlanes())
+	{
+		if (plane.hasVariable())
+		{
+			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); unknIdx++)
+			{
+				//				if (unknIdx >= rm.getSolutionVectByConst()->size())
+				//					throw std::runtime_error("Unknown index of a plane: " + plane.getName() + " exceeds matrix dimensions!");
+				//
 				plane.setEstVal(unknIdx, para(unknIdx));
-				//if (fabsq(correction) > convCrit)
+				// if (fabsq(correction) > convCrit)
 				//	critNotExceeded = false;
 			}
 		}
 	}
 }
 
- void TLSEvaluator::setLineParams(Eigen::VectorXd para)
+void TLSEvaluator::setLineParams(Eigen::VectorXd para)
 {
-	for (auto& line : fData->getLines()) {
-		if (!line.isFixed()) {
-			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++) {
-//				if (unknIdx >= rm.getSolutionVectByConst()->size())
-//					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
-//
+	for (auto &line : fData->getLines())
+	{
+		if (!line.isFixed())
+		{
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++)
+			{
+				//				if (unknIdx >= rm.getSolutionVectByConst()->size())
+				//					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
+				//
 				line.setEstVal(unknIdx, para(unknIdx));
-				//if (fabsq(correction) > convCrit)
+				// if (fabsq(correction) > convCrit)
 				//	critNotExceeded = false;
 			}
 		}
 	}
 }
 
- void TLSEvaluator::setLengthParams(Eigen::VectorXd para)
+void TLSEvaluator::setLengthParams(Eigen::VectorXd para)
 {
-//	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
-//
-//	bool critNotExceeded = true;
-	for (auto& length : fData->getLength()) {
-		if (!length.isFixed()) {
-			MatrixIndex unknIdx = length.getFirstUidx();	//first=last only one unknown fo angle class
-//
-//			if (unknIdx >= rm.getSolutionVectByConst()->size())
-//				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
-//
+	//	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
+	//
+	//	bool critNotExceeded = true;
+	for (auto &length : fData->getLength())
+	{
+		if (!length.isFixed())
+		{
+			MatrixIndex unknIdx = length.getFirstUidx(); // first=last only one unknown fo angle class
+			//
+			//			if (unknIdx >= rm.getSolutionVectByConst()->size())
+			//				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
+			//
 			length.setEstVal(unknIdx, para(unknIdx));
-//			if (fabsq(correction) > convCrit)
-//				critNotExceeded = false;
+			//			if (fabsq(correction) > convCrit)
+			//				critNotExceeded = false;
 		}
 	}
 }
 
- void TLSEvaluator::setTransformationParams(Eigen::VectorXd para)
+void TLSEvaluator::setTransformationParams(Eigen::VectorXd para)
 {
-//	logDebug() << "Extract parameters of the adjustable transformations from the calculated matrices";
-//
-//	bool critNotExceeded = true;
-//
-	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it) {
-		auto& trafo(it.node->data.get()->frame);
+	//	logDebug() << "Extract parameters of the adjustable transformations from the calculated matrices";
+	//
+	//	bool critNotExceeded = true;
+	//
+	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
+	{
+		auto &trafo(it.node->data.get()->frame);
 
-		if (trafo.hasVariable()) {
-			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++) {
-			//	if (unknIdx >= rm.getSolutionVectByConst()->size())
-			//		throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
+		if (trafo.hasVariable())
+		{
+			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++)
+			{
+				//	if (unknIdx >= rm.getSolutionVectByConst()->size())
+				//		throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
 
 				trafo.setEstVal(unknIdx, para(unknIdx));
-		//		if (fabsq(correction) > convCrit)
-		//			critNotExceeded = false;
+				//		if (fabsq(correction) > convCrit)
+				//			critNotExceeded = false;
 			}
+		}
+	}
+}
+
+// getters
+void TLSEvaluator::getPointParams(Eigen::VectorXd & para)
+{
+	for (auto &point : fData->getPoints())
+	{
+		if (point.hasVariable())
+		{
+				}
+	}
+}
+
+void TLSEvaluator::getAngleParams(Eigen::VectorXd & para)
+{
+	for (auto &angle : fData->getAngles())
+	{
+		if (!angle.isFixed())
+		{
+			MatrixIndex unknIdx = angle.getFirstUidx(); // first=last only one unknown fo angle class
+			//			if (unknIdx >= rm.getSolutionVectByConst()->size())
+			//				throw std::runtime_error("Unknown index of an angle: " + angle.getName() + " exceeds matrix dimensions!");
+			//
+			angle.setEstVal(unknIdx, para(unknIdx));
+		}
+	}
+}
+
+void TLSEvaluator::getPlaneParams(Eigen::VectorXd & para)
+{
+	//	logDebug() << "Extract parameters of the adjustable planes from the calculated matrices";
+	//
+	//	bool critNotExceeded = true;
+	//
+	for (auto &plane : fData->getPlanes())
+	{
+		if (plane.hasVariable())
+		{
+			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); unknIdx++)
+			{
+				//				if (unknIdx >= rm.getSolutionVectByConst()->size())
+				//					throw std::runtime_error("Unknown index of a plane: " + plane.getName() + " exceeds matrix dimensions!");
+				//
+				plane.setEstVal(unknIdx, para(unknIdx));
+				// if (fabsq(correction) > convCrit)
+				//	critNotExceeded = false;
+			}
+		}
+	}
+}
+
+void TLSEvaluator::getLineParams(Eigen::VectorXd & para)
+{
+	for (auto &line : fData->getLines())
+	{
+		if (!line.isFixed())
+		{
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++)
+			{
+				//				if (unknIdx >= rm.getSolutionVectByConst()->size())
+				//					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
+				//
+				line.setEstVal(unknIdx, para(unknIdx));
+				// if (fabsq(correction) > convCrit)
+				//	critNotExceeded = false;
+			}
+		}
+	}
+}
+
+void TLSEvaluator::getLengthParams(Eigen::VectorXd & para)
+{
+	//	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
+	//
+	//	bool critNotExceeded = true;
+	for (auto &length : fData->getLength())
+	{
+		if (!length.isFixed())
+		{
+			MatrixIndex unknIdx = length.getFirstUidx(); // first=last only one unknown fo angle class
+			//
+			//			if (unknIdx >= rm.getSolutionVectByConst()->size())
+			//				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
+			//
+			length.setEstVal(unknIdx, para(unknIdx));
+			//			if (fabsq(correction) > convCrit)
+			//				critNotExceeded = false;
+		}
+	}
+}
+
+void TLSEvaluator::getTransformationParams(Eigen::VectorXd & para)
+{
+	//	logDebug() << "Extract parameters of the adjustable transformations from the calculated matrices";
+	//
+	//	bool critNotExceeded = true;
+	//
+	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
+	{
+		auto &trafo(it.node->data.get()->frame);
+
+		if (trafo.hasVariable())
+		{
+			int nFreeParams = trafo.getNumUnkn();
+			Eigen::VectorXd trafoParams(nFreeParams);
+			trafoParams = trafo.getEstParam()(trafo.getRelativeUnknIndices());
+			para.middleRows(trafo.getFirstUidx(), trafo.getNumUnkn()) == trafoParams;
 		}
 	}
 }
