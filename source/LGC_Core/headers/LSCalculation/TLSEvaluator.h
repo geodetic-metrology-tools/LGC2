@@ -33,6 +33,7 @@ public:
 	TLSEvaluator(std::shared_ptr<TLGCData> data);
 	Eigen::VectorXd evaluate(Eigen::VectorXd parameter);
 	Eigen::VectorXd getEstParams();
+	void setParameters(Eigen::VectorXd para);
 
 private:
 	// a copy of data for maipulating parameter and observation values.
@@ -40,7 +41,6 @@ private:
 	//TLGCData fData;
 	TLSInputMatricesFiller fMatFiller;
 	// setter helpers
-	void setParameters(Eigen::VectorXd para);
 	void setPointParams(Eigen::VectorXd para);
 	void setAngleParams(Eigen::VectorXd para);
 	void setPlaneParams(Eigen::VectorXd para);
