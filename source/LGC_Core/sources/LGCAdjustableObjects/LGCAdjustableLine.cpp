@@ -73,6 +73,16 @@ LGCAdjustableLine LGCAdjustableLine::createUninitialized(const std::string& name
 int LGCAdjustableLine::getNumUnkn() const {
 	return (int)!fixedStateLineVector[0] + (int)!fixedStateLineVector[1] + (int)!fixedStateLineVector[2];
 }
+
+const std::vector<int> LGCAdjustableLine::getRelativeUnknIndices() const
+{
+	std::vector<int> relIndices;
+	for (int i = 0; i < 3; i++)
+		if (!fixedStateLineVector[i])
+			relIndices.push_back(i);
+
+	return relIndices;
+}
 		
 int LGCAdjustableLine::getFirstUidx() const {			
 	for (int i = 0; i < 3; i++)
