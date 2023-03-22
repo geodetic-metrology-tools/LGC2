@@ -101,6 +101,8 @@ public:
 
 		/// See \ref TVAdjustableObject::isFixed
 		virtual bool isFixed() const { return(fixedStateLineVector.all());}
+		
+		const std::vector<int> getRelativeUnknIndices() const;
 
 		/*! 
 			See \ref TVAdjustableObject::getFirstUidx
