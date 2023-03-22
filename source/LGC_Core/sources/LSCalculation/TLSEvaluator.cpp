@@ -30,19 +30,13 @@ Eigen::VectorXd TLSEvaluator::evaluate(Eigen::VectorXd parameter)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
 	setParameters(parameter);
-/////    	//Eigen::VectorXd result(fData->fUEOIndices.EIndex);
-/////    	TLSInputMatrices matrices;
-/////    	matrices.initMatrices(fData->fUEOIndices);
-/////    	//matrices->initMatrices(fData->fUEOIndices);
-/////    	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
-/////    	Eigen::VectorXd result = matrices.getMisclosureVctr();
-
-	//fMatFiller.fillMatrices();
-	//matrixFiller.
-	//result.setZero();
-	// 2. call inputmatrixfiller
-	// 3. get result from inputmatrices object
-	Eigen::VectorXd result(666);
+	// create matrices for model evaluation
+   	TLSInputMatrices matrices;
+   	matrices.initMatrices(fData->fUEOIndices);
+	// evaluate using the standard inputMatrixFiller
+   	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
+	// get misclosure
+   	Eigen::VectorXd result = matrices.getMisclosureVctr();
 	return result;
 }
 void TLSEvaluator::setParameters(Eigen::VectorXd para)
@@ -77,7 +71,6 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para)
 				// 	logCritical() << "Extract parameters of the adjustable points from the calculated matrices: Unknown index of point" << point.getName() << " exceeds
 				// matrix dimensions!"; 	throw std::runtime_error("Unknown index of an point: " + point.getName() + " exceeds matrix dimensions!");
 				// }
-				std::cout << para(unknIdx) << std::endl;
 				point.setEstVal(unknIdx, para(unknIdx));
 			}
 		}
