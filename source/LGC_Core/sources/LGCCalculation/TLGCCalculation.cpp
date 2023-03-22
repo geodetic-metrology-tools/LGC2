@@ -44,16 +44,19 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			it->transformProvisionalCoordinates(fData.get());
 		}
 
+		//{
+		for (int i = 0; i < 1000; i++)
 		{
+			std::cout << "evaluation nr " << i << std::endl;
 			std::shared_ptr<TLGCData> aux = fData->clone();
 			TLSEvaluator eval(aux);
 			Eigen::VectorXd test(fData->fUEOIndices.UIndex);
 			test.setZero();
 			Eigen::VectorXd result(fData->fUEOIndices.EIndex);
 			result = eval.evaluate(test);
-			std::cout << result << std::endl;
+			//std::cout << result << std::endl;
+			//}
 		}
-
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
 		if (fData->getConfig().sim.isActive())
