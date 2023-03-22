@@ -58,10 +58,31 @@ void LGCAdjustablePlane::initialize(const LGCAdjustablePoint* referencePoint, co
 	fInitialized = true;
 }
 
+const Eigen::VectorXd LGCAdjustablePlane::getEstParamVector()
+{
+	Eigen::VectorXd vector(3);
+	vector << fEstValTheta.getRadiansValue(), fEstValPhi.getRadiansValue(), fEstValRefPointDist;
+
+	return vector;
+}
+
+const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
+{
+	std::vector<int> relIndices;
+	//Ref. Pt distance is always variable
+	relIndices.push_back(0);
+	if (!fThetaFixed)
+		relIndices.push_back(1);
+
+	if (!fPhiFixed)
+		relIndices.push_back(2);
+
+	return relIndices;
+}
+
 void LGCAdjustablePlane::setFirstUidx(int idx) {
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to fixed plane.");
-	
 	if (!fThetaFixed)
 			uidx_Theta = idx++;
 

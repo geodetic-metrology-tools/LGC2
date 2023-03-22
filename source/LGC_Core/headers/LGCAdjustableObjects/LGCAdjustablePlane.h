@@ -14,9 +14,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TAngle.h>
 #include <TLength.h>
 
+#include <Eigen/Dense>
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
+
 
 class LGCAdjustablePoint;
 
@@ -77,6 +79,7 @@ public:
 		/// Returns a constant reference on the estimated value of the Phi angle.
 		inline const TAngle&		getPhiEstimatedValue() const {	return fEstValPhi;}
 
+		const Eigen::VectorXd getEstParamVector();
 		/// Returns a constant reference on the estimated precision of the Phi angle. 
 		inline const TAngle&		getPhiEstimatedPrecision() const {	return fEstPrecisionPhi;}
 
@@ -113,6 +116,9 @@ public:
 			Reference point distance is never fixed, so the plane either.	
 		*/
 		inline virtual bool isFixed() const { return false;}
+		
+		// returns vector of relative indices of free parameters
+		const std::vector<int> getRelativeUnknIndices() const;
 
 		///	Tells if at least one component is unfixed (variable). Reference point distance is always variable. True returned.
 		inline bool hasVariable() const { return true;}
