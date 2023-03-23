@@ -41,9 +41,11 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		//{
 		for (int i = 0; i < 1; i++)
 		{
-			std::cout << "evaluation nr " << i << std::endl;
-			std::shared_ptr<TLGCData> aux = fData->clone();
-			TLSEvaluator eval(aux);
+			std::cout << "starting evaluator" << std::endl;
+			//std::cout << "evaluation nr " << i << std::endl;
+			//std::shared_ptr<TLGCData> aux = fData->clone();
+			//TLSEvaluator eval(aux);
+			TLSEvaluator eval(fData);
 			Eigen::VectorXd test(fData->fUEOIndices.UIndex);
 			test.setZero();
 			Eigen::VectorXd result(fData->fUEOIndices.EIndex);
@@ -58,8 +60,15 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			//result = eval.evaluate(test);
 			Eigen::VectorXd test2=eval.getEstParams();
 
-			std::cout << "first norm="<<(testVec).norm() << std::endl;
-			std::cout << "difference="<<(testVec - test2).norm() << std::endl;
+			//std::cout << "first norm="<<(testVec).norm() << std::endl;
+			if ((testVec - test2).norm() > 0)
+			{
+				std::cout << "difference=" << (testVec - test2).norm() << std::endl;
+				int idx = 0;
+				idx = (testVec - test2).maxCoeff(&idx);
+				std::cout << testVec(idx) << " , " << test2(idx) << std::endl;
+				//std::cout << testVec << std::endl << test2 << std::endl;
+			}
 			//std::cout << result << std::endl;
 			//}
 		}
