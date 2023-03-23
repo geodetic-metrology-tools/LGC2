@@ -208,6 +208,7 @@ void TLSEvaluator::getPointParams(Eigen::VectorXd & para)
 		{
 	//		std::cout << point.getEstParamVector() << std::endl;
 			para.middleRows(point.getFirstUidx(), point.getNumUnkn()) = point.getEstParamVector()(point.getRelativeUnknIndices());
+			//std::cout << "pt setter" << std::endl << point.getEstParamVector()(point.getRelativeUnknIndices()) << std::endl;
 		}
 	}
 }
@@ -281,7 +282,8 @@ void TLSEvaluator::getTransformationParams(Eigen::VectorXd & para)
 			int nFreeParams = trafo.getNumUnkn();
 			Eigen::VectorXd trafoParams(nFreeParams);
 			trafoParams = trafo.getEstParamVector()(trafo.getRelativeUnknIndices());
-			para.middleRows(trafo.getFirstUidx(), trafo.getNumUnkn()) == trafoParams;
+			//std::cout << std::endl << "frame params = " << std::endl << trafoParams << std::endl;
+			para.middleRows(trafo.getFirstUidx(), trafo.getNumUnkn()) = trafoParams;
 		}
 	}
 }
