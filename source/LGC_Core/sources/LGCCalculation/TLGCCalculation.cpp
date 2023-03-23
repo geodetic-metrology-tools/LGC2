@@ -47,7 +47,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		//{
 		for (int i = 0; i < 1; i++)
 		{
-			std::cout << "starting evaluator" << std::endl;
+			//std::cout << "starting evaluator" << std::endl;
 			//std::cout << "evaluation nr " << i << std::endl;
 			//std::shared_ptr<TLGCData> aux = fData->clone();
 			//TLSEvaluator eval(aux);
@@ -55,7 +55,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			Eigen::VectorXd test(fData->fUEOIndices.UIndex);
 			test.setZero();
 			Eigen::VectorXd result(fData->fUEOIndices.EIndex);
-			result = eval.evaluate(test);
+			//result = eval.evaluate(test);
 			// test setter and getter
 			Eigen::VectorXd testVec(fData->fUEOIndices.UIndex);
 			for (int j = 0; j < fData->fUEOIndices.UIndex; j++)

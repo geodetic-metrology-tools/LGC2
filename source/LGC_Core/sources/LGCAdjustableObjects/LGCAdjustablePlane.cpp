@@ -79,13 +79,14 @@ const Eigen::VectorXd LGCAdjustablePlane::getEstParamVector()
 const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
 {
 	std::vector<int> relIndices;
-	//Ref. Pt distance is always variable
-	relIndices.push_back(0);
 	if (!fThetaFixed)
-		relIndices.push_back(1);
+		relIndices.push_back(0);
 
 	if (!fPhiFixed)
-		relIndices.push_back(2);
+		relIndices.push_back(1);
+	
+	//Ref. Pt distance is always variable
+	relIndices.push_back(2);
 
 	return relIndices;
 }
