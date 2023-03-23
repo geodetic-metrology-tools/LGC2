@@ -29,11 +29,8 @@ TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fUEOIndices(
 TLGCData::~TLGCData(){
     // should be done in addition to default destructor
     // this delete generates a problem when cloning the data ..
-	//if (fCovMat != NULL)
-	//{
-	//	delete fCovMat;
-	//}
-	//fCovMat = NULL;
+	delete fCovMat;
+	fCovMat = NULL;
 }
 
 TDataTreeIterator TLGCData::locateNode(std::string frameName) const
