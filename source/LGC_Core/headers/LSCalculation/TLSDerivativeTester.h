@@ -23,7 +23,11 @@ class TLSDerivativeTester
 public:
 	TLSDerivativeTester(std::shared_ptr<TLGCData> data);
 
+	bool testFirstDesignMatrix();
+
 private:
+	TLSEvaluator fEvaluator;
+
 
 };
 
