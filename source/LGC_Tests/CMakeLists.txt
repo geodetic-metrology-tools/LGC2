@@ -34,6 +34,7 @@ set(tests_SOURCES
 	sources/testINCL.cpp
 	sources/testHLSR.cpp
 	sources/testCONSI.cpp
+	sources/testSimulation.cpp
 )
 
 set(tests_INPUT
@@ -52,6 +53,7 @@ set(tests_INPUT
 	headers/testINCL.h
 	headers/testHLSR.h
 	headers/testCONSI.h
+	headers/testSimulation.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})

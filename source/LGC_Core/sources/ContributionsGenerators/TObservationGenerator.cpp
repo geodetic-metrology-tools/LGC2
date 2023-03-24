@@ -582,3 +582,14 @@ TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECW
 	
 	return calcMeas;
 }
+
+TPositionVector TObservationGenerator::getOBSXYZCalcMeas(const TOBSXYZ &obsxyz)
+{
+	// trafo of observed point to frame from which observation takes place
+	const TLOR2LOR& lor2ObsTrafo = fPointTransfo->getLORTransformation(obsxyz.station->getFrameTreePosition(), obsxyz.positionInTree);
+	TPositionVector calcMeas = obsxyz.targetPos->getEstimatedValue();
+	// transform point to observation frame
+	lor2ObsTrafo.transform(calcMeas);
+
+	return calcMeas;
+}
