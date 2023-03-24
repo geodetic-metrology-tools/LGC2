@@ -26,7 +26,10 @@ public:
 	bool testFirstDesignMatrix();
 
 private:
+	
 	TLSEvaluator fEvaluator;
+	
+	Eigen::MatrixXd computeFiniteDifferenceJacobian(Eigen::VectorXd vec);
 
 
 };
