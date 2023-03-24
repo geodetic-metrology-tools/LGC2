@@ -11,6 +11,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : fMatFiller(&data->g
 	// create a copy of the LGCData object to use it for manipulating parameter and observation values
 	// std::shared_ptr<TLGCData> aux = data->clone();
 	fData = data->clone();
+	dimensions = data->fUEOIndices;
 
 	//TLSInputMatricesFiller fMatFiller(&fData->getTree(), fData->getConfig().referential);
 	//TLSInputMatricesFiller matFiller(&fData->getTree(), fData->getConfig().referential);
@@ -28,7 +29,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : fMatFiller(&data->g
 }
 
 
-Eigen::VectorXd TLSEvaluator::evaluate(Eigen::VectorXd parameter)
+Eigen::VectorXd TLSEvaluator::evaluateMisclosure(Eigen::VectorXd parameter)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
 	setParameters(parameter);
@@ -38,8 +39,21 @@ Eigen::VectorXd TLSEvaluator::evaluate(Eigen::VectorXd parameter)
 	// evaluate using the standard inputMatrixFiller
    	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
 	// get misclosure
-   	Eigen::VectorXd result = matrices.getMisclosureVctr();
-	return result;
+   	Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
+	return misclosure;
+}
+Eigen::SparseMatrix<double> TLSEvaluator::evaluateA(Eigen::VectorXd parameter)
+{
+	// 1. set parameters in "estimated" fields of adjustable objects
+	setParameters(parameter);
+	// create matrices for model evaluation
+   	TLSInputMatrices matrices;
+   	matrices.initMatrices(fData->fUEOIndices);
+	// evaluate using the standard inputMatrixFiller
+   	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
+	// get first design matrix
+	Eigen::SparseMatrix<double> A = *matrices.getFirstDgnMtrx();
+	return A;
 }
 
 Eigen::VectorXd TLSEvaluator::getEstParams()
