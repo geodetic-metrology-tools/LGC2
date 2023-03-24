@@ -13,14 +13,28 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 {
 	// get value that is currently set in the TLGCData structure, if called at the beginning, this will be the provisional values
 	Eigen::VectorXd prov = fEvaluator.getEstParams();
+
+	// evaluate A matrix according to inputMatrixFiller, contributionGenerator etc..
+	Eigen::MatrixXd computedJacobian = fEvaluator.evaluateA(prov);
+	
+	// evaluate A matrix according to finite differences applied to the misclosure vector
+	Eigen::MatrixXd finiteDifferenceJacobian= computeFiniteDifferenceJacobian(prov);
+	// compare to A matrix
+	std::cout << "norm(Jac-finiteDiffJac)=" << (computedJacobian- finiteDifferenceJacobian).norm() << std::endl;
+
+	return false;
+
+}
+
+Eigen::MatrixXd TLSDerivativeTester::computeFiniteDifferenceJacobian(Eigen::VectorXd vec)
+{
+	// evaluate misclosure at basepoint
+	Eigen::VectorXd miscBase = fEvaluator.evaluateMisclosure(vec);
+	// evaluate A matrix at basepoint
+	Eigen::MatrixXd ABase = fEvaluator.evaluateA(vec);
+
 	int nParam = fEvaluator.dimensions.UIndex;
 	int nObs = fEvaluator.dimensions.OIndex;
-
-	// evaluate misclosure at basepoint
-	Eigen::VectorXd miscBase = fEvaluator.evaluateMisclosure(prov);
-	// evaluate A matrix at basepoint
-	Eigen::MatrixXd ABase = fEvaluator.evaluateA(prov);
-
 
 	// initialize Jacobian that will be filled with finite differences
 	Eigen::MatrixXd finiteDiffJacobian(nObs, nParam);
@@ -32,7 +46,7 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 		Eigen::VectorXd jacCol(nObs);
 		jacCol.setZero();
 		// go slightly in e_i direction
-		Eigen::VectorXd pertVect = prov;
+		Eigen::VectorXd pertVect = vec;
 		pertVect(i) += smallNumber;
 		// evaluate
 		Eigen::VectorXd miscPert = fEvaluator.evaluateMisclosure(pertVect);
@@ -42,9 +56,5 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 		finiteDiffJacobian.col(i) = jacCol;
 	}
 
-	// compare to A matrix
-	std::cout << "norm(Jac-finiteDiffJac)=" << (ABase - finiteDiffJacobian).norm() << std::endl;
-
-	return false;
-
+	return finiteDiffJacobian;
 }
