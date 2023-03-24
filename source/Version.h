@@ -8,8 +8,8 @@
 #include <sstream>
 
 #define LGC_VERSION_MAJOR "2"
-#define LGC_VERSION_MINOR "5"
-#define LGC_VERSION_PATCH "1"
+#define LGC_VERSION_MINOR "6"
+#define LGC_VERSION_PATCH "beta_2-SLAVE_Frames"
 
 static std::string getLGCVersion(void) {
 	std::stringstream ss;
