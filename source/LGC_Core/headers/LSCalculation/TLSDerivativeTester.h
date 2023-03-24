@@ -31,6 +31,9 @@ private:
 	
 	Eigen::MatrixXd computeFiniteDifferenceJacobian(Eigen::VectorXd vec);
 
+	// used for finite differences
+	double dx = 1e-6;
+
 
 };
 
