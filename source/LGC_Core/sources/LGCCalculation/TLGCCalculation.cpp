@@ -4,6 +4,7 @@
 #include "TLSAllfixed.h"
 #include <TLSAlgorithm.h>
 #include <TLSEvaluator.h>
+#include <TLSDerivativeTester.h>
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
@@ -71,6 +72,10 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			}
 			//std::cout << result << std::endl;
 			//}
+		}
+		{
+			TLSDerivativeTester tester(fData);
+			bool check = tester.testFirstDesignMatrix();
 		}
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 

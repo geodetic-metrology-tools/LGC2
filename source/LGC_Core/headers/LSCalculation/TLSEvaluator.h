@@ -19,8 +19,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #include <Eigen/Dense>
 
-class TLSInputMatricesFiller;
-class TLSResultsMatrices;
+//class TLSInputMatricesFiller;
+//class TLSResultsMatrices;
 
 /*!
 \ingroup Evaluator
@@ -31,9 +31,12 @@ class TLSEvaluator
 
 public:
 	TLSEvaluator(std::shared_ptr<TLGCData> data);
-	Eigen::VectorXd evaluate(Eigen::VectorXd parameter);
+	
+	Eigen::VectorXd evaluateMisclosure(Eigen::VectorXd parameter);
+	Eigen::SparseMatrix<double> evaluateA(Eigen::VectorXd parameter);
 	Eigen::VectorXd getEstParams();
 	void setParameters(Eigen::VectorXd para);
+	UEOIndices dimensions;
 
 private:
 	// a copy of data for maipulating parameter and observation values.
