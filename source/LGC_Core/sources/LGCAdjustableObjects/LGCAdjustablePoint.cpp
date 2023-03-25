@@ -308,6 +308,17 @@ void LGCAdjustablePoint::serialize(SerializerObject::SerializationHelper &obj) c
 	obj.addProperty("allfixedParam", allfixedParam);
 	obj.addProperty("fFramePosition_ID", fFramePosition.node->data.get()->ID);
 	obj.addProperty("fFramePosition_Name", fFramePosition.node->data.get()->frame.getName());
+
+	obj.addProperty("fProvisionalValueInSubframe", fProvisionalValueInSubframe);
+	obj.addProperty("fProvisionalValueInRoot", fProvisionalValueInRoot);
+	obj.addProperty("fProvisionalHeightInRoot", fProvisionalHeightInRoot);
+
+	obj.addProperty("fEstimatedValueInSubframe", fEstimatedValueInSubframe);
+	obj.addProperty("fEstimatedValueInRoot", fEstimatedValueInRoot);
+	obj.addProperty("fEstimatedHeightInRoot", fEstimatedHeightInRoot);
+
+	obj.addProperty("fCovarianceMatrixInSubframe", fCovarianceMatrixInSubframe);
+	obj.addProperty("fCovarianceMatrixInRoot", fCovarianceMatrixInRoot);
 }
 #endif
 
