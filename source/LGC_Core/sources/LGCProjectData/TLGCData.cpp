@@ -811,7 +811,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
 	obj.addProperty("angles", angles);
 	obj.addProperty("comments", comments);
-	//obj.addProperty("config", config);
+	obj.addProperty("config", config);
 	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("fMeasInfo", fMeasInfo);
@@ -825,7 +825,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
 	//obj.addProperty("pos", pos);
-	obj.addProperty("TLGCStatistic", stat);
+	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("fCovMat", fCovMat);
 }

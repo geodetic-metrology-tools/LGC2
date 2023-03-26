@@ -6,12 +6,16 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef _LGCOPTIONS_H_
 #define _LGCOPTIONS_H_
 
-
 //SURVEYLIB
 #include <TRefSystemFactory.h>
 #include "TStatusObject.h"
 //LGC
 #include <Global.h>
+
+#ifdef USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
+
 
 /*!
 	\ingroup LGCProjectData
@@ -20,7 +24,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	Options are set to defined default values by the starndard constructors of the
 	related classes. 
 */
-struct TLGCConfig 
+struct TLGCConfig : public Serializable
 {
 
 	/*!
@@ -71,6 +75,11 @@ struct TLGCConfig
 				numSims(n),
 				numSeed(s),
 				writeLGCFile(false) {}
+
+            #ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 	};
 
 	/*!
@@ -98,6 +107,11 @@ struct TLGCConfig
 				TBinaryOption(true),
 				alpha(alpha_),
 				beta(beta_) {}
+
+            #ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 	};
 
 	/*!
@@ -129,6 +143,11 @@ struct TLGCConfig
 				fptname(ptname),
 				fgis(gisement),
 				hasBearing(false){}
+
+			#ifdef USE_SERIALIZER
+						// Inherited via Serializable
+						virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 	};
 	
 	/// Defines the column separator for the output files.
@@ -144,6 +163,11 @@ struct TLGCConfig
 			TCustomOutputSep(const std::string& sepstr) :
 				TBinaryOption(true),
 				separator(sepstr) {}
+
+            #ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 	};
 	
 	/// Specifies the coordinate output for deformation analysis or punc files.
@@ -173,10 +197,16 @@ struct TLGCConfig
 			TCoordOut(eMode mode) :
 				TBinaryOption(true),
 				fmode(mode) {}
+
+            #ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 	};
 
 	/// Controls the precision of the output files
-	struct TPrecision {
+	struct TPrecision : public Serializable
+	{
 		public:
 			/// Number of digits after the comma
 			int digits;
@@ -196,6 +226,11 @@ struct TLGCConfig
 			inline TReal calcConv(int prec) {
 				return 5.0*powq(0.1, prec+1);
 			}
+
+            #ifdef USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#endif
 	};
 
 	/// The title of the adjustment including newlines
@@ -260,7 +295,89 @@ struct TLGCConfig
 
 	*/
 	void checkSanity();  //empty
+
+	#ifdef USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	#endif
+
 };
 
 
-#endif
+#ifdef USE_SERIALIZER
+
+inline void TLGCConfig::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("allfixed", allfixed);
+	obj.addProperty("chaba", chaba);
+	obj.addProperty("consCheck", consCheck);
+	obj.addProperty("covar", covar);
+	obj.addProperty("CustomOutputSeparator", CustomOutputSeparator);
+	obj.addProperty("CustomOutputSeparatorPunch", CustomOutputSeparatorPunch);
+
+	//obj.addProperty("erelPairs", erelPairs);
+	obj.addProperty("errorEllipses", errorEllipses);
+	obj.addProperty("faut", faut);
+	obj.addProperty("histo", histo);
+	obj.addProperty("libre", libre);
+	obj.addProperty("nodup", nodup);
+	obj.addProperty("obsIDwidth", obsIDwidth);
+	obj.addProperty("outPrecision", outPrecision);
+
+	obj.addProperty("pdor", pdor);
+	obj.addProperty("pointNameWidth", pointNameWidth);
+	obj.addProperty("referential", referential);
+	obj.addProperty("sim", sim);
+	obj.addProperty("title", title);
+	
+	obj.addProperty("useApriori", useApriori);
+	obj.addProperty("writeDefa", writeDefa);
+	obj.addProperty("writePlot", writePlot);
+	obj.addProperty("writePunch", writePunch);
+	obj.addProperty("json", json);
+}
+
+inline void TLGCConfig::TSimulation::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TBinaryOption::serialize(obj);
+	obj.addProperty("numSims", numSims);
+	obj.addProperty("numSeed", numSeed);
+	obj.addProperty("writeLGCFile", writeLGCFile);
+}
+
+inline void TLGCConfig::TFautDetect::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TBinaryOption::serialize(obj);
+	obj.addProperty("alpha", alpha);
+	obj.addProperty("beta", beta);
+}
+
+inline void TLGCConfig::TPDOR::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TBinaryOption::serialize(obj);
+	obj.addProperty("fptname", fptname);
+	obj.addProperty("fgis", fgis);
+	obj.addProperty("hasBearing", hasBearing);
+}
+
+inline void TLGCConfig::TCustomOutputSep::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TBinaryOption::serialize(obj);
+	obj.addProperty("separator", separator);
+}
+
+inline void TLGCConfig::TCoordOut::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TBinaryOption::serialize(obj);
+	obj.addProperty("fmode", fmode);
+}
+
+inline void TLGCConfig::TPrecision::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("digits", digits);
+	obj.addProperty("convCrit", convCrit);
+}
+
+#endif // USE_SERIALIZER
+
+#endif 
