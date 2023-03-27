@@ -290,7 +290,7 @@ class TKeyJSON : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyJSON(TLGCData &project, int nb_allowed_keywords = nb_allowed_cons_check, const char **keywords = allowed_JSON) : TAOptionKey(project, JSON)
+	TKeyJSON(TLGCData &project, int nb_allowed_keywords = nb_allowed_json, const char **keywords = allowed_JSON) : TAOptionKey(project, JSON)
 	{
 		for (int i(0); i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);

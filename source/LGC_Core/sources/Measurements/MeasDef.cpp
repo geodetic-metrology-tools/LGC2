@@ -156,7 +156,7 @@ TAMeas<int>(point, 0)
 
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 
 void TPLR3D::serialize(SerializerObject::SerializationHelper &obj) const
 {
@@ -246,7 +246,8 @@ void TRADI::serialize(SerializerObject::SerializationHelper &obj) const
 void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	TAMeas<int>::serialize(obj);
-	obj.addProperty("calaPt", calaPt->getName());
+	if (calaPt)
+		obj.addProperty("calaPt", calaPt->getName());
 	obj.addProperty("eolcomment", eolcomment);
 	obj.addProperty("fbearing", fbearing.getRadiansValue());
 	obj.addProperty("fbearingResidual", fbearingResidual.getRadiansValue());
@@ -254,7 +255,8 @@ void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fIsInitialise", fIsInitialise);
 	obj.addProperty("fSigmaObsVal", fSigmaObsVal.getRadiansValue());
 	obj.addProperty("line", line);
-	obj.addProperty("orientationPt", orientationPt->getName());
+	if (orientationPt)
+		obj.addProperty("orientationPt", orientationPt->getName());
 }
 
 void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const
@@ -270,7 +272,6 @@ void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("line", line);
 	obj.addProperty("station", station);
 	obj.addProperty("obsValue", obsValue);
-	//obj.addProperty("positionInTree", positionInTree);
 }
 
 void TECWS::serialize(SerializerObject::SerializationHelper &obj) const

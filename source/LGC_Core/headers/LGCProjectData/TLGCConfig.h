@@ -12,7 +12,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <Global.h>
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
@@ -24,7 +24,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	Options are set to defined default values by the starndard constructors of the
 	related classes. 
 */
-struct TLGCConfig : public Serializable
+#if USE_SERIALIZER
+	struct TLGCConfig : public Serializable
+#else
+	struct TLGCConfig
+#endif // USE_SERIALIZER
 {
 
 	/*!
@@ -76,10 +80,10 @@ struct TLGCConfig : public Serializable
 				numSeed(s),
 				writeLGCFile(false) {}
 
-            #ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 				// Inherited via Serializable
 				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#endif
 	};
 
 	/*!
@@ -108,10 +112,10 @@ struct TLGCConfig : public Serializable
 				alpha(alpha_),
 				beta(beta_) {}
 
-            #ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 				// Inherited via Serializable
 				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#endif
 	};
 
 	/*!
@@ -144,9 +148,9 @@ struct TLGCConfig : public Serializable
 				fgis(gisement),
 				hasBearing(false){}
 
-			#ifdef USE_SERIALIZER
-						// Inherited via Serializable
-						virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			#if USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 			#endif
 	};
 	
@@ -164,10 +168,10 @@ struct TLGCConfig : public Serializable
 				TBinaryOption(true),
 				separator(sepstr) {}
 
-            #ifdef USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 	};
 	
 	/// Specifies the coordinate output for deformation analysis or punc files.
@@ -198,14 +202,18 @@ struct TLGCConfig : public Serializable
 				TBinaryOption(true),
 				fmode(mode) {}
 
-            #ifdef USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 	};
 
 	/// Controls the precision of the output files
+#if USE_SERIALIZER
 	struct TPrecision : public Serializable
+#else
+	struct TPrecision
+#endif // USE_SERIALIZER
 	{
 		public:
 			/// Number of digits after the comma
@@ -227,10 +235,10 @@ struct TLGCConfig : public Serializable
 				return 5.0*powq(0.1, prec+1);
 			}
 
-            #ifdef USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 	};
 
 	/// The title of the adjustment including newlines
@@ -271,7 +279,7 @@ struct TLGCConfig : public Serializable
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
 	TCoordOut     writePunch;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
-	TCoordOut     writePlot;;
+	TCoordOut     writePlot;
 	/// Write a file for covariance analysis
 	TBinaryOption covar;
 	/// Write a file for best-fit analysis 
@@ -296,16 +304,15 @@ struct TLGCConfig : public Serializable
 	*/
 	void checkSanity();  //empty
 
-	#ifdef USE_SERIALIZER
-		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-	#endif
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 
 };
 
 
-#ifdef USE_SERIALIZER
-
+#if USE_SERIALIZER
 inline void TLGCConfig::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("allfixed", allfixed);

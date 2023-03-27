@@ -13,7 +13,9 @@
 #include "TChabaFileWriter.h"
 #include <Logger.hpp>
 #include <TLGCData.h>
-#include <Serializer_json.hpp>
+#if USE_SERIALIZER
+#	include <Serializer_json.hpp>
+#endif // USE_SERIALIZER
 
 
 
@@ -185,9 +187,11 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
     if(conf.writeDefa.isActive())
         writeDefaFile(dat, outputFileLocation, calculation.getResultMtr(), stream);
 
+#if USE_SERIALIZER
 	// Write serialized object file
 	if (conf.json.isActive())
 		writeJsonFile(dat, outputFileLocation);
+#endif // USE_SERIALIZER
 }
 
 void TLGCApp::writeStdResultsFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
@@ -317,6 +321,7 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 
 }
 
+#if USE_SERIALIZER
 void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 {
 	if (!Logger::getLogger().hasErrors())
@@ -325,11 +330,6 @@ void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &output
 		SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
 		obj.addProperty("fCopyright", fCopyright);
 		obj.addProperty("LGCVersion", getLGCVersion());
-		// obj.addProperty("fInputFileLoc", fInputFileLoc);
-		// obj.addProperty("fOutputFileLoc", fOutputFileLoc);
-		// obj.addProperty("fLoggerFileLoc", fLoggerFileLoc);
-		// obj.addProperty("fNamFile", fNamFile);
-		// obj.addProperty("fMaxIterations", fMaxIterations);
 		obj.addProperty("LGC_DATA", dat);
 
 		std::ofstream fout(outputFileLocation + ".json");
@@ -340,6 +340,7 @@ void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &output
 		logCritical() << "Result file:" << outputFileLocation << "has NOT been written";
 	}
 }
+#endif // USE_SERIALIZER
 
 void TLGCApp::writeSimFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream)
 {

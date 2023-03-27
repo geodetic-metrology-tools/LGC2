@@ -54,7 +54,7 @@ class TAMeas : public TStatusObject
 			
 		/// Pointer to the observed point on which the target is positioned
 		const LGCAdjustablePoint* targetPos; 
-		      
+
 		/// Line in the input file where this measurement was defined
 		int line;
 
@@ -95,7 +95,7 @@ class TAMeas : public TStatusObject
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
 			virtual MatrixIndex getLastEquationIndex() const = 0;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -226,7 +226,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 				anglesResiduals[id] = a;
 			}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif
 		//@}
@@ -314,7 +314,7 @@ class TAVectorMeas : public TAMeas<TTarget>
 		const TReal getYCompVectorResidual() const {
 			return YcompResidual;
 		}
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif
 };

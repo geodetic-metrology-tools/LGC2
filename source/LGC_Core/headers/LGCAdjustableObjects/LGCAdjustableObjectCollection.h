@@ -27,7 +27,6 @@ class TAdjustableLength;
 	This class is basically a composite of an stl list with more comfortable retrieving functions and counting of the number of unknowns.
 */
 template<typename T>
-
 class LGCAdjustableObjectCollection
 {
 	public:

@@ -14,7 +14,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TAngle.h>
 #include <TLength.h>
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
@@ -25,8 +25,6 @@ class LGCAdjustablePoint;
 
 	Plane is defined throught a Reference Point (LGCAdjustablePoint), distance of this Reference point (TLength) from the plane and two angles (TAngle) defining the normal vector of the plane.
 */
-
-
 class LGCAdjustablePlane : public TVAdjustableObject
 {
 public:
@@ -206,7 +204,7 @@ public:
 		void	setEstimatedPrecision(int idx, TReal value);
 
 	//@}
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif

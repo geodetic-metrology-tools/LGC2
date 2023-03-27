@@ -20,12 +20,17 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TTreeEntry.h>
 #include <TLSCalcRelativeError.h>
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
 /*! Counter of points based on the type */
-struct TPointGlobal : public Serializable {
+#if USE_SERIALIZER
+	struct TPointGlobal : public Serializable
+#else
+	struct TPointGlobal
+#endif // USE_SERIALIZER
+{
 	int	fNumCala;
 	int	fNumVx;
 	int	fNumVy;
@@ -35,12 +40,19 @@ struct TPointGlobal : public Serializable {
 	int	fNumVyz;
 	int	fNumVxyz;
 
+#if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 };
 
 /*! Counter of measurements based on the type */
-struct TMeasurementsGlobal : public Serializable {
+#if USE_SERIALIZER
+	struct TMeasurementsGlobal : public Serializable
+#else
+	struct TMeasurementsGlobal
+#endif // USE_SERIALIZER
+{
 	enum EMeasurementType{kANGL, kZEND, kDIST, kPLR3D, kDLEV, kDHOR, kECTH, kECDIR, kDSPT, kDVER, kUVEC, kUVD, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI, kOBSXYZ, kINCLY, kECWS};
 
 	int	fNumANGL;
@@ -65,8 +77,10 @@ struct TMeasurementsGlobal : public Serializable {
 	int fNumINCLY;
 	int fNumECWS;
 
+#if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 };
 
 
@@ -80,7 +94,13 @@ struct TMeasurementsGlobal : public Serializable {
 	by grouping together everything that is needed so the interaction with the LGC modules 
 	is reduced to ineracting with a single object.
 */ 
-class TLGCData : public Serializable {
+
+#if USE_SERIALIZER
+class TLGCData : public Serializable
+#else
+class TLGCData
+#endif // USE_SERIALIZER
+{
 public:
 	/*!
 		The default constructor provides a tree which consists only of the root node 
@@ -240,8 +260,10 @@ public:
 
         void setLGCv1(bool set) { islgc1 = set; }
 		
-        // Inherited via Serializable
-        virtual void serialize(SerializerObject::SerializationHelper& obj) const override;
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 
 private:
 
@@ -299,14 +321,21 @@ private:
 	// If standard deviations to points or frames assigned
 	bool fhasStandardDeviations;
 
-	struct TLSRelatedInfo : public Serializable {
+#if USE_SERIALIZER
+	struct TLSRelatedInfo : public Serializable
+#else
+	struct TLSRelatedInfo
+#endif // USE_SERIALIZER
+{
 		int fNumberOfLSIterations;
 		TReal fS0APosteriori;
 		TReal fChiLoLimit;
 		TReal fChiUpLimit;
 
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 	};
 
 	TLSRelatedInfo fLSRelatedInfo;

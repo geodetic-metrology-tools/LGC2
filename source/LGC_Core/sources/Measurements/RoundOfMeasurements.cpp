@@ -129,7 +129,7 @@ const TLGCObsSummary& TECWSROM::getECWSObsSummary(std::string text)  noexcept {
     return ecwsSummary_;
 }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 // Inherited via Serializable
 
 void TECHOROM::serialize(SerializerObject::SerializationHelper &obj) const
@@ -169,7 +169,8 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
 	obj.addProperty("instrument", instrument);
-	obj.addProperty("instrumentPos", instrumentPos->getName());
+	if (instrumentPos)
+		obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
 	obj.addProperty("measORIE", measORIE);
 	obj.addProperty("orieSummary_", orieSummary_);

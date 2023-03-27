@@ -25,7 +25,6 @@ class LGCAdjustablePoint;
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a line object defined through a point (TPositionVector) on a line and a line vector (TFreeVector).
 */
-
 class LGCAdjustableLine : public TVAdjustableObject
 {
 public:
@@ -149,7 +148,7 @@ public:
 
 		void reInitialise();
 	//@}
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif

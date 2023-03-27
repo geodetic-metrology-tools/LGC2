@@ -198,7 +198,7 @@ int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
 }
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 // Inherited via Serializable
 void LGCAdjustablePoint::serialize(SerializerObject::SerializationHelper &obj) const
 {

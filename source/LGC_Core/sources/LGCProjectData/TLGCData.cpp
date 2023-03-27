@@ -807,6 +807,8 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 
 }
 
+#if USE_SERIALIZER
+
 void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 {
 	obj.addProperty("angles", angles);
@@ -824,7 +826,6 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("lines", lines);
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
-	//obj.addProperty("pos", pos);
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("fCovMat", fCovMat);
@@ -874,3 +875,5 @@ void TLGCData::TLSRelatedInfo::serialize(SerializerObject::SerializationHelper &
 	obj.addProperty("fChiLoLimit", fChiLoLimit);
 	obj.addProperty("fChiUpLimit", fChiUpLimit);
 };
+
+#endif // USE_SERIALIZER

@@ -36,7 +36,7 @@ const TLGCObsSummary& TLEVEL::getDHORObsSummary(std::string text) noexcept {
 	return dhorSummary_;
 }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 // Inherited via Serializable
 void TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
 {

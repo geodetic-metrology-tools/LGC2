@@ -6,7 +6,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef MEASUREMENTS_H_
 #define MEASUREMENTS_H_
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
@@ -22,7 +22,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	\ingroup Measurements
 	The measurement class bundles all possible measurements together. Every node of the tree of local frames has one class of this type.
 */
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	struct TMeasurements : public Serializable
 #else
 	struct TMeasurements
@@ -133,7 +133,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
     const TLGCObsSummary& getECWSGlobalObsSummary() const;
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif

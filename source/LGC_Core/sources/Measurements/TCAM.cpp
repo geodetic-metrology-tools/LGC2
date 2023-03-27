@@ -56,12 +56,13 @@ const TUVECObsSummary& TCAM::getUVECObsSummary(std::string text) noexcept {
 }
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 // Inherited via Serializable
 void TCAM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("instrument", instrument);
-	obj.addProperty("instrumentPos", instrumentPos->getName());
+	if (instrumentPos)
+	    obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
 	obj.addProperty("measUVD", measUVD);
 	obj.addProperty("measUVEC", measUVEC);

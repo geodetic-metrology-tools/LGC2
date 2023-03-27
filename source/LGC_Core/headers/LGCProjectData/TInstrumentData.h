@@ -14,7 +14,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TAdjustableLength.h>
 #include <TAdjustableAngle.h>
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
@@ -26,16 +26,28 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	This data is then used to create proper instrument objects (TSTN, CAM, TLEVEL or TEDM).
 	Values given in the input file can be in various units, but they are transformed during reading into metres[m] (lengths) or radians[rads] (angles), in whose they are stored.
 */
-class TInstrumentData : public Serializable 
+#if USE_SERIALIZER
+class TInstrumentData : public Serializable
+#else
+class TInstrumentData
+#endif // USE_SERIALIZER
 {
 	public:
-	class TPOLAR : public Serializable
+#if USE_SERIALIZER
+		class TPOLAR : public Serializable
+#else
+		class TPOLAR
+#endif // USE_SERIALIZER
 	{
 		public:
-		    struct TTarget : public Serializable
+#if USE_SERIALIZER
+			struct TTarget : public Serializable
+#else
+			struct TTarget
+#endif // USE_SERIALIZER
 		    {
 				TTarget(std::string ID = "",
-					TAngle sigmaAngl = TAngle(),
+				    TAngle sigmaAngl = TAngle(),
 				    TAngle sigmaZenD = TAngle(),
 				    TLength sigmaDist = TLength(),
 				    TLength ppmDist = TLength(),
@@ -45,15 +57,15 @@ class TInstrumentData : public Serializable
 				    TLength sigmaTargetCentering = TLength(),
 				    TLength targetHt = TLength(),
 				    TLength sigmaTargetHt = TLength(),
-					TAdjustableLength *distCorrectionAdjustable = nullptr,
+				    TAdjustableLength *distCorrectionAdjustable = nullptr,
 				    TLength sigmaCombinedDist = TLength(),
 				    TAngle sigmaCombinedAngle = TAngle(),
 				    TAngle sigmaCombinedPLRAngl = TAngle(),
 				    TAngle sigmaCombinedPLRZenD = TAngle(),
 				    TLength sigmaCombinedPLRDist = TLength()) :
 				    ID(ID),
-					sigmaAngl(sigmaAngl),
-					sigmaZenD(sigmaZenD),
+				    sigmaAngl(sigmaAngl),
+				    sigmaZenD(sigmaZenD),
 				    sigmaDist(sigmaDist),
 				    ppmDist(ppmDist),
 				    distCorrectionUnknown(distCorrectionUnknown),
@@ -87,10 +99,10 @@ class TInstrumentData : public Serializable
 				TAngle sigmaCombinedPLRZenD;		   // [rad]
 				TLength sigmaCombinedPLRDist;		   // [m]
             
-                #ifdef USE_SERIALIZER
-				    // Inherited via Serializable
-				    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-                #endif
+#if USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
             };
 
             TPOLAR() = default;
@@ -130,10 +142,10 @@ class TInstrumentData : public Serializable
                 return *this;
             }
 
-            #ifdef USE_SERIALIZER
-			    // Inherited via Serializable
-			    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-            #endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 
 			std::string ID;
 			std::string defTarget;
@@ -145,9 +157,17 @@ class TInstrumentData : public Serializable
 		};
 
 		//Definition of camera parameters
+#if USE_SERIALIZER
 		struct TCAMD : public Serializable
+#else
+		struct TCAMD
+#endif // USE_SERIALIZER
 		{
+#if USE_SERIALIZER
 			struct TTarget : public Serializable
+#else
+			struct TTarget
+#endif // USE_SERIALIZER
             {
 				TTarget(std::string ID = "",
 					TReal sigmaX = 0,
@@ -175,10 +195,10 @@ class TInstrumentData : public Serializable
 				TLength sigmaCombinedY;		   // [m]
 				TLength sigmaCombinedDist;		   // [m]
 
-				#ifdef USE_SERIALIZER
-				    // Inherited via Serializable
-				    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-                #endif
+#if USE_SERIALIZER
+				// Inherited via Serializable
+				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
             };
 
             TCAMD() = default;
@@ -210,10 +230,10 @@ class TInstrumentData : public Serializable
                 return *this;
             }
 
-            #ifdef USE_SERIALIZER
-			    // Inherited via Serializable
-			    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-            #endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 
 			std::string ID;
 			std::string defTarget;
@@ -221,9 +241,17 @@ class TInstrumentData : public Serializable
             std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
+#if USE_SERIALIZER
 		struct TEDM : public Serializable
+#else
+		struct TEDM
+#endif // USE_SERIALIZER
 		{
+#if USE_SERIALIZER
 			struct TTarget : public Serializable
+#else
+			struct TTarget
+#endif // USE_SERIALIZER
 			{
 				TTarget(std::string ID = "",
 					TLength sigmaDSpt = TLength(),
@@ -260,8 +288,10 @@ class TInstrumentData : public Serializable
 				TAdjustableLength *distCorrectionAdjustable;
 				TLength sigmaCombinedDist; // [m]
 
+#if USE_SERIALIZER
 				// Inherited via Serializable
 				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 			};
 
 			TEDM() = default;
@@ -301,16 +331,23 @@ class TInstrumentData : public Serializable
 			TLength sigmaInstrCentering; // [m]
 			std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 
-			#ifdef USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 		};
 
-
+#if USE_SERIALIZER
 		struct TLEVEL : public Serializable
+#else
+		struct TLEVEL
+#endif // USE_SERIALIZER
 		{
+#if USE_SERIALIZER
 			struct TTarget : public Serializable
+#else
+			struct TTarget
+#endif // USE_SERIALIZER
 			{
 				TTarget(std::string ID = "",
 					TLength sigmaD = TLength(),
@@ -338,8 +375,10 @@ class TInstrumentData : public Serializable
 				TLength sigmaStaffHt; // [m] standard deviation of the vertical offset of the staff
 				TLength sigmaCombinedDist;
 
+#if USE_SERIALIZER
 				// Inherited via Serializable
 				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 			};
 
 			TLEVEL() = default;
@@ -379,13 +418,17 @@ class TInstrumentData : public Serializable
 			TAdjustableAngle *collAngleAdjustable;
 			std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 
-			#ifdef USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-			#endif
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 		};
 
+#if USE_SERIALIZER
 		struct TSCALE : public Serializable
+#else
+		struct TSCALE
+#endif // USE_SERIALIZER
 		{
 			TSCALE(std::string ID = "",
 				TLength sigmaD = TLength(),
@@ -410,11 +453,17 @@ class TInstrumentData : public Serializable
 			TLength sigmaInstrCentering; // [m]
 			TLength sigmaCombinedDist; // [m]
 
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 		};
 
+#if USE_SERIALIZER
 		struct TINCL : public Serializable
+#else
+		struct TINCL
+#endif // USE_SERIALIZER
 		{
 			TINCL(std::string ID = "",
 				TAngle sigmaAngl = TAngle(),
@@ -439,11 +488,17 @@ class TInstrumentData : public Serializable
 			TAngle refSigmaCorrectionValue; // [rad]
 			TAngle sigmaCombinedAngle; // [rad]
 
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 		};
 
+#if USE_SERIALIZER
 		struct THLSR : public Serializable
+#else
+		struct THLSR
+#endif // USE_SERIALIZER
 		{
 			THLSR(std::string ID = "",
 				TLength sigmaDist = TLength(),
@@ -460,8 +515,10 @@ class TInstrumentData : public Serializable
 			TLength sigmaWS;
 			TLength sigmaCombinedDist;
 
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 		};
 
 
@@ -498,14 +555,14 @@ class TInstrumentData : public Serializable
 			return *it->second;
 		}
 
-        #ifdef USE_SERIALIZER
-            // Inherited via Serializable
-		    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
-        #endif
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 };
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
     inline void TInstrumentData::serialize(SerializerObject::SerializationHelper &obj) const
     {
 		obj.addProperty("fCAMD", fCAMD);

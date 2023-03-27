@@ -120,7 +120,7 @@ struct TTSTN : public TStatusObject {
                 , v0(v0)
                 , defaultTargetId(defTargetId) {}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif
@@ -187,7 +187,7 @@ struct TTSTN : public TStatusObject {
 
 		{}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif

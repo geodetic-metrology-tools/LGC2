@@ -14,7 +14,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TALGCObjectWriter.h>
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
     #include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
@@ -22,7 +22,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 \ingroup Measurements
 \brief Class containing summary data for a given observation type in a LS calculation. Mean, standard error, confidence limits and histogram information.
 */
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 class TLGCObsSummary : public Serializable
 #else
 class TLGCObsSummary
@@ -125,7 +125,7 @@ public:
     static void createHistogram(bool create){ fCreateHistogram = create; }
 
     //@}
-    #ifdef USE_SERIALIZER
+    #if USE_SERIALIZER
 	    // Inherited via Serializable
 	    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
     #endif
@@ -165,7 +165,7 @@ private:
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the TPLR3D observation.
 */
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 struct TPOLARObsSummary : public Serializable
 #else
 struct TPOLARObsSummary
@@ -175,7 +175,7 @@ struct TPOLARObsSummary
     TLGCObsSummary anglObsSum;
     TLGCObsSummary zendObsSum;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
@@ -193,7 +193,7 @@ struct TPOLARObsSummary
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVD observation.
 */
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 struct TUVDObsSummary : public Serializable
 #else
 struct TUVDObsSummary
@@ -203,7 +203,7 @@ struct TUVDObsSummary
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
@@ -221,7 +221,7 @@ struct TUVDObsSummary
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVEC observation.
 */
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 struct TUVECObsSummary : public Serializable
 #else
 struct TUVECObsSummary
@@ -230,7 +230,7 @@ struct TUVECObsSummary
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{
@@ -246,7 +246,7 @@ struct TUVECObsSummary
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the OBSXYZ observation.
 */
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 struct TOBSXYZObsSummary : public Serializable
 #else
 struct TOBSXYZObsSummary
@@ -256,7 +256,7 @@ struct TOBSXYZObsSummary
     TLGCObsSummary obsYObsSum;
     TLGCObsSummary obsZObsSum;
     
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	inline void serialize(SerializerObject::SerializationHelper &obj) const
 	{

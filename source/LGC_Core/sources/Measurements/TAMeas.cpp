@@ -3,7 +3,7 @@
 
 #include <LGCAdjustablePoint.h>
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 template<typename TTarget>
 void TAMeas<TTarget>::serialize(SerializerObject::SerializationHelper &obj) const
 {
@@ -16,10 +16,7 @@ void TAMeas<TTarget>::serialize(SerializerObject::SerializationHelper &obj) cons
 	obj.addProperty("measId", measId);
 	obj.addProperty("target", target);
 	if (targetPos)
-	{
-		obj.addProperty("targetPos", targetPos->getName());
-	}
-	
+		obj.addProperty("targetPos", targetPos->getName());	
 }
 // Explicit template instantiation
 template class TAMeas<TInstrumentData::TPOLAR::TTarget>;

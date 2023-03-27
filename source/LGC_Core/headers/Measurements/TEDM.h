@@ -46,7 +46,7 @@ struct TEDM : public TStatusObject {
 
         int stnId{ stnCounter_++ };
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif

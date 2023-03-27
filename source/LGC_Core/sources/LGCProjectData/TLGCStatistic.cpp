@@ -35,6 +35,8 @@ fGValue(nullptr)
 TLGCStatistic::~TLGCStatistic(){
 }
 
+
+#if USE_SERIALIZER
 void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("fAreDetermined", fAreDetermined);
@@ -50,7 +52,7 @@ void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fWToCompute", fWToCompute);
 	obj.addProperty("fZ", fZ);
 }
-
+#endif // USE_SERIALIZER
 
 void TLGCStatistic::initialiseStatVector(const TLSInputMatrices* im)
 {

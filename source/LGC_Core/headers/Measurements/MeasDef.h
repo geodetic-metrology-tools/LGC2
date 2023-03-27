@@ -62,7 +62,7 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		TAngle fAllFixedRy[2];
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -87,7 +87,7 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -111,7 +111,7 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -137,7 +137,7 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -166,7 +166,7 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -195,7 +195,7 @@ public:
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0[2];
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -217,7 +217,7 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
 		TAScalarMeas::serialize(obj); 
@@ -246,7 +246,7 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 		/// Allfixed parameter: distance correction
 		TLength fAllFixedCs;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -270,7 +270,7 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 		/// Returns the last LS-matrices equation index of this measurement, TECHO introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex()const {return getFirstEquationIndex();}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
 			TAScalarMeas::serialize(obj); 
@@ -296,7 +296,7 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, TECVE introduces 1 equation.*/
 	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
 		TAScalarMeas::serialize(obj); 
@@ -347,7 +347,7 @@ class TDVER  : public TAScalarMeas<int>{
       inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
 	//@}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	  // Inherited via Serializable
 	  virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -383,7 +383,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				/// Stes DHOR sigma
             inline void setDHORSigma(TLength sigma){ dhorSigma = sigma; }
 
-			#ifdef USE_SERIALIZER
+			#if USE_SERIALIZER
 						// Inherited via Serializable
 						virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 			#endif
@@ -412,7 +412,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 			/// Allfixed parameter: collimation angle
 			TAngle fAllFixedCollimation;
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -440,7 +440,7 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 			inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 		//@}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
 				TAScalarMeas::serialize(obj); 
@@ -500,7 +500,7 @@ public:
     inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -571,7 +571,7 @@ public:
 	void setAngleResidual(const TAngle& a) { fbearingResidual = a; }
 	//@}
 	
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -638,7 +638,7 @@ public:
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif
@@ -678,7 +678,7 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
 		TAScalarMeas::serialize(obj);
@@ -711,7 +711,7 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
 #endif

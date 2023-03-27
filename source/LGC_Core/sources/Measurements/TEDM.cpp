@@ -24,13 +24,14 @@ const TLGCObsSummary& TEDM::getDSPTObsSummary(std::string text) noexcept {
 	return dsptSummary_;
 }
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 // Inherited via Serializable
 void TEDM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("dsptSummary_", dsptSummary_);
 	obj.addProperty("instrument", instrument);
-	obj.addProperty("instrumentPos", instrumentPos->getName());
+	if (instrumentPos)
+		obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
 	obj.addProperty("measDSPT", measDSPT);
 	obj.addProperty("stnCounter_", stnCounter_);

@@ -45,8 +45,6 @@ template<>
 template<>
 void object::test<1>()
 {
-	// test for ok
-	// test for task failed succesfully
 	set_test_name("Testing JSON keyword recognition");
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/JSON_keyword.txt");
 	projTest->getFileLogger().writeReportHeader("LGC output file");

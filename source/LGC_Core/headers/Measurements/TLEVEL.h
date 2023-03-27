@@ -60,7 +60,7 @@ struct TLEVEL : public TStatusObject {
 			hasDHOR(false)
 			{}
 			
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 			// Inherited via Serializable
 			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 #endif

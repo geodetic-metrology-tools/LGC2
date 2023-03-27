@@ -89,13 +89,17 @@ void TLSCalcRelativeError::setSigmaZ(TLength sz) {
 	return;
 }
 
+#if USE_SERIALIZER
 void TLSCalcRelativeError::serialize(SerializerObject::SerializationHelper& obj) const
 {
-	obj.addProperty("fPoint1", fPoint1->getName());
-	obj.addProperty("fPoint2", fPoint2->getName());
+	if (fPoint1)
+		obj.addProperty("fPoint1", fPoint1->getName());
+	if (fPoint2)
+		obj.addProperty("fPoint2", fPoint2->getName());
 	obj.addProperty("fSigmaL", fSigmaL);
 	obj.addProperty("fSigmaG", fSigmaG);
 	obj.addProperty("fSigmaR", fSigmaR);
 	obj.addProperty("fSigmaZ", fSigmaZ);
 	obj.addProperty("fSigmaV", fSigmaV);
 }
+#endif // USE_SERIALIZER

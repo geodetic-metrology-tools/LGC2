@@ -116,7 +116,7 @@ void LGCAdjustablePlane::reInitialise(){
 }
 
 
-#ifdef USE_SERIALIZER
+#if USE_SERIALIZER
 void LGCAdjustablePlane::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	TVAdjustableObject::serialize(obj);
