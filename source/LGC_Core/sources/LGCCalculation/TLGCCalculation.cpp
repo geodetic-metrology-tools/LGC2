@@ -74,8 +74,9 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		/////  	//}
 		/////  }
 		{
-			TLSDerivativeTester tester(fData);
-			bool check = tester.testFirstDesignMatrix();
+			TLSEvaluator evaluator(fData);
+			//TLSDerivativeTester tester(fData);
+			//bool check = tester.testFirstDesignMatrix();
 		}
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
