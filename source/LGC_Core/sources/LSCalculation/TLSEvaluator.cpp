@@ -18,13 +18,22 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 	// do some tests
 	//testSetterAndGetter();
 	bool setterEffect = testSetterEffect();
+	if (setterEffect)
+	{
+		std::cout << "parameter setter test successful" << std ::endl;
+	}
 
 	// manually change the parameter before the first evaluation
 	Eigen::VectorXd testPar(1);
 	testPar(0) = 1;
 	//testPar = getEstParams();
-	setParameters(testPar);
-	Eigen::VectorXd evalTest = evaluateMisclosure(testPar);
+	for (int k = 0; k < 10; k++)
+	{
+		testPar(0) += 0.1;
+		setParameters(testPar);
+		Eigen::VectorXd evalTest = evaluateMisclosure(testPar);
+		std::cout << evalTest << std::endl;
+	}
 
 	//TLSInputMatricesFiller fMatFiller(&fData->getTree(), fData->getConfig().referential);
 	//TLSInputMatricesFiller matFiller(&fData->getTree(), fData->getConfig().referential);
@@ -157,7 +166,8 @@ bool TLSEvaluator::testSetterEffect()
 		Eigen::VectorXd pertVar = baseVar;
 		pertVar(i) += smallPerturbation;
 		Eigen::VectorXd pertEval = evaluateMisclosure(pertVar);
-		if ((baseEval - pertEval).isZero())
+		double diff = (baseEval - pertEval).norm();
+		if (diff<1e-12)
 		{
 			testPassed = false;
 			std::cout << "Parameter i=" << i << " seems to have no influence on the misclosure." << std ::endl;
