@@ -6,12 +6,18 @@
 #include <Eigen/Dense>
 #include "TAdjustableHelmertTransformation.h"
 
-TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : fMatFiller(&data->getTree(), data->getConfig().referential)
+TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 {
 	// create a copy of the LGCData object to use it for manipulating parameter and observation values
 	// std::shared_ptr<TLGCData> aux = data->clone();
 	fData = data->clone();
+	fMatFiller = new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential);
+	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
+
+	// do some tests
+	testSetterAndGetter();
+	bool setterEffect = testSetterEffect();
 
 	//TLSInputMatricesFiller fMatFiller(&fData->getTree(), fData->getConfig().referential);
 	//TLSInputMatricesFiller matFiller(&fData->getTree(), fData->getConfig().referential);
@@ -28,6 +34,11 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : fMatFiller(&data->g
 	//}
 }
 
+TLSEvaluator::~TLSEvaluator()
+{
+	delete fMatFiller;
+}
+
 
 Eigen::VectorXd TLSEvaluator::evaluateMisclosure(Eigen::VectorXd parameter)
 {
@@ -37,7 +48,7 @@ Eigen::VectorXd TLSEvaluator::evaluateMisclosure(Eigen::VectorXd parameter)
    	TLSInputMatrices matrices;
    	matrices.initMatrices(fData->fUEOIndices);
 	// evaluate using the standard inputMatrixFiller
-   	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
+   	bool success =	fMatFiller->fillMatrices(fData.get(), true, &matrices);
 	// get misclosure
    	Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
 	return misclosure;
@@ -50,7 +61,7 @@ Eigen::SparseMatrix<double> TLSEvaluator::evaluateA(Eigen::VectorXd parameter)
    	TLSInputMatrices matrices;
    	matrices.initMatrices(fData->fUEOIndices);
 	// evaluate using the standard inputMatrixFiller
-   	bool success =	fMatFiller.fillMatrices(fData.get(), true, &matrices);
+   	bool success =	fMatFiller->fillMatrices(fData.get(), true, &matrices);
 	// get first design matrix
 	Eigen::SparseMatrix<double> A = *matrices.getFirstDgnMtrx();
 	return A;
@@ -89,6 +100,63 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para)
 	setTransformationParams(para);
 	setLineParams(para);
 
+}
+
+void TLSEvaluator::testSetterAndGetter()
+{
+	Eigen::VectorXd testParameter(dimensions.UIndex);
+	testParameter.setZero();
+	// create a dummy variable
+	for (int i = 0; i < dimensions.UIndex; i++)
+	{
+		testParameter(i) = 1.0 / (i+1);
+	}
+	//set the parameter
+	setParameters(testParameter);
+
+	// now get the parameters and check if they were set accordingly
+	Eigen::VectorXd retrievedParameter(dimensions.UIndex);
+	retrievedParameter.setZero();
+	retrievedParameter = getEstParams();
+	// compare both
+	bool success = true;
+	for (int i = 0; i < dimensions.UIndex; i++)
+	{
+		double diff = (retrievedParameter(i) - testParameter(i));
+		if (fabs(diff) > 1e-6)
+		{
+			success = false;
+			std::cout << "Parameter at Index " << i << " is not set correctly. Set to " << testParameter(i) << " vs retrieved value " << retrievedParameter(i) << std::endl;
+		}
+	}
+	if (success == false)
+	{
+		std::cout << "Parameter set/get test failed." << std::endl;
+	}
+
+
+}
+
+bool TLSEvaluator::testSetterEffect()
+{
+	// test if changing the parametyers has an effect on the misclosure. If not, somewghere is a problem (maybe in the evaluator itself or elsewhere)
+	Eigen::VectorXd baseVar = getEstParams();
+	Eigen::VectorXd baseEval = evaluateMisclosure(baseVar);
+
+	double smallPerturbation = 1e-1;
+	bool testPassed = true;
+	for (int i = 0; i < dimensions.UIndex; i++)
+	{
+		Eigen::VectorXd pertVar = baseVar;
+		pertVar(i) += smallPerturbation;
+		Eigen::VectorXd pertEval = evaluateMisclosure(pertVar);
+		if ((baseEval - pertEval).isZero())
+		{
+			testPassed = false;
+			std::cout << "Parameter i=" << i << " seems to have no influence on the misclosure." << std ::endl;
+		}
+	}
+	return testPassed;
 }
 
 void TLSEvaluator::setPointParams(Eigen::VectorXd para)
