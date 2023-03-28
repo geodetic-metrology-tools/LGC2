@@ -31,18 +31,22 @@ class TLSEvaluator
 
 public:
 	TLSEvaluator(std::shared_ptr<TLGCData> data);
+
+	~TLSEvaluator();
 	
 	Eigen::VectorXd evaluateMisclosure(Eigen::VectorXd parameter);
 	Eigen::SparseMatrix<double> evaluateA(Eigen::VectorXd parameter);
 	Eigen::VectorXd getEstParams();
 	void setParameters(Eigen::VectorXd para);
 	UEOIndices dimensions;
+	void testSetterAndGetter();
+	bool testSetterEffect();
 
 private:
 	// a copy of data for maipulating parameter and observation values.
 	std::shared_ptr<TLGCData> fData;
 	//TLGCData fData;
-	TLSInputMatricesFiller fMatFiller;
+	TLSInputMatricesFiller* fMatFiller;
 	// setter helpers
 	void setPointParams(Eigen::VectorXd para);
 	void setAngleParams(Eigen::VectorXd para);
