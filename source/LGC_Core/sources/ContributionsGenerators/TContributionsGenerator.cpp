@@ -1399,8 +1399,6 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	TPositionVector stationPos = incly.targetPos->getEstimatedValue(); // get the position of the station
 	const TLOR2LOR &ptLor2RootTrafo = fPointTransfo.getLORTransformation(incly.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); // Transformation from "STATION FRAME" to "ROOT"
 	ptLor2RootTrafo.transform(stationPos);
-	std::cout << "applied ry angle=" << ptLor2RootTrafo.getTransformationChain().begin()->adjTrafo->getEstRotation(1).getRadiansValue() << std::endl;
-	// test reversed transformation
 
 	// Creating the Local Vertical vector (no change if OLOC)
 	TFreeVector stationV(0, 0, 1, TCoordSysFactory::k3DCartesian);
@@ -1418,9 +1416,6 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	// Transform the local vertical in the station LOR
 	const TLOR2LOR &vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), inclST.positionInTree); // Trafo from from CCS LOR to station's LOR
 	vert2stTrafo.transform(stationV);
-	std::cout << "from=" << fPointTransfo.getTree()->begin().node->data.get()->frame.getName()<< std::endl;
-	std::cout << "to=" << inclST.positionInTree		.node->data.get()->frame.getName()<< std::endl;
-	std::cout << "applied ry angle=" << vert2stTrafo.getTransformationChain().begin()->adjTrafo->getEstRotation(1).getRadiansValue() << std::endl;
 
 	// Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
 	TReal XSt = stationV.getX().getMetresValue();
