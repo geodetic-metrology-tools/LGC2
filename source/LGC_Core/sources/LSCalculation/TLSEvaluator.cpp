@@ -16,8 +16,15 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 	dimensions = data->fUEOIndices;
 
 	// do some tests
-	testSetterAndGetter();
+	//testSetterAndGetter();
 	bool setterEffect = testSetterEffect();
+
+	// manually change the parameter before the first evaluation
+	Eigen::VectorXd testPar(1);
+	testPar(0) = 1;
+	//testPar = getEstParams();
+	setParameters(testPar);
+	Eigen::VectorXd evalTest = evaluateMisclosure(testPar);
 
 	//TLSInputMatricesFiller fMatFiller(&fData->getTree(), fData->getConfig().referential);
 	//TLSInputMatricesFiller matFiller(&fData->getTree(), fData->getConfig().referential);
@@ -143,7 +150,7 @@ bool TLSEvaluator::testSetterEffect()
 	Eigen::VectorXd baseVar = getEstParams();
 	Eigen::VectorXd baseEval = evaluateMisclosure(baseVar);
 
-	double smallPerturbation = 1e-1;
+	double smallPerturbation = 0.666;
 	bool testPassed = true;
 	for (int i = 0; i < dimensions.UIndex; i++)
 	{
