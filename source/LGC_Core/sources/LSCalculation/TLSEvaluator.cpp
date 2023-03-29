@@ -125,7 +125,7 @@ void TLSEvaluator::testSetterAndGetter()
 
 bool TLSEvaluator::testSetterEffect()
 {
-	// test if changing the parametyers has an effect on the misclosure. If not, somewghere is a problem (maybe in the evaluator itself or elsewhere)
+	// test if changing the parameters has an effect on the misclosure. If not, somewhere is a problem (maybe in the evaluator itself or elsewhere)
 	Eigen::VectorXd baseVar = getEstParams();
 	Eigen::VectorXd baseEval = evaluateMisclosure(baseVar);
 
