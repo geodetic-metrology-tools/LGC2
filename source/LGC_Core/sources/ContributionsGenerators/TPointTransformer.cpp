@@ -147,10 +147,14 @@ const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator origin
 
 	int trIndex = getTransformationIndex(originalFrameName + destinationFrameName);
 
-	// If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
-	if (trIndex == -1)
-	{
-		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName));
+	//If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
+	if (trIndex == -1){
+		// this somehow uses not updated transformation parameters for creating the LOR2LOR object
+		//fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName));
+		//   std::cout << "lor2lor data using iterator initialization=" << originalTreePos.node->data.get()->frame.getEstRotation(1).getRadiansValue() << std::endl;
+		//   std::cout << "lor2lor data using iterator initialization=" << destinationTreePos.node->data.get()->frame.getEstRotation(1).getRadiansValue() << std::endl;
+		// using the string initializer
+		fLORTrafo.emplace_back(TLOR2LOR(*fTree, originalFrameName, destinationFrameName, originalFrameName + destinationFrameName));
 		trIndex = (int)fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
 	}
 	std::list<TLOR2LOR>::iterator it = fLORTrafo.begin();
