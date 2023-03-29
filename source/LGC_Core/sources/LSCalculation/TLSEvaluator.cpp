@@ -16,38 +16,8 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 	dimensions = data->fUEOIndices;
 
 	// do some tests
-	//testSetterAndGetter();
+	testSetterAndGetter();
 	bool setterEffect = testSetterEffect();
-	if (setterEffect)
-	{
-		std::cout << "parameter setter test successful" << std ::endl;
-	}
-
-	// manually change the parameter before the first evaluation
-	Eigen::VectorXd testPar(1);
-	testPar(0) = 1;
-	//testPar = getEstParams();
-	for (int k = 0; k < 10; k++)
-	{
-		testPar(0) += 0.1;
-		setParameters(testPar);
-		Eigen::VectorXd evalTest = evaluateMisclosure(testPar);
-		std::cout << evalTest << std::endl;
-	}
-
-	//TLSInputMatricesFiller fMatFiller(&fData->getTree(), fData->getConfig().referential);
-	//TLSInputMatricesFiller matFiller(&fData->getTree(), fData->getConfig().referential);
-//	matFiller = aux;
-	//std::shared_ptr<TLSInputMatricesFiller> matFiller(new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential));
-	//matrixFiller(&fData->getTree(), fData->getConfig().referential);
-
-
-	//// identify the constraints necessary, create them
-	//if (data.getConfig().libre.isActive())
-	//{
-	//	fLibrCnstrGenerator.initCnstrIdentifier(data);
-	//	data.fUEOIndices.CIndex = fLibrCnstrGenerator.getNumberOfConstraint();
-	//}
 }
 
 TLSEvaluator::~TLSEvaluator()
@@ -159,7 +129,8 @@ bool TLSEvaluator::testSetterEffect()
 	Eigen::VectorXd baseVar = getEstParams();
 	Eigen::VectorXd baseEval = evaluateMisclosure(baseVar);
 
-	double smallPerturbation = 0.666;
+	double smallPerturbation = 1e-5;
+	//double smallPerturbation = 0.666;
 	bool testPassed = true;
 	for (int i = 0; i < dimensions.UIndex; i++)
 	{
