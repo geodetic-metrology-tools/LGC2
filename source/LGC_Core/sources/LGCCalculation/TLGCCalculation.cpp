@@ -39,11 +39,12 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			it->transformProvisionalCoordinates(fData.get());
 		}
 
+		algorithm.reset(new TLSAlgorithm(*fData.get()));
 		{
-			TLSEvaluator evaluator(fData);
+			// only now the constraint dimensions are set.
+			//TLSEvaluator evaluator(fData);
 			TLSDerivativeTester tester(fData);
 		}
-		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
 		if (fData->getConfig().sim.isActive())
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));

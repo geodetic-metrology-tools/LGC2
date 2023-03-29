@@ -6,14 +6,14 @@ TLSDerivativeTester::TLSDerivativeTester(std::shared_ptr<TLGCData> data) : fEval
 {
 	// test the first design matrix
 	bool result = testFirstDesignMatrix();
-	if (result)
-	{
-		std::cout << "Finite differences test for first design matrix passed." << std::endl;
-	}
-	else
-	{
-		std::cout << "Finite differences test for first design matrix failed." << std::endl;
-	}
+	// if (result)
+	// {
+	// 	std::cout << "Finite differences test for first design matrix passed." << std::endl;
+	// }
+	// else
+	// {
+	// 	std::cout << "Finite differences test for first design matrix failed." << std::endl;
+	// }
 }
 
 bool TLSDerivativeTester::testFirstDesignMatrix()
@@ -32,26 +32,24 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 	// generate error messages for each entry where the derivatives don't match (wrt to a given tolerance)
 	Eigen::MatrixXd difference = (computedJacobian - finiteDifferenceJacobian);
 	double tolerance = 100 * dx;
-	std::stringstream header;
-	header << "Derivative Test results: " << std::endl;
-	header << "(obs_idx, Parameter_idx), (expected value (computed via fin diff), actual value), absoluteDifference" << std::endl;
 	std::stringstream message;
 	bool problemDetected = false;
 	for (int par = 0; par < fEvaluator.dimensions.UIndex; par++)
 	{
 		for (int obs = 0; obs < fEvaluator.dimensions.OIndex; obs++)
 		{
-			if (fabs(difference(obs, par)) > tolerance)
+			double absDiff = fabs(difference(obs, par));
+			if (absDiff > tolerance)
 			{
+				double absSum = sqrt(pow(computedJacobian(obs, par),2) + pow(finiteDifferenceJacobian(obs, par),2));
 				problemDetected = true;
-				message << "(" << obs << "," << par << "), (" << std::setprecision(9) << finiteDifferenceJacobian(obs, par) << "," << computedJacobian(obs, par) << "), "
-						  << fabs(difference(obs, par)) << std::endl;
+				message <<"Idx = " << std::setw(4)<< obs << ", UIdx = " << std::setw(4)<< par << ", finDiffJac =" << std::setprecision(8) << std::setw(16)<< finiteDifferenceJacobian(obs, par)
+						<< ", LGCJac = " << std::setw(16) << computedJacobian(obs, par) << " , absDiff = " << std::setw(12)<< absDiff << ", relDiff = " << std::setw(10)<< absDiff / absSum << std::endl;
 			}
 		}
 	}
 	if (problemDetected == true)
 	{
-		std::cout << header.str();
 		std::cout << message.str();
 	}
 
