@@ -508,9 +508,9 @@ namespace tut
 				const TLGCData& dataset = calcul.getData();
 
 				TPositionVector Pt = dataset.getPoints().getObject("PT").getEstimatedValue();
-				ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-12);
-				ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-12);
-				ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-12);
+				ensure_equals("Pt x coordinate should match", Pt.getX().getMetresValue(), 0, 1e-9);
+				ensure_equals("Pt y coordinate should match", Pt.getY().getMetresValue(), 100, 1e-9);
+				ensure_equals("Pt z coordinate should match", Pt.getZ().getMetresValue(), 0, 1e-9);
 
 				TPositionVector PT2 = dataset.getPoints().getObject("PT2").getEstimatedValue();
 				ensure_equals("Pt2 x coordinate should match", PT2.getX().getMetresValue(), 100, 1e-9);

@@ -10,7 +10,11 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 {
 	// create a copy of the LGCData object to use it for manipulating parameter and observation values
 	// std::shared_ptr<TLGCData> aux = data->clone();
-	fData = data->clone();
+	// Plan was to use the clone method, but it breaks the links between the cloned tree and the cloned adj object collections... 
+	// probably the pointers to the lengths are not reset correctly in the clone method.
+	// fData = data->clone();
+	// instead take the original object now. The links there work.
+	fData = data;
 	fMatFiller = new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential);
 	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
@@ -90,6 +94,7 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para)
 
 void TLSEvaluator::testSetterAndGetter()
 {
+	Eigen::VectorXd prov = getEstParams();
 	Eigen::VectorXd testParameter(dimensions.UIndex);
 	testParameter.setZero();
 	// create a dummy variable
@@ -120,6 +125,8 @@ void TLSEvaluator::testSetterAndGetter()
 		std::cout << "Parameter set/get test failed." << std::endl;
 	}
 
+	// restore the original parameters in the data structure
+	setParameters(prov);
 
 }
 
@@ -142,8 +149,13 @@ bool TLSEvaluator::testSetterEffect()
 		{
 			testPassed = false;
 			std::cout << "Parameter i=" << i << " seems to have no influence on the misclosure." << std ::endl;
+			// print norm of associated column of Jacobian in this case. if its 0 this means LGC agrees that no influence on misclosure.. consi check should also complain in this case
+			Eigen::MatrixXd Jac = evaluateA(pertVar);
+			std::cout << "norm of i-th column of LGC Jacobian = " << Jac.col(i).norm() << std::endl;
 		}
 	}
+	// restore the original parameters in the data structure
+	setParameters(baseVar);
 	return testPassed;
 }
 

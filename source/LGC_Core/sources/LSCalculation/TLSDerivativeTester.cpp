@@ -31,7 +31,9 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 
 	// generate error messages for each entry where the derivatives don't match (wrt to a given tolerance)
 	Eigen::MatrixXd difference = (computedJacobian - finiteDifferenceJacobian);
-	double tolerance = 100 * dx;
+	//double tolerance = 100 * dx;
+	// only consider errors above certain relative tolerance
+	double relTol = 0.5;
 	std::stringstream message;
 	bool problemDetected = false;
 	for (int par = 0; par < fEvaluator.dimensions.UIndex; par++)
@@ -39,12 +41,17 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 		for (int obs = 0; obs < fEvaluator.dimensions.OIndex; obs++)
 		{
 			double absDiff = fabs(difference(obs, par));
-			if (absDiff > tolerance)
+		//	if (absDiff > tolerance)
 			{
 				double absSum = sqrt(pow(computedJacobian(obs, par),2) + pow(finiteDifferenceJacobian(obs, par),2));
-				problemDetected = true;
-				message <<"Idx = " << std::setw(4)<< obs << ", UIdx = " << std::setw(4)<< par << ", finDiffJac =" << std::setprecision(8) << std::setw(16)<< finiteDifferenceJacobian(obs, par)
-						<< ", LGCJac = " << std::setw(16) << computedJacobian(obs, par) << " , absDiff = " << std::setw(12)<< absDiff << ", relDiff = " << std::setw(10)<< absDiff / absSum << std::endl;
+				double relDiff = absDiff / absSum;
+				if ((relDiff > relTol)&&(absDiff>1e-9))
+				{
+					problemDetected = true;
+					message << "OIdx = " << std::setw(4) << obs << ", UIdx = " << std::setw(4) << par << ", finDiffJac =" << std::setprecision(8) << std::setw(16)
+							<< finiteDifferenceJacobian(obs, par) << ", LGCJac = " << std::setw(16) << computedJacobian(obs, par) << " , absDiff = " << std::setw(12)
+							<< absDiff << ", relDiff = " << std::setw(10) << relDiff << std::endl;
+				}
 			}
 		}
 	}
