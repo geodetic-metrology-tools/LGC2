@@ -388,7 +388,38 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
 }
 
 
-void TLGCData::copyTree(TLGCData const* const src, TLGCData* tgt) {
+void TLGCData::addSlaveFrameToGroup(std::string frameName, std::string groupName)
+{
+	// check if group already exists
+	bool found = false;
+    //TAdjustableHelmertTransformation & slaveFrame = locateNode(frameName).node->data.get()->frame;
+    TAdjustableHelmertTransformation & slaveFrame = locateNode(frameName)->get()->frame;
+	for (slaveGroup& group : slaveGroups)
+	{
+		if (group.groupName == groupName)
+		{
+			found = true;
+			group.slaveNames.push_back(frameName);
+			if (group.constraintDim!=slaveFrame.getNumUnkn()){
+				logCritical() << "Slave group" << group.groupName << "has inconsistent degrees of freedom. First inconsistent slave frame: " << frameName;
+            }
+            // constraint dimensions increments only if group already exists
+			fUEOIndices.CIndex += slaveFrame.getNumUnkn();
+		}
+	}
+	// if there is no group with this group name, create one
+	if (found == false)
+	{
+		slaveGroup newGroup;
+		newGroup.groupName = groupName;
+		newGroup.constraintDim = slaveFrame.getNumUnkn();
+		newGroup.slaveNames.push_back(frameName);
+		slaveGroups.push_back(newGroup);
+	}
+}
+
+void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
+{
 
 	// Copy the tree structure/form:
 	tgt->tree = src->tree;

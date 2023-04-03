@@ -367,8 +367,14 @@ const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
 	id << "LGC2 " << getLGCVersion() << ", compiled on " <<   __DATE__ ;
-	id << std::endl << "EXPERIMENTAL Version for constraining frames with 'SLAVE' prefix to have equal Helmert parameters.";
-	id << std::endl << "All SLAVE frames need equal free parameters and only the free parameters are constrained to be equal - the others are fixed as usual at the 'provisional' values.";
+	id << std::endl << "EXPERIMENTAL Version for constraining frames.";
+	id << std::endl << "Allows to define groups of frames that are constrained to have the same free Helmert parameters.";
+	id << std::endl << "Usage: add the tag \"SLAVE\" after the frame definition followed by a groupname to indicate that the frame belongs to a group.";
+	id << std::endl << "Example:";
+	id << std::endl << "*FRAME F1 1 2 3 4 5 6 1 TX TY RZ SLAVE firstGroup";
+	id << std::endl << "...";
+	id << std::endl << "*FRAME F2 7 8 9 10 11 12 1 TX TY RZ SLAVE firstGroup";
+	id << std::endl << "will force frames F1 and F2 to have identical TX, TY and RZ values after convergence.";
 	return id.str();
 }
 

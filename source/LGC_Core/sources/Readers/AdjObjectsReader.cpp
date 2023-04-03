@@ -34,6 +34,8 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	if (opts.has("RZ") || opts.has("SRZ")) rotations.set(2,0);
 	if (opts.has("SCL")|| opts.has("SSCL")) scale.set(0,0);
 
+
+
 	const auto gon(TAngle::kGons);
 	TransformParameters transfParam;
 	transfParam.tX = TLength(std::stor(tokens[3])); // Translation along X
@@ -71,6 +73,13 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		if(opts.has("SRY")) adjTrafo.setRotationStandDev(Y, TAngle(opts.getParamR("SRY"), TAngle::kCCs));  //Value given in cc, stored in angle object
 		if(opts.has("SRZ")) adjTrafo.setRotationStandDev(Z, TAngle(opts.getParamR("SRZ"), TAngle::kCCs));  //Value given in cc, stored in angle object
 		if(opts.has("SSCL")) adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M); 
+	}
+
+	// check for "Slave" frames
+	if (opts.has("SLAVE"))
+	{
+		std::string groupName = opts.getParam("SLAVE");
+		adjTrafo.setSlaveGroup(groupName);
 	}
 
 	// Create a new level in the tree using the current transformation definition.

@@ -52,7 +52,16 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	stream->setTreeDepth((int)frameIt->get()->ID.size() - 1); //Size of the ID is equal to the depth in the tree, which corresponds to the number o TABs to be used in formatting. Zero TABs for ROOT (depth 1).
 	
 
-	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
+	std::string modifiedName = frameIt->get()->frame.getName() ;
+	std::string slaveGroup = frameIt->get()->frame.getSlaveGroup();
+	if ( slaveGroup!= "")
+	{
+		std::stringstream slavePostString;
+		slavePostString << "(Slave Group " << slaveGroup << ")";
+		modifiedName += slavePostString.str();
+	}
+	//writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
+	writeFRAMEHeader(modifiedName, frameIt->get()->ID);
 
 	if(frameIt->get()->frame.getName() != "ROOT")
 		writeFRAMEDefinition(*frameIt->get());
