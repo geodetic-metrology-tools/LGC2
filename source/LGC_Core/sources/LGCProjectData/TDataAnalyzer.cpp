@@ -75,12 +75,6 @@ bool TDataAnalyzer::dataConsistent(){
 			lastUidx = frame.getLastUidx() + 1;
 		}
 
-        // new slave frame handling
-		if (frame.getSlaveGroup() != "")
-		{
-            fData.addSlaveFrameToGroup(frame.getName(), frame.getSlaveGroup());
-		}
-
 		if(frame.hasStandDev()){  //If a frame has standard deviation assigned 
 			fStandDevUsed = true;
 			fData.setStandDevUsed();
