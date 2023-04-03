@@ -13,6 +13,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TContributionsGenerator.h>
 #include <TPointTransformer.h>
 #include <Global.h>
+#include <TLGCData.h>
+
 
 class TLSInputMatrices;
 class TLGCData;
@@ -78,6 +80,9 @@ private:
  
 	/// Fills the weight unknown matrix.
 	bool	fillWeightUnkMtrx(TLGCData* projData, TLSInputMatrices* matrices);
+
+	// fill in the slave constraints
+	void addSlaveConstraints(TLGCData* projData, TLSInputMatrices* matrices);
 
 	/*!@name Methods to add the design matrix contributions for each type of observation*/
 	//@{

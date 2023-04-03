@@ -7,6 +7,7 @@
 #include "TLSInputMatrices.h"
 #include "TDataAnalyzer.h"
 #include <TLGCData.h>
+#include <Logger.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CONSTRUCTOR / DESTRUCTOR
@@ -36,119 +37,11 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 		if(fillWeightUnkn)
 			fillOK = fillOK && fillWeightUnkMtrx(projData, matrices);
 
-		bool firstSlaveFound = 0;
-		struct
-		{
-			double rx, ry, rz, tx, tz, ty, scale;
-			int rxIdx, ryIdx, rzIdx, txIdx, tzIdx, tyIdx, scaleIdx;
-		} slaveData;
+		addSlaveConstraints(projData, matrices);
+
 		//Itteration through the nodes of the tree
-		int cIdx = 0;
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++){		
 
-			// check if a "slave" constraint has to be applied
-			auto& frame(itTree.node->data.get()->frame);
-			// check if it is a "SLAVE" frame a
-			std::string framename = frame.getName();
-			std::string slavename = "SLAVE";
-			if (framename.rfind(slavename, 0) == 0)
-			{
-				if (firstSlaveFound == 0)
-				{
-					// get values from first slave (the master) 
-					slaveData.rx = frame.getEstRotation(0);
-					slaveData.ry = frame.getEstRotation(1);
-					slaveData.rz = frame.getEstRotation(2);
-					slaveData.tx = frame.getEstTranslation(0);
-					slaveData.ty = frame.getEstTranslation(1);
-					slaveData.tz = frame.getEstTranslation(2);
-					slaveData.scale = frame.getEstScale();
-					if (!frame.isRotationFixed(0))
-					{
-						slaveData.rxIdx = frame.getRotationUnknIndex(0);
-					};
-					if (!frame.isRotationFixed(1))
-					{
-						slaveData.ryIdx = frame.getRotationUnknIndex(1);
-					}
-					if (!frame.isRotationFixed(2))
-					{
-						slaveData.rzIdx = frame.getRotationUnknIndex(2);
-					}
-					if (!frame.isTranslationFixed(0))
-					{
-						slaveData.txIdx = frame.getTranslationUnknIndex(0);
-					}
-					if (!frame.isTranslationFixed(1))
-					{
-						slaveData.tyIdx = frame.getTranslationUnknIndex(1);
-					}
-					if (!frame.isTranslationFixed(2))
-					{
-						slaveData.tzIdx = frame.getTranslationUnknIndex(2);
-					}
-					if (!frame.isScaleFixed())
-					{
-						slaveData.scaleIdx = frame.getScaleUnknIndex();
-					}
-				}
-				if (firstSlaveFound == true)
-				{
-					// add the constraint data
-					if (!itTree.node->data.get()->frame.isRotationFixed(0))
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rxIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getRotationUnknIndex(0), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.rx - frame.getEstRotation(0)));
-						cIdx++;
-					}		
-					if (!frame.isRotationFixed(1))
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.ryIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getRotationUnknIndex(1), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.ry - frame.getEstRotation(1)));
-						cIdx++;
-					}				
-					if (!frame.isRotationFixed(2))
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.rzIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getRotationUnknIndex(2), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.rz - frame.getEstRotation(2)));
-						cIdx++;
-					}		
-					if (!frame.isTranslationFixed(0))
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.txIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getTranslationUnknIndex(0), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.tx - frame.getEstTranslation(0)));
-						cIdx++;
-					}		
-					if (!frame.isTranslationFixed(1))
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.tyIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getTranslationUnknIndex(1), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.ty - frame.getEstTranslation(1)));
-						cIdx++;
-					}			
-					if (!frame.isTranslationFixed(2))
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.tzIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getTranslationUnknIndex(2), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.tz - frame.getEstTranslation(2)));
-						cIdx++;
-					}				
-					if (!frame.isScaleFixed())
-					{
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveData.scaleIdx, 1);
-						matrices->setCnstrFirstDgnMtrxElement(cIdx, frame.getScaleUnknIndex(), -1);
-						matrices->setCnstrMisclosureVectorElement(cIdx, (slaveData.scale - frame.getEstScale()));
-						cIdx++;
-					}	
-
-				}
-				firstSlaveFound = true;
-
-			}
 			//In every node iterate through the Total station measurements (TSTN)
 			for(auto& itTSTN : itTree.node->data->measurements.fTSTN){
 				if (itTree.node->data->isROOTNode())
@@ -1774,5 +1667,57 @@ bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatri
 		}
 	}
 	return fillOK;
+}
+
+void TLSInputMatricesFiller::addSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices)
+{
+	int cIdx = 0;
+	// iterate over all slave groups
+	for (slaveGroup group : projData->slaveGroups)
+	{
+		// check if group has more then one frame
+		if (group.slaveNames.size()==1)
+		{
+			logWarning() << "Warning: slave group " << group.groupName << " contains only one frame. No slave-constraints added.";
+			break;
+		}
+		// get master frame
+		TAdjustableHelmertTransformation &master = projData->locateNode(group.slaveNames.at(0))->get()->frame;
+		// iterate over the non-master frames
+		for (int j = 1; j < group.slaveNames.size(); j++)
+		{
+			TAdjustableHelmertTransformation &slave = projData->locateNode(group.slaveNames.at(j))->get()->frame;
+			for (int tIdx = 0; tIdx < 3; tIdx++)
+			{
+				if (!master.isTranslationFixed(tIdx))
+				{
+					double misclosure = master.getEstTranslation(tIdx).getMetresValue() - slave.getEstTranslation(tIdx).getMetresValue();
+					matrices->setCnstrMisclosureVectorElement(cIdx, misclosure);
+					matrices->setCnstrFirstDgnMtrxElement(cIdx, master.getTranslationUnknIndex(tIdx), 1);
+					matrices->setCnstrFirstDgnMtrxElement(cIdx, slave.getTranslationUnknIndex(tIdx), -1);
+					cIdx++;
+				}
+			}
+			for (int rIdx = 0; rIdx < 3; rIdx++)
+			{
+				if (!master.isRotationFixed(rIdx))
+				{
+					double misclosure = master.getEstRotation(rIdx).getRadiansValue() - slave.getEstRotation(rIdx).getRadiansValue();
+					matrices->setCnstrMisclosureVectorElement(cIdx, misclosure);
+					matrices->setCnstrFirstDgnMtrxElement(cIdx, master.getRotationUnknIndex(rIdx), 1);
+					matrices->setCnstrFirstDgnMtrxElement(cIdx, slave.getRotationUnknIndex(rIdx), -1);
+					cIdx++;
+				}
+			}
+			if (!master.isScaleFixed())
+			{
+				double misclosure = master.getEstScale() - slave.getEstScale();
+				matrices->setCnstrMisclosureVectorElement(cIdx, misclosure);
+				matrices->setCnstrFirstDgnMtrxElement(cIdx, master.getScaleUnknIndex(), 1);
+				matrices->setCnstrFirstDgnMtrxElement(cIdx, slave.getScaleUnknIndex(), -1);
+				cIdx++;
+			}
+		}
+	}
 }
 

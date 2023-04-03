@@ -1,0 +1,26 @@
+*TITR
+test with several groups of frames that get identified.
+*OLOC
+%*CONSI
+*APRI
+*PREC 6
+*INSTR
+*CALA
+Z 0 0 1
+X 1 0 0
+*FRAME frame_1 0 0 0 0 0 0 1 TY RX RZ SLAVE Group2
+*FRAME frame_2 0 0 0 0 0 0 1 RY TX RZ SLAVE Group1
+*OBSXYZ 
+Z 1 0 0 1.00 1.00 1.00
+X 0 1.1 0 1.00 1.00 1.00
+%Z 1 0 0 1.00 1.00 1.00
+*ENDFRAME
+*ENDFRAME
+*FRAME frame_3 0 0 0 0 0 0 1 TX RY RZ SLAVE Group1
+*FRAME frame_4 0 0 0 0 0 0 1 RX TY RZ SLAVE Group2
+*OBSXYZ
+Z 1 0 0 1.00 1.00 1.00
+X 0 1.1 0 1.00 1.00 1.00
+*ENDFRAME
+*ENDFRAME
+*END

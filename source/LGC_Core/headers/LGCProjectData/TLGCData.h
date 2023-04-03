@@ -15,10 +15,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TLGCConfig.h>
 #include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
+#include <Logger.hpp>
 #include <TFileLogger.h>
 #include <TLGCStatistic.h>
 #include <TTreeEntry.h>
 #include <TLSCalcRelativeError.h>
+
+#include <vector>
 
 /*! Counter of points based on the type */
 struct TPointGlobal{
@@ -59,6 +62,17 @@ struct TMeasurementsGlobal{
 	int fNumECWS;
 };
 
+struct slaveGroup
+{
+	// name of the slave group
+	std::string groupName;
+	int constraintDim;
+	//std::map<std::string, slaveFrame> slaves;
+	std::vector<std::string> slaveNames;
+};
+//struct slaveData{
+//	std::vector<slaveGroup> slaveGroups;
+//};
 
 /**
 	\ingroup LGCProjectData
@@ -235,6 +249,10 @@ public:
 			int numberSlaveFrames = 0;
 			int dimSlave = 0;
 		} slaveFrames;
+
+		std::vector<slaveGroup> slaveGroups;
+		void addSlaveFrameToGroup(std::string frameName, std::string groupName);
+
 
 	private:
 
