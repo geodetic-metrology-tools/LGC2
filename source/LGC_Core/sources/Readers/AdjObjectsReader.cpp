@@ -39,12 +39,14 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	const auto gon(TAngle::kGons);
 	TransformParameters transfParam;
 	transfParam.tX = TLength(std::stor(tokens[3])); // Translation along X
+
+	std::string trafoName = tokens[2];
 	// Create adjustable helmert transformation
 	TAdjustableHelmertTransformation adjTrafo = TAdjustableHelmertTransformation( // Wrapper containing adjustable related information
 			translations, // Bits telling which of the translations are fixed
 			rotations,     // Bits telling which of the rotations around an axis are fixed
 			scale,  // Bit telling whether scale is fixed
-			tokens[2] //Transformation name
+			trafoName //Transformation name
 		);
 
 	adjTrafo.setParam(    // The transformation itself
@@ -75,15 +77,18 @@ void TKeyFRAME::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		if(opts.has("SSCL")) adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M); 
 	}
 
+
+	// Create a new level in the tree using the current transformation definition.
+	proj.addChild(&adjTrafo);
+
 	// check for "Slave" frames
 	if (opts.has("SLAVE"))
 	{
 		std::string groupName = opts.getParam("SLAVE");
-		adjTrafo.setSlaveGroup(groupName);
+		proj.addSlaveFrameToGroup(trafoName ,groupName);
+		//adjTrafo.setSlaveGroup(groupName);
 	}
 
-	// Create a new level in the tree using the current transformation definition.
-	proj.addChild(&adjTrafo);
 
 	if(opts.has("RX") && opts.has("SRX"))
 		throw std::runtime_error("Either \"RX\" flag or \"SRX\" option used, both are not allowed");

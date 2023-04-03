@@ -410,6 +410,23 @@ void TLGCData::addSlaveFrameToGroup(std::string frameName, std::string groupName
 	}
 }
 
+std::string TLGCData::getSlaveGroup(std::string frameName) const
+{
+    // return the slave group to which the frame belongs. Returns empty string if it belongs to no slave group
+	for (slaveGroup group : slaveGroups)
+	{
+		for (std::string slaveName : group.slaveNames)
+		{
+			if (frameName == slaveName)
+			{
+				return group.groupName;
+			}
+		}
+	}
+    // if no slave group contains this frame, return the empty string
+	return std::string("");
+}
+
 void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 {
 

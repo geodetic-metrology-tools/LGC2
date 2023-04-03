@@ -243,15 +243,11 @@ public:
         bool isLGCv1() const { return islgc1; }
 
         void setLGCv1(bool set) { islgc1 = set; }
-		// frames that start with prefix SLAVE. Their defining helmert parameters shall be constrained to be equal across all SLAVE frames
-		struct 
-		{
-			int numberSlaveFrames = 0;
-			int dimSlave = 0;
-		} slaveFrames;
 
+		// storing the data for the slave frame constraints
 		std::vector<slaveGroup> slaveGroups;
 		void addSlaveFrameToGroup(std::string frameName, std::string groupName);
+		std::string getSlaveGroup(std::string frameName) const ;
 
 
 	private:
