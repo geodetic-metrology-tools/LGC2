@@ -400,10 +400,28 @@ void TLGCData::addSlaveFrameToGroup(std::string frameName, std::string groupName
 		{
 			found = true;
 			group.slaveNames.push_back(frameName);
-			if (group.constraintDim!=slaveFrame.getNumUnkn()){
-				logCritical() << "Slave group" << group.groupName << "has inconsistent degrees of freedom. First inconsistent slave frame: " << frameName;
-            }
-            // constraint dimensions increments only if group already exists
+			std::string masterName = group.slaveNames.at(0);
+            TAdjustableHelmertTransformation & masterFrame = locateNode(masterName)->get()->frame;
+            // check if both master and slave have identical freedom signature
+			for (int j = 0; j < 3; j++)
+			{
+
+				if (masterFrame.isTranslationFixed(j) != slaveFrame.isTranslationFixed(j))
+				{
+					logCritical() << "The freedom of translation parameter" << j << "of master frame" << masterName << "and slave frame" << frameName << "in slave group"
+								  << group.groupName << "is inconsistent.";
+				}
+				if (masterFrame.isRotationFixed(j) != slaveFrame.isRotationFixed(j))
+				{
+					logCritical() << "The freedom of rotation parameter" << j << "of master frame" << masterName << "and slave frame" << frameName << "in slave group"
+								  << group.groupName << "is inconsistent.";
+				}
+			}
+			if (masterFrame.isScaleFixed() != slaveFrame.isScaleFixed())
+			{
+					logCritical() << "The freedom of the scale parameter of master frame" << masterName << "and slave frame" << frameName << "in slave group"
+								  << group.groupName << "is inconsistent.";
+			}
 			fUEOIndices.CIndex += slaveFrame.getNumUnkn();
 		}
 	}
