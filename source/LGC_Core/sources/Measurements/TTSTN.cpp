@@ -134,11 +134,11 @@ void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
 	if (instrumentPos)
 		obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
-	obj.addProperty("roms", roms);
+	if (!roms.empty())
+		obj.addProperty("roms", roms);
 	obj.addProperty("rot3D", rot3D);
 	obj.addProperty("rotX", rotX);
 	obj.addProperty("rotY", rotY);
-	obj.addProperty("stnCounter_", stnCounter_);
 	obj.addProperty("stnId", stnId);
 }
 #endif
@@ -150,30 +150,43 @@ void TTSTN::TROM::serialize(SerializerObject::SerializationHelper &obj) const
 	TStatusObject::serialize(obj);
 	obj.addProperty("acst", acst.getRadiansValue());
 	obj.addProperty("anglActive", anglActive);
-	obj.addProperty("anglSummary_", anglSummary_);
+	if (anglSummary_.getNumberOfObs())
+		obj.addProperty("anglSummary_", anglSummary_);
 	obj.addProperty("defaultTargetId", defaultTargetId);
 	obj.addProperty("dhorActive", dhorActive);
-	obj.addProperty("dhorSummary_", dhorSummary_);
+	if (dhorSummary_.getNumberOfObs())
+		obj.addProperty("dhorSummary_", dhorSummary_);
 	obj.addProperty("distActive", distActive);
-	obj.addProperty("distSummary_", distSummary_);
+	if (distSummary_.getNumberOfObs())
+		obj.addProperty("distSummary_", distSummary_);
 	obj.addProperty("ecdirActive", ecdirActive);
-	obj.addProperty("ecdirSummary_", ecdirSummary_);
+	if (ecdirSummary_.getNumberOfObs())
+		obj.addProperty("ecdirSummary_", ecdirSummary_);
 	obj.addProperty("ecthActive", ecthActive);
-	obj.addProperty("ecthSummary_", ecthSummary_);
-	obj.addProperty("measANGL", measANGL);
-	obj.addProperty("measDHOR", measDHOR);
-	obj.addProperty("measDIST", measDIST);
-	obj.addProperty("measECDIR", measECDIR);
-	obj.addProperty("measECTH", measECTH);
-	obj.addProperty("measPLR3D", measPLR3D);
-	obj.addProperty("measZEND", measZEND);
-	obj.addProperty("plr3dSummary_", plr3dSummary_);
+	if (ecthSummary_.getNumberOfObs())
+		obj.addProperty("ecthSummary_", ecthSummary_);
+	if (!measANGL.empty())
+		obj.addProperty("measANGL", measANGL);
+	if (!measDHOR.empty())
+		obj.addProperty("measDHOR", measDHOR);
+	if (!measDIST.empty())
+		obj.addProperty("measDIST", measDIST);
+	if (!measECDIR.empty())
+		obj.addProperty("measECDIR", measECDIR);
+	if (!measECTH.empty())
+		obj.addProperty("measECTH", measECTH);
+	if (!measPLR3D.empty())
+		obj.addProperty("measPLR3D", measPLR3D);
+	if (!measZEND.empty())
+		obj.addProperty("measZEND", measZEND);
+	if (plr3dSummary_.anglObsSum.getNumberOfObs())
+		obj.addProperty("plr3dSummary_", plr3dSummary_);
 	obj.addProperty("plrActive", plrActive);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 	obj.addProperty("v0", v0);
 	obj.addProperty("zendActive", zendActive);
-	obj.addProperty("zendSummary_", zendSummary_);
+	if (zendSummary_.getNumberOfObs())
+		obj.addProperty("zendSummary_", zendSummary_);
 }
 #endif
 

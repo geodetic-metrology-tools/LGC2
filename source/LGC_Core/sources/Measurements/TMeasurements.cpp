@@ -317,13 +317,17 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("obsxyzActive", obsxyzActive);
 	obj.addProperty("radiActive", radiActive);
 
-    if (!obsxyzGlobalSummary_.obsXObsSum.getNumberOfObs())
+    if (obsxyzGlobalSummary_.obsXObsSum.getNumberOfObs())
 	    obj.addProperty("obsxyzGlobalSummary_", obsxyzGlobalSummary_);
 	
-    obj.addProperty("obsxyzSummary_", obsxyzSummary_);
-	obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
-	obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
-	obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+    if (obsxyzSummary_.obsXObsSum.getNumberOfObs())
+        obj.addProperty("obsxyzSummary_", obsxyzSummary_);
+    if (plrGlobalSummary_.anglObsSum.getNumberOfObs())
+        obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
+    if (uvdGlobalSummary_.distObsSum.getNumberOfObs())
+        obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
+    if (uvecGlobalSummary_.xVectorCompObsSum.getNumberOfObs())
+        obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
 
 	if (!fCAM.empty())
 		obj.addProperty("fCAM", fCAM);

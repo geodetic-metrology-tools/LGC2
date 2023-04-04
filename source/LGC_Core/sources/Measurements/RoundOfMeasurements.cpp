@@ -138,7 +138,6 @@ void TECHOROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
 	obj.addProperty("line", line);
 	obj.addProperty("measECHO", measECHO);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 }
 
@@ -149,7 +148,6 @@ void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("line", measECSP);
 	obj.addProperty("p1", p1);
 	obj.addProperty("p2", p2);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 	obj.addProperty("romName", romName);
 }
@@ -161,7 +159,6 @@ void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fPtLine", fPtLine);
 	obj.addProperty("line", line);
 	obj.addProperty("measECVE", measECVE);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 }
 
@@ -174,7 +171,6 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("line", line);
 	obj.addProperty("measORIE", measORIE);
 	obj.addProperty("orieSummary_", orieSummary_);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 }
 
@@ -185,8 +181,6 @@ void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);
 	obj.addProperty("measINCLY", measINCLY);
-	//obj.addProperty("positionInTree", positionInTree);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 }
 
@@ -197,7 +191,6 @@ void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);
 	obj.addProperty("measECWS", measECWS);
-	obj.addProperty("romCounter_", romCounter_);
 	obj.addProperty("romId", romId);
 	obj.addProperty("romName", romName);
 	obj.addProperty("sigmaWS", sigmaWS.getMetresValue());

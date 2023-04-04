@@ -48,7 +48,6 @@ void TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);
 	obj.addProperty("measDLEV", measDLEV);
-	obj.addProperty("stnCounter_", stnCounter_);
 	obj.addProperty("stnId", stnId);
 }
 #endif

@@ -565,13 +565,20 @@ class TInstrumentData
 #if USE_SERIALIZER
     inline void TInstrumentData::serialize(SerializerObject::SerializationHelper &obj) const
     {
-		obj.addProperty("fCAMD", fCAMD);
-		obj.addProperty("fEDM", fEDM);
-		obj.addProperty("fHLSR", fHLSR);
-		obj.addProperty("fINCL", fINCL);
-		obj.addProperty("fLEVEL", fLEVEL);
-		obj.addProperty("fPOLAR", fPOLAR);		
-		obj.addProperty("fSCALE", fSCALE);
+		if (!fCAMD.empty())
+			obj.addProperty("fCAMD", fCAMD);
+		if (!fEDM.empty())
+			obj.addProperty("fEDM", fEDM);
+		if (!fHLSR.empty())
+			obj.addProperty("fHLSR", fHLSR);
+		if (!fINCL.empty())
+			obj.addProperty("fINCL", fINCL);
+		if (!fLEVEL.empty())
+			obj.addProperty("fLEVEL", fLEVEL);
+		if (!fPOLAR.empty())
+			obj.addProperty("fPOLAR", fPOLAR);		
+		if (!fSCALE.empty())
+			obj.addProperty("fSCALE", fSCALE);
     }
 
 	inline void TInstrumentData::TPOLAR::serialize(SerializerObject::SerializationHelper &obj) const
