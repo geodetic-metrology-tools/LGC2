@@ -1,4 +1,5 @@
 #include "TEDM.h"
+#include <LGCAdjustablePoint.h>
 
 int TEDM::stnCounter_ = 0;
 
@@ -22,3 +23,17 @@ const TLGCObsSummary& TEDM::getDSPTObsSummary(std::string text) noexcept {
 	dsptSummary_.setObsText(text);
 	return dsptSummary_;
 }
+
+#if USE_SERIALIZER
+// Inherited via Serializable
+void TEDM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("dsptSummary_", dsptSummary_);
+	obj.addProperty("instrument", instrument);
+	if (instrumentPos)
+		obj.addProperty("instrumentPos", instrumentPos->getName());
+	obj.addProperty("line", line);
+	obj.addProperty("measDSPT", measDSPT);
+	obj.addProperty("stnId", stnId);
+}
+#endif

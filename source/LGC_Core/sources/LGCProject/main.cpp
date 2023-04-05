@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 			logInfo() << "Starting the calculations...";
 			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
 			Behavior b = lgc.exec();
-			return (bool) b ? 0 : b.code();
+			return (bool)b ? 0 : b.code();
 		}
 		catch (const std::runtime_error& ex)
 		{

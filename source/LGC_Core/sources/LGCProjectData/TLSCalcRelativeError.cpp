@@ -81,9 +81,25 @@ void TLSCalcRelativeError::setSigmaV(TAngle sv) {
 	fSigmaV = sv;
 	return;
 }
+
 // sets the error in the height difference 
 void TLSCalcRelativeError::setSigmaZ(TLength sz) {
 
 	fSigmaZ = sz;
 	return;
 }
+
+#if USE_SERIALIZER
+void TLSCalcRelativeError::serialize(SerializerObject::SerializationHelper& obj) const
+{
+	if (fPoint1)
+		obj.addProperty("fPoint1", fPoint1->getName());
+	if (fPoint2)
+		obj.addProperty("fPoint2", fPoint2->getName());
+	obj.addProperty("fSigmaL", fSigmaL);
+	obj.addProperty("fSigmaG", fSigmaG);
+	obj.addProperty("fSigmaR", fSigmaR);
+	obj.addProperty("fSigmaZ", fSigmaZ);
+	obj.addProperty("fSigmaV", fSigmaV);
+}
+#endif // USE_SERIALIZER

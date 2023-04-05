@@ -271,3 +271,93 @@ const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ec
 const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }
 
 const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }
+
+#if USE_SERIALIZER
+// Inherited via Serializable
+void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	if (anglGlobalSummary_.getNumberOfObs())
+		obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);
+	if (dhorGlobalSummary_.getNumberOfObs())
+		obj.addProperty("dhorGlobalSummary_", dhorGlobalSummary_);
+	if (distGlobalSummary_.getNumberOfObs())
+		obj.addProperty("distGlobalSummary_", distGlobalSummary_);
+	if (dlevDHORGlobalSummary_.getNumberOfObs())
+		obj.addProperty("dlevDHORGlobalSummary_", dlevDHORGlobalSummary_);
+	if (dlevGlobalSummary_.getNumberOfObs())
+		obj.addProperty("dlevGlobalSummary_", dlevGlobalSummary_);
+	if (dsptGlobalSummary_.getNumberOfObs())
+		obj.addProperty("dsptGlobalSummary_", dsptGlobalSummary_);
+
+	if (dverSummary_.getNumberOfObs())
+		obj.addProperty("dverSummary_", dverSummary_);
+	if (ecdirGlobalSummary_.getNumberOfObs())
+		obj.addProperty("ecdirGlobalSummary_", ecdirGlobalSummary_);
+	if (echoGlobalSummary_.getNumberOfObs())
+		obj.addProperty("echoGlobalSummary_", echoGlobalSummary_);
+	if (ecspGlobalSummary_.getNumberOfObs())
+		obj.addProperty("ecspGlobalSummary_", ecspGlobalSummary_);
+	if (ecthGlobalSummary_.getNumberOfObs())
+		obj.addProperty("ecthGlobalSummary_", ecthGlobalSummary_);
+	if (ecveGlobalSummary_.getNumberOfObs())
+		obj.addProperty("ecveGlobalSummary_", ecveGlobalSummary_);
+	if (ecwsGlobalSummary_.getNumberOfObs())
+		obj.addProperty("ecwsGlobalSummary_", ecwsGlobalSummary_);
+
+	if (inclyGlobalSummary_.getNumberOfObs())
+		obj.addProperty("inclyGlobalSummary_", inclyGlobalSummary_);
+	if (orieGlobalSummary_.getNumberOfObs())
+		obj.addProperty("orieGlobalSummary_", orieGlobalSummary_);
+	if (radiSummary_.getNumberOfObs())
+		obj.addProperty("radiSummary_", radiSummary_);
+	if (zendGlobalSummary_.getNumberOfObs())
+		obj.addProperty("zendGlobalSummary_", zendGlobalSummary_);
+
+	obj.addProperty("dverActive", dverActive);
+	obj.addProperty("obsxyzActive", obsxyzActive);
+	obj.addProperty("radiActive", radiActive);
+
+    if (obsxyzGlobalSummary_.obsXObsSum.getNumberOfObs())
+	    obj.addProperty("obsxyzGlobalSummary_", obsxyzGlobalSummary_);
+	
+    if (obsxyzSummary_.obsXObsSum.getNumberOfObs())
+        obj.addProperty("obsxyzSummary_", obsxyzSummary_);
+    if (plrGlobalSummary_.anglObsSum.getNumberOfObs())
+        obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
+    if (uvdGlobalSummary_.distObsSum.getNumberOfObs())
+        obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
+    if (uvecGlobalSummary_.xVectorCompObsSum.getNumberOfObs())
+        obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+
+	if (!fCAM.empty())
+		obj.addProperty("fCAM", fCAM);
+	if (!fDVER.empty())
+		obj.addProperty("fDVER", fDVER);
+	if (!fECHO.empty())
+		obj.addProperty("fECHO", fECHO);
+	if (!fECSP.empty())
+		obj.addProperty("fECSP", fECSP);
+	if (!fECVE.empty())
+		obj.addProperty("fECVE", fECVE);
+	if (!fECWS.empty())
+		obj.addProperty("fECWS", fECWS);
+	if (!fEDM.empty())
+		obj.addProperty("fEDM", fEDM);
+	if (!fINCLY.empty())
+		obj.addProperty("fINCLY", fINCLY);
+	if (!fLEVEL.empty())
+		obj.addProperty("fLEVEL", fLEVEL);
+	if (!fOBSXYZ.empty())
+		obj.addProperty("fOBSXYZ", fOBSXYZ);
+	if (!fORIE.empty())
+		obj.addProperty("fORIE", fORIE);
+	if (fPDOR.isInitialised())
+        obj.addProperty("fPDOR", fPDOR);
+	if (!fRADI.empty())
+	    obj.addProperty("fRADI", fRADI);
+	if (!fLEVEL.empty())
+		obj.addProperty("fLEVEL", fLEVEL);
+	if (!fTSTN.empty())
+	    obj.addProperty("fTSTN", fTSTN);
+}
+#endif

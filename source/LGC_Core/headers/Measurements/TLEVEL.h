@@ -59,7 +59,12 @@ struct TLEVEL : public TStatusObject {
 			instrument(instrument),
 			hasDHOR(false)
 			{}
-
+			
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+			
     private:
 
         static int stnCounter_;

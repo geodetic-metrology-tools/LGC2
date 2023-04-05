@@ -12,15 +12,20 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 //LGC
 #include "TAdjustablePoint.h"
-
+#if USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
 /*!
 \ingroup LGCProjectData
 
 Class for writing the relative error between a list of points.
 */
-
-class TLSCalcRelativeError {
-
+#if USE_SERIALIZER
+struct TLSCalcRelativeError : public Serializable
+#else
+struct TLSCalcRelativeError
+#endif // USE_SERIALIZER
+{
 public:
 
 	/*!@name Constructor / destructor */
@@ -39,6 +44,11 @@ public:
 		/*! Destructor */
 		virtual ~TLSCalcRelativeError();
 	//@}
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 
 	/*! Overloaded equality operator */
 	bool operator==(const TLSCalcRelativeError& right);

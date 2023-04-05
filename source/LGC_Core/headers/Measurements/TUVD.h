@@ -11,6 +11,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TAMeas.h>
 
+#if USE_SERIALIZER
+#	include <Serializer.hpp>
+#endif // USE_SERIALIZER
 /*!
 	\ingroup Measurements
 	\brief Unit vector + distance measurement made by a camera (TCAM).
@@ -40,6 +43,16 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 
 		/// Returns the distance residual 
       TLength getDistanceResidual() const { return sdistResidual; }
+
+#if USE_SERIALIZER
+	  // Inherited via Serializable
+	  virtual void serialize(SerializerObject::SerializationHelper &obj) const override
+	  {
+		  TAVectorMeas<TInstrumentData::TCAMD::TTarget>::serialize(obj);
+		  obj.addProperty("sdist", sdist.getMetresValue());
+		  obj.addProperty("sdistResidual", sdistResidual.getMetresValue());
+	  }
+#endif
 
 	private:
 		// distance of the target

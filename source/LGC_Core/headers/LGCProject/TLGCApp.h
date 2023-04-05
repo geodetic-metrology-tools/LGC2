@@ -7,12 +7,14 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #define _LGCAPP_H_
 
 #include "Defaults.h"
+
 //STL
 #include <memory>
 #include <string>
 //SURVEYLIB
 #include "TStreamFormatterFactory.h"
 #include "TLSResultsMatrices.h"
+
 #include <Behavior.h>
 
 class TLGCData;
@@ -73,6 +75,12 @@ class TLGCApp {
 
 		/// Write files for bestfit analysis
 		static void writeChabaFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
+
+#if USE_SERIALIZER
+		/// Write serialization files
+		static void writeJsonFile(TLGCData const* const dat, const std::string &outputFileLocation);
+#endif // USE_SERIALIZER
+
 
 	private:
 		static const std::string		fCopyright;

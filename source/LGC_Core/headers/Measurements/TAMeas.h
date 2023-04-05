@@ -15,6 +15,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TInstrumentData.h>
 
+
 class LGCAdjustablePoint;
 
 /// Enum for the case that no value of a certain type is measured in \ref TAScalarMeas.
@@ -34,8 +35,8 @@ enum ESingleValue {
 					of the observed target. May be set to int and supplied with 0 if no target is used.
 */
 template<typename TTarget>
-class TAMeas : public TStatusObject {
-
+class TAMeas : public TStatusObject
+{
     private:
         
         static int measCounter;
@@ -93,6 +94,11 @@ class TAMeas : public TStatusObject {
 
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
 			virtual MatrixIndex getLastEquationIndex() const = 0;
+
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 
 		//@}
 
@@ -168,8 +174,8 @@ class TAScalarMeas : public TAMeas<TTarget>
       TAScalarMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, TLength value) :
 			TAMeas<TTarget>(targetPos, tgt)
 		{
-			static_assert(numDistances==1, "This works only for single distance values.");
-			distances[0] = value;
+			if constexpr (std::is_same_v<TEnumDistance, ESingleValue>)
+				distances[0] = value;
 		}
 
 		/// The virtual base destructor does nothing.
@@ -219,6 +225,10 @@ class TAScalarMeas : public TAMeas<TTarget>
 			void setAngleResidual(const TAngle& a, TEnumAngle id=kValue) {
 				anglesResiduals[id] = a;
 			}
+
+#if USE_SERIALIZER
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 		//@}
 };
 
@@ -304,6 +314,9 @@ class TAVectorMeas : public TAMeas<TTarget>
 		const TReal getYCompVectorResidual() const {
 			return YcompResidual;
 		}
+#if USE_SERIALIZER
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 };
 
 #endif

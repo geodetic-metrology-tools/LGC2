@@ -14,12 +14,19 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TALGCObjectWriter.h>
 
+#if USE_SERIALIZER
+    #include <Serializer.hpp>
+#endif // USE_SERIALIZER
 
 /*!
 \ingroup Measurements
 \brief Class containing summary data for a given observation type in a LS calculation. Mean, standard error, confidence limits and histogram information.
 */
-class  TLGCObsSummary
+#if USE_SERIALIZER
+class TLGCObsSummary : public Serializable
+#else
+class TLGCObsSummary
+#endif // USE_SERIALIZER
 {
 public:
     /*!@name Constructors and Destructors */
@@ -118,7 +125,10 @@ public:
     static void createHistogram(bool create){ fCreateHistogram = create; }
 
     //@}
-
+    #if USE_SERIALIZER
+	    // Inherited via Serializable
+	    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+    #endif
 
 protected:
 
@@ -155,39 +165,109 @@ private:
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the TPLR3D observation.
 */
-struct TPOLARObsSummary{
+#if USE_SERIALIZER
+struct TPOLARObsSummary : public Serializable
+#else
+struct TPOLARObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary distObsSum;
     TLGCObsSummary anglObsSum;
     TLGCObsSummary zendObsSum;
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (distObsSum.getNumberOfObs())
+		    obj.addProperty("distObsSum", distObsSum);
+		if (anglObsSum.getNumberOfObs())
+			obj.addProperty("anglObsSum", anglObsSum);
+		if (zendObsSum.getNumberOfObs())
+			obj.addProperty("zendObsSum", zendObsSum);
+	}
+#endif
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVD observation.
 */
-struct TUVDObsSummary{
+#if USE_SERIALIZER
+struct TUVDObsSummary : public Serializable
+#else
+struct TUVDObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary distObsSum;
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (distObsSum.getNumberOfObs())
+			obj.addProperty("distObsSum", distObsSum);
+		if (yVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+		if (yVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+	}
+#endif
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (TLGCObsSummary) of the three observations of the TUVEC observation.
 */
-struct TUVECObsSummary{
+#if USE_SERIALIZER
+struct TUVECObsSummary : public Serializable
+#else
+struct TUVECObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary xVectorCompObsSum;
     TLGCObsSummary yVectorCompObsSum;
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (xVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("xVectorCompObsSum", xVectorCompObsSum);
+		if (yVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+	}
+#endif
 };
 
 /*!
 \ingroup Measurements
 \brief A structure containing observation summaries (\ref TLGCObsSummary) of the three observations of the OBSXYZ observation.
 */
-struct TOBSXYZObsSummary{
+#if USE_SERIALIZER
+struct TOBSXYZObsSummary : public Serializable
+#else
+struct TOBSXYZObsSummary
+#endif // USE_SERIALIZER
+{
     TLGCObsSummary obsXObsSum;
     TLGCObsSummary obsYObsSum;
     TLGCObsSummary obsZObsSum;
+    
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (obsXObsSum.getNumberOfObs())
+			obj.addProperty("obsXObsSum", obsXObsSum);
+		if (obsYObsSum.getNumberOfObs())
+			obj.addProperty("obsYObsSum", obsYObsSum);
+		if (obsZObsSum.getNumberOfObs())
+			obj.addProperty("obsZObsSum", obsZObsSum);
+	}
+#endif
 };
 
 #endif // SU_LGC_OBS_SUMMARY

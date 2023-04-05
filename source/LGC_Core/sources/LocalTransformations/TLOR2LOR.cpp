@@ -60,7 +60,7 @@ TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
 
 		return TFreeVector(globalScale*transfo.getMmatrixIJPosition(0,0), globalScale*transfo.getMmatrixIJPosition(1,0), globalScale*transfo.getMmatrixIJPosition(2,0),TCoordSysFactory::ECoordSys::k3DCartesian);
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
  TReal TLOR2LOR::partDerivWRespToX0(int pos) const
@@ -83,7 +83,7 @@ TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
 
 		return globalScale*transfo.getMmatrixIJPosition(pos,0);
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
   TFreeVector TLOR2LOR::partDerivWRespToY0() const{
@@ -104,7 +104,7 @@ TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
 
 		return TFreeVector(globalScale*transfo.getMmatrixIJPosition(0,1), globalScale*transfo.getMmatrixIJPosition(1,1), globalScale*transfo.getMmatrixIJPosition(2,1),TCoordSysFactory::ECoordSys::k3DCartesian);
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
   TReal TLOR2LOR::partDerivWRespToY0(int pos) const
@@ -127,7 +127,7 @@ TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
 
 		return globalScale*transfo.getMmatrixIJPosition(pos,1);
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
  TFreeVector TLOR2LOR::partDerivWRespToZ0() const{
@@ -148,7 +148,7 @@ TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
 
 		return TFreeVector(globalScale*transfo.getMmatrixIJPosition(0,2), globalScale*transfo.getMmatrixIJPosition(1,2), globalScale*transfo.getMmatrixIJPosition(2,2),TCoordSysFactory::ECoordSys::k3DCartesian);
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
  TReal TLOR2LOR::partDerivWRespToZ0(int pos) const
@@ -171,7 +171,7 @@ TFreeVector& TLOR2LOR::transform(TFreeVector& p) const {
 
 		return globalScale*transfo.getMmatrixIJPosition(pos,2);
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
 
@@ -202,7 +202,7 @@ TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string& transfoName, co
 
 		return derivated_vector;
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
 }
 
 TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoName, const TPositionVector& p, int translation) const{
@@ -232,7 +232,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 
 		return derivated_vector;
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
 }
 
  TFreeVector TLOR2LOR::partialDerivativesScale(const std::string& transfoName, const TPositionVector& p) const{
@@ -261,7 +261,7 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 		
 		return derivated_vector;
 	}
-	catch(std::runtime_error ex){throw ex;}
+	catch(std::runtime_error& ex){throw ex;}
  }
 
  std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR::getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const

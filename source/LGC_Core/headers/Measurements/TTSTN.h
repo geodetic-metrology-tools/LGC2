@@ -13,6 +13,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TInstrumentData.h>
 #include <MeasDef.h>
 #include "TLGCObsSummary.h"
+#include <LGCAdjustablePoint.h>
 
 /*!
 	\ingroup Measurements
@@ -119,6 +120,11 @@ struct TTSTN : public TStatusObject {
                 , v0(v0)
                 , defaultTargetId(defTargetId) {}
 
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
         private:
 
             static int romCounter_;
@@ -180,6 +186,11 @@ struct TTSTN : public TStatusObject {
 			rotY(nullptr)
 
 		{}
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
     private:
 

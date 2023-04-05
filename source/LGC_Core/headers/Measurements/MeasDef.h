@@ -60,6 +60,13 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		TAngle fAllFixedRx[2];
 		/// Allfixed parameter: Ry
 		TAngle fAllFixedRy[2];
+
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+		
 };
 		
 /*! 
@@ -79,6 +86,11 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*! 
@@ -98,6 +110,11 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*! 
@@ -119,7 +136,11 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 		TLength fAllFixedCs;
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
-		
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*! 
@@ -144,6 +165,11 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 /*!
 \ingroup Measurements
@@ -168,6 +194,11 @@ public:
 
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0[2];
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 /*!
@@ -185,6 +216,13 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		TAScalarMeas::serialize(obj); 
+	}
+#endif
 };
 
 //--------------------------  EDM measurement--------------------------------------------
@@ -207,6 +245,11 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 
 		/// Allfixed parameter: distance correction
 		TLength fAllFixedCs;
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 //--------------------------  SCALE measurement--------------------------------------------
@@ -226,6 +269,13 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 
 		/// Returns the last LS-matrices equation index of this measurement, TECHO introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex()const {return getFirstEquationIndex();}
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+			TAScalarMeas::serialize(obj); 
+		}
+#endif
 };
 
 
@@ -245,6 +295,13 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, TECVE introduces 1 equation.*/
 	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		TAScalarMeas::serialize(obj); 
+	}
+#endif
 };
 
 //--------------------------  Levelling measurement--------------------------------------------
@@ -290,6 +347,11 @@ class TDVER  : public TAScalarMeas<int>{
       inline void setObservedStDev(TLength stDev){ fSigmaObsVal = stDev; }
 	//@}
 
+#if USE_SERIALIZER
+	  // Inherited via Serializable
+	  virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 	private:
 		// The distance correction
 		TLength fDistanceCorrection;
@@ -321,6 +383,11 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				/// Stes DHOR sigma
             inline void setDHORSigma(TLength sigma){ dhorSigma = sigma; }
 
+			#if USE_SERIALIZER
+						// Inherited via Serializable
+						virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+			#endif
+
 			private:
 				/*Optinal horizontal distance sigma which can be assigned to a DHOR measurement inside DLEV.*/
 				TLength dhorSigma;
@@ -344,6 +411,11 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 			/// Allfixed parameter: collimation angle
 			TAngle fAllFixedCollimation;
+
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 //--------------------------  Orientation measurement--------------------------------------------
@@ -367,6 +439,13 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 			/// Returns standard deviation of the observed value
 			inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
 		//@}
+
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+				TAScalarMeas::serialize(obj); 
+			}
+#endif
 };
 
 /*!
@@ -420,6 +499,11 @@ public:
     /// Set the angle constraint value
     inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 
 private:
 	// The angle constraint
@@ -487,6 +571,10 @@ public:
 	void setAngleResidual(const TAngle& a) { fbearingResidual = a; }
 	//@}
 	
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 
 private:
 	// Standard deviation of the observed value
@@ -550,6 +638,11 @@ public:
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
 
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 private:
 	// The residual angle constraint
 	TLength fXResidual;
@@ -585,6 +678,12 @@ public:
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		TAScalarMeas::serialize(obj);
+	}
+#endif
 };
 
 //--------------------------  HLSR measurement--------------------------------------------
@@ -611,6 +710,11 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
 };
 
 #endif

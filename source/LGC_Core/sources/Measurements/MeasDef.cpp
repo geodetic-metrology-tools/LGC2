@@ -153,3 +153,135 @@ fXSigmaObsVal(sigX), fYSigmaObsVal(sigY), fZSigmaObsVal(sigZ),
 positionInTree(itTree),
 TAMeas<int>(point, 0)
 {}
+
+
+
+#if USE_SERIALIZER
+
+void TPLR3D::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>::serialize(obj);
+	obj.addProperty("fAllFixedCs", fAllFixedCs.getMetresValue());
+	obj.addProperty("fAllFixedHi", fAllFixedHi.getMetresValue());
+	obj.addProperty("fAllFixedRx", fAllFixedRx);
+	obj.addProperty("fAllFixedRy", fAllFixedRy);
+	obj.addProperty("fAllFixedV0", fAllFixedV0);
+}
+
+void TANGL::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>::serialize(obj);
+	obj.addProperty("fAllFixedV0", fAllFixedV0.getRadiansValue());
+}
+
+void TZEND::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>::serialize(obj);
+	obj.addProperty("fAllFixedHi", fAllFixedHi.getMetresValue());
+}
+
+void TLINE::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TPOLAR::TTarget>::serialize(obj);
+	obj.addProperty("fAllFixedCs", fAllFixedCs.getMetresValue());
+	obj.addProperty("fAllFixedHi", fAllFixedHi.getMetresValue());
+}
+
+void TECTH::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TSCALE>::serialize(obj);
+	obj.addProperty("fAllFixedV0", fAllFixedV0.getRadiansValue());
+	obj.addProperty("obsHorAngle", obsHorAngle.getRadiansValue());
+}
+
+void TECDIR::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TSCALE>::serialize(obj);
+	obj.addProperty("fAllFixedV0", fAllFixedV0);
+	obj.addProperty("obsHorAngle", obsHorAngle.getRadiansValue());
+	obj.addProperty("obsVertAngle", obsVertAngle.getRadiansValue());
+}
+
+void TDSPT::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TEDM::TTarget>::serialize(obj);
+	obj.addProperty("fAllFixedCs", fAllFixedCs.getMetresValue());
+}
+
+void TDVER::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<int>::serialize(obj);
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fDistanceCorrection", fDistanceCorrection.getMetresValue());
+	obj.addProperty("fSigmaObsVal", fSigmaObsVal.getMetresValue());
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+}
+
+void TDLEV::TDHOR::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TLEVEL::TTarget>::serialize(obj);
+	obj.addProperty("dhorSigma", dhorSigma.getMetresValue());
+}
+
+void TDLEV::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TLEVEL::TTarget>::serialize(obj);
+	obj.addProperty("dhor", dhor);
+	obj.addProperty("fAllFixedCollimation", fAllFixedCollimation.getRadiansValue());
+}
+
+void TRADI::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAMeas<int>::serialize(obj);
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fAngleCnstr", fAngleCnstr.getRadiansValue());
+	obj.addProperty("fConstAngleVal", fConstAngleVal.getRadiansValue());
+	obj.addProperty("fResidual", fResidual.getMetresValue());
+	obj.addProperty("fSigmaObsVal", fSigmaObsVal.getMetresValue());
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+}
+
+void TPdorObs::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAMeas<int>::serialize(obj);
+	if (calaPt)
+		obj.addProperty("calaPt", calaPt->getName());
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fbearing", fbearing.getRadiansValue());
+	obj.addProperty("fbearingResidual", fbearingResidual.getRadiansValue());
+	obj.addProperty("fDefined", fDefined);
+	obj.addProperty("fIsInitialise", fIsInitialise);
+	obj.addProperty("fSigmaObsVal", fSigmaObsVal.getRadiansValue());
+	obj.addProperty("line", line);
+	if (orientationPt)
+		obj.addProperty("orientationPt", orientationPt->getName());
+}
+
+void TOBSXYZ::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAMeas<int>::serialize(obj);
+	obj.addProperty("eolcomment", eolcomment);
+	obj.addProperty("fXResidual", fXResidual.getMetresValue());
+	obj.addProperty("fXSigmaObsVal", fXSigmaObsVal.getMetresValue());
+	obj.addProperty("fYResidual", fYResidual.getMetresValue());
+	obj.addProperty("fYSigmaObsVal", fYSigmaObsVal.getMetresValue());
+	obj.addProperty("fZResidual", fZResidual.getMetresValue());
+	obj.addProperty("fZSigmaObsVal", fZSigmaObsVal.getMetresValue());
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+	obj.addProperty("obsValue", obsValue);
+}
+
+void TECWS::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::THLSR>::serialize(obj);
+	obj.addProperty("line", line);
+	obj.addProperty("station", station);
+	obj.addProperty("wsHeight", wsHeight);
+}
+
+#endif
+
+

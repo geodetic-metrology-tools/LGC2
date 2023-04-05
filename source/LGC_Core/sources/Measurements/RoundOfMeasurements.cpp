@@ -1,4 +1,5 @@
 #include "RoundOfMeasurements.h"
+#include <LGCAdjustablePoint.h>
 #include "tree.h"
 
 int TECHOROM::romCounter_ = 0;
@@ -127,3 +128,71 @@ const TLGCObsSummary& TECWSROM::getECWSObsSummary(std::string text)  noexcept {
     ecwsSummary_.setObsText(text);
     return ecwsSummary_;
 }
+
+#if USE_SERIALIZER
+// Inherited via Serializable
+
+void TECHOROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("echoSummary_", echoSummary_);
+	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
+	obj.addProperty("line", line);
+	obj.addProperty("measECHO", measECHO);
+	obj.addProperty("romId", romId);
+}
+
+void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecspSummary_", ecspSummary_);
+	obj.addProperty("line", line);
+	obj.addProperty("line", measECSP);
+	obj.addProperty("p1", p1);
+	obj.addProperty("p2", p2);
+	obj.addProperty("romId", romId);
+	obj.addProperty("romName", romName);
+}
+
+void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecveSummary_", ecveSummary_);
+	obj.addProperty("fMeasuredLine", fMeasuredLine);
+	obj.addProperty("fPtLine", fPtLine);
+	obj.addProperty("line", line);
+	obj.addProperty("measECVE", measECVE);
+	obj.addProperty("romId", romId);
+}
+
+void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
+	obj.addProperty("instrument", instrument);
+	if (instrumentPos)
+		obj.addProperty("instrumentPos", instrumentPos->getName());
+	obj.addProperty("line", line);
+	obj.addProperty("measORIE", measORIE);
+	obj.addProperty("orieSummary_", orieSummary_);
+	obj.addProperty("romId", romId);
+}
+
+void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
+	obj.addProperty("inclySummary_", inclySummary_);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("measINCLY", measINCLY);
+	obj.addProperty("romId", romId);
+}
+
+void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecwsSummary_", ecwsSummary_);
+	obj.addProperty("fMeasuredWSHeight", fMeasuredWSHeight);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("measECWS", measECWS);
+	obj.addProperty("romId", romId);
+	obj.addProperty("romName", romName);
+	obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
+}
+#endif

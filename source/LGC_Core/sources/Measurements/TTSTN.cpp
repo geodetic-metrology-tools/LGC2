@@ -122,3 +122,71 @@ const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary(std::string text) noexce
 	plr3dSummary_.distObsSum.setObsText(text);
 	return plr3dSummary_;
 }
+
+
+#if USE_SERIALIZER
+// Inherited via Serializable
+void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ihfix", ihfix);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("instrumentHeightAdjustable", instrumentHeightAdjustable);
+	if (instrumentPos)
+		obj.addProperty("instrumentPos", instrumentPos->getName());
+	obj.addProperty("line", line);
+	if (!roms.empty())
+		obj.addProperty("roms", roms);
+	obj.addProperty("rot3D", rot3D);
+	obj.addProperty("rotX", rotX);
+	obj.addProperty("rotY", rotY);
+	obj.addProperty("stnId", stnId);
+}
+#endif
+
+#if USE_SERIALIZER
+// Inherited via Serializable
+void TTSTN::TROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TStatusObject::serialize(obj);
+	obj.addProperty("acst", acst.getRadiansValue());
+	obj.addProperty("anglActive", anglActive);
+	if (anglSummary_.getNumberOfObs())
+		obj.addProperty("anglSummary_", anglSummary_);
+	obj.addProperty("defaultTargetId", defaultTargetId);
+	obj.addProperty("dhorActive", dhorActive);
+	if (dhorSummary_.getNumberOfObs())
+		obj.addProperty("dhorSummary_", dhorSummary_);
+	obj.addProperty("distActive", distActive);
+	if (distSummary_.getNumberOfObs())
+		obj.addProperty("distSummary_", distSummary_);
+	obj.addProperty("ecdirActive", ecdirActive);
+	if (ecdirSummary_.getNumberOfObs())
+		obj.addProperty("ecdirSummary_", ecdirSummary_);
+	obj.addProperty("ecthActive", ecthActive);
+	if (ecthSummary_.getNumberOfObs())
+		obj.addProperty("ecthSummary_", ecthSummary_);
+	if (!measANGL.empty())
+		obj.addProperty("measANGL", measANGL);
+	if (!measDHOR.empty())
+		obj.addProperty("measDHOR", measDHOR);
+	if (!measDIST.empty())
+		obj.addProperty("measDIST", measDIST);
+	if (!measECDIR.empty())
+		obj.addProperty("measECDIR", measECDIR);
+	if (!measECTH.empty())
+		obj.addProperty("measECTH", measECTH);
+	if (!measPLR3D.empty())
+		obj.addProperty("measPLR3D", measPLR3D);
+	if (!measZEND.empty())
+		obj.addProperty("measZEND", measZEND);
+	if (plr3dSummary_.anglObsSum.getNumberOfObs())
+		obj.addProperty("plr3dSummary_", plr3dSummary_);
+	obj.addProperty("plrActive", plrActive);
+	obj.addProperty("romId", romId);
+	obj.addProperty("v0", v0);
+	obj.addProperty("zendActive", zendActive);
+	if (zendSummary_.getNumberOfObs())
+		obj.addProperty("zendSummary_", zendSummary_);
+}
+#endif
+

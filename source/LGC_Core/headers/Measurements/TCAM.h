@@ -68,6 +68,10 @@ struct TCAM : public TStatusObject {
 		const TUVECObsSummary& getUVECObsSummary() const;
 		const TUVECObsSummary& getUVECObsSummary(std::string text) noexcept;
 
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
 
     private:
         

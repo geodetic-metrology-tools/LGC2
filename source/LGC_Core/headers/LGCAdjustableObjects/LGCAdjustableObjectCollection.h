@@ -27,8 +27,10 @@ class TAdjustableLength;
 	This class is basically a composite of an stl list with more comfortable retrieving functions and counting of the number of unknowns.
 */
 template<typename T>
-class LGCAdjustableObjectCollection {
+class LGCAdjustableObjectCollection
+{
 	public:
+		typedef T value_type;
 
 		/// Default constructor creating an empty collection
 		LGCAdjustableObjectCollection() {}
@@ -173,6 +175,7 @@ class LGCAdjustableObjectCollection {
 
 };
 
+
 typedef LGCAdjustableObjectCollection<TAdjustableHelmertTransformation> TAdjustableTransformationCollection;
 typedef LGCAdjustableObjectCollection<LGCAdjustablePoint> LGCAdjustablePointCollection;
 typedef LGCAdjustableObjectCollection<LGCAdjustableLine> LGCAdjustableLineCollection;
@@ -182,7 +185,5 @@ typedef LGCAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollec
 typedef LGCAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;
 
 typedef std::list<LGCAdjustablePoint>::const_iterator AdjPointIter;
-
-
 
 #endif

@@ -238,6 +238,10 @@ void TKeyCONSI::parse(const std::vector<std::string>&, bool activeLine, int) {
     fconfig.consCheck = TLGCConfig::TBinaryOption(activeLine);
 }
 
+void TKeyJSON::parse(const std::vector<std::string> &, bool activeLine, int)
+{
+	fconfig.json = TLGCConfig::TBinaryOption(activeLine);
+}
 
  void TKeyPREC::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
 	if (tokens.size() != 3)

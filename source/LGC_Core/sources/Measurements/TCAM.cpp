@@ -1,4 +1,5 @@
 #include "TCAM.h"
+#include <LGCAdjustablePoint.h>
 
 int TCAM::stnCounter_ = 0;
 
@@ -53,3 +54,23 @@ const TUVECObsSummary& TCAM::getUVECObsSummary(std::string text) noexcept {
 	uvecSummary_.yVectorCompObsSum.setObsText(text);
 	return uvecSummary_;
 }
+
+
+#if USE_SERIALIZER
+// Inherited via Serializable
+void TCAM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("instrument", instrument);
+	if (instrumentPos)
+	    obj.addProperty("instrumentPos", instrumentPos->getName());
+	obj.addProperty("line", line);
+	obj.addProperty("measUVD", measUVD);
+	obj.addProperty("measUVEC", measUVEC);
+	obj.addProperty("stnCounter_", stnCounter_);
+	obj.addProperty("stnId", stnId);
+	obj.addProperty("uvdActive", uvdActive);
+	obj.addProperty("uvdSummary_", uvdSummary_);
+	obj.addProperty("uvecActive", uvecActive);
+	obj.addProperty("uvecSummary_", uvecSummary_);
+}
+#endif

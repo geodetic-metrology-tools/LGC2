@@ -7,7 +7,7 @@
 #include "TLSInputMatrices.h"
 #include "TSparseMatrix.h"
 #include <TConstants.h>
-
+#include <vector>
 
 #ifndef isnotanumber
 #define isnotanumber(x) ((x)!=(x))
@@ -35,6 +35,24 @@ fGValue(nullptr)
 TLGCStatistic::~TLGCStatistic(){
 }
 
+
+#if USE_SERIALIZER
+void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("fAreDetermined", fAreDetermined);
+	obj.addProperty("fDegreesOfFreedom", fDegreesOfFreedom);
+	obj.addProperty("fDeltaComputed", fDeltaComputed);
+	obj.addProperty("fDelty", fDelty);
+	obj.addProperty("fGToCompute", fGToCompute);
+	obj.addProperty("fGValue", fGValue);
+	obj.addProperty("fNablaValue", fNablaValue);
+	obj.addProperty("fOverall", fOverall);
+	obj.addProperty("fT", fT);
+	obj.addProperty("fW", fW);
+	obj.addProperty("fWToCompute", fWToCompute);
+	obj.addProperty("fZ", fZ);
+}
+#endif // USE_SERIALIZER
 
 void TLGCStatistic::initialiseStatVector(const TLSInputMatrices* im)
 {

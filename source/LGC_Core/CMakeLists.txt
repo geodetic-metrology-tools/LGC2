@@ -150,6 +150,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSConsistencyCheck.cpp
     ${CORE_SOURCES_PATH}/Measurements/TMeasurements.cpp
 	${CORE_SOURCES_PATH}/Measurements/MeasDef.cpp
+	${CORE_SOURCES_PATH}/Measurements/TAMeas.cpp
 	${CORE_SOURCES_PATH}/Measurements/TLGCObsSummary.cpp
 	${CORE_SOURCES_PATH}/Measurements/TTSTN.cpp
 	${CORE_SOURCES_PATH}/Measurements/TCAM.cpp
@@ -224,8 +225,7 @@ source_group("Measurements\\Sources" FILES ${MEASUREMENTS_CPP})
 source_group("Readers\\Sources" FILES ${READERS_CPP})
 source_group("Writers\\Sources" FILES ${WRITERS_CPP})
 
-
 # Create a static library from sources:
 add_library(LGC_Core STATIC ${Core_HEADERS} ${Core_SOURCES})
 # Link static libraries to the current one
-target_link_libraries(LGC_Core  LSAlgorithms ProjectFramework SpatialObjects Tools)
+target_link_libraries(LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools)

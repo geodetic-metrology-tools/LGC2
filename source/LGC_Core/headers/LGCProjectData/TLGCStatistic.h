@@ -9,9 +9,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //STL
 #include <memory>
 //SURVEYLIB
+#if USE_SERIALIZER
+#include <Serializer.hpp>
+#endif // USE_SERIALIZER
 #include <TSparseMatrix.h>
 //LGC
 #include <Defaults.h>
+
 
 class TLSInputMatrices;
 class TLSResultsMatrices;
@@ -21,14 +25,23 @@ class TLSResultsMatrices;
 
 	Statistics definitions
 */
-class TLGCStatistic{
-
+#if USE_SERIALIZER
+class TLGCStatistic : public Serializable
+#else
+class TLGCStatistic
+#endif // USE_SERIALIZER
+{
 public:	
 	TLGCStatistic();
 	~TLGCStatistic();
 
-    ///Computes the statistic vector
+	///Computes the statistic vector
 	void calcReliabilityVector(TReal alpha, TReal beta, const TLSInputMatrices* inputMtr, TLSResultsMatrices* rm, bool hasPdor);
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 
 	/// Access to eventual error 
 	std::string		getError() const { return fError; }
