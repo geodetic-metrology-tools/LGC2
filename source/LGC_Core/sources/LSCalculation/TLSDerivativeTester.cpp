@@ -29,6 +29,8 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 	// compare to A matrix
 	//std::cout << "norm(Jac-finiteDiffJac)=" << (computedJacobian- finiteDifferenceJacobian).norm() << std::endl;
 
+	// reset the parameters
+	fEvaluator.setParameters(prov);
 	// generate error messages for each entry where the derivatives don't match (wrt to a given tolerance)
 	Eigen::MatrixXd difference = (computedJacobian - finiteDifferenceJacobian);
 	//double tolerance = 100 * dx;

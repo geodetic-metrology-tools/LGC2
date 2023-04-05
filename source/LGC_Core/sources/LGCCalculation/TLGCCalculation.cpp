@@ -52,7 +52,8 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
 		
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
-
+		// repeat test after convergence	
+		TLSDerivativeTester tester(fData);
 		if (successCalculation)
 		{
 			fResultsMtr = algorithm->resultMatrices;
