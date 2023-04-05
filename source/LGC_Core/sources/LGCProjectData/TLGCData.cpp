@@ -878,6 +878,8 @@ void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) 
 	obj.addProperty("fNumRADI", fNumRADI);
 	obj.addProperty("fNumOBSXYZ", fNumOBSXYZ);
 	obj.addProperty("fNumINCLY", fNumINCLY);
+	obj.addProperty("fNumECWS", fNumECWS);
+	obj.addProperty("fNumECWI", fNumECWI);
 }
 
 void TPointGlobal::serialize(SerializerObject::SerializationHelper& obj) const

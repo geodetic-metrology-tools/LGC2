@@ -228,4 +228,24 @@ void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romName", romName);
 	obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
 }
+
+void TECWIROM::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	obj.addProperty("ecwiSummary_", ecwiSummary_);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("referencePoint", referencePoint);
+	obj.addProperty("fWireDx", fWireDx);
+	obj.addProperty("fWireDz", fWireDz);
+	obj.addProperty("fWireBearing", fWireBearing);
+	obj.addProperty("fWireSlope", fWireSlope);
+	obj.addProperty("sagfix", sagfix);
+	obj.addProperty("sagAdjustable", sagAdjustable);
+	obj.addProperty("sigmaWire", sigmaWire.getMetresValue());
+	obj.addProperty("anchorPtFirst", anchorPtFirst->getName());
+	obj.addProperty("anchorPtSecond", anchorPtSecond->getName());
+	obj.addProperty("romId", romId);
+	obj.addProperty("romName", romName);
+	obj.addProperty("measECWI", measECWI);
+}
 #endif

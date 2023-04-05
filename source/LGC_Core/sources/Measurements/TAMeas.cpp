@@ -26,6 +26,7 @@ template class TAMeas<TInstrumentData::TLEVEL::TTarget>;
 template class TAMeas<TInstrumentData::TSCALE>;
 template class TAMeas<TInstrumentData::TINCL>;
 template class TAMeas<TInstrumentData::THLSR>;
+template class TAMeas<TInstrumentData::TWPSR>;
 template class TAMeas<int>;
 
 template<typename TTarget, typename TEnumDistance, int numDistances, typename TEnumAngle, int numAngles>
@@ -49,6 +50,7 @@ template class TAScalarMeas<TInstrumentData::TSCALE>;
 template class TAScalarMeas<TInstrumentData::TINCL>;
 template class TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>;
 template class TAScalarMeas<TInstrumentData::THLSR>;
+template class TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>;
 template class TAScalarMeas<int>;
 
 template<typename TTarget>
@@ -67,5 +69,6 @@ template class TAVectorMeas<TInstrumentData::TLEVEL::TTarget>;
 template class TAVectorMeas<TInstrumentData::TSCALE>;
 template class TAVectorMeas<TInstrumentData::TINCL>;
 template class TAVectorMeas<TInstrumentData::THLSR>;
+template class TAVectorMeas<TInstrumentData::TWPSR>;
 template class TAVectorMeas<int>;
 #endif

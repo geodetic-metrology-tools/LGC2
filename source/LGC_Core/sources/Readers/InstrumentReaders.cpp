@@ -371,7 +371,7 @@ void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 	auto &wpsrs(finstruments.fWPSR);
 	checkInstrument(7, wpsrs, tokens);
 
-	auto h = std::make_shared<TInstrumentData::TWPSR>(TInstrumentData::TWPSR{
+	auto h = std::make_shared<TInstrumentData::TWPSR>(TInstrumentData::TWPSR(
 		tokens.at(2), 
 		TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
 		TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), 
@@ -382,7 +382,7 @@ void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 		TLength(0),
 		TLength(0),
 		TLength(0)
-	});
+	));
 
 	// store the new wpsr
 	wpsrs.insert(std::make_pair(tokens.at(2), h));

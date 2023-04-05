@@ -224,6 +224,7 @@ void TMeasurements::initialiseObsSummaries() {
     ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
     ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
 	inclyGlobalSummary_ = TLGCObsSummary::merge(allINCLYSummaries);
+	ecwsGlobalSummary_ = TLGCObsSummary::merge(allECWSSummaries);
 
 }
 
@@ -346,6 +347,8 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
         obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
     if (uvecGlobalSummary_.xVectorCompObsSum.getNumberOfObs())
         obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+	if (ecwiGlobalSummary_.xObsSum.getNumberOfObs())
+		obj.addProperty("ecwiGlobalSummary_", ecwiGlobalSummary_);
 
 	if (!fCAM.empty())
 		obj.addProperty("fCAM", fCAM);
@@ -377,5 +380,7 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 		obj.addProperty("fLEVEL", fLEVEL);
 	if (!fTSTN.empty())
 	    obj.addProperty("fTSTN", fTSTN);
+	if (!fECWI.empty())
+		obj.addProperty("fECWI", fECWI);
 }
 #endif

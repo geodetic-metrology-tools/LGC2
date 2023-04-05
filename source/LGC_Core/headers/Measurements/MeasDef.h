@@ -691,10 +691,6 @@ public:
 
 class TECWS : public TAScalarMeas<TInstrumentData::THLSR> {
 public:
-	///Pointer to the first point
-	const LGCAdjustablePoint* station;
-
-	const LGCAdjustablePoint* wsHeight;
 
 	/// Line in the input file where this measurement was defined
 	int line;
@@ -734,8 +730,6 @@ enum EECWIDistances
 class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>
 {
 public:
-	/// Pointer to the first point
-	const LGCAdjustablePoint *station;
 
 	/// Line in the input file where this measurement was defined
 	int line;
@@ -753,6 +747,12 @@ public:
 
 	/// Returns the last observation index of this measurement (ECWI introduces 2 observations, order is defined to be: X, Z).
 	inline MatrixIndex getLastObservationIndex() const { return fFirstObservationIndex + 1; }
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+#endif
+
 };
 
 #endif

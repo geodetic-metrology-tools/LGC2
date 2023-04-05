@@ -521,9 +521,34 @@ class TInstrumentData
 #endif // USE_SERIALIZER
 		};
 
-
+#if USE_SERIALIZER
+		struct TWPSR : public Serializable
+#else
 		struct TWPSR
+#endif // USE_SERIALIZER
 		{
+			TWPSR(std::string ID = "",
+			TLength sigmaX = TLength(),
+			TLength sigmaZ = TLength(),
+			TLength sigmaInstrCenteringX= TLength(),
+			TLength sigmaInstrCenteringZ= TLength(),
+			TLength sagWire= TLength(),
+			TLength sigmaSagWire= TLength(),
+			TLength sigmaWire= TLength(),
+			TLength sigmaCombinedX= TLength(),
+			TLength sigmaCombinedZ= TLength()):
+				ID(ID),
+				sigmaX(sigmaX),
+				sigmaZ(sigmaZ),
+				sigmaInstrCenteringX(sigmaInstrCenteringX),
+				sigmaInstrCenteringZ(sigmaInstrCenteringZ),
+				sagWire(sagWire),
+				sigmaSagWire(sigmaSagWire),
+				sigmaWire(sigmaWire),
+				sigmaCombinedX(sigmaCombinedX),
+				sigmaCombinedZ(sigmaCombinedZ)
+			{};
+
 			std::string ID;
 			TLength sigmaX; // [m]
 			TLength sigmaZ; // [m]
@@ -534,6 +559,11 @@ class TInstrumentData
 			TLength sigmaWire; // [m]
 			TLength sigmaCombinedX; // [m]
 			TLength sigmaCombinedZ; // [m]
+
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
 		};
 
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
@@ -595,6 +625,8 @@ class TInstrumentData
 			obj.addProperty("fPOLAR", fPOLAR);		
 		if (!fSCALE.empty())
 			obj.addProperty("fSCALE", fSCALE);
+		if (!fWPSR.empty())
+			obj.addProperty("fWPSR", fWPSR);
     }
 
 	inline void TInstrumentData::TPOLAR::serialize(SerializerObject::SerializationHelper &obj) const
@@ -731,6 +763,21 @@ class TInstrumentData
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
 		obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
+	}
+
+
+	inline void TInstrumentData::TWPSR::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("ID", ID);
+		obj.addProperty("sigmaX", sigmaX.getMetresValue());
+		obj.addProperty("sigmaZ", sigmaZ.getMetresValue());
+		obj.addProperty("sigmaInstrCenteringX", sigmaInstrCenteringX.getMetresValue());
+		obj.addProperty("sigmaInstrCenteringZ", sigmaInstrCenteringZ.getMetresValue());
+		obj.addProperty("sagWire", sagWire.getMetresValue());
+		obj.addProperty("sigmaSagWire", sigmaSagWire.getMetresValue());
+		obj.addProperty("sigmaWire", sigmaWire.getMetresValue());
+		obj.addProperty("sigmaCombinedX", sigmaCombinedX.getMetresValue());
+		obj.addProperty("sigmaCombinedZ", sigmaCombinedZ.getMetresValue());
 	}
 
 #endif // USE_SERIALIZER
