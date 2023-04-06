@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -11,6 +11,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <MeasDef.h>
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustableLine.h>
+#include <TPositionVector.h>
 #include "TLGCObsSummary.h"
 
 
@@ -324,5 +325,90 @@ private:
 	static int romCounter_;
 
 	TLGCObsSummary ecwsSummary_;
+};
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of ECWI (TECWI) measurements which are measuring a single Wire.
+*/
+struct TECWIROM : public TStatusObject
+{
+	/// All ECWI measurements, measuring the same wire
+	std::list<TECWI> measECWI;
+
+	/// The instrument that is used on this station
+	TInstrumentData::TWPSR instrument;
+
+	// Lomg term: use the AdjustableLine to handle the wire definition (watchout to vertical case).
+	// position of the Reference point (fixed)
+	TPositionVector referencePoint;
+
+	// Wire dX, non-owning pointer
+	TAdjustableLength *fWireDx;
+
+	// Wire dZ, non-owning pointer
+	TAdjustableLength *fWireDz;
+
+	// Wire Bearing, non-owning pointer
+	TAdjustableAngle *fWireBearing;
+
+	// Wire Slope, non-owning pointer
+	TAdjustableAngle *fWireSlope;
+
+	/// First anchor point, non-owning pointer
+	const LGCAdjustablePoint *anchorPtFirst;
+
+	/// Second anchor point, non-owning pointer
+	const LGCAdjustablePoint *anchorPtSecond;
+
+	// 1-sigma precision of the wire
+	TLength sigmaWire;
+
+	// Adjustable sag, the sag can be fixed or variable, non-owning pointer
+	const TAdjustableLength *sagAdjustable;
+
+	// Tells whether the instrument height is fixed or not
+	bool sagfix;
+
+	/// name of the rom
+	std::string romName;
+
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
+
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TECWIObsSummary &getECWIObsSummary() const;
+	const TECWIObsSummary &getECWIObsSummary(std::string text) noexcept;
+
+	/// Line of the measurement definition
+	int line;
+	int romId = TECWIROM::romCounter_++;
+
+	TECWIROM(const TInstrumentData::TWPSR &inst, TLength sigmaWire, const LGCAdjustablePoint &anchor1, const LGCAdjustablePoint &anchor2) :
+		instrument(inst),
+		referencePoint(TPositionVector(TReal(0), TReal(0), TReal(0), TCoordSysFactory::ECoordSys::k3DCartesian)),
+		fWireDx(nullptr),
+		fWireDz(nullptr),
+		fWireBearing(nullptr),
+		fWireSlope(nullptr),
+		sagfix(false),
+		sagAdjustable(nullptr),
+		sigmaWire(sigmaWire),
+		anchorPtFirst(&anchor1),
+		anchorPtSecond(&anchor2),
+		romName(""),
+		line(NO_VALi)
+	{
+	}
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif
+
+private:
+	static int romCounter_;
+
+	TECWIObsSummary ecwiSummary_;
 };
 #endif

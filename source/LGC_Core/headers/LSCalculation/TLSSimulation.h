@@ -107,6 +107,8 @@ private:
 	void    getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws);
 	void    getOBSXYZSimValues(std::list<TOBSXYZ>& obsxyz);
 
+	void    getECWISimValues(const TECWIROM& ecwiROM, std::list<TECWI>& ecws);
+
 	/// Return a biased value (correct measurement + small error)
 	TReal   getSimulatedValue(const TReal val, const TReal sigma);
 

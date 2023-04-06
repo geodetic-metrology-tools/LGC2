@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -22,7 +22,32 @@ public:
 
 	/*!@name Enum Observation Types Definitions*/
 	//@{
-		enum ELGCObservations {kPLR3D, kUVEC, kUVD, kANGL, kZEND, kDIST, kECTH, kECDIR, kDHOR, kDSPT, kDLEV, kDVER, kECHO, kECSP, kECVE, kORIE, kPDOR, kRADI,kOBSXYZ,kINCLY,kECWS,ALWAYS_LAST};
+	enum ELGCObservations
+	{
+		kPLR3D,
+		kUVEC,
+		kUVD,
+		kANGL,
+		kZEND,
+		kDIST,
+		kECTH,
+		kECDIR,
+		kDHOR,
+		kDSPT,
+		kDLEV,
+		kDVER,
+		kECHO,
+		kECSP,
+		kECVE,
+		kORIE,
+		kPDOR,
+		kRADI,
+		kOBSXYZ,
+		kINCLY,
+		kECWS,
+		kECWI,
+		ALWAYS_LAST
+	};
 	//@}
 
 

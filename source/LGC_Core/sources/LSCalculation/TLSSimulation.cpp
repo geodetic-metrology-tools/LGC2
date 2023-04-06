@@ -244,6 +244,10 @@ void TLSSimulation::simulateValues()
 		//In every node iterate through the ECWS's measurements
 		for (auto& itECWS : itTree.node->data->measurements.fECWS)
 			getECWSSimValues(itECWS, itECWS.measECWS);
+
+		// In every node iterate through the ECWI's measurements
+		for (auto &itECWI : itTree.node->data->measurements.fECWI)
+			getECWISimValues(itECWI, itECWI.measECWI);
 		
 		//In every node go through the OBSXYZ measurements
 		getOBSXYZSimValues(itTree.node->data->measurements.fOBSXYZ);
@@ -451,6 +455,17 @@ void TLSSimulation::getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& 
 		TReal calcVal = fSimObs.getECWSCalcMeas(ecwsROM, itECWS);
 		TReal sigma = itECWS.target.sigmaDist;
 		itECWS.setDistance(TLength(getSimulatedValue(calcVal, sigma)));
+	}
+}
+
+void TLSSimulation::getECWISimValues(const TECWIROM &ecwiROM, std::list<TECWI> &ecwi)
+{
+	ECWICalcMeas calcMeas;
+	for (auto &itECWI : ecwi)
+	{
+		calcMeas = fSimObs.getECWICalcMeas(ecwiROM, itECWI);
+		itECWI.setDistance(TLength(getSimulatedValue(calcMeas.fMeasuredX, itECWI.target.sigmaX)), EECWIDistances::kX);
+		itECWI.setDistance(TLength(getSimulatedValue(calcMeas.fMeasuredZ, itECWI.target.sigmaZ)), EECWIDistances::kZ);
 	}
 }
 

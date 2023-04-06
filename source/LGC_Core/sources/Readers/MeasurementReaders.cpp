@@ -1495,3 +1495,105 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		ecwsROMLatest.measECWS.emplace_back(ecws);
 	}
 }
+
+void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline)
+	{
+		if (tokens.size() < 6)
+			throw std::runtime_error("ECWI measurement must have at least 3 entries, the WPSR instrument ID, the provisional sag and its precision");
+
+		if (proj.getCurrentNode().ID.size() != 1)
+		{
+			throw std::runtime_error("ECWI keyword is only allowed in the root frame");
+		}
+
+		TECWIROM ecwiRom(finstruments.getDevice(finstruments.fWPSR, tokens.at(2)), TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
+			fpoints.getObject(tokens.at(5)), fpoints.getObject(tokens.at(6)));
+
+		ecwiRom.instrument.sigmaWire = TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres);
+
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		ecwiRom.line = line;
+		ecwiRom.setActive(activeLine);
+
+		if (opts.has("WIID"))
+			ecwiRom.romName = opts.getParam("WIID");
+		else
+			ecwiRom.romName = "ECWI_line" + std::to_string(line);
+
+		// Check if the name is unique
+		for (auto &itRomName : proj.getCurrentNode().measurements.fECWI)
+		{
+			if (itRomName.romName == ecwiRom.romName)
+				throw std::runtime_error("Wire Names must be unique: " + ecwiRom.romName + " is duplicated");
+		}
+
+		// Check if the wire sag is fixed
+		ecwiRom.sagfix = opts.has("SAGFIX");
+		ecwiRom.instrument.sagWire = TLength(std::stor(tokens.at(3)));
+
+		// Look for optional "SAGSE" flag only if the "SAGFIX" flag used, ignore otherwise
+		if (ecwiRom.sagfix)
+		{
+			ecwiRom.instrument.sigmaSagWire = TLength(opts.getParamRmm2m("SAGSE", ecwiRom.instrument.sigmaSagWire));
+		}
+
+		proj.getCurrentNode().measurements.fECWI.emplace_back(ecwiRom); // add new round of measurement
+
+		// The WPSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
+		currentTargetApplied = finstruments.getDevice(finstruments.fWPSR, tokens.at(2)).ID;
+	}
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1)) && isNumber(tokens.at(2));
+		if (!hasAllParams && !proj.getConfig().sim.isActive())
+			throw std::runtime_error("ECWI measurement must have at least 3 entries: the WPSR instrument position, the X and Z observations");
+
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
+
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		std::string currentTarget = currentTargetApplied; // Take the current target, which is used
+		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
+		if (opts.has("INSTR"))
+		{
+			currentTarget = opts.getParam("INSTR");
+			currentTargetApplied = currentTarget;
+		}
+
+		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, currentTargetApplied); // Throws exception if instrument not found, caught on the top level
+		TECWIROM &ecwiROMLatest = proj.getCurrentNode().measurements.fECWI.back();
+
+		instr.sigmaX = TLength(opts.getParamRmm2m("XSE", instr.sigmaX));
+		instr.sigmaZ = TLength(opts.getParamRmm2m("ZSE", instr.sigmaZ));
+		instr.sigmaInstrCenteringX = TLength(opts.getParamRmm2m("XICSE", instr.sigmaInstrCenteringX));
+		instr.sigmaInstrCenteringZ = TLength(opts.getParamRmm2m("ZICSE", instr.sigmaInstrCenteringZ));
+
+		// Store  the measured value
+		TECWI ecwi(stationPoint, instr);
+
+		ecwi.setDistance(TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))), EECWIDistances::kX);
+		ecwi.setDistance(TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))), EECWIDistances::kZ);
+
+		// NODUP used
+		if (proj.getConfig().nodup.isActive())
+		{
+			for (auto &point : ecwiROMLatest.measECWI)
+			{
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("An ECWI measurement is duplicated");
+			}
+		}
+
+		ecwi.line = line;
+		ecwi.obsID = std::string(opts.getParamS("ID", ecwi.obsID));
+
+		ecwi.setActive(ecwiROMLatest.isActive() && activeLine); // Active only if ROM active as well
+
+		ecwiROMLatest.measECWI.emplace_back(ecwi);
+	}
+}
+

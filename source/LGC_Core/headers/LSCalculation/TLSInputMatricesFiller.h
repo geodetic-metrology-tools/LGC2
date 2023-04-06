@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -26,6 +26,7 @@ struct TECVEROM;
 struct TORIEROM;
 struct INCLYROM;
 struct TECWSROM;
+struct TECWIROM;
 
 /*! 
 	\ingroup LSCalculation
@@ -146,6 +147,8 @@ private:
 		/// Add the design matrices contributions for the ECWS measurement. 
 		void addECWSContributions(TECWSROM& ecwsROM, TLSInputMatrices* matrices);
 
+		/// Add the design matrices contributions for the ECWI measurement.
+		void addECWIContributions(TECWIROM &ecwiROM, TLSInputMatrices *matrices);
 		//@}
 
 

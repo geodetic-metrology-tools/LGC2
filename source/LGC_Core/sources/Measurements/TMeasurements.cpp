@@ -2,36 +2,38 @@
 #include "TMeasurements.h"
 
 void TMeasurements::initialiseObsSummaries() {
-    // First clear the old contents away
-    dverSummary_.clear();
-    radiSummary_.clear();
-    obsxyzSummary_.obsXObsSum.clear();
-    obsxyzSummary_.obsYObsSum.clear();
-    obsxyzSummary_.obsZObsSum.clear();
+	// First clear the old contents away
+	dverSummary_.clear();
+	radiSummary_.clear();
+	obsxyzSummary_.obsXObsSum.clear();
+	obsxyzSummary_.obsYObsSum.clear();
+	obsxyzSummary_.obsZObsSum.clear();
 
-    plrGlobalSummary_.anglObsSum.clear();
-    plrGlobalSummary_.zendObsSum.clear();
-    plrGlobalSummary_.distObsSum.clear();
-    anglGlobalSummary_.clear();
-    zendGlobalSummary_.clear();
-    distGlobalSummary_.clear();
-    dhorGlobalSummary_.clear();
-    ecthGlobalSummary_.clear();
-    ecdirGlobalSummary_.clear();
-    uvdGlobalSummary_.xVectorCompObsSum.clear();
-    uvdGlobalSummary_.yVectorCompObsSum.clear();
-    uvdGlobalSummary_.distObsSum.clear();
-    uvecGlobalSummary_.xVectorCompObsSum.clear();
-    uvecGlobalSummary_.yVectorCompObsSum.clear();
-    dsptGlobalSummary_.clear();
-    dlevGlobalSummary_.clear();
-    dlevDHORGlobalSummary_.clear();
-    orieGlobalSummary_.clear();
-    echoGlobalSummary_.clear();
-    ecveGlobalSummary_.clear();
-    ecspGlobalSummary_.clear();
+	plrGlobalSummary_.anglObsSum.clear();
+	plrGlobalSummary_.zendObsSum.clear();
+	plrGlobalSummary_.distObsSum.clear();
+	anglGlobalSummary_.clear();
+	zendGlobalSummary_.clear();
+	distGlobalSummary_.clear();
+	dhorGlobalSummary_.clear();
+	ecthGlobalSummary_.clear();
+	ecdirGlobalSummary_.clear();
+	uvdGlobalSummary_.xVectorCompObsSum.clear();
+	uvdGlobalSummary_.yVectorCompObsSum.clear();
+	uvdGlobalSummary_.distObsSum.clear();
+	uvecGlobalSummary_.xVectorCompObsSum.clear();
+	uvecGlobalSummary_.yVectorCompObsSum.clear();
+	dsptGlobalSummary_.clear();
+	dlevGlobalSummary_.clear();
+	dlevDHORGlobalSummary_.clear();
+	orieGlobalSummary_.clear();
+	echoGlobalSummary_.clear();
+	ecveGlobalSummary_.clear();
+	ecspGlobalSummary_.clear();
 	inclyGlobalSummary_.clear();
-    ecwsGlobalSummary_.clear();
+	ecwsGlobalSummary_.clear();
+	ecwiGlobalSummary_.xObsSum.clear();
+	ecwiGlobalSummary_.zObsSum.clear();
 
     // Add the residuals of each measurement and initialise the summaries:
 
@@ -89,9 +91,11 @@ void TMeasurements::initialiseObsSummaries() {
         allORIESummaries,
         allECHOSummaries,
         allECVESummaries,
-        allECSPSummaries,
-		allINCLYSummaries,
-        allECWSSummaries;
+        allECSPSummaries, 
+        allINCLYSummaries,
+        allECWSSummaries, 
+        allEcwiXSummaries, 
+        allEcwiZSummaries;
 
     // TSTN
     for(auto &tstn : fTSTN)
@@ -179,6 +183,14 @@ void TMeasurements::initialiseObsSummaries() {
         allECWSSummaries.push_back(&ecwsrom.getECWSObsSummary());
     }
 
+	// ECWI
+	for (auto &ecwirom : fECWI)
+	{
+		ecwirom.initialiseObsSummaries();
+		allEcwiXSummaries.push_back(&ecwirom.getECWIObsSummary().xObsSum);
+		allEcwiZSummaries.push_back(&ecwirom.getECWIObsSummary().zObsSum);
+	}
+
     // Create the global summaries from the collections:
 
     // TSTN:
@@ -199,6 +211,10 @@ void TMeasurements::initialiseObsSummaries() {
     uvecGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvecXSummaries);
     uvecGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvecYSummaries);
 
+    // WPSR
+	ecwiGlobalSummary_.xObsSum = TLGCObsSummary::merge(allEcwiXSummaries);
+	ecwiGlobalSummary_.zObsSum = TLGCObsSummary::merge(allEcwiZSummaries);
+
     // Other:
     dsptGlobalSummary_ = TLGCObsSummary::merge(allDSPTSummaries);
     dlevGlobalSummary_ = TLGCObsSummary::merge(allDLEVSummaries);
@@ -208,6 +224,7 @@ void TMeasurements::initialiseObsSummaries() {
     ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
     ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
 	inclyGlobalSummary_ = TLGCObsSummary::merge(allINCLYSummaries);
+	ecwsGlobalSummary_ = TLGCObsSummary::merge(allECWSSummaries);
 
 }
 
@@ -272,6 +289,8 @@ const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return i
 
 const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }
 
+const TECWIObsSummary& TMeasurements::getECWIGlobalObsSummary() const {	return ecwiGlobalSummary_; }
+
 #if USE_SERIALIZER
 // Inherited via Serializable
 void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
@@ -328,6 +347,8 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
         obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
     if (uvecGlobalSummary_.xVectorCompObsSum.getNumberOfObs())
         obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+	if (ecwiGlobalSummary_.xObsSum.getNumberOfObs())
+		obj.addProperty("ecwiGlobalSummary_", ecwiGlobalSummary_);
 
 	if (!fCAM.empty())
 		obj.addProperty("fCAM", fCAM);
@@ -359,5 +380,7 @@ void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
 		obj.addProperty("fLEVEL", fLEVEL);
 	if (!fTSTN.empty())
 	    obj.addProperty("fTSTN", fTSTN);
+	if (!fECWI.empty())
+		obj.addProperty("fECWI", fECWI);
 }
 #endif

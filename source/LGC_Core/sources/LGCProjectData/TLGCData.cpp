@@ -200,15 +200,20 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
 		case TMeasurementsGlobal::kINCLY:
 			fMeasInfo.fNumINCLY++;
 			break;
-        case TMeasurementsGlobal::kECWS:
-            fMeasInfo.fNumECWS++;
-            break;
+		case TMeasurementsGlobal::kECWS:
+			fMeasInfo.fNumECWS++;
+			break;
+		case TMeasurementsGlobal::kECWI:
+			fMeasInfo.fNumECWI++;
+			break;
 	}
 }
 
 
-int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const {
-	switch (type) {
+int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const
+{
+	switch (type)
+	{
 	case TMeasurementsGlobal::kANGL:
 		return fMeasInfo.fNumANGL;
 	case TMeasurementsGlobal::kZEND:
@@ -247,15 +252,17 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumOBSXYZ;
 	case TMeasurementsGlobal::kINCLY:
 		return fMeasInfo.fNumINCLY;
-    case TMeasurementsGlobal::kECWS:
-        return fMeasInfo.fNumECWS;
+	case TMeasurementsGlobal::kECWS:
+		return fMeasInfo.fNumECWS;
+	case TMeasurementsGlobal::kECWI:
+		return fMeasInfo.fNumECWI;
 	default:
 		return 0;
 	}
 }
 
-void TLGCData::setDefaultValues() {
-
+void TLGCData::setDefaultValues()
+{
 	fPointInfo.fNumCala = 0;
 	fPointInfo.fNumVx = 0;
 	fPointInfo.fNumVy = 0;
@@ -285,7 +292,8 @@ void TLGCData::setDefaultValues() {
 	fMeasInfo.fNumRADI = 0;
 	fMeasInfo.fNumOBSXYZ = 0;
 	fMeasInfo.fNumINCLY = 0;
-    fMeasInfo.fNumECWS = 0;
+	fMeasInfo.fNumECWS = 0;
+	fMeasInfo.fNumECWI = 0;
 }
 
 const TSparseMatrix *TLGCData::getCovMatByConst() const noexcept
@@ -692,6 +700,17 @@ void TLGCData::copyTree(TLGCData const* const src, TLGCData* tgt) {
                     meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
             }      
         }
+
+		// ECWI
+		for (auto &ecwirom : entry->measurements.fECWI)
+		{
+			// Measurements
+			for (auto &meas : ecwirom.measECWI)
+			{
+				if (meas.targetPos)
+					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+			}
+		}
     }
 }
 
@@ -773,6 +792,11 @@ void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
     for (auto& hlsr : tgtData->instruments.fHLSR)
         // Replace the instrument in the memory
         hlsr.second.reset(new TInstrumentData::THLSR(*hlsr.second));
+
+	// WPSR instrument
+	for (auto &wpsr : tgtData->instruments.fWPSR)
+		// Replace the instrument in the memory
+		wpsr.second.reset(new TInstrumentData::TWPSR(*wpsr.second));
 }
 
 void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
@@ -854,6 +878,8 @@ void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) 
 	obj.addProperty("fNumRADI", fNumRADI);
 	obj.addProperty("fNumOBSXYZ", fNumOBSXYZ);
 	obj.addProperty("fNumINCLY", fNumINCLY);
+	obj.addProperty("fNumECWS", fNumECWS);
+	obj.addProperty("fNumECWI", fNumECWI);
 }
 
 void TPointGlobal::serialize(SerializerObject::SerializationHelper& obj) const

@@ -74,6 +74,8 @@ private:
 		void writeINCLReliability(TDataTreeIterator frameIt);
 		/// Write HLSR reliability
 		void writeHLSRReliability(TDataTreeIterator frameIt);
+		/// Write WPSR reliability
+		void writeWPSRReliability(TDataTreeIterator frameIt);
 
 		///Writes specific point
 		void writeResultsPtsData(AdjPointIter pt, bool isLocal);
@@ -134,7 +136,9 @@ private:
 			allECVESummaries_,
 			allECSPSummaries_,
 			allINCLYSummaries_,
-			allECWSSummaries_,
+			allECWSSummaries_, 
+			allEcwiXSummaries_, 
+			allEcwiZSummaries_,
 			allObsxyzXSummaries_,
 			allObsxyzYSummaries_,
 			allObsxyzZSummaries_;

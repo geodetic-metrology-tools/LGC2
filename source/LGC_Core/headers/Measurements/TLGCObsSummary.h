@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -266,6 +266,31 @@ struct TOBSXYZObsSummary
 			obj.addProperty("obsYObsSum", obsYObsSum);
 		if (obsZObsSum.getNumberOfObs())
 			obj.addProperty("obsZObsSum", obsZObsSum);
+	}
+#endif
+};
+
+/*!
+\ingroup Measurements
+\brief A structure containing observation summaries (TLGCObsSummary) of the two observations of the ECWI observation.
+*/
+#if USE_SERIALIZER
+struct TECWIObsSummary : public Serializable
+#else
+struct TECWIObsSummary
+#endif // USE_SERIALIZER
+{
+	TLGCObsSummary xObsSum;
+	TLGCObsSummary zObsSum;
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		if (xObsSum.getNumberOfObs())
+			obj.addProperty("xObsSum", xObsSum);
+		if (zObsSum.getNumberOfObs())
+			obj.addProperty("zObsSum", zObsSum);
 	}
 #endif
 };

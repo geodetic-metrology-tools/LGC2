@@ -103,6 +103,10 @@ bool   TLSInputMatricesFiller::fillMatrices(TLGCData* projData, bool fillWeightU
 			for (auto& itECWS : itTree.node->data->measurements.fECWS)
 				addECWSContributions(itECWS, matrices);
 
+			// In every node iterate through the ECWI measurements
+			for (auto &itECWI : itTree.node->data->measurements.fECWI)
+				addECWIContributions(itECWI, matrices);
+
 			addDVERContribution(itTree.node->data->measurements.fDVER, matrices);
 
 			addRADIContributions(itTree.node->data->measurements.fRADI, matrices);
@@ -1317,6 +1321,91 @@ void  TLSInputMatricesFiller::addECWSContributions(TECWSROM& ecwsROM, TLSInputMa
 	}
 }
 
+void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMatrices *matrices)
+{
+	bool isProcessOK = true;
+
+	for (auto itECWI(ecwiROM.measECWI.begin()); itECWI != ecwiROM.measECWI.end(); ++itECWI)
+	{
+		MatrixIndex firstEqIdx = itECWI->getFirstEquationIndex();
+		MatrixIndex firstObsIdx = itECWI->getFirstObservationIndex();
+
+		ECWIContrib contributions = fCGenerator.getECWIContrib(ecwiROM, *itECWI); // Get the observation contribution
+
+		// Update the sigma
+		itECWI->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));
+		itECWI->target.sigmaCombinedZ = TLength(sqrt(contributions.fObsVariance[1]));
+
+		// Adding station's contributions
+		if (!itECWI->targetPos->isFixed())
+		{
+			isProcessOK &= addPointContribution(*itECWI->targetPos, contributions.fStCoordContrib[0], firstEqIdx, matrices)
+				&& addPointContribution(*itECWI->targetPos, contributions.fStCoordContrib[1], firstEqIdx + 1, matrices);
+		}
+
+		// Adding contributions to the transformation parameters
+		for (auto &itStTransform : contributions.fWireFirstEqTransformContrib)
+		{
+			if (!itStTransform.first.isFixed())
+			{
+				isProcessOK &= addTransformationContribution(itStTransform.first, itStTransform.second, firstEqIdx, matrices);
+			}
+		}
+
+		for (auto &itStTransform : contributions.fWireSecondEqTransformContrib)
+		{
+			if (!itStTransform.first.isFixed())
+			{
+				isProcessOK &= addTransformationContribution(itStTransform.first, itStTransform.second, firstEqIdx + 1, matrices);
+			}
+		}
+
+		// Setting the misclosure vector elements
+		isProcessOK &= matrices->setMisclosureVectorElement(firstEqIdx, -1.0 * (itECWI->getDistance(EECWIDistances::kX) - contributions.fCalcMeas[0]))
+			&& matrices->setMisclosureVectorElement(firstEqIdx + 1, -1.0 * (itECWI->getDistance(EECWIDistances::kZ) - contributions.fCalcMeas[1]));
+
+		// Adding controbution to the wire Bearing angle (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[1]);
+
+		// Adding controbution to the wire DRefX (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[1]);
+
+		// Adding controbution to the wire DRefZ (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[1]);
+
+		// Adding controbution to the wire Slope (always variable)
+		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[0])
+			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[1]);
+
+		// Adding controbution to the wire SAG (variable or fixed)
+		if (!ecwiROM.sagfix)
+		{
+			isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[0])
+				&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[1]);
+		}
+
+		// Add weight unknown matrix element
+		if (contributions.fObsVariance[0] < nullLimit || contributions.fObsVariance[1] < nullLimit)
+			throw std::runtime_error("Error when filling ECWI contribution, variance is zero or too small, can not set weight matrix element.");
+		else
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				isProcessOK &= matrices->setWeightMtrxElement(firstObsIdx + i, firstObsIdx + i, 1.0 / contributions.fObsVariance[i])
+					&& matrices->setWeightInvMtrxElement(firstObsIdx + i, firstObsIdx + i, contributions.fObsVariance[i]);
+			}
+		}
+
+		// Adding the contribution to the second design matrix
+		isProcessOK &= matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, -Eigen::MatrixXd::Identity(2, 2));
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of ECWI measurement occurred.");
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation

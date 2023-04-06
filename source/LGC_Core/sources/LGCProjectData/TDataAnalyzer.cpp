@@ -229,6 +229,43 @@ bool TDataAnalyzer::dataConsistent(){
             }
         }
 
+		for (auto &itECWI : it.node->data.get()->measurements.fECWI)
+		{
+			// Create the fixed reference point for the wire
+			TReal referencePoint[3] = {0, 0, 0};
+			TPositionVector firstAnchorPos = itECWI.anchorPtFirst->getEstimatedValue();
+
+			TLOR2LOR firstAnchor2Root(itECWI.anchorPtFirst->getFrameTreePosition(), fTree.begin(), "FirstAnchor2ROOT");
+			firstAnchor2Root.transform(firstAnchorPos);
+
+			TPositionVector secondAnchorPos = itECWI.anchorPtSecond->getEstimatedValue();
+			TLOR2LOR secondAnchor2Root(itECWI.anchorPtSecond->getFrameTreePosition(), fTree.begin(), "SecondAnchor2ROOT");
+			secondAnchor2Root.transform(secondAnchorPos);
+
+			// Fixed reference point for the ECWI measurement
+			TPositionVector refPointVector = (TFreeVector(firstAnchorPos) + TFreeVector(secondAnchorPos)) * 0.5;
+	
+			// Calculation of the initial approximated values for the wire bearing and slope
+			TFreeVector anchorVector = secondAnchorPos - firstAnchorPos;
+			TReal bearingLineVectorAngle = atan2q(anchorVector.getX().getMetresValue(), anchorVector.getY().getMetresValue());
+			TReal slopeLineVectorAngle = atan2q(-anchorVector.getZ().getMetresValue(), anchorVector.getHorDist().getMetresValue());
+
+			// Create the Adjustable Objects
+			std::string name = itECWI.romName + "_" + itECWI.anchorPtFirst->getName() + "_" + itECWI.anchorPtSecond->getName();
+
+			itECWI.referencePoint = refPointVector;
+
+			itECWI.fWireDx = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DX"));
+			itECWI.fWireDz = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DZ"));
+
+			itECWI.sagAdjustable = &fData.getLength().addObject(TAdjustableLength(itECWI.instrument.sagWire, itECWI.sagfix, name + "_SAG"));
+
+			TAdjustableAngle adjBearing(TAngle(bearingLineVectorAngle), false, name + "_BEARING");
+			itECWI.fWireBearing = &fData.getAngles().addObject(adjBearing);
+
+			TAdjustableAngle adjSlope(TAngle(slopeLineVectorAngle), false, name + "_SLOPE");
+			itECWI.fWireSlope = &fData.getAngles().addObject(adjSlope);
+		}
         cleanDeactivated();
 
 		//If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
@@ -681,6 +718,23 @@ bool TDataAnalyzer::cleanDeactivated(){
             ++ecwsrom;
         }
 
+        // ECWI
+		auto ecwirom = measurements.fECWI.begin();
+		while (ecwirom != measurements.fECWI.end())
+		{
+			// If ECWIROM not active, remove it:
+			if (!ecwirom->isActive())
+			{
+				measurements.fECWI.erase(ecwirom++);
+				continue;
+			}
+
+			if (!rmDeactivated_and_checkTargetPos(ecwirom->measECWI))
+				return false;
+
+			++ecwirom;
+		}
+
         // If the roms of different types of measurements are not active, clear the rom:
         if(!measurements.dverActive) measurements.fDVER.clear();
         if(!measurements.radiActive) measurements.fRADI.clear();
@@ -1004,6 +1058,20 @@ void TDataAnalyzer::assignEOIndices(){
                 ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
                 fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
             }
+
+		// ECWI
+		for (auto &ecwirom : measurements.fECWI)
+		{
+			for (auto &ecwi : ecwirom.measECWI)
+			{
+				// set indices of LS matrices, ECWI introduces 2 equations and 2 observations
+				ecwi.setFirstEquationIndex(fData.fUEOIndices.EIndex);
+				ecwi.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+				fData.fUEOIndices.EIndex += 2;
+				fData.fUEOIndices.OIndex += 2;
+				fData.addToMeasurementNum(TMeasurementsGlobal::kECWI);
+			}
+        }
     }
 }
 

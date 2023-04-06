@@ -151,6 +151,10 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			//In every node iterate through the ECWSROM's measurements
 			for (auto& itECWS : itTree.node->data->measurements.fECWS)
 				extractECWSROMObs(rm, itECWS);
+
+			// In every node iterate through the ECWIROM's measurements
+			for (auto &itECWI : itTree.node->data->measurements.fECWI)
+				extractECWIROMObs(rm, itECWI);
 		}
 	}
 	catch (std::exception const & excp)
@@ -507,6 +511,24 @@ void TLSResultsMatricesExtractor::extractECWSROMObs(const TLSResultsMatrices& rm
 		{
 			logCritical() << "ECWS observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itECWS->line << ")";
 			throw std::runtime_error("ECWS observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+		}
+	}
+}
+
+void TLSResultsMatricesExtractor::extractECWIROMObs(const TLSResultsMatrices &rm, TECWIROM &ecwiMeas)
+{
+	for (auto itECWI(ecwiMeas.measECWI.begin()); itECWI != ecwiMeas.measECWI.end(); ++itECWI)
+	{
+		MatrixIndex obsUidx = itECWI->getFirstObservationIndex();
+		if (obsUidx + 1 < rm.getResidualsVectByConst()->size())
+		{
+			itECWI->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)), EECWIDistances::kX);
+			itECWI->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx + 1)), EECWIDistances::kZ);
+		}
+		else
+		{
+			logCritical() << "ECWI observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itECWI->line << ")";
+			throw std::runtime_error("ECWI observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 		}
 	}
 }

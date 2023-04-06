@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -216,6 +216,26 @@ public:
 private:
 	TKeyHLSR& operator=(const TKeyHLSR&);
 };
+
+class TKeyWPSR : public TAInstrumentKey
+{
+public:
+	/*!
+		See \ref TAInstrumentKey::TAInstrumentKey
+	*/
+	TKeyWPSR(TLGCData &project, int nb_allowed_keywords = nb_allowed_wpsr, const char **keywords = allowed_WPSR);
+
+	/*!
+		See \ref TKeyINSTR::parse
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int);
+
+	virtual const std::vector<std::string> &parentKeys() const;
+
+private:
+	TKeyWPSR &operator=(const TKeyWPSR &);
+};
+
 
 /*! @} End of Doxygen Groups*/
 

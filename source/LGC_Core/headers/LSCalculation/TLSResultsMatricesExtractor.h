@@ -23,6 +23,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TINCLYROM;
 struct TECWSROM;
+struct TECWIROM;
 
 /*!
 	\ingroup LSCalculation
@@ -152,6 +153,9 @@ private:
 
 		/// Sets the ECWS measurement residual.
 		void extractECWSROMObs(const TLSResultsMatrices& rm, TECWSROM& ecwsMeas);
+
+		/// Sets the ECWI measurement residual.
+		void extractECWIROMObs(const TLSResultsMatrices &rm, TECWIROM &ecwiMeas);
 	//@}
 
 

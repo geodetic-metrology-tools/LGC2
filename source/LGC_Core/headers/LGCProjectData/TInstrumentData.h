@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -521,6 +521,50 @@ class TInstrumentData
 #endif // USE_SERIALIZER
 		};
 
+#if USE_SERIALIZER
+		struct TWPSR : public Serializable
+#else
+		struct TWPSR
+#endif // USE_SERIALIZER
+		{
+			TWPSR(std::string ID = "",
+			TLength sigmaX = TLength(),
+			TLength sigmaZ = TLength(),
+			TLength sigmaInstrCenteringX= TLength(),
+			TLength sigmaInstrCenteringZ= TLength(),
+			TLength sagWire= TLength(),
+			TLength sigmaSagWire= TLength(),
+			TLength sigmaWire= TLength(),
+			TLength sigmaCombinedX= TLength(),
+			TLength sigmaCombinedZ= TLength()):
+				ID(ID),
+				sigmaX(sigmaX),
+				sigmaZ(sigmaZ),
+				sigmaInstrCenteringX(sigmaInstrCenteringX),
+				sigmaInstrCenteringZ(sigmaInstrCenteringZ),
+				sagWire(sagWire),
+				sigmaSagWire(sigmaSagWire),
+				sigmaWire(sigmaWire),
+				sigmaCombinedX(sigmaCombinedX),
+				sigmaCombinedZ(sigmaCombinedZ)
+			{};
+
+			std::string ID;
+			TLength sigmaX; // [m]
+			TLength sigmaZ; // [m]
+			TLength sigmaInstrCenteringX; // [m]
+			TLength sigmaInstrCenteringZ; // [m]
+			TLength sagWire; // [m]
+			TLength sigmaSagWire; // [m]
+			TLength sigmaWire; // [m]
+			TLength sigmaCombinedX; // [m]
+			TLength sigmaCombinedZ; // [m]
+
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+#endif // USE_SERIALIZER
+		};
 
 		/// All available polar instruments, accessible by their ID. See \ref getDevice for failsave lookup.
         std::map<std::string, std::shared_ptr<TPOLAR>> fPOLAR;
@@ -534,8 +578,10 @@ class TInstrumentData
         std::map<std::string, std::shared_ptr<TSCALE>> fSCALE;
 		/// All available scale devices, accessible by their ID. See \ref getDevice for failsave lookup.
 		std::map<std::string, std::shared_ptr<TINCL>> fINCL;
-        /// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
-        std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
+		/// All available hls instruments, accessible by their ID. See \ref getDevice for failsave lookup.
+		std::map<std::string, std::shared_ptr<THLSR>> fHLSR;
+		/// All available wps instruments, accessible by their ID. See \ref getDevice for failsave lookup.
+		std::map<std::string, std::shared_ptr<TWPSR>> fWPSR;
 
 		/*!
 			Get a (const) reference to an instrument by passing the desired map and an instrument ID.
@@ -579,6 +625,8 @@ class TInstrumentData
 			obj.addProperty("fPOLAR", fPOLAR);		
 		if (!fSCALE.empty())
 			obj.addProperty("fSCALE", fSCALE);
+		if (!fWPSR.empty())
+			obj.addProperty("fWPSR", fWPSR);
     }
 
 	inline void TInstrumentData::TPOLAR::serialize(SerializerObject::SerializationHelper &obj) const
@@ -715,6 +763,21 @@ class TInstrumentData
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
 		obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
+	}
+
+
+	inline void TInstrumentData::TWPSR::serialize(SerializerObject::SerializationHelper &obj) const
+	{
+		obj.addProperty("ID", ID);
+		obj.addProperty("sigmaX", sigmaX.getMetresValue());
+		obj.addProperty("sigmaZ", sigmaZ.getMetresValue());
+		obj.addProperty("sigmaInstrCenteringX", sigmaInstrCenteringX.getMetresValue());
+		obj.addProperty("sigmaInstrCenteringZ", sigmaInstrCenteringZ.getMetresValue());
+		obj.addProperty("sagWire", sagWire.getMetresValue());
+		obj.addProperty("sigmaSagWire", sigmaSagWire.getMetresValue());
+		obj.addProperty("sigmaWire", sigmaWire.getMetresValue());
+		obj.addProperty("sigmaCombinedX", sigmaCombinedX.getMetresValue());
+		obj.addProperty("sigmaCombinedZ", sigmaCombinedZ.getMetresValue());
 	}
 
 #endif // USE_SERIALIZER

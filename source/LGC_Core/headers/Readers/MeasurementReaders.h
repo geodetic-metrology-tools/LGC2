@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2022. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -518,6 +518,25 @@ public:
 		/throws Exception if the keyword is not used correctly.
 	*/
 	virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
+};
+
+/// Keyword to process ECWI -- ECart-WIre measurements
+class TKeyECWI : public TAMeasurementKey
+{
+public:
+	/// Constructor, the list of allowed keywords is filled
+	TKeyECWI(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecwi, const char **keywords = allowed_ECWI) : TAMeasurementKey(project, ECWI)
+	{
+		for (int i = 0; i < nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	/*!
+		\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
+
+		/throws Exception if the keyword is not used correctly.
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int line);
 };
 /*! @} End of Doxygen Groups*/
 

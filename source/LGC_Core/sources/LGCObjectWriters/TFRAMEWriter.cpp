@@ -15,6 +15,7 @@
 #include <TPointTransformer.h>
 #include "TINCLWriter.h"
 #include "THLSRWriter.h"
+#include "TWPSRWriter.h"
 #include "TMeasurements.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -76,6 +77,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -145,6 +147,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt){
 
 	for (auto& itECWS : tmeas.fECWS)
 		hlsrWriter.writeECWSResults(itECWS);
+
+	for (auto& itECWI : tmeas.fECWI)
+		wpsrWriter.writeECWIResults(itECWI);
 }
 
 
@@ -164,6 +169,7 @@ void TFRAMEWriter::writeHistogrammeRootOnly() {
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());// no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
 	//TSTN
 	//ANGL
@@ -300,6 +306,14 @@ void TFRAMEWriter::writeHistogrammeRootOnly() {
 		(*stream) << endl;
 		hlsrWriter.writeHisto(TLGCObsSummary::merge(allECWSSummaries_), "ECWS");
 	}
+
+	// ECWI
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWI) >= 5) {
+		(*stream) << endl;
+		wpsrWriter.writeHisto(TLGCObsSummary::merge(allEcwiXSummaries_), "ECWI: X");
+		(*stream) << endl;
+		wpsrWriter.writeHisto(TLGCObsSummary::merge(allEcwiZSummaries_), "ECWI: Z");
+	}
 }
 
 void TFRAMEWriter::initialiseAllObsSummaries() {
@@ -329,6 +343,8 @@ void TFRAMEWriter::initialiseAllObsSummaries() {
 	allECSPSummaries_.clear();
 	allINCLYSummaries_.clear();
 	allECWSSummaries_.clear();
+	allEcwiXSummaries_.clear();
+	allEcwiZSummaries_.clear();
 	allObsxyzXSummaries_.clear();
 	allObsxyzYSummaries_.clear();
 	allObsxyzZSummaries_.clear();
@@ -384,6 +400,13 @@ void TFRAMEWriter::initialiseAllObsSummaries() {
 		if (tmeas.fECWS.size() > 0)
 			for (auto& itECWS : tmeas.fECWS)
 				allECWSSummaries_.push_back(&itECWS.getECWSObsSummary(itECWS.fMeasuredWSHeight->getName()));
+
+		if (tmeas.fECWI.size() > 0)
+			for (auto& itECWI : tmeas.fECWI)
+			{
+				allEcwiXSummaries_.push_back(&itECWI.getECWIObsSummary(itECWI.romName).xObsSum);
+				allEcwiZSummaries_.push_back(&itECWI.getECWIObsSummary(itECWI.romName).zObsSum);
+			}
 
 		if (tmeas.fCAM.size() > 0) {
 			for (auto& itCAM : tmeas.fCAM) {
@@ -450,6 +473,7 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly() {
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 
 
 	//ANGL
@@ -702,6 +726,24 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly() {
 		hlsrWriter.writeDefResultsSynthesis(allECWSSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
 		hlsrWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allECWSSummaries_), TABs);
 	}
+
+	////ECWI
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWI) > 0)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECWI: X");
+		(*stream) << endl;
+		wpsrWriter.writeWPSRSynthesisHeader();
+		wpsrWriter.writeDefResultsSynthesis(allEcwiXSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		wpsrWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allEcwiXSummaries_), TABs);
+		
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, "ECWI: Z");
+		(*stream) << endl;
+		wpsrWriter.writeWPSRSynthesisHeader();
+		wpsrWriter.writeDefResultsSynthesis(allEcwiZSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+		wpsrWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allEcwiZSummaries_), TABs);
+	}
 }
 
 void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
@@ -725,7 +767,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive());
-
+	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive());
 
     auto &tmeas = (*frameIt)->measurements;
 
@@ -770,6 +812,9 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt){
 
 	for (auto& itECWS : tmeas.fECWS)
 		hlsrWriter.writeECWSSIMUResults(itECWS);
+
+	for (auto &itECWI : tmeas.fECWI)
+		wpsrWriter.writeECWISIMUResults(itECWI);
 }
 
 void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
@@ -801,6 +846,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt){
 	writeSCALEReliability(frameIt);
 	writeINCLReliability(frameIt);
 	writeHLSRReliability(frameIt);
+	writeWPSRReliability(frameIt);
 
 	bool  ORIEheaderWritten = false;
 	for (auto& itORIE:tmeas.fORIE)
@@ -1502,6 +1548,30 @@ void TFRAMEWriter::writeHLSRReliability(TDataTreeIterator frameIt)
 		}
 	}
 
+}
+
+void TFRAMEWriter::writeWPSRReliability(TDataTreeIterator frameIt)
+{
+	TAStreamFormatter *stream = getStream();
+	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive());
+
+	auto &tmeas = (*frameIt)->measurements;
+
+	// ECWI
+	bool isecwi = false;
+	for (auto &itECWI : tmeas.fECWI)
+	{
+		if (itECWI.measECWI.size() > 0)
+		{
+			if (isecwi == false)
+			{
+				(*stream) << endl << "ECWI observations" << endl;
+				wpsrWriter.writeECWIReliabilityHeader();
+				isecwi = true;
+			}
+			wpsrWriter.writeECWIReliabilityData(itECWI, fProjectData->getStatistics(), itECWI.measECWI);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

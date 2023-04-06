@@ -353,3 +353,43 @@ const std::vector<std::string>& TKeyHLSR::parentKeys() const {
 	static std::vector<std::string> p{ INSTR };
 	return p;
 }
+
+
+//////////////////////
+// WPSR instrument //
+//////////////////////
+TKeyWPSR::TKeyWPSR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, WPSR)
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int)
+{
+	using namespace LGC;
+
+	auto &wpsrs(finstruments.fWPSR);
+	checkInstrument(7, wpsrs, tokens);
+
+	auto h = std::make_shared<TInstrumentData::TWPSR>(TInstrumentData::TWPSR(
+		tokens.at(2), 
+		TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
+		TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), 
+		TLength(std::stor(tokens.at(5)), TLength::EUnits::kMillimetres), 
+		TLength(std::stor(tokens.at(6)), TLength::EUnits::kMillimetres), 
+		TLength(0),
+		TLength(0), 
+		TLength(0),
+		TLength(0),
+		TLength(0)
+	));
+
+	// store the new wpsr
+	wpsrs.insert(std::make_pair(tokens.at(2), h));
+}
+
+const std::vector<std::string> &TKeyWPSR::parentKeys() const
+{
+	static std::vector<std::string> p{INSTR};
+	return p;
+}

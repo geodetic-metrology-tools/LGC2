@@ -278,8 +278,13 @@ void TECWS::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	TAScalarMeas<TInstrumentData::THLSR>::serialize(obj);
 	obj.addProperty("line", line);
-	obj.addProperty("station", station);
-	obj.addProperty("wsHeight", wsHeight);
+}
+
+
+void TECWI::serialize(SerializerObject::SerializationHelper &obj) const
+{
+	TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>::serialize(obj);
+	obj.addProperty("line", line);
 }
 
 #endif
