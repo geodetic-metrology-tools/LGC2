@@ -69,8 +69,8 @@ public:
 	/// Extracts unknown variances and covariances and fill them into the adjustable objects. Returns true if successful.
 	bool extractVarCovarParams(const TLSResultsMatrices&);
 
-	/// Extract results for relative error computation
-	void	extractRelError(const TLSResultsMatrices&);
+	/// Extract results for relative error computation, returning true if successful, false otherwise
+	bool extractRelError(const TLSResultsMatrices&);
 
 private:
 	/*!@name Methods responsible for extracting corrections from result matrices and filling them into the adjustable objects.*/

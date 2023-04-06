@@ -725,15 +725,16 @@ namespace tut
 		ensure_equals("Z Precision trivial transformation problem", sigmaInSubframe.getZ(), point.getZEstPrecision());
 
 		// call transformation function for non existing frame
+		std::string frameName = "NonExistingFrameName";
 		try
 		{
-			TFreeVector sigmaSubframe = point.transformSigma(point, projTest.get(), "NonExistingFrameName");
+			TFreeVector sigmaSubframe = point.transformSigma(point, projTest.get(), frameName);
 			fail("Expect exception because destination frame does not exist.");
 		}
 		catch (std::exception const &excp)
 		{
 			std::string test = excp.what();
-			ensure_equals("Wrong exception thrown", test, "Frame not found");
+			ensure_equals("Wrong exception thrown", test, "Frame " + frameName + " not found");
 		}
 	}
 

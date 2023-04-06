@@ -1,0 +1,88 @@
+#pragma warning(push)
+#pragma warning(disable : 4512)
+#include <tut/tut.hpp>
+#pragma warning(pop)
+
+
+#include <TLGCData.h>
+#include <TReader.h>
+#include "testEREL.h"
+#include "TLGCCalculation.h"
+#include <Behavior.h>
+
+namespace tut
+{
+	struct test_EREL 
+	{
+		test_EREL() : projTest(std::make_shared<TLGCData>()), reader(projTest) {}
+		std::shared_ptr<TLGCData> projTest;
+		TReader reader;
+	};
+	typedef test_group<test_EREL> factory;
+	typedef factory::object object;
+}
+
+namespace
+{
+	tut::factory tf("Test EREL (relative Error) computations");
+}
+
+namespace tut
+{
+	template<>
+	template<>
+	void object::test<1>()
+	{
+
+		set_test_name("Testing standard EREL use");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/EREL.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(Erel::EREL_test);
+
+		bool succesReading = reader.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		const TLGCData& dataset = calcul.getData();
+		LSRelErrorsContainer lsErrors = dataset.getRelError();
+		LSRelErrorIter relErrorIt = lsErrors.begin();
+		
+		TLSCalcRelativeError relError1 = *relErrorIt;
+		// test if precisions from polar measurement target can be recovered by erel (all in root)
+		ensure_equals("Zend sigma has to match.", relError1.getSigmaV().getSignedCCValue(), 13, 1e-4);
+		ensure_equals("Orientation sigma has to to match.", relError1.getSigmaG().getSignedCCValue(), 12, 1e-4);
+		ensure_equals("Distance sigma has to match.", relError1.getSigmaL().getMMetresValue(), 14, 1e-4);
+
+		// test if precisions from polar measurement target can be recovered by erel (point in root observed from uncertain frame) in uncertain frame coordinates (should be independent of frame uncertainty)
+		relErrorIt++;
+		TLSCalcRelativeError relError2 = *relErrorIt;
+		ensure_equals("Zend sigma has to match.", relError2.getSigmaV().getSignedCCValue(), 13, 1e-4);
+		ensure_equals("Orientation sigma has to to match.", relError2.getSigmaG().getSignedCCValue(), 12, 1e-4);
+		ensure_equals("Distance sigma has to match.", relError2.getSigmaL().getMMetresValue(), 14, 1e-4);
+		
+		// test if the relative error between a fixed point in a frame and a point in a different frame measured only by one obsxyz from that frame is equal to the relative error of an equivalent setup in root
+		relErrorIt++;
+		TLSCalcRelativeError relErrorReferenceSetup = *relErrorIt;
+		relErrorIt++;
+		TLSCalcRelativeError relErrorComplicatedTrSetup = *relErrorIt;
+		ensure_equals("L relative Error has to match.", relErrorReferenceSetup.getSigmaL(), relErrorComplicatedTrSetup.getSigmaL(), 1e-4);
+		ensure_equals("G relative Error has to match.", relErrorReferenceSetup.getSigmaG(), relErrorComplicatedTrSetup.getSigmaG(), 1e-4);
+		ensure_equals("R relative Error has to match.", relErrorReferenceSetup.getSigmaR(), relErrorComplicatedTrSetup.getSigmaR(), 1e-4);
+		ensure_equals("Z relative Error has to match.", relErrorReferenceSetup.getSigmaZ(), relErrorComplicatedTrSetup.getSigmaZ(), 1e-4);
+		ensure_equals("V relative Error has to match.", relErrorReferenceSetup.getSigmaV(), relErrorComplicatedTrSetup.getSigmaV(), 1e-4);
+		relErrorIt++;
+		TLSCalcRelativeError relErrorComplicatedRotSetup = *relErrorIt;	
+		ensure_equals("L relative Error has to match.", relErrorReferenceSetup.getSigmaL(), relErrorComplicatedRotSetup.getSigmaL(), 1e-4);
+		ensure_equals("G relative Error has to match.", relErrorReferenceSetup.getSigmaG(), relErrorComplicatedRotSetup.getSigmaG(), 1e-4);
+		ensure_equals("R relative Error has to match.", relErrorReferenceSetup.getSigmaR(), relErrorComplicatedRotSetup.getSigmaR(), 1e-4);
+		ensure_equals("Z relative Error has to match.", relErrorReferenceSetup.getSigmaZ(), relErrorComplicatedRotSetup.getSigmaZ(), 1e-4);
+		ensure_equals("V relative Error has to match.", relErrorReferenceSetup.getSigmaV(), relErrorComplicatedRotSetup.getSigmaV(), 1e-4);
+
+
+	}
+
+};

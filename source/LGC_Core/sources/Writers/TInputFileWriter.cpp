@@ -86,10 +86,10 @@ void TInputFileWriter::writeHeader()
     if(config.writeDefa.isActive())
         (*stream) << "*DEFA" << endl;
 
-    if(!config.erelPairs.empty()){
+    if(!config.erelTuples.empty()){
         (*stream) << "*EREL" << endl;
-        for(const auto &erelpair : config.erelPairs) {
-            (*stream) << erelpair.first << "  " << erelpair.second << endl;
+        for(const auto &erelTuple : config.erelTuples) {
+			(*stream) << std::get<0>(erelTuple) << "  " << std::get<1>(erelTuple) << "  " << std::get<2>(erelTuple) << endl;
         }
     }
 

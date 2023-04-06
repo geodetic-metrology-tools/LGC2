@@ -45,7 +45,7 @@ TDataTreeIterator TLGCData::locateNode(std::string frameName) const
 		currentNodeIter++;
 	}
 	if (currentNodeIter == lastNodeIter)
-		throw std::runtime_error("Frame not found");
+		throw std::runtime_error("Frame " + frameName + " not found");
 
 	return currentNodeIter;
 }
@@ -364,19 +364,9 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
 	d->fCovMat = fCovMat;
 
 	// Copy relative errors:
-	for (const auto& erelPair : fRelError) {
-		// Get the correct points from the new container:
-		auto p1 = d->points.getObject(erelPair.getPoint1Name());
-		auto p2 = d->points.getObject(erelPair.getPoint2Name());
-
-		// Create the erel pair, set sigmas:
-		TLSCalcRelativeError erel(p1, p2);
-		erel.setSigmaL(erelPair.getSigmaL());
-		erel.setSigmaR(erelPair.getSigmaR());
-		erel.setSigmaZ(erelPair.getSigmaZ());
-		erel.setSigmaG(erelPair.getSigmaG());
-		erel.setSigmaV(erelPair.getSigmaV());
-
+	for (const auto& erelTuple : fRelError) {
+		// use the copy constructor
+		TLSCalcRelativeError erel(erelTuple);
 		// Add to the new container:
 		d->fRelError.push_back(erel);
 	}

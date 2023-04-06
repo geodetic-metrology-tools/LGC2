@@ -265,8 +265,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	TBinaryOption histo;
 	/// Enables error-ellipse data output
 	TBinaryOption errorEllipses;
-	/// Pairs of points for relative error analysis
-	std::vector< std::pair<std::string, std::string> > erelPairs;
+	/// Pairs of points for relative error analysis together with destination frame
+	std::vector<std::tuple<std::string, std::string, std::string>> erelTuples;
 	/// See \ref CustomOutputSep
 	TCustomOutputSep CustomOutputSeparator;
 	/// See \ref CustomOutputSep

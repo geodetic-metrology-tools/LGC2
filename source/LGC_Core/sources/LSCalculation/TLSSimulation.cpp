@@ -95,7 +95,7 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 			fileWriter->writeSimPointsSummary(fData.getConfig().title, fPointSummaries, numOfSimMade);
 			fileWriter->writeSimFramesSummary(fFrameSummaries, numOfSimMade);
 
-			if (!fData.getConfig().erelPairs.empty())
+			if (!fData.getConfig().erelTuples.empty())
 			{
 				fileWriter->writeRelErrorHeader();
 				fileWriter->writeRelErrorResults(fData);

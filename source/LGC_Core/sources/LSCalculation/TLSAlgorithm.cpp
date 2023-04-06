@@ -127,7 +127,7 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 		if (computeVarCovarAndReliability(&data, inputMtr, computer))
 			return Behavior();
 		else{
-			fileLog << TFileLogger::e_logType::LOG_ERROR << "TResidual errors and their related variance-covariance matrix could not be estimated (Matrix inversion Problem)!";
+			fileLog << TFileLogger::e_logType::LOG_ERROR << "TResidual errors and their related variance-covariance matrix could not be estimated. ";
 			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"TResidual errors and their related variance-covariance matrix could not be estimated!\n");
 		}
 	}
@@ -177,10 +177,14 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrice
 		
 	}
 
-	if ((data->fUEOIndices.UIndex != 0) && !data->getConfig().erelPairs.empty())
+	if (!data->getConfig().erelTuples.empty())
 	{
+		if (!fExtractor->extractRelError(*resultMatrices))
+		{
+			logWarning() << "Problem during relative error computation";
+			return false;
+		};
 		logDebug() << "Statistics have been completed: extracts now the data";
-		fExtractor->extractRelError(*resultMatrices);
 	}
 
 	return true;

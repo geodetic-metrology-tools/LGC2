@@ -11,6 +11,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TTransformation.h>
 #include <Global.h>
 #include "TSparseMatrix.h"
+#include "TLGCData.h"
+#include "LGCAdjustablePoint.h"
 
 class TAdjustableHelmertTransformation;
 
@@ -177,6 +179,9 @@ class TLOR2LOR{
 		
 		// compute the derivative of the Lor2Lor chain with respect to the coordinates of the tranformed point
 		TDenseMatrix getPartialDerivativeWrtPosition(const TPositionVector &pos) const;
+
+		// compute derivative of point transformed to destinationFrame with respect to all LGC variables
+		TSparseMatrix getPointDerivative(const TLGCData* projData, const LGCAdjustablePoint &point);
 
 
 		/// Returns Source Node, the node of the tree from which is transformed.
