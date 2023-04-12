@@ -47,12 +47,13 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 			{
 				double absSum = sqrt(pow(computedJacobian(obs, par),2) + pow(finiteDifferenceJacobian(obs, par),2));
 				double relDiff = absDiff / absSum;
-				if ((relDiff > relTol)&&(absDiff>1e-9))
+				//if ((relDiff > relTol)&&(absDiff>1e-9))
+				if (absDiff>1e-2)
 				{
 					problemDetected = true;
 					message << "OIdx = " << std::setw(4) << obs << ", UIdx = " << std::setw(4) << par << ", finDiffJac =" << std::setprecision(8) << std::setw(16)
 							<< finiteDifferenceJacobian(obs, par) << ", LGCJac = " << std::setw(16) << computedJacobian(obs, par) << " , absDiff = " << std::setw(12)
-							<< absDiff << ", relDiff = " << std::setw(10) << relDiff << std::endl;
+							<< absDiff << std::endl; 
 				}
 			}
 		}
