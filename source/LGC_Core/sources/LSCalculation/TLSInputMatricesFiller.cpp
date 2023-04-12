@@ -1260,7 +1260,7 @@ void  TLSInputMatricesFiller::addINCLYContributions(TINCLYROM& inclyROM, TLSInpu
 		}
 		
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (-itINCLY.getAngle() - contributions.fCalcMeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itINCLY.getAngle() - contributions.fCalcMeas));
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)
