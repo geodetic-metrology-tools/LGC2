@@ -118,8 +118,11 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream) << " | ";
 		(*stream).writeString(obsResWidth, "DIST");  // observation PPM error for DIST
 		(*stream) << " | ";
-		if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
-		(*stream) << " | ";
+		if (obsIdWidth != 0)
+		{
+			(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
+			(*stream) << " | ";
+		}
 		(*stream) <<endl;
 
 
@@ -191,8 +194,11 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth, "PPM"); // observation PPM error for DIST
 		(*stream) << " | ";
 		
-		(*stream).writeString(obsIdWidth, ""); // observation ID
-		(*stream) << " | ";
+		if (obsIdWidth != 0)
+		{
+			(*stream).writeString(obsIdWidth, ""); // observation ID
+			(*stream) << " | ";
+		}
 
 		(*stream)<<endl;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -261,8 +267,11 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream).writeString(obsResWidth, "(MM/KM)");     // observation PPM error for DIST
 		(*stream) << " | ";
 
-		(*stream).writeString(obsIdWidth, ""); // observation ID
-		(*stream) << " | ";
+		if (obsIdWidth != 0)
+		{
+			(*stream).writeString(obsIdWidth, ""); // observation ID
+			(*stream) << " | ";
+		}
 
 		(*stream)<<endl;
 }
@@ -881,8 +890,11 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 
 		//ID
 		//Write the Measurement identifier
-		(*stream).writeString(obsIdWidth, ItPLR3D.obsID);
-		(*stream) << " | ";
+		if (obsIdWidth != 0)
+		{
+			(*stream).writeString(obsIdWidth, ItPLR3D.obsID);
+			(*stream) << " | ";
+		}
 
 		(*stream) << endl;
 	}
