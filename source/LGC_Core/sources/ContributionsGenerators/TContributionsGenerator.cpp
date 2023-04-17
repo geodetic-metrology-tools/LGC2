@@ -63,7 +63,10 @@ DistMeasContrib	TContributionsGenerator::getSpatialDistanceContrib(std::shared_p
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
 	if (D < nullLimit)
-		throw std::logic_error("TContributionGenerator::getSpatialDistanceContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getSpatialDistanceContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*dist.targetPos));
+	}
 
 	TReal a,b,c;   //station's contributions coefficients (negative values of these give coefficients of the TARGET)		 
 	a = (xSt - xTg)/D;  // xSt coefficient
@@ -125,7 +128,11 @@ DistMeasContribFrame	TContributionsGenerator::getSpatialDistanceContribInFrame(s
 	TReal D = dist3D(xSt, ySt, zSt, xTg, yTg, (zTg + hTg));
 
 	if (D < nullLimit)
-		throw std::logic_error("TContributionGenerator::getSpatialDistanceContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getSpatialDistanceContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*dist.targetPos));
+
+	}
 
 	TReal a, b, c;   //station's contributions coefficients (negative values of these give coefficients of the TARGET)		 
 	a = (xSt - xTg) / D;  // xSt coefficient
@@ -187,7 +194,11 @@ AnglMeasContrib	TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
-		throw std::logic_error("TContributionGenerator::getHorAnglContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getHorAnglContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*angl.targetPos));
+	}
+
 
 	TReal a,b,c; //station's contributions coefficients (negative values of these give the target coefficients)		
 	a = (-LITERAL(1.0) * (yTg - ySt))/dist2; //xSt coefficient
@@ -228,7 +239,10 @@ AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(std::shar
 	TReal yTg = targetPos.getY().getMetresValue();
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
-		throw std::logic_error("TContributionGenerator::getHorAnglContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getHorAnglContribInFrame: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*angl.targetPos));
+	}
 
 
 	//Calculated measurement value
@@ -292,7 +306,10 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN
 
 	TReal distance3D = dist3D(xSt, ySt, zSt+hInst, xTg, yTg, zTg+hTg);
 	if (distance3D < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
+	{
+		generateContributionError("TContributionGenerator::getZenDistContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*zend.targetPos));
+	}
 
 	TAngle calcMeas = TAngle::aCos((zTg - zSt - hInst + hTg)/distance3D);
 	
@@ -300,7 +317,10 @@ AnglMeasContrib	TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN
 	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
 	if (sinPhi < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (sinV=0).");
+	{
+		generateContributionError("TContributionGenerator::getZenDistContrib: Division by zero because Sinus of Zend angle between station and target is zero. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*zend.targetPos));
+	}
 
 	TReal a,b,c; //station's contributions coefficients (negative values of these give target's coefficients)	
 	a = (- 1.0 * dz * dx) / (powq(distance3D,3) * sinPhi);//xSt coefficient
@@ -352,7 +372,10 @@ AnglMeasContribFrame	TContributionsGenerator::getZenDistContribInFrame(std::shar
 
 	TReal distance3D = dist3D(xSt, ySt, zSt, xTg, yTg, zTg + hTg);
 	if (distance3D < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (distance3D).");
+	{
+		generateContributionError("TContributionGenerator::getZenDistContribInFrame: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*zend.targetPos));
+	}
 
 
 	// Prepare coefficients (a,b,c) for the points and the transformations contributions
@@ -361,7 +384,10 @@ AnglMeasContribFrame	TContributionsGenerator::getZenDistContribInFrame(std::shar
 	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
 	if (sinPhi < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getZenDistContrib: Division by zero because observation points have identical coordinates (sinV=0).");
+	{
+		generateContributionError("TContributionGenerator::getZenDistContribInFrame: Division by zero because Sinus of Zend angle between station and target is zero. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*zend.targetPos));
+	}
 
 	TReal a, b, c; //station's contributions coefficients (negative values of these give target's coefficients)	
 	a = (-1.0 * dz * dx) / (powq(distance3D, 3) * sinPhi);//xSt coefficient
@@ -560,7 +586,10 @@ HorDistContrib	TContributionsGenerator::getHorDistContrib(std::shared_ptr<TTSTN>
 	TReal D = dist(xSt, ySt, xTg, yTg);
 
 	if (D < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getHorDistDsgnMxContributions: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getHorDistContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*dhor.targetPos));
+	}
 
 	TReal a,b,c;  //station's contributions coefficients (negative values of these give target's coefficients)			
 	a = - (xTg - xSt)/D;  // xSt coefficient
@@ -698,7 +727,9 @@ ECTHContrib	 TContributionsGenerator::getECDIRContrib(std::shared_ptr<TTSTN> sta
 		V0Contrib = -1 * (l[1] * (xSt - xTg) - l[0] * (ySt - yTg)) / calcMeas; /**/
 	}
 	else
-		throw std::logic_error("TContributionGenerator::getECDIRContrib: Division by zero because the point is on the line");
+	{
+		generateContributionError("TContributionGenerator::getECDIRContrib: Division by zero because the point " + getNameAndLine(*ecdir.targetPos) + " is on the line.");
+	}
 
 
 	TReal distCorrection = -1.0;  //Not use for the moment, because it is not adjustable.
@@ -761,7 +792,10 @@ DistMeasContrib	TContributionsGenerator::getDSPTContrib(const TEDM& edmST, const
 	TReal D = dist3D(xSt, ySt, (zSt + hInst), xTg, yTg, (zTg + hTg));
 
 	if (D < nullLimit)
-		throw std::logic_error("TContributionGenerator::getDSPTContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getDSPTContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
+			+ getNameAndLine(*edmST.instrumentPos) + " and " + getNameAndLine(*dspt.targetPos));
+	}
 
 	TReal a,b,c;   //station's contributions coefficients (negative values of these give target's coefficients)		 
 	a = (xSt -xTg)/D;  // xSt coefficient
@@ -827,7 +861,10 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const LGCAdjustab
 	calcMeas = dist(xSt, ySt, xTg, yTg);
 
 	if (calcMeas < nullLimit)
-		throw std::logic_error("TLGCObsLSContributionGenerator::getHorDistContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getHorDistContrib: Division by zero because x and y coordinates of station and target are identical. Points: "
+			+ getNameAndLine(*referencePoint) + " and " + getNameAndLine(*dhor.targetPos));
+	}
 
 	TReal a,b,c; 	
 	a = - (xTg - xSt)/calcMeas; // xRp coefficient
@@ -1153,7 +1190,10 @@ AnglMeasContrib	TContributionsGenerator::getOrieContrib(const TORIEROM& orieROM,
 
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
-		throw std::logic_error("TContributionGenerator::getOrieContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getOrieContrib: Division by zero because station and target are identical or have identical x and y coordinates. Points: "
+			+ getNameAndLine(*orieROM.instrumentPos) + " and " + getNameAndLine(*orie.targetPos));
+	}
 
 	TReal a, b, c; //station's contributions coefficients (negative values of these give the target coefficients)		
 	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; //xSt coefficient
@@ -1206,7 +1246,10 @@ PtOrientationContrib	TContributionsGenerator::getPDORContrib(const TPdorObs& pdo
 
 	TReal D = dist(xFix, yFix, xRef, yRef);
 	if (D < nullLimit)
-		throw std::logic_error("TContributionsGenerator::getPDORContrib: Division by zero because observation points have identical coordinates.");
+	{
+		generateContributionError("TContributionGenerator::getPDORContrib: Division by zero because station and target are identical or have identical x and y coordinates. Points: "
+			+ getNameAndLine(*pdorObs.calaPt) + " and " + getNameAndLine(*pdorObs.orientationPt));
+	}
 
 	// When no bearing is set in th input file, one is set in TDataAnalyzer w.r.t provisional values
 	TReal calcmeas = (TAngle::aTan2((xRef - xFix), (yRef - yFix))) - pdorObs.getBearing().getRadiansValue();
@@ -1517,7 +1560,7 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	TReal sag = ecwiROM.sagAdjustable->getEstimatedValue().getMetresValue();
 
 	if (l < nullLimit)
-		throw std::logic_error("TContributionGenerator::getECWIContrib: Division by zero because anchor points have identical X and Y coordinates.");
+		throw std::logic_error("TContributionGenerator::getECWIContrib: Division by zero because anchor points are identical or have identical X and Y coordinates.");
 
 	TReal ratioLength = factor * di / l;
 	TReal riOver100 = 4 * sag * (pow2(ratioLength) - ratioLength);
@@ -1956,7 +1999,7 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 		scalePD = lorTrafo.partialDerivativesScale(transformationName, pointPos);
 
 		if ((pow2q(numerator) + pow2q(denominator)) < nullLimit)
-			throw std::logic_error("TContributionGenerator::getINCLYContrib: Division by zero because observation points have identical coordinates.");
+			throw std::logic_error("TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");
 
 		omegaContrib = (omegaPD.getX().getMetresValue() * denominator - numerator * omegaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
 		phiContrib = (phiPD.getX().getMetresValue() * denominator - numerator * phiPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
@@ -1969,4 +2012,15 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 
 	return transfContrib;
 }
+
+std::string TContributionsGenerator::getNameAndLine(const LGCAdjustablePoint& point) const
+{
+	return std::string(point.getName() + " defined in line " + std::to_string(point.line));
+}
+
+void TContributionsGenerator::generateContributionError(const std::string &message) const
+{
+	throw std::logic_error(message);
+}
+
 
