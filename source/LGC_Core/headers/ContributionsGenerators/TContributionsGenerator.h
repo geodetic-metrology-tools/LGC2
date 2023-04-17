@@ -170,6 +170,10 @@ private:
 		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
 		decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator);
 
+		// helper for error generation
+		std::string getNameAndLine(const LGCAdjustablePoint& point) const;
+		void generateContributionError(const std::string &message) const;
+
 		//@}
 
 };
