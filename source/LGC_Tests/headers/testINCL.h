@@ -201,7 +201,30 @@ namespace TestINCL {
 		"*ENDFRAME\n"
 		"*END\n"
 		;
-}
 
-
+	/*Testing the INCLY contributions and the angle and scale partial derivatives with TFreeVector */
+	char const *const INCLY_CONTRIB = 
+		"*TITR \n"
+		"test Contrib Incl \n"
+		"*OLOC \n"
+		"*INSTR \n"
+		"*INCL I   5    0   0  0  0 \n"
+		"*CALA \n"
+		"PT1 0 1000 100 \n"
+		"PT2 0 1000 101 \n"
+		"PT3 1 1001 101 \n"
+		"*FRAME TEST 500 500 500 10 10 80 0.8 TX TY TZ RX RY RZ SCL \n"
+		"*OBSXYZ \n"
+		"PT1 1 1001 101 0.1 0.1 0.1 \n"
+		"PT2 1 1001 102 0.1 0.1 0.1 \n"
+		"PT3 2 1002 102 0.1 0.1 0.1 \n"
+		"*INCLY I \n"
+		"PT3 0.0000 \n"
+		"*FRAME TEST2 20 30 10 0 0 100 1 \n"
+		"*INCLY I \n"
+		"PT1 0.0000 \n"
+		"*ENDFRAME \n"
+		"*ENDFRAME \n"
+		"*END \n";
+	}
 #endif
