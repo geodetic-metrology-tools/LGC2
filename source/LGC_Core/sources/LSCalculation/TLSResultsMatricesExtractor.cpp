@@ -169,14 +169,25 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 	Public Method: extractVarCovarParams
 	Extracts variances and covariances from calculated matrices
 ****************************************************************************************************************/
-void TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices& rm)
+bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices& rm)
 {
-	extractFullCovar(rm);
-	extractPointVarCovar(rm);
-	extractAngleVar(rm);
-	extractLengthVar(rm);
-	extractPlaneVarCovar(rm);
-	extractTransformationVarCovar(rm);
+	bool successfullExtraction = true;
+	try
+	{
+		extractFullCovar(rm);
+		extractPointVarCovar(rm);
+		extractAngleVar(rm);
+		extractLengthVar(rm);
+		extractPlaneVarCovar(rm);
+		extractTransformationVarCovar(rm);
+	}
+	catch (std::exception const & excp)
+	{
+		logCritical() << "Could not extract the covariances from calculated matrices! Exception caught:" << excp.what();
+		successfullExtraction = false;
+	}
+	return successfullExtraction;
+
 }
 
 //////////////////////////////////////////////////////////////////
