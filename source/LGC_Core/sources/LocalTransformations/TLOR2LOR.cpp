@@ -205,6 +205,12 @@ TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string& transfoName, co
 	catch(std::runtime_error& ex){throw ex;}
 }
 
+TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string &transfoName, const TFreeVector &v, int angle) const
+{
+	return partialDerivativesAngle(transfoName, (TPositionVector)v, angle)
+		- partialDerivativesAngle(transfoName, TPositionVector(0, 0, 0, TCoordSysFactory::ECoordSys::k3DCartesian), angle);
+}
+
 TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoName, const TPositionVector& p, int translation) const{
 	assert3D(translation);
 	try{
@@ -262,6 +268,12 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 		return derivated_vector;
 	}
 	catch(std::runtime_error& ex){throw ex;}
+ }
+
+  TFreeVector TLOR2LOR::partialDerivativesScale(const std::string &transfoName, const TFreeVector &v) const
+ {
+	  return partialDerivativesScale(transfoName, (TPositionVector)v)
+		 - partialDerivativesScale(transfoName, TPositionVector(0, 0, 0, TCoordSysFactory::ECoordSys::k3DCartesian));
  }
 
  std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR::getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const

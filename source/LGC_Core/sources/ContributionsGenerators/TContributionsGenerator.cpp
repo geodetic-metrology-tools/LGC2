@@ -1359,6 +1359,8 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 		fPointTransfo.transformMLA2CGRF(stationV);
 		fPointTransfo.transformCGRF2CCS(stationV);
 	}
+	// Keep a copy of the vector in the root for the transformation contributions
+	TFreeVector stationVRoot(stationV);
 
 	// Transform the local vertical in the station LOR
 	const TLOR2LOR &vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), inclST.positionInTree); // Trafo from from CCS LOR to station's LOR
@@ -1369,17 +1371,12 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	TReal ZSt = stationV.getZ().getMetresValue();
 	TAngle calcMeas = TAngle::aTan2(XSt, ZSt) - incly.target.angleCorrectionValue - incly.target.refAngleCorrectionValue;
 
-	// Add the transformation contribution
-	// Transform the projected vector from the station frame to the rootframe
-	const TLOR2LOR &stLor2RootTrafo = fPointTransfo.getLORTransformation(inclST.positionInTree, fPointTransfo.getTree()->begin()); // Transformation from "STATION FRAME" to "ROOT"
-	TPositionVector ProjLocalV(XSt, 0, ZSt, TCoordSysFactory::ECoordSys::k3DCartesian);
-	stLor2RootTrafo.transform(ProjLocalV);
-
 	// Compute the variance of the observation
-	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
+	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue())
+		+ pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 
 	// CalcMeas, transformationContributions, variance
-	return {calcMeas, addINCLContributions(vert2stTrafo, ProjLocalV, XSt, ZSt), obsVariance};
+	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt), obsVariance};
 }
 
 ////ECWS contribution
@@ -1977,7 +1974,7 @@ void TContributionsGenerator::addUVDTgTransfContributionsCamera(const TLOR2LOR& 
 }
 
 
-decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal numerator, TReal denominator) {
+decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR& lorTrafo, const TFreeVector& vector, TReal numerator, TReal denominator) {
 	const std::vector<TLOR2LOR::TransformAndParams>& trafoChain = lorTrafo.getTransformationChain();
 	
 	std::string transformationName;
@@ -1993,10 +1990,10 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
 	for (const auto& it : trafoChain) {
 		transformationName = it.adjTrafo->getName();
-		omegaPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 0);
-		phiPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 1);
-		kappaPD = lorTrafo.partialDerivativesAngle(transformationName, pointPos, 2);
-		scalePD = lorTrafo.partialDerivativesScale(transformationName, pointPos);
+		omegaPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 0);
+		phiPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 1);
+		kappaPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 2);
+		scalePD = lorTrafo.partialDerivativesScale(transformationName, vector);
 
 		if ((pow2q(numerator) + pow2q(denominator)) < nullLimit)
 			throw std::logic_error("TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");

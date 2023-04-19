@@ -333,4 +333,35 @@ namespace tut
 		}
 		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
 	}
+
+	template<>
+	template<>
+	void object::test<9>()
+	{
+		set_test_name("Testing INCLY derivatives and the angle and scale partial derivatives with TFreeVector");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_CONTRIB.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestINCL::INCLY_CONTRIB);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-9);
+
+		TDataTree tree = projTest->getTree();
+		TDataTreeIterator frameIt = tree.begin();
+		frameIt++;
+		ensure_equals("Translation X does not match", frameIt.node->data->frame.getEstTranslation(0).getMetresValue(), -1, 1e-6);
+		ensure_equals("Translation Y does not match", frameIt.node->data->frame.getEstTranslation(1).getMetresValue(), -1, 1e-6);
+		ensure_equals("Translation Z does not match", frameIt.node->data->frame.getEstTranslation(2).getMetresValue(), -1, 1e-6);
+		ensure_equals("Rotation X does not match", frameIt.node->data->frame.getEstRotation(0).getGonsValue(), 0, 1e-6);
+		ensure_equals("Rotation Y does not match", frameIt.node->data->frame.getEstRotation(1).getGonsValue(), 0, 1e-6);
+		ensure_equals("Rotation Z does not match", frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 0, 1e-6);
+		ensure_equals("Scale not does not match", frameIt.node->data->frame.getEstScale(), 1, 1e-6);
+	}
 	}

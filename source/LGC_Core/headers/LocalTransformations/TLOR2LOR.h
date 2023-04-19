@@ -120,7 +120,7 @@ class TLOR2LOR{
 		TFreeVector partDerivWRespToZ0() const;
 
 		/*!
-			\brief Partial derivatives with respect to angles.
+			\brief Partial derivatives with respect to angles for a Position Vector.
 
 			\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
 			\param[in] p Point which is transformed.
@@ -129,6 +129,17 @@ class TLOR2LOR{
 			\returns Partial derivatives of the point 'p' with respect to the "angle".
 		*/
 		TFreeVector partialDerivativesAngle (const std::string& transfoName, const TPositionVector& p, int angle) const;
+
+		/*!
+			\brief Partial derivatives with respect to angles for a Free Vector.
+
+			\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
+			\param[in] v Vector which is transformed.
+			\param[in] angle Specification of the the angle (0 - omega (x-axis), 1 - phi (y-axis), 2 - kappa (z-axis)). With respect to this angle is returned partial derivative.
+
+			\returns Partial derivatives of the vector 'v' with respect to the "angle".
+		*/
+		TFreeVector partialDerivativesAngle(const std::string &transfoName, const TFreeVector &v, int angle) const;
 
 		/*!
 			\brief Partial derivatives with respect to translations.
@@ -142,7 +153,7 @@ class TLOR2LOR{
 		TFreeVector partialDerivativesTranslation(const std::string& transfoName, const TPositionVector& p, int translation) const;
 
 		/*!
-			\brief Partial derivatives with respect to scale factor.
+			\brief Partial derivatives with respect to scale factor for a Position Vector.
 
 			\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
 			\param[in] p Point which is transformed.
@@ -150,6 +161,16 @@ class TLOR2LOR{
 			\returns Partial derivatives of the point 'p' with respect to the scale factor.
 		*/
 		TFreeVector partialDerivativesScale(const std::string& transfoName, const TPositionVector& p) const;
+
+		/*!
+			\brief Partial derivatives with respect to scale factor for a Free Vector.
+
+			\param[in] transfoName Name of the transformation in the transformation chain which we want to differentiate.
+			\param[in] v Vector which is transformed.
+
+			\returns Partial derivatives of the vector 'v' with respect to the scale factor.
+		*/
+		TFreeVector partialDerivativesScale(const std::string &transfoName, const TFreeVector &v) const;
 
 		// compute the derivatives of the Lor2Lor chain with respect to all involved helmert parameters, as in the Contributions generator (=dH(p1,p2,...,pn,x)/d(p1,p2,..,pn))
 		std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const;
