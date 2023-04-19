@@ -2,7 +2,7 @@
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR "2")
 set (LGC_VERSION_MINOR "6")
-set (LGC_VERSION_PATCH "beta_3-SLAVE_Frames")
+set (LGC_VERSION_PATCH "beta_5-SLAVE_Frames")
 
 # Versions files
 configure_file (
