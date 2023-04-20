@@ -286,7 +286,16 @@ void Moni::MoniImpl::createMeasurementReferences()
 				measRefs.ECWS.insert({itECWS.obsID, itECWS});
 				measRefs.types.insert({itECWS.obsID, "ECWS"});
 			}
+		}	
+		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
+		{
+			for (auto &itECWI : itECWIrom.measECWI)
+			{
+				measRefs.ECWI.insert({itECWI.obsID, itECWI});
+				measRefs.types.insert({itECWI.obsID, "ECWI"});
+			}
 		}
+
 	}
 }
 
@@ -408,6 +417,12 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 	else if (type == "ECWS")
 	{
 		measRefs.ECWS.at(id).setDistance(TLength(measurementVector[0]));
+		return;
+	}
+	else if (type == "ECWI")
+	{	
+		measRefs.ECWI.at(id).setDistance(TLength(measurementVector[0]), EECWIDistances::kX);
+		measRefs.ECWI.at(id).setDistance(TLength(measurementVector[1]), EECWIDistances::kZ);
 		return;
 	}
 	else if (type == "DVER")
@@ -552,6 +567,12 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	{
 		Eigen::VectorXd res(1);
 		res << measRefs.ECWS.at(id).getDistanceResidual();
+		return res;
+	}
+	else if (type == "ECWI")
+	{
+		Eigen::VectorXd res(2);
+		res << measRefs.ECWI.at(id).getDistanceResidual(EECWIDistances::kX), measRefs.ECWI.at(id).getDistanceResidual(EECWIDistances::kZ);
 		return res;
 	}
 	else if (type == "DVER")
@@ -733,6 +754,12 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	{
 		Eigen::VectorXd result(1);
 		result[0] = measRefs.ECWS.at(id).getDistance();
+		return result;
+	}
+	else if (type == "ECWI")
+	{	
+		Eigen::VectorXd result(2);
+		result << measRefs.ECWI.at(id).getDistance(EECWIDistances::kX), measRefs.ECWI.at(id).getDistance(EECWIDistances::kZ);
 		return result;
 	}
 	else if (type == "DVER")
