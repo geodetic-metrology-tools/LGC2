@@ -88,6 +88,8 @@ private:
 		std::unordered_map<std::string, TINCLY &> INCLY;
 		// HLSR Type
 		std::unordered_map<std::string, TECWS &> ECWS;
+		// WPSR Type
+		std::unordered_map<std::string, TECWI &> ECWI;
 		// "No" type
 		std::unordered_map<std::string, TDVER &> DVER;
 		std::unordered_map<std::string, TRADI &> RADI;
