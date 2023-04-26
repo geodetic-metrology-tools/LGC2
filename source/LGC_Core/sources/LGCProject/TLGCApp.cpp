@@ -88,12 +88,25 @@ Behavior TLGCApp::exec()
 	//if we are here, the reading is well done, clean Behavior and launch calculation
 	result.extract(Behavior::BehaviorCode::ERR_readingContent);
 	result = lgcCalculation.computeResults(fileWriter);
+	logInfo() << "Calculation process ended.";
 
 	// Save the final results (SIMU output is written during the calculation after each iteration)
-	if(result)
-        this->saveResults(projectData.get(), fOutputFileLoc, lgcCalculation, fStream);
+	if (result)
+	{
+		try
+		{
+			this->saveResults(projectData.get(), fOutputFileLoc, lgcCalculation, fStream);
+			logInfo() << "Results written.";
+		}
+		catch (std::exception const &excp)
+		{
+			TFileLogger& fileLog = projectData->getFileLogger();
+			fileLog << TFileLogger::e_logType::LOG_ERROR << "Error during result file writing, see .log2 file "<<excp.what();
+			logCritical() << excp.what();
+			result += Behavior(Behavior::BehaviorCode::ERR_results, L"Result File writing failed.");
+		}
 
-	logInfo() << "Calculation process ended.";
+	}
 	return result;
 }
 

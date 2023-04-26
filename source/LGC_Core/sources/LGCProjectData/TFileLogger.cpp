@@ -46,7 +46,14 @@ TFileLogger::~TFileLogger ()
 
 
 		//link to the user guide
-		outputFile << "User guide: " << "https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide" << std::endl << std::endl;
+		outputFile << "User guide: "
+				   << "https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide" << std::endl
+				   << std::endl;
+		outputFile << "For problematic cases consider checking the initial residuals (*ALLFIXED option or fixing variables)" << std::endl
+				   << "or use the *CONSI option to check the geometric consistency of the configuration." << std::endl;
+		outputFile << "Please report issues via Jira: "
+				   << "https://cern.ch/lgc2-bug" << std::endl;
+
 
         outputFile.close();
     } 

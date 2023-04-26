@@ -11,6 +11,8 @@
 //LGC Core
 #include <TLGCData.h>
 #include "TResultsFileWriter.h"
+#include <Logger.hpp>
+
 #include "TLGCApp.h"
 #include "TLOR2LOR.h"
 #include "TFRAMEWriter.h"
@@ -92,23 +94,23 @@ void    TResultsFileWriter::writeFile(const std::string error)
 // Write the LGC results for the given project
 void    TResultsFileWriter::writeFile()
 {
-	TAStreamFormatter* stream = getStream();
-    //Limited just number of points and unknowns for points for now
-    this->initObsListNumber();    
-    
-    //write the header title of the results file
-    this->writeTitle();
- 
-    // write the input data summary
-    this->writeDataSummary();
- 
-    this->writeCalcDataSummary();
- 
-    // write the calculation header
-    this->writeSigmaAPosteriori();
- 
-    //Write all the information specific to a frame (points and frames)
-    this->writeFramesResults();
+	TAStreamFormatter *stream = getStream();
+	// Limited just number of points and unknowns for points for now
+	this->initObsListNumber();
+
+	// write the header title of the results file
+	this->writeTitle();
+
+	// write the input data summary
+	this->writeDataSummary();
+
+	this->writeCalcDataSummary();
+
+	// write the calculation header
+	this->writeSigmaAPosteriori();
+
+	// Write all the information specific to a frame (points and frames)
+	this->writeFramesResults();
 
 	if (!getDataSet()->getConfig().erelPairs.empty())
 	{
@@ -116,7 +118,7 @@ void    TResultsFileWriter::writeFile()
 		this->writeRelErrorResults(*getDataSet());
 	}
 
-	//FIN DE FICHIER
+	// FIN DE FICHIER
 	(*stream) << "*** FIN DE FICHIER ***\n";
 }
  

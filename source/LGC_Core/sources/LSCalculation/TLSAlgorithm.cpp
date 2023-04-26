@@ -152,7 +152,10 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrice
 		resultMatrices->setUnkCovarMtrx(*UnkCovar);
 	}
 
-	fExtractor->extractVarCovarParams(*resultMatrices);
+	if (!fExtractor->extractVarCovarParams(*resultMatrices)){
+		logWarning() << "Problem during Covariance extraction.";
+		return false;
+	};
 	data->setNumberOfLSIterations(fNumberOfIterations);
 
 	/* Store calculated SIGMA A POSTERIORI in TLGCData and limits for it */
