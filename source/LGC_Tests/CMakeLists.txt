@@ -37,6 +37,7 @@ set(tests_SOURCES
 	sources/testWPSR.cpp
 	sources/testJSON.cpp
 	sources/testSimulation.cpp
+	sources/testEREL.cpp
 )
 
 set(tests_INPUT
@@ -57,6 +58,7 @@ set(tests_INPUT
 	headers/testCONSI.h
 	headers/testWPSR.h
 	headers/testSimulation.h
+	headers/testEREL.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})

@@ -347,6 +347,35 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string& transfoNa
 	 return pointContrib;
  }
 
+ TSparseMatrix TLOR2LOR::getPointDerivative(const TLGCData *projData,const LGCAdjustablePoint& point)
+ {
+	 // provide derivatives
+	 TPositionVector ptInSF = point.getEstimatedValue();
+
+	 TDenseMatrix ptJac = getPartialDerivativeWrtPosition(ptInSF);
+	 std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivatives = getPartialDerivativesWrtHelmertParameters(ptInSF);
+	 TSparseMatrix jac(3, projData->fUEOIndices.UIndex);
+	 jac.setZero();
+	 // assemble unknown Jacobian of transformation
+	 // sensitivity wrt trafo parameters
+	 for (auto &pair : trafoDerivatives)
+	 {
+		 TAdjustableHelmertTransformation trafo = pair.first;
+		 TDenseMatrix trafoJac = pair.second;
+		 if (trafo.getNumUnkn() > 0)
+		 {
+			jac.middleCols(trafo.getFirstUidx(), trafo.getNumUnkn()) = (trafoJac(Eigen::indexing::all, trafo.getRelativeUnknIndices())).sparseView();
+		 }
+	 }
+	 // sensitivity wrt transformed point
+	 if (point.getNumUnkn() > 0)
+	 {
+		 jac.middleCols(point.getFirstUidx(), point.getNumUnkn()) = (ptJac(Eigen::indexing::all, point.getRelativeUnknIndices())).sparseView();
+	 }
+
+	 return jac;
+ }
+
 ///////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS
 ///////////////////////////////////////////////////////////////////////////

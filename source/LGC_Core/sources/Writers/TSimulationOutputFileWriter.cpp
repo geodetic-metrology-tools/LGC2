@@ -351,9 +351,10 @@ void TSimulationOutputFileWriter::writeRelErrorHeader()
 
 	//////////////////////////////////////////////////////////////
 	//line1
-	// point 1 & 2
+	// point 1 & 2 & frame
 	(*stream).writeStringLeft(nameWidth, "POINT 1");
 	(*stream).writeStringLeft(nameWidth, "POINT 2");
+	(*stream).writeStringLeft(nameWidth, "Frame  ");
 	(*stream).writeStringLeft(nameWidth, "");
 	// Sigmas
 	(*stream).writeString(obsResWidth, "SIGMA L");
@@ -397,6 +398,7 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 		// write points name
 		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint1Name());
 		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint2Name());
+		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getDestinationFrame());
 		(*stream).writeStringLeft(nameWidth, "MIN");
 		// sets the values format:
 		stream->setLengthUnits(TLength::kMillimetres);
@@ -426,6 +428,7 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 		//LINE 2: MAX
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
+		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "MAX");
 		//sigma L
 		(*stream) << right << reducedEREL.MaxErel.at(ptPairIt).getSigmaL() << separator;
@@ -447,6 +450,7 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 
 
 		//LINE 3: MEAN
+		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "MEAN");
@@ -480,7 +484,7 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 
 	for (auto& ptPairIt : ERELdata)
 	{
-		if (statForErel.MaxErel.empty() && statForErel.MinErel.empty() &&statForErel.MeanErel.empty())
+		if (statForErel.MaxErel.empty() && statForErel.MinErel.empty() && statForErel.MeanErel.empty())
 		{
 			statForErel.MaxErel.push_back(ptPairIt);
 			statForErel.MinErel.push_back(ptPairIt);
@@ -494,8 +498,8 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 			for (int itInStat = 0; itInStat < statForErel.MaxErel.size(); itInStat++)
 			{
 				//pair is already save
-				if (statForErel.MinErel.at(itInStat).getPoint1Name() == ptPairIt.getPoint1Name()
-					&& statForErel.MinErel.at(itInStat).getPoint2Name() == ptPairIt.getPoint2Name())
+				if (statForErel.MinErel.at(itInStat).getPoint1Name() == ptPairIt.getPoint1Name() && statForErel.MinErel.at(itInStat).getPoint2Name() == ptPairIt.getPoint2Name()
+					&& statForErel.MinErel.at(itInStat).getDestinationFrame() == ptPairIt.getDestinationFrame())
 				{
 					numOfPair.at(itInStat) += 1;
 					
@@ -539,6 +543,7 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 				statForErel.MaxErel.push_back(ptPairIt);
 				statForErel.MinErel.push_back(ptPairIt);
 				statForErel.MeanErel.push_back(ptPairIt);
+				numOfPair.push_back(1);
 			}
 		}
 

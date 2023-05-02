@@ -180,20 +180,32 @@ void TKeyAPRI::parse(const std::vector<std::string>&, bool activeLine, int) {
 void TKeyEREL::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
     auto numtokens(tokens.size());
 	// this is a multi-line keyword, react just on the following calls
-	if (tokens.at(1) == "EREL") { 
+	if ((tokens.at(0) == "*") && (tokens.at(1) == "EREL"))
+	{
 		if (numtokens > 2)
-			throw std::runtime_error("Points for *EREL must occur as lines of point name pairs, "
-			                         "not starting with the keyword line.");
-
-        erelActive = activeLine;
+		{
+			throw std::runtime_error("*EREL accepts no additional arguments. The point pairs must follow on subsequent lines.");
+		}
+		erelActive = activeLine;
 		return;
 	}
+	// Points must occur in pairs with optinal destination frame name
+	if ((numtokens < 2) || (numtokens > 3))
+	{
+		throw std::runtime_error(
+			"The Relative error section only accepts pairs of points (for relative error expressed in Root) with an additional argument specifying the destination frame name.");
+	}
 
-	// Points must occur in pairs
-	if (numtokens != 2)
-		throw std::runtime_error("Points for *EREL must occur as lines of point name pairs.");
-
-	if(activeLine && erelActive) fconfig.erelPairs.push_back(std::make_pair(tokens.at(0), tokens.at(1)));
+	// default destination frame is Root
+	std::string destinationFrame{"ROOT"};
+	if (numtokens == 3)
+	{
+		destinationFrame = tokens.at(2);
+	}
+	if (activeLine && erelActive)
+	{
+		fconfig.erelTuples.push_back(std::tuple(tokens.at(0), tokens.at(1), destinationFrame));
+	}
 }
 
 

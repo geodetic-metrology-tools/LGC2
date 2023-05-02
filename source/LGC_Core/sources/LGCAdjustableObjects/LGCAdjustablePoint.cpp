@@ -226,53 +226,29 @@ bool LGCAdjustablePoint::isInRootFrame()
 
 TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame)
 {
+	// get the global covariance matrix
 	if (!(fData->getCovMatByConst()))
 	{
 		logCritical() << "Unknown Covariance matrix is not initialized.";
 	}
 	TSparseMatrix covar = *fData->getCovMatByConst();
+
+	// get the global derivative of the transformed point
 	TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
-	// vector to transform the point in the expected sigma to calcuated the partial derivative at each step
-	TPositionVector ptInSF = pv.getEstimatedValue();
-
-	//actual frame iterator
-	TDataTreeIterator frameIt = pv.getFrameTreePosition();
-	// actual frame
-	auto frame = pv.getFrameTreePosition().node->data.get()->frame;
-
 	TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
-	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivatives = completeTrafo.getPartialDerivativesWrtHelmertParameters(ptInSF);
-	TDenseMatrix ptJac = completeTrafo.getPartialDerivativeWrtPosition(ptInSF);
-	
-	TSparseMatrix jac(3, fData->fUEOIndices.UIndex);
-	jac.setZero();
-	// assemble unknown Jacobian of transformation
-	// sensitivity wrt trafo parameters
-	for (auto pair : trafoDerivatives)
-	{
-		TAdjustableHelmertTransformation trafo = pair.first;
-		TDenseMatrix trafoJac = pair.second;
-		if (trafo.getNumUnkn() > 0)
-		{
-			jac.middleCols(trafo.getFirstUidx(), trafo.getNumUnkn()) = (trafoJac(Eigen::indexing::all, trafo.getRelativeUnknIndices())).sparseView();
-		}
-	}
-	// sensitivity wrt transformed point
-	if (pv.getNumUnkn() > 0)
-	{
-		jac.middleCols(pv.getFirstUidx(), pv.getNumUnkn()) = (ptJac(Eigen::indexing::all, pv.getRelativeUnknIndices())).sparseView();
-	}
-	// covariance can now be assembled
+	TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
+
+	// compute the covariance matrix in the destination Frame
 	TDenseMatrix ptCovar = (jac * covar) * jac.transpose();
 
-	// extract variance in subframe
-	// return the modified sigma in subframe
-	TFreeVector sigmaRoot(pv.getEstimatedValue().getCoordSys());
-	sigmaRoot.setX(TLength(sqrt(ptCovar.coeff(0, 0))));
-	sigmaRoot.setY(TLength(sqrt(ptCovar.coeff(1, 1))));
-	sigmaRoot.setZ(TLength(sqrt(ptCovar.coeff(2, 2))));
+	// extract variances
+	// return the modified sigma
+	TFreeVector sigmaDestFrame(pv.getEstimatedValue().getCoordSys());
+	sigmaDestFrame.setX(TLength(sqrt(ptCovar.coeff(0, 0))));
+	sigmaDestFrame.setY(TLength(sqrt(ptCovar.coeff(1, 1))));
+	sigmaDestFrame.setZ(TLength(sqrt(ptCovar.coeff(2, 2))));
 
-	return sigmaRoot;
+	return sigmaDestFrame;
 
 }
 

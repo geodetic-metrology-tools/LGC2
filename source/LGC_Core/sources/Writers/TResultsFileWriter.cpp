@@ -112,7 +112,7 @@ void    TResultsFileWriter::writeFile()
 	// Write all the information specific to a frame (points and frames)
 	this->writeFramesResults();
 
-	if (!getDataSet()->getConfig().erelPairs.empty())
+	if (!getDataSet()->getConfig().erelTuples.empty())
 	{
 		this->writeRelErrorHeader();
 		this->writeRelErrorResults(*getDataSet());
@@ -619,9 +619,10 @@ void	TResultsFileWriter::writeRelErrorHeader()
 
 	//////////////////////////////////////////////////////////////
 	//line1
-	// point 1 & 2
+	// point 1 & 2 & frame
 	(*stream).writeStringLeft(nameWidth, "POINT 1");
 	(*stream).writeStringLeft(nameWidth, "POINT 2");
+	(*stream).writeStringLeft(nameWidth, "Frame  ");
 	// Sigmas
 	(*stream).writeString(obsResWidth, "SIGMA L");
 	(*stream).writeString(obsResWidth, "SIGMA G");
@@ -633,6 +634,7 @@ void	TResultsFileWriter::writeRelErrorHeader()
 	//////////////////////////////////////////////////////////////
 	//line2
 	// units
+	(*stream).writeString(nameWidth, " ");
 	(*stream).writeString(nameWidth, " ");
 	(*stream).writeString(nameWidth, " ");
 	(*stream).writeString(obsResWidth, "(MM)");
@@ -658,6 +660,7 @@ void	TResultsFileWriter::writeRelErrorResults(const TLGCData& data)
 
 		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint1Name());
 		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint2Name());
+		(*stream).writeStringLeft(nameWidth, ptPairIt.getDestinationFrame());
 		// sets the values format:
 		stream->setLengthUnits(TLength::kMillimetres);
 		stream->setAngleUnits(TAngle::k100MicroGons);

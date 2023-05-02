@@ -129,11 +129,11 @@ namespace tut
         o1.parse(tokenizefileString("*EREL"), true, -1);
 		o1.parse(tokenizefileString("P1 P2"), true, -1);
 		o1.parse(tokenizefileString("P3 P4"), true, -1);
-		ensure("2 point pairs must be there for relative errors now", cfg.erelPairs.size() == 2);
+		ensure("2 point pairs must be there for relative errors now", cfg.erelTuples.size() == 2);
 		ensure("First point pair for EREL must be P1 P2",  
-			cfg.erelPairs.at(0).first == "P1" && cfg.erelPairs.at(0).second == "P2");
+			std::get<0>(cfg.erelTuples.at(0)) == "P1" && std::get<1>(cfg.erelTuples.at(0)) == "P2");
 		ensure("Second point pair for EREL must be P3 P4", 
-			cfg.erelPairs.at(1).first == "P3" && cfg.erelPairs.at(1).second == "P4");
+			std::get<0>(cfg.erelTuples.at(1)) == "P3" && std::get<1>(cfg.erelTuples.at(1)) == "P4");
 		//
 		TKeyFMTO o2(proj);
         o2.parse(tokenizefileString("*FMTO COL"), true, -1);
