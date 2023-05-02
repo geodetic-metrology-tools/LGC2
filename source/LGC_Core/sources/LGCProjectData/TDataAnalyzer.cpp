@@ -318,6 +318,13 @@ bool TDataAnalyzer::dataConsistent(){
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!"; 
 			return false;
 		}
+
+		// compute position of provisional value in Root using provisional Helmert parameters
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), fTree.begin(), "subframe2root");
+		TPositionVector provInRoot = point.getProvisionalValue();
+		sub2Root.transform(provInRoot);
+		point.setProvisionalValueInRoot(provInRoot);
+
 		//Count number of CALA in ROOT
 		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
 			nCALAinROOT++;

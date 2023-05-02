@@ -35,6 +35,9 @@ LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string& na
 void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, const TReal& z) {
     fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys());
     fEstimatedValue = fProvisionalValue;
+	// copy only the coordinate system, coordinates are left uninitialized and later set in TDataAnalyzer,
+	// because for the definition the chain of Helmert trafos with their own provisional values is necessary.
+	fProvisionalValueInRoot.setCoordSys(fProvisionalValue.getCoordSys());
 
     // Use H instead of Z if necessary:
     if(fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH){

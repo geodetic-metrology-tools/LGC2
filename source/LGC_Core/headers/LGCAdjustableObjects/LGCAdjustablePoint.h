@@ -78,6 +78,11 @@ public:
 		*/
 		virtual int getLastUidx() const;
 
+		// get the provisional value in Root coordinates
+		const TPositionVector getProvisionalValueInRoot() const { return fProvisionalValueInRoot; }
+		// set provisional value in Root
+		void setProvisionalValueInRoot(TPositionVector pos) { fProvisionalValueInRoot = pos; }
+
 		/// Returns iterator to the position in the tree.
 		TDataTreeIterator	getFrameTreePosition() const{ return fFramePosition; };
 
@@ -165,6 +170,8 @@ public:
 private:
 
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
+	// coordinates of the provisional value in ROOT frame using the provisional values of the Helmert transformations.
+	TPositionVector fProvisionalValueInRoot{TPositionVector(TReal(NO_VALf), TReal(NO_VALf), TReal(NO_VALf), TCoordSysFactory::k3DCartesian)};
 
 	static bool allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
 
