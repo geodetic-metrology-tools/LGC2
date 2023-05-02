@@ -59,6 +59,83 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 	Eigen::Vector3d vectSumMoments(0, 0, 0);
 	double ech = 0.0;
 
+	auto toVector = [](TPositionVector vIn) {
+		Eigen::Vector3d vector(3);
+		vector << vIn.getX(), vIn.getY(), vIn.getZ();
+		return vector;
+	};
+
+	auto crossOperator = [](TVector vIn) {
+		// return matrix M such that vIn x w = M x w for all w in R^3
+		if (vIn.size()!=3){
+			throw std::runtime_error("Cross product can only happen between 3-dimensional vectors.");
+		}
+		Eigen::Matrix3d operatorMat;
+		operatorMat << 0, -vIn(2), vIn(1), vIn(2), 0, -vIn(2), -vIn(1), vIn(0), 0;
+		return operatorMat;
+	};
+
+
+	// new LIBR constraint considering the Frame transformations
+	// COG method
+	// COG constraint : estCog - provCog =0
+	TVector provCog(3);
+	provCog.setZero();
+	TVector estCog(3);
+	estCog.setZero();
+	TSparseMatrix cogDerivative(3, data.fUEOIndices.UIndex);
+	cogDerivative.setZero();
+	for (LGCAdjustablePoint point: data.getPoints()){
+		provCog += toVector(point.getProvisionalValueInRoot());
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		TPositionVector estPos = point.getEstimatedValue();
+		sub2Root.transform(estPos);
+		estCog += toVector(estPos);
+		cogDerivative += sub2Root.getPointDerivative(&data, point);
+	}
+	estCog *= 1.0 / data.getPoints().numObjects();
+	provCog *= 1.0 / data.getPoints().numObjects();
+
+	// Momentum Constraint
+	TVector momentum(3);
+	momentum.setZero();
+	TSparseMatrix momentumDerivative(3, data.fUEOIndices.UIndex);
+	momentumDerivative.setZero();
+	for (LGCAdjustablePoint point : data.getPoints())
+	{
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		TPositionVector estPos = point.getEstimatedValue();
+		sub2Root.transform(estPos);
+		Eigen::Vector3d firstFactor(3);
+		firstFactor = toVector(estPos);
+		Eigen::Vector3d secondFactor(3);
+		secondFactor = provCog - toVector(point.getProvisionalValueInRoot());
+		momentum += crossOperator(firstFactor)*secondFactor;
+		//momentumDerivative += ((sub2Root.getPointDerivative(&data, point).toDense()).cross(provCog - toVector(point.getProvisionalValueInRoot()))).sparseView();
+		momentumDerivative += (-(crossOperator(provCog - toVector(point.getProvisionalValueInRoot()))) * (sub2Root.getPointDerivative(&data, point).toDense())).sparseView();
+	}
+
+	// Scale Constraint
+	// TODO: consider effect of transposition on Storage order in the derivative comp
+	TReal scale;
+	scale = 0;
+	TSparseMatrix scaleDerivative(1, data.fUEOIndices.UIndex);
+	scaleDerivative.setZero();
+	for (LGCAdjustablePoint point : data.getPoints())
+	{
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		TPositionVector estPos = point.getEstimatedValue();
+		sub2Root.transform(estPos);
+		Eigen::VectorXd firstFactor, secondFactor;
+		firstFactor = toVector(estPos) - provCog;
+		secondFactor = toVector(estPos) - toVector(point.getProvisionalValueInRoot());
+		scale += firstFactor.transpose() * secondFactor;
+		//scaleDerivative += (((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose()) * (sub2Root.getPointDerivative(&data, point).toDense())).sparseView();
+		Eigen::SparseMatrix<double> test = ((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose() * sub2Root.getPointDerivative(&data, point).toDense()).sparseView();
+		//scaleDerivative += ((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose() * sub2Root.getPointDerivative(&data, point).toDense()).sparseView();
+	}
+
+
 
 	for (auto& ptIt : data.getPoints())
 	{
