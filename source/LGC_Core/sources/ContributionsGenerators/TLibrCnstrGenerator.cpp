@@ -47,17 +47,17 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 	// Subdivided into a first loop on points for the 3 Center of Gravity constraints
 	// The center of gravity of the new estimated positions is recalculated in this first loop.
 	// We need this center of gravity for the momentum calculations! (second loop)
-	int nXpts = 0;
-	int nYpts = 0;
-	int nZpts = 0;
-	double xGEstim = 0;
-	double yGEstim = 0;
-	double zGEstim = 0;
-	double sumDX = 0;
-	double sumDY = 0;
-	double sumDZ = 0;
-	Eigen::Vector3d vectSumMoments(0, 0, 0);
-	double ech = 0.0;
+	// int nXpts = 0;
+	// int nYpts = 0;
+	// int nZpts = 0;
+	// double xGEstim = 0;
+	// double yGEstim = 0;
+	// double zGEstim = 0;
+	// double sumDX = 0;
+	// double sumDY = 0;
+	// double sumDZ = 0;
+	// Eigen::Vector3d vectSumMoments(0, 0, 0);
+	// double ech = 0.0;
 
 	auto toVector = [](TPositionVector vIn) {
 		Eigen::Vector3d vector(3);
@@ -111,12 +111,15 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 		Eigen::Vector3d secondFactor(3);
 		secondFactor = provCog - toVector(point.getProvisionalValueInRoot());
 		momentum += crossOperator(firstFactor)*secondFactor;
+		std::cout << "point derivative=" << std::endl << sub2Root.getPointDerivative(&data, point).toDense() << std::endl;
 		//momentumDerivative += ((sub2Root.getPointDerivative(&data, point).toDense()).cross(provCog - toVector(point.getProvisionalValueInRoot()))).sparseView();
-		momentumDerivative += (-(crossOperator(provCog - toVector(point.getProvisionalValueInRoot()))) * (sub2Root.getPointDerivative(&data, point).toDense())).sparseView();
+		TSparseMatrix summand = (-(crossOperator(provCog - toVector(point.getProvisionalValueInRoot()))) * (sub2Root.getPointDerivative(&data, point).toDense())).sparseView();
+
+		momentumDerivative += summand;
+		std::cout << summand.toDense() << std::endl;
 	}
 
 	// Scale Constraint
-	// TODO: consider effect of transposition on Storage order in the derivative comp
 	TReal scale;
 	scale = 0;
 	TSparseMatrix scaleDerivative(1, data.fUEOIndices.UIndex);
@@ -130,291 +133,342 @@ bool TLibrCnstrGenerator::processFreeCnstr(TLSInputMatrices& matrices)
 		firstFactor = toVector(estPos) - provCog;
 		secondFactor = toVector(estPos) - toVector(point.getProvisionalValueInRoot());
 		scale += firstFactor.transpose() * secondFactor;
-		//scaleDerivative += (((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose()) * (sub2Root.getPointDerivative(&data, point).toDense())).sparseView();
-		Eigen::SparseMatrix<double> test = ((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose() * sub2Root.getPointDerivative(&data, point).toDense()).sparseView();
-		//scaleDerivative += ((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose() * sub2Root.getPointDerivative(&data, point).toDense()).sparseView();
+		Eigen::SparseMatrix<double> aux3 = ((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose() * sub2Root.getPointDerivative(&data, point).toDense()).sparseView();
+		TSparseMatrix pointDerivativeContribution = ((2 * toVector(estPos) - toVector(point.getProvisionalValueInRoot())).transpose() * sub2Root.getPointDerivative(&data, point).toDense()).sparseView();
+		scaleDerivative += pointDerivativeContribution;
 	}
+// 	std::cout << "Dimension check" << std::endl;
+// 	std::cout << "COG dims: "
+// 			  << "dim eval =" << estCog.size() << " dim deriv =" << cogDerivative.rows() << " " << cogDerivative.cols() << std::endl;
+// 	std::cout << "Momentum dims: "
+// 			  << "dim eval =" << momentum.size() << " dim deriv =" << momentumDerivative.rows() << " " << momentumDerivative.cols() << std::endl;
+// 	std::cout << "Scale dims: "
+// 			  << "dim deriv =" << scaleDerivative.rows() << " " << scaleDerivative.cols() << std::endl;
 
+	std::cout << "momentum=" << momentum << std::endl;
+	std::cout << "momentumDerivative=" << std::endl << momentumDerivative.toDense() << std::endl;
+	std::cout << "cog=" << estCog << std::endl;
+	std::cout << "cogDerivative=" << std::endl << cogDerivative.toDense() << std::endl;
 
-
-	for (auto& ptIt : data.getPoints())
-	{
-		TSpatialStatus::ESpatialStatus  fPtStatus = ptIt.getSpatialStatus();
-		bool xIsVariable = false;
-
-		if (fPtStatus != TSpatialStatus::ESpatialStatus::kCala)
-		{
-			MatrixIndex fFisrtUnkIndex = ptIt.getFirstUidx();
-			MatrixIndex fLastUnkIndex = ptIt.getLastUidx();
-
-			//dx constraint coefficient
-			if (fCnstrVector.dx)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					double a = 1.0;
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dx, fFisrtUnkIndex, a);
-					xIsVariable = true;
-
-					nXpts++;
-					xGEstim += ptIt.getEstimatedValue().getX().getMetresValue();
-					sumDX += ptIt.getCorrection(0).getMetresValue();
-				}
-			}
-
-			//dy constraint coefficient
-			if (fCnstrVector.dy)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					double a = 1.0;
-					if (xIsVariable)
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dy, fFisrtUnkIndex + 1, a);
-					else
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dy, fFisrtUnkIndex, a);
-
-					nYpts++;
-					yGEstim += ptIt.getEstimatedValue().getY().getMetresValue();
-					sumDY += ptIt.getCorrection(1).getMetresValue();
-				}
-			}
-
-			//dz constraint coefficient
-			if (fCnstrVector.dz)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					double a = 1.0;
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dz, fLastUnkIndex, a);
-
-					nZpts++;
-					zGEstim += ptIt.getEstimatedValue().getZ().getMetresValue();
-					sumDZ += ptIt.getCorrection(2).getMetresValue();
-				}
-			}
-		}
-	}
-
-	// Estimating the center of gravity of the new estimated point positions
-	xGEstim /= nXpts;
-	yGEstim /= nYpts;
-	zGEstim /= nZpts;
-
-	logDebug() << "Updated Gravity Center: Xg=" << xGEstim << " ; Yg =" << yGEstim << " ; Zg=" << zGEstim;
-
-	// If we want to come back to previous method (use precalculted center of gravity), simply decomment the following lines!
-/*	xGEstim = fXcgEst.getMetresValue();
-	yGEstim = fYcgEst.getMetresValue();
-	zGEstim = fZcgEst.getMetresValue(); */
-
-	// Second loop on points for the 3 momentum-constraints
-
-	for (auto& ptIt : data.getPoints())
-	{
-		TSpatialStatus::ESpatialStatus  fPtStatus = ptIt.getSpatialStatus();
-
-		if (fPtStatus != TSpatialStatus::ESpatialStatus::kCala)
-		{
-			MatrixIndex fFisrtUnkIndex = ptIt.getFirstUidx();
-			MatrixIndex fLastUnkIndex = ptIt.getLastUidx();
-			bool xIsVariable = false;
-
-			// Checks first if X is an unknown or not, in order to correctly handle unknown indices
-			if (fCnstrVector.dx && (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
-				fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-				fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-				fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-				fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown))
-				xIsVariable = true;
-
-			// Computes the momentum of the current point with respect to the center of gravity and its spatial displacement
-/*			Eigen::Vector3d vectGP(ptIt.getEstimatedValue().getX().getMetresValue() - fXcgEst.getMetresValue(),
-								   ptIt.getEstimatedValue().getY().getMetresValue() - fYcgEst.getMetresValue(),
-								   ptIt.getEstimatedValue().getZ().getMetresValue() - fZcgEst.getMetresValue()); */
-
-			Eigen::Vector3d vectGP(ptIt.getEstimatedValue().getX().getMetresValue() - xGEstim,
-				ptIt.getEstimatedValue().getY().getMetresValue() - yGEstim,
-				ptIt.getEstimatedValue().getZ().getMetresValue() - zGEstim);
-
-			Eigen::Vector3d vectDX(ptIt.getCorrection(0).getMetresValue(), ptIt.getCorrection(1).getMetresValue(), ptIt.getCorrection(2).getMetresValue());
-
-			vectSumMoments += vectGP.cross(vectDX);
-
-			//rx constraint coefficient
-			if (fCnstrVector.rx)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					//	double a = -1.0 * (ptIt.getEstimatedValue().getZ().getMetresValue() - fZcgEst.getMetresValue());
-					double a = -1.0 * (ptIt.getEstimatedValue().getZ().getMetresValue() - zGEstim);
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fFisrtUnkIndex + 1, a);
-				}
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					//	double b = (ptIt.getEstimatedValue().getY().getMetresValue() - fYcgEst.getMetresValue());
-					double b = ptIt.getEstimatedValue().getY().getMetresValue() - yGEstim;
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fLastUnkIndex, b);
-				}
-			}
-
-			//ry constraint coefficient
-			if (fCnstrVector.ry)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					//	double a = (ptIt.getEstimatedValue().getZ().getMetresValue() - fZcgEst.getMetresValue());
-					double a = ptIt.getEstimatedValue().getZ().getMetresValue() - zGEstim;
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.ry, fFisrtUnkIndex, a);
-				}
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					//	double b = -1.0 * (ptIt.getEstimatedValue().getX().getMetresValue() - fXcgEst.getMetresValue());
-					double b = -1.0 * (ptIt.getEstimatedValue().getX().getMetresValue() - xGEstim);
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.ry, fLastUnkIndex, b);
-				}
-			}
-
-			//rz constraint coefficient
-			if (fCnstrVector.rz)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					//	double a = -1.0 * (ptIt.getEstimatedValue().getY().getMetresValue() - fYcgEst.getMetresValue());
-					double a = -1.0 * (ptIt.getEstimatedValue().getY().getMetresValue() - yGEstim);
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex, a);
-				}
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					//	double b = (ptIt.getEstimatedValue().getX().getMetresValue() - fXcgEst.getMetresValue());
-					double b = ptIt.getEstimatedValue().getX().getMetresValue() - xGEstim;
-					if (xIsVariable)
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex + 1, b);
-					else
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex, b);
-				}
-			}
-
-			//scale constraint coefficient
-			if (fCnstrVector.k)
-			{
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					double a = ptIt.getEstimatedValue().getX().getMetresValue();
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex, a);
-				}
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					double b = ptIt.getEstimatedValue().getY().getMetresValue();
-					if (xIsVariable)
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex + 1, b);
-					else
-						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex, b);
-				}
-				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
-					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
-				{
-					double c = ptIt.getEstimatedValue().getZ().getMetresValue();
-					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fLastUnkIndex, c);
-				}
-
-				ech = ech + getScaleCalcValue(ptIt);
-			}
-
-		}
-	}
-
-	//***********************************************
-	//** setting the misclosure vector element     **
-	//***********************************************
-	logDebug() << "\nFree network adjustment: setting constraints misclosure vector W2";
-	//dx constraint coefficient
+	// from the prepared constraints pick the desired ones (chosen by the initCnstrIdentifier method)
+	// needs to be refactored: dont repeat!
 	if (fCnstrVector.dx)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dx, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.dx, cogDerivative.row(0));
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dx, estCog(0));
 	}
-
-	//dy constraint coefficient
 	if (fCnstrVector.dy)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dy, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.dy, cogDerivative.row(1));
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dy, estCog(1));
 	}
-
-	//dz constraint coefficient
 	if (fCnstrVector.dz)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dz, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.dz, cogDerivative.row(2));
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dz, estCog(2));
 	}
-
-	//rx constraint coefficient
 	if (fCnstrVector.rx)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rx, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.rx, momentumDerivative.row(0));
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rx, momentum(0));
 	}
-
-	//ry constraint coefficient
 	if (fCnstrVector.ry)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.ry, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.ry, momentumDerivative.row(1));
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.ry, momentum(1));
 	}
-
-	//rz constraint coefficient
 	if (fCnstrVector.rz)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rz, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.rz, momentumDerivative.row(2));
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rz, momentum(2));
 	}
-
-	//scale constraint coefficient
 	if (fCnstrVector.k)
 	{
-		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.k, 0);
+		successfullyProcessed = matrices.setCnstrFirstDgnMtrxRow(fCnstrNumber.k, scaleDerivative);
+		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rz, scale);
 	}
+
+
+// old method
+///   
+///   	for (auto& ptIt : data.getPoints())
+///   	{
+///   		TSpatialStatus::ESpatialStatus  fPtStatus = ptIt.getSpatialStatus();
+///   		bool xIsVariable = false;
+///   
+///   		if (fPtStatus != TSpatialStatus::ESpatialStatus::kCala)
+///   		{
+///   			MatrixIndex fFisrtUnkIndex = ptIt.getFirstUidx();
+///   			MatrixIndex fLastUnkIndex = ptIt.getLastUidx();
+///   
+///   			//dx constraint coefficient
+///   			if (fCnstrVector.dx)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					double a = 1.0;
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dx, fFisrtUnkIndex, a);
+///   					xIsVariable = true;
+///   
+///   					nXpts++;
+///   					xGEstim += ptIt.getEstimatedValue().getX().getMetresValue();
+///   					sumDX += ptIt.getCorrection(0).getMetresValue();
+///   				}
+///   			}
+///   
+///   			//dy constraint coefficient
+///   			if (fCnstrVector.dy)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					double a = 1.0;
+///   					if (xIsVariable)
+///   						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dy, fFisrtUnkIndex + 1, a);
+///   					else
+///   						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dy, fFisrtUnkIndex, a);
+///   
+///   					nYpts++;
+///   					yGEstim += ptIt.getEstimatedValue().getY().getMetresValue();
+///   					sumDY += ptIt.getCorrection(1).getMetresValue();
+///   				}
+///   			}
+///   
+///   			//dz constraint coefficient
+///   			if (fCnstrVector.dz)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					double a = 1.0;
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.dz, fLastUnkIndex, a);
+///   
+///   					nZpts++;
+///   					zGEstim += ptIt.getEstimatedValue().getZ().getMetresValue();
+///   					sumDZ += ptIt.getCorrection(2).getMetresValue();
+///   				}
+///   			}
+///   		}
+///   	}
+///   
+///   	// Estimating the center of gravity of the new estimated point positions
+///   	xGEstim /= nXpts;
+///   	yGEstim /= nYpts;
+///   	zGEstim /= nZpts;
+///   
+///   	logDebug() << "Updated Gravity Center: Xg=" << xGEstim << " ; Yg =" << yGEstim << " ; Zg=" << zGEstim;
+///   
+///   	// If we want to come back to previous method (use precalculted center of gravity), simply decomment the following lines!
+///   /*	xGEstim = fXcgEst.getMetresValue();
+///   	yGEstim = fYcgEst.getMetresValue();
+///   	zGEstim = fZcgEst.getMetresValue(); */
+///   
+///   	// Second loop on points for the 3 momentum-constraints
+///   
+///   	for (auto& ptIt : data.getPoints())
+///   	{
+///   		TSpatialStatus::ESpatialStatus  fPtStatus = ptIt.getSpatialStatus();
+///   
+///   		if (fPtStatus != TSpatialStatus::ESpatialStatus::kCala)
+///   		{
+///   			MatrixIndex fFisrtUnkIndex = ptIt.getFirstUidx();
+///   			MatrixIndex fLastUnkIndex = ptIt.getLastUidx();
+///   			bool xIsVariable = false;
+///   
+///   			// Checks first if X is an unknown or not, in order to correctly handle unknown indices
+///   			if (fCnstrVector.dx && (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
+///   				fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   				fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   				fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   				fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown))
+///   				xIsVariable = true;
+///   
+///   			// Computes the momentum of the current point with respect to the center of gravity and its spatial displacement
+///   /*			Eigen::Vector3d vectGP(ptIt.getEstimatedValue().getX().getMetresValue() - fXcgEst.getMetresValue(),
+///   								   ptIt.getEstimatedValue().getY().getMetresValue() - fYcgEst.getMetresValue(),
+///   								   ptIt.getEstimatedValue().getZ().getMetresValue() - fZcgEst.getMetresValue()); */
+///   
+///   			Eigen::Vector3d vectGP(ptIt.getEstimatedValue().getX().getMetresValue() - xGEstim,
+///   				ptIt.getEstimatedValue().getY().getMetresValue() - yGEstim,
+///   				ptIt.getEstimatedValue().getZ().getMetresValue() - zGEstim);
+///   
+///   			Eigen::Vector3d vectDX(ptIt.getCorrection(0).getMetresValue(), ptIt.getCorrection(1).getMetresValue(), ptIt.getCorrection(2).getMetresValue());
+///   
+///   			vectSumMoments += vectGP.cross(vectDX);
+///   
+///   			//rx constraint coefficient
+///   			if (fCnstrVector.rx)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					//	double a = -1.0 * (ptIt.getEstimatedValue().getZ().getMetresValue() - fZcgEst.getMetresValue());
+///   					double a = -1.0 * (ptIt.getEstimatedValue().getZ().getMetresValue() - zGEstim);
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fFisrtUnkIndex + 1, a);
+///   				}
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					//	double b = (ptIt.getEstimatedValue().getY().getMetresValue() - fYcgEst.getMetresValue());
+///   					double b = ptIt.getEstimatedValue().getY().getMetresValue() - yGEstim;
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rx, fLastUnkIndex, b);
+///   				}
+///   			}
+///   
+///   			//ry constraint coefficient
+///   			if (fCnstrVector.ry)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					//	double a = (ptIt.getEstimatedValue().getZ().getMetresValue() - fZcgEst.getMetresValue());
+///   					double a = ptIt.getEstimatedValue().getZ().getMetresValue() - zGEstim;
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.ry, fFisrtUnkIndex, a);
+///   				}
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					//	double b = -1.0 * (ptIt.getEstimatedValue().getX().getMetresValue() - fXcgEst.getMetresValue());
+///   					double b = -1.0 * (ptIt.getEstimatedValue().getX().getMetresValue() - xGEstim);
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.ry, fLastUnkIndex, b);
+///   				}
+///   			}
+///   
+///   			//rz constraint coefficient
+///   			if (fCnstrVector.rz)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					//	double a = -1.0 * (ptIt.getEstimatedValue().getY().getMetresValue() - fYcgEst.getMetresValue());
+///   					double a = -1.0 * (ptIt.getEstimatedValue().getY().getMetresValue() - yGEstim);
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex, a);
+///   				}
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					//	double b = (ptIt.getEstimatedValue().getX().getMetresValue() - fXcgEst.getMetresValue());
+///   					double b = ptIt.getEstimatedValue().getX().getMetresValue() - xGEstim;
+///   					if (xIsVariable)
+///   						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex + 1, b);
+///   					else
+///   						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.rz, fFisrtUnkIndex, b);
+///   				}
+///   			}
+///   
+///   			//scale constraint coefficient
+///   			if (fCnstrVector.k)
+///   			{
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVx ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					double a = ptIt.getEstimatedValue().getX().getMetresValue();
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex, a);
+///   				}
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxy ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					double b = ptIt.getEstimatedValue().getY().getMetresValue();
+///   					if (xIsVariable)
+///   						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex + 1, b);
+///   					else
+///   						successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fFisrtUnkIndex, b);
+///   				}
+///   				if (fPtStatus == TSpatialStatus::ESpatialStatus::kVz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kVxyz ||
+///   					fPtStatus == TSpatialStatus::ESpatialStatus::kUnknown)
+///   				{
+///   					double c = ptIt.getEstimatedValue().getZ().getMetresValue();
+///   					successfullyProcessed = matrices.setCnstrFirstDgnMtrxElement(fCnstrNumber.k, fLastUnkIndex, c);
+///   				}
+///   
+///   				ech = ech + getScaleCalcValue(ptIt);
+///   			}
+///   
+///   		}
+///   	}
+///   
+///   	//***********************************************
+///   	//** setting the misclosure vector element     **
+///   	//***********************************************
+///   	logDebug() << "\nFree network adjustment: setting constraints misclosure vector W2";
+///   	//dx constraint coefficient
+///   	if (fCnstrVector.dx)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dx, 0);
+///   	}
+///   
+///   	//dy constraint coefficient
+///   	if (fCnstrVector.dy)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dy, 0);
+///   	}
+///   
+///   	//dz constraint coefficient
+///   	if (fCnstrVector.dz)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.dz, 0);
+///   	}
+///   
+///   	//rx constraint coefficient
+///   	if (fCnstrVector.rx)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rx, 0);
+///   	}
+///   
+///   	//ry constraint coefficient
+///   	if (fCnstrVector.ry)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.ry, 0);
+///   	}
+///   
+///   	//rz constraint coefficient
+///   	if (fCnstrVector.rz)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.rz, 0);
+///   	}
+///   
+///   	//scale constraint coefficient
+///   	if (fCnstrVector.k)
+///   	{
+///   		successfullyProcessed = matrices.setCnstrMisclosureVectorElement(fCnstrNumber.k, 0);
+///   	}
 
 	return successfullyProcessed;
 }

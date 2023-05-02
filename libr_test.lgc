@@ -1,0 +1,29 @@
+*TITR
+testing libr constraints
+
+*OLOC
+*HIST
+*PREC 7
+*LIBR
+%*CONSI
+*PUNC   OUT1
+*FAUT     .01     .10
+%*EREL
+%Station1Pos RefPoint
+*INSTR
+*POLAR Station1 Target1 0 0 0 0
+Target1 0.1 1 1 0 0 0 0 0 0 0   
+
+% fataMorgana is totally free, so we want to fix it with the libr constraint
+
+*CALA
+Station1Pos              1 2 3
+RefPoint 4 5 6 
+*POIN
+FataMorgana  7 8 9
+*FRAME testFrame 1 2 3 4 5 6 1  
+*OBSXYZ
+Station1Pos 1 2 3 1 1 1
+Station1Pos 1 2 3 1 1 1
+*ENDFRAME
+*END
