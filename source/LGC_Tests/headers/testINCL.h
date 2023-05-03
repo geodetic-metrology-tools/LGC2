@@ -226,5 +226,35 @@ namespace TestINCL {
 		"*ENDFRAME \n"
 		"*ENDFRAME \n"
 		"*END \n";
-	}
+
+	
+	/*Testing the AC and RF flags on INCLY */
+	char const *const INCLY_SUBF_6 = R"(*TITR 
+test AC RF Flags
+*OLOC 
+*INSTR 
+*INCL I   5    0   0  0  0 
+*FRAME TEST 0 0 0 0 0 0 1  RY 
+*CALA 
+PT1 0 0 0 
+*INCLY I 
+PT1 1 AC 0.5 RF 0.3 ACSE 1 RFSE 2 OBSE 4
+*ENDFRAME 
+*END )";
+
+	/*Testing the AC and RF flags on INCL */
+	char const *const INCLY_SUBF_7 = R"(*TITR 
+test Corrections 
+*OLOC 
+*INSTR 
+*INCL I   4    0.5  1  0.3  2 
+*FRAME TEST 0 0 0 0 0 0 1  RY 
+*CALA 
+PT1 0 0 0 
+*INCLY I 
+PT1 1  
+*ENDFRAME 
+*END 
+)";
+	} // namespace TestINCL
 #endif

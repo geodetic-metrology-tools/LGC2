@@ -364,4 +364,76 @@ namespace tut
 		ensure_equals("Rotation Z does not match", frameIt.node->data->frame.getEstRotation(2).getGonsValue(), 0, 1e-6);
 		ensure_equals("Scale not does not match", frameIt.node->data->frame.getEstScale(), 1, 1e-6);
 	}
+
+	template<>
+	template<>
+	void object::test<10>()
+	{
+		set_test_name("Testing INCLY AC and RF flags");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_SUBF_6.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestINCL::INCLY_SUBF_6);
+
+		ensure_equals("Reading Successfull", r.read(infiler), true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-9);
+
+		TDataTreeIterator frameIt = projTest->getTree().begin();
+		frameIt++;
+		ensure_equals("Rotation Y does not match", frameIt.node->data->frame.getEstRotation(1).getGonsValue(), 0.2, 1e-6);
+
+		auto romIt = frameIt.node->data->measurements.fINCLY.begin();
+		TAngle obsse(4, TAngle::EUnits::kCCs);
+		TAngle refse(2, TAngle::EUnits::kCCs);
+		TAngle acse(1, TAngle::EUnits::kCCs);
+		TAngle combinedse(sqrt(pow2q(obsse.getRadiansValue()) + pow2q(refse.getRadiansValue()) + pow2q(acse.getRadiansValue())), TAngle::EUnits::kRadians);
+		
+		ensure_equals("AC Flag does not match", romIt->measINCLY.begin()->target.angleCorrectionValue.getGonsValue(), 0.5, 1e-7);
+		ensure_equals("ACSE Flag does not match", romIt->measINCLY.begin()->target.sigmaCorrectionValue.getGonsValue(), acse.getGonsValue(), 1e-7);
+		ensure_equals("RF Flag does not match", romIt->measINCLY.begin()->target.refAngleCorrectionValue.getGonsValue(), 0.3, 1e-7);
+		ensure_equals("RFSE Flag does not match", romIt->measINCLY.begin()->target.refSigmaCorrectionValue.getGonsValue(), refse.getGonsValue(), 1e-7);
+		ensure_equals("OBSE Flag does not match", romIt->measINCLY.begin()->target.sigmaAngl.getGonsValue(), obsse.getGonsValue(), 1e-7);
+		ensure_equals("Combined Sigma from Flags does not match", romIt->measINCLY.begin()->target.sigmaCombinedAngle.getGonsValue(), combinedse.getGonsValue(), 1e-7);
+	}
+		
+	template<>
+	template<>
+	void object::test<11>()
+	{
+		set_test_name("Testing INCL AC and RF correction");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_SUBF_7.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestINCL::INCLY_SUBF_7);
+
+		ensure_equals("Reading Successfull", r.read(infiler), true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-9);
+
+		TDataTreeIterator frameIt = projTest->getTree().begin();
+		frameIt++;
+		ensure_equals("Rotation Y does not match", frameIt.node->data->frame.getEstRotation(1).getGonsValue(), 0.2, 1e-6);
+
+		auto romIt = frameIt.node->data->measurements.fINCLY.begin();
+		TAngle obsse(4, TAngle::EUnits::kCCs);
+		TAngle refse(2, TAngle::EUnits::kCCs);
+		TAngle acse(1, TAngle::EUnits::kCCs);
+		TAngle combinedse(sqrt(pow2q(obsse.getRadiansValue()) + pow2q(refse.getRadiansValue()) + pow2q(acse.getRadiansValue())), TAngle::EUnits::kRadians);
+
+		ensure_equals("AC from INCL does not match", romIt->measINCLY.begin()->target.angleCorrectionValue.getGonsValue(), 0.5, 1e-7);
+		ensure_equals("ACSE from INCL does not match", romIt->measINCLY.begin()->target.sigmaCorrectionValue.getGonsValue(), acse.getGonsValue(), 1e-7);
+		ensure_equals("RF from INCL does not match", romIt->measINCLY.begin()->target.refAngleCorrectionValue.getGonsValue(), 0.3, 1e-7);
+		ensure_equals("RFSE from INCL does not match", romIt->measINCLY.begin()->target.refSigmaCorrectionValue.getGonsValue(), refse.getGonsValue(), 1e-7);
+		ensure_equals("OBSE from INCL does not match", romIt->measINCLY.begin()->target.sigmaAngl.getGonsValue(), obsse.getGonsValue(), 1e-7);
+		ensure_equals("Combined Sigma from INCL does not match", romIt->measINCLY.begin()->target.sigmaCombinedAngle.getGonsValue(), combinedse.getGonsValue(), 1e-7);
+	}
 	}
