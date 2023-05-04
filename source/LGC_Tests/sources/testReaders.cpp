@@ -241,15 +241,16 @@ namespace tut
 		//Incorrect definition, all 3 standard deviations should be assigned in POIN used. Just warning is produced, point is defined, but sigmas are not assigned.
         poin1.parse(tokenizefileString("POIN1 1 2 3 SX 0.1 SY 0.2"), true, -1);
 		ensure("Point should be defined", proj.getPoints().doesObjectExist("POIN1"));
-		ensure_equals("Standard deviations should not be assigned.", proj.getPoints().getObject("POIN1").hasStandDeviations(), false);
+		// no standard deviations supported anymore obsolote since introduction of OBSXYZ
+		//  ensure_equals("Standard deviations should not be assigned.", proj.getPoints().getObject("POIN1").hasStandDeviations(), false);
 
-		//Correct definition
-        poin1.parse(tokenizefileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), true, -1);
-		ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
+		//  //Correct definition
+        //  poin1.parse(tokenizefileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), true, -1);
+		//  ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
 
-		ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); //Values are stored in metres
-		ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M ); //Values are stored in metres
-		ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); //Values are stored in metres
+		//  ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); //Values are stored in metres
+		//  ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M ); //Values are stored in metres
+		//  ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); //Values are stored in metres
 	}
 	
 	template<>

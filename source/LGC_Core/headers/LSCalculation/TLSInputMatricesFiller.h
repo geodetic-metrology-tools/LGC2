@@ -77,7 +77,10 @@ private:
 	void initMatriceDimension(const TLGCData &projData, TLSInputMatrices *matrices);
 
 	/// Fills the weight unknown matrix.
-	bool fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices);
+	//obsolete
+//	bool	fillWeightUnkMtrx(TLGCData* projData, TLSInputMatrices* matrices);
+	bool fillParameterWeights(TLGCData* projData, TLSInputMatrices* matrices);
+
 
 	// fill in the slave constraints
 	bool fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices);
