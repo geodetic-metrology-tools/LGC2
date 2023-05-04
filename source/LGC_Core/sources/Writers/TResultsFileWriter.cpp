@@ -354,23 +354,26 @@ void TResultsFileWriter::writePointDataSummary(const std::string description, co
 // Write a summary of the LGC calculation data parameters
 void TResultsFileWriter::writeCalcDataSummary()
 {
-	TAStreamFormatter &stream = getStreamRef();
-
-	// NOMBRE D'OBSERVATIONS
-	stream << "	NOMBRE D'OBSERVATIONS =  " << fProjectData->fUEOIndices.OIndex;
+    TAStreamFormatter &stream = getStreamRef();
+ 
+    //NOMBRE D'OBSERVATIONS
+    stream<<"	NOMBRE D'OBSERVATIONS                 =     "<< fProjectData->fUEOIndices.OIndex;
 	if (fProjectData->getConfig().pdor.isActive())
 	{
 		stream << "	(PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
 		// FRK: Rajouter nom du point DPOR + CALA pour éviter toute confusion? (voir SUS-906)
 	}
-	stream << endl;
+    stream<<endl;
+ 
+    //NOMBRE D'INCONNUES
+	stream << "	NOMBRE D'INCONNUES (DONT PONDEREES)   =     " << fProjectData->fUEOIndices.UIndex << "(" << fProjectData->fUEOIndices.WIndex << ")";
+    stream<<endl;
+  //   //NOMBRE D'INCONNUES
+  //  stream<<"	NOMBRE D'INCONNUES PONDEREES          =     "<< fProjectData->fUEOIndices.WIndex;
+  //  stream<<endl;
 
-	// NOMBRE D'INCONNUES
-	stream << "	NOMBRE D'INCONNUES =     " << fProjectData->fUEOIndices.UIndex;
-	stream << endl;
-
-	// NOMBRE DE CONTRAINTES
-	stream << "	NOMBRE DE CONTRAINTES =  " << fProjectData->fUEOIndices.CIndex;
+    // NOMBRE DE CONTRAINTES
+	stream << "	NOMBRE DE CONTRAINTES                 =     " << fProjectData->fUEOIndices.CIndex;
 	stream << endl;
 
 	// NUMBER OF ITERATIONS

@@ -40,6 +40,7 @@ set(tests_SOURCES
 	sources/testSlaveConstraints.cpp
 	sources/testPointGroupConstraints.cpp
 	sources/testEREL.cpp
+	sources/testApriCov.cpp
 )
 
 set(tests_INPUT
@@ -62,6 +63,7 @@ set(tests_INPUT
 	headers/testSlaveConstraints.h
 	headers/testPointGroupConstraints.h
 	headers/testEREL.h
+	headers/testApriCov.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
