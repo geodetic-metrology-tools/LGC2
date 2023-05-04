@@ -3,7 +3,7 @@
 #include <map>
 
 
-TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandardDeviations(false), fUEOIndices({0, 0, 0, 0})
+TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandardDeviations(false), fUEOIndices({0, 0, 0, 0, 0})
 {
 	fLSRelatedInfo.fNumberOfLSIterations = 0;
 	setDefaultValues();

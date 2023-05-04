@@ -23,6 +23,7 @@ bool TDataAnalyzer::dataConsistent()
 	auto &outputMessages(fData.getFileLogger());
 	outputMessages.writeReportHeader("Data consistency check:");
 	int lastUidx = 0; // Unknown indices
+	int lastWidx = 0; // Weight observation indices
 	int lastCidx = 0; // Constraint indices
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
@@ -106,7 +107,15 @@ bool TDataAnalyzer::dataConsistent()
 		{
 			frame.setFirstUidx(lastUidx);
 			lastUidx = frame.getLastUidx() + 1;
+		} 
+
+        // assign weight indices
+		if (frame.hasAprioriCovariance)
+		{
+			frame.setFirstWeightIndex(lastWidx);
+			lastWidx += frame.getNumUnkn(); 
 		}
+
 
 		if (frame.hasStandDev())
 		{ // If a frame has standard deviation assigned
@@ -379,15 +388,22 @@ bool TDataAnalyzer::dataConsistent()
 		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
 			nCALAinROOT++;
 
-		if (point.hasStandDeviations())
-		{ // If point has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
+        // obsolete
+		//if(point.hasStandDeviations()){  //If point has standard deviation assigned 
+		//	fStandDevUsed = true;
+		//	fData.setStandDevUsed();
+		//}
+
+        // assign weight indices
+		if (point.hasAprioriCovariance)
+		{
+			point.setFirstWeightIndex(lastWidx);
+			lastWidx += point.getNumUnkn(); 
 		}
 
-		// Assign unknown indices
-		if (!point.isFixed())
-		{
+
+		//Assign unknown indices
+		if(!point.isFixed()){
 			point.setFirstUidx(lastUidx);
 			lastUidx = point.getLastUidx() + 1;
 		}
@@ -459,6 +475,7 @@ bool TDataAnalyzer::dataConsistent()
 
 	// Save total number of unknowns without sigmas
 	fData.fUEOIndices.UIndex = lastUidx;
+	fData.fUEOIndices.WIndex = lastWidx;
 
 	// Not run ALLFIXED and LIBR in the same time
 	if (fData.getConfig().libre.isActive() && fData.getConfig().allfixed.isActive())
@@ -521,13 +538,18 @@ bool TDataAnalyzer::dataConsistent()
 		}
 	}
 
-	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex)
+	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex + fData.fUEOIndices.WIndex)
 	{
 		outputMessages << TFileLogger::e_logType::LOG_ERROR
-					   << "There are more unknowns than equations+constraints, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) + ", EQUATIONS+CONSTRAINTS = "
-				+ std::to_string(fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex) + ". LS calculation can not work. Add measurements or fix some unknowns.";
+					   << "There are more unknowns than equations+constraints+weights, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) + ", EQUATIONS+CONSTRAINTS+WEIGHTS = "
+				+ std::to_string(fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex + fData.fUEOIndices.WIndex) + ". LS calculation can not work. Add measurements or fix some unknowns.";
 		return false;
 	}
+//	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex){
+//		outputMessages << TFileLogger::e_logType::LOG_ERROR << "There are more unknowns than equations, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) +  
+//				", EQUATIONS = " + std::to_string(fData.fUEOIndices.EIndex) + ". LS calculation can not work. Add measurements or fix some unknowns"; 
+//		return false;
+//	}
 
 	return consistent;
 }
