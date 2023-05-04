@@ -379,7 +379,7 @@ void    TResultsFileWriter::writeCalcDataSummary()
     TAStreamFormatter &stream = getStreamRef();
  
     //NOMBRE D'OBSERVATIONS
-    stream<<"	NOMBRE D'OBSERVATIONS =  "<< fProjectData->fUEOIndices.OIndex;
+    stream<<"	NOMBRE D'OBSERVATIONS        =     "<< fProjectData->fUEOIndices.OIndex;
 	if (fProjectData->getConfig().pdor.isActive())
 	{
 		stream << "	(PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
@@ -388,11 +388,15 @@ void    TResultsFileWriter::writeCalcDataSummary()
     stream<<endl;
  
     //NOMBRE D'INCONNUES
-    stream<<"	NOMBRE D'INCONNUES =     "<< fProjectData->fUEOIndices.UIndex;
+    stream<<"	NOMBRE D'INCONNUES           =     "<< fProjectData->fUEOIndices.UIndex;
     stream<<endl;
- 
+  
+    // //NOMBRE D'INCONNUES PONDÉRÉES
+    // stream<<"	NOMBRE D'INCONNUES PONDÉRÉES =     "<< fProjectData->fUEOIndices.WIndex;
+    // stream<<endl;
+
     // NUMBER OF ITERATIONS
-    stream<<"	NOMBRE D'ITERATIONS =    "<<fProjectData->getNumberOfLSIterations();
+    stream<<"	NOMBRE D'ITERATIONS          =     "<<fProjectData->getNumberOfLSIterations();
     stream<<endl<<endl;
  
     //RESEAU COMPLETEMENT LIBRE ?

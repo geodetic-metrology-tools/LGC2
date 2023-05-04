@@ -47,10 +47,12 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 			// fill the libr constraints
 			fillOK &= fLibrCnstrGenerator.processFreeCnstr(*matrices);
 		}
+		// obsolete
+	//	//If weight unknown matrix should be filled
+	//	if(fillWeightUnkn)
+	//		fillOK = fillOK && fillWeightUnkMtrx(projData, matrices);
 
-		// If weight unknown matrix should be filled
-		if (fillWeightUnkn)
-			fillOK &= fillWeightUnkMtrx(projData, matrices);
+		fillOK = fillOK && fillParameterWeights(projData, matrices);
 
 		fillOK &= fillSlaveConstraints(projData, matrices);
 
@@ -157,10 +159,10 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 //! initialise the dimensions of the input matrices
 void TLSInputMatricesFiller::initMatriceDimension(const TLGCData &projData, TLSInputMatrices *matrices)
 {
-	if ((projData.fUEOIndices.EIndex == 0))
+	if ((projData.fUEOIndices.EIndex+projData.fUEOIndices.WIndex == 0))
 		throw std::runtime_error("Equation index in LS matrices is null.");
 
-	if ((projData.fUEOIndices.OIndex == 0))
+	if ((projData.fUEOIndices.OIndex+projData.fUEOIndices.WIndex == 0))
 		throw std::runtime_error("Observation index in LS matrices is null.");
 
 	matrices->initMatrices(projData.fUEOIndices);
@@ -168,6 +170,71 @@ void TLSInputMatricesFiller::initMatriceDimension(const TLGCData &projData, TLSI
 	{
 		throw std::runtime_error("LIBR  is used, but no constraints are found.");
 	}
+}
+
+bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMatrices *matrices)
+{
+	bool isProcessOK = true;
+	// fill the data related to weighted parameters
+	for (LGCAdjustablePoint &point : projData->getPoints())
+	{
+		if (point.hasAprioriCovariance)
+		{
+			// fill the part associated to the first weight design matrix
+			TDenseMatrix apriCov = point.getApriCovar();
+			// the weight is the inverse of the covariance matrix
+			isProcessOK = isProcessOK && matrices->setWeightUnkMtrxBlock(point.getFirstWeightIndex(), apriCov.fullPivLu().inverse());
+			isProcessOK = isProcessOK
+				&& matrices->setSecondWeightDgnMtrxBlock(
+					point.getFirstWeightIndex(), point.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(point.getNumUnkn(), point.getNumUnkn()));
+
+			TPositionVector estPos = point.getEstimatedValue();
+			TPositionVector provPos = point.getProvisionalValue();
+			TFreeVector Misc = estPos - provPos;
+			TVector weightMisclosure(3);
+			weightMisclosure << Misc.getX(), Misc.getY(), Misc.getZ();
+			std::vector<int> relInd = point.getRelativeUnknIndices();
+			for (int i = 0; i < point.getNumUnkn(); i++)
+			{
+				// weights associated part of A matrix
+				isProcessOK = isProcessOK && matrices->setWeightsFirstDgnMtrxElement(point.getFirstWeightIndex() + i, point.getFirstUidx() + i, 1);
+				// weight associated misclosure
+				isProcessOK = isProcessOK && matrices->setWeightMisclosureVectorElement(point.getFirstWeightIndex() + i, weightMisclosure(relInd.at(i)));
+			}
+		}
+	}
+
+	for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++)
+	{
+		TAdjustableHelmertTransformation &trafo = itTree.node->data.get()->frame;
+		if (trafo.hasAprioriCovariance)
+		{	
+			// fill the part associated to the first weight design matrix
+			TDenseMatrix apriCov = trafo.getApriCovar();
+			// the weight is the inverse of the covariance matrix
+			isProcessOK = isProcessOK && matrices->setWeightUnkMtrxBlock(trafo.getFirstWeightIndex(), apriCov.fullPivLu().inverse());
+			isProcessOK = isProcessOK
+				&& matrices->setSecondWeightDgnMtrxBlock(
+					trafo.getFirstWeightIndex(), trafo.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(trafo.getNumUnkn(), trafo.getNumUnkn()));
+
+			TransformParameters prov = trafo.getProvParam();
+			TransformParameters est = trafo.getEstParam();
+			TransformParameters miscPar = est - prov;
+			TVector weightMisclosure(7);
+			weightMisclosure << miscPar.tX.getMetresValue(), miscPar.tY.getMetresValue(), miscPar.tZ.getMetresValue(), miscPar.omega.getRadiansValue(),
+				miscPar.phi.getRadiansValue(), miscPar.kappa.getRadiansValue(), miscPar.scale;
+			std::vector<int> relInd = trafo.getRelativeUnknIndices();
+			for (int i = 0; i < trafo.getNumUnkn(); i++)
+			{
+				// weights associated part of A matrix
+				isProcessOK = isProcessOK && matrices->setWeightsFirstDgnMtrxElement(trafo.getFirstWeightIndex() + i, trafo.getFirstUidx() + i, 1);
+				// weight associated misclosure
+				isProcessOK = isProcessOK && matrices->setWeightMisclosureVectorElement(trafo.getFirstWeightIndex() + i, weightMisclosure(relInd.at(i)));
+			}
+		}
+	}
+
+	return isProcessOK;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1840,80 +1907,63 @@ bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &poin
 	return isProcessOK;
 }
 
-bool TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices)
-{
-	bool fillOK = true;
-	auto &outputMessages(projData->getFileLogger());
-
-	for (auto &point : projData->getPoints())
-	{
-		if (point.hasStandDeviations())
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				TReal variance = pow2(point.getStandDev(i));
-
-				if (variance < nullLimit)
-				{
-					fillOK = false;
-					outputMessages << TFileLogger::e_logType::LOG_ERROR
-								   << "Standard deviation assigned to a cordinate of a point " + point.getName() + " is too small, causes zero division.";
-				}
-				else
-					matrices->setWeightUnkMtrxElement(point.getCoordinateUnknIndex(i), point.getCoordinateUnknIndex(i), 1 / variance);
-			}
-		}
-	}
-
-	for (auto it(projData->getTree().begin()); it != projData->getTree().end(); ++it)
-	{
-		auto &frame(it.node->data.get()->frame);
-		if (frame.hasStandDev())
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				if (frame.hasRotationStandDev(i))
-				{
-					TReal variance = pow2(frame.getRotationStandDev(i).getRadiansValue());
-					if (variance < nullLimit)
-					{
-						fillOK = false;
-						outputMessages << TFileLogger::e_logType::LOG_ERROR
-									   << "Standard deviation assigned to a rotation of a frame: " + frame.getName() + " is too small, causes zero division";
-					}
-					else
-						matrices->setWeightUnkMtrxElement(frame.getRotationUnknIndex(i), frame.getRotationUnknIndex(i), 1 / variance);
-				}
-
-				if (frame.hasTranslStandDev(i))
-				{
-					TReal variance = pow2(frame.getTranslationStandDev(i).getMetresValue());
-					if (variance < nullLimit)
-					{
-						fillOK = false;
-						outputMessages << TFileLogger::e_logType::LOG_ERROR
-									   << "Standard deviation assigned to a translation of a frame: " + frame.getName() + " is too small, causes zero division";
-					}
-					else
-						matrices->setWeightUnkMtrxElement(frame.getTranslationUnknIndex(i), frame.getTranslationUnknIndex(i), 1 / variance);
-				}
-			}
-
-			if (frame.hasScaleStandDev())
-			{
-				TReal variance = pow2(frame.getScaleStandDev());
-				if (variance < nullLimit)
-				{
-					fillOK = false;
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << "Standard deviation assigned to a scale of a frame: " + frame.getName() + " is too small, causes zero division";
-				}
-				else
-					matrices->setWeightUnkMtrxElement(frame.getScaleUnknIndex(), frame.getScaleUnknIndex(), 1 / variance);
-			}
-		}
-	}
-	return fillOK;
-}
+//bool	TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData* projData, TLSInputMatrices* matrices){
+//	bool fillOK = true;
+//	auto& outputMessages(projData->getFileLogger());
+//
+//	for (auto& point : projData->getPoints()){	
+//		if(point.hasStandDeviations()){
+//			for(int i = 0; i<3; i++){
+//				TReal variance = pow2(point.getStandDev(i));
+//
+//				if(variance < nullLimit){
+//					fillOK = false;
+//					outputMessages << TFileLogger::e_logType::LOG_ERROR <<  "Standard deviation assigned to a cordinate of a point " + point.getName() + " is too small, causes zero division.";
+//				}
+//				else
+//					matrices->setWeightUnkMtrxElement(point.getCoordinateUnknIndex(i), point.getCoordinateUnknIndex(i), 1/variance);
+//			}
+//		}
+//	}
+//
+//	for (auto it( projData->getTree().begin()); it != projData->getTree().end(); ++it){	
+//		auto& frame(it.node->data.get()->frame);
+//		if(frame.hasStandDev()){
+//			for(int i = 0;i<3;i++){
+//				if(frame.hasRotationStandDev(i)){
+//					TReal variance = pow2(frame.getRotationStandDev(i).getRadiansValue());
+//					if(variance < nullLimit){
+//						fillOK = false;
+//						outputMessages << TFileLogger::e_logType::LOG_ERROR <<  "Standard deviation assigned to a rotation of a frame: " + frame.getName() + " is too small, causes zero division"; 
+//					}
+//					else
+//						matrices->setWeightUnkMtrxElement(frame.getRotationUnknIndex(i), frame.getRotationUnknIndex(i), 1/variance);
+//				}
+//
+//				if(frame.hasTranslStandDev(i)){
+//					TReal variance = pow2(frame.getTranslationStandDev(i).getMetresValue());
+//					if(variance < nullLimit){
+//						fillOK = false;
+//						outputMessages << TFileLogger::e_logType::LOG_ERROR <<  "Standard deviation assigned to a translation of a frame: " + frame.getName() + " is too small, causes zero division"; 
+//					}
+//					else
+//						matrices->setWeightUnkMtrxElement(frame.getTranslationUnknIndex(i), frame.getTranslationUnknIndex(i), 1/variance);
+//				}
+//			}
+//
+//			if(frame.hasScaleStandDev()){
+//				TReal variance = pow2(frame.getScaleStandDev());
+//				if(variance < nullLimit){
+//					fillOK = false;
+//					outputMessages << TFileLogger::e_logType::LOG_ERROR <<  "Standard deviation assigned to a scale of a frame: " + frame.getName() + " is too small, causes zero division"; 
+//				}
+//				else
+//					matrices->setWeightUnkMtrxElement(frame.getScaleUnknIndex(), frame.getScaleUnknIndex(), 1/variance);
+//			}
+//		}
+//	}
+//	return fillOK;
+//}
 
 bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices)
 {
