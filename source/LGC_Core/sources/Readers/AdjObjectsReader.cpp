@@ -87,6 +87,25 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 		if (opts.has("SSCL"))
 			adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M);
 	}
+	if (opts.has("apriCov"))
+	{
+		// somehow extract the covariance matrix
+		std::string test = opts.getParam("apriCov");
+		TDenseMatrix trafoCovMat = opts.commaSeparatedStringToMat(test, adjTrafo.getNumUnkn());
+		// test if the matrix is symmetric and positive definite
+		if (!trafoCovMat.isApprox(trafoCovMat.transpose()))
+		{
+			throw std::runtime_error("A-priori covariance matrix of transformation " + adjTrafo.getName() + " has to be symmetric.");
+		}
+		// further test if it is positive definite.
+		if (!trafoCovMat.ldlt().isPositive())
+		{
+			std::cout << trafoCovMat << std::endl;
+			std::cout << trafoCovMat.eigenvalues() << std::endl;
+			throw std::runtime_error("A-priori covariance matrix of transformation " + adjTrafo.getName() + " has to be positive definite.");
+		}
+		adjTrafo.setApriCovar(trafoCovMat);
+	}
 
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
@@ -207,26 +226,42 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 
 	TOptionHelper opts(tokens.cbegin(), tokens.cend());
 
-	// If point defined using POIN
-	if (key == "POIN")
-	{
-		// If all 3 standard deviations are listed => store standard deviations
-		if (opts.has("SX") && opts.has("SY") && opts.has("SZ"))
-			pt.setStandardDeviations(opts.getParamR("SX") * MM2M, opts.getParamR("SY") * MM2M, opts.getParamR("SZ") * MM2M); // Standard deviations given in mili-meters, butstored in meters
-
-		// NB. June 2017:
-		// With the new observation OBSXYZ the standard deviations
-		// of POIN are not used any longer (for now).
-		// -------------------------------------------------------
-		// else if(!pt.getFrameTreePosition().node->data->isROOTNode())
-		//     //POIN is not in a ROOT node and standard deviations are not provided => then it is an error
-		//     proj.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << "Line " + std::to_string(line) + +" : point is defined using POIN in a sub-frame. Standard deviations are needed!";
-		// -------------------------------------------------------
-
-		else if (opts.has("SX") || opts.has("SY") || opts.has("SZ"))
-			// If only some of these options are set => standard deviations are not stored and warning is produced => warning
-			proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING
-								 << "Line " + std::to_string(line) + " : point is defined using POIN, but not all standard errors specified (SX,SY,SZ)!";
+	//If point defined using POIN
+	if(key == "POIN"){
+		if (opts.has("apriCov"))
+		{
+			// somehow extract the covariance matrix
+			std::string test = opts.getParam("apriCov");
+			TDenseMatrix pointCovMat = opts.commaSeparatedStringToMat(test, 3);
+			// test if the matrix is symmetric and positive definite
+			if (!pointCovMat.isApprox(pointCovMat.transpose()))
+			{
+				throw std::runtime_error("A-priori covariance matrix of point " + pt.getName() + " has to be symmetric.");
+			}
+			// further test if it is positive definite.
+			if (!pointCovMat.ldlt().isPositive())
+			{
+				throw std::runtime_error("A-priori covariance matrix of point " + pt.getName() + " has to be positive definite.");
+			}
+			pt.setApriCovar(pointCovMat);
+		}
+		// obsolete		
+//		//If all 3 standard deviations are listed => store standard deviations
+//		if(opts.has("SX") && opts.has("SY") && opts.has("SZ"))
+//			pt.setStandardDeviations(opts.getParamR("SX") * MM2M, opts.getParamR("SY") * MM2M, opts.getParamR("SZ") * MM2M); //Standard deviations given in mili-meters, butstored in meters
+//        
+//        // NB. June 2017:
+//        // With the new observation OBSXYZ the standard deviations
+//        // of POIN are not used any longer (for now).
+//        // -------------------------------------------------------
+//        // else if(!pt.getFrameTreePosition().node->data->isROOTNode())
+//        //     //POIN is not in a ROOT node and standard deviations are not provided => then it is an error
+//        //     proj.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << "Line " + std::to_string(line) + +" : point is defined using POIN in a sub-frame. Standard deviations are needed!";
+//        // -------------------------------------------------------
+//
+//        else if(opts.has("SX") || opts.has("SY") || opts.has("SZ"))
+//			//If only some of these options are set => standard deviations are not stored and warning is produced => warning 
+//			proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING << "Line " + std::to_string(line)  + " : point is defined using POIN, but not all standard errors specified (SX,SY,SZ)!";
 	}
 
 	// If last token starts with a comment chararcter, store it

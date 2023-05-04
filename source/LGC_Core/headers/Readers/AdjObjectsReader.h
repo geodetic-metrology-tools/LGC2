@@ -10,6 +10,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <ReaderBase.h>
 #include <KeywordRights.h>
+//
+#include <Eigen/Dense>
 
 /*!
  *  \addtogroup AdjObjectsReader
