@@ -522,35 +522,10 @@ TReal TObservationGenerator::getDVERCalcMeas(const TDVER& dver){
 }
 
 
-TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM& inclyROM, const TINCLY& incly) {
-	fPointTransfo->setMLA(false);
-
-	//Transform the point of meeasure to the Root frame
-	TPositionVector stationPos = incly.targetPos->getEstimatedValue(); //get the position of the station
-	const TLOR2LOR& ptLor2RootTrafo = fPointTransfo->getLORTransformation(incly.targetPos->getFrameTreePosition(), fPointTransfo->getTree()->begin()); //Transformation from "STATION FRAME" to "ROOT"
-	ptLor2RootTrafo.transform(stationPos);
-
-	//Creating the Local Vertical vector (no change if OLOC)
-	TFreeVector stationV(0, 0, 1, TCoordSysFactory::k3DCartesian);
-
-	//Express te local vertical if MLA is used
-	if (fPointTransfo->getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame) {
-		fPointTransfo->set2MLATransformation(stationPos);
-		fPointTransfo->transformMLA2CGRF(stationV);
-		fPointTransfo->transformCGRF2CCS(stationV);
-	}
-
-	//Transform the local vertical in the station LOR
-	const TLOR2LOR& vert2stTrafo = fPointTransfo->getLORTransformation(fPointTransfo->getTree()->begin(), inclyROM.positionInTree); //Trafo from from CCS LOR to station's LOR
-	vert2stTrafo.transform(stationV);
-
-	//Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
-	TReal XSt = stationV.getX().getMetresValue();
-	TReal ZSt = stationV.getZ().getMetresValue();
-	
-	TReal calcMeas = TAngle::aTan2(-XSt, ZSt) - incly.target.angleCorrectionValue.getRadiansValue() - incly.target.refAngleCorrectionValue.getRadiansValue();
-	
-	return calcMeas;
+TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM &inclyROM, const TINCLY &incly)
+{
+	INCLYContrib contributions = fCGenerator.getINCLYContrib(inclyROM, incly);
+	return contributions.fCalcMeas;
 }
 
 TReal TObservationGenerator::getECWSCalcMeas(const TECWSROM& ecwsROM, const TECWS& ecws) {

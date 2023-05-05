@@ -238,8 +238,6 @@ struct TINCLYROM : public TStatusObject {
 	/// The instrument that is used on this station
 	TInstrumentData::TINCL     instrument;
 
-	TAngle fConstantAngle;
-
 	/// Line of the measurement definition
 	int  line;
 	int romId = TINCLYROM::romCounter_++;
@@ -249,7 +247,6 @@ struct TINCLYROM : public TStatusObject {
 	/// the station attribute is a copy of the parameter to override defaults
 	TINCLYROM(const TInstrumentData::TINCL& instrument, TDataTreeIterator itTree) :
 		instrument(instrument),
-		fConstantAngle(0.0, TAngle::EUnits::kGons),
 		line(NO_VALi),
 		positionInTree(itTree)
 	{

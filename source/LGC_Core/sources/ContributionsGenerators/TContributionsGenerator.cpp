@@ -1369,7 +1369,7 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	// Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
 	TReal XSt = stationV.getX().getMetresValue();
 	TReal ZSt = stationV.getZ().getMetresValue();
-	TAngle calcMeas = TAngle::aTan2(XSt, ZSt) - incly.target.angleCorrectionValue - incly.target.refAngleCorrectionValue;
+	TAngle calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
 
 	// Compute the variance of the observation
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue())

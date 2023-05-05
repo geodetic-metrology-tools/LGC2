@@ -209,7 +209,6 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 
 void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
-	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
 	obj.addProperty("inclySummary_", inclySummary_);
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);
