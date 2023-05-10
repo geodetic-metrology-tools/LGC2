@@ -1273,5 +1273,44 @@ namespace MixObs {
 		"QDA____61710S    127.09500									\n"
 		"*END\n"
 		;
+
+	char const *const TSTN_FrameContribTest = R"(*TITR
+% Defining a station and target in a subframe with a TSTN measurement from root frame
+% This is handled by transforming both points to root. Both points deliver a helmert parameter contribution illustrating the overwriting issue SUS-2204
+% with LGC 2.5.1 the example converges after ~2500 iterations, the bug makes LGC think the total station  measurement depend on the TY frame translation
+% really they do not depend on it because the contributions cancel out. But since they are overwritten this is not the case
+% result is a wrong estimate (TY=-1.18). after correction almost perfect fit with TY=0 and 2 iterations.
+*OLOC
+*HIST
+*PREC 7
+*CONSI
+*PUNC   OUT1
+*FAUT     .01     .10
+*INSTR
+*POLAR Station1 Target1 0 0 0 0
+Target1 10 10 10 0 0 0 0 0 0 0   
+*CALA
+yInRoot 0 1 0
+*FRAME yTranslationFrame 0 0 0 0 0 0 1  TY
+*POIN
+p2 0 1 1
+*CALA
+zeroInFrame 0 0 0 
+*OBSXYZ
+p2 0 1 1 100 100 100
+*ENDFRAME
+*TSTN  zeroInFrame    Station1    IHFIX     TRGT Target1  
+*V0 
+% these measurements are independent from TY because station and target both move with the frame
+*DIST
+% slightly perturbed observation, perfect fit would be 2^0.5 
+p2 1.41
+*ANGL
+p2 0
+%
+*OBSXYZ
+% fixing the frame but allowing y movements by the low precision. Used to exploits the wrong sensitivity with respect to TY of the TSTN measurements
+zeroInFrame 0 0 0 1 2000 1
+*END)";
 }
 #endif

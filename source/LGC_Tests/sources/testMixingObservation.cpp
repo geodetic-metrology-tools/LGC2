@@ -433,4 +433,30 @@ namespace tut
 		}
 		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
 	}
+	template<>
+	template<>
+	void object::test<10>()
+	{
+		set_test_name("Testing total station frame contributions");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_FrameContribTest.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(MixObs::TSTN_FrameContribTest);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		TDataTree tree = projTest->getTree().begin();
+
+		// estimated TY translation should be 0
+		TDataTreeIterator frameIt = ++tree.begin();
+		double estimatedYTranslation = frameIt.node->data.get()->frame.getEstTranslation(1);
+		ensure_equals("Y translation should be 0", estimatedYTranslation, 0, 1e-9);
+	}
+
 	};
