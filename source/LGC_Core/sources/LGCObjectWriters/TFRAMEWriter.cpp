@@ -1003,26 +1003,27 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 
 	if(!node.frame.isFixed()){
 		(*stream)<<endl<<endl;
+		TDenseMatrix frameCovar = node.frame.getCovar();
 
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(1))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR (GON²): "); 
-			(*stream)<<node.frame.getXYCovarRot()*RAD2GON<<(separator);
+			(*stream)<<frameCovar(3,4)*RAD2GON<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(1) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR (GON²): "); 
-			(*stream)<<node.frame.getYZCovarRot()*RAD2GON<<(separator);
+			(*stream)<<frameCovar(4,5)*RAD2GON<<(separator);
 		}
 
 		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(2))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR (GON²): "); 
-			(*stream)<<node.frame.getXZCovarRot()*RAD2GON<<(separator);
+			(*stream)<<frameCovar(3,5)*RAD2GON<<(separator);
 		}
 		
 		(*stream)<<endl;
@@ -1031,21 +1032,21 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry& node){
 		{		
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "XY TRANS. COVAR (m²): "); 
-			(*stream)<<node.frame.getXYCovarTransl()<<(separator);
+			(*stream)<<frameCovar(0,1)<<(separator);
 		}
 
 		if (!node.frame.isTranslationFixed(1) && !node.frame.isTranslationFixed(2))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth, "YZ TRANS. COVAR (m²): "); 
-			(*stream)<<node.frame.getYZCovarTransl()<<(separator);
+			(*stream)<<frameCovar(1,2)<<(separator);
 		}
 	
 		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(2))
 		{
 			(*stream)<<TABs;
 			(*stream).writeStringLeft(nameWidth,  "XZ TRANS. COVAR (m²): "); 
-			(*stream)<<node.frame.getXZCovarTransl()<<(separator);
+			(*stream)<<frameCovar(0,2)<<(separator);
 		}
 	}
 	(*stream)<<endl;

@@ -1,28 +1,27 @@
 #include "TLSResultsMatricesExtractor.h"
-#include <TLGCData.h>
-#include "TLSResultsMatrices.h"
-#include "TLSCalcRelativeError.h"
+
 #include <Logger.hpp>
+#include <TLGCData.h>
 
+#include "TLSCalcRelativeError.h"
+#include "TLSResultsMatrices.h"
 
-TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData* fData) :
-	fDataSet(fData),
-	fLastIteration(false)
-{}
+TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData *fData) : fDataSet(fData), fLastIteration(false)
+{
+}
 
 TLSResultsMatricesExtractor::~TLSResultsMatricesExtractor()
-{//Destructor
+{ // Destructor
 }
 /////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
 /////////////////////////////////////////////////////////////////
 
-
 /****************************************************************************************************************
 	Public Method: extractResults
 	Extracts resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices
 ****************************************************************************************************************/
-bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, TReal convCrit)
+bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices &rm, TReal convCrit)
 {
 	bool successfullExtraction = true;
 	fLastIteration = false;
@@ -39,9 +38,10 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 		if ((pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive())
 			fLastIteration = true;
 	}
-	catch (std::exception const & excp)
+	catch (std::exception const &excp)
 	{
-		logWarning() << "Could not extract properly resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices. Exception caught:" << excp.what();
+		logWarning() << "Could not extract properly resulting parameters of adjustable objects (points, planes, lengths,...) from calculated matrices. Exception caught:"
+					 << excp.what();
 		successfullExtraction = false;
 		return successfullExtraction;
 	}
@@ -52,7 +52,7 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices& rm, T
 	Public Method: extractResiduals
 	Extracts residues from calculated matrices
 ****************************************************************************************************************/
-bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
+bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices &rm)
 {
 	bool successfullExtraction = true;
 	logDebug() << "Extract residuals from calculated matrices";
@@ -65,91 +65,88 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 			// Iterate through the Total station measurements (TSTN)
 			for (auto itTSTN : itTree.node->data->measurements.fTSTN)
 			{
-				// Iterate through every ROM of TSTN 
+				// Iterate through every ROM of TSTN
 				for (auto itROM : itTSTN->roms)
 				{
-					for (auto& itANGL : itROM->measANGL)
-						extractAngleObs(rm, itANGL); //Extract residuals of ANGL
+					for (auto &itANGL : itROM->measANGL)
+						extractAngleObs(rm, itANGL); // Extract residuals of ANGL
 
-					for (auto& itZEND : itROM->measZEND)
-						extractAngleObs(rm, itZEND); //Extract residuals of ZEND, same extractor used for both angle measurements
+					for (auto &itZEND : itROM->measZEND)
+						extractAngleObs(rm, itZEND); // Extract residuals of ZEND, same extractor used for both angle measurements
 
-					for (auto& itDIST : itROM->measDIST)
-						extractDistObs(rm, itDIST); //Extract residuals of DIST
+					for (auto &itDIST : itROM->measDIST)
+						extractDistObs(rm, itDIST); // Extract residuals of DIST
 
-					for (auto& itDHOR : itROM->measDHOR)
-						extractDistObs(rm, itDHOR); //Extract residuals of DHOR
+					for (auto &itDHOR : itROM->measDHOR)
+						extractDistObs(rm, itDHOR); // Extract residuals of DHOR
 
-					for (auto& itPLR3D : itROM->measPLR3D)
-						extractPLR3DObs(rm, itPLR3D);  //Extract residuals of PLR3D measurement
+					for (auto &itPLR3D : itROM->measPLR3D)
+						extractPLR3DObs(rm, itPLR3D); // Extract residuals of PLR3D measurement
 
-					for (auto& itECTH : itROM->measECTH)
+					for (auto &itECTH : itROM->measECTH)
 						extractDistObs(rm, itECTH);
 
-					for (auto& itECDIR : itROM->measECDIR)
+					for (auto &itECDIR : itROM->measECDIR)
 						extractDistObs(rm, itECDIR);
-
 				}
 			}
 
-			//Iterate through camera (CAM) measurements
+			// Iterate through camera (CAM) measurements
 			for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM)
 			{
-				for (auto& itUVD : itCAM->measUVD)
+				for (auto &itUVD : itCAM->measUVD)
 					extractUVDObs(rm, itUVD);
 
-				for (auto& itUVEC : itCAM->measUVEC)
+				for (auto &itUVEC : itCAM->measUVEC)
 					extractUVECObs(rm, itUVEC);
 			}
 
-
-			//In every node iterate through the EDM's measurements
+			// In every node iterate through the EDM's measurements
 			for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
 			{
-				//Iterate through DPST measurements
-				for (auto& itDPST : itEDM->measDSPT)
+				// Iterate through DPST measurements
+				for (auto &itDPST : itEDM->measDSPT)
 					extractDSPTObs(rm, itDPST);
 			}
 
-
-			//In every node iterate through the LEVEL's measurements
-			for (auto& itLEVEL : itTree.node->data->measurements.fLEVEL)
+			// In every node iterate through the LEVEL's measurements
+			for (auto &itLEVEL : itTree.node->data->measurements.fLEVEL)
 				extractLEVELObs(rm, itLEVEL);
 
-			//In every node iterate through the ECHOROM's measurements
-			for (auto& itECHO : itTree.node->data->measurements.fECHO)
+			// In every node iterate through the ECHOROM's measurements
+			for (auto &itECHO : itTree.node->data->measurements.fECHO)
 				extractECHOROMObs(rm, itECHO);
 
-			//In every node iterate through the ECVEROM's measurements
-			for (auto& itECVE : itTree.node->data->measurements.fECVE)
+			// In every node iterate through the ECVEROM's measurements
+			for (auto &itECVE : itTree.node->data->measurements.fECVE)
 				extractECVEROMObs(rm, itECVE);
 
-			//In every node iterate through the ECSPROM's measurements
-			for (auto& itECSP : itTree.node->data->measurements.fECSP)
+			// In every node iterate through the ECSPROM's measurements
+			for (auto &itECSP : itTree.node->data->measurements.fECSP)
 				extractECSPROMObs(rm, itECSP);
 
-			//In every node iterate through the ORIEROM's measurements
-			for (auto& itORIE : itTree.node->data->measurements.fORIE)
+			// In every node iterate through the ORIEROM's measurements
+			for (auto &itORIE : itTree.node->data->measurements.fORIE)
 				extractORIEROMObs(rm, itORIE);
 
-			//Extract vertical distance DVER residuals
+			// Extract vertical distance DVER residuals
 			extractDVERObs(rm, itTree.node->data->measurements.fDVER);
 
-			//Extract pdor residuals
+			// Extract pdor residuals
 			extractPDORObs(rm, itTree.node->data->measurements.fPDOR);
 
-			//Extract radi residuals
+			// Extract radi residuals
 			extractRADIObs(rm, itTree.node->data->measurements.fRADI);
 
-			//Extract OBSXYZ residuals
+			// Extract OBSXYZ residuals
 			extractOBSXYZObs(rm, itTree.node->data->measurements.fOBSXYZ);
 
-			//In every node iterate through the INCLYROM's measurements
-			for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
+			// In every node iterate through the INCLYROM's measurements
+			for (auto &itINCLY : itTree.node->data->measurements.fINCLY)
 				extractINCLYROMObs(rm, itINCLY);
 
-			//In every node iterate through the ECWSROM's measurements
-			for (auto& itECWS : itTree.node->data->measurements.fECWS)
+			// In every node iterate through the ECWSROM's measurements
+			for (auto &itECWS : itTree.node->data->measurements.fECWS)
 				extractECWSROMObs(rm, itECWS);
 
 			// In every node iterate through the ECWIROM's measurements
@@ -157,7 +154,7 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 				extractECWIROMObs(rm, itECWI);
 		}
 	}
-	catch (std::exception const & excp)
+	catch (std::exception const &excp)
 	{
 		logCritical() << "Could not extract properly the residues from calculated matrices! Exception caught:" << excp.what();
 		successfullExtraction = false;
@@ -169,7 +166,7 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices& rm)
 	Public Method: extractVarCovarParams
 	Extracts variances and covariances from calculated matrices
 ****************************************************************************************************************/
-bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices& rm)
+bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices &rm)
 {
 	bool successfullExtraction = true;
 	try
@@ -181,13 +178,12 @@ bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices
 		extractPlaneVarCovar(rm);
 		extractTransformationVarCovar(rm);
 	}
-	catch (std::exception const & excp)
+	catch (std::exception const &excp)
 	{
 		logCritical() << "Could not extract the covariances from calculated matrices! Exception caught:" << excp.what();
 		successfullExtraction = false;
 	}
 	return successfullExtraction;
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -198,7 +194,7 @@ bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices
 // Methods relative to the measurements (observations)
 ///////////////////////////////////////////////////////////////
 
-void TLSResultsMatricesExtractor::extractAngleObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>& anglMeas)
+void TLSResultsMatricesExtractor::extractAngleObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1> &anglMeas)
 {
 	MatrixIndex i = anglMeas.getFirstObservationIndex();
 	if (i < rm.getResidualsVectByConst()->size())
@@ -213,19 +209,20 @@ void TLSResultsMatricesExtractor::extractAngleObs(const TLSResultsMatrices& rm, 
 	}
 }
 
-void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget>& distanceMeas)
+void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget> &distanceMeas)
 {
 	MatrixIndex i = distanceMeas.getFirstObservationIndex();
 	if (i < rm.getResidualsVectByConst()->size())
 		distanceMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(i)));
 	else
 	{
-		logCritical() << "Distance observation made by a TSTN, problem during extraction residuals: observation index exceeds matrix dimensions! (input line number:" << distanceMeas.line << ")";
+		logCritical() << "Distance observation made by a TSTN, problem during extraction residuals: observation index exceeds matrix dimensions! (input line number:"
+					  << distanceMeas.line << ")";
 		throw std::runtime_error("Distance observation made by a TSTN, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
 }
 
-void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TEDM::TTarget>& distanceMeas)
+void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TEDM::TTarget> &distanceMeas)
 {
 	MatrixIndex i = distanceMeas.getFirstObservationIndex();
 	if (i < rm.getResidualsVectByConst()->size())
@@ -237,19 +234,20 @@ void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices& rm, T
 	}
 }
 
-void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TSCALE>& scaleMeas)
+void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TSCALE> &scaleMeas)
 {
 	MatrixIndex i = scaleMeas.getFirstObservationIndex();
 	if (i < rm.getResidualsVectByConst()->size())
 		scaleMeas.setDistanceResidual(TLength(rm.getResidualsVctrElmt(i)));
 	else
 	{
-		logCritical() << "Distance observation made by a scale, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << scaleMeas.line << ")";
+		logCritical() << "Distance observation made by a scale, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:"
+					  << scaleMeas.line << ")";
 		throw std::runtime_error("Distance observation made by a scale, problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
 }
 
-void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>& plr3DMeas)
+void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2> &plr3DMeas)
 {
 	MatrixIndex ANGLidx = plr3DMeas.getFirstObservationIndex();
 	if (ANGLidx < rm.getResidualsVectByConst()->size())
@@ -282,7 +280,8 @@ void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, 
 		if (plr3DMeas.getDistance() + plr3DMeas.getDistanceResidual() < 0)
 		{
 			logCritical() << "PLR3D observation (dist), problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << plr3DMeas.line << ")";
-			throw std::runtime_error("PLR3D observation (dist), problem with the residuals: the distance is negative.\n Try to add ACST 200.0 after the V0 declaration and relaunch the calculation. \n *V0 ACST 200.0");
+			throw std::runtime_error("PLR3D observation (dist), problem with the residuals: the distance is negative.\n Try to add ACST 200.0 after the V0 declaration "
+									 "and relaunch the calculation. \n *V0 ACST 200.0");
 		}
 	}
 	else
@@ -292,7 +291,7 @@ void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices& rm, 
 	}
 }
 
-void TLSResultsMatricesExtractor::extractUVDObs(const TLSResultsMatrices& rm, TUVD& uvdMeas)
+void TLSResultsMatricesExtractor::extractUVDObs(const TLSResultsMatrices &rm, TUVD &uvdMeas)
 {
 	MatrixIndex XcompIDX = uvdMeas.getFirstObservationIndex();
 	if (XcompIDX < rm.getResidualsVectByConst()->size())
@@ -322,8 +321,7 @@ void TLSResultsMatricesExtractor::extractUVDObs(const TLSResultsMatrices& rm, TU
 	}
 }
 
-
-void TLSResultsMatricesExtractor::extractUVECObs(const TLSResultsMatrices& rm, TUVEC& uvecMeas)
+void TLSResultsMatricesExtractor::extractUVECObs(const TLSResultsMatrices &rm, TUVEC &uvecMeas)
 {
 	MatrixIndex XcompIDX = uvecMeas.getFirstObservationIndex();
 	if (XcompIDX < rm.getResidualsVectByConst()->size())
@@ -344,8 +342,7 @@ void TLSResultsMatricesExtractor::extractUVECObs(const TLSResultsMatrices& rm, T
 	}
 }
 
-
-void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices& rm, TLEVEL& levelMeas)
+void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices &rm, TLEVEL &levelMeas)
 {
 	for (auto itDLEV(levelMeas.measDLEV.begin()); itDLEV != levelMeas.measDLEV.end(); ++itDLEV)
 	{
@@ -354,12 +351,13 @@ void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices& rm, 
 			itDLEV->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
 		else
 		{
-			logCritical() << "DHOR observation under DLEV, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itDLEV->line << ")";
+			logCritical()
+				<< "DHOR observation under DLEV, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itDLEV->line << ")";
 			throw std::runtime_error("DHOR observation under DLEV, problem during extraction residuals: observation index exceeds matrix dimensions");
 		}
 
 		if (itDLEV->dhor)
-		{ //If it is not nullptr
+		{ // If it is not nullptr
 			obsUidx = itDLEV->dhor->getFirstObservationIndex();
 			if (obsUidx < rm.getResidualsVectByConst()->size())
 				itDLEV->dhor->setDistanceResidual(TLength(rm.getResidualsVctrElmt(obsUidx)));
@@ -370,10 +368,9 @@ void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices& rm, 
 			}
 		}
 	}
-
 }
 
-void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm, TECHOROM& echoMeas)
+void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices &rm, TECHOROM &echoMeas)
 {
 	for (auto itECHO(echoMeas.measECHO.begin()); itECHO != echoMeas.measECHO.end(); ++itECHO)
 	{
@@ -388,9 +385,9 @@ void TLSResultsMatricesExtractor::extractECHOROMObs(const TLSResultsMatrices& rm
 	}
 }
 
-void TLSResultsMatricesExtractor::extractECVEROMObs(const TLSResultsMatrices& rm, TECVEROM& ecveMeas)
+void TLSResultsMatricesExtractor::extractECVEROMObs(const TLSResultsMatrices &rm, TECVEROM &ecveMeas)
 {
-	for (auto& itECVE : ecveMeas.measECVE)
+	for (auto &itECVE : ecveMeas.measECVE)
 	{
 		MatrixIndex obsUidx = itECVE.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVectByConst()->size())
@@ -403,9 +400,9 @@ void TLSResultsMatricesExtractor::extractECVEROMObs(const TLSResultsMatrices& rm
 	}
 }
 
-void TLSResultsMatricesExtractor::extractECSPROMObs(const TLSResultsMatrices& rm, TECSPROM& ecspMeas)
+void TLSResultsMatricesExtractor::extractECSPROMObs(const TLSResultsMatrices &rm, TECSPROM &ecspMeas)
 {
-	for (auto& itECSP : ecspMeas.measECSP)
+	for (auto &itECSP : ecspMeas.measECSP)
 	{
 		MatrixIndex obsUidx = itECSP.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVectByConst()->size())
@@ -418,9 +415,9 @@ void TLSResultsMatricesExtractor::extractECSPROMObs(const TLSResultsMatrices& rm
 	}
 }
 
-void TLSResultsMatricesExtractor::extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas)
+void TLSResultsMatricesExtractor::extractORIEROMObs(const TLSResultsMatrices &rm, TORIEROM &orieMeas)
 {
-	for (auto& itORIE : orieMeas.measORIE)
+	for (auto &itORIE : orieMeas.measORIE)
 	{
 		MatrixIndex obsUidx = itORIE.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVectByConst()->size())
@@ -433,7 +430,7 @@ void TLSResultsMatricesExtractor::extractORIEROMObs(const TLSResultsMatrices& rm
 	}
 }
 
-void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, std::list<TDVER>& dver)
+void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices &rm, std::list<TDVER> &dver)
 {
 	for (auto itDVER(dver.begin()); itDVER != dver.end(); ++itDVER)
 	{
@@ -448,7 +445,7 @@ void TLSResultsMatricesExtractor::extractDVERObs(const TLSResultsMatrices& rm, s
 	}
 }
 
-void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices& rm, TPdorObs& pdorObs)
+void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices &rm, TPdorObs &pdorObs)
 {
 	if (pdorObs.isInitialised())
 	{
@@ -463,9 +460,9 @@ void TLSResultsMatricesExtractor::extractPDORObs(const TLSResultsMatrices& rm, T
 	}
 }
 
-void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, std::list<TRADI>& radi)
+void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices &rm, std::list<TRADI> &radi)
 {
-	for (auto& itRADI : radi)
+	for (auto &itRADI : radi)
 	{
 		MatrixIndex obsUidx = itRADI.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVectByConst()->size())
@@ -478,9 +475,9 @@ void TLSResultsMatricesExtractor::extractRADIObs(const TLSResultsMatrices& rm, s
 	}
 }
 
-void TLSResultsMatricesExtractor::extractOBSXYZObs(const TLSResultsMatrices& rm, std::list<TOBSXYZ>& obsxyz)
+void TLSResultsMatricesExtractor::extractOBSXYZObs(const TLSResultsMatrices &rm, std::list<TOBSXYZ> &obsxyz)
 {
-	for (auto& itOBSXYZ : obsxyz)
+	for (auto &itOBSXYZ : obsxyz)
 	{
 		MatrixIndex obsUidx = itOBSXYZ.getFirstObservationIndex();
 		if (obsUidx + 2 < rm.getResidualsVectByConst()->size())
@@ -497,9 +494,10 @@ void TLSResultsMatricesExtractor::extractOBSXYZObs(const TLSResultsMatrices& rm,
 	}
 }
 
-void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices& rm, TINCLYROM& inclyMeas)
+void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices &rm, TINCLYROM &inclyMeas)
 {
-	for (auto& itINCLY : inclyMeas.measINCLY) {
+	for (auto &itINCLY : inclyMeas.measINCLY)
+	{
 		MatrixIndex obsUidx = itINCLY.getFirstObservationIndex();
 		if (obsUidx < rm.getResidualsVectByConst()->size())
 			itINCLY.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx)));
@@ -511,7 +509,7 @@ void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices& r
 	}
 }
 
-void TLSResultsMatricesExtractor::extractECWSROMObs(const TLSResultsMatrices& rm, TECWSROM& ecwsMeas)
+void TLSResultsMatricesExtractor::extractECWSROMObs(const TLSResultsMatrices &rm, TECWSROM &ecwsMeas)
 {
 	for (auto itECWS(ecwsMeas.measECWS.begin()); itECWS != ecwsMeas.measECWS.end(); ++itECWS)
 	{
@@ -548,16 +546,17 @@ void TLSResultsMatricesExtractor::extractECWIROMObs(const TLSResultsMatrices &rm
 // Methods relative to the adjustable objects
 ///////////////////////////////////////////////////////////////
 
-bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& rm, const TReal convCrit)
+bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable points from the calculated matrices";
 	bool critNotExceeded = true;
 	int nParamsOutsideCriteria = 0;
 	int nParamsTotal = 0;
 
-	for (auto& point : fDataSet->getPoints())
+	for (auto &point : fDataSet->getPoints())
 	{
-		if (point.hasVariable()) {
+		if (point.hasVariable())
+		{
 			for (int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx)
 			{
 				if (unknIdx >= rm.getSolutionVectByConst()->size())
@@ -583,20 +582,22 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices& r
 	return critNotExceeded;
 }
 
-bool TLSResultsMatricesExtractor::extractAngleParams(const TLSResultsMatrices& rm, const TReal convCrit)
+bool TLSResultsMatricesExtractor::extractAngleParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable angles from the calculated matrices";
 
 	bool critNotExceeded = true;
 
-	for (auto& angle : fDataSet->getAngles()) {
-		if (!angle.isFixed()) {
-			MatrixIndex	unknIdx = angle.getFirstUidx();	//first=last only one unknown fo angle class
+	for (auto &angle : fDataSet->getAngles())
+	{
+		if (!angle.isFixed())
+		{
+			MatrixIndex unknIdx = angle.getFirstUidx(); // first=last only one unknown fo angle class
 
 			if (unknIdx >= rm.getSolutionVectByConst()->size())
 				throw std::runtime_error("Unknown index of an angle: " + angle.getName() + " exceeds matrix dimensions!");
 
-			TReal	correctionVal = rm.getSolutionVctrElmt(unknIdx);
+			TReal correctionVal = rm.getSolutionVctrElmt(unknIdx);
 			angle.setCorrection(unknIdx, correctionVal);
 			if (fabsq(correctionVal) > convCrit)
 				critNotExceeded = false;
@@ -605,20 +606,22 @@ bool TLSResultsMatricesExtractor::extractAngleParams(const TLSResultsMatrices& r
 	return critNotExceeded;
 }
 
-
-bool TLSResultsMatricesExtractor::extractPlaneParams(const TLSResultsMatrices& rm, const TReal convCrit)
+bool TLSResultsMatricesExtractor::extractPlaneParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable planes from the calculated matrices";
 
 	bool critNotExceeded = true;
 
-	for (auto& plane : fDataSet->getPlanes()) {
-		if (plane.hasVariable()) {
-			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); unknIdx++) {
+	for (auto &plane : fDataSet->getPlanes())
+	{
+		if (plane.hasVariable())
+		{
+			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); unknIdx++)
+			{
 				if (unknIdx >= rm.getSolutionVectByConst()->size())
 					throw std::runtime_error("Unknown index of a plane: " + plane.getName() + " exceeds matrix dimensions!");
 
-				TReal	correction = rm.getSolutionVctrElmt(unknIdx);
+				TReal correction = rm.getSolutionVctrElmt(unknIdx);
 				plane.setCorrection(unknIdx, correction);
 				if (fabsq(correction) > convCrit)
 					critNotExceeded = false;
@@ -628,19 +631,22 @@ bool TLSResultsMatricesExtractor::extractPlaneParams(const TLSResultsMatrices& r
 	return critNotExceeded;
 }
 
-bool TLSResultsMatricesExtractor::extractLineParams(const TLSResultsMatrices& rm, const TReal convCrit)
+bool TLSResultsMatricesExtractor::extractLineParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable lines from the calculated matrices";
 
 	bool critNotExceeded = true;
 
-	for (auto& line : fDataSet->getLines()) {
-		if (!line.isFixed()) {
-			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++) {
+	for (auto &line : fDataSet->getLines())
+	{
+		if (!line.isFixed())
+		{
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++)
+			{
 				if (unknIdx >= rm.getSolutionVectByConst()->size())
 					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
 
-				TReal	correction = rm.getSolutionVctrElmt(unknIdx);
+				TReal correction = rm.getSolutionVctrElmt(unknIdx);
 				line.setCorrection(unknIdx, correction);
 				if (fabsq(correction) > convCrit)
 					critNotExceeded = false;
@@ -650,19 +656,21 @@ bool TLSResultsMatricesExtractor::extractLineParams(const TLSResultsMatrices& rm
 	return critNotExceeded;
 }
 
-bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices& rm, const TReal convCrit)
+bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
 
 	bool critNotExceeded = true;
-	for (auto& length : fDataSet->getLength()) {
-		if (!length.isFixed()) {
-			MatrixIndex unknIdx = length.getFirstUidx();	//first=last only one unknown fo angle class
+	for (auto &length : fDataSet->getLength())
+	{
+		if (!length.isFixed())
+		{
+			MatrixIndex unknIdx = length.getFirstUidx(); // first=last only one unknown fo angle class
 
 			if (unknIdx >= rm.getSolutionVectByConst()->size())
 				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
 
-			TReal	correction = rm.getSolutionVctrElmt(unknIdx);
+			TReal correction = rm.getSolutionVctrElmt(unknIdx);
 			length.setCorrection(unknIdx, correction);
 			if (fabsq(correction) > convCrit)
 				critNotExceeded = false;
@@ -671,21 +679,24 @@ bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices& 
 	return critNotExceeded;
 }
 
-bool TLSResultsMatricesExtractor::extractTransformationParams(const TLSResultsMatrices& rm, const TReal convCrit)
+bool TLSResultsMatricesExtractor::extractTransformationParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable transformations from the calculated matrices";
 
 	bool critNotExceeded = true;
 
-	for (auto it(fDataSet->getTree().begin()); it != fDataSet->getTree().end(); ++it) {
-		auto& trafo(it.node->data.get()->frame);
+	for (auto it(fDataSet->getTree().begin()); it != fDataSet->getTree().end(); ++it)
+	{
+		auto &trafo(it.node->data.get()->frame);
 
-		if (trafo.hasVariable()) {
-			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++) {
+		if (trafo.hasVariable())
+		{
+			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++)
+			{
 				if (unknIdx >= rm.getSolutionVectByConst()->size())
 					throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
 
-				TReal	correction = rm.getSolutionVctrElmt(unknIdx);
+				TReal correction = rm.getSolutionVctrElmt(unknIdx);
 				trafo.setCorrection(unknIdx, correction);
 				if (fabsq(correction) > convCrit)
 					critNotExceeded = false;
@@ -695,12 +706,11 @@ bool TLSResultsMatricesExtractor::extractTransformationParams(const TLSResultsMa
 	return critNotExceeded;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 // Returns the boolean that indicates if a new iteration is necessary or not
 //////////////////////////////////////////////////////////////////////////////
-bool	TLSResultsMatricesExtractor::lastIteration() const {
-
+bool TLSResultsMatricesExtractor::lastIteration() const
+{
 	return fLastIteration;
 }
 
@@ -712,27 +722,30 @@ void TLSResultsMatricesExtractor::extractFullCovar(const TLSResultsMatrices &rm)
 	fDataSet->setCovMat(*rm.getUnkCovarMtrx());
 }
 
-void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices& rm)
+void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices &rm)
 {
-	for (auto& point : fDataSet->getPoints()) {
-		if (point.hasVariable()) {
-			//Filling standard deviations (estimated precision)
-			for (int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx) {
-
+	for (auto &point : fDataSet->getPoints())
+	{
+		if (point.hasVariable())
+		{
+			// Filling standard deviations (estimated precision)
+			for (int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx)
+			{
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
 					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
 					// -> Sets the values arbitrary to -1
 					point.setEstimatedPrecision(unknIdx, -1);
 				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
 					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
-				else {
-					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx));	//Set standard deviation in metres [m], sqrt(variance)
+				else
+				{
+					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx)); // Set standard deviation in metres [m], sqrt(variance)
 					point.setEstimatedPrecision(unknIdx, sigma);
 				}
-
 			}
-			//Filling XY covariance
-			if (!point.isCoordinateFixed(0) && !point.isCoordinateFixed(1)) {
+			// Filling XY covariance
+			if (!point.isCoordinateFixed(0) && !point.isCoordinateFixed(1))
+			{
 				int xi = point.getCoordinateUnknIndex(0);
 				int yi = point.getCoordinateUnknIndex(1);
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
@@ -742,10 +755,11 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices&
 				else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (yi >= rm.getUnkCovarMtrxByConst()->rows()))
 					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
 				else
-					point.setXYEstimatedCovariance(rm.getUnkCovarMtrxElmt(xi, yi)); //Here it is multiplied by a factor of 1000 in LGC1 , weird
+					point.setXYEstimatedCovariance(rm.getUnkCovarMtrxElmt(xi, yi)); // Here it is multiplied by a factor of 1000 in LGC1 , weird
 			}
-			//Filling YZ covariance
-			if (!point.isCoordinateFixed(1) && !point.isCoordinateFixed(2)) {
+			// Filling YZ covariance
+			if (!point.isCoordinateFixed(1) && !point.isCoordinateFixed(2))
+			{
 				int yi = point.getCoordinateUnknIndex(1);
 				int zi = point.getCoordinateUnknIndex(2);
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
@@ -755,10 +769,11 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices&
 				else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
 					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
 				else
-					point.setYZEstimatedCovariance(rm.getUnkCovarMtrxElmt(yi, zi)); //Here it is multiplied by a factor of 1000 in LGC1 , weird
+					point.setYZEstimatedCovariance(rm.getUnkCovarMtrxElmt(yi, zi)); // Here it is multiplied by a factor of 1000 in LGC1 , weird
 			}
-			//Filling XZ covariance
-			if (!point.isCoordinateFixed(0) && !point.isCoordinateFixed(2)) {
+			// Filling XZ covariance
+			if (!point.isCoordinateFixed(0) && !point.isCoordinateFixed(2))
+			{
 				int xi = point.getCoordinateUnknIndex(0);
 				int zi = point.getCoordinateUnknIndex(2);
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
@@ -768,17 +783,19 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices&
 				else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
 					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
 				else
-					point.setXZEstimatedCovariance(rm.getUnkCovarMtrxElmt(xi, zi));//Here it is multiplied by a factor of 1000 in LGC1 , weird 
+					point.setXZEstimatedCovariance(rm.getUnkCovarMtrxElmt(xi, zi)); // Here it is multiplied by a factor of 1000 in LGC1 , weird
 			}
 		}
 	}
 }
 
-void TLSResultsMatricesExtractor::extractAngleVar(const TLSResultsMatrices& rm)
+void TLSResultsMatricesExtractor::extractAngleVar(const TLSResultsMatrices &rm)
 {
-	for (auto& angle : fDataSet->getAngles()) {
-		if (!angle.isFixed()) {
-			//Filling standard deviations (estimated precision)
+	for (auto &angle : fDataSet->getAngles())
+	{
+		if (!angle.isFixed())
+		{
+			// Filling standard deviations (estimated precision)
 			int unknIdx = angle.getFirstUidx();
 
 			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
@@ -788,16 +805,18 @@ void TLSResultsMatricesExtractor::extractAngleVar(const TLSResultsMatrices& rm)
 			else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
 				throw std::runtime_error("Unknown index of an angle: " + angle.getName() + " exceeds matrix dimensions!");
 			else
-				angle.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx))); //Set estimated precision in RADs
+				angle.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx))); // Set estimated precision in RADs
 		}
 	}
 }
 
-void TLSResultsMatricesExtractor::extractLengthVar(const TLSResultsMatrices& rm)
+void TLSResultsMatricesExtractor::extractLengthVar(const TLSResultsMatrices &rm)
 {
-	for (auto& length : fDataSet->getLength()) {
-		if (!length.isFixed()) {
-			//Filling standard deviations (estimated precision)
+	for (auto &length : fDataSet->getLength())
+	{
+		if (!length.isFixed())
+		{
+			// Filling standard deviations (estimated precision)
 			int unknIdx = length.getFirstUidx();
 
 			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
@@ -807,26 +826,30 @@ void TLSResultsMatricesExtractor::extractLengthVar(const TLSResultsMatrices& rm)
 			else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
 				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
 			else
-				length.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx))); //Set estimated precision in METRES
+				length.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx))); // Set estimated precision in METRES
 		}
 	}
 }
 
-void TLSResultsMatricesExtractor::extractPlaneVarCovar(const TLSResultsMatrices& rm) {
-	for (auto& plane : fDataSet->getPlanes()) {
-		if (plane.hasVariable()) {
-			//Filling standard deviations (estimated precision)
-			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); ++unknIdx) {
-
+void TLSResultsMatricesExtractor::extractPlaneVarCovar(const TLSResultsMatrices &rm)
+{
+	for (auto &plane : fDataSet->getPlanes())
+	{
+		if (plane.hasVariable())
+		{
+			// Filling standard deviations (estimated precision)
+			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); ++unknIdx)
+			{
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
 					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
 					// -> Sets the values arbitrary to -1
 					plane.setEstimatedPrecision(unknIdx, -1);
 				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
 					throw std::runtime_error("Unknown index of a plane: " + plane.getName() + " exceeds matrix dimensions!");
-				else {
+				else
+				{
 					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx));
-					plane.setEstimatedPrecision(unknIdx, sigma); //Store standard deviations in meters (reference point distance ) or radians (angles)
+					plane.setEstimatedPrecision(unknIdx, sigma); // Store standard deviations in meters (reference point distance ) or radians (angles)
 				}
 			}
 
@@ -835,21 +858,25 @@ void TLSResultsMatricesExtractor::extractPlaneVarCovar(const TLSResultsMatrices&
 	}
 }
 
-void TLSResultsMatricesExtractor::extractLineVarCovar(const TLSResultsMatrices& rm) {
-	for (auto& line : fDataSet->getLines()) {
-		if (!line.isFixed()) {
-			//Filling standard deviations (estimated precision)
-			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); ++unknIdx) {
-
+void TLSResultsMatricesExtractor::extractLineVarCovar(const TLSResultsMatrices &rm)
+{
+	for (auto &line : fDataSet->getLines())
+	{
+		if (!line.isFixed())
+		{
+			// Filling standard deviations (estimated precision)
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); ++unknIdx)
+			{
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
 					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
 					// -> Sets the values arbitrary to -1
 					line.setLineVectorEstimatedPrecision(unknIdx, -1);
 				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
 					throw std::runtime_error("Unknown index of a plane: " + line.getName() + " exceeds matrix dimensions!");
-				else {
+				else
+				{
 					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx));
-					line.setLineVectorEstimatedPrecision(unknIdx, sigma); //Store standard deviations in meters (reference point distance ) or radians (angles)
+					line.setLineVectorEstimatedPrecision(unknIdx, sigma); // Store standard deviations in meters (reference point distance ) or radians (angles)
 				}
 			}
 
@@ -858,316 +885,65 @@ void TLSResultsMatricesExtractor::extractLineVarCovar(const TLSResultsMatrices& 
 	}
 }
 
-void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResultsMatrices& rm) {
-	for (auto it(fDataSet->getTree().begin()); it != fDataSet->getTree().end(); ++it) {
-		auto& trafo(it.node->data.get()->frame);
+void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResultsMatrices &rm)
+{
+	for (auto it(fDataSet->getTree().begin()); it != fDataSet->getTree().end(); ++it)
+	{
+		auto &trafo(it.node->data.get()->frame);
 
-		if (trafo.hasVariable()) {
-			//Filling standard deviations (estimated precision)
-			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++) {
-
+		if (trafo.hasVariable())
+		{
+			// Filling standard deviations (estimated precision)
+			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++)
+			{
 				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
 					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
 					// -> Sets the values arbitrary to -1
 					trafo.setEstimatedPrecision(unknIdx, -1);
-				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows()) //rm.getSolutionVctr()->size())
+				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows()) // rm.getSolutionVctr()->size())
 					throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-				else {
+				else
+				{
 					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx));
-					trafo.setEstimatedPrecision(unknIdx, sigma); //Store standard deviations in METRES
+					trafo.setEstimatedPrecision(unknIdx, sigma); // Store standard deviations in METRES
 				}
-
 			}
 		}
 
-		//Filling XY covariance of a translation
-		if (!trafo.isTranslationFixed(0) && !trafo.isTranslationFixed(1)) {
-			int xi = trafo.getTranslationUnknIndex(0);
-			int yi = trafo.getTranslationUnknIndex(1);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setXYTranslationCovariance(-1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (yi >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of translation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setXYTranslationCovariance(rm.getUnkCovarMtrxElmt(xi, yi)); //Store covariance in METRES
+		// Filling the full covariance matrix, initialize entries to NO_VALf to mark the fixed indices
+		TDenseMatrix fullCovar(7, 7);
+		fullCovar.setConstant(NO_VALf);
+		std::vector<int> relUnkIdx = trafo.getRelativeUnknIndices();
+		const TSparseMatrix *covMat = rm.getUnkCovarMtrxByConst();
+		int dimTrafo = trafo.getNumUnkn();
+		if (dimTrafo > 0)
+		{
+			int firstIdx = trafo.getFirstUidx();
+			fullCovar(relUnkIdx, relUnkIdx) = (covMat->block(firstIdx, firstIdx, dimTrafo, dimTrafo)).toDense();
 		}
-		//Filling YZ covariance of a translation
-		if (!trafo.isTranslationFixed(1) && !trafo.isTranslationFixed(2)) {
-			int yi = trafo.getTranslationUnknIndex(1);
-			int zi = trafo.getTranslationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setYZTranslationCovariance(-1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of translation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setYZTranslationCovariance(rm.getUnkCovarMtrxElmt(yi, zi)); //Store covariance in METRES
-		}
-		//Filling XZ covariance of a translation
-		if (!trafo.isTranslationFixed(0) && !trafo.isTranslationFixed(2)) {
-			int xi = trafo.getTranslationUnknIndex(0);
-			int zi = trafo.getTranslationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setXZTranslationCovariance(-1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of translation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setXZTranslationCovariance(rm.getUnkCovarMtrxElmt(xi, zi)); //Store covariance in METRES
-		}
-
-
-		//Filling XY covariance of a rotation
-		if (!trafo.isRotationFixed(0) && !trafo.isRotationFixed(1)) {
-			int xi = trafo.getRotationUnknIndex(0);
-			int yi = trafo.getRotationUnknIndex(1);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setXYRotationCovariance(-1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (yi >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of rotation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setXYRotationCovariance(rm.getUnkCovarMtrxElmt(xi, yi)); //Store covariance in METRES
-		}
-		//Filling YZ covariance of a rotation
-		if (!trafo.isRotationFixed(1) && !trafo.isRotationFixed(2)) {
-			int yi = trafo.getRotationUnknIndex(1);
-			int zi = trafo.getRotationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setYZRotationCovariance(-1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of rotation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setYZRotationCovariance(rm.getUnkCovarMtrxElmt(yi, zi)); //Store covariance in METRES
-		}
-		//Filling XZ covariance of a rotation
-		if (!trafo.isRotationFixed(0) && !trafo.isRotationFixed(2)) {
-			int xi = trafo.getRotationUnknIndex(0);
-			int zi = trafo.getRotationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setXZRotationCovariance(-1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of rotation of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setXZRotationCovariance(rm.getUnkCovarMtrxElmt(xi, zi)); //Store covariance in METRES
-		}
-
-
-		//Filling scale covariance
-		if (!trafo.isTranslationFixed(0) && !trafo.isScaleFixed()) {
-			int xi = trafo.getTranslationUnknIndex(0);
-			int li = trafo.getScaleUnknIndex();
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setScaleCovariance(0, -1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (li >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setScaleCovariance(0, rm.getUnkCovarMtrxElmt(xi, li));
-		}
-		if (!trafo.isTranslationFixed(1) && !trafo.isScaleFixed()) {
-			int yi = trafo.getTranslationUnknIndex(1);
-			int li = trafo.getScaleUnknIndex();
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setScaleCovariance(1, -1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (li >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setScaleCovariance(1, rm.getUnkCovarMtrxElmt(yi, li));
-		}
-		if (!trafo.isTranslationFixed(2) && !trafo.isScaleFixed()) {
-			int zi = trafo.getTranslationUnknIndex(2);
-			int li = trafo.getScaleUnknIndex();
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setScaleCovariance(2, -1);
-			else if ((zi >= rm.getUnkCovarMtrxByConst()->rows()) || (li >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setScaleCovariance(2, rm.getUnkCovarMtrxElmt(zi, li));
-		}
-		if (!trafo.isRotationFixed(0) && !trafo.isScaleFixed()) {
-			int xi = trafo.getRotationUnknIndex(0);
-			int li = trafo.getScaleUnknIndex();
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setScaleCovariance(3, -1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (li >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setScaleCovariance(3, rm.getUnkCovarMtrxElmt(xi, li));
-		}
-		if (!trafo.isRotationFixed(1) && !trafo.isScaleFixed()) {
-			int yi = trafo.getRotationUnknIndex(1);
-			int li = trafo.getScaleUnknIndex();
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setScaleCovariance(4, -1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (li >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setScaleCovariance(4, rm.getUnkCovarMtrxElmt(yi, li));
-		}
-		if (!trafo.isRotationFixed(2) && !trafo.isScaleFixed()) {
-			int zi = trafo.getRotationUnknIndex(2);
-			int li = trafo.getScaleUnknIndex();
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setScaleCovariance(5, -1);
-			else if ((zi >= rm.getUnkCovarMtrxByConst()->rows()) || (li >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setScaleCovariance(5, rm.getUnkCovarMtrxElmt(zi, li));
-		}
-		//Filling translation-rotation covariance
-		//tx-rot
-		if (!trafo.isRotationFixed(0) && !trafo.isTranslationFixed(0)) {
-			int xi = trafo.getRotationUnknIndex(0);
-			int ti = trafo.getTranslationUnknIndex(0);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(0, -1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(0, rm.getUnkCovarMtrxElmt(xi, ti));
-		}
-		if (!trafo.isRotationFixed(1) && !trafo.isTranslationFixed(0)) {
-			int yi = trafo.getRotationUnknIndex(1);
-			int ti = trafo.getTranslationUnknIndex(0);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(1, -1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(1, rm.getUnkCovarMtrxElmt(yi, ti));
-		}
-		if (!trafo.isRotationFixed(2) && !trafo.isTranslationFixed(0)) {
-			int zi = trafo.getRotationUnknIndex(2);
-			int ti = trafo.getTranslationUnknIndex(0);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(2, -1);
-			else if ((zi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(2, rm.getUnkCovarMtrxElmt(zi, ti));
-		}
-		//ty-rot
-		if (!trafo.isRotationFixed(0) && !trafo.isTranslationFixed(1)) {
-			int xi = trafo.getRotationUnknIndex(0);
-			int ti = trafo.getTranslationUnknIndex(1);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(3, -1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(3, rm.getUnkCovarMtrxElmt(xi, ti));
-		}
-		if (!trafo.isRotationFixed(1) && !trafo.isTranslationFixed(1)) {
-			int yi = trafo.getRotationUnknIndex(1);
-			int ti = trafo.getTranslationUnknIndex(1);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(4, -1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(4, rm.getUnkCovarMtrxElmt(yi, ti));
-		}
-		if (!trafo.isRotationFixed(2) && !trafo.isTranslationFixed(1)) {
-			int zi = trafo.getRotationUnknIndex(2);
-			int ti = trafo.getTranslationUnknIndex(1);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(5, -1);
-			else if ((zi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(5, rm.getUnkCovarMtrxElmt(zi, ti));
-		}
-		//tz-rot
-		if (!trafo.isRotationFixed(0) && !trafo.isTranslationFixed(2)) {
-			int xi = trafo.getRotationUnknIndex(0);
-			int ti = trafo.getTranslationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(6, -1);
-			else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(6, rm.getUnkCovarMtrxElmt(xi, ti));
-		}
-		if (!trafo.isRotationFixed(1) && !trafo.isTranslationFixed(2)) {
-			int yi = trafo.getRotationUnknIndex(1);
-			int ti = trafo.getTranslationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(7, -1);
-			else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(7, rm.getUnkCovarMtrxElmt(yi, ti));
-		}
-		if (!trafo.isRotationFixed(2) && !trafo.isTranslationFixed(2)) {
-			int zi = trafo.getRotationUnknIndex(2);
-			int ti = trafo.getTranslationUnknIndex(2);
-			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-				// -> Sets the values arbitrary to -1
-				trafo.setTrRotCovariance(8, -1);
-			else if ((zi >= rm.getUnkCovarMtrxByConst()->rows()) || (ti >= rm.getUnkCovarMtrxByConst()->rows()))
-				throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-			else
-				trafo.setTrRotCovariance(8, rm.getUnkCovarMtrxElmt(zi, ti));
-		}
-
+		trafo.setCovar(fullCovar);
 	}
 }
 
-bool TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices& rm)
+bool TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices &rm)
 {
-	try {
+	try
+	{
 		TReal fS0 = 0.0;
 		if (rm.getSigmaZero2() != NO_VALf)
 			fS0 = sqrtq(rm.getSigmaZero2());
 
-		for (auto erelTuple: fDataSet->getConfig().erelTuples){
+		for (auto erelTuple : fDataSet->getConfig().erelTuples)
+		{
 			auto &pt1 = fDataSet->getPoints().getObject(std::get<0>(erelTuple));
 			auto &pt2 = fDataSet->getPoints().getObject(std::get<1>(erelTuple));
 			TLSCalcRelativeError re(pt1, pt2, std::get<2>(erelTuple));
 			re.computeErel(fDataSet);
 			fDataSet->getRelError().push_back(re);
 		}
-
 	}
-	catch (std::exception const & excp) {
+	catch (std::exception const &excp)
+	{
 		fDataSet->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
 		return false;
 	}

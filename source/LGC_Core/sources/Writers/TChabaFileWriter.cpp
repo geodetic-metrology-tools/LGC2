@@ -1,33 +1,32 @@
 #include "TChabaFileWriter.h"
 
-#include "TLGCApp.h"
-#include "TLGCData.h"
-
 #include <TAStreamFormatter.h>
+#include <TAdjustableHelmertTransformation.h>
+#include <TLOR2LOR.h>
+#include <TPointTransformer.h>
 #include <TRefSystemFactory.h>
 #include <TRotation.h>
 #include <TRotationMatrix.h>
-#include <TAdjustableHelmertTransformation.h>
 #include <TXYH2CCS.h>
-#include <TLOR2LOR.h>
-#include <TPointTransformer.h>
 
+#include "TLGCApp.h"
+#include "TLGCData.h"
 
-TChabaFileWriter::TChabaFileWriter(TAStreamFormatter* stream, const TLGCData* project) : TAFileWriter(stream, project)
-{//constructor
+TChabaFileWriter::TChabaFileWriter(TAStreamFormatter *stream, const TLGCData *project) : TAFileWriter(stream, project)
+{ // constructor
 	stream->setSeparator("   ");
 }
 
 TChabaFileWriter::~TChabaFileWriter()
-{//destructor
+{ // destructor
 }
 
-void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
+void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 {
 	std::string sep = stream->getSeparator();
 	writeTitle();
 
-	//write transformation and points information for each bestfit
+	// write transformation and points information for each bestfit
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 	{
 		if (itTree->get()->frame.getName() != "ROOT")
@@ -41,33 +40,37 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
 
 			const std::vector<TOBSXYZ> obsActif = keepOBSXYZ(fProjectData->getTree().begin());
 			if (!obsActif.empty())
-				writeInputPoints(obsActif); //first node is root
+				writeInputPoints(obsActif); // first node is root
 			else
-				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+				(*stream)
+					<< "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 
 			const std::vector<TOBSXYZ> obsPassif = keepOBSXYZ(itTree);
 			(*stream) << endl << sep << "PASSIF" << endl;
 			if (!obsPassif.empty())
 				writeInputPoints(obsPassif);
 			else
-				(*stream)  << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+				(*stream)
+					<< "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
-			//write results
+			// write results
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairActif = createPair(fProjectData->getTree().begin());
 			(*stream) << sep << "NOUVELLES COORDONNÉES DES POINTS REFERENCE (ACTIF)" << endl << endl;
 			if (!pairActif.empty())
 				writeTransformedPoints(pairActif, true, fProjectData->getTree().begin());
 			else
-				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+				(*stream)
+					<< "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
-			
+
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairPassif = createPair(itTree);
 			(*stream) << sep << "COORDONNÉES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTÈME" << endl << endl;
 			if (!pairPassif.empty())
 				writeTransformedPoints(pairPassif, true, itTree);
 			else
-				(*stream) << "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+				(*stream)
+					<< "Don't be able to display data. See https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<LGCAdjustablePoint> secondaryPts = createSecPoint(itTree);
@@ -80,23 +83,24 @@ void TChabaFileWriter::writeFile(TAStreamFormatter* stream)
 	}
 }
 
-void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmertTransformation & helmert, const std::vector<int>& ID)
+void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmertTransformation &helmert, const std::vector<int> &ID)
 {
-	//obtain attributes stored in parent object
-	TAStreamFormatter* stream = getStream();
+	// obtain attributes stored in parent object
+	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
-	int	coordPrecision = getCoordPrecision();
-	
-	//set output precision for the parameters
+	int coordPrecision = getCoordPrecision();
+
+	// set output precision for the parameters
 	int rotMatrixPrecision = coordPrecision + 7;
 	int anglePrecision = coordPrecision + 5;
 	int translationPrecision = coordPrecision;
 	int scalePrecision = coordPrecision + 7;
 
-	//set up a rotation matrix 
-	TRotation rot(TRotationMatrix::ERotationType::kRxyz, helmert.getEstRotation(0).getRadiansValue(), helmert.getEstRotation(1).getRadiansValue(), helmert.getEstRotation(2).getRadiansValue());
+	// set up a rotation matrix
+	TRotation rot(TRotationMatrix::ERotationType::kRxyz, helmert.getEstRotation(0).getRadiansValue(), helmert.getEstRotation(1).getRadiansValue(),
+		helmert.getEstRotation(2).getRadiansValue());
 
-	//set output units for different types of measurement
+	// set output units for different types of measurement
 	stream->setPrecisionFormat(4);
 	stream->setAngleUnits(TAngle::kGons);
 	stream->setLengthUnits(TLength::kMetres);
@@ -110,61 +114,55 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 		else
 			nameID += "_" + std::to_string(*it);
 	}
-	
-	//write the results table 
+
+	// write the results table
 	(*stream) << endl;
 	(*stream) << sep << "FRAME\t" << helmert.getName() << "  ID(" << nameID << ")" << endl;
 	(*stream) << endl;
-	(*stream)<<sep<<"**************** INFORMATION CONCERNANT LES PARAMETRES CALCULÉS ********************"<<endl;
-	(*stream)<<sep<<"*                                                                                  *"<<endl;
-	(*stream)<<sep<<"*                         TERMES DE LA MATRICE DE ROTATION:                        *"<<endl;
-	(*stream)<<sep<<"*                                                                                  *"<<endl;
-	(*stream)<<sep<<"* "<<sep<<"R11 = ";
-	writeDouble(17,rotMatrixPrecision,rot(0,0));
-	(*stream)<<sep<<"R12 = ";
-	writeDouble(17,rotMatrixPrecision,rot(0,1));
-	(*stream)<<sep<<"R13 = ";
-	writeDouble(17,rotMatrixPrecision,rot(0,2));
-	(*stream)<<sep<<"*"<<endl;
-	(*stream)<<sep<<"* "<<sep<<"R21 = ";
-	writeDouble(17,rotMatrixPrecision,rot(1,0));
-	(*stream)<<sep<<"R22 = ";
-	writeDouble(17,rotMatrixPrecision,rot(1,1));
-	(*stream)<<sep<<"R23 = ";
-	writeDouble(17,rotMatrixPrecision,rot(1,2));
-	(*stream)<<sep<<"*"<<endl;
-	(*stream)<<sep<<"* "<<sep<<"R31 = ";
-	writeDouble(17,rotMatrixPrecision,rot(2,0));
-	(*stream)<<sep<<"R32 = ";
-	writeDouble(17,rotMatrixPrecision,rot(2,1));
-	(*stream)<<sep<<"R33 = ";
-	writeDouble(17,rotMatrixPrecision,rot(2,2));
-	(*stream)<<sep<<"*"<<endl;
+	(*stream) << sep << "**************** INFORMATION CONCERNANT LES PARAMETRES CALCULÉS ********************" << endl;
+	(*stream) << sep << "*                                                                                  *" << endl;
+	(*stream) << sep << "*                         TERMES DE LA MATRICE DE ROTATION:                        *" << endl;
+	(*stream) << sep << "*                                                                                  *" << endl;
+	(*stream) << sep << "* " << sep << "R11 = ";
+	writeDouble(17, rotMatrixPrecision, rot(0, 0));
+	(*stream) << sep << "R12 = ";
+	writeDouble(17, rotMatrixPrecision, rot(0, 1));
+	(*stream) << sep << "R13 = ";
+	writeDouble(17, rotMatrixPrecision, rot(0, 2));
+	(*stream) << sep << "*" << endl;
+	(*stream) << sep << "* " << sep << "R21 = ";
+	writeDouble(17, rotMatrixPrecision, rot(1, 0));
+	(*stream) << sep << "R22 = ";
+	writeDouble(17, rotMatrixPrecision, rot(1, 1));
+	(*stream) << sep << "R23 = ";
+	writeDouble(17, rotMatrixPrecision, rot(1, 2));
+	(*stream) << sep << "*" << endl;
+	(*stream) << sep << "* " << sep << "R31 = ";
+	writeDouble(17, rotMatrixPrecision, rot(2, 0));
+	(*stream) << sep << "R32 = ";
+	writeDouble(17, rotMatrixPrecision, rot(2, 1));
+	(*stream) << sep << "R33 = ";
+	writeDouble(17, rotMatrixPrecision, rot(2, 2));
+	(*stream) << sep << "*" << endl;
 
-	(*stream)<<sep<<"*                                                                                  *"<<endl;
-	(*stream)<<sep<<"*        ANGLES DE ROTATION (Gons):                                                *"<<endl;
-	(*stream)<<sep<<"*                                                                                  *"<<endl;
+	(*stream) << sep << "*                                                                                  *" << endl;
+	(*stream) << sep << "*        ANGLES DE ROTATION (Gons):                                                *" << endl;
+	(*stream) << sep << "*                                                                                  *" << endl;
 
-	(*stream)<<sep<<"*"<<sep<<sep<<sep<<"OMEGA(x) = ";
-	(writeAngle(17,anglePrecision, TAngle::kGons, rot.getAngles(TRotationMatrix::kRzyx).omega));
-	(*stream)<<" ";
+	(*stream) << sep << "*" << sep << sep << sep << "OMEGA(x) = ";
+	(writeAngle(17, anglePrecision, TAngle::kGons, rot.getAngles(TRotationMatrix::kRzyx).omega));
+	(*stream) << " ";
 	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
-		
-
 
 	(*stream) << sep << "*" << sep << sep << sep << "PHI(y)   = ";
-	(writeAngle(17,anglePrecision, TAngle::kGons, rot.getAngles(TRotationMatrix::kRzyx).phi));
-	(*stream)<<" ";
-	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep  << "*" << endl;
-
-
-	
-	
-	(*stream)<<sep<<"*"<<sep<<sep<<sep<<"KAPPA(z) = ";
-	(writeAngle(17,anglePrecision, TAngle::kGons, rot.getAngles(TRotationMatrix::kRzyx).kappa));
-	(*stream)<<" ";
+	(writeAngle(17, anglePrecision, TAngle::kGons, rot.getAngles(TRotationMatrix::kRzyx).phi));
+	(*stream) << " ";
 	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
+	(*stream) << sep << "*" << sep << sep << sep << "KAPPA(z) = ";
+	(writeAngle(17, anglePrecision, TAngle::kGons, rot.getAngles(TRotationMatrix::kRzyx).kappa));
+	(*stream) << " ";
+	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
 	(*stream) << sep << "*                                                                                  *" << endl;
 	(*stream) << sep << "*        VECTEUR DE TRANSLATION (M):                                               *" << endl;
@@ -175,44 +173,37 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << " ";
 	(*stream) << sep << sep << sep << sep << "   " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
-
 	(*stream) << sep << "*" << sep << sep << sep << "TY = ";
 	writeLength(16, translationPrecision, TLength::kMetres, helmert.getEstTranslation(1));
 	(*stream) << " ";
 	(*stream) << sep << sep << sep << sep << "   " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
-
 
 	(*stream) << sep << "*" << sep << sep << sep << "TZ = ";
 	writeLength(16, translationPrecision, TLength::kMetres, helmert.getEstTranslation(2));
 	(*stream) << " ";
 	(*stream) << sep << sep << sep << sep << "   " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
-
-
-
-
-	(*stream)<<sep<<"*                                                                                  *"<<endl;	
-	(*stream)<<sep<<"*        FACTEUR D'ÉCHELLE (SANS UNITÉ):                                           *" << endl;
+	(*stream) << sep << "*                                                                                  *" << endl;
+	(*stream) << sep << "*        FACTEUR D'ÉCHELLE (SANS UNITÉ):                                           *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 
-	(*stream) << sep << "*" << sep << sep << sep <<  "ECH = ";
-	writeDouble(17,scalePrecision, helmert.getEstScale());
+	(*stream) << sep << "*" << sep << sep << sep << "ECH = ";
+	writeDouble(17, scalePrecision, helmert.getEstScale());
 	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
-
-	(*stream)<<sep<<"*                                                                                  *"<<endl;	
-	(*stream)<<sep<<"************************************************************************************"<<endl;
-	(*stream)<<endl;
-	(*stream)<<endl;
+	(*stream) << sep << "*                                                                                  *" << endl;
+	(*stream) << sep << "************************************************************************************" << endl;
+	(*stream) << endl;
+	(*stream) << endl;
 }
 
-void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
+void TChabaFileWriter::writeInputPoints(const std::vector<TOBSXYZ> &data)
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
-	//Write Column Headings
+	// Write Column Headings
 	writeStringLeftSep(getNameWidth(), "NOM");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
@@ -223,7 +214,7 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
 	(*stream) << endl;
 
-	for (auto& itPair : data)
+	for (auto &itPair : data)
 	{
 		stream->setLengthUnits(TLength::kMetres);
 		stream->setWidthFormat(getCoordWidth());
@@ -231,44 +222,37 @@ void TChabaFileWriter::writeInputPoints(const std::vector< TOBSXYZ> & data)
 
 		converter.writeName(itPair.station->getName(), getNameWidth());
 
-		//xyz
+		// xyz
 		converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), "", itPair.obsValue);
-		
-		//sx sy sz
-		converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz,
-			getCoordResWidth(),
-			getCoordPrecision(),
-			TLength::EUnits::kMillimetres,
-			sep,
-			itPair.getXObservedStDev(),
-			itPair.getYObservedStDev(),
-			itPair.getZObservedStDev(),
-			"");
-		
+
+		// sx sy sz
+		converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz, getCoordResWidth(), getCoordPrecision(), TLength::EUnits::kMillimetres, sep,
+			itPair.getXObservedStDev(), itPair.getYObservedStDev(), itPair.getZObservedStDev(), "");
+
 		(*stream) << endl;
 	}
 }
 
-void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> & pairs, bool writeDeltas, TDataTreeIterator itTree)
+void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> &pairs, bool writeDeltas, TDataTreeIterator itTree)
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
-	//write column headings
+	// write column headings
 	writeStringLeftSep(getNameWidth(), "NOM");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
 	if (pairs.at(0).first.getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		writeStringSep(getCoordWidth(), "H(M)");
-	(*stream) << sep << " " ;
+	(*stream) << sep << " ";
 	writeStringSep(getCoordResWidth(), "SX(MM)");
 	writeStringSep(getCoordResWidth(), "SY(MM)");
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
 
 	if (writeDeltas)
 	{
-		(*stream) << sep ;
+		(*stream) << sep;
 		writeStringSep(getCoordResWidth(), "DX(MM)");
 		(*stream) << sep;
 		writeStringSep(getCoordResWidth(), "DY(MM)");
@@ -282,14 +266,14 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	int usablePointCount = 0;
 	TReal sumdd2 = 0.0;
 
-	for (auto& it : pairs)
+	for (auto &it : pairs)
 	{
 		++usablePointCount;
 
-		//write the transformed coordinates of the passive point (coordinates in the root frame)
+		// write the transformed coordinates of the passive point (coordinates in the root frame)
 		TPositionVector stationRoot = it.second.obsValue;
 		TLOR2LOR transfo = TLOR2LOR(it.second.positionInTree, fProjectData->getTree().begin(), "transfo");
-		//transform coordinates in root
+		// transform coordinates in root
 		transfo.transform(stationRoot);
 		LGCAdjustablePoint ptInRoot(stationRoot, 0, 0, 0, it.first.getName(), it.first.getReferenceFrame(), it.first.getFrameTreePosition());
 
@@ -308,14 +292,13 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 			sigma.setZ(it.first.getZEstPrecision());
 		}
 		else
-			//need to transform sigma in the root
+			// need to transform sigma in the root
 			sigma = transformSigmaInRoot(it.second.obsValue, itTree, it.second.getXObservedStDev(), it.second.getYObservedStDev(), it.second.getZObservedStDev());
 
 		writePUNPoint(ptInRoot, sigma, d, writeDeltas);
 	}
 
-
-	//write EMQ from primary passive point information and write it at the bottom of the list
+	// write EMQ from primary passive point information and write it at the bottom of the list
 	double fEMQ = sqrt(sumdd2 / usablePointCount);
 	(*stream) << endl;
 	if (writeDeltas)
@@ -326,15 +309,15 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	}
 }
 
-void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdjustablePoint> & secondary)
+void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdjustablePoint> &secondary)
 {
 	delta d;
 	d.dx = d.dy = d.dz = TLength(0.0);
 
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
-	//write column headings
+	// write column headings
 	writeStringLeftSep(getNameWidth(), "NOM");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
@@ -347,31 +330,31 @@ void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdju
 	writeStringSep(getCoordResWidth(), "SZ(MM)");
 	(*stream) << endl;
 
-	for (auto& it : secondary)
-		writePUNPoint(it, it.transformSigmaInRoot(it,fProjectData), d, false);
+	for (auto &it : secondary)
+		writePUNPoint(it, it.transformSigmaInRoot(it, fProjectData), d, false);
 }
 
-void TChabaFileWriter::writePUNPoint(const LGCAdjustablePoint & it, TFreeVector sigma, delta d, bool writeDeltas)
+void TChabaFileWriter::writePUNPoint(const LGCAdjustablePoint &it, TFreeVector sigma, delta d, bool writeDeltas)
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
 	stream->setLengthUnits(TLength::EUnits::kMetres);
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
-	
-	//write the point name
+
+	// write the point name
 	converter.writeName(it.getName(), getNameWidth());
 
-	//transform coordinates in root
+	// transform coordinates in root
 	TPositionVector xyhToValue = it.getEstimatedValue();
 	TLOR2LOR transfo = TLOR2LOR(it.getFrameTreePosition(), fProjectData->getTree().begin(), "transfo");
 	transfo.transform(xyhToValue);
 
-	//write coordinates (X,Y,Z and possibly H when non-local reference frame)
+	// write coordinates (X,Y,Z and possibly H when non-local reference frame)
 	converter.write3Coordinates(getCoordWidth(), getCoordPrecision(), "", xyhToValue);
 	if (it.getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
-		//transform Z in H
+		// transform Z in H
 		if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 			TXYH2CCS::CCS2XYHs(xyhToValue);
 		else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
@@ -382,24 +365,15 @@ void TChabaFileWriter::writePUNPoint(const LGCAdjustablePoint & it, TFreeVector 
 		(*stream) << xyhToValue.getH();
 	}
 
+	// Write point's estimated precision after calculation
+	converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz, getCoordResWidth(), getCoordPrecision(), TLength::EUnits::kMillimetres, "", sigma.getX(),
+		sigma.getY(), sigma.getZ(), ""); /*sigma*/
 
-	//Write point's estimated precision after calculation
-	converter.writeCoordinateParam(TSpatialStatus::ESpatialStatus::kVxyz,
-		getCoordResWidth(),
-		getCoordPrecision(),
-		TLength::EUnits::kMillimetres,
-		"",
-		sigma.getX(),
-		sigma.getY(),
-		sigma.getZ(),
-	    "");/*sigma*/
-
-
-	//write differences
+	// write differences
 	if (writeDeltas)
 	{
 		(*stream) << sep;
-		//Change output properties from metres to millimetres
+		// Change output properties from metres to millimetres
 		stream->setLengthUnits(TLength::kMillimetres);
 		stream->setWidthFormat(getCoordResWidth());
 		stream->setPrecisionFormat(getCoordPrecision());
@@ -412,41 +386,42 @@ void TChabaFileWriter::writePUNPoint(const LGCAdjustablePoint & it, TFreeVector 
 
 void TChabaFileWriter::writeTitle()
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
 	(*stream) << endl;
 	(*stream) << "**********************************************************************************************************" << endl << endl;
 
-	(*stream) << "     " << "LGC - Best-Fit " << TLGCApp::getProgId() <<  endl;
-	(*stream) << "     " << "Copyright 2003 - 2016, CERN ACE / SU.All rights reserved." << endl << endl;
+	(*stream) << "     "
+			  << "LGC - Best-Fit " << TLGCApp::getProgId() << endl;
+	(*stream) << "     "
+			  << "Copyright 2003 - 2016, CERN ACE / SU.All rights reserved." << endl
+			  << endl;
 
 	(*stream) << "***********************************************************************************************************" << endl;
 	(*stream) << "                                         ----- FICHIER OUTPUT  -----" << endl;
 	(*stream) << "***********************************************************************************************************" << endl;
 	(*stream) << endl;
 
-
 	time_t ltime;
 	time(&ltime);
 	(*stream) << sep << "Calculation date:       " << sep << ctime(&ltime) << endl;
 	(*stream) << sep << "Project path:              " << fProjectData->getConfig().title << endl;
 
-	
-		(*stream) << sep << "File referential system:   ";
-		if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCCS)
-			(*stream) << "Coordinate system: 3DCartesian, reference frame: kCCS" << endl;
+	(*stream) << sep << "File referential system:   ";
+	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCCS)
+		(*stream) << "Coordinate system: 3DCartesian, reference frame: kCCS" << endl;
+	else
+	{
+		if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+			(*stream) << "Coordinate system: 2DPlusH, reference frame: kCERNXYHsSphereSPS" << endl;
+		else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			(*stream) << "Coordinate system: 2DPlusH, reference frame: kCernXYHg00Machine" << endl;
+		else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			(*stream) << "Coordinate system: 2DPlusH, reference frame: kCernXYHg85Machine" << endl;
 		else
-		{
-			if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-				(*stream) << "Coordinate system: 2DPlusH, reference frame: kCERNXYHsSphereSPS" << endl;
-			else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-				(*stream) << "Coordinate system: 2DPlusH, reference frame: kCernXYHg00Machine" << endl;
-			else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-				(*stream) << "Coordinate system: 2DPlusH, reference frame: kCernXYHg85Machine" << endl;
-			else
-				(*stream) << "Coordinate system: 3DCartesian, reference frame: kLocal" << endl;
-		}
+			(*stream) << "Coordinate system: 3DCartesian, reference frame: kLocal" << endl;
+	}
 
 	(*stream) << sep << "Precision (digits): " << fProjectData->getConfig().outPrecision.digits << endl << endl;
 
@@ -469,55 +444,54 @@ void TChabaFileWriter::writeTitle()
 const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> TChabaFileWriter::createPair(TDataTreeIterator itFrame)
 {
 	std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> commonPoints;
-	std::vector<LGCAdjustablePoint> newPoint; //point corresponding to the OBSXYZ, there are defined in the ROOT
-	std::vector<TOBSXYZ> oldPt;  //OBSXYZ
+	std::vector<LGCAdjustablePoint> newPoint; // point corresponding to the OBSXYZ, there are defined in the ROOT
+	std::vector<TOBSXYZ> oldPt; // OBSXYZ
 
-	//toPoint
+	// toPoint
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 		if (itTree == itFrame)
 			if (!itTree.node->data->measurements.fOBSXYZ.empty())
-				oldPt = { std::begin(itTree.node->data->measurements.fOBSXYZ), std::end(itTree.node->data->measurements.fOBSXYZ) };
-	
-	for (const auto& itOBS: oldPt)
+				oldPt = {std::begin(itTree.node->data->measurements.fOBSXYZ), std::end(itTree.node->data->measurements.fOBSXYZ)};
+
+	for (const auto &itOBS : oldPt)
 	{
-		const LGCAdjustablePoint& pt = fProjectData->getPoints().getObject(itOBS.station->getName());
-		if(pt.getFrameTreePosition().node->data->isROOTNode())
+		const LGCAdjustablePoint &pt = fProjectData->getPoints().getObject(itOBS.station->getName());
+		if (pt.getFrameTreePosition().node->data->isROOTNode())
 			newPoint.emplace_back(pt);
 	}
 
-	//make pair vector, sort the 2 vectors
-	for (auto& ItNewPoint : newPoint)
+	// make pair vector, sort the 2 vectors
+	for (auto &ItNewPoint : newPoint)
 	{
-		for (auto& ItOldPoint : oldPt)
+		for (auto &ItOldPoint : oldPt)
 		{
 			if (ItOldPoint.station->getName() == ItNewPoint.getName())
 				commonPoints.emplace_back(std::pair<LGCAdjustablePoint, TOBSXYZ>(ItNewPoint, ItOldPoint));
 		}
 	}
 	return commonPoints;
-
 }
 
 const std::vector<TOBSXYZ> TChabaFileWriter::keepOBSXYZ(TDataTreeIterator itFrame)
 {
-	std::vector<TOBSXYZ> obs;  //OBSXYZ
+	std::vector<TOBSXYZ> obs; // OBSXYZ
 
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 		if (itTree == itFrame)
 			if (!itTree.node->data->measurements.fOBSXYZ.empty())
-				obs = { std::begin(itTree.node->data->measurements.fOBSXYZ), std::end(itTree.node->data->measurements.fOBSXYZ) };
+				obs = {std::begin(itTree.node->data->measurements.fOBSXYZ), std::end(itTree.node->data->measurements.fOBSXYZ)};
 
 	return obs;
 }
 
 const std::vector<LGCAdjustablePoint> TChabaFileWriter::createSecPoint(TDataTreeIterator itFrame)
 {
-	std::vector<LGCAdjustablePoint> secondaryPoint; //other points defined in the frame
+	std::vector<LGCAdjustablePoint> secondaryPoint; // other points defined in the frame
 
-	for (const auto& pt : fProjectData->getPoints())
+	for (const auto &pt : fProjectData->getPoints())
 		if (pt.getFrameTreePosition() == itFrame)
 			secondaryPoint.emplace_back(pt);
-	
+
 	return secondaryPoint;
 }
 
@@ -527,257 +501,127 @@ TFreeVector TChabaFileWriter::transformSigmaInRoot(const TPositionVector pt, TDa
 	TFreeVector sigmaRoot(ptInSF.getCoordSys());
 	TPointTransformer fPointTransfo(&fProjectData->getTree(), fProjectData->getConfig().referential);
 
-	//actual frame iterator
+	// actual frame iterator
 	TDataTreeIterator frameIt = itTree;
 	// actual frame
 	auto frame = itTree.node->data.get()->frame;
 
-
-	//transformed covariance matrix
+	// transformed covariance matrix
 	TSparseMatrix covRoot(3, 3);
-	//at the fist iteration , point covariance are:
-	covRoot.insert(0, 0) = pow2q(sx);
-	covRoot.insert(1, 1) = pow2q(sy);
-	covRoot.insert(2, 2) = pow2q(sz);
-	covRoot.insert(0, 1) = 0.0;
-	covRoot.insert(1, 0) = 0.0;
-	covRoot.insert(0, 2) = 0.0;
-	covRoot.insert(2, 0) = 0.0;
-	covRoot.insert(1, 2) = 0.0;
-	covRoot.insert(2, 1) = 0.0;
 
 	while (frame.getName() != "ROOT")
 	{
 		// transform point in the actual subframe
-		const TLOR2LOR& lorTrafo = fPointTransfo.getLORTransformation(itTree, frameIt); //Transformation from "TARGET POSITION" to "node n-1"
+		const TLOR2LOR &lorTrafo = fPointTransfo.getLORTransformation(itTree, frameIt); // Transformation from "TARGET POSITION" to "node n-1"
 		lorTrafo.transform(ptInSF);
 
-
-		//Matrix C : partial derive restect to tx ty tz rx ry rz x y z
+		// Matrix C : partial derive restect to tx ty tz rx ry rz x y z
 		TSparseMatrix C(3, 10);
-		//tx
+		// tx
 		C.insert(0, 0) = 1.0;
-		//ty
+		// ty
 		C.insert(1, 1) = 1.0;
-		//tz
+		// tz
 		C.insert(2, 2) = 1.0;
-		//rx
+		// rx
 		C.insert(0, 3) = 0.0;
-		C.insert(1, 3) = ((sin(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getX()
-			+ (-cos(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getY()
-			+ (cos(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getZ())*frame.getEstScale();
-		C.insert(2, 3) = ((sin(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) - cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getX()
-			+ (-cos(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) - sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getY()
-			- (cos(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getZ())*frame.getEstScale();
-		//ry
-		C.insert(0, 4) = (-cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))* ptInSF.getX()
-			- sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))* ptInSF.getY()
-			- cos(frame.getEstRotation(1))* ptInSF.getZ())*frame.getEstScale();
-		C.insert(1, 4) = (cos(frame.getEstRotation(2))*cos(frame.getEstRotation(1))*sin(frame.getEstRotation(0))* ptInSF.getX()
-			+ sin(frame.getEstRotation(2))*cos(frame.getEstRotation(1))*sin(frame.getEstRotation(0))* ptInSF.getY()
-			- sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0))* ptInSF.getZ())*frame.getEstScale();
-		C.insert(2, 4) = (cos(frame.getEstRotation(2))*cos(frame.getEstRotation(1))*cos(frame.getEstRotation(0))* ptInSF.getX()
-			+ sin(frame.getEstRotation(2))*cos(frame.getEstRotation(1))*cos(frame.getEstRotation(0))* ptInSF.getY()
-			- sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0))* ptInSF.getZ())*frame.getEstScale();
-		//rz
-		C.insert(0, 5) = (-sin(frame.getEstRotation(2))*cos(frame.getEstRotation(1))* ptInSF.getX()
-			+ cos(frame.getEstRotation(2))*cos(frame.getEstRotation(1))* ptInSF.getY())*frame.getEstScale();
-		C.insert(1, 5) = ((-cos(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) - sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getX()
-			+ (-sin(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getY())*frame.getEstScale();
-		C.insert(2, 5) = ((cos(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) - sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getX()
-			+ (sin(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getY())*frame.getEstScale();
-		//scale
-		C.insert(0, 6) = cos(frame.getEstRotation(2))*cos(frame.getEstRotation(1))* ptInSF.getX()
-			+ sin(frame.getEstRotation(2))*cos(frame.getEstRotation(1))* ptInSF.getY()
-			- sin(frame.getEstRotation(1))* ptInSF.getZ();
-		C.insert(1, 6) = (-sin(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getX()
-			+ (cos(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) + sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))* ptInSF.getY()
-			+ cos(frame.getEstRotation(1))*sin(frame.getEstRotation(0))* ptInSF.getZ();
-		C.insert(2, 6) = (sin(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getX()
-			+ (-cos(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))* ptInSF.getY()
-			+ cos(frame.getEstRotation(1))*cos(frame.getEstRotation(0))* ptInSF.getZ();
-		//x
-		C.insert(0, 7) = (cos(frame.getEstRotation(2))*cos(frame.getEstRotation(1)))*frame.getEstScale();
-		C.insert(1, 7) = (-sin(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))*frame.getEstScale();
-		C.insert(2, 7) = (sin(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))*frame.getEstScale();
-		//y
-		C.insert(0, 8) = (sin(frame.getEstRotation(2))*cos(frame.getEstRotation(1)))*frame.getEstScale();
-		C.insert(1, 8) = (cos(frame.getEstRotation(2))*cos(frame.getEstRotation(0)) + sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))*frame.getEstScale();
-		C.insert(2, 8) = (-cos(frame.getEstRotation(2))*sin(frame.getEstRotation(0)) + sin(frame.getEstRotation(2))*sin(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))*frame.getEstScale();
-		//z
-		C.insert(0, 9) = (-sin(frame.getEstRotation(1)))*frame.getEstScale();
-		C.insert(1, 9) = (cos(frame.getEstRotation(1))*sin(frame.getEstRotation(0)))*frame.getEstScale();
-		C.insert(2, 9) = (cos(frame.getEstRotation(1))*cos(frame.getEstRotation(0)))*frame.getEstScale();
+		C.insert(1,
+			3) = ((sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+						 * ptInSF.getX()
+					 + (-cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+						 * ptInSF.getY()
+					 + (cos(frame.getEstRotation(1)) * cos(frame.getEstRotation(0))) * ptInSF.getZ())
+			* frame.getEstScale();
+		C.insert(2,
+			3) = ((sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) - cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+						 * ptInSF.getX()
+					 + (-cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) - sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+						 * ptInSF.getY()
+					 - (cos(frame.getEstRotation(1)) * sin(frame.getEstRotation(0))) * ptInSF.getZ())
+			* frame.getEstScale();
+		// ry
+		C.insert(0, 4) = (-cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * ptInSF.getX()
+							 - sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * ptInSF.getY() - cos(frame.getEstRotation(1)) * ptInSF.getZ())
+			* frame.getEstScale();
+		C.insert(1, 4) = (cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)) * ptInSF.getX()
+							 + sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)) * ptInSF.getY()
+							 - sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)) * ptInSF.getZ())
+			* frame.getEstScale();
+		C.insert(2, 4) = (cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)) * ptInSF.getX()
+							 + sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)) * ptInSF.getY()
+							 - sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)) * ptInSF.getZ())
+			* frame.getEstScale();
+		// rz
+		C.insert(0,
+			5) = (-sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * ptInSF.getX() + cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * ptInSF.getY())
+			* frame.getEstScale();
+		C.insert(1,
+			5) = ((-cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) - sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+						 * ptInSF.getX()
+					 + (-sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+						 * ptInSF.getY())
+			* frame.getEstScale();
+		C.insert(2,
+			5) = ((cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) - sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+						 * ptInSF.getX()
+					 + (sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+						 * ptInSF.getY())
+			* frame.getEstScale();
+		// scale
+		C.insert(0, 6) = cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * ptInSF.getX()
+			+ sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(1)) * ptInSF.getY() - sin(frame.getEstRotation(1)) * ptInSF.getZ();
+		C.insert(1, 6) = (-sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+				* ptInSF.getX()
+			+ (cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) + sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+				* ptInSF.getY()
+			+ cos(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)) * ptInSF.getZ();
+		C.insert(2, 6) = (sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+				* ptInSF.getX()
+			+ (-cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+				* ptInSF.getY()
+			+ cos(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)) * ptInSF.getZ();
+		// x
+		C.insert(0, 7) = (cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(1))) * frame.getEstScale();
+		C.insert(1, 7) = (-sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+			* frame.getEstScale();
+		C.insert(2, 7) = (sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+			* frame.getEstScale();
+		// y
+		C.insert(0, 8) = (sin(frame.getEstRotation(2)) * cos(frame.getEstRotation(1))) * frame.getEstScale();
+		C.insert(1, 8) = (cos(frame.getEstRotation(2)) * cos(frame.getEstRotation(0)) + sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * sin(frame.getEstRotation(0)))
+			* frame.getEstScale();
+		C.insert(2, 8) = (-cos(frame.getEstRotation(2)) * sin(frame.getEstRotation(0)) + sin(frame.getEstRotation(2)) * sin(frame.getEstRotation(1)) * cos(frame.getEstRotation(0)))
+			* frame.getEstScale();
+		// z
+		C.insert(0, 9) = (-sin(frame.getEstRotation(1))) * frame.getEstScale();
+		C.insert(1, 9) = (cos(frame.getEstRotation(1)) * sin(frame.getEstRotation(0))) * frame.getEstScale();
+		C.insert(2, 9) = (cos(frame.getEstRotation(1)) * cos(frame.getEstRotation(0))) * frame.getEstScale();
 
-		//covariance matrix = (cov frame, 0 ; 0, cov point)
+		// covariance matrix = (cov frame, 0 ; 0, cov point)
 		TSparseMatrix covSF(10, 10);
 
-		//Fill covariance matrix
-		//point covariance are:
-		covSF.insert(7, 7) = covRoot.coeff(0, 0);
-		covSF.insert(8, 8) = covRoot.coeff(1, 1);
-		covSF.insert(9, 9) = covRoot.coeff(2, 2);
-		covSF.insert(7, 8) = covRoot.coeff(0, 1);
-		covSF.insert(8, 7) = covRoot.coeff(0, 1);
-		covSF.insert(7, 9) = covRoot.coeff(0, 2);
-		covSF.insert(9, 7) = covRoot.coeff(0, 2);
-		covSF.insert(8, 9) = covRoot.coeff(1, 2);
-		covSF.insert(9, 8) = covRoot.coeff(1, 2);
-
-		//and fill the frame covariances covSF
-		if (!frame.isTranslationFixed(0))
-		{
-			covSF.insert(0, 0) = pow2q(frame.getEstimatedPrecisionTransl(0));
-			if (!frame.isTranslationFixed(1))
-			{
-				covSF.insert(0, 1) = frame.getXYCovarTransl();
-				covSF.insert(1, 0) = frame.getXYCovarTransl();
-			}
-			if (!frame.isTranslationFixed(2))
-			{
-				covSF.insert(0, 2) = frame.getXZCovarTransl();
-				covSF.insert(2, 0) = frame.getXZCovarTransl();
-			}
-			//
-			if (!frame.isRotationFixed(0))
-			{
-				covSF.insert(0, 3) = frame.getTrRotCovar(0);
-				covSF.insert(3, 0) = frame.getTrRotCovar(0);
-			}
-			if (!frame.isRotationFixed(1))
-			{
-				covSF.insert(0, 4) = frame.getTrRotCovar(1);
-				covSF.insert(4, 0) = frame.getTrRotCovar(1);
-			}
-			if (!frame.isRotationFixed(2))
-			{
-				covSF.insert(0, 5) = frame.getTrRotCovar(2);
-				covSF.insert(5, 0) = frame.getTrRotCovar(2);
-			}
-			if (!frame.isScaleFixed())
-			{
-				covSF.insert(0, 6) = frame.getScaleCovar(0);
-				covSF.insert(6, 0) = frame.getScaleCovar(0);
-			}
-			//
-		}
-		if (!frame.isTranslationFixed(1))
-		{
-			covSF.insert(1, 1) = pow2q(frame.getEstimatedPrecisionTransl(1));
-			if (!frame.isTranslationFixed(2))
-			{
-				covSF.insert(1, 2) = frame.getYZCovarTransl();
-				covSF.insert(2, 1) = frame.getYZCovarTransl();
-			}
-			//
-			if (!frame.isRotationFixed(0))
-			{
-				covSF.insert(1, 3) = frame.getTrRotCovar(3);
-				covSF.insert(3, 1) = frame.getTrRotCovar(3);
-			}
-			if (!frame.isRotationFixed(1))
-			{
-				covSF.insert(1, 4) = frame.getTrRotCovar(4);
-				covSF.insert(4, 1) = frame.getTrRotCovar(4);
-			}
-			if (!frame.isRotationFixed(2))
-			{
-				covSF.insert(1, 5) = frame.getTrRotCovar(5);
-				covSF.insert(5, 1) = frame.getTrRotCovar(5);
-			}
-			if (!frame.isScaleFixed())
-			{
-				covSF.insert(1, 6) = frame.getScaleCovar(1);
-				covSF.insert(6, 1) = frame.getScaleCovar(1);
-			}
-			//
-		}
-		if (!frame.isTranslationFixed(2))
-		{
-			covSF.insert(2, 2) = pow2q(frame.getEstimatedPrecisionTransl(2));
-			//
-			if (!frame.isRotationFixed(0))
-			{
-				covSF.insert(2, 3) = frame.getTrRotCovar(6);
-				covSF.insert(3, 2) = frame.getTrRotCovar(6);
-			}
-			if (!frame.isRotationFixed(1))
-			{
-				covSF.insert(2, 4) = frame.getTrRotCovar(7);
-				covSF.insert(4, 2) = frame.getTrRotCovar(7);
-			}
-			if (!frame.isRotationFixed(2))
-			{
-				covSF.insert(2, 5) = frame.getTrRotCovar(8);
-				covSF.insert(5, 2) = frame.getTrRotCovar(8);
-			}
-			if (!frame.isScaleFixed())
-			{
-				covSF.insert(2, 6) = frame.getScaleCovar(2);
-				covSF.insert(6, 2) = frame.getScaleCovar(2);
-			}
-			//
-		}
-
-		if (!frame.isRotationFixed(0))
-		{
-			covSF.insert(3, 3) = pow2q(frame.getEstimatedPrecisionRot(0).getRadiansValue());
-			if (!frame.isRotationFixed(1))
-			{
-				covSF.insert(3, 4) = frame.getXYCovarRot();
-				covSF.insert(4, 3) = frame.getXYCovarRot();
-			}
-			if (!frame.isRotationFixed(2))
-			{
-				covSF.insert(3, 5) = frame.getXZCovarRot();
-				covSF.insert(5, 3) = frame.getXZCovarRot();
-			}
-		}
-		if (!frame.isRotationFixed(1))
-		{
-			covSF.insert(4, 4) = pow2q(frame.getEstimatedPrecisionRot(1).getRadiansValue());
-			if (!frame.isRotationFixed(2))
-			{
-				covSF.insert(4, 5) = frame.getYZCovarRot();
-				covSF.insert(5, 4) = frame.getYZCovarRot();
-			}
-		}
-		if (!frame.isRotationFixed(2))
-		{
-			covSF.insert(5, 5) = pow2q(frame.getEstimatedPrecisionRot(2).getRadiansValue());
-		}
-
-
-		if (!frame.isScaleFixed())
-		{
-			covSF.insert(6, 6) = pow2q(frame.getEstimatedPrecisionScale());
-			//
-			if (!frame.isRotationFixed(0))
-			{
-				covSF.insert(6, 3) = frame.getScaleCovar(3);
-				covSF.insert(3, 6) = frame.getScaleCovar(3);
-			}
-			if (!frame.isRotationFixed(1))
-			{
-				covSF.insert(6, 4) = frame.getScaleCovar(4);
-				covSF.insert(4, 6) = frame.getScaleCovar(4);
-			}
-			if (!frame.isRotationFixed(2))
-			{
-				covSF.insert(6, 5) = frame.getScaleCovar(5);
-				covSF.insert(5, 6) = frame.getScaleCovar(5);
-			}
-		}
+		TDenseMatrix covSFDense(10, 10);
+		covSFDense.setZero();
+		TDenseMatrix fullCov = frame.getCovar();
+		// convention used here: 0 entry at inactive indices
+		TDenseMatrix covSubframe(7, 7);
+		covSubframe.setZero();
+		covSubframe(frame.getRelativeUnknIndices(), frame.getRelativeUnknIndices()) = fullCov(frame.getRelativeUnknIndices(), frame.getRelativeUnknIndices());
+		covSFDense.topLeftCorner(7, 7) = covSubframe;
+		covSFDense(8, 8) = pow2q(sx);
+		covSFDense(9, 9) = pow2q(sy);
+		covSFDense(10, 10) = pow2q(sz);
+		covSF = covSFDense.sparseView();
 
 		// calculated new point covariance in the upper frame
-		covRoot = C*covSF*(C.transpose());
+		covRoot = C * covSF * (C.transpose());
 
-		//frame, go up
+		// frame, go up
 		frameIt = frameIt.node->parent;
 		frame = frameIt.node->data.get()->frame;
 	}
 
-	//extract variance in root
+	// extract variance in root
 	sigmaRoot.setX(TLength(sqrt(covRoot.coeff(0, 0))));
 	sigmaRoot.setY(TLength(sqrt(covRoot.coeff(1, 1))));
 	sigmaRoot.setZ(TLength(sqrt(covRoot.coeff(2, 2))));
