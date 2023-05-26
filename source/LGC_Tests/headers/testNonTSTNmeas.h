@@ -729,5 +729,51 @@ Zero100 0 0 0
 		"SURFACE.PBASE.4.   		100.00000    ID RADI.0.01_PBASE.4                                                                     \n"
 		"SURFACE.PBASE.5.   		100.00000    ID RADI.0.01_PBASE.5                                                                     \n"
 		;
-}
+
+	char const *const OBSXYZ_INSTR = R"(*TITR
+keyword issue test
+*OLOC
+*PREC 7
+*INSTR
+*OBSXYZ 
+Point 0 1 0 1 1 1
+*FRAME Subframe 0 0 0 100 1 0 1 RY
+*CALA
+Point 0 0 1
+*ENDFRAME
+*END
+)";
+
+		char const *const RADI_INSTR = R"(*TITR
+keyword issue test
+*OLOC
+*PREC 7
+*INSTR
+*RADI 0.02
+Point 0.01
+*FRAME Subframe 0 0 0 100 1 0 1
+*CALA
+Point 0 0 1
+*ENDFRAME
+*END
+)";
+
+		char const *const DVER_INSTR = R"(*TITR
+keyword issue test
+*OLOC
+*PREC 7
+*INSTR
+*DVER
+Point Point1 0.1
+*FRAME Subframe 0 0 0 0 1 0 1
+*CALA
+Point 0 0 1
+*FRAME Subframe1 0 0 0 0 0 0 1 TZ
+*CALA
+Point1 0 0 1
+*ENDFRAME
+*ENDFRAME
+*END
+)";
+		}
 #endif
