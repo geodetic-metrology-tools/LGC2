@@ -24,7 +24,7 @@ void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	pimpl_->updateMeas(id, measurementVector);
 }
-// triggering the adjustment claculation
+// triggering the adjustment calculation
 bool Moni::adjust()
 {
 	return pimpl_->adjust();
@@ -33,25 +33,36 @@ bool Moni::getStatus()
 {
 	return pimpl_->getStatus();
 }
-// get estimate of parameter
-Eigen::VectorXd Moni::getEstimate(std::string id)
+// get estimate of point
+Eigen::VectorXd Moni::getPointEstimate(std::string pointId)
 {
-	return pimpl_->getEstimate(id);
+	return pimpl_->getPointEstimate(pointId);
 }
-// get estimate of parameter in subframe
-Eigen::VectorXd Moni::getEstimate(std::string id, std::string frameName)
+// get estimate of frame
+Eigen::VectorXd Moni::getFrameEstimate(std::string frameId)
 {
-	return pimpl_->getEstimate(id, frameName);
+	return pimpl_->getFrameEstimate(frameId);
+}
+Eigen::VectorXd Moni::getFrameEstimatePrec(std::string frameId)
+{
+	return pimpl_->getFrameEstimatePrec(frameId);
+}
+
+
+// get estimate of point in subframe
+Eigen::VectorXd Moni::getPointEstimate(std::string id, std::string frameName)
+{
+	return pimpl_->getPointEstimate(id, frameName);
 }
 // get diagonal elements of covariances of the estimated parameters
-Eigen::VectorXd Moni::getEstimatePrec(std::string id)
+Eigen::VectorXd Moni::getPointEstimatePrec(std::string id)
 {
-	return pimpl_->getEstimatePrec(id);
+	return pimpl_->getPointEstimatePrec(id);
 }
 // get diagonal elements of covariances of the estimated parameters transformed to a subframe
-Eigen::VectorXd Moni::getEstimatePrec(std::string id, std::string frameName)
+Eigen::VectorXd Moni::getPointEstimatePrec(std::string id, std::string frameName)
 {
-	return pimpl_->getEstimatePrec(id,frameName);
+	return pimpl_->getPointEstimatePrec(id, frameName);
 }
 // get estimated residual
 Eigen::VectorXd Moni::getEstimateResidual(std::string obsId)
@@ -109,36 +120,29 @@ void Moni::MoniImpl::createParameterReferences()
 	for (auto &object : project.get()->getPoints())
 	{
 		paramRefs.POINTS.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "POINT"});
 	}
 	for (auto &object : project.get()->getLines())
 	{
 		paramRefs.LINES.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "LINE"});
 	}
 	for (auto &object : project.get()->getAngles())
 	{
 		paramRefs.ANGLES.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "ANGLE"});
 	}
 	for (auto &object : project.get()->getPlanes())
 	{
 		paramRefs.PLANES.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "PLANE"});
 	}
 	for (auto &object : project.get()->getLength())
 	{
 		paramRefs.LENGTHS.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "LENGTH"});
 	}
 	// now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
 	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)
 	{
 		auto object(it.node->data.get()->frame);
-		// std::cout << object.getName() << std::endl;
-		paramRefs.TRAFOS.insert({object.getName(), object});
-		paramRefs.types.insert({object.getName(), "TRAFO"});
+		paramRefs.FRAMES.insert({object.getName(), object});
 	}
 }
 void Moni::MoniImpl::createMeasurementReferences()
@@ -318,7 +322,7 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 
 	// reset estimationStatus to false as soon as new measurement data is supplied
 	estimationStatus = false;
-	// manipulate the corresponding measurement by accesing it via the reference map.
+	// manipulate the corresponding measurement by accessing it via the reference map.
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
@@ -439,7 +443,7 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 	else if (type == "OBSXYZ")
 	{
 		TPositionVector obsVector(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::ECoordSys::k3DCartesian);
-		// using a setter methof for obsxyz
+		// using a setter method for obsxyz
 		measRefs.OBSXYZ.at(id).setObservedVector(obsVector);
 		return;
 	}
@@ -786,135 +790,103 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	}
 }
 // get estimate
-Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string paramId)
+Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId)
 {
-	if (paramRefs.types.count(paramId) == 0)
+	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+		std::cout << "No point with Id " << pointId << " found" << std::endl;
 	}
-	// get type and return result
-	// for now this method relies on unique parameter names
-	// in case there are objects of different type with identical parameter name, the first object with matching name will be taken
-	if (paramRefs.types.at(paramId) == "POINT")
-	{
-		TPositionVector result = paramRefs.POINTS.at(paramId).getEstimatedValue();
-	//	Eigen::VectorXd vector=;
-	//	vector[0] = (double)result.getX();
-	//	vector[1] = (double)result.getY();
-	//	vector[2] = (double)result.getZ();
-		return toVectorXd(result);
-	}
-	else if (paramRefs.types.at(paramId) == "LINE")
-	{
-		// how many dimensions does this have??	
-		TFreeVector result = paramRefs.LINES.at(paramId).getLineVectorEstimatedValue();
-		//Eigen::VectorXd vector(3);
-		//vector[0] = (double)result.getX();
-		//vector[1] = (double)result.getY();
-		//vector[2] = (double)result.getZ();
-
-		return toVectorXd(result);
-	}
-	else if (paramRefs.types.at(paramId) == "ANGLE")
-	{
-		Eigen::VectorXd resultVector(1);
-		resultVector[0]=(paramRefs.ANGLES.at(paramId).getEstimatedValue());
-
-		return resultVector;
-	}
-	else if (paramRefs.types.at(paramId) == "PLANE")
-	{
-		Eigen::VectorXd resultVector(3);
-		resultVector[0] = (double)paramRefs.PLANES.at(paramId).getRefPtDistEstimatedValue();
-		resultVector[1] = (double)paramRefs.PLANES.at(paramId).getPhiEstimatedValue();
-		resultVector[2] = (double)paramRefs.PLANES.at(paramId).getThetaEstimatedValue();
-
-		return resultVector;
-	}
-	else if (paramRefs.types.at(paramId) == "LENGTH")
-	{
-		Eigen::VectorXd resultVector(1);
-		resultVector[0] = (double)paramRefs.LENGTHS.at(paramId).getEstimatedValue();
-
-		return resultVector;
-	}
-	else if (paramRefs.types.at(paramId) == "TRAFO")
-	{
-		Eigen::VectorXd resultVector(7);
-		resultVector[0] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().kappa;
-		resultVector[1] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().omega;
-		resultVector[2] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().phi;
-		resultVector[3] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tX;
-		resultVector[4] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tY;
-		resultVector[5] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().tZ;
-		resultVector[6] = (double)paramRefs.TRAFOS.at(paramId).getEstParam().scale;
-
-		return resultVector;
-	}
-
-
+	TPositionVector result = paramRefs.POINTS.at(pointId).getEstimatedValue();
+	return toVectorXd(result);
 }
-// get point estimate in subframe
-Eigen::VectorXd Moni::MoniImpl::getEstimate(std::string pointId, std::string frameName)
+Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::string destFrame)
 {
-	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
-	if (paramRefs.types.count(pointId) == 0)
+	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No parameter with Id " << pointId << " found" << std::endl;
+		std::cout << "No point with Id " << pointId << " found" << std::endl;
 	}
-	if (!(paramRefs.types.at(pointId) == "POINT"))
+	if (paramRefs.FRAMES.count(destFrame) == 0)
 	{
-		std::cout << "Extracion in subframes only allowed for points, but Object is of type " << paramRefs.types.at(pointId) << "." << std::endl;
+		std::cout << "No frame with Id " << destFrame << " found" << std::endl;
 	}
-	if (!(frameName == "ROOT"))
-	{
-		std::cout << "Transformations only allowed to \"ROOT\" frame, but destination frame is " << frameName << "." << std::endl;
-	}
-	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();
-	TPointTransformer fPointTransfo(&project->getTree(), project->getConfig().referential);
-	const TLOR2LOR &lorTrafo = fPointTransfo.getLORTransformation(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->getTree().begin());
+
+	// transform to destination frame
+	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();	
+	const TLOR2LOR lorTrafo(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->getTree().begin(), "sub2Dest");
 	lorTrafo.transform(point);
 	return toVectorXd(point);
 }
 
-Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string pointId)
+Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(std::string frameId)
 {
-	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
-	if (paramRefs.types.count(pointId) == 0)
+	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
-		std::cout << "No parameter with Id " << pointId << " found" << std::endl;
-	}
-	if (!(paramRefs.types.at(pointId) == "POINT"))
-	{
-		std::cout << "Covariance extraction only allowed for Points, but Object is of type " << paramRefs.types.at(pointId) << "." << std::endl;
+		std::cout << "No frame with Id " << frameId << " found" << std::endl;
 	}
 
+	Eigen::VectorXd resultVector(7);
+	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstParam().kappa;
+	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstParam().omega;
+	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstParam().phi;
+	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tX;
+	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tY;
+	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tZ;
+	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstParam().scale;
+
+	return resultVector;
+}
+
+Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(std::string frameId)
+{
+	if (paramRefs.FRAMES.count(frameId) == 0)
+	{
+		std::cout << "No frame with Id " << frameId << " found" << std::endl;
+	}
+
+	Eigen::VectorXd resultVector(7);
+	TAdjustableHelmertTransformation& aux = paramRefs.FRAMES.at(frameId);
+	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(0);
+	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(1);
+	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(2);
+	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(0);
+	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(1);
+	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(2);
+	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionScale();
+
+	return resultVector;
+}
+
+
+
+Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId)
+{
+	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
+	if (paramRefs.POINTS.count(pointId) == 0)
+	{
+		std::cout << "No point with Id " << pointId << " found" << std::endl;
+	}
 	Eigen::VectorXd prec(3);
 	prec.setZero();
-	// get type and return result
-	if (paramRefs.types.at(pointId) == "POINT")
-	{
-		// get precisions, the diagonal covar elements are the square roots
-		prec << (double)paramRefs.POINTS.at(pointId).getXEstPrecision(), (double)paramRefs.POINTS.at(pointId).getYEstPrecision(),
-			(double)paramRefs.POINTS.at(pointId).getZEstPrecision();
-	}
+	// get precisions, the diagonal covar elements are the square roots
+	prec << (double)paramRefs.POINTS.at(pointId).getXEstPrecision(), (double)paramRefs.POINTS.at(pointId).getYEstPrecision(),
+		(double)paramRefs.POINTS.at(pointId).getZEstPrecision();
 
 	return prec;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getEstimatePrec(std::string paramId, std::string frameName)
-{
-	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
-	if (paramRefs.types.count(paramId) == 0)
+Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId, std::string destFrame)
+{	
+	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No parameter with Id " << paramId << " found" << std::endl;
+		std::cout << "No point with Id " << pointId << " found" << std::endl;
 	}
-	if (!(paramRefs.types.at(paramId) == "POINT"))
+	if (paramRefs.FRAMES.count(destFrame) == 0)
 	{
-		std::cout << "Covariance transformations only allowed for Points, but Object is of type " << paramRefs.types.at(paramId) << "." << std::endl;
+		std::cout << "No frame with Id " << destFrame << " found" << std::endl;
 	}
-	LGCAdjustablePoint point = paramRefs.POINTS.at(paramId);
-	Eigen::VectorXd prec = toVectorXd(point.transformSigma(point, project.get(),frameName));
+
+	LGCAdjustablePoint point = paramRefs.POINTS.at(pointId);
+	Eigen::VectorXd prec = toVectorXd(point.transformSigma(point, project.get(),destFrame));
 
 	return prec;
 }

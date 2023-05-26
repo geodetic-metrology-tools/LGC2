@@ -21,18 +21,21 @@ public:
 	DECLSPEC Moni(std::string inputFilePath);
 	DECLSPEC ~Moni();
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
-	// triggering the adjustment claculation
+	// triggering the adjustment calculation
 	DECLSPEC bool adjust();
 	// for checking the estimation status
 	DECLSPEC bool getStatus();
-	// get estimate of parameter
-	DECLSPEC Eigen::VectorXd getEstimate(std::string);
-	// get estimate of parameter in subframe
-	DECLSPEC Eigen::VectorXd getEstimate(std::string, std::string);
+	// get estimate of point
+	DECLSPEC Eigen::VectorXd getPointEstimate(std::string);
+	// get estimate of point in subframe
+	DECLSPEC Eigen::VectorXd getPointEstimate(std::string, std::string);
+	// get estimate of frame
+	DECLSPEC Eigen::VectorXd getFrameEstimate(std::string);
+	DECLSPEC Eigen::VectorXd getFrameEstimatePrec(std::string);
 	// get diagonal elements of covariances of the estimated parameters
-	DECLSPEC Eigen::VectorXd getEstimatePrec(std::string);
+	DECLSPEC Eigen::VectorXd getPointEstimatePrec(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
-	DECLSPEC Eigen::VectorXd getEstimatePrec(std::string pointName, std::string frameName);
+	DECLSPEC Eigen::VectorXd getPointEstimatePrec(std::string pointName, std::string frameName);
 	// get estimated residual
 	DECLSPEC Eigen::VectorXd getEstimateResidual(std::string obsName);
 	// get Meas IDs

@@ -24,18 +24,23 @@ public:
 	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// get measurement
 	Eigen::VectorXd getMeas(std::string id);
-	// triggering the adjustment claculation
+	// triggering the adjustment calculation
 	bool adjust();
 	// for checking the estimation status
 	bool getStatus() { return estimationStatus; };
-	// get estimate of parameter
-	Eigen::VectorXd getEstimate(std::string);
-	// get estimate of parameter in a subframe
-	Eigen::VectorXd getEstimate(std::string, std::string frameName);
-	// get diagonal elements of covariances of the estimated parameters
-	Eigen::VectorXd getEstimatePrec(std::string);
-	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
-	Eigen::VectorXd getEstimatePrec(std::string pointName, std::string frameName);
+
+	// Parameter Result methods
+	// get estimate of point
+	Eigen::VectorXd getPointEstimate(std::string);
+	// get estimate of point in a subframe
+	Eigen::VectorXd getPointEstimate(std::string, std::string frameName);
+	Eigen::VectorXd getPointEstimatePrec(std::string);
+	Eigen::VectorXd getPointEstimatePrec(std::string, std::string detsFrame);
+	// get estimate of frame
+	Eigen::VectorXd getFrameEstimate(std::string);
+	Eigen::VectorXd getFrameEstimatePrec(std::string);
+
+	// Residual result methods
 	// get estimated residual
 	Eigen::VectorXd getEstimateResidual(std::string obsName);
 	// get the sigma0 after adjustment
@@ -48,7 +53,7 @@ private:
 	void createParameterReferences();
 	void createMeasurementReferences();
 
-	// helper methods for concversion to Eigen vector
+	// helper methods for conversion to Eigen vector
 	Eigen::VectorXd toVectorXd(TFreeVector);
 	Eigen::VectorXd toVectorXd(TPositionVector);
 
@@ -98,20 +103,18 @@ private:
 	
 	
 	// containing maps to parameter object references
-	// should probably be private.
 	// maybe needs to be more specific as a universal method a la getEstimate does not exists in LGC, rather there
 	// are methods like getEstimatedValue, getEstParam etc..
 	struct
 	{
 		// the parameter types
-		std::unordered_map<std::string, std::string> types;
 		// the parameter references
 		std::unordered_map<std::string, LGCAdjustablePoint &> POINTS;
 		std::unordered_map<std::string, LGCAdjustableLine &> LINES;
 		std::unordered_map<std::string, TAdjustableAngle &> ANGLES;
 		std::unordered_map<std::string, LGCAdjustablePlane &> PLANES;
 		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
-		std::unordered_map<std::string, TAdjustableHelmertTransformation &> TRAFOS;
+		std::unordered_map<std::string, TAdjustableHelmertTransformation &> FRAMES;
 	} paramRefs;
 
 	// status of estimation. True if estimation results are ready for extraction.
