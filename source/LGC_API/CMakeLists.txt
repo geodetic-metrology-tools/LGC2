@@ -50,11 +50,14 @@ endif()
 
 
 # set default build type
-if(NOT CMAKE_BUILD_TYPE)
+#if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
-endif()
+#endif()
+#message(${CMAKE_CURRENT_BINARY_DIR})
 if(WIN32)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_API.dll")
+# how to access the build types set by visual studio to make sure the dll is copied to the debug/release folder of visual studio?
+# for now: hard coded: Debug mode
+ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_API.dll")
 endif()
 
