@@ -49,13 +49,18 @@ int main(int argc, char *argv[])
 		// std::string pointName = "B-TAP.WPS2";
 		// std::string pointName = "B-TAP.HLS1";
 		std::string pointName = "A-TAP.HLS1";
-		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getEstimate(pointName) << std::endl;
-		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getEstimate(pointName, "ROOT") << std::endl;
+		std::string frameName = "WIRE.RIGHT.DOF";
+
+		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
+		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
 		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
-		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getEstimatePrec(pointName) << std::endl;
+		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimatePrec(pointName) << std::endl;
 		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with unceratin parameters involved
 		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
-				  << mockup.getEstimatePrec(pointName, "ROOT") << std::endl;
+				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+		
+		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
+		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
 
 		// get exemplary measurement residual
 		std::string obsName = "meas1";
