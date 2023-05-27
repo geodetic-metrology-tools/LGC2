@@ -131,6 +131,29 @@ public:
         void transformProvisionalCoordinates(const TLGCData *fData);
         void transformEstimatedCoordinates(const TLGCData *fData);
 
+		/// Returns a constant reference on the estimated value of the point in the subframe
+		inline const TPositionVector &getEstimatedValueInSubframe() const { return fEstimatedValueInSubframe; }
+
+		/// Returns a constant reference on the provisional value of the point in the subframe
+		inline const TPositionVector &getProvisionalValueInSubframe() const { return fProvisionalValueInSubframe; }
+
+		/// Returns a constant reference on the estimated value of the point in ROOT
+		inline const TPositionVector &getEstimatedValueInRoot() const { return fEstimatedValueInRoot; }
+
+		/// Returns a constant reference on the provisional value of the point in ROOT
+		inline const TPositionVector &getProvisionalValueInRoot() const { return fProvisionalValueInRoot; }
+
+		/// Returns a constant reference on the estimated height of the point in ROOT
+		inline const TLength &getEstimatedHeightInRoot() const { return fEstimatedHeightInRoot; }
+
+		/// Returns a constant reference on the provisional height of the point in ROOT
+		inline const TLength &getProvisionalHeightInRoot() const { return fProvisionalHeightInRoot; }
+
+		/// Returns a constant reference on the covariance matrix of the point in the subframe
+		inline const std::shared_ptr<Eigen::MatrixXd> &getCovarianceMatrixInSubframe() const { return fCovarianceMatrixInSubframe; }
+
+		/// Returns a constant reference on the covariance matrix of the point in ROOT
+		inline const std::shared_ptr<Eigen::MatrixXd> &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; } 
 
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
