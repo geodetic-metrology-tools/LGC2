@@ -1860,66 +1860,39 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 	if (localFRAME)
 	{ // Means that it is not ROOT!!!!!!
+
+		TPositionVector estimatedValue = pt->getEstimatedValueInSubframe();
+		TPositionVector provisionalValue = pt->getProvisionalValueInSubframe();
+		TDenseMatrix covarianceMatrixInSubframe = *pt->getCovarianceMatrixInSubframe().get();
+
 		// Write point coordinates XYZ or H because it is a local frame
 		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
-
-		// Write point's estimated precision after calculation
-		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, pt->getXEstPrecision(),
-			pt->getYEstPrecision(), pt->getZEstPrecision(), ""); /*sigma*/
-
-		// Write DX, DY, DZ difference between provisional and estimated value
-		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
-			TLength(estimatedValue.getZ() - provisionalValue.getZ()), ""); /*offset*/
 	}
 	else
 	{ // It is ROOT
-		TDataTreeIterator root = fProjectData->getTree().begin();
 		TRefSystemFactory::ERefFrame globalRef = fProjectData->getConfig().referential;
 
-		TFreeVector sigmaRoot;
-		// If point is defined in a sub-frame
-		if (root != pt->getFrameTreePosition())
-		{
-			TLOR2LOR transfo = TLOR2LOR(pt->getFrameTreePosition(), fProjectData->getTree().begin(), "transfo");
-			// transform sigma in root
-			sigmaRoot = pt->transformSigmaInRoot(*pt, fProjectData);
-			// transform coordinates in root
-			transfo.transform(provisionalValue);
-			transfo.transform(estimatedValue);
-		}
-		else
-		{
-			/*If ROOT and not OLOC -> provisional is XYH, needs to be transformed to XYZ*/
-			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-				transfXYH2XYZ(provisionalValue, globalRef);
-		}
+		TPositionVector provisionalValue = pt->getProvisionalValueInRoot();
+		TPositionVector estimatedValue = pt->getEstimatedValueInRoot();
+		TDenseMatrix covarianceMatrixInRoot = *pt->getCovarianceMatrixInRoot().get();
 
 		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
 		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
-			TPositionVector forHCalc(estimatedValue);
-			transfXYZ2XYH(forHCalc, globalRef);
-
-			writeDouble(coordWidth, coordPrecision, forHCalc.getH().getMetresValue());
+			writeDouble(coordWidth, coordPrecision, pt->getEstimatedHeightInRoot());
 			(*stream) << separator;
 		}
 
-		if (pt->getFrameTreePosition() == root)
-		{
-			// Write point's estimated precision after calculation
-			converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, pt->getXEstPrecision(),
-				pt->getYEstPrecision(), pt->getZEstPrecision(), ""); /*sigma*/
-		}
-		else
-		{
-			// status = vxyz to write sigma because with CALA, no sigma are writen
-			converter.writeCoordinateParam(TSpatialStatus::kVxyz, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, sigmaRoot.getX(),
-				sigmaRoot.getY(), sigmaRoot.getZ(), ""); /*sigma convert in root*/
-		}
+		// status = vxyz to write sigma because with CALA, no sigma are writen
+		converter.writeCoordinateParam(TSpatialStatus::kVxyz, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
+			TLength(sqrtq(covarianceMatrixInRoot(0, 0))),
+			TLength(sqrtq(covarianceMatrixInRoot(1, 1))),
+			TLength(sqrtq(covarianceMatrixInRoot(2, 2))),
+			""); /*sigma convert in root*/
+		//  }
 
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
 			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
