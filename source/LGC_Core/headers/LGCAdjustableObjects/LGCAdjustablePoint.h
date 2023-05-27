@@ -13,6 +13,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
 
+namespace Eigen
+{
+template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
+class Matrix;
+using MatrixXd = Matrix<double, -1, -1, 0, -1, -1>;
+} // namespace Eigen
+
 class TLGCData;
 
 /*! 
@@ -120,6 +127,11 @@ public:
         /// Reset the provisional position vector
         virtual void setProvisionalValue(const TReal& x, const TReal& y, const TReal& z);
 
+        void transformPointSigma(const TLGCData *fData);
+        void transformProvisionalCoordinates(const TLGCData *fData);
+        void transformEstimatedCoordinates(const TLGCData *fData);
+
+
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
 
@@ -127,7 +139,7 @@ public:
 
 			\throws Throws a logic_error if the adjusted point does not contain required index.
 		*/
-      virtual void setCorrection(int idx, TReal value);
+		virtual void setCorrection(int idx, TReal value);
 
 		/// Sets the XY covariance after calculation
 		virtual void	setXYEstimatedCovariance(TReal value);
@@ -159,6 +171,8 @@ public:
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame);
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const std::string toFrame);
 
+		static Eigen::MatrixXd transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame);
+
 		/// Returns true if this point is defined in the ROOT frame
 		bool isInRootFrame();
 
@@ -168,8 +182,20 @@ private:
 
 	static bool allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
 
+	TPositionVector fProvisionalValueInSubframe = getProvisionalValue(); /*!< point's provisional value in Subframe*/
+	TPositionVector fEstimatedValueInSubframe = getEstimatedValue(); /*!< point's estimated value after calculation in Subframe*/
+	std::shared_ptr<Eigen::MatrixXd> fCovarianceMatrixInSubframe; /*!< point's covariance matrix in Subframe*/
+
+	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< point's provisional value in ROOT*/
+	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< point's estimated value after calculation in ROOT*/
+	std::shared_ptr<Eigen::MatrixXd> fCovarianceMatrixInRoot; /*!< point's covariance matrix in ROOT*/
+
+	TLength fProvisionalHeightInRoot; /*!< point's provisional height value in ROOT*/
+	TLength fEstimatedHeightInRoot; /*!< point's estimated height value in ROOT*/
+
 	/*!Private constructor for creating uninitialized object	*/
 	LGCAdjustablePoint(const std::string& name);
+
 };
 
 #endif //TADJUSTABLE_POINT
