@@ -43,6 +43,108 @@ void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, con
     }
 }
 
+void LGCAdjustablePoint::transformPointSigma(const TLGCData *fData)
+{
+	fCovarianceMatrixInSubframe = std::make_shared<Eigen::MatrixXd>(transformCovar(*this, fData, this->fFramePosition));
+	fCovarianceMatrixInRoot = std::make_shared<Eigen::MatrixXd>(transformCovar(*this, fData, fData->getTree().begin()));
+}
+
+
+void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
+{
+	TDataTreeIterator root = fData->getTree().begin();
+	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
+
+	fProvisionalValueInSubframe = fProvisionalValue;
+	
+	if (root == getFrameTreePosition())
+	{
+		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
+		fProvisionalValueInRoot = fProvisionalValueInSubframe;
+
+		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		{
+			fProvisionalHeightInRoot = fProvisionalValueInRoot.getH();
+
+			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+				TXYH2CCS::XYHs2CCS(fProvisionalValueInRoot);
+			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+				TXYH2CCS::XYHg2000Machine2CCS(fProvisionalValueInRoot);
+			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValueInRoot);
+
+			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+				TXYH2CCS::XYHs2CCS(fProvisionalValueInSubframe);
+			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+				TXYH2CCS::XYHg2000Machine2CCS(fProvisionalValueInSubframe);
+			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValueInSubframe);
+		}
+	}
+	else
+	{
+		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
+		fProvisionalValueInRoot = fProvisionalValueInSubframe;
+
+		TLOR2LOR transfo = TLOR2LOR(getFrameTreePosition(), root, "transfo");
+		// transform coordinates in the ROOT frame
+		transfo.transform(fProvisionalValueInRoot);
+		
+		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		{
+			TPositionVector fProvisionalInRootForHCalc(fProvisionalValueInRoot);
+
+			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+				TXYH2CCS::CCS2XYHs(fProvisionalInRootForHCalc);
+			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+				TXYH2CCS::CCS2XYHg2000Machine(fProvisionalInRootForHCalc);
+			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+				TXYH2CCS::CCS2XYHg1985Machine(fProvisionalInRootForHCalc);
+
+			fProvisionalHeightInRoot = fProvisionalInRootForHCalc.getH();
+		}
+	}
+}
+
+
+void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
+{
+    TDataTreeIterator root = fData->getTree().begin();
+	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
+
+	fEstimatedValueInSubframe = fEstimatedValue;
+
+	if (root == getFrameTreePosition())
+	{
+		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
+		fEstimatedValueInRoot = fEstimatedValueInSubframe;
+	}
+	else
+	{
+		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
+		fEstimatedValueInRoot = fEstimatedValueInSubframe;
+
+		TLOR2LOR transfo = TLOR2LOR(getFrameTreePosition(), root, "transfo");
+		// transform coordinates in the ROOT frame
+		transfo.transform(fEstimatedValueInRoot);
+	}
+
+	if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+	{
+		TPositionVector fEstimatedInRootForHCalc(fEstimatedValueInRoot);
+
+		if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+			TXYH2CCS::CCS2XYHs(fEstimatedInRootForHCalc);
+		else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+			TXYH2CCS::CCS2XYHg2000Machine(fEstimatedInRootForHCalc);
+		else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+			TXYH2CCS::CCS2XYHg1985Machine(fEstimatedInRootForHCalc);
+
+		fEstimatedHeightInRoot = fEstimatedInRootForHCalc.getH();
+	}
+}
+
+
 void LGCAdjustablePoint::setCorrection(int idx, TReal value) {
 	for (int i = 0; i < 3; i++){
 		if (uidx[i] == idx) {
@@ -226,6 +328,21 @@ bool LGCAdjustablePoint::isInRootFrame()
 
 TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame)
 {
+	// transfor the covariance matrix of a point to the given frame
+	TDenseMatrix ptCovar = transformCovar(pv, fData, toFrame);
+
+	// extract variances
+	// return the modified sigma
+	TFreeVector sigmaDestFrame(pv.getEstimatedValue().getCoordSys());
+	sigmaDestFrame.setX(TLength(sqrt(ptCovar.coeff(0, 0))));
+	sigmaDestFrame.setY(TLength(sqrt(ptCovar.coeff(1, 1))));
+	sigmaDestFrame.setZ(TLength(sqrt(ptCovar.coeff(2, 2))));
+
+	return sigmaDestFrame;
+}
+
+TDenseMatrix LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame)
+{
 	// get the global covariance matrix
 	if (!(fData->getCovMatByConst()))
 	{
@@ -236,19 +353,12 @@ TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, con
 	// get the global derivative of the transformed point
 	TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
 	TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
+
 	TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
 
 	// compute the covariance matrix in the destination Frame
 	TDenseMatrix ptCovar = (jac * covar) * jac.transpose();
 
-	// extract variances
-	// return the modified sigma
-	TFreeVector sigmaDestFrame(pv.getEstimatedValue().getCoordSys());
-	sigmaDestFrame.setX(TLength(sqrt(ptCovar.coeff(0, 0))));
-	sigmaDestFrame.setY(TLength(sqrt(ptCovar.coeff(1, 1))));
-	sigmaDestFrame.setZ(TLength(sqrt(ptCovar.coeff(2, 2))));
-
-	return sigmaDestFrame;
-
+	return ptCovar;
 }
 
