@@ -89,14 +89,6 @@ Behavior TLGCApp::exec()
 	result.extract(Behavior::BehaviorCode::ERR_readingContent);
 	result = lgcCalculation.computeResults(fileWriter);
 	logInfo() << "Calculation process ended.";
-
-    // Iteration through the points
-	for (auto it(projectData->getPoints().begin()); it != projectData->getPoints().end(); ++it)
-	{
-		it->transformPointSigma(projectData.get());
-		it->transformProvisionalCoordinates(projectData.get());
-		it->transformEstimatedCoordinates(projectData.get());
-	}
 	
 	// Save the final results (SIMU output is written during the calculation after each iteration)
 	if (result)

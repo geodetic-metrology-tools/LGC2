@@ -43,6 +43,13 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		if (successCalculation)
 			fResultsMtr = algorithm->resultMatrices;
 
+		// Iteration through the points
+		for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)
+		{
+			it->transformPointSigma(fData.get());
+			it->transformProvisionalCoordinates(fData.get());
+			it->transformEstimatedCoordinates(fData.get());
+		}
 	}
 	catch (std::exception& e)
 	{
