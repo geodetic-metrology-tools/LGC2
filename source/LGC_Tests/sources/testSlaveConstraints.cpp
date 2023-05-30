@@ -3,11 +3,11 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
+#include <LGCFrameConstraintGroup.h>
 #include <TLGCData.h>
 #include <TReader.h>
 
 #include "TLGCCalculation.h"
-#include <LGCFrameConstraintGroup.h>
 #include "testSlaveConstraints.h"
 
 namespace tut
@@ -33,7 +33,6 @@ template<>
 template<>
 void object::test<1>()
 {
-
 	std::stringstream infiler(Slave::SLAVE_1);
 
 	bool succesReading = reader.read(infiler);
@@ -80,7 +79,6 @@ template<>
 template<>
 void object::test<2>()
 {
-
 	std::stringstream infiler(Slave::SLAVE_2);
 
 	bool succesReading = reader.read(infiler);
@@ -128,12 +126,10 @@ template<>
 template<>
 void object::test<3>()
 {
-
 	std::stringstream infiler(Slave::SLAVE_incompatible);
 
 	bool succesReading = reader.read(infiler);
 	ensure_equals("Reader should raise error caused by incompatible degrees of freedom", succesReading, false);
-
 }
 
 }; // namespace tut

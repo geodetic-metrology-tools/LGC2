@@ -1,32 +1,30 @@
-#include <TLGCData.h>	
+#include <TLGCData.h>
 
-TLGCData::TLGCData() 
-    : fileLogger(std::make_shared<TFileLogger>())
-    , fhasStandardDeviations(false) 
-    , fUEOIndices({0,0,0,0})
+TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandardDeviations(false), fUEOIndices({0, 0, 0, 0})
 {
-        fLSRelatedInfo.fNumberOfLSIterations = 0;
-	    setDefaultValues();
-        config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+	fLSRelatedInfo.fNumberOfLSIterations = 0;
+	setDefaultValues();
+	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 
 	// Create an empty root node
 	tree.insert(tree.begin(), TDataSPtr(new TTreeEntry()));
 
 	// This is the current node of the tree
 	pos = tree.begin();
-	auto& n(getCurrentNode());
+	auto &n(getCurrentNode());
 
-	//ROOT frame of the tree
+	// ROOT frame of the tree
 	n.ID = std::vector<int>(1);
 	n.ID[0] = 1;
 	n.frame.setName("ROOT");
 
-    // covar Matrix
+	// covar Matrix
 	fCovMat = new TSparseMatrix;
 }
 
-TLGCData::~TLGCData(){
-    // should be done in addition to default destructor
+TLGCData::~TLGCData()
+{
+	// should be done in addition to default destructor
 	delete fCovMat;
 	fCovMat = nullptr;
 }
@@ -53,15 +51,16 @@ TDataTreeIterator TLGCData::locateNode(std::string frameName) const
 TTreeEntry &TLGCData::addChild(TAdjustableHelmertTransformation *transfo)
 {
 	pos = tree.append_child(pos, TDataSPtr(new TTreeEntry()));
-	auto& n(getCurrentNode());
+	auto &n(getCurrentNode());
 	n.frame = *transfo;
-	//Assign unique ID to the node
+	// Assign unique ID to the node
 	int depth = tree.depth(pos);
 	int nOfSiblings = tree.number_of_siblings(pos);
 	n.ID = std::vector<int>(depth + 1);
 	TDataTreeIterator parent = TDataTree::parent(pos);
 
-	for (int i = 0; i < depth; i++) {
+	for (int i = 0; i < depth; i++)
+	{
 		n.ID[i] = parent.node->data->ID[i];
 	}
 	n.ID[depth] = nOfSiblings + 1;
@@ -69,20 +68,19 @@ TTreeEntry &TLGCData::addChild(TAdjustableHelmertTransformation *transfo)
 	return n;
 }
 
-
 void TLGCData::setChiS0Limits(TReal chiLo, TReal chiUp)
 {
 	fLSRelatedInfo.fChiLoLimit = chiLo;
 	fLSRelatedInfo.fChiUpLimit = chiUp;
 }
 
-
 ///////////////////////////////////////////////////////////////////
 // increment the number of read points for the corresponding status
 ///////////////////////////////////////////////////////////////////
 void TLGCData::addToPointNum(TSpatialStatus::ESpatialStatus status)
 {
-	switch (status) {
+	switch (status)
+	{
 	case TSpatialStatus::kCala:
 		fPointInfo.fNumCala++;
 		break;
@@ -115,7 +113,8 @@ void TLGCData::addToPointNum(TSpatialStatus::ESpatialStatus status)
 ////////////////////////////////////////////////////////////////
 int TLGCData::getPointsDimension(TSpatialStatus::ESpatialStatus status) const
 {
-	switch (status) {
+	switch (status)
+	{
 	case TSpatialStatus::kCala:
 		return fPointInfo.fNumCala;
 	case TSpatialStatus::kVx:
@@ -137,78 +136,78 @@ int TLGCData::getPointsDimension(TSpatialStatus::ESpatialStatus status) const
 	}
 }
 
-
-void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type){
-	switch (type){
-		case TMeasurementsGlobal::kANGL:
-			fMeasInfo.fNumANGL++;
-			break;
-		case TMeasurementsGlobal::kZEND:
-			fMeasInfo.fNumZEND++;
-			break;
-		case TMeasurementsGlobal::kDHOR :
-			fMeasInfo.fNumDHOR++;
-			break;
-		case TMeasurementsGlobal::kDIST :
-			fMeasInfo.fNumDIST++;
-			break;
-		case TMeasurementsGlobal::kPLR3D:
-			fMeasInfo.fNumPLR3D++;
-			break;
-		case TMeasurementsGlobal::kECTH:
-			fMeasInfo.fNumECTH++;
-			break;
-		case TMeasurementsGlobal::kECDIR:
-			fMeasInfo.fNumECDIR++;
-			break;
-		case TMeasurementsGlobal::kDLEV:
-			fMeasInfo.fNumDLEV++;
-			break;
-		case TMeasurementsGlobal::kDVER:
-			fMeasInfo.fNumDVER++;
-			break;
-		case TMeasurementsGlobal::kDSPT:
-			fMeasInfo.fNumDSPT++;
-			break;
-		case TMeasurementsGlobal::kUVEC:
-			fMeasInfo.fNumUVEC++;
-			break;
-		case TMeasurementsGlobal::kUVD:
-			fMeasInfo.fNumUVD++;
-			break;
-		case TMeasurementsGlobal::kECHO:
-			fMeasInfo.fNumECHO++;
-			break;
-		case TMeasurementsGlobal::kECSP:
-			fMeasInfo.fNumECSP++;
-			break;
-		case TMeasurementsGlobal::kECVE:
-			fMeasInfo.fNumECVE++;
-			break;
-		case TMeasurementsGlobal::kORIE:
-			fMeasInfo.fNumORIE++;
-			break;
-		case TMeasurementsGlobal::kPDOR:
-			fMeasInfo.fNumPDOR++;
-			break;
-		case TMeasurementsGlobal::kRADI:
-			fMeasInfo.fNumRADI++;
-			break;
-		case TMeasurementsGlobal::kOBSXYZ:
-			fMeasInfo.fNumOBSXYZ++;
-			break;
-		case TMeasurementsGlobal::kINCLY:
-			fMeasInfo.fNumINCLY++;
-			break;
-		case TMeasurementsGlobal::kECWS:
-			fMeasInfo.fNumECWS++;
-			break;
-		case TMeasurementsGlobal::kECWI:
-			fMeasInfo.fNumECWI++;
-			break;
+void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type)
+{
+	switch (type)
+	{
+	case TMeasurementsGlobal::kANGL:
+		fMeasInfo.fNumANGL++;
+		break;
+	case TMeasurementsGlobal::kZEND:
+		fMeasInfo.fNumZEND++;
+		break;
+	case TMeasurementsGlobal::kDHOR:
+		fMeasInfo.fNumDHOR++;
+		break;
+	case TMeasurementsGlobal::kDIST:
+		fMeasInfo.fNumDIST++;
+		break;
+	case TMeasurementsGlobal::kPLR3D:
+		fMeasInfo.fNumPLR3D++;
+		break;
+	case TMeasurementsGlobal::kECTH:
+		fMeasInfo.fNumECTH++;
+		break;
+	case TMeasurementsGlobal::kECDIR:
+		fMeasInfo.fNumECDIR++;
+		break;
+	case TMeasurementsGlobal::kDLEV:
+		fMeasInfo.fNumDLEV++;
+		break;
+	case TMeasurementsGlobal::kDVER:
+		fMeasInfo.fNumDVER++;
+		break;
+	case TMeasurementsGlobal::kDSPT:
+		fMeasInfo.fNumDSPT++;
+		break;
+	case TMeasurementsGlobal::kUVEC:
+		fMeasInfo.fNumUVEC++;
+		break;
+	case TMeasurementsGlobal::kUVD:
+		fMeasInfo.fNumUVD++;
+		break;
+	case TMeasurementsGlobal::kECHO:
+		fMeasInfo.fNumECHO++;
+		break;
+	case TMeasurementsGlobal::kECSP:
+		fMeasInfo.fNumECSP++;
+		break;
+	case TMeasurementsGlobal::kECVE:
+		fMeasInfo.fNumECVE++;
+		break;
+	case TMeasurementsGlobal::kORIE:
+		fMeasInfo.fNumORIE++;
+		break;
+	case TMeasurementsGlobal::kPDOR:
+		fMeasInfo.fNumPDOR++;
+		break;
+	case TMeasurementsGlobal::kRADI:
+		fMeasInfo.fNumRADI++;
+		break;
+	case TMeasurementsGlobal::kOBSXYZ:
+		fMeasInfo.fNumOBSXYZ++;
+		break;
+	case TMeasurementsGlobal::kINCLY:
+		fMeasInfo.fNumINCLY++;
+		break;
+	case TMeasurementsGlobal::kECWS:
+		fMeasInfo.fNumECWS++;
+		break;
+	case TMeasurementsGlobal::kECWI:
+		fMeasInfo.fNumECWI++;
+		break;
 	}
 }
-
 
 int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const
 {
@@ -301,31 +300,31 @@ const TSparseMatrix *TLGCData::getCovMatByConst() const noexcept
 	return fCovMat;
 }
 
-void TLGCData::reInitForSIMU(){
-	for (auto& point : points)
+void TLGCData::reInitForSIMU()
+{
+	for (auto &point : points)
 		point.reInitialise();
 
-	for (auto& plane : planes)
+	for (auto &plane : planes)
 		plane.reInitialise();
 
-	for (auto& angle : angles)
+	for (auto &angle : angles)
 		angle.reInitialise();
 
-	for (auto& length : lengths)
+	for (auto &length : lengths)
 		length.reInitialise();
 
-	for (auto& line : lines)
+	for (auto &line : lines)
 		line.reInitialise();
 
 	for (auto nodeIt(tree.begin()); nodeIt != tree.end(); ++nodeIt)
 		nodeIt->get()->frame.reInitialise();
 
-
 	/*Eventually also all the statistics but they will be rewritten anyway, so it seems not to be necessary*/
 }
 
-
-std::shared_ptr<TLGCData> TLGCData::clone() const {
+std::shared_ptr<TLGCData> TLGCData::clone() const
+{
 	auto d = std::make_shared<TLGCData>();
 
 	d->islgc1 = islgc1;
@@ -345,26 +344,27 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
 	// move the pointers to correct objects in lines and planes:
 	updateAdjustableObjectsPointers(d.get());
 
-    // Copy configuration:
-    d->config = config;
-    d->fhasStandardDeviations = fhasStandardDeviations;
-    d->fUEOIndices = fUEOIndices;
-    d->fLSRelatedInfo = fLSRelatedInfo;
-    d->fPointInfo = fPointInfo;
-    d->fMeasInfo = fMeasInfo;
+	// Copy configuration:
+	d->config = config;
+	d->fhasStandardDeviations = fhasStandardDeviations;
+	d->fUEOIndices = fUEOIndices;
+	d->fLSRelatedInfo = fLSRelatedInfo;
+	d->fPointInfo = fPointInfo;
+	d->fMeasInfo = fMeasInfo;
 
 	// Copy instruments:
 	copyInstruments(this, d.get());
 
-    // Copy filelogger:
-    d->fileLogger = fileLogger;
-    
-    // Copy statistics:
-    d->stat = stat;
+	// Copy filelogger:
+	d->fileLogger = fileLogger;
+
+	// Copy statistics:
+	d->stat = stat;
 	d->fCovMat = fCovMat;
 
 	// Copy relative errors:
-	for (const auto& erelTuple : fRelError) {
+	for (const auto &erelTuple : fRelError)
+	{
 		// use the copy constructor
 		TLSCalcRelativeError erel(erelTuple);
 		// Add to the new container:
@@ -377,18 +377,16 @@ std::shared_ptr<TLGCData> TLGCData::clone() const {
 	return d;
 }
 
-
 void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 {
-
 	// Copy the tree structure/form:
 	tgt->tree = src->tree;
 
 	// Loop the tree in order to create a deep copy of each node
 	// (NB. Iterator needed for the OBSXYZ measurement)
-	for (auto tree_iter = tgt->tree.begin(); tree_iter != tgt->tree.end(); ++tree_iter) {
-
-		auto& entry = *tree_iter;
+	for (auto tree_iter = tgt->tree.begin(); tree_iter != tgt->tree.end(); ++tree_iter)
+	{
+		auto &entry = *tree_iter;
 
 		// First replace the contents of the node:
 		entry.reset(new TTreeEntry(*entry));
@@ -396,8 +394,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		// Necessary to manage all measurements separately thanks to pointers and references
 
 		// TSTN
-		for (auto& tstn : entry->measurements.fTSTN) {
-
+		for (auto &tstn : entry->measurements.fTSTN)
+		{
 			// Replace the tstn:
 			tstn.reset(new TTSTN(*tstn));
 
@@ -413,13 +411,13 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 			if (tstn->rotY)
 				tstn->rotY = &tgt->angles.getObject(tstn->rotY->getName());
 
-			for (auto& plrTgt : tstn->instrument.targets)
+			for (auto &plrTgt : tstn->instrument.targets)
 				if (plrTgt.second->distCorrectionAdjustable)
 					plrTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second->distCorrectionAdjustable->getName());
 
 			// TSTN::ROM
-			for (auto& rom : tstn->roms) {
-
+			for (auto &rom : tstn->roms)
+			{
 				// Replace the rom:
 				rom.reset(new TTSTN::TROM(*rom));
 
@@ -430,7 +428,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				// Measurements in this rom
 
 				// PLR3D
-				for (auto& meas : rom->measPLR3D) {
+				for (auto &meas : rom->measPLR3D)
+				{
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -439,7 +438,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				}
 
 				// ANGL
-				for (auto& meas : rom->measANGL) {
+				for (auto &meas : rom->measANGL)
+				{
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -448,7 +448,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				}
 
 				// ZEND
-				for (auto& meas : rom->measZEND) {
+				for (auto &meas : rom->measZEND)
+				{
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -457,7 +458,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				}
 
 				// DIST
-				for (auto& meas : rom->measDIST) {
+				for (auto &meas : rom->measDIST)
+				{
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -466,7 +468,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				}
 
 				// DHOR
-				for (auto& meas : rom->measDHOR) {
+				for (auto &meas : rom->measDHOR)
+				{
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -475,48 +478,47 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				}
 
 				// ECTH
-				for (auto& meas : rom->measECTH)
+				for (auto &meas : rom->measECTH)
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
 				// ECDIR
-				for (auto& meas : rom->measECDIR)
+				for (auto &meas : rom->measECDIR)
 					if (meas.targetPos)
 						meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
-
 			}
 		}
 
 		// CAM
-		for (auto& cam : entry->measurements.fCAM) {
-
+		for (auto &cam : entry->measurements.fCAM)
+		{
 			// Reset the pointers to point to objects in the target core:
 			cam.instrumentPos = &tgt->points.getObject(cam.instrumentPos->getName());
 
 			// UVD
-			for (auto& meas : cam.measUVD)
+			for (auto &meas : cam.measUVD)
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
 			// UVEC
-			for (auto& meas : cam.measUVEC)
+			for (auto &meas : cam.measUVEC)
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 		}
 
-
 		// EDM
-		for (auto& edm : entry->measurements.fEDM) {
-
+		for (auto &edm : entry->measurements.fEDM)
+		{
 			// Reset the pointers to point to objects in the target core:
 			edm.instrumentPos = &tgt->points.getObject(edm.instrumentPos->getName());
 
-			for (auto& edmTgt : edm.instrument.targets)
+			for (auto &edmTgt : edm.instrument.targets)
 				if (edmTgt.second->distCorrectionAdjustable)
 					edmTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(edmTgt.second->distCorrectionAdjustable->getName());
 
 			// DSPT
-			for (auto& meas : edm.measDSPT) {
+			for (auto &meas : edm.measDSPT)
+			{
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -526,8 +528,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		}
 
 		// LEVEL
-		for (auto& level : entry->measurements.fLEVEL) {
-
+		for (auto &level : entry->measurements.fLEVEL)
+		{
 			// Reset the pointers to point to objects in the target core:
 			if (level.fRefPt)
 				level.fRefPt = &tgt->points.getObject(level.fRefPt->getName());
@@ -539,11 +541,11 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				level.instrument.collAngleAdjustable = &tgt->angles.getObject(level.instrument.collAngleAdjustable->getName());
 
 			// DLEV
-			for (auto& meas : level.measDLEV) {
-
+			for (auto &meas : level.measDLEV)
+			{
 				// If DHOR specified, replace it and reset pointer:
-				if (meas.dhor) {
-
+				if (meas.dhor)
+				{
 					meas.dhor.reset(new TDLEV::TDHOR(*meas.dhor));
 
 					if (meas.dhor->targetPos)
@@ -557,17 +559,18 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		}
 
 		// ORIE
-		for (auto& orierom : entry->measurements.fORIE) {
-
+		for (auto &orierom : entry->measurements.fORIE)
+		{
 			// Reset the pointers to point to objects in the target core:
 			orierom.instrumentPos = &tgt->points.getObject(orierom.instrumentPos->getName());
 
-			for (auto& plrTgt : orierom.instrument.targets)
+			for (auto &plrTgt : orierom.instrument.targets)
 				if (plrTgt.second->distCorrectionAdjustable)
 					plrTgt.second->distCorrectionAdjustable = &tgt->lengths.getObject(plrTgt.second->distCorrectionAdjustable->getName());
 
 			// Measurements
-			for (auto& meas : orierom.measORIE) {
+			for (auto &meas : orierom.measORIE)
+			{
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
@@ -577,21 +580,21 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		}
 
 		// ECHO
-		for (auto& echorom : entry->measurements.fECHO) {
-
+		for (auto &echorom : entry->measurements.fECHO)
+		{
 			// Reset the pointers to point to objects in the target core:
 			if (echorom.fMeasuredPlane)
 				echorom.fMeasuredPlane = &tgt->planes.getObject(echorom.fMeasuredPlane->getName());
 
 			// Measurements
-			for (auto& meas : echorom.measECHO)
+			for (auto &meas : echorom.measECHO)
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 		}
 
 		// ECVE
-		for (auto& ecverom : entry->measurements.fECVE) {
-
+		for (auto &ecverom : entry->measurements.fECVE)
+		{
 			// Reset the pointers to point to objects in the target core:
 			if (ecverom.fPtLine)
 				ecverom.fPtLine = &tgt->points.getObject(ecverom.fPtLine->getName());
@@ -600,14 +603,14 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				ecverom.fMeasuredLine = &tgt->lines.getObject(ecverom.fMeasuredLine->getName());
 
 			// Measurements
-			for (auto& meas : ecverom.measECVE)
+			for (auto &meas : ecverom.measECVE)
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 		}
 
 		// ECSP
-		for (auto& ecsprom : entry->measurements.fECSP) {
-
+		for (auto &ecsprom : entry->measurements.fECSP)
+		{
 			// Reset the pointers to point to objects in the target core:
 			if (ecsprom.p1)
 				ecsprom.p1 = &tgt->points.getObject(ecsprom.p1->getName());
@@ -616,14 +619,14 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 				ecsprom.p2 = &tgt->points.getObject(ecsprom.p2->getName());
 
 			// Measurements
-			for (auto& meas : ecsprom.measECSP)
+			for (auto &meas : ecsprom.measECSP)
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 		}
 
 		// DVER
-		for (auto& dver : entry->measurements.fDVER) {
-
+		for (auto &dver : entry->measurements.fDVER)
+		{
 			// Reset the pointers to point to objects in the target core:
 
 			if (dver.station)
@@ -634,8 +637,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		}
 
 		// RADI
-		for (auto& radi : entry->measurements.fRADI) {
-
+		for (auto &radi : entry->measurements.fRADI)
+		{
 			// Reset the pointers to point to objects in the target core:
 
 			if (radi.station)
@@ -646,8 +649,8 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		}
 
 		// OBSXYZ
-		for (auto& obsxyz : entry->measurements.fOBSXYZ) {
-
+		for (auto &obsxyz : entry->measurements.fOBSXYZ)
+		{
 			// Reset the pointers to point to objects in the target core:
 
 			if (obsxyz.station)
@@ -661,16 +664,16 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		}
 
 		// INCLY
-		for (auto& inclyrom : entry->measurements.fINCLY) {
-
+		for (auto &inclyrom : entry->measurements.fINCLY)
+		{
 			// Measurements
-			for (auto& meas : inclyrom.measINCLY)
+			for (auto &meas : inclyrom.measINCLY)
 				if (meas.targetPos)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 		}
 
-		// PDOR 
-		auto& pdor = entry->measurements.fPDOR;
+		// PDOR
+		auto &pdor = entry->measurements.fPDOR;
 
 		// Reset the pointers to point to objects in the target core:
 		if (pdor.calaPt)
@@ -679,18 +682,19 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		if (pdor.orientationPt)
 			pdor.orientationPt = &tgt->points.getObject(pdor.orientationPt->getName());
 
-        if(pdor.targetPos)
-            pdor.targetPos = &tgt->points.getObject(pdor.targetPos->getName());
+		if (pdor.targetPos)
+			pdor.targetPos = &tgt->points.getObject(pdor.targetPos->getName());
 
-        // ECWS
-        for (auto& ecwsrom : entry->measurements.fECWS) {
-
-            // Measurements
-            for (auto& meas : ecwsrom.measECWS) {
-                if (meas.targetPos)
-                    meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
-            }      
-        }
+		// ECWS
+		for (auto &ecwsrom : entry->measurements.fECWS)
+		{
+			// Measurements
+			for (auto &meas : ecwsrom.measECWS)
+			{
+				if (meas.targetPos)
+					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
+			}
+		}
 
 		// ECWI
 		for (auto &ecwirom : entry->measurements.fECWI)
@@ -702,24 +706,24 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 			}
 		}
-    }
+	}
 }
 
-void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
-
+void TLGCData::copyInstruments(TLGCData const *const src, TLGCData *tgtData)
+{
 	// Copy the instruments and targets:
 	tgtData->instruments = src->instruments;
 
 	// Reset the pointers to instruments and targets and to adjustable objects in each concerned instrument/target:
 
 	// Polar targets:
-	for (auto& polar : tgtData->instruments.fPOLAR) {
-
+	for (auto &polar : tgtData->instruments.fPOLAR)
+	{
 		// Replace the instrument in the memory
 		polar.second.reset(new TInstrumentData::TPOLAR(*polar.second));
 
-		for (auto& tgt : polar.second->targets) {
-
+		for (auto &tgt : polar.second->targets)
+		{
 			// Replace the target in the memory
 			tgt.second.reset(new TInstrumentData::TPOLAR::TTarget(*tgt.second));
 
@@ -728,31 +732,30 @@ void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
 		}
 	}
 
-	for (auto& camd : tgtData->instruments.fCAMD) {
-
+	for (auto &camd : tgtData->instruments.fCAMD)
+	{
 		// Replace the instrument in the memory
 		camd.second.reset(new TInstrumentData::TCAMD(*camd.second));
 
-		for (auto& tgt : camd.second->targets)
+		for (auto &tgt : camd.second->targets)
 			// Replace the target in the memory
 			tgt.second.reset(new TInstrumentData::TCAMD::TTarget(*tgt.second));
 	}
 
-	for (auto& incl : tgtData->instruments.fINCL) {
-
+	for (auto &incl : tgtData->instruments.fINCL)
+	{
 		// Replace the instrument in the memory
 		incl.second.reset(new TInstrumentData::TINCL(*incl.second));
-
 	}
 
 	// EDM targets:
-	for (auto& edm : tgtData->instruments.fEDM) {
-
+	for (auto &edm : tgtData->instruments.fEDM)
+	{
 		// Replace the instrument in the memory
 		edm.second.reset(new TInstrumentData::TEDM(*edm.second));
 
-		for (auto& tgt : edm.second->targets) {
-
+		for (auto &tgt : edm.second->targets)
+		{
 			// Replace the target in the memory
 			tgt.second.reset(new TInstrumentData::TEDM::TTarget(*tgt.second));
 
@@ -762,27 +765,27 @@ void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
 	}
 
 	// Levelling instrument:
-	for (auto& level : tgtData->instruments.fLEVEL) {
-
+	for (auto &level : tgtData->instruments.fLEVEL)
+	{
 		// Replace the instrument in the memory
 		level.second.reset(new TInstrumentData::TLEVEL(*level.second));
 
 		if (level.second->collAngleAdjustable)
 			level.second->collAngleAdjustable = &tgtData->angles.getObject(level.second->collAngleAdjustable->getName());
 
-		for (auto& tgt : level.second->targets)
+		for (auto &tgt : level.second->targets)
 			// Replace the target in the memory
 			tgt.second.reset(new TInstrumentData::TLEVEL::TTarget(*tgt.second));
 	}
 
-    for(auto &scale : tgtData->instruments.fSCALE)
-        // Replace the instrument in the memory
-        scale.second.reset(new TInstrumentData::TSCALE(*scale.second));
+	for (auto &scale : tgtData->instruments.fSCALE)
+		// Replace the instrument in the memory
+		scale.second.reset(new TInstrumentData::TSCALE(*scale.second));
 
-    //HLSR instrument
-    for (auto& hlsr : tgtData->instruments.fHLSR)
-        // Replace the instrument in the memory
-        hlsr.second.reset(new TInstrumentData::THLSR(*hlsr.second));
+	// HLSR instrument
+	for (auto &hlsr : tgtData->instruments.fHLSR)
+		// Replace the instrument in the memory
+		hlsr.second.reset(new TInstrumentData::THLSR(*hlsr.second));
 
 	// WPSR instrument
 	for (auto &wpsr : tgtData->instruments.fWPSR)
@@ -790,13 +793,14 @@ void TLGCData::copyInstruments(TLGCData const* const src, TLGCData* tgtData) {
 		wpsr.second.reset(new TInstrumentData::TWPSR(*wpsr.second));
 }
 
-void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
-
+void TLGCData::updateAdjustableObjectsPointers(TLGCData *d)
+{
 	// Update the iterators in points:
-	for (auto& p : d->points) {
-
+	for (auto &p : d->points)
+	{
 		// If frameTreePosition is unknown, continue
-		if (p.getFrameTreePosition() == TDataTreeIterator()) continue;
+		if (p.getFrameTreePosition() == TDataTreeIterator())
+			continue;
 
 		// Get the id of the node:
 		auto nodeId = (*p.getFrameTreePosition())->ID;
@@ -804,27 +808,27 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData* d) {
 		// Loop the tree and find the node with the same id,
 		// update the frameTreePosition to the found node:
 		for (auto it = d->tree.begin(); it != d->tree.end(); ++it)
-			if ((*it)->ID == nodeId) {
+			if ((*it)->ID == nodeId)
+			{
 				p.setFrameTreePosition(it);
 				break;
 			}
 	}
 
 	// Update the pointers in lines:
-	for (auto& l : d->lines)
+	for (auto &l : d->lines)
 		if (l.getLinePoint())
 			l.setLinePoint(&d->points.getObject(l.getLinePoint()->getName()));
 
 	// Update the pointers in planes:
-	for (auto& p : d->planes)
+	for (auto &p : d->planes)
 		if (p.getReferencePoint())
 			p.setReferencePoint(&d->points.getObject(p.getReferencePoint()->getName()));
-
 }
 
 #if USE_SERIALIZER
 
-void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
+void TLGCData::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("angles", angles);
 	obj.addProperty("comments", comments);
@@ -847,8 +851,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper& obj) const
 	obj.addProperty("slaveGroups", slaveGroups);
 }
 
-
-void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) const
+void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("fNumANGL", fNumANGL);
 	obj.addProperty("fNumZEND", fNumZEND);
@@ -874,7 +877,7 @@ void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper& obj) 
 	obj.addProperty("fNumECWI", fNumECWI);
 }
 
-void TPointGlobal::serialize(SerializerObject::SerializationHelper& obj) const
+void TPointGlobal::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("fNumCala", fNumCala);
 	obj.addProperty("fNumVx", fNumVx);
