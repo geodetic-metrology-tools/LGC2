@@ -1793,7 +1793,19 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 		TPositionVector provisionalValue = pt->getProvisionalValueInRoot();
 		TPositionVector estimatedValue = pt->getEstimatedValueInRoot();
-		TDenseMatrix covarianceMatrixInRoot = pt->getCovarianceMatrixInRoot();
+		// the necessary computation (that sets the fCovarinRoot member which is needed for the getCovarInRoot) for this done so it crashes
+		// the following matrix has dimension 0 in the test:
+		TDenseMatrix WRONGcovarianceMatrixInRoot = pt->getCovarianceMatrixInRoot();
+		// try to do the computation now:
+		// doesn't compile:
+		//pt->transformCovar(*pt, fProjectData, fProjectData->getTree().begin());
+		// this way it works: (only for getting the covar in root)
+		LGCAdjustablePoint point = *pt;
+
+		point.transformPointSigma(fProjectData);
+		// this computation was not done and has to be done 
+		TDenseMatrix covarianceMatrixInRoot = point.getCovarianceMatrixInRoot();
+		// same problem probably for the points not in root in the first if block
 
 		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
