@@ -1769,7 +1769,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 		TPositionVector estimatedValue = pt->getEstimatedValueInSubframe();
 		TPositionVector provisionalValue = pt->getProvisionalValueInSubframe();
-		TDenseMatrix covarianceMatrixInSubframe = *pt->getCovarianceMatrixInSubframe().get();
+		TDenseMatrix covarianceMatrixInSubframe = pt->getCovarianceMatrixInSubframe();
 
 		// Write point coordinates XYZ or H because it is a local frame
 		stream->setLengthUnits(TLength::EUnits::kMetres);
@@ -1793,7 +1793,7 @@ void	TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 		TPositionVector provisionalValue = pt->getProvisionalValueInRoot();
 		TPositionVector estimatedValue = pt->getEstimatedValueInRoot();
-		TDenseMatrix covarianceMatrixInRoot = *pt->getCovarianceMatrixInRoot().get();
+		TDenseMatrix covarianceMatrixInRoot = pt->getCovarianceMatrixInRoot();
 
 		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);

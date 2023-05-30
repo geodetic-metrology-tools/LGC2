@@ -12,6 +12,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
+#include "TSparseMatrix.h"
 
 namespace Eigen
 {
@@ -150,10 +151,10 @@ public:
 		inline const TLength &getProvisionalHeightInRoot() const { return fProvisionalHeightInRoot; }
 
 		/// Returns a constant reference on the covariance matrix of the point in the subframe
-		inline const std::shared_ptr<Eigen::MatrixXd> &getCovarianceMatrixInSubframe() const { return fCovarianceMatrixInSubframe; }
+		inline const TDenseMatrix &getCovarianceMatrixInSubframe() const { return fCovarianceMatrixInSubframe; }
 
 		/// Returns a constant reference on the covariance matrix of the point in ROOT
-		inline const std::shared_ptr<Eigen::MatrixXd> &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; } 
+		inline const TDenseMatrix &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; } 
 
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
@@ -207,11 +208,11 @@ private:
 
 	TPositionVector fProvisionalValueInSubframe = getProvisionalValue(); /*!< point's provisional value in Subframe*/
 	TPositionVector fEstimatedValueInSubframe = getEstimatedValue(); /*!< point's estimated value after calculation in Subframe*/
-	std::shared_ptr<Eigen::MatrixXd> fCovarianceMatrixInSubframe; /*!< point's covariance matrix in Subframe*/
+	TDenseMatrix fCovarianceMatrixInSubframe; /*!< point's covariance matrix in Subframe*/
 
 	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< point's provisional value in ROOT*/
 	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< point's estimated value after calculation in ROOT*/
-	std::shared_ptr<Eigen::MatrixXd> fCovarianceMatrixInRoot; /*!< point's covariance matrix in ROOT*/
+	TDenseMatrix fCovarianceMatrixInRoot; /*!< point's covariance matrix in ROOT*/
 
 	TLength fProvisionalHeightInRoot; /*!< point's provisional height value in ROOT*/
 	TLength fEstimatedHeightInRoot; /*!< point's estimated height value in ROOT*/

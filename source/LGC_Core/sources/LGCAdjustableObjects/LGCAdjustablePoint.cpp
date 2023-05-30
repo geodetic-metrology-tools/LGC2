@@ -45,8 +45,8 @@ void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, con
 
 void LGCAdjustablePoint::transformPointSigma(const TLGCData *fData)
 {
-	fCovarianceMatrixInSubframe = std::make_shared<Eigen::MatrixXd>(transformCovar(*this, fData, this->fFramePosition));
-	fCovarianceMatrixInRoot = std::make_shared<Eigen::MatrixXd>(transformCovar(*this, fData, fData->getTree().begin()));
+	fCovarianceMatrixInSubframe = transformCovar(*this, fData, this->fFramePosition);
+	fCovarianceMatrixInRoot = transformCovar(*this, fData, fData->getTree().begin());
 }
 
 
@@ -368,6 +368,7 @@ TDenseMatrix LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv, co
 	TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
 
 	// compute the covariance matrix in the destination Frame
+	std::cout << covar.cols() << std::endl;
 	TDenseMatrix ptCovar = (jac * covar) * jac.transpose();
 
 	return ptCovar;
