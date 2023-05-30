@@ -941,4 +941,61 @@ namespace tut
 		}
 		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
 	}
+
+	template<>
+	template<>
+	void object::test<29>()
+	{
+		set_test_name("Testing reading OBSXYZ after INSTR");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/OBSXYZ_INSTR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::OBSXYZ_INSTR);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	}
+
+	template<>
+	template<>
+	void object::test<30>()
+	{
+		set_test_name("Testing reading RADI after INSTR");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/RADI_INSTR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::RADI_INSTR);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	}
+
+	template<>
+	template<>
+	void object::test<31>()
+	{
+		set_test_name("Testing reading DVER after INSTR");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/DVER_INSTR.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::DVER_INSTR);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading Successfull ", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	}
 	}

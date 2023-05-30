@@ -175,7 +175,7 @@ namespace {
 	const int nb_allowed_json = 30;
 
 	//header
-	const int nb_allowed_instr = 16; // instruments + points +frame
+	const int nb_allowed_instr = 19; // instruments + points + frame + round of measurements without intruments
 	const int nb_allowed_frame = 9;
 	const int nb_allowed_ef = 23;
 	const int nb_allowed_end = 0;
@@ -303,7 +303,7 @@ namespace {
 	const char* allowed_CHABA[nb_allowed_chaba] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, LIBR, SIMU, COVAR , CONSI, JSON};
 	const char* allowed_JSON[nb_allowed_json] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, SOBS, EREL, COVAR , CHABA, CONSI};
 	// Others
-	const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR,WPSR };
+	const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI };
 	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN, INCLY };
 	const char* allowed_ENDFRAME[nb_allowed_ef] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ECWS,ECWI };
 	const char* allowed_END[1] = {};
