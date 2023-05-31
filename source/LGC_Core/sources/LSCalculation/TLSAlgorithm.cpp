@@ -1,34 +1,23 @@
-#include <TLSAlgorithm.h>
-#include "TLSInputMatricesFiller.h"
-#include "TLSConsistencyCheck.h"
-#include "TLSUniversalMtdComputer.h"
 #include <Logger.hpp>
+#include <TLSAlgorithm.h>
 
-TLSAlgorithm::TLSAlgorithm(TLGCData& data)
-	: fNumberOfIterations(0)
-	, fS0APosterioriVariances(false)
-	,fPointTransformer(&data.getTree(), data.getConfig().referential)
-	,fLibrCnstrGenerator(fPointTransformer, data)
+#include "TLSConsistencyCheck.h"
+#include "TLSInputMatricesFiller.h"
+#include "TLSUniversalMtdComputer.h"
+
+TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosterioriVariances(false), fPointTransformer(&data.getTree(), data.getConfig().referential)
 {
 	delete resultMatrices;
-	// identify the constraints necessary, create them
-	if (data.getConfig().libre.isActive())
-	{
-		fLibrCnstrGenerator.initCnstrIdentifier(data);
-		data.fUEOIndices.CIndex = fLibrCnstrGenerator.getNumberOfConstraint();
-	}
 	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
 }
 
-Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
+Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 {
 	std::unique_ptr<TALSComputer> computer;
-	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential));
+	std::unique_ptr<TLSInputMatricesFiller> matrFiller(new TLSInputMatricesFiller(&data.getTree(), data.getConfig().referential, data));
 	std::unique_ptr<TLSInputMatrices> inputMtr(new TLSInputMatrices());
 
 	fExtractor = std::make_shared<TLSResultsMatricesExtractor>(&data);
-	
-
 
 	// use the universal LS algorithm for parametric, combined and constrained case.
 	computer.reset(new TLSUniversalMtdComputer());
@@ -38,72 +27,59 @@ Behavior TLSAlgorithm::run(TLGCData& data, int fMaxIterations)
 	return computationIsOK;
 }
 
-
-Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
-											TLSInputMatricesFiller* matrFiller,
-											TLSInputMatrices* inputMtr,
-											TALSComputer* computer,
-											int fMaxIterations,
-											TReal convCrit)
+Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *matrFiller, TLSInputMatrices *inputMtr, TALSComputer *computer, int fMaxIterations, TReal convCrit)
 {
-	
-
 	bool hasReachedCriteria = false;
 	fNumberOfIterations = 0;
 
-	TFileLogger& fileLog = data.getFileLogger();
+	TFileLogger &fileLog = data.getFileLogger();
 
 	// Iterate to find solution
 	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
 	{
 		bool fillOK = false;
-		if (fNumberOfIterations == 0)//First iteration, fill also the weight unknown matrix.
+		if (fNumberOfIterations == 0) // First iteration, fill also the weight unknown matrix.
 		{
 			fillOK = matrFiller->fillMatrices(&data, true, inputMtr);
 		}
-		else//In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
+		else // In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
 
-		//fill part of the free constraints
-		if (data.getConfig().libre.isActive())
-			fLibrCnstrGenerator.processFreeCnstr(*inputMtr);
-
-		if (data.getConfig().consCheck.isActive() && fNumberOfIterations==0){
+		if (data.getConfig().consCheck.isActive() && fNumberOfIterations == 0)
+		{
 			// Check for inconsistencies leading to ambiguous least square problems
-			// libr constraint matrices are necessary if there is a
-			// constraint
 			TLSConsCheck consCheck(data, *inputMtr);
-			if (!consCheck.getResultStatus()) {
-				return Behavior(Behavior::BehaviorCode::ERR_consistencyCheck, L"Problem with measurement configuration.\n");	
+			if (!consCheck.getResultStatus())
+			{
+				return Behavior(Behavior::BehaviorCode::ERR_consistencyCheck, L"Problem with measurement configuration.\n");
 			}
 		}
 
 		if (fillOK)
-		{		
-
-			// compute solution 
+		{
+			// compute solution
 			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
-	
 
 			if (computationOK)
 			{
 				logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done\n=============================";
 
-				bool extractOK = false; 
+				bool extractOK = false;
 				extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
 
 				if (extractOK)
 					hasReachedCriteria = fExtractor->lastIteration();
-				else{
+				else
+				{
 					fileLog << "Problem in LS matrices extraction.\n";
-					return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); //Error during extraction, errors written out already, STOP the calculation.	
+					return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); // Error during extraction, errors written out already, STOP the calculation.
 				}
 			}
 			else
 			{
-				//Write errors which occured in computer of LS methos
+				// Write errors which occured in computer of LS methos
 				logCritical() << "Problem with LS computation: ended at the iteration step" << fNumberOfIterations;
-				fileLog << "Problem with LS computation: " << computer->getError()<< " \n";
+				fileLog << "Problem with LS computation: " << computer->getError() << " \n";
 				return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation. Matrix not inverted\n");
 			}
 		}
@@ -118,41 +94,43 @@ Behavior	TLSAlgorithm::iterate2Solution(TLGCData& data,
 	// Checks if maximal number of iteration steps has been reached without satisfying the converging criteria
 	if (fNumberOfIterations == fMaxIterations && !hasReachedCriteria)
 	{
-		logCritical() << "Maximal number of iteration steps ("<<fMaxIterations<<") has been reached without satisfying the converging criteria!";
+		logCritical() << "Maximal number of iteration steps (" << fMaxIterations << ") has been reached without satisfying the converging criteria!";
 		fileLog << "The calculation is not converging \n";
-		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"The calculation is not converging \n"); //Error during the calculation, errors written out already, STOP the calculation.	
+		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"The calculation is not converging \n"); // Error during the calculation, errors written out already, STOP the calculation.
 	}
 	else
 	{
 		if (computeVarCovarAndReliability(&data, inputMtr, computer))
 			return Behavior();
-		else{
+		else
+		{
 			fileLog << TFileLogger::e_logType::LOG_ERROR << "TResidual errors and their related variance-covariance matrix could not be estimated. ";
 			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"TResidual errors and their related variance-covariance matrix could not be estimated!\n");
 		}
 	}
 }
 
-bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrices* inputMtr, TALSComputer* computer)
+bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer)
 {
 	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices))
 	{
 		logWarning() << "Residual errors and their related variance-covariance matrix could not be estimated!";
 		return false;
 	}
-		
+
 	fExtractor->extractResiduals(*resultMatrices);
 
 	TReal S0 = sqrt(resultMatrices->getSigmaZero2());
 	// Apply S02 only if APRI is not used and S02 is outside the limits
-	if (!data->getConfig().useApriori.isActive() && (S0>resultMatrices->getSigmaZeroUpLimit() || S0<resultMatrices->getSigmaZeroLowLimit()))
+	if (!data->getConfig().useApriori.isActive() && (S0 > resultMatrices->getSigmaZeroUpLimit() || S0 < resultMatrices->getSigmaZeroLowLimit()))
 	{
-		TSparseMatrix* UnkCovar = resultMatrices->getUnkCovarMtrx();
+		TSparseMatrix *UnkCovar = resultMatrices->getUnkCovarMtrx();
 		(*UnkCovar) *= resultMatrices->getSigmaZero2();
 		resultMatrices->setUnkCovarMtrx(*UnkCovar);
 	}
 
-	if (!fExtractor->extractVarCovarParams(*resultMatrices)){
+	if (!fExtractor->extractVarCovarParams(*resultMatrices))
+	{
 		logWarning() << "Problem during Covariance extraction.";
 		return false;
 	};
@@ -162,19 +140,17 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrice
 	data->setS0APosteriori(S0);
 	data->setChiS0Limits(resultMatrices->getSigmaZeroLowLimit(), resultMatrices->getSigmaZeroUpLimit());
 
-
 	if ((data->fUEOIndices.UIndex != 0) && data->getConfig().faut.isActive())
 	{
 		logDebug() << "Computes statistics (Z, W, T, G, NABLA and DELTY)";
 
-		//re-initialize the statictic vectors
+		// re-initialize the statictic vectors
 		data->getStatistics().initialiseStatVector(inputMtr);
 		TReal alpha = data->getConfig().faut.alpha / 100;
 		TReal beta = data->getConfig().faut.beta / 100;
 
-		//compute statistics (Z, W, T, G, NABLA and DELTY)
+		// compute statistics (Z, W, T, G, NABLA and DELTY)
 		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());
-		
 	}
 
 	if (!data->getConfig().erelTuples.empty())
@@ -188,5 +164,4 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData* data, TLSInputMatrice
 	}
 
 	return true;
-	
 }

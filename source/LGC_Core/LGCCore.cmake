@@ -47,6 +47,7 @@ include_directories (
 	${TUT_INCLUDE_PATH}
 	${EIGEN_INCLUDE_PATH}
     ${LGCCore_INCLUDE_PATH}/LGCAdjustableObjects
+	${LGCCore_INCLUDE_PATH}/LGCConstraintObjects
 	${LGCCore_INCLUDE_PATH}/LSCalculation
 	${LGCCore_INCLUDE_PATH}/Readers
 	${LGCCore_INCLUDE_PATH}/ContributionsGenerators
@@ -77,6 +78,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableLine.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustablePlane.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableObjectCollection.h
+	${CORE_INCLUDE_PATH}/LGCConstraintObjects/LGCFrameConstraintGroup.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TLGCCalculation.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimFrameSummary.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimPointSummary.h
@@ -159,6 +161,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustableLine.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePlane.cpp
+	${CORE_SOURCES_PATH}/LGCConstraintObjects/LGCFrameConstraintGroup.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TLGCCalculation.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimPointSummary.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimFrameSummary.cpp
