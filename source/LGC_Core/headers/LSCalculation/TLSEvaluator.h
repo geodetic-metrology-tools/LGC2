@@ -35,7 +35,7 @@ public:
 	~TLSEvaluator();
 	
 	Eigen::VectorXd evaluateMisclosure(Eigen::VectorXd parameter);
-	Eigen::SparseMatrix<double> evaluateA(Eigen::VectorXd parameter);
+	Eigen::SparseMatrix<double> getA(Eigen::VectorXd parameter);
 	Eigen::VectorXd getEstParams();
 	void setParameters(Eigen::VectorXd para);
 	UEOIndices dimensions;
@@ -47,6 +47,11 @@ private:
 	std::shared_ptr<TLGCData> fData;
 	//TLGCData fData;
 	TLSInputMatricesFiller* fMatFiller;
+	TLSInputMatrices* iMat;
+	// update iMat objects by evaluating at current parameter
+	bool evaluate();
+	// indicating thatiMat corrsponds to eval at current parameter. reset to false in any setParam method call
+	bool isUptoDate = false;
 	// setter helpers
 	void setPointParams(Eigen::VectorXd para);
 	void setAngleParams(Eigen::VectorXd para);
