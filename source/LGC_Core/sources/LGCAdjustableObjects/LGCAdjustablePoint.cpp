@@ -45,8 +45,8 @@ void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, con
 
 void LGCAdjustablePoint::transformPointSigma(const TLGCData *fData)
 {
-	fCovarianceMatrixInSubframe = std::make_shared<Eigen::MatrixXd>(transformCovar(*this, fData, this->fFramePosition));
-	fCovarianceMatrixInRoot = std::make_shared<Eigen::MatrixXd>(transformCovar(*this, fData, fData->getTree().begin()));
+	TAdjustablePoint::setCovarianceMatrix(transformCovar(*this, fData, this->fFramePosition));
+	fCovarianceMatrixInRoot = transformCovar(*this, fData, fData->getTree().begin());
 }
 
 
@@ -54,13 +54,11 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 {
 	TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
-
-	fProvisionalValueInSubframe = fProvisionalValue;
 	
 	if (root == getFrameTreePosition())
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		fProvisionalValueInRoot = fProvisionalValueInSubframe;
+		fProvisionalValueInRoot = fProvisionalValue;
 
 		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
@@ -74,17 +72,17 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValueInRoot);
 
 			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-				TXYH2CCS::XYHs2CCS(fProvisionalValueInSubframe);
+				TXYH2CCS::XYHs2CCS(fProvisionalValue);
 			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-				TXYH2CCS::XYHg2000Machine2CCS(fProvisionalValueInSubframe);
+				TXYH2CCS::XYHg2000Machine2CCS(fProvisionalValue);
 			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValueInSubframe);
+				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValue);
 		}
 	}
 	else
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		fProvisionalValueInRoot = fProvisionalValueInSubframe;
+		fProvisionalValueInRoot = fProvisionalValue;
 
 		TLOR2LOR transfo = TLOR2LOR(getFrameTreePosition(), root, "transfo");
 		// transform coordinates in the ROOT frame
@@ -112,17 +110,15 @@ void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
     TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 
-	fEstimatedValueInSubframe = fEstimatedValue;
-
 	if (root == getFrameTreePosition())
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		fEstimatedValueInRoot = fEstimatedValueInSubframe;
+		fEstimatedValueInRoot = fEstimatedValue;
 	}
 	else
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		fEstimatedValueInRoot = fEstimatedValueInSubframe;
+		fEstimatedValueInRoot = fEstimatedValue;
 
 		TLOR2LOR transfo = TLOR2LOR(getFrameTreePosition(), root, "transfo");
 		// transform coordinates in the ROOT frame
@@ -309,15 +305,12 @@ void LGCAdjustablePoint::serialize(SerializerObject::SerializationHelper &obj) c
 	obj.addProperty("fFramePosition_ID", fFramePosition.node->data.get()->ID);
 	obj.addProperty("fFramePosition_Name", fFramePosition.node->data.get()->frame.getName());
 
-	obj.addProperty("fProvisionalValueInSubframe", fProvisionalValueInSubframe);
 	obj.addProperty("fProvisionalValueInRoot", fProvisionalValueInRoot);
 	obj.addProperty("fProvisionalHeightInRoot", fProvisionalHeightInRoot);
 
-	obj.addProperty("fEstimatedValueInSubframe", fEstimatedValueInSubframe);
 	obj.addProperty("fEstimatedValueInRoot", fEstimatedValueInRoot);
 	obj.addProperty("fEstimatedHeightInRoot", fEstimatedHeightInRoot);
 
-	obj.addProperty("fCovarianceMatrixInSubframe", fCovarianceMatrixInSubframe);
 	obj.addProperty("fCovarianceMatrixInRoot", fCovarianceMatrixInRoot);
 }
 #endif

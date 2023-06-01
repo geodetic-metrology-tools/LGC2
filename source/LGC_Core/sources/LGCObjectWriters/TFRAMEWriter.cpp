@@ -1855,15 +1855,13 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 	// coordinates
 	stream->setWidthFormat(coordWidth);
 	stream->setPrecisionFormat(coordPrecision);
-	TPositionVector estimatedValue = pt->getEstimatedValue();
-	TPositionVector provisionalValue = pt->getProvisionalValue();
 
 	if (localFRAME)
 	{ // Means that it is not ROOT!!!!!!
 
-		TPositionVector estimatedValue = pt->getEstimatedValueInSubframe();
-		TPositionVector provisionalValue = pt->getProvisionalValueInSubframe();
-		TDenseMatrix covarianceMatrixInSubframe = *pt->getCovarianceMatrixInSubframe().get();
+		TPositionVector estimatedValue = pt->getEstimatedValue();
+		TPositionVector provisionalValue = pt->getProvisionalValue();
+		TDenseMatrix covarianceMatrix = pt->getCovarianceMatrix();
 
 		// Write point coordinates XYZ or H because it is a local frame
 		stream->setLengthUnits(TLength::EUnits::kMetres);
@@ -1875,7 +1873,7 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 		TPositionVector provisionalValue = pt->getProvisionalValueInRoot();
 		TPositionVector estimatedValue = pt->getEstimatedValueInRoot();
-		TDenseMatrix covarianceMatrixInRoot = *pt->getCovarianceMatrixInRoot().get();
+		TDenseMatrix covarianceMatrix = pt->getCovarianceMatrixInRoot();
 
 		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
@@ -1888,11 +1886,8 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 
 		// status = vxyz to write sigma because with CALA, no sigma are writen
 		converter.writeCoordinateParam(TSpatialStatus::kVxyz, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(sqrtq(covarianceMatrixInRoot(0, 0))),
-			TLength(sqrtq(covarianceMatrixInRoot(1, 1))),
-			TLength(sqrtq(covarianceMatrixInRoot(2, 2))),
+			TLength(sqrtq(covarianceMatrix(0, 0))), TLength(sqrtq(covarianceMatrix(1, 1))), TLength(sqrtq(covarianceMatrix(2, 2))),
 			""); /*sigma convert in root*/
-		//  }
 
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
 			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),

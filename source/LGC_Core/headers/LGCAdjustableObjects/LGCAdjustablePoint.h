@@ -13,12 +13,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <LGCAdjustableObjectCollection.h>
 #include <Global.h>
 
-namespace Eigen
-{
-template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
-class Matrix;
-using MatrixXd = Matrix<double, -1, -1, 0, -1, -1>;
-} // namespace Eigen
 
 class TLGCData;
 
@@ -131,12 +125,6 @@ public:
         void transformProvisionalCoordinates(const TLGCData *fData);
         void transformEstimatedCoordinates(const TLGCData *fData);
 
-		/// Returns a constant reference on the estimated value of the point in the subframe
-		inline const TPositionVector &getEstimatedValueInSubframe() const { return fEstimatedValueInSubframe; }
-
-		/// Returns a constant reference on the provisional value of the point in the subframe
-		inline const TPositionVector &getProvisionalValueInSubframe() const { return fProvisionalValueInSubframe; }
-
 		/// Returns a constant reference on the estimated value of the point in ROOT
 		inline const TPositionVector &getEstimatedValueInRoot() const { return fEstimatedValueInRoot; }
 
@@ -149,11 +137,8 @@ public:
 		/// Returns a constant reference on the provisional height of the point in ROOT
 		inline const TLength &getProvisionalHeightInRoot() const { return fProvisionalHeightInRoot; }
 
-		/// Returns a constant reference on the covariance matrix of the point in the subframe
-		inline const std::shared_ptr<Eigen::MatrixXd> &getCovarianceMatrixInSubframe() const { return fCovarianceMatrixInSubframe; }
-
 		/// Returns a constant reference on the covariance matrix of the point in ROOT
-		inline const std::shared_ptr<Eigen::MatrixXd> &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; } 
+		inline const TDenseMatrix &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; }
 
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
@@ -205,13 +190,9 @@ private:
 
 	static bool allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
 
-	TPositionVector fProvisionalValueInSubframe = getProvisionalValue(); /*!< point's provisional value in Subframe*/
-	TPositionVector fEstimatedValueInSubframe = getEstimatedValue(); /*!< point's estimated value after calculation in Subframe*/
-	std::shared_ptr<Eigen::MatrixXd> fCovarianceMatrixInSubframe; /*!< point's covariance matrix in Subframe*/
-
 	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< point's provisional value in ROOT*/
 	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< point's estimated value after calculation in ROOT*/
-	std::shared_ptr<Eigen::MatrixXd> fCovarianceMatrixInRoot; /*!< point's covariance matrix in ROOT*/
+	TDenseMatrix fCovarianceMatrixInRoot = getCovarianceMatrix(); /*!< point's covariance matrix in ROOT*/
 
 	TLength fProvisionalHeightInRoot; /*!< point's provisional height value in ROOT*/
 	TLength fEstimatedHeightInRoot; /*!< point's estimated height value in ROOT*/
