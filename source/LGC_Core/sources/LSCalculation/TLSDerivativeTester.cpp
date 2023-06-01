@@ -22,7 +22,7 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 	Eigen::VectorXd prov = fEvaluator.getEstParams();
 
 	// evaluate A matrix according to inputMatrixFiller, contributionGenerator etc..
-	Eigen::MatrixXd computedJacobian = fEvaluator.evaluateA(prov);
+	Eigen::MatrixXd computedJacobian = fEvaluator.getA(prov);
 	
 	// evaluate A matrix according to finite differences applied to the misclosure vector
 	Eigen::MatrixXd finiteDifferenceJacobian= computeFiniteDifferenceJacobian(prov);
@@ -71,7 +71,7 @@ Eigen::MatrixXd TLSDerivativeTester::computeFiniteDifferenceJacobian(Eigen::Vect
 	// evaluate misclosure at basepoint
 	Eigen::VectorXd miscBase = fEvaluator.evaluateMisclosure(vec);
 	// evaluate A matrix at basepoint
-	Eigen::MatrixXd ABase = fEvaluator.evaluateA(vec);
+	Eigen::MatrixXd ABase = fEvaluator.getA(vec);
 
 	int nParam = fEvaluator.dimensions.UIndex;
 	int nObs = fEvaluator.dimensions.OIndex;

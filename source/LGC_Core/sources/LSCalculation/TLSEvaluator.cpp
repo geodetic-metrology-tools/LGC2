@@ -6,7 +6,7 @@
 #include <Eigen/Dense>
 #include "TAdjustableHelmertTransformation.h"
 
-TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
+TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMatrices)
 {
 	// create a copy of the LGCData object to use it for manipulating parameter and observation values
 	// std::shared_ptr<TLGCData> aux = data->clone();
@@ -15,7 +15,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 	// fData = data->clone();
 	// instead take the original object now. The links there work.
 	fData = data;
-	fMatFiller = new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential);
+	fMatFiller = new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential, *fData);
 	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
 
@@ -26,6 +26,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data)
 
 TLSEvaluator::~TLSEvaluator()
 {
+	delete iMat;
 	delete fMatFiller;
 }
 
@@ -43,18 +44,20 @@ Eigen::VectorXd TLSEvaluator::evaluateMisclosure(Eigen::VectorXd parameter)
    	Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
 	return misclosure;
 }
-Eigen::SparseMatrix<double> TLSEvaluator::evaluateA(Eigen::VectorXd parameter)
+Eigen::SparseMatrix<double> TLSEvaluator::getA(Eigen::VectorXd parameter)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
 	setParameters(parameter);
-	// create matrices for model evaluation
-   	TLSInputMatrices matrices;
-   	matrices.initMatrices(fData->fUEOIndices);
-	// evaluate using the standard inputMatrixFiller
-   	bool success =	fMatFiller->fillMatrices(fData.get(), true, &matrices);
-	// get first design matrix
-	Eigen::SparseMatrix<double> A = *matrices.getFirstDgnMtrx();
-	return A;
+	evaluate();
+	return *iMat->getFirstDgnMtrx();
+	//// create matrices for model evaluation
+   	//TLSInputMatrices matrices;
+   	//matrices.initMatrices(fData->fUEOIndices);
+	//// evaluate using the standard inputMatrixFiller
+   	//bool success =	fMatFiller->fillMatrices(fData.get(), true, &matrices);
+	//// get first design matrix
+	//Eigen::SparseMatrix<double> A = *matrices.getFirstDgnMtrx();
+	//return A;
 }
 
 Eigen::VectorXd TLSEvaluator::getEstParams()
@@ -150,7 +153,7 @@ bool TLSEvaluator::testSetterEffect()
 			testPassed = false;
 			std::cout << "Parameter i=" << i << " seems to have no influence on the misclosure." << std ::endl;
 			// print norm of associated column of Jacobian in this case. if its 0 this means LGC agrees that no influence on misclosure.. consi check should also complain in this case
-			Eigen::MatrixXd Jac = evaluateA(pertVar);
+			Eigen::MatrixXd Jac = getA(pertVar);
 			std::cout << "norm of i-th column of LGC Jacobian = " << Jac.col(i).norm() << std::endl;
 		}
 	}
@@ -159,8 +162,27 @@ bool TLSEvaluator::testSetterEffect()
 	return testPassed;
 }
 
+bool TLSEvaluator::evaluate()
+{ 
+	bool success;
+	if (isUptoDate)
+	{
+		// iMat object already contains up to date data
+		success = true;
+	}
+	else
+	{
+		// evaluate
+		iMat->initMatrices(fData->fUEOIndices);
+		// evaluate using the standard inputMatrixFiller
+		success = fMatFiller->fillMatrices(fData.get(), true, iMat);
+	}
+	return success;
+}
+
 void TLSEvaluator::setPointParams(Eigen::VectorXd para)
 {
+	isUptoDate = false;
 	for (auto &point : fData->getPoints())
 	{
 		if (point.hasVariable())
@@ -180,6 +202,7 @@ void TLSEvaluator::setPointParams(Eigen::VectorXd para)
 
 void TLSEvaluator::setAngleParams(Eigen::VectorXd para)
 {
+	isUptoDate = false;
 	for (auto &angle : fData->getAngles())
 	{
 		if (!angle.isFixed())
@@ -199,6 +222,7 @@ void TLSEvaluator::setPlaneParams(Eigen::VectorXd para)
 	//
 	//	bool critNotExceeded = true;
 	//
+	isUptoDate = false;
 	for (auto &plane : fData->getPlanes())
 	{
 		if (plane.hasVariable())
@@ -218,6 +242,7 @@ void TLSEvaluator::setPlaneParams(Eigen::VectorXd para)
 
 void TLSEvaluator::setLineParams(Eigen::VectorXd para)
 {
+	isUptoDate = false;
 	for (auto &line : fData->getLines())
 	{
 		if (!line.isFixed())
@@ -240,6 +265,7 @@ void TLSEvaluator::setLengthParams(Eigen::VectorXd para)
 	//	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
 	//
 	//	bool critNotExceeded = true;
+	isUptoDate = false;
 	for (auto &length : fData->getLength())
 	{
 		if (!length.isFixed())
@@ -262,6 +288,7 @@ void TLSEvaluator::setTransformationParams(Eigen::VectorXd para)
 	//
 	//	bool critNotExceeded = true;
 	//
+	isUptoDate = false;
 	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
 	{
 		auto &trafo(it.node->data.get()->frame);
