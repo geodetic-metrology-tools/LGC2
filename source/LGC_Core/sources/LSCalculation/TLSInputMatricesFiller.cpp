@@ -324,13 +324,6 @@ void TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM>
 		if (!rom->v0->isFixed())
 			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
-		// Add contributions of transformations parameters
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform)
-		{
-			if (!itTgTransform->first.isFixed())
-				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
-		}
-
 		// Adding contributions of STATION transformation's parameters
 		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform)
 		{
@@ -1823,14 +1816,14 @@ bool TLSInputMatricesFiller::addTransformationContribution(const TAdjustableHelm
 	for (int i = 0; i < 3; i++)
 	{
 		if (!trafo.isTranslationFixed(i))
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIndex, trafo.getTranslationUnknIndex(i), trContrib.fTranslContrib[i]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getTranslationUnknIndex(i), trContrib.fTranslContrib[i]);
 
 		if (!trafo.isRotationFixed(i))
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIndex, trafo.getRotationUnknIndex(i), trContrib.fRotationContrib[i]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getRotationUnknIndex(i), trContrib.fRotationContrib[i]);
 	}
 
 	if (!trafo.isScaleFixed())
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIndex, trafo.getScaleUnknIndex(), trContrib.fScaleContrib);
+		isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getScaleUnknIndex(), trContrib.fScaleContrib);
 
 	return isProcessOK;
 }
