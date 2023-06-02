@@ -56,8 +56,6 @@ namespace tut
 		TSparseMatrix fullCovar = *projTest.get()->getCovMatByConst();
 		TDenseMatrix retrievedCovar = fullCovar.toDense()(P1_idx, P1_idx);
 		TDenseMatrix suppliedCovar = P1.getApriCovar();
-	//	std::cout << "retrieved covar =" << std::endl << retrievedCovar << std::endl;
-	//	std::cout << "supplied covar =" << std::endl << suppliedCovar << std::endl;
 
 		ensure_equals("Retrieved Covariance does not match supplied covariance", retrievedCovar.isApprox(suppliedCovar), true);
 
@@ -143,9 +141,6 @@ namespace tut
 		}
 		TDenseMatrix retrievedCovar2 = fullCovar.toDense()(idx2,idx2);
 		TDenseMatrix suppliedCovar2 = trafo2.getApriCovar();
-	//	std::cout << "supplied covar =" << std::endl << suppliedCovar2 << std::endl;
-//		std::cout << "retrieved covar =" << std::endl << retrievedCovar2 << std::endl;
-//		std::cout << fullCovar.toDense() << std::endl;
 
 		ensure_equals("Retrieved Covariance does not match supplied covariance", retrievedCovar2.isApprox(suppliedCovar2), true);
 
@@ -190,6 +185,79 @@ namespace tut
 		ensure_equals("Estimate does not match provisional values.", result.isApprox(expectedResult), true);
 		ensure_equals("Retrieved Covariance does not match supplied covariance", retrievedCovar.isApprox(suppliedCovar), true);
 		
+	}
+	template<>
+	template<>
+	void object::test<5>()
+	{
+		set_test_name("Testing compatibility of slave feature and apriCov feature for frames.");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/apricov.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(ApriCov::APRICOV_slave_vs_apriCov);
+
+		bool succesReading = reader.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		
+		TSparseMatrix fullCovar = *projTest.get()->getCovMatByConst();
+		TDataTreeIterator it = projTest.get()->getTree().begin();
+		it++;
+		TAdjustableHelmertTransformation &trafo1 = it.node->data.get()->frame;
+		it++;
+		TAdjustableHelmertTransformation &trafo2 = it.node->data.get()->frame;
+		it++;
+		TAdjustableHelmertTransformation &trafo3 = it.node->data.get()->frame;
+		it++;
+		TAdjustableHelmertTransformation &trafo4 = it.node->data.get()->frame;
+		// first slave then apricov
+		int first1 = trafo1.getFirstUidx();
+		std::vector<int> idx1;
+		for (int j = 0; j < trafo1.getNumUnkn(); j++)
+		{
+			idx1.push_back(j + first1);
+		}
+		std::for_each(idx1.begin(), idx1.end(), [first1](int x) { return x + first1; });
+		TDenseMatrix retrievedCovar1 = fullCovar.toDense()(idx1, idx1);
+		TDenseMatrix suppliedCovar1 = trafo1.getApriCovar();	
+		// get the retrieved covar from the second frame
+		int first2 = trafo2.getFirstUidx();
+		std::vector<int> idx2;
+		for (int j = 0; j < trafo2.getNumUnkn(); j++)
+		{
+			idx2.push_back(j + first2);
+		}
+		std::for_each(idx2.begin(), idx2.end(), [first2](int x) { return x + first2; });
+		TDenseMatrix retrievedCovar2 = fullCovar.toDense()(idx1, idx1);
+		ensure_equals("Retrieved Covariance does not match supplied covariance", retrievedCovar1.isApprox(suppliedCovar1), true);
+		ensure_equals("Retrieved Covariance of second frame needs to match covar from first frame due to slave constraint", retrievedCovar1.isApprox(retrievedCovar2), true);
+
+		// first apricov then slave
+		int first3 = trafo3.getFirstUidx();
+		std::vector<int> idx3;
+		for (int j = 0; j < trafo3.getNumUnkn(); j++)
+		{
+			idx3.push_back(j + first3);
+		}
+		std::for_each(idx3.begin(), idx3.end(), [first3](int x) { return x + first3; });
+		TDenseMatrix retrievedCovar3 = fullCovar.toDense()(idx3, idx3);
+		TDenseMatrix suppliedCovar4 = trafo4.getApriCovar();	
+		// get the retrieved covar from the second frame
+		int first4 = trafo4.getFirstUidx();
+		std::vector<int> idx4;
+		for (int j = 0; j < trafo4.getNumUnkn(); j++)
+		{
+			idx4.push_back(j + first4);
+		}
+		std::for_each(idx4.begin(), idx4.end(), [first4](int x) { return x + first4; });
+		TDenseMatrix retrievedCovar4 = fullCovar.toDense()(idx4, idx4);
+		ensure_equals("Retrieved Covariance does not match supplied covariance", retrievedCovar3.isApprox(suppliedCovar4), true);
+		ensure_equals("Retrieved Covariance of second frame needs to match covar from first frame due to slave constraint", retrievedCovar3.isApprox(retrievedCovar4), true);
+
 	}
 
 

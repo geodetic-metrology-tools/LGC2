@@ -79,6 +79,24 @@ P2 1 2 3 1 1 1
 *END
 )";
 
+	char const *const APRICOV_slave_vs_apriCov = R"(*TITR
+test apriCov together with slave constraints
+*OLOC
+*APRI
+*CONSI
+*INSTR
+*POLAR Station1 Target1 0 0 0 0
+Target1 12 13 14 0 0 0 0 0 0 0  
+*FRAME testFrame1 1 2 3 4 5 6 1 TX RY SLAVE myGroup1 apriCov (1,2,2,1)
+*ENDFRAME
+*FRAME testFrame2  10 20 30 40 50 60 1 TX RY SLAVE myGroup1
+*ENDFRAME
+*FRAME testFrame3 1 2 3 4 5 6 1 TX RY   SLAVE myGroup2
+*ENDFRAME
+*FRAME testFrame4  10 20 30 40 50 60 1 TX RY apriCov (1,2,2,1) SLAVE myGroup2
+*ENDFRAME
+*END
+)";
 
 
 }
