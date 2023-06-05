@@ -1,4 +1,7 @@
-#include <TLGCData.h>
+
+#include <TLGCData.h>	
+#include <map>
+
 
 TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandardDeviations(false), fUEOIndices({0, 0, 0, 0})
 {
@@ -16,6 +19,7 @@ TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandard
 	// ROOT frame of the tree
 	n.ID = std::vector<int>(1);
 	n.ID[0] = 1;
+	n.branch = {"ROOT"};
 	n.frame.setName("ROOT");
 
 	// covar Matrix
@@ -57,11 +61,17 @@ TTreeEntry &TLGCData::addChild(TAdjustableHelmertTransformation *transfo)
 	int depth = tree.depth(pos);
 	int nOfSiblings = tree.number_of_siblings(pos);
 	n.ID = std::vector<int>(depth + 1);
+	peka::tree_node_<TDataSPtr> *posNode = pos.node;
 	TDataTreeIterator parent = TDataTree::parent(pos);
 
+
+	n.branch = std::vector<std::string>(depth + 1);
+	n.branch[depth] = posNode->data.get()->frame.getName();
 	for (int i = 0; i < depth; i++)
 	{
 		n.ID[i] = parent.node->data->ID[i];
+		n.branch[depth - i - 1] = posNode->parent->data.get()->frame.getName();
+		posNode = posNode->parent;
 	}
 	n.ID[depth] = nOfSiblings + 1;
 

@@ -39,7 +39,8 @@ struct TTreeEntry
 {
 	/// Unique ID of a tree node.
   	std::vector<int> ID; 
- 
+	/// Vector of the framenames describing the branch from the current frame up to the ROOT frame.
+	std::vector<std::string> branch; 
 	/// Returns TRUE if the node is a ROOT node
 	bool isROOTNode() const{return frame.getName() == "ROOT";}
 
@@ -61,6 +62,7 @@ struct TTreeEntry
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const override
 	{ 
 		obj.addProperty("ID", ID);
+		obj.addProperty("branch", branch);
 		obj.addProperty("frame", frame);
 		obj.addProperty("measurements", measurements);
 	}
