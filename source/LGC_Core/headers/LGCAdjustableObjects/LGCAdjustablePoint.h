@@ -192,7 +192,7 @@ private:
 
 	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< point's provisional value in ROOT*/
 	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< point's estimated value after calculation in ROOT*/
-	TDenseMatrix fCovarianceMatrixInRoot = getCovarianceMatrix(); /*!< point's covariance matrix in ROOT*/
+	TDenseMatrix fCovarianceMatrixInRoot = Eigen::MatrixXd::Zero(3, 3);	/*!< point's covariance matrix in ROOT*/
 
 	TLength fProvisionalHeightInRoot; /*!< point's provisional height value in ROOT*/
 	TLength fEstimatedHeightInRoot; /*!< point's estimated height value in ROOT*/
