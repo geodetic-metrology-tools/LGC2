@@ -728,6 +728,19 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices 
 	{
 		if (point.hasVariable())
 		{
+			// Filling the full covariance matrix
+			TDenseMatrix fullCovar(3, 3);
+			fullCovar.setConstant(NO_VALf);
+			std::vector<int> relUnkIdx = point.getRelativeUnknIndices();
+			const TSparseMatrix *covMat = rm.getUnkCovarMtrxByConst();
+			int dimPoint = point.getNumUnkn();
+			if (dimPoint > 0)
+			{
+				int firstIdx = point.getFirstUidx();
+				fullCovar(relUnkIdx, relUnkIdx) = (covMat->block(firstIdx, firstIdx, dimPoint, dimPoint)).toDense();
+			}
+			point.setCovarianceMatrix(fullCovar);
+
 			// Filling standard deviations (estimated precision)
 			for (int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx)
 			{

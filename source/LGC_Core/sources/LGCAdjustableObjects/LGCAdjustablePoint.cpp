@@ -43,10 +43,9 @@ void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, con
     }
 }
 
-void LGCAdjustablePoint::transformPointSigma(const TLGCData *fData)
+void LGCAdjustablePoint::setCovarianceMatrixInRoot(const TLGCData *fData)
 {
-	TAdjustablePoint::setCovarianceMatrix(transformCovar(*this, fData, this->fFramePosition));
-	fCovarianceMatrixInRoot = transformCovar(*this, fData, fData->getTree().begin());
+		fCovarianceMatrixInRoot = transformCovar(*this, fData, fData->getTree().begin());
 }
 
 void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
@@ -356,23 +355,25 @@ TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, con
 
 TDenseMatrix LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame)
 {
-	// get the global covariance matrix
-	TSparseMatrix covar = *fData->getCovMatByConst();
-
-	int nPar = fData->fUEOIndices.UIndex;
-	if ((covar.cols() != nPar) || (covar.rows() != nPar))
+	if (pv.getFrameTreePosition() == toFrame)
+		return pv.fCovarianceMatrix;
+	else
 	{
-		throw std::logic_error("Unknown Covariance matrix is not initialized.");
+		// get the global covariance matrix
+		TSparseMatrix covar = *fData->getCovMatByConst();
+
+		int nPar = fData->fUEOIndices.UIndex;
+		if ((covar.cols() != nPar) || (covar.rows() != nPar))
+		{
+			throw std::logic_error("Unknown Covariance matrix is not initialized.");
+		}
+
+		// get the global derivative of the transformed point
+		TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
+		TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
+		TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
+
+		// compute the covariance matrix in the destination Frame
+		return (jac * covar) * jac.transpose();
 	}
-
-	// get the global derivative of the transformed point
-	TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
-	TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
-	TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
-
-	// compute the covariance matrix in the destination Frame
-	TDenseMatrix ptCovar = (jac * covar) * jac.transpose();
-
-	return ptCovar;
 }
-

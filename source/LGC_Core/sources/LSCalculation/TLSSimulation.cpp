@@ -55,7 +55,7 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 			// Iteration through the points
 			for (auto it(fData.getPoints().begin()); it != fData.getPoints().end(); ++it)
 			{
-				it->transformPointSigma(&fData);
+				it->setCovarianceMatrixInRoot(&fData);
 				it->transformEstimatedCoordinates(&fData);
 			}
 
@@ -93,7 +93,7 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 			// Iteration through the points
 			for (auto it(fData.getPoints().begin()); it != fData.getPoints().end(); ++it)
 			{
-				it->transformPointSigma(&fData);
+				it->setCovarianceMatrixInRoot(&fData);
 				it->transformEstimatedCoordinates(&fData);
 			}
 
