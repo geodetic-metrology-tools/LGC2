@@ -67,7 +67,7 @@ include_directories (
 	SYSTEM
   ${CMAKE_SOURCE_DIR}/LGC_API/headers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
-	${CMAKE_SOURCE_PATH}/LGC_Core/headers/LGCConstraintObjects
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCConstraintObjects
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Readers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
