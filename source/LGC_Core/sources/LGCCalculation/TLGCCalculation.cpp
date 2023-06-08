@@ -30,6 +30,11 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Data are not consistent, see the log file for more information.");
 	}
 	try{
+		// Iteration through the points
+		for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)
+		{
+			it->transformProvisionalCoordinates(fData.get());
+		}
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
@@ -41,12 +46,22 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 
 		if (successCalculation)
+		{
 			fResultsMtr = algorithm->resultMatrices;
 
+			// Iteration through the points
+			for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)
+			{
+				it->transformPointSigma(fData.get());
+				it->transformEstimatedCoordinates(fData.get());
+				it->changeProvValueToCCS(fData.get());
+			}
+		}
 	}
 	catch (std::exception& e)
 	{
 		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
+		successCalculation += Behavior(Behavior::BehaviorCode::ERR_results, L"Problem during computation.");
 	}
 
     // If the calculation succeeded, initialise the observation summaries:

@@ -37,13 +37,13 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 	// (VV) Feed the seed number into the random number engine
 	engine.seed(seedNumber);
 
-
 	int numOfSimMade = 0;
 	int totalNumOfSimul = fData.getConfig().sim.numSims;
 
 	// Run through the first simulation
 
 	try {
+
 		simulateValues();
 		calcOK = lsCalc.run(data, maxIterations);
 
@@ -51,6 +51,13 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 		{
 			updateResValues();
 			numOfSimMade++;
+
+			// Iteration through the points
+			for (auto it(fData.getPoints().begin()); it != fData.getPoints().end(); ++it)
+			{
+				it->transformPointSigma(&fData);
+				it->transformEstimatedCoordinates(&fData);
+			}
 
 			fileWriter->writeFileBegin(); //Write the beginning of the file (data summary, title etc.)
 			fileWriter->writeSimSummary(fData, numOfSimMade); // Write results of the first iteration
@@ -82,6 +89,13 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 
 			// Updates the values for the 2 final tables (Points and Frames summaries)
 			updateResValues();
+
+			// Iteration through the points
+			for (auto it(fData.getPoints().begin()); it != fData.getPoints().end(); ++it)
+			{
+				it->transformPointSigma(&fData);
+				it->transformEstimatedCoordinates(&fData);
+			}
 
 			if (numOfSimMade != totalNumOfSimul) /*Mot the last iteration -> write just the summary*/
 				fileWriter->writeSimSummary(fData, numOfSimMade);

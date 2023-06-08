@@ -120,6 +120,33 @@ public:
         /// Reset the provisional position vector
         virtual void setProvisionalValue(const TReal& x, const TReal& y, const TReal& z);
 
+		/// Store the covariance matrix and transform it in ROOT
+		void transformPointSigma(const TLGCData *fData);
+
+		/// Transform the provisional coordinates (X,Y,Z) in ROOT and compute the provisional height in ROOT
+		void transformProvisionalCoordinates(const TLGCData *fData);
+
+		/// Transform the estimated coordinates (X,Y,Z) in ROOT and compute the estimated height in ROOT
+		void transformEstimatedCoordinates(const TLGCData *fData);
+        
+		/// Temporary method to change provisional values after computation without breaking the LGC other logic (Method to be deleted in the future)
+		void changeProvValueToCCS(const TLGCData *fData);
+
+		/// Returns a constant reference on the estimated value of the point in ROOT
+		inline const TPositionVector &getEstimatedValueInRoot() const { return fEstimatedValueInRoot; }
+
+		/// Returns a constant reference on the provisional value of the point in ROOT
+		inline const TPositionVector &getProvisionalValueInRoot() const { return fProvisionalValueInRoot; }
+
+		/// Returns a constant reference on the estimated height of the point in ROOT
+		inline const TLength &getEstimatedHeightInRoot() const { return fEstimatedHeightInRoot; }
+
+		/// Returns a constant reference on the provisional height of the point in ROOT
+		inline const TLength &getProvisionalHeightInRoot() const { return fProvisionalHeightInRoot; }
+
+		/// Returns a constant reference on the covariance matrix of the point in ROOT
+		inline const TDenseMatrix &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; }
+
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
 
@@ -159,6 +186,8 @@ public:
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame);
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const std::string toFrame);
 
+		static TDenseMatrix transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame);
+
 		/// Returns true if this point is defined in the ROOT frame
 		bool isInRootFrame();
 
@@ -167,6 +196,13 @@ private:
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
 
 	static bool allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
+
+	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< initialization of point's provisional value in ROOT*/
+	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< initialization of point's estimated value in ROOT*/
+	TDenseMatrix fCovarianceMatrixInRoot = TDenseMatrix::Zero(3, 3); /*!< initialization of point's covariance matrix in ROOT*/
+
+	TLength fProvisionalHeightInRoot = TLength(0); /*!< point's provisional height value in ROOT*/
+	TLength fEstimatedHeightInRoot = TLength(0); /*!< point's estimated height value in ROOT*/
 
 	/*!Private constructor for creating uninitialized object	*/
 	LGCAdjustablePoint(const std::string& name);

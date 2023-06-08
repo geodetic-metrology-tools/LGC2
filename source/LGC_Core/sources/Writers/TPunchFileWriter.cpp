@@ -689,52 +689,11 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 
 		(*stream).width(1);
 		(*stream) << "";
+		
 		//Delta
-
-		//transform H in Z
 		TPositionVector xyzValue = point.getProvisionalValue();
-		if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		{
-			TXYH2CCS::XYHs2CCS(xyzValue);
-			converter.writeCoordinateParam(point.getSpatialStatus(),
-				getCoordWidth(),
-				getCoordPrecision(),
-				TLength::EUnits::kMillimetres,
-				separator,
-				point.getDXValue(),
-				point.getDYValue(),
-				point.getEstValue(2) - xyzValue.getZ(),
-				" ");
-		}
-		else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		{
-			TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
-			converter.writeCoordinateParam(point.getSpatialStatus(),
-				getCoordWidth(),
-				getCoordPrecision(),
-				TLength::EUnits::kMillimetres,
-				separator,
-				point.getDXValue(),
-				point.getDYValue(),
-				point.getEstValue(2) - xyzValue.getZ(),
-				" ");
-		}
-		else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		{
-			TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
-
-			converter.writeCoordinateParam(point.getSpatialStatus(),
-				getCoordWidth(),
-				getCoordPrecision(),
-				TLength::EUnits::kMillimetres,
-				separator,
-				point.getDXValue(),
-				point.getDYValue(),
-				point.getEstValue(2) - xyzValue.getZ(),
-				" ");
-		}
-		else
-			converter.writeCoordinateParam(point.getSpatialStatus(),
+			
+		converter.writeCoordinateParam(point.getSpatialStatus(),
 			getCoordWidth(),
 			getCoordPrecision(),
 				TLength::EUnits::kMillimetres,
@@ -742,7 +701,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaData(LGCAdjustablePoint const& point
 			point.getDXValue(),
 			point.getDYValue(),
 			point.getDZValue(),
-			" ");
+			" ");			
 	}
 	else
 	{
@@ -876,50 +835,9 @@ void TPunchFileWriter::writeXYZErrorEllData(LGCAdjustablePoint const& point)
 
 
 	//Delta
-	//transform H in Z
 	TPositionVector xyzValue = point.getProvisionalValue();
-	if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-	{
-		TXYH2CCS::XYHs2CCS(xyzValue);
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			"");
-	}
-	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-	{
-		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			"");
-	}
-	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-	{
-		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			"");
-	}
-	else
-		converter.writeCoordinateParam(point.getSpatialStatus(),
+	converter.writeCoordinateParam(point.getSpatialStatus(),
 		coordWidth,
 		getCoordPrecision(),
 		TLength::kMillimetres,
@@ -1087,50 +1005,9 @@ void TPunchFileWriter::writeCooData(LGCAdjustablePoint const& point)
 		stream->writeString(coordWidth, "-1");
 
 	//Delta
-	//transform H in Z
 	TPositionVector xyzValue = point.getProvisionalValue();
-	if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-	{
-		TXYH2CCS::XYHs2CCS(xyzValue);
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			"0.0");
-	}
-	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-	{
-		TXYH2CCS::XYHg2000Machine2CCS(xyzValue);
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			"0.0");
-	}
-	else if (point.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-	{
-		TXYH2CCS::XYHg1985Machine2CCS(xyzValue);
 
-		converter.writeCoordinateParam(point.getSpatialStatus(),
-			coordWidth,
-			getCoordPrecision(),
-			TLength::kMillimetres,
-			separator,
-			point.getDXValue(),
-			point.getDYValue(),
-			point.getEstValue(2) - xyzValue.getZ(),
-			"0.0");
-	}
-	else
-		converter.writeCoordinateParam(point.getSpatialStatus(),
+	converter.writeCoordinateParam(point.getSpatialStatus(),
 		coordWidth,
 		getCoordPrecision(),
 		TLength::kMillimetres,
