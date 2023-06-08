@@ -306,13 +306,13 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	bool firstVZ = true;
 
 	// lambda function to write the point coordinate
-	auto writeXYZorH = [&](TAdjustablePoint const &fPoint) {
+	auto writeXYZorH = [&](LGCAdjustablePoint const &fPoint) {
 		if (!fPoint.isActive())
 			(*stream) << DEACTIVATION_CHAR;
 
 		if ((data->getConfig().referential == 106 || data->getConfig().referential == 107 || data->getConfig().referential == 104) && frameIt->get()->isROOTNode())
 			(*stream) << fPoint.getName() << sep << fPoint.getProvisionalValue().getX() << sep << fPoint.getProvisionalValue().getY() << sep
-					  << fPoint.getProvisionalValue().getH() << sep << fPoint.eolcomment << endl;
+					  << fPoint.getProvisionalHeightInRoot() << sep << fPoint.eolcomment << endl;
 		else
 			(*stream) << fPoint.getName() << sep << fPoint.getProvisionalValue().getX() << sep << fPoint.getProvisionalValue().getY() << sep
 					  << fPoint.getProvisionalValue().getZ() << sep << fPoint.eolcomment << endl;
