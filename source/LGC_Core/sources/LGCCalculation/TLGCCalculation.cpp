@@ -52,7 +52,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			// Iteration through the points
 			for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)
 			{
-				it->transformPointSigma(fData.get());
+				it->setCovarianceMatrixInRoot(fData.get());
 				it->transformEstimatedCoordinates(fData.get());
 				it->changeProvValueToCCS(fData.get());
 			}

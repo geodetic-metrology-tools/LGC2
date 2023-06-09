@@ -120,8 +120,8 @@ public:
         /// Reset the provisional position vector
         virtual void setProvisionalValue(const TReal& x, const TReal& y, const TReal& z);
 
-		/// Store the covariance matrix and transform it in ROOT
-		void transformPointSigma(const TLGCData *fData);
+		/// Transform and Store the covariance matrix in ROOT
+		void setCovarianceMatrixInRoot(const TLGCData *fData);
 
 		/// Transform the provisional coordinates (X,Y,Z) in ROOT and compute the provisional height in ROOT
 		void transformProvisionalCoordinates(const TLGCData *fData);
