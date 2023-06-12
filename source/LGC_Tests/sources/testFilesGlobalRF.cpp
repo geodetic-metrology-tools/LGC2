@@ -710,4 +710,28 @@ namespace tut
 		ensure_equals("sy should match",dataset.getPoints().getObject("PT2").getYEstPrecision().getMMetresValue(), 0.3537, 2e-4);
 		ensure_equals("sz should match",dataset.getPoints().getObject("PT2").getZEstPrecision().getMMetresValue(), 0.0111 , 2e-4);
 	}
+
+	template<>
+	template<>
+	void object::test<19>()
+	{
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+	
+		// SETUP: RS2K - 3 CALA in ROOT, 1 CALA and 1 POIN in FRAME - OBSXYZ 
+	
+		set_test_name("Test coordinates and height transformation");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/EREL.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+	
+		std::stringstream infiler(TestROOT::OBSXYZ_coords_heights_transformation_in_ROOT);
+		r.read(infiler);
+	
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		const TLGCData &dataset = calcul.getData();
+	}
+	
 }
