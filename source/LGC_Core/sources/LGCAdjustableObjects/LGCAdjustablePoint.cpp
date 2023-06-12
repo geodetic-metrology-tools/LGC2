@@ -79,19 +79,23 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		// transform coordinates in the ROOT frame
 		transfo.transform(fProvisionalValueInRoot);
 
-		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		try
 		{
-			TPositionVector fProvisionalInRootForHCalc(fProvisionalValueInRoot);
+			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+			{
+				TPositionVector fProvisionalInRootForHCalc(fProvisionalValueInRoot);
 
-			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-				TXYH2CCS::CCS2XYHs(fProvisionalInRootForHCalc);
-			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-				TXYH2CCS::CCS2XYHg2000Machine(fProvisionalInRootForHCalc);
-			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-				TXYH2CCS::CCS2XYHg1985Machine(fProvisionalInRootForHCalc);
+				if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+					TXYH2CCS::CCS2XYHs(fProvisionalInRootForHCalc);
+				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+					TXYH2CCS::CCS2XYHg2000Machine(fProvisionalInRootForHCalc);
+				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+					TXYH2CCS::CCS2XYHg1985Machine(fProvisionalInRootForHCalc);
 
-			fProvisionalHeightInRoot = fProvisionalInRootForHCalc.getH();
+				fProvisionalHeightInRoot = fProvisionalInRootForHCalc.getH();
+			}
 		}
+		catch (...) {}
 	}
 }
 

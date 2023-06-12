@@ -753,6 +753,30 @@ namespace TestROOT {
 			"PT 290 \n"
 	;		
 
+	char const *const OBSXYZ_coords_heights_transformation_in_ROOT = R"(*TITR
+Test
+*RS2K
+*PREC 6
+*PUNC  OUT1
+*FAUT     .01     .10
+*INSTR
+*CALA
+PT1	1600     2001    434  
+PT2	1601     2001    435
+PT3 1601     2000    436
+*FRAME  passif  0  0  0  0  0  0  1 TX TY TZ RX RY RZ
+*CALA
+PT4 -1 -1 -1
+*POIN
+PT5 -2 -2 -2
+*OBSXYZ
+PT1	0     1    0	0.1	0.1	0.1
+PT2	1     1    1	0.1	0.1	0.1
+PT3 1     0    2	0.1	0.1	0.1
+PT5 -2 	-2 	-2	0.1	0.1	0.1
+*ENDFRAME
+*END)";
+
 }
 
 
