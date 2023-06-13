@@ -15,7 +15,7 @@ test apriCov flag for points
 %*CONSI
 *INSTR
 *POIN
-P1  1 1 1 apriCov (1,2,3,2,2,2,3,2,3)
+P1  1 1 1 apriCov (1,0.2,0.3,0.2,2,0.2,0.3,0.2,3)
 P2 1 1 1
 *OBSXYZ 
 P2 1 2 3 1 1 1
@@ -44,14 +44,14 @@ test apriCov flag for frames
 %*CONSI
 *INSTR
 *POIN
-*FRAME testFrame1 0 0 0 0 0 0 1 TX  TY TZ apriCov (1,2,3,2,2,2,3,2,3)
+*FRAME testFrame1 0 0 0 0 0 0 1 TX  TY TZ apriCov (1,0.2,0.3,0.2,2,0.2,0.3,0.2,3)
 *CALA
 auxPoint1 0 0 0
 % useless measurements to calm down the unknowns vs equations counter
 *OBSXYZ
 auxPoint1 0 0 0 1 1 1
 *ENDFRAME
-*FRAME testFrame2 0 0 0 0 0 0 1 TX RX RZ apriCov (1,4,3,4,4,4,3,4,3)
+*FRAME testFrame2 0 0 0 0 0 0 1 TX RX RZ apriCov (1,0.4,0.3,0.4,4,0.4,0.3,0.4,3)
 *CALA
 auxPoint2 0 0 0
 % useless measurements to calm down the unknowns vs equations counter
@@ -87,13 +87,13 @@ test apriCov together with slave constraints
 *INSTR
 *POLAR Station1 Target1 0 0 0 0
 Target1 12 13 14 0 0 0 0 0 0 0  
-*FRAME testFrame1 1 2 3 4 5 6 1 TX RY SLAVE myGroup1 apriCov (1,2,2,1)
+*FRAME testFrame1 1 2 3 4 5 6 1 TX RY SLAVE myGroup1 apriCov (2,1,1,2)
 *ENDFRAME
 *FRAME testFrame2  10 20 30 40 50 60 1 TX RY SLAVE myGroup1
 *ENDFRAME
 *FRAME testFrame3 1 2 3 4 5 6 1 TX RY   SLAVE myGroup2
 *ENDFRAME
-*FRAME testFrame4  10 20 30 40 50 60 1 TX RY apriCov (1,2,2,1) SLAVE myGroup2
+*FRAME testFrame4  10 20 30 40 50 60 1 TX RY apriCov (2,1,1,2) SLAVE myGroup2
 *ENDFRAME
 *END
 )";
