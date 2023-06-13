@@ -7,8 +7,10 @@ test apriCov flag for points
 *POLAR Station1 Target1 0 0 0 0
 Target1 12 13 14 0 0 0 0 0 0 0  
 *POIN
-P1  1 1 1 apriCov (1,2,3,2,2,2,3,2,3)
+P1  1 1 1 apriCov mat(1,0,0,0,4,0,0,0,9)
 P2 1 1 1
+P3 1 2 3 apriCov diag(25,36,49)
+P4 1 2 3 apriCov Jauche(363)
 *OBSXYZ 
 P2 1 2 3 1 1 1
 *END

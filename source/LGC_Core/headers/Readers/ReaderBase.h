@@ -189,6 +189,32 @@ class TOptionHelper {
 
 		inline TDenseMatrix commaSeparatedStringToMat(std::string opt, int dim) {
 			// e.g. transform (1,2,3,4) to eigen matrix [[1,2];[3,4]], first we assume its a square matrix
+			// 
+			
+			// check if matrix is supplied via mat (full matrix) or diag (only diag elements) tag
+			// example mat(1,2,3,4)->[[1,2];[3,4]], diag(1,2)->[[1,0];[0,2]]
+
+			bool isDiag = false;
+			if (opt.rfind("mat", 0) == 0)
+			{
+				// full matrix is supplied
+				// strip keyword
+				opt = opt.erase(0, 3);
+							}
+			else if (opt.rfind("diag", 0) == 0)
+			{
+				// diagonal elements are supplied
+				isDiag = true;
+				// strip keyword
+				opt = opt.erase(0, 4);
+			}
+			else
+			{
+				std::string msg;
+				msg = "Unrecognized option: " + opt + "\n Matrix has to be supplied either in mat(..,..,..) or diag(..,..,..) format (full matrix or only diagonal elements).";
+				throw std::runtime_error(msg);
+			}
+
 			// strip parenthesis
 			opt = opt.substr(1, opt.size() - 2);
 			std::stringstream optStream(opt);
@@ -199,12 +225,34 @@ class TOptionHelper {
 				std::getline(optStream, strEntry, ',');
 				entries.push_back(std::stod(strEntry));
 			}
-			TDenseMatrix result(dim,dim);
-			for (int iRow = 0; iRow < dim; iRow++)
+			//assemble the matrix either as full or diagonal matrix	
+			TDenseMatrix result(dim, dim);
+			result.setZero();
+			if (isDiag)
 			{
-				for (int iCol = 0; iCol < dim; iCol++)
+				if (entries.size() != dim)
 				{
-					result(iRow, iCol) = entries.at(iRow * dim + iCol);
+					throw std::logic_error("Wrong number of diagonal entries, expecting dimension " + std::to_string(dim));
+				}
+				TVector diagonalElements(dim);
+				for (int iRow = 0; iRow < dim; iRow++)
+				{
+					diagonalElements(iRow) = entries.at(iRow);
+				}
+				result.diagonal() = diagonalElements;
+			}
+			else
+			{
+				if (entries.size() != dim*dim)
+				{
+					throw std::logic_error("Wrong number of matrix entries, expecting dimension " + std::to_string(dim));
+				}
+				for (int iRow = 0; iRow < dim; iRow++)
+				{
+					for (int iCol = 0; iCol < dim; iCol++)
+					{
+						result(iRow, iCol) = entries.at(iRow * dim + iCol);
+					}
 				}
 			}
 			return result;
