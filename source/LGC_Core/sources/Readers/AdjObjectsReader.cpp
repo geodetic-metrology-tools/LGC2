@@ -98,8 +98,10 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 			throw std::runtime_error("A-priori covariance matrix of transformation " + adjTrafo.getName() + " has to be symmetric.");
 		}
 		// further test if it is positive definite.
-		if (!trafoCovMat.fullPivHouseholderQr().isInvertible())
+		if (!trafoCovMat.ldlt().isPositive())
 		{
+			std::cout << trafoCovMat << std::endl;
+			std::cout << trafoCovMat.eigenvalues() << std::endl;
 			throw std::runtime_error("A-priori covariance matrix of transformation " + adjTrafo.getName() + " has to be positive definite.");
 		}
 		adjTrafo.setApriCovar(trafoCovMat);
@@ -237,7 +239,7 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 				throw std::runtime_error("A-priori covariance matrix of point " + pt.getName() + " has to be symmetric.");
 			}
 			// further test if it is positive definite.
-			if (!pointCovMat.fullPivHouseholderQr().isInvertible())
+			if (!pointCovMat.ldlt().isPositive())
 			{
 				throw std::runtime_error("A-priori covariance matrix of point " + pt.getName() + " has to be positive definite.");
 			}
