@@ -60,6 +60,9 @@ class TAMeas : public TStatusObject
 
 		/// Observation identifier: identification of specific measurement
 		std::string obsID;
+		
+		/// Mask status. Used for masking (ignoring measurements) during the adjustment while still evaluating all model data
+		bool maskStatus{false};
 
 		/// DB comment after the measurement definition
 		std::string eolcomment;

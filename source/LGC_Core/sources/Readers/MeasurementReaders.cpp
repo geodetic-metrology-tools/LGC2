@@ -1331,6 +1331,11 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		obsxyz.line = line;
         obsxyz.setActive(proj.getCurrentNode().measurements.obsxyzActive && activeLine); // Active only if ROM active as well
 		obsxyz.obsID = std::string(opts.getParamS("ID", obsxyz.obsID));
+		//testing masking
+		if (obsxyz.obsID == "maskTest")
+		{
+			obsxyz.maskStatus = true;
+		}
 
 		//If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);

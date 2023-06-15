@@ -272,6 +272,7 @@ AnglMeasContribFrame	TContributionsGenerator::getHorAnglContribInFrame(std::shar
 AnglMeasContrib	TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN> station, const TZEND& zend){
 //Transform TARGET and STATION from their LOCAL FRAME either to ROOT or to MLA of the station
 	TPositionVector targetPos = zend.targetPos->getEstimatedValue();
+	TPositionVector aux = zend.targetPos->getProvisionalValue();
 	const TLOR2LOR& tgLor2RootTrafo = fPointTransfo.getLORTransformation(zend.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); //Transformation from "TARGET FRAME" to "ROOT"
 	tgLor2RootTrafo.transform(targetPos);
 
