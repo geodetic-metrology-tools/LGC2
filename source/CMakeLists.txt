@@ -2,13 +2,11 @@
 # CMake file for LGC2
 #
 # To create a solution with this CMake file, you need to first define the following variables in a CMake style file.
-# The path to this file can be setup in the below variable `EXT_LIBS_TXT_PATH`
 #
 # - `BOOST_ROOT`: The path to Boost folder
 # - `EIGEN_INCLUDE_PATH`: The path to Eigen folder
 # - `REFRAME_LIBRARY_DIR`: The path to Reframe folder
 # - `TUT_INCLUDE_PATH`: The path to Tut folder
-# - `VCREDIST_INSTALLER_PATH`: The path to the folder holding the VCRedist installer
 
 cmake_minimum_required(VERSION 3.6)
 
@@ -17,10 +15,10 @@ cmake_minimum_required(VERSION 3.6)
 # PROJECT NAME
 #
 
-set(PROJECT_NAME LGC)
+project(LGC)
 
 # Set version number and provide a header file with corresponding defines
-# /!\ IMPORTANT : Modify it int LGC_Core/LGCCore.cmake AS WELL !
+# /!\ IMPORTANT : Modify it in LGC_Core/LGCCore.cmake AS WELL !
 set (EXE_VERSION_MAJOR "2")
 set (EXE_VERSION_MINOR "6")
 set (EXE_VERSION_PATCH "0")
@@ -37,7 +35,8 @@ set(CPACK_BUILD ON)
 set(USE_SERIALIZER 1)
 add_compile_definitions(USE_SERIALIZER=${USE_SERIALIZER})
 
-include("../../SUSoftCMakeCommon/CMakeLists.txt")
+set(LIBRARIES_PATH "${CMAKE_SOURCE_DIR}/../lib")
+include(${LIBRARIES_PATH}/SUSoftCMakeCommon/CMakeLists.txt)
 
 # Versions files
 configure_file (
@@ -46,7 +45,7 @@ configure_file (
 )
 
 # Make surveylib sublibraries available
-SET(SURVEYLIB_ROOT ${PROJECT_SOURCE_DIR}/../SurveyLib)
+SET(SURVEYLIB_ROOT ${LIBRARIES_PATH}/SurveyLib)
 
 FIND_PACKAGE(Boost 1.49.0 REQUIRED)
 
