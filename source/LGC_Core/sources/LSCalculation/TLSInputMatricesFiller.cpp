@@ -1246,6 +1246,14 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 
+		if (meas->maskStatus)
+		{
+			matrices->maskedIndices.insert(firstEqIdx);
+			matrices->maskedIndices.insert(firstEqIdx + 1);
+			matrices->maskedIndices.insert(firstEqIdx + 2);
+		}
+
+
 		// Get the observation contribution
 		contributions = fCGenerator.getOBSXYZContrib(*meas);
 
