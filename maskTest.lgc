@@ -1,0 +1,25 @@
+*TITR
+%Test
+*OLOC
+*JSON
+*HIST
+*PREC 7
+*CONSI
+*PUNC   OUT1
+*FAUT     .01     .10
+*INSTR
+*POLAR Station1 Target1 0 0 0 0
+Target1 0.1 1 1 0 0 0 0 0 0 0   
+*CALA
+point1 1 2 3 
+*POIN
+point2 1 2 3
+*OBSXYZ 
+point2 1 2 3 1 1 1 
+point2 4 5 6 0.1 0.1 0.1 ID maskTest
+point3 1 2 3 1 1 1
+*FRAME do_nothing_frame 0 0 0 0 0 0 1 TX TY TZ
+*CALA
+point3 1 2 3
+*ENDFRAME
+*END
