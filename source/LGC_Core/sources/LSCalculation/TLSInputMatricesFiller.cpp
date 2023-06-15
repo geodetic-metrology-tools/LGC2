@@ -182,6 +182,7 @@ void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE> &distMeas,
 
 	for (auto meas(distMeas.begin()); meas != distMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		// These indices should be equal as the residuals are associated with the measurements
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
@@ -249,6 +250,7 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE> &dist
 
 	for (auto meas(distMeas.begin()); meas != distMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -304,6 +306,7 @@ void TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM>
 
 	for (auto meas(rom->measANGL.begin()); meas != rom->measANGL.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -366,6 +369,7 @@ void TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN::
 
 	for (auto meas(rom->measANGL.begin()); meas != rom->measANGL.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -417,6 +421,7 @@ void TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND> &zendMeas,
 
 	for (auto meas(zendMeas.begin()); meas != zendMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -480,6 +485,7 @@ void TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND> &zend
 
 	for (auto meas(zendMeas.begin()); meas != zendMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -532,6 +538,7 @@ void TLSInputMatricesFiller::addHorDistContributions(std::list<TLINE> &dhorMeas,
 
 	for (auto meas(dhorMeas.begin()); meas != dhorMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -594,6 +601,7 @@ void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> r
 
 	for (auto &meas : rom->measECTH)
 	{
+		updateMask(&meas, matrices);
 		eqIdx = meas.getFirstEquationIndex();
 		obsIdx = meas.getFirstObservationIndex();
 
@@ -656,6 +664,7 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 
 	for (auto &meas : rom->measECDIR)
 	{
+		updateMask(&meas, matrices);
 		eqIdx = meas.getFirstEquationIndex();
 		obsIdx = meas.getFirstObservationIndex();
 
@@ -717,6 +726,7 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 	bool isProcessOK = true;
 	for (auto itDLEV(levelSt.measDLEV.begin()); itDLEV != levelSt.measDLEV.end(); ++itDLEV)
 	{
+		updateMask(itDLEV, matrices);
 		MatrixIndex eqIdx = itDLEV->getFirstEquationIndex();
 		MatrixIndex obsIdx = itDLEV->getFirstObservationIndex();
 
@@ -774,6 +784,7 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			MatrixIndex eqIdxHd = itDLEV->dhor->getFirstEquationIndex();
 			MatrixIndex obsIdxHd = itDLEV->dhor->getFirstObservationIndex();
 
+			updateMask(itDLEV->dhor, matrices);
 			contributionsDHOR = fCGenerator.getHorDistContrib(levelSt.fMeasuredPlane->getReferencePoint(), *itDLEV->dhor); // Get the observation contribution
 
 			// Add levelling staff's contributions
@@ -830,6 +841,7 @@ void TLSInputMatricesFiller::addORIEContributions(TORIEROM &orieROM, TLSInputMat
 
 	for (auto &meas : orieROM.measORIE)
 	{
+		updateMask(&meas, matrices);
 		eqIdx = meas.getFirstEquationIndex();
 		obsIdx = meas.getFirstObservationIndex();
 
@@ -892,6 +904,7 @@ void TLSInputMatricesFiller::addECHOContributions(TECHOROM &echoROM, TLSInputMat
 	ECHOContrib contributions;
 	for (auto itECHO(echoROM.measECHO.begin()); itECHO != echoROM.measECHO.end(); ++itECHO)
 	{
+		updateMask(itECHO, matrices);
 		MatrixIndex eqIdx = itECHO->getFirstEquationIndex();
 		MatrixIndex obsIdx = itECHO->getFirstObservationIndex();
 
@@ -943,6 +956,7 @@ void TLSInputMatricesFiller::addECVEContributions(TECVEROM &ecveROM, TLSInputMat
 	ScaleMeasContrib contributions;
 	for (auto itECVE(ecveROM.measECVE.begin()); itECVE != ecveROM.measECVE.end(); ++itECVE)
 	{
+		updateMask(itECVE, matrices);
 		MatrixIndex eqIdx = itECVE->getFirstEquationIndex();
 		MatrixIndex obsIdx = itECVE->getFirstObservationIndex();
 
@@ -1002,6 +1016,7 @@ void TLSInputMatricesFiller::addECSPContributions(TECSPROM &ecspRom, TLSInputMat
 
 	for (auto &itECSP : ecspRom.measECSP)
 	{
+		updateMask(&itECSP, matrices);
 		eqIdx = itECSP.getFirstEquationIndex();
 		obsIdx = itECSP.getFirstObservationIndex();
 
@@ -1068,6 +1083,7 @@ void TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT> &dsptMeas, con
 
 	for (auto meas(dsptMeas.begin()); meas != dsptMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -1130,6 +1146,7 @@ void TLSInputMatricesFiller::addDVERContribution(const std::list<TDVER> &dverMea
 
 	for (auto meas(dverMeas.begin()); meas != dverMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -1183,6 +1200,7 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs &pdorObs, TLSIn
 	MatrixIndex obsIdx = -1;
 	PtOrientationContrib contributions;
 
+	updateMask(&pdorObs, matrices);
 	eqIdx = pdorObs.getFirstEquationIndex();
 	obsIdx = pdorObs.getFirstObservationIndex();
 
@@ -1235,6 +1253,7 @@ void TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI> &radiMe
 
 	for (auto meas(radiMeas.begin()); meas != radiMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		eqIdx = meas->getFirstEquationIndex();
 		obsIdx = meas->getFirstObservationIndex();
 
@@ -1286,16 +1305,10 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 
 	for (auto meas(obsxyzMeas.begin()); meas != obsxyzMeas.end(); ++meas)
 	{
+		updateMask(meas, matrices);
+
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
-
-		if (meas->maskStatus)
-		{
-			matrices->maskedIndices.insert(firstEqIdx);
-			matrices->maskedIndices.insert(firstEqIdx + 1);
-			matrices->maskedIndices.insert(firstEqIdx + 2);
-		}
-
 
 		// Get the observation contribution
 		contributions = fCGenerator.getOBSXYZContrib(*meas);
@@ -1364,6 +1377,7 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 
 	for (auto &itINCLY : inclyROM.measINCLY)
 	{
+		updateMask(&itINCLY, matrices);
 		eqIdx = itINCLY.getFirstEquationIndex();
 		obsIdx = itINCLY.getFirstObservationIndex();
 
@@ -1404,6 +1418,7 @@ void TLSInputMatricesFiller::addECWSContributions(TECWSROM &ecwsROM, TLSInputMat
 
 	for (auto itECWS(ecwsROM.measECWS.begin()); itECWS != ecwsROM.measECWS.end(); ++itECWS)
 	{
+		updateMask(itECWS, matrices);
 		MatrixIndex eqIdx = itECWS->getFirstEquationIndex();
 		MatrixIndex obsIdx = itECWS->getFirstObservationIndex();
 
@@ -1452,6 +1467,7 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 
 	for (auto itECWI(ecwiROM.measECWI.begin()); itECWI != ecwiROM.measECWI.end(); ++itECWI)
 	{
+		updateMask(itECWI, matrices);
 		MatrixIndex firstEqIdx = itECWI->getFirstEquationIndex();
 		MatrixIndex firstObsIdx = itECWI->getFirstObservationIndex();
 
@@ -1544,6 +1560,7 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 
 	for (auto meas(rom->measPLR3D.begin()); meas != rom->measPLR3D.end(); ++meas)
 	{
+		updateMask(meas, matrices);
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 		// Get the observation contribution

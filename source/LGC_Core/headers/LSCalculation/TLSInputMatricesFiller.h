@@ -163,6 +163,25 @@ private:
 	/// Fills contributions of an adjustable point
 	bool addPointContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices);
 	//@}
+template<typename Meas>
+	void updateMask(Meas meas, TLSInputMatrices *matrices);
 };
 
 #endif // TLS_INPUT_MATRICES_FILLER
+
+template<typename Meas>
+inline void TLSInputMatricesFiller::updateMask(Meas meas, TLSInputMatrices *matrices)
+{
+	// for now ignore obsidx as they are equal.
+	// lastObsidx metho
+	if (meas->maskStatus)
+	{
+		int firstEqIdx = meas->getFirstEquationIndex();
+		int lastEqIdx= meas->getLastEquationIndex();
+		for	(int j = firstEqIdx; j < lastEqIdx; j++)
+		{
+			matrices->maskData.EIndices.insert(j);
+		}
+
+	}
+}
