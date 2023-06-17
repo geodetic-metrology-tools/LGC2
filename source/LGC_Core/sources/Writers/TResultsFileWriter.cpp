@@ -16,7 +16,6 @@
 #include "TLGCApp.h"
 #include "TLOR2LOR.h"
 #include "TFRAMEWriter.h"
-#include "TLibrCnstrGenerator.h"
 
 //SurveyLib
 #include "TSeparatedFormatTStream.h"
@@ -392,74 +391,33 @@ void    TResultsFileWriter::writeCalcDataSummary()
     // NUMBER OF ITERATIONS
     stream<<"	NOMBRE D'ITERATIONS =    "<<fProjectData->getNumberOfLSIterations();
     stream<<endl<<endl;
- 
-    //RESEAU COMPLETEMENT LIBRE ?
-	if (fProjectData->getConfig().libre.isActive())
+
+    if (fProjectData->getConfig().useConsiLibr.isActive())
 	{
-		if (fProjectData->fUEOIndices.CIndex != 0)
+		stream << "**** Free Adjustment Calculation ****";
+		stream << "\n";
+
+		if (fProjectData->getConfig().hasManualConstraints.isActive())
 		{
-			stream << "             ************************************";
-			stream << endl;
-			stream << "             *                                  *";
-			stream << endl;
-			stream << "             *     RESEAU COMPLETEMENT LIBRE    *";
-			stream << endl;
-			stream << "             *                                  *";
-			stream << endl;
-			stream << "             ************************************";
-			stream << endl << endl;
-
-			stream << "             LES PARAMETRES QUI MANQUENT SONT :";
-			stream << endl << endl;
-
-			TPointTransformer fPointTransformer(& fProjectData->getTree(), fProjectData->getConfig().referential);
-			TLibrCnstrGenerator fCnstrGenerator(fPointTransformer, *fProjectData);
-			fCnstrGenerator.initCnstrIdentifier(*fProjectData);
-			struct isFreeCnstr cnstr = fCnstrGenerator.getCnstIdentifier();
-			if (cnstr.dx == 1)
+			stream << "Manually specified constraints:";
+			stream << "\n";
+			std::vector<std::string> constraintNames = {"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"};
+			std::array<bool, 7> constraintSignature = fProjectData->getConfig().manualConstraints;
+			for (size_t i = 0; i < 7; i++)
 			{
-				stream << "             ORIGINE D'AXE X";
-				stream << endl;
+				if (constraintSignature.at(i))
+				{
+					stream << constraintNames.at(i) << " ";
+				}
 			}
-			if (cnstr.dy == 1)
-			{
-				stream << "             ORIGINE D'AXE Y";
-				stream << endl;
-			}
-			if (cnstr.dz == 1)
-			{
-				stream << "             ORIGINE D'AXE Z";
-				stream << endl;
-			}
-			if (cnstr.rx == 1)
-			{
-				stream << "             ORIENTATION DANS LE PLAN YZ";
-				stream << endl;
-			}
-			if (cnstr.ry == 1)
-			{
-				stream << "             ORIENTATION DANS LE PLAN XZ";
-				stream << endl;
-			}
-			if (cnstr.rz == 1)
-			{
-				stream << "             ORIENTATION DANS LE PLAN XY";
-				stream << endl;
-			}
-			if (cnstr.k == 1)
-			{
-				stream << "             ECHELLE";
-				stream << endl;
-			}
-
-			stream << endl << endl << endl << endl;
-
+			stream << "\n";
 		}
 		else
 		{
-			stream << "             ERREUR : OPTION *LIBR CHOISIE SANS JUSTIFICATION";
-			stream << endl << endl << endl << endl << endl;
+			stream << "Constraints determined automatically." << "\n";
+			stream << "See .log2 file for more information." << "\n";
 		}
+		stream << "*************************************" << "\n";
 	}
  
     return;

@@ -26,6 +26,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	Options are set to defined default values by the starndard constructors of the
 	related classes. 
 */
+
 #if USE_SERIALIZER
 	struct TLGCConfig : public Serializable
 #else
@@ -252,8 +253,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	
 	/// Sets all points to be fixed points in spite of their configuration
 	TBinaryOption allfixed;
-	/// This is a free network adjustment
-	TBinaryOption libre;
 	/// duplicate measurements to a point are forbidden
 	TBinaryOption nodup;
 	/// See \ref PDOR
@@ -286,6 +285,12 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	TBinaryOption chaba;
 	/// Make a consistency check to find groups of unidentifiable objects
 	TBinaryOption consCheck;
+	/// LIBR mode activated by CONSI
+	TBinaryOption useConsiLibr;
+	/// are manually specified constraints added?
+	TBinaryOption hasManualConstraints;
+	// signature of the manual added constraints (TX,TY,TZ,RX,RZ,RY,SCL)
+	std::array<bool, 7>  manualConstraints;
 	/// Write a JSON serialized object file
 	TBinaryOption writeJSON;
 	/// Write a separate COVAR JSON file in addition to the general JSON file
@@ -328,7 +333,6 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("errorEllipses", errorEllipses);
 	obj.addProperty("faut", faut);
 	obj.addProperty("histo", histo);
-	obj.addProperty("libre", libre);
 	obj.addProperty("nodup", nodup);
 	obj.addProperty("obsIDwidth", obsIDwidth);
 	obj.addProperty("outPrecision", outPrecision);

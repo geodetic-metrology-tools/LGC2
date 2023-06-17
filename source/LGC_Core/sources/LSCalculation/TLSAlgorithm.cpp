@@ -1,7 +1,6 @@
 #include <Logger.hpp>
 #include <TLSAlgorithm.h>
 
-#include "TLSConsistencyCheck.h"
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
 
@@ -21,7 +20,7 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 
 	// use the universal LS algorithm for parametric, combined and constrained case.
 	computer.reset(new TLSUniversalMtdComputer());
-	if (data.getSlaveGroups().size()!=0)
+	if (data.getSlaveGroups().size() != 0 || data.getPointGroups().size() != 0)
 	{
 		// use strict threshold only for slave option. temporary fix until LIBR is refactored
 		computer->activateStrictThreshold();
@@ -49,16 +48,6 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 		}
 		else // In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
 			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
-
-		if (data.getConfig().consCheck.isActive() && fNumberOfIterations == 0)
-		{
-			// Check for inconsistencies leading to ambiguous least square problems
-			TLSConsCheck consCheck(data, *inputMtr);
-			if (!consCheck.getResultStatus())
-			{
-				return Behavior(Behavior::BehaviorCode::ERR_consistencyCheck, L"Problem with measurement configuration.\n");
-			}
-		}
 
 		if (fillOK)
 		{

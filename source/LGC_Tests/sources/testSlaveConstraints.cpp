@@ -3,7 +3,7 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
-#include <LGCFrameConstraintGroup.h>
+#include <TLGCFrameConstraintGroup.h>
 #include <TLGCData.h>
 #include <TReader.h>
 
@@ -44,9 +44,9 @@ void object::test<1>()
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 	// test if the slave constraints worked
-	std::list<LGCFrameConstraintGroup> frameConstraints = projTest.get()->getSlaveGroups();
+	std::list<TLGCFrameConstraintGroup> frameConstraints = projTest.get()->getSlaveGroups();
 
-	for (LGCFrameConstraintGroup group : frameConstraints)
+	for (TLGCFrameConstraintGroup group : frameConstraints)
 	{
 		std::string firstFrame = group.slaves.front();
 		std::string secondFrame = group.slaves.back();
@@ -91,9 +91,9 @@ void object::test<2>()
 	ensure_equals("Calculation has to work because Slave constraint fixes the otherwise free frame", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
 	// test if the slave constraints worked
-	std::list<LGCFrameConstraintGroup> frameConstraints = projTest.get()->getSlaveGroups();
+	std::list<TLGCFrameConstraintGroup> frameConstraints = projTest.get()->getSlaveGroups();
 
-	for (LGCFrameConstraintGroup group : frameConstraints)
+	for (TLGCFrameConstraintGroup group : frameConstraints)
 	{
 		std::string firstFrame = group.slaves.front();
 		std::string secondFrame = group.slaves.back();

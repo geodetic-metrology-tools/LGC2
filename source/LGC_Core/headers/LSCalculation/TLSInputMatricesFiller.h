@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rights reserved. This software is released under a CERN proprietary software license.
+© Copyright CERN 2000-2024. All rights reserved. This software is released under a CERN proprietary software license.
 Any permission to use it shall be granted in writing. Request shall be addressed to CERN through mail-KT@cern.ch
 */
 
@@ -12,7 +12,6 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #include <Global.h>
 #include <TContributionsGenerator.h>
 #include <TLGCData.h>
-#include <TLibrCnstrGenerator.h>
 #include <TPointTransformer.h>
 
 class TLSInputMatrices;
@@ -68,8 +67,6 @@ private:
 	/// Equality operator: not implemented
 	TLSInputMatricesFiller &operator=(const TLSInputMatricesFiller &right);
 
-	/// Contribution generator for the free network
-	TLibrCnstrGenerator fLibrCnstrGenerator;
 	/// Contributions generator, used to calculated the contributions to be inserted into the input matrices.
 	TContributionsGenerator fCGenerator;
 
@@ -84,6 +81,8 @@ private:
 
 	// fill in the slave constraints
 	bool fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices);
+	// fill in the point group constraints
+	bool fillPointGroupConstraints(TLGCData *projData, TLSInputMatrices *matrices);
 
 	/*!@name Methods to add the design matrix contributions for each type of observation*/
 	//@{
@@ -160,8 +159,10 @@ private:
 	//@{
 	/// Fills contributions of an adjustable transformation
 	bool addTransformationContribution(const TAdjustableHelmertTransformation &trafo, const TransformationContrib &trContrib, int eqIndex, TLSInputMatrices *matrices);
+	bool addConstraintTransformationContribution(const TAdjustableHelmertTransformation &trafo, const TransformationContrib &trContrib, int eqIndex, TLSInputMatrices *matrices);
 	/// Fills contributions of an adjustable point
 	bool addPointContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices);
+	bool addPointConstraintContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices);
 	//@}
 };
 

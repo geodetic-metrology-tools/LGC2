@@ -714,11 +714,14 @@ Zero100 0 0 0
 		;
 
 		//----------------------------- RADI --------------------------------//
+		// the inputfile has a extreme dependency on the provisional coordinates because the deprecated LIBR chooses constraints that doe not make sense
+		// just change some of the xy provisional coordinates to see the effect
 		char const *const radi_id =
 		"*TITR                                                                                                                           \n"
 		"Test RADI with observation ID                                                                                                   \n"
 		"*RS2K                                                                                                                           \n"
-		"*LIBR                                                                                                                           \n"
+		"%*LIBR                                                                                                                           \n"
+		"*CONSI LIBR                                                                                                                           \n"
 		"*FAUT 0.01  0.1                                                                                                                 \n"
 		"*HIST                                                                                                                           \n"
 		"*PUNC OUT1                                                                                                                      \n"

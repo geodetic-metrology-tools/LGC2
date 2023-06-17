@@ -30,7 +30,6 @@ set(tests_SOURCES
 	sources/main.cpp
 	sources/tests_with_ScaleInstr.cpp
 	sources/testAllfixed.cpp
-	sources/testLIBR.cpp
 	sources/testLgc1Reader.cpp
 	sources/testINCL.cpp
 	sources/testHLSR.cpp
@@ -39,6 +38,7 @@ set(tests_SOURCES
 	sources/testJSON.cpp
 	sources/testSimulation.cpp
 	sources/testSlaveConstraints.cpp
+	sources/testPointGroupConstraints.cpp
 	sources/testEREL.cpp
 )
 
@@ -53,7 +53,6 @@ set(tests_INPUT
 	headers/testDVER.h
 	headers/tests_with_ScaleInstr.h
 	headers/testAllfixed.h
-	headers/testLIBR.h
 	headers/testLgc1Reader.h
 	headers/testINCL.h
 	headers/testHLSR.h
@@ -61,6 +60,7 @@ set(tests_INPUT
 	headers/testWPSR.h
 	headers/testSimulation.h
 	headers/testSlaveConstraints.h
+	headers/testPointGroupConstraints.h
 	headers/testEREL.h
 )
 

@@ -80,8 +80,10 @@ void TKeyALLFIXED::parse(const std::vector<std::string>&, bool activeLine, int) 
 }
 
 
-void TKeyLIBR::parse(const std::vector<std::string>&, bool activeLine, int) {
-    fconfig.libre = TLGCConfig::TBinaryOption(activeLine);
+void TKeyLIBR::parse(const std::vector<std::string> &, bool activeLine, int)
+{
+	throw std::runtime_error("LIBR keyword is deprecated, please use *CONSI LIBR, see user guide.");
+	//fconfig.libre = TLGCConfig::TBinaryOption(activeLine);
 }
 
 void TKeyCOVAR::parse(const std::vector<std::string>&, bool activeLine, int) {
@@ -274,8 +276,48 @@ void TKeyERELFRAME::parse(const std::vector<std::string>& tokens, bool activeLin
     // Set the usage of histogram in obsSummary
     TLGCObsSummary::createHistogram(activeLine);
 }
-void TKeyCONSI::parse(const std::vector<std::string>&, bool activeLine, int) {
-    fconfig.consCheck = TLGCConfig::TBinaryOption(activeLine);
+void TKeyCONSI::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
+
+	// activate consistency check
+	fconfig.consCheck = TLGCConfig::TBinaryOption(activeLine);
+	// TODO: make sure this only gets executed ic line is active
+	if (tokens.size() > 2)
+	{
+		// check if LIBR via automatic constraint detection or manual constraint specification is activated
+		if (tokens.at(2) == "LIBR")
+		{
+			fconfig.useConsiLibr	 = TLGCConfig::TBinaryOption(activeLine);
+			// LIBR mode active, either constraints are given or we try to find them automatically
+			if (tokens.size() == 3)
+			{
+				// no constraints specified manually
+				// activate the automatic constraint identification check
+				// this is done in TDataAnalyzer
+			}
+			else
+			{
+				TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+				std::array<bool, 7> manualSpecifiedConstraints{opts.has("TX"), opts.has("TY"), opts.has("TZ"), opts.has("RX"), opts.has("RY"), opts.has("RZ"), opts.has("SCL")};
+				// check if at least one constraint is specified
+				bool hasUserDefinedConstraint = std::any_of(manualSpecifiedConstraints.begin(), manualSpecifiedConstraints.end(), [](bool value) { return value; });
+				fconfig.hasManualConstraints = TLGCConfig::TBinaryOption(hasUserDefinedConstraint);
+
+				if (hasUserDefinedConstraint)
+				{
+					fconfig.manualConstraints = manualSpecifiedConstraints;
+				}
+				else
+				{
+					throw std::runtime_error("Optional arguments allowed after *CONSI LIBR are TX,TY,TZ,RX,RY,RZ,SCL");
+				}
+			}
+
+		}
+		else
+		{
+			throw std::runtime_error("Unknown *CONSI option given : " + tokens.at(2));
+		}
+	}
 }
 
 void TKeyJSON::parse(const std::vector<std::string> & tokens, bool activeLine, int)

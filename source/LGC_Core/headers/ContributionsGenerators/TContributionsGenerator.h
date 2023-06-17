@@ -11,6 +11,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <ContributionStructures.h>
 #include <TPointTransformer.h>
 #include <TInverseTransformation.h>
+#include <TLGCPointConstraintGroup.h>
 #include <TTSTN.h>
 
 class TUVEC;
@@ -140,7 +141,7 @@ public:
 		ECWIContrib getECWIContrib(const TECWIROM &ecwiROM, const TECWI &ecwi);
 
 	//@}
-
+		LIBRPointGroupContrib getPointGroupConstraintContrib(const TLGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
 
 private:
 	// Contains references: not assignable
@@ -158,9 +159,12 @@ private:
 
 		/// Adds contribution of a LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
 		void addTransformationsContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal a, TReal b, TReal c, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
+		void addTransformationsContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const Eigen::Vector3d& vec, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
 
 		/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 		void addTransformationsContributions3D(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
+		// matrix argument version
+		void addTransformationsContributions3D(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const Eigen::Matrix3d& AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 		
 		/// Adds Point contributions for the PLR3D measurement, returns object representing AMat*dtrafo(point)/dpoint
 		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const Eigen::Matrix3d& Amat , Point3DContrib& pointContrib, bool station);

@@ -28,20 +28,6 @@ namespace tut
 	{
 		//Test if the whole application runs
 		using namespace LGC;
-
-		set_test_name("Testing TLGCApp class and nam file reader");
-		
-        TLGCApp proj( getCurrentDirectory()+ slash + "test_files" + slash + "LIBR_SIMU.lgc2", 
-					    getCurrentDirectory()+ slash + "test_files" + slash + "LIBR_SIMU.out");
-		ensure( "Execution should work", proj.exec() == true);
-	}
-
-	template<>
-	template<>
-	void object::test<2>()
-	{
-		//Test if the whole application runs
-		using namespace LGC;
 		set_test_name("Testing TLGCApp class and nam file reader");
 
 		TLGCApp proj(getCurrentDirectory() + slash + "test_files" + slash + "OBSXYZ.lgc",

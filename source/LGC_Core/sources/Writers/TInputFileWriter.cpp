@@ -66,8 +66,27 @@ void TInputFileWriter::writeHeader()
     // Calculation options:
 	if (config.allfixed.isActive())
 		(*stream) << "*ALLFIXED" << endl;
-	else if (config.libre.isActive())
-		(*stream) << "*LIBR" << endl;
+    
+    if (data->getConfig().consCheck.isActive())
+	{
+		(*stream) << "*CONSI";
+		if (data->getConfig().useConsiLibr.isActive())
+		{
+			(*stream) << " LIBR ";
+			if (data->getConfig().hasManualConstraints.isActive())
+			{
+				std::array<std::string, 7> labels = {"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"};
+				for (size_t i = 0; i < 7; i++)
+				{
+					if (data->getConfig().manualConstraints[i])
+					{
+						(*stream) << labels[i] + " ";
+					}
+				}
+			}
+		}
+		(*stream) << "\n";
+	}
 
     if(config.sim.isActive() || config.sim.numSims != 0){
         if(!config.sim.isActive())

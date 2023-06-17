@@ -15,12 +15,8 @@
 // CONSTRUCTOR / DESTRUCTOR
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 TLSInputMatricesFiller::TLSInputMatricesFiller(const TDataTree *tree, const TRefSystemFactory::ERefFrame &referentiel, const TLGCData &data) :
-	fPointTransformer(tree, referentiel), fCGenerator(fPointTransformer), fLibrCnstrGenerator(fPointTransformer, data)
+	fPointTransformer(tree, referentiel), fCGenerator(fPointTransformer)
 {
-	if (data.getConfig().libre.isActive())
-	{
-		fLibrCnstrGenerator.initCnstrIdentifier(data);
-	}
 }
 
 TLSInputMatricesFiller::~TLSInputMatricesFiller()
@@ -35,6 +31,8 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 	bool fillOK = true;
 	auto &outputMessages(projData->getFileLogger());
 
+
+
 	try
 	{
 		// Input matrices have to be initialized each time they are filled.
@@ -45,17 +43,13 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		// LGC uses only parametric measurement models, so the B matrix is -Identity
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
-		if (projData->getConfig().libre.isActive())
-		{
-			// fill the libr constraints
-			fillOK &= fLibrCnstrGenerator.processFreeCnstr(*matrices);
-		}
-
 		// If weight unknown matrix should be filled
 		if (fillWeightUnkn)
 			fillOK &= fillWeightUnkMtrx(projData, matrices);
 
-		fillOK &= fillSlaveConstraints(projData, matrices);
+		fillOK &= fillSlaveConstraints(projData, matrices);	
+		fillOK &= fillPointGroupConstraints(projData, matrices);
+
 
 		// Itteration through the nodes of the tree
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++)
@@ -167,10 +161,6 @@ void TLSInputMatricesFiller::initMatriceDimension(const TLGCData &projData, TLSI
 		throw std::runtime_error("Observation index in LS matrices is null.");
 
 	matrices->initMatrices(projData.fUEOIndices);
-	if (projData.getConfig().libre.isActive() && projData.fUEOIndices.CIndex == 0)
-	{
-		throw std::runtime_error("LIBR  is used, but no constraints are found.");
-	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1758,6 +1748,25 @@ bool TLSInputMatricesFiller::addTransformationContribution(const TAdjustableHelm
 	return isProcessOK;
 }
 
+bool TLSInputMatricesFiller::addConstraintTransformationContribution(const TAdjustableHelmertTransformation &trafo, const TransformationContrib &trContrib, int eqIndex, TLSInputMatrices *matrices)
+{
+	bool isProcessOK = true;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!trafo.isTranslationFixed(i))
+			isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIndex, trafo.getTranslationUnknIndex(i), trContrib.fTranslContrib[i]);
+
+		if (!trafo.isRotationFixed(i))
+			isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIndex, trafo.getRotationUnknIndex(i), trContrib.fRotationContrib[i]);
+	}
+
+	if (!trafo.isScaleFixed())
+		isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIndex, trafo.getScaleUnknIndex(), trContrib.fScaleContrib);
+
+	return isProcessOK;
+}
+
 bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices)
 {
 	bool isProcessOK = true;
@@ -1768,6 +1777,19 @@ bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &poin
 			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
 	}
 	return isProcessOK;
+}
+
+bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices)
+{	
+	bool isProcessOK = true;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!pointAdj.isCoordinateFixed(i))
+			isProcessOK = isProcessOK && matrices->setCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
+	}
+	return isProcessOK;
+
 }
 
 bool TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices)
@@ -1852,7 +1874,7 @@ bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMa
 	try
 	{
 		// iterate over all slave groups
-		for (LGCFrameConstraintGroup slaveGroup : projData->getSlaveGroups())
+		for (TLGCFrameConstraintGroup slaveGroup : projData->getSlaveGroups())
 		{
 			int cIdx = slaveGroup.getFirstCIndex();
 			// check if group has more then one frame
@@ -1907,4 +1929,134 @@ bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMa
 	}
 
 	return fillOK;
+}
+
+bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSInputMatrices *matrices)
+{	bool fillOK = true;
+	auto &outputMessages(projData->getFileLogger());
+	try
+	{
+		// iterate over all point constraint groups
+		for (TLGCPointConstraintGroup group : projData->getPointGroups())
+		{
+			int cIdx = group.getFirstCIndex();
+			LIBRPointGroupContrib contrib = fCGenerator.getPointGroupConstraintContrib(group, *projData);
+			// fill the corresponding constraints. misclosure and derivatives
+			// as each point in the group is transformed to root, it contributes possibly helmert trafo contribution and a position variable contribution
+			// so its important to not overwrite helmert trafo contributions but to add them
+
+			std::array<bool, 7> active = group.getConstraintSignature();
+			// loop over all 7 possible constraints
+			for (size_t relCIdx = 0; relCIdx < 7; relCIdx++)
+			{
+				// is this constraint active?
+				if (active[relCIdx] == true)
+				{
+					// Dummy Implementation for translation in x constraint
+					// loop over points in group
+					for (std::string pointName : group.getAffectedPoints())
+					{
+						LGCAdjustablePoint adjPoint = projData->getPoints().getObject(pointName);
+
+						// translation constraint
+						if (0 <= relCIdx && relCIdx < 3)
+						{
+							// contribution from the point coordinates itself
+							fillOK = fillOK
+								&& addPointConstraintContribution(adjPoint, TFreeVector(contrib.cogConstraintContrib.PointContrib[pointName].row(relCIdx)), cIdx, matrices);
+							// contribution of helmert transformations
+							for (auto frameContribPair : contrib.cogConstraintContrib.TransformContrib[pointName])
+							{
+								if (!frameContribPair.first.isFixed())
+								{
+									fillOK = fillOK && addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.getContrib(relCIdx), cIdx, matrices);
+								}
+							}
+						}
+						// rotation constraint
+						if (3 <= relCIdx && relCIdx < 6)
+						{
+							// contribution from the point coordinates itself
+							fillOK = fillOK
+								&& addPointConstraintContribution(adjPoint, TFreeVector(contrib.momentumConstraintContrib.PointContrib[pointName].row(relCIdx - 3)), cIdx, matrices);
+							// contribution of helmert transformations
+							for (auto frameContribPair : contrib.momentumConstraintContrib.TransformContrib[pointName])
+							{
+								if (!frameContribPair.first.isFixed())
+								{
+									fillOK = fillOK
+										&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.getContrib(relCIdx - 3), cIdx, matrices);
+								}
+							}
+						}
+						// scale constraint
+						if (relCIdx == 6)
+						{
+							// contribution from the point coordinates itself
+							fillOK = fillOK && addPointConstraintContribution(adjPoint, TFreeVector(contrib.scaleConstraintContrib.PointContrib[pointName]), cIdx, matrices); 
+							// contribution of helmert transformations
+							for (auto frameContribPair : contrib.scaleConstraintContrib.TransformContrib[pointName])
+							{
+								if (!frameContribPair.first.isFixed())
+								{
+									fillOK = fillOK && addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second, cIdx, matrices);
+								}
+							}
+						}
+					}
+					// misclosure
+					if (0 <= relCIdx && relCIdx < 3)
+					{
+						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.cogConstraintContrib.constraintMisclosure[relCIdx]);
+						cIdx++;
+					}
+					else if (3 <= relCIdx && relCIdx < 6)
+					{
+						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.momentumConstraintContrib.constraintMisclosure[relCIdx - 3]);
+						cIdx++;
+					}
+					else if (relCIdx == 6)
+					{
+						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.scaleConstraintContrib.constraintMisclosure);
+						cIdx++;
+					}
+				}
+			}
+			// check if there is a constraint that does not depend on any parameter
+			// this can happen for example if a TX constraint was (manually) added but the only points defined are *VZ (they only vary in Z)
+			for (size_t i = group.getFirstCIndex(); i <group.getFirstCIndex()+group.getConstraintDimension();i++)
+			{
+				// Check if there are non-zero entries in row i
+				TSparseMatrix A2 = *matrices->getCnstrFirstDgnMtrx();
+				bool hasEntries = false;
+				for (size_t k = 0; k < A2.outerSize(); ++k)
+				{
+					for (Eigen::SparseMatrix<double>::InnerIterator it(A2, k); it; ++it)
+					{
+						if (it.row() == i)
+						{ // Check if the current element is in row i
+							hasEntries = true;
+							break;
+						}
+					}
+					if (hasEntries)
+					{
+						break;
+					}
+				}
+				if (!hasEntries)
+				{
+					throw std::runtime_error("A constraint that does not depend on any variable was added.");
+				}
+			}
+		}
+	}
+	catch (std::exception const &excp)
+	{
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << excp.what();
+		fillOK = false;
+	}
+
+	return fillOK;
+
 }

@@ -24,7 +24,6 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TPointTransformer.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TObservationGenerator.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TAllfixedParamGenerator.h
-	${CORE_INCLUDE_PATH}/ContributionsGenerators/TLibrCnstrGenerator.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableLine.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustablePlane.h
@@ -34,7 +33,8 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimPointSummary.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TVAbstractAlgorithm.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TALGCObjectWriter.h
-	${CORE_INCLUDE_PATH}/LGCConstraintObjects/LGCFrameConstraintGroup.h
+	${CORE_INCLUDE_PATH}/LGCConstraintObjects/TLGCFrameConstraintGroup.h
+	${CORE_INCLUDE_PATH}/LGCConstraintObjects/TLGCPointConstraintGroup.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TTSTNWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TCAMWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TLEVELWriter.h
@@ -112,14 +112,14 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/ContributionsGenerators/TPointTransformer.cpp
 	${CORE_SOURCES_PATH}/ContributionsGenerators/TObservationGenerator.cpp
 	${CORE_SOURCES_PATH}/ContributionsGenerators/TAllfixedParamGenerator.cpp
-	${CORE_SOURCES_PATH}/ContributionsGenerators/TLibrCnstrGenerator.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustableLine.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePlane.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TLGCCalculation.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimPointSummary.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimFrameSummary.cpp
-	${CORE_SOURCES_PATH}/LGCConstraintObjects/LGCFrameConstraintGroup.cpp
+	${CORE_SOURCES_PATH}/LGCConstraintObjects/TLGCFrameConstraintGroup.cpp
+	${CORE_SOURCES_PATH}/LGCConstraintObjects/TLGCPointConstraintGroup.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TALGCObjectWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TTSTNWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TCAMWriter.cpp
