@@ -11,6 +11,8 @@
 #include "TLOR2LOR.h"
 #include "TLibrCnstrGenerator.h"
 #include "TXYH2CCS.h"
+#include "TLSInputMatricesFiller.h"
+#include "TLSConsistencyCheck.h"
 
 TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
 {
@@ -528,6 +530,19 @@ bool TDataAnalyzer::dataConsistent()
 					   << "There are more unknowns than equations+constraints, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) + ", EQUATIONS+CONSTRAINTS = "
 				+ std::to_string(fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex) + ". LS calculation can not work. Add measurements or fix some unknowns.";
 		return false;
+	}
+
+	if (fData.getConfig().consCheck.isActive())
+	{
+		// do geometric consistency check already here
+		TLSInputMatricesFiller iFiller(&fData.getTree(), fData.getConfig().referential, fData);
+		TLSInputMatrices im;
+		iFiller.fillMatrices(&fData, true, &im);
+		TLSConsCheck consCheck(fData, im);
+		if (!consCheck.getResultStatus())
+		{
+			return false;
+		}
 	}
 
 	return consistent;
