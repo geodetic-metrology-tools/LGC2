@@ -20,22 +20,25 @@ TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : p
 	initialize();
 
 	// identify connected groups of kernel based on the nullspace
-	set<set<int>> connectedNullspaceGroups = identifyConnectedNullspaceGroups();
+	connectedNullspaceGroups = identifyConnectedNullspaceGroups();
+	if (connectedNullspaceGroups.size() == 0)
+	{
+		resultStatus = true;
+	}
+	if (resultStatus == false)
+	{
+		generateErrorMessage();
+	}
+}
 
-	// cant take the projData member itself because it is const
-	TFileLogger &outputMessages(data.getFileLogger());
-	outputMessages.writeReportHeader("Geometry consistency check:");
+void TLSConsCheck::generateErrorMessage()
+{
 	if (connectedNullspaceGroups.size() > 0)
 	{
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
-		logCritical()
-			<< "The Nullspace of the first design matrix is nonzero. There are groups of unidentifiable objects and the estimation problem has no unique solution.";
 		logWarning() << "There are " << connectedNullspaceGroups.size() << " connected Groups of unidentifiable objects.";
 	}
 	else
 	{
-		outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
-		resultStatus = true;
 		logWarning() << "No identifiability-problems detected.";
 	}
 
@@ -49,12 +52,13 @@ TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : p
 		nGroup++;
 	}
 }
-
 void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDenseMatrix> kernGroupBaseVectors, const int groupNumber)
 {
 	// Generate warning message listing the objects and the directions
 	// corresponding to the degrees of freedom
 	// To improve readability of the output ignore components below threshold.
+
+	// plotting the ambiguous directions
 	double plottingThreshold = 1e-12;
 	logWarning() << string(100, '=');
 	int dimKernGroup = kernGroupBaseVectors.size();
@@ -94,14 +98,17 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDens
 		msg << string(lineWidth, '-');
 		logWarning() << msg.str();
 	}
+
 	// check if the movement of the points in this group can be explained by a helmert transformation, only makes sense if group has at least 2 points, maybe 3 points
 	if (pointsInGroup.size() > 1)
 	{
 		logWarning() << "In case these directions can be explained as linear combinations of Helmert transformations acting on these points (in Root coordinates), they "
 						"are listed below";
 
-		//
-		checkGroupInRoot(pointsInGroup, kernGroupBaseVectors);
+		// this method checks if directions can be interpreted as helmert movements
+		vector<vector<string>> correspondingTransformations = interpreteGroupDirectionsAsHelmertMovements(pointsInGroup, kernGroupBaseVectors);
+		// this method generates the error message
+		plotTransformationMessage(correspondingTransformations);
 	}
 
 	// get external connections
@@ -202,8 +209,9 @@ vector<string> TLSConsCheck::involvedHelmertComponents(TVector linComb)
 	return components;
 }
 
-void TLSConsCheck::checkGroupInRoot(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors)
+vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors)
 {
+	vector<vector<std::string>> result;
 	int nPoints = pointsInGroup.size();
 
 	int dimKernGroup = kernGroupBaseVectors.size();
@@ -224,14 +232,10 @@ void TLSConsCheck::checkGroupInRoot(set<int> pointsInGroup, vector<TDenseMatrix>
 		j++;
 	}
 
-	stringstream msg;
-	msg.precision(6);
-	msg << scientific;
-	msg << setw(54) << "involved Transformations |";
-
 	// check each column of the group-nullspace
 	for (int j = 0; j < dimKernGroup; j++)
 	{
+		vector<std::string> directionResult;
 		TVector pointNullspaceVector = ambiguousGroupDirectionsInRoot.col(j);
 		// can it be expressed by the span of the helmertMovements?
 		Eigen::VectorXd linComb = helmertMovementsInRoot.fullPivHouseholderQr().solve(pointNullspaceVector);
@@ -241,21 +245,39 @@ void TLSConsCheck::checkGroupInRoot(set<int> pointsInGroup, vector<TDenseMatrix>
 		if (isTrivial)
 		{
 			// in this case the non-uniqueness direction transformed to Root is zero which means the root coordinates of the point are actually determinable but the subframe coordinates and some frame freedoms cancel each other out creating a inconsistency
-			helmertString.append("stationary in Root");
+			directionResult.push_back("stationary");
 		}
 		else if (isInSpan)
 		{
 			vector<string> involvedComps = involvedHelmertComponents(linComb);
-			for (string comp : involvedComps)
-			{
-				helmertString.append(comp);
-				helmertString.append(" ");
-			}
+			directionResult = involvedComps;
 		}
 		else
 		{
 			// direction is no linear combination of Helmert trafos
-			helmertString.append(" --- ");
+			directionResult.push_back("notInterpretable");
+		}
+		result.push_back(directionResult);
+	}
+
+	return result;
+}
+
+void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
+{
+	stringstream msg;
+	msg.precision(6);
+	msg << scientific;
+	msg << setw(54) << "involved Transformations |";
+
+	// check each column of the group-nullspace
+	for (int j = 0; j < input.size(); j++)
+	{
+		string helmertString;
+		for (auto comp : input.at(j))
+		{
+			helmertString.append(comp);
+			helmertString.append(" ");
 		}
 		msg << setw(22) << helmertString << "|";
 	}

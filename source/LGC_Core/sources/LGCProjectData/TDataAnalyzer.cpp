@@ -539,8 +539,18 @@ bool TDataAnalyzer::dataConsistent()
 		TLSInputMatrices im;
 		iFiller.fillMatrices(&fData, true, &im);
 		TLSConsCheck consCheck(fData, im);
-		if (!consCheck.getResultStatus())
+		// TFileLogger &outputMessages(data.getFileLogger());
+		outputMessages.writeReportHeader("Geometry consistency check:");
+
+		if (consCheck.getResultStatus())
 		{
+			outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
+		}
+		else
+		{
+			logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
+			consCheck.generateErrorMessage();
 			return false;
 		}
 	}

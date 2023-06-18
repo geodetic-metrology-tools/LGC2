@@ -19,6 +19,8 @@ public:
 	// constructor
 	TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr);
 	bool getResultStatus();
+	// write the error message with the logger methods
+	void generateErrorMessage();
 	// get set of object indices of the Nullspace connected to certain object in the Nullspace
 	set<int> getConnectedNullspaceGroup(int);
 
@@ -41,6 +43,8 @@ private:
 	vector<set<int>> neighbors;
 	// vector of sets of neighbors restricted to objects that contribute to Nullspace of first design matrix
 	vector<set<int>> nullspaceNeighbors;
+	// the different connected problematic groups
+	set<set<int>> connectedNullspaceGroups;
 	// matrix representation of Kernel of first design matrix & constraints
 	TDenseMatrix nullspace;
 	// objects contributing to Nullspace
@@ -75,7 +79,9 @@ private:
 	// return column indices from sparsity pattern of a row of a sparse  matrix
 	vector<int> getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber);
 	vector<string> involvedHelmertComponents(TVector linComb);
-	void checkGroupInRoot(set<int> groupOfPoints, vector<TDenseMatrix> kernGroupBaseVectors);
+	// for a group check for each direction if it can be interpreted as movements from a helmert transformation in ROOT
+	vector<vector<string>> interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors);
+	void plotTransformationMessage(vector<vector<string>>);
 };
 
 #endif
