@@ -83,6 +83,7 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Returns the last LS-matrices equation index of this measurement, ANGL introduces 1 equation.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
@@ -107,7 +108,8 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 		/// Returns the last LS-matrices equation index of this measurement, ZEND introduces 1 equation.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
-
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
+		
 		/// Allfixed parameter: instrument heigth - Hi
 		TLength fAllFixedHi;
 
@@ -131,6 +133,7 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 
 		/// Returns the last LS-matrices equation index of this measurement
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 
 		/// Allfixed parameter: distance correction - Cs
 		TLength fAllFixedCs;
@@ -162,6 +165,7 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 		/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 
 		/// Allfixed parameter: V0
 		TAngle fAllFixedV0;
@@ -191,6 +195,7 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0[2];
@@ -216,6 +221,7 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -242,6 +248,7 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 
 		/// Returns the last LS-matrices equation index of this measurement, DSPT introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 
 		/// Allfixed parameter: distance correction
 		TLength fAllFixedCs;
@@ -269,6 +276,7 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 
 		/// Returns the last LS-matrices equation index of this measurement, TECHO introduces 1 equation.*/
 		inline MatrixIndex getLastEquationIndex()const {return getFirstEquationIndex();}
+		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
@@ -295,6 +303,7 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, TECVE introduces 1 equation.*/
 	inline MatrixIndex getLastEquationIndex()const { return getFirstEquationIndex(); }
+	inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -328,7 +337,8 @@ class TDVER  : public TAScalarMeas<int>{
 
 	/*!@name Access methods*/
 	//@{
-		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+	  inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	  inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 		/// Returns the observed value.
 		inline TLength getDistanceCorrection() const {return fDistanceCorrection;}
@@ -375,7 +385,8 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 				~TDHOR(){}
 
 				/// Returns the last LS-matrices equation index of this measurement, DIST, DHOR introduce 1 equation.
-				inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+				inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+				inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 				/// Returns the DHOR sigma
 				inline TLength getDHORSigma() const {return dhorSigma;}
@@ -404,6 +415,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 		//@{
 			/// Returns standard deviation of the observed value
 			inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+			inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 		//@}
 
 			/// The optional DHOR measurment 
@@ -438,6 +450,7 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 		//@{
 			/// Returns standard deviation of the observed value
 			inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex();}
+			inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex();}
 		//@}
 
 #if USE_SERIALIZER
@@ -473,6 +486,7 @@ public:
 	/*!@name Access methods*/
 	//@{
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 	/// Return the standard deviation of the observed value
 	inline TLength getObservedStDev() const { return fSigmaObsVal; }
@@ -542,6 +556,7 @@ public:
 	/*!@name Access methods*/
 	//@{
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 	/// Return if the pdor measurement is initialise or not
 	const bool isInitialised()const { return fIsInitialise; }
@@ -613,6 +628,7 @@ public:
 	/*!@name Access methods*/
 	//@{
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex()+2; }
+	inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex() + 2; }
 
 	/// Returns standard deviation of the observed value
 	inline TLength getXObservedStDev() const { return fXSigmaObsVal; }
@@ -677,6 +693,7 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -706,6 +723,7 @@ public:
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex(); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -746,7 +764,7 @@ public:
 	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 1; }
 
 	/// Returns the last observation index of this measurement (ECWI introduces 2 observations, order is defined to be: X, Z).
-	inline MatrixIndex getLastObservationIndex() const { return fFirstObservationIndex + 1; }
+	inline MatrixIndex getLastObservationIndex() const { return getFirstObservationIndex() + 1; }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
