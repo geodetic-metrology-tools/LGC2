@@ -28,6 +28,8 @@ public:
 	bool adjust();
 	// for checking the estimation status
 	bool getStatus() { return estimationStatus; };
+	// write Json output file
+	void writeJsonFile();
 
 	// Parameter Result methods
 	// get estimate of point
@@ -53,6 +55,8 @@ private:
 	void createParameterReferences();
 	void createMeasurementReferences();
 
+	// containing measurement configuration, observations, estimates
+	std::shared_ptr<TLGCData> project;
 	// helper methods for conversion to Eigen vector
 	Eigen::VectorXd toVectorXd(TFreeVector);
 	Eigen::VectorXd toVectorXd(TPositionVector);
@@ -61,8 +65,6 @@ private:
 	std::string inputFilePath;
 	// LGC adjustment algorithm used by adjust method
 	std::unique_ptr<TVAbstractAlgorithm> algorithm;
-	// containing measurement configuration, observations, estimates
-	std::shared_ptr<TLGCData> project;
 
 	struct
 	{

@@ -16,10 +16,21 @@
 #include "TLSResultsMatrices.h"
 #include "TLSSimulation.h"
 #include "TVAbstractAlgorithm.h"
+#if USE_SERIALIZER
+#	include <Serializer_json.hpp>
+#endif // USE_SERIALIZER
 
 // constructor
 Moni::Moni(std::string inputFilePath) : pimpl_(new MoniImpl(inputFilePath)){}
 Moni::~Moni() = default;
+
+
+//void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+void Moni::writeJsonFile()
+{
+	pimpl_->writeJsonFile();
+}
+
 void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	pimpl_->updateMeas(id, measurementVector);
@@ -114,7 +125,17 @@ void Moni::MoniImpl::initialize()
 	std::cout << "Monitor object initialized." << std::endl;
 
 }
+void Moni::MoniImpl::writeJsonFile()
+{
+	jsonSerializerObject ser;
+	SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+	// obj.addProperty("fCopyright", fCopyright);
+	// obj.addProperty("LGCVersion", getLGCVersion());
+	obj.addProperty("LGC_DATA", project.get());
 
+	std::ofstream fout("JsonTest.json");
+	fout << ser.getStringRepresentation();
+}
 void Moni::MoniImpl::createParameterReferences()
 {
 	for (auto &object : project.get()->getPoints())

@@ -20,6 +20,8 @@ class Moni
 public:
 	DECLSPEC Moni(std::string inputFilePath);
 	DECLSPEC ~Moni();
+	//DECLSPEC void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
+	DECLSPEC void Moni::writeJsonFile();
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// triggering the adjustment calculation
 	DECLSPEC bool adjust();
