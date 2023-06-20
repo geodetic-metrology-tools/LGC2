@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 		
 		//testing json output
-		//mockup.writeJsonFile();
+		mockup.writeJsonFile();
 
 	}
 	auto stop = high_resolution_clock::now();
