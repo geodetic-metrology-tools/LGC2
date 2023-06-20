@@ -141,7 +141,7 @@ void Moni::MoniImpl::createParameterReferences()
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
 	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)
 	{
-		auto object(it.node->data.get()->frame);
+		auto& object(it.node->data.get()->frame);
 		paramRefs.FRAMES.insert({object.getName(), object});
 	}
 }
