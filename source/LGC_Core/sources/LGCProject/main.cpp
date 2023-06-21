@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
 			new_measurement(0) = newMeas;
 			mockup.updateMeas(id, new_measurement);
 		}
+		// test input file writer
+		// mockup.writeLGCInputFile();
 
 		status = mockup.adjust();
 		auto currentTime = high_resolution_clock::now();
@@ -70,7 +72,7 @@ int main(int argc, char *argv[])
 		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 		
 		//testing json output
-		mockup.writeJsonFile();
+		//mockup.writeResultFile();
 
 	}
 	auto stop = high_resolution_clock::now();

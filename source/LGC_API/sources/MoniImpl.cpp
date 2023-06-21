@@ -1,24 +1,9 @@
 #include "MoniImpl.h"
 #include "Moni.h"
 
+#include "TAStreamFormatter.h"
 #include <iostream>
 
-#include <Eigen/Dense>
-
-#include <Behavior.h>
-#include <TLGCData.h>
-#include <TLSAlgorithm.h>
-#include <TReader.h>
-
-#include "FileUtils.h"
-#include "TDataAnalyzer.h"
-#include "TLGCCalculation.h"
-#include "TLSResultsMatrices.h"
-#include "TLSSimulation.h"
-#include "TVAbstractAlgorithm.h"
-#if USE_SERIALIZER
-#	include <Serializer_json.hpp>
-#endif // USE_SERIALIZER
 
 // constructor
 Moni::Moni(std::string inputFilePath) : pimpl_(new MoniImpl(inputFilePath)){}
@@ -26,9 +11,14 @@ Moni::~Moni() = default;
 
 
 //void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
-void Moni::writeJsonFile()
+void Moni::writeResultFile()
 {
-	pimpl_->writeJsonFile();
+	pimpl_->writeResultFile();
+}
+
+void Moni::writeLGCInputFile()
+{
+	pimpl_->writeLGCInputFile();
 }
 
 void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
@@ -125,16 +115,62 @@ void Moni::MoniImpl::initialize()
 	std::cout << "Monitor object initialized." << std::endl;
 
 }
-void Moni::MoniImpl::writeJsonFile()
+void Moni::MoniImpl::writeResultFile()
 {
 	jsonSerializerObject ser;
 	SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
-	// obj.addProperty("fCopyright", fCopyright);
-	// obj.addProperty("LGCVersion", getLGCVersion());
 	obj.addProperty("LGC_DATA", project.get());
-
-	std::ofstream fout("JsonTest.json");
+	auto now = std::chrono::system_clock::now();
+	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	std::stringstream filename;
+	filename << "resultDump_"<< std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".json";
+	std::ofstream fout(filename.str());
 	fout << ser.getStringRepresentation();
+}
+void Moni::MoniImpl::writeLGCInputFile()
+{
+    // Create and initialise stream:
+    std::shared_ptr<TAStreamFormatter> stream;
+	TFileParameters resultFileParam;
+	auto now = std::chrono::system_clock::now();
+	auto in_time_t = std::chrono::system_clock::to_time_t(now);
+	std::stringstream filename;
+	filename << "inputDump_"<< std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".lgc";
+
+	resultFileParam.setFileName(filename.str());
+
+	//Some keywords(options) in the input file responsible for this, for now just setting here one of them (column), but can be semi-colon, dash etc.
+	TAStreamFormatter::ETextFormat resultsFileFormat = TAStreamFormatter::ETextFormat::kColumnFormat;
+
+	TStreamFormatterFactory* formatterFactory = TStreamFormatterFactory::instance();
+	TDataParameters dataParam;
+	dataParam.setRefFrame(TRefSystemFactory::ERefFrame::kCCS); //default param because not redefine
+	dataParam.setPrecision(project->getConfig().outPrecision.digits);
+	dataParam.setObsIdWidth(project->getConfig().obsIDwidth);
+
+	TADataSet tads(resultFileParam, dataParam);
+    stream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));
+    stream->setReferenceFrame(dataParam.getRefFrame());  //default param because not redefine
+    stream->setCoordSys(TCoordSysFactory::k3DCartesian);
+
+    TPointFormat* pointFormat = stream->getPointFormat();
+	//Set the name width to the max width of a name point +1 characters.
+	if (project->getConfig().pointNameWidth>pointFormat->getNameWidth())
+	{
+		pointFormat->setNameWidth(project->getConfig().pointNameWidth+1);
+        stream->setPointFormat(*pointFormat);
+	}
+	//As the name width is used also for frames. Set the name width to the max of of frame name +1 characters, if necessary.
+	for (const auto& itTree : project->getTree())
+	{
+		if (itTree.get()->frame.getName().length() >= pointFormat->getNameWidth()) {
+			pointFormat->setNameWidth((int)itTree.get()->frame.getName().length() + 1);
+			stream->setPointFormat(*pointFormat);
+		}
+	}
+	// Create writer, write the file:
+	TInputFileWriter infileWriter(stream.get(), project.get());
+	infileWriter.writeFile();
 }
 void Moni::MoniImpl::createParameterReferences()
 {
