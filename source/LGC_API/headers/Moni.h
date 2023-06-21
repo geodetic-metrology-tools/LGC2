@@ -21,7 +21,10 @@ public:
 	DECLSPEC Moni(std::string inputFilePath);
 	DECLSPEC ~Moni();
 	//DECLSPEC void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
-	DECLSPEC void writeJsonFile();
+	// write the results from the current estimation in a json file with timestamp
+	DECLSPEC void writeResultFile();
+	// write lgc input file with current measurements with timestamp
+	DECLSPEC void writeLGCInputFile();
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// triggering the adjustment calculation
 	DECLSPEC bool adjust();

@@ -11,9 +11,29 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 // STL
 #include <Eigen/Dense>
 
+#include <Behavior.h>
 #include <TLGCData.h>
+#include <TLSAlgorithm.h>
+#include <TReader.h>
 
+#include "FileUtils.h"
+#include "TDataAnalyzer.h"
+#include "TLGCCalculation.h"
+#include "TLSResultsMatrices.h"
+#include "TLSSimulation.h"
 #include "TVAbstractAlgorithm.h"
+#include "TInputFileWriter.h"
+#include "TSimFileWriter.h"
+#include "TStreamFormatterFactory.h"
+#include <iomanip> // put_time
+#include <chrono>
+
+
+
+
+#if USE_SERIALIZER
+#	include <Serializer_json.hpp>
+#endif // USE_SERIALIZER
 
 class Moni::MoniImpl
 {
@@ -29,7 +49,9 @@ public:
 	// for checking the estimation status
 	bool getStatus() { return estimationStatus; };
 	// write Json output file
-	void writeJsonFile();
+	void writeResultFile();
+	// write input file with current measurement data
+	void writeLGCInputFile();
 
 	// Parameter Result methods
 	// get estimate of point
