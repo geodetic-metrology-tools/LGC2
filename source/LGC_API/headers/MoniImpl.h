@@ -69,6 +69,8 @@ public:
 	// Residual result methods
 	// get estimated residual
 	Eigen::VectorXd getEstimateResidual(std::string obsName);
+	// get calculated measurement
+	Eigen::VectorXd getCalcMeas(std::string obsName) { return getMeas(obsName) + getEstimateResidual(obsName); };
 	// get the sigma0 after adjustment
 	double getSigma0();
 	// get Meas IDs

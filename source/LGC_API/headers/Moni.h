@@ -44,12 +44,14 @@ public:
 	DECLSPEC Eigen::VectorXd getPointEstimatePrec(std::string);
 	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
 	DECLSPEC Eigen::VectorXd getPointEstimatePrec(std::string pointName, std::string frameName);
-	// get estimated residual
-	DECLSPEC Eigen::VectorXd getEstimateResidual(std::string obsName);
 	// get Meas IDs
 	DECLSPEC std::vector<std::string> getECWSMeasIds();
 	// get measurement
 	DECLSPEC Eigen::VectorXd getMeas(std::string id);
+	// get estimated residual
+	DECLSPEC Eigen::VectorXd getEstimateResidual(std::string obsName);
+	// get "calculated" measurement = obs+residual
+	DECLSPEC Eigen::VectorXd getCalcMeas(std::string obsname);
 	// get the sigma0 after adjustment
 	DECLSPEC double getSigma0();
 	

@@ -70,7 +70,9 @@ int main(int argc, char *argv[])
 
 		// get exemplary measurement residual
 		std::string obsName = "meas1";
+		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
 		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
+		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
 
 		// get sigmaZero
 		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
