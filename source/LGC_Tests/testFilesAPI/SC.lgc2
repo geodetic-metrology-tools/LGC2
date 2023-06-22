@@ -1,0 +1,189 @@
+*TITR
+First vesrion of the LGC file Single component
+*OLOC 							%OLOC for now, in case of MAD-X, could be *RS2K
+*PREC 6
+*COVAR
+*INSTR
+*HLSR HL_SNSR_1 0.02 0 0  		%Precisions used from power point. Name of the standard instrument?
+*INCL INCL_SNSR_1   63    0   0 0  0  	%What is your inclinometer precision? Name of the standard instrument?
+*EDM FSI_SNSR_1 CORNERCUBE 0 0 0	%FSI as distance measurement
+CORNERCUBE .3 0 0 0 0 0 0 0
+
+*CALA
+A-TAP.GROUNDREF 0	-1	0
+B-TAP.GROUNDREF 0	-1	0
+TAP.A.LONGIREF 	0 	-1 	2.4
+TAP.L.LONGIREF 	0 	11 	2.4
+
+*DSPT  TAP.A.LONGIREF   FSI_SNSR_1 %observation is a 3D distance between two points. OK with that? do you need an orientation too?
+TAP.A.LONGI		2	%MEAS
+*DSPT  TAP.L.LONGIREF   FSI_SNSR_1
+TAP.L.LONGI 	2	%MEAS
+
+*DVER 0.010							%could be a dist also.  Precision?
+A-TAP.GROUNDREF  A-TAP.REF	2	%MEAS
+B-TAP.GROUNDREF	 B-TAP.REF	2	%MEAS
+
+*ECWS  HL_SNSR_1  0.001  WSID    WaterNetwork1    %Water network name?
+A-TAP.HLS1	0.0295	ID meas1	%MEAS
+A-TAP.HLS2	0.0295	ID meas2	%MEAS
+B-TAP.HLS1	0.0295	ID meas3	%MEAS
+B-TAP.HLS2	0.0295	ID meas4	%MEAS
+TAP.A.HLS	0.0295	ID meas5	%MEAS
+TAP.L.HLS	0.0295	ID meas6	%MEAS
+TAP.Q.HLS	0.0295	ID meas7	%MEAS
+TAP.D.HLS	0.0295	ID meas8	%MEAS
+
+
+*FRAME   WIRE.RIGHT	 	0.3	5	0	0	0	0  1 %IF MADX--> need to compute from CCS to wire.
+*FRAME   WIRE.RIGHT.DOF	0	0	0    0    0    0   1  	 TX	TZ	RX	RZ
+*POIN
+A-TAP.WPS2 	0	-6.035	0  %no sag in this simulation
+TAP.A.WPS	0	-4.035	0
+TAP.L.WPS	0	3.965	0
+B-TAP.WPS2	0	5.965	0
+*OBSXYZ
+A-TAP.WPS2 	0	-6.035	0	0.0001		0.0001 		10000
+TAP.A.WPS	0	-4.035	0	0.0001		0.0001 		10000
+TAP.L.WPS	0	3.965	0	0.0001		0.0001 		10000
+B-TAP.WPS2	0	5.965	0	0.0001		0.0001 		10000
+*FRAME   WIRE.RIGHT.SCALE	0	0	0    0    0    0   1 	SCL
+*OBSXYZ
+A-TAP.WPS2 	0	-6.035	0	10000 	10000 	0.0001
+TAP.A.WPS	0	-4.035	0	10000 	10000 	0.0001
+TAP.L.WPS	0	3.965	0	10000 	10000 	0.0001
+B-TAP.WPS2	0	5.965	0	10000 	10000 	0.0001
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+
+*FRAME   WIRE.LEFT	 	-0.3	5	0	0	0	0  1
+*FRAME   WIRE.LEFT.DOF	0	0	0    0    0    0   1  	TX	TZ	RX	RZ
+*POIN
+A-TAP.WPS1 	0	-6.035	0
+TAP.D.WPS	0	-4.035	0
+TAP.Q.WPS	0	3.965	0
+B-TAP.WPS1	0	5.965	0
+*OBSXYZ
+A-TAP.WPS1 	0	-6.035	0	0.0001		0.0001 		10000
+TAP.D.WPS	0	-4.035	0	0.0001		0.0001 		10000
+TAP.Q.WPS	0	3.965	0	0.0001		0.0001 		10000
+B-TAP.WPS1	0	5.965	0	0.0001		0.0001 		10000
+*FRAME   WIRE.LEFT.SCALE	0	0	0    0    0    0   1 	SCL
+*OBSXYZ
+A-TAP.WPS1 	0	-6.035	0	10000 	10000 	0.0001
+TAP.D.WPS	0	-4.035	0	10000 	10000 	0.0001
+TAP.Q.WPS	0	3.965	0	10000 	10000 	0.0001
+B-TAP.WPS1	0	5.965	0	10000 	10000 	0.0001
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+
+
+% Description Table 1
+*FRAME A-TAP.THEO 0 -1 2 0 0 0 1 		%Theoretical frame of the plate A-TAP
+*FRAME A-TAP.REAL 0 0 0 0 0 0 1   TZ	%Real measured frame of the plate A-TAP, TZ freed for the Distance measurement
+*CALA 
+A-TAP.REF 0 0 0
+*FRAME A-TAP.HLS1 -0.3 0 0.5 0 200 0 1
+*CALA
+A-TAP.HLS1 0 0 0
+*ENDFRAME
+*FRAME A-TAP.HLS2 0.3 0 0.5 0 200 0 1
+*CALA
+A-TAP.HLS2 0 0 0 
+*ENDFRAME
+*FRAME A-TAP.WPS1 -0.3 0 0.4 0 0 0 1
+*OBSXYZ
+A-TAP.WPS1 0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*FRAME A-TAP.WPS2 0.3 0 0.4 0 0 0 1
+*OBSXYZ
+A-TAP.WPS2 0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+
+% Description Table 2
+*FRAME B-TAP.THEO 0 11 2 0 0 0 1 		%Theoretical frame of the plate A-TAP
+*FRAME B-TAP.REAL 0 0 0 0 0 0 1   TZ	%Real measured frame of the plate A-TAP, TZ freed for the Distance measurement
+*CALA 
+B-TAP.REF 0 0 0
+*FRAME B-TAP.HLS1 -0.3 0 0.5 0 200 0 1
+*CALA
+B-TAP.HLS1 0 0 0
+*ENDFRAME
+*FRAME B-TAP.HLS2 0.3 0 0.5 0 200 0 1
+*CALA
+B-TAP.HLS2 0 0 0
+*ENDFRAME
+*FRAME B-TAP.WPS1 -0.3 0 0.4 0 0 0 1
+*OBSXYZ
+B-TAP.WPS1 0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*FRAME B-TAP.WPS2 0.3 0 0.4 0 0 0 1
+*OBSXYZ
+B-TAP.WPS2 0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+
+% Description Table
+*FRAME TAP.THEO 0 0 2 0 0 0 1 		%Theoretical frame of Component. If a MAD-X is used it should be at the Entrance of the element. OK With That? Might be more complicated structure than that.
+*FRAME TAP.BUMP 0 0 0 0 0 0 1 		%Can the offset be generated as a Bump from MAD-X? or there is it two different principles? Could be several Frame, depends on GEODE.
+*FRAME TAP.REAL 0 0 0 0 0 0 1   	TX	TY	TZ	RX	RY	RZ	%Real measured Position of the TAP element? Could be 2 frames, depends of GEODE
+%add beam points
+*CALA 
+BEAM_TAP.E 		0	0	0
+BEAM_TAP_S		0	10	0
+TAP.A.LONGI 	0 	1 	0.4
+TAP.L.LONGI 	0 	9 	0.4
+*FRAME TAP.A.INCLINO 0 1 0.4 0 0 0 1 %FRAME could be avoided
+*CALA
+TAP.A.INCLINO	0    0 0
+*INCLY INCL_SNSR_1
+TAP.A.INCLINO	0		%MEAS
+*ENDFRAME
+*FRAME TAP.L.INCLINO 0 9 0.4 0 0 0 1
+*CALA
+TAP.L.INCLINO	0    0 0
+*INCLY INCL_SNSR_1
+TAP.L.INCLINO	0		%MEAS
+*ENDFRAME
+*FRAME TAP.A.WPS 0.3 1 0.4 0 0 0 1
+*OBSXYZ
+TAP.A.WPS	0    -0.035 -0.0345	0.03	15	0.03 		%MEAS	%is it OK with values in the ppt?
+*ENDFRAME
+*FRAME TAP.L.WPS 0.3 9 0.4 0 0 0 1
+*OBSXYZ
+TAP.L.WPS	0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*FRAME TAP.Q.WPS -0.3 9 0.4 0 0 0 1
+*OBSXYZ
+TAP.Q.WPS	0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*FRAME TAP.D.WPS -0.3 1 0.4 0 0 0 1
+*OBSXYZ
+TAP.D.WPS	0    -0.035 -0.0345	0.03	15	0.03		%MEAS
+*ENDFRAME
+*FRAME TAP.A.HLS 0.3 1 0.5 0 200 0 1
+*CALA
+TAP.A.HLS	0    0	0
+*ENDFRAME
+*FRAME TAP.L.HLS 0.3 9 0.5 0 200 0 1
+*CALA
+TAP.L.HLS	0    0	0
+*ENDFRAME
+*FRAME TAP.Q.HLS -0.3 9 0.5 0 200 0 1
+*CALA
+TAP.Q.HLS	0    0	0
+*ENDFRAME
+*FRAME TAP.D.HLS 0.3 1 0.5 0 200 0 1
+*CALA
+TAP.D.HLS	0    0	0
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+
+*END

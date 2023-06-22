@@ -12,6 +12,7 @@ include_directories(${CMAKE_SOURCE_DIR}
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/readers
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/Writers
 					${CMAKE_SOURCE_DIR}/LGC_Tests/headers/
+					${CMAKE_SOURCE_DIR}/LGC_API
 					)
 
 set(tests_SOURCES
@@ -42,6 +43,7 @@ set(tests_SOURCES
 	sources/testPointWithSigma.cpp
 	sources/testEREL.cpp
 	sources/testMasking.cpp
+	sources/testAPI.cpp
 	sources/testDLEV.cpp
 )
 
@@ -66,13 +68,14 @@ set(tests_INPUT
 	headers/testPointGroupConstraints.h
 	headers/testPointWithSigma.h
 	headers/testEREL.h
+	headers/testAPI.h
 	headers/testMasking.h
 	headers/testDLEV.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
+target_link_libraries(LGC_Tests LGC_API LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
 
 add_test(
 	NAME LGC_Tests
@@ -83,8 +86,17 @@ add_test(
 # Copy test files for unit tests
 set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFiles)
 file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
+set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
+file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
 
 foreach(test_file ${COPY_TESTFILES})
 	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")
 	file(COPY "${test_file}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test_files")
 endforeach()
+
+# make sure api dll is available in test build folder
+if (WIN32)
+add_custom_command(TARGET LGC_Tests POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_BINARY_DIR}/LGC_API/Debug/LGC_API.dll" "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll")
+endif()
+

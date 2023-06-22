@@ -76,6 +76,12 @@ Eigen::VectorXd Moni::getEstimateResidual(std::string obsId)
 	return pimpl_->getEstimateResidual(obsId);
 }
 
+// get calculated measurement
+Eigen::VectorXd Moni::getCalcMeas(std::string obsId)
+{
+	return pimpl_->getCalcMeas(obsId);
+}
+
 
 // get Meas IDs
 std::vector<std::string> Moni::getECWSMeasIds()
