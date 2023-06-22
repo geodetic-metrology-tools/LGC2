@@ -1,89 +1,161 @@
-#include <chrono>
-#include <iomanip>
+#include <filesystem>
 #include <iostream>
-#include <random>
+#include "TLGCApp.h"
+#include "FileUtils.h"
+#include <FileLogHandler.hpp>
+#include <ConsoleLogHandler.hpp>
+#include <Logger.hpp>
+#include "Defaults.h"
 
-// the monitoring class
-#include "Moni.h"
-using namespace std::chrono;
+#include "TFileLogger.h"  // Will be obsolete soon
+
+
 
 int main(int argc, char *argv[])
 {
-	// for simulation of random perturbations
-	std::ranlux48 engine;
-	// reproducibility
-	engine.seed(1);
-	auto start = high_resolution_clock::now();
-	std::string inputFilePath = "../SC.lgc2";
 
-	Moni mockup(inputFilePath);
+	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
+#ifdef __linux__
+	const std::string logFilePath2 = svlTools::getCurrentDirectory() + slash + "LOGFile.log";
+#else
+	const std::string logFilePath2 = "C:\\temp\\LOGFile.log";
+#endif
+	TFileLogger logFile(logFilePath2, "LGC log file");
+	// **************************************************************************
 
-	// the IDs for the observations we want to manipulate during the monitoring
-	std::vector<std::string> ecwsIds = {"meas1", "meas2", "meas3", "meas4", "meas5", "meas6", "meas7", "meas8"};
-	// first save the original measurements
-	std::unordered_map<std::string, double> originalMeasurements;
-	for (auto id : ecwsIds)
+	bool bChangeLogFile = true;
+
+	std::string inputFilePath, outputFilePath, logFilePath;
+	int nMaxIterations = MAX_ITERATIONS;
+
+	// Default Log file (it can be changed by the user with the -D option)
+	logFilePath = svlTools::getCurrentDirectory() + slash + "DefaultLogFileLGC.log";
+
+	// Creates the Logger mechanism (here log to file and console)
+	// IMPORTANT: Use the macros logDebug(), logInfo(), etc everywhere in the project !
+	FileLogHandler *pLogFileHandler = new FileLogHandler(logFilePath);
+	pLogFileHandler->setThreshold(LogMessage::Type::INFO);
+	Logger::getLogger().addHandlers(pLogFileHandler,	new ConsoleLogHandler());
+
+	if (argc == 1)
 	{
-		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
+		logFatal() << "Launch LGC: No argument, LGC needs at least the project filepath after the -i flag.";
 	}
-	bool status = false;
-
-	// Simulating a monitoring scenario
-	for (int i = 0; i < 1000; i++)
+	else
 	{
-		for (auto id : ecwsIds)
+		for (int i = 0; i < argc; i++)
 		{
-			// simulate new measurements by taking the original values and add a perturbation with standard deviation sigma
-			// ECWS sigma = 0.001 mm = 1e-6m
-			double sigma(1e-6);
-			double newMeas(std::normal_distribution<double>(0, sigma)(engine) + originalMeasurements.at(id));
-			Eigen::VectorXd new_measurement(1);
-			new_measurement(0) = newMeas;
-			mockup.updateMeas(id, new_measurement);
-			Eigen::VectorXd new_obsSigma(1);
-			// testing  setObsSigma
-			// new_obsSigma << 1e-5;
-			// mockup.setObsSigma(id, new_obsSigma);
+			if (argv[i][0] == '-')
+			{
+				switch (argv[i][1])
+				{
+					// run command line interface
+				case 'i':
+				case 'I':
+				{
+					if (!argv[i + 1]) {
+						logFatal() << "Launch LGC: I/-i option used, but the input file path was not specified.";
+						break;
+					}
+
+					// Look if absolute path is used
+					inputFilePath = svlTools::getPathFileName(argv[i + 1]);
+					break;
+				}
+
+				case 'o':
+				case 'O':
+				{
+					if (!argv[i + 1]) {
+						logFatal() << "Launch LGC: -O/-o option used, but the output file path was not specified.";
+						break;
+					}
+
+					// Look if absolute path is used
+					outputFilePath = svlTools::getPathFileName(argv[i + 1]);
+					break;
+				}
+
+				case 'n':
+				case 'N':
+				{
+					if (!argv[i + 1]) {
+						logFatal() << "Launch LGC: -N/-n option used, but the maximal number of iterations was not specified.";
+						break;
+					}
+					try {
+						nMaxIterations = std::stoi(argv[i + 1]);
+					}
+					catch (std::invalid_argument& e) {
+						// if no conversion could be performed
+						logFatal() << "Launch LGC: -N/-n option used, but the maximal number of iterations is not correctly defined.\nException caught: " << e.what();
+					}
+					break;
+				}
+
+				// Executes the program with DEBUG level messages stored in a LOG file
+				// This log file is by default defined in the temporary folder, or given as an argument following -D option
+				case 'd':
+				case 'D':
+				{
+					// Decreases the Log level to DEBUG level
+					pLogFileHandler->setThreshold(LogMessage::Type::DEBUG);
+
+					// Changes the log file attached to this handler
+					if (argv[i + 1]) 
+					{
+						logFilePath = svlTools::getPathFileName(argv[i + 1]);
+						bChangeLogFile = false;
+					}
+
+					break;
+				}
+
+				default:
+					break;
+				}
+			}
 		}
-		// test input file writer
-		// mockup.writeLGCInputFile();
 
-		status = mockup.adjust();
-		auto currentTime = high_resolution_clock::now();
-		auto duration = duration_cast<milliseconds>(currentTime - start);
-		// get exemplary parameter estimates
-		// std::string pointName = "B-TAP.WPS2";
-		// std::string pointName = "B-TAP.HLS1";
-		std::string pointName = "A-TAP.HLS1";
-		std::string frameName = "WIRE.RIGHT.DOF";
 
-		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
-		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
-		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
-		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimatePrec(pointName) << std::endl;
-		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
-		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
-				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+		if (inputFilePath.empty())
+		{
+			logFatal() << "Launch LGC: Error, the input file is not found. Give the path after -i flag.";
+			return 1;
+		}
+		else if (outputFilePath.empty())
+			// Output file becomes the input filename with the ".res" extension
+			outputFilePath = svlTools::getFilePathWithoutExtension(inputFilePath) + ".res";
+
+		svlTools::createOutputFile(outputFilePath);
+
+		// Changes the log file attached to this handler
+		// Log file becomes the input filename with the ".log2" extension
+		if (bChangeLogFile)
+		{
+			logFilePath = svlTools::getFilePathWithoutExtension(outputFilePath) + ".log2";
+		}
+		std::filesystem::remove(logFilePath.c_str());
+		pLogFileHandler->setLogFile(logFilePath);
 		
-		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
-		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
 
-		// get exemplary measurement residual
-		std::string obsName = "meas1";
-		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
-		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
-		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
-
-		// get sigmaZero
-		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
-		
-		//testing json output
-		//mockup.writeResultFile();
-
+		//
+		// Main code for executing the whole calculations
+		//
+		try
+		{
+			logInfo() << "This Log File contains more detailed data when application launched in Debug mode with -D option!";
+			logInfo() << "See User Guide: https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide";
+			logInfo() << "Starting the calculations...";
+			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
+			Behavior b = lgc.exec();
+			return (bool)b ? 0 : b.code();
+		}
+		catch (const std::runtime_error& ex)
+		{
+			logFatal() << "LGC calculation problem\nException: " << ex.what();
+		}
 	}
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<seconds>(stop - start);
-	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 
 	return 1;
 }

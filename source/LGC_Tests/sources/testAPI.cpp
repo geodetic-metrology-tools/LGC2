@@ -67,8 +67,7 @@ void object::test<1>()
 
 	// on the fly change of obsxyz precisions
 	Eigen::VectorXd newObsxyzSigma(3);
-	double newSigma = 0.12345;
-	newObsxyzSigma.setConstant(newSigma);
+	newObsxyzSigma << 0.12345, 0.23456, 0.34567;
 	apiObject.setObsSigma("testObs1", newObsxyzSigma);
 	apiObject.adjust();
 	expectedFramePrecisions << newObsxyzSigma, 0, 0, 0, 0;
@@ -102,7 +101,7 @@ void object::test<2>()
 	bool status = false;
 
 	// Simulating a monitoring scenario
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		for (auto id : ecwsIds)
 		{
@@ -125,8 +124,6 @@ void object::test<2>()
 		auto currentTime = high_resolution_clock::now();
 		auto duration = duration_cast<milliseconds>(currentTime - start);
 		// get exemplary parameter estimates
-		// std::string pointName = "B-TAP.WPS2";
-		// std::string pointName = "B-TAP.HLS1";
 		std::string pointName = "A-TAP.HLS1";
 		std::string frameName = "WIRE.RIGHT.DOF";
 

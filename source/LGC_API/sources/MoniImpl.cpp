@@ -860,7 +860,7 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "ZEND")
 	{
-		measRefs.ZEND.at(id).target.sigmaDist.setMetresValue(sigma(0));
+		measRefs.ZEND.at(id).target.sigmaZenD.setRadiansValue(sigma(0));
 	}
 	else if (type == "DIST")
 	{
@@ -868,12 +868,10 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "ECTH")
 	{
-		// not supported
 		measRefs.ECTH.at(id).obsHorAngle.setRadiansValue(sigma(0));
 	}
 	else if (type == "ECDIR")
 	{
-		// not supported
 		measRefs.ECDIR.at(id).obsHorAngle.setRadiansValue(sigma(0));
 		measRefs.ECDIR.at(id).obsVertAngle.setRadiansValue(sigma(1));
 	}
@@ -884,7 +882,6 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "PLR3D")
 	{
-		// not supported
 		measRefs.PLR3D.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
 		measRefs.PLR3D.at(id).target.sigmaZenD.setRadiansValue(sigma(1));
 		measRefs.PLR3D.at(id).target.sigmaDist.setMetresValue(sigma(2));
@@ -895,7 +892,6 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "UVEC")
 	{
-		// NOT implemented
 		measRefs.UVEC.at(id).target.sigmaX = sigma(0); // unitless
 		measRefs.UVEC.at(id).target.sigmaY = sigma(1); // unitless
 	}
@@ -911,19 +907,19 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "DLEV")
 	{
-		measRefs.DLEV.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+		measRefs.DLEV.at(id).target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECHO")
 	{
-		measRefs.ECHO.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+		measRefs.ECHO.at(id).target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECSP")
 	{
-		measRefs.ECSP.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+		measRefs.ECSP.at(id).target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECVE")
 	{
-		measRefs.ECVE.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+		measRefs.ECVE.at(id).target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "INCLY")
 	{
@@ -931,12 +927,12 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "ECWS")
 	{
-		measRefs.ECWS.at(id).target.sigmaDist.setMetresValue(TLength(sigma(0)));
+		measRefs.ECWS.at(id).target.sigmaDist.setMetresValue(sigma(0));
 	}
 	else if (type == "ECWI")
 	{	
-		measRefs.ECWI.at(id).target.sigmaX.setMetresValue(TLength(sigma(0)));
-		measRefs.ECWI.at(id).target.sigmaZ.setMetresValue(TLength(sigma(1)));
+		measRefs.ECWI.at(id).target.sigmaX.setMetresValue(sigma(0));
+		measRefs.ECWI.at(id).target.sigmaZ.setMetresValue(sigma(1));
 	}
 	else if (type == "DVER")
 	{
