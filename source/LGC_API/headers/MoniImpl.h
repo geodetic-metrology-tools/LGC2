@@ -42,6 +42,8 @@ public:
 	MoniImpl(std::string path) : inputFilePath(path) { MoniImpl::initialize(); }
 	~MoniImpl() = default;
 	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
+	// set observation standard deviation (optional, otherwise the ones from the inputfile are used)
+	void setObsSigma(std::string id, Eigen::VectorXd sigma);
 	// get measurement
 	Eigen::VectorXd getMeas(std::string id);
 	// triggering the adjustment calculation
