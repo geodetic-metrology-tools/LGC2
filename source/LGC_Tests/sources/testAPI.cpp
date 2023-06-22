@@ -3,42 +3,85 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
-
-//#include <TLGCData.h>
-//#include <TReader.h>
-//#include "TLGCCalculation.h"
-//#include <Behavior.h>
-#include "Moni.h"
 #include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <random>
 
+#include "Moni.h"
+
 using namespace std::chrono;
 namespace tut
 {
-	struct test_API 
-	{
-		//test_API();
-	};
-	typedef test_group<test_API> factory;
-	typedef factory::object object;
-}
+struct test_API
+{
+	// test_API();
+};
+typedef test_group<test_API> factory;
+typedef factory::object object;
+} // namespace tut
 
 namespace
 {
-	tut::factory tf("Test API (relative Error) computations");
+tut::factory tf("Test API (relative Error) computations");
 }
 
 namespace tut
 {
-	template<>
-	template<>
-	void object::test<1>()
-	{
 
-		set_test_name("Testing standard API use");
-		ensure_equals("Reading file successful", true, true);
+template<>
+template<>
+void object::test<1>()
+{
+	set_test_name("Testing simple API use");
+	Moni apiObject("test_files/minimalTest.lgc2");
+	apiObject.adjust();
+	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
+	Eigen::VectorXd expectedRes(7);
+	expectedRes << 1, 2, 3, 0, 0, 0, 1;
+	ensure("Frame Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
+
+	// change the obsxyz observation and make new estimation
+	Eigen::VectorXd newMeas(3);
+	newMeas << 11, 13, 19;
+	apiObject.updateMeas("testObs1", newMeas);
+	apiObject.adjust();
+	expectedRes << newMeas, 0, 0, 0, 1;
+	estRes = apiObject.getFrameEstimate("testFrame");
+	ensure("Frame Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
+
+	//
+	Eigen::VectorXd p2 = apiObject.getPointEstimate("P2");
+	// test calcMeas method. both observations of P2 should give the same calcmeas
+	Eigen::VectorXd calcMeas1 = apiObject.getCalcMeas("testObs2");
+	Eigen::VectorXd calcMeas2 = apiObject.getCalcMeas("testObs3");
+	ensure("Both OBSXYZ observations of P2 should have the same calcmeas.", calcMeas1.isApprox(calcMeas2, 1e-12));
+
+	// testing precisions
+	Eigen::VectorXd framePrecisions = apiObject.getFrameEstimatePrec("testFrame");
+	// should be the precisions coming from the obsxyz measurement
+
+	Eigen::VectorXd expectedFramePrecisions(7);
+	expectedFramePrecisions << 0.001, 0.001, 0.001, 0, 0, 0, 0;
+	ensure("Frame precisions should match OBSXYZ precisions.", expectedFramePrecisions.isApprox(framePrecisions, 1e-12));
+
+	// on the fly change of obsxyz precisions
+	Eigen::VectorXd newObsxyzSigma(3);
+	double newSigma = 0.12345;
+	newObsxyzSigma.setConstant(newSigma);
+	apiObject.setObsSigma("testObs1", newObsxyzSigma);
+	apiObject.adjust();
+	expectedFramePrecisions << newObsxyzSigma, 0, 0, 0, 0;
+	framePrecisions = apiObject.getFrameEstimatePrec("testFrame");
+	ensure("Frame precisions should match updated OBSXYZ weights.", expectedFramePrecisions.isApprox(framePrecisions, 1e-12));
+}
+
+template<>
+template<>
+void object::test<2>()
+{
+	set_test_name("Testing API on single component test file");
+	ensure_equals("Reading file successful", true, true);
 	// for simulation of random perturbations
 	std::ranlux48 engine;
 	// reproducibility
@@ -115,45 +158,7 @@ namespace tut
 	auto duration = duration_cast<seconds>(stop - start);
 	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 
-	//		TLGCCalculation calcul(projTest);
-	//		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-	//		Behavior succesCalc = calcul.computeResults(fileWriter);
-	//		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-	//		const TLGCData& dataset = calcul.getData();
-	//		LSRelErrorsContainer lsErrors = dataset.getRelError();
-	//		LSRelErrorIter relErrorIt = lsErrors.begin();
-	//
-	//		TLSCalcRelativeError relError1 = *relErrorIt;
-	//		// test if precisions from polar measurement target can be recovered by erel (all in root)
-	//		ensure_equals("Zend sigma has to match.", relError1.getSigmaV().getSignedCCValue(), 13, 1e-4);
-	//		ensure_equals("Orientation sigma has to to match.", relError1.getSigmaG().getSignedCCValue(), 12, 1e-4);
-	//		ensure_equals("Distance sigma has to match.", relError1.getSigmaL().getMMetresValue(), 14, 1e-4);
-	//
-	//		// test if precisions from polar measurement target can be recovered by erel (point in root observed from uncertain frame) in uncertain frame coordinates (should be independent of frame uncertainty)
-	//		relErrorIt++;
-	//		TLSCalcRelativeError relError2 = *relErrorIt;
-	//		ensure_equals("Zend sigma has to match.", relError2.getSigmaV().getSignedCCValue(), 13, 1e-4);
-	//		ensure_equals("Orientation sigma has to to match.", relError2.getSigmaG().getSignedCCValue(), 12, 1e-4);
-	//		ensure_equals("Distance sigma has to match.", relError2.getSigmaL().getMMetresValue(), 14, 1e-4);
-	//
-	//		// test if the relative error between a fixed point in a frame and a point in a different frame measured only by one obsxyz from that frame is equal to the relative error of an equivalent setup in root
-	//		relErrorIt++;
-	//		TLSCalcRelativeError relErrorReferenceSetup = *relErrorIt;
-	//		relErrorIt++;
-	//		TLSCalcRelativeError relErrorComplicatedTrSetup = *relErrorIt;
-	//		ensure_equals("L relative Error has to match.", relErrorReferenceSetup.getSigmaL(), relErrorComplicatedTrSetup.getSigmaL(), 1e-4);
-	//		ensure_equals("G relative Error has to match.", relErrorReferenceSetup.getSigmaG(), relErrorComplicatedTrSetup.getSigmaG(), 1e-4);
-	//		ensure_equals("R relative Error has to match.", relErrorReferenceSetup.getSigmaR(), relErrorComplicatedTrSetup.getSigmaR(), 1e-4);
-	//		ensure_equals("Z relative Error has to match.", relErrorReferenceSetup.getSigmaZ(), relErrorComplicatedTrSetup.getSigmaZ(), 1e-4);
-	//		ensure_equals("V relative Error has to match.", relErrorReferenceSetup.getSigmaV(), relErrorComplicatedTrSetup.getSigmaV(), 1e-4);
-	//		relErrorIt++;
-	//		TLSCalcRelativeError relErrorComplicatedRotSetup = *relErrorIt;
-	//		ensure_equals("L relative Error has to match.", relErrorReferenceSetup.getSigmaL(), relErrorComplicatedRotSetup.getSigmaL(), 1e-4);
-	//		ensure_equals("G relative Error has to match.", relErrorReferenceSetup.getSigmaG(), relErrorComplicatedRotSetup.getSigmaG(), 1e-4);
-	//		ensure_equals("R relative Error has to match.", relErrorReferenceSetup.getSigmaR(), relErrorComplicatedRotSetup.getSigmaR(), 1e-4);
-	//		ensure_equals("Z relative Error has to match.", relErrorReferenceSetup.getSigmaZ(), relErrorComplicatedRotSetup.getSigmaZ(), 1e-4);
-	//		ensure_equals("V relative Error has to match.", relErrorReferenceSetup.getSigmaV(), relErrorComplicatedRotSetup.getSigmaV(), 1e-4);
-	//
-	}
 
-};
+}
+
+}; // namespace tut
