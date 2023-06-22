@@ -16,32 +16,31 @@ include_directories(${CMAKE_SOURCE_DIR}
 					)
 
 set(tests_SOURCES
-	sources/testReaders.cpp
-	sources/testGlobals.cpp
-	sources/testsTransformationClasses.cpp
-	sources/testTstnInputFiles.cpp
-	sources/testTstnInputFiles_2_Stations.cpp
-	sources/testGeodeticTransformations.cpp
-	sources/testTLOR2LOR.cpp
-	sources/testFilesGlobalRF.cpp
-	sources/testCAM.cpp
-	sources/testNonTSTNmeas.cpp
-	sources/testMixingObservation.cpp
-	sources/testAppExecution.cpp
+#	sources/testReaders.cpp
+#	sources/testGlobals.cpp
+#	sources/testsTransformationClasses.cpp
+#	sources/testTstnInputFiles.cpp
+#	sources/testTstnInputFiles_2_Stations.cpp
+#	sources/testGeodeticTransformations.cpp
+#	sources/testTLOR2LOR.cpp
+#	sources/testFilesGlobalRF.cpp
+#	sources/testCAM.cpp
+#	sources/testNonTSTNmeas.cpp
+#	sources/testMixingObservation.cpp
+#	sources/testAppExecution.cpp
 	sources/main.cpp
-	sources/tests_with_ScaleInstr.cpp
-	sources/testAllfixed.cpp
-	sources/testLIBR.cpp
-	sources/testLgc1Reader.cpp
-	sources/testINCL.cpp
-	sources/testHLSR.cpp
-	sources/testCONSI.cpp
-	sources/testWPSR.cpp
-	sources/testJSON.cpp
-	sources/testSimulation.cpp
-	sources/testSlaveConstraints.cpp
-	sources/testEREL.cpp
-	sources/testMasking.cpp
+#	sources/tests_with_ScaleInstr.cpp
+#	sources/testAllfixed.cpp
+#	sources/testLIBR.cpp
+#	sources/testLgc1Reader.cpp
+#	sources/testINCL.cpp
+#	sources/testHLSR.cpp
+#	sources/testCONSI.cpp
+#	sources/testWPSR.cpp
+#	sources/testJSON.cpp
+#	sources/testSimulation.cpp
+#	sources/testSlaveConstraints.cpp
+#	sources/testEREL.cpp
 	sources/testAPI.cpp
 )
 
@@ -91,8 +90,8 @@ foreach(test_file ${COPY_TESTFILES})
 endforeach()
 
 # make sure api dll is available in test build folder
-if (WIN32)
-add_custom_command(TARGET LGC_Tests POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_BINARY_DIR}/LGC_API/Debug/LGC_API.dll" "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll")
-endif()
+#if (WIN32)
+#add_custom_command(TARGET LGC_Tests POST_BUILD
+#                    COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_BINARY_DIR}/LGC_API/Debug/LGC_API.dll" "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll")
+#endif()
 

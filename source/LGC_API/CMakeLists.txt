@@ -60,5 +60,7 @@ if(WIN32)
  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_API.dll")
 
+ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_Tests/LGC_API.dll")
 endif()
 

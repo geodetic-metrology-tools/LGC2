@@ -992,12 +992,12 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(std::string frameId)
 	}
 
 	Eigen::VectorXd resultVector(7);
-	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstParam().kappa;
-	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstParam().omega;
-	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstParam().phi;
-	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tX;
-	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tY;
-	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tZ;
+	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tX;
+	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tY;
+	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tZ;
+	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstParam().omega;
+	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstParam().phi;
+	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstParam().kappa;
 	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstParam().scale;
 
 	return resultVector;
