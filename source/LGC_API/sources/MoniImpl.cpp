@@ -25,6 +25,11 @@ void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 {
 	pimpl_->updateMeas(id, measurementVector);
 }
+	
+void Moni::setObsSigma(std::string id, Eigen::VectorXd sigma)
+{
+	pimpl_->setObsSigma(id, sigma);
+}
 // triggering the adjustment calculation
 bool Moni::adjust()
 {
@@ -755,23 +760,12 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	}
 	else if (type == "UVEC")
 	{
-		Eigen::VectorXd result(3);
-		result *= 0;
-		// NOT implemented
-		// measRefs.UVEC.at(id).getVectorValue();
-		// TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
-		// measRefs.UVEC.at(id).setVectorMeasurement(direction);
-		return result;
+		return toVectorXd(measRefs.UVEC.at(id).getVectorValue());
 	}
 	else if (type == "UVD")
 	{	
-		Eigen::VectorXd result(3);
-		result *= 0;
-		// NOT implemented
-		// TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
-		// TLength distance(measurementVector[3]);
-		// measRefs.UVD.at(id).setVectorMeasurement(direction);
-		// measRefs.UVD.at(id).setDistance(distance);
+		Eigen::VectorXd result(4);
+		result << toVectorXd(measRefs.UVD.at(id).getVectorValue()), measRefs.UVD.at(id).getDistance().getMetresValue();
 		return result;
 	}
 	else if (type == "DSPT")
@@ -833,19 +827,129 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	{
 		Eigen::VectorXd result(0);
 		result *= 0;
-		std::cout << "RADI is not a real measurement" << std::endl;
+		std::cout << "RADI is not a real measurement, the \"observed\" value always corresponds to 0" << std::endl;
 		// measRefs.RADI.at(id).set(TAngle(measurementVector[0]));
 		// NOT IMPLEMENTED
 		return result;
 	}
 	else if (type == "OBSXYZ")
 	{
-		Eigen::VectorXd result(3);
-		result *= 0;
-		// NOT IMPLEMENTED
-		return result;
+		return toVectorXd(measRefs.OBSXYZ.at(id).obsValue);
 	}
 }
+
+void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
+{
+	// get observation value
+	// check if id exists
+	if (measRefs.types.count(id) == 0)
+	{
+		std::cout << "No measurement with ID " << id << " found." << std::endl;
+	}
+
+	string type = measRefs.types.at(id);
+	if (type == "ANGL")
+	{
+		measRefs.ANGL.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+	}
+	else if (type == "ZEND")
+	{
+		measRefs.ZEND.at(id).target.sigmaDist.setMetresValue(sigma(0));
+	}
+	else if (type == "DIST")
+	{
+		measRefs.DIST.at(id).target.sigmaDist.setMetresValue(sigma(0));
+	}
+	else if (type == "ECTH")
+	{
+		// not supported
+		measRefs.ECTH.at(id).obsHorAngle.setRadiansValue(sigma(0));
+	}
+	else if (type == "ECDIR")
+	{
+		// not supported
+		measRefs.ECDIR.at(id).obsHorAngle.setRadiansValue(sigma(0));
+		measRefs.ECDIR.at(id).obsVertAngle.setRadiansValue(sigma(1));
+	}
+	else if (type == "DHOR")
+	{
+		// not supported
+		//	measRefs.DHOR.at(id).setDHORSigma(TLength(sigma(0)));
+	}
+	else if (type == "PLR3D")
+	{
+		// not supported
+		measRefs.PLR3D.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+		measRefs.PLR3D.at(id).target.sigmaZenD.setRadiansValue(sigma(1));
+		measRefs.PLR3D.at(id).target.sigmaDist.setMetresValue(sigma(2));
+	}
+	else if (type == "ORIE")
+	{
+		measRefs.ORIE.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+	}
+	else if (type == "UVEC")
+	{
+		// NOT implemented
+		measRefs.UVEC.at(id).target.sigmaX = sigma(0); // unitless
+		measRefs.UVEC.at(id).target.sigmaY = sigma(1); // unitless
+	}
+	else if (type == "UVD")
+	{	
+		measRefs.UVD.at(id).target.sigmaX = sigma(0); // unitless
+		measRefs.UVD.at(id).target.sigmaY = sigma(1); // unitless
+		measRefs.UVD.at(id).target.sigmaDist.setMetresValue(sigma(2));
+	}
+	else if (type == "DSPT")
+	{
+		measRefs.DSPT.at(id).target.sigmaDSpt.setMetresValue(sigma(0));
+	}
+	else if (type == "DLEV")
+	{
+		measRefs.DLEV.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+	}
+	else if (type == "ECHO")
+	{
+		measRefs.ECHO.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+	}
+	else if (type == "ECSP")
+	{
+		measRefs.ECSP.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+	}
+	else if (type == "ECVE")
+	{
+		measRefs.ECVE.at(id).target.sigmaD.setMetresValue(TLength(sigma(0)));
+	}
+	else if (type == "INCLY")
+	{
+		measRefs.INCLY.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+	}
+	else if (type == "ECWS")
+	{
+		measRefs.ECWS.at(id).target.sigmaDist.setMetresValue(TLength(sigma(0)));
+	}
+	else if (type == "ECWI")
+	{	
+		measRefs.ECWI.at(id).target.sigmaX.setMetresValue(TLength(sigma(0)));
+		measRefs.ECWI.at(id).target.sigmaZ.setMetresValue(TLength(sigma(1)));
+	}
+	else if (type == "DVER")
+	{
+		measRefs.DVER.at(id).setObservedStDev(TLength(sigma(0)));
+	}
+	else if (type == "RADI")
+	{
+		measRefs.RADI.at(id).setObservedStDev(TLength(sigma(0)));
+	}
+	else if (type == "OBSXYZ")
+	{
+		measRefs.OBSXYZ.at(id).setXObservedStDev(TLength(sigma(0)));
+		measRefs.OBSXYZ.at(id).setYObservedStDev(TLength(sigma(1)));
+		measRefs.OBSXYZ.at(id).setZObservedStDev(TLength(sigma(2)));
+	}
+}
+
+
+
 // get estimate
 Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId)
 {

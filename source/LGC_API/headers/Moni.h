@@ -25,7 +25,10 @@ public:
 	DECLSPEC void writeResultFile();
 	// write lgc input file with current measurements with timestamp
 	DECLSPEC void writeLGCInputFile();
+	// updating observations
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
+	// changing observation Sigma
+	DECLSPEC void setObsSigma(std::string id, Eigen::VectorXd sigma);
 	// triggering the adjustment calculation
 	DECLSPEC bool adjust();
 	// for checking the estimation status

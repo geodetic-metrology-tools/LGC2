@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
 	Moni mockup(inputFilePath);
 
-	// the IDs for the observations we want to maniupualte during the monitoring
+	// the IDs for the observations we want to manipulate during the monitoring
 	std::vector<std::string> ecwsIds = {"meas1", "meas2", "meas3", "meas4", "meas5", "meas6", "meas7", "meas8"};
 	// first save the original measurements
 	std::unordered_map<std::string, double> originalMeasurements;
@@ -40,6 +40,10 @@ int main(int argc, char *argv[])
 			Eigen::VectorXd new_measurement(1);
 			new_measurement(0) = newMeas;
 			mockup.updateMeas(id, new_measurement);
+			Eigen::VectorXd new_obsSigma(1);
+			// testing  setObsSigma
+			// new_obsSigma << 1e-5;
+			// mockup.setObsSigma(id, new_obsSigma);
 		}
 		// test input file writer
 		// mockup.writeLGCInputFile();
@@ -57,7 +61,7 @@ int main(int argc, char *argv[])
 		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
 		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
 		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimatePrec(pointName) << std::endl;
-		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with unceratin parameters involved
+		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
 		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
 				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
 		
