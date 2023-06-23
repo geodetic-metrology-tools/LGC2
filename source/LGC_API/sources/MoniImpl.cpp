@@ -845,7 +845,10 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 }
 
 void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
-{
+{	
+	// reset estimationStatus to false as soon as new weights are provided
+	estimationStatus = false;
+
 	// get observation value
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
