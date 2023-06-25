@@ -11,27 +11,39 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 {
 	// simple full step Gauss Newton
 	Eigen::VectorXd parameterIterate = fEvaluator.getEstParams();
+	Eigen::VectorXd grad = getGradient(parameterIterate);
 	Eigen::VectorXd direction(fEvaluator.dimensions.UIndex);
 	direction.setConstant(1);
 	
+	int itIdx = 0;
 	//while (direction.norm()>1e-6)
-	while (direction.cwiseAbs().maxCoeff() > 1e-6)
+	//while ((direction.cwiseAbs().maxCoeff() > 1e-6)|| grad.norm()>1e-2)
+	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 500)
 	{
-	//std::cout << direction.cwiseAbs().maxCoeff()<< std::endl;
 		direction = getGNDirection(parameterIterate);
-		Eigen::VectorXd grad = getGradient(parameterIterate);
+		grad = getGradient(parameterIterate);
 
 		Eigen::VectorXd residual = fEvaluator.getResidual();
 		double sigma0 = residual.transpose() * *fEvaluator.getPv() * residual;
 		double stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
+		//double stepsize = 1;
 
-		// to full step
+		// do full step
 		//parameterIterate += direction;
-		// or stepsize corrected
+		// or multiply by stepsize
 		parameterIterate += stepsize * direction;
-		std::cout << "GN solve method: full step GN norm = " << direction.norm() << std::endl;
-		std::cout << "GN solve method: gradient norm = " << grad.norm() << std::endl;
-		std::cout << "Armijo backtracking stepsize = " << stepsize << std::endl;
+
+	//	std::cout << "current sigma " << sigma0 << std::endl;
+	//	//std::cout << "GN solve method: full step GN norm = " << direction.norm() << std::endl;
+	//	std::cout << "current gradient norm = " << grad.norm() << std::endl;
+	//	std::cout << "Armijo backtracking stepsize = " << stepsize << std::endl;
+		if (itIdx % 20 == 0)
+		{
+			printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+		}
+		printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
+
+		itIdx++;
 	}
 	return parameterIterate;
 }
@@ -169,7 +181,7 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::V
 	double trialSigma = trialResidual.transpose() * *fEvaluator.getPv() * trialResidual;
 	double realDescent = trialSigma - sigma0;
 	// testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
-	while (c * alpha* expectedDescent < realDescent)
+	while (c * alpha* expectedDescent < realDescent && alpha>0.1)
 	{
 		// reduce stepsize
 		alpha *= tau;
