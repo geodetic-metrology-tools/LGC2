@@ -31,33 +31,59 @@ TLSEvaluator::~TLSEvaluator()
 }
 
 
-Eigen::VectorXd TLSEvaluator::evaluateMisclosure(Eigen::VectorXd parameter)
+Eigen::VectorXd TLSEvaluator::getMisclosure()
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
-	setParameters(parameter);
-	// create matrices for model evaluation
-   	TLSInputMatrices matrices;
-   	matrices.initMatrices(fData->fUEOIndices);
-	// evaluate using the standard inputMatrixFiller
-   	bool success =	fMatFiller->fillMatrices(fData.get(), true, &matrices);
-	// get misclosure
-   	Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
-	return misclosure;
-}
-Eigen::SparseMatrix<double> TLSEvaluator::getA(Eigen::VectorXd parameter)
-{
-	// 1. set parameters in "estimated" fields of adjustable objects
-	setParameters(parameter);
 	evaluate();
-	return *iMat->getFirstDgnMtrx();
+	return iMat->getMisclosureVctr();
 	//// create matrices for model evaluation
    	//TLSInputMatrices matrices;
    	//matrices.initMatrices(fData->fUEOIndices);
 	//// evaluate using the standard inputMatrixFiller
    	//bool success =	fMatFiller->fillMatrices(fData.get(), true, &matrices);
-	//// get first design matrix
-	//Eigen::SparseMatrix<double> A = *matrices.getFirstDgnMtrx();
-	//return A;
+	//// get misclosure
+   	//Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
+	//return misclosure;
+}
+Eigen::VectorXd TLSEvaluator::getConstraintMisclosure()
+{
+	evaluate();
+	return iMat->getCnstrMisclosureVctr();
+}
+Eigen::VectorXd TLSEvaluator::getResidual()
+{
+	evaluate();
+	return -(*getBinv() * getMisclosure());
+}
+const TSparseMatrix* TLSEvaluator::getA()
+{
+	// 1. set parameters in "estimated" fields of adjustable objects
+	evaluate();
+	return iMat->getFirstDgnMtrx();
+}
+
+const TSparseMatrix *TLSEvaluator::getA2()
+{
+	evaluate();
+	return iMat->getCnstrFirstDgnMtrx();
+}
+
+const TSparseMatrix *TLSEvaluator::getB()
+{
+	evaluate();
+	return iMat->getSecondDgnMtrx();
+}
+
+const TSparseMatrix *TLSEvaluator::getBinv()
+{
+	evaluate();
+	return iMat->getSecondDgnBlockDiagInvMtrx();
+}
+
+const TSparseMatrix *TLSEvaluator::getPv()
+{
+	evaluate();
+	return iMat->getWeightMtrx();
 }
 
 Eigen::VectorXd TLSEvaluator::getEstParams()
@@ -78,6 +104,7 @@ Eigen::VectorXd TLSEvaluator::getEstParams()
 
 void TLSEvaluator::setParameters(Eigen::VectorXd para)
 {
+	isUptoDate = false;
 	// check if dimension is correct
 	if (para.size() != (fData->fUEOIndices.UIndex))
 	{
@@ -92,7 +119,6 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para)
 	setLengthParams(para);
 	setTransformationParams(para);
 	setLineParams(para);
-
 }
 
 void TLSEvaluator::testSetterAndGetter()
@@ -137,7 +163,8 @@ bool TLSEvaluator::testSetterEffect()
 {
 	// test if changing the parameters has an effect on the misclosure. If not, somewhere is a problem (maybe in the evaluator itself or elsewhere)
 	Eigen::VectorXd baseVar = getEstParams();
-	Eigen::VectorXd baseEval = evaluateMisclosure(baseVar);
+	setParameters(baseVar);
+	Eigen::VectorXd baseEval = getMisclosure();
 
 	double smallPerturbation = 1e-5;
 	//double smallPerturbation = 0.666;
@@ -146,14 +173,15 @@ bool TLSEvaluator::testSetterEffect()
 	{
 		Eigen::VectorXd pertVar = baseVar;
 		pertVar(i) += smallPerturbation;
-		Eigen::VectorXd pertEval = evaluateMisclosure(pertVar);
+		setParameters(pertVar);
+		Eigen::VectorXd pertEval = getMisclosure();
 		double diff = (baseEval - pertEval).norm();
 		if (diff<1e-12)
 		{
 			testPassed = false;
 			std::cout << "Parameter i=" << i << " seems to have no influence on the misclosure." << std ::endl;
 			// print norm of associated column of Jacobian in this case. if its 0 this means LGC agrees that no influence on misclosure.. consi check should also complain in this case
-			Eigen::MatrixXd Jac = getA(pertVar);
+			TDenseMatrix Jac = getA()->toDense();
 			std::cout << "norm of i-th column of LGC Jacobian = " << Jac.col(i).norm() << std::endl;
 		}
 	}
@@ -176,13 +204,13 @@ bool TLSEvaluator::evaluate()
 		iMat->initMatrices(fData->fUEOIndices);
 		// evaluate using the standard inputMatrixFiller
 		success = fMatFiller->fillMatrices(fData.get(), true, iMat);
+		isUptoDate = true;
 	}
 	return success;
 }
 
 void TLSEvaluator::setPointParams(Eigen::VectorXd para)
 {
-	isUptoDate = false;
 	for (auto &point : fData->getPoints())
 	{
 		if (point.hasVariable())
@@ -202,7 +230,6 @@ void TLSEvaluator::setPointParams(Eigen::VectorXd para)
 
 void TLSEvaluator::setAngleParams(Eigen::VectorXd para)
 {
-	isUptoDate = false;
 	for (auto &angle : fData->getAngles())
 	{
 		if (!angle.isFixed())
@@ -222,7 +249,6 @@ void TLSEvaluator::setPlaneParams(Eigen::VectorXd para)
 	//
 	//	bool critNotExceeded = true;
 	//
-	isUptoDate = false;
 	for (auto &plane : fData->getPlanes())
 	{
 		if (plane.hasVariable())
@@ -242,7 +268,6 @@ void TLSEvaluator::setPlaneParams(Eigen::VectorXd para)
 
 void TLSEvaluator::setLineParams(Eigen::VectorXd para)
 {
-	isUptoDate = false;
 	for (auto &line : fData->getLines())
 	{
 		if (!line.isFixed())
@@ -265,7 +290,6 @@ void TLSEvaluator::setLengthParams(Eigen::VectorXd para)
 	//	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
 	//
 	//	bool critNotExceeded = true;
-	isUptoDate = false;
 	for (auto &length : fData->getLength())
 	{
 		if (!length.isFixed())
@@ -288,7 +312,6 @@ void TLSEvaluator::setTransformationParams(Eigen::VectorXd para)
 	//
 	//	bool critNotExceeded = true;
 	//
-	isUptoDate = false;
 	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
 	{
 		auto &trafo(it.node->data.get()->frame);

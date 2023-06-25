@@ -5,9 +5,11 @@
 #include <TLSAlgorithm.h>
 #include <TLSEvaluator.h>
 #include <TLSDerivativeTester.h>
+#include <TLSGaussNewtonSolver.h>
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
+#include <TLSEvaluator.h>
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
@@ -44,6 +46,15 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			// only now the constraint dimensions are set.
 			//TLSEvaluator evaluator(fData);
 			TLSDerivativeTester tester(fData);
+			// experimental: full step GN using the evaluator,
+			// plan: armijo backtracking
+			TLSEvaluator auxEval(fData);
+			Eigen::VectorXd provPar = auxEval.getEstParams();
+			TLSGaussNewtonSolver gnObject(fData);
+			Eigen::VectorXd solution = gnObject.solve();
+			// reset parameters
+			auxEval.setParameters(provPar);
+
 		}
 
 		if (fData->getConfig().sim.isActive())
