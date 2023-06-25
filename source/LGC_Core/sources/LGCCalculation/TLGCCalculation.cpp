@@ -51,17 +51,22 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 		{
 			// only now the constraint dimensions are set.
-			//TLSEvaluator evaluator(fData);
-			TLSDerivativeTester tester(fData);
+			TLSEvaluator evaluator(fData);
+			// TLSDerivativeTester tester(fData);
 			// experimental: full step GN using the evaluator,
 			// plan: armijo backtracking
 			TLSEvaluator auxEval(fData);
 			Eigen::VectorXd provPar = auxEval.getEstParams();
 			TLSGaussNewtonSolver gnObject(fData);
-			Eigen::VectorXd solution = gnObject.solve();
+			
+			// do nothing if uindex=0
+			if (fData.get()->fUEOIndices.UIndex > 0)
+			{
+				Eigen::VectorXd solution = gnObject.solve();
+				// estimated parameters contain solution now if no reset takes place -> lgc will go ahead and converge after first iteration
+			}
 			// reset parameters
-			auxEval.setParameters(provPar);
-
+			// auxEval.setParameters(provPar);
 		}
 
 		if (fData->getConfig().sim.isActive())
@@ -71,7 +76,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 		// repeat test after convergence	
-		TLSDerivativeTester tester(fData);
+		// TLSDerivativeTester tester(fData);
 		if (successCalculation)
 		{
 			fResultsMtr = algorithm->resultMatrices;
