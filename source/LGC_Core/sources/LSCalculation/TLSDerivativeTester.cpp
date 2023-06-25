@@ -22,7 +22,9 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 	Eigen::VectorXd prov = fEvaluator.getEstParams();
 
 	// evaluate A matrix according to inputMatrixFiller, contributionGenerator etc..
-	Eigen::MatrixXd computedJacobian = fEvaluator.getA(prov);
+	//const TSparseMatrix* computedJacobian 
+	fEvaluator.setParameters(prov);
+	TDenseMatrix computedJacobian = fEvaluator.getA()->toDense();
 	
 	// evaluate A matrix according to finite differences applied to the misclosure vector
 	Eigen::MatrixXd finiteDifferenceJacobian= computeFiniteDifferenceJacobian(prov);
@@ -69,9 +71,10 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 Eigen::MatrixXd TLSDerivativeTester::computeFiniteDifferenceJacobian(Eigen::VectorXd vec)
 {
 	// evaluate misclosure at basepoint
-	Eigen::VectorXd miscBase = fEvaluator.evaluateMisclosure(vec);
+	fEvaluator.setParameters(vec);
+	Eigen::VectorXd miscBase = fEvaluator.getMisclosure();
 	// evaluate A matrix at basepoint
-	Eigen::MatrixXd ABase = fEvaluator.getA(vec);
+	Eigen::MatrixXd ABase = fEvaluator.getA()->toDense();
 
 	int nParam = fEvaluator.dimensions.UIndex;
 	int nObs = fEvaluator.dimensions.OIndex;
@@ -88,7 +91,8 @@ Eigen::MatrixXd TLSDerivativeTester::computeFiniteDifferenceJacobian(Eigen::Vect
 		Eigen::VectorXd pertVect = vec;
 		pertVect(i) += dx;
 		// evaluate
-		Eigen::VectorXd miscPert = fEvaluator.evaluateMisclosure(pertVect);
+		fEvaluator.setParameters(pertVect);
+		Eigen::VectorXd miscPert = fEvaluator.getMisclosure();
 		// compute he finite diff Jacobian
 		jacCol = (miscPert - miscBase) / dx;
 		// write it ibn the finite diff Jacobian
