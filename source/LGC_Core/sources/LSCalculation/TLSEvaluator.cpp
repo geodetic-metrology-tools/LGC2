@@ -19,9 +19,9 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMa
 	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
 
-	// do some tests
-	testSetterAndGetter();
-	bool setterEffect = testSetterEffect();
+	// // do some tests
+	// testSetterAndGetter();
+	// bool setterEffect = testSetterEffect();
 }
 
 TLSEvaluator::~TLSEvaluator()
