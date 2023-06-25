@@ -34,10 +34,23 @@ public:
 
 	~TLSEvaluator();
 	
-	Eigen::VectorXd evaluateMisclosure(Eigen::VectorXd parameter);
-	Eigen::SparseMatrix<double> getA(Eigen::VectorXd parameter);
-	Eigen::VectorXd getEstParams();
+	Eigen::VectorXd getMisclosure();
+	Eigen::VectorXd getConstraintMisclosure();
+	// using the relation W+Bv=0, assuming B is invertible
+	Eigen::VectorXd getResidual();
+
 	void setParameters(Eigen::VectorXd para);
+	// first design matrix
+	const TSparseMatrix* getA();
+	// constraint first design matrix
+	const TSparseMatrix* getA2();
+	// second design matrix
+	const TSparseMatrix* getB();
+	const TSparseMatrix* getBinv();
+	// weights
+	const TSparseMatrix* getPv();
+
+	Eigen::VectorXd getEstParams();
 	UEOIndices dimensions;
 	void testSetterAndGetter();
 	bool testSetterEffect();
