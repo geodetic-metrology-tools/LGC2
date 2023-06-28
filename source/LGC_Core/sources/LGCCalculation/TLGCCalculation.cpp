@@ -9,6 +9,7 @@
 #include <TLSEvaluator.h>
 #include <TLSDerivativeTester.h>
 #include <TLSGaussNewtonSolver.h>
+#include <TLSLMSolver.h>
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
@@ -63,10 +64,13 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			if (fData.get()->fUEOIndices.UIndex > 0)
 			{
 				Eigen::VectorXd solution = gnObject.solve();
+				// test levenberg marquardt
+				TLSLMSolver lmSolver(fData);
+				Eigen::VectorXd solutionLM = lmSolver.solveLM();
 				// estimated parameters contain solution now if no reset takes place -> lgc will go ahead and converge after first iteration
 			}
-			// reset parameters
-			// auxEval.setParameters(provPar);
+			// reset parameters - to not interfere with usual LGC calculation
+			auxEval.setParameters(provPar);
 		}
 
 		if (fData->getConfig().sim.isActive())
