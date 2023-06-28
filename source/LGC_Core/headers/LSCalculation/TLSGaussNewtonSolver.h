@@ -32,6 +32,9 @@ private:
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
 
+
 };
+
+
 
 #endif
