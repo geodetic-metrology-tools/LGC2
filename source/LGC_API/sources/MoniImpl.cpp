@@ -26,6 +26,11 @@ void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 	pimpl_->updateMeas(id, measurementVector);
 }
 	
+void Moni::setMeasStatus(std::string id, bool status)
+{
+	pimpl_->setMeasStatus(id, status);
+}
+
 void Moni::setObsSigma(std::string id, Eigen::VectorXd sigma)
 {
 	pimpl_->setObsSigma(id, sigma);
@@ -371,6 +376,103 @@ void Moni::MoniImpl::createMeasurementReferences()
 	}
 }
 
+TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
+{
+	// check if id exists
+	if (measRefs.types.count(id) == 0)
+	{
+		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		return TStatusObject();
+	}
+
+	string type = measRefs.types.at(id);
+	if (type == "ANGL")
+	{
+		return measRefs.ANGL.at(id);
+	}
+	else if (type == "ZEND")
+	{
+		return measRefs.ZEND.at(id);
+	}
+	else if (type == "DIST")
+	{
+		return measRefs.DIST.at(id);
+	}
+	else if (type == "ECTH")
+	{
+		return measRefs.ECTH.at(id);
+	}
+	else if (type == "ECDIR")
+	{
+		return measRefs.ECDIR.at(id);
+	}
+	else if (type == "DHOR")
+	{
+		return measRefs.DHOR.at(id);
+	}
+	else if (type == "PLR3D")
+	{
+		return measRefs.PLR3D.at(id);
+	}
+	else if (type == "ORIE")
+	{
+		return measRefs.ORIE.at(id);
+	}
+	else if (type == "UVEC")
+	{
+		return measRefs.UVEC.at(id);
+	}
+	else if (type == "UVD")
+	{
+		return measRefs.UVD.at(id);
+	}
+	else if (type == "DSPT")
+	{
+		return measRefs.DSPT.at(id);
+	}
+	else if (type == "DLEV")
+	{
+		return measRefs.DLEV.at(id);
+	}
+	else if (type == "ECHO")
+	{
+		return measRefs.ECHO.at(id);
+	}
+	else if (type == "ECSP")
+	{
+		return measRefs.ECSP.at(id);
+	}
+	else if (type == "ECVE")
+	{
+		return measRefs.ECVE.at(id);
+	}
+	else if (type == "INCLY")
+	{
+		return measRefs.INCLY.at(id);
+	}
+	else if (type == "ECWS")
+	{
+		return measRefs.ECWS.at(id);
+	}
+	else if (type == "ECWI")
+	{	
+		return measRefs.ECWI.at(id);
+	}
+	else if (type == "DVER")
+	{
+		return measRefs.DVER.at(id);
+	}
+	else if (type == "RADI")
+	{
+		return measRefs.RADI.at(id);
+	}
+	else if (type == "OBSXYZ")
+	{
+		return measRefs.OBSXYZ.at(id);
+	}
+
+}
+
 Eigen::VectorXd Moni::MoniImpl::toVectorXd(TFreeVector freeVector)
 {
 	Eigen::VectorXd vector(3);
@@ -515,6 +617,12 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 		measRefs.OBSXYZ.at(id).setObservedVector(obsVector);
 		return;
 	}
+}
+void Moni::MoniImpl::setMeasStatus(std::string id, bool status)
+{
+	estimationStatus = false;
+	// maskStatus false menas observation is not masked, i.e. it is active
+	getStatusObject(id).maskStatus = !status;
 }
 Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 {

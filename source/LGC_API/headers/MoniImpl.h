@@ -42,6 +42,8 @@ public:
 	MoniImpl(std::string path) : inputFilePath(path) { MoniImpl::initialize(); }
 	~MoniImpl() = default;
 	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
+	// set activtaionstatus
+	void setMeasStatus(std::string, bool);
 	// set observation standard deviation (optional, otherwise the ones from the inputfile are used)
 	void setObsSigma(std::string id, Eigen::VectorXd sigma);
 	// get measurement
@@ -80,6 +82,7 @@ private:
 	void initialize();
 	void createParameterReferences();
 	void createMeasurementReferences();
+	TStatusObject &getStatusObject(std::string obsId);
 
 	// containing measurement configuration, observations, estimates
 	std::shared_ptr<TLGCData> project;

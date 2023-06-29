@@ -41,6 +41,7 @@ set(tests_SOURCES
 #	sources/testSimulation.cpp
 #	sources/testSlaveConstraints.cpp
 #	sources/testEREL.cpp
+	sources/testMasking.cpp
 	sources/testAPI.cpp
 )
 
