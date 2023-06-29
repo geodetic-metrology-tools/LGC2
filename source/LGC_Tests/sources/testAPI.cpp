@@ -40,6 +40,24 @@ void object::test<1>()
 	Eigen::VectorXd expectedRes(7);
 	expectedRes << 1, 2, 3, 0, 0, 0, 1;
 	ensure("Frame Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
+	
+	// test P2 position
+	Eigen::VectorXd estP2 = apiObject.getPointEstimate("P2");
+	Eigen::VectorXd expectedP2(3);
+	expectedP2.setZero();
+	ensure("P2 needs to be estimated at 0,0,0", estP2.isApprox(expectedP2));
+	// test measurement deactivation
+	apiObject.setMeasStatus("testObs2", false);
+	apiObject.adjust();
+	estP2 = apiObject.getPointEstimate("P2");
+	expectedP2.setConstant(1);
+	ensure("After testObs2 deactivation, P2 needs to be estimated at 1,1,1", estP2.isApprox(expectedP2));
+	
+	// test reactivation
+	apiObject.setMeasStatus("testObs2", true);
+	apiObject.adjust();estP2 = apiObject.getPointEstimate("P2");
+	expectedP2.setZero();
+	ensure("After testObs2 reactivation, P2 needs to be estimated again at 0,0,0", estP2.isApprox(expectedP2));
 
 	// change the obsxyz observation and make new estimation
 	Eigen::VectorXd newMeas(3);

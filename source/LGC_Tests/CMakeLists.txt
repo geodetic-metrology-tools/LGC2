@@ -16,18 +16,18 @@ include_directories(${CMAKE_SOURCE_DIR}
 					)
 
 set(tests_SOURCES
-#	sources/testReaders.cpp
-#	sources/testGlobals.cpp
-#	sources/testsTransformationClasses.cpp
-#	sources/testTstnInputFiles.cpp
-#	sources/testTstnInputFiles_2_Stations.cpp
-#	sources/testGeodeticTransformations.cpp
-#	sources/testTLOR2LOR.cpp
-#	sources/testFilesGlobalRF.cpp
-#	sources/testCAM.cpp
-#	sources/testNonTSTNmeas.cpp
-#	sources/testMixingObservation.cpp
-#	sources/testAppExecution.cpp
+	sources/testReaders.cpp
+	sources/testGlobals.cpp
+	sources/testsTransformationClasses.cpp
+	sources/testTstnInputFiles.cpp
+	sources/testTstnInputFiles_2_Stations.cpp
+	sources/testGeodeticTransformations.cpp
+	sources/testTLOR2LOR.cpp
+	sources/testFilesGlobalRF.cpp
+	sources/testCAM.cpp
+	sources/testNonTSTNmeas.cpp
+	sources/testMixingObservation.cpp
+	sources/testAppExecution.cpp
 	sources/main.cpp
 	sources/tests_with_ScaleInstr.cpp
 	sources/testAllfixed.cpp
