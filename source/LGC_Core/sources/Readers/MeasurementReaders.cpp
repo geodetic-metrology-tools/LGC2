@@ -1334,7 +1334,7 @@ void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, 
 		//testing masking
 		if (obsxyz.obsID == "maskTest")
 		{
-			obsxyz.maskStatus = true;
+			obsxyz.setActive(false);
 		}
 
 		//If last token starts with a comment character, store it as a end of line comment
