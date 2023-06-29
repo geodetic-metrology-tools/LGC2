@@ -26,9 +26,9 @@ void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
 	pimpl_->updateMeas(id, measurementVector);
 }
 	
-void Moni::setMeasStatus(std::string id, bool status)
+void Moni::setActivationStatus(std::string id, bool status)
 {
-	pimpl_->setMeasStatus(id, status);
+	pimpl_->setActivationStatus(id, status);
 }
 
 void Moni::setObsSigma(std::string id, Eigen::VectorXd sigma)
@@ -618,11 +618,10 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 		return;
 	}
 }
-void Moni::MoniImpl::setMeasStatus(std::string id, bool status)
+void Moni::MoniImpl::setActivationStatus(std::string id, bool status)
 {
 	estimationStatus = false;
-	// maskStatus false menas observation is not masked, i.e. it is active
-	getStatusObject(id).maskStatus = !status;
+	getStatusObject(id).setActive(status);
 }
 Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 {

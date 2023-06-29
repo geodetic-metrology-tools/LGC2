@@ -43,7 +43,7 @@ public:
 	~MoniImpl() = default;
 	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// set activtaionstatus
-	void setMeasStatus(std::string, bool);
+	void setActivationStatus(std::string, bool);
 	// set observation standard deviation (optional, otherwise the ones from the inputfile are used)
 	void setObsSigma(std::string id, Eigen::VectorXd sigma);
 	// get measurement

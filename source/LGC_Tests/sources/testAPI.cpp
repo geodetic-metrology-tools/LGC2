@@ -47,14 +47,14 @@ void object::test<1>()
 	expectedP2.setZero();
 	ensure("P2 needs to be estimated at 0,0,0", estP2.isApprox(expectedP2));
 	// test measurement deactivation
-	apiObject.setMeasStatus("testObs2", false);
+	apiObject.setActivationStatus("testObs2", false);
 	apiObject.adjust();
 	estP2 = apiObject.getPointEstimate("P2");
 	expectedP2.setConstant(1);
 	ensure("After testObs2 deactivation, P2 needs to be estimated at 1,1,1", estP2.isApprox(expectedP2));
 	
 	// test reactivation
-	apiObject.setMeasStatus("testObs2", true);
+	apiObject.setActivationStatus("testObs2", true);
 	apiObject.adjust();estP2 = apiObject.getPointEstimate("P2");
 	expectedP2.setZero();
 	ensure("After testObs2 reactivation, P2 needs to be estimated again at 0,0,0", estP2.isApprox(expectedP2));

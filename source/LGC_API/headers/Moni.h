@@ -26,7 +26,7 @@ public:
 	// write lgc input file with current measurements with timestamp
 	DECLSPEC void writeLGCInputFile();
 	// updating observations
-	DECLSPEC void setMeasStatus(std::string id, bool status);
+	DECLSPEC void setActivationStatus(std::string id, bool status);
 	// set activtaionStatus
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// changing observation Sigma
