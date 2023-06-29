@@ -174,7 +174,7 @@ inline void TLSInputMatricesFiller::updateMask(Meas meas, TLSInputMatrices *matr
 {
 	// for now ignore obsidx as they are equal.
 	// lastObsidx metho
-	if (meas->isActive())
+	if (!meas->isActive())
 	{
 		int firstEqIdx = meas->getFirstEquationIndex();
 		int lastEqIdx= meas->getLastEquationIndex();
