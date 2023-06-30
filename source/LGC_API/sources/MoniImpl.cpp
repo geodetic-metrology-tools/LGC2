@@ -381,8 +381,7 @@ TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
-		std::cout << "No measurement with ID " << id << " found." << std::endl;
-		return TStatusObject();
+		throw std::logic_error("No measurement with ID " + id + " found.");
 	}
 
 	string type = measRefs.types.at(id);
