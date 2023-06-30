@@ -202,8 +202,8 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
 
 #if USE_SERIALIZER
 	// Write serialized object file
-	if (conf.json.isActive())
-		writeJsonFile(dat, outputFileLocation);
+	if (conf.writeJSON.isActive())
+		writeJsonFiles(dat, outputFileLocation);
 #endif // USE_SERIALIZER
 }
 
@@ -335,8 +335,45 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 }
 
 #if USE_SERIALIZER
-void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation)
 {
+	/** 
+	* This class serializes additional objects to separate JSON files and writes their paths to the main JSON object.
+	*/
+	struct JSONAuxiliaries : Serializable
+	{
+	public:
+		JSONAuxiliaries(SerializerObject::SerializationHelper &objJson, TLGCData const *const data, const std::string &outputFileLocation) :
+			objJson(objJson), data(data), outputFileLocation(outputFileLocation) {}
+
+		// Adds the entry to the main object and creates a JSON file for the entry object
+		void addEntry(const std::string &name, const std::string &extension, std::function<void(SerializerObject::SerializationHelper &, TLGCData const *const, const std::string&)> addMember) const
+		{
+			// Create JSON object with the data
+			jsonSerializerObject ser;
+			SerializerObject::SerializationHelper objEntry = ser.getSerializationHelper();
+			addMember(objEntry, data, name);
+			// Save to file
+			const auto path = outputFileLocation + extension;
+			std::ofstream fout(path);
+			fout << ser.getStringRepresentation();
+			// Save the path to the main JSON object
+			objJson.addProperty(name, path);
+		}
+		virtual void serialize(SerializerObject::SerializationHelper &) const override
+		{
+			// Save COVAR matrix to a file
+			if (data->getConfig().writeJSON_COVAR.isActive())
+				addEntry("CovarianceMatrix", ".covar.json", [](SerializerObject::SerializationHelper &objEntry, TLGCData const *const data, const std::string &name) {
+					objEntry.addProperty(name, data->getCovMatByConst());
+				});
+		}
+
+		SerializerObject::SerializationHelper &objJson;
+		TLGCData const *const data; // non-owning pointer
+		const std::string &outputFileLocation;
+	};
+
 	if (!Logger::getLogger().hasErrors())
 	{
 		jsonSerializerObject ser;
@@ -344,6 +381,7 @@ void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &output
 		obj.addProperty("fCopyright", fCopyright);
 		obj.addProperty("LGCVersion", getLGCVersion());
 		obj.addProperty("LGC_DATA", dat);
+		obj.addProperty("JSONAuxiliaries", JSONAuxiliaries(obj, dat, outputFileLocation));
 
 		std::ofstream fout(outputFileLocation + ".json");
 		fout << ser.getStringRepresentation();

@@ -286,8 +286,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	TBinaryOption chaba;
 	/// Make a consistency check to find groups of unidentifiable objects
 	TBinaryOption consCheck;
-	/// Make a json serialized object
-	TBinaryOption json;
+	/// Write a JSON serialized object file
+	TBinaryOption writeJSON;
+	/// Write a separate COVAR JSON file in addition to the general JSON file
+	TBinaryOption writeJSON_COVAR;
 
 	///width of point's name
 	int pointNameWidth = 0;
@@ -341,7 +343,7 @@ inline void TLGCConfig::serialize(SerializerObject::SerializationHelper &obj) co
 	obj.addProperty("writeDefa", writeDefa);
 	obj.addProperty("writePlot", writePlot);
 	obj.addProperty("writePunch", writePunch);
-	obj.addProperty("json", json);
+	obj.addProperty("json", writeJSON);
 }
 
 inline void TLGCConfig::TSimulation::serialize(SerializerObject::SerializationHelper &obj) const

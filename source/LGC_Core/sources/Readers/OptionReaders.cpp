@@ -250,9 +250,14 @@ void TKeyCONSI::parse(const std::vector<std::string>&, bool activeLine, int) {
     fconfig.consCheck = TLGCConfig::TBinaryOption(activeLine);
 }
 
-void TKeyJSON::parse(const std::vector<std::string> &, bool activeLine, int)
+void TKeyJSON::parse(const std::vector<std::string> & tokens, bool activeLine, int)
 {
-	fconfig.json = TLGCConfig::TBinaryOption(activeLine);
+	fconfig.writeJSON = TLGCConfig::TBinaryOption(activeLine);
+	for (int i = 2; i < tokens.size(); i++)
+	{
+		if (tokens.at(i) == "COVAR")
+			fconfig.writeJSON_COVAR = true;
+	}
 }
 
  void TKeyPREC::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
