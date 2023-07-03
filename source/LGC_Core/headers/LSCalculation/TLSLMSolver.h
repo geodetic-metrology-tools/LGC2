@@ -42,9 +42,49 @@ private:
 		typedef Eigen::Matrix<Scalar, ValuesAtCompileTime, InputsAtCompileTime> JacobianType;
 
 		int m_inputs, m_values;
+		TLSEvaluator& f_evaluator;
 
-		Functor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime) {}
-		Functor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
+	//	Functor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime) {}
+		Functor(TLSEvaluator evaluator) : m_inputs(evaluator.dimensions.UIndex), m_values(evaluator.dimensions.OIndex), f_evaluator(evaluator) {}
+		int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
+		{
+		//	std::cout << "eval of function" << std::endl;
+			f_evaluator.setParameters(x);
+			fvec = f_evaluator.getWeightedResidual();
+			return 0;
+		};
+		int df(const Eigen::VectorXd &x, Eigen::MatrixXd &fjac) const
+		{
+		//	std::cout << "start eval of Jacobian" << std::endl;
+			f_evaluator.setParameters(x);
+		//	std::cout << "getting A" << std::endl;
+			Eigen::SparseMatrix<double> A = *f_evaluator.getA();
+			//std::cout << "A=" << std::endl << A.toDense() << std::endl;
+		//	std::cout << "getting Binv" << std::endl;
+			Eigen::SparseMatrix<double> Binv = *f_evaluator.getBinv();
+			//std::cout << "Binv=" << std::endl << Binv.toDense() << std::endl;
+		//	std::cout << "getting Pv" << std::endl;
+			Eigen::SparseMatrix<double> Pv  = *f_evaluator.getPv();
+			//std::cout << "Pv=" << std::endl << Pv.toDense() << std::endl;
+		//	std::cout << "diagonal of Pv" << std::endl;
+			Eigen::VectorXd diagEntries = Pv.diagonal().cwiseSqrt()				;
+			//Eigen::SparseMatrix<double> aux = Binv * A;
+			Eigen::MatrixXd diagMat(f_evaluator.dimensions.OIndex, f_evaluator.dimensions.OIndex);
+			diagMat.diagonal() = diagEntries;
+
+			
+			//std::cout << "getting Binv*A" << std::endl;
+			Eigen::SparseMatrix<double> temp = Binv * A;
+
+			//std::cout << "temp=" << std::endl << temp.toDense() << std::endl;
+			//std::cout << "scaling with diagmat" << std::endl;
+			fjac = -(diagMat.sparseView() * temp).toDense();
+			//std::cout << "finish eval of Jacobian" << std::endl;
+			//std::cout << fjac << std::endl;
+			return 0;
+		}
+
+
 
 		int inputs() const { return m_inputs; }
 		int values() const { return m_values; }
