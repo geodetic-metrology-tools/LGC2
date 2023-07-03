@@ -1065,7 +1065,10 @@ void TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT> &dsptMeas, con
 		}
 
 		if (!isProcessOK)
+		{
+			std::cout << "isprocok" << isProcessOK << std::endl;
 			throw std::runtime_error("Error when filling input design matrices of DSPT measurement occurred.");
+		}
 	}
 }
 

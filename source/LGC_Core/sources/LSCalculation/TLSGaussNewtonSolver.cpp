@@ -12,6 +12,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 {
 	// simple full step Gauss Newton
 	Eigen::VectorXd parameterIterate = fEvaluator.getEstParams();
+	//parameterIterate.setRandom();
 	Eigen::VectorXd grad = getGradient(parameterIterate);
 	Eigen::VectorXd direction(fEvaluator.dimensions.UIndex);
 	direction.setConstant(1);
