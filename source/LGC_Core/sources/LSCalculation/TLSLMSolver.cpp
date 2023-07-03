@@ -16,39 +16,64 @@ TLSLMSolver::TLSLMSolver(std::shared_ptr<TLGCData> data) : fEvaluator( TLSEvalua
 
 Eigen::VectorXd TLSLMSolver::solveLM()
 {
-	struct my_functor : Functor<double>
-	{
-		my_functor() : Functor<double>(1,1) {}
-		int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
-		{
-			// example function from https://edms.cern.ch/document/2852335/1
-			// this example has a extremely small convergence region when solved with LGC's normal full step GN - like [-1.2,2.8]
-			fvec(0) = acos(x(0) / pow(1 + x(0) * x(0), 0.5)) - PI / 4;
-			// fvec(0) = 10.0 * pow(x(0) + 3.0, 2) + pow(x(1) - 5.0, 2);
-			// fvec(1) = 0;
+	//TVector ini(fEvaluator.dimensions.UIndex);
+	TVector ini=Eigen::VectorXd::Random(fEvaluator.dimensions.UIndex);
+	ini = fEvaluator.getEstParams();
 
-			return 0;
-		}
-	};
+	// fEvaluator.setParameters(ini);
+	TVector result(fEvaluator.dimensions.OIndex);
 
-	// test eigen levenberg marquardt
-	Eigen::VectorXd x(1);
-	x(0) = 500.0;
-	std::cout << "x: " << x << std::endl;
+	 Functor<double> myFunctor(fEvaluator);
+//	 // finite difference version
+//	 myFunctor(ini, result);
+//	 //std::cout <<sa result << std::endl;
+//
+//	 Eigen::NumericalDiff<Functor<double>> numDiff(myFunctor);
+//	 Eigen::LevenbergMarquardt<Eigen::NumericalDiff<Functor<double>>, double> lmNumDiff(numDiff);
+//	 // reset initial value
+//	 TVector sol = ini;
+//	 int retNumdiff = lmNumDiff.minimize(sol);
+//	 std::cout << "Function evaluations " << lmNumDiff.nfev << std::endl;
+//	 std::cout << "Jacobian evaluations " << lmNumDiff.njev << std::endl;
+//
+//	 std::cout << "fnorm=" << lmNumDiff.fnorm << std::endl;
 
-	my_functor functor;
-	Eigen::NumericalDiff<my_functor> numDiff(functor);
-	Eigen::LevenbergMarquardt<Eigen::NumericalDiff<my_functor>, double> lm(numDiff);
-	lm.parameters.maxfev = 2000;
-	lm.parameters.xtol = 1.0e-10;
-	//std::cout << lm.parameters.maxfev << std::endl;
 
-	int ret = lm.minimize(x);
-	std::cout << lm.iter << std::endl;
-	std::cout << ret << std::endl;
 
-	std::cout << "x that minimizes the function: " << x << std::endl;
+	// in case we have the Jcobian
+	 Eigen::LevenbergMarquardt<Functor<double>> lm(myFunctor);
+	 lm.parameters.maxfev = 2000;
+	 lm.parameters.xtol = 1.0e-10;
 
-	return x;
+	 Eigen::VectorXd sol = ini;
+	 //std::cout << sol << std::endl;
+	 int ret = lm.minimize(sol);
+	 std::cout << "Function evaluations " << lm.nfev << std::endl;
+	 std::cout << "Jacobian evaluations " << lm.njev << std::endl;
+
+//	 //test deriv
+//	 double testx = 5;
+//	 Eigen::VectorXd x(1);
+//	 x << testx;
+//	 Eigen::VectorXd xeps(1);
+//	 double myEps = 1e-6;
+//	 xeps << testx + myEps;
+//	 Eigen::VectorXd fx(1);
+//	 Eigen::VectorXd fxeps(1);
+//	 myFunctor(xeps, fxeps);
+//	 myFunctor(x, fx);
+//	 Eigen::MatrixXd dfDiff = (fxeps - fx) / myEps;
+//	 Eigen::MatrixXd df(1, 1);
+//	 myFunctor.df(x, df);
+//	 std::cout << "findiff="<< dfDiff << std::endl;
+//	 std::cout << "jacobi="<< df << std::endl;
+
+
+	// std::cout << "sol=" << sol << std::endl;
+	// std::cout << "fnorm=" << lm.fnorm << std::endl;
+
+
+
+	return sol;
 }
 
