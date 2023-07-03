@@ -26,8 +26,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMa
 
 TLSEvaluator::~TLSEvaluator()
 {
-	delete iMat;
-	delete fMatFiller;
+	//delete fMatFiller;
 }
 
 
@@ -54,6 +53,14 @@ Eigen::VectorXd TLSEvaluator::getResidual()
 {
 	evaluate();
 	return -(*getBinv() * getMisclosure());
+}
+Eigen::VectorXd TLSEvaluator::getWeightedResidual()
+{
+	Eigen::VectorXd diagEntries(dimensions.OIndex);
+	diagEntries = getPv()->diagonal().cwiseSqrt();
+	Eigen::VectorXd result(dimensions.OIndex);
+	result = diagEntries.cwiseProduct(getResidual());
+	return result;
 }
 const TSparseMatrix* TLSEvaluator::getA()
 {

@@ -105,6 +105,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 	}
 	else
 	{
+		std::cout << "Number of iterations= " << fNumberOfIterations << std::endl;
 		if (computeVarCovarAndReliability(&data, inputMtr, computer))
 			return Behavior();
 		else

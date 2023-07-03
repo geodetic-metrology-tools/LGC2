@@ -38,6 +38,7 @@ public:
 	Eigen::VectorXd getConstraintMisclosure();
 	// using the relation W+Bv=0, assuming B is invertible
 	Eigen::VectorXd getResidual();
+	Eigen::VectorXd getWeightedResidual();
 
 	void setParameters(Eigen::VectorXd para);
 	// first design matrix
