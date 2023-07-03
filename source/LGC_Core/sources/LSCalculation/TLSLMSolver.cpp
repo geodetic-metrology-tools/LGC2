@@ -17,7 +17,7 @@ TLSLMSolver::TLSLMSolver(std::shared_ptr<TLGCData> data) : fEvaluator( TLSEvalua
 Eigen::VectorXd TLSLMSolver::solveLM()
 {
 	//TVector ini(fEvaluator.dimensions.UIndex);
-	TVector ini=Eigen::VectorXd::Random(fEvaluator.dimensions.UIndex);
+	TVector ini = Eigen::VectorXd::Random(fEvaluator.dimensions.UIndex);
 	ini = fEvaluator.getEstParams();
 
 	// fEvaluator.setParameters(ini);
@@ -44,12 +44,14 @@ Eigen::VectorXd TLSLMSolver::solveLM()
 	 Eigen::LevenbergMarquardt<Functor<double>> lm(myFunctor);
 	 lm.parameters.maxfev = 2000;
 	 lm.parameters.xtol = 1.0e-10;
+	 //lm.parameters.gtol = 1e-20;
 
 	 Eigen::VectorXd sol = ini;
 	 //std::cout << sol << std::endl;
 	 int ret = lm.minimize(sol);
 	 std::cout << "Function evaluations " << lm.nfev << std::endl;
 	 std::cout << "Jacobian evaluations " << lm.njev << std::endl;
+	 std::cout << "fnorm=" << lm.fnorm << std::endl;
 
 //	 //test deriv
 //	 double testx = 5;
@@ -70,7 +72,6 @@ Eigen::VectorXd TLSLMSolver::solveLM()
 
 
 	// std::cout << "sol=" << sol << std::endl;
-	// std::cout << "fnorm=" << lm.fnorm << std::endl;
 
 
 
