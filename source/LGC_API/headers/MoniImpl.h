@@ -46,6 +46,8 @@ public:
 	void setActivationStatus(std::string, bool);
 	// set observation standard deviation (optional, otherwise the ones from the inputfile are used)
 	void setObsSigma(std::string id, Eigen::VectorXd sigma);
+	// methods for manipulating fixed point and frame parameters
+	void setFixedFrameParameter(std::string frameName, int idx, double val);
 	// get measurement
 	Eigen::VectorXd getMeas(std::string id);
 	// triggering the adjustment calculation
