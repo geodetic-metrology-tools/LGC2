@@ -31,6 +31,8 @@ public:
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// changing observation Sigma
 	DECLSPEC void setObsSigma(std::string id, Eigen::VectorXd sigma);
+	// changing the value of a fixed frame parameter
+	DECLSPEC void setFixedFrameParameter(std::string frameName, int idx, double val);
 	// triggering the adjustment calculation
 	DECLSPEC bool adjust();
 	// for checking the estimation status

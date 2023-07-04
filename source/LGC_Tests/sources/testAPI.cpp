@@ -23,7 +23,7 @@ typedef factory::object object;
 
 namespace
 {
-tut::factory tf("Test API (relative Error) computations");
+tut::factory tf("Test API ");
 }
 
 namespace tut
@@ -96,6 +96,30 @@ void object::test<1>()
 template<>
 template<>
 void object::test<2>()
+{
+	set_test_name("Testing method setFixedFrameParameter(std::string frameName, int idx, double val) ");
+	Moni apiObject("test_files/manipulateFrameVars.lgc2");
+	apiObject.adjust();
+	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
+	Eigen::VectorXd expectedRes(7);
+	expectedRes << 0, 0, 0, 0, 0, 0, 1;
+	ensure("Frame Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
+
+	for (int j = 0; j < 7; j++)
+	{
+		// manipulate frame parameter j
+		apiObject.setFixedFrameParameter("testFrame", j, 0.1*j);
+		apiObject.adjust();
+		Eigen::VectorXd framePars = apiObject.getFrameEstimate("testFrame");
+		// j-th entry should be fixed to value 0.1*j now (take 0.1*j because j would be greater then pi and normalization ocurs)
+		double estVar = framePars(j);
+		ensure_equals("Frame variable index " + std::to_string(j) + " should be fixed to " + std::to_string(j) + " now.", estVar, 0.1 * j);
+	}
+}
+
+template<>
+template<>
+void object::test<3>()
 {
 	set_test_name("Testing API on single component test file");
 	ensure_equals("Reading file successful", true, true);

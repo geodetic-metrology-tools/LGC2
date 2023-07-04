@@ -1,0 +1,15 @@
+*TITR
+testings setFixedFrameParameter(std::string frameName, int idx, double val)
+*OLOC 		
+*APRI		
+*PREC 6
+*INSTR
+*POIN
+P0 0 0 0
+*OBSXYZ 
+P0 0 0 0 1 1 1 ID testObs1 % 
+*FRAME testFrame 0 0 0 0 0 0 1 
+*CALA
+P1 0 0 0 
+*ENDFRAME
+*END

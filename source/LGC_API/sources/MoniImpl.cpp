@@ -35,6 +35,13 @@ void Moni::setObsSigma(std::string id, Eigen::VectorXd sigma)
 {
 	pimpl_->setObsSigma(id, sigma);
 }
+
+
+void Moni::setFixedFrameParameter(std::string frameName, int idx, double val)
+{
+	pimpl_->setFixedFrameParameter(frameName, idx, val);
+}
+
 // triggering the adjustment calculation
 bool Moni::adjust()
 {
@@ -188,6 +195,38 @@ void Moni::MoniImpl::writeLGCInputFile()
 	TInputFileWriter infileWriter(stream.get(), project.get());
 	infileWriter.writeFile();
 }
+void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, double val)
+{
+	// set a fixed frame parameter (for example scale of Frame which is determined by temperature)
+	if (paramRefs.FRAMES.count(frameName) == 0)
+	{
+		throw std::logic_error("Frame " + frameName + " does not exist.");
+	}
+	
+	// check if the associated parameter of the frame is really fixed
+	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
+	bool isFixed = frameRef.isFixedVar(idx);
+	if (!isFixed)
+	{
+		throw std::logic_error("Index " + std::to_string(idx) + " of frame " + frameName + " is not a fixed variable. ");
+	}
+
+	// set the parameter
+	if (idx < 3)
+	{
+		frameRef.setTranslation(idx, TLength(val));
+	}
+	else if (idx < 6)
+	{
+		frameRef.setRotation(idx - 3, TAngle(val,TAngle::EUnits::kRadians));
+	}
+	else if (idx == 6)
+	{
+		frameRef.setScale(TReal(val));
+	}
+
+}
+
 void Moni::MoniImpl::createParameterReferences()
 {
 	for (auto &object : project.get()->getPoints())
