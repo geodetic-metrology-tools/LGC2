@@ -48,6 +48,7 @@ public:
 	void setObsSigma(std::string id, Eigen::VectorXd sigma);
 	// methods for manipulating fixed point and frame parameters
 	void setFixedFrameParameter(std::string frameName, int idx, double val);
+	void setFixedPointParameter(std::string frameName, int idx, double val);
 	// get measurement
 	Eigen::VectorXd getMeas(std::string id);
 	// triggering the adjustment calculation

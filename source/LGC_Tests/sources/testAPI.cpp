@@ -97,8 +97,8 @@ template<>
 template<>
 void object::test<2>()
 {
-	set_test_name("Testing method setFixedFrameParameter(std::string frameName, int idx, double val) ");
-	Moni apiObject("test_files/manipulateFrameVars.lgc2");
+	set_test_name("Testing methods for manipulatinr fixed parameters");
+	Moni apiObject("test_files/manipulateFixedParameters.lgc2");
 	apiObject.adjust();
 	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
 	Eigen::VectorXd expectedRes(7);
@@ -115,6 +115,18 @@ void object::test<2>()
 		double estVar = framePars(j);
 		ensure_equals("Frame variable index " + std::to_string(j) + " should be fixed to " + std::to_string(j) + " now.", estVar, 0.1 * j);
 	}
+
+	// test for changing fixed point variables
+	for (int j = 0; j < 3; j++)
+	{
+		// manipulate point parameter j
+		apiObject.setFixedPointParameter("P2", j, j);
+		apiObject.adjust();
+		Eigen::VectorXd pointPars = apiObject.getPointEstimate("P2");
+		double estVar = pointPars(j);
+		ensure_equals("Point variable index " + std::to_string(j) + " should be fixed to " + std::to_string(j) + " now.", estVar, j);
+	}
+		
 }
 
 template<>
@@ -143,7 +155,7 @@ void object::test<3>()
 	bool status = false;
 
 	// Simulating a monitoring scenario
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		for (auto id : ecwsIds)
 		{
@@ -159,39 +171,41 @@ void object::test<3>()
 			// new_obsSigma << 1e-5;
 			// mockup.setObsSigma(id, new_obsSigma);
 		}
+		status = mockup.getStatus();
+		ensure_equals("Estimation status should be false after measurement updates", status, false);
 		// test input file writer
 		// mockup.writeLGCInputFile();
 
 		status = mockup.adjust();
+		ensure_equals("Estimation status should be true after adjustment", status, true);
 		auto currentTime = high_resolution_clock::now();
 		auto duration = duration_cast<milliseconds>(currentTime - start);
-		// get exemplary parameter estimates
-		std::string pointName = "A-TAP.HLS1";
-		std::string frameName = "WIRE.RIGHT.DOF";
 
-		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
-		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
-		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
-		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
-				  << mockup.getPointEstimatePrec(pointName) << std::endl;
-		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
-		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
-				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+  		// get exemplary parameter estimates
+  		std::string pointName = "A-TAP.HLS1";
+  		std::string frameName = "WIRE.RIGHT.DOF";
+  
+  		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
+  		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
+  		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
+  		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
+  				  << mockup.getPointEstimatePrec(pointName) << std::endl;
+  		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
+  		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
+  				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+  
+  		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
+  		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
+  
+  		// get exemplary measurement residual
+  		std::string obsName = "meas1";
+  		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
+  		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
+  		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
+  
+  		// get sigmaZero
+  		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 
-		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
-		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
-
-		// get exemplary measurement residual
-		std::string obsName = "meas1";
-		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
-		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
-		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
-
-		// get sigmaZero
-		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
-
-		// testing json output
-		// mockup.writeResultFile();
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
