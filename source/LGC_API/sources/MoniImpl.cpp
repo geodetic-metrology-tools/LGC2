@@ -41,6 +41,11 @@ void Moni::setFixedFrameParameter(std::string frameName, int idx, double val)
 {
 	pimpl_->setFixedFrameParameter(frameName, idx, val);
 }
+void Moni::setFixedPointParameter(std::string frameName, int idx, double val)
+{
+	pimpl_->setFixedPointParameter(frameName, idx, val);
+}
+
 
 // triggering the adjustment calculation
 bool Moni::adjust()
@@ -202,6 +207,9 @@ void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, doub
 	{
 		throw std::logic_error("Frame " + frameName + " does not exist.");
 	}
+
+	//this method will change the solution of the estimation, so reset of status necessary
+	estimationStatus = false;
 	
 	// check if the associated parameter of the frame is really fixed
 	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
@@ -218,12 +226,35 @@ void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, doub
 	}
 	else if (idx < 6)
 	{
-		frameRef.setRotation(idx - 3, TAngle(val,TAngle::EUnits::kRadians));
+		frameRef.setRotation(idx - 3, TAngle(val));
 	}
 	else if (idx == 6)
 	{
 		frameRef.setScale(TReal(val));
 	}
+
+}
+
+void Moni::MoniImpl::setFixedPointParameter(std::string pointName, int idx, double val)
+{
+	// set a fixed point parameter 
+	if (paramRefs.POINTS.count(pointName) == 0)
+	{
+		throw std::logic_error("Point " + pointName + " does not exist.");
+	}
+
+	//this method will change the solution of the estimation, so reset of status necessary
+	estimationStatus = false;
+	
+	// check if the associated parameter of the frame is really fixed
+	TAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
+	bool isFixed = pointRef.isCoordinateFixed(idx);
+	if (!isFixed)
+	{
+		throw std::logic_error("Index " + std::to_string(idx) + " of point " + pointName + " is not a fixed variable. ");
+	}
+
+	pointRef.setEstVal(idx, val);
 
 }
 
