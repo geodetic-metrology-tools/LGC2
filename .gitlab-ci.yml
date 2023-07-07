@@ -1,5 +1,6 @@
 include:
   - project: 'apc/common/gitlab-ci-utils'
+    ref: scc_submodule
     file: 'ci/scripts/gitlab-ci-susoft.yml'
 
 ##################

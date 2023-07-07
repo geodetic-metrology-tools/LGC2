@@ -1,6 +1,6 @@
 [![pipeline status](https://gitlab.cern.ch/apc/susofts/processing/LGC2/badges/master/pipeline.svg)](https://gitlab.cern.ch/apc/susofts/processing/LGC2/commits/master)
 
-SurveyLib
+LGC2
 =========
 
 LGC2 is a command line CERN survey software that uses the least squares method to determine the real position of measured points.
@@ -43,10 +43,7 @@ Main shifts:
 Download
 --------
 
-You can download the last version of LGC2 installer here:
-- Linux (64 bits) - executable only: [LGC](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGC?job=linux_release)
-- Windows (64 bits): [LGCInstaller-2.02.00-win64.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGCInstaller-2.02.00-win64.exe?job=windows64_release)
-- Windows (32 bits): [LGCInstaller-2.02.00-win32.exe](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/jobs/artifacts/master/raw/LGCInstaller-2.02.00-win32.exe?job=windows32_release)
+You can download the last version of LGC2 in the [Releases](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/releases)
 
 Documentation
 -------------
@@ -55,7 +52,6 @@ Documentation
 
 You can find all the user documentation here:
 - [user guide](https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide)
-- [release notes](https://readthedocs.web.cern.ch/display/SUS/LGC+v2+Release+Notes)
 
 ### Doxygen ###
 
@@ -65,7 +61,7 @@ Once built, you can open the file `build/html/index.html` as an entry point to t
 
 ### Other ###
 
-You can find further documentation in the folder [doc](./doc). You can also find some [notes on the code](https://readthedocs.web.cern.ch/display/SUS/Notes+on+the+code).
+You can find further documentation in the folder [doc](./doc).
 
 Build instructions
 ------------------
@@ -80,12 +76,11 @@ LGC2 can be built on Windows or Linux. To do so, you need at least:
 - NSIS
 - Eigen
 - TUT
-- TClap
 - Boost
 
 For Windows, you can follow the steps in the aforementioned [Getting started with C++](https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=22153013) documentation.
 
-For Linux, you have an example of the needed steps in the [Dockerfile](https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker/blob/master/Dockerfile) of the [sus_ci_cppworker](https://gitlab.cern.ch/apc/susofts/shared/sus_ci_cppworker) project (the Docker image used to automatically run the tests on GitLab-CI).
+For Linux, you have an example of the needed steps in the dockerfiles of the [sus_ci_cppworker](https://gitlab.cern.ch/apc/common/docker-image-susoft-cpp) project (the Docker image used to automatically run the tests on GitLab-CI).
 Note that the `devtoolset` trick is only necessary on the CC7 (Cern CentOS 7) as it doesn't provide a C++14 compiler by default.
 
 ### Generate project ###
@@ -95,11 +90,16 @@ We use CMake to generate projects, thus it is possible to generate projects for 
 To generate the project, you need first to create a subdirectory named `build/`, and then run CMake inside:
 
 ```bash
-# first we download the SurveyLib as a submodule
+# first we download all the submodules
 $ git submodule update --init
 # then we generate the project
 $ mkdir build && cd build/
-$ cmake -G "Visual Studio 15 2017 Win64" ../source # Use another generator here if you wish
+$ cmake -G "Visual Studio 16 2019" -A x64 ../source # Use another generator here if you wish
+```
+In order to use a custom ext_libs.txt file defining the dependencies, please use:
+
+```bash
+$ cmake -G "Visual Studio 16 2019" -A x64 -DEXT_LIBS_TXT_PATH="C:/susoft/SUSoftCMakeCommon/ext_libs.txt" ../source # Use another file defining the dependencies
 ```
 
 ### Build ###
@@ -108,12 +108,13 @@ Once generated, you can open your project in the `build/` subfolder. If you use 
 
 you can see that CMake has generated several targets, among others:
 - `ALL_BUILD` builds all except the doxygen documentation
-- `ZERO_CHECK` reruns CMake and automatically updates your project
 - `PACKAGE` builds the Windows installer
+- `ZERO_CHECK` reruns CMake and automatically updates your project
+- `RUN_TESTS` runs all tests provided they were build before
 - `doc` builds the Doxygen documentation
-- `SpatialObjDLL` builds the SurveyLib dynamic library
-- `LGC_Tests` builds the tests
 - `LGC` builds the command line executable (default project in MSVC)
+- `LGC_Core` builds the static library that handles all LGC computations
+- `LGC_Tests` builds the tests
 
 ### Tests ###
 

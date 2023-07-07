@@ -466,7 +466,7 @@ namespace tut
 		Eigen::Matrix4d Id;
 		Id.setIdentity();
 
-		ensure("invDir is identity ", invDir.getMatrix() == Id);
+		ensure("invDir is identity ", invDir.getMatrix().isApprox(Id));
 	}
 	
 	// Test  angle partial derivative for a direct transformation

@@ -1,5 +1,8 @@
 [submodule "SurveyLib"]
-	path = SurveyLib
+	path = lib/SurveyLib
 	url = ../../libraries/SurveyLib.git
 	branch = master
 
+[submodule "lib/SUSoftCMakeCommon"]
+	path = lib/SUSoftCMakeCommon
+	url = https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon
