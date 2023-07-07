@@ -48,6 +48,9 @@ private:
     //! Manage the deactivated points, measurements etc. from the data
     bool cleanDeactivated();
 
+	bool checkParameters();
+	bool checkConfigOptions();
+
     //! Assign observation and equation indices to measurements.
     void assignEOIndices();
 
