@@ -76,7 +76,6 @@ LGC2 can be built on Windows or Linux. To do so, you need at least:
 - NSIS
 - Eigen
 - TUT
-- Boost
 
 For Windows, you can follow the steps in the aforementioned [Getting started with C++](https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=22153013) documentation.
 

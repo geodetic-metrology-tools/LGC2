@@ -107,23 +107,20 @@ void TLGCObsSummary::initialise() {
     {
         TReal prob, STLo, STHi, chiLo, chiHi;
 
-        // initialise some parameters
-        prob = LITERAL(0.975); 
-
         // calculate the confidence limits from the Student T distribution
-        STLo = deviates_students_t_lower_tail(1 - prob, dof);
+        STLo = deviates_students_t_lower_tail_0025(dof);
         fMeanLoLimit = STLo * fStdev / sqrtq(TReal(fNumberOfObs));
 
         // calculate the confidence limits from the Student T distribution
-        STHi = deviates_students_t_upper_tail(1 - prob, dof);
+        STHi = deviates_students_t_upper_tail_0025(dof);
 		fMeanHiLimit = STHi * fStdev / sqrtq(TReal(fNumberOfObs));
 
         // chi test coefficients
-        chiLo = deviates_chi_sq(prob, dof);
+        chiLo = deviates_chi_sq_0975(dof);
 		fStdLoLimit = fStdev * sqrtq(dof / chiLo);
 
         // chi test coefficients
-        chiHi = deviates_chi_sq(1 - prob, dof);
+        chiHi = deviates_chi_sq_0025(dof);
 		fStdHiLimit = fStdev * sqrtq(dof / chiHi);
     }
 
