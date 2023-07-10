@@ -78,7 +78,7 @@ class TLGCApp {
 
 #if USE_SERIALIZER
 		/// Write serialization files
-		static void writeJsonFiles(TLGCData const* const dat, const std::string &outputFileLocation);
+		static void writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx);
 #endif // USE_SERIALIZER
 
 
