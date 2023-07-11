@@ -53,7 +53,8 @@ void object::test<1>()
 
 	bool succesReading = reader.read(infiler);
 	ensure_equals("Reading file successful", succesReading, true);
-	ensure_equals("JSON check activation succesful", projTest->getConfig().json.isActive(), true);
+	ensure_equals("JSON check activation succesful", projTest->getConfig().writeJSON.isActive(), true);
+	ensure_equals("JSON COVAR check activation failed succesfully", projTest->getConfig().writeJSON_COVAR.isActive(), false);
 
 	TLGCCalculation calcul(projTest);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
@@ -73,7 +74,29 @@ void object::test<2>()
 
 	bool succesReading = reader.read(infiler);
 	ensure_equals("Reading file successful", succesReading, true);
-	ensure_equals("JSON check activation failed succesfully", projTest->getConfig().json.isActive(), false);
+	ensure_equals("JSON check activation failed succesfully", projTest->getConfig().writeJSON.isActive(), false);
+	ensure_equals("JSON COVAR check activation failed succesfully", projTest->getConfig().writeJSON_COVAR.isActive(), false);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+}
+
+template<>
+template<>
+void object::test<3>()
+{
+	set_test_name("Testing JSON keyword with COVAR");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/JSON_keyword.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(JSON_input_header + "*JSON COVAR\n" + JSON_input_rest);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	ensure_equals("JSON check activation succesful", projTest->getConfig().writeJSON.isActive(), true);
+	ensure_equals("JSON COVAR check activation succesful", projTest->getConfig().writeJSON_COVAR.isActive(), true);
 
 	TLGCCalculation calcul(projTest);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);

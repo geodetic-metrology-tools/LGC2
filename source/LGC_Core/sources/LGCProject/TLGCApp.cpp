@@ -11,6 +11,7 @@
 #include "TDefaFileWriter.h"
 #include "TCovarFileWriter.h"
 #include "TChabaFileWriter.h"
+#include "ProjectPath.h"
 #include <Logger.hpp>
 #include <TLGCData.h>
 #if USE_SERIALIZER
@@ -31,7 +32,7 @@ TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLo
 	fStream(nullptr),
 	fMaxIterations(maxIterations)
 {
-	
+	ProjectPath::getPath(infileLocation); // Singleton initialization
 	fLoggerFileLoc = fOutputFileLoc.substr(0, fOutputFileLoc.length() - 4) + ".log";  // fLoggerFileLoc will become OBSOLETE!
 }
 
@@ -202,8 +203,8 @@ void TLGCApp::saveResults(TLGCData const * const dat, std::string outputFileLoca
 
 #if USE_SERIALIZER
 	// Write serialized object file
-	if (conf.json.isActive())
-		writeJsonFile(dat, outputFileLocation);
+	if (conf.writeJSON.isActive())
+		writeJsonFiles(dat, outputFileLocation, calculation.getResultMtr());
 #endif // USE_SERIALIZER
 }
 
@@ -335,7 +336,7 @@ void TLGCApp::writeChabaFile(TLGCData const * const dat, const std::string &outp
 }
 
 #if USE_SERIALIZER
-void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx)
 {
 	if (!Logger::getLogger().hasErrors())
 	{
@@ -344,6 +345,8 @@ void TLGCApp::writeJsonFile(TLGCData const *const dat, const std::string &output
 		obj.addProperty("fCopyright", fCopyright);
 		obj.addProperty("LGCVersion", getLGCVersion());
 		obj.addProperty("LGC_DATA", dat);
+		if (dat->getConfig().writeJSON_COVAR.isActive())
+			obj.addProperty("ResultsMatrices", fResMtrx);
 
 		std::ofstream fout(outputFileLocation + ".json");
 		fout << ser.getStringRepresentation();

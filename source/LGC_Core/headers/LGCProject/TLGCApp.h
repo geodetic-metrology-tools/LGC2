@@ -78,7 +78,7 @@ class TLGCApp {
 
 #if USE_SERIALIZER
 		/// Write serialization files
-		static void writeJsonFile(TLGCData const* const dat, const std::string &outputFileLocation);
+		static void writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx);
 #endif // USE_SERIALIZER
 
 
@@ -90,7 +90,7 @@ class TLGCApp {
 		TLGCApp& operator=(const TLGCApp& x);
 
 		std::string fInputFileLoc; //Location of the input file
-		std::string fOutputFileLoc; // Output file extension
+		std::string fOutputFileLoc; // Path to the final destination of .res file. During `saveResults` the extension is removed.
 		std::string fLoggerFileLoc; //Location of the input file with extension, e.g. C://Temp//outputLog.log 
 		std::string fNamFile; //Location of the 'name' file
 		int			fMaxIterations; // Maximal number of iterations (fixed by default at 80)

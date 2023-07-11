@@ -857,7 +857,6 @@ void TLGCData::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("points", points);
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
-	obj.addProperty("fCovMat", fCovMat);
 	obj.addProperty("slaveGroups", slaveGroups);
 }
 
