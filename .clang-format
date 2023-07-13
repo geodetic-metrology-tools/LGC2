@@ -121,9 +121,6 @@ IncludeCategories:
   # Eigen
   - Regex: '^<Eigen\/[[:upper:]][[:alnum:]]+>$'
     Priority: 3
-  # Boost
-  - Regex: '^<boost\/.+\.hpp>$'
-    Priority: 2
   # STL
   - Regex: '^<[[:lower:]_]+>$'
     Priority: 1

@@ -27,7 +27,6 @@ set(SURVEYLIB_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../SurveyLib)
 
 include_directories (
 	SYSTEM
-	${Boost_INCLUDE_DIRS}
     ${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcElements

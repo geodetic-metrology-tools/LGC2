@@ -3,7 +3,6 @@
 #
 # To create a solution with this CMake file, you need to first define the following variables in a CMake style file.
 #
-# - `BOOST_ROOT`: The path to Boost folder
 # - `EIGEN_INCLUDE_PATH`: The path to Eigen folder
 # - `REFRAME_LIBRARY_DIR`: The path to Reframe folder
 # - `TUT_INCLUDE_PATH`: The path to Tut folder
@@ -47,7 +46,6 @@ configure_file (
 # Make surveylib sublibraries available
 SET(SURVEYLIB_ROOT ${LIBRARIES_PATH}/SurveyLib)
 
-FIND_PACKAGE(Boost 1.49.0 REQUIRED)
 
 IF(MSVC)
 	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
@@ -75,7 +73,6 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Writers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
-	${Boost_INCLUDE_DIRS}
 	${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/Logs
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
