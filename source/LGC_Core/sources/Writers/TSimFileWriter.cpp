@@ -343,7 +343,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	}
 
 	// Write point list
-	// define a unknown point type
+	// define an unknown point type
 	TSpatialStatus::ESpatialStatus previousPointType(TSpatialStatus::kUnknown);
 	for (auto &point : data->getPoints())
 	{
@@ -942,7 +942,17 @@ void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << "*ECWI" << sep << wpsrDefInst.ID << sep << meas->sagAdjustable->getProvisionalValue().getMetresValue() << sep << meas->sigmaWire.getMMetresValue() << sep
-			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName << endl;
+			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName; 
+	if (meas->sagfix)
+	{
+		(*stream) << sep << "SAGFIX";
+		// use SAGSE flag only if the precision is not zero
+		if (fabs(meas->instrument.sigmaSagWire) > EPSILON)
+		{
+			(*stream) << sep << "SAGSE" << sep << meas->instrument.sigmaSagWire.getMMetresValue();
+		}
+	}
+	(*stream) << endl;
 
 	// write the list of measurements for the line
 	for (auto &itECWI : meas->measECWI)
