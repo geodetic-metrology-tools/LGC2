@@ -298,13 +298,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	std::string sep = stream->getSeparator();
 	stream->setPrecisionFormat(data->getConfig().outPrecision.digits);
 
-	bool firstCALA = true;
-	bool firstPOIN = true;
-	bool firstVXY = true;
-	bool firstVXZ = true;
-	bool firstVYZ = true;
-	bool firstVZ = true;
-
 	// lambda function to write the point coordinate
 	auto writeXYZorH = [&](LGCAdjustablePoint const &fPoint) {
 		if (!fPoint.isActive())
@@ -350,96 +343,44 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	}
 
 	// Write point list
+	// define a unknown point type
+	TSpatialStatus::ESpatialStatus previousPointType(TSpatialStatus::kUnknown);
 	for (auto &point : data->getPoints())
 	{
-		TSpatialStatus::ESpatialStatus status = point.getSpatialStatus();
+		TSpatialStatus::ESpatialStatus currentPointType = point.getSpatialStatus();
 		TDataTreeIterator posInTree = point.getFrameTreePosition();
 
 		if (posInTree == frameIt)
 		{
-			switch (status)
+			// check if it is a new point type, if so write type header
+			if (previousPointType != currentPointType)
 			{
-			case TSpatialStatus::ESpatialStatus::kCala:
-				if (firstCALA)
+				// write header
+				switch (currentPointType)
 				{
-					firstCALA = false;
+				case TSpatialStatus::ESpatialStatus::kCala:
 					(*stream) << "*CALA" << endl;
-				}
-				writeXYZorH(point);
-				break;
-
-			case TSpatialStatus::ESpatialStatus::kVxyz:
-				if (firstPOIN)
-				{
-					firstPOIN = false;
+					break;
+				case TSpatialStatus::ESpatialStatus::kVxyz:
 					(*stream) << "*POIN" << endl;
-				}
-				writeXYZorH(point);
-
-				// NB. June 2017:
-				// With the new observation OBSXYZ the standard deviations
-				// of POIN are not used any longer (for now).
-				// -------------------------------------------------------
-				// if(!frameIt->get()->isROOTNode())
-				//     (*stream) << "SX" << sep
-				//     << point.getStandDev(0) * 1000 << sep
-				//     << "SY" << sep
-				//     << point.getStandDev(1) * 1000 << sep
-				//     << "SZ" << sep
-				//     << point.getStandDev(2) * 1000 << endl;
-				// else
-				// {
-				//     if(point.hasStandDeviations())
-				//         (*stream) << "SX" << sep
-				//         << point.getStandDev(0) * 1000 << sep
-				//         << "SY" << sep
-				//         << point.getStandDev(1) * 1000 << sep
-				//         << "SZ" << sep
-				//         << point.getStandDev(2) * 1000 << endl;
-				//     else
-				//         (*stream) << endl;
-				// }
-				// -------------------------------------------------------
-
-				break;
-
-			case TSpatialStatus::ESpatialStatus::kVxy:
-				if (firstVXY)
-				{
-					firstVXY = false;
+					break;
+				case TSpatialStatus::ESpatialStatus::kVxy:
 					(*stream) << "*VXY" << endl;
-				}
-				writeXYZorH(point);
-				break;
-
-			case TSpatialStatus::ESpatialStatus::kVxz:
-				if (firstVXZ)
-				{
-					firstVXZ = false;
+					break;
+				case TSpatialStatus::ESpatialStatus::kVxz:
 					(*stream) << "*VXZ" << endl;
-				}
-				writeXYZorH(point);
-				break;
-
-			case TSpatialStatus::ESpatialStatus::kVyz:
-
-				if (firstVYZ)
-				{
-					firstVYZ = false;
+					break;
+				case TSpatialStatus::ESpatialStatus::kVyz:
 					(*stream) << "*VYZ" << endl;
-				}
-				writeXYZorH(point);
-				break;
-
-			case TSpatialStatus::ESpatialStatus::kVz:
-				if (firstVZ)
-				{
-					firstVZ = false;
+					break;
+				case TSpatialStatus::ESpatialStatus::kVz:
 					(*stream) << "*VZ" << endl;
+					break;
 				}
-				writeXYZorH(point);
-				break;
 			}
+			writeXYZorH(point);
+			// copy current point status to point type for checking whether the next point has same type
+			previousPointType = currentPointType;
 		}
 	}
 }
