@@ -284,7 +284,7 @@ bool TReader::read(std::istream& lgcStream) {
 		++nline) 
 	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline+1) + ": ");  
+		const string nlinestr("Line " + to_string(nline) + ": ");  
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
 
@@ -396,21 +396,21 @@ bool TReader::read(std::istream& lgcStream) {
 	// Iterate the frames
 	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
 	{
-		// In each iteration append the frame name and the *FRAME line (it is the actual line number minus one)
+		// In each iteration append the frame name and the *FRAME line
 		frameNames.push_back(itTree->get()->frame.getName());
 		frameLines.push_back(itTree->get()->frame.getLine());
 
 		if (frameNames.size() > 1 && frameNames.back().compare("ROOT") == 0)
 		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "The frame name \"ROOT\" at line " + to_string(frameLines.back() + 1) + " cannot be used.";
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "The frame name \"ROOT\" at line " + to_string(frameLines.back()) + " cannot be used.";
 		}
 
 		// Iterate the vector starting from the second item, i.e., the second frame name.
 		for (std::size_t i = 2; i < frameNames.size(); ++i) {
 			if (frameNames.back().compare(frameNames[i - 1]) == 0)
 			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frames at lines " + to_string(frameLines[i - 1] + 1) + \
-					" and " + to_string(frameLines.back() + 1) + " have the same name: \"" + frameNames.back() + "\".";
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frames at lines " + to_string(frameLines[i - 1]) + \
+					" and " + to_string(frameLines.back()) + " have the same name: \"" + frameNames.back() + "\".";
 			}
 		}
 
