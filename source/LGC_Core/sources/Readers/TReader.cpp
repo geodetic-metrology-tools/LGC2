@@ -242,7 +242,7 @@ std::istream& safeGetline(std::istream& is, std::string& t)
 bool TReader::read(std::istream& lgcStream) {
 	using namespace std;
 	string line;
-	int nline(1);
+	int nline(0);
 	bool isReferenceSystemDefined = false;	
 
 	auto& outputMessages(project.getFileLogger());
@@ -253,6 +253,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
+	nline++;
 	const auto& titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
@@ -263,6 +264,7 @@ bool TReader::read(std::istream& lgcStream) {
 			
 	// read until the next keyword
 	safeGetline(lgcStream, line/*, '*'*/);
+	nline++;
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
