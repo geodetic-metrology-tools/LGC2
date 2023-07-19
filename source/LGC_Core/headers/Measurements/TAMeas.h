@@ -61,6 +61,10 @@ class TAMeas : public TStatusObject
 		/// Observation identifier: identification of specific measurement
 		std::string obsID;
 
+		/// mask status. Can be used to exclude measurement form least square process while still evaluating
+		// true  = obseravtion is ignored (masked), false = observation participating in LS adjustment
+		bool maskStatus{false};
+
 		/// DB comment after the measurement definition
 		std::string eolcomment;
 

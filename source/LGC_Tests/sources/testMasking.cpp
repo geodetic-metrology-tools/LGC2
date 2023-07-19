@@ -63,7 +63,7 @@ namespace tut
 			if (obsxyz.obsID == "firstObs")
 			{
 				//deactivate this observation
-				obsxyz.setActive(false);
+				obsxyz.maskStatus = true;
 			}
 		}
 		// do new calculation
