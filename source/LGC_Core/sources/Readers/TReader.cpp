@@ -263,13 +263,13 @@ bool TReader::read(std::istream& lgcStream) {
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
 			
 	// read until the next keyword
-	safeGetline(lgcStream, line/*, '*'*/);
+	safeGetline(lgcStream, line);
 	nline++;
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
 		project.getConfig().title += line +" ";
-		safeGetline(lgcStream, line/*, '*'*/);
+		safeGetline(lgcStream, line);
 
 		nline += (int)count(line.cbegin(), line.cend(), '\n');
 		nline++;
@@ -291,13 +291,13 @@ bool TReader::read(std::istream& lgcStream) {
 		// skip empty lines
 		if (tokLine.empty())
 		{
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 			continue;
 		}
 		// % means comment line, i.e. to be ignored
 		if (tokLine[0][0] == *"%"){
 			project.pushComment(std::pair<int, std::string>(nline, line));
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 			continue;
 		}
 
@@ -336,7 +336,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 				// abort if there is no valid handler
 				if (!currenthandler){
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey;
 					return !outputMessages.hasErrors();
 				}
 
@@ -363,7 +363,7 @@ bool TReader::read(std::istream& lgcStream) {
 		try{ //Handler was found, try to parse
 			
 			currenthandler->parse(tokLine, activeLine, nline);
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 		}
 		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
