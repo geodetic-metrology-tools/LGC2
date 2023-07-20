@@ -270,8 +270,6 @@ bool TReader::read(std::istream& lgcStream) {
 		// store the read title in the config
 		project.getConfig().title += line +" ";
 		safeGetline(lgcStream, line);
-
-		nline += (int)count(line.cbegin(), line.cend(), '\n');
 		nline++;
 	}
     // Remove the last added whitespace:
@@ -463,8 +461,6 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		// store the read title in the config
 		project.getConfig().title += line + ' ';
 		safeGetline(lgcStream, line);
-		
-		nline += (int)count(line.cbegin(), line.cend(), '\n');
 		nline++;
 
 		if (lgcStream.peek() == EOF) break; // End of file
