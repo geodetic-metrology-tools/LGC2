@@ -16,6 +16,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include "TLSResultsMatrices.h"
 
 #include <Behavior.h>
+#include <chrono>
 
 class TLGCData;
 class TLGCCalculation;
@@ -76,6 +77,18 @@ class TLGCApp {
 		/// Write files for bestfit analysis
 		static void writeChabaFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
 
+		/// Convert a timestamp to a string
+		const std::string convertTimestampToString(const std::chrono::system_clock::time_point &timestamp, const char *format);
+        
+		/// Compute and return a time diference
+		const static double computeProcessingElapsedSeconds(const std::chrono::system_clock::time_point &timeStart, const std::chrono::system_clock::time_point &timeEnd);
+		
+		/// Get the string of the processing timestamp
+		static std::string getStartProcessingTimestamp() { return startProcessingTimestampOUT; };
+
+		/// Get the processing elapsed time in seconds
+		static double getProcessingElapsedSeconds() { return processingElapsedSeconds; };
+
 #if USE_SERIALIZER
 		/// Write serialization files
 		static void writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx);
@@ -97,6 +110,14 @@ class TLGCApp {
 
 		/// Shared pointer to global stream
 		std::shared_ptr<TAStreamFormatter> fStream;
+
+        std::chrono::system_clock::time_point startProcessingTime; // Start processing time to the fraction of the second
+        static std::string startProcessingTimestampISO; // Start processing timestamp string, formatted according to ISO 8601
+		static std::string startProcessingTimestampOUT; // Start processing timestamp string, formatted for the output files
+        
+		std::chrono::system_clock::time_point endProcessingTime; // End processing time to the fraction of the second
+        
+		static double processingElapsedSeconds; // Time difference in fractional seconds
 };
 
 #endif
