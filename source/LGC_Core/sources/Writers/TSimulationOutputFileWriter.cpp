@@ -9,6 +9,7 @@
 #include <string>
 #include	<TSimulationOutputFileWriter.h>
 #include	<TLGCData.h>
+#include	<TLGCApp.h>
 #include	"TAStreamFormatter.h"
 #include	"TFRAMEWriter.h"
 
@@ -109,19 +110,7 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 	(*stream)<<"RESUME APRES : " << i	<< " SIMULATIONS" <<endl;
 
 	//write date and time
-	char tmpbuf[128];
-	time_t ltime;
-	time(&ltime);
-	struct tm *today;
-#if defined(__linux__) || defined(__APPLE__)
-	tzset();
-#else
-	_tzset();
-#endif
-	today = localtime( &ltime );
-	std::string essai = ctime( &ltime );
-	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
-	(*stream)<<tmpbuf<<endl<<endl<<endl;
+	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl  << endl << endl;
 
 	//write title
 	(*stream)<<projTitle<<endl;

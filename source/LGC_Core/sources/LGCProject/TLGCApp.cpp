@@ -14,6 +14,7 @@
 #include "ProjectPath.h"
 #include <Logger.hpp>
 #include <TLGCData.h>
+#include <chrono>
 #if USE_SERIALIZER
 #	include <Serializer_json.hpp>
 #endif // USE_SERIALIZER
@@ -24,7 +25,9 @@
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
 const std::string TLGCApp::fCopyright = "Copyright 2022, CERN SU. All rights reserved.";
-
+std::string TLGCApp::startProcessingTimestampISO = "";
+std::string TLGCApp::startProcessingTimestampOUT = "";
+double TLGCApp::processingElapsedSeconds = 0;
 
 TLGCApp::TLGCApp(const std::string& infileLocation, const std::string& outfileLocation, const int maxIterations) :
 	fInputFileLoc(infileLocation),
@@ -59,6 +62,10 @@ Behavior TLGCApp::exec()
 	//Initialise Behavior with an error during the read
 	Behavior result(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
 
+	startProcessingTime = std::chrono::system_clock::now();
+	startProcessingTimestampISO = convertTimestampToString(startProcessingTime, "%FT%T%z");
+	startProcessingTimestampOUT = convertTimestampToString(startProcessingTime, "%F %T (UTC %z)");
+
 	//Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
 	TReader r(projectData);
 	if (r.isLgc2File(cp_inputFileStream))
@@ -90,6 +97,9 @@ Behavior TLGCApp::exec()
 	result.extract(Behavior::BehaviorCode::ERR_readingContent);
 	result = lgcCalculation.computeResults(fileWriter);
 	logInfo() << "Calculation process ended.";
+
+	endProcessingTime = std::chrono::system_clock::now();
+	processingElapsedSeconds = computeProcessingElapsedSeconds(startProcessingTime, endProcessingTime);
 
 	// Save the final results (SIMU output is written during the calculation after each iteration)
 	if (result)
@@ -344,6 +354,8 @@ void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outpu
 		SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
 		obj.addProperty("fCopyright", fCopyright);
 		obj.addProperty("LGCVersion", getLGCVersion());
+		obj.addProperty("startProcessingTimestamp", startProcessingTimestampISO);
+		obj.addProperty("processingElapsedSeconds", processingElapsedSeconds);
 		obj.addProperty("LGC_DATA", dat);
 		if (dat->getConfig().writeJSON_COVAR.isActive())
 			obj.addProperty("ResultsMatrices", fResMtrx);
@@ -393,3 +405,29 @@ const std::string TLGCApp::getCopyright()
 	return fCopyright;
 }
 
+// Convert a timestamp to a string, given a format^M
+const std::string TLGCApp::convertTimestampToString(const std::chrono::system_clock::time_point &timestamp, const char *format)
+{
+       std::time_t time = std::chrono::system_clock::to_time_t(timestamp);
+       std::tm tmLOC = *std::localtime(&time);
+
+#if defined(__linux__) || defined(__APPLE__)
+       tzset();
+#else
+       _tzset();
+#endif
+
+       std::ostringstream oss;
+       oss << std::put_time(&tmLOC, format);
+
+       return oss.str();
+}
+
+
+// Compute and return a time diference^M
+const double TLGCApp::computeProcessingElapsedSeconds(const std::chrono::system_clock::time_point &timeStart, const std::chrono::system_clock::time_point &timeEnd)
+{
+       std::chrono::duration<double> elapsedTime = timeEnd - timeStart;
+       
+       return elapsedTime.count();
+}

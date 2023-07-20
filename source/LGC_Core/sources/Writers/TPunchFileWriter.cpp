@@ -209,20 +209,8 @@ void TPunchFileWriter::writeTitle()
 	(*stream) << "#" << (fProjectData->getConfig().title) << endl;
 	(*stream) << "#"  << endl;
 
-	//write time
-	char tmpbuf[128];
-	time_t ltime;
-	time(&ltime);
-	struct tm *today;
-#if defined(__linux__) || defined(__APPLE__)
-	tzset();
-#else
-	_tzset();
-#endif
-	today = localtime( &ltime );
-	std::string essai = ctime( &ltime );
-	strftime( tmpbuf, 128,"CALCUL DU %d %B %Y %X", today );
-	(*stream) << "#" << tmpbuf << endl;
+	// write date and time
+	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
 	(*stream) << "#";
 	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		(*stream) << "*SPHE";
