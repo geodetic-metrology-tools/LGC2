@@ -52,6 +52,12 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		if (fillWeightUnkn)
 			fillOK &= fillWeightUnkMtrx(projData, matrices);
 
+		//update parameter masking status of points
+		for (LGCAdjustablePoint &pt : projData->getPoints())
+		{
+			updateParameterMask(pt, matrices);
+		}
+
 		fillOK &= fillSlaveConstraints(projData, matrices);
 
 		// Itteration through the nodes of the tree

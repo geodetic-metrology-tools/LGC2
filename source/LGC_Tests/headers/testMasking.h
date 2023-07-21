@@ -28,6 +28,27 @@ point2 1 2 3 1 1 1 ID firstObs
 point2 -1 -2 -3 1 1 1 ID secondObs
 *END
 )";
+char const *const Masking_test_2= R"(*TITR
+%Test file for deactivation of parameters
+*OLOC
+*HIST
+*PREC 7
+%*CONSI
+%*PUNC   OUT1
+%*FAUT     .01     .10
+*INSTR
+*CALA
+point1 1 2 3 
+*POIN
+point2 0 0 0
+point3 1 2 3
+*OBSXYZ 
+% if both observations are active they cancel other and the result should be zero.
+point2 1 2 3 1 1 1 ID firstObs
+point3 1 2 3 1 1 1
+*END
+)";
+
 }
 #endif
 

@@ -81,6 +81,51 @@ namespace tut
 
 
 	}
+	template<>
+	template<>
+	void object::test<2>()
+	{
+
+		set_test_name("Testing simple Masking use");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/Masking.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(Masking::Masking_test_2);
+
+		bool succesReading = reader.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		//ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		// now fix point 2
+		LGCAdjustablePoint &p2 = projTest.get()->getPoints().getObject("point2");
+		// mask it
+		p2.maskStatus = true;
+		// manipulate the estimated values
+		p2.setCorrection(0, 1);
+		p2.setCorrection(1, 1);
+		p2.setCorrection(2, 1);
+		TPositionVector p2Before=p2.getEstimatedValue();
+		TVector resultBefore(3);
+		resultBefore << p2Before.getX(), p2Before.getY(), p2Before.getZ();
+
+		//copy of point
+		LGCAdjustablePoint testPoint = projTest.get()->getPoints().getObject("point2");
+
+		// compute, point should be fixed now
+		Behavior succesCalc2 = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc2.code(), Behavior::BehaviorCode::ERR_noError);
+		const TLGCData& dataset2 = calcul.getData();
+		// check position of point2, should be zero when both observations are active
+		TPositionVector p2After=p2.getEstimatedValue();
+		TVector resultAfter(3);
+		resultAfter << p2After.getX(), p2After.getY(), p2After.getZ();
+					// as the point is excluded from the adjustment, its position needs to be unchanged.
+		ensure("Position of point2 should be fixed (2,3,4)", resultBefore.isApprox(resultAfter));
+
+	}
 
 };
 

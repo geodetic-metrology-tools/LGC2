@@ -191,7 +191,8 @@ public:
 		/// Returns true if this point is defined in the ROOT frame
 		bool isInRootFrame();
 
-private:
+
+	private:
 
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
 

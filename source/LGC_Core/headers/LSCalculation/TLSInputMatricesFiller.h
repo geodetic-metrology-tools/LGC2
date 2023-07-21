@@ -165,6 +165,8 @@ private:
 	//@}
 template<typename Meas>
 	void updateMask(Meas meas, TLSInputMatrices *matrices);
+template<typename parObject>
+	void updateParameterMask(parObject& par, TLSInputMatrices *matrices);
 };
 
 #endif // TLS_INPUT_MATRICES_FILLER
@@ -190,3 +192,18 @@ inline void TLSInputMatricesFiller::updateMask(Meas meas, TLSInputMatrices *matr
 		}
 	}
 }
+
+template<typename parObject>
+inline void TLSInputMatricesFiller::updateParameterMask(parObject& par, TLSInputMatrices *matrices)
+{
+	if (par.maskStatus)
+	{
+		int firstUIdx = par.getFirstUidx();
+		int lastUIdx= par.getLastUidx();
+		for	(int j = firstUIdx; j <= lastUIdx; j++)
+		{
+			matrices->maskData.UIndices.insert(j);
+		}
+	}
+}
+
