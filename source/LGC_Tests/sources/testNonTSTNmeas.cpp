@@ -193,7 +193,43 @@ namespace tut
 		ensure_equals("Translation about z axis should match",frameIt.node->data->frame.getEstTranslation(2), 100.0  , 1e-7);
  	}
 
-//----------------------------- DVER --------------------------------//	
+	template<>
+	template<>
+	void object::test<6>()
+	{
+		set_test_name("Testing DLEV TH and Corrections parameters");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/outDLEV4.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::dlev_4);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+		ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-10);
+
+		// checking the precisions
+		TDataTree tree = projTest->getTree();
+		TDataTreeIterator frameIt = tree.begin();
+		auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+		auto measIt = romIt->measDLEV.begin();
+
+		ensure_equals("Measurement on PT1 staff precision value", measIt->target.sigmaStaffHt.getMMetresValue(), 0.4, 1e-7);
+		ensure_equals("Measurement on PT1 correction precision value", measIt->target.sigmaDCorr.getMMetresValue(), 0, 1e-7);
+		measIt++;
+		ensure_equals("Measurement on PT2 staff precision value", measIt->target.sigmaStaffHt.getMMetresValue(), 0, 1e-7);
+		ensure_equals("Measurement on PT2 correction precision value", measIt->target.sigmaDCorr.getMMetresValue(), 0, 1e-7);
+		measIt++;
+		measIt++;
+		ensure_equals("Measurement on PT4 staff precision value", measIt->target.sigmaStaffHt.getMMetresValue(), 0.2, 1e-7);
+		ensure_equals("Measurement on PT4 correction precision value", measIt->target.sigmaDCorr.getMMetresValue(), 0.1, 1e-7);
+	}
+
+	//----------------------------- DVER --------------------------------//	
 //in OLOC	
 	template<>
 	template<>
