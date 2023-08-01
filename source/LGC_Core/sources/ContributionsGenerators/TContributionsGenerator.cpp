@@ -887,7 +887,8 @@ HorDistContribLEVEL	TContributionsGenerator::getHorDistContrib(const LGCAdjustab
 //DLEV contributions
 DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, const TDLEV& dlev){
 	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); //collimination angle in rads
-	TReal cdz = dlev.target.distCorrectionValue; //distance correction value
+	TReal cdz = dlev.target.distCorrectionValue.getMetresValue(); // distance correction value
+	TReal tgHeight = dlev.target.staffHt.getMetresValue(); // Target Height
 	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(); //Distance of the reference point from the plane
 
 	TPositionVector referencePoint = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
@@ -907,7 +908,7 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 		fPointTransfo.setMLA(false);
 
 	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue()) + pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue())); 
-	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg*tanq(collAngl);
+	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg * tanq(collAngl) - tgHeight;
 
 	//Station can be defined anywhere, get point contributions and transformations contributions
 	TFreeVector staffContrib = getPointContributions(staffPTLor2RootTrafo, 0, 0, -1);
@@ -922,7 +923,7 @@ DLEVContrib	TContributionsGenerator::getDLEVContrib(const TLEVEL& levelInstr, co
 	TReal collAngleContrib = - dTg*(1.0 + powq(tanq(collAngl),2));
 	TReal fRefPtDistCont = 1.0;
 
-	TReal variance = pow2q(dlev.target.sigmaD + dTg/1000*dlev.target.ppmD) +  pow2q(dlev.target.sigmaStaffHt);
+	TReal variance = pow2q(dlev.target.sigmaD.getMetresValue() + dTg / 1000 * dlev.target.ppmD.getMetresValue()) + pow2q(dlev.target.sigmaStaffHt.getMetresValue()) + pow2q(dlev.target.sigmaDCorr.getMetresValue());
 
 	DLEVContrib dlevContrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, fRefPtDistCont, collAngleContrib, variance};
 	return dlevContrib;

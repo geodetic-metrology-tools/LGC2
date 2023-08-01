@@ -233,10 +233,28 @@ namespace TestNonTSTN {
 			"PTCAL2 -200 DHOR 68.96375859826666 DSE 0.8\n"
 			"PT 50 DHOR 42.379240200834 DSE 0.8\n"
 		;
-
-
-
-
+		
+		/*Test the reading of corrections and target heights*/
+		char const *const dlev_4 = R"(*TITR
+Test DLEV TH
+*OLOC
+*INSTR
+*LEVEL L1 T1 0 0
+T1 0.1 0 0 0 0 0
+T2 0.1 0 0.1 0.1 0.2 0.2
+*CALA
+PT1 0 0 0
+PT2 10 10 0
+PT3 0 10 0
+PT4 10 0 0
+REF 5 5 2
+*DLEV   L1 RefPt REF
+PT1 1  THSE 0.4
+PT2 0.5	TH 0.5
+PT3 1.2 TH -0.2	
+PT4 0.7 TRGT T2
+*END
+)";
 
 /////////////////////////OFFSET MEASUREMENTS/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	char const *const echo_1 = 
