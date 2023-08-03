@@ -378,7 +378,11 @@ void    TResultsFileWriter::writeCalcDataSummary()
     //NOMBRE D'INCONNUES
     stream<<"	NOMBRE D'INCONNUES =     "<< fProjectData->fUEOIndices.UIndex;
     stream<<endl;
- 
+  
+    // NOMBRE DE CONTRAINTES
+	stream << "	NOMBRE DE CONTRAINTES =  " << fProjectData->fUEOIndices.CIndex;
+	stream << endl;
+
     // NUMBER OF ITERATIONS
     stream<<"	NOMBRE D'ITERATIONS =    "<<fProjectData->getNumberOfLSIterations();
     stream<<endl<<endl;
