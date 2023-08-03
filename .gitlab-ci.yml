@@ -14,6 +14,8 @@ linux_build_and_test:
 linux_release:
     extends: .linux_release
     needs: ["linux_build_and_test"]
+    only:
+        - beta_3_LGCReport
     script:
         - echo "Building executable | -j$(nproc)"
         - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
@@ -34,6 +36,8 @@ windows64_build_and_test:
 windows64_release:
     extends: .windows64_release
     needs: ["windows64_build_and_test"]
+    only:
+        - beta_3_LGCReport
     script:
         - echo "Building executable"
         - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release --target PACKAGE
