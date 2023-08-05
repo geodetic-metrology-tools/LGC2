@@ -72,7 +72,7 @@ public:
 		HorDistContrib	getHorDistContrib(std::shared_ptr<TTSTN> station, const TLINE& dhor);
 
 		/// Returns contribution for the TPLR3D measurement.
-		PLR3DContrib getPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
+		parametricPLR3DContrib getParametricPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
@@ -161,8 +161,8 @@ private:
 		/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 		void addTransformationsContributions3D(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 		
-		/// Adds Point contributions for the PLR3D measurement
-		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, Point3DContrib& pointContrib, bool station);
+		/// Adds Point contributions for the PLR3D measurement, returns object representing AMat*dtrafo(point)/dpoint
+		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const Eigen::Matrix3d& Amat , Point3DContrib& pointContrib, bool station);
 	
 		///Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
 		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
@@ -177,4 +177,5 @@ private:
 		//@}
 
 };
+
 #endif 
