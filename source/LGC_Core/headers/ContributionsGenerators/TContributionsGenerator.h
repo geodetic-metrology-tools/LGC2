@@ -73,7 +73,7 @@ public:
 		HorDistContrib	getHorDistContrib(std::shared_ptr<TTSTN> station, const TLINE& dhor);
 
 		/// Returns contribution for the TPLR3D measurement.
-		PLR3DContrib getPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
+		parametricPLR3DContrib getParametricPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
