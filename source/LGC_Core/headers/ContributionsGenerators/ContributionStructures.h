@@ -36,9 +36,7 @@ struct TransformationContrib{
 	\brief  Contributions for a point in observation models consisting of 3 equations (currently used for PLR3D, UVD).
 */
 struct Point3DContrib{
-	TFreeVector firstEqPtContrib; //!< x,y,z point coordinate contributions for the FIRST equation
-	TFreeVector secondEqPtContrib; //!< x,y,z point's coordinate contributions  for a SECOND equation
-	TFreeVector thirdEqPtContrib; //!< x,y,z point's coordinate contributions  for a THIRD equation
+	Eigen::Matrix3d contrib;
 };
 
 /*!
@@ -260,26 +258,27 @@ struct ECTHContrib{
 
 	\brief Contributions for the TPLR3D measurement made by a total station (TTSTN).
 */
-struct PLR3DContrib{
+struct parametricPLR3DContrib {
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fStTransformContrib; 
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib; 	
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
 
-	TReal       fInstrHeightContrib[3];	 //!< Instrument (station) height contribution for the First, Second and Third equation respectively.
-	TReal       fV0Contrib[3];	//!< V0 contribution for the First, Second and Third equation respectively.
-	TReal		fThetaContrib[3]; //!< Theta contribution for the First, Second and Third equation respectively.
-	TReal		fPhiContrib[3]; //!< Phi contribution for the First, Second and Third equation respectively.
-	TReal		fDistAndCsContrib[3]; //!< Distance and distance correction contributions for the First, Second and Third equation respectively.
+	Eigen::Vector3d fInstrHeightContrib; //!< Instrument (station) height contribution for the First, Second and Third equation respectively.
+	Eigen::Vector3d fTargetHeightContrib; //!< Target height contribution for the First, Second and Third equation respectively.
+	Eigen::Vector3d fV0Contrib; //!< V0 contribution for the First, Second and Third equation respectively.
+	Eigen::Vector3d fThetaContrib; //!< Theta contribution for the First, Second and Third equation respectively.
+	Eigen::Vector3d fPhiContrib; //!< Phi contribution for the First, Second and Third equation respectively.
+	Eigen::Vector3d fDistAndCsContrib; //!< Distance and distance correction contributions for the First, Second and Third equation respectively.
 
-	TReal		fRxContrib[3]; //!< Contribution of the option rotation about the X axis for the First, Second and Third equation respectively.
-	TReal		fRyContrib[3]; //!< Contribution of the option rotation about the Y axis for the First, Second and Third equation respectively.
+	Eigen::Vector3d fRxContrib; //!< Contribution of the option rotation about the X axis for the First, Second and Third equation respectively.
+	Eigen::Vector3d fRyContrib; //!< Contribution of the option rotation about the Y axis for the First, Second and Third equation respectively.
 
-	TReal	    fMisclosureVector[3]; //!< Misclosure vector of the First, Second and Third equation respectively.
-	TReal		fObsVariance[3]; //!< Variances of the First, Second and Third equation respectively.
+	Eigen::Vector3d fMisclosureVector; //!< Misclosure vector of the First, Second and Third equation respectively.
+	Eigen::Vector3d fObsVariance; //!< Variances of the First, Second and Third equation respectively.
 };
 
 /*!

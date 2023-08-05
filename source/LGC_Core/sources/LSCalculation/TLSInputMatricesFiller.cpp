@@ -65,7 +65,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 					// In every TSTN iterate through ROMS and add contributions for every observation type
 					for (auto &itROM : itTSTN->roms)
 					{
-						addPLR3DContributions(itROM, itTSTN, matrices); // Process all the PLR3D measurement in this ROM
+						addParametricPLR3DContributions(itROM, itTSTN, matrices); // Process all the PLR3D measurement in this ROM
 						addHorAngContributions(itROM, itTSTN, matrices); // Process all the ANGL measurement in this ROM
 						addSpaDistContributions(itROM->measDIST, itTSTN, matrices);
 						addZenDistContributions(itROM->measZEND, itTSTN, matrices);
@@ -1295,9 +1295,9 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 		// Add contributions for coordinates
 		if (!meas->station->isFixed())
 		{
-			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fTgCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
-			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fTgCoordContrib.secondEqPtContrib, firstEqIdx + 1, matrices);
-			isProcessOK = isProcessOK && addPointContribution(*meas->station, contributions.fTgCoordContrib.thirdEqPtContrib, firstEqIdx + 2, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, TFreeVector(contributions.fTgCoordContrib.contrib.row(0)), firstEqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, TFreeVector(contributions.fTgCoordContrib.contrib.row(1)), firstEqIdx + 1, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->station, TFreeVector(contributions.fTgCoordContrib.contrib.row(2)), firstEqIdx + 2, matrices);
 		}
 
 		// Add contributions of transformations parameters
@@ -1527,19 +1527,19 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices)
+
+void TLSInputMatricesFiller::addParametricPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices)
 {
 	bool isProcessOK = true;
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
-	PLR3DContrib contributions;
 
 	for (auto meas(rom->measPLR3D.begin()); meas != rom->measPLR3D.end(); ++meas)
 	{
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 		// Get the observation contribution
-		contributions = fCGenerator.getPolar3DContrib(station, rom, *meas);
+		parametricPLR3DContrib contributions = fCGenerator.getParametricPolar3DContrib(station, rom, *meas);
 
 		// Update the sigma
 		meas->target.sigmaCombinedPLRAngl = TAngle(sqrt(contributions.fObsVariance[0]));
@@ -1551,17 +1551,17 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 		// Add contributions for STATION coordinates
 		if (!stationPos.isFixed())
 		{
-			isProcessOK = isProcessOK && addPointContribution(stationPos, contributions.fStCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
-			isProcessOK = isProcessOK && addPointContribution(stationPos, contributions.fStCoordContrib.secondEqPtContrib, firstEqIdx + 1, matrices);
-			isProcessOK = isProcessOK && addPointContribution(stationPos, contributions.fStCoordContrib.thirdEqPtContrib, firstEqIdx + 2, matrices);
+			isProcessOK = isProcessOK && addPointContribution(stationPos, TFreeVector(contributions.fStCoordContrib.contrib.row(0)), firstEqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(stationPos, TFreeVector(contributions.fStCoordContrib.contrib.row(1)), firstEqIdx + 1, matrices);
+			isProcessOK = isProcessOK && addPointContribution(stationPos, TFreeVector(contributions.fStCoordContrib.contrib.row(2)), firstEqIdx + 2, matrices);
 		}
 
 		// Add contributions for TARGET coordinates
 		if (!targetPos.isFixed())
 		{
-			isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
-			isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContrib.secondEqPtContrib, firstEqIdx + 1, matrices);
-			isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContrib.thirdEqPtContrib, firstEqIdx + 2, matrices);
+			isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.contrib.row(0)), firstEqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.contrib.row(1)), firstEqIdx + 1, matrices);
+			isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.contrib.row(2)), firstEqIdx + 2, matrices);
 		}
 
 		if (!meas->target.distCorrectionAdjustable->isFixed())
@@ -1594,12 +1594,8 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 			}
 		}
 
-		Eigen::MatrixXd block(3, 3);
-		for (int i = 0; i < 3; i++)
-		{
-			block.row(i) << contributions.fThetaContrib[i], contributions.fPhiContrib[i], contributions.fDistAndCsContrib[i];
-		}
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, block);
+		// parametric version
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, -Eigen::MatrixXd::Identity(3, 3));
 
 		// Setting the misclosure vector elements
 		for (int i = 0; i < 3; i++)
@@ -1678,17 +1674,17 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *
 		// Add contributions for CAMERA coordinates
 		if (!cameraPos.isFixed())
 		{
-			isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
-			isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContrib.secondEqPtContrib, firstEqIdx + 1, matrices);
-			isProcessOK = isProcessOK && addPointContribution(cameraPos, contributions.fStCoordContrib.thirdEqPtContrib, firstEqIdx + 2, matrices);
+			isProcessOK = isProcessOK && addPointContribution(cameraPos, TFreeVector(contributions.fStCoordContrib.contrib.row(0)), firstEqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(cameraPos, TFreeVector(contributions.fStCoordContrib.contrib.row(1)), firstEqIdx + 1, matrices);
+			isProcessOK = isProcessOK && addPointContribution(cameraPos, TFreeVector(contributions.fStCoordContrib.contrib.row(2)), firstEqIdx + 2, matrices);
 		}
 
 		// Add contributions for TARGET coordinates
 		if (!targetPos.isFixed())
 		{
-			isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContrib.firstEqPtContrib, firstEqIdx, matrices);
-			isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContrib.secondEqPtContrib, firstEqIdx + 1, matrices);
-			isProcessOK = isProcessOK && addPointContribution(targetPos, contributions.fTgCoordContrib.thirdEqPtContrib, firstEqIdx + 2, matrices);
+			isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.contrib.row(0)), firstEqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.contrib.row(1)), firstEqIdx + 1, matrices);
+			isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.contrib.row(2)), firstEqIdx + 2, matrices);
 		}
 
 		// Add contributions of transformations parameters
