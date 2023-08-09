@@ -1732,44 +1732,52 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 						   { pow2q(uvec.target.sigmaX) + pow2q(k / (dz)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)), pow2q(uvec.target.sigmaY) + pow2q(k / (dz)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)) } }; //Obs variances
 	return contrib;
 }
-
-UVDContrib	TContributionsGenerator::getUVDContrib(const TCAM& camera, const TUVD& uvd){
+parametricUVDContrib 	TContributionsGenerator::getParametricUVDContrib(const TCAM& camera, const TUVD& uvd){
 	fPointTransfo.setMLA (false); // TCAM measurements never in MLA
 	TPositionVector targetPos = uvd.targetPos->getEstimatedValue();
 	const TLOR2LOR& tg2stTrafo = fPointTransfo.getLORTransformation(uvd.targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
 	tg2stTrafo.transform(targetPos);
 
-	//CAM station's contribution is calculated in a LOR system of the station and, therefore, the station's contribution is this
-	Point3DContrib coordContribStation = {Eigen::Matrix3d::Identity()};
-	//	Point3DContrib coordContribStation = {TFreeVector(1.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian),
-//										TFreeVector(0.0, 1.0, 0.0, TCoordSysFactory::k3DCartesian),
-//										TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::k3DCartesian)};
-
-	Point3DContrib coordContribTarget = {-tg2stTrafo.getPartialDerivativeWrtPosition()};
-	//	Point3DContrib coordContribTarget = { TFreeVector(-tg2stTrafo.partDerivWRespToX0(0), -tg2stTrafo.partDerivWRespToY0(0), -tg2stTrafo.partDerivWRespToZ0(0), TCoordSysFactory::k3DCartesian),
-//										  TFreeVector(-tg2stTrafo.partDerivWRespToX0(1), -tg2stTrafo.partDerivWRespToY0(1), -tg2stTrafo.partDerivWRespToZ0(1), TCoordSysFactory::k3DCartesian),
-//										  TFreeVector(-tg2stTrafo.partDerivWRespToX0(2), -tg2stTrafo.partDerivWRespToY0(2), -tg2stTrafo.partDerivWRespToZ0(2), TCoordSysFactory::k3DCartesian)};
-
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector with target's transformations contributions
-
-	//Parametres: transformation from target's LOR into station's LOR, target position, vector of contributions to be filled
-	addUVDTgTransfContributionsCamera(tg2stTrafo,  uvd.targetPos->getEstimatedValue(), targetTransfContributions);
-
+	// the observations
 	TReal sDist = uvd.getDistance(); //measured distance
 	TReal i = uvd.getVectorValue().getX().getMetresValue(); // X component
 	TReal j = uvd.getVectorValue().getY().getMetresValue(); // Y component
-	TReal k = uvd.getVectorValue().getZ().getMetresValue(); // Z component
+	TReal k = uvd.getVectorValue().getZ().getMetresValue(); // Z component not a observation
+	TPositionVector stationPos = camera.instrumentPos->getEstimatedValue();
+	TFreeVector relPos = targetPos - stationPos;
+	// UVD target height???
+	TLength targetHeight(0);
+	relPos.setZ(relPos.getZ() + targetHeight);
+	double relPosNorm = relPos.length();
+	double x(relPos.getX().getMetresValue()), y(relPos.getY().getMetresValue()), z(relPos.getZ().getMetresValue()), zSquare=z*z;
+	Eigen::Vector3d F(k * x / z, k * y / z, z / k);
+	Eigen::Vector3d obs(i, j, sDist);
+	Eigen::Vector3d misclosure = F - obs;
 
-	TReal dx = targetPos.getX().getMetresValue() - camera.instrumentPos->getEstimatedValue().getX().getMetresValue();
-	TReal dy = targetPos.getY().getMetresValue() - camera.instrumentPos->getEstimatedValue().getY().getMetresValue();
-	TReal dz = targetPos.getZ().getMetresValue() - camera.instrumentPos->getEstimatedValue().getZ().getMetresValue();
+	// Jacobian of F
+	Eigen::Matrix3d JacF;
+	JacF << k / z, 0, -k * x / zSquare, 0, k / z, -k * y / zSquare, 0, 0, 1 / k;
 
-	UVDContrib contrib = {coordContribStation, coordContribTarget, targetTransfContributions, 
-		{sDist,0.0, 0.0}, // i
-		{0.0,sDist, 0.0}, //j
-		{i, j, k}, // dist contrib
-		{sDist*i - dx, sDist*j - dy, sDist*k - dz}, //misclosure vector
-		{ pow2q(uvd.target.sigmaX) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering), pow2q(uvd.target.sigmaY) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering), pow2q(uvd.target.sigmaDist) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering) } };   //variances
+	//CAM station's contribution is calculated in a LOR system of the station and, therefore, the station's contribution is this
+	Point3DContrib coordContribStation = {-JacF};
+
+	Point3DContrib coordContribTarget = {JacF * tg2stTrafo.getPartialDerivativeWrtPosition()};
+
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector with target's transformations contributions
+	
+	//Parameters: transformation from target's LOR into station's LOR, target position, vector of contributions to be filled
+	addTransformationsContributions3D(tg2stTrafo, uvd.targetPos->getEstimatedValue(), TFreeVector(JacF.row(0)), TFreeVector(JacF.row(1)), TFreeVector(JacF.row(2)), targetTransfContributions);
+	// fill the contribution structure
+	Eigen::Vector3d obsVariance(pow2q(uvd.target.sigmaX) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering),
+		pow2q(uvd.target.sigmaY) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering),
+		pow2q(uvd.target.sigmaDist) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering));
+
+	parametricUVDContrib contrib;
+	contrib.fStCoordContrib = coordContribStation;
+	contrib.fTgCoordContrib = coordContribTarget;
+	contrib.fTgTransformContrib = targetTransfContributions;
+	contrib.fMisclosureVector = misclosure;
+	contrib.fObsVariance = obsVariance;
 	
 	return contrib;
 }
@@ -1932,53 +1940,6 @@ void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR& lorTraf
 	}
 	else{	//Target
 		pointContrib.contrib = -mat;
-	}
-}
-
-void TContributionsGenerator::addUVDTgTransfContributionsCamera(const TLOR2LOR& transformations, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib){
-		const std::vector<TLOR2LOR::TransformAndParams>& trafoChain = transformations.getTransformationChain();
-		std::string transformationName;
-		TFreeVector scaleDeriv(TCoordSysFactory::k3DCartesian);
-		TFreeVector omegaDerivative(TCoordSysFactory::k3DCartesian);
-		TFreeVector phiDerivative (TCoordSysFactory::k3DCartesian);
-		TFreeVector kappaDerivative(TCoordSysFactory::k3DCartesian);
-
-		TFreeVector t1Derivative = (TCoordSysFactory::k3DCartesian);
-		TFreeVector t2Derivative = (TCoordSysFactory::k3DCartesian);
-		TFreeVector t3Derivative (TCoordSysFactory::k3DCartesian);
-
-		// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
-		for(auto it(trafoChain.begin()); it != trafoChain.end(); ++it){
-			transformationName = it->adjTrafo->getName();
-
-			//Contributions for rotations : Omega, Phi and Kappa
-			omegaDerivative = transformations.partialDerivativesAngle(transformationName, pointPos, 0);
-			phiDerivative = transformations.partialDerivativesAngle(transformationName, pointPos, 1);
-			kappaDerivative = transformations.partialDerivativesAngle(transformationName, pointPos, 2);
-
-			//Contributions for translation: X, Y and Z coordinate
-			t1Derivative = transformations.partialDerivativesTranslation(transformationName, pointPos, 0);
-			t2Derivative = transformations.partialDerivativesTranslation(transformationName, pointPos, 1); 
-			t3Derivative = transformations.partialDerivativesTranslation(transformationName, pointPos, 2);
-
-			scaleDeriv = transformations.partialDerivativesScale(transformationName, pointPos);
-
-
-			TransformationContrib firstEqContrib = {TFreeVector(-omegaDerivative.getX().getMetresValue(),-phiDerivative.getX().getMetresValue(), -kappaDerivative.getX().getMetresValue(),TCoordSysFactory::k3DCartesian),
-													TFreeVector(- t1Derivative.getX().getMetresValue(), -t2Derivative.getX().getMetresValue(), -t3Derivative.getX().getMetresValue(),TCoordSysFactory::k3DCartesian),
-													- scaleDeriv.getX().getMetresValue()};
-
-			TransformationContrib secondEqContrib = {TFreeVector(-  omegaDerivative.getY().getMetresValue(), -  phiDerivative.getY().getMetresValue(), - kappaDerivative.getY().getMetresValue(),TCoordSysFactory::k3DCartesian),
-													TFreeVector(- t1Derivative.getY().getMetresValue(), - t2Derivative.getY().getMetresValue(), - t3Derivative.getY().getMetresValue(),TCoordSysFactory::k3DCartesian),
-													-  scaleDeriv.getY().getMetresValue()};
-
-			TransformationContrib thirdEqContrib = {TFreeVector(- omegaDerivative.getZ().getMetresValue(), - phiDerivative.getZ().getMetresValue(), -  kappaDerivative.getZ().getMetresValue(),TCoordSysFactory::k3DCartesian),
-													TFreeVector(- t1Derivative.getZ().getMetresValue(), - t2Derivative.getZ().getMetresValue(), -  t3Derivative.getZ().getMetresValue(),TCoordSysFactory::k3DCartesian),
-													- scaleDeriv.getZ().getMetresValue()};
-
-			TransformationContrib3D trContrib = {firstEqContrib, secondEqContrib, thirdEqContrib};
-
-			transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib3D> (*it->adjTrafo, trContrib));
 	}
 }
 

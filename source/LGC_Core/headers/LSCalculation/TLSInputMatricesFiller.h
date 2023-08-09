@@ -115,7 +115,7 @@ private:
 	/// Add CAMERA UVEC observation
 	void addUVECContribution(TCAM &camera, TLSInputMatrices *matrices);
 	/// Add CAMERA UVD observation
-	void addUVDContribution(TCAM &camera, TLSInputMatrices *matrices);
+	void addParametricUVDContribution(TCAM &camera, TLSInputMatrices *matrices);
 
 	/// Add the design matrices contributions for the Levelling station, contatining a DLEV and dlev's DHOR measurements.
 	void addLevelStContributions(TLEVEL &levelSt, TLSInputMatrices *matrices);

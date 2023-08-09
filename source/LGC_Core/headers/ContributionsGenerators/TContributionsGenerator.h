@@ -89,7 +89,7 @@ public:
 		UVECContrib	getUVECContrib(const TCAM& camera, const TUVEC& uvec);
 
 		/// Returns the contribution for the TUVD measurement.
-		UVDContrib	getUVDContrib(const TCAM& camera, const TUVD& uvd);
+		parametricUVDContrib getParametricUVDContrib(const TCAM &camera, const TUVD &uvd);
 
 	//@}
 
@@ -163,9 +163,6 @@ private:
 		
 		/// Adds Point contributions for the PLR3D measurement, returns object representing AMat*dtrafo(point)/dpoint
 		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const Eigen::Matrix3d& Amat , Point3DContrib& pointContrib, bool station);
-	
-		///Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
-		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 	
 		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
 		decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR& lorTrafo, const TFreeVector& vector, TReal numerator, TReal denominator);

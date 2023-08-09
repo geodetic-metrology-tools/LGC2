@@ -88,7 +88,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 			// In every node iterate through camera (TCAM) measurements
 			for (auto &itCAM : itTree.node->data->measurements.fCAM)
 			{
-				addUVDContribution(itCAM, matrices);
+				addParametricUVDContribution(itCAM, matrices);
 				addUVECContribution(itCAM, matrices);
 			}
 
@@ -1650,19 +1650,19 @@ void TLSInputMatricesFiller::addParametricPLR3DContributions(std::shared_ptr<TTS
 	}
 }
 
-void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *matrices)
+void TLSInputMatricesFiller::addParametricUVDContribution(TCAM &camera, TLSInputMatrices *matrices)
 {
 	bool isProcessOK = true;
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
-	UVDContrib contributions;
+	parametricUVDContrib contributions;
 
 	for (auto meas(camera.measUVD.begin()); meas != camera.measUVD.end(); ++meas)
 	{
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 
-		contributions = fCGenerator.getUVDContrib(camera, *meas);
+		contributions = fCGenerator.getParametricUVDContrib(camera, *meas);
 
 		// Update the sigma
 		meas->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));
@@ -1698,13 +1698,8 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *
 			}
 		}
 
-		// Setting contributions for observations into a second design matrix
-		Eigen::MatrixXd block(3, 3);
-		for (int i = 0; i < 3; i++)
-		{
-			block.row(i) << contributions.fXCompContrib[i], contributions.fYCompContrib[i], contributions.fDistContrib[i];
-		}
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, block);
+		// parametric version
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, -Eigen::MatrixXd::Identity(3, 3));
 
 		// Setting the misclosure vector elements
 		for (int i = 0; i < 3; i++)
@@ -1728,6 +1723,7 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of UVD measurement occurred.");
 	}
+
 }
 
 void TLSInputMatricesFiller::addUVECContribution(TCAM &camera, TLSInputMatrices *matrices)
