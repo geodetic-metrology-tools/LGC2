@@ -259,6 +259,7 @@ struct ECTHContrib{
 	\brief Contributions for the TPLR3D measurement made by a total station (TTSTN).
 */
 struct parametricPLR3DContrib {
+	Eigen::Vector3d fCalcMeas;
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
 
@@ -286,21 +287,8 @@ struct parametricPLR3DContrib {
 
 	\brief Contributions for the TUVD measurement made by a camera (TCAM).
 */
-struct UVDContrib{
-	Point3DContrib fStCoordContrib;
-	Point3DContrib fTgCoordContrib;
-
-	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the UVD measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib; 			
-
-	TReal		fXCompContrib[3]; //!< X vector component contribution for the First, Second and Third equation respectively.
-	TReal		fYCompContrib[3]; //!< Y vector component contribution for the First, Second and Third equation respectively.
-	TReal		fDistContrib[3]; //!< Distance contribution for the First, Second and Third equation respectively.
-
-	TReal	    fMisclosureVector[3]; //!< Misclosure vector of the First, Second and Third equation respectively.
-	TReal		fObsVariance[3]; //!< Variances of the First, Second and Third equation respectively.
-};
 struct parametricUVDContrib{
+	Eigen::Vector3d fCalcMeas;
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
 
@@ -330,9 +318,7 @@ struct UVECContrib{
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib2D>> fTgTransformContrib;		
 
-	TReal		fXCompContrib[2]; //!< X vector component contribution for the First and Second equation respectively.
-	TReal		fYCompContrib[2]; //!< Y vector component contribution for the First and Second equation respectively.
-
+	TReal	    fCalcMeas[2];  //!< Calculated measurement
 	TReal	    fMisclosureVector[2];  //!< Misclosure vector of the First and Second equation respectively.
 	TReal		fObsVariance[2];  //!< Variances for the First and Second equation respectively.
 }; 
