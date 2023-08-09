@@ -488,6 +488,7 @@ parametricPLR3DContrib TContributionsGenerator::getParametricPolar3DContrib(std:
 	Eigen::Vector3d obs(plr3D.getAngle(kANGL).getRadiansValue(), plr3D.getAngle(kZEND).getRadiansValue(), plr3D.getDistance().getMetresValue());
 
 	// both angles need to be normalized (in the range -2pi, 2pi)
+	result.fCalcMeas = calcMeas;
 	result.fMisclosureVector << TAngle(calcMeas(0) - obs(0)).getRadiansValue(), TAngle(calcMeas(1) - obs(1)).getRadiansValue(), calcMeas(2) - obs(2);
 	
 	// Derivatives
@@ -1725,11 +1726,11 @@ UVECContrib	TContributionsGenerator::getUVECContrib(const TCAM& camera, const TU
 	}
 	////End of filling transformation contributions
 
-	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions, 
-						   {-1.0, 0.0}, // X contribution (i) for a first and second equation
-				           {0.0, -1.0}, // Y contribution (j) for a first and second equation
-						   {-i+(k/dz)*dx, -j+(k/dz)*dy}, //Misclosure vector for a first and second equation
-						   { pow2q(uvec.target.sigmaX) + pow2q(k / (dz)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)), pow2q(uvec.target.sigmaY) + pow2q(k / (dz)*(uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)) } }; //Obs variances
+	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions,
+		{(k / dz) * dx, (k / dz) * dy}, // CalcMeas vector for a first and second equation
+		{(k / dz) * dx - i, (k / dz) * dy - j}, // Misclosure vector for a first and second equation
+		{pow2q(uvec.target.sigmaX) + pow2q(k / (dz) * (uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering)),
+			pow2q(uvec.target.sigmaY) + pow2q(k / (dz) * (uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering))}}; // Obs variances
 	return contrib;
 }
 parametricUVDContrib 	TContributionsGenerator::getParametricUVDContrib(const TCAM& camera, const TUVD& uvd){
@@ -1750,23 +1751,23 @@ parametricUVDContrib 	TContributionsGenerator::getParametricUVDContrib(const TCA
 	relPos.setZ(relPos.getZ() + targetHeight);
 	double relPosNorm = relPos.length();
 	double x(relPos.getX().getMetresValue()), y(relPos.getY().getMetresValue()), z(relPos.getZ().getMetresValue()), zSquare=z*z;
-	Eigen::Vector3d F(k * x / z, k * y / z, z / k);
+	Eigen::Vector3d calcMeas(k * x / z, k * y / z, z / k);
 	Eigen::Vector3d obs(i, j, sDist);
-	Eigen::Vector3d misclosure = F - obs;
+	Eigen::Vector3d misclosure = calcMeas - obs;
 
-	// Jacobian of F
-	Eigen::Matrix3d JacF;
-	JacF << k / z, 0, -k * x / zSquare, 0, k / z, -k * y / zSquare, 0, 0, 1 / k;
+	// Jacobian of CalcMeas
+	Eigen::Matrix3d JacCalcMeas;
+	JacCalcMeas << k / z, 0, -k * x / zSquare, 0, k / z, -k * y / zSquare, 0, 0, 1 / k;
 
 	//CAM station's contribution is calculated in a LOR system of the station and, therefore, the station's contribution is this
-	Point3DContrib coordContribStation = {-JacF};
+	Point3DContrib coordContribStation = {-JacCalcMeas};
 
-	Point3DContrib coordContribTarget = {JacF * tg2stTrafo.getPartialDerivativeWrtPosition()};
+	Point3DContrib coordContribTarget = {JacCalcMeas * tg2stTrafo.getPartialDerivativeWrtPosition()};
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector with target's transformations contributions
 	
 	//Parameters: transformation from target's LOR into station's LOR, target position, vector of contributions to be filled
-	addTransformationsContributions3D(tg2stTrafo, uvd.targetPos->getEstimatedValue(), TFreeVector(JacF.row(0)), TFreeVector(JacF.row(1)), TFreeVector(JacF.row(2)), targetTransfContributions);
+	addTransformationsContributions3D(tg2stTrafo, uvd.targetPos->getEstimatedValue(), TFreeVector(JacCalcMeas.row(0)), TFreeVector(JacCalcMeas.row(1)), TFreeVector(JacCalcMeas.row(2)), targetTransfContributions);
 	// fill the contribution structure
 	Eigen::Vector3d obsVariance(pow2q(uvd.target.sigmaX) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering),
 		pow2q(uvd.target.sigmaY) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering),
@@ -1776,6 +1777,7 @@ parametricUVDContrib 	TContributionsGenerator::getParametricUVDContrib(const TCA
 	contrib.fStCoordContrib = coordContribStation;
 	contrib.fTgCoordContrib = coordContribTarget;
 	contrib.fTgTransformContrib = targetTransfContributions;
+	contrib.fCalcMeas = calcMeas;
 	contrib.fMisclosureVector = misclosure;
 	contrib.fObsVariance = obsVariance;
 	

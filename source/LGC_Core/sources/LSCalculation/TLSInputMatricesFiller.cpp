@@ -1770,12 +1770,7 @@ void TLSInputMatricesFiller::addUVECContribution(TCAM &camera, TLSInputMatrices 
 		}
 
 		// Setting contributions for observations into a second design matrix
-		Eigen::MatrixXd block(2, 2);
-		for (int i = 0; i < 2; i++)
-		{
-			block.row(i) << contributions.fXCompContrib[i], contributions.fYCompContrib[i];
-		}
-		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, block);
+		isProcessOK = isProcessOK && matrices->setSecondDgnMtrxBlock(firstEqIdx, firstObsIdx, -Eigen::MatrixXd::Identity(2, 2));
 
 		// Setting the misclosure vector elements
 		for (int i = 0; i < 2; i++)
