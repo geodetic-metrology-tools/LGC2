@@ -10,6 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <ContributionStructures.h>
 #include <TPointTransformer.h>
+#include <TInverseTransformation.h>
 #include <TTSTN.h>
 
 class TUVEC;
@@ -72,7 +73,7 @@ public:
 		HorDistContrib	getHorDistContrib(std::shared_ptr<TTSTN> station, const TLINE& dhor);
 
 		/// Returns contribution for the TPLR3D measurement.
-		parametricPLR3DContrib getParametricPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
+		PLR3DContrib getPolar3DContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TPLR3D& plr3D);
 
 		/// Returns contribution for the offset to a theodolite plane (TECTH) measurement.
 		ECTHContrib	 getECTHContrib(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TECTH& ecth);
@@ -89,7 +90,7 @@ public:
 		UVECContrib	getUVECContrib(const TCAM& camera, const TUVEC& uvec);
 
 		/// Returns the contribution for the TUVD measurement.
-		parametricUVDContrib getParametricUVDContrib(const TCAM &camera, const TUVD &uvd);
+		UVDContrib getUVDContrib(const TCAM &camera, const TUVD &uvd);
 
 	//@}
 

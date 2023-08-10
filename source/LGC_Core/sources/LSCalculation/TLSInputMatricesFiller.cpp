@@ -65,7 +65,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 					// In every TSTN iterate through ROMS and add contributions for every observation type
 					for (auto &itROM : itTSTN->roms)
 					{
-						addParametricPLR3DContributions(itROM, itTSTN, matrices); // Process all the PLR3D measurement in this ROM
+						addPLR3DContributions(itROM, itTSTN, matrices); // Process all the PLR3D measurement in this ROM
 						addHorAngContributions(itROM, itTSTN, matrices); // Process all the ANGL measurement in this ROM
 						addSpaDistContributions(itROM->measDIST, itTSTN, matrices);
 						addZenDistContributions(itROM->measZEND, itTSTN, matrices);
@@ -88,7 +88,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 			// In every node iterate through camera (TCAM) measurements
 			for (auto &itCAM : itTree.node->data->measurements.fCAM)
 			{
-				addParametricUVDContribution(itCAM, matrices);
+				addUVDContribution(itCAM, matrices);
 				addUVECContribution(itCAM, matrices);
 			}
 
@@ -1472,7 +1472,7 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 // PRIVATE - FILLING more-equations observation
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void TLSInputMatricesFiller::addParametricPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices)
+void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices)
 {
 	bool isProcessOK = true;
 	MatrixIndex firstEqIdx = -1;
@@ -1483,7 +1483,7 @@ void TLSInputMatricesFiller::addParametricPLR3DContributions(std::shared_ptr<TTS
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 		// Get the observation contribution
-		parametricPLR3DContrib contributions = fCGenerator.getParametricPolar3DContrib(station, rom, *meas);
+		PLR3DContrib contributions = fCGenerator.getPolar3DContrib(station, rom, *meas);
 
 		// Update the sigma
 		meas->target.sigmaCombinedPLRAngl = TAngle(sqrt(contributions.fObsVariance[0]));
@@ -1591,19 +1591,19 @@ void TLSInputMatricesFiller::addParametricPLR3DContributions(std::shared_ptr<TTS
 	}
 }
 
-void TLSInputMatricesFiller::addParametricUVDContribution(TCAM &camera, TLSInputMatrices *matrices)
+void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *matrices)
 {
 	bool isProcessOK = true;
 	MatrixIndex firstEqIdx = -1;
 	MatrixIndex firstObsIdx = -1;
-	parametricUVDContrib contributions;
+	UVDContrib contributions;
 
 	for (auto meas(camera.measUVD.begin()); meas != camera.measUVD.end(); ++meas)
 	{
 		firstEqIdx = meas->getFirstEquationIndex();
 		firstObsIdx = meas->getFirstObservationIndex();
 
-		contributions = fCGenerator.getParametricUVDContrib(camera, *meas);
+		contributions = fCGenerator.getUVDContrib(camera, *meas);
 
 		// Update the sigma
 		meas->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));

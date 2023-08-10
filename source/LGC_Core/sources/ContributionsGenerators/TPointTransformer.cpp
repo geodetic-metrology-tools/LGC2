@@ -60,7 +60,7 @@ void TPointTransformer::transform2MLA(TFreeVector& fv){
 	fla2mla.transform(fv);
 }
 
-void TPointTransformer::transform2MLA(TDenseMatrix& pmat, bool isFree)
+void TPointTransformer::transform2MLA(TDenseMatrix& pmat, bool isFreeVector)
 {
 	// throw error if row dim is not 3
 	if (pmat.rows()!=3){
@@ -69,19 +69,19 @@ void TPointTransformer::transform2MLA(TDenseMatrix& pmat, bool isFree)
 	for (int colIdx = 0; colIdx < pmat.cols(); colIdx++)
 	{
 		TVector colVec = pmat.col(colIdx);
-		if (isFree)
+		if (isFreeVector)
 		{
 			// transform to FreeVector
-			TFreeVector freeColVec(colVec[0], colVec[1], colVec[2], TCoordSysFactory::k3DCartesian);
-			transform2MLA(freeColVec);
-			pmat.col(colIdx) << freeColVec.getX(), freeColVec.getY(), freeColVec.getZ();
+			TFreeVector colVecFree(colVec);
+			transform2MLA(colVecFree);
+			pmat.col(colIdx) = colVecFree.toRealVector();
 		}
 		else
 		{
 			// transform to PositionVector
-			TPositionVector freeColVec(colVec[0], colVec[1], colVec[2], TCoordSysFactory::k3DCartesian);
-			transform2MLA(freeColVec);
-			pmat.col(colIdx) << freeColVec.getX(), freeColVec.getY(), freeColVec.getZ();
+			TPositionVector colVecPos(colVec);
+			transform2MLA(colVecPos);
+			pmat.col(colIdx) = colVecPos.toRealVector();
 		}
 	}
 }

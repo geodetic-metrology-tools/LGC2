@@ -224,6 +224,64 @@ namespace TestROOT {
 				"REF  451 100  141.421356237\n"  
 				"PT 501 100 100  \n"  
 					;
+	char const *const ROT3D = R"(*TITR
+testing Rot3D
+*OLOC
+*INSTR
+*POLAR A C .1898 0 0 0
+C 3 3 .02 6 0 0 0 0 0 0
+*FRAME rotFrame 0 0 0 12 34 56 1
+*CALA
+zero 0 0 0 
+ex 1 0 0 
+ey 0 1 0
+*ENDFRAME
+*TSTN   zero   A ROT3D  TRGT C
+*V0   
+*PLR3D
+ex 100 100 1
+ey 0 100 1
+*END
+)";
+
+	char const *const CombinedIssue = R"(*TITR
+This input file was solved with the combined method until LGC 2.6 (PLR3D)
+Due to an inaccuracy in the GN algorithm the estimated parameters are slightly wrong
+See issue https://its.cern.ch/jira/browse/SUS-2014
+*OLOC
+*INSTR
+*POLAR Station1 Target1 0 0 0 0
+Target1 0.1 1 1 0 0 0 0 0 0 0   
+*CALA
+Station1Pos              0 0 0
+RefPoint 1 0 0 
+*POIN
+FataMorgana  1 0 0
+*TSTN  Station1Pos    Station1    IHFIX     TRGT Target1  
+*V0 
+% the same measurement in ANGL ZEND DIST is using a parametric formulation which is solved correct in LGC <2.6
+% the estimated x coordinate of FataMorgana point needs to be at 1m. In LGC <2.6 it is estimated at 0.8m
+%*ANGL
+%RefPoint  0   % to give the station a horizontal orientation
+%FataMorgana -0.005
+%FataMorgana 0.005
+%*ZEND 
+%RefPoint  100
+%FataMorgana 100
+%FataMorgana 100
+%*DIST   
+%RefPoint  1
+%FataMorgana 1
+%FataMorgana 1
+*PLR3D
+RefPoint 0  100 1
+FataMorgana -0.005 100 1
+FataMorgana 0.005 100 1
+*END
+)";
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// DHOR and ECTH measurement
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

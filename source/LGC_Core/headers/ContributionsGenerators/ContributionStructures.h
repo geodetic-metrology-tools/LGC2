@@ -258,7 +258,7 @@ struct ECTHContrib{
 
 	\brief Contributions for the TPLR3D measurement made by a total station (TTSTN).
 */
-struct parametricPLR3DContrib {
+struct PLR3DContrib {
 	Eigen::Vector3d fCalcMeas;
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
@@ -287,17 +287,13 @@ struct parametricPLR3DContrib {
 
 	\brief Contributions for the TUVD measurement made by a camera (TCAM).
 */
-struct parametricUVDContrib{
+struct UVDContrib{
 	Eigen::Vector3d fCalcMeas;
 	Point3DContrib fStCoordContrib;
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the UVD measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib; 			
-
-	//Eigen::Vector3d fXCompContrib; //!< X vector component contribution for the First, Second and Third equation respectively.
-	//Eigen::Vector3d fYCompContrib; //!< Y vector component contribution for the First, Second and Third equation respectively.
-	//Eigen::Vector3d fDistContrib; //!< Distance contribution for the First, Second and Third equation respectively.
 
 	Eigen::Vector3d fMisclosureVector; //!< Misclosure vector of the First, Second and Third equation respectively.
 	Eigen::Vector3d fObsVariance; //!< Variances of the First, Second and Third equation respectively.
