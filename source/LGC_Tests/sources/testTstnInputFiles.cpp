@@ -568,6 +568,61 @@ namespace tut
         TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
         ensure_equals("V0 calculation should match for total station ST2",V0Calc, 199, 1e-8); 
 	}
+	
+	template<>
+	template<>
+	void object::test<8>()
+	{ 
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+		
+
+		set_test_name("Testing ROT3D");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/output.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+		
+		std::stringstream infiler(TestROOT::ROT3D);
+		r.read(infiler);
+		
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
+        TReal V0Calc = dataset.getAngles().begin()->getEstimatedValue().getGonsValue();
+		TDataTreeIterator root = projTest->getTree().begin();
+		TTSTN stat = *root->get()->measurements.fTSTN.begin()->get();
+		ensure_equals("RotX should be 12 gon ", stat.rotX->getEstimatedValue().getGonsValue(), 12, 1e-8);
+		ensure_equals("RotY should be 34 gon ", stat.rotY->getEstimatedValue().getGonsValue(), 34, 1e-8);
+		ensure_equals("V0 should be 56 gon ", V0Calc, 56, 1e-8);
+	}
+
+	template<>
+	template<>
+	void object::test<9>()
+	{ 
+		std::shared_ptr<TLGCData> projTest(new TLGCData);
+		
+
+		set_test_name("Testing correction of combined model issue PLR3D");
+		TReader r(projTest);
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/output.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+		
+		std::stringstream infiler(TestROOT::CombinedIssue);
+		r.read(infiler);
+		
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		const TLGCData& dataset = calcul.getData();
+		TPositionVector PT = dataset.getPoints().getObject("FataMorgana").getEstimatedValue();
+		ensure_equals("X coordinate of estimated point should be at 1m ", PT.getX().getMetresValue(), 1, 1e-8);
+	}
 
 }
 #endif
