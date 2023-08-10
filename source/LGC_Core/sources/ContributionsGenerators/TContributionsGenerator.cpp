@@ -566,7 +566,7 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 	obsVariance(2) = varM + pow2q((dZ) / distance3D) * (varInstHeight + varTgHeight) + ((pow2q(dY) + pow2q(dX)) / pow2q(distance3D)) * (varInstCent + varTgCent);
 	contrib.fObsVariance = obsVariance;
 
-	return result;
+	return conrib;
 }
 
 // Horizontal distance contributions, measurement made by TSTN
