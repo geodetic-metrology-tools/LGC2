@@ -61,7 +61,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 					// In every TSTN iterate through ROMS and add contributions for every observation type
 					for (auto &itROM : itTSTN->roms)
 					{
-						addParametricPLR3DContributions(itROM, itTSTN, matrices); // Process all the PLR3D measurement in this ROM
+						addPLR3DContributions(itROM, itTSTN, matrices); // Process all the PLR3D measurement in this ROM
 						addHorAngContributions(itROM, itTSTN, matrices); // Process all the ANGL measurement in this ROM
 						addSpaDistContributions(itROM->measDIST, itTSTN, matrices);
 						addZenDistContributions(itROM->measZEND, itTSTN, matrices);
