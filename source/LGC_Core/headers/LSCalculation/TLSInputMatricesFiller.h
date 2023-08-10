@@ -88,7 +88,6 @@ private:
 	//@{
 	/// Add the design matrices contributions for the PLR3D observation
 	void addPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices);
-	void addParametricPLR3DContributions(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices);
 
 	/// Add the design matrices contributions for the spatial dist. observations
 	void addSpaDistContributions(std::list<TLINE> &distMeas, std::shared_ptr<TTSTN> station, TLSInputMatrices *matrices);
