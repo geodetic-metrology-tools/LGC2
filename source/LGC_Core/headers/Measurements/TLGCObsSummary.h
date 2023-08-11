@@ -209,8 +209,8 @@ struct TUVDObsSummary
 	{
 		if (distObsSum.getNumberOfObs())
 			obj.addProperty("distObsSum", distObsSum);
-		if (yVectorCompObsSum.getNumberOfObs())
-			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
+		if (xVectorCompObsSum.getNumberOfObs())
+			obj.addProperty("xVectorCompObsSum", xVectorCompObsSum);
 		if (yVectorCompObsSum.getNumberOfObs())
 			obj.addProperty("yVectorCompObsSum", yVectorCompObsSum);
 	}
