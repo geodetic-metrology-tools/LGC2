@@ -22,7 +22,7 @@ class TLSLMSolver
 public:
 	TLSLMSolver(std::shared_ptr<TLGCData> data);
 	//~TLSLMSolver();
-	Eigen::VectorXd solveLM();
+	Eigen::VectorXd solve();
 
 private:
 	TLSEvaluator fEvaluator;
@@ -60,22 +60,18 @@ private:
 			//std::cout << "getting A" << std::endl;
 			Eigen::SparseMatrix<double> A = *f_evaluator.getA();
 			//std::cout << "A=" << std::endl << A.toDense() << std::endl;
-			//std::cout << "getting Binv" << std::endl;
-			Eigen::SparseMatrix<double> Binv = *f_evaluator.getBinv();
-			//std::cout << "Binv=" << std::endl << Binv.toDense() << std::endl;
 			//std::cout << "getting Pv" << std::endl;
 			Eigen::SparseMatrix<double> Pv = *f_evaluator.getPv();
 			//std::cout << "Pv=" << std::endl << Pv.toDense() << std::endl;
 			//std::cout << "diagonal of Pv" << std::endl;
 			Eigen::VectorXd diagEntries = Pv.diagonal().cwiseSqrt();
-			Eigen::SparseMatrix<double> aux = Binv * A;
+			Eigen::SparseMatrix<double> aux = -A;
 			Eigen::MatrixXd diagMat(f_evaluator.dimensions.OIndex, f_evaluator.dimensions.OIndex);
 			diagMat.setZero();
 			diagMat.diagonal() = diagEntries;
 			//std::cout << "diagonal matrix" << std::endl << diagMat << std::endl;
 
-			//std::cout << "getting Binv*A" << std::endl;
-			Eigen::SparseMatrix<double> temp = Binv * A;
+			Eigen::SparseMatrix<double> temp = -A;
 
 			//std::cout << "temp=" << std::endl << temp.toDense() << std::endl;
 			//std::cout << "scaling with diagmat" << std::endl;

@@ -45,9 +45,6 @@ public:
 	const TSparseMatrix* getA();
 	// constraint first design matrix
 	const TSparseMatrix* getA2();
-	// second design matrix
-	const TSparseMatrix* getB();
-	const TSparseMatrix* getBinv();
 	// weights
 	const TSparseMatrix* getPv();
 
