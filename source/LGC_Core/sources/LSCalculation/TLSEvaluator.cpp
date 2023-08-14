@@ -52,7 +52,7 @@ Eigen::VectorXd TLSEvaluator::getConstraintMisclosure()
 Eigen::VectorXd TLSEvaluator::getResidual()
 {
 	evaluate();
-	return -(*getBinv() * getMisclosure());
+	return getMisclosure();
 }
 Eigen::VectorXd TLSEvaluator::getWeightedResidual()
 {
@@ -73,18 +73,6 @@ const TSparseMatrix *TLSEvaluator::getA2()
 {
 	evaluate();
 	return iMat->getCnstrFirstDgnMtrx();
-}
-
-const TSparseMatrix *TLSEvaluator::getB()
-{
-	evaluate();
-	return iMat->getSecondDgnMtrx();
-}
-
-const TSparseMatrix *TLSEvaluator::getBinv()
-{
-	evaluate();
-	return iMat->getSecondDgnBlockDiagInvMtrx();
 }
 
 const TSparseMatrix *TLSEvaluator::getPv()

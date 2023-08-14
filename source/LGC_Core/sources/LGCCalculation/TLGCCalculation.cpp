@@ -68,14 +68,14 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 				// test levenberg marquardt
 				//reset for fairness vs armijo
 				//auxEval.setParameters(provPar);
-				TLSLMSolver lmSolver(fData);
-				Eigen::VectorXd solutionLM = lmSolver.solveLM();
-				std::cout << "LM sol=" << solutionLM << std::endl;
-				auxEval.setParameters(solutionLM);
-				// estimated parameters contain solution now if no reset takes place -> lgc will go ahead and converge after first iteration
+				//TLSLMSolver lmSolver(fData);
+				//Eigen::VectorXd solutionLM = lmSolver.solve();
+				//std::cout << "LM sol=" << solutionLM << std::endl;
+				//auxEval.setParameters(solutionLM);
+				//// estimated parameters contain solution now if no reset takes place -> lgc will go ahead and converge after first iteration
 			}
 			// reset parameters - to not interfere with usual LGC calculation
-			//auxEval.setParameters(provPar);
+			auxEval.setParameters(provPar);
 		}
 
 		if (fData->getConfig().sim.isActive())

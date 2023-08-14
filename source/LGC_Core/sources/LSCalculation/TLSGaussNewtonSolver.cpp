@@ -78,8 +78,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 		//	throw std::runtime_error("Some of the design matrices are not initialized!");
 		//}
 		const TSparseMatrix &Pv = *fEvaluator.getPv();
-		const TSparseMatrix &invB = *fEvaluator.getBinv();
-		invN1 = invB.transpose() * Pv * invB;
+		invN1 = Pv ;
 	//}
 //	else
 //	{ // if B is not block diagonal, invN1 needs to be computed via an explicit inversion
@@ -159,10 +158,9 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGradient(Eigen::VectorXd parameter)
 	Eigen::VectorXd misclosure = fEvaluator.getMisclosure();
 	const TSparseMatrix &Pv = *fEvaluator.getPv();
 	const TSparseMatrix &A = *fEvaluator.getA();
-	const TSparseMatrix &invB = *fEvaluator.getBinv();
 	Eigen::VectorXd residual = fEvaluator.getResidual();
 
-	grad = -(invB * A).transpose() * Pv * residual;
+	grad = A.transpose() * Pv * residual;
 
 	return grad;
 }
