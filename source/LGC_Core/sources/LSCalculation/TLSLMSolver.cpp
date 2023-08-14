@@ -14,7 +14,7 @@ TLSLMSolver::TLSLMSolver(std::shared_ptr<TLGCData> data) : fEvaluator( TLSEvalua
 }
 
 
-Eigen::VectorXd TLSLMSolver::solveLM()
+Eigen::VectorXd TLSLMSolver::solve()
 {
 	//TVector ini(fEvaluator.dimensions.UIndex);
 	TVector ini = Eigen::VectorXd::Random(fEvaluator.dimensions.UIndex);
