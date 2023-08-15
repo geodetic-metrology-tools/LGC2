@@ -10,35 +10,28 @@ TLSGaussNewtonSolver::TLSGaussNewtonSolver(std::shared_ptr<TLGCData> data) : fEv
 
 Eigen::VectorXd TLSGaussNewtonSolver::solve()
 {
-	// simple full step Gauss Newton
+	// Gauss Newton with armijo stepsize regularization
 	Eigen::VectorXd parameterIterate = fEvaluator.getEstParams();
-	//parameterIterate.setRandom();
 	Eigen::VectorXd grad = getGradient(parameterIterate);
 	Eigen::VectorXd direction(fEvaluator.dimensions.UIndex);
 	direction.setConstant(1);
 	
 	int itIdx = 0;
-	//while (direction.norm()>1e-6)
-	//while ((direction.cwiseAbs().maxCoeff() > 1e-6)|| grad.norm()>1e-2)
 	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 500)
 	{
+		// compute the search direction
 		direction = getGNDirection(parameterIterate);
+		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
-
+		// compute the residual and the weighted objective to compare the real descent vs the gradient predicted descent in the armijo linesearch method
 		Eigen::VectorXd residual = fEvaluator.getResidual();
 		double sigma0 = residual.transpose() * *fEvaluator.getPv() * residual;
 		double stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
-		//double stepsize = 1;
 
-		// do full step
-		//parameterIterate += direction;
-		// or multiply by stepsize
+		// do the regularized step
 		parameterIterate += stepsize * direction;
 
-	//	std::cout << "current sigma " << sigma0 << std::endl;
-	//	//std::cout << "GN solve method: full step GN norm = " << direction.norm() << std::endl;
-	//	std::cout << "current gradient norm = " << grad.norm() << std::endl;
-	//	std::cout << "Armijo backtracking stepsize = " << stepsize << std::endl;
+		// stepsize=armijo stepsize
 		if (itIdx % 20 == 0)
 		{
 			printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
@@ -70,36 +63,10 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 
 	// set invN1
 	TSparseMatrix invN1(nbEq, nbEq);
-	// for now assume B is always block diagonal
-	//if (im->getSecondDgnBlockDiagStatus())
-	//{
-		//if (!(im->getWeightMtrx()) || !(im->getSecondDgnBlockDiagInvMtrx()))
-		//{
-		//	throw std::runtime_error("Some of the design matrices are not initialized!");
-		//}
-		const TSparseMatrix &Pv = *fEvaluator.getPv();
-		invN1 = Pv ;
-	//}
-//	else
-//	{ // if B is not block diagonal, invN1 needs to be computed via an explicit inversion
-//	  // B*invPv*BT is symmetric and positive definite so LDLT can be used
-//		if (!(im->getWeightInvMtrx()) || !(im->getSecondDgnMtrx()))
-//		{
-//			throw std::runtime_error("Some of the design matrices are not initialized!");
-//		}
-//		const TSparseMatrix &B = *im->getSecondDgnMtrx();
-//		const TSparseMatrix &InvPv = *im->getWeightInvMtrx();
-//		if (!TSparseUtils::inverse(B * InvPv * B.transpose(), invN1, true))
-//		{
-//			logCritical() << "Matrix B*inv(Pv)*transpose(B) could not be inverted!";
-//			return false;
-//		}
-//		// copy invN1 to resultmatrices only if B is not block diagonal, otherwise it is not needed in the calcRes method
-//		rm->setInvN1Matrix(invN1);
-//	}
+	const TSparseMatrix &Pv = *fEvaluator.getPv();
+	invN1 = Pv ;
 
 	// Calculate Normal matrix N2 = At * inv( B * inv(P) * Bt ) * A , matrix dimensions (u,u)
-	// and re-sets this new matrix to the main TLSResultsMatrices object.
 	TSparseMatrix N2(nbUnk, nbUnk);
 	N2 = A.transpose() * invN1 * A;
 
@@ -144,11 +111,6 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	// we do not need the Lagrange multipliers
 	solution = solutionExt.head(nbUnk);
 	return solution;
-
-	// Copies the matrices into the members of the TResultsMatrices object
-//	rm->setNormalMatrix(NBig);
-//	rm->setSolutionVect(solution);
-
 }
 
 Eigen::VectorXd TLSGaussNewtonSolver::getGradient(Eigen::VectorXd parameter)
