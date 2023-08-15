@@ -25,7 +25,22 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 /*!
 \ingroup Evaluator
 \brief For evaluating the mathematical models at arbitrary values
+original LS problem: min |PV|^2 s.t. F(x,L+V)=0 (& C(x)=0)
+for iterative GN method in LGC, inputMatricFiller evaluates
+- "A-matrix" A = dF/dx(x,L)
+- constraint A martrix A2 = dC/dx(x)
+- "Misclosure" W = F(x,L)(=F(x)-L for the relevant parametric case)
+- constraint misclosure C = F(x)
+As the residual V can be interpreted as function of the parameter x (we only have the "parametric" case F(x)-(L+V)=0) we also implement the residual function
+- residual r(x)=V(x)=W (from 0=F(x)-(L+V)=W-V)
 */
+
+struct maskData {
+	std::vector<int> parameterIndices;
+	TSparseMatrix parMask;
+	std::vector<int> equationsIndices;
+	TSparseMatrix eqMask;
+};
 class TLSEvaluator 
 {
 
@@ -35,7 +50,7 @@ public:
 	~TLSEvaluator();
 	
 	Eigen::VectorXd getMisclosure();
-	Eigen::VectorXd getConstraintMisclosure();
+	//Eigen::VectorXd getConstraintMisclosure();
 	// using the relation W+Bv=0, assuming B is invertible
 	Eigen::VectorXd getResidual();
 	Eigen::VectorXd getWeightedResidual();
@@ -52,6 +67,7 @@ public:
 	UEOIndices dimensions;
 	void testSetterAndGetter();
 	bool testSetterEffect();
+	
 
 private:
 	// a copy of data for maipulating parameter and observation values.
@@ -61,7 +77,7 @@ private:
 	TLSInputMatrices* iMat;
 	// update iMat objects by evaluating at current parameter
 	bool evaluate();
-	// indicating thatiMat corrsponds to eval at current parameter. reset to false in any setParam method call
+	// indicating that iMat object corrsponds to evaluation at current parameter. reset to false in any setParam method call
 	bool isUptoDate = false;
 	// setter helpers
 	void setPointParams(Eigen::VectorXd para);
@@ -78,9 +94,8 @@ private:
 	void getLengthParams(Eigen::VectorXd &para);
 	void getTransformationParams(Eigen::VectorXd &para);
 	void getLineParams(Eigen::VectorXd &para);
-
-
-
+	// maskData vectors of indices of active parameters and active equations
+	maskData currentMask;
 
 };
 

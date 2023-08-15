@@ -20,13 +20,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class TLSGaussNewtonSolver
 {
 public:
-	TLSGaussNewtonSolver(std::shared_ptr<TLGCData> data);
+	TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator);
 	//~TLSGaussNewtonSolver();
 	// apply GN solver
 	Eigen::VectorXd solve();
 
 private:
-	TLSEvaluator fEvaluator;
+	std::shared_ptr<TLSEvaluator> fEvaluator;
 	Eigen::VectorXd getGNDirection(Eigen::VectorXd);
 	Eigen::VectorXd getGradient(Eigen::VectorXd);
 	// compute armijo stepsize via backtracking

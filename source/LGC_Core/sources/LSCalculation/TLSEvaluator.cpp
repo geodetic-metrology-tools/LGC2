@@ -19,6 +19,18 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMa
 	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
 
+	// initialize mask Data of active indices
+	std::vector<int> parIdx;
+	for (int i=0;i<dimensions.UIndex;i++){
+		parIdx.push_back(i);
+	}
+	std::vector<int> eqIdx;
+	for (int i=0;i<dimensions.EIndex;i++){
+		eqIdx.push_back(i);
+	}
+	currentMask.parameterIndices = parIdx;
+	currentMask.equationsIndices= eqIdx;
+
 	// // do some tests
 	// testSetterAndGetter();
 	// bool setterEffect = testSetterEffect();
@@ -44,11 +56,11 @@ Eigen::VectorXd TLSEvaluator::getMisclosure()
    	//Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
 	//return misclosure;
 }
-Eigen::VectorXd TLSEvaluator::getConstraintMisclosure()
-{
-	evaluate();
-	return iMat->getCnstrMisclosureVctr();
-}
+//Eigen::VectorXd TLSEvaluator::getConstraintMisclosure()
+//{
+//	evaluate();
+//	return iMat->getCnstrMisclosureVctr();
+//}
 Eigen::VectorXd TLSEvaluator::getResidual()
 {
 	evaluate();
