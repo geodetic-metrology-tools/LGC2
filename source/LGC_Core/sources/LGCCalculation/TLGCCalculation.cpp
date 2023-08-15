@@ -54,25 +54,27 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			// only now the constraint dimensions are set.
 			TLSEvaluator evaluator(fData);
 			TLSDerivativeTester tester(fData);
-			///   // experimental: full step GN using the evaluator,
-			///   // plan: armijo backtracking
-			///   TLSEvaluator auxEval(fData);
-			///   Eigen::VectorXd provPar = auxEval.getEstParams();
-			///   TLSGaussNewtonSolver gnObject(fData);
-			///   
-			///   // do nothing if uindex=0
-			///   if (fData.get()->fUEOIndices.UIndex > 0)
-			///   {
-			///   	Eigen::VectorXd solution = gnObject.solve();
-			///   	// test levenberg marquardt
-			///   	//reset for fairness vs armijo
-			///   	//auxEval.setParameters(provPar);
-			///   	//TLSLMSolver lmSolver(fData);
-			///   	//Eigen::VectorXd solutionLM = lmSolver.solve();
-			///   	//std::cout << "LM sol=" << solutionLM << std::endl;
-			///   }
-			///   // reset parameters - to not interfere with usual LGC calculation
-			///   auxEval.setParameters(provPar);
+			// experimental: full step GN using the evaluator,
+			// plan: armijo backtracking
+			TLSEvaluator auxEval(fData);
+			Eigen::VectorXd provPar = auxEval.getEstParams();
+			TLSGaussNewtonSolver gnObject(std::make_shared<TLSEvaluator>(auxEval));
+
+			// do nothing if uindex=0
+			if (fData.get()->fUEOIndices.UIndex > 0)
+			{
+				//Eigen::VectorXd solution = gnObject.solve();
+				// should do only one iteration
+				//solution = gnObject.solve();
+				// test levenberg marquardt
+				// reset for fairness vs armijo
+				// auxEval.setParameters(provPar);
+				// TLSLMSolver lmSolver(fData);
+				// Eigen::VectorXd solutionLM = lmSolver.solve();
+				// std::cout << "LM sol=" << solutionLM << std::endl;
+			}
+			// reset parameters - to not interfere with usual LGC calculation
+			//auxEval.setParameters(provPar);
 		}
 
 		if (fData->getConfig().sim.isActive())

@@ -4,16 +4,16 @@
 #include <iostream>
 
 
-TLSGaussNewtonSolver::TLSGaussNewtonSolver(std::shared_ptr<TLGCData> data) : fEvaluator( TLSEvaluator(data) )
+TLSGaussNewtonSolver::TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator) : fEvaluator( evaluator )
 {
 }
 
 Eigen::VectorXd TLSGaussNewtonSolver::solve()
 {
 	// Gauss Newton with armijo stepsize regularization
-	Eigen::VectorXd parameterIterate = fEvaluator.getEstParams();
+	Eigen::VectorXd parameterIterate = fEvaluator->getEstParams();
 	Eigen::VectorXd grad = getGradient(parameterIterate);
-	Eigen::VectorXd direction(fEvaluator.dimensions.UIndex);
+	Eigen::VectorXd direction(fEvaluator->dimensions.UIndex);
 	direction.setConstant(1);
 	
 	int itIdx = 0;
@@ -24,8 +24,8 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
 		// compute the residual and the weighted objective to compare the real descent vs the gradient predicted descent in the armijo linesearch method
-		Eigen::VectorXd residual = fEvaluator.getResidual();
-		double sigma0 = residual.transpose() * *fEvaluator.getPv() * residual;
+		Eigen::VectorXd residual = fEvaluator->getResidual();
+		double sigma0 = residual.transpose() * *fEvaluator->getPv() * residual;
 		double stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
 
 		// do the regularized step
@@ -46,24 +46,24 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 
 Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 {
-	fEvaluator.setParameters(parameter);
-	// compute dx, as in TLSUNiversalMtdComputer class
-	const TSparseMatrix &A = *fEvaluator.getA();
-	const TVector &W = fEvaluator.getMisclosure();
-	//im->getMisclosureVctr(); // W : Misclosures vector ("fermetures")
-	const TSparseMatrix &A2 = *fEvaluator.getA2();
-	//*im->getCnstrFirstDgnMtrx(); // A2 : First design matrix part related to constraints only
-	const TVector &W2 = fEvaluator.getConstraintMisclosure();
-	//im->getCnstrMisclosureVctr(); // W2 : Misclosures vector part related to constraints only
+	fEvaluator->setParameters(parameter);
+	// compute dx, as in TLSUniversalMtdComputer class
+	const TSparseMatrix &A = *fEvaluator->getA();
+	const TVector &W = fEvaluator->getMisclosure();
 
-	int nbUnk = fEvaluator.dimensions.UIndex;
-	int nbEq = fEvaluator.dimensions.EIndex;
-	int nbCnstr = fEvaluator.dimensions.CIndex;
+	int nbUnk = fEvaluator->dimensions.UIndex;
+	int nbEq = fEvaluator->dimensions.EIndex;
+	// assume nbConstr=0;
+	int nbCnstr = fEvaluator->dimensions.CIndex;
+	if (nbCnstr != 0)
+	{
+		throw std::runtime_error("Armijo Gauss Newton only implemented without constraints.");
+	}
 
 
 	// set invN1
 	TSparseMatrix invN1(nbEq, nbEq);
-	const TSparseMatrix &Pv = *fEvaluator.getPv();
+	const TSparseMatrix &Pv = *fEvaluator->getPv();
 	invN1 = Pv ;
 
 	// Calculate Normal matrix N2 = At * inv( B * inv(P) * Bt ) * A , matrix dimensions (u,u)
@@ -73,30 +73,23 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	// construct NBig = (N2, A2t
 	//                   A2, 0  )
 	TSparseMatrix NBig(nbUnk + nbCnstr, nbUnk + nbCnstr);
-	std::vector<TTriplet> coeffs;
-	coeffs.reserve(N2.nonZeros() + 2 * A2.nonZeros());
+	// no constraints
+	NBig = N2;
+	//std::vector<TTriplet> coeffs;
+	//coeffs.reserve(N2.nonZeros() + 2 * A2.nonZeros());
 
-	// Fill in the N2 part
-	for (int k = 0; k < N2.outerSize(); ++k)
-	{
-		for (TSparseMatrix::InnerIterator it(N2, k); it; ++it)
-			coeffs.push_back(TTriplet(it.row(), it.col(), it.value()));
-	}
+	//// Fill in the N2 part
+	//for (int k = 0; k < N2.outerSize(); ++k)
+	//{
+	//	for (TSparseMatrix::InnerIterator it(N2, k); it; ++it)
+	//		coeffs.push_back(TTriplet(it.row(), it.col(), it.value()));
+	//}
 
-	// Fill the A2 and A2T
-	for (int k = 0; k < A2.outerSize(); ++k)
-	{
-		for (TSparseMatrix::InnerIterator it(A2, k); it; ++it)
-		{
-			coeffs.push_back(TTriplet(it.row() + N2.rows(), it.col(), it.value())); // A2
-			coeffs.push_back(TTriplet(it.col(), it.row() + N2.cols(), it.value())); // A2T
-		}
-	}
-	NBig.setFromTriplets(coeffs.begin(), coeffs.end());
+	//NBig.setFromTriplets(coeffs.begin(), coeffs.end());
 
 	// Extended vector: appends W2 (constraints misclosures) to the calculated At*inv(N1)*W  vector
 	TVector VBig(nbUnk + nbCnstr);
-	VBig << A.transpose() * invN1 * W, W2;
+	VBig << A.transpose() * invN1 * W;
 
 	// Calculates solution NBig * X = -VBig and keeps only the part corresponding to adjusted parameters
 	TVector solutionExt(nbUnk + nbCnstr);
@@ -115,12 +108,12 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 
 Eigen::VectorXd TLSGaussNewtonSolver::getGradient(Eigen::VectorXd parameter)
 {
-	fEvaluator.setParameters(parameter);
-	Eigen::VectorXd grad(fEvaluator.dimensions.UIndex);
-	Eigen::VectorXd misclosure = fEvaluator.getMisclosure();
-	const TSparseMatrix &Pv = *fEvaluator.getPv();
-	const TSparseMatrix &A = *fEvaluator.getA();
-	Eigen::VectorXd residual = fEvaluator.getResidual();
+	fEvaluator->setParameters(parameter);
+	Eigen::VectorXd grad(fEvaluator->dimensions.UIndex);
+	Eigen::VectorXd misclosure = fEvaluator->getMisclosure();
+	const TSparseMatrix &Pv = *fEvaluator->getPv();
+	const TSparseMatrix &A = *fEvaluator->getA();
+	Eigen::VectorXd residual = fEvaluator->getResidual();
 
 	grad = A.transpose() * Pv * residual;
 
@@ -139,9 +132,9 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::V
 	double expectedDescent = getGradient(x0).dot(direction);
 	double alpha = 1;
 	Eigen::VectorXd trialParameter = x0 + alpha * direction;
-	fEvaluator.setParameters(trialParameter);
-	Eigen::VectorXd trialResidual = fEvaluator.getResidual();
-	double trialSigma = trialResidual.transpose() * *fEvaluator.getPv() * trialResidual;
+	fEvaluator->setParameters(trialParameter);
+	Eigen::VectorXd trialResidual = fEvaluator->getResidual();
+	double trialSigma = trialResidual.transpose() * *fEvaluator->getPv() * trialResidual;
 	double realDescent = trialSigma - sigma0;
 	// testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
 	while (c * alpha* expectedDescent < realDescent && alpha>0.1)
@@ -149,9 +142,9 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::V
 		// reduce stepsize
 		alpha *= tau;
 		trialParameter = x0 + alpha * direction;
-		fEvaluator.setParameters(trialParameter);
-		trialResidual = fEvaluator.getResidual();
-		trialSigma = trialResidual.transpose() * *fEvaluator.getPv() * trialResidual;
+		fEvaluator->setParameters(trialParameter);
+		trialResidual = fEvaluator->getResidual();
+		trialSigma = trialResidual.transpose() * *fEvaluator->getPv() * trialResidual;
 		realDescent = trialSigma - sigma0;
 	}
 	return alpha;
