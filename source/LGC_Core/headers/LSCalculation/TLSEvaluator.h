@@ -18,6 +18,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include "TLSInputMatricesFiller.h"
 
 #include <Eigen/Dense>
+#include <memory>
 
 //class TLSInputMatricesFiller;
 //class TLSResultsMatrices;
@@ -37,7 +38,7 @@ As the residual V can be interpreted as function of the parameter x (we only hav
 
 struct maskData {
 	std::vector<int> parameterIndices;
-	std::vector<int> equationsIndices;
+	std::vector<int> equationIndices;
 };
 class TLSEvaluator 
 {
