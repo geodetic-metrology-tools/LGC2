@@ -37,9 +37,7 @@ As the residual V can be interpreted as function of the parameter x (we only hav
 
 struct maskData {
 	std::vector<int> parameterIndices;
-	TSparseMatrix parMask;
 	std::vector<int> equationsIndices;
-	TSparseMatrix eqMask;
 };
 class TLSEvaluator 
 {
@@ -49,35 +47,37 @@ public:
 
 	~TLSEvaluator();
 	
-	Eigen::VectorXd getMisclosure();
+	Eigen::VectorXd getMisclosure(bool useMask = true);
 	//Eigen::VectorXd getConstraintMisclosure();
 	// using the relation W+Bv=0, assuming B is invertible
-	Eigen::VectorXd getResidual();
-	Eigen::VectorXd getWeightedResidual();
+	Eigen::VectorXd getResidual(bool useMask = true);
+	Eigen::VectorXd getWeightedResidual(bool useMask = true);
 
-	void setParameters(Eigen::VectorXd para);
+	void setParameters(Eigen::VectorXd para, bool useMask = true);
 	// first design matrix
-	const TSparseMatrix* getA();
-	// constraint first design matrix
-	const TSparseMatrix* getA2();
+	const TSparseMatrix getA(bool useMask = true);
+	//// constraint first design matrix
+	//const TSparseMatrix* getA2(bool useMask = true);
 	// weights
-	const TSparseMatrix* getPv();
+	const TSparseMatrix getPv(bool useMask = true);
 
-	Eigen::VectorXd getEstParams();
+	Eigen::VectorXd getEstParams(bool useMask = true);
 	UEOIndices dimensions;
 	void testSetterAndGetter();
 	bool testSetterEffect();
+	// maskData vectors of indices of active parameters and active equations
+	maskData currentMask;
 	
 
 private:
-	// a copy of data for maipulating parameter and observation values.
+	// a copy of data for manipulating parameter and observation values.
 	std::shared_ptr<TLGCData> fData;
 	//TLGCData fData;
 	TLSInputMatricesFiller* fMatFiller;
 	TLSInputMatrices* iMat;
 	// update iMat objects by evaluating at current parameter
 	bool evaluate();
-	// indicating that iMat object corrsponds to evaluation at current parameter. reset to false in any setParam method call
+	// indicating that iMat object corresponds to evaluation at current parameter. reset to false in any setParam method call
 	bool isUptoDate = false;
 	// setter helpers
 	void setPointParams(Eigen::VectorXd para);
@@ -94,8 +94,9 @@ private:
 	void getLengthParams(Eigen::VectorXd &para);
 	void getTransformationParams(Eigen::VectorXd &para);
 	void getLineParams(Eigen::VectorXd &para);
-	// maskData vectors of indices of active parameters and active equations
-	maskData currentMask;
+
+	Eigen::SparseMatrix<double> maskRows(std::vector<int>, Eigen::SparseMatrix<double>);
+	Eigen::SparseMatrix<double> maskColumns(std::vector<int>, Eigen::SparseMatrix<double>);
 
 };
 

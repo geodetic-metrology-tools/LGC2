@@ -58,10 +58,10 @@ private:
 			//std::cout << "start eval of Jacobian" << std::endl;
 			f_evaluator.setParameters(x);
 			//std::cout << "getting A" << std::endl;
-			Eigen::SparseMatrix<double> A = *f_evaluator.getA();
+			Eigen::SparseMatrix<double> A = f_evaluator.getA();
 			//std::cout << "A=" << std::endl << A.toDense() << std::endl;
 			//std::cout << "getting Pv" << std::endl;
-			Eigen::SparseMatrix<double> Pv = *f_evaluator.getPv();
+			Eigen::SparseMatrix<double> Pv = f_evaluator.getPv();
 			//std::cout << "Pv=" << std::endl << Pv.toDense() << std::endl;
 			//std::cout << "diagonal of Pv" << std::endl;
 			Eigen::VectorXd diagEntries = Pv.diagonal().cwiseSqrt();

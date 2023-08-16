@@ -63,7 +63,15 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			// do nothing if uindex=0
 			if (fData.get()->fUEOIndices.UIndex > 0)
 			{
-				//Eigen::VectorXd solution = gnObject.solve();
+				auxEval.currentMask.parameterIndices = std::vector<int>{5,1,2,0,4,3};
+				auxEval.currentMask.equationsIndices = std::vector<int>{5,4,3};
+				TLSGaussNewtonSolver gnObject2(std::make_shared<TLSEvaluator>(auxEval));
+				Eigen::VectorXd solution2 = gnObject2.solve();
+				std::cout << solution2 << std::endl;
+				std::cout << "global Var=" << auxEval.getEstParams(false) << std::endl<< std::endl;
+
+				Eigen::VectorXd solution = gnObject.solve();
+				std::cout << solution << std::endl;
 				// should do only one iteration
 				//solution = gnObject.solve();
 				// test levenberg marquardt
