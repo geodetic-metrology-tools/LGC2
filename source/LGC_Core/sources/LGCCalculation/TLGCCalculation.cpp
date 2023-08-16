@@ -50,40 +50,27 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		}
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
-		{
-			// only now the constraint dimensions are set.
-			TLSEvaluator evaluator(fData);
-			TLSDerivativeTester tester(fData);
-			// experimental: full step GN using the evaluator,
-			// plan: armijo backtracking
-			TLSEvaluator auxEval(fData);
-			Eigen::VectorXd provPar = auxEval.getEstParams();
-			TLSGaussNewtonSolver gnObject(std::make_shared<TLSEvaluator>(auxEval));
+	   	{
+	   		// only now the constraint dimensions are set.
+			// testing derivatives
+	   		TLSDerivativeTester tester(fData);
+	   		TLSEvaluator auxEval(fData);
+	   		Eigen::VectorXd provPar = auxEval.getEstParams();
+	   		TLSEvaluator evaluator(fData);
+	   		std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
-			// do nothing if uindex=0
-			if (fData.get()->fUEOIndices.UIndex > 0)
-			{
-				auxEval.currentMask.parameterIndices = std::vector<int>{5,1,2,0,4,3};
-				auxEval.currentMask.equationsIndices = std::vector<int>{5,4,3};
-				TLSGaussNewtonSolver gnObject2(std::make_shared<TLSEvaluator>(auxEval));
-				Eigen::VectorXd solution2 = gnObject2.solve();
-				std::cout << solution2 << std::endl;
-				std::cout << "global Var=" << auxEval.getEstParams(false) << std::endl<< std::endl;
+	   		// plan: Gauss Newton solver with armijo backtracking
+	   		TLSGaussNewtonSolver gnObject(evalPtr);
 
-				Eigen::VectorXd solution = gnObject.solve();
-				std::cout << solution << std::endl;
-				// should do only one iteration
-				//solution = gnObject.solve();
-				// test levenberg marquardt
-				// reset for fairness vs armijo
-				// auxEval.setParameters(provPar);
-				// TLSLMSolver lmSolver(fData);
-				// Eigen::VectorXd solutionLM = lmSolver.solve();
-				// std::cout << "LM sol=" << solutionLM << std::endl;
-			}
-			// reset parameters - to not interfere with usual LGC calculation
-			//auxEval.setParameters(provPar);
-		}
+	   		// do nothing if uindex=0
+	   		if (fData.get()->fUEOIndices.UIndex > 0)
+	   		{
+				// solve the problem using Gauss Newton with stepsize regularization
+	   			Eigen::VectorXd solution = gnObject.solve();
+	   		}
+	   		// reset parameters - to not interfere with usual LGC calculation
+	   		auxEval.setParameters(provPar);
+	   	}
 
 		if (fData->getConfig().sim.isActive())
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
