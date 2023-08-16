@@ -1,4 +1,3 @@
-#include "TLSGaussNewtonSolver.h"
 #include <TLSGaussNewtonSolver.h>
 #include <Logger.hpp>
 #include <iostream>
@@ -15,6 +14,24 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 	Eigen::VectorXd grad = getGradient(parameterIterate);
 	Eigen::VectorXd direction(fEvaluator->dimensions.UIndex);
 	direction.setConstant(1);
+
+	// make initial rudimentary consistency check
+	Eigen::SparseMatrix<double> A = fEvaluator->getA(true);
+    Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
+    qrSolver.compute(A);
+
+    if (qrSolver.info() == Eigen::Success) {
+		int rank = qrSolver.rank();
+		if (rank != A.cols())
+		{
+			std::stringstream errMessage;
+			errMessage << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+			throw std::runtime_error(errMessage.str());
+		}
+	} else {
+		throw std::runtime_error("Decomposition failed.");
+    }
+
 	
 	int itIdx = 0;
 	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 500)
@@ -102,7 +119,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 		logCritical() << "No solution could be found when solving equation system: Nbig * dX = -VBig (extended matrices with conditions)";
 	}
 
-	std::cout << "NBig" << std::endl << NBig.toDense() << std::endl;
+	//std::cout << "NBig" << std::endl << NBig.toDense() << std::endl;
 	TVector solution;
 	// we do not need the Lagrange multipliers
 	solution = solutionExt;

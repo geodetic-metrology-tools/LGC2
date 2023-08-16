@@ -19,7 +19,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMa
 	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
 
-	// initialize mask Data of active indices
+	// initialize mask Data of active indices, default= all variables and equations are active
 	std::vector<int> parIdx;
 	for (int i=0;i<dimensions.UIndex;i++){
 		parIdx.push_back(i);
@@ -29,7 +29,7 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMa
 		eqIdx.push_back(i);
 	}
 	currentMask.parameterIndices = parIdx;
-	currentMask.equationsIndices= eqIdx;
+	currentMask.equationIndices= eqIdx;
 
 	// // do some tests
 	// testSetterAndGetter();
@@ -48,7 +48,7 @@ Eigen::VectorXd TLSEvaluator::getMisclosure(bool useMask)
 	evaluate();
 	Eigen::VectorXd result = iMat->getMisclosureVctr();
 	if (useMask)
-		return result(currentMask.equationsIndices);
+		return result(currentMask.equationIndices);
 	return result;
 	//// create matrices for model evaluation
    	//TLSInputMatrices matrices;
@@ -81,7 +81,7 @@ const TSparseMatrix TLSEvaluator::getA(bool useMask)
 	evaluate();
 	if (useMask)
 	{
-		Eigen::SparseMatrix<double> result = maskColumns(currentMask.parameterIndices, maskRows(currentMask.equationsIndices, *iMat->getFirstDgnMtrx()));
+		Eigen::SparseMatrix<double> result = maskColumns(currentMask.parameterIndices, maskRows(currentMask.equationIndices, *iMat->getFirstDgnMtrx()));
 		return result;
 	}
 	else
@@ -101,7 +101,7 @@ const TSparseMatrix TLSEvaluator::getPv(bool useMask)
 	Eigen::SparseMatrix<double> result;
 	if (useMask)
 	{
-		result = maskColumns(currentMask.equationsIndices, maskRows(currentMask.equationsIndices, *iMat->getWeightMtrx()));
+		result = maskColumns(currentMask.equationIndices, maskRows(currentMask.equationIndices, *iMat->getWeightMtrx()));
 		return result;
 	}
 	else
