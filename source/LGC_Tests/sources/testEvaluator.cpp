@@ -104,13 +104,13 @@ void object::test<2>()
 		TLSGaussNewtonSolver gnObject(evaluator);
 		// solve the problem
 		Eigen::VectorXd firstSolution = gnObject.solve();
-		ensure_equals("z component should be estimated at 1", firstSolution(0), 1);
+		ensure_equals("z component should be estimated at 1", firstSolution(0), 1.0);
 		LGCAdjustablePoint &pointP1 = projTest->getPoints().getObject("P1");
 		// reset z coordinate of point P1 to a value far from the solution (=1)
 		pointP1.setEstVal(0,10);
 		// solve the problem again
 		Eigen::VectorXd secondSolution = gnObject.solve();
-		ensure_equals("z component should be estimated at 1", secondSolution(0), 1);
+		ensure_equals("z component should be estimated at 1", secondSolution(0), 1.0);
 }
 
 }; // namespace tut

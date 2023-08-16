@@ -79,6 +79,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSDerivativeTester.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSGaussNewtonSolver.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSLMSolver.h
+	${CORE_INCLUDE_PATH}/LSCalculation/TLSGraph.h
 	${CORE_INCLUDE_PATH}/Measurements/TMeasurements.h
 	${CORE_INCLUDE_PATH}/Measurements/TTSTN.h
 	${CORE_INCLUDE_PATH}/Measurements/TAMeas.h
@@ -161,6 +162,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSDerivativeTester.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSGaussNewtonSolver.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSLMSolver.cpp
+	${CORE_SOURCES_PATH}/LSCalculation/TLSGraph.cpp
     ${CORE_SOURCES_PATH}/Measurements/TMeasurements.cpp
 	${CORE_SOURCES_PATH}/Measurements/MeasDef.cpp
 	${CORE_SOURCES_PATH}/Measurements/TAMeas.cpp

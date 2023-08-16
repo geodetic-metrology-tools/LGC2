@@ -68,6 +68,8 @@ public:
 	bool testSetterEffect();
 	// maskData vectors of indices of active parameters and active equations
 	maskData currentMask;
+	// reset the mask to default: consider all equations and all parameters
+	void unmask();
 	
 
 private:
