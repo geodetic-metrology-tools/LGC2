@@ -42,11 +42,14 @@ TLSEvaluator::~TLSEvaluator()
 }
 
 
-Eigen::VectorXd TLSEvaluator::getMisclosure()
+Eigen::VectorXd TLSEvaluator::getMisclosure(bool useMask)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
 	evaluate();
-	return iMat->getMisclosureVctr();
+	Eigen::VectorXd result = iMat->getMisclosureVctr();
+	if (useMask)
+		return result(currentMask.equationsIndices);
+	return result;
 	//// create matrices for model evaluation
    	//TLSInputMatrices matrices;
    	//matrices.initMatrices(fData->fUEOIndices);
@@ -61,39 +64,54 @@ Eigen::VectorXd TLSEvaluator::getMisclosure()
 //	evaluate();
 //	return iMat->getCnstrMisclosureVctr();
 //}
-Eigen::VectorXd TLSEvaluator::getResidual()
+Eigen::VectorXd TLSEvaluator::getResidual(bool useMask)
 {
 	evaluate();
-	return getMisclosure();
+	return getMisclosure(useMask);
 }
-Eigen::VectorXd TLSEvaluator::getWeightedResidual()
+Eigen::VectorXd TLSEvaluator::getWeightedResidual(bool useMask)
 {
-	Eigen::VectorXd diagEntries(dimensions.OIndex);
-	diagEntries = getPv()->diagonal().cwiseSqrt();
-	Eigen::VectorXd result(dimensions.OIndex);
-	result = diagEntries.cwiseProduct(getResidual());
-	return result;
+	Eigen::VectorXd diagEntries;
+	diagEntries = getPv(useMask).diagonal().cwiseSqrt();
+	return diagEntries.cwiseProduct(getResidual(useMask));
 }
-const TSparseMatrix* TLSEvaluator::getA()
+const TSparseMatrix TLSEvaluator::getA(bool useMask)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
 	evaluate();
-	return iMat->getFirstDgnMtrx();
+	if (useMask)
+	{
+		Eigen::SparseMatrix<double> result = maskColumns(currentMask.parameterIndices, maskRows(currentMask.equationsIndices, *iMat->getFirstDgnMtrx()));
+		return result;
+	}
+	else
+		return *iMat->getFirstDgnMtrx();
+
 }
 
-const TSparseMatrix *TLSEvaluator::getA2()
+//const TSparseMatrix *TLSEvaluator::getA2(bool useMask)
+//{
+//	evaluate();
+//	return iMat->getCnstrFirstDgnMtrx();
+//}
+
+const TSparseMatrix TLSEvaluator::getPv(bool useMask)
 {
 	evaluate();
-	return iMat->getCnstrFirstDgnMtrx();
+	Eigen::SparseMatrix<double> result;
+	if (useMask)
+	{
+		result = maskColumns(currentMask.equationsIndices, maskRows(currentMask.equationsIndices, *iMat->getWeightMtrx()));
+		return result;
+	}
+	else
+	{
+		result = *iMat->getWeightMtrx();
+	}
+	return result;
 }
 
-const TSparseMatrix *TLSEvaluator::getPv()
-{
-	evaluate();
-	return iMat->getWeightMtrx();
-}
-
-Eigen::VectorXd TLSEvaluator::getEstParams()
+Eigen::VectorXd TLSEvaluator::getEstParams(bool useMask)
 {
 	Eigen::VectorXd result(fData->fUEOIndices.UIndex);
 	result.setZero();
@@ -104,28 +122,47 @@ Eigen::VectorXd TLSEvaluator::getEstParams()
 	getTransformationParams(result);
 	getLineParams(result);
 
+	if (useMask)
+		return result(currentMask.parameterIndices);
+
 	return result;
 
 }
 
 
-void TLSEvaluator::setParameters(Eigen::VectorXd para)
+void TLSEvaluator::setParameters(Eigen::VectorXd para, bool useMask)
 {
 	isUptoDate = false;
-	// check if dimension is correct
-	if (para.size() != (fData->fUEOIndices.UIndex))
+	Eigen::VectorXd globalPar;
+	if (useMask)
 	{
-		std::string message;
-		message = "variable has wrong dimension, expected: " + std::to_string(fData->fUEOIndices.UIndex) + ", actual: " + std::to_string(para.size());
-		std::cout << message << std::endl;
+		if (para.size()!=currentMask.parameterIndices.size()){
+			throw std::runtime_error("parameter needs to have consistent dimension with active parameter mask");
+		}
+		// in this case only the active parameters get touched
+		// get the full parameter vector
+		globalPar = getEstParams(false);
+		// manipulate the parameters at the active indices
+		globalPar(currentMask.parameterIndices) = para;
+	}
+	else
+	{
+		// check if dimension is correct
+		if (para.size() != (fData->fUEOIndices.UIndex))
+		{
+			std::string message;
+			message = "variable has wrong dimension, expected: " + std::to_string(fData->fUEOIndices.UIndex) + ", actual: " + std::to_string(para.size());
+			throw std::runtime_error(message);
+		}
+		globalPar = para;
 	}
 	// go through all adjustable objects, fill in the appropriate values from the parameter vector
-	setPointParams(para);
-	setAngleParams(para);
-	setPlaneParams(para);
-	setLengthParams(para);
-	setTransformationParams(para);
-	setLineParams(para);
+	setPointParams(globalPar);
+	setAngleParams(globalPar);
+	setPlaneParams(globalPar);
+	setLengthParams(globalPar);
+	setTransformationParams(globalPar);
+	setLineParams(globalPar);
 }
 
 void TLSEvaluator::testSetterAndGetter()
@@ -188,7 +225,7 @@ bool TLSEvaluator::testSetterEffect()
 			testPassed = false;
 			std::cout << "Parameter i=" << i << " seems to have no influence on the misclosure." << std ::endl;
 			// print norm of associated column of Jacobian in this case. if its 0 this means LGC agrees that no influence on misclosure.. consi check should also complain in this case
-			TDenseMatrix Jac = getA()->toDense();
+			TDenseMatrix Jac = getA().toDense();
 			std::cout << "norm of i-th column of LGC Jacobian = " << Jac.col(i).norm() << std::endl;
 		}
 	}
@@ -390,6 +427,18 @@ void TLSEvaluator::getLineParams(Eigen::VectorXd & para)
 			para.middleRows(line.getFirstUidx(), line.getNumUnkn()) = vect(line.getRelativeUnknIndices());
 		}
 	}
+}
+
+Eigen::SparseMatrix<double> TLSEvaluator::maskRows(std::vector<int> actRows, Eigen::SparseMatrix<double> mat)
+{
+	// the dirty way, conversion to dense
+	return (mat.toDense()(actRows, Eigen::indexing::all)).sparseView();
+}
+
+Eigen::SparseMatrix<double> TLSEvaluator::maskColumns(std::vector<int> actCols, Eigen::SparseMatrix<double> mat)
+{	
+	// the dirty way, conversion to dense
+	return (mat.toDense()(Eigen::indexing::all, actCols)).sparseView();
 }
 
 void TLSEvaluator::getLengthParams(Eigen::VectorXd & para)
