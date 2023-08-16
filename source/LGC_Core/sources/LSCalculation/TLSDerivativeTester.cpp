@@ -24,7 +24,9 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 	// evaluate A matrix according to inputMatrixFiller, contributionGenerator etc..
 	//const TSparseMatrix* computedJacobian 
 	fEvaluator.setParameters(prov);
-	TDenseMatrix computedJacobian = fEvaluator.getA()->toDense();
+	Eigen::SparseMatrix<double> test =  fEvaluator.getA();
+	TDenseMatrix test2 = test.toDense();
+	TDenseMatrix computedJacobian = fEvaluator.getA().toDense();
 	
 	// evaluate A matrix according to finite differences applied to the misclosure vector
 	Eigen::MatrixXd finiteDifferenceJacobian= computeFiniteDifferenceJacobian(prov);
@@ -74,7 +76,7 @@ Eigen::MatrixXd TLSDerivativeTester::computeFiniteDifferenceJacobian(Eigen::Vect
 	fEvaluator.setParameters(vec);
 	Eigen::VectorXd miscBase = fEvaluator.getMisclosure();
 	// evaluate A matrix at basepoint
-	Eigen::MatrixXd ABase = fEvaluator.getA()->toDense();
+	Eigen::MatrixXd ABase = fEvaluator.getA().toDense();
 
 	int nParam = fEvaluator.dimensions.UIndex;
 	int nObs = fEvaluator.dimensions.OIndex;
