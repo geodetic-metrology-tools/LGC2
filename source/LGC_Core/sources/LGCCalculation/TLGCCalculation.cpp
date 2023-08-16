@@ -14,6 +14,7 @@
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
 #include <TLSEvaluator.h>
+#include <TLSGraph.h>
 #include "TLSSimulation.h"
 #include "TVAbstractAlgorithm.h"
 
@@ -62,9 +63,11 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   		// plan: Gauss Newton solver with armijo backtracking
 	   		TLSGaussNewtonSolver gnObject(evalPtr);
 
-	   		// do nothing if uindex=0
-	   		if (fData.get()->fUEOIndices.UIndex > 0)
+	   		// only use armijo gn if there are variables and there is no constraint
+	   		if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0 )
 	   		{
+				// experiment with the dulmage decomposition
+				computeDulmageSequence();
 				// solve the problem using Gauss Newton with stepsize regularization
 	   			Eigen::VectorXd solution = gnObject.solve();
 	   		}
@@ -106,10 +109,102 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	return successCalculation;
 }
 
-void TLGCCalculation::initialiseObsSummaries()
-{
-	// Iterate the whole tree and initialise the
-	// observation summaries in each node:
-	for (auto &node : fData->getTree())
-		node->measurements.initialiseObsSummaries();
+void TLGCCalculation::initialiseObsSummaries(){
+
+    // Iterate the whole tree and initialise the
+    // observation summaries in each node:
+    for(auto &node : fData->getTree())
+        node->measurements.initialiseObsSummaries();
+}
+
+void TLGCCalculation::computeDulmageSequence(){
+	// create a Evaluater pointer
+	TLSEvaluator auxEval(fData);
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(auxEval);
+	// use it to create a Gauss Newton solver object
+	TLSGaussNewtonSolver gnSolver(evalPtr);
+
+	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
+	Eigen::SparseMatrix<double> A = evalPtr->getA();
+	Eigen::MatrixXd A_dense = A.toDense();
+
+	// create bipartite Graph encoding equation-parameter incidence
+	BipGraph G(A);
+	// get the maximum matching and the associated fine Dulmage decomposition
+	vector<std::pair<std::set<int>, std::set<int>>> fineDM = G.getFineDulmage();
+	vector<int> orderedPIdx;
+	vector<int> orderedEIdx;
+	///   int count = 1;
+	///   for (auto comp : fineDM)
+	///   {
+	///   	set<int> eqComp = comp.first;
+	///   	set<int> parComp = comp.second;
+	///   	std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
+	///   	std::cout << "par Idx: ";
+	///   	for (auto pIdx : parComp)
+	///   	{
+	///   		orderedPIdx.push_back(pIdx - 1);
+	///   		std::cout << pIdx << " , ";
+	///   	};
+	///   	std::cout << std::endl;
+	///   	std::cout << "eqn Idx: ";
+	///   	for (auto eqIdx : eqComp)
+	///   	{
+	///   		orderedEIdx.push_back(eqIdx - 1);
+	///   		std::cout << eqIdx << " , ";
+	///   	};
+	///   	std::cout << std::endl;
+	///   	count++;
+	///   }
+
+	///   // comparing the sparsity patterns
+	///   Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
+	///   Eigen::SparseMatrix<double> test_sparse = test.sparseView();
+	///   std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	///   //std::cout << A.toDense() << std ::endl;
+	///   plotSparsity(A);
+	///   std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	///   plotSparsity(test_sparse);
+
+	// create a sequence of well defined subproblems of increasing dimension and dolve them using the masking method with the Gn solver
+	
+	// loop over the components of the DM decomposition, following the topological ordering beginning from the block that depends on the least number of parameters
+	// set (or alternatively add them) the parameter mask to the parameters of the block, the equation mask to the equations of the block
+	// solve the problem
+
+	evalPtr->currentMask.equationIndices.clear();
+	evalPtr->currentMask.parameterIndices.clear();
+	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
+	{
+		// get the eq and par indices
+		std::vector<int> eqIndices, parIndices;
+		for (auto eqIdx : compIt->first)
+		{
+			eqIndices.push_back(eqIdx);
+		}
+		for (auto parIdx : compIt->second)
+		{
+			parIndices.push_back(parIdx);
+		}
+		// use them for the mask
+		// reset mask
+		//evalPtr->currentMask.equationIndices = eqIndices;
+		//evalPtr->currentMask.parameterIndices = parIndices;
+		// succesively increase set of active parameters
+		for (auto eqIdx : eqIndices)
+		{
+			evalPtr->currentMask.equationIndices.push_back(eqIdx);
+		}
+		for (auto parIdx : parIndices)
+		{
+			evalPtr->currentMask.parameterIndices.push_back(parIdx);
+		}
+		// use the gn solver to solve the corrsponding subproblem
+		gnSolver.solve();
+	}
+	// remove the mask and solve again
+	evalPtr->unmask();
+	// final solve
+	gnSolver.solve();
+
 }
