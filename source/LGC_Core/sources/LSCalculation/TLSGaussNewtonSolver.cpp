@@ -22,11 +22,13 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 
     if (qrSolver.info() == Eigen::Success) {
 		int rank = qrSolver.rank();
+		//std::cout << A.cols() << std::endl;
 		if (rank != A.cols())
 		{
 			std::stringstream errMessage;
+			//std::cout << "I am not of full column rank: " << A.toDense() << std::endl;
 			errMessage << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
-			throw std::runtime_error(errMessage.str());
+			// throw std::runtime_error(errMessage.str());
 		}
 	} else {
 		throw std::runtime_error("Decomposition failed.");

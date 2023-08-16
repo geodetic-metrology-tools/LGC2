@@ -19,17 +19,9 @@ TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMa
 	//fMatFiller(filler);
 	dimensions = data->fUEOIndices;
 
-	// initialize mask Data of active indices, default= all variables and equations are active
-	std::vector<int> parIdx;
-	for (int i=0;i<dimensions.UIndex;i++){
-		parIdx.push_back(i);
-	}
-	std::vector<int> eqIdx;
-	for (int i=0;i<dimensions.EIndex;i++){
-		eqIdx.push_back(i);
-	}
-	currentMask.parameterIndices = parIdx;
-	currentMask.equationIndices= eqIdx;
+	//initialize the mask: all equations and parameters are considered.
+	unmask();
+
 
 	// // do some tests
 	// testSetterAndGetter();
@@ -41,7 +33,20 @@ TLSEvaluator::~TLSEvaluator()
 	//delete fMatFiller;
 }
 
-
+void TLSEvaluator::unmask()
+{
+	// initialize mask Data of active indices, default= all variables and equations are active
+	std::vector<int> parIdx;
+	for (int i=0;i<dimensions.UIndex;i++){
+		parIdx.push_back(i);
+	}
+	std::vector<int> eqIdx;
+	for (int i=0;i<dimensions.EIndex;i++){
+		eqIdx.push_back(i);
+	}
+	currentMask.parameterIndices = parIdx;
+	currentMask.equationIndices= eqIdx;
+}
 Eigen::VectorXd TLSEvaluator::getMisclosure(bool useMask)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
