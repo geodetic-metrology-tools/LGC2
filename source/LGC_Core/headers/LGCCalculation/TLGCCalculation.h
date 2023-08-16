@@ -48,7 +48,10 @@ class TLGCCalculation{
 	private:
     
     // Initialise the observation summaries in measurements
-    void initialiseObsSummaries();
+		void initialiseObsSummaries();
+
+	// split the problem in asequence of subproblems of increasing dimensions
+	void computeDulmageSequence();
 
 	// contains references: not assignable
 	TLGCCalculation& operator=(const TLGCCalculation&);
