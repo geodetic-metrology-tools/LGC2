@@ -50,7 +50,7 @@ class TLGCCalculation{
     // Initialise the observation summaries in measurements
 		void initialiseObsSummaries();
 
-	// split the problem in asequence of subproblems of increasing dimensions
+	// split the problem in asequence of subproblems of increasing dimensions corresponding to the fine dulmage decomposition
 	void computeDulmageSequence();
 
 	// contains references: not assignable
