@@ -22,11 +22,12 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 
     if (qrSolver.info() == Eigen::Success) {
 		int rank = qrSolver.rank();
+		//std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
 		//std::cout << A.cols() << std::endl;
 		if (rank != A.cols())
 		{
 			std::stringstream errMessage;
-			//std::cout << "I am not of full column rank: " << A.toDense() << std::endl;
+			//std::cout << "I am not of full column rank: " << std::endl << A.toDense() << std::endl;
 			errMessage << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
 			// throw std::runtime_error(errMessage.str());
 		}
@@ -46,6 +47,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 		Eigen::VectorXd residual = fEvaluator->getResidual();
 		double sigma0 = residual.transpose() * fEvaluator->getPv() * residual;
 		double stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
+		//double stepsize = 1;
 
 		// do the regularized step
 		parameterIterate += stepsize * direction;
@@ -112,19 +114,21 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	VBig = A.transpose() * invN1 * W;
 
 	// Calculates solution NBig * X = -VBig and keeps only the part corresponding to adjusted parameters
-	TVector solutionExt;
+	//TVector solutionExt;
 	//(nbUnk + nbCnstr);
 
+	// use qr decomposition
+    Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig);
+	TVector solution = qr.solve(-VBig);
+	//std::cout << "dx=" << std::endl << solution << std::endl;
 	// use Cholesky decomposition if nbCnstr=0, otherwise SparseLU as positive definiteness of NBig may be violated
-	if (!TSparseUtils::solveUnique(NBig, -VBig, solutionExt, (nbCnstr == 0), (nbCnstr == 0), true))
-	{
-		logCritical() << "No solution could be found when solving equation system: Nbig * dX = -VBig (extended matrices with conditions)";
-	}
+	//if (!TSparseUtils::solveUnique(NBig, -VBig, solutionExt, (nbCnstr == 0), (nbCnstr == 0), true))
+	//{
+	//	logCritical() << "No solution could be found when solving equation system: Nbig * dX = -VBig (extended matrices with conditions)";
+	//}
 
-	//std::cout << "NBig" << std::endl << NBig.toDense() << std::endl;
-	TVector solution;
-	// we do not need the Lagrange multipliers
-	solution = solutionExt;
+	////std::cout << "NBig" << std::endl << NBig.toDense() << std::endl;
+	//TVector solution;
 	return solution;
 }
 
