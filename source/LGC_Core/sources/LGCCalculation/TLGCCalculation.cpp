@@ -67,7 +67,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   		if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0 )
 	   		{
 				// experiment with the dulmage decomposition
-				computeDulmageSequence();
+				// computeDulmageSequence();
 				// solve the problem using Gauss Newton with stepsize regularization
 	   			Eigen::VectorXd solution = gnObject.solve();
 	   		}
@@ -213,6 +213,29 @@ void TLGCCalculation::computeDulmageSequence(){
 	  	{
 	  		evalPtr->currentMask.parameterIndices.push_back(parIdx);
 	  	}
+
+		// make rudimentary consistency check before solve
+		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
+		// this can happen when for example a point is measured by two ANGL measurements from the same station, the corresponding 2x2 block (eq x pars) will have no zeros but the columns are linearly dependant
+		Eigen::SparseMatrix<double> A = evalPtr->getA(true);
+		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
+		qrSolver.compute(A);
+
+		if (qrSolver.info() == Eigen::Success)
+		{
+			int rank = qrSolver.rank();
+			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
+			if (rank != A.cols())
+			{
+				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Decomposition failed.");
+		}
+
+
 		// use the gn solver to solve the corrsponding subproblem
 		std::cout << "Solving block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
 		gnSolver.solve();
