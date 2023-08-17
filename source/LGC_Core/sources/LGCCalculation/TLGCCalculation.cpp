@@ -127,37 +127,39 @@ void TLGCCalculation::computeDulmageSequence(){
 	vector<std::pair<std::set<int>, std::set<int>>> fineDM = G.getFineDulmage();
 	vector<int> orderedPIdx;
 	vector<int> orderedEIdx;
-	///   int count = 1;
-	///   for (auto comp : fineDM)
-	///   {
-	///   	set<int> eqComp = comp.first;
-	///   	set<int> parComp = comp.second;
-	///   	std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
-	///   	std::cout << "par Idx: ";
-	///   	for (auto pIdx : parComp)
-	///   	{
-	///   		orderedPIdx.push_back(pIdx - 1);
-	///   		std::cout << pIdx << " , ";
-	///   	};
-	///   	std::cout << std::endl;
-	///   	std::cout << "eqn Idx: ";
-	///   	for (auto eqIdx : eqComp)
-	///   	{
-	///   		orderedEIdx.push_back(eqIdx - 1);
-	///   		std::cout << eqIdx << " , ";
-	///   	};
-	///   	std::cout << std::endl;
-	///   	count++;
-	///   }
 
-	///   // comparing the sparsity patterns
-	///   Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
-	///   Eigen::SparseMatrix<double> test_sparse = test.sparseView();
-	///   std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	///   //std::cout << A.toDense() << std ::endl;
-	///   plotSparsity(A);
-	///   std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
-	///   plotSparsity(test_sparse);
+	// print information on the strongly connected components
+	int count = 1;
+	for (auto comp : fineDM)
+	{
+		set<int> eqComp = comp.first;
+		set<int> parComp = comp.second;
+		std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
+		std::cout << "par Idx: ";
+		for (auto pIdx : parComp)
+		{
+			orderedPIdx.push_back(pIdx - 1);
+			std::cout << pIdx << " , ";
+		};
+		std::cout << std::endl;
+		std::cout << "eqn Idx: ";
+		for (auto eqIdx : eqComp)
+		{
+			orderedEIdx.push_back(eqIdx - 1);
+			std::cout << eqIdx << " , ";
+		};
+		std::cout << std::endl;
+		count++;
+	}
+
+	// // comparing the sparsity patterns
+	// Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
+	// Eigen::SparseMatrix<double> test_sparse = test.sparseView();
+	// std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	// // std::cout << A.toDense() << std ::endl;
+	// plotSparsity(A);
+	// std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	// plotSparsity(test_sparse);
 
 	// create a sequence of well defined subproblems of increasing dimension and dolve them using the masking method with the Gn solver
 	
@@ -165,34 +167,47 @@ void TLGCCalculation::computeDulmageSequence(){
 	// set (or alternatively add them) the parameter mask to the parameters of the block, the equation mask to the equations of the block
 	// solve the problem
 
+	// perturb initial value to avoid singular matrices
+//	TVector iniVal = evalPtr->getEstParams(false);
+//	Eigen::VectorXd randVal(iniVal.rows());
+//	randVal.setRandom();
+//	//randVal *= 1e-2;
+//	randVal *= 0;
+//	iniVal += randVal;
+//	evalPtr->setParameters(iniVal, false);
+
 	evalPtr->currentMask.equationIndices.clear();
 	evalPtr->currentMask.parameterIndices.clear();
+	int blockNumber = 0;
 	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
 	{
+		blockNumber++;
 		// get the eq and par indices
 		std::vector<int> eqIndices, parIndices;
 		for (auto eqIdx : compIt->first)
 		{
-			eqIndices.push_back(eqIdx);
+			eqIndices.push_back(eqIdx - 1);
 		}
 		for (auto parIdx : compIt->second)
 		{
-			parIndices.push_back(parIdx);
+			parIndices.push_back(parIdx - 1);
 		}
-		// use them for the mask
-		// reset mask
-		//evalPtr->currentMask.equationIndices = eqIndices;
-		//evalPtr->currentMask.parameterIndices = parIndices;
-		// succesively increase set of active parameters
-		for (auto eqIdx : eqIndices)
-		{
-			evalPtr->currentMask.equationIndices.push_back(eqIdx);
-		}
-		for (auto parIdx : parIndices)
-		{
-			evalPtr->currentMask.parameterIndices.push_back(parIdx);
-		}
+		//   // use them for the mask
+	 	//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
+	 	//   evalPtr->currentMask.equationIndices = eqIndices;
+	 	//   evalPtr->currentMask.parameterIndices = parIndices;
+	  	// OPTION 2: 
+	  	// gradually increase set of active parameters and equations
+	  	for (auto eqIdx : eqIndices)
+	  	{
+	  		evalPtr->currentMask.equationIndices.push_back(eqIdx);
+	  	}
+	  	for (auto parIdx : parIndices)
+	  	{
+	  		evalPtr->currentMask.parameterIndices.push_back(parIdx);
+	  	}
 		// use the gn solver to solve the corrsponding subproblem
+		std::cout << "Solving block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
 		gnSolver.solve();
 	}
 	// remove the mask and solve again
