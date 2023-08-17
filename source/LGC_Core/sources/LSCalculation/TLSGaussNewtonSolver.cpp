@@ -15,25 +15,6 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 	Eigen::VectorXd direction(fEvaluator->dimensions.UIndex);
 	direction.setConstant(1);
 
-	// make initial rudimentary consistency check
-	Eigen::SparseMatrix<double> A = fEvaluator->getA(true);
-    Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
-    qrSolver.compute(A);
-
-    if (qrSolver.info() == Eigen::Success) {
-		int rank = qrSolver.rank();
-		//std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
-		//std::cout << A.cols() << std::endl;
-		if (rank != A.cols())
-		{
-			std::stringstream errMessage;
-			//std::cout << "I am not of full column rank: " << std::endl << A.toDense() << std::endl;
-			errMessage << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
-			// throw std::runtime_error(errMessage.str());
-		}
-	} else {
-		throw std::runtime_error("Decomposition failed.");
-    }
 
 	
 	int itIdx = 0;
