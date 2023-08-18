@@ -67,7 +67,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   		if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0 )
 	   		{
 				// experiment with the dulmage decomposition
-				// computeDulmageSequence();
+				//computeDulmageSequence();
 				// solve the problem using Gauss Newton with stepsize regularization
 	   			Eigen::VectorXd solution = gnObject.solve();
 	   		}
@@ -125,50 +125,87 @@ void TLGCCalculation::computeDulmageSequence(){
 	TLSGaussNewtonSolver gnSolver(evalPtr);
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
-	Eigen::SparseMatrix<double> A = evalPtr->getA();
-	Eigen::MatrixXd A_dense = A.toDense();
+	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
+	Eigen::MatrixXd A_dense = A_global.toDense();
 
 	// create bipartite Graph encoding equation-parameter incidence
-	BipGraph G(A);
+	BipGraph G(A_global);
 	// get the maximum matching and the associated fine Dulmage decomposition
 	vector<std::pair<std::set<int>, std::set<int>>> fineDM = G.getFineDulmage();
 	vector<int> orderedPIdx;
 	vector<int> orderedEIdx;
 
-	// print information on the strongly connected components
-	int count = 1;
-	for (auto comp : fineDM)
+//	// print information on the strongly connected components
+//	int count = 1;
+//	for (auto comp : fineDM)
+//	{
+//		set<int> eqComp = comp.first;
+//		set<int> parComp = comp.second;
+//		std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
+//		std::cout << "par Idx: ";
+//		for (auto pIdx : parComp)
+//		{
+//			orderedPIdx.push_back(pIdx - 1);
+//			std::cout << pIdx << " , ";
+//		};
+//		std::cout << std::endl;
+//		std::cout << "eqn Idx: ";
+//		for (auto eqIdx : eqComp)
+//		{
+//			orderedEIdx.push_back(eqIdx - 1);
+//			std::cout << eqIdx << " , ";
+//		};
+//		std::cout << std::endl;
+//		count++;
+//	}
+
+//  comparing the sparsity patterns
+	//	Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
+	//	Eigen::SparseMatrix<double> test_sparse = test.sparseView();
+	//	std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	//	// std::cout << A.toDense() << std ::endl;
+	//	plotSparsity(A_global);
+	//	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	//	plotSparsity(test_sparse);
+
+
+	// find a subset of row indices such that the reduced A matrix has full rank (essentially a maximum matching with real full rank opposed to only structural full rank)
+	std::vector<int> chosenRows = findFullRankSubMatrix(A_global);
+	Eigen::SparseMatrix<double>	intermediateA = A_dense(chosenRows, Eigen::indexing::all).sparseView();
+//	plotSparsity(intermediateA);
+	// create bipartite Graph encoding equation-parameter incidence
+	BipGraph intermediateG(intermediateA);
+	// check the fine dulmage decomposition of the reduced matrix
+	vector<std::pair<std::set<int>, std::set<int>>> intermediateFineDM = intermediateG.getFineDulmage();
+
+
+
+	// check if the diagonal blocks of the dulmage decomposition are of full rank
+	std::cout << "full A matrix has dimensions " << A_dense.fullPivHouseholderQr().rank() << std::endl;
+	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
 	{
-		set<int> eqComp = comp.first;
-		set<int> parComp = comp.second;
-		std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
-		std::cout << "par Idx: ";
-		for (auto pIdx : parComp)
+		std::vector<int> eqIndices, parIndices;
+		for (auto eqIdx : compIt->first)
 		{
-			orderedPIdx.push_back(pIdx - 1);
-			std::cout << pIdx << " , ";
-		};
-		std::cout << std::endl;
-		std::cout << "eqn Idx: ";
-		for (auto eqIdx : eqComp)
+			eqIndices.push_back(eqIdx - 1);
+		}
+		for (auto parIdx : compIt->second)
 		{
-			orderedEIdx.push_back(eqIdx - 1);
-			std::cout << eqIdx << " , ";
-		};
+			parIndices.push_back(parIdx - 1);
+		}
+		Eigen::MatrixXd diagBlock = A_dense(eqIndices, parIndices);
+		int blockSize = parIndices.size();
+		int blockRank =  diagBlock.fullPivHouseholderQr().rank();
+		std::cout << "Block has dimensions " << blockSize << " and rank " << blockRank;
+		if (blockRank < blockSize)
+		{
+			std::cout << " Block is rank deficient.";
+		}
 		std::cout << std::endl;
-		count++;
+
 	}
 
-	// // comparing the sparsity patterns
-	// Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
-	// Eigen::SparseMatrix<double> test_sparse = test.sparseView();
-	// std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	// // std::cout << A.toDense() << std ::endl;
-	// plotSparsity(A);
-	// std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
-	// plotSparsity(test_sparse);
-
-	// create a sequence of well defined subproblems of increasing dimension and dolve them using the masking method with the Gn solver
+	// create a sequence of well defined subproblems of increasing dimension and solve them using the masking method with the Gn solver
 	
 	// loop over the components of the DM decomposition, following the topological ordering beginning from the block that depends on the least number of parameters
 	// set (or alternatively add them) the parameter mask to the parameters of the block, the equation mask to the equations of the block
@@ -205,14 +242,17 @@ void TLGCCalculation::computeDulmageSequence(){
 	 	//   evalPtr->currentMask.parameterIndices = parIndices;
 	  	// OPTION 2: 
 	  	// gradually increase set of active parameters and equations
-	  	for (auto eqIdx : eqIndices)
-	  	{
-	  		evalPtr->currentMask.equationIndices.push_back(eqIdx);
-	  	}
-	  	for (auto parIdx : parIndices)
+	  	  	for (auto parIdx : parIndices)
 	  	{
 	  		evalPtr->currentMask.parameterIndices.push_back(parIdx);
 	  	}
+		//for (auto eqIdx : eqIndices)
+		//{
+		//	evalPtr->currentMask.equationIndices.push_back(eqIdx);
+		//}
+
+		// alternative use all eqautions associated
+		evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
 
 		// make rudimentary consistency check before solve
 		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
@@ -223,11 +263,19 @@ void TLGCCalculation::computeDulmageSequence(){
 
 		if (qrSolver.info() == Eigen::Success)
 		{
+			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
 			int rank = qrSolver.rank();
 			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
 			if (rank != A.cols())
 			{
 				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+			}
+			else
+			{
+				// only solve if full rank
+				// use the gn solver to solve the corrsponding subproblem
+				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
+				gnSolver.solve();
 			}
 		}
 		else
@@ -236,13 +284,38 @@ void TLGCCalculation::computeDulmageSequence(){
 		}
 
 
-		// use the gn solver to solve the corrsponding subproblem
-		std::cout << "Solving block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
-		gnSolver.solve();
 	}
 	// remove the mask and solve again
 	evalPtr->unmask();
 	// final solve
 	gnSolver.solve();
 
+}
+
+vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
+{
+	int coldim = A.cols();
+	int rowDim = A.rows();
+	vector<int> associatedEqIndices;
+	// loop through equations ~ rows of matrix A
+	for (int rowIdx = 0; rowIdx < rowDim; rowIdx++)
+	{
+		bool isAssociated = true;
+		// check if row/eq only depends on parameters in parIdx
+		for (Eigen::SparseMatrix<double>::InnerIterator it(A, rowIdx); it; ++it)
+		{
+			// test if parameter is in set
+			if (std::count(parIdx.begin(), parIdx.end(), it.col()) == 0)
+			{
+				isAssociated = false;
+				break;
+			}
+			//std::cout << "Row: " << it.row() << " Column: " << it.col() << " Value: " << it.value() << std::endl;
+		}
+		if (isAssociated)
+		{
+			associatedEqIndices.push_back(rowIdx);
+		}
+	}
+	return associatedEqIndices;
 }
