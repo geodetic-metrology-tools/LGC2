@@ -69,4 +69,7 @@ class TLGCCalculation{
 	TLSResultsMatrices* fResultsMtr;
 };
 
+// get the set of equation indices such that the associated equations only depend on parameters in the parameter index set.
+// looking at sparsity pattern of A
+std::vector<int> getAssociatedEquations(std::vector<int> parIdx, TSparseMatrix A);
 #endif
