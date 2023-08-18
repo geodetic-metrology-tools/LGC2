@@ -6,6 +6,7 @@
 #include <tuple>
 #include <stack>
 #include <Eigen/Sparse>
+#include <Eigen/Dense>
 using namespace std;
 #define NIL -1
 #define INF INT_MAX
@@ -104,4 +105,7 @@ private:
 };
 
 void plotSparsity(Eigen::SparseMatrix<double> A);
+
+// input: full rank A matrix (full column rank) output submatrix with same rank but quadrtaic (eliminated rows)
+std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A);
 
