@@ -21,7 +21,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 500)
 	{
 		// compute the search direction
-		direction = getGNDirection(parameterIterate);
+		direction = getGNDirection(parameterIterate, false);
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
 		// compute the residual and the weighted objective to compare the real descent vs the gradient predicted descent in the armijo linesearch method
@@ -46,11 +46,12 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 }
 
 
-Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
+Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, bool useScaling)
 {
 	fEvaluator->setParameters(parameter);
 	// compute dx, as in TLSUniversalMtdComputer class
 	const TSparseMatrix &A = fEvaluator->getA();
+
 	const TVector &W = fEvaluator->getMisclosure();
 
 	int nbUnk = fEvaluator->dimensions.UIndex;
@@ -77,39 +78,55 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	TSparseMatrix NBig;
 	// no constraints
 	NBig = N2;
-	//std::vector<TTriplet> coeffs;
-	//coeffs.reserve(N2.nonZeros() + 2 * A2.nonZeros());
-
-	//// Fill in the N2 part
-	//for (int k = 0; k < N2.outerSize(); ++k)
-	//{
-	//	for (TSparseMatrix::InnerIterator it(N2, k); it; ++it)
-	//		coeffs.push_back(TTriplet(it.row(), it.col(), it.value()));
-	//}
-
-	//NBig.setFromTriplets(coeffs.begin(), coeffs.end());
-
-	// Extended vector: appends W2 (constraints misclosures) to the calculated At*inv(N1)*W  vector
 	TVector VBig;
-	//(nbUnk + nbCnstr);
 	VBig = A.transpose() * invN1 * W;
 
 	// Calculates solution NBig * X = -VBig and keeps only the part corresponding to adjusted parameters
 	//TVector solutionExt;
 	//(nbUnk + nbCnstr);
+	
 
-	// use qr decomposition
-    Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig);
-	TVector solution = qr.solve(-VBig);
-	//std::cout << "dx=" << std::endl << solution << std::endl;
-	// use Cholesky decomposition if nbCnstr=0, otherwise SparseLU as positive definiteness of NBig may be violated
-	//if (!TSparseUtils::solveUnique(NBig, -VBig, solutionExt, (nbCnstr == 0), (nbCnstr == 0), true))
-	//{
-	//	logCritical() << "No solution could be found when solving equation system: Nbig * dX = -VBig (extended matrices with conditions)";
-	//}
+	// solve the system
+	TVector solution;
+	// 
+	// scale the columns of NBig
+	if (useScaling == true)
+	{
+		Eigen::MatrixXd NBigdense = NBig.toDense();
+		int nCol = NBig.cols();
+		Eigen::VectorXd colScale(nCol);
+		for (int j = 0; j < nCol; j++)
+		{
+			double colNorm = NBigdense.col(j).norm();
+			if (colNorm < 1e-16)
+			{
+				throw std::runtime_error("NBig has a zero-column, so no full rank!");
+			}
+			colScale(j) = 1 / colNorm;
+		}
 
-	////std::cout << "NBig" << std::endl << NBig.toDense() << std::endl;
-	//TVector solution;
+		// scale NBig
+		//  define diagonal matrix
+		Eigen::MatrixXd scaleMat(nCol, nCol);
+		scaleMat.setZero();
+		scaleMat = colScale.asDiagonal();
+		// use qr decomposition
+		// solve scaled system NBig * Scale * sol = W
+		// and then rescale solution trueSol = Scale * sol
+		Eigen::SparseMatrix<double> NBig_scaled = (NBigdense * scaleMat).sparseView();
+		// Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig);
+		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig_scaled);
+		solution = qr.solve(-VBig);
+		// rescale solution
+		solution = scaleMat * solution;
+	}
+	else
+	{
+		// solve directly without scaling
+		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig);
+		solution = qr.solve(-VBig);
+	}
+
 	return solution;
 }
 
