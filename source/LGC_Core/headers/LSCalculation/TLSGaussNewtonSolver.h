@@ -27,7 +27,7 @@ public:
 
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
-	Eigen::VectorXd getGNDirection(Eigen::VectorXd);
+	Eigen::VectorXd getGNDirection(Eigen::VectorXd, bool useScaling = false);
 	Eigen::VectorXd getGradient(Eigen::VectorXd);
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
