@@ -5,6 +5,7 @@
 #include <set>
 #include <tuple>
 #include <stack>
+#include <algorithm>
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 using namespace std;
@@ -108,4 +109,5 @@ void plotSparsity(Eigen::SparseMatrix<double> A);
 
 // input: full rank A matrix (full column rank) output submatrix with same rank but quadrtaic (eliminated rows)
 std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A);
+std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A);
 
