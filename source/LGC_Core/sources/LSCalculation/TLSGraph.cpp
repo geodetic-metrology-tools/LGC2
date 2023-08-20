@@ -614,3 +614,37 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 	std::cout << "expected rank =" << rowDim << " actual rank =" << fullColRankSubmatrix.colPivHouseholderQr().rank() << std ::endl;
 	return rowIndices;
 }
+
+std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A)
+{
+    // return vector of indices such that the number of nonzeros are sorted with increasing order
+	std::vector<int> nonZerosInRow;
+    // create an index vector
+	int nRows = A.rows();
+	std::vector<int> indexVector;
+	for (int j = 0; j < nRows; j++)
+	{
+		indexVector.push_back(j);
+	}
+	for (int rowIdx=0; rowIdx<nRows;rowIdx++){
+        // count nonzeros
+        int nonZeros=0;
+        for (int col = 0; col < A.cols(); col++)
+		{
+			if (A.coeffRef(rowIdx, col) != 0)
+			{
+				nonZeros++;
+			}
+		}
+		nonZerosInRow.push_back(nonZeros);
+    }
+    // sort according to number of nonzeros per row
+	std::sort(indexVector.begin(), indexVector.end(), [&nonZerosInRow](int a, int b) { return nonZerosInRow[a] < nonZerosInRow[b]; });
+
+    // // show result
+    // for (int j=0;j<nRows;j++){
+	// 	std::cout << "(row idx, orig. nnz, sorted nnz)   " << j << " , " << nonZerosInRow[j] << " , " << nonZerosInRow[indexVector[j]] << std::endl;
+    // }
+
+	return indexVector;
+}
