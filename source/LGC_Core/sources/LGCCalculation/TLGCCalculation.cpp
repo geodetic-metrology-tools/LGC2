@@ -67,7 +67,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   		if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0 )
 	   		{
 				// experiment with the dulmage decomposition
-				//computeDulmageSequence();
+				computeDulmageSequence();
 				// solve the problem using Gauss Newton with stepsize regularization
 	   			Eigen::VectorXd solution = gnObject.solve();
 	   		}
@@ -126,15 +126,86 @@ void TLGCCalculation::computeDulmageSequence(){
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
-	Eigen::MatrixXd A_dense = A_global.toDense();
+	int nRows = A_global.rows();
+	// get rowOrdering
+	std::vector<int> rowOrder = getRowOrdering(A_global);
+	// permute A according to roworder
+	Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> rowOrderPermutation(nRows);
+	for (int i = 0; i < nRows; ++i)
+	{
+		rowOrderPermutation.indices()(rowOrder[i]) = i;
+	}
+	Eigen::SparseMatrix<double> A_global_ordered = rowOrderPermutation * A_global;
+//	std::cout << "sparsity original matrix" << std::endl;
+//	plotSparsity(A_global);
+//	std::cout << "sparsity row ordered matrix" << std::endl;
+//	plotSparsity(A_global_ordered);
+	// succesively eliminate equations that do not increase the rank. goal is to get a square rank = nRows  submatrix
+	std::vector<int> chosenRows = findFullRankSubMatrix(A_global_ordered);
+	Eigen::MatrixXd reducedReorderedA = A_global_ordered.toDense()(chosenRows, Eigen::indexing::all);
+	Eigen::SparseMatrix<double> AFinal = reducedReorderedA.sparseView();
+	//std::cout << "sparsity row-ordered and reduced matrix" << std::endl;
+	//plotSparsity(AFinal);
 
+	// find maximum matching
 	// create bipartite Graph encoding equation-parameter incidence
-	BipGraph G(A_global);
+	BipGraph G(AFinal);
 	// get the maximum matching and the associated fine Dulmage decomposition
-	vector<std::pair<std::set<int>, std::set<int>>> fineDM = G.getFineDulmage();
+	vector<std::pair<std::set<int>, std::set<int>>> fineDM_reducedReordered = G.getFineDulmage();
+
 	vector<int> orderedPIdx;
 	vector<int> orderedEIdx;
+	vector<int> blockSizes;
 
+	// print information on the strongly connected components
+	// transform indices back to original matrix (reversing row-reordering, full rank row eliminiation)
+	int count = 1;
+	for (auto comp : fineDM_reducedReordered)
+	{
+		set<int> eqComp = comp.first;
+		set<int> parComp = comp.second;
+		std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
+		blockSizes.push_back(eqComp.size());
+		std::cout << "par Idx: ";
+		for (auto pIdx : parComp)
+		{
+			orderedPIdx.push_back(pIdx - 1);
+			std::cout << pIdx - 1 << " , ";
+		};
+		std::cout << std::endl;
+		std::cout << "eqn Idx: ";
+		for (auto eqIdx : eqComp)
+		{
+			orderedEIdx.push_back(rowOrder[chosenRows[eqIdx - 1]]);
+			std::cout << rowOrder[chosenRows[eqIdx - 1]] << " , ";
+		};
+		std::cout << std::endl;
+		count++;
+	}
+	//  comparing the sparsity patterns
+	Eigen::MatrixXd A_global_dense = A_global.toDense();
+	Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
+	Eigen::SparseMatrix<double> test_sparse = test.sparseView();
+	//std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	//plotSparsity(A_global);
+	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	plotSparsity(test_sparse, blockSizes);
+
+
+	int k = 0;
+	true;
+	//	
+//	vector<int> orderedPIdx;
+//
+//	Eigen::MatrixXd A_dense = A_global.toDense();
+//
+//	// create bipartite Graph encoding equation-parameter incidence
+//	BipGraph G(A_global);
+//	// get the maximum matching and the associated fine Dulmage decomposition
+//	vector<std::pair<std::set<int>, std::set<int>>> fineDM = G.getFineDulmage();
+//	vector<int> orderedPIdx;
+//	vector<int> orderedEIdx;
+//
 //	// print information on the strongly connected components
 //	int count = 1;
 //	for (auto comp : fineDM)
@@ -158,138 +229,133 @@ void TLGCCalculation::computeDulmageSequence(){
 //		std::cout << std::endl;
 //		count++;
 //	}
-
-//  comparing the sparsity patterns
-	//	Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
-	//	Eigen::SparseMatrix<double> test_sparse = test.sparseView();
-	//	std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	//	// std::cout << A.toDense() << std ::endl;
-	//	plotSparsity(A_global);
-	//	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
-	//	plotSparsity(test_sparse);
-
-
-	// find a subset of row indices such that the reduced A matrix has full rank (essentially a maximum matching with real full rank opposed to only structural full rank)
-	std::vector<int> chosenRows = findFullRankSubMatrix(A_global);
-	Eigen::SparseMatrix<double>	intermediateA = A_dense(chosenRows, Eigen::indexing::all).sparseView();
-//	plotSparsity(intermediateA);
-	// create bipartite Graph encoding equation-parameter incidence
-	BipGraph intermediateG(intermediateA);
-	// check the fine dulmage decomposition of the reduced matrix
-	vector<std::pair<std::set<int>, std::set<int>>> intermediateFineDM = intermediateG.getFineDulmage();
-
-
-
-	// check if the diagonal blocks of the dulmage decomposition are of full rank
-	std::cout << "full A matrix has dimensions " << A_dense.fullPivHouseholderQr().rank() << std::endl;
-	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
-	{
-		std::vector<int> eqIndices, parIndices;
-		for (auto eqIdx : compIt->first)
-		{
-			eqIndices.push_back(eqIdx - 1);
-		}
-		for (auto parIdx : compIt->second)
-		{
-			parIndices.push_back(parIdx - 1);
-		}
-		Eigen::MatrixXd diagBlock = A_dense(eqIndices, parIndices);
-		int blockSize = parIndices.size();
-		int blockRank =  diagBlock.fullPivHouseholderQr().rank();
-		std::cout << "Block has dimensions " << blockSize << " and rank " << blockRank;
-		if (blockRank < blockSize)
-		{
-			std::cout << " Block is rank deficient.";
-		}
-		std::cout << std::endl;
-
-	}
-
-	// create a sequence of well defined subproblems of increasing dimension and solve them using the masking method with the Gn solver
-	
-	// loop over the components of the DM decomposition, following the topological ordering beginning from the block that depends on the least number of parameters
-	// set (or alternatively add them) the parameter mask to the parameters of the block, the equation mask to the equations of the block
-	// solve the problem
-
-	// perturb initial value to avoid singular matrices
-//	TVector iniVal = evalPtr->getEstParams(false);
-//	Eigen::VectorXd randVal(iniVal.rows());
-//	randVal.setRandom();
-//	//randVal *= 1e-2;
-//	randVal *= 0;
-//	iniVal += randVal;
-//	evalPtr->setParameters(iniVal, false);
-
-	evalPtr->currentMask.equationIndices.clear();
-	evalPtr->currentMask.parameterIndices.clear();
-	int blockNumber = 0;
-	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
-	{
-		blockNumber++;
-		// get the eq and par indices
-		std::vector<int> eqIndices, parIndices;
-		for (auto eqIdx : compIt->first)
-		{
-			eqIndices.push_back(eqIdx - 1);
-		}
-		for (auto parIdx : compIt->second)
-		{
-			parIndices.push_back(parIdx - 1);
-		}
-		//   // use them for the mask
-	 	//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
-	 	//   evalPtr->currentMask.equationIndices = eqIndices;
-	 	//   evalPtr->currentMask.parameterIndices = parIndices;
-	  	// OPTION 2: 
-	  	// gradually increase set of active parameters and equations
-	  	  	for (auto parIdx : parIndices)
-	  	{
-	  		evalPtr->currentMask.parameterIndices.push_back(parIdx);
-	  	}
-		//for (auto eqIdx : eqIndices)
-		//{
-		//	evalPtr->currentMask.equationIndices.push_back(eqIdx);
-		//}
-
-		// alternative use all eqautions associated
-		evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
-
-		// make rudimentary consistency check before solve
-		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
-		// this can happen when for example a point is measured by two ANGL measurements from the same station, the corresponding 2x2 block (eq x pars) will have no zeros but the columns are linearly dependant
-		Eigen::SparseMatrix<double> A = evalPtr->getA(true);
-		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
-		qrSolver.compute(A);
-
-		if (qrSolver.info() == Eigen::Success)
-		{
-			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
-			int rank = qrSolver.rank();
-			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
-			if (rank != A.cols())
-			{
-				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
-			}
-			else
-			{
-				// only solve if full rank
-				// use the gn solver to solve the corrsponding subproblem
-				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
-				gnSolver.solve();
-			}
-		}
-		else
-		{
-			throw std::runtime_error("Decomposition failed.");
-		}
-
-
-	}
-	// remove the mask and solve again
-	evalPtr->unmask();
-	// final solve
-	gnSolver.solve();
-
+//
+//	//  comparing the sparsity patterns
+//	Eigen::MatrixXd test = A_dense(orderedEIdx, orderedPIdx);
+//	Eigen::SparseMatrix<double> test_sparse = test.sparseView();
+//	std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+//	// std::cout << A.toDense() << std ::endl;
+//	plotSparsity(A_global);
+//	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+//	plotSparsity(test_sparse);
+//
+//	// find a subset of row indices such that the reduced A matrix has full rank (essentially a maximum matching with real full rank opposed to only structural full rank)
+//	// order rows with respect to number of nonzeros
+//
+//	std::vector<int> chosenRows = findFullRankSubMatrix(A_global);
+//	Eigen::SparseMatrix<double> intermediateA = A_dense(chosenRows, Eigen::indexing::all).sparseView();
+//	//	plotSparsity(intermediateA);
+//	// create bipartite Graph encoding equation-parameter incidence
+//	BipGraph intermediateG(intermediateA);
+//	// check the fine dulmage decomposition of the reduced matrix
+//	vector<std::pair<std::set<int>, std::set<int>>> intermediateFineDM = intermediateG.getFineDulmage();
+//
+//	// check if the diagonal blocks of the dulmage decomposition are of full rank
+//	std::cout << "full A matrix has dimensions " << A_dense.fullPivHouseholderQr().rank() << std::endl;
+//	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
+//	{
+//		std::vector<int> eqIndices, parIndices;
+//		for (auto eqIdx : compIt->first)
+//		{
+//			eqIndices.push_back(eqIdx - 1);
+//		}
+//		for (auto parIdx : compIt->second)
+//		{
+//			parIndices.push_back(parIdx - 1);
+//		}
+//		Eigen::MatrixXd diagBlock = A_dense(eqIndices, parIndices);
+//		int blockSize = parIndices.size();
+//		int blockRank = diagBlock.fullPivHouseholderQr().rank();
+//		std::cout << "Block has dimensions " << blockSize << " and rank " << blockRank;
+//		if (blockRank < blockSize)
+//		{
+//			std::cout << " Block is rank deficient.";
+//		}
+//		std::cout << std::endl;
+//	}
+//
+//	// create a sequence of well defined subproblems of increasing dimension and solve them using the masking method with the Gn solver
+//
+//	// loop over the components of the DM decomposition, following the topological ordering beginning from the block that depends on the least number of parameters
+//	// set (or alternatively add them) the parameter mask to the parameters of the block, the equation mask to the equations of the block
+//	// solve the problem
+//
+//	// perturb initial value to avoid singular matrices
+//	//	TVector iniVal = evalPtr->getEstParams(false);
+//	//	Eigen::VectorXd randVal(iniVal.rows());
+//	//	randVal.setRandom();
+//	//	//randVal *= 1e-2;
+//	//	randVal *= 0;
+//	//	iniVal += randVal;
+//	//	evalPtr->setParameters(iniVal, false);
+//
+//	evalPtr->currentMask.equationIndices.clear();
+//	evalPtr->currentMask.parameterIndices.clear();
+//	int blockNumber = 0;
+//	for (auto compIt = fineDM.rbegin(); compIt != fineDM.rend(); ++compIt)
+//	{
+//		blockNumber++;
+//		// get the eq and par indices
+//		std::vector<int> eqIndices, parIndices;
+//		for (auto eqIdx : compIt->first)
+//		{
+//			eqIndices.push_back(eqIdx - 1);
+//		}
+//		for (auto parIdx : compIt->second)
+//		{
+//			parIndices.push_back(parIdx - 1);
+//		}
+//		//   // use them for the mask
+//		//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
+//		//   evalPtr->currentMask.equationIndices = eqIndices;
+//		//   evalPtr->currentMask.parameterIndices = parIndices;
+//		// OPTION 2:
+//		// gradually increase set of active parameters and equations
+//		for (auto parIdx : parIndices)
+//		{
+//			evalPtr->currentMask.parameterIndices.push_back(parIdx);
+//		}
+//		// for (auto eqIdx : eqIndices)
+//		//{
+//		//	evalPtr->currentMask.equationIndices.push_back(eqIdx);
+//		// }
+//
+//		// alternative use all eqautions associated
+//		evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
+//
+//		// make rudimentary consistency check before solve
+//		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
+//		// this can happen when for example a point is measured by two ANGL measurements from the same station, the corresponding 2x2 block (eq x pars) will have no zeros but the columns are linearly dependant
+//		Eigen::SparseMatrix<double> A = evalPtr->getA(true);
+//		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
+//		qrSolver.compute(A);
+//
+//		if (qrSolver.info() == Eigen::Success)
+//		{
+//			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
+//			int rank = qrSolver.rank();
+//			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
+//			if (rank != A.cols())
+//			{
+//				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+//			}
+//			else
+//			{
+//				// only solve if full rank
+//				// use the gn solver to solve the corrsponding subproblem
+//				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
+//				gnSolver.solve();
+//			}
+//		}
+//		else
+//		{
+//			throw std::runtime_error("Decomposition failed.");
+//		}
+//	}
+//	// remove the mask and solve again
+//	evalPtr->unmask();
+//	// final solve
+//	gnSolver.solve();
 }
 
 vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)

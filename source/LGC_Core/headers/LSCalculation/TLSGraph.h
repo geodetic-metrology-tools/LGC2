@@ -105,7 +105,7 @@ private:
 	void topologicalSortUtil(int v, vector<bool>& visited, stack<int>& stack);
 };
 
-void plotSparsity(Eigen::SparseMatrix<double> A);
+void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes = {});
 
 // input: full rank A matrix (full column rank) output submatrix with same rank but quadrtaic (eliminated rows)
 std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A);

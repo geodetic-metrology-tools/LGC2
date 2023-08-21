@@ -548,18 +548,42 @@ void dirGraph::topologicalSortUtil(int v, vector<bool>& visited, stack<int>& sta
 	stack.push(v);
 }
 
-void plotSparsity(Eigen::SparseMatrix<double> A) {
+void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes) {
 	int rows = A.rows();
 	int cols = A.cols();
+	std::vector<int> separatorIndices;
+	int separatorIndex = 0;
+	for (auto j:blockSizes){
+		separatorIndex += j;
+		separatorIndices.push_back(separatorIndex);
+    }
 	string nonZeroSymbol = "x";
 	string zeroSymbol = ".";
+	string rowSeparator = "_";
+	string colSeparator = "|";
     std::cout << std::setw(cols);
     for (int row = 0; row < rows; row++) {
-		for (int col = 0; col < cols; col++) {
-			if (A.coeffRef(row, col) != 0) {
+        // check if we have to insert a separator
+		if (std::find(separatorIndices.begin(), separatorIndices.end(), row) != separatorIndices.end())
+		{
+			for (int k = 0; k < rows + blockSizes.size(); k++)
+			{
+				std::cout << rowSeparator;
+			}
+			std::cout << std::endl;
+		}
+		for (int col = 0; col < cols; col++)
+		{
+			if (std::find(separatorIndices.begin(), separatorIndices.end(), col) != separatorIndices.end())
+			{
+				std::cout << colSeparator;
+			}
+			if (A.coeffRef(row, col) != 0)
+			{
 				std::cout << nonZeroSymbol;
 			}
-			else {
+			else
+			{
 				std::cout << zeroSymbol;
 			}
 		}
@@ -600,7 +624,7 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 			// its not in the span and we add it as new column
 			fullColRankSubmatrix.col(currentRank) = columnCandidate;
 			rowIndices.push_back(j);
-			std::cout << "added index " << j << std::endl;
+			//std::cout << "added index " << j << std::endl;
 			currentRank++;
 		}
 		if (currentRank == rowDim)
