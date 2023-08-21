@@ -18,7 +18,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 
 	
 	int itIdx = 0;
-	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 500)
+	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 50)
 	{
 		// compute the search direction
 		direction = getGNDirection(parameterIterate, false);
@@ -161,7 +161,7 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::V
 	double trialSigma = trialResidual.transpose() * fEvaluator->getPv() * trialResidual;
 	double realDescent = trialSigma - sigma0;
 	// testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
-	while (c * alpha* expectedDescent < realDescent && alpha>0.1)
+	while (c * alpha* expectedDescent < realDescent && alpha>0.01)
 	{
 		// reduce stepsize
 		alpha *= tau;
