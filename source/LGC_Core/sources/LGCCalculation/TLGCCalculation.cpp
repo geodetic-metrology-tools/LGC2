@@ -65,7 +65,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   			Eigen::VectorXd solution = gnObject.solve();
 	   		}
 	   		// reset parameters - to not interfere with usual LGC calculation
-	   		auxEval.setParameters(provPar);
+	   		//auxEval.setParameters(provPar);
 	   	}
 
 		if (fData->getConfig().sim.isActive())
@@ -136,6 +136,7 @@ void TLGCCalculation::computeDulmageSequence(){
 	// succesively eliminate equations that do not increase the rank. goal is to get a square rank = nRows  submatrix
 	std::vector<int> chosenRows = findFullRankSubMatrix(A_global_ordered);
 	Eigen::MatrixXd reducedReorderedA = A_global_ordered.toDense()(chosenRows, Eigen::indexing::all);
+
 	Eigen::SparseMatrix<double> AFinal = reducedReorderedA.sparseView();
 	//std::cout << "sparsity row-ordered and reduced matrix" << std::endl;
 	//plotSparsity(AFinal);
@@ -145,6 +146,10 @@ void TLGCCalculation::computeDulmageSequence(){
 	BipGraph G(AFinal);
 	// get the maximum matching and the associated fine Dulmage decomposition
 	vector<std::pair<std::set<int>, std::set<int>>> fineDM_reducedReordered = G.getFineDulmage();
+
+
+	// prepare vector containing the original indices
+	vector<std::pair<std::set<int>, std::set<int>>> fineDM_reducedRealIndices;
 
 	vector<int> orderedPIdx;
 	vector<int> orderedEIdx;
@@ -157,12 +162,15 @@ void TLGCCalculation::computeDulmageSequence(){
 	{
 		set<int> eqComp = comp.first;
 		set<int> parComp = comp.second;
+		set<int> eqCompReal;
+		set<int> parCompReal;
 		std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
 		blockSizes.push_back(eqComp.size());
 		std::cout << "par Idx: ";
 		for (auto pIdx : parComp)
 		{
 			orderedPIdx.push_back(pIdx - 1);
+			parCompReal.insert(pIdx - 1);
 			std::cout << pIdx - 1 << " , ";
 		};
 		std::cout << std::endl;
@@ -170,8 +178,10 @@ void TLGCCalculation::computeDulmageSequence(){
 		for (auto eqIdx : eqComp)
 		{
 			orderedEIdx.push_back(rowOrder[chosenRows[eqIdx - 1]]);
+			eqCompReal.insert(rowOrder[chosenRows[eqIdx - 1]]);
 			std::cout << rowOrder[chosenRows[eqIdx - 1]] << " , ";
 		};
+		fineDM_reducedRealIndices.push_back(std::make_pair(eqCompReal, parCompReal));
 		std::cout << std::endl;
 		count++;
 	}
@@ -183,6 +193,91 @@ void TLGCCalculation::computeDulmageSequence(){
 	//plotSparsity(A_global);
 	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
 	plotSparsity(test_sparse, blockSizes);
+
+	//	// perturb initial value to avoid singular matrices
+	// TVector iniVal = evalPtr->getEstParams(false);
+	// Eigen::VectorXd randVal(iniVal.rows());
+	// std::cout << iniVal << std::endl;
+	// randVal.setRandom();
+	// randVal *= 1e+0;
+	// iniVal= randVal.cwiseProduct(iniVal);
+	// //randVal *= 0;
+	// iniVal += randVal;
+	// evalPtr->setParameters(iniVal, false);
+
+
+	// iterate through the components and solve problemns of increasing size
+	evalPtr->currentMask.equationIndices.clear();
+	evalPtr->currentMask.parameterIndices.clear();
+	int blockNumber = 0;
+	for (auto compIt = fineDM_reducedRealIndices.rbegin(); compIt != fineDM_reducedRealIndices.rend(); ++compIt)
+	{
+		blockNumber++;
+		// get the eq and par indices
+		std::vector<int> eqIndices, parIndices;
+		for (auto eqIdx : compIt->first)
+		{
+			eqIndices.push_back(eqIdx);
+		}
+		for (auto parIdx : compIt->second)
+		{
+			parIndices.push_back(parIdx);
+		}
+		//   // use them for the mask
+		//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
+		//   evalPtr->currentMask.equationIndices = eqIndices;
+		//   evalPtr->currentMask.parameterIndices = parIndices;
+		// OPTION 2:
+		// gradually increase set of active parameters and equations
+		for (auto parIdx : parIndices)
+		{
+			evalPtr->currentMask.parameterIndices.push_back(parIdx);
+		}
+		for (auto eqIdx : eqIndices)
+		{
+			evalPtr->currentMask.equationIndices.push_back(eqIdx);
+		}
+
+		// alternative use all eqautions associated
+	//	evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
+
+		// make rudimentary consistency check before solve
+		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
+		// this can happen when for example a point is measured by two ANGL measurements from the same station, the corresponding 2x2 block (eq x pars) will have no zeros but the columns are linearly dependant
+		Eigen::SparseMatrix<double> A = evalPtr->getA(true);
+		std::cout << "sparsity pattern of current  masked matrix" << std::endl;
+		plotSparsity(A);
+		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
+		qrSolver.compute(A);
+
+		if (qrSolver.info() == Eigen::Success)
+		{
+			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
+			int rank = qrSolver.rank();
+			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
+			if (rank != A.cols())
+			{
+				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+			}
+			else
+			{
+				// only solve if full rank
+				// use the gn solver to solve the corrsponding subproblem
+				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
+				gnSolver.solve();
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Decomposition failed.");
+		}
+	}
+	// remove the mask and solve again
+	evalPtr->unmask();
+	// final solve
+	gnSolver.solve();
+
+
 
 
 	int k = 0;
