@@ -561,7 +561,6 @@ void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes) {
 	string zeroSymbol = ".";
 	string rowSeparator = "_";
 	string colSeparator = "|";
-    std::cout << std::setw(cols);
     for (int row = 0; row < rows; row++) {
         // check if we have to insert a separator
 		if (std::find(separatorIndices.begin(), separatorIndices.end(), row) != separatorIndices.end())
