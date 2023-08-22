@@ -37,6 +37,8 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		initMatriceDimension(*projData, matrices);
 		// Contribution generator transformations need to update the transformations it stores.
 		fPointTransformer.updateTransformations();
+		
+		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
 		// LGC uses only parametric measurement models, so the B matrix is -Identity
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
