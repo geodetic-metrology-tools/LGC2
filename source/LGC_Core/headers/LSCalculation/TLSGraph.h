@@ -111,3 +111,5 @@ void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes = {
 std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A);
 std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A);
 
+bool isStructuralNonZero(const Eigen::SparseMatrix<double>& A, int row, int col);
+
