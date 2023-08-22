@@ -44,9 +44,6 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
-		// LGC uses only parametric measurement models, so the B matrix is -Identity
-		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
-
 		if (projData->getConfig().libre.isActive())
 		{
 			// fill the libr constraints
