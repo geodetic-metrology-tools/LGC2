@@ -577,7 +577,8 @@ void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes) {
 			{
 				std::cout << colSeparator;
 			}
-			if (A.coeffRef(row, col) != 0)
+			//if (A.coeffRef(row, col) != 0)
+			if (isStructuralNonZero(A,row,col)==true)
 			{
 				std::cout << nonZeroSymbol;
 			}
@@ -670,4 +671,20 @@ std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A)
     // }
 
 	return indexVector;
+}
+
+bool isStructuralNonZero(const Eigen::SparseMatrix<double>& A, int row, int col)
+{
+    // check if (row,col) is an entry of the matrix
+    // matrix is column major
+    // check all entries of column col
+	for (Eigen::SparseMatrix<double>::InnerIterator it(A, col); it; ++it)
+	{
+		if (it.row() == row)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

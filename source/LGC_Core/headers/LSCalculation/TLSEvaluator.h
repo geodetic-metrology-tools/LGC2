@@ -100,6 +100,12 @@ private:
 
 	Eigen::SparseMatrix<double> maskRows(std::vector<int>, Eigen::SparseMatrix<double>);
 	Eigen::SparseMatrix<double> maskColumns(std::vector<int>, Eigen::SparseMatrix<double>);
+	
+	// can be used to get the columns of anothjer matrix by multiplying this from the right
+	Eigen::SparseMatrix<double> getColumnMaskMatrix(std::vector<int> actInd, int dim);
+	
+	// can be used to get the rows of another matrix by multiplying this from the left
+	Eigen::SparseMatrix<double> getRowMaskMatrix(std::vector<int> actInd, int dim);
 
 };
 
