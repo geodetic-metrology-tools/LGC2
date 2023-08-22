@@ -639,7 +639,7 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 	return rowIndices;
 }
 
-std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A)
+std::vector<int> getRowOrdering(const Eigen::SparseMatrix<double> &A)
 {
     // return vector of indices such that the number of nonzeros are sorted with increasing order
 	std::vector<int> nonZerosInRow;
@@ -653,9 +653,9 @@ std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A)
 	for (int rowIdx=0; rowIdx<nRows;rowIdx++){
         // count nonzeros
         int nonZeros=0;
-        for (int col = 0; col < A.cols(); col++)
+		for (int col = 0; col < A.cols(); col++)
 		{
-			if (A.coeffRef(rowIdx, col) != 0)
+			if (isStructuralNonZero(A, rowIdx, col) != 0)
 			{
 				nonZeros++;
 			}
@@ -687,4 +687,42 @@ bool isStructuralNonZero(const Eigen::SparseMatrix<double>& A, int row, int col)
 	}
 
 	return false;
+}
+
+Eigen::SparseMatrix<double> maskRows(std::vector<int> actRows, Eigen::SparseMatrix<double> mat)
+{
+	// the cleaner way, multiplication with sparse matrix
+	int rowDim = mat.rows();
+	return getRowMaskMatrix(actRows, rowDim) * mat;
+}
+
+Eigen::SparseMatrix<double> maskColumns(std::vector<int> actCols, Eigen::SparseMatrix<double> mat)
+{
+	// the cleaner way, multiplication with sparse matrix
+	int colDim = mat.cols();
+	return mat * getColumnMaskMatrix(actCols, colDim);
+}
+
+Eigen::SparseMatrix<double> getColumnMaskMatrix(std::vector<int> actInd, int dim)
+{
+	int numberIndices = actInd.size();
+	Eigen::SparseMatrix<double> result(dim, numberIndices);
+	result.setZero();
+	for (int col = 0; col < numberIndices; col++)
+	{
+		result.coeffRef(actInd[col], col) = 1.0;
+	}
+	return result;
+}
+
+Eigen::SparseMatrix<double> getRowMaskMatrix(std::vector<int> actInd, int dim)
+{
+	int numberIndices = actInd.size();
+	Eigen::SparseMatrix<double> result(numberIndices, dim);
+	result.setZero();
+	for (int row = 0; row < numberIndices; row++)
+	{
+		result.coeffRef(row, actInd[row]) = 1.0;
+	}
+	return result;
 }

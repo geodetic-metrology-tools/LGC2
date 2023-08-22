@@ -3,6 +3,7 @@
 #include "TLSConsistencyCheck.h"
 #include "TLSUniversalMtdComputer.h"
 #include <Logger.hpp>
+#include <TLSGraph.h>
 #include <Eigen/Dense>
 #include "TAdjustableHelmertTransformation.h"
 
@@ -434,43 +435,7 @@ void TLSEvaluator::getLineParams(Eigen::VectorXd & para)
 	}
 }
 
-Eigen::SparseMatrix<double> TLSEvaluator::maskRows(std::vector<int> actRows, Eigen::SparseMatrix<double> mat)
-{
-	// the cleaner way, multiplication with sparse matrix
-	int rowDim = mat.rows();
-	return getRowMaskMatrix(actRows, rowDim) * mat;
-}
 
-Eigen::SparseMatrix<double> TLSEvaluator::maskColumns(std::vector<int> actCols, Eigen::SparseMatrix<double> mat)
-{	
-	// the cleaner way, multiplication with sparse matrix
-	int colDim = mat.cols();
-	return mat * getColumnMaskMatrix(actCols, colDim);
-}
-
-Eigen::SparseMatrix<double> TLSEvaluator::getColumnMaskMatrix(std::vector<int> actInd, int dim)
-{
-	int numberIndices = actInd.size();
-	Eigen::SparseMatrix<double> result(dim, numberIndices);
-	result.setZero();
-	for (int col = 0; col < numberIndices; col++)
-	{
-		result.coeffRef(actInd[col], col) = 1.0;
-	}
-	return result;
-}
-
-Eigen::SparseMatrix<double> TLSEvaluator::getRowMaskMatrix(std::vector<int> actInd, int dim)
-{
-	int numberIndices = actInd.size();
-	Eigen::SparseMatrix<double> result(numberIndices, dim);
-	result.setZero();
-	for (int row = 0; row < numberIndices; row++)
-	{
-		result.coeffRef(row, actInd[row]) = 1.0;
-	}
-	return result;
-}
 
 void TLSEvaluator::getLengthParams(Eigen::VectorXd & para)
 {
