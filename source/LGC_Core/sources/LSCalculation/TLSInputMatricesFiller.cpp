@@ -41,6 +41,8 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		initMatriceDimension(*projData, matrices);
 		// Contribution generator transformations need to update the transformations it stores.
 		fPointTransformer.updateTransformations();
+		
+		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
 		if (projData->getConfig().libre.isActive())
 		{
