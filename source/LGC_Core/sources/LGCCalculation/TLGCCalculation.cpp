@@ -126,6 +126,8 @@ void TLGCCalculation::computeDulmageSequence(){
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
+	plotSparsity(A_global);
+	plotSparsity(A_global);
 	int nRows = A_global.rows();
 	// get rowOrdering
 	std::vector<int> rowOrder = getRowOrdering(A_global);
@@ -142,9 +144,12 @@ void TLGCCalculation::computeDulmageSequence(){
 //	plotSparsity(A_global_ordered);
 	// succesively eliminate equations that do not increase the rank. goal is to get a square rank = nRows  submatrix
 	std::vector<int> chosenRows = findFullRankSubMatrix(A_global_ordered);
-	Eigen::MatrixXd reducedReorderedA = A_global_ordered.toDense()(chosenRows, Eigen::indexing::all);
+//	Eigen::MatrixXd reducedReorderedA = A_global_ordered.toDense()(chosenRows, Eigen::indexing::all);
+	Eigen::SparseMatrix<double>  reducedReorderedA = maskRows(chosenRows, A_global_ordered);
+//	.toDense()(chosenRows, Eigen::indexing::all);
 
-	Eigen::SparseMatrix<double> AFinal = reducedReorderedA.sparseView();
+	//Eigen::SparseMatrix<double> AFinal = reducedReorderedA.sparseView();
+	Eigen::SparseMatrix<double> AFinal = reducedReorderedA;
 	//std::cout << "sparsity row-ordered and reduced matrix" << std::endl;
 	//plotSparsity(AFinal);
 
@@ -193,11 +198,13 @@ void TLGCCalculation::computeDulmageSequence(){
 		count++;
 	}
 	//  comparing the sparsity patterns
-	Eigen::MatrixXd A_global_dense = A_global.toDense();
-	Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
-	Eigen::SparseMatrix<double> test_sparse = test.sparseView();
-	//std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	//plotSparsity(A_global);
+	//Eigen::MatrixXd A_global_dense = A_global.toDense();
+//Eigen::SparseMatrix<double> test_sparse = 
+	//Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
+	//Eigen::SparseMatrix<double> test_sparse = test.sparseView();
+	Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
+	std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	plotSparsity(A_global);
 	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
 	plotSparsity(test_sparse, blockSizes);
 
