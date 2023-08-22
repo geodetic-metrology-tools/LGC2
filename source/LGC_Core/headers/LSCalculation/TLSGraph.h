@@ -109,7 +109,17 @@ void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes = {
 
 // input: full rank A matrix (full column rank) output submatrix with same rank but quadrtaic (eliminated rows)
 std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A);
-std::vector<int> getRowOrdering(Eigen::SparseMatrix<double> &A);
+std::vector<int> getRowOrdering(const Eigen::SparseMatrix<double> &A);
 
 bool isStructuralNonZero(const Eigen::SparseMatrix<double>& A, int row, int col);
+
+Eigen::SparseMatrix<double> maskRows(std::vector<int>, Eigen::SparseMatrix<double>);
+Eigen::SparseMatrix<double> maskColumns(std::vector<int>, Eigen::SparseMatrix<double>);
+
+// can be used to get the columns of anothjer matrix by multiplying this from the right
+Eigen::SparseMatrix<double> getColumnMaskMatrix(std::vector<int> actInd, int dim);
+
+// can be used to get the rows of another matrix by multiplying this from the left
+Eigen::SparseMatrix<double> getRowMaskMatrix(std::vector<int> actInd, int dim);
+
 
