@@ -18,7 +18,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 
 	
 	int itIdx = 0;
-	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 50)
+	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 100)
 	{
 		// compute the search direction
 		direction = getGNDirection(parameterIterate, false);
@@ -114,17 +114,28 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, 
 		// solve scaled system NBig * Scale * sol = W
 		// and then rescale solution trueSol = Scale * sol
 		Eigen::SparseMatrix<double> NBig_scaled = (NBigdense * scaleMat).sparseView();
-		// Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig);
-		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig_scaled);
-		solution = qr.solve(-VBig);
+	
+		// use either QR or SimplicialLDLT
+		//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> decomp(NBig_scaled);
+		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig_scaled);
+		solution = decomp.solve(-VBig);
 		// rescale solution
 		solution = scaleMat * solution;
 	}
 	else
 	{
 		// solve directly without scaling
-		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr(NBig);
-		solution = qr.solve(-VBig);
+		// use either QR or SimplicialLDLT
+		//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> decomp(NBig);
+		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
+		solution = decomp.solve(-VBig);
+	}
+
+	// test solution quality, how exact is NBig*sol = -VBig solved?
+	double solutionQuality = (NBig * solution + VBig).norm();
+	if (solutionQuality > 1e+3)
+	{
+		std::cout << "linear subsystem not solved accurately |NBig * solution + VBig| = " << solutionQuality << std::endl;
 	}
 
 	return solution;
