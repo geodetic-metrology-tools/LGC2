@@ -459,26 +459,36 @@ void TLGCCalculation::computeDulmageSequence(){
 //	// final solve
 //	gnSolver.solve();
 }
-
 vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 {
-	int coldim = A.cols();
+	int colDim = A.cols();
 	int rowDim = A.rows();
 	vector<int> associatedEqIndices;
 	// loop through equations ~ rows of matrix A
 	for (int rowIdx = 0; rowIdx < rowDim; rowIdx++)
 	{
-		bool isAssociated = true;
 		// check if row/eq only depends on parameters in parIdx
-		for (Eigen::SparseMatrix<double>::InnerIterator it(A, rowIdx); it; ++it)
+		bool isAssociated = true;
+		for (int colIdx = 0; colIdx < colDim; colIdx++)
 		{
-			// test if parameter is in set
-			if (std::count(parIdx.begin(), parIdx.end(), it.col()) == 0)
+			for (Eigen::SparseMatrix<double>::InnerIterator it(A, colIdx); it; ++it)
 			{
-				isAssociated = false;
+				if (it.row() == rowIdx)
+				{
+					// the row depends on parameter colIdx
+					// check if the colIdx is in the allowed set
+					if (std::count(parIdx.begin(), parIdx.end(), colIdx) == 0)
+					{
+						//not allowed
+						isAssociated = false;
+					}
+				}
+			}
+			if (isAssociated == false)
+			{
+				// row does also depend on other parameters
 				break;
 			}
-			//std::cout << "Row: " << it.row() << " Column: " << it.col() << " Value: " << it.value() << std::endl;
 		}
 		if (isAssociated)
 		{
@@ -487,3 +497,4 @@ vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 	}
 	return associatedEqIndices;
 }
+
