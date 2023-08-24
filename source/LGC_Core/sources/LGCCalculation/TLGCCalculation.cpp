@@ -65,18 +65,33 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 				//std::cout << iniVal << std::endl;
 				randVal.setRandom();
 				//randVal *= 1e+1;
+				//randVal *= 1000;
 				randVal *= 0;
 				Eigen::VectorXd perturbedIniVal = iniVal + randVal;
 				evalPtr->setParameters(perturbedIniVal, false);
 
 				// can it be solved directly?
-				gnObject.solve();
+//  				// armijo
+//  				std::cout << "solving with armijo linesearch" << std::endl;
+//  				gnObject.solve(true, false);
+//  				evalPtr->setParameters(perturbedIniVal, false);
+//  				// Levenberg Marquardt
+//  				std::cout << "solving with Levenberg Marquardt regularization" << std::endl;
+//  				gnObject.solve(false, true);
+//  				evalPtr->setParameters(perturbedIniVal, false);
+//  				// armijo & Levenberg Marquardt
+//  				std::cout << "solving with Levenberg Marquardt regularization & Armijo linesearch" << std::endl;
+//  				gnObject.solve(true, true);// armijo & Levenberg Marquardt
+//  				evalPtr->setParameters(perturbedIniVal, false);
+//  				std::cout << "solving with Full Step GN" << std::endl;
+//  				gnObject.solve(false, true);
+//  
 				// reset inival
 				evalPtr->setParameters(perturbedIniVal, false);
 				// experiment with the dulmage decomposition
-				//computeDulmageSequence();
+				computeDulmageSequence();
 				// solve the problem using Gauss Newton with stepsize regularization
-	   			Eigen::VectorXd solution = gnObject.solve();
+	   			//Eigen::VectorXd solution = gnObject.solve(false,true);
 	   		}
 	   		// reset parameters - to not interfere with usual LGC calculation
 	   		//auxEval.setParameters(provPar);
@@ -254,8 +269,10 @@ void TLGCCalculation::computeDulmageSequence(){
 		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
 		// this can happen when for example a point is measured by two ANGL measurements from the same station, the corresponding 2x2 block (eq x pars) will have no zeros but the columns are linearly dependant
 		Eigen::SparseMatrix<double> A = evalPtr->getA(true);
-		std::cout << "sparsity pattern of current  masked matrix" << std::endl;
-		plotSparsity(A);
+		
+	//  	std::cout << "sparsity pattern of current  masked matrix" << std::endl;
+	//  	plotSparsity(A);
+		
 		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
 		qrSolver.compute(A);
 
@@ -273,7 +290,9 @@ void TLGCCalculation::computeDulmageSequence(){
 				// only solve if full rank
 				// use the gn solver to solve the corrsponding subproblem
 				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
-				gnSolver.solve();
+				// gnSolver.solve(false, true);
+				gnSolver.solve(true, true);
+				//gnSolver.solve(false, false);
 			}
 		}
 		else

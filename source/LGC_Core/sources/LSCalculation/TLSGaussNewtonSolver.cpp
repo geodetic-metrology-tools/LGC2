@@ -7,7 +7,7 @@ TLSGaussNewtonSolver::TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluat
 {
 }
 
-Eigen::VectorXd TLSGaussNewtonSolver::solve()
+Eigen::VectorXd TLSGaussNewtonSolver::solve(bool useArmijoLineSearch, bool useLevenbergMarquardt)
 {
 	// Gauss Newton with armijo stepsize regularization
 	Eigen::VectorXd parameterIterate = fEvaluator->getEstParams();
@@ -21,14 +21,17 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 100)
 	{
 		// compute the search direction
-		direction = getGNDirection(parameterIterate, false);
+		direction = getGNDirection(parameterIterate, false,  useLevenbergMarquardt);
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
 		// compute the residual and the weighted objective to compare the real descent vs the gradient predicted descent in the armijo linesearch method
 		Eigen::VectorXd residual = fEvaluator->getResidual();
 		double sigma0 = residual.transpose() * fEvaluator->getPv() * residual;
-		double stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
-		//double stepsize = 1;
+		double stepsize = 1;
+		if (useArmijoLineSearch)
+		{
+			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
+		}
 
 		// do the regularized step
 		parameterIterate += stepsize * direction;
@@ -46,7 +49,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve()
 }
 
 
-Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, bool useScaling)
+Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, bool useScaling, bool useLMRegularization)
 {
 	fEvaluator->setParameters(parameter);
 	// compute dx, as in TLSUniversalMtdComputer class
@@ -127,16 +130,23 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, 
 		// solve directly without scaling
 		// use either QR or SimplicialLDLT
 		//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> decomp(NBig);
+		double scaleFactor = 0.01;
+		if (useLMRegularization)
+		{
+			//std::cout << std::endl << NBig << std::endl;
+			NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
+			//std::cout << std::endl << NBig << std::endl;
+		}
 		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
 		solution = decomp.solve(-VBig);
 	}
 
-	// test solution quality, how exact is NBig*sol = -VBig solved?
-	double solutionQuality = (NBig * solution + VBig).norm();
-	if (solutionQuality > 1e+3)
-	{
-		std::cout << "linear subsystem not solved accurately |NBig * solution + VBig| = " << solutionQuality << std::endl;
-	}
+//	// test solution quality, how exact is NBig*sol = -VBig solved?
+//	double solutionQuality = (NBig * solution + VBig).norm();
+//	if (solutionQuality > 1e+3)
+//	{
+//		std::cout << "linear subsystem not solved accurately |NBig * solution + VBig| = " << solutionQuality << std::endl;
+//	}
 
 	return solution;
 }
@@ -183,5 +193,21 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::V
 		realDescent = trialSigma - sigma0;
 	}
 	return alpha;
+}
+
+Eigen::SparseMatrix<double> TLSGaussNewtonSolver::getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M)
+{
+	int colDim = M.cols(), rowDim = M.rows();
+	if (colDim != rowDim)
+	{
+		throw std::runtime_error("Levenberg Marquardt Scalefactor needs to be computed with a square matrix.");
+	}
+	Eigen::SparseMatrix<double> result(colDim, colDim);
+	Eigen::VectorXd diagonal = M.diagonal();
+	for (int j = 0; j < colDim; j++)
+	{
+		result.coeffRef(j, j) = diagonal(j);
+	}
+	return result;
 }
 

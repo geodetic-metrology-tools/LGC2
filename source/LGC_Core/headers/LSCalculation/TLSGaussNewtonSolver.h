@@ -23,14 +23,15 @@ public:
 	TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator);
 	//~TLSGaussNewtonSolver();
 	// apply GN solver
-	Eigen::VectorXd solve();
+	Eigen::VectorXd solve(bool useArmijoLineSearch = true, bool useLevenbergMarquardt = false);
 
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
-	Eigen::VectorXd getGNDirection(Eigen::VectorXd, bool useScaling = false);
+	Eigen::VectorXd getGNDirection(Eigen::VectorXd, bool useScaling = false, bool useLMRegularization = false);
 	Eigen::VectorXd getGradient(Eigen::VectorXd);
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
+	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);
 
 
 };
