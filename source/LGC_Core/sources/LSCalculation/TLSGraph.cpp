@@ -595,47 +595,38 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 {
 	std::vector<int> rowIndices;
 	// transpose matrix and find submatrix with full coulmn  rank. with the transpose we can check more easy if a vector is in the column space
-	Eigen::MatrixXd A_dense_T = A.toDense().transpose();
-	int colDim = A_dense_T.cols();
-	int rowDim = A_dense_T.rows();
-
-	// initialize
-	Eigen::MatrixXd fullColRankSubmatrix(rowDim, rowDim);
-	fullColRankSubmatrix.setZero();
-    // take the first column per default
-	fullColRankSubmatrix.col(0) = A_dense_T.col(0);
-	rowIndices.push_back(0);
-	int currentRank = 1;
-	// loop over cols of A_dense_T
-	for (int j = 1; j < colDim; j++)
+	Eigen::MatrixXd A_dense = A.toDense();
+	int colDim = A_dense.cols();
+	int rowDim = A_dense.rows();
+	int currentRank = 0;
+	Eigen::MatrixXd intermediateMat;
+	for (int j = 0; j < rowDim; j++)
 	{
-		// check if column is in span of fullColRankSubmatrix, if not add it as column
-		Eigen::VectorXd columnCandidate = A_dense_T.col(j);
-		Eigen::VectorXd proposedSol = fullColRankSubmatrix.colPivHouseholderQr().solve(columnCandidate);
-		// test if the column is equal to the proposed linear combination
-		double testNorm = (fullColRankSubmatrix * proposedSol - columnCandidate).norm();
-		if (testNorm < 1e-7)
-		{
-			true;
-			// it is in the span and we do not add it
-		}
-		else
-		{
-			// its not in the span and we add it as new column
-			fullColRankSubmatrix.col(currentRank) = columnCandidate;
-			rowIndices.push_back(j);
-			//std::cout << "added index " << j << std::endl;
-			currentRank++;
-		}
 		if (currentRank == rowDim)
 		{
-            // stop if maximum dimension is reached
+			break;
+		}
+		std::vector<int> testIndices = rowIndices;
+		testIndices.push_back(j);
+		intermediateMat = A_dense(testIndices, Eigen::indexing::all);
+		// check if rank increased
+		int newRank = intermediateMat.colPivHouseholderQr().rank();
+		if (newRank > currentRank)
+		{
+			if (newRank > currentRank + 1)
+			{
+				std::cout << "Rank increased by more then 1 dimension, which should be impossible." << std::endl;
+			}
+			// rank increased so we add the row
+			rowIndices.push_back(j);
+			currentRank = newRank;
+		}
+		// stop if maximum rank is reached
+		if (currentRank == colDim)
+		{
 			break;
 		}
 	}
-
-	// test if at the end of the rpocess the fullColRank matrix has actually full rank
-	std::cout << "expected rank =" << rowDim << " actual rank =" << fullColRankSubmatrix.colPivHouseholderQr().rank() << std ::endl;
 	return rowIndices;
 }
 
