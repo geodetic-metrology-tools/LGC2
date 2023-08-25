@@ -43,6 +43,12 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve(bool useArmijoLineSearch, bool useLe
 		}
 		printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
 
+		if (direction.norm() > 1e+12)
+		{
+			std::cout << "Step too big, stopping iterations" << std::endl;
+			break;
+		}
+
 		itIdx++;
 	}
 	return parameterIterate;
@@ -130,7 +136,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, 
 		// solve directly without scaling
 		// use either QR or SimplicialLDLT
 		//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> decomp(NBig);
-		double scaleFactor = 0.01;
+		double scaleFactor = 1;
 		if (useLMRegularization)
 		{
 			//std::cout << std::endl << NBig << std::endl;

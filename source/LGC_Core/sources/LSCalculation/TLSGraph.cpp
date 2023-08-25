@@ -599,18 +599,14 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 	int colDim = A_dense.cols();
 	int rowDim = A_dense.rows();
 	int currentRank = 0;
-	Eigen::MatrixXd intermediateMat;
+	//plotSparsity(A);
 	for (int j = 0; j < rowDim; j++)
 	{
 		if (currentRank == rowDim)
 		{
 			break;
 		}
-		std::vector<int> testIndices = rowIndices;
-		testIndices.push_back(j);
-		intermediateMat = A_dense(testIndices, Eigen::indexing::all);
-		// check if rank increased
-		int newRank = intermediateMat.colPivHouseholderQr().rank();
+		int newRank = A_dense.topRows(j).colPivHouseholderQr().rank();
 		if (newRank > currentRank)
 		{
 			if (newRank > currentRank + 1)
