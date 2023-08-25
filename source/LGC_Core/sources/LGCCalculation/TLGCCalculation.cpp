@@ -47,55 +47,25 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   	{
 	   		// only now the constraint dimensions are set.
 			// testing derivatives
-	   		TLSDerivativeTester tester(fData);
-	   		TLSEvaluator auxEval(fData);
-	   		Eigen::VectorXd provPar = auxEval.getEstParams();
+	   		//TLSDerivativeTester tester(fData);
 	   		TLSEvaluator evaluator(fData);
+	   		Eigen::VectorXd provPar = evaluator.getEstParams();
 	   		std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
+			// test different globalization methods
+			testGlobalizationMethods();
+
 	   		// plan: Gauss Newton solver with armijo backtracking
-	   		TLSGaussNewtonSolver gnObject(evalPtr);
-
-	   		// only use armijo gn if there are variables and there is no constraint
-	   		if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0 )
-			{
-				 // perturb initial value 
-				TVector iniVal = evalPtr->getEstParams(false);
-				Eigen::VectorXd randVal(iniVal.rows());
-				//std::cout << iniVal << std::endl;
-				randVal.setRandom();
-				//randVal *= 1e+1;
-				//randVal *= 1000;
-				randVal *= 0;
-				Eigen::VectorXd perturbedIniVal = iniVal + randVal;
-				evalPtr->setParameters(perturbedIniVal, false);
-
-				// can it be solved directly?
-//  				// armijo
-//  				std::cout << "solving with armijo linesearch" << std::endl;
-//  				gnObject.solve(true, false);
-//  				evalPtr->setParameters(perturbedIniVal, false);
-//  				// Levenberg Marquardt
-//  				std::cout << "solving with Levenberg Marquardt regularization" << std::endl;
-//  				gnObject.solve(false, true);
-//  				evalPtr->setParameters(perturbedIniVal, false);
-//  				// armijo & Levenberg Marquardt
-//  				std::cout << "solving with Levenberg Marquardt regularization & Armijo linesearch" << std::endl;
-//  				gnObject.solve(true, true);// armijo & Levenberg Marquardt
-//  				evalPtr->setParameters(perturbedIniVal, false);
-//  				std::cout << "solving with Full Step GN" << std::endl;
-//  				gnObject.solve(false, true);
-//  
-				// reset inival
-				evalPtr->setParameters(perturbedIniVal, false);
-				// experiment with the dulmage decomposition
-				computeDulmageSequence();
-				// solve the problem using Gauss Newton with stepsize regularization
-	   			//Eigen::VectorXd solution = gnObject.solve(false,true);
-	   		}
-	   		// reset parameters - to not interfere with usual LGC calculation
-	   		//auxEval.setParameters(provPar);
-	   	}
+	   		// TLSGaussNewtonSolver gnObject(evalPtr);
+			//if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0)
+			//{
+			//	// can it be solved directly?
+			//	std::cout << "solving with full step Gauss Newton" << std::endl;
+			//	gnObject.solve(false, false);
+			//	// reset initial value
+			//	// auxEval.setParameters(provPar);
+			//}
+		}
 
 		if (fData->getConfig().sim.isActive())
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
@@ -148,7 +118,7 @@ void TLGCCalculation::computeDulmageSequence(){
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
-	plotSparsity(A_global);
+	//plotSparsity(A_global);
 	int nRows = A_global.rows();
 	// get rowOrdering
 	std::vector<int> rowOrder = getRowOrdering(A_global);
@@ -224,10 +194,10 @@ void TLGCCalculation::computeDulmageSequence(){
 	//Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
 	//Eigen::SparseMatrix<double> test_sparse = test.sparseView();
 	Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
-	std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	plotSparsity(A_global);
-	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
-	plotSparsity(test_sparse, blockSizes);
+	//std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	//plotSparsity(A_global);
+	//std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	//plotSparsity(test_sparse, blockSizes);
 
 
 	// iterate through the components and solve problemns of increasing size
@@ -291,8 +261,8 @@ void TLGCCalculation::computeDulmageSequence(){
 				// use the gn solver to solve the corrsponding subproblem
 				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
 				// gnSolver.solve(false, true);
-				gnSolver.solve(true, true);
-				//gnSolver.solve(false, false);
+				// gnSolver.solve(true, true);
+				gnSolver.solve(true, false);
 			}
 		}
 		else
@@ -304,6 +274,58 @@ void TLGCCalculation::computeDulmageSequence(){
 	evalPtr->unmask();
 	// final solve
 	gnSolver.solve();
+
+
+}
+void TLGCCalculation::testGlobalizationMethods()
+{
+
+	TLSEvaluator evaluator(fData);
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+
+	TVector provisionalVal = evalPtr->getEstParams(false);
+	// Throw away any apriori knowledge in form of provisional values
+	Eigen::VectorXd iniVal = provisionalVal;
+	// // set values randomly
+	// iniVal.setRandom();
+	// set values linearly spaced
+	for (int j = 0; j < iniVal.rows(); j++)
+	{
+		iniVal(j) = 100 + double(j + 1) / double(iniVal.rows());
+	}
+	evalPtr->setParameters(iniVal, false);
+	
+	// create Gauss Newton solver instance
+	TLSGaussNewtonSolver gnObject(evalPtr);
+
+	// first try simple Gauss Newton without any regularization
+	std::cout << "Full step Gauss Newton" << std::endl;
+	gnObject.solve(false, false);
+	// reset initial value
+	evalPtr->setParameters(iniVal, false);
+
+	// Gauss Newton with Armijo linesearch
+	std::cout << "Gauss Newton with Armijo Linesearch" << std::endl;
+	gnObject.solve(true, false);
+	// reset initial value
+	evalPtr->setParameters(iniVal, false);
+
+	// Gauss Newton with Levenberg Marquardt
+	std::cout << "Gauss Newton with Levenberg Marquardt Regularization" << std::endl;
+	gnObject.solve(false, true);
+	// reset initial value
+	evalPtr->setParameters(iniVal, false);
+
+	// Gauss Newton with Levenberg Marquardt and Armijo
+	std::cout << "Gauss Newton with Armijo Linesearch and Levenberg Marquardt Regularization" << std::endl;
+	gnObject.solve(true, true);
+	// reset initial value
+	evalPtr->setParameters(iniVal, false);
+
+	// try to solve the problem via a Dulmage Mendelsohn sequence
+	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
+	computeDulmageSequence();
+
 
 
 }
@@ -345,4 +367,5 @@ vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 	}
 	return associatedEqIndices;
 }
+
 

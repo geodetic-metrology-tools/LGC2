@@ -52,6 +52,8 @@ class TLGCCalculation{
 
 	// split the problem in asequence of subproblems of increasing dimensions corresponding to the fine dulmage decomposition
 	void computeDulmageSequence();
+	// test different globalization methods
+	void testGlobalizationMethods();
 
 	// contains references: not assignable
 	TLGCCalculation& operator=(const TLGCCalculation&);
