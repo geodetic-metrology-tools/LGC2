@@ -329,6 +329,8 @@ void TLGCCalculation::testGlobalizationMethods()
 	solverConfig LMandArmijoregGN = {1, true, true, 1e-2, 100, 1e-6};
 	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
 
+	jsonSerializerObject ser;
+	SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
 
 	for (auto config : testConfigs)
 	{
@@ -338,6 +340,10 @@ void TLGCCalculation::testGlobalizationMethods()
 		gnObject.setConfig(config);
 		// try solution
 		GNresult result = gnObject.solve();
+		//serobj.addProperty("File", fData.get()->getFileLogger().getOutputFileLocation());
+		serobj.addProperty("Result", result);
+		//serobj.addProperty("Configuration", config);
+		std::cout << ser.getStringRepresentation() << std::endl;
 	}
 	
 	// reset initial value
@@ -422,5 +428,6 @@ vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 	}
 	return associatedEqIndices;
 }
+
 
 
