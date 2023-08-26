@@ -18,6 +18,7 @@
 #include "TLSSimulation.h"
 #include "TVAbstractAlgorithm.h"
 
+
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
@@ -327,23 +328,27 @@ void TLGCCalculation::testGlobalizationMethods()
 	solverConfig armijoGN = {1, true, false, 0, 100, 1e-6};
 	solverConfig LMregGN = {1, false, true, 1e-2, 100, 1e-6};
 	solverConfig LMandArmijoregGN = {1, true, true, 1e-2, 100, 1e-6};
+
 	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
 
-	jsonSerializerObject ser;
-	SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
 
 	for (auto config : testConfigs)
 	{
+		jsonSerializerObject ser;
+		SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
 		// set initial value
 		evalPtr->setParameters(iniVal, false);
 		// set config
 		gnObject.setConfig(config);
 		// try solution
 		GNresult result = gnObject.solve();
-		//serobj.addProperty("File", fData.get()->getFileLogger().getOutputFileLocation());
+		serobj.addProperty("File", fData.get()->getFileLogger().getOutputFileLocation());
 		serobj.addProperty("Result", result);
-		//serobj.addProperty("Configuration", config);
-		std::cout << ser.getStringRepresentation() << std::endl;
+		serobj.addProperty("Configuration", config);
+		//std::cout << ser.getStringRepresentation() << std::endl;
+		std::ofstream outputFile("../studyResults.txt", std::ios::app);
+		outputFile << ser.getStringRepresentation() << "\n";
+		outputFile.close();
 	}
 	
 	// reset initial value
