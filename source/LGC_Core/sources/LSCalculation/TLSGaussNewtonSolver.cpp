@@ -296,13 +296,14 @@ void GNresult::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("sigma0Aposteriori", sigma0Aposteriori);
 }
 
-//void solverConfig::serialize(SerializerObject::SerializationHelper &obj) const
-//{ 
-//	obj.addProperty("plotLevel", plotLevel);
-//	obj.addProperty("useArmijo", useArmijo);
-//	obj.addProperty("useLM", useLM);
-//	obj.addProperty("LMpenalty", LMpenalty);
-//	obj.addProperty("maxIter", maxIter);
-//	obj.addProperty("terminationTol", terminationTol);   	
-//}
+void solverConfig::serialize(SerializerObject::SerializationHelper &obj) const
+{ 
+	obj.addProperty("plotLevel", plotLevel);
+	obj.addProperty("useArmijo", useArmijo);
+	obj.addProperty("useLM", useLM);
+	obj.addProperty("LMpenalty", LMpenalty);
+	obj.addProperty("maxIter", maxIter);
+	obj.addProperty("terminationTol", terminationTol);   	
+}
+
 
