@@ -17,7 +17,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 \ingroup GaussNewtonSolver
 \brief Gauss Newton method
 */
-struct GNresult{
+struct GNresult: public Serializable
+{
 	Eigen::VectorXd solution;
 	Eigen::VectorXd residual;
 	double objective = -1;
@@ -25,10 +26,11 @@ struct GNresult{
 	bool success = false;
 	bool isInLimits = false;
 	double sigma0Aposteriori;
+	void serialize(SerializerObject::SerializationHelper &obj) const;
 
-	//GNresult() = default;
+//	GNresult() = default;
 };
-struct solverConfig
+struct solverConfig//: public Serializable
 {
 	// plotLevel
 	// 0 -> show no information
@@ -40,10 +42,13 @@ struct solverConfig
 	double LMpenalty;
 	int maxIter;
 	double terminationTol;
+//	void serialize(SerializerObject::SerializationHelper &obj) const;
+//
+//	solverConfig() = default;
 };
 
 
-class TLSGaussNewtonSolver
+class TLSGaussNewtonSolver //public Serializable
 {
 public:
 	TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator);
@@ -66,6 +71,7 @@ private:
 	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);
 
 	solverConfig fConfig;
+
 //	struct
 //	{
 //		// plotLevel 
