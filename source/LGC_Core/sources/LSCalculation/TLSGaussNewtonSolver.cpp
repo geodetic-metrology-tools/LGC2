@@ -1,5 +1,6 @@
 #include <TLSGaussNewtonSolver.h>
 #include <Logger.hpp>
+#include "QuantileFunctions.h"
 #include <iostream>
 
 
@@ -16,7 +17,19 @@ GNresult TLSGaussNewtonSolver::solve()
 	Eigen::VectorXd direction(fEvaluator->dimensions.UIndex);
 	direction.setConstant(1);
 
-
+	std::string headerLine(100, '~');
+	std::cout << headerLine << std::endl;
+	std::cout << "Starting Gauss-Newton iterations" << std::endl;
+	std::cout << "Regularizations used: ";
+	if (fConfig.useArmijo)
+	{
+		std::cout << "Armijo . ";
+	}
+	if (fConfig.useLM)
+	{
+		std::cout << "LevenbergMarquardt regularization .";
+	}
+	std::cout << std::endl;
 	
 	int itIdx = 0;
 	bool stepsizeCrit = false;
@@ -34,7 +47,7 @@ GNresult TLSGaussNewtonSolver::solve()
 		residual = fEvaluator->getResidual();
 		sigma0 = residual.transpose() * fEvaluator->getPv() * residual;
 		stepsize = 1;
-		if (config.useArmijo)
+		if (fConfig.useArmijo)
 		{
 			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
 		}
@@ -42,7 +55,7 @@ GNresult TLSGaussNewtonSolver::solve()
 		// do the regularized step
 		parameterIterate += stepsize * direction;
 
-		if (config.plotLevel == 2)
+		if (fConfig.plotLevel == 2)
 		{
 			// stepsize=armijo stepsize
 			if (itIdx % 20 == 0)
@@ -58,9 +71,20 @@ GNresult TLSGaussNewtonSolver::solve()
 		}
 
 		itIdx++;
-		stepsizeCrit = (direction.cwiseAbs().maxCoeff() < config.terminationTol);
-		maxIterReached =  (itIdx >= config.maxIter);
+		stepsizeCrit = (direction.cwiseAbs().maxCoeff() < fConfig.terminationTol);
+		maxIterReached =  (itIdx >= fConfig.maxIter);
 	}
+
+
+	// compute expected sigmas limits
+	int d = residual.rows() - direction.rows();
+	double chiUp = deviates_chi_sq_0975(d);
+	double chiLow = deviates_chi_sq_0025(d);
+	// Limits
+	double s0PostUpLimit = sqrtq(chiUp / d);
+	double s0PostLoLimit = sqrtq(chiLow / d);
+	double sigma0Aposteriori = sqrtq(sigma0 / d);
+	bool isInLimits = (sigma0Aposteriori < s0PostUpLimit) && (sigma0Aposteriori > s0PostLoLimit);
 
 
 	// write the result structure
@@ -69,13 +93,13 @@ GNresult TLSGaussNewtonSolver::solve()
 	result.solution = parameterIterate;
 	result.residual = residual;
 	result.objective = sigma0;
+	result.sigma0Aposteriori = sigma0Aposteriori;
 	result.success = stepsizeCrit && (!maxIterReached);
+	result.isInLimits = isInLimits;
 
 	// final plot
-	if (config.plotLevel > 0)
+	if (fConfig.plotLevel > 0)
 	{
-		std::string headerLine(100, '~');
-		std::cout << headerLine << std::endl;
 		std::cout << "Final Results" << std::endl;
 		std::cout << "Success Status = " << result.success << std::endl;
 		printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
@@ -91,12 +115,12 @@ void TLSGaussNewtonSolver::setOption(std::string option, bool flag)
 {
 	if (option == "useArmijo")
 	{
-		config.useArmijo = flag;
+		fConfig.useArmijo = flag;
 		return;
 	}
-	if (option == "useLevenbergMarquardt")
+	if (option == "useLM")
 	{
-		config.useLevenbergMarquardt = flag;
+		fConfig.useLM = flag;
 		return;
 	}
 
@@ -105,14 +129,9 @@ void TLSGaussNewtonSolver::setOption(std::string option, bool flag)
 
 void TLSGaussNewtonSolver::setOption(std::string option, double value)
 {
-	if (option == "maxIter")
-	{
-		config.maxIter = int(value);
-		return;
-	}
 	if (option == "terminationTol")
 	{
-		config.terminationTol = value;
+		fConfig.terminationTol = value;
 		return;
 	}
 
@@ -120,24 +139,31 @@ void TLSGaussNewtonSolver::setOption(std::string option, double value)
 }
 
 void TLSGaussNewtonSolver::setOption(std::string option, int value)
-{	
+{
+	if (option == "maxIter")
+	{
+		fConfig.maxIter = int(value);
+		return;
+	}
+
 	if (option == "plotLevel")
 	{
-		config.plotLevel = value;
+		fConfig.plotLevel = value;
 		return;
 	}
 
 	throw std::runtime_error("Option " + option + " with argument type int does not exist.");
-	
 }
 void TLSGaussNewtonSolver::resetOptions()
 {
-	config.plotLevel = 2;
-	config.maxIter = 100;
-	config.useArmijo = false;
-	config.useLevenbergMarquardt = false;
-	config.LMpenalty = 1e-2;
-	config.terminationTol = 1e-6;
+	// set the default values
+	// default = full step GN, no Armijo, no LM regularization, 100 iterations
+	fConfig.plotLevel = 1;
+	fConfig.maxIter = 100;
+	fConfig.useArmijo = false;
+	fConfig.useLM = false;
+	fConfig.LMpenalty = 1e-2;
+	fConfig.terminationTol = 1e-6;
 }
 
 
@@ -180,8 +206,8 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	// solve the system
 	TVector solution;
 	// solve directly without scaling
-	double scaleFactor = config.LMpenalty;
-	if (config.useLevenbergMarquardt)
+	double scaleFactor = fConfig.LMpenalty;
+	if (fConfig.useLM)
 	{
 		// std::cout << std::endl << NBig << std::endl;
 		NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
