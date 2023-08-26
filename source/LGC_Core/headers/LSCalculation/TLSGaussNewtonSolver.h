@@ -30,21 +30,24 @@ struct GNresult: public Serializable
 
 //	GNresult() = default;
 };
-struct solverConfig//: public Serializable
+struct solverConfig : public Serializable
 {
 	// plotLevel
 	// 0 -> show no information
 	// 1 -> show information at end of iterations
 	// 2 -> show information after each step
-	int plotLevel;
-	bool useArmijo;
-	bool useLM;
-	double LMpenalty;
-	int maxIter;
-	double terminationTol;
-//	void serialize(SerializerObject::SerializationHelper &obj) const;
-//
-//	solverConfig() = default;
+	int plotLevel = 0;
+	bool useArmijo = false;
+	bool useLM = false;
+	double LMpenalty = 0;
+	int maxIter = 0;
+	double terminationTol = 0;
+	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	//
+	solverConfig(int plotLevel, bool useArmijo, bool useLM, double LMpenalty, int maxIter, double terminationTol) :
+		plotLevel(plotLevel), useArmijo(useArmijo), useLM(useLM), LMpenalty(LMpenalty), maxIter(maxIter), terminationTol(terminationTol){};
+
+	solverConfig() = default;
 };
 
 
