@@ -5,9 +5,10 @@
 
 TLSGaussNewtonSolver::TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator) : fEvaluator( evaluator )
 {
+	resetOptions();
 }
 
-Eigen::VectorXd TLSGaussNewtonSolver::solve(bool useArmijoLineSearch, bool useLevenbergMarquardt)
+GNresult TLSGaussNewtonSolver::solve()
 {
 	// Gauss Newton with armijo stepsize regularization
 	Eigen::VectorXd parameterIterate = fEvaluator->getEstParams();
@@ -18,17 +19,22 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve(bool useArmijoLineSearch, bool useLe
 
 	
 	int itIdx = 0;
-	while (direction.cwiseAbs().maxCoeff() > 1e-6 && itIdx < 100)
+	bool stepsizeCrit = false;
+	bool maxIterReached = false;
+	double sigma0=1;
+	double stepsize = 1;
+	Eigen::VectorXd residual;
+	while (stepsizeCrit == false && maxIterReached == false)
 	{
 		// compute the search direction
-		direction = getGNDirection(parameterIterate, false,  useLevenbergMarquardt);
+		direction = getGNDirection(parameterIterate);
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
 		// compute the residual and the weighted objective to compare the real descent vs the gradient predicted descent in the armijo linesearch method
-		Eigen::VectorXd residual = fEvaluator->getResidual();
-		double sigma0 = residual.transpose() * fEvaluator->getPv() * residual;
-		double stepsize = 1;
-		if (useArmijoLineSearch)
+		residual = fEvaluator->getResidual();
+		sigma0 = residual.transpose() * fEvaluator->getPv() * residual;
+		stepsize = 1;
+		if (config.useArmijo)
 		{
 			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
 		}
@@ -36,13 +42,15 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve(bool useArmijoLineSearch, bool useLe
 		// do the regularized step
 		parameterIterate += stepsize * direction;
 
-		// stepsize=armijo stepsize
-		if (itIdx % 20 == 0)
+		if (config.plotLevel == 2)
 		{
-			printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+			// stepsize=armijo stepsize
+			if (itIdx % 20 == 0)
+			{
+				printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+			}
+			printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
 		}
-		printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
-
 		if (direction.norm() > 1e+12)
 		{
 			std::cout << "Step too big, stopping iterations" << std::endl;
@@ -50,12 +58,90 @@ Eigen::VectorXd TLSGaussNewtonSolver::solve(bool useArmijoLineSearch, bool useLe
 		}
 
 		itIdx++;
+		stepsizeCrit = (direction.cwiseAbs().maxCoeff() < config.terminationTol);
+		maxIterReached =  (itIdx >= config.maxIter);
 	}
-	return parameterIterate;
+
+
+	// write the result structure
+	GNresult result;
+	result.nIterations = itIdx;
+	result.solution = parameterIterate;
+	result.residual = residual;
+	result.objective = sigma0;
+	result.success = stepsizeCrit && (!maxIterReached);
+
+	// final plot
+	if (config.plotLevel > 0)
+	{
+		std::string headerLine(100, '~');
+		std::cout << headerLine << std::endl;
+		std::cout << "Final Results" << std::endl;
+		std::cout << "Success Status = " << result.success << std::endl;
+		printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+		printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx-1, sigma0, grad.norm(), direction.norm(), stepsize);
+		std::cout << headerLine << std::endl;
+	}
+
+
+	return result;
+}
+
+void TLSGaussNewtonSolver::setOption(std::string option, bool flag)
+{
+	if (option == "useArmijo")
+	{
+		config.useArmijo = flag;
+		return;
+	}
+	if (option == "useLevenbergMarquardt")
+	{
+		config.useLevenbergMarquardt = flag;
+		return;
+	}
+
+	throw std::runtime_error("Option " + option + " with argument type bool does not exist.");
+}
+
+void TLSGaussNewtonSolver::setOption(std::string option, double value)
+{
+	if (option == "maxIter")
+	{
+		config.maxIter = int(value);
+		return;
+	}
+	if (option == "terminationTol")
+	{
+		config.terminationTol = value;
+		return;
+	}
+
+	throw std::runtime_error("Option " + option + " with argument type double does not exist.");
+}
+
+void TLSGaussNewtonSolver::setOption(std::string option, int value)
+{	
+	if (option == "plotLevel")
+	{
+		config.plotLevel = value;
+		return;
+	}
+
+	throw std::runtime_error("Option " + option + " with argument type int does not exist.");
+	
+}
+void TLSGaussNewtonSolver::resetOptions()
+{
+	config.plotLevel = 2;
+	config.maxIter = 100;
+	config.useArmijo = false;
+	config.useLevenbergMarquardt = false;
+	config.LMpenalty = 1e-2;
+	config.terminationTol = 1e-6;
 }
 
 
-Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, bool useScaling, bool useLMRegularization)
+Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 {
 	fEvaluator->setParameters(parameter);
 	// compute dx, as in TLSUniversalMtdComputer class
@@ -72,11 +158,10 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, 
 		throw std::runtime_error("Armijo Gauss Newton only implemented without constraints.");
 	}
 
-
 	// set invN1
 	TSparseMatrix invN1;
 	const TSparseMatrix &Pv = fEvaluator->getPv();
-	invN1 = Pv ;
+	invN1 = Pv;
 
 	// Calculate Normal matrix N2 = At * inv( B * inv(P) * Bt ) * A , matrix dimensions (u,u)
 	TSparseMatrix N2;
@@ -91,68 +176,26 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter, 
 	VBig = A.transpose() * invN1 * W;
 
 	// Calculates solution NBig * X = -VBig and keeps only the part corresponding to adjusted parameters
-	//TVector solutionExt;
-	//(nbUnk + nbCnstr);
-	
 
 	// solve the system
 	TVector solution;
-	// 
-	// scale the columns of NBig
-	if (useScaling == true)
+	// solve directly without scaling
+	double scaleFactor = config.LMpenalty;
+	if (config.useLevenbergMarquardt)
 	{
-		Eigen::MatrixXd NBigdense = NBig.toDense();
-		int nCol = NBig.cols();
-		Eigen::VectorXd colScale(nCol);
-		for (int j = 0; j < nCol; j++)
-		{
-			double colNorm = NBigdense.col(j).norm();
-			if (colNorm < 1e-16)
-			{
-				throw std::runtime_error("NBig has a zero-column, so no full rank!");
-			}
-			colScale(j) = 1 / colNorm;
-		}
-
-		// scale NBig
-		//  define diagonal matrix
-		Eigen::MatrixXd scaleMat(nCol, nCol);
-		scaleMat.setZero();
-		scaleMat = colScale.asDiagonal();
-		// use qr decomposition
-		// solve scaled system NBig * Scale * sol = W
-		// and then rescale solution trueSol = Scale * sol
-		Eigen::SparseMatrix<double> NBig_scaled = (NBigdense * scaleMat).sparseView();
-	
-		// use either QR or SimplicialLDLT
-		//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> decomp(NBig_scaled);
-		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig_scaled);
-		solution = decomp.solve(-VBig);
-		// rescale solution
-		solution = scaleMat * solution;
+		// std::cout << std::endl << NBig << std::endl;
+		NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
+		// std::cout << std::endl << NBig << std::endl;
 	}
-	else
-	{
-		// solve directly without scaling
-		// use either QR or SimplicialLDLT
-		//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> decomp(NBig);
-		double scaleFactor = 1;
-		if (useLMRegularization)
-		{
-			//std::cout << std::endl << NBig << std::endl;
-			NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
-			//std::cout << std::endl << NBig << std::endl;
-		}
-		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
-		solution = decomp.solve(-VBig);
-	}
+	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
+	solution = decomp.solve(-VBig);
 
-//	// test solution quality, how exact is NBig*sol = -VBig solved?
-//	double solutionQuality = (NBig * solution + VBig).norm();
-//	if (solutionQuality > 1e+3)
-//	{
-//		std::cout << "linear subsystem not solved accurately |NBig * solution + VBig| = " << solutionQuality << std::endl;
-//	}
+	//	// test solution quality, how exact is NBig*sol = -VBig solved?
+	//	double solutionQuality = (NBig * solution + VBig).norm();
+	//	if (solutionQuality > 1e+3)
+	//	{
+	//		std::cout << "linear subsystem not solved accurately |NBig * solution + VBig| = " << solutionQuality << std::endl;
+	//	}
 
 	return solution;
 }
