@@ -17,24 +17,54 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 \ingroup GaussNewtonSolver
 \brief Gauss Newton method
 */
+struct GNresult{
+	Eigen::VectorXd solution;
+	Eigen::VectorXd residual;
+	double objective = -1;
+	int nIterations = 0;
+	bool success = false;
+
+	//GNresult() = default;
+};
+
 class TLSGaussNewtonSolver
 {
 public:
 	TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator);
 	//~TLSGaussNewtonSolver();
 	// apply GN solver
-	Eigen::VectorXd solve(bool useArmijoLineSearch = true, bool useLevenbergMarquardt = false);
+	GNresult solve();
+	void setOption(std::string, bool flag);
+	void setOption(std::string, double value);
+	void setOption(std::string, int value);
+	void resetOptions();
+
 
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
-	Eigen::VectorXd getGNDirection(Eigen::VectorXd, bool useScaling = false, bool useLMRegularization = false);
+	Eigen::VectorXd getGNDirection(Eigen::VectorXd);
 	Eigen::VectorXd getGradient(Eigen::VectorXd);
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
 	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);
 
+	struct
+	{
+		// plotLevel 
+		// 0 -> show no information
+		// 1 -> show information at end of iterations
+		// 2 -> show information after each step
+		int plotLevel;
+		bool useArmijo;
+		bool useLevenbergMarquardt;
+		double LMpenalty;
+		int maxIter;
+		double terminationTol;
+	} config;
+
 
 };
+
 
 
 
