@@ -60,7 +60,16 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	   		std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
 			// test different globalization methods
-			testGlobalizationMethods();
+			try
+			{
+				testGlobalizationMethods();
+			}
+			catch (const std::exception &e)
+			{
+				// Code to handle the exception
+				std::cerr << "An exception occurred: " << e.what() << std::endl;
+				exit(0);
+			}
 
 	   		// plan: Gauss Newton solver with armijo backtracking
 	   		// TLSGaussNewtonSolver gnObject(evalPtr);
@@ -122,6 +131,7 @@ void TLGCCalculation::computeDulmageSequence(){
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(auxEval);
 	// use it to create a Gauss Newton solver object
 	TLSGaussNewtonSolver gnSolver(evalPtr);
+	gnSolver.setOption("plotLevel", 1);
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
@@ -269,7 +279,7 @@ void TLGCCalculation::computeDulmageSequence(){
 				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
 				// gnSolver.solve(false, true);
 				// gnSolver.solve(true, true);
-				gnSolver.solve(true, false);
+				gnSolver.solve();
 			}
 		}
 		else
@@ -307,25 +317,33 @@ void TLGCCalculation::testGlobalizationMethods()
 
 	// first try simple Gauss Newton without any regularization
 	std::cout << "Full step Gauss Newton" << std::endl;
-	gnObject.solve(false, false);
+	gnObject.solve();
 	// reset initial value
 	evalPtr->setParameters(iniVal, false);
 
+
 	// Gauss Newton with Armijo linesearch
 	std::cout << "Gauss Newton with Armijo Linesearch" << std::endl;
-	gnObject.solve(true, false);
+	gnObject.setOption("useArmijo", true);
+	GNresult result = gnObject.solve();
+	std::cout << result.success << std::endl;
 	// reset initial value
 	evalPtr->setParameters(iniVal, false);
 
 	// Gauss Newton with Levenberg Marquardt
 	std::cout << "Gauss Newton with Levenberg Marquardt Regularization" << std::endl;
-	gnObject.solve(false, true);
+	gnObject.resetOptions();
+	gnObject.setOption("useLevenbergMarquardt", true);
+	gnObject.solve();
 	// reset initial value
 	evalPtr->setParameters(iniVal, false);
 
 	// Gauss Newton with Levenberg Marquardt and Armijo
 	std::cout << "Gauss Newton with Armijo Linesearch and Levenberg Marquardt Regularization" << std::endl;
-	gnObject.solve(true, true);
+	gnObject.resetOptions();
+	gnObject.setOption("useArmijo", true);
+	gnObject.setOption("useLevenbergMarquardt", true);
+	gnObject.solve();
 	// reset initial value
 	evalPtr->setParameters(iniVal, false);
 
