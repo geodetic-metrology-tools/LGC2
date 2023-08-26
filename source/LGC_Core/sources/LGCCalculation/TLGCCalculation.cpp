@@ -125,6 +125,10 @@ void TLGCCalculation::computeDulmageSequence(){
 	// use it to create a Gauss Newton solver object
 	TLSGaussNewtonSolver gnSolver(evalPtr);
 	gnSolver.setOption("plotLevel", 1);
+	gnSolver.setOption("useArmijo", true);
+	gnSolver.setOption("useLM", true);
+	gnSolver.setOption("maxIter", 200);
+	gnSolver.setOption("terminationTol", 1e-8);
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
@@ -177,30 +181,30 @@ void TLGCCalculation::computeDulmageSequence(){
 		set<int> parComp = comp.second;
 		set<int> eqCompReal;
 		set<int> parCompReal;
-		std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
+		//  std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
 		blockSizes.push_back(eqComp.size());
-		std::cout << "par Idx: ";
+		//  std::cout << "par Idx: ";
 		for (auto pIdx : parComp)
 		{
 			orderedPIdx.push_back(pIdx - 1);
 			parCompReal.insert(pIdx - 1);
-			std::cout << pIdx - 1 << " , ";
+			//  std::cout << pIdx - 1 << " , ";
 		};
-		std::cout << std::endl;
-		std::cout << "eqn Idx: ";
+		//  std::cout << std::endl;
+		//  std::cout << "eqn Idx: ";
 		for (auto eqIdx : eqComp)
 		{
 			orderedEIdx.push_back(rowOrder[chosenRows[eqIdx - 1]]);
 			eqCompReal.insert(rowOrder[chosenRows[eqIdx - 1]]);
-			std::cout << rowOrder[chosenRows[eqIdx - 1]] << " , ";
+			//  std::cout << rowOrder[chosenRows[eqIdx - 1]] << " , ";
 		};
 		fineDM_reducedRealIndices.push_back(std::make_pair(eqCompReal, parCompReal));
-		std::cout << std::endl;
+		//  std::cout << std::endl;
 		count++;
 	}
 	//  comparing the sparsity patterns
 	//Eigen::MatrixXd A_global_dense = A_global.toDense();
-//Eigen::SparseMatrix<double> test_sparse = 
+	//Eigen::SparseMatrix<double> test_sparse = 
 	//Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
 	//Eigen::SparseMatrix<double> test_sparse = test.sparseView();
 	Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
@@ -284,6 +288,9 @@ void TLGCCalculation::computeDulmageSequence(){
 	evalPtr->unmask();
 	// final solve
 	gnSolver.solve();
+	// switch to full step to confrim solution
+	gnSolver.resetOptions();
+	gnSolver.solve();
 
 
 }
@@ -308,42 +315,65 @@ void TLGCCalculation::testGlobalizationMethods()
 	// create Gauss Newton solver instance
 	TLSGaussNewtonSolver gnObject(evalPtr);
 
-	// first try simple Gauss Newton without any regularization
-	std::cout << "Full step Gauss Newton" << std::endl;
-	gnObject.solve();
+	// solverConfigs to test
+	solverConfig fullStepGN = {1, false, false, 0, 100, 1e-6};
+	solverConfig armijoGN = {1, true, false, 0, 100, 1e-6};
+	solverConfig LMregGN = {1, false, true, 1e-2, 100, 1e-6};
+	solverConfig LMandArmijoregGN = {1, true, true, 1e-2, 100, 1e-6};
+	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
+
+
+	for (auto config : testConfigs)
+	{
+		// set initial value
+		evalPtr->setParameters(iniVal, false);
+		// set config
+		gnObject.setConfig(config);
+		// try solution
+		GNresult result = gnObject.solve();
+	}
+	
 	// reset initial value
 	evalPtr->setParameters(iniVal, false);
-
-
-	// Gauss Newton with Armijo linesearch
-	std::cout << "Gauss Newton with Armijo Linesearch" << std::endl;
-	gnObject.setOption("useArmijo", true);
-	GNresult result = gnObject.solve();
-	std::cout << result.success << std::endl;
-	// reset initial value
-	evalPtr->setParameters(iniVal, false);
-
-	// Gauss Newton with Levenberg Marquardt
-	std::cout << "Gauss Newton with Levenberg Marquardt Regularization" << std::endl;
-	gnObject.resetOptions();
-	gnObject.setOption("useLevenbergMarquardt", true);
-	gnObject.solve();
-	// reset initial value
-	evalPtr->setParameters(iniVal, false);
-
-	// Gauss Newton with Levenberg Marquardt and Armijo
-	std::cout << "Gauss Newton with Armijo Linesearch and Levenberg Marquardt Regularization" << std::endl;
-	gnObject.resetOptions();
-	gnObject.setOption("useArmijo", true);
-	gnObject.setOption("useLevenbergMarquardt", true);
-	gnObject.solve();
-	// reset initial value
-	evalPtr->setParameters(iniVal, false);
-
 	// try to solve the problem via a Dulmage Mendelsohn sequence
 	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
 	computeDulmageSequence();
 
+//
+////	std::vector<solverConfig> testConfigs;
+//	// first try simple Gauss Newton without any regularization
+//	std::cout << "Full step Gauss Newton" << std::endl;
+//	gnObject.solve();
+//	// reset initial value
+//	evalPtr->setParameters(iniVal, false);
+//
+//	// Gauss Newton with Armijo linesearch
+//	std::cout << "Gauss Newton with Armijo Linesearch" << std::endl;
+//	gnObject.setOption("useArmijo", true);
+//	GNresult result = gnObject.solve();
+//	// reset initial value
+//	evalPtr->setParameters(iniVal, false);
+//
+//	// Gauss Newton with Levenberg Marquardt
+//	std::cout << "Gauss Newton with Levenberg Marquardt Regularization" << std::endl;
+//	gnObject.resetOptions();
+//	gnObject.setOption("useLM", true);
+//	gnObject.solve();
+//	// reset initial value
+//	evalPtr->setParameters(iniVal, false);
+//
+//	// Gauss Newton with Levenberg Marquardt and Armijo
+//	std::cout << "Gauss Newton with Armijo Linesearch and Levenberg Marquardt Regularization" << std::endl;
+//	gnObject.resetOptions();
+//	gnObject.setOption("useArmijo", true);
+//	gnObject.setOption("useLM", true);
+//	gnObject.solve();
+//	// reset initial value
+//	evalPtr->setParameters(iniVal, false);
+//
+//	// try to solve the problem via a Dulmage Mendelsohn sequence
+//	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
+//	computeDulmageSequence();
 
 
 }
