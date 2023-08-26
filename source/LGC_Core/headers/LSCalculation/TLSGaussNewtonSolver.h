@@ -23,9 +23,25 @@ struct GNresult{
 	double objective = -1;
 	int nIterations = 0;
 	bool success = false;
+	bool isInLimits = false;
+	double sigma0Aposteriori;
 
 	//GNresult() = default;
 };
+struct solverConfig
+{
+	// plotLevel
+	// 0 -> show no information
+	// 1 -> show information at end of iterations
+	// 2 -> show information after each step
+	int plotLevel;
+	bool useArmijo;
+	bool useLM;
+	double LMpenalty;
+	int maxIter;
+	double terminationTol;
+};
+
 
 class TLSGaussNewtonSolver
 {
@@ -37,6 +53,7 @@ public:
 	void setOption(std::string, bool flag);
 	void setOption(std::string, double value);
 	void setOption(std::string, int value);
+	void setConfig(solverConfig config) { fConfig = config; };
 	void resetOptions();
 
 
@@ -48,23 +65,23 @@ private:
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
 	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);
 
-	struct
-	{
-		// plotLevel 
-		// 0 -> show no information
-		// 1 -> show information at end of iterations
-		// 2 -> show information after each step
-		int plotLevel;
-		bool useArmijo;
-		bool useLevenbergMarquardt;
-		double LMpenalty;
-		int maxIter;
-		double terminationTol;
-	} config;
+	solverConfig fConfig;
+//	struct
+//	{
+//		// plotLevel 
+//		// 0 -> show no information
+//		// 1 -> show information at end of iterations
+//		// 2 -> show information after each step
+//		int plotLevel;
+//		bool useArmijo;
+//		bool useLM;
+//		double LMpenalty;
+//		int maxIter;
+//		double terminationTol;
+//	} config;
 
 
 };
-
 
 
 
