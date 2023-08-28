@@ -77,9 +77,8 @@ Eigen::VectorXd TLSEvaluator::getResidual(bool useMask)
 }
 Eigen::VectorXd TLSEvaluator::getWeightedResidual(bool useMask)
 {
-	Eigen::VectorXd diagEntries;
-	diagEntries = getPv(useMask).diagonal().cwiseSqrt();
-	return diagEntries.cwiseProduct(getResidual(useMask));
+	evaluate();
+	return getSqrtPv(useMask) * getResidual(useMask);
 }
 const TSparseMatrix TLSEvaluator::getA(bool useMask)
 {
@@ -113,6 +112,19 @@ const TSparseMatrix TLSEvaluator::getPv(bool useMask)
 	else
 	{
 		result = *iMat->getWeightMtrx();
+	}
+	return result;
+}
+
+const TSparseMatrix TLSEvaluator::getSqrtPv(bool useMask)
+{
+	evaluate();
+	Eigen::VectorXd diagEntries = getPv(useMask).diagonal();
+	int dim = diagEntries.rows();
+	Eigen::SparseMatrix<double> result(dim, dim);
+	for (int j = 0; j < dim; j++)
+	{
+		result.coeffRef(j, j) = sqrt(diagEntries(j));
 	}
 	return result;
 }

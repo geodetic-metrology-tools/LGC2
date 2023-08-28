@@ -5,7 +5,8 @@
 TLSDerivativeTester::TLSDerivativeTester(std::shared_ptr<TLGCData> data) : fEvaluator( TLSEvaluator(data) )
 {
 	// test the first design matrix
-	bool result = testFirstDesignMatrix();
+	bool resultResidual = testFirstDesignMatrix();
+	bool resultWeightedResidual = testWeightedResidualDerivative();
 	// if (result)
 	// {
 	// 	std::cout << "Finite differences test for first design matrix passed." << std::endl;
@@ -68,6 +69,51 @@ bool TLSDerivativeTester::testFirstDesignMatrix()
 	}
 
 	return !problemDetected;
+}
+
+bool TLSDerivativeTester::testWeightedResidualDerivative()
+{
+	// weighted residual = sqrt(P_v) * (F(x)-L)
+	// computed derivative (as P_v is assumed to be parameter independant):
+	// sqrt(P_v)*J_F(x)
+	
+	// get value that is currently set in the TLGCData structure, if called at the beginning, this will be the provisional values
+	Eigen::VectorXd prov = fEvaluator.getEstParams();
+
+	fEvaluator.setParameters(prov);
+	Eigen::SparseMatrix<double> computedJacobian = fEvaluator.getSqrtPv() * fEvaluator.getA();
+
+	// compute the finite difference Jacobian
+	Eigen::VectorXd baseValue = fEvaluator.getWeightedResidual();
+	
+	int nParam = fEvaluator.dimensions.UIndex;
+	int nObs = fEvaluator.dimensions.OIndex;
+
+	// initialize Jacobian that will be filled with finite differences
+	Eigen::MatrixXd finiteDiffJacobian(nObs, nParam);
+	finiteDiffJacobian.setZero();
+	Eigen::VectorXd baseVector = fEvaluator.getEstParams();
+	
+	for (int i = 0; i < nParam; i++)
+	{
+		Eigen::VectorXd jacCol(nObs);
+		jacCol.setZero();
+		// go slightly in e_i direction
+		Eigen::VectorXd pertVect = baseVector;
+		pertVect(i) += dx;
+		// evaluate
+		fEvaluator.setParameters(pertVect);
+		Eigen::VectorXd weightedResidualPert = fEvaluator.getWeightedResidual();
+		// compute he finite diff Jacobian
+		jacCol = (weightedResidualPert - baseValue) / dx;
+		// write it ibn the finite diff Jacobian
+		finiteDiffJacobian.col(i) = jacCol;
+	}
+
+	std::cout << (computedJacobian.toDense() - finiteDiffJacobian).norm() << std::endl;
+
+
+	return false;
 }
 
 Eigen::MatrixXd TLSDerivativeTester::computeFiniteDifferenceJacobian(Eigen::VectorXd vec)

@@ -56,13 +56,15 @@ void object::test<1>()
 		// create GN solver object
 		TLSGaussNewtonSolver gnObject(evaluator);
 		// solve the problem
-		Eigen::VectorXd firstSolution = gnObject.solve();
+		GNresult firstResult = gnObject.solve();
+		Eigen::VectorXd firstSolution = firstResult.solution;
 		// solution needs to be 0 0 0 0 0 0
 		ensure_equals("all parameters need to be 0", firstSolution.norm(), 0);
 
 		// deactivate the second B observation
 		evaluator->currentMask.equationIndices = std::vector<int>{0, 1, 2, 3, 4, 5};
-		Eigen::VectorXd secondSolution = gnObject.solve();
+		GNresult secondResult = gnObject.solve();
+		Eigen::VectorXd secondSolution = secondResult.solution;
 		Eigen::VectorXd expectedSol(6);
 		expectedSol << 0, 0, 0, -1, -2, -3;
 		ensure_equals("B coordinates should match -1,-2,-3", expectedSol, secondSolution);
@@ -102,14 +104,17 @@ void object::test<2>()
 		std::shared_ptr<TLSEvaluator> evaluator = std::make_shared<TLSEvaluator>(evalObject);
 		// create GN solver object
 		TLSGaussNewtonSolver gnObject(evaluator);
+		gnObject.setOption("useArmijo", true);
 		// solve the problem
-		Eigen::VectorXd firstSolution = gnObject.solve();
+		GNresult firstResult = gnObject.solve();
+		Eigen::VectorXd firstSolution = firstResult.solution;
 		ensure_equals("z component should be estimated at 1", firstSolution(0), 1.0);
 		LGCAdjustablePoint &pointP1 = projTest->getPoints().getObject("P1");
 		// reset z coordinate of point P1 to a value far from the solution (=1)
 		pointP1.setEstVal(0,10);
 		// solve the problem again
-		Eigen::VectorXd secondSolution = gnObject.solve();
+		GNresult secondResult = gnObject.solve();
+		Eigen::VectorXd secondSolution = secondResult.solution;
 		ensure_equals("z component should be estimated at 1", secondSolution(0), 1.0);
 }
 
