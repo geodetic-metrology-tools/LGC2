@@ -48,24 +48,24 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 	   	{
-	   		// only now the constraint dimensions are set.
-			// testing derivatives
-	   		//TLSDerivativeTester tester(fData);
-	   		TLSEvaluator evaluator(fData);
-	   		Eigen::VectorXd provPar = evaluator.getEstParams();
-	   		std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+	   	//	// only now the constraint dimensions are set.
+		//	// testing derivatives
+	   	//	TLSDerivativeTester tester(fData);
+	   	//	TLSEvaluator evaluator(fData);
+	   	//	Eigen::VectorXd provPar = evaluator.getEstParams();
+	   	//	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
-			// test different globalization methods
-			try
-			{
-				testGlobalizationMethods();
-			}
-			catch (const std::exception &e)
-			{
-				// Code to handle the exception
-				std::cerr << "An exception occurred: " << e.what() << std::endl;
-				exit(0);
-			}
+		//	// test different globalization methods
+		//	try
+		//	{
+		//		testGlobalizationMethods();
+		//	}
+		//	catch (const std::exception &e)
+		//	{
+		//		// Code to handle the exception
+		//		std::cerr << "An exception occurred: " << e.what() << std::endl;
+		//		exit(0);
+		//	}
 
 	   		// plan: Gauss Newton solver with armijo backtracking
 	   		// TLSGaussNewtonSolver gnObject(evalPtr);
