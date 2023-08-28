@@ -51,14 +51,14 @@ public:
     std::pair<set<int>, set<int>> splitEqAndPar(set<int>);
     
     // compute coarse Dulmage-mendelsohn decomposition OUW decomposition: Overdetermined, Underdetermined, Well determined+ Sccs= strongly connected components associated to oriented max matching graph
-    std::tuple< std::set<int>, std::set<int>, std::set<int>, vector<std::set<int>>, vector<int>>  BipGraph::getDulmage();
+    std::tuple< std::set<int>, std::set<int>, std::set<int>, vector<std::set<int>>, vector<int>>  getDulmage();
     // get vector of strongly connected components represented as pair of euqation indices and parameter indices.
     // Vector is sorted according to topological order of contracted scc dependencies
-    vector<std::pair<std::set<int>, std::set<int>>>  BipGraph::getFineDulmage();
+    vector<std::pair<std::set<int>, std::set<int>>>  getFineDulmage();
 
     // return directed graph corresponding to the maximum matching (copy all edges and add also reversed edges for matched original edges)
     // used for Dulmage Mendelsohn decomposition
-    dirGraph BipGraph::dirMatch();
+    dirGraph dirMatch();
    // // split a set of nodes from the directed graph into the two subsets of nodes of the bipartite graph
    // std::pair<set<int>, set<int>> splitEqAndPar(set<int>);
 
@@ -76,17 +76,17 @@ public :
     int inDegree(int j);
     int outDegree(int j);
     // inefficient implementation!!
-    std::set<int> dirGraph::findDescendants(int i);
-    std::set<int> dirGraph::findAncestors(int i);
-    std::set<int> dirGraph::getSourceDescendants();
-    std::set<int> dirGraph::getSinkAncestors();
-    vector<set<int>> dirGraph::getSCC();
-    void dirGraph::printSCCs();
+    std::set<int> findDescendants(int i);
+    std::set<int> findAncestors(int i);
+    std::set<int> getSourceDescendants();
+    std::set<int> getSinkAncestors();
+    vector<set<int>> getSCC();
+    void printSCCs();
     // topological sorting the vertices.
     // ONLY POSSIBLE IF GRAPH HAS NO CYCLES!
     vector<int> topologicalSort();
     // after maximum matching computation, get the graph that results from contracting the vertices of the scc's
-    dirGraph dirGraph::contractSCCgraph();
+    dirGraph contractSCCgraph();
 private:
     // number of vertices
     int n;
@@ -98,7 +98,7 @@ private:
     // map vertex->index of associated SCC
     vector<int> vertexToSCC;
     // find strongly connected components using Tarjans algorithm
-    void dirGraph::findSCC();
+    void findSCC();
     // A Recursive DFS based function used by SCC()
     void SCCUtil(int u, int& discTime, vector<int>& disc, vector<int>& low, stack<int>& st, vector<bool>& stackMember);
         // A function used by topologicalSort

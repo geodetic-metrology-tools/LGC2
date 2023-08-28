@@ -61,6 +61,7 @@ public:
 	//const TSparseMatrix* getA2(bool useMask = true);
 	// weights
 	const TSparseMatrix getPv(bool useMask = true);
+	const TSparseMatrix getSqrtPv(bool useMask = true);
 
 	Eigen::VectorXd getEstParams(bool useMask = true);
 	UEOIndices dimensions;
