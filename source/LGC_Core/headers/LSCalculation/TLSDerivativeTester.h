@@ -24,6 +24,7 @@ public:
 	TLSDerivativeTester(std::shared_ptr<TLGCData> data);
 
 	bool testFirstDesignMatrix();
+	bool testWeightedResidualDerivative();
 
 private:
 	
