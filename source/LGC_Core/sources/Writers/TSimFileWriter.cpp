@@ -62,6 +62,7 @@ void TSimFileWriter::writeFile()
 void TSimFileWriter::writeHeader()
 {
 	TAStreamFormatter *stream = getStream();
+	std::string sep = stream->getSeparator();
 
 	(*stream) << "*TITR" << endl;
 	(*stream) << data->getConfig().title << endl;
@@ -129,6 +130,14 @@ void TSimFileWriter::writeHeader()
 			(*stream) << "*PUNC OUT1" << endl;
 		else
 			(*stream) << "*PUNC" << endl;
+
+	if (data->getConfig().writeJSON.isActive())
+	{
+		(*stream) << "*JSON";
+		if (data->getConfig().writeJSON_COVAR.isActive())
+			(*stream) << sep << "COVAR";
+		(*stream) << "\n";
+	}
 }
 
 void TSimFileWriter::writeInstrument()
