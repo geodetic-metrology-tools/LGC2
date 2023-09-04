@@ -608,9 +608,9 @@ TFreeVector TChabaFileWriter::transformSigmaInRoot(const TPositionVector pt, TDa
 		covSubframe.setZero();
 		covSubframe(frame.getRelativeUnknIndices(), frame.getRelativeUnknIndices()) = fullCov(frame.getRelativeUnknIndices(), frame.getRelativeUnknIndices());
 		covSFDense.topLeftCorner(7, 7) = covSubframe;
-		covSFDense(8, 8) = pow2q(sx);
-		covSFDense(9, 9) = pow2q(sy);
-		covSFDense(10, 10) = pow2q(sz);
+		covSFDense(7, 7) = pow2q(sx);
+		covSFDense(8, 8) = pow2q(sy);
+		covSFDense(9, 9) = pow2q(sz);
 		covSF = covSFDense.sparseView();
 
 		// calculated new point covariance in the upper frame
