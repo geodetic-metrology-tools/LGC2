@@ -227,7 +227,7 @@ bool TDataAnalyzer::dataConsistent()
 			if (numberOfMeasurements == 0)
 			{
 				itINCLY.setActive(false);
-				const std::string nlinestr("Line " + std::to_string(itINCLY.line + 1) + ": ");
+				const std::string nlinestr("Line " + std::to_string(itINCLY.line) + ": ");
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
 			}
 		}
@@ -238,7 +238,7 @@ bool TDataAnalyzer::dataConsistent()
 			if (numberOfMeasurements == 0)
 			{
 				itECWS.setActive(false);
-				const std::string nlinestr("Line " + std::to_string(itECWS.line + 1) + ": ");
+				const std::string nlinestr("Line " + std::to_string(itECWS.line) + ": ");
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
 			}
 			else
