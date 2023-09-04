@@ -149,7 +149,7 @@ namespace tut
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
 
-		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line16").getEstimatedValue();
+		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line17").getEstimatedValue();
 		ensure_equals("PT x coordinate should match",PTRP.getX().getMetresValue(), 40  , 1e-7);
 		ensure_equals("PT y coordinate should match",PTRP.getY().getMetresValue(), 34.0  , 1e-7);
 		ensure_equals("PT z coordinate should match",PTRP.getZ().getMetresValue(), 114.0  , 1e-7);
@@ -183,7 +183,7 @@ namespace tut
 		TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 		ensure_equals("PT z coordinate should match",PT.getZ().getMetresValue(), 50.0  , 1e-7);
 
-		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line20").getEstimatedValue();
+		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line21").getEstimatedValue();
 		ensure_equals("PT x coordinate should match",PTRP.getX().getMetresValue(), 40  , 1e-7);
 		ensure_equals("PT y coordinate should match",PTRP.getY().getMetresValue(), 34.0  , 1e-7);
 		ensure_equals("PT z coordinate should match",PTRP.getZ().getMetresValue(), 174.0  , 1e-7);

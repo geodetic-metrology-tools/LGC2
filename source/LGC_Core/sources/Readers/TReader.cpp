@@ -242,7 +242,7 @@ std::istream& safeGetline(std::istream& is, std::string& t)
 bool TReader::read(std::istream& lgcStream) {
 	using namespace std;
 	string line;
-	int nline(1);
+	int nline(0);
 	bool isReferenceSystemDefined = false;	
 
 	auto& outputMessages(project.getFileLogger());
@@ -253,6 +253,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
+	nline++;
 	const auto& titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
@@ -262,14 +263,13 @@ bool TReader::read(std::istream& lgcStream) {
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
 			
 	// read until the next keyword
-	safeGetline(lgcStream, line/*, '*'*/);
+	safeGetline(lgcStream, line);
+	nline++;
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
 		project.getConfig().title += line +" ";
-		safeGetline(lgcStream, line/*, '*'*/);
-
-		nline += (int)count(line.cbegin(), line.cend(), '\n');
+		safeGetline(lgcStream, line);
 		nline++;
 	}
     // Remove the last added whitespace:
@@ -282,20 +282,20 @@ bool TReader::read(std::istream& lgcStream) {
 		++nline) 
 	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline+1) + ": ");  
+		const string nlinestr("Line " + to_string(nline) + ": ");  
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
 
 		// skip empty lines
 		if (tokLine.empty())
 		{
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 			continue;
 		}
 		// % means comment line, i.e. to be ignored
 		if (tokLine[0][0] == *"%"){
 			project.pushComment(std::pair<int, std::string>(nline, line));
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 			continue;
 		}
 
@@ -334,7 +334,7 @@ bool TReader::read(std::istream& lgcStream) {
 
 				// abort if there is no valid handler
 				if (!currenthandler){
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + "\"";
 					return !outputMessages.hasErrors();
 				}
 
@@ -361,7 +361,7 @@ bool TReader::read(std::istream& lgcStream) {
 		try{ //Handler was found, try to parse
 			
 			currenthandler->parse(tokLine, activeLine, nline);
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 		}
 		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
@@ -394,21 +394,21 @@ bool TReader::read(std::istream& lgcStream) {
 	// Iterate the frames
 	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
 	{
-		// In each iteration append the frame name and the *FRAME line (it is the actual line number minus one)
+		// In each iteration append the frame name and the *FRAME line
 		frameNames.push_back(itTree->get()->frame.getName());
 		frameLines.push_back(itTree->get()->frame.getLine());
 
 		if (frameNames.size() > 1 && frameNames.back().compare("ROOT") == 0)
 		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "The frame name \"ROOT\" at line " + to_string(frameLines.back() + 1) + " cannot be used.";
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "The frame name \"ROOT\" at line " + to_string(frameLines.back()) + " cannot be used.";
 		}
 
 		// Iterate the vector starting from the second item, i.e., the second frame name.
 		for (std::size_t i = 2; i < frameNames.size(); ++i) {
 			if (frameNames.back().compare(frameNames[i - 1]) == 0)
 			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frames at lines " + to_string(frameLines[i - 1] + 1) + \
-					" and " + to_string(frameLines.back() + 1) + " have the same name: \"" + frameNames.back() + "\".";
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frames at lines " + to_string(frameLines[i - 1]) + \
+					" and " + to_string(frameLines.back()) + " have the same name: \"" + frameNames.back() + "\".";
 			}
 		}
 
@@ -432,7 +432,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 {
 	using namespace std;
 	string line;
-	int nline(1);
+	int nline(0);
 	bool isReferenceSystemDefined = false;
 	// bool isLgc1 = true;
 
@@ -444,6 +444,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 
 	// read the first line of the file
 	safeGetline(lgcStream, line);
+	nline++;
 	const auto& titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
@@ -453,14 +454,13 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
 
 	// read until the next keyword
-	safeGetline(lgcStream, line/*, '*'*/);
+	safeGetline(lgcStream, line);
+	nline++;
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
 		project.getConfig().title += line + ' ';
-		safeGetline(lgcStream, line/*, '*'*/);
-		
-		nline += (int)count(line.cbegin(), line.cend(), '\n');
+		safeGetline(lgcStream, line);
 		nline++;
 
 		if (lgcStream.peek() == EOF) break; // End of file
@@ -475,21 +475,21 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		++nline)
 	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline+1) + ": ");
+		const string nlinestr("Line " + to_string(nline) + ": ");
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
 
 		// skip empty lines
 		if (tokLine.empty())
 		{
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 			continue;
 		}
 		// % means comment line, i.e. to be ignored
         // The deactivation character behaves as commented line in LGC1 mode
         if(tokLine[0][0] == *"%" || tokLine[0][0] == *DEACTIVATION_CHAR){
 			project.getComments()[nline] = line;
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 			continue;
 		}
 
@@ -519,9 +519,9 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			try {
 				// abort if there is no valid handler
 				if (!currenthandler){
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + ", at line " + line;
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + "\"";
 					//allow to get to the next line, avoid infinite loop
-					safeGetline(lgcStream, line/*, '*'*/);
+					safeGetline(lgcStream, line);
 					continue;
 				}
 
@@ -530,20 +530,20 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
 				//allow to get to the next line, avoid infinite loop
-				safeGetline(lgcStream, line/*, '*'*/);
+				safeGetline(lgcStream, line);
 			}
 		}
 
 
 		try{ //Handler was found, try to parse
 			currenthandler->parse(tokLine, true, nline);
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 		}
 		catch (std::exception const & excp) 
 		{  // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
 			//allow to get to the next line, avoid infinite loop
-			safeGetline(lgcStream, line/*, '*'*/);
+			safeGetline(lgcStream, line);
 		}
 	}
 
