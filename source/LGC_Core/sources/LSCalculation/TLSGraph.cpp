@@ -606,7 +606,7 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 		{
 			break;
 		}
-		int newRank = A_dense.topRows(j).colPivHouseholderQr().rank();
+		int newRank = A_dense.topRows(j+1).colPivHouseholderQr().rank();
 		if (newRank > currentRank)
 		{
 			if (newRank > currentRank + 1)
