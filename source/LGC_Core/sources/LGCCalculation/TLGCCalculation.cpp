@@ -52,36 +52,25 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		}
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
-	   	{
-	   	//	// only now the constraint dimensions are set.
-		//	// testing derivatives
-	   	//	TLSDerivativeTester tester(fData);
-	   	//	TLSEvaluator evaluator(fData);
-	   	//	Eigen::VectorXd provPar = evaluator.getEstParams();
-	   	//	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+		{
+		//   	// only now the constraint dimensions are set.
+		//   	// testing derivatives
+		//   	TLSDerivativeTester tester(fData);
+		//   	TLSEvaluator evaluator(fData);
+		//   	Eigen::VectorXd provPar = evaluator.getEstParams();
+		//   	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
-		//	// test different globalization methods
-		//	try
-		//	{
-		//		testGlobalizationMethods();
-		//	}
-		//	catch (const std::exception &e)
-		//	{
-		//		// Code to handle the exception
-		//		std::cerr << "An exception occurred: " << e.what() << std::endl;
-		//		exit(0);
-		//	}
-
-	   		// plan: Gauss Newton solver with armijo backtracking
-	   		// TLSGaussNewtonSolver gnObject(evalPtr);
-			//if (fData.get()->fUEOIndices.UIndex > 0 && fData.get()->fUEOIndices.CIndex == 0)
-			//{
-			//	// can it be solved directly?
-			//	std::cout << "solving with full step Gauss Newton" << std::endl;
-			//	gnObject.solve(false, false);
-			//	// reset initial value
-			//	// auxEval.setParameters(provPar);
-			//}
+		//   	// test different globalization methods
+		//   	try
+		//   	{
+		//   		testGlobalizationMethods();
+		//   	}
+		//   	catch (const std::exception &e)
+		//   	{
+		//   		// Code to handle the exception
+		//   		std::cerr << "An exception occurred: " << e.what() << std::endl;
+		//   		exit(0);
+		//   	}
 		}
 
 		if (fData->getConfig().sim.isActive())
@@ -134,9 +123,9 @@ void TLGCCalculation::computeDulmageSequence(){
 	TLSGaussNewtonSolver gnSolver(evalPtr);
 	gnSolver.setOption("plotLevel", 1);
 	gnSolver.setOption("useArmijo", true);
-	gnSolver.setOption("useLM", true);
-	gnSolver.setOption("maxIter", 200);
-	gnSolver.setOption("terminationTol", 1e-8);
+	gnSolver.setOption("useLM", false);
+	gnSolver.setOption("maxIter", 100);
+	gnSolver.setOption("terminationTol", 1e-6);
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
@@ -215,11 +204,11 @@ void TLGCCalculation::computeDulmageSequence(){
 	//Eigen::SparseMatrix<double> test_sparse = 
 	//Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
 	//Eigen::SparseMatrix<double> test_sparse = test.sparseView();
-	Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
-	//std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	//plotSparsity(A_global);
-	//std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
-	//plotSparsity(test_sparse, blockSizes);
+	// Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
+	// std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	// plotSparsity(A_global);
+	// std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	// plotSparsity(test_sparse, blockSizes);
 
 
 	// iterate through the components and solve problemns of increasing size
@@ -239,7 +228,7 @@ void TLGCCalculation::computeDulmageSequence(){
 		{
 			parIndices.push_back(parIdx);
 		}
-		//   // use them for the mask
+		// use them for the mask
 		//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
 		//   evalPtr->currentMask.equationIndices = eqIndices;
 		//   evalPtr->currentMask.parameterIndices = parIndices;
@@ -254,7 +243,7 @@ void TLGCCalculation::computeDulmageSequence(){
 			evalPtr->currentMask.equationIndices.push_back(eqIdx);
 		}
 
-		// alternative use all eqautions associated
+		// alternative use all equations associated
 		evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
 
 		// make rudimentary consistency check before solve
@@ -273,6 +262,8 @@ void TLGCCalculation::computeDulmageSequence(){
 			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
 			int rank = qrSolver.rank();
 			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
+			//  std::cout << "Current sparsity of A block: " <<  std::endl;
+			// plotSparsity(A);
 			if (rank != A.cols())
 			{
 				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
@@ -282,8 +273,6 @@ void TLGCCalculation::computeDulmageSequence(){
 				// only solve if full rank
 				// use the gn solver to solve the corrsponding subproblem
 				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
-				// gnSolver.solve(false, true);
-				// gnSolver.solve(true, true);
 				gnSolver.solve();
 			}
 		}
@@ -295,6 +284,7 @@ void TLGCCalculation::computeDulmageSequence(){
 	// remove the mask and solve again
 	evalPtr->unmask();
 	// final solve
+	gnSolver.setOption("useLM", true);
 	gnSolver.solve();
 	// switch to full step to confrim solution
 	gnSolver.resetOptions();
@@ -316,7 +306,7 @@ void TLGCCalculation::testGlobalizationMethods()
 	// set values linearly spaced
 	for (int j = 0; j < iniVal.rows(); j++)
 	{
-		iniVal(j) = 100 + double(j + 1) / double(iniVal.rows());
+		iniVal(j) = 10000 + 10*double(j + 1) / double(iniVal.rows());
 	}
 	evalPtr->setParameters(iniVal, false);
 	
@@ -329,7 +319,8 @@ void TLGCCalculation::testGlobalizationMethods()
 	solverConfig LMregGN = {1, false, true, 1e-2, 100, 1e-6};
 	solverConfig LMandArmijoregGN = {1, true, true, 1e-2, 100, 1e-6};
 
-	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
+	//std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
+	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN};
 
 
 	for (auto config : testConfigs)
@@ -403,6 +394,7 @@ vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 	// loop through equations ~ rows of matrix A
 	for (int rowIdx = 0; rowIdx < rowDim; rowIdx++)
 	{
+		bool rowDependsOnSomeParameter = false;
 		// check if row/eq only depends on parameters in parIdx
 		bool isAssociated = true;
 		for (int colIdx = 0; colIdx < colDim; colIdx++)
@@ -411,6 +403,7 @@ vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 			{
 				if (it.row() == rowIdx)
 				{
+					rowDependsOnSomeParameter = true;
 					// the row depends on parameter colIdx
 					// check if the colIdx is in the allowed set
 					if (std::count(parIdx.begin(), parIdx.end(), colIdx) == 0)
@@ -426,7 +419,7 @@ vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)
 				break;
 			}
 		}
-		if (isAssociated)
+		if (isAssociated && rowDependsOnSomeParameter)
 		{
 			associatedEqIndices.push_back(rowIdx);
 		}
