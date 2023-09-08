@@ -4,9 +4,7 @@
 #include "TLSAllfixed.h"
 #include <TLSAlgorithm.h>
 #include <TLSEvaluator.h>
-#include <TLSDerivativeTester.h>
 #include <TLSGaussNewtonSolver.h>
-#include <TLSLMSolver.h>
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
@@ -16,7 +14,6 @@
 #include <fstream>
 #include <Timer.h>
 #include <algorithm>
-
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
@@ -31,7 +28,6 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 {
 	std::unique_ptr<TVAbstractAlgorithm> algorithm;
 	Behavior successCalculation;
-
 
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fData.get());
@@ -73,8 +69,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
 		
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
-		// repeat test after convergence	
-		// TLSDerivativeTester tester(fData);
+
 		if (successCalculation)
 		{
 			fResultsMtr = algorithm->resultMatrices;
