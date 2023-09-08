@@ -623,6 +623,10 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 		{
 			break;
 		}
+		if (currentRank < colDim)
+		{
+			std::cout << "No full rank submatrix of A could be found. Probably A has not full rank. Try consistency check." << std::endl;
+		}
 	}
 	if (currentRank < colDim)
 	{
