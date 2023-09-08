@@ -1,8 +1,8 @@
 # Configure version when called from UI
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR "2")
-set (LGC_VERSION_MINOR "5")
-set (LGC_VERSION_PATCH "0")
+set (LGC_VERSION_MINOR "7")
+set (LGC_VERSION_PATCH "beta_4_GaussNewtonArmijoLineSearch")
 
 # Versions files
 configure_file (

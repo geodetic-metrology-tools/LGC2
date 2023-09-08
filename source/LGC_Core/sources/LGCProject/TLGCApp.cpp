@@ -395,6 +395,7 @@ const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
 	id << "LGC2 " << getLGCVersion() << ", compiled on " <<   __DATE__ ;
+	id << std::endl << "ATTENTION: EXPERIMENTAL VERSION using a basic linesearch for more robust behavior with respect to provisional values.";
 	return id.str();
 }
 
