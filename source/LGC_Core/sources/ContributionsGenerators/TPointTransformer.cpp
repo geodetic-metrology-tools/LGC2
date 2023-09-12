@@ -60,6 +60,32 @@ void TPointTransformer::transform2MLA(TFreeVector& fv){
 	fla2mla.transform(fv);
 }
 
+void TPointTransformer::transform2MLA(TDenseMatrix& pmat, bool isFreeVector)
+{
+	// throw error if row dim is not 3
+	if (pmat.rows()!=3){
+			throw std::runtime_error("TPointTransformer::transform2MLA attempting to transform columns of a matrix to MLA but row dimension not equal to 3.");
+	}
+	for (int colIdx = 0; colIdx < pmat.cols(); colIdx++)
+	{
+		TVector colVec = pmat.col(colIdx);
+		if (isFreeVector)
+		{
+			// transform to FreeVector
+			TFreeVector colVecFree(colVec);
+			transform2MLA(colVecFree);
+			pmat.col(colIdx) = colVecFree.toRealVector();
+		}
+		else
+		{
+			// transform to PositionVector
+			TPositionVector colVecPos(colVec);
+			transform2MLA(colVecPos);
+			pmat.col(colIdx) = colVecPos.toRealVector();
+		}
+	}
+}
+
 // used only for the dver and incl measurements
 void TPointTransformer::transformMLA2CGRF(TFreeVector& fv){
 	fla2mla.transformInverse(fv);

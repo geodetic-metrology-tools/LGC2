@@ -72,6 +72,8 @@ public:
 
 	///Transform a free vector into a MLA system
 	void transform2MLA(TFreeVector& pv);
+	// transform each column of a matrix to MLA, assume Cartesian Coord system
+	void transform2MLA(TDenseMatrix &pmat, bool isFreeVector = false);
 
 	/// Sets the boolean value to tell is MLA is used
 	void setMLA(bool fBool){ fMLAused = fBool; }

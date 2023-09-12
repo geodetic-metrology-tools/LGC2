@@ -356,11 +356,6 @@ std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR:
 	TFreeVector t2Derivative(TCoordSysFactory::k3DCartesian);
 	TFreeVector t3Derivative(TCoordSysFactory::k3DCartesian);
 	TFreeVector scaleDeriv(TCoordSysFactory::k3DCartesian);
-	auto toVector = [](TFreeVector vIn) {
-		TVector vector(3);
-		vector << vIn.getX(), vIn.getY(), vIn.getZ();
-		return vector;
-	};
 
 	// Iterate through the transformations, calculate contributions and store the contributiojn for every transformation
 	for (auto it(transformationChain.begin()); it != transformationChain.end(); ++it)
@@ -381,13 +376,13 @@ std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR:
 
 		TDenseMatrix singleContrib(3, 7);
 		singleContrib.setZero();
-		singleContrib.col(0) = toVector(t1Derivative);
-		singleContrib.col(1) = toVector(t2Derivative);
-		singleContrib.col(2) = toVector(t3Derivative);
-		singleContrib.col(3) = toVector(omegaDerivative);
-		singleContrib.col(4) = toVector(phiDerivative);
-		singleContrib.col(5) = toVector(kappaDerivative);
-		singleContrib.col(6) = toVector(scaleDeriv);
+		singleContrib.col(0) = t1Derivative.toRealVector();
+		singleContrib.col(1) = t2Derivative.toRealVector();
+		singleContrib.col(2) = t3Derivative.toRealVector();
+		singleContrib.col(3) = omegaDerivative.toRealVector();
+		singleContrib.col(4) = phiDerivative.toRealVector();
+		singleContrib.col(5) = kappaDerivative.toRealVector();
+		singleContrib.col(6) = scaleDeriv.toRealVector();
 		trafoContrib.push_back(std::pair<TAdjustableHelmertTransformation, TDenseMatrix>(*it->adjTrafo, singleContrib));
 	}
 
@@ -396,21 +391,15 @@ std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR:
 
 TDenseMatrix TLOR2LOR::getPartialDerivativeWrtPosition() const
 {
-	auto toVector = [](TFreeVector vIn) {
-		TVector vector(3);
-		// getMetresValue() not necessary because default is meter
-		vector << vIn.getX(), vIn.getY(), vIn.getZ();
-		return vector;
-	};
 
 	TFreeVector partDerWRespToX0 = partDerivWRespToX0();
 	TFreeVector partDerWRespToY0 = partDerivWRespToY0();
 	TFreeVector partDerWRespToZ0 = partDerivWRespToZ0();
 	TDenseMatrix pointContrib(3, 3);
 	pointContrib.setZero();
-	pointContrib.col(0) = toVector(partDerWRespToX0);
-	pointContrib.col(1) = toVector(partDerWRespToY0);
-	pointContrib.col(2) = toVector(partDerWRespToZ0);
+	pointContrib.col(0) = partDerWRespToX0.toRealVector();
+	pointContrib.col(1) = partDerWRespToY0.toRealVector();
+	pointContrib.col(2) = partDerWRespToZ0.toRealVector();
 
 	return pointContrib;
 }

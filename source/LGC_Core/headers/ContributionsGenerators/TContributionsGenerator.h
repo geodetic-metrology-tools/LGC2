@@ -10,6 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <ContributionStructures.h>
 #include <TPointTransformer.h>
+#include <TInverseTransformation.h>
 #include <TTSTN.h>
 
 class TUVEC;
@@ -89,7 +90,7 @@ public:
 		UVECContrib	getUVECContrib(const TCAM& camera, const TUVEC& uvec);
 
 		/// Returns the contribution for the TUVD measurement.
-		UVDContrib	getUVDContrib(const TCAM& camera, const TUVD& uvd);
+		UVDContrib getUVDContrib(const TCAM &camera, const TUVD &uvd);
 
 	//@}
 
@@ -161,11 +162,8 @@ private:
 		/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 		void addTransformationsContributions3D(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
 		
-		/// Adds Point contributions for the PLR3D measurement
-		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, Point3DContrib& pointContrib, bool station);
-	
-		///Adds contribution of a every target's LOR transformation in 'lorTrafo' into a 'transfContrib' vector for UVD measurement
-		void addUVDTgTransfContributionsCamera(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);
+		/// Adds Point contributions for the PLR3D measurement, returns object representing AMat*dtrafo(point)/dpoint
+		void addPointContributionsPLR3D(const TLOR2LOR& lorTrafo, const Eigen::Matrix3d& Amat , Point3DContrib& pointContrib, bool station);
 	
 		/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
 		decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR& lorTrafo, const TFreeVector& vector, TReal numerator, TReal denominator);
@@ -177,4 +175,5 @@ private:
 		//@}
 
 };
+
 #endif 
