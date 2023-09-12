@@ -599,14 +599,14 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 	int colDim = A_dense.cols();
 	int rowDim = A_dense.rows();
 	int currentRank = 0;
-	//plotSparsity(A);
+	// plotSparsity(A);
 	for (int j = 0; j < rowDim; j++)
 	{
 		if (currentRank == rowDim)
 		{
 			break;
 		}
-		int newRank = A_dense.topRows(j+1).colPivHouseholderQr().rank();
+		int newRank = A_dense.topRows(j + 1).colPivHouseholderQr().rank();
 		if (newRank > currentRank)
 		{
 			if (newRank > currentRank + 1)
@@ -623,6 +623,11 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 			break;
 		}
 	}
+	if (currentRank < colDim)
+	{
+		std::cout << "No full rank submatrix of A could be found. Probably A has not full rank. Try consistency check." << std::endl;
+	}
+
 	return rowIndices;
 }
 
