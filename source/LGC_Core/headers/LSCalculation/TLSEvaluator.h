@@ -53,6 +53,7 @@ public:
 	// using the relation W+Bv=0, assuming B is invertible
 	Eigen::VectorXd getResidual(bool useMask = true);
 	Eigen::VectorXd getWeightedResidual(bool useMask = true);
+	double getObjective(bool useMask = true);
 
 	void setParameters(Eigen::VectorXd para, bool useMask = true);
 	// first design matrix
