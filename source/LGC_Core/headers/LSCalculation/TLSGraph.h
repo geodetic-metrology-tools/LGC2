@@ -108,7 +108,10 @@ private:
 void plotSparsity(Eigen::SparseMatrix<double> A, std::vector<int> blockSizes = {});
 
 // input: full rank A matrix (full column rank) output submatrix with same rank but quadrtaic (eliminated rows)
+// naive method
 std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A);
+// using A^T P=QR decomposition with permutation matrix, column pivoting qr
+std::vector<int> findFullRankSubMatrixWithQR(Eigen::SparseMatrix<double> A);
 std::vector<int> getRowOrdering(const Eigen::SparseMatrix<double> &A);
 
 bool isStructuralNonZero(const Eigen::SparseMatrix<double>& A, int row, int col);
