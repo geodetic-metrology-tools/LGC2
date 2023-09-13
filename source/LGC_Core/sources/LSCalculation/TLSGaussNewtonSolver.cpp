@@ -19,7 +19,8 @@ GNresult TLSGaussNewtonSolver::solve()
 
 	std::string headerLine(100, '~');
 	std::cout << headerLine << std::endl;
-	std::cout << "Starting Gauss-Newton iterations" << std::endl;
+	std::cout << "Starting Gauss-Newton iterations. Dimensions: n_par = " << fEvaluator->currentMask.parameterIndices.size()
+			  << ", n_eq = " << fEvaluator->currentMask.equationIndices.size() << std::endl;
 	std::cout << "Regularizations used: ";
 	if (fConfig.useArmijo)
 	{
@@ -43,9 +44,8 @@ GNresult TLSGaussNewtonSolver::solve()
 		direction = getGNDirection(parameterIterate);
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
-		// compute the residual and the weighted objective to compare the real descent vs the gradient predicted descent in the armijo linesearch method
-		residual = fEvaluator->getResidual();
-		sigma0 = residual.transpose() * fEvaluator->getPv() * residual;
+		// compute the current objective to compare the gradient predicted descent in the search direction with the true descent.
+		sigma0 = fEvaluator->getObjective();
 		stepsize = 1;
 		if (fConfig.useArmijo)
 		{
