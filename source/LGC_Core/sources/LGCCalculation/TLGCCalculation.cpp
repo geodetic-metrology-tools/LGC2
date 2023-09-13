@@ -14,6 +14,7 @@
 #include <TLSGraph.h>
 #include "Serializer_json.hpp"
 #include <fstream>
+#include <Timer.h>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -48,24 +49,24 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 		{
-		//   	// only now the constraint dimensions are set.
-		//   	// testing derivatives
-		//   	TLSDerivativeTester tester(fData);
-		//   	TLSEvaluator evaluator(fData);
-		//   	Eigen::VectorXd provPar = evaluator.getEstParams();
-		//   	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+		//	// only now the constraint dimensions are set.
+		//	// testing derivatives
+		//	// TLSDerivativeTester tester(fData);
+		//	// TLSEvaluator evaluator(fData);
+		//	// Eigen::VectorXd provPar = evaluator.getEstParams();
+		//	// std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
-		//   	// test different globalization methods
-		//   	try
-		//   	{
-		//   		testGlobalizationMethods();
-		//   	}
-		//   	catch (const std::exception &e)
-		//   	{
-		//   		// Code to handle the exception
-		//   		std::cerr << "An exception occurred: " << e.what() << std::endl;
-		//   		exit(0);
-		//   	}
+		//	// test different globalization methods
+		//	try
+		//	{
+		//		testGlobalizationMethods();
+		//	}
+		//	catch (const std::exception &e)
+		//	{
+		//		// Code to handle the exception
+		//		std::cerr << "An exception occurred: " << e.what() << std::endl;
+		//		exit(0);
+		//	}
 		}
 
 		if (fData->getConfig().sim.isActive())
@@ -110,17 +111,73 @@ void TLGCCalculation::initialiseObsSummaries(){
         node->measurements.initialiseObsSummaries();
 }
 
+void TLGCCalculation::testGlobalizationMethods()
+{
+
+	TLSEvaluator evaluator(fData);
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+
+	TVector provisionalVal = evalPtr->getEstParams(false);
+	// Throw away any apriori knowledge in form of provisional values
+	Eigen::VectorXd iniVal = provisionalVal;
+	// // set values randomly
+	// iniVal.setRandom();
+	// set values linearly spaced
+	for (int j = 0; j < iniVal.rows(); j++)
+	{
+		iniVal(j) = 100 + 10 * double(j + 1) / double(iniVal.rows());
+	}
+	evalPtr->setParameters(iniVal, false);
+	
+	// create Gauss Newton solver instance
+	TLSGaussNewtonSolver gnObject(evalPtr);
+
+	// solverConfigs to test
+	solverConfig fullStepGN = {2, false, false, 0, 100, 1e-6};
+	solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+	solverConfig LMregGN = {2, false, true, 1e-2, 100, 1e-6};
+	solverConfig LMandArmijoregGN = {2, true, true, 1e-2, 100, 1e-6};
+
+	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
+	//std::vector<solverConfig> testConfigs = { LMregGN, LMandArmijoregGN};
+	//std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN};
+	//std::vector<solverConfig> testConfigs = {};
+
+
+	for (auto config : testConfigs)
+	{
+		jsonSerializerObject ser;
+		SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
+		// set initial value
+		evalPtr->setParameters(iniVal, false);
+		// set config
+		gnObject.setConfig(config);
+		// try solution
+		GNresult result = gnObject.solve();
+		serobj.addProperty("File", fData.get()->getFileLogger().getOutputFileLocation());
+		serobj.addProperty("Result", result);
+		serobj.addProperty("Configuration", config);
+		//std::cout << ser.getStringRepresentation() << std::endl;
+		std::ofstream outputFile("../studyResults.txt", std::ios::app);
+		outputFile << ser.getStringRepresentation() << "\n";
+		outputFile.close();
+	}
+	
+	// reset initial value
+	evalPtr->setParameters(iniVal, false);
+	// try to solve the problem via a Dulmage Mendelsohn sequence
+	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
+	computeDulmageSequence();
+}
+
 void TLGCCalculation::computeDulmageSequence(){
 	// create a Evaluater pointer
 	TLSEvaluator auxEval(fData);
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(auxEval);
 	// use it to create a Gauss Newton solver object
 	TLSGaussNewtonSolver gnSolver(evalPtr);
-	gnSolver.setOption("plotLevel", 1);
-	gnSolver.setOption("useArmijo", true);
-	gnSolver.setOption("useLM", false);
-	gnSolver.setOption("maxIter", 100);
-	gnSolver.setOption("terminationTol", 1e-6);
+	solverConfig dulmageSolver = {2, true, false, 1e-4, 100, 1e-6};
+	gnSolver.setConfig(dulmageSolver);
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
@@ -140,10 +197,10 @@ void TLGCCalculation::computeDulmageSequence(){
 //	std::cout << "sparsity row ordered matrix" << std::endl;
 //	plotSparsity(A_global_ordered);
 	// succesively eliminate equations that do not increase the rank. goal is to get a square rank = nRows  submatrix
-	std::vector<int> chosenRows = findFullRankSubMatrix(A_global_ordered);
-//	Eigen::MatrixXd reducedReorderedA = A_global_ordered.toDense()(chosenRows, Eigen::indexing::all);
+	//std::vector<int> chosenRows = findFullRankSubMatrix(A_global_ordered);
+	std::vector<int> chosenRows = findFullRankSubMatrixWithQR(A_global_ordered);
+
 	Eigen::SparseMatrix<double>  reducedReorderedA = maskRows(chosenRows, A_global_ordered);
-//	.toDense()(chosenRows, Eigen::indexing::all);
 
 	//Eigen::SparseMatrix<double> AFinal = reducedReorderedA.sparseView();
 	Eigen::SparseMatrix<double> AFinal = reducedReorderedA;
@@ -267,7 +324,7 @@ void TLGCCalculation::computeDulmageSequence(){
 			{
 				// only solve if full rank
 				// use the gn solver to solve the corrsponding subproblem
-				std::cout << "A matrix has rank " << rank << " and there are " << A.cols() << " columns, solve will start." << std::endl;
+				std::cout << "A matrix has rank " << rank << ". There are " << A.cols() << " columns and " << A.rows() << " equations. Solve will start." << std::endl;
 				gnSolver.solve();
 			}
 		}
@@ -284,101 +341,6 @@ void TLGCCalculation::computeDulmageSequence(){
 	// switch to full step to confrim solution
 	gnSolver.resetOptions();
 	gnSolver.solve();
-
-
-}
-void TLGCCalculation::testGlobalizationMethods()
-{
-
-	TLSEvaluator evaluator(fData);
-	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
-
-	TVector provisionalVal = evalPtr->getEstParams(false);
-	// Throw away any apriori knowledge in form of provisional values
-	Eigen::VectorXd iniVal = provisionalVal;
-	// // set values randomly
-	// iniVal.setRandom();
-	// set values linearly spaced
-	for (int j = 0; j < iniVal.rows(); j++)
-	{
-		iniVal(j) = 10000 + 10*double(j + 1) / double(iniVal.rows());
-	}
-	evalPtr->setParameters(iniVal, false);
-	
-	// create Gauss Newton solver instance
-	TLSGaussNewtonSolver gnObject(evalPtr);
-
-	// solverConfigs to test
-	solverConfig fullStepGN = {1, false, false, 0, 100, 1e-6};
-	solverConfig armijoGN = {1, true, false, 0, 100, 1e-6};
-	solverConfig LMregGN = {1, false, true, 1e-2, 100, 1e-6};
-	solverConfig LMandArmijoregGN = {1, true, true, 1e-2, 100, 1e-6};
-
-	//std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
-	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN};
-
-
-	for (auto config : testConfigs)
-	{
-		jsonSerializerObject ser;
-		SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
-		// set initial value
-		evalPtr->setParameters(iniVal, false);
-		// set config
-		gnObject.setConfig(config);
-		// try solution
-		GNresult result = gnObject.solve();
-		serobj.addProperty("File", fData.get()->getFileLogger().getOutputFileLocation());
-		serobj.addProperty("Result", result);
-		serobj.addProperty("Configuration", config);
-		//std::cout << ser.getStringRepresentation() << std::endl;
-		std::ofstream outputFile("../studyResults.txt", std::ios::app);
-		outputFile << ser.getStringRepresentation() << "\n";
-		outputFile.close();
-	}
-	
-	// reset initial value
-	evalPtr->setParameters(iniVal, false);
-	// try to solve the problem via a Dulmage Mendelsohn sequence
-	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
-	computeDulmageSequence();
-
-//
-////	std::vector<solverConfig> testConfigs;
-//	// first try simple Gauss Newton without any regularization
-//	std::cout << "Full step Gauss Newton" << std::endl;
-//	gnObject.solve();
-//	// reset initial value
-//	evalPtr->setParameters(iniVal, false);
-//
-//	// Gauss Newton with Armijo linesearch
-//	std::cout << "Gauss Newton with Armijo Linesearch" << std::endl;
-//	gnObject.setOption("useArmijo", true);
-//	GNresult result = gnObject.solve();
-//	// reset initial value
-//	evalPtr->setParameters(iniVal, false);
-//
-//	// Gauss Newton with Levenberg Marquardt
-//	std::cout << "Gauss Newton with Levenberg Marquardt Regularization" << std::endl;
-//	gnObject.resetOptions();
-//	gnObject.setOption("useLM", true);
-//	gnObject.solve();
-//	// reset initial value
-//	evalPtr->setParameters(iniVal, false);
-//
-//	// Gauss Newton with Levenberg Marquardt and Armijo
-//	std::cout << "Gauss Newton with Armijo Linesearch and Levenberg Marquardt Regularization" << std::endl;
-//	gnObject.resetOptions();
-//	gnObject.setOption("useArmijo", true);
-//	gnObject.setOption("useLM", true);
-//	gnObject.solve();
-//	// reset initial value
-//	evalPtr->setParameters(iniVal, false);
-//
-//	// try to solve the problem via a Dulmage Mendelsohn sequence
-//	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
-//	computeDulmageSequence();
-
 
 }
 vector<int> getAssociatedEquations(vector<int> parIdx, TSparseMatrix A)

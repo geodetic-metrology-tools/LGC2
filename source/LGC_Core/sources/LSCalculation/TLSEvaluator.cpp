@@ -80,6 +80,10 @@ Eigen::VectorXd TLSEvaluator::getWeightedResidual(bool useMask)
 	evaluate();
 	return getSqrtPv(useMask) * getResidual(useMask);
 }
+double TLSEvaluator::getObjective(bool useMask)
+{
+	return getWeightedResidual().squaredNorm();
+}
 const TSparseMatrix TLSEvaluator::getA(bool useMask)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects
