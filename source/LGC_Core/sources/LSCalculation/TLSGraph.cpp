@@ -615,6 +615,7 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 			}
 			// rank increased so we add the row
 			rowIndices.push_back(j);
+			//std::cout << j << std::endl;
 			currentRank = newRank;
 		}
 		// stop if maximum rank is reached
@@ -625,10 +626,36 @@ std::vector<int> findFullRankSubMatrix(Eigen::SparseMatrix<double> A)
 	}
 	if (currentRank < colDim)
 	{
-		std::cout << "No full rank submatrix of A could be found. Probably A has not full rank. Try consistency check." << std::endl;
+		std::cout << "No full rank submatrix of A could be found. Probably A has not full rank. Undefined behavior during solution process might ocur. Try consistency check." << std::endl;
 	}
 
 	return rowIndices;
+}
+std::vector<int> findFullRankSubMatrixWithQR(Eigen::SparseMatrix<double> A){
+    // find full rank submatrix with qr decomposition
+	Eigen::SparseMatrix<double> AT = A.transpose();
+	//Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qr;
+	Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qr;
+	// Eigen makes a decomposition AT * P = Q * R
+    // where P is a column permutation matrix. The first rank(A) permutation indices of P correspond to a column submatrix of A with full rank
+    qr.compute(AT);
+    int n = A.cols();
+	std::vector<int> result;
+	for (int j = 0; j < n; j++)
+	{
+		result.push_back(qr.colsPermutation().indices()[j]);
+	}
+    // sort the result increasing
+	std::sort(result.begin(), result.end());
+	// for (int j = 0; j < n; j++)
+	// {
+	// 	std::cout << result[j] << std::endl;
+	// }
+	if (qr.rank() < n)
+	{
+		std::cout << "No full rank submatrix of A could be found. Probably A has not full rank. Undefined behavior during solution process might ocur. Try consistency check." << std::endl;
+	}
+	return result;
 }
 
 std::vector<int> getRowOrdering(const Eigen::SparseMatrix<double> &A)
