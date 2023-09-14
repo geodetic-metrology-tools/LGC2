@@ -1,4 +1,5 @@
 #include <TLSGaussNewtonSolver.h>
+#include <TLSGraph.h>
 #include <Logger.hpp>
 #include "QuantileFunctions.h"
 #include <iostream>
@@ -52,6 +53,12 @@ GNresult TLSGaussNewtonSolver::solve()
 		{
 			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
 		}
+	
+		if (stepsize*direction.norm() > 1e+12)
+		{
+			std::cout << "Step too big, stopping iterations" << std::endl;
+			break;
+		}
 
 		// do the regularized step
 		parameterIterate += stepsize * direction;
@@ -64,11 +71,6 @@ GNresult TLSGaussNewtonSolver::solve()
 				printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
 			}
 			printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
-		}
-		if (direction.norm() > 1e+12)
-		{
-			std::cout << "Step too big, stopping iterations" << std::endl;
-			break;
 		}
 
 		itIdx++;
@@ -214,20 +216,18 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	{
 		Eigen::SparseMatrix<double> identity(NBig.rows(), NBig.cols());
 		identity.setIdentity();
-		// std::cout << std::endl << NBig << std::endl;
 		//NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
 		NBig += scaleFactor * identity;
-		// std::cout << std::endl << NBig << std::endl;
 	}
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
 	solution = decomp.solve(-VBig);
-
-	//	// test solution quality, how exact is NBig*sol = -VBig solved?
-	//	double solutionQuality = (NBig * solution + VBig).norm();
-	//	if (solutionQuality > 1e+3)
-	//	{
-	//		std::cout << "linear subsystem not solved accurately |NBig * solution + VBig| = " << solutionQuality << std::endl;
-	//	}
+	double solNorm = solution.norm();
+	double VBigNorm = VBig.norm();
+	if (decomp.info() == 1)
+	{
+		std::cout << "Numerical issue during decomposition" << std::endl;
+		throw std::runtime_error("problem determining linear subsystem solution");
+	}
 
 	return solution;
 }
