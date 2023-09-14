@@ -2,6 +2,7 @@
 #include <Logger.hpp>
 #include "QuantileFunctions.h"
 #include <iostream>
+#include <algorithm>
 
 
 TLSGaussNewtonSolver::TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator) : fEvaluator( evaluator )
@@ -206,11 +207,16 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	// solve the system
 	TVector solution;
 	// solve directly without scaling
-	double scaleFactor = fConfig.LMpenalty;
+	//double scaleFactor = fConfig.LMpenalty;
+	double scaleFactor = fConfig.LMpenalty * fEvaluator->getObjective();
+	scaleFactor = std::clamp(scaleFactor, 1e-15, 1e+6);
 	if (fConfig.useLM)
 	{
+		Eigen::SparseMatrix<double> identity(NBig.rows(), NBig.cols());
+		identity.setIdentity();
 		// std::cout << std::endl << NBig << std::endl;
-		NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
+		//NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
+		NBig += scaleFactor * identity;
 		// std::cout << std::endl << NBig << std::endl;
 	}
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
