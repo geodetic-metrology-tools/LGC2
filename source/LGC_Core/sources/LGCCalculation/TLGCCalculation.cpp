@@ -49,24 +49,21 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 		{
-		//	// only now the constraint dimensions are set.
-		//	// testing derivatives
-		//	// TLSDerivativeTester tester(fData);
-		//	// TLSEvaluator evaluator(fData);
-		//	// Eigen::VectorXd provPar = evaluator.getEstParams();
-		//	// std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
-
-		//	// test different globalization methods
-		//	try
-		//	{
-		//		testGlobalizationMethods();
-		//	}
-		//	catch (const std::exception &e)
-		//	{
-		//		// Code to handle the exception
-		//		std::cerr << "An exception occurred: " << e.what() << std::endl;
-		//		exit(0);
-		//	}
+			// only now the constraint dimensions are set.
+			// testing derivatives
+			//	TLSDerivativeTester tester(fData);
+		
+			// test different globalization methods
+			try
+			{
+			//	testGlobalizationMethods();
+			}
+			catch (const std::exception &e)
+			{
+				// Code to handle the exception
+				std::cerr << "An exception occurred: " << e.what() << std::endl;
+				exit(0);
+			}
 		}
 
 		if (fData->getConfig().sim.isActive())
@@ -113,19 +110,20 @@ void TLGCCalculation::initialiseObsSummaries(){
 
 void TLGCCalculation::testGlobalizationMethods()
 {
-
 	TLSEvaluator evaluator(fData);
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 
 	TVector provisionalVal = evalPtr->getEstParams(false);
 	// Throw away any apriori knowledge in form of provisional values
 	Eigen::VectorXd iniVal = provisionalVal;
+	Eigen::VectorXd pertVal = provisionalVal;
 	// // set values randomly
-	// iniVal.setRandom();
+	// pertVal.setRandom();
+	//	iniVal += 1e+1*pertVal;
 	// set values linearly spaced
 	for (int j = 0; j < iniVal.rows(); j++)
 	{
-		iniVal(j) = 100 + 10 * double(j + 1) / double(iniVal.rows());
+		iniVal(j) = 100 + 5 * double(j + 1) / double(iniVal.rows());
 	}
 	evalPtr->setParameters(iniVal, false);
 	
@@ -135,12 +133,13 @@ void TLGCCalculation::testGlobalizationMethods()
 	// solverConfigs to test
 	solverConfig fullStepGN = {2, false, false, 0, 100, 1e-6};
 	solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
-	solverConfig LMregGN = {2, false, true, 1e-2, 100, 1e-6};
-	solverConfig LMandArmijoregGN = {2, true, true, 1e-2, 100, 1e-6};
-
+	solverConfig LMregGN = {2, false, true, 1e-14, 100, 1e-6};
+	solverConfig LMandArmijoregGN = {2, true, true, 1e-14, 100, 1e-6};
+	
 	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
-	//std::vector<solverConfig> testConfigs = { LMregGN, LMandArmijoregGN};
-	//std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN};
+	//std::vector<solverConfig> testConfigs = { fullStepGN, LMregGN, LMandArmijoregGN};
+	//std::vector<solverConfig> testConfigs = { LMandArmijoregGN};
+	//std::vector<solverConfig> testConfigs = {armijoGN};
 	//std::vector<solverConfig> testConfigs = {};
 
 
@@ -153,7 +152,15 @@ void TLGCCalculation::testGlobalizationMethods()
 		// set config
 		gnObject.setConfig(config);
 		// try solution
-		GNresult result = gnObject.solve();
+		GNresult result;
+		try
+		{
+			result = gnObject.solve();
+		}
+		catch (...)
+		{
+			std::cout << "GN solution failed" << std::endl;
+		}
 		serobj.addProperty("File", fData.get()->getFileLogger().getOutputFileLocation());
 		serobj.addProperty("Result", result);
 		serobj.addProperty("Configuration", config);
@@ -165,8 +172,8 @@ void TLGCCalculation::testGlobalizationMethods()
 	
 	// reset initial value
 	evalPtr->setParameters(iniVal, false);
-	// try to solve the problem via a Dulmage Mendelsohn sequence
-	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
+ 	// try to solve the problem via a Dulmage Mendelsohn sequence
+ 	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
 	computeDulmageSequence();
 }
 
@@ -176,12 +183,9 @@ void TLGCCalculation::computeDulmageSequence(){
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(auxEval);
 	// use it to create a Gauss Newton solver object
 	TLSGaussNewtonSolver gnSolver(evalPtr);
-	solverConfig dulmageSolver = {2, true, false, 1e-4, 100, 1e-6};
-	gnSolver.setConfig(dulmageSolver);
 
 	// compute the Dulmage-Mendelsohn decomposition using the A matrix sparsity pattern
 	Eigen::SparseMatrix<double> A_global = evalPtr->getA();
-	//plotSparsity(A_global);
 	int nRows = A_global.rows();
 	// get rowOrdering
 	std::vector<int> rowOrder = getRowOrdering(A_global);
@@ -192,20 +196,12 @@ void TLGCCalculation::computeDulmageSequence(){
 		rowOrderPermutation.indices()(rowOrder[i]) = i;
 	}
 	Eigen::SparseMatrix<double> A_global_ordered = rowOrderPermutation * A_global;
-//	std::cout << "sparsity original matrix" << std::endl;
-//	plotSparsity(A_global);
-//	std::cout << "sparsity row ordered matrix" << std::endl;
-//	plotSparsity(A_global_ordered);
-	// succesively eliminate equations that do not increase the rank. goal is to get a square rank = nRows  submatrix
-	//std::vector<int> chosenRows = findFullRankSubMatrix(A_global_ordered);
+	// make sure the matrix on which the fine dulmage decomposition is performed has full rank
 	std::vector<int> chosenRows = findFullRankSubMatrixWithQR(A_global_ordered);
 
 	Eigen::SparseMatrix<double>  reducedReorderedA = maskRows(chosenRows, A_global_ordered);
 
-	//Eigen::SparseMatrix<double> AFinal = reducedReorderedA.sparseView();
 	Eigen::SparseMatrix<double> AFinal = reducedReorderedA;
-	//std::cout << "sparsity row-ordered and reduced matrix" << std::endl;
-	//plotSparsity(AFinal);
 
 	// find maximum matching
 	// create bipartite Graph encoding equation-parameter incidence
@@ -230,37 +226,26 @@ void TLGCCalculation::computeDulmageSequence(){
 		set<int> parComp = comp.second;
 		set<int> eqCompReal;
 		set<int> parCompReal;
-		//  std::cout << "Component " << count << " of size " << eqComp.size() << std::endl;
 		blockSizes.push_back(eqComp.size());
-		//  std::cout << "par Idx: ";
 		for (auto pIdx : parComp)
 		{
 			orderedPIdx.push_back(pIdx - 1);
 			parCompReal.insert(pIdx - 1);
-			//  std::cout << pIdx - 1 << " , ";
 		};
-		//  std::cout << std::endl;
-		//  std::cout << "eqn Idx: ";
 		for (auto eqIdx : eqComp)
 		{
 			orderedEIdx.push_back(rowOrder[chosenRows[eqIdx - 1]]);
 			eqCompReal.insert(rowOrder[chosenRows[eqIdx - 1]]);
-			//  std::cout << rowOrder[chosenRows[eqIdx - 1]] << " , ";
 		};
 		fineDM_reducedRealIndices.push_back(std::make_pair(eqCompReal, parCompReal));
-		//  std::cout << std::endl;
 		count++;
 	}
-	//  comparing the sparsity patterns
-	//Eigen::MatrixXd A_global_dense = A_global.toDense();
-	//Eigen::SparseMatrix<double> test_sparse = 
-	//Eigen::MatrixXd test = A_global_dense(orderedEIdx, orderedPIdx);
-	//Eigen::SparseMatrix<double> test_sparse = test.sparseView();
-	// Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
-	// std::cout << "Sparsity Pattern original A matrix:" << std::endl;
-	// plotSparsity(A_global);
-	// std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
-	// plotSparsity(test_sparse, blockSizes);
+	//  comparing the sparsity patterns original vs dulmage decomp
+	// 	Eigen::SparseMatrix<double> test_sparse = maskRows(orderedEIdx, maskColumns(orderedPIdx, A_global));
+	// 	std::cout << "Sparsity Pattern original A matrix:" << std::endl;
+	// 	plotSparsity(A_global);
+	// 	std::cout << "Sparsity Pattern reduced and reordered A matrix:" << std::endl;
+	// 	plotSparsity(test_sparse, blockSizes);
 
 
 	// iterate through the components and solve problemns of increasing size
@@ -301,6 +286,7 @@ void TLGCCalculation::computeDulmageSequence(){
 		// make rudimentary consistency check before solve
 		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
 		// this can happen when for example a point is measured by two ANGL measurements from the same station, the corresponding 2x2 block (eq x pars) will have no zeros but the columns are linearly dependant
+		// in theory this should be avoided by the findFullRankSubmatrix which is performed before the computation of the strongly connected components
 		Eigen::SparseMatrix<double> A = evalPtr->getA(true);
 		
 	//  	std::cout << "sparsity pattern of current  masked matrix" << std::endl;
@@ -308,30 +294,65 @@ void TLGCCalculation::computeDulmageSequence(){
 		
 		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::NaturalOrdering<int>> qrSolver;
 		qrSolver.compute(A);
+		
+		GNresult blockResult;
+		Eigen::VectorXd previousGuess = evalPtr->getEstParams(false);
 
 		if (qrSolver.info() == Eigen::Success)
 		{
 			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
 			int rank = qrSolver.rank();
-			// std::cout << "Current A block: " << std::endl << A.toDense() << std::endl;
-			//  std::cout << "Current sparsity of A block: " <<  std::endl;
-			// plotSparsity(A);
 			if (rank != A.cols())
 			{
 				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+				// 
+				//gnSolver.solve();
 			}
 			else
 			{
 				// only solve if full rank
 				// use the gn solver to solve the corrsponding subproblem
 				std::cout << "A matrix has rank " << rank << ". There are " << A.cols() << " columns and " << A.rows() << " equations. Solve will start." << std::endl;
-				gnSolver.solve();
+				// try to solve the subblock with different solver settings, starting with armijo linesearch: full GN, going to the more robust ones
+				// solverConfigs to test
+				solverConfig fullStepGN = {1, false, false, 0, 100, 1e-6};
+				solverConfig armijoGN = {1, true, false, 0, 100, 1e-6};
+				solverConfig LMregGN = {1, false, true, 1e-12, 100, 1e-6};
+				solverConfig LMandArmijoregGN = {1, true, true, 1e-12, 100, 1e-6};
+
+				std::vector<solverConfig> blockSolverConfigs = {armijoGN, LMandArmijoregGN, LMregGN};
+
+				for (auto config : blockSolverConfigs)
+				{
+					gnSolver.setConfig(config);
+					try
+					{
+						blockResult = gnSolver.solve();
+					}
+					catch (...)
+					{
+						blockResult.success = false;
+					}
+					if (blockResult.success == true)
+					{
+						break;
+					}
+
+				}
 			}
 		}
 		else
 		{
 			throw std::runtime_error("Decomposition failed.");
 		}
+
+		// check if block solve failed
+		if (!blockResult.success)
+		{
+			// if solve was not successful, reject the block iterations
+			evalPtr->setParameters(previousGuess, false);
+		}
+
 	}
 	// remove the mask and solve again
 	evalPtr->unmask();
