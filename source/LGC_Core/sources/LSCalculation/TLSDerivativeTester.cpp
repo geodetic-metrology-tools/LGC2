@@ -110,7 +110,7 @@ bool TLSDerivativeTester::testWeightedResidualDerivative()
 		finiteDiffJacobian.col(i) = jacCol;
 	}
 
-	std::cout << (computedJacobian.toDense() - finiteDiffJacobian).norm() << std::endl;
+	std::cout << "checking weighted residual (sqrt(Pv(x))*res(x)) derivative: |J_finDiff-J_computed| = " << (computedJacobian.toDense() - finiteDiffJacobian).norm() << std::endl;
 
 
 	return false;
