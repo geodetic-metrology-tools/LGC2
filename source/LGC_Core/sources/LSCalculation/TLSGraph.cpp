@@ -745,3 +745,4 @@ Eigen::SparseMatrix<double> getRowMaskMatrix(std::vector<int> actInd, int dim)
 	}
 	return result;
 }
+

@@ -172,10 +172,14 @@ void TLGCCalculation::testGlobalizationMethods()
 		std::ofstream outputFile("../studyResults.txt", std::ios::app);
 		outputFile << ser.getStringRepresentation() << "\n";
 		outputFile.close();
+		if (result.success == true)
+		{
+			break;
+		}
 	}
 	
 	// reset initial value
-	evalPtr->setParameters(iniVal, false);
+//	evalPtr->setParameters(iniVal, false);
  	// try to solve the problem via a Dulmage Mendelsohn sequence
  	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
 	computeDulmageSequence();
@@ -260,29 +264,17 @@ void TLGCCalculation::computeDulmageSequence(){
 	{
 		blockNumber++;
 		// get the eq and par indices
-		std::vector<int> eqIndices, parIndices;
-		for (auto eqIdx : compIt->first)
-		{
-			eqIndices.push_back(eqIdx);
-		}
-		for (auto parIdx : compIt->second)
-		{
-			parIndices.push_back(parIdx);
-		}
+		auto eqns = compIt->first;
+		auto pars = compIt->second;
+		std::vector<int> eqIndices(eqns.begin(), eqns.end()), parIndices(pars.begin(), pars.end());
 		// use them for the mask
 		//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
-		//   evalPtr->currentMask.equationIndices = eqIndices;
-		//   evalPtr->currentMask.parameterIndices = parIndices;
+	// 	evalPtr->currentMask.equationIndices = eqIndices;
+	// 	evalPtr->currentMask.parameterIndices = parIndices;
 		// OPTION 2:
 		// gradually increase set of active parameters and equations
-		for (auto parIdx : parIndices)
-		{
-			evalPtr->currentMask.parameterIndices.push_back(parIdx);
-		}
-		for (auto eqIdx : eqIndices)
-		{
-			evalPtr->currentMask.equationIndices.push_back(eqIdx);
-		}
+		evalPtr->currentMask.parameterIndices = concatenate(evalPtr->currentMask.parameterIndices, parIndices);
+		evalPtr->currentMask.equationIndices = concatenate(evalPtr->currentMask.equationIndices, eqIndices);
 
 		// alternative use all equations associated
 		evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
@@ -300,7 +292,7 @@ void TLGCCalculation::computeDulmageSequence(){
 		qrSolver.compute(A);
 		
 		GNresult blockResult;
-		Eigen::VectorXd previousGuess = evalPtr->getEstParams(false);
+		Eigen::VectorXd previousGuess = evalPtr->getEstParams(true);
 
 		if (qrSolver.info() == Eigen::Success)
 		{
@@ -310,7 +302,15 @@ void TLGCCalculation::computeDulmageSequence(){
 			{
 				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
 				// 
-				//gnSolver.solve();
+				// 
+				try
+				{
+					blockResult = gnSolver.solve();
+				}
+				catch (...)
+				{
+					blockResult.success = false;
+				}
 			}
 			else
 			{
@@ -349,12 +349,15 @@ void TLGCCalculation::computeDulmageSequence(){
 		{
 			throw std::runtime_error("Decomposition failed.");
 		}
+		Eigen::VectorXd newGuess = evalPtr->getEstParams(true);
+		//std::cout << newGuess - previousGuess << std::endl;
 
 		// check if block solve failed
 		if (!blockResult.success)
 		{
 			// if solve was not successful, reject the block iterations
-			evalPtr->setParameters(previousGuess, false);
+			evalPtr->setParameters(previousGuess, true);
+
 		}
 
 	}
