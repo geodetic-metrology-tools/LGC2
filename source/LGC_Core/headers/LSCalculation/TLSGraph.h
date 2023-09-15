@@ -125,4 +125,13 @@ Eigen::SparseMatrix<double> getColumnMaskMatrix(std::vector<int> actInd, int dim
 // can be used to get the rows of another matrix by multiplying this from the left
 Eigen::SparseMatrix<double> getRowMaskMatrix(std::vector<int> actInd, int dim);
 
+// convenient way to concatenate vectors
+template<typename T>
+std::vector<T> concatenate(const std::vector<T> &v1, const std::vector<T> &v2){
+	std::vector<T> result(v1);
+	result.insert(result.end(), v2.begin(), v2.end());
+	return result;
+};
+
+
 
