@@ -15,6 +15,7 @@
 #include "Serializer_json.hpp"
 #include <fstream>
 #include <Timer.h>
+#include <algorithm>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -123,7 +124,7 @@ void TLGCCalculation::testGlobalizationMethods()
 	// set values linearly spaced
 	for (int j = 0; j < iniVal.rows(); j++)
 	{
-		iniVal(j) = 100 + 5 * double(j + 1) / double(iniVal.rows());
+		iniVal(j) = 50 + 10 * double(j + 1) / double(iniVal.rows());
 	}
 	evalPtr->setParameters(iniVal, false);
 	
@@ -136,11 +137,11 @@ void TLGCCalculation::testGlobalizationMethods()
 	solverConfig LMregGN = {2, false, true, 1e-14, 100, 1e-6};
 	solverConfig LMandArmijoregGN = {2, true, true, 1e-14, 100, 1e-6};
 	
-	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
+	//std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
 	//std::vector<solverConfig> testConfigs = { fullStepGN, LMregGN, LMandArmijoregGN};
 	//std::vector<solverConfig> testConfigs = { LMandArmijoregGN};
 	//std::vector<solverConfig> testConfigs = {armijoGN};
-	//std::vector<solverConfig> testConfigs = {};
+	std::vector<solverConfig> testConfigs = {};
 
 
 	for (auto config : testConfigs)
@@ -256,6 +257,12 @@ void TLGCCalculation::computeDulmageSequence(){
 	evalPtr->currentMask.equationIndices.clear();
 	evalPtr->currentMask.parameterIndices.clear();
 	int blockNumber = 0;
+
+	// this parameter controls the minimum block size for which we attempt to solve the problem. This is to avoid too much small subproblems which could take a longer time.
+	//int minBlockSize = evalPtr->dimensions.UIndex / 5.0;
+	int minBlockSize = std::min((double) evalPtr->dimensions.UIndex / 5.0, 50.0);
+	int newParametersSinceLastSolve = 0;
+
 	for (auto compIt = fineDM_reducedRealIndices.rbegin(); compIt != fineDM_reducedRealIndices.rend(); ++compIt)
 	{
 		blockNumber++;
@@ -270,10 +277,14 @@ void TLGCCalculation::computeDulmageSequence(){
 		// OPTION 2:
 		// gradually increase set of active parameters and equations
 		evalPtr->currentMask.parameterIndices = concatenate(evalPtr->currentMask.parameterIndices, parIndices);
+		// check what is the size of the parameters that are added since last solve
+		newParametersSinceLastSolve += parIndices.size();
 		evalPtr->currentMask.equationIndices = concatenate(evalPtr->currentMask.equationIndices, eqIndices);
 
 		// alternative use all equations associated
 		evalPtr->currentMask.equationIndices = getAssociatedEquations(evalPtr->currentMask.parameterIndices, A_global);
+
+
 
 		// make rudimentary consistency check before solve
 		// because it can happen that the dulmage decomposition which is based on the structural rank (only based on sparsity pattern) overestimates the rank of the matrix
@@ -290,41 +301,20 @@ void TLGCCalculation::computeDulmageSequence(){
 		GNresult blockResult;
 		Eigen::VectorXd previousGuess = evalPtr->getEstParams(true);
 
-		if (qrSolver.info() == Eigen::Success)
+		// check if a solve attempt should be done (enough new parameters added?)
+		if (newParametersSinceLastSolve >= minBlockSize)
 		{
-			std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
-			int rank = qrSolver.rank();
-			if (rank != A.cols())
+			// reset the newly added parameter counter
+			newParametersSinceLastSolve = 0;
+			if (qrSolver.info() == Eigen::Success)
 			{
-				std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
-				// 
-				// 
-				try
+				std::cout << "Trying to solve block number " << blockNumber << " of size " << evalPtr->currentMask.parameterIndices.size() << std::endl;
+				int rank = qrSolver.rank();
+				if (rank != A.cols())
 				{
-					blockResult = gnSolver.solve();
-				}
-				catch (...)
-				{
-					blockResult.success = false;
-				}
-			}
-			else
-			{
-				// only solve if full rank
-				// use the gn solver to solve the corrsponding subproblem
-				std::cout << "A matrix has rank " << rank << ". There are " << A.cols() << " columns and " << A.rows() << " equations. Solve will start." << std::endl;
-				// try to solve the subblock with different solver settings, starting with armijo linesearch: full GN, going to the more robust ones
-				// solverConfigs to test
-				solverConfig fullStepGN = {1, false, false, 0, 100, 1e-6};
-				solverConfig armijoGN = {1, true, false, 0, 100, 1e-6};
-				solverConfig LMregGN = {1, false, true, 1e-12, 100, 1e-6};
-				solverConfig LMandArmijoregGN = {1, true, true, 1e-12, 100, 1e-6};
-
-				std::vector<solverConfig> blockSolverConfigs = {armijoGN, LMandArmijoregGN, LMregGN};
-
-				for (auto config : blockSolverConfigs)
-				{
-					gnSolver.setConfig(config);
+					std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
+					//
+					//
 					try
 					{
 						blockResult = gnSolver.solve();
@@ -333,29 +323,58 @@ void TLGCCalculation::computeDulmageSequence(){
 					{
 						blockResult.success = false;
 					}
-					if (blockResult.success == true)
-					{
-						break;
-					}
+				}
+				else
+				{
+					// only solve if full rank
+					// use the gn solver to solve the corrsponding subproblem
+					std::cout << "A matrix has rank " << rank << ". There are " << A.cols() << " columns and " << A.rows() << " equations. Solve will start." << std::endl;
+					// try to solve the subblock with different solver settings, starting with armijo linesearch: full GN, going to the more robust ones
+					// solverConfigs to test
+					solverConfig fullStepGN = {2, false, false, 0, 100, 1e-6};
+					solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+					solverConfig LMregGN = {2, false, true, 1e-12, 100, 1e-6};
+					solverConfig LMandArmijoregGN = {2, true, true, 1e-12, 100, 1e-6};
 
+					std::vector<solverConfig> blockSolverConfigs = {armijoGN, LMandArmijoregGN, LMregGN};
+
+					for (auto config : blockSolverConfigs)
+					{
+						gnSolver.setConfig(config);
+						try
+						{
+							blockResult = gnSolver.solve();
+						}
+						catch (...)
+						{
+							blockResult.success = false;
+						}
+						if (blockResult.success == true)
+						{
+							break;
+						}
+					}
 				}
 			}
-		}
-		else
-		{
-			throw std::runtime_error("Decomposition failed.");
-		}
-		Eigen::VectorXd newGuess = evalPtr->getEstParams(true);
-		//std::cout << newGuess - previousGuess << std::endl;
+			else
+			{
+				throw std::runtime_error("Decomposition failed.");
+			}
+			Eigen::VectorXd newGuess = evalPtr->getEstParams(true);
+			// std::cout << newGuess - previousGuess << std::endl;
 
-		// check if block solve failed
-		if (!blockResult.success)
-		{
-			// if solve was not successful, reject the block iterations
-			evalPtr->setParameters(previousGuess, true);
-
+			// check if block solve failed
+			if (blockResult.success)
+			{
+				// reset the newly added parameter counter
+				//newParametersSinceLastSolve = 0;
+			}
+			else
+			{
+				// if solve was not successful, reject the block iterations
+				evalPtr->setParameters(previousGuess, true);
+			}
 		}
-
 	}
 	// remove the mask and solve again
 	evalPtr->unmask();
