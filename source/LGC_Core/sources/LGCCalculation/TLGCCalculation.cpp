@@ -142,11 +142,11 @@ void TLGCCalculation::testGlobalizationMethods()
 	solverConfig LMregGN = {2, false, true, 1e-14, 100, 1e-6};
 	solverConfig LMandArmijoregGN = {2, true, true, 1e-14, 100, 1e-6};
 	
-	//std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
+	std::vector<solverConfig> testConfigs = {fullStepGN, armijoGN, LMregGN, LMandArmijoregGN};
 	//std::vector<solverConfig> testConfigs = { fullStepGN, LMregGN, LMandArmijoregGN};
 	//std::vector<solverConfig> testConfigs = { LMandArmijoregGN};
 	//std::vector<solverConfig> testConfigs = {armijoGN};
-	std::vector<solverConfig> testConfigs = {};
+	//std::vector<solverConfig> testConfigs = {};
 
 
 	for (auto config : testConfigs)
@@ -176,12 +176,12 @@ void TLGCCalculation::testGlobalizationMethods()
 		outputFile.close();
 		if (result.success == true)
 		{
-			break;
+		//	break;
 		}
 	}
 	
 	// reset initial value
-//	evalPtr->setParameters(iniVal, false);
+	evalPtr->setParameters(iniVal, false);
  	// try to solve the problem via a Dulmage Mendelsohn sequence
  	std::cout << "Sequence of subproblems according to strongly connected components" << std::endl;
 	computeDulmageSequence();
@@ -305,6 +305,13 @@ void TLGCCalculation::computeDulmageSequence(){
 		
 		GNresult blockResult;
 		Eigen::VectorXd previousGuess = evalPtr->getEstParams(true);
+	
+		// solver configurations
+		solverConfig fullStepGN = {2, false, false, 0, 100, 1e-6};
+		solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+		solverConfig LMregGN = {2, false, true, 1e-12, 50, 1e-6};
+		solverConfig LMandArmijoregGN = {2, true, true, 1e-12, 100, 1e-6};
+
 
 		// check if a solve attempt should be done (enough new parameters added?)
 		if (newParametersSinceLastSolve >= minBlockSize)
@@ -319,14 +326,23 @@ void TLGCCalculation::computeDulmageSequence(){
 				{
 					std::cout << "A matrix has rank " << rank << " but there are " << A.cols() << " columns, so A has not full column rank." << std::endl;
 					//
-					//
-					try
+					// in the rank deficient case only use LM regularized solvers to guarantee psoitive definiteness
+					std::vector<solverConfig> robustConfigs = {LMregGN, LMandArmijoregGN};
+					for (auto config : robustConfigs)
 					{
-						blockResult = gnSolver.solve();
-					}
-					catch (...)
-					{
-						blockResult.success = false;
+						gnSolver.setConfig(config);
+						try
+						{
+							blockResult = gnSolver.solve();
+						}
+						catch (...)
+						{
+							blockResult.success = false;
+						}	
+						if (blockResult.success == true || blockResult.objective < 1e-4)
+						{
+							break;
+						}
 					}
 				}
 				else
@@ -336,12 +352,8 @@ void TLGCCalculation::computeDulmageSequence(){
 					std::cout << "A matrix has rank " << rank << ". There are " << A.cols() << " columns and " << A.rows() << " equations. Solve will start." << std::endl;
 					// try to solve the subblock with different solver settings, starting with armijo linesearch: full GN, going to the more robust ones
 					// solverConfigs to test
-					solverConfig fullStepGN = {2, false, false, 0, 100, 1e-6};
-					solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
-					solverConfig LMregGN = {2, false, true, 1e-12, 100, 1e-6};
-					solverConfig LMandArmijoregGN = {2, true, true, 1e-12, 100, 1e-6};
-
-					std::vector<solverConfig> blockSolverConfigs = {armijoGN, LMandArmijoregGN, LMregGN};
+					// first try LM
+					std::vector<solverConfig> blockSolverConfigs = {LMregGN, armijoGN, LMandArmijoregGN};
 
 					for (auto config : blockSolverConfigs)
 					{
@@ -354,7 +366,7 @@ void TLGCCalculation::computeDulmageSequence(){
 						{
 							blockResult.success = false;
 						}
-						if (blockResult.success == true)
+						if (blockResult.success == true || blockResult.objective < 1e-4)
 						{
 							break;
 						}
@@ -369,7 +381,7 @@ void TLGCCalculation::computeDulmageSequence(){
 			// std::cout << newGuess - previousGuess << std::endl;
 
 			// check if block solve failed
-			if (blockResult.success)
+			if (blockResult.success || blockResult.objective < 1e-4)
 			{
 				// reset the newly added parameter counter
 				//newParametersSinceLastSolve = 0;
