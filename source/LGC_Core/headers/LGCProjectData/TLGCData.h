@@ -271,6 +271,9 @@ public:
 	int getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type) const;
 	//@}
 
+	// get the name of the adjustable object corresponding to a given unknown index
+	std::pair<std::string, std::string> getAdjustableObjectName(int idx);
+
 	/// Sets default values for number of points, measuremets, etc.
 	void setDefaultValues();
 
