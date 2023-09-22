@@ -270,6 +270,101 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 	}
 }
 
+std::pair<std::string,std::string> TLGCData::getAdjustableObjectName(int idx)
+{
+
+	std::string type = "Point";
+	for (auto &point : getPoints())
+	{
+		if (point.hasVariable())
+		{
+			for (int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx)
+
+			{
+				if (idx == unknIdx)
+				{
+					return {point.getName(), type};
+				}
+			}
+		}
+	}
+
+	type = "Angle";
+	for (auto &angle : getAngles())
+	{
+		if (!angle.isFixed())
+		{
+			if (angle.getFirstUidx() == idx)
+			{
+				return {angle.getName(), type};
+			}
+		}
+	}
+
+	type = "Plane";
+	for (auto &plane : getPlanes())
+	{
+		if (plane.hasVariable())
+		{
+			for (int unknIdx = plane.getFirstUidx(); unknIdx <= plane.getLastUidx(); unknIdx++)
+			{
+				if (idx == unknIdx)
+				{
+					return {plane.getName(), type};
+				}
+			}
+		}
+	}
+
+	type = "Line";
+	for (auto &line : getLines())
+	{
+		if (!line.isFixed())
+		{
+			for (int unknIdx = line.getFirstUidx(); unknIdx <= line.getLastUidx(); unknIdx++)
+			{
+				if (idx == unknIdx)
+				{
+					return {line.getName(), type};
+				}
+			}
+		}
+	}
+
+	type = "Length";
+	for (auto &length : getLength())
+	{
+		if (!length.isFixed())
+		{
+			if (idx == length.getFirstUidx())
+			{
+				return {length.getName(), type};
+			}
+		}
+	}
+
+	type = "Trafo";
+	for (auto it(getTree().begin()); it != getTree().end(); ++it)
+	{
+		auto &trafo(it.node->data.get()->frame);
+
+		if (trafo.hasVariable())
+		{
+			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++)
+			{
+				if (idx == unknIdx)
+				{
+					return {trafo.getName(), type};
+				}
+			}
+		}
+	}
+
+	std::string notFoundMessage = "Object with index " + std::to_string(idx) + " not found.";
+
+	return {notFoundMessage, "NO_TYPE"};
+}
+
 void TLGCData::setDefaultValues()
 {
 	fPointInfo.fNumCala = 0;
