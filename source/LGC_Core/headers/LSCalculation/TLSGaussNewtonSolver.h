@@ -42,6 +42,7 @@ struct solverConfig : public Serializable
 	double LMpenalty = 0;
 	int maxIter = 0;
 	double terminationTol = 0;
+	std::vector<int> penalizedIndices;
 	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
 	//
 	solverConfig(int plotLevel, bool useArmijo, bool useLM, double LMpenalty, int maxIter, double terminationTol) :
