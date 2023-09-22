@@ -44,6 +44,7 @@ GNresult TLSGaussNewtonSolver::solve()
 	{
 		// compute the search direction
 		direction = getGNDirection(parameterIterate);
+		//std::cout << "GN direction = " << direction << std::endl;
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
 		// compute the current objective to compare the gradient predicted descent in the search direction with the true descent.
@@ -219,6 +220,13 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 		//NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
 		NBig += scaleFactor * identity;
 	}
+	// penalize/regularize some special indices
+	double penalty = 1e+2;
+	for (auto j : fConfig.penalizedIndices)
+	{
+		NBig.coeffRef(j, j) += penalty;
+	}
+
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
 	solution = decomp.solve(-VBig);
 	double solNorm = solution.norm();
