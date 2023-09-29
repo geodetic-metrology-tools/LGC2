@@ -42,18 +42,20 @@ class LGCPointConstraintGroup
 #	endif // USE_SERIALIZER
 {
 public:
-	// constructorconst 
+	// constructor
 	LGCPointConstraintGroup(const TLGCData &projData) : data(projData){};
 	// destructor
 	~LGCPointConstraintGroup(){};
 	// set of points that will be constrained
 	void setAffectedPoints(std::set<std::string> affectedPoints);
+	std::set<std::string> getAffectedPoints() const { return fAffectedPoints; };
 	// set of imposed constraints , subset of (TX,TY,TZ,RX,RY,RZ,SCL) meaning center of Gravity constraint of x,y,z coordinate, momentum constraint x,y,z rotation, scale constraint
 	void setConstraints(constraintSignature usedConstraints);
 	int getFirstCIndex() { return firstCIndex; };
 	void setFirstCIndex(int j) { firstCIndex = j; };
-//
-//
+	Eigen::Vector3d getProvRootPos(std::string pointName) const; 
+	Eigen::Vector3d getCOG() const { return COG; };
+	//
 //	void setGroupName(std::string name) { groupName = name; };
 //	std::string getGroupName() { return groupName; };
 //	void addFrameToGroup(std::string frame, const TLGCData &projData);
@@ -73,10 +75,13 @@ private:
 	// the points of the group
 	std::set<std::string> fAffectedPoints;
 	// the coordinates of the points transformed to root (using provisional values)
-	std::map<std::string, Eigen::Vector3d> fPositionsInRoot;
+	std::map<std::string, Eigen::Vector3d> fProvPosInRoot;
 	constraintSignature fConstraints;
 	int firstCIndex{-1};
 	int constraintDim{0};
+	//the center of gravity in root coordinates with provisional values.
+	Eigen::Vector3d COG;
+	//void setCOG();
 };
 
 #endif

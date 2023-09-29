@@ -1991,6 +1991,15 @@ void TContributionsGenerator::addTransformationsContributions3D(const TLOR2LOR &
 	}
 }
 
+void TContributionsGenerator::addTransformationsContributions3D(const TLOR2LOR &lorTrafo,
+	const TPositionVector &pointPos,
+	const Eigen::Matrix3d &AMat,
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> &transfContrib)
+{
+	TFreeVector line1(AMat.row(0)), line2(AMat.row(1)), line3(AMat.row(2));
+	addTransformationsContributions3D(lorTrafo, pointPos, line1, line2, line3, transfContrib);
+}
+
 void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR &lorTrafo, const Eigen::Matrix3d &Amat, Point3DContrib &pointContrib, bool station)
 {
 	TDenseMatrix derWrtPos = lorTrafo.getPartialDerivativeWrtPosition();
@@ -2058,4 +2067,78 @@ std::string TContributionsGenerator::getNameAndLine(const LGCAdjustablePoint &po
 void TContributionsGenerator::generateContributionError(const std::string &message) const
 {
 	throw std::logic_error(message);
+}
+
+PointGroupConstraintContrib3D TContributionsGenerator::getPointGroupConstraintContrib(const LGCPointConstraintGroup pointConstraintGroup, const TLGCData& data)
+{
+	PointGroupConstraintContrib3D resultCOG;
+	// evaluate the constraint and compute its derivatives for the inputmatrixfiller
+
+	// all constraints (COG, Momentum and scale) are computed, the inputmatrixfiller will use only the activated ones
+
+	std::set<std::string> affectedPoints = pointConstraintGroup.getAffectedPoints();
+	int numberOfPoints = affectedPoints.size();
+	Eigen::Vector3d provisionalCOG = pointConstraintGroup.getCOG();
+	// Center of Gravity constraints
+	Eigen::Vector3d currentCOGinRoot = Eigen::Vector3d::Zero();
+	for (auto pointName : affectedPoints)
+	{
+		// compute the position of the point in Root
+		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
+		// transform point to root coordinates
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		TPositionVector positionInRoot = point.getEstimatedValue();
+		sub2Root.transform(positionInRoot);
+		Eigen::Vector3d rootPos = positionInRoot.toRealVector();
+		currentCOGinRoot += rootPos;
+	}
+	currentCOGinRoot /= numberOfPoints;
+
+	resultCOG.constraintMisclosure = currentCOGinRoot - provisionalCOG;
+
+	// compute the derivatives for the COG constraint
+	// each point has potential contributions from the point coordinates itself and from frame transformations
+	for (auto pointName : affectedPoints)
+	{
+		// the contribution of the point coordinates
+		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		TPositionVector pointInSubframe = point.getEstimatedValue();
+		resultCOG.PointContrib[pointName] = sub2Root.getPartialDerivativeWrtPosition();
+
+		// set the contributions of the transformations to root
+		// we could also just leave this normalizing factor out..
+		double normalizeFactor = 1.0 / double(numberOfPoints);
+		Eigen::Matrix3d normalizedIdentity;
+		normalizedIdentity.setIdentity();
+		normalizedIdentity /= normalizeFactor;
+
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> point2RootTransformationsContrib;
+		addTransformationsContributions3D(sub2Root, pointInSubframe, normalizedIdentity, point2RootTransformationsContrib);
+		resultCOG.TransformContrib[pointName] = point2RootTransformationsContrib;
+	}
+
+
+	// Momentum Constraint
+
+	PointGroupConstraintContrib3D resultMOM;
+	// compute the momentum with respect to the provisional positions
+	Eigen::Vector3d currentMomentum = Eigen::Vector3d::Zero();
+	for (auto pointName : affectedPoints)
+	{	
+		// compute the position of the point in Root
+		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
+		// transform point to root coordinates
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		Eigen::Vector3d positionInRoot = point.getEstimatedValue().toRealVector();
+		Eigen::Vector3d provisionalInRoot = pointConstraintGroup.getProvRootPos(pointName);
+		currentMomentum += positionInRoot.cross(currentCOGinRoot - provisionalInRoot);
+	}
+	resultMOM.constraintMisclosure = currentMomentum;
+
+
+
+
+
+	return resultCOG;
 }

@@ -5,6 +5,9 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 	// set the affected points
 	fAffectedPoints = affectedPoints;
 	// compute and store the coordinates of the points in Root. These values are necessary to evaluate the constraint functions
+	// additionally compute the center of gravity in Root
+	Eigen::Vector3d cogInRoot = Eigen::Vector3d::Zero();
+
 	for (auto pointName : affectedPoints)
 	{
 		if (!data.getPoints().doesObjectExist(pointName))
@@ -16,14 +19,33 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
 		TPositionVector positionInRoot = point.getEstimatedValue();
 		sub2Root.transform(positionInRoot);
-		fPositionsInRoot[pointName] = positionInRoot.toRealVector();
+		Eigen::Vector3d rootPos =  positionInRoot.toRealVector();
+		fProvPosInRoot[pointName] = rootPos;
+		cogInRoot += rootPos;
 	}
+	cogInRoot /= fAffectedPoints.size();
+	COG = cogInRoot;
+
 }
 
 void LGCPointConstraintGroup::setConstraints(constraintSignature usedConstraints)
 {
 	fConstraints = usedConstraints;
 	constraintDim = usedConstraints.tx + usedConstraints.ty + usedConstraints.tz + usedConstraints.rx + usedConstraints.ry + usedConstraints.rz + usedConstraints.scl;
+}
+
+Eigen::Vector3d LGCPointConstraintGroup::getProvRootPos(std::string pointName) const
+{
+	auto it = fProvPosInRoot.find(pointName);
+	if (it != fProvPosInRoot.end())
+	{
+		return it->second; // Found the key, return the corresponding value
+	}
+	else
+	{
+		// Handle the case where the key is not found in the map
+		throw std::runtime_error("Can't get the provisionla value in root of point " + pointName);
+	}
 }
 
 

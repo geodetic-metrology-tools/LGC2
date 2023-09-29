@@ -19,6 +19,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TFreeVector.h>
 #include <TAdjustableHelmertTransformation.h>
 
+#include <LGCPointConstraintGroup.h>
+
 /*!
 	\ingroup ContributionsGenerators
 
@@ -438,14 +440,35 @@ struct ECWICalcMeas
 	TReal fMeasuredZ;
 };
 
-struct PointGroupConstraintContribution
+struct PointGroupConstraintContrib
 {
+	// this struct can hold the data for a 1D scale constraint
 	// current constraint value
 	TReal constraintMisclosure;
 	// derivatives
-	// with respect to frame trafos
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTransformContrib;
+	// with respect to frame trafos (for each affected point)
+	std::map<std::string, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>> TransformContrib;
 	// with respect to involved points
-	std::map<std::string, Eigen::Vector3d> fPointContrib;
+	std::map<std::string, Eigen::Vector3d> PointContrib;
+};
+
+struct PointGroupConstraintContrib3D
+{
+	// this struct can hold the data for a full 3d COG constraint or a full 3d momentum constraint
+	// current constraint value
+	Eigen::Vector3d constraintMisclosure;
+	// derivatives
+	// with respect to frame trafos (for each affected point)
+	std::map<std::string, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>> TransformContrib;
+	// with respect to involved points
+	std::map<std::string, Eigen::Matrix3d> PointContrib;
+};
+
+struct LIBRGroupContrib
+{
+	constraintSignature signature;
+	PointGroupConstraintContrib3D cogConstraintContrib;
+	PointGroupConstraintContrib3D momentumConstraintContrib;
+	PointGroupConstraintContrib scaleConstraintContrib;
 };
 #endif

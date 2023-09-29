@@ -35,6 +35,17 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 	bool fillOK = true;
 	auto &outputMessages(projData->getFileLogger());
 
+	// experimental:
+	if (projData->getPointGroups().size() > 0)
+	{
+		for (auto pointGroup : projData->getPointGroups())
+		{
+			PointGroupConstraintContrib3D contrib = fCGenerator.getPointGroupConstraintContrib(pointGroup, *projData);
+		}
+
+	}
+
+
 	try
 	{
 		// Input matrices have to be initialized each time they are filled.

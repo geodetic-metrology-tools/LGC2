@@ -13,6 +13,7 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #include <Global.h>
 #include <LGCAdjustableObjectCollection.h>
 #include <LGCFrameConstraintGroup.h>
+#include <LGCPointConstraintGroup.h>
 #include <TFileLogger.h>
 #include <TLGCConfig.h>
 #include <TLGCStatistic.h>
@@ -190,6 +191,11 @@ public:
 	std::list<LGCFrameConstraintGroup> &getSlaveGroups() { return slaveGroups; }
 	/// Returns a constant reference of the Constraint groups
 	std::list<LGCFrameConstraintGroup> const &getSlaveGroups() const { return slaveGroups; }
+	// Returns list of to the point Constraint groups
+	std::list<LGCPointConstraintGroup> &getPointGroups() { return pointGroups; }
+	/// Returns a constant reference of the Constraint groups
+	std::list<LGCPointConstraintGroup> const &getPointGroups() const { return pointGroups; }
+
 
 	/// Returns the instruments defined
 	TInstrumentData &getInstruments() { return instruments; }
@@ -312,6 +318,8 @@ private:
 	//@}
 	// vector containing data associated to frame constraint groups
 	std::list<LGCFrameConstraintGroup> slaveGroups;
+	// vector containing data associated to point constraint groups
+	std::list<LGCPointConstraintGroup> pointGroups;
 
 	bool islgc1{false};
 

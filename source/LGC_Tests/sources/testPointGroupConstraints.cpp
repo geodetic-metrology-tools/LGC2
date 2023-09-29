@@ -60,6 +60,14 @@ void object::test<1>()
 	constraintSignature signature;
 	signature.tx = true;
 	testGroup.setConstraints(signature);
+	std::list<LGCPointConstraintGroup> &pointGroups = projTest->getPointGroups();
+	pointGroups.push_back(testGroup);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
 }
 
 }; // namespace tut
