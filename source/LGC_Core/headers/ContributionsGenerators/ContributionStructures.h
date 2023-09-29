@@ -437,4 +437,15 @@ struct ECWICalcMeas
 	TReal fMeasuredX;
 	TReal fMeasuredZ;
 };
+
+struct PointGroupConstraintContribution
+{
+	// current constraint value
+	TReal constraintMisclosure;
+	// derivatives
+	// with respect to frame trafos
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTransformContrib;
+	// with respect to involved points
+	std::map<std::string, Eigen::Vector3d> fPointContrib;
+};
 #endif

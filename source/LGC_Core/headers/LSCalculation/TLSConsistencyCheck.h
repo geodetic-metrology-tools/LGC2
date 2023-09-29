@@ -23,6 +23,7 @@ public:
 	void generateErrorMessage();
 	// get set of object indices of the Nullspace connected to certain object in the Nullspace
 	set<int> getConnectedNullspaceGroup(int);
+	void computeNecessaryLIBRConstraints();
 
 private:
 	TLGCData &projData;
@@ -81,6 +82,9 @@ private:
 	vector<string> involvedHelmertComponents(TVector linComb);
 	// for a group check for each direction if it can be interpreted as movements from a helmert transformation in ROOT
 	vector<vector<string>> interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors);
+	//std::unordered_map<std::string, Eigen::Vector3d> interpreteNullSpaceDirectionAsPointMovementInRoot(Eigen::VectorXd nullspaceVector);
+	// return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root.
+	std::pair<std::set<std::string>, Eigen::VectorXd> getAffectedPointsAndRootMovements(Eigen::VectorXd nullspaceVector);
 	void plotTransformationMessage(vector<vector<string>>);
 };
 

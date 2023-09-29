@@ -25,10 +25,11 @@ TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : p
 	{
 		resultStatus = true;
 	}
-	if (resultStatus == false)
-	{
-		generateErrorMessage();
-	}
+	//if (resultStatus == false)
+	//{
+	//	generateErrorMessage();
+	//}
+	computeNecessaryLIBRConstraints();
 }
 
 void TLSConsCheck::generateErrorMessage()
@@ -98,6 +99,20 @@ void TLSConsCheck::generateGroupWarning(const set<int> group, const vector<TDens
 		msg << string(lineWidth, '-');
 		logWarning() << msg.str();
 	}
+
+
+
+// 	for (auto nullSpaceVector: kernGroupBaseVectors)
+// 	{
+// 		auto rootMovements = interpreteNullSpaceDirectionAsPointMovementInRoot(nullSpaceVector);
+// 		for (auto el : rootMovements)
+// 		{
+// 			std::cout << "Point " << el.first << " is moved in direction " << el.second << std::endl;
+// 		}
+// 	}
+
+
+
 
 	// check if the movement of the points in this group can be explained by a helmert transformation, only makes sense if group has at least 2 points, maybe 3 points
 	if (pointsInGroup.size() > 1)
@@ -263,6 +278,47 @@ vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMove
 	return result;
 }
 
+//std::unordered_map<std::string, Eigen::Vector3d> TLSConsCheck::interpreteNullSpaceDirectionAsPointMovementInRoot(Eigen::VectorXd nullspaceVector)
+//{
+//	std::unordered_map<std::string, Eigen::Vector3d> names2Movements;
+//	// loop over ALL points
+//	for (auto &point : projData.getPoints())
+//	{
+//		names2Movements[point.getName()] = getAmbiguousDirectionsInRoot(point.getName(), nullspaceVector);
+//	}
+//	return names2Movements;
+//}
+
+std::pair<std::set<std::string>,Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(Eigen::VectorXd nullspaceVector)
+{
+	std::set<std::string> affectedPoints;
+	std::unordered_map<std::string, Eigen::Vector3d> points2Movements;
+	// loop over ALL points to find the affected points
+	for (auto &point : projData.getPoints())
+	{
+		std::string pointName = point.getName();
+		Eigen::Vector3d rootDirection;
+		rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
+		if (rootDirection.norm() > 1e-12)
+		{
+			affectedPoints.insert(pointName);
+			points2Movements[pointName] = rootDirection;
+		}
+	}
+	// create a vector with all directions of affected points concatenated. The order is the lexicographic order of the pont names.
+	int numberOfAffectedPoints = affectedPoints.size();
+	Eigen::VectorXd names2Movements(3 * numberOfAffectedPoints);
+	names2Movements.setZero();
+	int j = 0;
+	for (auto pointName : affectedPoints)
+	{
+		names2Movements.segment(3 * j, 3) = points2Movements[pointName];
+		j++;
+	}
+
+	return {affectedPoints, names2Movements};
+}
+
 void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
 {
 	stringstream msg;
@@ -329,6 +385,114 @@ set<int> TLSConsCheck::getConnectedNullspaceGroup(int i)
 		group = newGroup;
 	}
 	return group;
+}
+
+void TLSConsCheck::computeNecessaryLIBRConstraints()
+{
+	// go over each group  and transform each ambiguous direction int point movements in root.
+	std::vector<std::pair<std::set<std::string>, Eigen::VectorXd>> groupsOfAffectedPoints;
+	for (auto group : connectedNullspaceGroups)
+	{
+		// compute nullspace associated to this group
+		vector<TDenseMatrix> kernGroupBaseVectors = computeKernelWrtObjectSet(group);
+		for (auto nullspaceVector : kernGroupBaseVectors)
+		{
+			groupsOfAffectedPoints.push_back(getAffectedPointsAndRootMovements(nullspaceVector));
+		}
+	}
+
+	// collect all directions affecting the same sets of points
+	// need map here because std::set has no default hash function
+	std::map<std::set<std::string>, Eigen::MatrixXd> groups2AmbiguousDirections;
+	std::map<std::set<std::string>, Eigen::MatrixXd> groups2HelmertMovements;
+	for (auto affectedPointGroup : groupsOfAffectedPoints)
+	{
+		int nRows = 3 * affectedPointGroup.first.size();
+		std::set<string> pointNames = affectedPointGroup.first;
+		Eigen::VectorXd rootDirections = affectedPointGroup.second;
+		Eigen::MatrixXd newDir = groups2AmbiguousDirections[pointNames];
+		newDir.conservativeResize(nRows, newDir.cols() + 1);
+		newDir.col(newDir.cols() - 1) = rootDirections;
+		groups2AmbiguousDirections[pointNames] = newDir;
+
+		// now for this group compute the hypothetical action af a helmert transformation
+		Eigen::MatrixXd helmertMovements = Eigen::MatrixXd::Zero(nRows, 7);	
+		int i = 0;
+		for (auto point : pointNames)
+		{
+			helmertMovements.middleRows(3 * i, 3) = getMasterDirections(point);
+			i++;
+		}
+		groups2HelmertMovements[pointNames] = helmertMovements;
+	}
+
+	// TODO: for each group of points find the intersection of the span of ambiguous directions and the span of the linearized hypothetical helmert movements
+	// numerically compute this space and compare its dimension with the dimension of the ambiguous directions.
+	// if it is equal, every ambiguos direction is explained as a helmert movement.
+	std::map<std::set<std::string>, Eigen::MatrixXd> explainableDirections;
+	// iterate over all sets of affected points, use groups2HelmertMovements to avoid duplicates in groupsOfAffectedPoints)
+	for (auto group : groups2HelmertMovements)
+	{
+		std::set<string> pointNames = group.first;
+		// find the intersection of the space of ambiguous directions and the space of the helmert directions
+		Eigen::MatrixXd helmertMovements = groups2HelmertMovements[pointNames];
+		Eigen::MatrixXd ambiguousDirections = groups2AmbiguousDirections[pointNames];
+
+		// imA n imB = P_1 ker(C) with C=[A,-B]
+		int nRows = helmertMovements.rows();
+		std::cout << "dimension of helmert movements = " << helmertMovements.fullPivHouseholderQr().rank() << std::endl;
+		Eigen::MatrixXd C = Eigen::MatrixXd::Zero(nRows, helmertMovements.cols() + ambiguousDirections.cols());
+		C.leftCols(helmertMovements.cols()) = helmertMovements;
+		C.rightCols(ambiguousDirections.cols()) = -ambiguousDirections;
+		Eigen::MatrixXd kernel = C.fullPivLu().kernel();
+		Eigen::MatrixXd intersection = helmertMovements * kernel.topRows(helmertMovements.cols());
+
+		// now for a base of the intersection: check if it can be uniquely represented as comb of helmert directions.
+		// if there is only one point, the combination can not be unique because there are already 7 directions and there are ambiguities
+		// but if the group is bigger, it is more likely that any vector in the intersection can be uniquely represented as linear combination
+
+		// TODO:
+		// loop over intersection directions
+		// check if it a unique combination? 
+		// yes -> save the coefficients in terms of helmert directions, append it to a vector where these lin combs are stored connected to the group.
+		// no -> the direction can be interpreted in different ways, e.g. as totation OR as translation. Based onlinearizations we can not be sure what to do in this case.
+
+
+	// 	Eigen::MatrixXd intersection2 = ambiguousDirections * kernel.bottomRows(ambiguousDirections.cols());
+	// 	std::cout << "_________________________________________________" << std::endl;
+	// 	std::cout << "The dimension of the ambiguous directions is " << ambiguousDirections.fullPivHouseholderQr().rank() << std::endl;
+	// 	std::cout << "The dimension of the ambiguous directions is " << ambiguousDirections.cols() << std::endl;
+	// 	std::cout << "ambiguous directions = " << std::endl;
+	// 	std::cout << ambiguousDirections << std::endl;
+	// 	std::cout << "The intersection of the ambiguous directions and the directions explainable as helmert trafos is spaned by the matrix" << std::endl
+	// 			  << intersection << std::endl;
+	// 	std::cout << "The dimension of this intersection is " << intersection.colPivHouseholderQr().rank() << std ::endl;
+	// 	std::cout << "The dimension of this intersection version2 is " << intersection2.colPivHouseholderQr().rank() << std ::endl;
+	}
+
+
+
+	// // now for each of these groups compute the hypothetical action af a helmert transformation
+	// std::map<std::set<std::string>, Eigen::MatrixXd> groups2HelmertMovements;
+	// for (auto affectedPointGroup : groupsOfAffectedPoints)
+	// {
+	// 	std::set<std::string> pointNames = affectedPointGroup.first;
+	// 	// create matrix with linearized helmert movements for the affected points
+	// 	int nPoints = pointNames.size();
+	// 	int nRows = 3 * nPoints;
+	// 	Eigen::MatrixXd helmertMovements = Eigen::MatrixXd::Zero(nRows, 7);
+
+	// 	int i = 0;
+	// 	for (auto point : pointNames)
+	// 	{
+	// 		helmertMovements.middleRows(3 * i, 3) = getMasterDirections(point);
+	// 		i++;
+	// 	}
+	// 	groups2HelmertMovements[pointNames] = helmertMovements;
+	// }
+
+	
+	true;
 }
 
 void TLSConsCheck::initialize()
