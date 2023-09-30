@@ -159,6 +159,7 @@ private:
 
 		/// Adds contribution of a LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
 		void addTransformationsContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, TReal a, TReal b, TReal c, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
+		void addTransformationsContributions(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const Eigen::Vector3d vec, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>& transfContrib);
 
 		/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 		void addTransformationsContributions3D(const TLOR2LOR& lorTrafo, const TPositionVector& pointPos, const TFreeVector& line1AMat,  const TFreeVector& line2AMat,  const TFreeVector& line3AMat, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>& transfContrib);

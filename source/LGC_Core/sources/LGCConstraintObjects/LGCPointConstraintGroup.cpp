@@ -24,7 +24,7 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 		cogInRoot += rootPos;
 	}
 	cogInRoot /= fAffectedPoints.size();
-	COG = cogInRoot;
+	provCOG = cogInRoot;
 
 }
 
