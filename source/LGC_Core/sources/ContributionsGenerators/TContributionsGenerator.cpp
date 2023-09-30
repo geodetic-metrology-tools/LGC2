@@ -2077,7 +2077,7 @@ void TContributionsGenerator::generateContributionError(const std::string &messa
 	throw std::logic_error(message);
 }
 
-PointGroupConstraintContrib3D TContributionsGenerator::getPointGroupConstraintContrib(const LGCPointConstraintGroup pointConstraintGroup, const TLGCData& data)
+LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(const LGCPointConstraintGroup pointConstraintGroup, const TLGCData &data)
 {
 	PointGroupConstraintContrib3D resultCOG;
 	// evaluate the constraint and compute its derivatives for the inputmatrixfiller
@@ -2182,9 +2182,13 @@ PointGroupConstraintContrib3D TContributionsGenerator::getPointGroupConstraintCo
 		currentScale += pow2(diff2COG.norm());
 
 		// derivatives
-		Eigen::Vector3d Aline = diff2COG.transpose() * (1.0 - 1.0 / numberOfPoints);
+		//Eigen::MatrixXd	Aline = diff2COG.transpose() * (1.0 - 1.0 / numberOfPoints);
+		Eigen::Vector3d Aline = diff2COG * (1.0 - 1.0 / numberOfPoints);
+		std::cout << Aline << std::endl;
+		std::cout << "kltr;jdkhbg" << std::endl;
+		std::cout << sub2Root.getPartialDerivativeWrtPosition()<< std::endl;
 		// with respect to point coordinates:
-		Eigen::Vector3d derWRTPos = Aline * sub2Root.getPartialDerivativeWrtPosition();
+		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
 		resultScale.PointContrib[pointName] = derWRTPos;
 
 		
@@ -2195,7 +2199,6 @@ PointGroupConstraintContrib3D TContributionsGenerator::getPointGroupConstraintCo
 	}
 	resultScale.constraintMisclosure = currentScale;
 
-
-
-	return resultCOG;
+//LIBRPointGroupContrib result(resultCOG, resultMOM, resultScale);
+	return LIBRPointGroupContrib{resultCOG, resultMOM, resultScale};
 }

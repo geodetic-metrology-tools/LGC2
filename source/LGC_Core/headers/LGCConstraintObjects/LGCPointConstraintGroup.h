@@ -50,7 +50,9 @@ public:
 	void setAffectedPoints(std::set<std::string> affectedPoints);
 	std::set<std::string> getAffectedPoints() const { return fAffectedPoints; };
 	// set of imposed constraints , subset of (TX,TY,TZ,RX,RY,RZ,SCL) meaning center of Gravity constraint of x,y,z coordinate, momentum constraint x,y,z rotation, scale constraint
-	void setConstraints(constraintSignature usedConstraints);
+	void setConstraintSignature(constraintSignature usedConstraints);
+	const constraintSignature getConstraintSignature() { return fConstraints; };
+	const int getConstraintDimension() { return constraintDim; }
 	int getFirstCIndex() { return firstCIndex; };
 	void setFirstCIndex(int j) { firstCIndex = j; };
 	Eigen::Vector3d getProvRootPos(std::string pointName) const; 

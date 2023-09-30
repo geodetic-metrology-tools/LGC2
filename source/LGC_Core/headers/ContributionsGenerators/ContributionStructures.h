@@ -464,9 +464,9 @@ struct PointGroupConstraintContrib3D
 	std::map<std::string, Eigen::Matrix3d> PointContrib;
 };
 
-struct LIBRGroupContrib
+struct LIBRPointGroupContrib
 {
-	constraintSignature signature;
+	//constraintSignature signature;
 	PointGroupConstraintContrib3D cogConstraintContrib;
 	PointGroupConstraintContrib3D momentumConstraintContrib;
 	PointGroupConstraintContrib scaleConstraintContrib;

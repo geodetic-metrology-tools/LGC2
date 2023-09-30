@@ -28,7 +28,7 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 
 }
 
-void LGCPointConstraintGroup::setConstraints(constraintSignature usedConstraints)
+void LGCPointConstraintGroup::setConstraintSignature(constraintSignature usedConstraints)
 {
 	fConstraints = usedConstraints;
 	constraintDim = usedConstraints.tx + usedConstraints.ty + usedConstraints.tz + usedConstraints.rx + usedConstraints.ry + usedConstraints.rz + usedConstraints.scl;

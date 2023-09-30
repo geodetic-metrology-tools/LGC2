@@ -40,7 +40,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 	{
 		for (auto pointGroup : projData->getPointGroups())
 		{
-			PointGroupConstraintContrib3D contrib = fCGenerator.getPointGroupConstraintContrib(pointGroup, *projData);
+			LIBRPointGroupContrib contrib = fCGenerator.getPointGroupConstraintContrib(pointGroup, *projData);
 		}
 
 	}

@@ -141,7 +141,7 @@ public:
 		ECWIContrib getECWIContrib(const TECWIROM &ecwiROM, const TECWI &ecwi);
 
 	//@}
-		PointGroupConstraintContrib3D getPointGroupConstraintContrib(const LGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
+		LIBRPointGroupContrib getPointGroupConstraintContrib(const LGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
 
 private:
 	// Contains references: not assignable

@@ -870,6 +870,8 @@ bool TDataAnalyzer::checkConfigOptions()
 		return false;
 	}
 
+
+	// this should be done before the simple dimension check. it will return a more interpretable error in case there are unidentifiable unknowns.
 	if (fData.getConfig().consCheck.isActive())
 	{
 		// do geometric consistency check already here
@@ -892,6 +894,15 @@ bool TDataAnalyzer::checkConfigOptions()
 			return false;
 		}
 	}
+
+	// now the point constraint groups should be ready, we can assign the constraint indices
+	// loop over all point constraint groups and set the cindices
+	for (LGCPointConstraintGroup &group : fData.getPointGroups())
+	{
+		group.setFirstCIndex(lastCidx);
+		lastCidx += group.getConstraintDimension();
+	}
+	fData.fUEOIndices.CIndex = lastCidx;
 
 
 }
