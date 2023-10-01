@@ -35,15 +35,6 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 	bool fillOK = true;
 	auto &outputMessages(projData->getFileLogger());
 
-	// experimental:
-	if (projData->getPointGroups().size() > 0)
-	{
-		for (auto pointGroup : projData->getPointGroups())
-		{
-			LIBRPointGroupContrib contrib = fCGenerator.getPointGroupConstraintContrib(pointGroup, *projData);
-		}
-
-	}
 
 
 	try
@@ -66,7 +57,10 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		if (fillWeightUnkn)
 			fillOK &= fillWeightUnkMtrx(projData, matrices);
 
-		fillOK &= fillSlaveConstraints(projData, matrices);
+		fillOK &= fillSlaveConstraints(projData, matrices);	
+		// experimental point group constraints:
+		fillOK &= fillPointGroupConstraints(projData, matrices);
+
 
 		// Itteration through the nodes of the tree
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++)
@@ -1769,6 +1763,29 @@ bool TLSInputMatricesFiller::addTransformationContribution(const TAdjustableHelm
 	return isProcessOK;
 }
 
+bool TLSInputMatricesFiller::addConstraintTransformationContribution(const TAdjustableHelmertTransformation &trafo, const TransformationContrib &trContrib, int eqIndex, TLSInputMatrices *matrices)
+{
+	bool isProcessOK = true;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!trafo.isTranslationFixed(i))
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getTranslationUnknIndex(i), trContrib.fTranslContrib[i]);
+
+		if (!trafo.isRotationFixed(i))
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getRotationUnknIndex(i), trContrib.fRotationContrib[i]);
+	}
+
+	if (!trafo.isScaleFixed())
+		isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getScaleUnknIndex(), trContrib.fScaleContrib);
+
+	return isProcessOK;
+
+
+
+	return false;
+}
+
 bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices)
 {
 	bool isProcessOK = true;
@@ -1779,6 +1796,19 @@ bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &poin
 			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
 	}
 	return isProcessOK;
+}
+
+bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices)
+{	
+	bool isProcessOK = true;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!pointAdj.isCoordinateFixed(i))
+			isProcessOK = isProcessOK && matrices->setCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
+	}
+	return isProcessOK;
+
 }
 
 bool TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices)
@@ -1918,4 +1948,133 @@ bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMa
 	}
 
 	return fillOK;
+}
+
+bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSInputMatrices *matrices)
+{	bool fillOK = true;
+	auto &outputMessages(projData->getFileLogger());
+	try
+	{
+		// iterate over all point constraint groups
+		for (LGCPointConstraintGroup group : projData->getPointGroups())
+		{
+			int cIdx = group.getFirstCIndex();
+			LIBRPointGroupContrib contrib = fCGenerator.getPointGroupConstraintContrib(group, *projData);
+			// fill the corresponding constraints. misclosure and derivatives
+			// as each point in the group is transformed to root, it contributes possibly helmert trafo contribution and a position variable contribution
+			// so its important to not overwrite helmert trafo contributions but to add them
+
+			constraintSignature active = group.getConstraintSignature();
+			// loop over all 7 possible constraints
+			for (int relCIdx = 0; relCIdx < active.size(); relCIdx++)
+			{
+				// is this constraint active?
+				if (active[relCIdx] == true)
+				{
+					// Dummy Implementation for translation in x constraint
+					// loop over points in group
+					for (std::string pointName : group.getAffectedPoints())
+					{
+						LGCAdjustablePoint adjPoint = projData->getPoints().getObject(pointName);
+						// translation constraint
+						if (0 <= relCIdx && relCIdx < 3)
+						{
+							// contribution from the point coordinates itself
+							fillOK = fillOK
+								&& addPointConstraintContribution(adjPoint, TFreeVector(contrib.cogConstraintContrib.PointContrib[pointName].row(relCIdx)), cIdx, matrices);
+							// contribution of helmert transformations
+							for (auto frameContribPair : contrib.cogConstraintContrib.TransformContrib[pointName])
+							{
+								if (!frameContribPair.first.isFixed())
+								{
+									if (relCIdx == 0)
+									{
+										fillOK = fillOK
+											&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.firstEquationTransContrib, cIdx, matrices);
+									}
+									if (relCIdx == 1)
+									{
+										fillOK = fillOK
+											&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.secondEquationTransContrib, cIdx, matrices);
+									}
+									if (relCIdx == 2)
+									{
+										fillOK = fillOK
+											&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.thirdEquationTransContrib, cIdx, matrices);
+									}
+								}
+							}
+						}
+						// rotation constraint
+						if (3 <= relCIdx && relCIdx < 6)
+						{
+							// contribution from the point coordinates itself
+							fillOK = fillOK
+								&& addPointConstraintContribution(adjPoint, TFreeVector(contrib.momentumConstraintContrib.PointContrib[pointName].row(relCIdx - 3)), cIdx, matrices);
+							// contribution of helmert transformations
+							for (auto frameContribPair : contrib.momentumConstraintContrib.TransformContrib[pointName])
+							{
+								if (!frameContribPair.first.isFixed())
+								{
+									if (relCIdx == 3)
+									{
+										fillOK = fillOK
+											&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.firstEquationTransContrib, cIdx, matrices);
+									}
+									if (relCIdx == 4)
+									{
+										fillOK = fillOK
+											&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.secondEquationTransContrib, cIdx, matrices);
+									}
+									if (relCIdx == 5)
+									{
+										fillOK = fillOK
+											&& addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.thirdEquationTransContrib, cIdx, matrices);
+									}
+								}
+							}
+						}
+						// scale constraint
+						if (relCIdx == 6)
+						{
+							// contribution from the point coordinates itself
+							fillOK = fillOK && addPointConstraintContribution(adjPoint, TFreeVector(contrib.scaleConstraintContrib.PointContrib[pointName]), cIdx, matrices); // contribution of helmert transformations
+							for (auto frameContribPair : contrib.scaleConstraintContrib.TransformContrib[pointName])
+							{
+								if (!frameContribPair.first.isFixed())
+								{
+									fillOK = fillOK && addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second, cIdx, matrices);
+								}
+							}
+						}
+					}
+					// misclosure
+
+					if (0 <= relCIdx && relCIdx < 3)
+					{
+						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.cogConstraintContrib.constraintMisclosure[relCIdx]);
+						cIdx++;
+					}
+					if (3 <= relCIdx && relCIdx < 5)
+					{
+						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.momentumConstraintContrib.constraintMisclosure[relCIdx - 3]);
+						cIdx++;
+					}
+					if (relCIdx == 6)
+					{
+						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.scaleConstraintContrib.constraintMisclosure);
+						cIdx++;
+					}
+				}
+			}
+		}
+	}
+	catch (std::exception const &excp)
+	{
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << excp.what();
+		fillOK = false;
+	}
+
+	return fillOK;
+
 }

@@ -24,16 +24,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 
 //! Structure to know free and fixed parameter to calculate
-struct constraintSignature
-{
-	bool tx = false;
-	bool ty = false;
-	bool tz = false;
-	bool rx = false;
-	bool ry = false;
-	bool rz = false;
-	bool scl = false;
-};
+typedef std::bitset<7> constraintSignature;
 
 
 class LGCPointConstraintGroup : public Serializable
