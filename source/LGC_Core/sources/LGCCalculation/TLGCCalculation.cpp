@@ -62,7 +62,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			// test different globalization methods
 			try
 			{
-		//		testGlobalizationMethods();
+			//	testGlobalizationMethods();
 			}
 			catch (const std::exception &e)
 			{
@@ -129,7 +129,7 @@ void TLGCCalculation::testGlobalizationMethods()
 	// set values linearly spaced
 	for (int j = 0; j < iniVal.rows(); j++)
 	{
-		iniVal(j) = 5 + 10 * double(j + 1) / double(iniVal.rows());
+		iniVal(j) = 50 + 10 * double(j + 1) / double(iniVal.rows());
 	}
 	evalPtr->setParameters(iniVal, false);
 	
@@ -265,7 +265,7 @@ void TLGCCalculation::computeDulmageSequence(){
 
 	// this parameter controls the minimum block size for which we attempt to solve the problem. This is to avoid too much small subproblems which could take a longer time.
 	//int minBlockSize = evalPtr->dimensions.UIndex / 5.0;
-	int minBlockSize = std::min((double) evalPtr->dimensions.UIndex / 5.0, 5.0);
+	int minBlockSize = std::min((double) evalPtr->dimensions.UIndex / 5.0, 50.0);
 	int newParametersSinceLastSolve = 0;
 
 	for (auto compIt = fineDM_reducedRealIndices.rbegin(); compIt != fineDM_reducedRealIndices.rend(); ++compIt)
@@ -277,8 +277,8 @@ void TLGCCalculation::computeDulmageSequence(){
 		std::vector<int> eqIndices(eqns.begin(), eqns.end()), parIndices(pars.begin(), pars.end());
 		// use them for the mask
 		//   // OPTION 1: reset mask,only solve with equations and parameters corresponding to current component
-	 	// evalPtr->currentMask.equationIndices = eqIndices;
-	 	// evalPtr->currentMask.parameterIndices = parIndices;
+	// 	evalPtr->currentMask.equationIndices = eqIndices;
+	// 	evalPtr->currentMask.parameterIndices = parIndices;
 		// OPTION 2:
 		// gradually increase set of active parameters and equations
 		evalPtr->currentMask.parameterIndices = concatenate(evalPtr->currentMask.parameterIndices, parIndices);
@@ -354,32 +354,13 @@ void TLGCCalculation::computeDulmageSequence(){
 					// solverConfigs to test
 					// first try LM
 					std::vector<solverConfig> blockSolverConfigs = {LMregGN, armijoGN, LMandArmijoregGN};
-					//std::vector<solverConfig> blockSolverConfigs = {armijoGN, LMregGN, LMandArmijoregGN};
 
 					for (auto config : blockSolverConfigs)
 					{
 						gnSolver.setConfig(config);
 						try
 						{
-							// identify angle indices
-							std::vector<int> anglIdx;
-							int j = 0;
-							for (auto idx : evalPtr->currentMask.parameterIndices)
-							{
-								std::string type = fData->getAdjustableObjectName(idx).second;
-								std::cout << type << " " << fData->getAdjustableObjectName(idx).first << std::endl;
-								if (type == "Angle")
-								{
-									anglIdx.push_back(j);
-								}
-								j++;
-							}
-							// penalize the angle indices
-							config.penalizedIndices = anglIdx;
-							gnSolver.setConfig(config);
-
 							blockResult = gnSolver.solve();
-							//std::cout << blockResult.solution << std::endl;
 						}
 						catch (...)
 						{

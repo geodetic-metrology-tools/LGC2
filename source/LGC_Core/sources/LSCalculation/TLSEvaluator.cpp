@@ -65,6 +65,16 @@ Eigen::VectorXd TLSEvaluator::getMisclosure(bool useMask)
    	//Eigen::VectorXd misclosure = matrices.getMisclosureVctr();
 	//return misclosure;
 }
+Eigen::VectorXd TLSEvaluator::getConstraintMisclosure(bool useMask)
+{
+	// 1. set parameters in "estimated" fields of adjustable objects
+	evaluate();
+	Eigen::VectorXd result = iMat->getCnstrMisclosureVctr();
+	// there is not yet a mask for constraints
+// 	if (useMask)
+// 		return result;
+	return result;
+}
 //Eigen::VectorXd TLSEvaluator::getConstraintMisclosure()
 //{
 //	evaluate();
@@ -98,11 +108,18 @@ const TSparseMatrix TLSEvaluator::getA(bool useMask)
 
 }
 
-//const TSparseMatrix *TLSEvaluator::getA2(bool useMask)
-//{
-//	evaluate();
-//	return iMat->getCnstrFirstDgnMtrx();
-//}
+const TSparseMatrix TLSEvaluator::getA2(bool useMask)
+{
+	// 1. set parameters in "estimated" fields of adjustable objects
+	evaluate();
+	if (useMask)
+	{
+		Eigen::SparseMatrix<double> result = maskColumns(currentMask.parameterIndices, *iMat->getCnstrFirstDgnMtrx());
+		return result;
+	}
+	else
+		return *iMat->getCnstrFirstDgnMtrx();
+}
 
 const TSparseMatrix TLSEvaluator::getPv(bool useMask)
 {
