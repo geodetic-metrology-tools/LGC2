@@ -2038,7 +2038,8 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 						if (relCIdx == 6)
 						{
 							// contribution from the point coordinates itself
-							fillOK = fillOK && addPointConstraintContribution(adjPoint, TFreeVector(contrib.scaleConstraintContrib.PointContrib[pointName]), cIdx, matrices); // contribution of helmert transformations
+							fillOK = fillOK && addPointConstraintContribution(adjPoint, TFreeVector(contrib.scaleConstraintContrib.PointContrib[pointName]), cIdx, matrices); 
+							// contribution of helmert transformations
 							for (auto frameContribPair : contrib.scaleConstraintContrib.TransformContrib[pointName])
 							{
 								if (!frameContribPair.first.isFixed())

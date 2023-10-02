@@ -470,5 +470,22 @@ struct LIBRPointGroupContrib
 	PointGroupConstraintContrib3D cogConstraintContrib;
 	PointGroupConstraintContrib3D momentumConstraintContrib;
 	PointGroupConstraintContrib scaleConstraintContrib;
+
+	// helper function
+	TFreeVector getPointContrib(std::string pointName, int idx)
+	{
+		if (0 <= idx && idx < 3)
+		{
+			return TFreeVector(cogConstraintContrib.PointContrib[pointName].row(idx));
+		}
+		else if (3 <= idx && idx < 6)
+		{
+			return TFreeVector(momentumConstraintContrib.PointContrib[pointName].row(idx - 3));
+		}
+		else if (idx == 6)
+		{
+			return TFreeVector(scaleConstraintContrib.PointContrib[pointName]);
+		}
+	}
 };
 #endif

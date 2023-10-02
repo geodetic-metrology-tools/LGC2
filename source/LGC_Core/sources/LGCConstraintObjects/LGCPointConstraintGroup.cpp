@@ -31,7 +31,12 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 void LGCPointConstraintGroup::setConstraintSignature(constraintSignature usedConstraints)
 {
 	fConstraints = usedConstraints;
-	constraintDim = usedConstraints.count();
+	int dim = 0;
+	for (int j = 0; j < 7; j++)
+	{
+		dim += usedConstraints[j];
+	}
+	constraintDim = dim;
 }
 
 Eigen::Vector3d LGCPointConstraintGroup::getProvRootPos(std::string pointName) const

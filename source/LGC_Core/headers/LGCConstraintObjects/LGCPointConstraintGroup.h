@@ -22,10 +22,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #	define _LGC_POINTCONSTRAINTGROUP_H
 #	if USE_SERIALIZER
 
-
-//! Structure to know free and fixed parameter to calculate
-typedef std::bitset<7> constraintSignature;
-
+typedef std::array<bool,7> constraintSignature;
 
 class LGCPointConstraintGroup : public Serializable
 #	else

@@ -2184,8 +2184,8 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		// derivatives
 		//Eigen::MatrixXd	Aline = diff2COG.transpose() * (1.0 - 1.0 / numberOfPoints);
 		Eigen::Vector3d Aline = diff2COG * (1.0 - 1.0 / numberOfPoints);
-		std::cout << Aline << std::endl;
-		std::cout << sub2Root.getPartialDerivativeWrtPosition()<< std::endl;
+		//std::cout << Aline << std::endl;
+		//std::cout << sub2Root.getPartialDerivativeWrtPosition()<< std::endl;
 		// with respect to point coordinates:
 		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
 		resultScale.PointContrib[pointName] = derWRTPos;
