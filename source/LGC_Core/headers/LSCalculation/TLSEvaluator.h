@@ -49,7 +49,7 @@ public:
 	~TLSEvaluator();
 	
 	Eigen::VectorXd getMisclosure(bool useMask = true);
-	//Eigen::VectorXd getConstraintMisclosure();
+	Eigen::VectorXd getConstraintMisclosure(bool useMask = true);
 	// using the relation W+Bv=0, assuming B is invertible
 	Eigen::VectorXd getResidual(bool useMask = true);
 	Eigen::VectorXd getWeightedResidual(bool useMask = true);
@@ -59,7 +59,7 @@ public:
 	// first design matrix
 	const TSparseMatrix getA(bool useMask = true);
 	//// constraint first design matrix
-	//const TSparseMatrix* getA2(bool useMask = true);
+	const TSparseMatrix getA2(bool useMask = true);
 	// weights
 	const TSparseMatrix getPv(bool useMask = true);
 	const TSparseMatrix getSqrtPv(bool useMask = true);
