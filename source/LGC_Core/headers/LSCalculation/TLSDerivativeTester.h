@@ -24,13 +24,15 @@ public:
 	TLSDerivativeTester(std::shared_ptr<TLGCData> data);
 
 	bool testFirstDesignMatrix();
+	bool testFirstConstraintDesignMatrix();
 	bool testWeightedResidualDerivative();
 
 private:
 	
 	TLSEvaluator fEvaluator;
 	
-	Eigen::MatrixXd computeFiniteDifferenceJacobian(Eigen::VectorXd vec);
+	// with Cnstr=false it will give the first design matrix, with cnstr=true it will retutn the constraint first design matrix
+	Eigen::MatrixXd computeFiniteDifferenceJacobian(Eigen::VectorXd vec, bool Cnstr=false);
 
 	// used for finite differences
 	double dx = 1e-6;
