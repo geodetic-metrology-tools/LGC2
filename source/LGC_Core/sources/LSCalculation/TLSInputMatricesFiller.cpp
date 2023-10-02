@@ -2056,12 +2056,12 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.cogConstraintContrib.constraintMisclosure[relCIdx]);
 						cIdx++;
 					}
-					if (3 <= relCIdx && relCIdx < 5)
+					else if (3 <= relCIdx && relCIdx < 6)
 					{
 						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.momentumConstraintContrib.constraintMisclosure[relCIdx - 3]);
 						cIdx++;
 					}
-					if (relCIdx == 6)
+					else if (relCIdx == 6)
 					{
 						fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.scaleConstraintContrib.constraintMisclosure);
 						cIdx++;

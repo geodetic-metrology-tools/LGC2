@@ -57,7 +57,8 @@ void object::test<1>()
 	std::set<std::string> affectedPoints = {"p0", "p3"};
 	LGCPointConstraintGroup testGroup(*projTest);
 	testGroup.setAffectedPoints(affectedPoints);
-	constraintSignature signature{1, 0, 0, 0, 0, 0, 0};
+	//constraintSignature signature{1, 0, 0, 0, 0, 0, 0};
+	constraintSignature signature{1, 1, 1, 1, 1, 1, 1};
 	testGroup.setConstraintSignature(signature);
 	std::list<LGCPointConstraintGroup> &pointGroups = projTest->getPointGroups();
 	pointGroups.push_back(testGroup);
