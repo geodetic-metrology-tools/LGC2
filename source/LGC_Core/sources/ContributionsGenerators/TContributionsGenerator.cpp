@@ -2086,8 +2086,8 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 
 	std::set<std::string> affectedPoints = pointConstraintGroup.getAffectedPoints();
 	int numberOfPoints = affectedPoints.size();
+	double averagingFactor = 1.0 / double(numberOfPoints);
 	Eigen::Vector3d provCOG = pointConstraintGroup.getProvCOG();
-
 
 	// COG (Center of Gravity) constraints
 	Eigen::Vector3d currentCOGinRoot = Eigen::Vector3d::Zero();
@@ -2102,7 +2102,7 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		Eigen::Vector3d rootPos = positionInRoot.toRealVector();
 		currentCOGinRoot += rootPos;
 	}
-	currentCOGinRoot /= numberOfPoints;
+	currentCOGinRoot *= averagingFactor;
 
 	resultCOG.constraintMisclosure = currentCOGinRoot - provCOG;
 
@@ -2117,11 +2117,9 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		resultCOG.PointContrib[pointName] = sub2Root.getPartialDerivativeWrtPosition();
 
 		// set the contributions of the transformations to root
-		// we could also just leave this normalizing factor out..
-		double normalizeFactor = 1.0 / double(numberOfPoints);
 		Eigen::Matrix3d normalizedIdentity;
 		normalizedIdentity.setIdentity();
-		normalizedIdentity /= normalizeFactor;
+		normalizedIdentity *= averagingFactor;
 
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> point2RootTransformationsContrib;
 		addTransformationsContributions3D(sub2Root, pointInSubframe, normalizedIdentity, point2RootTransformationsContrib);
@@ -2138,25 +2136,27 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 	{
 		// compute the position of the point in Root
 		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
-		TPositionVector pointInSubframe = point.getEstimatedValue();
+		TPositionVector pointInRoot = point.getEstimatedValue();
 		// transform point to root coordinates
 		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
-		Eigen::Vector3d positionInRoot = point.getEstimatedValue().toRealVector();
+		sub2Root.transform(pointInRoot);
+
+		Eigen::Vector3d positionInRoot = pointInRoot.toRealVector();
 		Eigen::Vector3d provisionalInRoot = pointConstraintGroup.getProvRootPos(pointName);
 		Eigen::Vector3d diff2Root = provCOG - provisionalInRoot;
 		currentMomentum += positionInRoot.cross(diff2Root);
 
 		// derivatives
-		// prepare the matrix that is multiplied from the left with the partial derivatives 
+		// prepare the matrix that is multiplied from the left with the partial derivatives
 		Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
 		A << 0, -diff2Root[2], diff2Root[1], diff2Root[2], 0, -diff2Root[0], -diff2Root[1], diff2Root[0], 0;
 		// with respect to point coordinates:
 		resultMOM.PointContrib[pointName] = -A * sub2Root.getPartialDerivativeWrtPosition();
-		
+
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> point2RootTransformationsContribMOM;
+		TPositionVector pointInSubframe = point.getEstimatedValue();
 		addTransformationsContributions3D(sub2Root, pointInSubframe, -A, point2RootTransformationsContribMOM);
 		resultMOM.TransformContrib[pointName] = point2RootTransformationsContribMOM;
-
 	}
 	resultMOM.constraintMisclosure = currentMomentum;
 
@@ -2172,29 +2172,29 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 	{
 		// compute the position of the point in Root
 		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
-		TPositionVector pointInSubframe = point.getEstimatedValue();
+		TPositionVector pointInRoot = point.getEstimatedValue();
 		// transform point to root coordinates
 		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
-		Eigen::Vector3d positionInRoot = point.getEstimatedValue().toRealVector();
-		//Eigen::Vector3d provisionalInRoot = pointConstraintGroup.getProvRootPos(pointName);
+		sub2Root.transform(pointInRoot);
+		Eigen::Vector3d positionInRoot = pointInRoot.toRealVector();
+		// Eigen::Vector3d provisionalInRoot = pointConstraintGroup.getProvRootPos(pointName);
 		Eigen::Vector3d diff2COG = positionInRoot - currentCOGinRoot;
 
 		currentScale += pow2(diff2COG.norm());
 
 		// derivatives
-		//Eigen::MatrixXd	Aline = diff2COG.transpose() * (1.0 - 1.0 / numberOfPoints);
-		Eigen::Vector3d Aline = diff2COG * (1.0 - 1.0 / numberOfPoints);
-		//std::cout << Aline << std::endl;
-		//std::cout << sub2Root.getPartialDerivativeWrtPosition()<< std::endl;
-		// with respect to point coordinates:
+		// Eigen::MatrixXd	Aline = diff2COG.transpose() * (1.0 - 1.0 / numberOfPoints);
+		Eigen::Vector3d Aline = 2 * diff2COG * (1.0 - averagingFactor);
+		// std::cout << Aline << std::endl;
+		// std::cout << sub2Root.getPartialDerivativeWrtPosition()<< std::endl;
+		//  with respect to point coordinates:
 		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
 		resultScale.PointContrib[pointName] = derWRTPos;
 
-		
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> point2RootTransformationsContribScale;
+		TPositionVector pointInSubframe = point.getEstimatedValue();
 		addTransformationsContributions(sub2Root, pointInSubframe, Aline, point2RootTransformationsContribScale);
 		resultScale.TransformContrib[pointName] = point2RootTransformationsContribScale;
-
 	}
 	resultScale.constraintMisclosure = currentScale;
 
