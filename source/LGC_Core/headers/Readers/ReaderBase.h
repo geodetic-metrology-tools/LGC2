@@ -164,6 +164,15 @@ class TOptionHelper {
 			return (std::stor(getParam(opt)) * CC2RAD);
 		}
 
+		/// extract an option as a real (floating point) number with a default value, string value given in microradians [urad], returned value is in radians [rad]
+		inline TReal getParamRurad2rad(const std::string &opt, TReal def = 0.0) const
+		{
+			if (!has(opt))
+				return def;
+
+			return (std::stor(getParam(opt)) / pow(10,6));
+		}
+
 		/// extract an option as a real (floating point) number with a default value, string value given in gradians [gon], returned value is in radians [rad]
 		inline TReal getParamRgon2rad(const std::string& opt, TReal def= 0.0) const {
 			if (! has(opt)) return def;

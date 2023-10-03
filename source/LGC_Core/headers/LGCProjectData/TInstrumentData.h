@@ -467,6 +467,7 @@ class TInstrumentData
 		{
 			TINCL(std::string ID = "",
 				TAngle sigmaAngl = TAngle(),
+				TAngle sigmaPpm = TAngle(),
 				TAngle angleCorrectionValue = TAngle(),
 				TAngle sigmaCorrectionValue = TAngle(),
 				TAngle refAngleCorrectionValue = TAngle(),
@@ -474,6 +475,7 @@ class TInstrumentData
 				TAngle sigmaCombinedAngle = TAngle()) :
 				ID(ID),
 				sigmaAngl(sigmaAngl),
+				sigmaPpm(sigmaPpm),
 				angleCorrectionValue(angleCorrectionValue),
 				sigmaCorrectionValue(sigmaCorrectionValue),
 				refAngleCorrectionValue(refAngleCorrectionValue),
@@ -482,6 +484,7 @@ class TInstrumentData
 
 			std::string ID;
 			TAngle sigmaAngl; // [rad]
+			TAngle sigmaPpm; // [rad]
 			TAngle angleCorrectionValue; // [rad]
 			TAngle sigmaCorrectionValue; // [rad]
 			TAngle refAngleCorrectionValue; // [rad]
@@ -751,6 +754,7 @@ class TInstrumentData
 		obj.addProperty("refAngleCorrectionValue", refAngleCorrectionValue.getRadiansValue());
 		obj.addProperty("refSigmaCorrectionValue", refSigmaCorrectionValue.getRadiansValue());
 		obj.addProperty("sigmaAngl", sigmaAngl.getRadiansValue());
+		obj.addProperty("sigmaPpm", sigmaPpm.getRadiansValue());
 		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle.getRadiansValue());
 		obj.addProperty("sigmaCorrectionValue", sigmaCorrectionValue.getRadiansValue());
 	}

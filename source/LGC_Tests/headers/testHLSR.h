@@ -177,7 +177,7 @@ namespace TestHLSR {
 		"*INSTR\n"
 		"*HLSR HL_SNSR_1 0.03 0 0\n"
 		"*HLSR HL_SNSR_2 0.05 0.02 1\n"
-		"*INCL I_12   1    0   0  0  0\n"
+		"*INCL I_12   1  0  0   0  0  0\n"
 		"*CALA\n"
 		"LHC.WATER3001.GISB.1L8.				4485.011766     5033.323603    330\n"
 		"*VZ \n"
