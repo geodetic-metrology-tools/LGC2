@@ -16,7 +16,7 @@ TKeyINSTR::TKeyINSTR(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyINSTR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeyINSTR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	// Does not parse, just the root of its sub-keys
 	if (tokens[0] != "*")
 		throw std::runtime_error("INSTR must be follow by an instrument keyword ");
@@ -31,7 +31,7 @@ TKeyPOLAR::TKeyPOLAR(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") { 
@@ -46,6 +46,7 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 		p->sigmaInstrHeight = TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres);
 		p->sigmaInstrCentering =  TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres);
 		p->constAngle = TAngle(std::stor(tokens[7]), TAngle::EUnits::kGons);
+		p->line = line;
 
 		// store the new station
 		polInstruments.insert(std::make_pair(tokens.at(2), p));
@@ -68,7 +69,8 @@ void TKeyPOLAR::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
             TLength(std::stor(tokens[9]), TLength::EUnits::kMetres),
             TLength(std::stor(tokens[10]), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
-            nullptr
+            nullptr,
+            line
         ));
 
 		// store the new target
@@ -94,7 +96,7 @@ TKeyCAMD::TKeyCAMD(TLGCData& project, int nb_allowed_keywords, const char** keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") { 
@@ -105,7 +107,8 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
         auto p = std::make_shared<TInstrumentData::TCAMD>(
             tokens.at(2),
             tokens.at(3),
-            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres)
+            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres),
+            line
 		);
 
 		// store the new station
@@ -122,7 +125,8 @@ void TKeyCAMD::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
             std::stor(tokens.at(1))  * VECCONV, // unitless 
             std::stor(tokens.at(2))  * VECCONV, // unitless 
             TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
-            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres) // conversion from mili-metres to metres
+            TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), // conversion from mili-metres to metres
+            line
         ));
 
 		// store the new target
@@ -148,7 +152,7 @@ TKeyEDM::TKeyEDM(TLGCData& project, int nb_allowed_keywords, const char** keywor
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") {
@@ -161,7 +165,8 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/,
             tokens.at(3),
             TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres),
             TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
-            TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres)
+            TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
+            line
 		);
 
 		// store the new station
@@ -183,7 +188,8 @@ void TKeyEDM::parse(const std::vector<std::string>& tokens, bool /*activeLine*/,
             TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens[7]), TLength::EUnits::kMetres),
             TLength(std::stor(tokens[8]), TLength::EUnits::kMillimetres),
-            nullptr
+            nullptr,
+            line
         ));
 	
 		// store the new target
@@ -206,7 +212,7 @@ TKeyLEVEL::TKeyLEVEL(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int){
+void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line){
 	using namespace LGC;
 
 	if (tokens.at(0) == "*") {
@@ -221,7 +227,8 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             tokens.at(3),
             std::stoi(tokens.at(4)) != 0,
             TAngle(std::stor(tokens[5]), TAngle::EUnits::kGons),
-            nullptr
+            nullptr,
+            line
 		);
 
 		// store the new station
@@ -239,7 +246,8 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*
             TLength(std::stor(tokens.at(3)), TLength::EUnits::kMetres),
             TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
             TLength(std::stor(tokens[5]), TLength::EUnits::kMetres),
-            TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres)
+            TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
+			line
         ));
 
 		// store the new target
@@ -262,7 +270,7 @@ TKeySCALE::TKeySCALE(TLGCData& project, int nb_allowed_keywords, const char** ke
 		allowed_keywords.emplace_back(keywords[i]);
 }
 		
-void TKeySCALE::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeySCALE::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 
 	auto& scales(finstruments.fSCALE);
@@ -274,7 +282,8 @@ void TKeySCALE::parse(const std::vector<std::string>& tokens, bool /*activeLine*
         TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
         TLength(std::stor(tokens[5]), TLength::EUnits::kMetres),
         TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres),
-        TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres)
+        TLength(std::stor(tokens[7]), TLength::EUnits::kMillimetres),
+		line
     ));
 
 	// store the new scale
@@ -296,7 +305,7 @@ TKeyINCL::TKeyINCL(TLGCData& project, int nb_allowed_keywords, const char** keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 
 	auto& incls(finstruments.fINCL);
@@ -309,7 +318,8 @@ void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kGons),
 		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kCCs),
 		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kGons),
-		TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs)
+		TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs),
+		line
 		));
 
 	// store the new inclinometer
@@ -332,7 +342,7 @@ TKeyHLSR::TKeyHLSR(TLGCData& project, int nb_allowed_keywords, const char** keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyHLSR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int) {
+void TKeyHLSR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/, int line) {
 	using namespace LGC;
 
 	auto& hlsrs(finstruments.fHLSR);
@@ -342,8 +352,8 @@ void TKeyHLSR::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 		tokens.at(2),
 		TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres),
 		TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
-		TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres)
-
+		TLength(std::stor(tokens[5]), TLength::EUnits::kMillimetres),
+		line
 		));
 
 	// store the new hlsr
@@ -365,7 +375,7 @@ TKeyWPSR::TKeyWPSR(TLGCData &project, int nb_allowed_keywords, const char **keyw
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int)
+void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
 {
 	using namespace LGC;
 
@@ -382,7 +392,8 @@ void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 		TLength(0), 
 		TLength(0),
 		TLength(0),
-		TLength(0)
+		TLength(0),
+		line
 	));
 
 	// store the new wpsr

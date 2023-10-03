@@ -58,6 +58,7 @@ class TInstrumentData
 				    TLength targetHt = TLength(),
 				    TLength sigmaTargetHt = TLength(),
 				    TAdjustableLength *distCorrectionAdjustable = nullptr,
+				    int line = 0,
 				    TLength sigmaCombinedDist = TLength(),
 				    TAngle sigmaCombinedAngle = TAngle(),
 				    TAngle sigmaCombinedPLRAngl = TAngle(),
@@ -75,6 +76,7 @@ class TInstrumentData
 				    targetHt(targetHt),
 				    sigmaTargetHt(sigmaTargetHt),
 				    distCorrectionAdjustable(distCorrectionAdjustable),
+				    line(line),
 				    sigmaCombinedDist(sigmaCombinedDist),
 				    sigmaCombinedAngle(sigmaCombinedAngle),
 				    sigmaCombinedPLRAngl(sigmaCombinedPLRAngl),
@@ -93,6 +95,7 @@ class TInstrumentData
                 TLength targetHt;             // [m]
                 TLength sigmaTargetHt;        // [m]
                 TAdjustableLength* distCorrectionAdjustable; // Adjustable object for "distCorrectionValue"
+				int line;
 				TLength sigmaCombinedDist;		   // [m]
 				TAngle sigmaCombinedAngle;		   // [rad]
 				TAngle sigmaCombinedPLRAngl;		   // [rad]
@@ -112,13 +115,15 @@ class TInstrumentData
                 const TLength &instrH,
                 const TLength &sigmaInstrH,
                 const TLength &sigmaInstrCent,
-                const TAngle &cstAngle)
+                const TAngle &cstAngle,
+                const int &line)
                 : ID(instr_id)
                 , defTarget(defTgt)
                 , instrHeight(instrH)
                 , sigmaInstrHeight(sigmaInstrH)
                 , sigmaInstrCentering(sigmaInstrCent)
-                , constAngle(cstAngle) {}
+                , constAngle(cstAngle)
+                , line(line){}
             
             TPOLAR(const TPOLAR& instr)
 			{
@@ -133,6 +138,7 @@ class TInstrumentData
                 sigmaInstrHeight = other.sigmaInstrHeight;
                 sigmaInstrCentering = other.sigmaInstrCentering;
                 constAngle = other.constAngle;
+                line = other.line;
                 targets = other.targets;
 
                 for(auto &tgt : targets)
@@ -153,6 +159,7 @@ class TInstrumentData
 			TLength sigmaInstrHeight;     // [m]
 			TLength sigmaInstrCentering;  // [m]
 			TAngle constAngle;            // [rad]
+			int line;
             std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
@@ -174,6 +181,7 @@ class TInstrumentData
 					TReal sigmaY = 0,
 					TLength sigmaDist = TLength(),
 					TLength sigmaTargetCentering = TLength(),
+					int line = 0,
 					TLength sigmaCombinedX = TLength(),
 					TLength sigmaCombinedY = TLength(),
 					TLength sigmaCombinedDist = TLength()) :
@@ -182,6 +190,7 @@ class TInstrumentData
 					sigmaY(sigmaY),
 					sigmaDist(sigmaDist),
 					sigmaTargetCentering(sigmaTargetCentering),
+					line(line),
 					sigmaCombinedX(sigmaCombinedX),
 					sigmaCombinedY(sigmaCombinedY),
 					sigmaCombinedDist(sigmaCombinedDist){};
@@ -191,9 +200,10 @@ class TInstrumentData
                 TReal sigmaY;	               // [] unitless
                 TLength sigmaDist;	         // [m]
                 TLength sigmaTargetCentering; // [m]
-				TLength sigmaCombinedX;		   // [m]
-				TLength sigmaCombinedY;		   // [m]
-				TLength sigmaCombinedDist;		   // [m]
+                int line;
+                TLength sigmaCombinedX;		   // [m]
+                TLength sigmaCombinedY;		   // [m]
+                TLength sigmaCombinedDist;		   // [m]
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
@@ -205,10 +215,12 @@ class TInstrumentData
             TCAMD(
                 const std::string &instr_id,
                 const std::string &defTgt,
-                const TLength &sigmaInstrCent)
+                const TLength &sigmaInstrCent,
+                const int &line)
                 : ID(instr_id)
                 , defTarget(defTgt)
-                , sigmaInstrCentering(sigmaInstrCent) {}
+                , sigmaInstrCentering(sigmaInstrCent) 
+                , line(line){}
 
             TCAMD(const TCAMD& instr)
             {
@@ -221,6 +233,7 @@ class TInstrumentData
                 ID = other.ID;
                 defTarget = other.defTarget;
                 sigmaInstrCentering = other.sigmaInstrCentering;
+                line - other.line;
                 targets = other.targets;
 
                 for(auto &tgt : targets)
@@ -238,6 +251,7 @@ class TInstrumentData
 			std::string ID;
 			std::string defTarget;
 			TLength sigmaInstrCentering; // [m]
+			int line;
             std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 		};
 
@@ -263,6 +277,7 @@ class TInstrumentData
 					TLength targetHt = TLength(),
 					TLength sigmaTargetHt = TLength(),
 					TAdjustableLength *distCorrectionAdjustable = nullptr,
+					int line = 0,
 					TLength sigmaCombinedDist = TLength()) :
 					ID(ID),
 					sigmaDSpt(sigmaDSpt),
@@ -274,6 +289,7 @@ class TInstrumentData
 					targetHt(targetHt),
 					sigmaTargetHt(sigmaTargetHt),
 					distCorrectionAdjustable(distCorrectionAdjustable),
+					line(line),
 					sigmaCombinedDist(sigmaCombinedDist){};
 
 				std::string ID;
@@ -286,6 +302,7 @@ class TInstrumentData
 				TLength targetHt; // [m]
 				TLength sigmaTargetHt; // [m]
 				TAdjustableLength *distCorrectionAdjustable;
+				int line;
 				TLength sigmaCombinedDist; // [m]
 
 #if USE_SERIALIZER
@@ -295,8 +312,8 @@ class TInstrumentData
 			};
 
 			TEDM() = default;
-			TEDM(const std::string &instr_id, const std::string &defTgt, const TLength &instrH, const TLength &sigmaInstrH, const TLength &sigmaInstrCent) :
-				ID(instr_id), defTarget(defTgt), instrHeight(instrH), sigmaInstrHeight(sigmaInstrH), sigmaInstrCentering(sigmaInstrCent)
+			TEDM(const std::string &instr_id, const std::string &defTgt, const TLength &instrH, const TLength &sigmaInstrH, const TLength &sigmaInstrCent, const int &line) :
+				ID(instr_id), defTarget(defTgt), instrHeight(instrH), sigmaInstrHeight(sigmaInstrH), sigmaInstrCentering(sigmaInstrCent), line(line)
 			{
 			}
 
@@ -315,6 +332,7 @@ class TInstrumentData
 				instrHeight = other.instrHeight;
 				sigmaInstrHeight = other.sigmaInstrHeight;
 				sigmaInstrCentering = other.sigmaInstrCentering;
+				line = other.line;
 				targets = other.targets;
 
 				for (auto &tgt : targets)
@@ -329,6 +347,7 @@ class TInstrumentData
 			TLength instrHeight; // [m]
 			TLength sigmaInstrHeight; // [m]
 			TLength sigmaInstrCentering; // [m]
+			int line;
 			std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 
 #if USE_SERIALIZER
@@ -356,6 +375,7 @@ class TInstrumentData
 					TLength sigmaDCorr = TLength(),
 					TLength staffHt = TLength(),
 					TLength sigmaStaffHt = TLength(),
+					int line = 0,
 					TLength sigmaCombinedDist = TLength()) :
 					ID(ID),
 					sigmaD(sigmaD),
@@ -364,6 +384,7 @@ class TInstrumentData
 					sigmaDCorr(sigmaDCorr),
 					staffHt(staffHt),
 					sigmaStaffHt(sigmaStaffHt),
+					line(line),
 					sigmaCombinedDist(sigmaCombinedDist){};
 
 				std::string ID;
@@ -374,6 +395,7 @@ class TInstrumentData
 				TLength staffHt; // [m] i.e vertical offset of the staff = staff height
 				TLength sigmaStaffHt; // [m] standard deviation of the vertical offset of the staff
 				TLength sigmaCombinedDist;
+				int line;
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
@@ -382,8 +404,8 @@ class TInstrumentData
 			};
 
 			TLEVEL() = default;
-			TLEVEL(const std::string &instr_id, const std::string &defStaff, const bool &collAnglUnknown, const TAngle &collAnglVal, TAdjustableAngle *collAnglAdj) :
-				ID(instr_id), defStaffID(defStaff), collAngleUnknown(collAnglUnknown), collAngleValue(collAnglVal), collAngleAdjustable(collAnglAdj)
+			TLEVEL(const std::string &instr_id, const std::string &defStaff, const bool &collAnglUnknown, const TAngle &collAnglVal, TAdjustableAngle *collAnglAdj, const int line) :
+				ID(instr_id), defStaffID(defStaff), collAngleUnknown(collAnglUnknown), collAngleValue(collAnglVal), collAngleAdjustable(collAnglAdj), line(line)
 			{
 			}
 
@@ -402,6 +424,7 @@ class TInstrumentData
 				collAngleUnknown = other.collAngleUnknown;
 				collAngleValue = other.collAngleValue;
 				collAngleAdjustable = other.collAngleAdjustable;
+				line = other.line;
 				targets = other.targets;
 
 				for (auto &tgt : targets)
@@ -416,6 +439,7 @@ class TInstrumentData
 			bool collAngleUnknown;
 			TAngle collAngleValue; // [rad]
 			TAdjustableAngle *collAngleAdjustable;
+			int line;
 			std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
 
 #if USE_SERIALIZER
@@ -436,6 +460,7 @@ class TInstrumentData
 				TLength distCorrectionValue = TLength(),
 				TLength sigmaDCorr = TLength(),
 				TLength sigmaInstrCentering = TLength(),
+				int line = 0,
 				TLength sigmaCombinedDist = TLength()) :
 				ID(ID),
 				sigmaD(sigmaD),
@@ -443,6 +468,7 @@ class TInstrumentData
 				distCorrectionValue(distCorrectionValue),
 				sigmaDCorr(sigmaDCorr),
 				sigmaInstrCentering(sigmaInstrCentering),
+				line(line),
 				sigmaCombinedDist(sigmaCombinedDist){};
 
 			std::string ID;
@@ -451,6 +477,7 @@ class TInstrumentData
 			TLength distCorrectionValue; // [m]
 			TLength sigmaDCorr; // [m]
 			TLength sigmaInstrCentering; // [m]
+			int line;
 			TLength sigmaCombinedDist; // [m]
 
 #if USE_SERIALIZER
@@ -472,6 +499,7 @@ class TInstrumentData
 				TAngle sigmaCorrectionValue = TAngle(),
 				TAngle refAngleCorrectionValue = TAngle(),
 				TAngle refSigmaCorrectionValue = TAngle(),
+				int line = 0,
 				TAngle sigmaCombinedAngle = TAngle()) :
 				ID(ID),
 				sigmaAngl(sigmaAngl),
@@ -480,6 +508,7 @@ class TInstrumentData
 				sigmaCorrectionValue(sigmaCorrectionValue),
 				refAngleCorrectionValue(refAngleCorrectionValue),
 				refSigmaCorrectionValue(refSigmaCorrectionValue),
+				line(line),
 				sigmaCombinedAngle(sigmaCombinedAngle){};
 
 			std::string ID;
@@ -489,6 +518,7 @@ class TInstrumentData
 			TAngle sigmaCorrectionValue; // [rad]
 			TAngle refAngleCorrectionValue; // [rad]
 			TAngle refSigmaCorrectionValue; // [rad]
+			int line;
 			TAngle sigmaCombinedAngle; // [rad]
 
 #if USE_SERIALIZER
@@ -507,16 +537,19 @@ class TInstrumentData
 				TLength sigmaDist = TLength(),
 				TLength sigmaInstrHeight = TLength(),
 				TLength sigmaInstrCentering = TLength(),
+				int line = 0,
 				TLength sigmaWS = TLength(),
 				TLength sigmaCombinedDist = TLength()) :
-				ID(ID), sigmaDist(sigmaDist), sigmaInstrHeight(sigmaInstrHeight), sigmaInstrCentering(sigmaInstrCentering), sigmaWS(sigmaWS), sigmaCombinedDist(sigmaCombinedDist){};
+				ID(ID), sigmaDist(sigmaDist), sigmaInstrHeight(sigmaInstrHeight), sigmaInstrCentering(sigmaInstrCentering), line(line), sigmaWS(sigmaWS), sigmaCombinedDist(sigmaCombinedDist){};
 
 			std::string ID;
 			TLength sigmaDist;
 			TLength sigmaInstrHeight;
 			TLength sigmaInstrCentering;
+			int line;
 			TLength sigmaWS;
 			TLength sigmaCombinedDist;
+
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
@@ -539,7 +572,8 @@ class TInstrumentData
 			TLength sigmaSagWire= TLength(),
 			TLength sigmaWire= TLength(),
 			TLength sigmaCombinedX= TLength(),
-			TLength sigmaCombinedZ= TLength()):
+			TLength sigmaCombinedZ= TLength(),
+			int line =0):
 				ID(ID),
 				sigmaX(sigmaX),
 				sigmaZ(sigmaZ),
@@ -549,7 +583,8 @@ class TInstrumentData
 				sigmaSagWire(sigmaSagWire),
 				sigmaWire(sigmaWire),
 				sigmaCombinedX(sigmaCombinedX),
-				sigmaCombinedZ(sigmaCombinedZ)
+				sigmaCombinedZ(sigmaCombinedZ),
+				line(line)
 			{};
 
 			std::string ID;
@@ -562,6 +597,7 @@ class TInstrumentData
 			TLength sigmaWire; // [m]
 			TLength sigmaCombinedX; // [m]
 			TLength sigmaCombinedZ; // [m]
+			int line;
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
@@ -640,6 +676,7 @@ class TInstrumentData
 		obj.addProperty("instrHeight", instrHeight.getMetresValue());
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
+		obj.addProperty("line", line);
 		obj.addProperty("targets", targets);
 	}
 
@@ -666,7 +703,7 @@ class TInstrumentData
 
 		obj.addProperty("sigmaZenD", sigmaZenD.getRadiansValue());
 		obj.addProperty("targetHt", targetHt.getMetresValue());
-		
+		obj.addProperty("line", line);
 	}
 	
 	inline void TInstrumentData::TCAMD::serialize(SerializerObject::SerializationHelper &obj) const
@@ -674,6 +711,7 @@ class TInstrumentData
 		obj.addProperty("defTarget", defTarget);
 		obj.addProperty("ID", ID);
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
+		obj.addProperty("line", line);
 		obj.addProperty("targets", targets);
 	}
 
@@ -687,6 +725,7 @@ class TInstrumentData
 		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering.getMetresValue());
 		obj.addProperty("sigmaX", sigmaX);
 		obj.addProperty("sigmaY", sigmaY);
+		obj.addProperty("line", line);
 	}
 
 	inline void TInstrumentData::TEDM::serialize(SerializerObject::SerializationHelper &obj) const
@@ -696,6 +735,7 @@ class TInstrumentData
 		obj.addProperty("instrHeight", instrHeight.getMetresValue());
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
+		obj.addProperty("line", line);
 		obj.addProperty("targets", targets);
 	}
 
@@ -712,6 +752,7 @@ class TInstrumentData
 		obj.addProperty("sigmaTargetCentering", sigmaTargetCentering.getMetresValue());
 		obj.addProperty("sigmaTargetHt", sigmaTargetHt.getMetresValue());
 		obj.addProperty("targetHt", targetHt.getMetresValue());
+		obj.addProperty("line", line);
 	}
 
 	inline void TInstrumentData::TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
@@ -721,6 +762,7 @@ class TInstrumentData
 		obj.addProperty("collAngleValue", collAngleValue.getRadiansValue());
 		obj.addProperty("defStaffID", defStaffID);
 		obj.addProperty("ID", ID);
+		obj.addProperty("line", line);
 		obj.addProperty("targets", targets);
 	}
 
@@ -734,6 +776,7 @@ class TInstrumentData
 		obj.addProperty("sigmaDCorr", sigmaDCorr.getMetresValue());
 		obj.addProperty("sigmaStaffHt", sigmaStaffHt.getMetresValue());
 		obj.addProperty("staffHt", staffHt.getMetresValue());
+		obj.addProperty("line", line);
 	}
 
 	inline void TInstrumentData::TSCALE::serialize(SerializerObject::SerializationHelper &obj) const
@@ -745,6 +788,7 @@ class TInstrumentData
 		obj.addProperty("sigmaD", sigmaD.getMetresValue());
 		obj.addProperty("sigmaDCorr", sigmaDCorr.getMetresValue());
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
+		obj.addProperty("line", line);
 	}
 
 	inline void TInstrumentData::TINCL::serialize(SerializerObject::SerializationHelper &obj) const
@@ -757,6 +801,7 @@ class TInstrumentData
 		obj.addProperty("sigmaPpm", sigmaPpm.getRadiansValue());
 		obj.addProperty("sigmaCombinedAngle", sigmaCombinedAngle.getRadiansValue());
 		obj.addProperty("sigmaCorrectionValue", sigmaCorrectionValue.getRadiansValue());
+		obj.addProperty("line", line);
 	}
 
 	inline void TInstrumentData::THLSR::serialize(SerializerObject::SerializationHelper &obj) const
@@ -767,8 +812,8 @@ class TInstrumentData
 		obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 		obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
 		obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
+		obj.addProperty("line", line);
 	}
-
 
 	inline void TInstrumentData::TWPSR::serialize(SerializerObject::SerializationHelper &obj) const
 	{
@@ -782,6 +827,7 @@ class TInstrumentData
 		obj.addProperty("sigmaWire", sigmaWire.getMetresValue());
 		obj.addProperty("sigmaCombinedX", sigmaCombinedX.getMetresValue());
 		obj.addProperty("sigmaCombinedZ", sigmaCombinedZ.getMetresValue());
+		obj.addProperty("line", line);
 	}
 
 #endif // USE_SERIALIZER

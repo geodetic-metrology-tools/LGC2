@@ -75,7 +75,7 @@ void TAMeasurementKey_lgc1::createPolarInstrument()
 	p->sigmaInstrHeight = TLength(0.0, TLength::EUnits::kMillimetres);
 	p->sigmaInstrCentering = TLength(0.0, TLength::EUnits::kMillimetres);
 	p->constAngle = TAngle(0.0, TAngle::EUnits::kGons);
-	
+
 	// store the new station
 	finstruments.fPOLAR.insert(std::make_pair("TSTNInstr", p));
 	
@@ -110,7 +110,8 @@ void TAMeasurementKey_lgc1::createEDMInstrument() {
         "EDMTgt",
         TLength(0.0, TLength::EUnits::kMetres), //hi
         TLength(0.0, TLength::EUnits::kMillimetres), //sigma hi
-        TLength(0.0, TLength::EUnits::kMillimetres) //sigma instr centering
+        TLength(0.0, TLength::EUnits::kMillimetres), //sigma instr centering
+        0
     );
     finstruments.fEDM.insert(std::make_pair("EDMInstr", e));
 
@@ -1621,7 +1622,8 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
             "Staff1",
             false,
             TAngle(0.0), //collimation angle value
-            collANGLEAdjustable
+            collANGLEAdjustable,
+			0
         );
 
 		// store the new station
@@ -1641,7 +1643,7 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
             TLength(0.0, TLength::EUnits::kMetres), // distcorr
             TLength(0.0, TLength::EUnits::kMillimetres), //sigma distcorr
             TLength(0.0, TLength::EUnits::kMetres), //hstaff
-            TLength(0.0, TLength::EUnits::kMillimetres) //sigma hstaff
+            TLength(0.0, TLength::EUnits::kMillimetres), //sigma hstaff
         });
 
 		// store the new staff
