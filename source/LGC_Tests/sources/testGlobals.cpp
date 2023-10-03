@@ -221,11 +221,8 @@ namespace tut
 		TDataTreeIterator iter;
 		const LGCAdjustablePoint pos(posit, false, false, false, "point", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
 	
-#ifdef __linux__
 		const TInstrumentData::TPOLAR instrument{};
-#else
-		const TInstrumentData::TPOLAR instrument;
-#endif
+
 		TTSTN tstn( pos, instrument);
 		LGCAdjustablePoint ssa = *tstn.instrumentPos;
 		ssa.setXYEstimatedCovariance(3.0);
