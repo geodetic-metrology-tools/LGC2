@@ -1,2 +1,10 @@
 /build
 /build32
+*.log*
+*.coo
+*.err
+*.res
+*.sw*
+*.inp*
+*.lgc*
+*.json

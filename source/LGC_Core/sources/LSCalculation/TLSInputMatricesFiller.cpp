@@ -1770,14 +1770,14 @@ bool TLSInputMatricesFiller::addConstraintTransformationContribution(const TAdju
 	for (int i = 0; i < 3; i++)
 	{
 		if (!trafo.isTranslationFixed(i))
-			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getTranslationUnknIndex(i), trContrib.fTranslContrib[i]);
+			isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIndex, trafo.getTranslationUnknIndex(i), trContrib.fTranslContrib[i]);
 
 		if (!trafo.isRotationFixed(i))
-			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getRotationUnknIndex(i), trContrib.fRotationContrib[i]);
+			isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIndex, trafo.getRotationUnknIndex(i), trContrib.fRotationContrib[i]);
 	}
 
 	if (!trafo.isScaleFixed())
-		isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIndex, trafo.getScaleUnknIndex(), trContrib.fScaleContrib);
+		isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIndex, trafo.getScaleUnknIndex(), trContrib.fScaleContrib);
 
 	return isProcessOK;
 
