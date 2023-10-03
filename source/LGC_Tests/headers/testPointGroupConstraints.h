@@ -103,5 +103,45 @@ pz 0 0 1
 *ENDFRAME
 )";
 
+char const *const constraintDetection_testfile= R"(*TITR
+testFile
+find necessary libr constraint groups
+*OLOC
+*CONSI
+*INSTR
+*POLAR TS1 T1 0.0 0.1 0.1 0
+T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0
+% dummy observations to deactivate the unknown vs obs counter check
+*CALA 
+zero 0 0 0
+*OBSXYZ
+zero 0 0 0 1 1 1 
+zero 0 0 0 1 1 1 
+zero 0 0 0 1 1 1 
+% this frame should give rise to TX TY and TZ helmert movements in root
+*FRAME testFrameTranslation 0 1 2 0 0 0 1 TX TY TZ
+*CALA
+p1 1 2 3
+p2 3 4 5
+p3 6 7 8
+*ENDFRAME
+% this frame should give rise to RX RY and RZ helmert movements in root
+*FRAME testFrameRotation 0 1 2 0 0 0 1 RX RY RZ
+*CALA
+p4 1 2 3
+p5 3 4 5
+p6 6 7 8
+*ENDFRAME
+% this frame should give rise to RX RY and RZ helmert movements in root
+*FRAME testFrameTranslationAndRotation 0 1 2 0 0 0 1 TX TY
+*CALA
+p7 1 2 3
+p8 3 4 5
+p9 6 7 8
+*ENDFRAME
+*END
+
+)";
+
 }
 #endif

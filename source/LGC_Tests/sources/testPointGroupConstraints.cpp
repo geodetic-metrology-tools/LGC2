@@ -185,4 +185,28 @@ void object::test<4>()
 	ensure_equals("tx should not have changed", frame.getEstTranslation(0), frame.getProvTranslation(0), 1e-6);
 }
 
+template<>
+template<>
+void object::test<5>()
+{
+	set_test_name("Testing constraint detection");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/test.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	// more complicated testfile, with 7 DOF frame with free point inside frame
+	std::stringstream infiler(pointConstraintTest::constraintDetection_testfile);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	TLSInputMatricesFiller matrFiller(&projTest->getTree(), projTest->getConfig().referential, *projTest.get());
+	TLSInputMatrices im;
+	TDataAnalyzer analyzer(*projTest);
+	analyzer.dataConsistent();
+	im.initMatrices(projTest->fUEOIndices);
+	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
+	TLSConsCheck consCheck(*projTest.get(), im);
+	consCheck.computeNecessaryLIBRConstraints();
+
+}
+
 }; // namespace tut
