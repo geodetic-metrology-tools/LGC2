@@ -1432,6 +1432,9 @@ void TSimFileWriter::writeINCLYMeas(TINCLYROM *meas)
 		if (itINCLY.target.sigmaAngl != inclDefInst.sigmaAngl)
 			(*stream) << "OBSE" << sep << itINCLY.target.sigmaAngl.getSignedCCValue() << sep;
 
+		if (itINCLY.target.sigmaPpm != inclDefInst.sigmaPpm)
+			(*stream) << "PPM" << sep << itINCLY.target.sigmaPpm.getMicroRadiansValue() << sep;
+
 		if (itINCLY.target.angleCorrectionValue != inclDefInst.angleCorrectionValue)
 			(*stream) << "AC" << sep << itINCLY.target.angleCorrectionValue.getGonsValue() << sep;
 

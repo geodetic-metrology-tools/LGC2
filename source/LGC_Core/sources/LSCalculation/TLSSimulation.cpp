@@ -459,7 +459,7 @@ void	TLSSimulation::getDISTSimValuesInFrame(const TTSTN& station, std::list<TLIN
 void TLSSimulation::getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly) {
 	for (auto& itINCLY : incly) {
 		TReal calcVal = fSimObs.getINCLYCalcMeas(inclyROM, itINCLY);
-		TReal sigma = itINCLY.target.sigmaAngl;
+		TReal sigma = itINCLY.target.sigmaAngl + itINCLY.target.sigmaPpm;
 		itINCLY.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
 }

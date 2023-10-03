@@ -369,7 +369,7 @@ namespace tut
 	template<>
 	void object::test<10>()
 	{
-		set_test_name("Testing INCLY AC and RF flags");
+		set_test_name("Testing INCLY AC, RF and PPM flags");
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_SUBF_6.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
@@ -389,15 +389,17 @@ namespace tut
 
 		auto romIt = frameIt.node->data->measurements.fINCLY.begin();
 		TAngle obsse(4, TAngle::EUnits::kCCs);
+		TAngle ppmse(3, TAngle::EUnits::kMicroRadians);
 		TAngle refse(2, TAngle::EUnits::kCCs);
 		TAngle acse(1, TAngle::EUnits::kCCs);
-		TAngle combinedse(sqrt(pow2q(obsse.getRadiansValue()) + pow2q(refse.getRadiansValue()) + pow2q(acse.getRadiansValue())), TAngle::EUnits::kRadians);
+		TAngle combinedse(sqrt(pow2q(obsse.getRadiansValue() + ppmse.getRadiansValue()) + pow2q(refse.getRadiansValue()) + pow2q(acse.getRadiansValue())), TAngle::EUnits::kRadians);
 		
 		ensure_equals("AC Flag does not match", romIt->measINCLY.begin()->target.angleCorrectionValue.getGonsValue(), 0.5, 1e-7);
 		ensure_equals("ACSE Flag does not match", romIt->measINCLY.begin()->target.sigmaCorrectionValue.getGonsValue(), acse.getGonsValue(), 1e-7);
 		ensure_equals("RF Flag does not match", romIt->measINCLY.begin()->target.refAngleCorrectionValue.getGonsValue(), 0.3, 1e-7);
 		ensure_equals("RFSE Flag does not match", romIt->measINCLY.begin()->target.refSigmaCorrectionValue.getGonsValue(), refse.getGonsValue(), 1e-7);
 		ensure_equals("OBSE Flag does not match", romIt->measINCLY.begin()->target.sigmaAngl.getGonsValue(), obsse.getGonsValue(), 1e-7);
+		ensure_equals("PPM Flag does not match", romIt->measINCLY.begin()->target.sigmaPpm.getGonsValue(), ppmse.getGonsValue(), 1e-7);
 		ensure_equals("Combined Sigma from Flags does not match", romIt->measINCLY.begin()->target.sigmaCombinedAngle.getGonsValue(), combinedse.getGonsValue(), 1e-7);
 	}
 		
@@ -425,15 +427,17 @@ namespace tut
 
 		auto romIt = frameIt.node->data->measurements.fINCLY.begin();
 		TAngle obsse(4, TAngle::EUnits::kCCs);
+		TAngle ppmse(3, TAngle::EUnits::kMicroRadians);
 		TAngle refse(2, TAngle::EUnits::kCCs);
 		TAngle acse(1, TAngle::EUnits::kCCs);
-		TAngle combinedse(sqrt(pow2q(obsse.getRadiansValue()) + pow2q(refse.getRadiansValue()) + pow2q(acse.getRadiansValue())), TAngle::EUnits::kRadians);
+		TAngle combinedse(sqrt(pow2q(obsse.getRadiansValue() + ppmse.getRadiansValue()) + pow2q(refse.getRadiansValue()) + pow2q(acse.getRadiansValue())), TAngle::EUnits::kRadians);
 
 		ensure_equals("AC from INCL does not match", romIt->measINCLY.begin()->target.angleCorrectionValue.getGonsValue(), 0.5, 1e-7);
 		ensure_equals("ACSE from INCL does not match", romIt->measINCLY.begin()->target.sigmaCorrectionValue.getGonsValue(), acse.getGonsValue(), 1e-7);
 		ensure_equals("RF from INCL does not match", romIt->measINCLY.begin()->target.refAngleCorrectionValue.getGonsValue(), 0.3, 1e-7);
 		ensure_equals("RFSE from INCL does not match", romIt->measINCLY.begin()->target.refSigmaCorrectionValue.getGonsValue(), refse.getGonsValue(), 1e-7);
 		ensure_equals("OBSE from INCL does not match", romIt->measINCLY.begin()->target.sigmaAngl.getGonsValue(), obsse.getGonsValue(), 1e-7);
+		ensure_equals("PPM Flag does not match", romIt->measINCLY.begin()->target.sigmaPpm.getGonsValue(), ppmse.getGonsValue(), 1e-7);
 		ensure_equals("Combined Sigma from INCL does not match", romIt->measINCLY.begin()->target.sigmaCombinedAngle.getGonsValue(), combinedse.getGonsValue(), 1e-7);
 	}
 	}

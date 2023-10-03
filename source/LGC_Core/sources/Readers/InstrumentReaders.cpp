@@ -300,15 +300,16 @@ void TKeyINCL::parse(const std::vector<std::string>& tokens, bool /*activeLine*/
 	using namespace LGC;
 
 	auto& incls(finstruments.fINCL);
-	checkInstrument(8, incls, tokens);
+	checkInstrument(9, incls, tokens);
 
 	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL(
 		tokens.at(2),
 		TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
-		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kGons),
-		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kCCs),
-		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kGons),
-		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kCCs)
+		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kMicroRadians),
+		TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kCCs),
+		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs)
 		));
 
 	// store the new inclinometer

@@ -1421,7 +1421,8 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	TAngle calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
 
 	// Compute the variance of the observation
-	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue()) + pow2q(incly.target.sigmaCorrectionValue.getRadiansValue())
+	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue() + incly.target.sigmaPpm.getRadiansValue())
+		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue())
 		+ pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 
 	// CalcMeas, transformationContributions, variance

@@ -38,6 +38,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	(*stream).writeString(obsResWidth, "RES/SIG"); // residual/sigma
 	(*stream).writeString(nameWidth, "INCL ID"); // inclinometer ID
 	(*stream).writeString(obsResWidth, "OBSE"); // OBSE value
+	(*stream).writeString(obsResWidth, "PPM"); // PPM value
 	(*stream).writeString(obsWidth, "AC"); // AC value
 	(*stream).writeString(obsResWidth, "ACSE"); // ACSE Value
 	(*stream).writeString(obsWidth, "RF"); // RF value
@@ -56,6 +57,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	(*stream).writeString(obsResWidth, ""); // residual/sigma
 	(*stream).writeString(nameWidth, ""); // inclinometer ID
 	(*stream).writeString(obsResWidth, "(CC)"); // OBSE
+	(*stream).writeString(obsResWidth, ""); // PPM
 	(*stream).writeString(obsWidth, "(GON)"); // AC
 	(*stream).writeString(obsResWidth, "(CC)"); // ACSE
 	(*stream).writeString(obsWidth, "(GON)"); // RF
@@ -109,6 +111,9 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 
 		// write the OBSE
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaAngl.getSignedCCValue()); // Output value in cc [cc], stored in [rad]
+
+		// write the PPM
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY.target.sigmaPpm.getMicroRadiansValue()); // Output value in microradians [urad], stored in [rad]
 
 		// write the AC
 		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.target.angleCorrectionValue.getGonsValue()); // Output value in gon [gon], stored in [rad]

@@ -1381,6 +1381,7 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		//TInstrumentData::TINCL instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
 
 		instrument.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE",instrument.sigmaAngl));
+		instrument.sigmaPpm = TAngle(opts.getParamRurad2rad("PPM", instrument.sigmaPpm));
 		instrument.angleCorrectionValue = TAngle(opts.getParamRgon2rad("AC", instrument.angleCorrectionValue));
 		instrument.sigmaCorrectionValue = TAngle(opts.getParamRcc2rad("ACSE", instrument.sigmaCorrectionValue));
 		instrument.refAngleCorrectionValue = TAngle(opts.getParamRgon2rad("RF", instrument.refAngleCorrectionValue));
