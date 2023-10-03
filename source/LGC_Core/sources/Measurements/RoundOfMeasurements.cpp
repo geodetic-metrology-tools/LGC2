@@ -178,7 +178,7 @@ void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
 {
 	obj.addProperty("ecspSummary_", ecspSummary_);
 	obj.addProperty("line", line);
-	obj.addProperty("line", measECSP);
+	obj.addProperty("measECSP", measECSP);
 	obj.addProperty("p1", p1);
 	obj.addProperty("p2", p2);
 	obj.addProperty("romId", romId);
