@@ -2114,7 +2114,7 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
 		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
 		TPositionVector pointInSubframe = point.getEstimatedValue();
-		resultCOG.PointContrib[pointName] = sub2Root.getPartialDerivativeWrtPosition();
+		resultCOG.PointContrib[pointName] = averagingFactor * sub2Root.getPartialDerivativeWrtPosition();
 
 		// set the contributions of the transformations to root
 		Eigen::Matrix3d normalizedIdentity;
@@ -2183,10 +2183,7 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		currentScale += pow2(diff2COG.norm());
 
 		// derivatives
-		// Eigen::MatrixXd	Aline = diff2COG.transpose() * (1.0 - 1.0 / numberOfPoints);
-		Eigen::Vector3d Aline = 2 * diff2COG * (1.0 - averagingFactor);
-		// std::cout << Aline << std::endl;
-		// std::cout << sub2Root.getPartialDerivativeWrtPosition()<< std::endl;
+		Eigen::Vector3d Aline = 2 * diff2COG; 
 		//  with respect to point coordinates:
 		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
 		resultScale.PointContrib[pointName] = derWRTPos;
