@@ -31,11 +31,7 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 void LGCPointConstraintGroup::setConstraintSignature(constraintSignature usedConstraints)
 {
 	fConstraints = usedConstraints;
-	int dim = 0;
-	for (int j = 0; j < 7; j++)
-	{
-		dim += usedConstraints[j];
-	}
+	int dim = std::count(usedConstraints.begin(), usedConstraints.end(), true);
 	constraintDim = dim;
 }
 

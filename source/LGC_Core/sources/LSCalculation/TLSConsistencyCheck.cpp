@@ -430,6 +430,10 @@ void TLSConsCheck::computeNecessaryLIBRConstraints()
 	// numerically compute this space and compare its dimension with the dimension of the ambiguous directions.
 	// if it is equal, every ambiguos direction is explained as a helmert movement.
 	std::map<std::set<std::string>, Eigen::MatrixXd> explainableDirections;
+	
+	std::list<LGCPointConstraintGroup> &pointGroups = projData.getPointGroups();
+
+	bool explainable = true;
 	// iterate over all sets of affected points, use groups2HelmertMovements to avoid duplicates in groupsOfAffectedPoints)
 	for (auto group : groups2HelmertMovements)
 	{
@@ -437,62 +441,91 @@ void TLSConsCheck::computeNecessaryLIBRConstraints()
 		// find the intersection of the space of ambiguous directions and the space of the helmert directions
 		Eigen::MatrixXd helmertMovements = groups2HelmertMovements[pointNames];
 		Eigen::MatrixXd ambiguousDirections = groups2AmbiguousDirections[pointNames];
+		Eigen::MatrixXd intersection = intersect(helmertMovements, ambiguousDirections);
+		Eigen::MatrixXd intersectionAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(intersection);
 
-		// imA n imB = P_1 ker(C) with C=[A,-B]
-		int nRows = helmertMovements.rows();
-		std::cout << "dimension of helmert movements = " << helmertMovements.fullPivHouseholderQr().rank() << std::endl;
-		Eigen::MatrixXd C = Eigen::MatrixXd::Zero(nRows, helmertMovements.cols() + ambiguousDirections.cols());
-		C.leftCols(helmertMovements.cols()) = helmertMovements;
-		C.rightCols(ambiguousDirections.cols()) = -ambiguousDirections;
-		Eigen::MatrixXd kernel = C.fullPivLu().kernel();
-		Eigen::MatrixXd intersection = helmertMovements * kernel.topRows(helmertMovements.cols());
+		int dimAmb = ambiguousDirections.fullPivHouseholderQr().rank();
+		int dimIntersect = intersection.fullPivHouseholderQr().rank();
+		int dimHelmert = helmertMovements.fullPivHouseholderQr().rank();
+		// check if the ambiguous directions are a subspace of the helmert movements (the case if the intersection has the same dimension hen the amb directions)
+		if (dimAmb == dimIntersect && dimHelmert == 7)
+		{ // check if the Helmert directions are linear independent, if so the linear combinations are unique.
 
-		// now for a base of the intersection: check if it can be uniquely represented as comb of helmert directions.
-		// if there is only one point, the combination can not be unique because there are already 7 directions and there are ambiguities
-		// but if the group is bigger, it is more likely that any vector in the intersection can be uniquely represented as linear combination
-
-		// TODO:
-		// loop over intersection directions
-		// check if it a unique combination? 
-		// yes -> save the coefficients in terms of helmert directions, append it to a vector where these lin combs are stored connected to the group.
-		// no -> the direction can be interpreted in different ways, e.g. as totation OR as translation. Based onlinearizations we can not be sure what to do in this case.
-
-
-	// 	Eigen::MatrixXd intersection2 = ambiguousDirections * kernel.bottomRows(ambiguousDirections.cols());
-	// 	std::cout << "_________________________________________________" << std::endl;
-	// 	std::cout << "The dimension of the ambiguous directions is " << ambiguousDirections.fullPivHouseholderQr().rank() << std::endl;
-	// 	std::cout << "The dimension of the ambiguous directions is " << ambiguousDirections.cols() << std::endl;
-	// 	std::cout << "ambiguous directions = " << std::endl;
-	// 	std::cout << ambiguousDirections << std::endl;
-	// 	std::cout << "The intersection of the ambiguous directions and the directions explainable as helmert trafos is spaned by the matrix" << std::endl
-	// 			  << intersection << std::endl;
-	// 	std::cout << "The dimension of this intersection is " << intersection.colPivHouseholderQr().rank() << std ::endl;
-	// 	std::cout << "The dimension of this intersection version2 is " << intersection2.colPivHouseholderQr().rank() << std ::endl;
+			// compute a choice of constraints that can be used to block the corresponding movements
+			constraintSignature chosenConstraints = whatToBlock(intersectionAsHelmertMovements);
+			LGCPointConstraintGroup newConstraintGroup(projData);
+			newConstraintGroup.setAffectedPoints(group.first);
+			newConstraintGroup.setConstraintSignature(chosenConstraints);
+			// add this group to the constarint groups
+			pointGroups.push_back(newConstraintGroup);
+		}
+		else
+		{
+			explainable = false;
+		}
 	}
 
+}
 
+constraintSignature TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
+{
+	constraintSignature result;
+	result.fill(false);
+	//std::cout << "~~~~~~~~" << std::endl;
+	//std::cout << mat << std::endl;
+	Eigen::MatrixXd remainingDirections = mat;
+	// based on a matrix with columns representing linear combinations of linearized helmert movements (assuming full rank), chose a set of helmert directions that when blocked prohibit all the directions
+	int addedBlocks = 0;
+	for (int j = 6; j >= 0; j--)
+	{
+		if (mat.row(j).norm() > 1e-9)
+		{
+			result[j] = true;
+			addedBlocks++;
+			// find the maximum entry in this row to determine the helmert direction we can block to block this direction
+			int colMax;
+			mat.row(j).cwiseAbs().maxCoeff(&colMax);
+			// the direction in the column colMax is now blocked, dont consider it anymore
+			// the direction j is now blocked, so intersect the remaining directions with the nullspace of the projection on j
 
-	// // now for each of these groups compute the hypothetical action af a helmert transformation
-	// std::map<std::set<std::string>, Eigen::MatrixXd> groups2HelmertMovements;
-	// for (auto affectedPointGroup : groupsOfAffectedPoints)
-	// {
-	// 	std::set<std::string> pointNames = affectedPointGroup.first;
-	// 	// create matrix with linearized helmert movements for the affected points
-	// 	int nPoints = pointNames.size();
-	// 	int nRows = 3 * nPoints;
-	// 	Eigen::MatrixXd helmertMovements = Eigen::MatrixXd::Zero(nRows, 7);
+			Eigen::MatrixXd projImage(7, 7);
+			projImage.setIdentity();
+			projImage.row(j).setZero();
 
-	// 	int i = 0;
-	// 	for (auto point : pointNames)
-	// 	{
-	// 		helmertMovements.middleRows(3 * i, 3) = getMasterDirections(point);
-	// 		i++;
-	// 	}
-	// 	groups2HelmertMovements[pointNames] = helmertMovements;
-	// }
+			//std::cout << "~~~~~" << std::endl << mat << std::endl;
+			mat = intersect(mat, projImage);
+			//std::cout << "~~~~~" << std::endl << mat << std::endl;
+			//mat.col(colMax).setZero();
+		}
+		if (addedBlocks == mat.cols())
+		{
+			// dimension of blocked directions should be equal to dimension of directions
+			break;
+		}
+	}
+	if (addedBlocks < mat.cols())
+	{
+		throw std::runtime_error("Attention: Too few blocking constraints were chosen automatically.");
+	}
 
-	
-	true;
+	return result;
+}
+
+Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
+{
+	// imA n imB = P_1 ker(C) with C=[A,-B]
+	int nRows = A.rows();
+	if (nRows != B.rows())
+	{
+		throw std::runtime_error("to compute the intersectionof the images of matrix A and matrix B they must have the same row-dimension.");
+	}
+	Eigen::MatrixXd C = Eigen::MatrixXd::Zero(nRows, A.cols() + B.cols());
+	C.leftCols(A.cols()) = A;
+	C.rightCols(B.cols()) = -B;
+	Eigen::MatrixXd kernel = C.fullPivLu().kernel();
+	Eigen::MatrixXd intersection = A * kernel.topRows(A.cols());
+
+	return intersection;
 }
 
 void TLSConsCheck::initialize()

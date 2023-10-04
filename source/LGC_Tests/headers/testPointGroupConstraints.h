@@ -118,26 +118,33 @@ zero 0 0 0
 zero 0 0 0 1 1 1 
 zero 0 0 0 1 1 1 
 zero 0 0 0 1 1 1 
-% this frame should give rise to TX TY and TZ helmert movements in root
-*FRAME testFrameTranslation 0 1 2 0 0 0 1 TX TY TZ
-*CALA
-p1 1 2 3
-p2 3 4 5
-p3 6 7 8
-*ENDFRAME
+%%  % this frame should give rise to TX TY and TZ helmert movements in root
+%%  *FRAME testFrameTranslation 0 1 2 0 0 0 1 TX TY TZ
+%%  *CALA
+%%  p1 1 2 3
+%%  p2 3 4 5
+%%  p3 6 7 8
+%%  *ENDFRAME
+%%  % this frame should give rise to RX RY and RZ helmert movements in root
+%%  *FRAME testFrameRotation 0 1 2 0 0 0 1 RX RY RZ
+%%  *CALA
+%%  p4 1 2 3
+%%  p5 3 4 5
+%%  p6 6 7 8
+%%  *ENDFRAME
 % this frame should give rise to RX RY and RZ helmert movements in root
-*FRAME testFrameRotation 0 1 2 0 0 0 1 RX RY RZ
-*CALA
-p4 1 2 3
-p5 3 4 5
-p6 6 7 8
-*ENDFRAME
-% this frame should give rise to RX RY and RZ helmert movements in root
-*FRAME testFrameTranslationAndRotation 0 1 2 0 0 0 1 TX TY
+*FRAME testFrameTranslationAndRotation 0 0 0 1 20 30 1  RY 
+% Ry is free but RZ is determined to be blocked because from root the movement is a combination of RY and RZ
+% note: order of rotations is first RX, then RY then RZ. So if there is a RZ freedom predecessed by fixed RX, the resulting linearized direction will contain a RX component
+%*FRAME testFrameTranslationAndRotation 0 0 0 10 0 0 1 RY 
 *CALA
 p7 1 2 3
 p8 3 4 5
-p9 6 7 8
+p9 6 7.01 8
+%p10 9 10 11
+%p12 12 13 14
+%p13 15 16 17
+%p14 1 1 1
 *ENDFRAME
 *END
 

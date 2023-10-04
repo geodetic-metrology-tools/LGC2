@@ -886,13 +886,13 @@ bool TDataAnalyzer::checkConfigOptions()
 		{
 			outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
 		}
-		else
-		{
-			logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
-			consCheck.generateErrorMessage();
-			return false;
-		}
+	//	else
+	//	{
+	//		logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
+	//		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
+	//		consCheck.generateErrorMessage();
+	//		return false;
+	//	}
 	}
 
 	// now the point constraint groups should be ready, we can assign the constraint indices

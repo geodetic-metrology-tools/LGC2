@@ -8,6 +8,7 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 
 #include <TLGCData.h>
 #include <TVAdjustableObject.h>
+#include <LGCPointConstraintGroup.h>
 
 #include "TSparseMatrix.h"
 
@@ -24,6 +25,9 @@ public:
 	// get set of object indices of the Nullspace connected to certain object in the Nullspace
 	set<int> getConnectedNullspaceGroup(int);
 	void computeNecessaryLIBRConstraints();
+	constraintSignature whatToBlock(Eigen::MatrixXd mat);
+	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
+	Eigen::MatrixXd intersect(Eigen::MatrixXd A, Eigen::MatrixXd B);
 
 private:
 	TLGCData &projData;
