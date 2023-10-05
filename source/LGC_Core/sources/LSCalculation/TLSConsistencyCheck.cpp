@@ -25,10 +25,10 @@ TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : p
 	{
 		resultStatus = true;
 	}
-	//if (resultStatus == false)
-	//{
-	//	generateErrorMessage();
-	//}
+	if (resultStatus == false)
+	{
+		generateErrorMessage();
+	}
 	computeNecessaryLIBRConstraints();
 }
 
@@ -289,10 +289,26 @@ vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMove
 //	return names2Movements;
 //}
 
-std::pair<std::set<std::string>,Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(Eigen::VectorXd nullspaceVector)
+std::pair<std::set<std::string>, Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector)
 {
 	std::set<std::string> affectedPoints;
 	std::unordered_map<std::string, Eigen::Vector3d> points2Movements;
+	// initialize the points with the points that are in the associated group
+
+	std::set<int> pointNumbers = getPoints(group);
+	for (auto number : pointNumbers)
+	{
+		if (objectTypes[number] != "Point")
+		{
+			throw std::runtime_error("Object " + objectNames[number] + " is not of type POINT.");
+		}
+		std::string pointName = objectNames[number];
+		affectedPoints.insert(pointName);
+		Eigen::Vector3d rootDirection;
+		rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
+		points2Movements[pointName] = rootDirection;
+	}
+
 	// loop over ALL points to find the affected points
 	for (auto &point : projData.getPoints())
 	{
@@ -397,7 +413,7 @@ void TLSConsCheck::computeNecessaryLIBRConstraints()
 		vector<TDenseMatrix> kernGroupBaseVectors = computeKernelWrtObjectSet(group);
 		for (auto nullspaceVector : kernGroupBaseVectors)
 		{
-			groupsOfAffectedPoints.push_back(getAffectedPointsAndRootMovements(nullspaceVector));
+			groupsOfAffectedPoints.push_back(getAffectedPointsAndRootMovements(group, nullspaceVector));
 		}
 	}
 
@@ -413,6 +429,11 @@ void TLSConsCheck::computeNecessaryLIBRConstraints()
 		Eigen::MatrixXd newDir = groups2AmbiguousDirections[pointNames];
 		newDir.conservativeResize(nRows, newDir.cols() + 1);
 		newDir.col(newDir.cols() - 1) = rootDirections;
+		if (rootDirections.norm() > 1e+3)
+		{
+			std::cout << "wrong direction" << std::endl;
+			std::cout << rootDirections << std::endl;
+		}
 		groups2AmbiguousDirections[pointNames] = newDir;
 
 		// now for this group compute the hypothetical action af a helmert transformation
@@ -447,6 +468,12 @@ void TLSConsCheck::computeNecessaryLIBRConstraints()
 		int dimAmb = ambiguousDirections.fullPivHouseholderQr().rank();
 		int dimIntersect = intersection.fullPivHouseholderQr().rank();
 		int dimHelmert = helmertMovements.fullPivHouseholderQr().rank();
+	//	std::cout << "~~~~~~~" << std::endl;
+	//	std::cout << helmertMovements << std::endl;
+	//	std::cout << "~~~~~~~" << std::endl;
+	//	std::cout << ambiguousDirections << std::endl;
+	//	std::cout << "~~~~~~~" << std::endl;
+	//	std::cout << intersection << std::endl;
 		// check if the ambiguous directions are a subspace of the helmert movements (the case if the intersection has the same dimension hen the amb directions)
 		if (dimAmb == dimIntersect && dimHelmert == 7)
 		{ // check if the Helmert directions are linear independent, if so the linear combinations are unique.
@@ -456,8 +483,14 @@ void TLSConsCheck::computeNecessaryLIBRConstraints()
 			LGCPointConstraintGroup newConstraintGroup(projData);
 			newConstraintGroup.setAffectedPoints(group.first);
 			newConstraintGroup.setConstraintSignature(chosenConstraints);
+			// // override constarints
+			// chosenConstraints = {1, 1, 1, 0, 0, 1, 0};
+			// newConstraintGroup.setConstraintSignature(chosenConstraints);
 			// add this group to the constarint groups
 			pointGroups.push_back(newConstraintGroup);
+			std::cout << "~~~~~~" << std::endl;
+			newConstraintGroup.plotGroupData();
+			std::cout << "~~~~~~" << std::endl;
 		}
 		else
 		{
@@ -471,12 +504,14 @@ constraintSignature TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 {
 	constraintSignature result;
 	result.fill(false);
+	int rank = mat.fullPivHouseholderQr().rank();
 	//std::cout << "~~~~~~~~" << std::endl;
 	//std::cout << mat << std::endl;
 	Eigen::MatrixXd remainingDirections = mat;
 	// based on a matrix with columns representing linear combinations of linearized helmert movements (assuming full rank), chose a set of helmert directions that when blocked prohibit all the directions
 	int addedBlocks = 0;
-	for (int j = 6; j >= 0; j--)
+	std::vector<int> priority{3, 4, 5, 0, 1, 2,6 };
+	for (int j : priority)
 	{
 		if (mat.row(j).norm() > 1e-9)
 		{
@@ -497,15 +532,18 @@ constraintSignature TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 			//std::cout << "~~~~~" << std::endl << mat << std::endl;
 			//mat.col(colMax).setZero();
 		}
-		if (addedBlocks == mat.cols())
+		if (addedBlocks == rank)
 		{
 			// dimension of blocked directions should be equal to dimension of directions
 			break;
 		}
 	}
-	if (addedBlocks < mat.cols())
+	if (addedBlocks < rank)
 	{
-		throw std::runtime_error("Attention: Too few blocking constraints were chosen automatically.");
+		if (mat.norm() > 1e-6)
+		{
+			throw std::runtime_error("Attention: Too few blocking constraints were chosen automatically.");
+		}
 	}
 
 	return result;
@@ -517,13 +555,19 @@ Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
 	int nRows = A.rows();
 	if (nRows != B.rows())
 	{
-		throw std::runtime_error("to compute the intersectionof the images of matrix A and matrix B they must have the same row-dimension.");
+		throw std::runtime_error("to compute the intersection of the images of matrix A and matrix B they must have the same row-dimension.");
 	}
 	Eigen::MatrixXd C = Eigen::MatrixXd::Zero(nRows, A.cols() + B.cols());
 	C.leftCols(A.cols()) = A;
 	C.rightCols(B.cols()) = -B;
 	Eigen::MatrixXd kernel = C.fullPivLu().kernel();
 	Eigen::MatrixXd intersection = A * kernel.topRows(A.cols());
+	// std::cout << "~~~~~~~" << std::endl;
+	// std::cout << A << std::endl;
+	// std::cout << "~~~~~~~" << std::endl;
+	// std::cout << B << std::endl;
+	// std::cout << "~~~~~~~" << std::endl;
+	// std::cout << intersection << std::endl;
 
 	return intersection;
 }

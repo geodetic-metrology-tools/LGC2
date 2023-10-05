@@ -45,6 +45,7 @@ public:
 	void setFirstCIndex(int j) { firstCIndex = j; };
 	Eigen::Vector3d getProvRootPos(std::string pointName) const; 
 	Eigen::Vector3d getProvCOG() const { return provCOG; };
+	void plotGroupData();
 	//
 //	void setGroupName(std::string name) { groupName = name; };
 //	std::string getGroupName() { return groupName; };

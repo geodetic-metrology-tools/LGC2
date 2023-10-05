@@ -88,7 +88,7 @@ private:
 	vector<vector<string>> interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors);
 	//std::unordered_map<std::string, Eigen::Vector3d> interpreteNullSpaceDirectionAsPointMovementInRoot(Eigen::VectorXd nullspaceVector);
 	// return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root.
-	std::pair<std::set<std::string>, Eigen::VectorXd> getAffectedPointsAndRootMovements(Eigen::VectorXd nullspaceVector);
+	std::pair<std::set<std::string>, Eigen::VectorXd> getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector);
 	void plotTransformationMessage(vector<vector<string>>);
 };
 

@@ -49,6 +49,22 @@ Eigen::Vector3d LGCPointConstraintGroup::getProvRootPos(std::string pointName) c
 	}
 }
 
+void LGCPointConstraintGroup::plotGroupData()
+{
+	std::cout << "Point group constraint fixing constraints" << std::endl << "(TX, TY, TZ, RX, RY, RZ, SCL) " << std::endl;
+	for (auto used : fConstraints)
+	{
+		std::cout << used;
+	}
+	std::cout << std::endl;
+	std::cout << fAffectedPoints.size() << " Affected Points:" << std::endl;
+	for (auto pointName : fAffectedPoints)
+	{
+		std::cout << pointName << std::endl;
+	}
+	std::cout << std::endl;
+}
+
 
 #if USE_SERIALIZER
 void LGCPointConstraintGroup::serialize(SerializerObject::SerializationHelper &obj) const
