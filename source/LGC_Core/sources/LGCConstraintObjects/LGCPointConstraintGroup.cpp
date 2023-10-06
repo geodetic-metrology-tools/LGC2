@@ -63,6 +63,20 @@ void LGCPointConstraintGroup::plotGroupData()
 		std::cout << pointName << std::endl;
 	}
 	std::cout << std::endl;
+	std::vector<std::string> constraintNames({"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"});
+	logWarning() << "Point group constraint fixing constraints";
+	logWarning() << "(TX, TY, TZ, RX, RY, RZ, SCL) ";
+	std::string constraintString;
+	for (int j = 0; j < 7; j++)
+	{
+		constraintString += fConstraints[j] ? constraintNames[j] + "|" : " |";
+	}
+	logWarning() << constraintString;
+	logWarning() << std::to_string(fAffectedPoints.size()) + " affected Points:";
+	for (auto pointName : fAffectedPoints)
+	{
+		logWarning() << pointName;
+	}
 }
 
 
