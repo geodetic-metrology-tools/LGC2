@@ -24,7 +24,8 @@ public:
 	void generateErrorMessage();
 	// get set of object indices of the Nullspace connected to certain object in the Nullspace
 	set<int> getConnectedNullspaceGroup(int);
-	void computeNecessaryLIBRConstraints();
+	// compute a list of point group constraints that can make the problem computable.
+	std::list<LGCPointConstraintGroup> computeNecessaryLIBRConstraints();
 	constraintSignature whatToBlock(Eigen::MatrixXd mat);
 	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
 	Eigen::MatrixXd intersect(Eigen::MatrixXd A, Eigen::MatrixXd B);

@@ -886,6 +886,21 @@ bool TDataAnalyzer::checkConfigOptions()
 		{
 			outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
 		}
+
+		
+		// try to generate necessary constraints - this could be activated by some kind of flag
+		std::list<LGCPointConstraintGroup> proposedConstraintGroups = consCheck.computeNecessaryLIBRConstraints();
+		// communicate them to the TLGCData object
+		std::list<LGCPointConstraintGroup> &pointGroups = fData.getPointGroups();
+		for (auto pointGroup : proposedConstraintGroups)
+		{
+			pointGroups.push_back(pointGroup);	\
+			std::cout << "~~~~~~ The following point group constraint was added:" << std::endl;
+			pointGroup.plotGroupData();
+			std::cout << "~~~~~~" << std::endl;
+		}
+
+		
 	//	else
 	//	{
 	//		logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
