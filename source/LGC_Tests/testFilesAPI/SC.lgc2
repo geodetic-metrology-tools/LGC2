@@ -5,7 +5,7 @@ First vesrion of the LGC file Single component
 *COVAR
 *INSTR
 *HLSR HL_SNSR_1 0.02 0 0  		%Precisions used from power point. Name of the standard instrument?
-*INCL INCL_SNSR_1   63    0   0 0  0  	%What is your inclinometer precision? Name of the standard instrument?
+*INCL INCL_SNSR_1   63 0 0 0 0 0  	%What is your inclinometer precision? Name of the standard instrument?
 *EDM FSI_SNSR_1 CORNERCUBE 0 0 0	%FSI as distance measurement
 CORNERCUBE .3 0 0 0 0 0 0 0
 
