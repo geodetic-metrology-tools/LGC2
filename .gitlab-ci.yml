@@ -10,14 +10,12 @@ include:
 linux_build_and_test:
     extends: .linux_build_and_test 
     script:
-      - echo "Building executable | -j$(nproc)"
-      - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
-      - cp LGC ..
+      - echo "Preparing LGC_API for artifacts"
+      - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC_API
       - cp LGC_API/libLGC_API.so ..
     artifacts:
         paths:
-            - LGC
-            - libLGC_API.so
+          - libLGC_API.so
 
 
 # Build and upload the LGC application
@@ -29,11 +27,9 @@ linux_release:
         - echo "Building executable | -j$(nproc)"
         - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
         - cp LGC ..
-        - cp LGC_API/libLGC_API.so ..
     artifacts:
         paths:
             - LGC
-            - libLGC_API.so
 
 ##################
 # WINDOWS BUILDS #
