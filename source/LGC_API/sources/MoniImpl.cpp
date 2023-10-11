@@ -565,7 +565,7 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
-		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		throw std::logic_error("No measurement with ID " + id + " found.");
 		return;
 	}
 
@@ -700,7 +700,7 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	{
 		Eigen::VectorXd res(1);
 		res << -1;
-		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		throw std::logic_error("No measurement with ID " + id + " found.");
 		return res;
 	}
 
@@ -860,7 +860,7 @@ bool Moni::MoniImpl::adjust()
 	}
 	else
 	{
-		std::cout << "Problems occured during Adjustment method." << std::endl;
+		throw std::runtime_error("Problems occured during Adjustment method.");
 	}
 	return estimationStatus;
 }
@@ -885,7 +885,7 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
-		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		throw std::logic_error("No measurement with ID " + id + " found.");
 		Eigen::VectorXd result(1);
 		result[0] = 0;
 		return result;
@@ -1029,7 +1029,7 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
-		std::cout << "No measurement with ID " << id << " found." << std::endl;
+		throw std::logic_error("No measurement with ID " + id + " found.");
 	}
 
 	string type = measRefs.types.at(id);
@@ -1136,7 +1136,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No point with Id " << pointId << " found" << std::endl;
+		throw std::logic_error("No point with Id " + pointId + " found");
 	}
 	TPositionVector result = paramRefs.POINTS.at(pointId).getEstimatedValue();
 	return toVectorXd(result);
@@ -1145,11 +1145,11 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::strin
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No point with Id " << pointId << " found" << std::endl;
+		throw std::logic_error("No point with Id " + pointId + " found");
 	}
 	if (paramRefs.FRAMES.count(destFrame) == 0)
 	{
-		std::cout << "No frame with Id " << destFrame << " found" << std::endl;
+		throw std::logic_error("No Frame with Id " + destFrame + " found");
 	}
 
 	// transform to destination frame
@@ -1163,7 +1163,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(std::string frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
-		std::cout << "No frame with Id " << frameId << " found" << std::endl;
+		throw std::logic_error("No Frame with Id " + frameId + " found");
 	}
 
 	Eigen::VectorXd resultVector(7);
@@ -1182,7 +1182,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(std::string frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
-		std::cout << "No frame with Id " << frameId << " found" << std::endl;
+		throw std::logic_error("No Frame with Id " + frameId + " found");
 	}
 
 	Eigen::VectorXd resultVector(7);
@@ -1205,7 +1205,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId)
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No point with Id " << pointId << " found" << std::endl;
+		throw std::logic_error("No Point with Id " + pointId + " found");
 	}
 	Eigen::VectorXd prec(3);
 	prec.setZero();
@@ -1220,11 +1220,11 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId, std::s
 {	
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
-		std::cout << "No point with Id " << pointId << " found" << std::endl;
+		throw std::logic_error("No Point with Id " + pointId + " found");
 	}
 	if (paramRefs.FRAMES.count(destFrame) == 0)
 	{
-		std::cout << "No frame with Id " << destFrame << " found" << std::endl;
+		throw std::logic_error("No Point with Id " + destFrame + " found");
 	}
 
 	LGCAdjustablePoint point = paramRefs.POINTS.at(pointId);
