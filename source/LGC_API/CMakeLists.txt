@@ -41,6 +41,10 @@ target_link_libraries(	${PROJECT_NAME}
 	Plugins
 )
 
+if(NOT MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0)
+endif()
+
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
