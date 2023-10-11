@@ -214,4 +214,92 @@ void object::test<3>()
 
 }
 
+
+template<>
+template<>
+void object::test<4>()
+{
+	set_test_name("Testing API on single component test file");
+	ensure_equals("Reading file successful", true, true);
+	// for simulation of random perturbations
+	std::ranlux48 engine;
+	// reproducibility
+	engine.seed(1);
+	auto start = high_resolution_clock::now();
+	std::string inputFilePath = "test_files/LGC_SCT_WPS.lgc";
+
+	Moni mockup(inputFilePath);
+
+	// the IDs for the observations we want to manipulate during the monitoring
+	std::vector<std::string> wpsIds = {
+		"GISCD.B1LX.A_WPS", "GTAP.A1LX.A_WPS", "GTAP.A1LX.L_WPS", "GISCD.A1LX.A_WPS", "GISCD.B1LX.D_WPS", "GTAP.A1LX.D_WPS", "GTAP.A1LX.Q_WPS", "GISCD.A1LX.D_WPS"};
+
+	// first save the original measurements
+	std::unordered_map<std::string, Eigen::VectorXd> originalMeasurements;
+	for (auto id : wpsIds)
+	{
+		originalMeasurements.insert({id, mockup.getMeas(id)});
+	}
+	bool status = false;
+
+	// Simulating a monitoring scenario
+	for (int i = 0; i < 10; i++)
+	{
+		for (auto id : wpsIds)
+		{
+			// simulate new measurements by taking the original values and add a perturbation with standard deviation sigma
+			// ECWS sigma = 0.001 mm = 1e-6m
+			double sigma(1e-6);
+			Eigen::VectorXd perturbation(2);
+			perturbation << std::normal_distribution<double>(0, sigma)(engine), std::normal_distribution<double>(0, sigma)(engine);
+			Eigen::VectorXd new_measurement = perturbation + originalMeasurements.at(id);
+			mockup.updateMeas(id, new_measurement);
+			//Eigen::VectorXd new_obsSigma(1);
+			// testing  setObsSigma
+			// new_obsSigma << 1e-5;
+			// mockup.setObsSigma(id, new_obsSigma);
+		}
+		status = mockup.getStatus();
+		ensure_equals("Estimation status should be false after measurement updates", status, false);
+		// test input file writer
+		// mockup.writeLGCInputFile();
+
+		status = mockup.adjust();
+		ensure_equals("Estimation status should be true after adjustment", status, true);
+		auto currentTime = high_resolution_clock::now();
+		auto duration = duration_cast<milliseconds>(currentTime - start);
+
+  		// get exemplary parameter estimates
+		std::string pointName = "BEAM_SCT.GTAP.A1LX.E";
+  		std::string frameName = "SCT.GTAP.A1LX.RSTRI";
+  
+  		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
+  		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
+  		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
+  		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
+  				  << mockup.getPointEstimatePrec(pointName) << std::endl;
+  		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
+  		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
+  				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+  
+  		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
+  		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
+  
+  		// get exemplary measurement residual
+  		std::string obsName = "GTAP.A1LX.L_WPS";
+  		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
+  		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
+  		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
+  
+  		// get sigmaZero
+  		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
+
+	}
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<seconds>(stop - start);
+	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
+
+
+}
+
 }; // namespace tut
