@@ -888,16 +888,27 @@ bool TDataAnalyzer::checkConfigOptions()
 		}
 
 		
+		// TODO:
+		// Guard this by some configuration flag that activates the LIBR constraint identification check.
+
 		// try to generate necessary constraints - this could be activated by some kind of flag
-		std::list<LGCPointConstraintGroup> proposedConstraintGroups = consCheck.computeNecessaryLIBRConstraints();
-		// communicate them to the TLGCData object
-		std::list<LGCPointConstraintGroup> &pointGroups = fData.getPointGroups();
-		for (auto pointGroup : proposedConstraintGroups)
+		std::list<LGCPointConstraintGroup> proposedConstraintGroups;
+		bool success = consCheck.computeNecessaryLIBRConstraints(proposedConstraintGroups);
+		if (success)
 		{
-			pointGroups.push_back(pointGroup);	\
-			std::cout << "~~~~~~ The following point group constraint was added:" << std::endl;
-			pointGroup.plotGroupData();
-			std::cout << "~~~~~~" << std::endl;
+			// communicate the constraints to the TLGCData object
+			std::list<LGCPointConstraintGroup> &pointGroups = fData.getPointGroups();
+			for (auto pointGroup : proposedConstraintGroups)
+			{
+				pointGroups.push_back(pointGroup);
+				std::cout << "~~~~~~ The following point group constraint was added:" << std::endl;
+				pointGroup.plotGroupData();
+				std::cout << "~~~~~~" << std::endl;
+			}
+		}
+		else
+		{
+			std::cout << "Automatic LIBR constraint identification failed to identify enough constraints to make the problem computable." << std::endl;
 		}
 
 		

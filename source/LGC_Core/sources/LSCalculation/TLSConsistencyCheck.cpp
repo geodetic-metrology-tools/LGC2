@@ -271,19 +271,19 @@ std::pair<std::set<std::string>, Eigen::VectorXd> TLSConsCheck::getAffectedPoint
 	std::unordered_map<std::string, Eigen::Vector3d> points2Movements;
 	
 	// Experiment: initialize the points with the points that are in the associated group
-	//	std::set<int> pointNumbers = getPoints(group);
-	//	for (auto number : pointNumbers)
-	//	{
-	//		if (objectTypes[number] != "Point")
-	//		{
-	//			throw std::runtime_error("Object " + objectNames[number] + " is not of type POINT.");
-	//		}
-	//		std::string pointName = objectNames[number];
-	//		affectedPoints.insert(pointName);
-	//		Eigen::Vector3d rootDirection;
-	//		rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
-	//		points2Movements[pointName] = rootDirection;
-	//	}
+	std::set<int> pointNumbers = getPoints(group);
+	for (auto number : pointNumbers)
+	{
+		if (objectTypes[number] != "Point")
+		{
+			throw std::runtime_error("Object " + objectNames[number] + " is not of type POINT.");
+		}
+		std::string pointName = objectNames[number];
+		affectedPoints.insert(pointName);
+		Eigen::Vector3d rootDirection;
+		rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
+		points2Movements[pointName] = rootDirection;
+	}
 
 	// loop over ALL points to find the affected points
 	for (auto &point : projData.getPoints())
@@ -379,7 +379,7 @@ set<int> TLSConsCheck::getConnectedNullspaceGroup(int i)
 	return group;
 }
 
-std::list<LGCPointConstraintGroup> TLSConsCheck::computeNecessaryLIBRConstraints()
+bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintGroup> &proposedPointGroupConstraints)
 {
 	// go over each group  and transform each ambiguous direction int point movements in root.
 	std::vector<std::pair<std::set<std::string>, Eigen::VectorXd>> groupsOfAffectedPoints;
@@ -403,11 +403,12 @@ std::list<LGCPointConstraintGroup> TLSConsCheck::computeNecessaryLIBRConstraints
 		std::set<string> pointNames = affectedPointGroup.first;
 		Eigen::VectorXd rootDirections = affectedPointGroup.second;
 		Eigen::MatrixXd newDir = groups2AmbiguousDirections[pointNames];
+		// prepare the concatentaion of a new column with the corresponding root direction
 		newDir.conservativeResize(nRows, newDir.cols() + 1);
 		newDir.col(newDir.cols() - 1) = rootDirections;
 		groups2AmbiguousDirections[pointNames] = newDir;
 
-		// now for this group compute the hypothetical action af a helmert transformation
+		// now for this group compute the hypothetical action af a helmert transformation (in root coordinates)
 		Eigen::MatrixXd helmertMovements = Eigen::MatrixXd::Zero(nRows, 7);	
 		int i = 0;
 		for (auto point : pointNames)
@@ -423,8 +424,9 @@ std::list<LGCPointConstraintGroup> TLSConsCheck::computeNecessaryLIBRConstraints
 	// if it is equal, every ambiguos direction is explained as a helmert movement.
 	std::map<std::set<std::string>, Eigen::MatrixXd> explainableDirections;
 	
-	std::list<LGCPointConstraintGroup> result;
+	//std::list<LGCPointConstraintGroup> result;
 	bool explainable = true;
+	int numberConstraintsAdded = 0;
 	// iterate over all sets of affected points, use groups2HelmertMovements to avoid duplicates in groupsOfAffectedPoints)
 	for (auto group : groups2HelmertMovements)
 	{
@@ -454,7 +456,6 @@ std::list<LGCPointConstraintGroup> TLSConsCheck::computeNecessaryLIBRConstraints
 			}
 		}
 
-
 		int dimAmb = ambiguousDirections.fullPivHouseholderQr().rank();
 		int dimIntersect = intersection.fullPivHouseholderQr().rank();
 		int dimHelmert = helmertMovements.fullPivHouseholderQr().rank();
@@ -482,15 +483,24 @@ std::list<LGCPointConstraintGroup> TLSConsCheck::computeNecessaryLIBRConstraints
 			LGCPointConstraintGroup newConstraintGroup(projData);
 			newConstraintGroup.setAffectedPoints(group.first);
 			newConstraintGroup.setConstraintSignature(chosenConstraints);
+
 			// // override constarints
 			// 	chosenConstraints = {1, 0, 0, 0, 0, 1, 0};
 			//  newConstraintGroup.setConstraintSignature(chosenConstraints);
-			result.push_back(newConstraintGroup);
+			proposedPointGroupConstraints.push_back(newConstraintGroup);
+			numberConstraintsAdded += newConstraintGroup.getConstraintDimension();
 		}
 		//	else
 		//	{
 		//		explainable = false;
 		//	}
+	}
+	bool result = false;
+	if (numberConstraintsAdded == nullspace.cols())
+	{
+		// nullspace dimension is equal to number of blocking constraints
+		// enough constraints found to attempt a solution
+		result = true;
 	}
 
 	return result;
