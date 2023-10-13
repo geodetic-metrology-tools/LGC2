@@ -11,10 +11,13 @@ Moni::~Moni() = default;
 
 
 //void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+
+#if USE_SERIALIZER
 void Moni::writeResultFile()
 {
 	pimpl_->writeResultFile();
 }
+#endif
 
 void Moni::writeLGCInputFile()
 {
@@ -143,6 +146,8 @@ void Moni::MoniImpl::initialize()
 	std::cout << "Monitor object initialized." << std::endl;
 
 }
+
+#if USE_SERIALIZER
 void Moni::MoniImpl::writeResultFile()
 {
 	jsonSerializerObject ser;
@@ -155,6 +160,8 @@ void Moni::MoniImpl::writeResultFile()
 	std::ofstream fout(filename.str());
 	fout << ser.getStringRepresentation();
 }
+#endif
+
 void Moni::MoniImpl::writeLGCInputFile()
 {
     // Create and initialise stream:

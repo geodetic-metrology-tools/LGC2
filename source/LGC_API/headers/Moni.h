@@ -22,7 +22,10 @@ public:
 	DECLSPEC ~Moni();
 	//DECLSPEC void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
 	// write the results from the current estimation in a json file with timestamp
+
+#if USE_SERIALIZER
 	DECLSPEC void writeResultFile();
+#endif
 	// write lgc input file with current measurements with timestamp
 	DECLSPEC void writeLGCInputFile();
 	// updating observations

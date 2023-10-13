@@ -1,5 +1,7 @@
 PROJECT (LGC_API)
 
+# do not use the serializer in the API
+set(USE_SERIALIZER 0)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/
 )
