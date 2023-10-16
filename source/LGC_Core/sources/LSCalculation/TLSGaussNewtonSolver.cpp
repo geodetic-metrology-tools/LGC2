@@ -234,7 +234,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	if (decomp.info() == 1)
 	{
 		std::cout << "Numerical issue during decomposition" << std::endl;
-		throw std::runtime_error("problem determining linear subsystem solution");
+		//throw std::logic_error("problem determining linear subsystem solution");
 	}
 
 	return solution;
