@@ -43,7 +43,14 @@ GNresult TLSGaussNewtonSolver::solve()
 	while (stepsizeCrit == false && maxIterReached == false)
 	{
 		// compute the search direction
-		direction = getGNDirection(parameterIterate);
+		direction = getGNDirection(parameterIterate);	
+		if (direction.norm() > 1e+12)
+		{
+			std::cout << "Computed direction too big, stopping iterations" << std::endl;
+			break;
+		}
+
+
 		//std::cout << "GN direction = " << direction << std::endl;
 		// compute the gradient along this direction. Needed for the armijo linesearch
 		grad = getGradient(parameterIterate);
@@ -55,11 +62,6 @@ GNresult TLSGaussNewtonSolver::solve()
 			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
 		}
 	
-		if (stepsize*direction.norm() > 1e+12)
-		{
-			std::cout << "Step too big, stopping iterations" << std::endl;
-			break;
-		}
 
 		// do the regularized step
 		parameterIterate += stepsize * direction;
@@ -234,6 +236,9 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
 	if (decomp.info() == 1)
 	{
 		std::cout << "Numerical issue during decomposition" << std::endl;
+		// set dummy solution to stop GN
+		solution.setOnes();
+		solution *= 1e+13;
 		//throw std::logic_error("problem determining linear subsystem solution");
 	}
 
