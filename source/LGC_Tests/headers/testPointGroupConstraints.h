@@ -107,7 +107,7 @@ char const *const constraintDetection_testfile= R"(*TITR
 testFile
 find necessary libr constraint groups
 *OLOC
-*CONSI
+*CONSI LIBR
 *INSTR
 *POLAR TS1 T1 0.0 0.1 0.1 0
 T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0
@@ -133,7 +133,7 @@ zero 0 0 0 1 1 1
 %%  p6 6 7 8
 %%  *ENDFRAME
 % this frame should give rise to RX RY and RZ helmert movements in root
-*FRAME testFrameTranslationAndRotation 0 0 0 1 20 30 1  RY 
+*FRAME testFrameTranslationAndRotation 0 0 0 10 20 0 1  RY 
 % Ry is free but RZ is determined to be blocked because from root the movement is a combination of RY and RZ
 % note: order of rotations is first RX, then RY then RZ. So if there is a RZ freedom predecessed by fixed RX, the resulting linearized direction will contain a RX component
 %*FRAME testFrameTranslationAndRotation 0 0 0 10 0 0 1 RY 
@@ -149,6 +149,86 @@ p9 6 7.01 8
 *END
 
 )";
+
+char const *const constraintDetection_pyramidFull= R"(*TITR
+testing libr constraint choice. points form a rigid pyramid.
+Depending on the degrees of freedom of the points, the pyramid is "floating" in space or fully/partially determined
+*OLOC
+*CONSI LIBR
+*INSTR
+*EDM EDM TGT 0.0 0.0 0.0
+TGT   0.5 5.0 0  0  0 0.4  0.0  0.6
+*POIN
+P1 0 0 0
+P2 0 1.000 0 
+P3 0.9976 1.00032 0 
+P4 1.00017 0 0
+Top 0.5001 0.499978 1.00013
+*DSPT P1 EDM  IH 0.0     
+P2 1
+P3 1.414
+P4 1
+Top 1.224
+*DSPT P2 EDM  IH 0.0     
+P1 1
+P4 1.414
+P3 1
+Top 1.224
+*DSPT P3 EDM  IH 0.0     
+P2 1
+P1 1.414
+P4 1
+Top 1.224
+*DSPT P4 EDM  IH 0.0     
+P1 1
+P2 1.414
+P3 1
+Top 1.224
+*END
+)";
+
+
+char const *const constraintDetection_pyramidRotationXYZ= R"(*TITR
+testing libr constraint choice. points form a rigid pyramid.
+Depending on the degrees of freedom of the points, the pyramid is "floating" in space or fully/partially determined
+*OLOC
+*CONSI LIBR
+*INSTR
+*EDM EDM TGT 0.0 0.0 0.0
+TGT   0.5 5.0 0  0  0 0.4  0.0  0.6
+*CALA
+P1 0 0 0
+*POIN
+P2 0 1.000 0 
+P3 0.9976 1.00032 0 
+P4 1.00017 0 0
+Top 0.5001 0.499978 1.00013
+*DSPT P1 EDM  IH 0.0     
+P2 1
+P3 1.414
+P4 1
+Top 1.224
+*DSPT P2 EDM  IH 0.0     
+P1 1
+P4 1.414
+P3 1
+Top 1.224
+*DSPT P3 EDM  IH 0.0     
+P2 1
+P1 1.414
+P4 1
+Top 1.224
+*DSPT P4 EDM  IH 0.0     
+P1 1
+P2 1.414
+P3 1
+Top 1.224
+*END
+)";
+
+
+
+
 
 }
 #endif

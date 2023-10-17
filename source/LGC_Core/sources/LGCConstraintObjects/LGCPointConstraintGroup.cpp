@@ -64,25 +64,25 @@ Eigen::Vector3d LGCPointConstraintGroup::getProvRootPos(std::string pointName) c
 void LGCPointConstraintGroup::plotGroupData()
 {
 
-//   	// print to std::cout for debugging
-//   	std::cout << "Point group constraint fixing constraints" << std::endl << "(TX, TY, TZ, RX, RY, RZ, SCL) " << std::endl;
-//   	for (auto used : fConstraints)
-//   	{
-//   		std::cout << used;
-//   	}
-//   	std::cout << std::endl;
-//   	std::cout << fAffectedPoints.size() << " Affected Points:" << std::endl;
-//   	for (auto pointName : fAffectedPoints)
-//   	{
-//   		std::cout << pointName << std::endl;
-//   	}
-//   	std::cout << std::endl;
+// print to std::cout for debugging
+//	std::cout << "Point group constraint fixing constraints" << std::endl << "(TX, TY, TZ, RX, RY, RZ, SCL) " << std::endl;
+//	for (auto used : fConstraints)
+//	{
+//		std::cout << used;
+//	}
+//	std::cout << std::endl;
+//	std::cout << fAffectedPoints.size() << " Affected Points:" << std::endl;
+//	for (auto pointName : fAffectedPoints)
+//	{
+//		std::cout << pointName << std::endl;
+//	}
+//	std::cout << std::endl;
 
 	// write to log file
 	std::vector<std::string> constraintNames({"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"});
 
 	logWarning() << "LIBR constraint group blocking the following: ";
-	//logWarning() << "(TX, TY, TZ, RX, RY, RZ, SCL) ";
+	// logWarning() << "(TX, TY, TZ, RX, RY, RZ, SCL) ";
 	std::string constraintString;
 	for (int j = 0; j < 7; j++)
 	{

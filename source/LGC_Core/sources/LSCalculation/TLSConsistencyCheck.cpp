@@ -25,10 +25,10 @@ TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : p
 	{
 		resultStatus = true;
 	}
-	if (resultStatus == false)
-	{
-		generateErrorMessage();
-	}
+//	if (resultStatus == false)
+//	{
+//		generateErrorMessage();
+//	}
 }
 
 void TLSConsCheck::generateErrorMessage()

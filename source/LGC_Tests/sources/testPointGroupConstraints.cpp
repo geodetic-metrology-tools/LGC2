@@ -55,7 +55,7 @@ void object::test<1>()
 	std::set<std::string> affectedPoints = {"p0", "p3"};
 	LGCPointConstraintGroup testGroup(*projTest);
 	testGroup.setAffectedPoints(affectedPoints);
-	constraintSignature signature{1, 0, 0, 0, 0, 0, 0};
+	std::array<bool, 7> signature{1, 0, 0, 0, 0, 0, 0};
 	// no result with scale constraint
 	// constraintSignature signature{1, 1, 1, 1, 1, 1, 1};
 	testGroup.setConstraintSignature(signature);
@@ -89,7 +89,7 @@ void object::test<2>()
 	std::set<std::string> affectedPoints = {"p0", "p1", "p2", "p3", "p4"};
 	LGCPointConstraintGroup testGroup(*projTest);
 	testGroup.setAffectedPoints(affectedPoints);
-	constraintSignature signature{1, 0, 0, 0, 0, 0, 0};
+	std::array<bool, 7> signature{1, 0, 0, 0, 0, 0, 0};
 	// constraintSignature signature{1, 1, 1, 1, 1, 1, 0};
 	testGroup.setConstraintSignature(signature);
 	std::list<LGCPointConstraintGroup> &pointGroups = projTest->getPointGroups();
@@ -122,7 +122,7 @@ void object::test<3>()
 	LGCPointConstraintGroup testGroup(*projTest);
 	testGroup.setAffectedPoints(affectedPoints);
 	// blocking x momentum
-	constraintSignature signature{0, 0, 0, 1, 0, 0, 0};
+	std::array<bool, 7> signature{0, 0, 0, 1, 0, 0, 0};
 	testGroup.setConstraintSignature(signature);
 	std::list<LGCPointConstraintGroup> &pointGroups = projTest->getPointGroups();
 	pointGroups.push_back(testGroup);
@@ -169,7 +169,7 @@ void object::test<4>()
 	LGCPointConstraintGroup testGroup(*projTest);
 	testGroup.setAffectedPoints(affectedPoints);
 	// blocking x cog
-	constraintSignature signature{1, 0, 0, 0, 0, 0, 0};
+	std::array<bool, 7> signature{1, 0, 0, 0, 0, 0, 0};
 	testGroup.setConstraintSignature(signature);
 	std::list<LGCPointConstraintGroup> &pointGroups = projTest->getPointGroups();
 	pointGroups.push_back(testGroup);
@@ -202,10 +202,77 @@ void object::test<5>()
 	TLSInputMatrices im;
 	TDataAnalyzer analyzer(*projTest);
 	analyzer.dataConsistent();
+// 	// plot applied constraints
+// 	for (auto group:projTest.get()->getPointGroups()){
+// 		group.plotGroupData();
+// 	}
 	im.initMatrices(projTest->fUEOIndices);
 	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
 	TLSConsCheck consCheck(*projTest.get(), im);
 
 }
+
+template<>
+template<>
+void object::test<6>()
+{
+	set_test_name("Testing constraint detection");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/test.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	// more complicated testfile, with 7 DOF frame with free point inside frame
+	std::stringstream infiler(pointConstraintTest::constraintDetection_pyramidFull);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	TLGCCalculation calcul(projTest);
+	// compute
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	// check if the constraints have been detected
+	auto groups = projTest.get()->getPointGroups();
+	ensure_equals("There should be one group of points with imposed contraints.", groups.size(), 1);
+	auto group = groups.front();
+	ensure_equals("There should be 5 points in this group.", group.getAffectedPoints().size(), 5);
+	// check if all points are in the group
+	auto actualSignature = group.getConstraintSignature();
+	std::array<bool, 7> expectedSignature{1, 1, 1, 1, 1, 1, 0};
+	bool isAsExpected = (actualSignature == expectedSignature);
+	ensure_equals("Constraints for this group are not as expected.", isAsExpected, true);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+}
+
+template<>
+template<>
+void object::test<7>()
+{
+	set_test_name("Testing constraint detection");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/test.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	// more complicated testfile, with 7 DOF frame with free point inside frame
+	std::stringstream infiler(pointConstraintTest::constraintDetection_pyramidRotationXYZ);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	TLGCCalculation calcul(projTest);
+	// compute
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	// check if the constraints have been detected
+	auto groups = projTest.get()->getPointGroups();
+	auto group = groups.front();
+	ensure_equals("There should be 5 points in this group.", group.getAffectedPoints().size(), 4);
+	// check if all points are in the group
+	ensure_equals("There should be one group of points with imposed contraints.", groups.size(), 1);
+	// check if all points are in the group
+	auto actualSignature = group.getConstraintSignature();
+	std::array<bool, 7> expectedSignature{0, 0, 0, 1, 1, 1, 0};
+	bool isAsExpected = (actualSignature == expectedSignature);
+	ensure_equals("Momentum for all 3 rotations should be blocked.", isAsExpected, true);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+}
+
 
 }; // namespace tut
