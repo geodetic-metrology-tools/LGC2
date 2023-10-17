@@ -28,7 +28,19 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 
 }
 
-void LGCPointConstraintGroup::setConstraintSignature(constraintSignature usedConstraints)
+void LGCPointConstraintGroup::allPointsAreAffected()
+{
+	// create a set containing all points
+	std::set<std::string> allPoints;
+	for (auto point : data.getPoints())
+	{
+		allPoints.insert(point.getName());
+	}
+	// call the setAffectedPoints method with this set
+	setAffectedPoints(allPoints);
+}
+
+void LGCPointConstraintGroup::setConstraintSignature(std::array<bool, 7> usedConstraints)
 {
 	fConstraints = usedConstraints;
 	int dim = std::count(usedConstraints.begin(), usedConstraints.end(), true);
@@ -51,28 +63,34 @@ Eigen::Vector3d LGCPointConstraintGroup::getProvRootPos(std::string pointName) c
 
 void LGCPointConstraintGroup::plotGroupData()
 {
-	std::cout << "Point group constraint fixing constraints" << std::endl << "(TX, TY, TZ, RX, RY, RZ, SCL) " << std::endl;
-	for (auto used : fConstraints)
-	{
-		std::cout << used;
-	}
-	std::cout << std::endl;
-	std::cout << fAffectedPoints.size() << " Affected Points:" << std::endl;
-	for (auto pointName : fAffectedPoints)
-	{
-		std::cout << pointName << std::endl;
-	}
-	std::cout << std::endl;
+
+//   	// print to std::cout for debugging
+//   	std::cout << "Point group constraint fixing constraints" << std::endl << "(TX, TY, TZ, RX, RY, RZ, SCL) " << std::endl;
+//   	for (auto used : fConstraints)
+//   	{
+//   		std::cout << used;
+//   	}
+//   	std::cout << std::endl;
+//   	std::cout << fAffectedPoints.size() << " Affected Points:" << std::endl;
+//   	for (auto pointName : fAffectedPoints)
+//   	{
+//   		std::cout << pointName << std::endl;
+//   	}
+//   	std::cout << std::endl;
+
+	// write to log file
 	std::vector<std::string> constraintNames({"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"});
-	logWarning() << "Point group constraint fixing constraints";
-	logWarning() << "(TX, TY, TZ, RX, RY, RZ, SCL) ";
+
+	logWarning() << "LIBR constraint group blocking the following: ";
+	//logWarning() << "(TX, TY, TZ, RX, RY, RZ, SCL) ";
 	std::string constraintString;
 	for (int j = 0; j < 7; j++)
 	{
 		constraintString += fConstraints[j] ? constraintNames[j] + "|" : " |";
 	}
 	logWarning() << constraintString;
-	logWarning() << std::to_string(fAffectedPoints.size()) + " affected Points:";
+	logWarning() << " affecting the following" << std::to_string(fAffectedPoints.size()) << "points : ";
+	//logWarning() << std::to_string(fAffectedPoints.size()) + " affected Points:";
 	for (auto pointName : fAffectedPoints)
 	{
 		logWarning() << pointName;

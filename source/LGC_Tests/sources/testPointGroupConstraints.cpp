@@ -205,7 +205,6 @@ void object::test<5>()
 	im.initMatrices(projTest->fUEOIndices);
 	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
 	TLSConsCheck consCheck(*projTest.get(), im);
-	consCheck.computeNecessaryLIBRConstraints();
 
 }
 

@@ -26,7 +26,7 @@ public:
 	set<int> getConnectedNullspaceGroup(int);
 	// compute a list of point group constraints that can make the problem computable.
 	bool computeNecessaryLIBRConstraints(std::list<LGCPointConstraintGroup> &proposedPointGroupConstraints);
-	constraintSignature whatToBlock(Eigen::MatrixXd mat);
+	std::array<bool, 7> whatToBlock(Eigen::MatrixXd mat);
 	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
 	Eigen::MatrixXd intersect(Eigen::MatrixXd A, Eigen::MatrixXd B);
 

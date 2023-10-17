@@ -479,7 +479,7 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 			// std::cout << ambiguousDirections << std::endl;
 			// std::cout << ambiguousAsHelmertMovements << std::endl;
 			// constraintSignature chosenConstraints = whatToBlock(intersectionAsHelmertMovements);
-			constraintSignature chosenConstraints = whatToBlock(ambiguousAsHelmertMovements);
+			std::array<bool, 7> chosenConstraints = whatToBlock(ambiguousAsHelmertMovements);
 			LGCPointConstraintGroup newConstraintGroup(projData);
 			newConstraintGroup.setAffectedPoints(group.first);
 			newConstraintGroup.setConstraintSignature(chosenConstraints);
@@ -506,9 +506,9 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 	return result;
 }
 
-constraintSignature TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
+std::array<bool, 7> TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 {
-	constraintSignature result;
+	std::array<bool, 7> result;
 	result.fill(false);
 	int rank = mat.fullPivHouseholderQr().rank();
 	//std::cout << "~~~~~~~~" << std::endl;

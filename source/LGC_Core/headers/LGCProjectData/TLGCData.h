@@ -120,6 +120,10 @@ struct TMeasurementsGlobal
 	is reduced to interacting with a single object.
 */
 
+// forward declaration
+// not clear why this is necessary as LGCPointConstraintGroup is included
+class LGCPointConstraintGroup;
+
 #if USE_SERIALIZER
 class TLGCData : public Serializable
 #else

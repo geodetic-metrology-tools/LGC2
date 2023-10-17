@@ -2,7 +2,8 @@
 © Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
-
+#ifndef _LGC_POINTCONSTRAINTGROUP_H
+#	define _LGC_POINTCONSTRAINTGROUP_H
 #include <algorithm>
 #include <iostream>
 #include <list>
@@ -18,11 +19,10 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
-#ifndef _LGC_POINTCONSTRAINTGROUP_H
-#	define _LGC_POINTCONSTRAINTGROUP_H
+
+
 #	if USE_SERIALIZER
 
-typedef std::array<bool,7> constraintSignature;
 
 class LGCPointConstraintGroup : public Serializable
 #	else
@@ -30,16 +30,19 @@ class LGCPointConstraintGroup
 #	endif // USE_SERIALIZER
 {
 public:
+	//using constraintSignature = std::array<bool, 7>;
 	// constructor
 	LGCPointConstraintGroup(const TLGCData &projData) : data(projData){};
 	// destructor
 	~LGCPointConstraintGroup(){};
 	// set of points that will be constrained
 	void setAffectedPoints(std::set<std::string> affectedPoints);
+	// convenience method which adds all points to the affected points, equivalent to call setAffectedPoints with a set containing all points
+	void allPointsAreAffected();
 	std::set<std::string> getAffectedPoints() const { return fAffectedPoints; };
 	// set of imposed constraints , subset of (TX,TY,TZ,RX,RY,RZ,SCL) meaning center of Gravity constraint of x,y,z coordinate, momentum constraint x,y,z rotation, scale constraint
-	void setConstraintSignature(constraintSignature usedConstraints);
-	const constraintSignature getConstraintSignature() { return fConstraints; };
+	void setConstraintSignature(std::array<bool, 7> usedConstraints);
+	const std::array<bool, 7> getConstraintSignature() { return fConstraints; };
 	const int getConstraintDimension() { return constraintDim; }
 	int getFirstCIndex() { return firstCIndex; };
 	void setFirstCIndex(int j) { firstCIndex = j; };
@@ -67,7 +70,7 @@ private:
 	std::set<std::string> fAffectedPoints;
 	// the coordinates of the points transformed to root (using provisional values)
 	std::map<std::string, Eigen::Vector3d> fProvPosInRoot;
-	constraintSignature fConstraints;
+	std::array<bool, 7> fConstraints;
 	int firstCIndex{-1};
 	int constraintDim{0};
 	//the center of gravity in root coordinates with provisional values.
@@ -76,3 +79,4 @@ private:
 };
 
 #endif
+

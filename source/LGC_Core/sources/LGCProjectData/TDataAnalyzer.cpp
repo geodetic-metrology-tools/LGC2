@@ -891,28 +891,50 @@ bool TDataAnalyzer::checkConfigOptions()
 		// TODO:
 		// Guard this by some configuration flag that activates the LIBR constraint identification check.
 
-		// try to generate necessary constraints - this could be activated by some kind of flag
-		std::list<LGCPointConstraintGroup> proposedConstraintGroups;
-		bool success = consCheck.computeNecessaryLIBRConstraints(proposedConstraintGroups);
-		if (success)
+		if (fData.getConfig().useConsiLibr.isActive())
 		{
-			// communicate the constraints to the TLGCData object
 			std::list<LGCPointConstraintGroup> &pointGroups = fData.getPointGroups();
-			for (auto pointGroup : proposedConstraintGroups)
+			if (fData.getConfig().hasManualConstraints.isActive())
 			{
-				pointGroups.push_back(pointGroup);
+				// use the manually defined constraints
+				LGCPointConstraintGroup manuallyAddedConstraints(fData);
+				manuallyAddedConstraints.allPointsAreAffected();
+				manuallyAddedConstraints.setConstraintSignature(fData.getConfig().manualConstraints);
+				// communicate the constraints to the TLGCData object
+				pointGroups.push_back(manuallyAddedConstraints);
+			}
+			else
+			{
+				std::cout << "Trying to automatically identify necessary LIBR constraints to make the problem computable." << std::endl;
+				// try to automatically generate the necessary constraints
+				std::list<LGCPointConstraintGroup> proposedConstraintGroups;
+				bool success = consCheck.computeNecessaryLIBRConstraints(proposedConstraintGroups);
+				if (success)
+				{
+					// communicate the constraints to the TLGCData object
+					for (auto pointGroup : proposedConstraintGroups)
+					{
+						pointGroups.push_back(pointGroup);
+						std::cout << "~~~~~~ The following point group constraint was added:" << std::endl;
+						pointGroup.plotGroupData();
+						std::cout << "~~~~~~" << std::endl;
+					}
+				}
+				else
+				{
+					std::cout << "Automatic LIBR constraint identification failed to identify enough constraints to make the problem computable." << std::endl;
+				}
+			}
+			// show what has been added
+			for (auto pointGroup : pointGroups)
+			{
 				std::cout << "~~~~~~ The following point group constraint was added:" << std::endl;
 				pointGroup.plotGroupData();
 				std::cout << "~~~~~~" << std::endl;
 			}
 		}
-		else
-		{
-			std::cout << "Automatic LIBR constraint identification failed to identify enough constraints to make the problem computable." << std::endl;
-		}
 
-		
-	//	else
+		//	else
 	//	{
 	//		logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
 	//		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";

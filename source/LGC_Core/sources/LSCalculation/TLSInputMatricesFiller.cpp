@@ -1964,7 +1964,7 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 			// as each point in the group is transformed to root, it contributes possibly helmert trafo contribution and a position variable contribution
 			// so its important to not overwrite helmert trafo contributions but to add them
 
-			constraintSignature active = group.getConstraintSignature();
+			std::array<bool, 7> active = group.getConstraintSignature();
 			// loop over all 7 possible constraints
 			for (int relCIdx = 0; relCIdx < active.size(); relCIdx++)
 			{

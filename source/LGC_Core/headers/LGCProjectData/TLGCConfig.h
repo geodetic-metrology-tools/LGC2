@@ -24,6 +24,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	Options are set to defined default values by the starndard constructors of the
 	related classes. 
 */
+
 #if USE_SERIALIZER
 	struct TLGCConfig : public Serializable
 #else
@@ -284,6 +285,12 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	TBinaryOption chaba;
 	/// Make a consistency check to find groups of unidentifiable objects
 	TBinaryOption consCheck;
+	/// LIBR mode activated by CONSI
+	TBinaryOption useConsiLibr;
+	/// are manually specified constraints added?
+	TBinaryOption hasManualConstraints;
+	// signature of the manual added constraints (TX,TY,TZ,RX,RZ,RY,SCL)
+	std::array<bool, 7>  manualConstraints;
 	/// Write a JSON serialized object file
 	TBinaryOption writeJSON;
 	/// Write a separate COVAR JSON file in addition to the general JSON file
