@@ -862,6 +862,8 @@ bool TDataAnalyzer::checkConfigOptions()
 		}
 	}
 
+	// TODO: replace this test in the future using Consi?
+	// if it is kept move it at the end as after this test now there still may be new constraints
 	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex)
 	{
 		outputMessages << TFileLogger::e_logType::LOG_ERROR
@@ -938,10 +940,13 @@ bool TDataAnalyzer::checkConfigOptions()
 		else
 		// in case the libr option in consi is not used, generate an erro if there is an inconsistecny.
 		{
-			logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
-			consCheck.generateErrorMessage();
-			return false;
+			if (!consCheck.getResultStatus())
+			{
+				logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
+				consCheck.generateErrorMessage();
+				return false;
+			}
 		}
 	}
 
@@ -954,6 +959,7 @@ bool TDataAnalyzer::checkConfigOptions()
 	}
 	fData.fUEOIndices.CIndex = lastCidx;
 
+	return true;
 
 }
 
