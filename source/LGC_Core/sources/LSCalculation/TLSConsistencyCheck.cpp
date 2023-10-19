@@ -450,7 +450,7 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 			double solQuality = (helmertMovements * solution - direction).norm();
 			if (solQuality > 1e-6)
 			{
-				std::cout << "difficulties interpreting the direction as helmert direction" << std::endl;
+				logWarning() << "difficulties interpreting a direction as helmert direction.";
 				// remove this direction. This will probably lead to too few constraints
 				ambiguousDirections.col(k).setZero();
 			}
@@ -467,9 +467,8 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 		// std::cout << intersection << std::endl;
 		// check if the ambiguous directions can be UNIQUELY represented. This is the case if the intersection has the same dimension as the ambiguous directions and if the helmert movements span a 7 dim space.
 		// this will exclude 1 or 2 point groups as the helmert movements there can only span 3 or max 6 dimensions..--> experiment without this condition
-		// if (dimAmb == dimIntersect && dimHelmert == 7)
+		 if (dimAmb == dimIntersect && dimHelmert == 7)
 		{ // check if the Helmert directions are linear independent, if so the linear combinations are unique.
-
 			// compute a choice of constraints that can be used to block the corresponding movements
 
 			Eigen::MatrixXd ambiguousAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(ambiguousDirections);
@@ -490,10 +489,11 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 			proposedPointGroupConstraints.push_back(newConstraintGroup);
 			numberConstraintsAdded += newConstraintGroup.getConstraintDimension();
 		}
-		//	else
-		//	{
-		//		explainable = false;
-		//	}
+		else
+		{
+			logWarning() << "Not all ambiguos directions can be interpreted as Helmert transformation movements in a unique way.";
+			return false;
+		}
 	}
 	bool result = false;
 	if (numberConstraintsAdded == nullspace.cols())
@@ -511,8 +511,8 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 	std::array<bool, 7> result;
 	result.fill(false);
 	int rank = mat.fullPivHouseholderQr().rank();
-	//std::cout << "~~~~~~~~" << std::endl;
-	//std::cout << mat << std::endl;
+	std::cout << "~~~~~~~~" << std::endl;
+	std::cout << mat << std::endl;
 	Eigen::MatrixXd remainingDirections = mat;
 	// based on a matrix with columns representing linear combinations of linearized helmert movements (assuming full rank), chose a set of helmert directions that when blocked prohibit all the directions
 	int addedBlocks = 0;
