@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <iostream>
 #include "TLGCApp.h"
 #include "FileUtils.h"
@@ -105,6 +104,7 @@ int main(int argc, char *argv[])
 					if (argv[i + 1]) 
 					{
 						logFilePath = svlTools::getPathFileName(argv[i + 1]);
+						pLogFileHandler->setLogFile(logFilePath);
 						bChangeLogFile = false;
 					}
 
@@ -134,10 +134,8 @@ int main(int argc, char *argv[])
 		if (bChangeLogFile)
 		{
 			logFilePath = svlTools::getFilePathWithoutExtension(outputFilePath) + ".log2";
+			pLogFileHandler->setLogFile(logFilePath);
 		}
-		std::filesystem::remove(logFilePath.c_str());
-		pLogFileHandler->setLogFile(logFilePath);
-		
 
 		//
 		// Main code for executing the whole calculations

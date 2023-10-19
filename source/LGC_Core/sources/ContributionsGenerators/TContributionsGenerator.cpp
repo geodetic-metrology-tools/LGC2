@@ -1554,7 +1554,14 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	};
 
 	// Compute the projection of the station onto the wire in the station system
-	auto [projSt, projStNumerator, projStDenominator] = projPointOnWire(ecwi.targetPos->getEstimatedValue());
+	//auto [projSt, projStNumerator, projStDenominator] = projPointOnWire(ecwi.targetPos->getEstimatedValue());
+	// avoid c++17 feauture
+	// auto [projSt, projStNumerator, projStDenominator] 
+	std::tuple<TPositionVector, TReal, TReal> projectionSt = projPointOnWire(ecwi.targetPos->getEstimatedValue());
+	TPositionVector projSt = std::get<0>(projectionSt);
+	TReal projStNumerator = std::get<1>(projectionSt);
+	TReal projStDenominator = std::get<2>(projectionSt);
+
 	TReal componentX = projSt.getX().getMetresValue();
 	TReal componentZ = projSt.getZ().getMetresValue();
 
@@ -1575,13 +1582,25 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	// First Anchor
 	Root2AnchorFirstLorTrafo.transform(wireY);
 	Root2AnchorFirstLorTrafo.transform(wireZero);
-	auto [projA1, projA1Numerator, projA1Denominator] = projPointOnWire(A1);
+
+	// avoid c++17 feauture
+	//auto [projA1, projA1Numerator, projA1Denominator] = projPointOnWire(A1);
+	std::tuple<TPositionVector, TReal, TReal> projectionA1 = projPointOnWire(A1);
+	TPositionVector projA1 = std::get<0>(projectionA1 );
+	TReal projA1Numerator = std::get<1>(projectionA1 );
+	TReal projA1Denominator = std::get<2>(projectionA1 );
 
 	// Second Anchor
 	AnchorFirstLor2AnchorSecondLorTrafo.transform(wireY);
 	AnchorFirstLor2AnchorSecondLorTrafo.transform(wireZero);
 	AnchorFirstLor2AnchorSecondLorTrafo.transform(projA1);
-	auto [projA2, projA2Numerator, projA2Denominator] = projPointOnWire(A2);
+
+	// avoid c++17 feauture
+	//auto [projA2, projA2Numerator, projA2Denominator] = projPointOnWire(A2);
+	std::tuple<TPositionVector, TReal, TReal> projectionA2 = projPointOnWire(A2);
+	TPositionVector projA2 = std::get<0>(projectionA2);
+	TReal projA2Numerator = std::get<1>(projectionA2);
+	TReal projA2Denominator = std::get<2>(projectionA2);
 
 	// put again the wire in the station Frame
 	AnchorSecondLor2RootTrafo.transform(wireY);
