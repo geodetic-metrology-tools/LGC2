@@ -28,6 +28,7 @@ public:
 	// apply GN solver
 	// Huber Estimator
 	void solve();
+	void setGamma(double t) { gamma = t; }
 
 
 private:
@@ -35,6 +36,8 @@ private:
 	Eigen::VectorXd computeStep(Eigen::VectorXd par);
 	void setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
 	void setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix<double> &hessian, Eigen::VectorXd &gradient);
+	// Huber threshold (residual vs sigma from where L1 begins)
+	double gamma = 2;
 
 };
 

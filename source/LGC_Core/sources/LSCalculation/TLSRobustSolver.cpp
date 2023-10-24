@@ -23,20 +23,24 @@ void TLSRobustSolver::solve()
 
 	Eigen::VectorXd currentIter = iniVal;
 	Eigen::VectorXd step = iniVal;
+	double stepnorm = 1;
 	int nIter = 0;
 	int maxIter=100;
-	while (step.norm()>1e-7 && nIter<maxIter)
+	while (stepnorm>1e-7 && nIter<maxIter)
 	{
 		Eigen::VectorXd huberStep = computeStep(currentIter);
 		step = huberStep.topRows(nPar);
+		stepnorm = step.norm();
 		currentIter += step;		
 		std::cout << "huber stepsize = " << step.norm() << std::endl;
 		nIter++;
 	}
 
 
+
+
 	//Eigen::VectorXd result = computeStep(iniVal);
-//	std::cout << currentIter<< std::endl;
+	std::cout << "Huber solution for gamma =" << gamma << std::endl << currentIter << std::endl;
 }
 
 Eigen::VectorXd TLSRobustSolver::computeStep(Eigen::VectorXd par)
@@ -50,12 +54,12 @@ Eigen::VectorXd TLSRobustSolver::computeStep(Eigen::VectorXd par)
 	// variables = y=(dx,V,W,U)
 	// min 0.5*y^THy + g^T y  st.
 	// 0<=F(x_k)+Adx+BV<=0
-	// 0<=V-U+W<=+inf			
-	// -inf<=V-U-W<=0
+	// 0<=Sv V-W+U<=+inf			
+	// -inf<=V-W-U<=0
 	// 0<=C(x_k)+C_kdx<=0
 	// 
-	// with H=diag(0,Sv,0,I), Sv=sqrt(Pv)
-	// g=(0,0,lambda^T,0)
+	// with H=diag(0,0,I,0), Sv=sqrt(Pv)
+	// g=lambda*(0,0,1^T,0)
 
 	UEOIndices indices = fEvaluator->dimensions;
 
@@ -171,7 +175,7 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 	}
 	// row 2
 	// Sv
-	for (int k = 0; k < Sv.outerSize(); ++k)
+	for (int k = 0; k < Sv.outerSize(); k++)
 	{
 		for (TSparseMatrix::InnerIterator it(Sv, k); it; ++it)
 			triplets.push_back(TTriplet(it.row() + nEqn, it.col() + nPar, it.value()));
@@ -179,12 +183,12 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 	// the two identity matrices
 	for (int k = 0; k < nObs; k++)
 	{
-		triplets.push_back(TTriplet(nEqn + k, nObs + k, -1.0));
-		triplets.push_back(TTriplet(nEqn + k, 2 * nObs + k, +1.0));
+		triplets.push_back(TTriplet(nEqn + k, nPar+nObs + k, -1.0));
+		triplets.push_back(TTriplet(nEqn + k, nPar+2 * nObs + k, +1.0));
 	}
 	// row 3
 	// Sv
-	for (int k = 0; k < Sv.outerSize(); ++k)
+	for (int k = 0; k < Sv.outerSize(); k++)
 	{
 		for (TSparseMatrix::InnerIterator it(Sv, k); it; ++it)
 			triplets.push_back(TTriplet(it.row() + nEqn + nObs, it.col() + nPar, it.value()));
@@ -192,8 +196,8 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 	// the two identity matrices
 	for (int k = 0; k < nObs; k++)
 	{
-		triplets.push_back(TTriplet(nEqn + nObs + k, nObs + k, -1.0));
-		triplets.push_back(TTriplet(nEqn + nObs + k, 2 * nObs + k, -1.0));
+		triplets.push_back(TTriplet(nEqn + nObs + k,nPar+ nObs + k, -1.0));
+		triplets.push_back(TTriplet(nEqn + nObs + k, nPar+2 * nObs + k, -1.0));
 	}
 	// row 4
 	// C_k
@@ -238,33 +242,32 @@ void TLSRobustSolver::setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix
 	Eigen::SparseMatrix<double> Sv = P.cwiseSqrt();
 	
 	int nnzP(P.nonZeros());
-	int nnzHessian = nnzP + nObs;
-	// H=diag(0,Sv,0,I)
+	int nnzHessian = nObs;
+	// H=diag(0,0,I,0)
 	std::vector<Eigen::Triplet<double>> triplets;
 	triplets.reserve(nnzHessian);
 
-	// Sv block
-	for (int k = 0; k < Sv.outerSize(); ++k)
+	// identity block	
+	for (int k = 0; k < nObs; k++)
 	{
-		for (TSparseMatrix::InnerIterator it(Sv, k); it; ++it)
-			triplets.push_back(TTriplet(it.row() + nPar, it.col() + nPar, it.value()));
-	}
-	// lower right identity block	
-	for (int k = 0; k < nObs; ++k)
-	{
-		triplets.push_back(TTriplet(nPar + 2 * nObs + k, nPar + 2 * nObs + k, +1.0));	
+		triplets.push_back(TTriplet(nPar + nObs + k, nPar + nObs + k, +1.0));
 	}
 	hessian.setFromTriplets(triplets.begin(), triplets.end());
+	hessian.makeCompressed();
+	Eigen::MatrixXd test = hessian.toDense();
 
 	// gradient
 	// the gradient is set to the value where the L2 switches to L1 in the Huber objective
 	// so it has roughly the magnitude of the sigmas
-	Eigen::VectorXd diag = Sv.diagonal();
-	Eigen::VectorXd sigmas = diag.cwiseInverse();
-//	std::cout << sigmas << std::endl;
+	//Eigen::VectorXd diag = Sv.diagonal();
+	//Eigen::VectorXd sigmas = diag.cwiseInverse();
+	Eigen::VectorXd ones(nObs);
+	ones.setOnes();
+		//	std::cout << sigmas << std::endl;
 	Eigen::VectorXd result(nPar + 3 * nObs);
 	result.setZero();
-	result.middleRows(nPar + nObs, nObs) = 1 * sigmas;
+	//double gamma = 1;
+	result.middleRows(nPar + 2*nObs, nObs) = gamma*ones;
 
 
 	gradient = result;
