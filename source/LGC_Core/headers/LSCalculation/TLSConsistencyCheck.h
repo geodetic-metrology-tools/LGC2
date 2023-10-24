@@ -11,6 +11,8 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #include <TVAdjustableObject.h>
 
 #include "TSparseMatrix.h"
+#include <algorithm>
+#include <vector>
 
 class TLSConsCheck
 {
