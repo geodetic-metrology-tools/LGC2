@@ -9,6 +9,7 @@
 #include <TLSEvaluator.h>
 #include <TLSDerivativeTester.h>
 #include <TLSGaussNewtonSolver.h>
+#include <TLSRobustSolver.h>
 #include <TLSLMSolver.h>
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
@@ -62,6 +63,10 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			// test different globalization methods
 			try
 			{
+				// TLSEvaluator evaluator(fData);
+				// std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+				// TLSRobustSolver huber(evalPtr);
+				// huber.solve();
 			//	testGlobalizationMethods();
 			}
 			catch (const std::exception &e)

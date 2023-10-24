@@ -5,6 +5,10 @@
 #include <vector>
 #include "UEOIndices.h"
 
+// osqp-eigen
+#include "OsqpEigen/OsqpEigen.h"
+
+
 
 TLSRobustSolver::TLSRobustSolver(std::shared_ptr<TLSEvaluator> evaluator) : fEvaluator( evaluator )
 {
@@ -13,27 +17,34 @@ TLSRobustSolver::TLSRobustSolver(std::shared_ptr<TLSEvaluator> evaluator) : fEva
 void TLSRobustSolver::solve()
 {
 	Eigen::VectorXd iniVal = fEvaluator->getEstParams();
+	int nPar = iniVal.rows();
+
+	// rudimentary full step GN huber iterations
+
+	Eigen::VectorXd currentIter = iniVal;
+	Eigen::VectorXd step = iniVal;
+	int nIter = 0;
+	int maxIter=100;
+	while (step.norm()>1e-7 && nIter<maxIter)
+	{
+		Eigen::VectorXd huberStep = computeStep(currentIter);
+		step = huberStep.topRows(nPar);
+		currentIter += step;		
+		std::cout << "huber stepsize = " << step.norm() << std::endl;
+		nIter++;
+	}
 
 
-
-
+	//Eigen::VectorXd result = computeStep(iniVal);
+//	std::cout << currentIter<< std::endl;
 }
 
 Eigen::VectorXd TLSRobustSolver::computeStep(Eigen::VectorXd par)
 {
+	fEvaluator->setParameters(par);
 	// set up the linearized quadratic program and solve it with osqp
 	// lambda = Huber threshold where L2 becomes L1
 
-	// matrices: first design, weight, etc
-	Eigen::SparseMatrix<double> A = fEvaluator->getA();
-	Eigen::SparseMatrix<double> A2 = fEvaluator->getA2();
-	// implement getB!!
-	//Eigen::SparseMatrix<double> B = fEvaluator->getB();
-	Eigen::SparseMatrix<double> P = fEvaluator->getPv();
-
-	// vectors: misclosures
-	Eigen::VectorXd W = fEvaluator->getMisclosure();
-	Eigen::VectorXd W2 = fEvaluator->getConstraintMisclosure();
 
 	// assemble QP data:
 	// variables = y=(dx,V,W,U)
@@ -53,22 +64,62 @@ Eigen::VectorXd TLSRobustSolver::computeStep(Eigen::VectorXd par)
 	int nEqn = indices.EIndex;
 	int nCnstr = indices.CIndex;
 
+	int nVariables = nPar + 3 * nObs;
+	int nConstraints = nEqn + 2 * nObs + nCnstr;
 
-	Eigen::SparseMatrix<double> constraintMatrix(nEqn + 3 * nObs, nPar + 2 * nObs + nCnstr);
-	Eigen::VectorXd lb(nEqn+ 3 * nObs), ub(nEqn+ 3 * nObs);
+	Eigen::SparseMatrix<double> constraintMatrix(nConstraints, nVariables);
+	Eigen::VectorXd lb(nConstraints), ub(nConstraints);
 	lb.setZero(), ub.setZero();
 	setHuberConstraints(par, constraintMatrix, lb, ub);
-	Eigen::SparseMatrix<double> hessian(nPar + 2 * nObs + nCnstr, nPar + 2 * nObs + nCnstr);
-	Eigen::VectorXd gradient(nPar + 2 * nObs + nCnstr);
+	Eigen::SparseMatrix<double> hessian(nVariables, nVariables);
+	Eigen::VectorXd gradient(nVariables);
 	gradient.setZero();
 	setHuberObjective(par, hessian, gradient);
-	
 
 
+    // instantiate the OSQP solver
+    OsqpEigen::Solver solver;
+	// no output printing
+//	solver.settings()->setVerbosity(false);
+	solver.data()->setNumberOfVariables(nVariables);
+	solver.data()->setNumberOfConstraints(nConstraints);
+	if (!solver.data()->setHessianMatrix(hessian))
+	{
+		throw std::runtime_error("failed to set osqp problem data.");
+	}
+	if (!solver.data()->setGradient(gradient))
+	{
+		throw std::runtime_error("failed to set osqp problem data.");
+	}
+	if (!solver.data()->setLinearConstraintsMatrix(constraintMatrix))
+	{
+		throw std::runtime_error("failed to set osqp problem data.");
+	}
+	if (!solver.data()->setLowerBound(lb))
+	{
+		throw std::runtime_error("failed to set osqp problem data.");
+	}
+	if (!solver.data()->setUpperBound(ub))
+	{
+		throw std::runtime_error("failed to set osqp problem data.");
+	}
 
 
+	// initialize and solve
+	if (!solver.initSolver())
+	{
+		throw std::runtime_error("initialization of solver failed");
+	}
+	if (!solver.solve())
+	{
+		throw std::runtime_error("OSQP solve failed.");
+	}
 
-	return Eigen::VectorXd();
+	// get solution
+
+	Eigen::VectorXd result = solver.getSolution();
+
+	return result;
 }
 
 void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
@@ -80,6 +131,7 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 	int nEqn = indices.EIndex;
 	int nCnstr = indices.CIndex;
 
+	fEvaluator->setParameters(par);
 	// matrices: first design, weight, etc
 	Eigen::SparseMatrix<double> A = fEvaluator->getA();
 	Eigen::SparseMatrix<double> A2 = fEvaluator->getA2();
@@ -95,7 +147,7 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 
 
 	int nnzA(A.nonZeros()), nnzB(B.nonZeros()), nnzA2(A2.nonZeros()), nnzP(P.nonZeros());
-	int nnzHuber = nnzA + nnzA2 + 2 * nnzP + 4 * nObs;
+	int nnzHuber = nnzA + nnzA2 + nnzB + 2 * nnzP + 4 * nObs;
 
 	// Constraints in matrix form
 	// -F(x_k) <= [A  , B, 0 ,0] [dx] <= -F(x_k)
@@ -122,54 +174,51 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 	for (int k = 0; k < Sv.outerSize(); ++k)
 	{
 		for (TSparseMatrix::InnerIterator it(Sv, k); it; ++it)
-			triplets.push_back(TTriplet(it.row() + nEqn, it.col()+nPar, it.value()));
+			triplets.push_back(TTriplet(it.row() + nEqn, it.col() + nPar, it.value()));
 	}
 	// the two identity matrices
 	for (int k = 0; k < nObs; k++)
 	{
-		triplets.push_back(TTriplet(nEqn+k,nObs+k,-1.0));
-		triplets.push_back(TTriplet(nEqn+k,2*nObs+k,+1.0));
+		triplets.push_back(TTriplet(nEqn + k, nObs + k, -1.0));
+		triplets.push_back(TTriplet(nEqn + k, 2 * nObs + k, +1.0));
 	}
 	// row 3
 	// Sv
 	for (int k = 0; k < Sv.outerSize(); ++k)
 	{
 		for (TSparseMatrix::InnerIterator it(Sv, k); it; ++it)
-			triplets.push_back(TTriplet(it.row() + nEqn+nObs, it.col()+nPar, it.value()));
+			triplets.push_back(TTriplet(it.row() + nEqn + nObs, it.col() + nPar, it.value()));
 	}
 	// the two identity matrices
 	for (int k = 0; k < nObs; k++)
 	{
-		triplets.push_back(TTriplet(nEqn+nObs+k,nObs+k,-1.0));
-		triplets.push_back(TTriplet(nEqn+nObs+k,2*nObs+k,-1.0));
+		triplets.push_back(TTriplet(nEqn + nObs + k, nObs + k, -1.0));
+		triplets.push_back(TTriplet(nEqn + nObs + k, 2 * nObs + k, -1.0));
 	}
 	// row 4
 	// C_k
 	for (int k = 0; k < A2.outerSize(); ++k)
 	{
 		for (TSparseMatrix::InnerIterator it(A2, k); it; ++it)
-			triplets.push_back(TTriplet(it.row() + nEqn+2*nObs, it.col(), it.value()));
+			triplets.push_back(TTriplet(it.row() + nEqn + 2 * nObs, it.col(), it.value()));
 	}
 
 	constraintMat.setFromTriplets(triplets.begin(), triplets.end());
 
+	double BIG = 1e+6;
 	// the bounds
 	// row 1
 	lb.topRows(nEqn) = -W;
 	ub.topRows(nEqn) = -W;
 	// row 2
 	lb.middleRows(nEqn, nObs).setZero();
-	ub.middleRows(nEqn, nObs).setConstant(Eigen::Infinity);
+	ub.middleRows(nEqn, nObs).setConstant(OsqpEigen::INFTY);
 	// row 3
-	lb.middleRows(nEqn + nObs, nObs).setConstant(-Eigen::Infinity);
+	lb.middleRows(nEqn + nObs, nObs).setConstant(-OsqpEigen::INFTY);
 	ub.middleRows(nEqn + nObs, nObs).setZero();
 	// row 4
 	lb.middleRows(nEqn + 2 * nObs, nCnstr) = -W2;
 	ub.middleRows(nEqn + 2 * nObs, nCnstr) = -W2;
-
-
-
-
 
 }
 
@@ -182,6 +231,7 @@ void TLSRobustSolver::setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix
 	int nEqn = indices.EIndex;
 	int nCnstr = indices.CIndex;
 
+	fEvaluator->setParameters(par);
 	// matrices: first design, weight, etc
 	Eigen::SparseMatrix<double> P = fEvaluator->getPv();
 	// square root assuming P is diagonal
@@ -211,9 +261,13 @@ void TLSRobustSolver::setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix
 	// so it has roughly the magnitude of the sigmas
 	Eigen::VectorXd diag = Sv.diagonal();
 	Eigen::VectorXd sigmas = diag.cwiseInverse();
+//	std::cout << sigmas << std::endl;
+	Eigen::VectorXd result(nPar + 3 * nObs);
+	result.setZero();
+	result.middleRows(nPar + nObs, nObs) = 1 * sigmas;
 
-	// set the border between L1 and L2 to 2 sigma --> residuals over 2 sigma will be penalized via L1
-	gradient = 2 * sigmas;
+
+	gradient = result;
 
 }
 
