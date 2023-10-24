@@ -108,6 +108,20 @@ const TSparseMatrix TLSEvaluator::getA(bool useMask)
 
 }
 
+const TSparseMatrix TLSEvaluator::getB(bool useMask)
+{	
+	// 1. set parameters in "estimated" fields of adjustable objects
+	// Masking: no "parameters" t mask in B matrix
+	evaluate();
+	if (useMask)
+	{
+		Eigen::SparseMatrix<double> result = maskRows(currentMask.equationIndices, *iMat->getSecondDgnMtrx());
+		return result;
+	}
+	else
+		return *iMat->getSecondDgnMtrx();
+}
+
 const TSparseMatrix TLSEvaluator::getA2(bool useMask)
 {
 	// 1. set parameters in "estimated" fields of adjustable objects

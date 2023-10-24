@@ -58,6 +58,8 @@ public:
 	void setParameters(Eigen::VectorXd para, bool useMask = true);
 	// first design matrix
 	const TSparseMatrix getA(bool useMask = true);
+	// first design matrix
+	const TSparseMatrix getB(bool useMask = true);
 	//// constraint first design matrix
 	const TSparseMatrix getA2(bool useMask = true);
 	// weights
