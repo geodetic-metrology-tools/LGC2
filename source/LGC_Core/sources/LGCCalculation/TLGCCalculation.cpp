@@ -66,9 +66,9 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 				TLSEvaluator evaluator(fData);
 				std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
 				TLSRobustSolver huber(evalPtr);
-				huber.solve();
+				//huber.solve();
 				// big gamma means its basically L2
-				huber.setGamma(10000);
+				huber.setGamma(1);
 				huber.solve();
 			//	testGlobalizationMethods();
 			}

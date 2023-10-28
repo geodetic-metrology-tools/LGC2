@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <unsupported/Eigen/SparseExtra>
 #include "UEOIndices.h"
 
 // osqp-eigen
@@ -158,7 +159,7 @@ void TLSRobustSolver::setHuberObjective(const Eigen::VectorXd par, Eigen::Sparse
 	hessian.setFromTriplets(triplets.begin(), triplets.end());
 	hessian.makeCompressed();
 	Eigen::MatrixXd test = hessian.toDense();
-	std::cout << "huber Hessians matrix" << std::endl << test << std::endl;
+	//std::cout << "huber Hessians matrix" << std::endl << test << std::endl;
 
 	// gradient
 	// the gradient is set to the value where the L2 switches to L1 in the Huber objective
@@ -176,6 +177,11 @@ void TLSRobustSolver::setHuberObjective(const Eigen::VectorXd par, Eigen::Sparse
 	gradient.resize(nPar + 4 * nObs);
 
 	gradient = result;
+	if (dumpMat)
+	{
+		Eigen::saveMarket(hessian, "hessian.mtx");
+		Eigen::saveMarketDense(gradient, "gradient.mtx");
+	}
 
 }
 
@@ -321,6 +327,14 @@ void TLSRobustSolver::setOSQPFormatConstraint(const Eigen::VectorXd par, Eigen::
 	Eigen::VectorXd bEq, lbIneq, ubIneq;
 	setEqualityConstraint(par, eqBlock, bEq);
 	setInequalityConstraint(par, ineqBlock, lbIneq, ubIneq);
+	if (dumpMat)
+	{
+		Eigen::saveMarket(eqBlock, "eqBlock.mtx");
+		Eigen::saveMarketDense(bEq, "bEq.mtx");
+		Eigen::saveMarket(ineqBlock, "ineqBlock.mtx");
+		Eigen::saveMarketDense(lbIneq, "lbIneq.mtx");
+		Eigen::saveMarketDense(ubIneq, "ubIneq.mtx");
+	}
 	int eqRows = eqBlock.rows();
 	int ineqRows = ineqBlock.rows();
 	constraintMat.resize(eqRows + ineqRows, eqBlock.cols());

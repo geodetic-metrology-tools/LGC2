@@ -44,7 +44,10 @@ private:
 	void setOSQPFormatConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
 
 	// Huber threshold (residual vs sigma from where L1 begins)
-	double gamma = 2;
+	double gamma = 1;
+
+	// flag for dumping matrices for debugging in python
+	bool dumpMat = true;
 
 };
 
