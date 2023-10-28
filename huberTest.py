@@ -42,9 +42,11 @@ def solveProxQP():
     nPar = hessian.shape[1]
     nEq = eqBlock.shape[0]
     nIneq = ineqBlock.shape[0]
-    qp = proxsuite.proxqp.dense.QP(nPar, nEq, nIneq)
-    qp.init(hessian.toarray(), gradient, eqBlock.toarray(), bEq, ineqBlock.toarray(), lbIneq, ubIneq)
+    #qp = proxsuite.proxqp.dense.QP(nPar, nEq, nIneq,hessian_type=proxsuite.proxqp.dense.HessianType.Diagonal)
+    qp = proxsuite.proxqp.sparse.QP(nPar, nEq, nIneq)
+    qp.init(hessian.toarray(), gradient, eqBlock.toarray(), bEq, ineqBlock.toarray(), lbIneq, ubIneq,rho=1e-2)
     qp.settings.verbose = True
+    qp.settings.eps_abs = 1.0e-6
     qp.solve()
     return qp.results.x
 
