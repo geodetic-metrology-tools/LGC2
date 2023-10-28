@@ -70,12 +70,13 @@ Eigen::VectorXd TLSRobustSolver::computeStep(Eigen::VectorXd par)
 	int nVariables = nPar + 4 * nObs;
 	int nConstraints = nEqn + nCnstr + 3 * nObs;
 
-	Eigen::SparseMatrix<double> constraintMatrix(nConstraints, nVariables);
-	Eigen::VectorXd lb(nConstraints), ub(nConstraints);
+	Eigen::SparseMatrix<double> constraintMatrix;
+	Eigen::VectorXd lb, ub;
 	lb.setZero(), ub.setZero();
-	setHuberConstraints(par, constraintMatrix, lb, ub);
-	Eigen::SparseMatrix<double> hessian(nVariables, nVariables);
-	Eigen::VectorXd gradient(nVariables);
+	setOSQPFormatConstraint(par, constraintMatrix, lb, ub);
+	std::cout << constraintMatrix.rows() << " "<<constraintMatrix.cols()  << std::endl;
+	Eigen::SparseMatrix<double> hessian;
+	Eigen::VectorXd gradient;
 	gradient.setZero();
 	setHuberObjective(par, hessian, gradient);
 
@@ -128,7 +129,57 @@ Eigen::VectorXd TLSRobustSolver::computeStep(Eigen::VectorXd par)
 	return result;
 }
 
-void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
+void TLSRobustSolver::setHuberObjective(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &hessian, Eigen::VectorXd &gradient)
+{
+	UEOIndices indices = fEvaluator->dimensions;
+
+	int nPar = indices.UIndex;
+	int nObs = indices.OIndex;
+	int nEqn = indices.EIndex;
+
+	fEvaluator->setParameters(par);
+	// matrices: first design, weight, etc
+	Eigen::SparseMatrix<double> P = fEvaluator->getPv();
+	// square root assuming P is diagonal
+	Eigen::SparseMatrix<double> Sv = P.cwiseSqrt();
+	
+	int nnzP(P.nonZeros());
+	int nnzHessian = nObs;
+	// H=diag(0,0,I,0)
+	std::vector<Eigen::Triplet<double>> triplets;
+	triplets.reserve(nnzHessian);
+	hessian.resize(nPar + 4 * nObs, nPar + 4 * nObs);
+
+	// identity block	
+	for (int k = 0; k < nObs; k++)
+	{
+		triplets.push_back(TTriplet(nPar + nObs + k, nPar + nObs + k, +1.0));
+	}
+	hessian.setFromTriplets(triplets.begin(), triplets.end());
+	hessian.makeCompressed();
+	Eigen::MatrixXd test = hessian.toDense();
+	std::cout << "huber Hessians matrix" << std::endl << test << std::endl;
+
+	// gradient
+	// the gradient is set to the value where the L2 switches to L1 in the Huber objective
+	// so it has roughly the magnitude of the sigmas
+	//Eigen::VectorXd diag = Sv.diagonal();
+	//Eigen::VectorXd sigmas = diag.cwiseInverse();
+	Eigen::VectorXd ones(2 * nObs);
+	ones.setOnes();
+		//	std::cout << sigmas << std::endl;
+	Eigen::VectorXd result(nPar + 4 * nObs);
+	result.setZero();
+	//double gamma = 1;
+	result.middleRows(nPar + 2 * nObs, 2 * nObs) = gamma * ones;
+
+	gradient.resize(nPar + 4 * nObs);
+
+	gradient = result;
+
+}
+
+void TLSRobustSolver::setEqualityConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &block, Eigen::VectorXd &b)
 {
 	UEOIndices indices = fEvaluator->dimensions;
 
@@ -153,16 +204,18 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 
 
 	int nnzA(A.nonZeros()), nnzB(B.nonZeros()), nnzA2(A2.nonZeros()), nnzP(P.nonZeros());
-	int nnzHuber = nnzA + nnzA2 + nnzB + 1 * nnzP + 5 * nObs;
+	int nnzEqBlock= nnzA + nnzA2 + nnzB + 1 * nnzP + 3 * nObs;
 
-	// Constraints in matrix form
-	// -F(x_k) <= [A  , B, 0 ,0, 0] [dx] <= -F(x_k)
-	// -C(x_k) <= [C_k, 0, 0, 0, 0] [V ] <= -C(x_k)
-	// 0       <= [0  ,Sv,-I,-I, I] [W ] <= 0
-	// 0       <= [0  , 0, 0, I, 0] [R ] <= +inf
-	// 0       <= [0  , 0, 0, 0, I] [S ] <= +inf
+	// Equality Constraints in matrix form
+	// [A  , B, 0 ,0, 0] [dx] = -F(x_k)
+	// [C_k, 0, 0, 0, 0] [V ] = -C(x_k)
+	// [0  ,Sv,-I,-I, I] [W ] = 0
+	// setting the size
+	block.resize(nEqn + nCnstr + nObs, nPar + 4 * nObs);
+	b.resize(nEqn + nCnstr + nObs);
+
 	std::vector<Eigen::Triplet<double>> triplets;
-	triplets.reserve(nnzHuber);
+	triplets.reserve(nnzEqBlock);
 	// row 1
 	// A
 	for (int k = 0; k < A.outerSize(); ++k)
@@ -197,46 +250,22 @@ void TLSRobustSolver::setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatr
 		triplets.push_back(TTriplet(nEqn + nCnstr + k, nPar + 2 * nObs + k, -1.0));
 		triplets.push_back(TTriplet(nEqn + nCnstr + k, nPar + 3 * nObs + k, +1.0));
 	}
-	// row 4
-	// one identity matrix
-	for (int k = 0; k < nObs; k++)
-	{
-		triplets.push_back(TTriplet(nEqn + nCnstr + nObs + k, nPar + 2 * nObs + k, +1.0));
-	}
-	// row 5
-	// one identity matrix
-	for (int k = 0; k < nObs; k++)
-	{
-		triplets.push_back(TTriplet(nEqn + nCnstr + 2 * nObs + k, nPar + 3 * nObs + k, +1.0));
-	}
-
-
-	constraintMat.setFromTriplets(triplets.begin(), triplets.end());
-	constraintMat.makeCompressed();
-	std::cout << "huber constraint matrix" << std::endl << constraintMat.toDense() << std::endl;
+	block.setFromTriplets(triplets.begin(), triplets.end());
+	block.makeCompressed();
 
 	double BIG = 1e+6;
 	// the bounds
 	// row 1
-	lb.topRows(nEqn) = -W;
-	ub.topRows(nEqn) = -W;
+	b.topRows(nEqn) = -W;
 	// row 2
-	lb.middleRows(nEqn, nCnstr) = -W2;
-	ub.middleRows(nEqn, nCnstr) = -W2;
+	b.middleRows(nEqn, nCnstr) = -W2;
 	// row 3
-	lb.middleRows(nEqn + nCnstr, nObs).setZero();
-	ub.middleRows(nEqn + nCnstr, nObs).setZero();
-	// row 4
-	lb.middleRows(nEqn + nCnstr + nObs, nObs).setZero();
-	ub.middleRows(nEqn + nCnstr + nObs, nObs).setConstant(OsqpEigen::INFTY);
-	// row 5
-	lb.middleRows(nEqn + nCnstr + 2 * nObs, nObs).setZero();
-	ub.middleRows(nEqn + nCnstr + 2 * nObs, nObs).setConstant(OsqpEigen::INFTY);
+	b.middleRows(nEqn + nCnstr, nObs).setZero();
 
 }
 
-void TLSRobustSolver::setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix<double> &hessian, Eigen::VectorXd &gradient)
-{
+void TLSRobustSolver::setInequalityConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &block, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
+{	
 	UEOIndices indices = fEvaluator->dimensions;
 
 	int nPar = indices.UIndex;
@@ -246,41 +275,86 @@ void TLSRobustSolver::setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix
 
 	fEvaluator->setParameters(par);
 	// matrices: first design, weight, etc
+	Eigen::SparseMatrix<double> A = fEvaluator->getA();
+	Eigen::SparseMatrix<double> A2 = fEvaluator->getA2();
+	// implement getB!!
+	Eigen::SparseMatrix<double> B = fEvaluator->getB();
 	Eigen::SparseMatrix<double> P = fEvaluator->getPv();
 	// square root assuming P is diagonal
 	Eigen::SparseMatrix<double> Sv = P.cwiseSqrt();
-	
-	int nnzP(P.nonZeros());
-	int nnzHessian = nObs;
-	// H=diag(0,0,I,0)
-	std::vector<Eigen::Triplet<double>> triplets;
-	triplets.reserve(nnzHessian);
 
-	// identity block	
+	// Misclosure Vectors .. for the bounds
+	Eigen::VectorXd W = fEvaluator->getMisclosure();
+	Eigen::VectorXd W2 = fEvaluator->getConstraintMisclosure();
+
+
+	int nnzIneqBlock = 2 * nObs;
+
+	// Inequality Constraints in matrix form
+	// 0       <= [0  , 0, 0, I, 0] [R ] <= +inf
+	// 0       <= [0  , 0, 0, 0, I] [S ] <= +inf
+	block.resize(2 * nObs, nPar + 4 * nObs);
+	lb.resize(2 * nObs);
+	ub.resize(2 * nObs);
+	
+	std::vector<Eigen::Triplet<double>> triplets;
+	triplets.reserve(nnzIneqBlock);
+	// row 1+1
+	// each one identity matrix
 	for (int k = 0; k < nObs; k++)
 	{
-		triplets.push_back(TTriplet(nPar + nObs + k, nPar + nObs + k, +1.0));
+		triplets.push_back(TTriplet(k, nPar + 2 * nObs + k, +1.0));
+		triplets.push_back(TTriplet(nObs + k, nPar + 3 * nObs + k, +1.0));
 	}
-	hessian.setFromTriplets(triplets.begin(), triplets.end());
-	hessian.makeCompressed();
-	Eigen::MatrixXd test = hessian.toDense();
-	std::cout << "huber Hessians matrix" << std::endl << test << std::endl;
+	block.setFromTriplets(triplets.begin(), triplets.end());
+	block.makeCompressed();
 
-	// gradient
-	// the gradient is set to the value where the L2 switches to L1 in the Huber objective
-	// so it has roughly the magnitude of the sigmas
-	//Eigen::VectorXd diag = Sv.diagonal();
-	//Eigen::VectorXd sigmas = diag.cwiseInverse();
-	Eigen::VectorXd ones(2 * nObs);
-	ones.setOnes();
-		//	std::cout << sigmas << std::endl;
-	Eigen::VectorXd result(nPar + 4 * nObs);
-	result.setZero();
-	//double gamma = 1;
-	result.middleRows(nPar + 2 * nObs, 2 * nObs) = gamma * ones;
+	// the lower and upper bound
+	// row 1+2
+	lb.setZero();
+	ub.setConstant(OsqpEigen::INFTY);
+}
 
+void TLSRobustSolver::setOSQPFormatConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
+{
+	Eigen::SparseMatrix<double> eqBlock, ineqBlock;
+	Eigen::VectorXd bEq, lbIneq, ubIneq;
+	setEqualityConstraint(par, eqBlock, bEq);
+	setInequalityConstraint(par, ineqBlock, lbIneq, ubIneq);
+	int eqRows = eqBlock.rows();
+	int ineqRows = ineqBlock.rows();
+	constraintMat.resize(eqRows + ineqRows, eqBlock.cols());
+	// stack both blocks to form the combined constraints
+	std::vector<Eigen::Triplet<double>> triplets;
+	triplets.reserve(eqBlock.nonZeros()+ineqBlock.nonZeros());
+	// Set the top equality block.
+	for (int i = 0; i < eqBlock.outerSize(); ++i)
+	{
+		for (Eigen::SparseMatrix<double>::InnerIterator it(eqBlock, i); it; ++it)
+		{
+			constraintMat.insert(it.row(), it.col()) = it.value();
+		}
+	}
 
-	gradient = result;
+	// Set the bottom inequality block.
+	for (int i = 0; i < ineqBlock.outerSize(); ++i)
+	{
+		for (Eigen::SparseMatrix<double>::InnerIterator it(ineqBlock, i); it; ++it)
+		{
+			constraintMat.insert(it.row() + eqRows, it.col()) = it.value();
+		}
+	}
+
+	lb.resize(eqRows + ineqRows);
+	ub.resize(eqRows + ineqRows);
+	// set the bounds
+	// equality
+	lb.topRows(eqRows) = bEq;
+	ub.topRows(eqRows) = bEq;
+	//inequality
+	lb.bottomRows(ineqRows) = lbIneq;
+	ub.bottomRows(ineqRows) = ubIneq;
+
 
 }
 

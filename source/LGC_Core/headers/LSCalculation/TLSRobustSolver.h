@@ -34,8 +34,15 @@ public:
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
 	Eigen::VectorXd computeStep(Eigen::VectorXd par);
-	void setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
-	void setHuberObjective(Eigen::VectorXd par, Eigen::SparseMatrix<double> &hessian, Eigen::VectorXd &gradient);
+	//void setHuberConstraints(Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
+	void setHuberObjective(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &hessian, Eigen::VectorXd &gradient);
+	// equality constraint block of the form Ax=b
+	void setEqualityConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &block, Eigen::VectorXd &b);
+	// inequality constraint block of the form lb=<Ax<=ub
+	void setInequalityConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &block, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
+	// combine eq and ineq constraints for osqp
+	void setOSQPFormatConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
+
 	// Huber threshold (residual vs sigma from where L1 begins)
 	double gamma = 2;
 
