@@ -18,11 +18,46 @@ Eigen::VectorXd LGCController::getMisclosure(Eigen::VectorXd par)
 	return fEvaluator->getMisclosure();
 }
 
-Eigen::VectorXd LGCController::getParameter()
+Eigen::VectorXd LGCController::getConstraintMisclosure(Eigen::VectorXd par)
+{
+	fEvaluator->setParameters(par);
+	return fEvaluator->getConstraintMisclosure();
+}
+
+Eigen::SparseMatrix<double> LGCController::getFirstDesignMatrix(Eigen::VectorXd par)
+{
+	fEvaluator->setParameters(par);
+	return fEvaluator->getA();
+}
+
+Eigen::SparseMatrix<double> LGCController::getFirstConstraintDesignMatrix(Eigen::VectorXd par)
+{
+	fEvaluator->setParameters(par);
+	return fEvaluator->getA2();
+}
+
+Eigen::SparseMatrix<double> LGCController::getSecondDesignMatrix(Eigen::VectorXd par)
+{
+	fEvaluator->setParameters(par);
+	return fEvaluator->getB();
+}
+
+Eigen::SparseMatrix<double> LGCController::getPv(Eigen::VectorXd par)
+{
+	fEvaluator->setParameters(par);
+	return fEvaluator->getPv();
+}
+
+Eigen::VectorXd LGCController::getParameters()
 {
 	Eigen::VectorXd result = fEvaluator->getEstParams();
 	return result;
 }
+void LGCController::setParameters(Eigen::VectorXd par)
+{
+	fEvaluator->setParameters(par);
+}
+
 
 void LGCController::initialize()
 {

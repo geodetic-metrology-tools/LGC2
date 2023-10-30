@@ -33,9 +33,14 @@ class LGCController
 {
 public:
 	LGCController(const std::string path);
+	Eigen::VectorXd getParameters();
+	void setParameters(Eigen::VectorXd par);
 	Eigen::VectorXd getMisclosure(Eigen::VectorXd par);
-	Eigen::VectorXd getParameter();
-	int testMethod(int a) { return 2 * a; }
+	Eigen::VectorXd getConstraintMisclosure(Eigen::VectorXd par);
+	Eigen::SparseMatrix<double> getFirstDesignMatrix(Eigen::VectorXd par);
+	Eigen::SparseMatrix<double> getFirstConstraintDesignMatrix(Eigen::VectorXd par);
+	Eigen::SparseMatrix<double> getSecondDesignMatrix(Eigen::VectorXd par);
+	Eigen::SparseMatrix<double> getPv(Eigen::VectorXd par);
 
 private:
 	void initialize();
