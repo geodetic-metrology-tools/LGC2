@@ -1,41 +1,41 @@
 
 cmake_minimum_required(VERSION 3.12)
-PROJECT (pyLib)
+PROJECT (pyLGC)
 
-set(CMKE_CXX_STANDARD 17)
+set(CMKE_CXX_STANDARD 14)
 find_package(pybind11 REQUIRED)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/)
 
-SET(pyLib_INCLUDE_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/headers/)
-SET(pyLib_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources/)
+SET(pyLGC_INCLUDE_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/headers/)
+SET(pyLGC_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 					
 					
 # Create a variable containing all .h files:
-set(pyLib_HEADERS 	
-	${pyLib_INCLUDE_PATH}/LGCController.h
+set(pyLGC_HEADERS 	
+	${pyLGC_INCLUDE_PATH}/LGCController.h
 )
 
 # Create a variable containing all .cpp files:
-set(pyLib_SOURCES
-	${pyLib_SOURCES_PATH}/LGCController.cpp
-	${pyLib_SOURCES_PATH}/binding.cpp
+set(pyLGC_SOURCES
+	${pyLGC_SOURCES_PATH}/LGCController.cpp
+	${pyLGC_SOURCES_PATH}/binding.cpp
 )
 
 
 # Define VS folders:
-file(GLOB pyLib_H ${pyLib_INCLUDE_PATH}/*.*)
+file(GLOB pyLGC_H ${pyLGC_INCLUDE_PATH}/*.*)
 
-file(GLOB pyLib_CPP ${pyLib_SOURCES_PATH}/*.*)
+file(GLOB pyLGC_CPP ${pyLGC_SOURCES_PATH}/*.*)
 
-source_group("\\Headers" FILES ${pyLib_H})
+source_group("\\Headers" FILES ${pyLGC_H})
 
-source_group("\\Sources" FILES ${pyLib_CPP})
+source_group("\\Sources" FILES ${pyLGC_CPP})
 
 
 
 
 # Create python library from sources:
-add_library(${PROJECT_NAME} MODULE ${pyLib_SOURCES} ${pyLib_HEADERS})
+add_library(${PROJECT_NAME} MODULE ${pyLGC_SOURCES} ${pyLGC_HEADERS})
 target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::module
 	LGC_Core
 	LSAlgorithms
@@ -45,8 +45,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::module
 	Plugins
 )
 
-get_target_property(dirs ${PROJECT_NAME} INCLUDE_DIRECTORIES)
-message(STATUS "Include directories of pyLib: ${dirs}")
+set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pyd")
 
 find_package(OpenMP)
 if (OPENMP_FOUND)

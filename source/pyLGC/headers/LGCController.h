@@ -34,6 +34,8 @@ class LGCController
 public:
 	LGCController(const std::string path);
 	Eigen::VectorXd getMisclosure(Eigen::VectorXd par);
+	Eigen::VectorXd getParameter();
+	int testMethod(int a) { return 2 * a; }
 
 private:
 	void initialize();

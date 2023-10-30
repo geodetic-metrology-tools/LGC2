@@ -1,3 +1,10 @@
+// class for python LGC wrapper
+// for starting it will contain methods
+// initialize: with lgc file name string
+// set and get Parameter
+// evaluate A(1 and 2) matrix, B matrix, P + all misclosures
+
+
 #include "LGCController.h"
 
 LGCController::LGCController(const std::string path) : inputFilePath(path)
@@ -9,6 +16,12 @@ Eigen::VectorXd LGCController::getMisclosure(Eigen::VectorXd par)
 {
 	fEvaluator->setParameters(par);
 	return fEvaluator->getMisclosure();
+}
+
+Eigen::VectorXd LGCController::getParameter()
+{
+	Eigen::VectorXd result = fEvaluator->getEstParams();
+	return result;
 }
 
 void LGCController::initialize()
@@ -32,6 +45,6 @@ void LGCController::initialize()
 	// projectData object is ready now.
 	// create the evaluator object
 	TLSEvaluator evaluator(fProject);
-	std::shared_ptr<TLSEvaluator> fEvaluator = std::make_shared<TLSEvaluator>(evaluator);
-
+	fEvaluator = std::make_shared<TLSEvaluator>(evaluator);
+	std::cout << "initialization done" << std::endl;
 }
