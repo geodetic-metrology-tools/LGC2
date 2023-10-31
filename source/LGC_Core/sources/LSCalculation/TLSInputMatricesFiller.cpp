@@ -187,9 +187,9 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			TDenseMatrix apriCov = point.getApriCovar();
 			// the weight is the inverse of the covariance matrix
 			isProcessOK = isProcessOK && matrices->setWeightUnkMtrxBlock(point.getFirstWeightIndex(), apriCov.fullPivLu().inverse());
-			isProcessOK = isProcessOK
-				&& matrices->setSecondWeightDgnMtrxBlock(
-					point.getFirstWeightIndex(), point.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(point.getNumUnkn(), point.getNumUnkn()));
+		//	isProcessOK = isProcessOK
+		//		&& matrices->setSecondWeightDgnMtrxBlock(
+		//			point.getFirstWeightIndex(), point.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(point.getNumUnkn(), point.getNumUnkn()));
 
 			TPositionVector estPos = point.getEstimatedValue();
 			TPositionVector provPos = point.getProvisionalValue();
@@ -216,9 +216,9 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			TDenseMatrix apriCov = trafo.getApriCovar();
 			// the weight is the inverse of the covariance matrix
 			isProcessOK = isProcessOK && matrices->setWeightUnkMtrxBlock(trafo.getFirstWeightIndex(), apriCov.fullPivLu().inverse());
-			isProcessOK = isProcessOK
-				&& matrices->setSecondWeightDgnMtrxBlock(
-					trafo.getFirstWeightIndex(), trafo.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(trafo.getNumUnkn(), trafo.getNumUnkn()));
+		//	isProcessOK = isProcessOK
+		//		&& matrices->setSecondWeightDgnMtrxBlock(
+		//			trafo.getFirstWeightIndex(), trafo.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(trafo.getNumUnkn(), trafo.getNumUnkn()));
 
 			TransformParameters prov = trafo.getProvParam();
 			TransformParameters est = trafo.getEstParam();
