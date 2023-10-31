@@ -547,6 +547,8 @@ public:
 	/// Initialise the measurement
 	void Initialise(LGCAdjustablePoint &cala, LGCAdjustablePoint &ori, TAngle gis, bool hasbearing);
 
+	//set the bearing
+	void setBearing(const TAngle& a) { fbearing = a; }
 	/// Sets a residual of observed angle
 	void setAngleResidual(const TAngle &a) { fbearingResidual = a; }
 	//@}

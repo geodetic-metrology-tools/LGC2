@@ -82,10 +82,15 @@ private:
 	//TLGCData fData;
 	TLSInputMatricesFiller* fMatFiller;
 	TLSInputMatrices* iMat;
-	// update iMat objects by evaluating at current parameter
+	// update iMat objects by evaluating at current parameter/observation
 	bool evaluate();
 	// indicating that iMat object corresponds to evaluation at current parameter. reset to false in any setParam method call
 	bool isUptoDate = false;
+
+	// helper methods for setting and getting current parameter and observation values
+	 
+	
+	// Parameter related
 	// setter helpers
 	void setPointParams(Eigen::VectorXd para);
 	void setAngleParams(Eigen::VectorXd para);
@@ -101,6 +106,11 @@ private:
 	void getLengthParams(Eigen::VectorXd &para);
 	void getTransformationParams(Eigen::VectorXd &para);
 	void getLineParams(Eigen::VectorXd &para);
+
+	// Observation related
+	void setObservations(Eigen::VectorXd L);
+	void getObservations(Eigen::VectorXd &L);
+
 
 
 };

@@ -220,6 +220,7 @@ void TLSEvaluator::setParameters(Eigen::VectorXd para, bool useMask)
 
 void TLSEvaluator::testSetterAndGetter()
 {
+	// PARAMETERS
 	Eigen::VectorXd prov = getEstParams();
 	Eigen::VectorXd testParameter(dimensions.UIndex);
 	testParameter.setZero();
@@ -236,23 +237,62 @@ void TLSEvaluator::testSetterAndGetter()
 	retrievedParameter.setZero();
 	retrievedParameter = getEstParams();
 	// compare both
-	bool success = true;
+	bool successParameters = true;
 	for (int i = 0; i < dimensions.UIndex; i++)
 	{
 		double diff = (retrievedParameter(i) - testParameter(i));
 		if (fabs(diff) > 1e-6)
 		{
-			success = false;
+			successParameters = false;
 			std::cout << "Parameter at Index " << i << " is not set correctly. Set to " << testParameter(i) << " vs retrieved value " << retrievedParameter(i) << std::endl;
 		}
 	}
-	if (success == false)
+	if (successParameters == false)
 	{
 		std::cout << "Parameter set/get test failed." << std::endl;
 	}
 
 	// restore the original parameters in the data structure
 	setParameters(prov);
+
+	// OBSERVATIONS
+	Eigen::VectorXd originalObservation(dimensions.OIndex);
+	getObservations(originalObservation);
+	Eigen::VectorXd testObservation(dimensions.OIndex);
+	testObservation.setZero();
+	// create a dummy variable
+	for (int i = 0; i < dimensions.OIndex; i++)
+	{
+		testObservation(i) = 1.0 / (i+1);
+	}
+	//set the observation
+	setObservations(testObservation);
+
+	// now get the observations and check if they were set accordingly
+	Eigen::VectorXd retrievedObservation(dimensions.OIndex);
+	retrievedObservation.setZero();
+	getObservations(retrievedObservation);
+	// compare both
+	bool successObseravtions = true;
+	int counter = 0;
+	for (int i = 0; i < dimensions.OIndex; i++)
+	{
+		double diff = (retrievedObservation(i) - testObservation(i));
+		if (fabs(diff) > 1e-6)
+		{
+			std::cout << counter++ << std::endl;
+			successObseravtions  = false;
+			std::cout << "Observation at Index " << i << " is not set correctly. Set to " << testObservation(i) << " vs retrieved value " << retrievedObservation(i) << std::endl;
+		}
+	}
+	if (successObseravtions  == false)
+	{
+		std::cout << "Observation set/get test failed." << std::endl;
+	}
+
+	// restore the original observations in the data structure
+	setObservations(originalObservation);
+
 
 }
 
@@ -478,6 +518,351 @@ void TLSEvaluator::getLineParams(Eigen::VectorXd & para)
 			Eigen::VectorXd vect(3);
 			vect << line.getLineVectorEstimatedValue().getX(), line.getLineVectorEstimatedValue().getY(), line.getLineVectorEstimatedValue().getZ();
 			para.middleRows(line.getFirstUidx(), line.getNumUnkn()) = vect(line.getRelativeUnknIndices());
+		}
+	}
+}
+
+void TLSEvaluator::setObservations(Eigen::VectorXd L)
+{
+	for (TDataTreeIterator itTree = fData.get()->getTree().begin(); itTree != fData.get()->getTree().end(); itTree++)
+	{
+		// PDOR
+		if (itTree.node->data->measurements.fPDOR.isInitialised())
+		{
+			TPdorObs &pdor = itTree.node->data->measurements.fPDOR;
+			pdor.setBearing(TAngle(L(pdor.getFirstObservationIndex())));
+		}
+
+		// Iterate through the Total station measurements (TSTN)
+		for (auto itTSTN : itTree.node->data->measurements.fTSTN)
+		{
+			// Iterate through every ROM of TSTN
+			for (auto itROM : itTSTN->roms)
+			{
+				for (auto &itANGL : itROM->measANGL)
+				{
+					itANGL.setAngle(TAngle(L(itANGL.getFirstObservationIndex())));
+				}
+
+				for (auto &itZEND : itROM->measZEND)
+				{
+					itZEND.setAngle(TAngle(L(itZEND.getFirstObservationIndex())));
+				}
+
+				for (auto &itDIST : itROM->measDIST)
+				{
+					itDIST.setDistance(TLength(L(itDIST.getFirstObservationIndex())));
+				}
+				for (auto &itECTH : itROM->measECTH)
+				{
+					itECTH.setDistance(TLength(L(itECTH.getFirstObservationIndex())));
+				}
+
+				for (auto &itECDIR : itROM->measECDIR)
+				{
+					itECDIR.setDistance(TLength(L(itECDIR.getFirstObservationIndex())));
+				}
+
+				for (auto &itDHOR : itROM->measDHOR)
+				{
+					itDHOR.setDistance(TLength(L(itDHOR.getFirstObservationIndex())));
+				}
+
+				for (auto &itPLR3D : itROM->measPLR3D)
+				{
+					itPLR3D.setAngle(TAngle(L(itPLR3D.getFirstObservationIndex())), kANGL);
+					itPLR3D.setAngle(TAngle(L(itPLR3D.getFirstObservationIndex() + 1)), kZEND);
+					itPLR3D.setDistance(TLength(L(itPLR3D.getFirstObservationIndex() + 2)));
+				}
+			}
+		}
+
+		// Iterate through camera (CAM) measurements
+		for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM)
+		{
+			for (auto &itUVD : itCAM->measUVD)
+			{
+				int firstObsIdx = itUVD.getFirstObservationIndex();
+				// internally UVD has 3 residuals: x,y, and distance
+				// zcomp is such that x,y,z is normalized
+				double zObs = sqrt(1 - pow2(L(firstObsIdx)) - pow2(L(firstObsIdx + 1)));
+				TFreeVector direction(L(firstObsIdx), L(firstObsIdx + 1), zObs, TCoordSysFactory::k3DCartesian);
+				itUVD.setVectorMeasurement(direction);
+				itUVD.setDistance(TLength(L(firstObsIdx + 2)));
+			}
+
+			for (auto &itUVEC : itCAM->measUVEC)
+			{
+				int firstObsIdx = itUVEC.getFirstObservationIndex();
+				// internally UVEC has 2 residuals: x,y
+				// zcomp is such that x,y,z is normalized
+				double zObs = sqrt(1 - pow2(L(firstObsIdx)) - pow2(L(firstObsIdx + 1)));
+				TFreeVector direction(L(firstObsIdx), L(firstObsIdx + 1), zObs, TCoordSysFactory::k3DCartesian);
+				itUVEC.setVectorMeasurement(direction);
+			}
+		}
+		// In every node iterate through the EDM's measurements
+		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
+		{
+			// Iterate through DSPT measurements
+			for (auto &itDSPT : itEDM->measDSPT) // TYPO in original implementation
+			{
+				itDSPT.setDistance(TLength(L(itDSPT.getFirstObservationIndex())));
+			}
+		}
+		// In every node iterate through the LEVEL's measurements
+		for (auto &itLEVEL : itTree.node->data->measurements.fLEVEL)
+		{
+			for (auto &itDLEV : itLEVEL.measDLEV)
+			{
+				itDLEV.setDistance(TLength(L(itDLEV.getFirstObservationIndex())));
+				// In a case that optional DHOR measurement is done
+				if (itDLEV.dhor)
+				{ // i.e. !=nullptr
+					itDLEV.dhor->setDistance(TLength(L(itDLEV.dhor->getFirstObservationIndex())));
+				}
+			}
+		}
+		// In every node iterate through the ECHOROM's measurements
+		for (auto &itECHOrom : itTree.node->data->measurements.fECHO)
+		{
+			for (auto &itECHO : itECHOrom.measECHO)
+			{
+				itECHO.setDistance(TLength(L(itECHO.getFirstObservationIndex())));
+			}
+		}
+		// In every node iterate through the ECSP measurements
+		for (auto &itECSProm : itTree.node->data->measurements.fECSP)
+		{
+			for (auto &itECSP : itECSProm.measECSP)
+			{
+				itECSP.setDistance(TLength(L(itECSP.getFirstObservationIndex())));
+			}
+		}
+		// In every node iterate through the ECVEROM's measurements
+		for (auto &itECVErom : itTree.node->data->measurements.fECVE)
+		{
+			for (auto &itECVE : itECVErom.measECVE)
+			{
+				itECVE.setDistance(TLength(L(itECVE.getFirstObservationIndex())));
+			}
+		}
+		// In every node iterate through the ORIEROM's measurements
+		for (auto &itORIErom : itTree.node->data->measurements.fORIE)
+		{
+			for (auto &itORIE : itORIErom.measORIE)
+			{
+				itORIE.setAngle(TAngle(L(itORIE.getFirstObservationIndex())));
+			}
+		}
+		for (auto &itDVER : itTree.node->data->measurements.fDVER)
+		{
+			itDVER.setDistance(TLength(L(itDVER.getFirstObservationIndex())));
+		}
+		for (auto &itRADI : itTree.node->data->measurements.fRADI)
+		{
+			// radi is a "constraint"
+			itRADI.setAngleCnstr(TAngle(L(itRADI.getFirstObservationIndex())));
+		}
+		for (auto &itOBSXYZ : itTree.node->data->measurements.fOBSXYZ)
+		{
+			int firstObsIdx = itOBSXYZ.getFirstObservationIndex();
+			TPositionVector obsVector(L(firstObsIdx), L(firstObsIdx + 1), L(firstObsIdx + 2), TCoordSysFactory::ECoordSys::k3DCartesian);
+			itOBSXYZ.obsValue = obsVector;
+		}
+		for (auto &itINCLYrom : itTree.node->data->measurements.fINCLY)
+		{
+			for (auto &itINCLY : itINCLYrom.measINCLY)
+			{
+				itINCLY.setAngle(TAngle(L(itINCLY.getFirstObservationIndex())));
+			}
+		}
+		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
+		{
+			for (auto &itECWS : itECWSrom.measECWS)
+			{
+				itECWS.setDistance(TLength(L(itECWS.getFirstObservationIndex())));
+			}
+		}
+		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
+		{
+			for (auto &itECWI : itECWIrom.measECWI)
+			{
+				itECWI.setDistance(TLength(L(itECWI.getFirstObservationIndex())), EECWIDistances::kX);
+				itECWI.setDistance(TLength(L(itECWI.getFirstObservationIndex() + 1)), EECWIDistances::kZ);
+			}
+		}
+	}
+}
+
+
+void TLSEvaluator::getObservations(Eigen::VectorXd &L)
+{
+	for (TDataTreeIterator itTree = fData.get()->getTree().begin(); itTree != fData.get()->getTree().end(); itTree++)
+	{
+		// PDOR
+		if (itTree.node->data->measurements.fPDOR.isInitialised())
+		{
+			TPdorObs &pdor = itTree.node->data->measurements.fPDOR;
+			L(pdor.getFirstObservationIndex()) = pdor.getBearing();
+		}
+
+		// Iterate through the Total station measurements (TSTN)
+		for (auto itTSTN : itTree.node->data->measurements.fTSTN)
+		{
+			// Iterate through every ROM of TSTN
+			for (auto itROM : itTSTN->roms)
+			{
+				for (auto &itANGL : itROM->measANGL)
+				{
+					L(itANGL.getFirstObservationIndex()) = itANGL.getAngle();
+				}
+
+				for (auto &itZEND : itROM->measZEND)
+				{
+					L(itZEND.getFirstObservationIndex()) = itZEND.getAngle();
+				}
+
+				for (auto &itDIST : itROM->measDIST)
+				{
+					L(itDIST.getFirstObservationIndex()) = itDIST.getDistance();
+				}
+				for (auto &itECTH : itROM->measECTH)
+				{
+					L(itECTH.getFirstObservationIndex()) = itECTH.getDistance();
+				}
+
+				for (auto &itECDIR : itROM->measECDIR)
+				{
+					L(itECDIR.getFirstObservationIndex()) = itECDIR.getDistance();
+				}
+
+				for (auto &itDHOR : itROM->measDHOR)
+				{
+					L(itDHOR.getFirstObservationIndex()) = itDHOR.getDistance();
+				}
+
+				for (auto &itPLR3D : itROM->measPLR3D)
+				{
+					L(itPLR3D.getFirstObservationIndex()) = itPLR3D.getAngle(kANGL);
+					L(itPLR3D.getFirstObservationIndex() + 1) = itPLR3D.getAngle(kZEND);
+					L(itPLR3D.getFirstObservationIndex() + 2) = itPLR3D.getDistance();
+				}
+			}
+		}
+
+		// Iterate through camera (CAM) measurements
+		for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM)
+		{
+			for (auto &itUVD : itCAM->measUVD)
+			{
+				int firstObsIdx = itUVD.getFirstObservationIndex();
+				// internally UVD has 3 residuals: x,y, and distance
+				// zcomp is such that x,y,z is normalized
+				L(itUVD.getFirstObservationIndex()) = itUVD.getVectorValue().getX();
+				L(itUVD.getFirstObservationIndex() + 1) = itUVD.getVectorValue().getY();
+				L(itUVD.getFirstObservationIndex() + 2) = itUVD.getDistance();
+			}
+
+			for (auto &itUVEC : itCAM->measUVEC)
+			{
+				int firstObsIdx = itUVEC.getFirstObservationIndex();
+				// internally UVEC has 2 residuals: x,y
+				L(itUVEC.getFirstObservationIndex()) = itUVEC.getVectorValue().getX();
+				L(itUVEC.getFirstObservationIndex() + 1) = itUVEC.getVectorValue().getY();
+			}
+		}
+		// In every node iterate through the EDM's measurements
+		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
+		{
+			// Iterate through DSPT measurements
+			for (auto &itDSPT : itEDM->measDSPT) // TYPO in original implementation
+			{
+				L(itDSPT.getFirstObservationIndex()) = itDSPT.getDistance();
+			}
+		}
+		// In every node iterate through the LEVEL's measurements
+		for (auto &itLEVEL : itTree.node->data->measurements.fLEVEL)
+		{
+			for (auto &itDLEV : itLEVEL.measDLEV)
+			{
+				L(itDLEV.getFirstObservationIndex()) = itDLEV.getDistance();	
+				// In a case that optional DHOR measurement is done
+				if (itDLEV.dhor)
+				{ // i.e. !=nullptr
+					L(itDLEV.dhor->getFirstObservationIndex()) = itDLEV.dhor->getDistance();
+				}
+			}
+		}
+		// In every node iterate through the ECHOROM's measurements
+		for (auto &itECHOrom : itTree.node->data->measurements.fECHO)
+		{
+			for (auto &itECHO : itECHOrom.measECHO)
+			{
+				L(itECHO.getFirstObservationIndex()) = itECHO.getDistance();
+			}
+		}	
+		// In every node iterate through the ECSP measurements
+		for (auto &itECSProm : itTree.node->data->measurements.fECSP)
+		{
+			for (auto &itECSP : itECSProm.measECSP)
+			{
+				L(itECSP.getFirstObservationIndex()) = itECSP.getDistance();
+			}
+		}
+		// In every node iterate through the ECVEROM's measurements
+		for (auto &itECVErom : itTree.node->data->measurements.fECVE)
+		{
+			for (auto &itECVE : itECVErom.measECVE)
+			{
+				L(itECVE.getFirstObservationIndex()) = itECVE.getDistance();
+			}
+		}
+		// In every node iterate through the ORIEROM's measurements
+		for (auto &itORIErom : itTree.node->data->measurements.fORIE)
+		{
+			for (auto &itORIE : itORIErom.measORIE)
+			{
+				L(itORIE.getFirstObservationIndex()) = itORIE.getAngle();
+			}
+		}
+		for (auto &itDVER : itTree.node->data->measurements.fDVER)
+		{
+			L(itDVER.getFirstObservationIndex()) = itDVER.getDistance();
+		}
+		for (auto &itRADI : itTree.node->data->measurements.fRADI)
+		{
+			// radi is a "constraint"
+			L(itRADI.getFirstObservationIndex()) = itRADI.getAngleCnstr();
+		}
+		for (auto &itOBSXYZ : itTree.node->data->measurements.fOBSXYZ)
+		{
+			int firstObsIdx = itOBSXYZ.getFirstObservationIndex();
+			L(firstObsIdx) = itOBSXYZ.obsValue.getX();
+			L(firstObsIdx + 1) = itOBSXYZ.obsValue.getY();
+			L(firstObsIdx + 2) = itOBSXYZ.obsValue.getZ();
+		}
+		for (auto &itINCLYrom : itTree.node->data->measurements.fINCLY)
+		{
+			for (auto &itINCLY : itINCLYrom.measINCLY)
+			{
+				L(itINCLY.getFirstObservationIndex()) = itINCLY.getAngle();
+			}
+		}
+		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
+		{
+			for (auto &itECWS : itECWSrom.measECWS)
+			{
+				L(itECWS.getFirstObservationIndex()) = itECWS.getDistance();
+			}
+		}
+		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
+		{
+			for (auto &itECWI : itECWIrom.measECWI)
+			{
+				L(itECWI.getFirstObservationIndex()) = itECWI.getDistance(EECWIDistances::kX);
+				L(itECWI.getFirstObservationIndex() + 1) = itECWI.getDistance(EECWIDistances::kZ);
+			}
 		}
 	}
 }

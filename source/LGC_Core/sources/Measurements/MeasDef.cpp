@@ -102,7 +102,8 @@ void TPdorObs::Initialise(LGCAdjustablePoint &cala, LGCAdjustablePoint &ori, TAn
 {
 	calaPt = &cala;
 	orientationPt = &ori;
-	fbearing = gis;
+	setBearing(gis);
+	//fbearing = gis;
 	fIsInitialise = true;
 	fDefined = hasbearing;
 }
