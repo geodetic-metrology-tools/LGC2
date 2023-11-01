@@ -26,6 +26,14 @@ void LGCPointConstraintGroup::setAffectedPoints(std::set<std::string> affectedPo
 	cogInRoot /= fAffectedPoints.size();
 	provCOG = cogInRoot;
 
+	// compute provisional scale = sum(|p_i-cog|^2)
+	provScale = 0;
+	for (auto pointName : affectedPoints)
+	{
+		provScale += pow2((fProvPosInRoot[pointName] - provCOG).norm());
+	}
+
+
 }
 
 void LGCPointConstraintGroup::allPointsAreAffected()

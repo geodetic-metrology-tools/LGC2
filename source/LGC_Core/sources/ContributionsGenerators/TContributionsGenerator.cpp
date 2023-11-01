@@ -2166,6 +2166,7 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 	// note d (p_i-COG(p)) / d(p_i) = (1-1/#points)Id
 
 	PointGroupConstraintContrib resultScale;
+	double provScale = pointConstraintGroup.getProvScale();
 	// compute the momentum with respect to the provisional positions
 	double currentScale = 0;
 	for (auto pointName : affectedPoints)
@@ -2187,13 +2188,13 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		//  with respect to point coordinates:
 		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
 		resultScale.PointContrib[pointName] = derWRTPos;
-
+		// with respect to transformation parameters
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> point2RootTransformationsContribScale;
 		TPositionVector pointInSubframe = point.getEstimatedValue();
 		addTransformationsContributions(sub2Root, pointInSubframe, Aline, point2RootTransformationsContribScale);
 		resultScale.TransformContrib[pointName] = point2RootTransformationsContribScale;
 	}
-	resultScale.constraintMisclosure = currentScale;
+	resultScale.constraintMisclosure = currentScale - provScale;
 
 //LIBRPointGroupContrib result(resultCOG, resultMOM, resultScale);
 	return LIBRPointGroupContrib{resultCOG, resultMOM, resultScale};

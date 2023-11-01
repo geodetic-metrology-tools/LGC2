@@ -48,6 +48,7 @@ public:
 	void setFirstCIndex(int j) { firstCIndex = j; };
 	Eigen::Vector3d getProvRootPos(std::string pointName) const; 
 	Eigen::Vector3d getProvCOG() const { return provCOG; };
+	double getProvScale() const { return provScale; };
 	void plotGroupData();
 	//
 //	void setGroupName(std::string name) { groupName = name; };
@@ -75,6 +76,7 @@ private:
 	int constraintDim{0};
 	//the center of gravity in root coordinates with provisional values.
 	Eigen::Vector3d provCOG;
+	double provScale = 0;
 	//void setCOG();
 };
 
