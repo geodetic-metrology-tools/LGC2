@@ -206,7 +206,7 @@ public:
 	//@}
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:

@@ -126,7 +126,7 @@ const TPOLARObsSummary& TTSTN::TROM::getPLR3DObsSummary(std::string text) noexce
 
 #if USE_SERIALIZER
 // Inherited via Serializable
-void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
+void TTSTN::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("ihfix", ihfix);
 	obj.addProperty("instrument", instrument);
@@ -145,7 +145,7 @@ void TTSTN::serialize(SerializerObject::SerializationHelper &obj) const
 
 #if USE_SERIALIZER
 // Inherited via Serializable
-void TTSTN::TROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TTSTN::TROM::serialize(ObjectSerializer &obj) const
 {
 	TStatusObject::serialize(obj);
 	obj.addProperty("acst", acst.getRadiansValue());

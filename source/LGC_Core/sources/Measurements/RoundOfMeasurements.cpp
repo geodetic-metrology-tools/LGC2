@@ -165,7 +165,7 @@ const TECWIObsSummary &TECWIROM::getECWIObsSummary(std::string text) noexcept
 #if USE_SERIALIZER
 // Inherited via Serializable
 
-void TECHOROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TECHOROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("echoSummary_", echoSummary_);
 	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
@@ -174,7 +174,7 @@ void TECHOROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romId", romId);
 }
 
-void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TECSPROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("ecspSummary_", ecspSummary_);
 	obj.addProperty("line", line);
@@ -185,7 +185,7 @@ void TECSPROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romName", romName);
 }
 
-void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TECVEROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("ecveSummary_", ecveSummary_);
 	obj.addProperty("fMeasuredLine", fMeasuredLine);
@@ -195,7 +195,7 @@ void TECVEROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romId", romId);
 }
 
-void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TORIEROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("fConstantAngle", fConstantAngle.getRadiansValue());
 	obj.addProperty("instrument", instrument);
@@ -207,7 +207,7 @@ void TORIEROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romId", romId);
 }
 
-void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TINCLYROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("inclySummary_", inclySummary_);
 	obj.addProperty("instrument", instrument);
@@ -216,7 +216,7 @@ void TINCLYROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("romId", romId);
 }
 
-void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TECWSROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("ecwsSummary_", ecwsSummary_);
 	obj.addProperty("fMeasuredWSHeight", fMeasuredWSHeight);
@@ -228,7 +228,7 @@ void TECWSROM::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("sigmaWS", sigmaWS.getMetresValue());
 }
 
-void TECWIROM::serialize(SerializerObject::SerializationHelper &obj) const
+void TECWIROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("ecwiSummary_", ecwiSummary_);
 	obj.addProperty("instrument", instrument);

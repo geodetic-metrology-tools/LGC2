@@ -47,7 +47,7 @@ bool LGCFrameConstraintGroup::isPartOfGroup(std::string frame)
 }
 
 #if USE_SERIALIZER
-void LGCFrameConstraintGroup::serialize(SerializerObject::SerializationHelper &obj) const
+void LGCFrameConstraintGroup::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("groupName", groupName);
 	obj.addProperty("constraintDim", constraintDim);

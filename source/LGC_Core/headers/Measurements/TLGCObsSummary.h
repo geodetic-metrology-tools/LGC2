@@ -127,7 +127,7 @@ public:
     //@}
     #if USE_SERIALIZER
 	    // Inherited via Serializable
-	    virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	    virtual void serialize(ObjectSerializer &obj) const override;
     #endif
 
 protected:
@@ -177,7 +177,7 @@ struct TPOLARObsSummary
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	inline void serialize(ObjectSerializer &obj) const
 	{
 		if (distObsSum.getNumberOfObs())
 		    obj.addProperty("distObsSum", distObsSum);
@@ -205,7 +205,7 @@ struct TUVDObsSummary
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	inline void serialize(ObjectSerializer &obj) const
 	{
 		if (distObsSum.getNumberOfObs())
 			obj.addProperty("distObsSum", distObsSum);
@@ -232,7 +232,7 @@ struct TUVECObsSummary
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	inline void serialize(ObjectSerializer &obj) const
 	{
 		if (xVectorCompObsSum.getNumberOfObs())
 			obj.addProperty("xVectorCompObsSum", xVectorCompObsSum);
@@ -258,7 +258,7 @@ struct TOBSXYZObsSummary
     
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	inline void serialize(ObjectSerializer &obj) const
 	{
 		if (obsXObsSum.getNumberOfObs())
 			obj.addProperty("obsXObsSum", obsXObsSum);
@@ -285,7 +285,7 @@ struct TECWIObsSummary
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	inline void serialize(SerializerObject::SerializationHelper &obj) const
+	inline void serialize(ObjectSerializer &obj) const
 	{
 		if (xObsSum.getNumberOfObs())
 			obj.addProperty("xObsSum", xObsSum);

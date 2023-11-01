@@ -47,7 +47,7 @@ struct TECHOROM : public TStatusObject {
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 	private:
@@ -118,7 +118,7 @@ struct TECSPROM : public TStatusObject {
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:
@@ -165,7 +165,7 @@ struct TECVEROM : public TStatusObject {
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:
@@ -216,7 +216,7 @@ struct TORIEROM : public TStatusObject {
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
     private:
@@ -261,7 +261,7 @@ struct TINCLYROM : public TStatusObject {
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:
@@ -314,7 +314,7 @@ struct TECWSROM : public TStatusObject {
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:
@@ -400,7 +400,7 @@ struct TECWIROM : public TStatusObject
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:
