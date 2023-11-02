@@ -2068,6 +2068,15 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 					}
 				}
 			}
+			// check if there is a constraint that does not depend on any parameter
+			// this can happen for example if a TX constraint was added but the only points defined are *VZ (they only vary in Z)
+			for (int i = group.getFirstCIndex(); i <group.getFirstCIndex()+group.getConstraintDimension();i++)
+			{
+				if (matrices->getCnstrFirstDgnMtrx()->row(i).norm() < EPSILON)
+				{
+					throw std::runtime_error("A constraint that does not depend on any variable was added.");
+				}
+			}
 		}
 	}
 	catch (std::exception const &excp)
