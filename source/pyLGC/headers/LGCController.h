@@ -40,7 +40,8 @@ public:
 	Eigen::SparseMatrix<double> getFirstDesignMatrix(Eigen::VectorXd par);
 	Eigen::SparseMatrix<double> getFirstConstraintDesignMatrix(Eigen::VectorXd par);
 	Eigen::SparseMatrix<double> getSecondDesignMatrix(Eigen::VectorXd par);
-	Eigen::SparseMatrix<double> getPv(Eigen::VectorXd par);
+	// diagonal of weight matrix
+	Eigen::VectorXd getPv(Eigen::VectorXd par);
 
 private:
 	void initialize();
