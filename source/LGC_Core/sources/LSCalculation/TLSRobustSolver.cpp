@@ -6,8 +6,8 @@
 #include <unsupported/Eigen/SparseExtra>
 #include "UEOIndices.h"
 
-// osqp-eigen
-#include "OsqpEigen/OsqpEigen.h"
+//// osqp-eigen
+//#include "OsqpEigen/OsqpEigen.h"
 
 
 
@@ -75,7 +75,7 @@ Eigen::VectorXd TLSRobustSolver::computeHuberStep(Eigen::VectorXd par)
 	Eigen::VectorXd lb, ub;
 	lb.setZero(), ub.setZero();
 	//setOSQPFormatL1Constraint(par, constraintMatrix, lb, ub);
-	setOSQPFormatHuberConstraint(par, constraintMatrix, lb, ub);
+	//setOSQPFormatHuberConstraint(par, constraintMatrix, lb, ub);
 	std::cout << constraintMatrix.rows() << " "<<constraintMatrix.cols()  << std::endl;
 	Eigen::SparseMatrix<double> hessian;
 	Eigen::VectorXd gradient;
@@ -84,51 +84,51 @@ Eigen::VectorXd TLSRobustSolver::computeHuberStep(Eigen::VectorXd par)
 	//setL1Objective(hessian, gradient);
 
 
-    // instantiate the OSQP solver
-    OsqpEigen::Solver solver;
-	// no output printing
-//	solver.settings()->setVerbosity(false);
-	solver.settings()->setScaling(false);
-	solver.settings()->setScaledTerimination(true);
-	solver.settings()->setPolish(true);
-	solver.data()->setNumberOfVariables(nVariables);
-	solver.data()->setNumberOfConstraints(nConstraints);
-	if (!solver.data()->setHessianMatrix(hessian))
-	{
-		throw std::runtime_error("failed to set osqp problem data.");
-	}
-	if (!solver.data()->setGradient(gradient))
-	{
-		throw std::runtime_error("failed to set osqp problem data.");
-	}
-	if (!solver.data()->setLinearConstraintsMatrix(constraintMatrix))
-	{
-		throw std::runtime_error("failed to set osqp problem data.");
-	}
-	if (!solver.data()->setLowerBound(lb))
-	{
-		throw std::runtime_error("failed to set osqp problem data.");
-	}
-	if (!solver.data()->setUpperBound(ub))
-	{
-		throw std::runtime_error("failed to set osqp problem data.");
-	}
-
-
-	// initialize and solve
-	if (!solver.initSolver())
-	{
-		throw std::runtime_error("initialization of solver failed");
-	}
-	if (!solver.solve())
-	{
-		throw std::runtime_error("OSQP solve failed.");
-	}
-
-	// get solution
-
-	Eigen::VectorXd result = solver.getSolution();
-
+//    // instantiate the OSQP solver
+//    OsqpEigen::Solver solver;
+//	// no output printing
+////	solver.settings()->setVerbosity(false);
+//	solver.settings()->setScaling(false);
+//	solver.settings()->setScaledTerimination(true);
+//	solver.settings()->setPolish(true);
+//	solver.data()->setNumberOfVariables(nVariables);
+//	solver.data()->setNumberOfConstraints(nConstraints);
+//	if (!solver.data()->setHessianMatrix(hessian))
+//	{
+//		throw std::runtime_error("failed to set osqp problem data.");
+//	}
+//	if (!solver.data()->setGradient(gradient))
+//	{
+//		throw std::runtime_error("failed to set osqp problem data.");
+//	}
+//	if (!solver.data()->setLinearConstraintsMatrix(constraintMatrix))
+//	{
+//		throw std::runtime_error("failed to set osqp problem data.");
+//	}
+//	if (!solver.data()->setLowerBound(lb))
+//	{
+//		throw std::runtime_error("failed to set osqp problem data.");
+//	}
+//	if (!solver.data()->setUpperBound(ub))
+//	{
+//		throw std::runtime_error("failed to set osqp problem data.");
+//	}
+//
+//
+//	// initialize and solve
+//	if (!solver.initSolver())
+//	{
+//		throw std::runtime_error("initialization of solver failed");
+//	}
+//	if (!solver.solve())
+//	{
+//		throw std::runtime_error("OSQP solve failed.");
+//	}
+//
+//	// get solution
+//
+//	Eigen::VectorXd result = solver.getSolution();
+	Eigen::VectorXd result;
 	return result;
 }
 
@@ -320,59 +320,59 @@ void TLSRobustSolver::setHuberInequalityConstraint(const Eigen::VectorXd par, Ei
 	// the lower and upper bound
 	// row 1+2
 	lb.setZero();
-	ub.setConstant(OsqpEigen::INFTY);
+	//ub.setConstant(OsqpEigen::INFTY);
 }
 
-void TLSRobustSolver::setOSQPFormatHuberConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
-{
-	Eigen::SparseMatrix<double> eqBlock, ineqBlock;
-	Eigen::VectorXd bEq, lbIneq, ubIneq;
-	setHuberEqualityConstraint(par, eqBlock, bEq);
-	setHuberInequalityConstraint(par, ineqBlock, lbIneq, ubIneq);
-	if (dumpMat)
-	{
-		Eigen::saveMarket(eqBlock, "eqBlock.mtx");
-		Eigen::saveMarketDense(bEq, "bEq.mtx");
-		Eigen::saveMarket(ineqBlock, "ineqBlock.mtx");
-		Eigen::saveMarketDense(lbIneq, "lbIneq.mtx");
-		Eigen::saveMarketDense(ubIneq, "ubIneq.mtx");
-	}
-	int eqRows = eqBlock.rows();
-	int ineqRows = ineqBlock.rows();
-	constraintMat.resize(eqRows + ineqRows, eqBlock.cols());
-	// stack both blocks to form the combined constraints
-	std::vector<Eigen::Triplet<double>> triplets;
-	triplets.reserve(eqBlock.nonZeros()+ineqBlock.nonZeros());
-	// Set the top equality block.
-	for (int i = 0; i < eqBlock.outerSize(); ++i)
-	{
-		for (Eigen::SparseMatrix<double>::InnerIterator it(eqBlock, i); it; ++it)
-		{
-			constraintMat.insert(it.row(), it.col()) = it.value();
-		}
-	}
-
-	// Set the bottom inequality block.
-	for (int i = 0; i < ineqBlock.outerSize(); ++i)
-	{
-		for (Eigen::SparseMatrix<double>::InnerIterator it(ineqBlock, i); it; ++it)
-		{
-			constraintMat.insert(it.row() + eqRows, it.col()) = it.value();
-		}
-	}
-
-	lb.resize(eqRows + ineqRows);
-	ub.resize(eqRows + ineqRows);
-	// set the bounds
-	// equality
-	lb.topRows(eqRows) = bEq;
-	ub.topRows(eqRows) = bEq;
-	//inequality
-	lb.bottomRows(ineqRows) = lbIneq;
-	ub.bottomRows(ineqRows) = ubIneq;
-
-
-}
+//void TLSRobustSolver::setOSQPFormatHuberConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
+//{
+//	Eigen::SparseMatrix<double> eqBlock, ineqBlock;
+//	Eigen::VectorXd bEq, lbIneq, ubIneq;
+//	setHuberEqualityConstraint(par, eqBlock, bEq);
+//	setHuberInequalityConstraint(par, ineqBlock, lbIneq, ubIneq);
+//	if (dumpMat)
+//	{
+//		Eigen::saveMarket(eqBlock, "eqBlock.mtx");
+//		Eigen::saveMarketDense(bEq, "bEq.mtx");
+//		Eigen::saveMarket(ineqBlock, "ineqBlock.mtx");
+//		Eigen::saveMarketDense(lbIneq, "lbIneq.mtx");
+//		Eigen::saveMarketDense(ubIneq, "ubIneq.mtx");
+//	}
+//	int eqRows = eqBlock.rows();
+//	int ineqRows = ineqBlock.rows();
+//	constraintMat.resize(eqRows + ineqRows, eqBlock.cols());
+//	// stack both blocks to form the combined constraints
+//	std::vector<Eigen::Triplet<double>> triplets;
+//	triplets.reserve(eqBlock.nonZeros()+ineqBlock.nonZeros());
+//	// Set the top equality block.
+//	for (int i = 0; i < eqBlock.outerSize(); ++i)
+//	{
+//		for (Eigen::SparseMatrix<double>::InnerIterator it(eqBlock, i); it; ++it)
+//		{
+//			constraintMat.insert(it.row(), it.col()) = it.value();
+//		}
+//	}
+//
+//	// Set the bottom inequality block.
+//	for (int i = 0; i < ineqBlock.outerSize(); ++i)
+//	{
+//		for (Eigen::SparseMatrix<double>::InnerIterator it(ineqBlock, i); it; ++it)
+//		{
+//			constraintMat.insert(it.row() + eqRows, it.col()) = it.value();
+//		}
+//	}
+//
+//	lb.resize(eqRows + ineqRows);
+//	ub.resize(eqRows + ineqRows);
+//	// set the bounds
+//	// equality
+//	lb.topRows(eqRows) = bEq;
+//	ub.topRows(eqRows) = bEq;
+//	//inequality
+//	lb.bottomRows(ineqRows) = lbIneq;
+//	ub.bottomRows(ineqRows) = ubIneq;
+//
+//
+//}
 
 void TLSRobustSolver::setL1Objective(Eigen::SparseMatrix<double> &hessian, Eigen::VectorXd &gradient)
 {
@@ -533,60 +533,60 @@ void TLSRobustSolver::setL1InequalityConstraint(const Eigen::VectorXd par, Eigen
 
 	lb.setZero();
 	ub.setZero();
-	lb.topRows(nObs).setConstant(-OsqpEigen::INFTY);
-	lb.bottomRows(nObs).setConstant(0);
-	ub.topRows(nObs).setConstant(0);
-	ub.bottomRows(nObs).setConstant(OsqpEigen::INFTY);
+	//lb.topRows(nObs).setConstant(-OsqpEigen::INFTY);
+	//lb.bottomRows(nObs).setConstant(0);
+	//ub.topRows(nObs).setConstant(0);
+	//ub.bottomRows(nObs).setConstant(OsqpEigen::INFTY);
 }
 
 
-void TLSRobustSolver::setOSQPFormatL1Constraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
-{
-	Eigen::SparseMatrix<double> eqBlock, ineqBlock;
-	Eigen::VectorXd bEq, lbIneq, ubIneq;
-	setL1EqualityConstraint(par, eqBlock, bEq);
-	setL1InequalityConstraint(par, ineqBlock, lbIneq, ubIneq);
-	if (dumpMat)
-	{
-		Eigen::saveMarket(eqBlock, "eqBlock.mtx");
-		Eigen::saveMarketDense(bEq, "bEq.mtx");
-		Eigen::saveMarket(ineqBlock, "ineqBlock.mtx");
-		Eigen::saveMarketDense(lbIneq, "lbIneq.mtx");
-		Eigen::saveMarketDense(ubIneq, "ubIneq.mtx");
-	}
-	int eqRows = eqBlock.rows();
-	int ineqRows = ineqBlock.rows();
-	constraintMat.resize(eqRows + ineqRows, eqBlock.cols());
-	// stack both blocks to form the combined constraints
-	std::vector<Eigen::Triplet<double>> triplets;
-	triplets.reserve(eqBlock.nonZeros()+ineqBlock.nonZeros());
-	// Set the top equality block.
-	for (int i = 0; i < eqBlock.outerSize(); ++i)
-	{
-		for (Eigen::SparseMatrix<double>::InnerIterator it(eqBlock, i); it; ++it)
-		{
-			constraintMat.insert(it.row(), it.col()) = it.value();
-		}
-	}
-
-	// Set the bottom inequality block.
-	for (int i = 0; i < ineqBlock.outerSize(); ++i)
-	{
-		for (Eigen::SparseMatrix<double>::InnerIterator it(ineqBlock, i); it; ++it)
-		{
-			constraintMat.insert(it.row() + eqRows, it.col()) = it.value();
-		}
-	}
-
-	lb.resize(eqRows + ineqRows);
-	ub.resize(eqRows + ineqRows);
-	// set the bounds
-	// equality
-	lb.topRows(eqRows) = bEq;
-	ub.topRows(eqRows) = bEq;
-	//inequality
-	lb.bottomRows(ineqRows) = lbIneq;
-	ub.bottomRows(ineqRows) = ubIneq;
-
-
-}
+//void TLSRobustSolver::setOSQPFormatL1Constraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub)
+//{
+//	Eigen::SparseMatrix<double> eqBlock, ineqBlock;
+//	Eigen::VectorXd bEq, lbIneq, ubIneq;
+//	setL1EqualityConstraint(par, eqBlock, bEq);
+//	setL1InequalityConstraint(par, ineqBlock, lbIneq, ubIneq);
+//	if (dumpMat)
+//	{
+//		Eigen::saveMarket(eqBlock, "eqBlock.mtx");
+//		Eigen::saveMarketDense(bEq, "bEq.mtx");
+//		Eigen::saveMarket(ineqBlock, "ineqBlock.mtx");
+//		Eigen::saveMarketDense(lbIneq, "lbIneq.mtx");
+//		Eigen::saveMarketDense(ubIneq, "ubIneq.mtx");
+//	}
+//	int eqRows = eqBlock.rows();
+//	int ineqRows = ineqBlock.rows();
+//	constraintMat.resize(eqRows + ineqRows, eqBlock.cols());
+//	// stack both blocks to form the combined constraints
+//	std::vector<Eigen::Triplet<double>> triplets;
+//	triplets.reserve(eqBlock.nonZeros()+ineqBlock.nonZeros());
+//	// Set the top equality block.
+//	for (int i = 0; i < eqBlock.outerSize(); ++i)
+//	{
+//		for (Eigen::SparseMatrix<double>::InnerIterator it(eqBlock, i); it; ++it)
+//		{
+//			constraintMat.insert(it.row(), it.col()) = it.value();
+//		}
+//	}
+//
+//	// Set the bottom inequality block.
+//	for (int i = 0; i < ineqBlock.outerSize(); ++i)
+//	{
+//		for (Eigen::SparseMatrix<double>::InnerIterator it(ineqBlock, i); it; ++it)
+//		{
+//			constraintMat.insert(it.row() + eqRows, it.col()) = it.value();
+//		}
+//	}
+//
+//	lb.resize(eqRows + ineqRows);
+//	ub.resize(eqRows + ineqRows);
+//	// set the bounds
+//	// equality
+//	lb.topRows(eqRows) = bEq;
+//	ub.topRows(eqRows) = bEq;
+//	//inequality
+//	lb.bottomRows(ineqRows) = lbIneq;
+//	ub.bottomRows(ineqRows) = ubIneq;
+//
+//
+//}

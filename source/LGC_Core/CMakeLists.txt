@@ -248,8 +248,9 @@ source_group("Writers\\Sources" FILES ${WRITERS_CPP})
 
 
 
-find_package(OsqpEigen)
+##find_package(OsqpEigen)
 # Create a static library from sources:
 add_library(LGC_Core STATIC ${Core_HEADERS} ${Core_SOURCES})
 # Link static libraries to the current one
-target_link_libraries(LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools OsqpEigen::OsqpEigen)
+#target_link_libraries(LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools OsqpEigen::OsqpEigen)
+target_link_libraries(LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools)

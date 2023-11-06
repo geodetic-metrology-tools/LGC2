@@ -42,7 +42,7 @@ private:
 	// inequality constraint block of the form lb=<Ax<=ub
 	void setHuberInequalityConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &block, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
 	// combine eq and ineq constraints for osqp
-	void setOSQPFormatHuberConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
+	//void setOSQPFormatHuberConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
 
 	// Huber threshold (residual vs sigma from where L1 begins)
 	double gamma = 1;
@@ -58,7 +58,7 @@ private:
 	// inequality constraint block of the form lb=<Ax<=ub
 	void setL1InequalityConstraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &block, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
 	// combine eq and ineq constraints for osqp
-	void setOSQPFormatL1Constraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
+	//void setOSQPFormatL1Constraint(const Eigen::VectorXd par, Eigen::SparseMatrix<double> &constraintMat, Eigen::VectorXd &lb, Eigen::VectorXd &ub);
 
 
 };
