@@ -1010,7 +1010,7 @@ void TDataAnalyzer::assignEOIndices()
 
 					// set indices of LS matrices, PLR3D introduces 3 equations and 3 observations
 					plr.setFirstEquationIndex(fData.fUEOIndices.EIndex);
-					plr.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+					plr.setFirstObservationIndex(fData.fUEOIndices.OIndex, fData.fObsIdx2LineIdx);
 					fData.fUEOIndices.EIndex += 3;
 					fData.fUEOIndices.OIndex += 3;
 					fData.addToMeasurementNum(TMeasurementsGlobal::kPLR3D);
@@ -1025,7 +1025,7 @@ void TDataAnalyzer::assignEOIndices()
 
 					// set indices of LS matrices, ANGL introduces 1 equation and 1 observation
 					angl.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					angl.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					angl.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kANGL);
 				}
 
@@ -1038,7 +1038,7 @@ void TDataAnalyzer::assignEOIndices()
 
 					// set indices of LS matrices, ZEND introduces 1 equation and 1 observation
 					zend.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					zend.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					zend.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kZEND);
 				}
 
@@ -1051,7 +1051,7 @@ void TDataAnalyzer::assignEOIndices()
 
 					// set indices of LS matrices, DIST introduces 1 equation and 1 observation
 					dist.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					dist.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					dist.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kDIST);
 				}
 
@@ -1064,7 +1064,7 @@ void TDataAnalyzer::assignEOIndices()
 
 					// set indices of LS matrices, DHOR introduces 1 equation and 1 observation
 					dhor.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					dhor.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					dhor.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kDHOR);
 				}
 
@@ -1073,7 +1073,7 @@ void TDataAnalyzer::assignEOIndices()
 				{
 					// set indices of LS matrices, ECTH introduces 1 equation and 1 observation
 					ecth.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					ecth.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					ecth.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kECTH);
 				}
 
@@ -1082,7 +1082,7 @@ void TDataAnalyzer::assignEOIndices()
 				{
 					// set indices of LS matrices, ECDIR introduces 1 equation and 1 observation
 					ecdir.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					ecdir.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					ecdir.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
 				}
 			}
@@ -1096,7 +1096,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, UVD introduces 3 equations and 3 observations
 				uvd.setFirstEquationIndex(fData.fUEOIndices.EIndex);
-				uvd.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+				uvd.setFirstObservationIndex(fData.fUEOIndices.OIndex,fData.fObsIdx2LineIdx);
 				fData.fUEOIndices.EIndex += 3;
 				fData.fUEOIndices.OIndex += 3;
 				fData.addToMeasurementNum(TMeasurementsGlobal::kUVD);
@@ -1107,7 +1107,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, UVEC introduces 2 equations and 2 observations
 				uvec.setFirstEquationIndex(fData.fUEOIndices.EIndex);
-				uvec.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+				uvec.setFirstObservationIndex(fData.fUEOIndices.OIndex,fData.fObsIdx2LineIdx);
 				fData.fUEOIndices.EIndex += 2;
 				fData.fUEOIndices.OIndex += 2;
 				fData.addToMeasurementNum(TMeasurementsGlobal::kUVEC);
@@ -1124,7 +1124,7 @@ void TDataAnalyzer::assignEOIndices()
 
 				// set indices of LS matrices, DSPT introduces 1 equation and 1 observation
 				dspt.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				dspt.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				dspt.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kDSPT);
 			}
 
@@ -1142,14 +1142,14 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, DLEV introduces 1 equation and 1 observation
 				dlev.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				dlev.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				dlev.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kDLEV);
 
 				// DLEV::DHOR
 				if (dlev.dhor)
 				{
 					dlev.dhor->setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-					dlev.dhor->setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+					dlev.dhor->setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 
 					// If DHOR exists, tell the station:
 					level.hasDHOR = true;
@@ -1162,7 +1162,7 @@ void TDataAnalyzer::assignEOIndices()
 		{
 			// set indices of LS matrices, DVER introduces 1 equation and 1 observation
 			dver.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-			dver.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+			dver.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 			fData.addToMeasurementNum(TMeasurementsGlobal::kDVER);
 		}
 
@@ -1176,7 +1176,7 @@ void TDataAnalyzer::assignEOIndices()
 
 				// set indices of LS matrices, ORIE introduces 1 equation and 1 observation
 				orie.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				orie.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				orie.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kORIE);
 			}
 
@@ -1186,7 +1186,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, ECHO introduces 1 equation and 1 observation
 				echo.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				echo.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				echo.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECHO);
 			}
 
@@ -1196,7 +1196,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, ECVE introduces 1 equation and 1 observation
 				ecve.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				ecve.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				ecve.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECVE);
 			}
 
@@ -1206,7 +1206,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, ECSP introduces 1 equation and 1 observation
 				ecsp.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				ecsp.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				ecsp.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECSP);
 			}
 
@@ -1215,7 +1215,7 @@ void TDataAnalyzer::assignEOIndices()
 		{
 			// set indices of LS matrices, RADI introduces 1 equation and 1 observation
 			radi.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-			radi.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+			radi.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 			fData.addToMeasurementNum(TMeasurementsGlobal::kRADI);
 		}
 
@@ -1224,7 +1224,7 @@ void TDataAnalyzer::assignEOIndices()
 		{
 			// set indices of LS matrices, OBSXYZ introduxes 3 equations and 3 observations
 			obsxyz.setFirstEquationIndex(fData.fUEOIndices.EIndex);
-			obsxyz.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+			obsxyz.setFirstObservationIndex(fData.fUEOIndices.OIndex,fData.fObsIdx2LineIdx);
 			fData.fUEOIndices.EIndex += 3;
 			fData.fUEOIndices.OIndex += 3;
 			fData.addToMeasurementNum(TMeasurementsGlobal::kOBSXYZ);
@@ -1236,7 +1236,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, ECHO introduces 1 equation and 1 observation
 				incly.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				incly.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
 
@@ -1246,7 +1246,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, ECWS introduces 1 equation and 1 observation
 				ecws.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
-				ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				ecws.setFirstObservationIndex(fData.fUEOIndices.OIndex++,fData.fObsIdx2LineIdx);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
 			}
 
@@ -1257,7 +1257,7 @@ void TDataAnalyzer::assignEOIndices()
 			{
 				// set indices of LS matrices, ECWI introduces 2 equations and 2 observations
 				ecwi.setFirstEquationIndex(fData.fUEOIndices.EIndex);
-				ecwi.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+				ecwi.setFirstObservationIndex(fData.fUEOIndices.OIndex,fData.fObsIdx2LineIdx);
 				fData.fUEOIndices.EIndex += 2;
 				fData.fUEOIndices.OIndex += 2;
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECWI);
@@ -1359,7 +1359,7 @@ void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)
 		auto initialize = [&](TPdorObs &pdor_meas) {
 			pdor_meas.Initialise(*cala, oriPt, pdor.fgis, pdor.hasBearing);
 			pdor_meas.setFirstEquationIndex(fData.fUEOIndices.EIndex);
-			pdor_meas.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+			pdor_meas.setFirstObservationIndex(fData.fUEOIndices.OIndex,fData.fObsIdx2LineIdx);
 			pdor_meas.line = pdor.line;
 			fData.fUEOIndices.EIndex++;
 			fData.fUEOIndices.OIndex++;

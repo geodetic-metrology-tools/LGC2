@@ -94,7 +94,7 @@ class huberSolution:
     # the huber gamma of the problem
     huberGamma: float
 
-    def showQQPlot(self):
+    def showQQPlot(self, evaluator):
         # generate a theoretical quantile vs real quantile plot
         fig,ax=plt.subplots()
         yData= self.weightDiagonal*self.residual
@@ -134,7 +134,11 @@ class huberSolution:
              # Find the index of the point closest to the cursor
             distance = np.sqrt((yData - sel.target[1])**2)
             index = np.argmin(distance)
-            sel.annotation.set(text=f"ObservationIndex: {index}")
+            if (distance[index]<0.001):
+                sel.annotation.set(text=f"ObservationIndex:{index} Line Number:{evaluator.getLineNumber(index)}")
+            else:
+                sel.annotation.set(text=f"No data point.")
+            #sel.annotation.set(text=f"ObservationIndex: {index}")
 
 
 

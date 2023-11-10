@@ -234,6 +234,7 @@ public:
 
 	/// Number of unknowns, equations, observations and constraints.
 	UEOIndices fUEOIndices;
+	std::unordered_map<int, int> fObsIdx2LineIdx;
 
 	/// Sets the number of LS iterations.
 	void setNumberOfLSIterations(int noi) { fLSRelatedInfo.fNumberOfLSIterations = noi; }

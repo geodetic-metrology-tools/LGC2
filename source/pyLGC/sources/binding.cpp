@@ -18,7 +18,8 @@ PYBIND11_MODULE(pyLGC, m)
 		.def("getFirstDesignMatrix", &LGCController::getFirstDesignMatrix, py::arg("par"))
 		.def("getFirstConstraintDesignMatrix", &LGCController::getFirstConstraintDesignMatrix,  py::arg("par"))
 		.def("getSecondDesignMatrix", &LGCController::getSecondDesignMatrix, py::arg("par"))
-		.def("getPv", &LGCController::getPv, py::arg("par"));
+		.def("getPv", &LGCController::getPv, py::arg("par"))
+		.def("getLineNumber", &LGCController::getLineNumber, py::arg("par"));
 	//Eigen::SparseMatrix<double> 
 //Eigen::SparseMatrix<double> 
 //Eigen::SparseMatrix<double> 

@@ -40,6 +40,7 @@ public:
 	Eigen::SparseMatrix<double> getFirstDesignMatrix(Eigen::VectorXd par);
 	Eigen::SparseMatrix<double> getFirstConstraintDesignMatrix(Eigen::VectorXd par);
 	Eigen::SparseMatrix<double> getSecondDesignMatrix(Eigen::VectorXd par);
+	int getLineNumber(int obsIdx) { return fProject->fObsIdx2LineIdx[obsIdx]; }
 	// diagonal of weight matrix
 	Eigen::VectorXd getPv(Eigen::VectorXd par);
 

@@ -28,9 +28,9 @@ from analyzer import huberSolver,huberSolution
 #obj = pyLGC.LGCController("LHC_2013-Compense_v2-LGC_1.12.02.lgc")
 #obj = pyLGC.LGCController("LHC_2013-Compense_v2-LGC_1.12.02.sim")
 #obj = pyLGC.LGCController("huberExamples/PSR2AD-NTOF_CALA-PSR-AD.lgc")
-obj = pyLGC.LGCController("huberExamples/28360.lgc")
+#obj = pyLGC.LGCController("huberExamples/28360.lgc")
 #obj = pyLGC.LGCController("PSR2AD-NTOF_CALA-PSR-AD.sim")
-#obj = pyLGC.LGCController("huberExamples/15217.lgc")
+obj = pyLGC.LGCController("huberExamples/12731-LSS5_Gyro-Acc_GKA_TestVersion_CALA.lgc")
 #obj = pyLGC.LGCController("huberExamples/simpleMinimal.lgc")
 #obj = pyLGC.LGCController("huberExamples/SUS-1910_ScanLGC_frames_OBSXYZ_OK_BF.lgc")
 
@@ -41,7 +41,7 @@ initialValue = obj.getParameter()
 for huberGamma in [2.95,100000]:
     print("Attempt Huber problem with gamma =",huberGamma)
     solution= myTool.solve(initialValue, huberGamma,maxIter=10)
-    solution.showQQPlot()
+    solution.showQQPlot(obj)
     diffNorm=np.linalg.norm(solution.primalSolution-initialValue)
     linPart=solution.negLinearPart+solution.posLinearPart
     #print("linear part=",np.linalg.norm(linPart))
