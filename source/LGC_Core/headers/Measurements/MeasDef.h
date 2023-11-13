@@ -315,12 +315,6 @@ class TDVER  : public TAScalarMeas<int>{
 		///Pointer to the first point
 		const LGCAdjustablePoint* station;
 
-		/// Line in the input file where this measurement was defined
-		int line;
-
-		/// DB comment after the measurement definition
-		std::string eolcomment;
-
 	/*!@name Constructors */
 	//@{
       TDVER(const LGCAdjustablePoint& station, const LGCAdjustablePoint& target, TLength obsVal);
@@ -458,12 +452,6 @@ public:
 	///Pointer to the first point
 	const LGCAdjustablePoint* station;
 
-	/// Line in the input file where this measurement was defined
-	int line;
-
-	/// DB comment after the measurement definition
-	std::string eolcomment;
-
 	/*!@name Constructors */
 	//@{
 	TRADI(const LGCAdjustablePoint& point, TAngle obsVal, TLength sig = TLength(0.0));
@@ -526,12 +514,6 @@ public:
 
 	///Pointer to the orientation point
 	const LGCAdjustablePoint* orientationPt;
-
-	/// Line in the input file where this measurement was defined
-	int line;
-
-	/// DB comment after the measurement definition
-	std::string eolcomment;
 
 	/*!@name Constructors */
 	//@{
@@ -597,12 +579,6 @@ public:
 	//Position of the point in the subframe (= observation)
 	TPositionVector obsValue;
 	TDataTreeIterator positionInTree;
-
-	/// Line in the input file where this measurement was defined
-	int line;
-
-	/// DB comment after the measurement definition
-	std::string eolcomment;
 
 	/*!@name Constructors */
 	//@{
@@ -691,10 +667,6 @@ public:
 
 class TECWS : public TAScalarMeas<TInstrumentData::THLSR> {
 public:
-
-	/// Line in the input file where this measurement was defined
-	int line;
-
 	/*!@name Constructors */
 	//@{
 	TECWS(const LGCAdjustablePoint& station, TInstrumentData::THLSR instr, TLength obsVal) :
@@ -730,10 +702,6 @@ enum EECWIDistances
 class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>
 {
 public:
-
-	/// Line in the input file where this measurement was defined
-	int line;
-
 	/*!@name Constructors */
 	//@{
 	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr){};
