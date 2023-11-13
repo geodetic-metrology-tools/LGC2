@@ -97,7 +97,7 @@ void TKeyNODUP::parse(const std::vector<std::string>&, bool activeLine, int) {
 }
 
 
-void TKeyPDOR::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
+void TKeyPDOR::parse(const std::vector<std::string>& tokens, bool activeLine, int lineNumber) {
     if(activeLine && fconfig.allfixed.isActive())
         throw std::runtime_error("PDOR is not allowed with ALLFIXED option.");
 
@@ -112,15 +112,17 @@ void TKeyPDOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		return;
 	}
 
-	// Points must occur in pairs
+	// Either just a pointname or a pointname + bearing
     if(numtok == 1){
         fconfig.pdor.fptname = tokens.at(0);
+		fconfig.pdor.line = lineNumber;
     }
 	else if (numtok == 2)
 	{
         fconfig.pdor.fptname = tokens.at(0);
         fconfig.pdor.fgis = TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons);
 		fconfig.pdor.hasBearing = true;
+		fconfig.pdor.line = lineNumber;
 	}
 	else
 		throw std::runtime_error("Keyword *PDOR takes either one or two arguments "

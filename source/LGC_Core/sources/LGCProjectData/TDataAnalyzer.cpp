@@ -1245,6 +1245,7 @@ void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)
 			pdor_meas.Initialise(*cala, oriPt, pdor.fgis, pdor.hasBearing);
 			pdor_meas.setFirstEquationIndex(fData.fUEOIndices.EIndex);
 			pdor_meas.setFirstObservationIndex(fData.fUEOIndices.OIndex);
+			pdor_meas.line = pdor.line;
 			fData.fUEOIndices.EIndex++;
 			fData.fUEOIndices.OIndex++;
 			fData.addToMeasurementNum(TMeasurementsGlobal::kPDOR);

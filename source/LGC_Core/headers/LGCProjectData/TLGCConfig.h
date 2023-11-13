@@ -129,24 +129,30 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 			TAngle fgis;
 			//boolean to know if the bearing is given in the input file
 			bool hasBearing; 
+			// line where it is defined
+			int line;
 			
 			/// There is no orientation point for the adjustment
 			TPDOR()
                 : TBinaryOption()
                 , fptname("")
                 , fgis(TAngle(0.0))
-                , hasBearing(false) {}
+                , hasBearing(false)
+				, line(-1)
+			{}
 			/*!
 				\brief Adds an orientation point to the adjustment with an optional gisement.
 
 				\param ptname The name of the orientation point as it is given in the points section
 				\param gisement Constant gisement of the solution
 			*/
-			TPDOR(const std::string& ptname, TAngle gisement = TAngle(0.0)) :
+			TPDOR(const std::string &ptname, TAngle gisement = TAngle(0.0), int lineNumber = -1) :
 				TBinaryOption(true),
 				fptname(ptname),
 				fgis(gisement),
-				hasBearing(false){}
+				hasBearing(false), 
+				line(lineNumber)
+			{}
 
 			#if USE_SERIALIZER
 				// Inherited via Serializable
