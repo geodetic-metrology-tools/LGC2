@@ -26,7 +26,7 @@ const TLGCObsSummary& TEDM::getDSPTObsSummary(std::string text) noexcept {
 
 #if USE_SERIALIZER
 // Inherited via Serializable
-void TEDM::serialize(SerializerObject::SerializationHelper &obj) const
+void TEDM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("dsptSummary_", dsptSummary_);
 	obj.addProperty("instrument", instrument);

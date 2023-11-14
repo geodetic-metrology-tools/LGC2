@@ -82,7 +82,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
@@ -114,7 +114,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
@@ -150,7 +150,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 			#if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 			#endif
 	};
 	
@@ -170,7 +170,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 	
@@ -204,7 +204,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
@@ -237,7 +237,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
@@ -308,14 +308,14 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 
 };
 
 
 #if USE_SERIALIZER
-inline void TLGCConfig::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("allfixed", allfixed);
 	obj.addProperty("chaba", chaba);
@@ -346,7 +346,7 @@ inline void TLGCConfig::serialize(SerializerObject::SerializationHelper &obj) co
 	obj.addProperty("json", writeJSON);
 }
 
-inline void TLGCConfig::TSimulation::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::TSimulation::serialize(ObjectSerializer &obj) const
 {
 	TBinaryOption::serialize(obj);
 	obj.addProperty("numSims", numSims);
@@ -354,14 +354,14 @@ inline void TLGCConfig::TSimulation::serialize(SerializerObject::SerializationHe
 	obj.addProperty("writeLGCFile", writeLGCFile);
 }
 
-inline void TLGCConfig::TFautDetect::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::TFautDetect::serialize(ObjectSerializer &obj) const
 {
 	TBinaryOption::serialize(obj);
 	obj.addProperty("alpha", alpha);
 	obj.addProperty("beta", beta);
 }
 
-inline void TLGCConfig::TPDOR::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::TPDOR::serialize(ObjectSerializer &obj) const
 {
 	TBinaryOption::serialize(obj);
 	obj.addProperty("fptname", fptname);
@@ -369,19 +369,19 @@ inline void TLGCConfig::TPDOR::serialize(SerializerObject::SerializationHelper &
 	obj.addProperty("hasBearing", hasBearing);
 }
 
-inline void TLGCConfig::TCustomOutputSep::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::TCustomOutputSep::serialize(ObjectSerializer &obj) const
 {
 	TBinaryOption::serialize(obj);
 	obj.addProperty("separator", separator);
 }
 
-inline void TLGCConfig::TCoordOut::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::TCoordOut::serialize(ObjectSerializer &obj) const
 {
 	TBinaryOption::serialize(obj);
 	obj.addProperty("fmode", fmode);
 }
 
-inline void TLGCConfig::TPrecision::serialize(SerializerObject::SerializationHelper &obj) const
+inline void TLGCConfig::TPrecision::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("digits", digits);
 	obj.addProperty("convCrit", convCrit);

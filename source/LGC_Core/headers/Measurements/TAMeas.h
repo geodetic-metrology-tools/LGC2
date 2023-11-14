@@ -97,7 +97,7 @@ class TAMeas : public TStatusObject
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+			virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
 		//@}
@@ -227,7 +227,7 @@ class TAScalarMeas : public TAMeas<TTarget>
 			}
 
 #if USE_SERIALIZER
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 		//@}
 };
@@ -315,7 +315,7 @@ class TAVectorMeas : public TAMeas<TTarget>
 			return YcompResidual;
 		}
 #if USE_SERIALIZER
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 };
 

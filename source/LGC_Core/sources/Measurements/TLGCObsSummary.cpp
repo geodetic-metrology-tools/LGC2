@@ -339,7 +339,7 @@ TLGCObsSummary TLGCObsSummary::merge(const std::list<const TLGCObsSummary*> &sum
 }
 
 #if USE_SERIALIZER
-void TLGCObsSummary::serialize(SerializerObject::SerializationHelper &obj) const
+void TLGCObsSummary::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("fAngleType", fAngleType);
 	obj.addProperty("fCreateHistogram", fCreateHistogram);

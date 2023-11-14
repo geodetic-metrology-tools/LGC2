@@ -104,7 +104,7 @@ class TInstrumentData
             
 #if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
             };
 
@@ -150,7 +150,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 
 			std::string ID;
@@ -207,7 +207,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
             };
 
@@ -245,7 +245,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 
 			std::string ID;
@@ -307,7 +307,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 			};
 
@@ -352,7 +352,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 		};
 
@@ -399,7 +399,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 				// Inherited via Serializable
-				virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+				virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 			};
 
@@ -444,7 +444,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 		};
 
@@ -482,7 +482,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 		};
 
@@ -523,7 +523,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 		};
 
@@ -553,7 +553,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 		};
 
@@ -601,7 +601,7 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+			virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 		};
 
@@ -642,13 +642,13 @@ class TInstrumentData
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 };
 
 
 #if USE_SERIALIZER
-    inline void TInstrumentData::serialize(SerializerObject::SerializationHelper &obj) const
+    inline void TInstrumentData::serialize(ObjectSerializer &obj) const
     {
 		if (!fCAMD.empty())
 			obj.addProperty("fCAMD", fCAMD);
@@ -668,7 +668,7 @@ class TInstrumentData
 			obj.addProperty("fWPSR", fWPSR);
     }
 
-	inline void TInstrumentData::TPOLAR::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TPOLAR::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("constAngle", constAngle.getRadiansValue());
 		obj.addProperty("defTarget", defTarget);
@@ -681,7 +681,7 @@ class TInstrumentData
 	}
 
 	
-	inline void TInstrumentData::TPOLAR::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TPOLAR::TTarget::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
 		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
@@ -706,7 +706,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 	
-	inline void TInstrumentData::TCAMD::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TCAMD::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("defTarget", defTarget);
 		obj.addProperty("ID", ID);
@@ -715,7 +715,7 @@ class TInstrumentData
 		obj.addProperty("targets", targets);
 	}
 
-	inline void TInstrumentData::TCAMD::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TCAMD::TTarget::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("ID", ID);
 		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
@@ -728,7 +728,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 
-	inline void TInstrumentData::TEDM::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TEDM::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("defTarget", defTarget);
 		obj.addProperty("ID", ID);
@@ -739,7 +739,7 @@ class TInstrumentData
 		obj.addProperty("targets", targets);
 	}
 
-	inline void TInstrumentData::TEDM::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TEDM::TTarget::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("distCorrectionAdjustable", distCorrectionAdjustable);
 		obj.addProperty("distCorrectionUnknown", distCorrectionUnknown);
@@ -755,7 +755,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 
-	inline void TInstrumentData::TLEVEL::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TLEVEL::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("collAngleAdjustable", collAngleAdjustable);
 		obj.addProperty("collAngleUnknown", collAngleUnknown);
@@ -766,7 +766,7 @@ class TInstrumentData
 		obj.addProperty("targets", targets);
 	}
 
-	inline void TInstrumentData::TLEVEL::TTarget::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TLEVEL::TTarget::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("distCorrectionValue", distCorrectionValue.getMetresValue());
 		obj.addProperty("ID", ID);
@@ -779,7 +779,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 
-	inline void TInstrumentData::TSCALE::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TSCALE::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("distCorrectionValue", distCorrectionValue.getMetresValue());
 		obj.addProperty("ID", ID);
@@ -791,7 +791,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 
-	inline void TInstrumentData::TINCL::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TINCL::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("angleCorrectionValue", angleCorrectionValue.getRadiansValue());
 		obj.addProperty("ID", ID);
@@ -804,7 +804,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 
-	inline void TInstrumentData::THLSR::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::THLSR::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("ID", ID);
 		obj.addProperty("sigmaCombinedDist", sigmaCombinedDist.getMetresValue());
@@ -815,7 +815,7 @@ class TInstrumentData
 		obj.addProperty("line", line);
 	}
 
-	inline void TInstrumentData::TWPSR::serialize(SerializerObject::SerializationHelper &obj) const
+	inline void TInstrumentData::TWPSR::serialize(ObjectSerializer &obj) const
 	{
 		obj.addProperty("ID", ID);
 		obj.addProperty("sigmaX", sigmaX.getMetresValue());

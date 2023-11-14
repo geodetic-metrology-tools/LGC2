@@ -350,8 +350,7 @@ void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outpu
 {
 	if (!Logger::getLogger().hasErrors())
 	{
-		jsonSerializerObject ser;
-		SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+		JSONObjectSerializer obj;
 		obj.addProperty("fCopyright", fCopyright);
 		obj.addProperty("LGCVersion", getLGCVersion());
 		obj.addProperty("startProcessingTimestamp", startProcessingTimestampISO);
@@ -361,7 +360,7 @@ void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outpu
 			obj.addProperty("ResultsMatrices", fResMtrx);
 
 		std::ofstream fout(outputFileLocation + ".json");
-		fout << ser.getStringRepresentation();
+		fout << obj.getStringRepresentation();
 	}
 	else
 	{

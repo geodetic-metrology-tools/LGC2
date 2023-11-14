@@ -310,7 +310,7 @@ int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
 
 #if USE_SERIALIZER
 // Inherited via Serializable
-void LGCAdjustablePoint::serialize(SerializerObject::SerializationHelper &obj) const
+void LGCAdjustablePoint::serialize(ObjectSerializer &obj) const
 {
 	TAdjustablePoint::serialize(obj);
 	obj.addProperty("allfixedParam", allfixedParam);

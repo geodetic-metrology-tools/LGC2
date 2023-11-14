@@ -293,7 +293,7 @@ const TECWIObsSummary& TMeasurements::getECWIGlobalObsSummary() const {	return e
 
 #if USE_SERIALIZER
 // Inherited via Serializable
-void TMeasurements::serialize(SerializerObject::SerializationHelper &obj) const
+void TMeasurements::serialize(ObjectSerializer &obj) const
 {
 	if (anglGlobalSummary_.getNumberOfObs())
 		obj.addProperty("anglGlobalSummary_", anglGlobalSummary_);

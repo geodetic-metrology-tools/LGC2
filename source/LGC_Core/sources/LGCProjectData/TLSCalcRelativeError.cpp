@@ -193,7 +193,7 @@ std::vector<functionEval> TLSCalcRelativeError::evaluateRelErrorFunctions(const 
 }
 
 #if USE_SERIALIZER
-void TLSCalcRelativeError::serialize(SerializerObject::SerializationHelper &obj) const
+void TLSCalcRelativeError::serialize(ObjectSerializer &obj) const
 {
 	if (fPoint1)
 		obj.addProperty("fPoint1", fPoint1->getName());

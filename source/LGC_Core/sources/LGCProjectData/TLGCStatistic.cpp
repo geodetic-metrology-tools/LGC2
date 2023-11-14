@@ -37,7 +37,7 @@ TLGCStatistic::~TLGCStatistic(){
 
 
 #if USE_SERIALIZER
-void TLGCStatistic::serialize(SerializerObject::SerializationHelper &obj) const
+void TLGCStatistic::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("fAreDetermined", fAreDetermined);
 	obj.addProperty("fDegreesOfFreedom", fDegreesOfFreedom);

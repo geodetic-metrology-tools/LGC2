@@ -117,7 +117,7 @@ void LGCAdjustablePlane::reInitialise(){
 
 
 #if USE_SERIALIZER
-void LGCAdjustablePlane::serialize(SerializerObject::SerializationHelper &obj) const
+void LGCAdjustablePlane::serialize(ObjectSerializer &obj) const
 {
 	TVAdjustableObject::serialize(obj);
 	obj.addProperty("fCorrectionPhi", fCorrectionPhi.getRadiansValue());

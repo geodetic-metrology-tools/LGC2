@@ -838,7 +838,7 @@ void TLGCData::updateAdjustableObjectsPointers(TLGCData *d)
 
 #if USE_SERIALIZER
 
-void TLGCData::serialize(SerializerObject::SerializationHelper &obj) const
+void TLGCData::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("angles", angles);
 	obj.addProperty("comments", comments);
@@ -860,7 +860,7 @@ void TLGCData::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("slaveGroups", slaveGroups);
 }
 
-void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper &obj) const
+void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("fNumANGL", fNumANGL);
 	obj.addProperty("fNumZEND", fNumZEND);
@@ -886,7 +886,7 @@ void TMeasurementsGlobal::serialize(SerializerObject::SerializationHelper &obj) 
 	obj.addProperty("fNumECWI", fNumECWI);
 }
 
-void TPointGlobal::serialize(SerializerObject::SerializationHelper &obj) const
+void TPointGlobal::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("fNumCala", fNumCala);
 	obj.addProperty("fNumVx", fNumVx);
@@ -898,7 +898,7 @@ void TPointGlobal::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("fNumVxyz", fNumVxyz);
 }
 
-void TLGCData::TLSRelatedInfo::serialize(SerializerObject::SerializationHelper &obj) const
+void TLGCData::TLSRelatedInfo::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("fNumberOfLSIterations", fNumberOfLSIterations);
 	obj.addProperty("fS0APosteriori", fS0APosteriori);

@@ -64,7 +64,7 @@ class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 		
 };
@@ -89,7 +89,7 @@ class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+		virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -113,7 +113,7 @@ class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+		virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -139,7 +139,7 @@ class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget> {
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+		virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -168,7 +168,7 @@ class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+		virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 /*!
@@ -197,7 +197,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -219,7 +219,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+	virtual void serialize(ObjectSerializer &obj) const override { 
 		TAScalarMeas::serialize(obj); 
 	}
 #endif
@@ -248,7 +248,7 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget> {
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+		virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -272,7 +272,7 @@ class TECHO : public TAScalarMeas<TInstrumentData::TSCALE> {
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
-		virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+		virtual void serialize(ObjectSerializer &obj) const override { 
 			TAScalarMeas::serialize(obj); 
 		}
 #endif
@@ -298,7 +298,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+	virtual void serialize(ObjectSerializer &obj) const override { 
 		TAScalarMeas::serialize(obj); 
 	}
 #endif
@@ -349,7 +349,7 @@ class TDVER  : public TAScalarMeas<int>{
 
 #if USE_SERIALIZER
 	  // Inherited via Serializable
-	  virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	  virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
 	private:
@@ -385,7 +385,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 			#if USE_SERIALIZER
 						// Inherited via Serializable
-						virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+						virtual void serialize(ObjectSerializer &obj) const;
 			#endif
 
 			private:
@@ -414,7 +414,7 @@ class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget> {
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+			virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -442,7 +442,7 @@ class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget,
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
-			virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+			virtual void serialize(ObjectSerializer &obj) const override { 
 				TAScalarMeas::serialize(obj); 
 			}
 #endif
@@ -502,7 +502,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
 private:
@@ -573,7 +573,7 @@ public:
 	
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
 private:
@@ -640,7 +640,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
 private:
@@ -680,7 +680,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override { 
+	virtual void serialize(ObjectSerializer &obj) const override { 
 		TAScalarMeas::serialize(obj);
 	}
 #endif
@@ -709,7 +709,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 };
 
@@ -750,7 +750,7 @@ public:
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const;
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
 };

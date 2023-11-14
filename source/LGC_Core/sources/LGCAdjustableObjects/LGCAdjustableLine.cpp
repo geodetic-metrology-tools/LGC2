@@ -153,7 +153,7 @@ void LGCAdjustableLine::setDefaults(){
 
 
 #if USE_SERIALIZER
-void LGCAdjustableLine::serialize(SerializerObject::SerializationHelper &obj) const
+void LGCAdjustableLine::serialize(ObjectSerializer &obj) const
 {
 	TVAdjustableObject::serialize(obj);
 	obj.addProperty("fInit", fInit);

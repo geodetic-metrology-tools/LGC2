@@ -58,7 +58,7 @@ const TUVECObsSummary& TCAM::getUVECObsSummary(std::string text) noexcept {
 
 #if USE_SERIALIZER
 // Inherited via Serializable
-void TCAM::serialize(SerializerObject::SerializationHelper &obj) const
+void TCAM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("instrument", instrument);
 	if (instrumentPos)
