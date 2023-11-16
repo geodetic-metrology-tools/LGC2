@@ -28,7 +28,6 @@ tut::factory tf("Test API ");
 
 namespace tut
 {
-
 template<>
 template<>
 void object::test<1>()
@@ -40,7 +39,7 @@ void object::test<1>()
 	Eigen::VectorXd expectedRes(7);
 	expectedRes << 1, 2, 3, 0, 0, 0, 1;
 	ensure("Frame Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
-	
+
 	// test P2 position
 	Eigen::VectorXd estP2 = apiObject.getPointEstimate("P2");
 	Eigen::VectorXd expectedP2(3);
@@ -52,10 +51,11 @@ void object::test<1>()
 	estP2 = apiObject.getPointEstimate("P2");
 	expectedP2.setConstant(1);
 	ensure("After testObs2 deactivation, P2 needs to be estimated at 1,1,1", estP2.isApprox(expectedP2));
-	
+
 	// test reactivation
 	apiObject.setActivationStatus("testObs2", true);
-	apiObject.adjust();estP2 = apiObject.getPointEstimate("P2");
+	apiObject.adjust();
+	estP2 = apiObject.getPointEstimate("P2");
 	expectedP2.setZero();
 	ensure("After testObs2 reactivation, P2 needs to be estimated again at 0,0,0", estP2.isApprox(expectedP2));
 
@@ -97,7 +97,7 @@ template<>
 template<>
 void object::test<2>()
 {
-	set_test_name("Testing methods for manipulatinr fixed parameters");
+	set_test_name("Testing methods for manipulating fixed parameters");
 	Moni apiObject("test_files/manipulateFixedParameters.lgc2");
 	apiObject.adjust();
 	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
@@ -108,7 +108,7 @@ void object::test<2>()
 	for (int j = 0; j < 7; j++)
 	{
 		// manipulate frame parameter j
-		apiObject.setFixedFrameParameter("testFrame", j, 0.1*j);
+		apiObject.setFixedFrameParameter("testFrame", j, 0.1 * j);
 		apiObject.adjust();
 		Eigen::VectorXd framePars = apiObject.getFrameEstimate("testFrame");
 		// j-th entry should be fixed to value 0.1*j now (take 0.1*j because j would be greater then pi and normalization ocurs)
@@ -126,12 +126,111 @@ void object::test<2>()
 		double estVar = pointPars(j);
 		ensure_equals("Point variable index " + std::to_string(j) + " should be fixed to " + std::to_string(j) + " now.", estVar, j);
 	}
-		
 }
 
 template<>
 template<>
 void object::test<3>()
+{
+	set_test_name("Testing methods for freezing frame parameters");
+	Moni apiObject("test_files/minimalTest.lgc2");
+	apiObject.adjust();
+	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
+	Eigen::VectorXd expectedRes(7);
+	expectedRes << 1, 2, 3, 0, 0, 0, 1;
+	// std::cout << estRes << std::endl;
+	ensure("Frame Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
+
+	// test freezing a parameter
+	apiObject.freezeFrameParameter("testFrame", 0, 5.0);
+	apiObject.adjust();
+	estRes = apiObject.getFrameEstimate("testFrame");
+	ensure_equals("tx should be frozen to value of 5. ", estRes[0], 5.0);
+
+	// unfreeze the parameter
+	apiObject.unfreezeFrameParameter("testFrame", 0);
+	apiObject.adjust();
+	estRes = apiObject.getFrameEstimate("testFrame");
+	ensure_equals("tx should be back at 1. ", estRes[0], 1.0);
+
+	// try freezing a fixed variable
+	try
+	{
+		apiObject.freezeFrameParameter("testFrame", 3, 1.0);
+		fail("exception expected when trying to freeze a fixed varable.");
+	}
+	catch (const std::runtime_error &ex)
+	{
+		// ok
+	}
+
+	// try unfreeze non frozen variable
+	try
+	{
+		apiObject.unfreezeFrameParameter("testFrame", 4);
+		fail("exception expected");
+	}
+	catch (const std::runtime_error &ex)
+	{
+		// ok
+	}
+}
+
+template<>
+template<>
+void object::test<4>()
+{
+	set_test_name("Testing methods for freezing point parameters");
+	Moni apiObject("test_files/minimalTest.lgc2");
+	apiObject.adjust();
+	Eigen::VectorXd estRes = apiObject.getPointEstimate("P2");
+	Eigen::VectorXd expectedRes(3);
+	expectedRes << 0, 0, 0;
+	ensure("Point Parameters have to be estimated correctly.", estRes.isApprox(expectedRes, 1e-12));
+
+	// test freezing a parameter
+	apiObject.freezePointParameter("P2", 0, 5.0);
+	apiObject.adjust();
+	estRes = apiObject.getPointEstimate("P2");
+	ensure_equals("tx should be frozen to value of 5. ", estRes[0], 5.0);
+
+	// extract precision of frozen parameter
+	Eigen::VectorXd frozenPrecision = apiObject.getPointEstimatePrec("P2");
+	ensure_equals("x coordinate is frozen so precision should be zero. ", frozenPrecision[0], 0.0);
+	ensure("y coordinate is not frozen and there should be a nonzero-precision assigned", (fabs(frozenPrecision[1]) != 0.0));
+	ensure("z coordinate is not frozen and there should be a nonzero-precision assigned", (fabs(frozenPrecision[2]) != 0.0));
+
+	// unfreeze the parameter
+	apiObject.unfreezePointParameter("P2", 0);
+	apiObject.adjust();
+	estRes = apiObject.getPointEstimate("P2");
+	ensure_equals("x coordinate should be back at 0. ", estRes[0], 0.0);
+
+	// try freezing a fixed variable
+	try
+	{
+		apiObject.freezePointParameter("P1", 1, 1.0);
+		fail("exception expected when trying to freeze a fixed varable.");
+	}
+	catch (const std::runtime_error &ex)
+	{
+		// ok
+	}
+
+	// try unfreeze non frozen variable
+	try
+	{
+		apiObject.unfreezePointParameter("P2", 0);
+		fail("exception expected");
+	}
+	catch (const std::runtime_error &ex)
+	{
+		// ok
+	}
+}
+template<>
+template<>
+void object::test<5>()
 {
 	set_test_name("Testing API on single component test file");
 	ensure_equals("Reading file successful", true, true);
@@ -181,43 +280,39 @@ void object::test<3>()
 		auto currentTime = high_resolution_clock::now();
 		auto duration = duration_cast<milliseconds>(currentTime - start);
 
-  		// get exemplary parameter estimates
-  		std::string pointName = "A-TAP.HLS1";
-  		std::string frameName = "WIRE.RIGHT.DOF";
-  
-  		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
-  		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
-  		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
-  		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
-  				  << mockup.getPointEstimatePrec(pointName) << std::endl;
-  		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
-  		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
-  				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
-  
-  		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
-  		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
-  
-  		// get exemplary measurement residual
-  		std::string obsName = "meas1";
-  		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
-  		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
-  		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
-  
-  		// get sigmaZero
-  		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
+		// get exemplary parameter estimates
+		std::string pointName = "A-TAP.HLS1";
+		std::string frameName = "WIRE.RIGHT.DOF";
 
+		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
+		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
+		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
+		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
+				  << mockup.getPointEstimatePrec(pointName) << std::endl;
+		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
+		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
+				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+
+		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
+		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
+
+		// get exemplary measurement residual
+		std::string obsName = "meas1";
+		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
+		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
+		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
+
+		// get sigmaZero
+		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
 	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
-
-
 }
 
-
 template<>
 template<>
-void object::test<4>()
+void object::test<6>()
 {
 	set_test_name("Testing API on single component test file");
 	ensure_equals("Reading file successful", true, true);
@@ -254,10 +349,10 @@ void object::test<4>()
 			perturbation << std::normal_distribution<double>(0, sigma)(engine), std::normal_distribution<double>(0, sigma)(engine);
 			Eigen::VectorXd new_measurement = perturbation + originalMeasurements.at(id);
 			mockup.updateMeas(id, new_measurement);
-			//Eigen::VectorXd new_obsSigma(1);
-			// testing  setObsSigma
-			// new_obsSigma << 1e-5;
-			// mockup.setObsSigma(id, new_obsSigma);
+			// Eigen::VectorXd new_obsSigma(1);
+			//  testing  setObsSigma
+			//  new_obsSigma << 1e-5;
+			//  mockup.setObsSigma(id, new_obsSigma);
 		}
 		status = mockup.getStatus();
 		ensure_equals("Estimation status should be false after measurement updates", status, false);
@@ -269,37 +364,34 @@ void object::test<4>()
 		auto currentTime = high_resolution_clock::now();
 		auto duration = duration_cast<milliseconds>(currentTime - start);
 
-  		// get exemplary parameter estimates
+		// get exemplary parameter estimates
 		std::string pointName = "BEAM_SCT.GTAP.A1LX.E";
-  		std::string frameName = "SCT.GTAP.A1LX.RSTRI";
-  
-  		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
-  		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
-  		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
-  		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
-  				  << mockup.getPointEstimatePrec(pointName) << std::endl;
-  		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
-  		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
-  				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
-  
-  		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
-  		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
-  
-  		// get exemplary measurement residual
-  		std::string obsName = "GTAP.A1LX.L_WPS";
-  		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
-  		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
-  		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
-  
-  		// get sigmaZero
-  		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
+		std::string frameName = "SCT.GTAP.A1LX.RSTRI";
 
+		std::cout << "Estimate of " << pointName << " in coordinates of its defining frame: " << std::endl << mockup.getPointEstimate(pointName) << std::endl;
+		std::cout << "Estimate of " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl << mockup.getPointEstimate(pointName, "ROOT") << std::endl;
+		// precisions of this point in its defining frame are zero because the point is fixed in this frame -- "CALA" point
+		std::cout << "Estimated precision for " << pointName << " in coordinates of its defining frame: " << std::endl
+				  << mockup.getPointEstimatePrec(pointName) << std::endl;
+		// precisions of this point in "ROOT" frame are non-zero because there are non-trivial Helmert transformations with uncertain parameters involved
+		std::cout << "Estimated precision for " << pointName << " in coordinates of the \"ROOT\" frame: " << std::endl
+				  << mockup.getPointEstimatePrec(pointName, "ROOT") << std::endl;
+
+		std::cout << "Estimated parameters for frame " << frameName << " : " << std::endl << mockup.getFrameEstimate(frameName) << std::endl;
+		std::cout << "Estimated precision for frame " << frameName << " : " << std::endl << mockup.getFrameEstimatePrec(frameName) << std::endl;
+
+		// get exemplary measurement residual
+		std::string obsName = "GTAP.A1LX.L_WPS";
+		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
+		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
+		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
+
+		// get sigmaZero
+		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
 	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
-
-
 }
 
 }; // namespace tut
