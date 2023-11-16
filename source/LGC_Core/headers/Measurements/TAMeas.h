@@ -108,10 +108,14 @@ class TAMeas : public TStatusObject
 			void setFirstEquationIndex(MatrixIndex firstEquationIndex){fFirstEquationIndex = firstEquationIndex;}
 
 			/// Sets LS matrices OBSERVATION index of the first observation of this measurement
-			void setFirstObservationIndex(MatrixIndex firstObservationIndex, std::unordered_map<int, int> &lines)
+			void setFirstObservationIndex(MatrixIndex firstObservationIndex, std::unordered_map<int, int> &lines, int nObs = 1)
 			{
 				fFirstObservationIndex = firstObservationIndex;
-				lines[firstObservationIndex] = line;
+				// there can be several obsIndices on the same measurement line, e.g. PLR3D
+				for (int j = 0; j < nObs; j++)
+				{
+					lines[firstObservationIndex + j] = line;
+				}
 			}
 		//@}
 };

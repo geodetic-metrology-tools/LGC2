@@ -135,7 +135,7 @@ class huberSolution:
             distance = np.sqrt((yData - sel.target[1])**2)
             index = np.argmin(distance)
             if (distance[index]<0.001):
-                sel.annotation.set(text=f"ObservationIndex:{index} Line Number:{evaluator.getLineNumber(index)}")
+                sel.annotation.set(text=f"ObservationIndex:{index} Line Number:{evaluator.getLineNumber(index)} \n Relative Residual: {yData[index]}")
             else:
                 sel.annotation.set(text=f"No data point.")
             #sel.annotation.set(text=f"ObservationIndex: {index}")
