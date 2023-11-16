@@ -49,6 +49,25 @@ void Moni::setFixedPointParameter(std::string frameName, int idx, double val)
 	pimpl_->setFixedPointParameter(frameName, idx, val);
 }
 
+void Moni::freezeFrameParameter(std::string frameName, int idx, double val)
+{
+	pimpl_->freezeFrameParameter(frameName, idx, val);
+}
+
+void Moni::unfreezeFrameParameter(std::string frameName, int idx)
+{
+	pimpl_->unfreezeFrameParameter(frameName, idx);
+}
+void Moni::freezePointParameter(std::string pointName, int idx, double val)
+{
+	pimpl_->freezePointParameter(pointName, idx, val);
+}
+
+void Moni::unfreezePointParameter(std::string pointName, int idx)
+{
+	pimpl_->unfreezePointParameter(pointName, idx);
+}
+
 
 // triggering the adjustment calculation
 bool Moni::adjust()
@@ -263,6 +282,160 @@ void Moni::MoniImpl::setFixedPointParameter(std::string pointName, int idx, doub
 
 	pointRef.setEstVal(idx, val);
 
+}
+
+void Moni::MoniImpl::freezeFrameParameter(std::string frameName, int idx, double val)
+{
+	// freeze a frame parameter that is free in the original configuration
+	if (paramRefs.FRAMES.count(frameName) == 0)
+	{
+		throw std::runtime_error("Frame " + frameName + " does not exist.");
+	}
+
+	// this method will potentially change the solution of the estimation, so reset of status necessary
+	estimationStatus = false;
+
+	// check if the associated parameter of the frame is really free
+	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
+	bool isFixed = frameRef.isFixedVar(idx);
+	if (isFixed)
+	{
+		// maybe not throw an error only a warning?
+		throw std::runtime_error("Index " + std::to_string(idx) + " of frame " + frameName + " is not a free variable. Nothing to freeze!");
+	}
+
+	// freeze the parameter
+	if (idx < 3)
+	{
+		frameRef.setTranslation(idx, TLength(val));
+		project->fParameterMask.insert(frameRef.getTranslationUnknIndex(idx));
+	}
+	else if (idx < 6)
+	{
+		frameRef.setRotation(idx - 3, TAngle(val));
+		project->fParameterMask.insert(frameRef.getRotationUnknIndex(idx - 3));
+	}
+	else if (idx == 6)
+	{
+		frameRef.setScale(TReal(val));
+		project->fParameterMask.insert(frameRef.getScaleUnknIndex());
+	}
+}
+
+void Moni::MoniImpl::unfreezeFrameParameter(std::string frameName, int idx)
+{
+	// freeze a frame parameter that is free in the original configuration
+	if (paramRefs.FRAMES.count(frameName) == 0)
+	{
+		throw std::runtime_error("Frame " + frameName + " does not exist.");
+	}
+
+	// this method will potentially change the solution of the estimation, so reset of status necessary
+	estimationStatus = false;
+
+	// check if the associated parameter of the frame is really free
+	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
+	bool isFixed = frameRef.isFixedVar(idx);
+	if (isFixed)
+	{
+		// maybe not throw an error only a warning?
+		throw std::runtime_error("Index " + std::to_string(idx) + " of frame " + frameName + " is not a free variable. Nothing to unfreeze!");
+	}
+
+	// get the index of the variable
+	int frozenIndex = -1;
+	if (idx < 3)
+	{
+		frozenIndex = frameRef.getTranslationUnknIndex(idx);
+	}
+	else if (idx < 6)
+	{
+		frozenIndex = frameRef.getRotationUnknIndex(idx - 3);
+	}
+	else if (idx == 6)
+	{
+		frozenIndex = frameRef.getScaleUnknIndex();
+	}
+	// remove this index from the masked parameter indices
+
+	// Find the iterator to the element
+	auto it = std::find(project->fParameterMask.begin(), project->fParameterMask.end(), frozenIndex);
+
+	// Check if the element was found in the parameter mask
+	if (it != project->fParameterMask.end())
+	{
+		// Erase the element
+		project->fParameterMask.erase(it);
+	}
+	else
+	{
+		throw std::runtime_error("Index " + std::to_string(idx) + " of frame " + frameName + " was not frozen. Nothing to unfreeze!");
+	}
+}
+
+void Moni::MoniImpl::freezePointParameter(std::string pointName, int idx, double val)
+{
+	// freeze a frame parameter that is free in the original configuration
+	if (paramRefs.POINTS.count(pointName) == 0)
+	{
+		throw std::runtime_error("Point " + pointName + " does not exist.");
+	}
+
+	// this method will potentially change the solution of the estimation, so reset of status necessary
+	estimationStatus = false;
+
+	// check if the associated parameter of the frame is really free
+	LGCAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
+	bool isFixed = pointRef.isCoordinateFixed(idx);
+	if (isFixed)
+	{
+		// maybe not throw an error only a warning?
+		throw std::runtime_error("Index " + std::to_string(idx) + " of point " + pointName + " is not a free variable. Nothing to freeze!");
+	}
+
+	// freeze the parameter
+	pointRef.setEstVal(idx, TLength(val));
+	project->fParameterMask.insert(pointRef.getCoordinateUnknIndex(idx));
+}
+
+void Moni::MoniImpl::unfreezePointParameter(std::string pointName, int idx)
+{
+	// freeze a point parameter that is free in the original configuration
+	if (paramRefs.POINTS.count(pointName) == 0)
+	{
+		throw std::runtime_error("Point " + pointName + " does not exist.");
+	}
+
+	// this method will potentially change the solution of the estimation, so reset of status necessary
+	estimationStatus = false;
+
+	// check if the associated parameter of the point is really free
+	LGCAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
+	bool isFixed = pointRef.isCoordinateFixed(idx);
+	if (isFixed)
+	{
+		// maybe not throw an error only a warning?
+		throw std::runtime_error("Index " + std::to_string(idx) + " of point " + pointName + " is not a free variable. Nothing to unfreeze!");
+	}
+
+	// get the index of the variable
+	int frozenIndex = -1;
+	frozenIndex = pointRef.getCoordinateUnknIndex(idx);
+	// remove this index from the masked parameter indices
+
+	// Find the iterator to the element
+	auto it = std::find(project->fParameterMask.begin(), project->fParameterMask.end(), frozenIndex);
+
+	// Check if the element was found in the parameter mask
+	if (it != project->fParameterMask.end())
+	{
+		// Erase the element
+		project->fParameterMask.erase(it);
+	}
+	else
+	{
+		throw std::runtime_error("Index " + std::to_string(idx) + " of point " + pointName + " was not frozen. Nothing to unfreeze!");
+	}
 }
 
 void Moni::MoniImpl::createParameterReferences()

@@ -48,7 +48,15 @@ public:
 	void setObsSigma(std::string id, Eigen::VectorXd sigma);
 	// methods for manipulating fixed point and frame parameters
 	void setFixedFrameParameter(std::string frameName, int idx, double val);
-	void setFixedPointParameter(std::string frameName, int idx, double val);
+	void setFixedPointParameter(std::string pointName, int idx, double val);
+	// methods for freezing variables. Only possible if parameter is free
+	void freezeFrameParameter(std::string frameName, int idx, double val);
+	// unfreeze a frame parameter (only possible if it was freezed previously)
+	void unfreezeFrameParameter(std::string frameName, int idx);
+	void freezePointParameter(std::string PointName, int idx, double val);
+	// unfreeze. only possible for previously freezed parameters
+	void unfreezePointParameter(std::string PointName, int idx);
+
 	// get measurement
 	Eigen::VectorXd getMeas(std::string id);
 	// triggering the adjustment calculation

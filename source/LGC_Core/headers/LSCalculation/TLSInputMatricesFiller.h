@@ -180,13 +180,13 @@ inline void TLSInputMatricesFiller::updateMask(Meas meas, TLSInputMatrices *matr
 		int lastEqIdx= meas->getLastEquationIndex();
 		for	(int j = firstEqIdx; j <= lastEqIdx; j++)
 		{
-			matrices->maskData.EIndices.insert(j);
+			matrices->fMaskData.EIndices.insert(j);
 		}
 		int firstObsIdx = meas->getFirstObservationIndex();
 		int lastObsIdx = meas->getLastObservationIndex();
 		for (int j = firstObsIdx; j <= lastObsIdx; j++)
 		{
-			matrices->maskData.OIndices.insert(j);
+			matrices->fMaskData.OIndices.insert(j);
 		}
 
 	}

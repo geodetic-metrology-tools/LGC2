@@ -37,6 +37,15 @@ public:
 	// changing the value of a fixed frame parameter
 	DECLSPEC void setFixedFrameParameter(std::string frameName, int idx, double val);
 	DECLSPEC void setFixedPointParameter(std::string pointName, int idx, double val);
+	// "freezing" of free parameters
+	DECLSPEC void freezeFrameParameter(std::string frameName, int idx, double val);
+	// "unfreezing" of free parameters
+	DECLSPEC void unfreezeFrameParameter(std::string frameName, int idx);
+	// "freezing" of free parameters
+	DECLSPEC void freezePointParameter(std::string pointName, int idx, double val);
+	// "unfreezing" of free parameters
+	DECLSPEC void unfreezePointParameter(std::string pointName, int idx);
+
 	// triggering the adjustment calculation
 	DECLSPEC bool adjust();
 	// for checking the estimation status

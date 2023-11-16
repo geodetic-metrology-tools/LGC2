@@ -38,6 +38,9 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 		// Contribution generator transformations need to update the transformations it stores.
 		fPointTransformer.updateTransformations();
 
+		// communicate the masked parameters
+		matrices->fMaskData.PIndices = projData->fParameterMask;
+
 		// LGC uses only parametric measurement models, so the B matrix is -Identity
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
