@@ -8,6 +8,8 @@ from dataclasses import dataclass
 import seaborn as sns
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
+import shutil
+import os
 
 def cast2HuberQP(P,A,A2,B,W,W2,huberGamma):
     ## taking the design matrices and the weight  matrix.
@@ -66,8 +68,8 @@ def solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq):
     cones = [clarabel.ZeroConeT(nEqQP), clarabel.NonnegativeConeT(2*nIneqQP)]
 
     settings = clarabel.DefaultSettings()
-    #settings.verbose = True
-    settings.verbose = False
+    settings.verbose = True
+    #settings.verbose = False
     sparseHessian=hessian.tocsc()
     solver = clarabel.DefaultSolver(
         sparseHessian, gradient, AClarabel.tocsc(), bClarabel, cones, settings)
@@ -167,7 +169,7 @@ class huberSolver:
             xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
             dx = xClara[:A.shape[1]]
 
-            par+=dx
+            par+=0.5*dx
             ##print(rs)
             print("|dx|=",np.linalg.norm(dx))
             ##print("x=",par)
@@ -188,3 +190,46 @@ class huberSolver:
 
         
         return huberSolution(par,v,w,r,s,fullSol, np.sqrt(Pv),gamma)
+
+
+def prepend_to_line(file_path, line_number, string_to_prepend):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    if 0 <= line_number < len(lines):
+        lines[line_number-1] = string_to_prepend + lines[line_number-1]
+
+    with open(file_path, 'w') as file:
+        file.writelines(lines)
+
+def attemptBlunderRemoval(filename):
+
+    name, extension = os.path.splitext(filename)
+    # Append the string to the name and add the extension back
+    appendName="_MarkedAndRemovedBlunders"
+    tempFile = f"{name}{appendName}{extension}"
+    shutil.copy(filename,tempFile)
+    #filename="huberExamples/20697_V2_Dirk_ESA_experimental.lgc"
+    blunderExists=True
+    object=pyLGC.LGCController(tempFile)
+    initialValue = object.getParameter()
+    while (blunderExists):
+        object=pyLGC.LGCController(tempFile)
+        huber=huberSolver(object)
+        solution=huber.solve(initialValue, 2.95,maxIter=50)
+        solution.showQQPlot(object)
+        initialValue=solution.primalSolution
+        linPart=solution.negLinearPart+solution.posLinearPart
+        # find index of n biggest outliers
+        n=3
+        largestOutliersIndices = np.argsort(linPart)[-n:][::-1]
+        #largestOutlier=np.amax(linPart)
+        nBlunder=0
+        for idx in largestOutliersIndices:
+            if (linPart[idx]>10):
+                nBlunder+=1
+                outlierIndex = idx
+                prepend_to_line(tempFile,object.getLineNumber(outlierIndex),f"% [Potential Outlier Nr. {nBlunder} =]: ")
+                #plt.show()
+            else:
+                blunderExists=False
