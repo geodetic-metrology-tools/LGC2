@@ -2,8 +2,6 @@
 
 import seaborn as sns
 import statsmodels.api as sm
-#import proxsuite
-#from quadprog import solve_qp
 import clarabel
 import pyLGC
 import numpy as np
@@ -15,7 +13,6 @@ from analyzer import huberSolver,huberSolution, prepend_to_line, attemptBlunderR
 
 # example from Dirks Presentation, see SUS-2235
 obj = pyLGC.LGCController("huberExamples/20697_V2_Dirk_ESA_experimental.lgc")
-#abj = pyLGC.LGCController("huberExamples/20190814_10h06_Polar_Module_ATLAS.lgc")
 
 myTool= huberSolver(obj)
 initialValue = obj.getParameter()

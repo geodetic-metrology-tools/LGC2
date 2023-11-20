@@ -101,7 +101,7 @@ class huberSolution:
         fig,ax=plt.subplots()
         yData= self.weightDiagonal*self.residual
         sm.qqplot(yData, line ='45',ax=ax) # 
-        plt.title("Q-Q Plot of Residuals. Huber Gamma="+str(self.huberGamma))
+        plt.title("Q-Q Plot of normalized residuals. Huber Gamma="+str(self.huberGamma))
         linPart=self.negLinearPart+self.posLinearPart
         numberLinearContributions=np.sum(np.abs(linPart)>1e-4)
         plt.xlabel("Theoretical Quantiles."+str(numberLinearContributions)+" Residuals above Huber threshold.")
@@ -221,7 +221,7 @@ def attemptBlunderRemoval(filename):
         initialValue=solution.primalSolution
         linPart=solution.negLinearPart+solution.posLinearPart
         # find index of n biggest outliers
-        n=3
+        n=2
         largestOutliersIndices = np.argsort(linPart)[-n:][::-1]
         #largestOutlier=np.amax(linPart)
         nBlunder=0
