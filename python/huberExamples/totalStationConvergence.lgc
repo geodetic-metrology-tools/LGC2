@@ -1,0 +1,54 @@
+*TITR 
+Input by Tsunami 2.00.05 as a free station
+*OLOC
+*FAUT     .01     .10 
+*PUNC 
+*PREC 6
+*INSTR 
+   %Polar Instrument    DefaultTrgt  IHeight  sIH   sICentering  const_angl 
+   %Polar [id]          [id]         [m]      [mm]  [mm]         [gon]      
+   *POLAR AT401_391056  RRR0.5_1     0.00000  0.00  0.00         0.0000    
+      %Target       sAngl  sZend  sDist  ppm   CsteVariable DistCorrection sDC   sCentering  Heigth  sH
+      %[id]         [cc]   [cc]   [mm]   [mm]  [1/0]        [m]            [mm]  [mm]        [m]     [mm] 
+      RRR0.5_1      4.0    4.0    0.05   1.00  0            0.00000        0.00  0.00    0.00000     0.00    
+*CALA 
+   %Name                           X          Y        Z/H 
+   %[id]                         [m]        [m]        [m] 
+   926R014.REF.01.              0.00000       1.76664       1.01696 
+   926R014.REF.02.              1.23670       1.91130       0.51340 
+   926R014.REF.03.              1.61988      -1.08306       0.62339 
+   926R014.REF.08.             -1.83975      -1.11326       0.97951 
+*VXY
+   %Name                           X          Y        Z/H 
+   %[id]                         [m]        [m]        [m] 
+*POIN
+   %Name                           X          Y        Z/H 
+   %[id]                         [m]        [m]        [m] 
+   926R014.STL.20230623MOI01.       1.16321       1.27940       1.69231 	 % Cala barycenter coord. + random cm used.
+*TSTN 926R014.STL.20230623MOI01. AT401_391056 IHFIX  IH 0 IHSE 0     % 23/06/2023 14:38:22
+   *V0
+      *ANGL
+          %Name                            Obs                     Target     sigmaA    Comments
+          %[id]                          [gon]                       [id]       [CC]    --------
+          926R014.REF.01.            178.3603            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=1 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.02.            214.7576            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.03.            316.4949            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.08.            46.0191            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+%         926R014.REF.01.            178.3606            TRGT   RRR0.5_1               % TSU: 'Control 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm,Off.: dH=3.1cc, dV=1.4cc, dD=0.01mm'   % Was 'Control' according to Tsunami
+      *ZEND
+          %Name                            Obs   Target H          Target     sigmaA    Comments
+          %[id]                          [gon]        [m]            [id]       [CC]    --------
+          926R014.REF.01.            65.7397 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=1 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.02.            84.4387 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.03.            78.1551 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.08.            71.4746 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+%         926R014.REF.01.            65.7398 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Control 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm,Off.: dH=3.1cc, dV=1.4cc, dD=0.01mm'   % Was 'Control' according to Tsunami
+      *DIST
+          %Name                            Obs   Target H          Target     sigmaA    Comments
+          %[id]                            [m]        [m]            [id]       [CC]    --------
+          926R014.REF.01.            2.09666 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=1 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.02.            2.35995 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.03.            2.02412 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+          926R014.REF.08.            2.39430 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
+%         926R014.REF.01.            2.09666 TH 0.00000 TRGT   RRR0.5_1               % TSU: 'Control 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm,Off.: dH=3.1cc, dV=1.4cc, dD=0.01mm'   % Was 'Control' according to Tsunami
+*END 

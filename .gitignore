@@ -1,3 +1,12 @@
 /build
 /build32
+*.lgc*
+*.log*
+*.co*
+*.err
+*.res
+*.chaba*
+*.html
+*.json
+/build32
 source/Version.h
