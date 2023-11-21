@@ -115,7 +115,7 @@ const TSparseMatrix TLSEvaluator::getB(bool useMask)
 	evaluate();
 	if (useMask)
 	{
-		Eigen::SparseMatrix<double> result = maskRows(currentMask.equationIndices, *iMat->getSecondDgnMtrx());
+		Eigen::SparseMatrix<double> result = maskColumns(currentMask.equationIndices, maskRows(currentMask.equationIndices, *iMat->getSecondDgnMtrx()));
 		return result;
 	}
 	else

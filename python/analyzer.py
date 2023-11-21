@@ -157,13 +157,13 @@ class huberSolver:
         dx=1
         while (it<maxIter)& (np.linalg.norm(dx)>1e-4):
             it+=1
-            A=evaluator.getFirstDesignMatrix(par)
-            A2=evaluator.getFirstConstraintDesignMatrix(par)
-            B=evaluator.getSecondDesignMatrix(par)
+            A=evaluator.getA(par)
+            A2=evaluator.getA2(par)
+            B=evaluator.getB(par)
             Pv=evaluator.getPv(par)
             #print(Pv)
-            W=evaluator.getMisclosure(par)
-            W2=evaluator.getConstraintMisclosure(par) 
+            W=evaluator.getW(par)
+            W2=evaluator.getW2(par) 
             [hessian, gradient, Ceq, Cineq, bEq, lbIneq,
                 ubIneq] = cast2HuberQP(Pv, A, A2, B, W, W2,gamma)
             xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)

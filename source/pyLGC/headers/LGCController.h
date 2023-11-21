@@ -44,6 +44,13 @@ public:
 	// diagonal of weight matrix
 	Eigen::VectorXd getPv(Eigen::VectorXd par);
 
+	// for controlling the masking:
+	// parameter masking will split the parameters in active and inactive (masked). in this state the evaluator expects a vector of length (active) and evaluates at a combination of the actively set parameters and at the incative parameters, which have the values they had at the moment of setting the mask
+	// observation masking essentially is projecting the model function onto the unmasked indices.
+	void setObservationMask(std::vector<int> maskedObservationIndices) { fEvaluator->currentMask.equationIndices = maskedObservationIndices; };
+	void setParameterMask(std::vector<int> maskedParameterIndices) { fEvaluator->currentMask.parameterIndices = maskedParameterIndices; };
+	void unmask() { fEvaluator->unmask(); };
+
 private:
 	void initialize();
 	std::string inputFilePath;
