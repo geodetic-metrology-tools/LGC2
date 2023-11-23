@@ -73,6 +73,8 @@ void LGCController::initialize()
 
 	std::ifstream inputFileStream(inputFilePath, std::ifstream::in);
 	bool succesReading = r.read(inputFileStream);
+	if (!succesReading)
+		throw std::runtime_error("Error reading input file");
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fProject.get());
 	bool configSuccess = analyzer.dataConsistent();

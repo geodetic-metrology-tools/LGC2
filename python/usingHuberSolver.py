@@ -26,7 +26,7 @@ for huberGamma in [2.95,10000000]:
     #print("solution=",solution.primalSolution)
     # print("V,W,R,S")
     # print(solution.residual[646],solution.quadraticPart[646],solution.posLinearPart[646],solution.negLinearPart[646])
-    numberLinearContributions=np.sum(np.abs(linPart)>1e-4)
+    numberLinearContributions=np.sum(np.abs(linPart)>1e-6)
     
     print("number of linear contributions = ",numberLinearContributions)
     print("difference to previous huber solution=",diffNorm)

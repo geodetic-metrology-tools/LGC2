@@ -46,17 +46,13 @@ class armijoSolver:
         trueDescent = trialSigma-sigma0
         alphaBigEnough =True
         insufficientDescent = c * alpha* expectedDescent < trueDescent 
-        #sufficientDescent=True
        	## testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
-        #while (c * alpha* expectedDescent < trueDescent & alpha>0.01):
-        while (insufficientDescent & alphaBigEnough):
+        while (c * alpha* expectedDescent < trueDescent)&(alpha>0.01):
             # reduce stepsize
             alpha *= tau
             trialPar = x0 + alpha * direction
             trialSigma =self.evalObj(trialPar)
             trueDescent = trialSigma - sigma0
-            insufficientDescent = c * alpha* expectedDescent < trueDescent
-            alphaBigEnough= alpha>0.01
         return alpha
 
     

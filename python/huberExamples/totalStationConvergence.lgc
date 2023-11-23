@@ -30,7 +30,7 @@ Input by Tsunami 2.00.05 as a free station
       *ANGL
           %Name                            Obs                     Target     sigmaA    Comments
           %[id]                          [gon]                       [id]       [CC]    --------
-          926R014.REF.01.            178.3603            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=1 cc, sV=0 cc, sD=0.00 mm'
+       %   926R014.REF.01.            178.3603            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=1 cc, sV=0 cc, sD=0.00 mm'
           926R014.REF.02.            214.7576            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
           926R014.REF.03.            316.4949            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'
           926R014.REF.08.            46.0191            TRGT   RRR0.5_1               % TSU: 'Good 2F / 1 Fast: => sH=0 cc, sV=0 cc, sD=0.00 mm'

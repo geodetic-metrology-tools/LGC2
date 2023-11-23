@@ -68,8 +68,8 @@ def solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq):
     cones = [clarabel.ZeroConeT(nEqQP), clarabel.NonnegativeConeT(2*nIneqQP)]
 
     settings = clarabel.DefaultSettings()
-    settings.verbose = True
-    #settings.verbose = False
+    #settings.verbose = True
+    settings.verbose = False
     sparseHessian=hessian.tocsc()
     solver = clarabel.DefaultSolver(
         sparseHessian, gradient, AClarabel.tocsc(), bClarabel, cones, settings)
@@ -169,7 +169,7 @@ class huberSolver:
             xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
             dx = xClara[:A.shape[1]]
 
-            par+=0.5*dx
+            par+=dx
             ##print(rs)
             print("|dx|=",np.linalg.norm(dx))
             ##print("x=",par)
