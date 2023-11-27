@@ -151,6 +151,7 @@ class huberSolver:
 
     def solve(self,initialValue,gamma,maxIter=50):
         #solving the huber estimation problem with threshold huberGamma
+        print("Starting Huber estimation iterations for gamma= ",gamma)
         evaluator = self._evaluator
         par=copy.deepcopy(initialValue)
         it=0

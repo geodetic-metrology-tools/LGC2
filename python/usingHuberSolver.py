@@ -9,7 +9,7 @@ import scipy.sparse as sp
 from scipy import sparse
 from scipy.io import mmread
 import matplotlib.pyplot as plt
-from analyzer import huberSolver,huberSolution, prepend_to_line, attemptBlunderRemoval
+from huberTools import huberSolver,huberSolution, prepend_to_line, attemptBlunderRemoval
 
 # example from Dirks Presentation, see SUS-2235
 obj = pyLGC.LGCController("huberExamples/20697_V2_Dirk_ESA_experimental.lgc")
