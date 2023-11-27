@@ -202,9 +202,10 @@ bool TDataAnalyzer::dataConsistent()
 				initialRefPtDistance /= numberOfMeasurements;
 
 				/*Fixed reference point for the ECHO measurement*/
-				LGCAdjustablePoint &rp = fData.getPoints().addObject(
-					LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), true, true,
-						true, "ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin()));
+				std::shared_ptr<LGCAdjustablePoint> refPoint = std::make_shared<LGCAdjustablePoint>(
+					TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), true, true, true,
+					"ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin());
+				itECHO->fReferencePoint = refPoint;
 
 				/*Calculation of the initial approximation value for the theta angle of the plane.*/
 				const TPositionVector &firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
@@ -214,7 +215,7 @@ bool TDataAnalyzer::dataConsistent()
 					lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
 
 				auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
-				itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(&rp, TLength(initialRefPtDistance),
+				itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(refPoint.get(), TLength(initialRefPtDistance),
 					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
 			}
 			else

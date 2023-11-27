@@ -10,6 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <MeasDef.h>
 #include <LGCAdjustablePlane.h>
+#include <LGCAdjustablePoint.h>
 #include <LGCAdjustableLine.h>
 #include <TPositionVector.h>
 #include "TLGCObsSummary.h"
@@ -19,42 +20,39 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	\ingroup Measurements
 	\brief This class represents a round of ECHO (TECHO) measurements, which are measuring a single Plane.
 */
-struct TECHOROM : public TStatusObject {
+struct TECHOROM : public TStatusObject
+{
+	/// All ECHO measurements, measuring the 'fmeasuredPlane'
+	std::list<TECHO> measECHO;
 
-		/// All ECHO measurements, measuring the 'fmeasuredPlane'
-		std::list<TECHO> measECHO;
+	// Measured vertical plane
+	LGCAdjustablePlane *fMeasuredPlane;
+	std::shared_ptr<LGCAdjustablePoint> fReferencePoint;
 
-		//Measured vertical plane
-		LGCAdjustablePlane* fMeasuredPlane;
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
-        /// Initialise observation summaries
-        void initialiseObsSummaries();
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary &getECHOObsSummary() const;
+	const TLGCObsSummary &getECHOObsSummary(std::string text) noexcept;
 
-		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-        const TLGCObsSummary& getECHOObsSummary() const;
-		const TLGCObsSummary& getECHOObsSummary(std::string text) noexcept;
+	/// Line of the measurement definition
+	int line;
 
-		/// Line of the measurement definition
-		int  line;
+	int romId{romCounter_++};
 
-        int romId{ romCounter_++ };
-
-		/// the station attribute is a copy of the parameter to override defaults
-		TECHOROM(LGCAdjustablePlane *measPlane) :
-			fMeasuredPlane(measPlane),
-			line(NO_VALi)
-			{}
+	/// the station attribute is a copy of the parameter to override defaults
+	TECHOROM(LGCAdjustablePlane *measPlane) : fMeasuredPlane(measPlane), line(NO_VALi) {}
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
-	private:
+private:
+	static int romCounter_;
 
-    static int romCounter_;
-
-    TLGCObsSummary echoSummary_;
+	TLGCObsSummary echoSummary_;
 };
 
 /*!

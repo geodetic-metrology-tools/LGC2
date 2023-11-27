@@ -169,6 +169,7 @@ void TECHOROM::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("echoSummary_", echoSummary_);
 	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
+	obj.addProperty("fReferencePoint", fReferencePoint);
 	obj.addProperty("line", line);
 	obj.addProperty("measECHO", measECHO);
 	obj.addProperty("romId", romId);
