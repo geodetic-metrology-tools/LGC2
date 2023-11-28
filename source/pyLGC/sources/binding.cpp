@@ -21,8 +21,10 @@ PYBIND11_MODULE(pyLGC, m)
 		.def("getB", &LGCController::getSecondDesignMatrix, py::arg("par"))
 		.def("getPv", &LGCController::getPv, py::arg("par"))
 		.def("getLineNumber", &LGCController::getLineNumber, py::arg("par"))
-		.def("setObservationMask", &LGCController ::setObservationMask, py::arg("par"))
-		.def("setParameterMask", &LGCController ::setParameterMask, py::arg("par"))
+		.def("setObservationMask", &LGCController::setObservationMask, py::arg("par"))
+		.def("setParameterMask", &LGCController::setParameterMask, py::arg("par"))
+		.def("getObservationMask", &LGCController::getObservationMask)
+		.def("getParameterMask", &LGCController::getParameterMask)
 		.def("unmask", &LGCController ::unmask);
 	//Eigen::SparseMatrix<double> 
 //Eigen::SparseMatrix<double> 

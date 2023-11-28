@@ -9,13 +9,13 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import shutil
 import os
-from analyzer import solveQPwithClarabel
 
 class armijoSolver:
     def __init__(self, evaluator):
         # initialize with an evaluator instance
         self._evaluator=evaluator
     def solve(self,initialValue,maxIter=50):
+        print("Starting Gauss Newton with Armijo linesearch= ")
         # Gauss Newton with armijo linesearch
         evaluator = self._evaluator
         par=copy.deepcopy(initialValue)

@@ -4,83 +4,57 @@ import scipy.sparse as sp
 from huberTools import huberSolver,huberSolution, prepend_to_line, attemptBlunderRemoval
 from armijo import armijoSolver
 import matplotlib.pyplot as plt
-
-import pyomo.environ as pyo
-from pyomo.contrib.incidence_analysis import IncidenceGraphInterface
-import pyomo
+from structuralDecompositionTools import sparsityAnalyzer
 
 
-
+# seed for random number generation
+np.random.seed(0)
 
 #evaluator = pyLGC.LGCController("huberExamples/170712_14736_XBPF_22716_PLR3D.lgc")
 #evaluator = pyLGC.LGCController("huberExamples/PSR2AD-NTOF_CALA-PSR-AD.lgc")
-#evaluator = pyLGC.LGCController("huberExamples/20697_V2_Dirk_ESA_experimental_Blunder.lgc")
+evaluator = pyLGC.LGCController("huberExamples/20697_V2_Dirk_ESA_experimental_Blunder.lgc")
+#evaluator = pyLGC.LGCController("huberExamples/20190814_10h06_Polar_Module_ATLAS_V2.lgc")
 #evaluator = pyLGC.LGCController("huberExamples/SUS-1795_ba4_polygo_3cala_cdcg.lgc")
 #evaluator = pyLGC.LGCController("huberExamples/minimal.lgc")
-evaluator = pyLGC.LGCController("huberExamples/totalStationConvergence.lgc")
+#evaluator = pyLGC.LGCController("huberExamples/totalStationConvergence.lgc")
 #evaluator = pyLGC.LGCController("huberExamples/minimal_diverging.lgc")
 
+# get the first design matrix to perform a sparsity structure analysis
 par=evaluator.getParameter()
-## parDim=par.shape[0]
-## obsdim=evaluator.getw(par).shape[0]
-## actobsindices = list(range(obsdim))
-## huberObject=huberSolver(evaluator)
-## sol1=huberObject.solve(par,2.95)
-## sol1.showQQPlot(evaluator)
-## # find biggest blunder index
-## linPart=sol1.posLinearPart+sol1.negLinearPart
-## idx=np.argmax(linPart)
-## actObsIndices.remove(idx)
-## # deactivate this index
-## print(evaluator.getPv(par).shape)
-## evaluator.setObservationMask(actObsIndices)
-## print(evaluator.getPv(par).shape)
-## print(evaluator.getA(par).shape)
-## print(evaluator.getB(par).shape)
-## print(evaluator.getA2(par).shape)
-## print(evaluator.getW(par).shape)
-## print(evaluator.getW2(par).shape)
-## 
-## # solve again
-## sol2=huberObject.solve(par,2.95)
-## sol2.showQQPlot(evaluator)
-## 
-
-print("solve with armijo")
-arm=armijoSolver(evaluator)
-leastSquareSol = arm.solve(par)
-print("solve with huber")
-huber=huberSolver(evaluator)
-huberSol=huber.solve(par,2.95)
-huberSol=huber.solve(leastSquareSol,2.95)
-huberSol.showQQPlot(evaluator)
-huberSol=huber.solve(leastSquareSol,1000000)
-huberSol.showQQPlot(evaluator)
-# set observation mask 
-obsdim=evaluator.getW(par).shape[0]
-actObsIndices = list(range(obsdim))
-actObsIndices.remove(8)
-evaluator.setObservationMask(actObsIndices)
-huberSol=huber.solve(leastSquareSol,1000000)
-huberSol.showQQPlot(evaluator)
-print("diff Norm=",np.linalg.norm(leastSquareSol-huberSol.primalSolution))
-plt.show()
-
-
-
-
+dimPar=par.shape[0]
+#par=10*np.random.rand(dimPar)
 A=evaluator.getA(par)
-plt.figure(figsize=(8, 8))
-plt.spy(A)
-plt.title('Sparsity Pattern')
-plt.xlabel('Column Index')
-plt.ylabel('Row Index')
-plt.show()
-# get max matching
-maxMatch=pyomo.contrib.incidence_analysis.matching.maximum_matching(A.tocoo())
-rowIdx=maxMatch.values()
-Areduced=A[list(maxMatch.values()),:]
+analysisTool= sparsityAnalyzer(A)
 
-print(A.todense())
-plt.spy(Areduced)
-#[rowList,colList]=pyomo.contrib.incidence_analysis.triangularize.block_triangularize(A)
+# prepare a solver object
+armijoWorker=armijoSolver(evaluator)
+huberWorker=huberSolver(evaluator)
+
+currentParIdx=list()
+currentEqIdx=list()
+# loop over the decomposed blocks
+blockNumber=0
+for eqBlock,parBlock in analysisTool.decompositionList:
+    blockNumber+=1
+    print("Attempt solving block number ", blockNumber," of size (eqs,pars)=",len(eqBlock),",",len(parBlock))
+    currentEqIdx+=eqBlock
+    currentParIdx+=parBlock
+    # set masks
+    evaluator.setObservationMask(currentEqIdx)
+    test=evaluator.getObservationMask()
+    evaluator.setParameterMask(currentParIdx)
+    testMask=evaluator.getObservationMask()
+    currentPar=evaluator.getParameter()
+    # check rank
+    aux=evaluator.getA(currentPar).toarray()
+    Arank=np.linalg.matrix_rank(aux)
+    #print(aux)
+    print("A matrix has rank",np.linalg.matrix_rank(aux))
+    if (Arank>=len(currentParIdx)):
+        # try to solve
+        sol=armijoWorker.solve(currentPar)
+        huberSol=huberWorker.solve(currentPar,2.95)
+        huberSol.showQQPlot(evaluator)
+plt.show()
+
+True

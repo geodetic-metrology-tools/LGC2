@@ -49,6 +49,8 @@ public:
 	// observation masking essentially is projecting the model function onto the unmasked indices.
 	void setObservationMask(std::vector<int> maskedObservationIndices) { fEvaluator->currentMask.equationIndices = maskedObservationIndices; };
 	void setParameterMask(std::vector<int> maskedParameterIndices) { fEvaluator->currentMask.parameterIndices = maskedParameterIndices; };
+	std::vector<int> getObservationMask() { return fEvaluator->currentMask.equationIndices; };
+	std::vector<int> getParameterMask() { return fEvaluator->currentMask.parameterIndices; };
 	void unmask() { fEvaluator->unmask(); };
 
 private:

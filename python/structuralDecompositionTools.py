@@ -51,16 +51,12 @@ def plot_sparsity_pattern(matrix, title="Sparsity pattern"):
     matrix (np.ndarray): The matrix whose sparsity pattern is to be plotted.
     """
     # Find the non-zero elements
-    #rows, cols = matrix.row, matrix.col
     # Plot the sparsity pattern
     plt.figure(figsize=(8, 6))
     plt.spy(matrix, markersize=1)
-    #plt.scatter(cols, rows, color='blue', marker='s')
     plt.title(title)
     plt.xlabel("Column Index")
     plt.ylabel("Row Index")
-    #plt.gca().invert_yaxis()  # Invert y-axis to match matrix representation
-    #plt.show()
 
 
 class sparsityAnalyzer():
@@ -79,9 +75,15 @@ class sparsityAnalyzer():
         self.maxMatch=matching.maximum_matching(self.matrix)
         ## with the maximum matching, a subset of equations (of equal size as the set of parameters) is identified that allows the full estimation of all parameters
         self.mainEquations=list(self.maxMatch.keys())
+        
+        
         ## do the block triangular decomposition on the submatrix
-        #plot_sparsity_pattern(self.matrix[self.mainEquations,:])
         reducedEq,reducedPar = triangularize.block_triangularize(self.matrix[self.mainEquations,:])
+        ## create a list of pairs of equation and parameter indices
+        ## each parameter list can be determined using the associated equation list + the previous determined parameters
+        ## the reordered A matrix has a sparsity pattern that is lower block triangular.
+        ## Going block by block, the parameters can be succesively be determined, each time increasing the set of parameters a bit until at the end the whole set of parameters is estimated.
+        ## this allows to decompose big problems into a sequence of smaller problems
         eqs=set() 
         pars=set()
         decompositionList=list()

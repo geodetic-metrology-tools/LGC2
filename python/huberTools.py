@@ -131,13 +131,15 @@ class huberSolution:
 
                 # Add interactive cursor
         cursor = mplcursors.cursor(ax, hover=True)
+        realObsIndices=evaluator.getObservationMask()
         @cursor.connect("add")
         def on_add(sel):
              # Find the index of the point closest to the cursor
             distance = np.sqrt((yData - sel.target[1])**2)
             index = np.argmin(distance)
+            unmaskedIndex=realObsIndices[index]
             if (distance[index]<0.001):
-                sel.annotation.set(text=f"ObservationIndex:{index} Line Number:{evaluator.getLineNumber(index)} \n Relative Residual: {yData[index]}")
+                sel.annotation.set(text=f"ObservationIndex:{unmaskedIndex} Line Number:{evaluator.getLineNumber(unmaskedIndex)} \n Relative Residual: {yData[index]}")
             else:
                 sel.annotation.set(text=f"No data point.")
             #sel.annotation.set(text=f"ObservationIndex: {index}")
@@ -170,7 +172,7 @@ class huberSolver:
             xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
             dx = xClara[:A.shape[1]]
 
-            par+=dx
+            par+=0.5*dx
             ##print(rs)
             print("|dx|=",np.linalg.norm(dx))
             ##print("x=",par)
