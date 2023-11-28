@@ -1,7 +1,7 @@
 import pyLGC
 import numpy as np
 import scipy.sparse as sp
-from analyzer import huberSolver,huberSolution, prepend_to_line, attemptBlunderRemoval
+from huberTools import huberSolver,huberSolution, prepend_to_line, attemptBlunderRemoval
 from armijo import armijoSolver
 import matplotlib.pyplot as plt
 
@@ -22,8 +22,8 @@ evaluator = pyLGC.LGCController("huberExamples/totalStationConvergence.lgc")
 
 par=evaluator.getParameter()
 ## parDim=par.shape[0]
-## obsDim=evaluator.getW(par).shape[0]
-## actObsIndices = list(range(obsDim))
+## obsdim=evaluator.getw(par).shape[0]
+## actobsindices = list(range(obsdim))
 ## huberObject=huberSolver(evaluator)
 ## sol1=huberObject.solve(par,2.95)
 ## sol1.showQQPlot(evaluator)
@@ -52,7 +52,17 @@ leastSquareSol = arm.solve(par)
 print("solve with huber")
 huber=huberSolver(evaluator)
 huberSol=huber.solve(par,2.95)
-#huberSol.showQQPlot(evaluator)
+huberSol=huber.solve(leastSquareSol,2.95)
+huberSol.showQQPlot(evaluator)
+huberSol=huber.solve(leastSquareSol,1000000)
+huberSol.showQQPlot(evaluator)
+# set observation mask 
+obsdim=evaluator.getW(par).shape[0]
+actObsIndices = list(range(obsdim))
+actObsIndices.remove(8)
+evaluator.setObservationMask(actObsIndices)
+huberSol=huber.solve(leastSquareSol,1000000)
+huberSol.showQQPlot(evaluator)
 print("diff Norm=",np.linalg.norm(leastSquareSol-huberSol.primalSolution))
 plt.show()
 
