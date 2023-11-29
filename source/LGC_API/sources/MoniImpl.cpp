@@ -137,6 +137,11 @@ double Moni::getSigma0()
 	return pimpl_->getSigma0();
 }
 
+waterNetwork Moni::getECWSData(std::string ecwsRomName)
+{
+	return pimpl_->getECWSData(ecwsRomName);
+}
+
 // actual Implementation
 void Moni::MoniImpl::initialize()
 {
@@ -608,6 +613,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 		}
 		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
 		{
+			romRefs.ecwsRoms.insert({itECWSrom.romName, itECWSrom});
 			for (auto &itECWS : itECWSrom.measECWS)
 			{
 				measRefs.ECWS.insert({itECWS.obsID, itECWS});
@@ -616,6 +622,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 		}	
 		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
 		{
+			romRefs.ecwiRoms.insert({itECWIrom.romName, itECWIrom});
 			for (auto &itECWI : itECWIrom.measECWI)
 			{
 				measRefs.ECWI.insert({itECWI.obsID, itECWI});
@@ -1057,6 +1064,22 @@ std::vector<std::string> Moni::MoniImpl::getECWSMeasIds()
 double Moni::MoniImpl::getSigma0()
 {
 	return project->getS0APosteriori();
+}
+waterNetwork Moni::MoniImpl::getECWSData(std::string ecwsRomName)
+{
+	// find the ecws tom reference
+	auto it = romRefs.ecwsRoms.find(ecwsRomName);
+	if (it != romRefs.ecwsRoms.end())
+	{
+		TECWSROM &rom = romRefs.ecwsRoms.at(ecwsRomName);
+		waterNetwork result(rom.romName, double(rom.fMeasuredWSHeight->getEstimatedValue()), double(rom.fMeasuredWSHeight->getEstimatedPrecision()));
+		return result;
+	}
+	else
+	{
+		throw std::runtime_error("No ECWS round of measurements named " + ecwsRomName + " found.");
+	}
+
 }
 // get measurement
 Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)

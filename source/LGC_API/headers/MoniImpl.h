@@ -86,6 +86,10 @@ public:
 	Eigen::VectorXd getCalcMeas(std::string obsName) { return getMeas(obsName) + getEstimateResidual(obsName); };
 	// get the sigma0 after adjustment
 	double getSigma0();
+	// for water and wir network related data
+	waterNetwork getECWSData(std::string ecwsRomName);
+
+
 	// get Meas IDs
 	std::vector<std::string> getECWSMeasIds();
 
@@ -142,6 +146,14 @@ private:
 		std::unordered_map<std::string, TRADI &> RADI;
 		std::unordered_map<std::string, TOBSXYZ &> OBSXYZ;
 	} measRefs;
+
+	struct
+	{
+		// Round of Measurement references, for now only used for water and wire
+		std::unordered_map<std::string, TECWSROM &> ecwsRoms;
+		std::unordered_map<std::string, TECWIROM &> ecwiRoms;
+
+	} romRefs;
 	
 	
 	// containing maps to parameter object references

@@ -15,6 +15,14 @@
 	#define DECLSPEC
 #endif
 
+struct waterNetwork {
+	std::string romName = "";
+	double waterLevel = 0;
+	double waterLevelSigma = 0;
+	// basic constuctor
+	waterNetwork(std::string name, double level, double sigma) : romName(name), waterLevel(level), waterLevelSigma(sigma){}
+};
+
 class Moni
 {
 public:
@@ -71,6 +79,7 @@ public:
 	DECLSPEC Eigen::VectorXd getCalcMeas(std::string obsname);
 	// get the sigma0 after adjustment
 	DECLSPEC double getSigma0();
+	DECLSPEC waterNetwork getECWSData(std::string ecwsRomName);
 	
 private:
 	class MoniImpl;
