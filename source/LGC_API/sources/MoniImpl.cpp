@@ -137,9 +137,14 @@ double Moni::getSigma0()
 	return pimpl_->getSigma0();
 }
 
-waterNetwork Moni::getECWSData(std::string ecwsRomName)
+waterRom Moni::getECWSData(std::string ecwsRomName)
 {
 	return pimpl_->getECWSData(ecwsRomName);
+}
+
+DECLSPEC wireRom Moni::getECWIData(std::string ecwiRomName)
+{
+	return pimpl_->getECWIData(ecwiRomName);
 }
 
 // actual Implementation
@@ -1065,19 +1070,41 @@ double Moni::MoniImpl::getSigma0()
 {
 	return project->getS0APosteriori();
 }
-waterNetwork Moni::MoniImpl::getECWSData(std::string ecwsRomName)
+waterRom Moni::MoniImpl::getECWSData(std::string ecwsRomName)
 {
-	// find the ecws tom reference
+	// find the ecws rom reference
 	auto it = romRefs.ecwsRoms.find(ecwsRomName);
 	if (it != romRefs.ecwsRoms.end())
 	{
 		TECWSROM &rom = romRefs.ecwsRoms.at(ecwsRomName);
-		waterNetwork result(rom.romName, double(rom.fMeasuredWSHeight->getEstimatedValue()), double(rom.fMeasuredWSHeight->getEstimatedPrecision()));
+		waterRom result(rom.romName, double(rom.fMeasuredWSHeight->getEstimatedValue()), double(rom.fMeasuredWSHeight->getEstimatedPrecision()));
 		return result;
 	}
 	else
 	{
 		throw std::runtime_error("No ECWS round of measurements named " + ecwsRomName + " found.");
+	}
+
+}
+wireRom Moni::MoniImpl::getECWIData(std::string ecwiRomName)
+{	
+	// find the ecwi rom reference
+	auto it = romRefs.ecwiRoms.find(ecwiRomName);
+	if (it != romRefs.ecwiRoms.end())
+	{
+		TECWIROM &rom = romRefs.ecwiRoms.at(ecwiRomName);
+		Eigen::VectorXd data(5), sigmas(5);
+		data << double(rom.fWireDx->getEstimatedValue()), double(rom.fWireDz->getEstimatedValue()), double(rom.fWireBearing->getEstimatedValue()),
+			double(rom.fWireSlope->getEstimatedValue()), double(rom.sagAdjustable->getEstimatedValue());
+		sigmas << double(rom.fWireDx->getEstimatedPrecision()), double(rom.fWireDz->getEstimatedPrecision()), double(rom.fWireBearing->getEstimatedPrecision()),
+			double(rom.fWireSlope->getEstimatedPrecision()), double(rom.sagAdjustable->getEstimatedPrecision());
+		auto &sagAdj = rom.sagAdjustable;
+
+		return wireRom(ecwiRomName,data,sigmas);
+	}
+	else
+	{
+		throw std::runtime_error("No ecwi round of measurements named " + ecwiRomName + " found.");
 	}
 
 }

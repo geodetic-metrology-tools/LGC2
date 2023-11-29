@@ -303,7 +303,7 @@ void object::test<5>()
 		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
 
 		// test water network data extraction
-		waterNetwork waterNetworkResult = mockup.getECWSData("WaterNetwork1");
+		waterRom waterNetworkResult = mockup.getECWSData("WaterNetwork1");
 		std::cout << "Water network name= " << waterNetworkResult.romName << " water level height = " << waterNetworkResult.waterLevel << " with sigma "
 				  << waterNetworkResult.waterLevelSigma << std::endl;
 
@@ -390,6 +390,10 @@ void object::test<6>()
 		std::cout << "Observed value of " << obsName << " = " << mockup.getMeas(obsName) << std::endl;
 		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
 		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
+
+		wireRom wireNetworkResult = mockup.getECWIData("GIWPN.T1LX");
+		std::cout << "Wire network name= " << wireNetworkResult.romName << " data (dx,dz,bearing,slope,sag) = " << wireNetworkResult.values << " with sigma "
+				  << wireNetworkResult.sigmas << std::endl;
 
 		// get sigmaZero
 		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;

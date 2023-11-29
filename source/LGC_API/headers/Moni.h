@@ -15,13 +15,27 @@
 	#define DECLSPEC
 #endif
 
-struct waterNetwork {
+// structures for water and wire round of measurements results.
+struct waterRom
+{
 	std::string romName = "";
 	double waterLevel = 0;
 	double waterLevelSigma = 0;
 	// basic constuctor
-	waterNetwork(std::string name, double level, double sigma) : romName(name), waterLevel(level), waterLevelSigma(sigma){}
+	waterRom(std::string name, double level, double sigma) : romName(name), waterLevel(level), waterLevelSigma(sigma) {}
 };
+
+struct wireRom
+{
+	std::string romName = "";
+	// containing values of Dx,Dz,bearing,slope,sag in this order
+	Eigen::VectorXd values= Eigen::VectorXd::Zero(5);
+	// sigmas in the same order
+	Eigen::VectorXd sigmas = Eigen::VectorXd::Zero(5);
+	// basic constructor
+	wireRom(std::string name, Eigen::VectorXd vals, Eigen::VectorXd sigmas) : romName(name), values(vals), sigmas(sigmas) {}
+};
+
 
 class Moni
 {
@@ -79,7 +93,8 @@ public:
 	DECLSPEC Eigen::VectorXd getCalcMeas(std::string obsname);
 	// get the sigma0 after adjustment
 	DECLSPEC double getSigma0();
-	DECLSPEC waterNetwork getECWSData(std::string ecwsRomName);
+	DECLSPEC waterRom getECWSData(std::string ecwsRomName);
+	DECLSPEC wireRom getECWIData(std::string ecwiRomName);
 	
 private:
 	class MoniImpl;
