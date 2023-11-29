@@ -86,8 +86,9 @@ public:
 	Eigen::VectorXd getCalcMeas(std::string obsName) { return getMeas(obsName) + getEstimateResidual(obsName); };
 	// get the sigma0 after adjustment
 	double getSigma0();
-	// for water and wir network related data
-	waterNetwork getECWSData(std::string ecwsRomName);
+	// for water and wire network related data
+	waterRom getECWSData(std::string ecwsRomName);
+	wireRom getECWIData(std::string ecwiRomName);
 
 
 	// get Meas IDs
