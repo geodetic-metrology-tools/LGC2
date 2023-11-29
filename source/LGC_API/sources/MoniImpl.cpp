@@ -248,7 +248,7 @@ void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, doub
 	estimationStatus = false;
 	
 	// check if the associated parameter of the frame is really fixed
-	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
+	TAdjustableHelmertTransformation &frameRef = *paramRefs.FRAMES.at(frameName);
 	bool isFixed = frameRef.isFixedVar(idx);
 	if (!isFixed)
 	{
@@ -283,7 +283,7 @@ void Moni::MoniImpl::setFixedPointParameter(std::string pointName, int idx, doub
 	estimationStatus = false;
 	
 	// check if the associated parameter of the frame is really fixed
-	TAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
+	TAdjustablePoint &pointRef = *paramRefs.POINTS.at(pointName);
 	bool isFixed = pointRef.isCoordinateFixed(idx);
 	if (!isFixed)
 	{
@@ -306,7 +306,7 @@ void Moni::MoniImpl::freezeFrameParameter(std::string frameName, int idx, double
 	estimationStatus = false;
 
 	// check if the associated parameter of the frame is really free
-	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
+	TAdjustableHelmertTransformation &frameRef = *paramRefs.FRAMES.at(frameName);
 	bool isFixed = frameRef.isFixedVar(idx);
 	if (isFixed)
 	{
@@ -344,7 +344,7 @@ void Moni::MoniImpl::unfreezeFrameParameter(std::string frameName, int idx)
 	estimationStatus = false;
 
 	// check if the associated parameter of the frame is really free
-	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
+	TAdjustableHelmertTransformation &frameRef = *paramRefs.FRAMES.at(frameName);
 	bool isFixed = frameRef.isFixedVar(idx);
 	if (isFixed)
 	{
@@ -395,7 +395,7 @@ void Moni::MoniImpl::freezePointParameter(std::string pointName, int idx, double
 	estimationStatus = false;
 
 	// check if the associated parameter of the frame is really free
-	LGCAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
+	LGCAdjustablePoint &pointRef = *paramRefs.POINTS.at(pointName);
 	bool isFixed = pointRef.isCoordinateFixed(idx);
 	if (isFixed)
 	{
@@ -420,7 +420,7 @@ void Moni::MoniImpl::unfreezePointParameter(std::string pointName, int idx)
 	estimationStatus = false;
 
 	// check if the associated parameter of the point is really free
-	LGCAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
+	LGCAdjustablePoint &pointRef = *paramRefs.POINTS.at(pointName);
 	bool isFixed = pointRef.isCoordinateFixed(idx);
 	if (isFixed)
 	{
@@ -452,30 +452,30 @@ void Moni::MoniImpl::createParameterReferences()
 {
 	for (auto &object : project.get()->getPoints())
 	{
-		paramRefs.POINTS.insert({object.getName(), object});
+		paramRefs.POINTS.insert({object.getName(), &object});
 	}
 	for (auto &object : project.get()->getLines())
 	{
-		paramRefs.LINES.insert({object.getName(), object});
+		paramRefs.LINES.insert({object.getName(), &object});
 	}
 	for (auto &object : project.get()->getAngles())
 	{
-		paramRefs.ANGLES.insert({object.getName(), object});
+		paramRefs.ANGLES.insert({object.getName(), &object});
 	}
 	for (auto &object : project.get()->getPlanes())
 	{
-		paramRefs.PLANES.insert({object.getName(), object});
+		paramRefs.PLANES.insert({object.getName(), &object});
 	}
 	for (auto &object : project.get()->getLength())
 	{
-		paramRefs.LENGTHS.insert({object.getName(), object});
+		paramRefs.LENGTHS.insert({object.getName(), &object});
 	}
 	// now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
 	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)
 	{
 		auto& object(it.node->data.get()->frame);
-		paramRefs.FRAMES.insert({object.getName(), object});
+		paramRefs.FRAMES.insert({object.getName(), &object});
 	}
 }
 void Moni::MoniImpl::createMeasurementReferences()
@@ -490,42 +490,42 @@ void Moni::MoniImpl::createMeasurementReferences()
 			{
 				for (auto &itANGL : itROM->measANGL)
 				{
-					measRefs.ANGL.insert({itANGL.obsID, itANGL});
+					measRefs.ANGL.insert({itANGL.obsID, &itANGL});
 					measRefs.types.insert({itANGL.obsID, "ANGL"});
 				}
 
 				for (auto &itZEND : itROM->measZEND)
 				{
-					measRefs.ZEND.insert({itZEND.obsID, itZEND});
+					measRefs.ZEND.insert({itZEND.obsID, &itZEND});
 					measRefs.types.insert({itZEND.obsID, "ZEND"});
 				}
 
 				for (auto &itDIST : itROM->measDIST)
 				{
-					measRefs.DIST.insert({itDIST.obsID, itDIST});
+					measRefs.DIST.insert({itDIST.obsID, &itDIST});
 					measRefs.types.insert({itDIST.obsID, "DIST"});
 				}
 				for (auto &itECTH : itROM->measECTH)
 				{
-					measRefs.ECTH.insert({itECTH.obsID, itECTH});
+					measRefs.ECTH.insert({itECTH.obsID, &itECTH});
 					measRefs.types.insert({itECTH.obsID, "ECTH"});
 				}
 
 				for (auto &itECDIR : itROM->measECDIR)
 				{
-					measRefs.ECDIR.insert({itECDIR.obsID, itECDIR});
+					measRefs.ECDIR.insert({itECDIR.obsID, &itECDIR});
 					measRefs.types.insert({itECDIR.obsID, "ECDIR"});
 				}
 
 				for (auto &itDHOR : itROM->measDHOR)
 				{
-					measRefs.DHOR.insert({itDHOR.obsID, itDHOR});
+					measRefs.DHOR.insert({itDHOR.obsID, &itDHOR});
 					measRefs.types.insert({itDHOR.obsID, "DHOR"});
 				}
 
 				for (auto &itPLR3D : itROM->measPLR3D)
 				{
-					measRefs.PLR3D.insert({itPLR3D.obsID, itPLR3D});
+					measRefs.PLR3D.insert({itPLR3D.obsID, &itPLR3D});
 					measRefs.types.insert({itPLR3D.obsID, "PLR3D"});
 				}
 				// what about ORIEs?
@@ -537,13 +537,13 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itUVD : itCAM->measUVD)
 			{
-				measRefs.UVD.insert({itUVD.obsID, itUVD});
+				measRefs.UVD.insert({itUVD.obsID, &itUVD});
 				measRefs.types.insert({itUVD.obsID, "UVD"});
 			}
 
 			for (auto &itUVEC : itCAM->measUVEC)
 			{
-				measRefs.UVEC.insert({itUVEC.obsID, itUVEC});
+				measRefs.UVEC.insert({itUVEC.obsID, &itUVEC});
 				measRefs.types.insert({itUVEC.obsID, "UVEC"});
 			}
 		}
@@ -553,7 +553,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 			// Iterate through DSPT measurements
 			for (auto &itDSPT : itEDM->measDSPT) // TYPO in original implementation
 			{
-				measRefs.DSPT.insert({itDSPT.obsID, itDSPT});
+				measRefs.DSPT.insert({itDSPT.obsID, &itDSPT});
 				measRefs.types.insert({itDSPT.obsID, "DSPT"});
 			}
 		}
@@ -562,7 +562,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itDLEV : itLEVEL.measDLEV)
 			{
-				measRefs.DLEV.insert({itDLEV.obsID, itDLEV});
+				measRefs.DLEV.insert({itDLEV.obsID, &itDLEV});
 				measRefs.types.insert({itDLEV.obsID, "DLEV"});
 			}
 		}
@@ -571,7 +571,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itECHO : itECHOrom.measECHO)
 			{
-				measRefs.ECHO.insert({itECHO.obsID, itECHO});
+				measRefs.ECHO.insert({itECHO.obsID, &itECHO});
 				measRefs.types.insert({itECHO.obsID, "ECHO"});
 			}
 		}
@@ -580,7 +580,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itECVE : itECVErom.measECVE)
 			{
-				measRefs.ECVE.insert({itECVE.obsID, itECVE});
+				measRefs.ECVE.insert({itECVE.obsID, &itECVE});
 				measRefs.types.insert({itECVE.obsID, "ECVE"});
 			}
 		}
@@ -589,48 +589,48 @@ void Moni::MoniImpl::createMeasurementReferences()
 		{
 			for (auto &itORIE : itORIErom.measORIE)
 			{
-				measRefs.ORIE.insert({itORIE.obsID, itORIE});
+				measRefs.ORIE.insert({itORIE.obsID, &itORIE});
 				measRefs.types.insert({itORIE.obsID, "ORIE"});
 			}
 		}
 		for (auto &itDVER : itTree.node->data->measurements.fDVER)
 		{
-			measRefs.DVER.insert({itDVER.obsID, itDVER});
+			measRefs.DVER.insert({itDVER.obsID, &itDVER});
 			measRefs.types.insert({itDVER.obsID, "DVER"});
 		}
 		for (auto &itRADI : itTree.node->data->measurements.fRADI)
 		{
-			measRefs.RADI.insert({itRADI.obsID, itRADI});
+			measRefs.RADI.insert({itRADI.obsID, &itRADI});
 			measRefs.types.insert({itRADI.obsID, "RADI"});
 		}
 		for (auto &itOBSXYZ : itTree.node->data->measurements.fOBSXYZ)
 		{
-			measRefs.OBSXYZ.insert({itOBSXYZ.obsID, itOBSXYZ});
+			measRefs.OBSXYZ.insert({itOBSXYZ.obsID, &itOBSXYZ});
 			measRefs.types.insert({itOBSXYZ.obsID, "OBSXYZ"});
 		}
 		for (auto &itINCLYrom : itTree.node->data->measurements.fINCLY)
 		{
 			for (auto &itINCLY : itINCLYrom.measINCLY)
 			{
-				measRefs.INCLY.insert({itINCLY.obsID, itINCLY});
+				measRefs.INCLY.insert({itINCLY.obsID, &itINCLY});
 				measRefs.types.insert({itINCLY.obsID, "INCLY"});
 			}
 		}
 		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
 		{
-			romRefs.ecwsRoms.insert({itECWSrom.romName, itECWSrom});
+			romRefs.ecwsRoms.insert({itECWSrom.romName, &itECWSrom});
 			for (auto &itECWS : itECWSrom.measECWS)
 			{
-				measRefs.ECWS.insert({itECWS.obsID, itECWS});
+				measRefs.ECWS.insert({itECWS.obsID, &itECWS});
 				measRefs.types.insert({itECWS.obsID, "ECWS"});
 			}
 		}	
 		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
 		{
-			romRefs.ecwiRoms.insert({itECWIrom.romName, itECWIrom});
+			romRefs.ecwiRoms.insert({itECWIrom.romName, &itECWIrom});
 			for (auto &itECWI : itECWIrom.measECWI)
 			{
-				measRefs.ECWI.insert({itECWI.obsID, itECWI});
+				measRefs.ECWI.insert({itECWI.obsID, &itECWI});
 				measRefs.types.insert({itECWI.obsID, "ECWI"});
 			}
 		}
@@ -649,87 +649,87 @@ TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
 	string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
-		return measRefs.ANGL.at(id);
+		return *measRefs.ANGL.at(id);
 	}
 	else if (type == "ZEND")
 	{
-		return measRefs.ZEND.at(id);
+		return *measRefs.ZEND.at(id);
 	}
 	else if (type == "DIST")
 	{
-		return measRefs.DIST.at(id);
+		return *measRefs.DIST.at(id);
 	}
 	else if (type == "ECTH")
 	{
-		return measRefs.ECTH.at(id);
+		return *measRefs.ECTH.at(id);
 	}
 	else if (type == "ECDIR")
 	{
-		return measRefs.ECDIR.at(id);
+		return *measRefs.ECDIR.at(id);
 	}
 	else if (type == "DHOR")
 	{
-		return measRefs.DHOR.at(id);
+		return *measRefs.DHOR.at(id);
 	}
 	else if (type == "PLR3D")
 	{
-		return measRefs.PLR3D.at(id);
+		return *measRefs.PLR3D.at(id);
 	}
 	else if (type == "ORIE")
 	{
-		return measRefs.ORIE.at(id);
+		return *measRefs.ORIE.at(id);
 	}
 	else if (type == "UVEC")
 	{
-		return measRefs.UVEC.at(id);
+		return *measRefs.UVEC.at(id);
 	}
 	else if (type == "UVD")
 	{
-		return measRefs.UVD.at(id);
+		return *measRefs.UVD.at(id);
 	}
 	else if (type == "DSPT")
 	{
-		return measRefs.DSPT.at(id);
+		return *measRefs.DSPT.at(id);
 	}
 	else if (type == "DLEV")
 	{
-		return measRefs.DLEV.at(id);
+		return *measRefs.DLEV.at(id);
 	}
 	else if (type == "ECHO")
 	{
-		return measRefs.ECHO.at(id);
+		return *measRefs.ECHO.at(id);
 	}
 	else if (type == "ECSP")
 	{
-		return measRefs.ECSP.at(id);
+		return *measRefs.ECSP.at(id);
 	}
 	else if (type == "ECVE")
 	{
-		return measRefs.ECVE.at(id);
+		return *measRefs.ECVE.at(id);
 	}
 	else if (type == "INCLY")
 	{
-		return measRefs.INCLY.at(id);
+		return *measRefs.INCLY.at(id);
 	}
 	else if (type == "ECWS")
 	{
-		return measRefs.ECWS.at(id);
+		return *measRefs.ECWS.at(id);
 	}
 	else if (type == "ECWI")
 	{	
-		return measRefs.ECWI.at(id);
+		return *measRefs.ECWI.at(id);
 	}
 	else if (type == "DVER")
 	{
-		return measRefs.DVER.at(id);
+		return *measRefs.DVER.at(id);
 	}
 	else if (type == "RADI")
 	{
-		return measRefs.RADI.at(id);
+		return *measRefs.RADI.at(id);
 	}
 	else if (type == "OBSXYZ")
 	{
-		return measRefs.OBSXYZ.at(id);
+		return *measRefs.OBSXYZ.at(id);
 	}
 
 }
@@ -764,118 +764,118 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 	string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
-		measRefs.ANGL.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		measRefs.ANGL.at(id)->setAngle(TAngle(measurementVector[0], TAngle::kGons));
 		return;
 	}
 	else if (type == "ZEND")
 	{
-		measRefs.ZEND.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		measRefs.ZEND.at(id)->setAngle(TAngle(measurementVector[0], TAngle::kGons));
 		return;
 	}
 	else if (type == "DIST")
 	{
-		measRefs.DIST.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.DIST.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "ECTH")
 	{
-		measRefs.ECTH.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.ECTH.at(id)->setDistance(TLength(measurementVector[0]));
 		// return;
 	}
 	else if (type == "ECDIR")
 	{
-		measRefs.ECDIR.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.ECDIR.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "DHOR")
 	{
-		measRefs.DHOR.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.DHOR.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "PLR3D")
 	{
-		measRefs.PLR3D.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons), kANGL);
-		measRefs.PLR3D.at(id).setAngle(TAngle(measurementVector[1], TAngle::kGons), kZEND);
-		measRefs.PLR3D.at(id).setDistance(TLength(measurementVector[2]));
+		measRefs.PLR3D.at(id)->setAngle(TAngle(measurementVector[0], TAngle::kGons), kANGL);
+		measRefs.PLR3D.at(id)->setAngle(TAngle(measurementVector[1], TAngle::kGons), kZEND);
+		measRefs.PLR3D.at(id)->setDistance(TLength(measurementVector[2]));
 		return;
 	}
 	else if (type == "ORIE")
 	{
-		measRefs.ORIE.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		measRefs.ORIE.at(id)->setAngle(TAngle(measurementVector[0], TAngle::kGons));
 		return;
 	}
 	else if (type == "UVEC")
 	{
 		TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
-		measRefs.UVEC.at(id).setVectorMeasurement(direction);
+		measRefs.UVEC.at(id)->setVectorMeasurement(direction);
 		return;
 	}
 	else if (type == "UVD")
 	{
 		TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
 		TLength distance(measurementVector[3]);
-		measRefs.UVD.at(id).setVectorMeasurement(direction);
-		measRefs.UVD.at(id).setDistance(distance);
+		measRefs.UVD.at(id)->setVectorMeasurement(direction);
+		measRefs.UVD.at(id)->setDistance(distance);
 		return;
 	}
 	else if (type == "DSPT")
 	{
-		measRefs.DSPT.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.DSPT.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "DLEV")
 	{
 		// ignoring DHOR
-		measRefs.DLEV.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.DLEV.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "ECHO")
 	{
-		measRefs.ECHO.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.ECHO.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "ECSP")
 	{
-		measRefs.ECSP.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.ECSP.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "ECVE")
 	{
-		measRefs.ECVE.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.ECVE.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "INCLY")
 	{
-		measRefs.INCLY.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
+		measRefs.INCLY.at(id)->setAngle(TAngle(measurementVector[0], TAngle::kGons));
 		return;
 	}
 	else if (type == "ECWS")
 	{
-		measRefs.ECWS.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.ECWS.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "ECWI")
 	{	
-		measRefs.ECWI.at(id).setDistance(TLength(measurementVector[0]), EECWIDistances::kX);
-		measRefs.ECWI.at(id).setDistance(TLength(measurementVector[1]), EECWIDistances::kZ);
+		measRefs.ECWI.at(id)->setDistance(TLength(measurementVector[0]), EECWIDistances::kX);
+		measRefs.ECWI.at(id)->setDistance(TLength(measurementVector[1]), EECWIDistances::kZ);
 		return;
 	}
 	else if (type == "DVER")
 	{
-		measRefs.DVER.at(id).setDistance(TLength(measurementVector[0]));
+		measRefs.DVER.at(id)->setDistance(TLength(measurementVector[0]));
 		return;
 	}
 	else if (type == "RADI")
 	{
 		std::cout << "RADI is not a real measurement" << std::endl;
-		// measRefs.RADI.at(id).set(TAngle(measurementVector[0]));
+		// measRefs.RADI.at(id)->set(TAngle(measurementVector[0]));
 		return;
 	}
 	else if (type == "OBSXYZ")
 	{
 		TPositionVector obsVector(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::ECoordSys::k3DCartesian);
 		// using a setter method for obsxyz
-		measRefs.OBSXYZ.at(id).setObservedVector(obsVector);
+		measRefs.OBSXYZ.at(id)->setObservedVector(obsVector);
 		return;
 	}
 }
@@ -900,57 +900,57 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	if (type == "ANGL")
 	{
 		Eigen::VectorXd res(1);
-		res<<(double) measRefs.ANGL.at(id).getAngleResidual();
+		res<<(double) measRefs.ANGL.at(id)->getAngleResidual();
 		return res;
 	}
 	else if (type == "ZEND")
 	{
 		Eigen::VectorXd res(1);
-		res<<(double) measRefs.ZEND.at(id).getAngleResidual();
+		res<<(double) measRefs.ZEND.at(id)->getAngleResidual();
 		return res;
 	}
 	else if (type == "DIST")
 	{
 		Eigen::VectorXd res(1);
-		res << (double)measRefs.DIST.at(id).getDistanceResidual();
+		res << (double)measRefs.DIST.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ECTH")
 	{
 		Eigen::VectorXd res(1);
 		// what kind of residual ? distance, angle?
-		res << measRefs.ECTH.at(id).getDistanceResidual();
+		res << measRefs.ECTH.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ECDIR")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.ECDIR.at(id).getDistanceResidual();
+		res << measRefs.ECDIR.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "DHOR")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.DHOR.at(id).getDistanceResidual();
+		res << measRefs.DHOR.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "PLR3D")
 	{
 		Eigen::VectorXd res(3);
-		res << measRefs.PLR3D.at(id).getAngleResidual(kANGL), measRefs.PLR3D.at(id).getAngleResidual(kZEND), measRefs.PLR3D.at(id).getDistanceResidual();
+		res << measRefs.PLR3D.at(id)->getAngleResidual(kANGL), measRefs.PLR3D.at(id)->getAngleResidual(kZEND), measRefs.PLR3D.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ORIE")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.ORIE.at(id).getAngleResidual();
+		res << measRefs.ORIE.at(id)->getAngleResidual();
 		return res;
 	}
 	else if (type == "UVEC")
 	{
 		// to be checked! 
 		Eigen::VectorXd res(2);
-		res << measRefs.UVEC.at(id).getXCompVectorResidual(), measRefs.UVEC.at(id).getYCompVectorResidual();
+		res << measRefs.UVEC.at(id)->getXCompVectorResidual(), measRefs.UVEC.at(id)->getYCompVectorResidual();
 		//TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
 		//measRefs.UVEC.at(id).setVectorMeasurement(direction);
 		return res;
@@ -959,7 +959,7 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	{
 		// to be checked, particular the order! 
 		Eigen::VectorXd res(3);
-		res << measRefs.UVD.at(id).getXCompVectorResidual(), measRefs.UVD.at(id).getYCompVectorResidual(), measRefs.UVD.at(id).getDistanceResidual();
+		res << measRefs.UVD.at(id)->getXCompVectorResidual(), measRefs.UVD.at(id)->getYCompVectorResidual(), measRefs.UVD.at(id)->getDistanceResidual();
 		//TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
 		//TLength distance(measurementVector[3]);
 		//measRefs.UVD.at(id).setVectorMeasurement(direction);
@@ -969,56 +969,56 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	else if (type == "DSPT")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.DSPT.at(id).getDistanceResidual();
+		res << measRefs.DSPT.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "DLEV")
 	{
 		// ignoring DHOR
 		Eigen::VectorXd res(1);
-		res << measRefs.DLEV.at(id).getDistanceResidual();
+		res << measRefs.DLEV.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ECHO")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.ECHO.at(id).getDistanceResidual();
+		res << measRefs.ECHO.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ECSP")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.ECSP.at(id).getDistanceResidual();
+		res << measRefs.ECSP.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ECVE")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.ECVE.at(id).getDistanceResidual();
+		res << measRefs.ECVE.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "INCLY")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.INCLY.at(id).getAngleResidual();
+		res << measRefs.INCLY.at(id)->getAngleResidual();
 		return res;
 	}
 	else if (type == "ECWS")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.ECWS.at(id).getDistanceResidual();
+		res << measRefs.ECWS.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "ECWI")
 	{
 		Eigen::VectorXd res(2);
-		res << measRefs.ECWI.at(id).getDistanceResidual(EECWIDistances::kX), measRefs.ECWI.at(id).getDistanceResidual(EECWIDistances::kZ);
+		res << measRefs.ECWI.at(id)->getDistanceResidual(EECWIDistances::kX), measRefs.ECWI.at(id)->getDistanceResidual(EECWIDistances::kZ);
 		return res;
 	}
 	else if (type == "DVER")
 	{
 		Eigen::VectorXd res(1);
-		res << measRefs.DVER.at(id).getDistanceResidual();
+		res << measRefs.DVER.at(id)->getDistanceResidual();
 		return res;
 	}
 	else if (type == "RADI")
@@ -1032,7 +1032,7 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	else if (type == "OBSXYZ")
 	{
 		Eigen::VectorXd res(3);
-		res << measRefs.OBSXYZ.at(id).getXResidual(), measRefs.OBSXYZ.at(id).getYResidual(), measRefs.OBSXYZ.at(id).getZResidual();
+		res << measRefs.OBSXYZ.at(id)->getXResidual(), measRefs.OBSXYZ.at(id)->getYResidual(), measRefs.OBSXYZ.at(id)->getZResidual();
 		return res;
 	}
 	Eigen::VectorXd resDummy(1);
@@ -1076,7 +1076,7 @@ waterRom Moni::MoniImpl::getECWSData(std::string ecwsRomName)
 	auto it = romRefs.ecwsRoms.find(ecwsRomName);
 	if (it != romRefs.ecwsRoms.end())
 	{
-		TECWSROM &rom = romRefs.ecwsRoms.at(ecwsRomName);
+		TECWSROM &rom = *romRefs.ecwsRoms.at(ecwsRomName);
 		waterRom result(rom.romName, double(rom.fMeasuredWSHeight->getEstimatedValue()), double(rom.fMeasuredWSHeight->getEstimatedPrecision()));
 		return result;
 	}
@@ -1092,7 +1092,7 @@ wireRom Moni::MoniImpl::getECWIData(std::string ecwiRomName)
 	auto it = romRefs.ecwiRoms.find(ecwiRomName);
 	if (it != romRefs.ecwiRoms.end())
 	{
-		TECWIROM &rom = romRefs.ecwiRoms.at(ecwiRomName);
+		TECWIROM &rom = *romRefs.ecwiRoms.at(ecwiRomName);
 		Eigen::VectorXd data(5), sigmas(5);
 		data << double(rom.fWireDx->getEstimatedValue()), double(rom.fWireDz->getEstimatedValue()), double(rom.fWireBearing->getEstimatedValue()),
 			double(rom.fWireSlope->getEstimatedValue()), double(rom.sagAdjustable->getEstimatedValue());
@@ -1125,114 +1125,114 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	if (type == "ANGL")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ANGL.at(id).getAngle());
+		result[0] = ((double) measRefs.ANGL.at(id)->getAngle());
 		return result;
 	}
 	else if (type == "ZEND")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ZEND.at(id).getAngle());
+		result[0] = ((double) measRefs.ZEND.at(id)->getAngle());
 		return result;
 	}
 	else if (type == "DIST")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.DIST.at(id).getDistance());
+		result[0] = ((double) measRefs.DIST.at(id)->getDistance());
 		return result;
 	}
 	else if (type == "ECTH")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ECTH.at(id).getDistance());
+		result[0] = ((double) measRefs.ECTH.at(id)->getDistance());
 		return result;
 	}
 	else if (type == "ECDIR")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ECDIR.at(id).getDistance());
+		result[0] = ((double) measRefs.ECDIR.at(id)->getDistance());
 		return result;
 	}
 	else if (type == "DHOR")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.DHOR.at(id).getDistance());
+		result[0] = ((double) measRefs.DHOR.at(id)->getDistance());
 		return result;
 	}
 	else if (type == "PLR3D")
 	{
 		Eigen::VectorXd result(3);
-		result << measRefs.PLR3D.at(id).getAngle(kANGL), measRefs.PLR3D.at(id).getAngle(kZEND), measRefs.PLR3D.at(id).getDistance();
+		result << measRefs.PLR3D.at(id)->getAngle(kANGL), measRefs.PLR3D.at(id)->getAngle(kZEND), measRefs.PLR3D.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "ORIE")
 	{
 		Eigen::VectorXd result(1);
-		result << measRefs.ORIE.at(id).getAngle();
+		result << measRefs.ORIE.at(id)->getAngle();
 		return result;
 	}
 	else if (type == "UVEC")
 	{
-		return toVectorXd(measRefs.UVEC.at(id).getVectorValue());
+		return toVectorXd(measRefs.UVEC.at(id)->getVectorValue());
 	}
 	else if (type == "UVD")
 	{	
 		Eigen::VectorXd result(4);
-		result << toVectorXd(measRefs.UVD.at(id).getVectorValue()), measRefs.UVD.at(id).getDistance().getMetresValue();
+		result << toVectorXd(measRefs.UVD.at(id)->getVectorValue()), measRefs.UVD.at(id)->getDistance().getMetresValue();
 		return result;
 	}
 	else if (type == "DSPT")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.DSPT.at(id).getDistance();
+		result[0] = measRefs.DSPT.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "DLEV")
 	{
 		// ignoring DHOR
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.DHOR.at(id).getDistance();
+		result[0] = measRefs.DHOR.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "ECHO")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.ECHO.at(id).getDistance();
+		result[0] = measRefs.ECHO.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "ECSP")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.ECSP.at(id).getDistance();
+		result[0] = measRefs.ECSP.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "ECVE")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.ECVE.at(id).getDistance();
+		result[0] = measRefs.ECVE.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "INCLY")
 	{
 		Eigen::VectorXd result(1);
-		result[0]=measRefs.INCLY.at(id).getAngle();
+		result[0]=measRefs.INCLY.at(id)->getAngle();
 		return result;
 	}
 	else if (type == "ECWS")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.ECWS.at(id).getDistance();
+		result[0] = measRefs.ECWS.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "ECWI")
 	{	
 		Eigen::VectorXd result(2);
-		result << measRefs.ECWI.at(id).getDistance(EECWIDistances::kX), measRefs.ECWI.at(id).getDistance(EECWIDistances::kZ);
+		result << measRefs.ECWI.at(id)->getDistance(EECWIDistances::kX), measRefs.ECWI.at(id)->getDistance(EECWIDistances::kZ);
 		return result;
 	}
 	else if (type == "DVER")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = measRefs.DVER.at(id).getDistance();
+		result[0] = measRefs.DVER.at(id)->getDistance();
 		return result;
 	}
 	else if (type == "RADI")
@@ -1246,7 +1246,7 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	}
 	else if (type == "OBSXYZ")
 	{
-		return toVectorXd(measRefs.OBSXYZ.at(id).obsValue);
+		return toVectorXd(measRefs.OBSXYZ.at(id)->obsValue);
 	}
 }
 
@@ -1265,97 +1265,97 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
-		measRefs.ANGL.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+		measRefs.ANGL.at(id)->target.sigmaAngl.setRadiansValue(sigma(0));
 	}
 	else if (type == "ZEND")
 	{
-		measRefs.ZEND.at(id).target.sigmaZenD.setRadiansValue(sigma(0));
+		measRefs.ZEND.at(id)->target.sigmaZenD.setRadiansValue(sigma(0));
 	}
 	else if (type == "DIST")
 	{
-		measRefs.DIST.at(id).target.sigmaDist.setMetresValue(sigma(0));
+		measRefs.DIST.at(id)->target.sigmaDist.setMetresValue(sigma(0));
 	}
 	else if (type == "ECTH")
 	{
-		measRefs.ECTH.at(id).obsHorAngle.setRadiansValue(sigma(0));
+		measRefs.ECTH.at(id)->obsHorAngle.setRadiansValue(sigma(0));
 	}
 	else if (type == "ECDIR")
 	{
-		measRefs.ECDIR.at(id).obsHorAngle.setRadiansValue(sigma(0));
-		measRefs.ECDIR.at(id).obsVertAngle.setRadiansValue(sigma(1));
+		measRefs.ECDIR.at(id)->obsHorAngle.setRadiansValue(sigma(0));
+		measRefs.ECDIR.at(id)->obsVertAngle.setRadiansValue(sigma(1));
 	}
 	else if (type == "DHOR")
 	{
 		// not supported
-		//	measRefs.DHOR.at(id).setDHORSigma(TLength(sigma(0)));
+		//	measRefs.DHOR.at(id)->setDHORSigma(TLength(sigma(0)));
 	}
 	else if (type == "PLR3D")
 	{
-		measRefs.PLR3D.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
-		measRefs.PLR3D.at(id).target.sigmaZenD.setRadiansValue(sigma(1));
-		measRefs.PLR3D.at(id).target.sigmaDist.setMetresValue(sigma(2));
+		measRefs.PLR3D.at(id)->target.sigmaAngl.setRadiansValue(sigma(0));
+		measRefs.PLR3D.at(id)->target.sigmaZenD.setRadiansValue(sigma(1));
+		measRefs.PLR3D.at(id)->target.sigmaDist.setMetresValue(sigma(2));
 	}
 	else if (type == "ORIE")
 	{
-		measRefs.ORIE.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+		measRefs.ORIE.at(id)->target.sigmaAngl.setRadiansValue(sigma(0));
 	}
 	else if (type == "UVEC")
 	{
-		measRefs.UVEC.at(id).target.sigmaX = sigma(0); // unitless
-		measRefs.UVEC.at(id).target.sigmaY = sigma(1); // unitless
+		measRefs.UVEC.at(id)->target.sigmaX = sigma(0); // unitless
+		measRefs.UVEC.at(id)->target.sigmaY = sigma(1); // unitless
 	}
 	else if (type == "UVD")
 	{	
-		measRefs.UVD.at(id).target.sigmaX = sigma(0); // unitless
-		measRefs.UVD.at(id).target.sigmaY = sigma(1); // unitless
-		measRefs.UVD.at(id).target.sigmaDist.setMetresValue(sigma(2));
+		measRefs.UVD.at(id)->target.sigmaX = sigma(0); // unitless
+		measRefs.UVD.at(id)->target.sigmaY = sigma(1); // unitless
+		measRefs.UVD.at(id)->target.sigmaDist.setMetresValue(sigma(2));
 	}
 	else if (type == "DSPT")
 	{
-		measRefs.DSPT.at(id).target.sigmaDSpt.setMetresValue(sigma(0));
+		measRefs.DSPT.at(id)->target.sigmaDSpt.setMetresValue(sigma(0));
 	}
 	else if (type == "DLEV")
 	{
-		measRefs.DLEV.at(id).target.sigmaD.setMetresValue(sigma(0));
+		measRefs.DLEV.at(id)->target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECHO")
 	{
-		measRefs.ECHO.at(id).target.sigmaD.setMetresValue(sigma(0));
+		measRefs.ECHO.at(id)->target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECSP")
 	{
-		measRefs.ECSP.at(id).target.sigmaD.setMetresValue(sigma(0));
+		measRefs.ECSP.at(id)->target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECVE")
 	{
-		measRefs.ECVE.at(id).target.sigmaD.setMetresValue(sigma(0));
+		measRefs.ECVE.at(id)->target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "INCLY")
 	{
-		measRefs.INCLY.at(id).target.sigmaAngl.setRadiansValue(sigma(0));
+		measRefs.INCLY.at(id)->target.sigmaAngl.setRadiansValue(sigma(0));
 	}
 	else if (type == "ECWS")
 	{
-		measRefs.ECWS.at(id).target.sigmaDist.setMetresValue(sigma(0));
+		measRefs.ECWS.at(id)->target.sigmaDist.setMetresValue(sigma(0));
 	}
 	else if (type == "ECWI")
 	{	
-		measRefs.ECWI.at(id).target.sigmaX.setMetresValue(sigma(0));
-		measRefs.ECWI.at(id).target.sigmaZ.setMetresValue(sigma(1));
+		measRefs.ECWI.at(id)->target.sigmaX.setMetresValue(sigma(0));
+		measRefs.ECWI.at(id)->target.sigmaZ.setMetresValue(sigma(1));
 	}
 	else if (type == "DVER")
 	{
-		measRefs.DVER.at(id).setObservedStDev(TLength(sigma(0)));
+		measRefs.DVER.at(id)->setObservedStDev(TLength(sigma(0)));
 	}
 	else if (type == "RADI")
 	{
-		measRefs.RADI.at(id).setObservedStDev(TLength(sigma(0)));
+		measRefs.RADI.at(id)->setObservedStDev(TLength(sigma(0)));
 	}
 	else if (type == "OBSXYZ")
 	{
-		measRefs.OBSXYZ.at(id).setXObservedStDev(TLength(sigma(0)));
-		measRefs.OBSXYZ.at(id).setYObservedStDev(TLength(sigma(1)));
-		measRefs.OBSXYZ.at(id).setZObservedStDev(TLength(sigma(2)));
+		measRefs.OBSXYZ.at(id)->setXObservedStDev(TLength(sigma(0)));
+		measRefs.OBSXYZ.at(id)->setYObservedStDev(TLength(sigma(1)));
+		measRefs.OBSXYZ.at(id)->setZObservedStDev(TLength(sigma(2)));
 	}
 }
 
@@ -1368,7 +1368,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId)
 	{
 		throw std::runtime_error("No point with Id " + pointId + " found");
 	}
-	TPositionVector result = paramRefs.POINTS.at(pointId).getEstimatedValue();
+	TPositionVector result = paramRefs.POINTS.at(pointId)->getEstimatedValue();
 	return toVectorXd(result);
 }
 Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::string destFrame)
@@ -1383,8 +1383,8 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::strin
 	}
 
 	// transform to destination frame
-	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();	
-	const TLOR2LOR lorTrafo(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->locateNode(destFrame), "sub2Dest");
+	TPositionVector point = paramRefs.POINTS.at(pointId)->getEstimatedValue();	
+	const TLOR2LOR lorTrafo(paramRefs.POINTS.at(pointId)->getFrameTreePosition(), project->locateNode(destFrame), "sub2Dest");
 	lorTrafo.transform(point);
 	return toVectorXd(point);
 }
@@ -1397,13 +1397,13 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(std::string frameId)
 	}
 
 	Eigen::VectorXd resultVector(7);
-	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tX;
-	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tY;
-	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tZ;
-	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstParam().omega;
-	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstParam().phi;
-	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstParam().kappa;
-	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstParam().scale;
+	resultVector[0] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().tX;
+	resultVector[1] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().tY;
+	resultVector[2] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().tZ;
+	resultVector[3] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().omega;
+	resultVector[4] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().phi;
+	resultVector[5] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().kappa;
+	resultVector[6] = (double)paramRefs.FRAMES.at(frameId)->getEstParam().scale;
 
 	return resultVector;
 }
@@ -1416,14 +1416,14 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(std::string frameId)
 	}
 
 	Eigen::VectorXd resultVector(7);
-	TAdjustableHelmertTransformation& aux = paramRefs.FRAMES.at(frameId);
-	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(0);
-	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(1);
-	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(2);
-	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(0);
-	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(1);
-	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(2);
-	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionScale();
+	//TAdjustableHelmertTransformation& aux = paramRefs.FRAMES.at(frameId);
+	resultVector[0] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionTransl(0);
+	resultVector[1] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionTransl(1);
+	resultVector[2] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionTransl(2);
+	resultVector[3] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionRot(0);
+	resultVector[4] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionRot(1);
+	resultVector[5] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionRot(2);
+	resultVector[6] = (double)paramRefs.FRAMES.at(frameId)->getEstimatedPrecisionScale();
 
 	return resultVector;
 }
@@ -1440,8 +1440,8 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId)
 	Eigen::VectorXd prec(3);
 	prec.setZero();
 	// get precisions, the diagonal covar elements are the square roots
-	prec << (double)paramRefs.POINTS.at(pointId).getXEstPrecision(), (double)paramRefs.POINTS.at(pointId).getYEstPrecision(),
-		(double)paramRefs.POINTS.at(pointId).getZEstPrecision();
+	prec << (double)paramRefs.POINTS.at(pointId)->getXEstPrecision(), (double)paramRefs.POINTS.at(pointId)->getYEstPrecision(),
+		(double)paramRefs.POINTS.at(pointId)->getZEstPrecision();
 
 	return prec;
 }
@@ -1457,8 +1457,8 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId, std::s
 		throw std::runtime_error("No Point with Id " + destFrame + " found");
 	}
 
-	LGCAdjustablePoint point = paramRefs.POINTS.at(pointId);
-	Eigen::VectorXd prec = toVectorXd(point.transformSigma(point, project.get(),destFrame));
+	LGCAdjustablePoint* point = paramRefs.POINTS.at(pointId);
+	Eigen::VectorXd prec = toVectorXd(point->transformSigma(*point, project.get(),destFrame));
 
 	return prec;
 }

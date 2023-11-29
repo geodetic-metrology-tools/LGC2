@@ -117,42 +117,42 @@ private:
 		std::unordered_map<std::string, std::string> types;
 		// rather maps to one class higher (TScalar, TPosition??)
 		// Polar type
-		std::unordered_map<std::string, TANGL &> ANGL;
-		std::unordered_map<std::string, TZEND &> ZEND;
-		std::unordered_map<std::string, TLINE &> DIST;
-		std::unordered_map<std::string, TECTH &> ECTH;
-		std::unordered_map<std::string, TECDIR &> ECDIR;
-		std::unordered_map<std::string, TLINE &> DHOR;
-		std::unordered_map<std::string, TPLR3D &> PLR3D;
-		std::unordered_map<std::string, TORIE &> ORIE;
+		std::unordered_map<std::string, TANGL *> ANGL;
+		std::unordered_map<std::string, TZEND *> ZEND;
+		std::unordered_map<std::string, TLINE *> DIST;
+		std::unordered_map<std::string, TECTH *> ECTH;
+		std::unordered_map<std::string, TECDIR *> ECDIR;
+		std::unordered_map<std::string, TLINE *> DHOR;
+		std::unordered_map<std::string, TPLR3D *> PLR3D;
+		std::unordered_map<std::string, TORIE *> ORIE;
 		// CAMD type
-		std::unordered_map<std::string, TUVEC &> UVEC;
-		std::unordered_map<std::string, TUVD &> UVD;
+		std::unordered_map<std::string, TUVEC *> UVEC;
+		std::unordered_map<std::string, TUVD *> UVD;
 		// EDM type
-		std::unordered_map<std::string, TDSPT &> DSPT;
+		std::unordered_map<std::string, TDSPT *> DSPT;
 		// LEVEL type, what about RefPt and RefPt+DHOR config?
-		std::unordered_map<std::string, TDLEV &> DLEV;
+		std::unordered_map<std::string, TDLEV *> DLEV;
 		// SCALE Type
-		std::unordered_map<std::string, TECHO &> ECHO;
-		std::unordered_map<std::string, TECSP &> ECSP;
-		std::unordered_map<std::string, TECVE &> ECVE;
+		std::unordered_map<std::string, TECHO *> ECHO;
+		std::unordered_map<std::string, TECSP *> ECSP;
+		std::unordered_map<std::string, TECVE *> ECVE;
 		// INCL Type
-		std::unordered_map<std::string, TINCLY &> INCLY;
+		std::unordered_map<std::string, TINCLY *> INCLY;
 		// HLSR Type
-		std::unordered_map<std::string, TECWS &> ECWS;
+		std::unordered_map<std::string, TECWS *> ECWS;
 		// WPSR Type
-		std::unordered_map<std::string, TECWI &> ECWI;
+		std::unordered_map<std::string, TECWI *> ECWI;
 		// "No" type
-		std::unordered_map<std::string, TDVER &> DVER;
-		std::unordered_map<std::string, TRADI &> RADI;
-		std::unordered_map<std::string, TOBSXYZ &> OBSXYZ;
+		std::unordered_map<std::string, TDVER *> DVER;
+		std::unordered_map<std::string, TRADI *> RADI;
+		std::unordered_map<std::string, TOBSXYZ *> OBSXYZ;
 	} measRefs;
 
 	struct
 	{
 		// Round of Measurement references, for now only used for water and wire
-		std::unordered_map<std::string, TECWSROM &> ecwsRoms;
-		std::unordered_map<std::string, TECWIROM &> ecwiRoms;
+		std::unordered_map<std::string, TECWSROM *> ecwsRoms;
+		std::unordered_map<std::string, TECWIROM *> ecwiRoms;
 
 	} romRefs;
 	
@@ -164,12 +164,12 @@ private:
 	{
 		// the parameter types
 		// the parameter references
-		std::unordered_map<std::string, LGCAdjustablePoint &> POINTS;
-		std::unordered_map<std::string, LGCAdjustableLine &> LINES;
-		std::unordered_map<std::string, TAdjustableAngle &> ANGLES;
-		std::unordered_map<std::string, LGCAdjustablePlane &> PLANES;
-		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
-		std::unordered_map<std::string, TAdjustableHelmertTransformation &> FRAMES;
+		std::unordered_map<std::string, LGCAdjustablePoint *> POINTS;
+		std::unordered_map<std::string, LGCAdjustableLine *> LINES;
+		std::unordered_map<std::string, TAdjustableAngle *> ANGLES;
+		std::unordered_map<std::string, LGCAdjustablePlane *> PLANES;
+		std::unordered_map<std::string, TAdjustableLength *> LENGTHS;
+		std::unordered_map<std::string, TAdjustableHelmertTransformation *> FRAMES;
 	} paramRefs;
 
 	// status of estimation. True if estimation results are ready for extraction.
