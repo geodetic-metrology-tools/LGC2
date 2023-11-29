@@ -302,6 +302,11 @@ void object::test<5>()
 		std::cout << "Residual of " << obsName << " = " << mockup.getEstimateResidual(obsName) << std::endl;
 		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
 
+		// test water network data extraction
+		waterNetwork waterNetworkResult = mockup.getECWSData("WaterNetwork1");
+		std::cout << "Water network name= " << waterNetworkResult.romName << " water level height = " << waterNetworkResult.waterLevel << " with sigma "
+				  << waterNetworkResult.waterLevelSigma << std::endl;
+
 		// get sigmaZero
 		std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 	}
