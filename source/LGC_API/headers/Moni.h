@@ -19,21 +19,21 @@
 struct waterRom
 {
 	std::string romName = "";
-	double waterLevel = 0;
-	double waterLevelSigma = 0;
+	double estimate = 0;
+	double prec = 0;
 	// basic constuctor
-	waterRom(std::string name, double level, double sigma) : romName(name), waterLevel(level), waterLevelSigma(sigma) {}
+	waterRom(std::string name, double level, double sigma) : romName(name), estimate(level), prec(sigma) {}
 };
 
 struct wireRom
 {
 	std::string romName = "";
 	// containing values of Dx,Dz,bearing,slope,sag in this order
-	Eigen::VectorXd values= Eigen::VectorXd::Zero(5);
+	Eigen::VectorXd estimate = Eigen::VectorXd::Zero(5);
 	// sigmas in the same order
-	Eigen::VectorXd sigmas = Eigen::VectorXd::Zero(5);
+	Eigen::VectorXd prec = Eigen::VectorXd::Zero(5);
 	// basic constructor
-	wireRom(std::string name, Eigen::VectorXd vals, Eigen::VectorXd sigmas) : romName(name), values(vals), sigmas(sigmas) {}
+	wireRom(std::string name, Eigen::VectorXd vals, Eigen::VectorXd sigmas) : romName(name), estimate(vals), prec(sigmas) {}
 };
 
 
