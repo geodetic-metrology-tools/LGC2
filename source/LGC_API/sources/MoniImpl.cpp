@@ -1384,7 +1384,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::strin
 
 	// transform to destination frame
 	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();	
-	const TLOR2LOR lorTrafo(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->getTree().begin(), "sub2Dest");
+	const TLOR2LOR lorTrafo(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->locateNode(destFrame), "sub2Dest");
 	lorTrafo.transform(point);
 	return toVectorXd(point);
 }

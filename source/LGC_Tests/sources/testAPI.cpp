@@ -403,4 +403,88 @@ void object::test<6>()
 	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 }
 
+template<>
+template<>
+void object::test<7>()
+{
+	set_test_name("Testing API on single component test file with nominal positions for direct offset calculation.");
+	ensure_equals("Reading file successful", true, true);
+	// for simulation of random perturbations
+	std::ranlux48 engine;
+	// reproducibility
+	engine.seed(1);
+	auto start = high_resolution_clock::now();
+	std::string inputFilePath = "test_files/LGC_SCT_WPS_withNominalPositions.lgc";
+
+	Moni mockup(inputFilePath);
+
+	// the IDs for the observations we want to manipulate during the monitoring
+	std::vector<std::string> wpsIds = {
+		"GISCD.B1LX.A_WPS", "GTAP.A1LX.A_WPS", "GTAP.A1LX.L_WPS", "GISCD.A1LX.A_WPS", "GISCD.B1LX.D_WPS", "GTAP.A1LX.D_WPS", "GTAP.A1LX.Q_WPS", "GISCD.A1LX.D_WPS"};
+
+	// first save the original measurements
+	std::unordered_map<std::string, Eigen::VectorXd> originalMeasurements;
+	for (auto id : wpsIds)
+	{
+		originalMeasurements.insert({id, mockup.getMeas(id)});
+	}
+	bool status = false;
+
+	// Simulating a monitoring scenario
+	for (int i = 0; i < 10; i++)
+	{
+		for (auto id : wpsIds)
+		{
+			// simulate new measurements by taking the original values and add a perturbation with standard deviation sigma
+			// ECWI sigmas for x & y = 0.02 mm = 2e-5m
+			double sigma(2e-5);
+			Eigen::VectorXd perturbation(2);
+			perturbation << std::normal_distribution<double>(0, sigma)(engine), std::normal_distribution<double>(0, sigma)(engine);
+			Eigen::VectorXd new_measurement = perturbation + originalMeasurements.at(id);
+			mockup.updateMeas(id, new_measurement);
+		}
+		status = mockup.getStatus();
+		ensure_equals("Estimation status should be false after measurement updates", status, false);
+
+		status = mockup.adjust();
+		ensure_equals("Estimation status should be true after adjustment", status, true);
+		auto currentTime = high_resolution_clock::now();
+		auto duration = duration_cast<milliseconds>(currentTime - start);
+
+		// compute offset for SCT.GISCD.A1LX.E
+		std::string pointNameAligned = "BEAM_SCT.GTAP.A1LX.E";
+		std::string pointNameNominal = "BEAM_SCT.GTAP.A1LX.E_nominal";
+		std::string frameNominal = "SCT.GTAP.A1LX.RSTB";
+		std::string frameAligned = "SCT.GTAP.A1LX.RSTR";
+
+		// get data and compute offset
+		Eigen::VectorXd alignedPos = mockup.getPointEstimate(pointNameAligned, frameNominal);
+		Eigen::VectorXd nominalPos = mockup.getPointEstimate(pointNameNominal, frameNominal);
+		Eigen::VectorXd alignedPosPrec = mockup.getPointEstimatePrec(pointNameAligned, frameNominal);
+		Eigen::VectorXd nominalPosPrec = mockup.getPointEstimatePrec(pointNameNominal, frameNominal); // will be zero because nominal point is cala in nominal frame
+		Eigen::MatrixXd offsetData(3, 2);
+		offsetData << alignedPos - nominalPos, alignedPosPrec;
+
+		std::cout << "Position of point " << pointNameAligned << " in Frame " << frameNominal << std::endl;
+		std::cout << alignedPos << std::endl;
+		std::cout << "Position of point " << pointNameNominal << " in Frame " << frameNominal << std::endl;
+		std::cout << nominalPos << std::endl;
+
+		std::cout << "Offset and offset precision:" << std::endl;
+		std::cout << offsetData << std::endl;
+
+		std::cout << "offset calculation without nominal points " << std::endl;
+		std::cout << mockup.getPointEstimate(pointNameAligned, frameNominal) - mockup.getPointEstimate(pointNameAligned, frameAligned) << std::endl;
+
+		//wireRom wireNetworkResult = mockup.getECWIData("GIWPN.T1LX");
+		//std::cout << "Wire network name= " << wireNetworkResult.romName << " data (dx,dz,bearing,slope,sag) = " << wireNetworkResult.estimate << " with precision"
+		//		  << wireNetworkResult.prec << std::endl;
+
+		//// get sigmaZero
+		//std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
+	}
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<seconds>(stop - start);
+	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
+}
 }; // namespace tut
