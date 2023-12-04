@@ -28,6 +28,7 @@ def cast2HuberQP(P,A,A2,B,W,W2,huberGamma):
     nHuberIneq=2*nObs
     ZeroObsxObs =sp.csr_matrix((nObs,nObs))
     Iobs=sp.eye(nObs)
+    Ipars=sp.eye(nPar)
     diagonalElements=P
     roots = np.sqrt(diagonalElements)
     Sv=sp.diags(roots)
@@ -39,15 +40,18 @@ def cast2HuberQP(P,A,A2,B,W,W2,huberGamma):
     ##Ceq=sp.bmat([[A,B,ZeroObsxObs,ZeroObsxObs,ZeroObsxObs],
     ##               [A2,sp.csr_matrix((nCnstr,4*nObs))],
     ##               [sp.csr_matrix((nObs,nPar)),Sv,-Iobs,-Iobs,Iobs]])
-    # inequality constraint matrix 
-    Cineq=sp.bmat([[sp.csr_matrix((nObs,nPar+2*nObs)),Iobs,sp.csr_matrix((nObs,nObs))],
-                   [sp.csr_matrix((nObs,nPar+2*nObs)),sp.csr_matrix((nObs,nObs)),Iobs]])
+    # inequality constraint matrix simple bounds on dx and huber modeling linear contributions
+    Cineq=sp.bmat([[Ipars, sp.csr_matrix((nPar,2*nObs)),sp.csr_matrix((nPar,nObs)),sp.csr_matrix((nPar,nObs))],
+                   [sp.csr_matrix((nObs,nPar)),sp.csr_matrix((nObs,2*nObs)),Iobs,sp.csr_matrix((nObs,nObs))],
+                   [sp.csr_matrix((nObs,nPar)),sp.csr_matrix((nObs,2*nObs)),sp.csr_matrix((nObs,nObs)),Iobs]])
     # equality bound
     bEq=np.concatenate((-W,-W2,np.zeros((nObs))))
     # inequality bounds
     BIG =1e+6
-    lbIneq=np.zeros(2*nObs)
-    ubIneq=BIG*np.ones(2*nObs)
+    xLower=-0.1
+    xUpper=+0.1
+    lbIneq=np.concatenate((xLower*np.ones(nPar),np.zeros(2*nObs)))
+    ubIneq=np.concatenate((xUpper*np.ones(nPar),BIG*np.ones(2*nObs)))
     # hessian 
     hessDiag=np.concatenate((np.zeros(nPar+nObs),np.ones(nObs),np.zeros(2*nObs)))
     hessian=sp.diags(hessDiag)
@@ -68,8 +72,8 @@ def solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq):
     cones = [clarabel.ZeroConeT(nEqQP), clarabel.NonnegativeConeT(2*nIneqQP)]
 
     settings = clarabel.DefaultSettings()
-    #settings.verbose = True
-    settings.verbose = False
+    settings.verbose = True
+    #settings.verbose = False
     sparseHessian=hessian.tocsc()
     solver = clarabel.DefaultSolver(
         sparseHessian, gradient, AClarabel.tocsc(), bClarabel, cones, settings)
@@ -151,7 +155,7 @@ class huberSolver:
     def __init__(self, evaluator):
         self._evaluator = evaluator
 
-    def solve(self,initialValue,gamma,maxIter=50):
+    def solve(self,initialValue,gamma,maxIter=1000):
         #solving the huber estimation problem with threshold huberGamma
         print("Starting Huber estimation iterations for gamma= ",gamma)
         evaluator = self._evaluator
@@ -172,7 +176,7 @@ class huberSolver:
             xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
             dx = xClara[:A.shape[1]]
 
-            par+=0.5*dx
+            par+=dx
             ##print(rs)
             print("|dx|=",np.linalg.norm(dx))
             ##print("x=",par)
