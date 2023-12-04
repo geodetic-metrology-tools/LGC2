@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import shutil
 import os
 
-def cast2HuberQP(P,A,A2,B,W,W2,huberGamma):
+def cast2HuberQP(P,A,A2,B,W,W2,huberGamma,dxBound):
     ## taking the design matrices and the weight  matrix.
     ## huber gamma defines from which multiple of the standard deviation an residual is penalized linearly
     ## setting up the Huber QP
@@ -48,8 +48,8 @@ def cast2HuberQP(P,A,A2,B,W,W2,huberGamma):
     bEq=np.concatenate((-W,-W2,np.zeros((nObs))))
     # inequality bounds
     BIG =1e+6
-    xLower=-0.1
-    xUpper=+0.1
+    xLower=-dxBound
+    xUpper=+dxBound
     lbIneq=np.concatenate((xLower*np.ones(nPar),np.zeros(2*nObs)))
     ubIneq=np.concatenate((xUpper*np.ones(nPar),BIG*np.ones(2*nObs)))
     # hessian 
@@ -72,8 +72,8 @@ def solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq):
     cones = [clarabel.ZeroConeT(nEqQP), clarabel.NonnegativeConeT(2*nIneqQP)]
 
     settings = clarabel.DefaultSettings()
-    settings.verbose = True
-    #settings.verbose = False
+    #settings.verbose = True
+    settings.verbose = False
     sparseHessian=hessian.tocsc()
     solver = clarabel.DefaultSolver(
         sparseHessian, gradient, AClarabel.tocsc(), bClarabel, cones, settings)
@@ -155,7 +155,7 @@ class huberSolver:
     def __init__(self, evaluator):
         self._evaluator = evaluator
 
-    def solve(self,initialValue,gamma,maxIter=1000):
+    def solve(self,initialValue,gamma,maxIter=1000,dxBoxBound=1000):
         #solving the huber estimation problem with threshold huberGamma
         print("Starting Huber estimation iterations for gamma= ",gamma)
         evaluator = self._evaluator
@@ -172,7 +172,7 @@ class huberSolver:
             W=evaluator.getW(par)
             W2=evaluator.getW2(par) 
             [hessian, gradient, Ceq, Cineq, bEq, lbIneq,
-                ubIneq] = cast2HuberQP(Pv, A, A2, B, W, W2,gamma)
+                ubIneq] = cast2HuberQP(Pv, A, A2, B, W, W2,gamma,dxBoxBound)
             xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
             dx = xClara[:A.shape[1]]
 
