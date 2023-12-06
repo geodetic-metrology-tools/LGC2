@@ -72,9 +72,27 @@ void LGCController::initialize()
 
 
 	std::ifstream inputFileStream(inputFilePath, std::ifstream::in);
-	bool succesReading = r.read(inputFileStream);
-	if (!succesReading)
-		throw std::runtime_error("Error reading input file");
+	std::ifstream cp_inputFileStream(inputFilePath, std::ifstream::in);
+	
+	if (r.isLgc2File(cp_inputFileStream))
+	{
+		if (!r.read(inputFileStream))
+		{
+			throw std::runtime_error("Errors found in the input file.");
+		}
+	}
+	else
+	{
+		std::cout << "trying LGC1 file reader" << std::endl;
+		if (!r.readLgc1File(inputFileStream))
+		{
+			throw std::runtime_error("Errors found in the input file.");
+		}
+	}
+
+//	bool succesReading = r.read(inputFileStream);
+//	if (!succesReading)
+//		throw std::runtime_error("Error reading input file");
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fProject.get());
 	bool configSuccess = analyzer.dataConsistent();

@@ -110,7 +110,8 @@ class huberSolution:
         plt.title("Q-Q Plot of normalized residuals. Huber Gamma="+str(self.huberGamma))
         linPart=self.negLinearPart+self.posLinearPart
         numberLinearContributions=np.sum(np.abs(linPart)>1e-4)
-        plt.xlabel("Theoretical Quantiles."+str(numberLinearContributions)+" Residuals above Huber threshold.")
+        nResiduals=len(self.residual)
+        plt.xlabel("Theoretical Quantiles."+str(numberLinearContributions)+" Residuals from "+str(len(self.residual))+ " above Huber threshold. "+str(100*numberLinearContributions/nResiduals)+ " %")
         plt.ylabel("Sample Quantiles")
 
         # Draw a horizontal line at the specified height
