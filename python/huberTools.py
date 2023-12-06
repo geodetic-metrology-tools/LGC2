@@ -80,7 +80,8 @@ def solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq):
     solution = solver.solve()
     # test solution equality constraint
     # print("solution quality",np.linalg.norm(Ceq@solution.x-bEq))
-    return np.array(solution.x)
+    status=solution.status
+    return np.array(solution.x), status
 
 @dataclass
 class huberSolution:
@@ -99,6 +100,7 @@ class huberSolution:
     weightDiagonal:np.array
     # the huber gamma of the problem
     huberGamma: float
+    solStatus: bool
 
     def showQQPlot(self, evaluator):
         # generate a theoretical quantile vs real quantile plot
@@ -173,7 +175,7 @@ class huberSolver:
             W2=evaluator.getW2(par) 
             [hessian, gradient, Ceq, Cineq, bEq, lbIneq,
                 ubIneq] = cast2HuberQP(Pv, A, A2, B, W, W2,gamma,dxBoxBound)
-            xClara = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
+            xClara,status = solveQPwithClarabel(hessian, gradient, Ceq, Cineq, bEq, lbIneq, ubIneq)
             dx = xClara[:A.shape[1]]
 
             par+=dx
@@ -195,8 +197,13 @@ class huberSolver:
         s=xClara[nPar+3*nObs:nPar+4*nObs]
         fullSol=xClara
 
-        
-        return huberSolution(par,v,w,r,s,fullSol, np.sqrt(Pv),gamma)
+        print(status)
+
+        if (str(status)=='Solved'):
+            success=True
+        else:
+            success=False
+        return huberSolution(par,v,w,r,s,fullSol, np.sqrt(Pv),gamma, success)
 
 
 def prepend_to_line(file_path, line_number, string_to_prepend):
