@@ -73,9 +73,12 @@ class sparsityAnalyzer():
 
         ## compute a maximum matching
         self.maxMatch=matching.maximum_matching(self.matrix)
-        ## with the maximum matching, a subset of equations (of equal size as the set of parameters) is identified that allows the full estimation of all parameters
-        self.mainEquations=list(self.maxMatch.keys())
-        
+
+        self.mainEquations=find_invertible_submatrix_sparse(self.matrix)
+        # ## test if the main equation indices really define a full rank submatrix
+        # testMat = self.matrix[self.mainEquations,:].todense()
+        # rank=np.linalg.matrix_rank(testMat)
+        # print("Rank=",rank, " dimensions ",testMat.shape)
         
         ## do the block triangular decomposition on the submatrix
         reducedEq,reducedPar = triangularize.block_triangularize(self.matrix[self.mainEquations,:])
@@ -96,6 +99,8 @@ class sparsityAnalyzer():
             decompositionList.append(tuple((newEqs,newPars)))
 
         self.decompositionList=decompositionList
+
+
 
 
     def getMaxMatch(self):
@@ -130,6 +135,21 @@ class sparsityAnalyzer():
 
         return associatedEqnIdx
 
+def find_invertible_submatrix_sparse(matrix):
+    m, n = matrix.shape
+    assert m > n, "The number of rows must be greater than the number of columns"
+
+    # Ensure the matrix is in CSC format for efficient QR decomposition
+    if not isinstance(matrix, sparse.csc_matrix):
+        matrix = sparse.csc_matrix(matrix)
+
+    # Perform QR decomposition on the transpose of the matrix
+    Q, R, P = sp.linalg.qr(matrix.transpose().todense(),pivoting=True)
+
+    # use the pivot reordering to get a set of linear independant rows of the original matrix
+
+
+    return P[:n]
 
 def decompose_into_transpositions(perm):
     """
