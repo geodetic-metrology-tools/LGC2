@@ -99,7 +99,8 @@ class huberSolution:
     # including the weight matrix at the solution. it contains useful information for the analysis of the solution
     weightDiagonal:np.array
     # the huber gamma of the problem
-    huberGamma: float
+    huberGamma: np.double
+    sigma: np.double
     solStatus: bool
 
     def showQQPlot(self, evaluator):
@@ -204,7 +205,11 @@ class huberSolver:
             success=True
         else:
             success=False
-        return huberSolution(par,v,w,r,s,fullSol, np.sqrt(Pv),gamma, success)
+
+        Pv=sp.diags(evaluator.getPv(par))
+        
+        sigma=v.transpose()@Pv@v/(nObs-nPar)
+        return huberSolution(par,v,w,r,s,fullSol, np.sqrt(Pv),gamma,sigma, success)
 
 
 def prepend_to_line(file_path, line_number, string_to_prepend):
