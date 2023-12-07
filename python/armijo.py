@@ -29,8 +29,18 @@ class armijoSolver:
             stepsize = self.ArmijoLinesearch(par, currentObjective, dx)
             par+=stepsize*dx
             print("|dx|=",np.linalg.norm(dx),"alpha=",stepsize)
+        
 
-        return par
+        # prepare the solution object
+        residual=evaluator.getW(par)
+        Pv=sp.diags(evaluator.getPv(par))
+        if (np.linalg.norm(dx)<1e-6)&(it<maxIter):
+            success=True
+        else:
+            success=False
+        sigma=currentObjective/(len(residual)-len(dx))
+
+        return armijoSolution(par,residual,Pv,sigma,success)
     
     def ArmijoLinesearch(self,x0,sigma0,direction):
         evaluator=self._evaluator
@@ -91,3 +101,14 @@ class armijoSolver:
         return dx
 
 
+@dataclass
+class armijoSolution:
+    # primal solution of the estimation problem
+    primalSolution: np.array
+    # v=residual
+    residual:np.array
+    # including the weight matrix at the solution. it contains useful information for the analysis of the solution
+    weightDiagonal:np.array
+    # sigma= weighted residuals divided by nEq-nPar
+    sigma: np.double
+    status: bool
