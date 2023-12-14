@@ -28,7 +28,6 @@ tut::factory tf("Test API ");
 
 namespace tut
 {
-
 template<>
 template<>
 void object::test<1>()
@@ -154,13 +153,13 @@ void object::test<3>()
 	apiObject.freezeFrameParameter("testFrame", 0, 5.0);
 	apiObject.adjust();
 	estRes = apiObject.getFrameEstimate("testFrame");
-	ensure_equals("tx should be frozen to value of 5. ", estRes[0], 5.0);
+	ensure_equals("tx should be frozen to value of 5. ", estRes(0), 5.0);
 
 	// unfreeze the parameter
 	apiObject.unfreezeFrameParameter("testFrame", 0);
 	apiObject.adjust();
 	estRes = apiObject.getFrameEstimate("testFrame");
-	ensure_equals("tx should be back at 1. ", estRes[0], 1.0);
+	ensure_equals("tx should be back at 1. ", estRes(0), 1.0);
 
 	// try freezing a fixed variable
 	try
@@ -201,19 +200,19 @@ void object::test<4>()
 	apiObject.freezePointParameter("P2", 0, 5.0);
 	apiObject.adjust();
 	estRes = apiObject.getPointEstimate("P2");
-	ensure_equals("tx should be frozen to value of 5. ", estRes[0], 5.0);
+	ensure_equals("tx should be frozen to value of 5. ", estRes(0), 5.0);
 
 	// extract precision of frozen parameter
 	Eigen::VectorXd frozenPrecision = apiObject.getPointEstimatePrec("P2");
-	ensure_equals("x coordinate is frozen so precision should be zero. ", frozenPrecision[0], 0.0);
-	ensure("y coordinate is not frozen and there should be a nonzero-precision assigned", (fabs(frozenPrecision[1]) != 0.0));
-	ensure("z coordinate is not frozen and there should be a nonzero-precision assigned", (fabs(frozenPrecision[2]) != 0.0));
+	ensure_equals("x coordinate is frozen so precision should be zero. ", frozenPrecision(0), 0.0);
+	ensure("y coordinate is not frozen and there should be a nonzero-precision assigned", (fabs(frozenPrecision(1)) != 0.0));
+	ensure("z coordinate is not frozen and there should be a nonzero-precision assigned", (fabs(frozenPrecision(2)) != 0.0));
 
 	// unfreeze the parameter
 	apiObject.unfreezePointParameter("P2", 0);
 	apiObject.adjust();
 	estRes = apiObject.getPointEstimate("P2");
-	ensure_equals("x coordinate should be back at 0. ", estRes[0], 0.0);
+	ensure_equals("x coordinate should be back at 0. ", estRes(0), 0.0);
 
 	// try freezing a fixed variable
 	try
@@ -258,7 +257,7 @@ void object::test<5>()
 	std::unordered_map<std::string, double> originalMeasurements;
 	for (auto id : ecwsIds)
 	{
-		originalMeasurements.insert({id, mockup.getMeas(id)[0]});
+		originalMeasurements.insert({id, mockup.getMeas(id)(0)});
 	}
 	bool status = false;
 
@@ -511,7 +510,7 @@ void object::test<8>()
 	// W.r.t. NXCALS Variables names available in the last version furnished by Vincent on 12/12/2023:
 	// get the FUV/S02
 	// call:
-	double s = apiObject.getSigma0();
+	double initialSigma = apiObject.getSigma0();
 	// returns a double to log into the corresponding NXCALS variable
 
 	// Let's assume the position GTAP.A1LX
@@ -654,27 +653,42 @@ void object::test<8>()
 	// let's take the HLS on functional positon SCT.GISC.A1LX.A, the corresponding observation ID is "SCT.GISC.A1LX.A_HLS"
 	// update the value:
 	// create a  Eigen::VectorXd of 1 element with the value of the observation
-	Eigen::VectorXd hlsObs = Eigen::VectorXd::Zero(1);
+	Eigen::VectorXd hlsObs(1);
+	// extreme "blunder" observation value
 	hlsObs(0) = 1;
-	// update the measurement
+	//// update the measurement
 	apiObject.updateMeas("SCT.GISC.A1LX.A_HLS", hlsObs);
+	apiObject.adjust();
+
+	// sigma will be very high due to the blunder
+	double sigmaAfterMeasUpdateWithBlunder = apiObject.getSigma0();
 
 	// update the state of this observation :
-	//  call to turn off;
+	// call to turn off;
 	apiObject.setActivationStatus("SCT.GISC.A1LX.A_HLS", false);
 	apiObject.adjust();
-	double sigmaAfterDeactivation =apiObject.getSigma0();
-	// call to turn on;
+	double sigmaAfterDeactivation = apiObject.getSigma0();
+
+	// reactivate measurement and reset to a "normal" value around 0 (sensor "repaired")
 	apiObject.setActivationStatus("SCT.GISC.A1LX.A_HLS", true);
-	double sigmaAfterReactivation =apiObject.getSigma0();
+	hlsObs(0) = 0;
+	apiObject.updateMeas("SCT.GISC.A1LX.A_HLS", hlsObs);
+	apiObject.adjust();
+	// sigma should be back to where it was before the blunder
+	double sigmaAfterIntervention = apiObject.getSigma0();
+	
+	ensure("Sigma after blunder observation should be very high.", sigmaAfterMeasUpdateWithBlunder > 1000);
+	ensure("Sigma after deactivation of blunder observation should be close to where it was before blunder.", fabs(sigmaAfterDeactivation - initialSigma) < 10);
+	ensure_equals("Sigma should be back to normal.", initialSigma, sigmaAfterIntervention, 1e-3);
+
 
 	// for WPS:
 	// let's take the WPS on functional positon SCT.GISC.A1LX.A, the corresponding observation ID is "SCT.GISC.A1LX.A_WPS"
 	// update the value:
 	// create a  Eigen::VectorXd of 2 elements with the value of the observations in X and Z
 	Eigen::VectorXd wpsObs = Eigen::VectorXd::Zero(2);
-	wpsObs(0) = 1;
-	wpsObs(1) = 2;
+	wpsObs(0) = 1e-5;
+	wpsObs(1) = 2*1e-5;
 	// update the measurement
 	apiObject.updateMeas("SCT.GISC.A1LX.A_WPS", wpsObs);
 
@@ -683,6 +697,7 @@ void object::test<8>()
 	apiObject.setActivationStatus("SCT.GISC.A1LX.A_WPS", false);
 	// call to turn on;
 	apiObject.setActivationStatus("SCT.GISC.A1LX.A_WPS", true);
+	apiObject.adjust();
 
 	// to freeze/unfreeze the a translation parameters.
 	// by defaults a parameters can only be freezed if in the full configuration it is a DOF
@@ -696,11 +711,19 @@ void object::test<8>()
 	// GTAP.A1LX:RST_SCALE_USE
 	// let's take the GTAP.A1LX:RST_TX_USE and it's a boolean
 
-	// to freeze a parameter a value should be specified, here let's take 10m)
-	apiObject.freezeFrameParameter("RSTRI_SCT.GTAP.A1LX", 0, 10);
+	Eigen::VectorXd frameParameters = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
+	double TXBeforeFreeze = frameParameters(0);
+	// to freeze a parameter a value should be specified, here let's take 1m)
+	apiObject.freezeFrameParameter("RSTRI_SCT.GTAP.A1LX", 0, 1.0);
+	apiObject.adjust();
+	frameParameters = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
+	ensure_equals("TX of frame should be frozen to 1.0.", frameParameters(0), 1.0, 1e-6);
 
 	// to unfreeze a parameter
 	apiObject.unfreezeFrameParameter("RSTRI_SCT.GTAP.A1LX", 0);
+	apiObject.adjust();
+	frameParameters = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
+	ensure_equals("TX of frame should be back to its original value.", frameParameters(0), TXBeforeFreeze, 1e-6);
 
 	/* the T* are in meter, the R* are in gon, the Scale is unitless
    here is the index map
