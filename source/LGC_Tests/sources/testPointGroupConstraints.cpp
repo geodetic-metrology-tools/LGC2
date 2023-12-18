@@ -136,15 +136,15 @@ void object::test<3>()
 
 	ensure_equals("rx should not have changed", frame.getEstRotation(0), frame.getProvRotation(0), 1e-6);
 
-	// TPositionVector px_orig = dataset.getPoints().getObject("px").getProvisionalValue();
-	// TPositionVector py_orig = dataset.getPoints().getObject("py").getProvisionalValue();
-	// TPositionVector pz_orig = dataset.getPoints().getObject("pz").getProvisionalValue();
-	// TPositionVector px_afterComp = dataset.getPoints().getObject("px").getEstimatedValue();
-	// TPositionVector py_afterComp = dataset.getPoints().getObject("py").getEstimatedValue();
-	// TPositionVector pz_afterComp = dataset.getPoints().getObject("pz").getEstimatedValue();
-	// ensure_equals("px should not have changed", (px_orig - px_afterComp).length(), 0, 1e-9);
-	// ensure_equals("py should not have changed", (py_orig - py_afterComp).length(), 0, 1e-9);
-	// ensure_equals("pz should not have changed", (pz_orig - pz_afterComp).length(), 0, 1e-9);
+	TPositionVector px_orig = dataset.getPoints().getObject("px").getProvisionalValue();
+	TPositionVector py_orig = dataset.getPoints().getObject("py").getProvisionalValue();
+	TPositionVector pz_orig = dataset.getPoints().getObject("pz").getProvisionalValue();
+	TPositionVector px_afterComp = dataset.getPoints().getObject("px").getEstimatedValue();
+	TPositionVector py_afterComp = dataset.getPoints().getObject("py").getEstimatedValue();
+	TPositionVector pz_afterComp = dataset.getPoints().getObject("pz").getEstimatedValue();
+	ensure_equals("px should not have changed", (px_orig - px_afterComp).length(), 0, 1e-9);
+	ensure_equals("py should not have changed", (py_orig - py_afterComp).length(), 0, 1e-9);
+	ensure_equals("pz should not have changed", (pz_orig - pz_afterComp).length(), 0, 1e-9);
 }
 
 template<>
@@ -263,7 +263,7 @@ void object::test<7>()
 	// check if the constraints have been detected
 	auto groups = projTest.get()->getPointGroups();
 	auto group = groups.front();
-	ensure_equals("There should be 5 points in this group.", group.getAffectedPoints().size(), 4);
+	ensure_equals("There should be 4 points in this group.", group.getAffectedPoints().size(), 4);
 	// check if all points are in the group
 	ensure_equals("There should be one group of points with imposed contraints.", groups.size(), 1);
 	// check if all points are in the group
@@ -271,7 +271,7 @@ void object::test<7>()
 	std::array<bool, 7> expectedSignature{0, 0, 0, 1, 1, 1, 0};
 	bool isAsExpected = (actualSignature == expectedSignature);
 	ensure_equals("Momentum for all 3 rotations should be blocked.", isAsExpected, true);
-	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	ensure_equals("Calculation is expected to work.", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
 
 

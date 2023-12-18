@@ -107,7 +107,7 @@ void LGCPointConstraintGroup::plotGroupData()
 
 
 #if USE_SERIALIZER
-void LGCPointConstraintGroup::serialize(SerializerObject::SerializationHelper &obj) const
+void LGCPointConstraintGroup::serialize(ObjectSerializer &obj) const
 {
 	//obj.addProperty("groupName", groupName);
 	obj.addProperty("constraintDim", constraintDim);

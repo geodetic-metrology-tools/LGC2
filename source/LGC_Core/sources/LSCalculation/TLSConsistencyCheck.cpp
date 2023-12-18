@@ -511,8 +511,8 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 	std::array<bool, 7> result;
 	result.fill(false);
 	int rank = mat.fullPivHouseholderQr().rank();
-	std::cout << "~~~~~~~~" << std::endl;
-	std::cout << mat << std::endl;
+	// std::cout << "~~~~~~~~" << std::endl;
+	// std::cout << mat << std::endl;
 	Eigen::MatrixXd remainingDirections = mat;
 	// based on a matrix with columns representing linear combinations of linearized helmert movements (assuming full rank), chose a set of helmert directions that when blocked prohibit all the directions
 	int addedBlocks = 0;
