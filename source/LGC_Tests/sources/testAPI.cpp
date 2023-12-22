@@ -501,7 +501,7 @@ template<>
 void object::test<8>()
 {
 	set_test_name("Testing a realistic application scenario for FRAS");
-	Moni apiObject("test_files/Updated_LGC_Vincent.lgc");
+	Moni apiObject("test_files/231219_LGC_SCT.lgc");
 	apiObject.adjust();
 
 	// create a map from variable name to double (some variable names like "GTAP.A1LX.RST.TX:MM" can't be used directly because : is used by c++)
@@ -632,17 +632,17 @@ void object::test<8>()
 
 	// for residuals
 	// for HLS:
-	// let's take the HLS on functional positon SCT.GISC.A1LX.A, the corresponding observation ID is "SCT.GISC.A1LX.A_HLS"
+	// let's take the HLS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_HLS"
 	// call:
-	Eigen::VectorXd HLSRes = apiObject.getEstimateResidual("SCT.GISC.A1LX.A_HLS");
+	Eigen::VectorXd HLSRes = apiObject.getEstimateResidual("SCT.GISCD.A1LX.A_HLS");
 	// returns a Eigen::VectorXd containing 1 parameter
 	values["GTAP.A1LX.A_HLS:RESIDUAL_MM"] = HLSRes(0) / 1000;
 	// given in meters, to transform to mm
 
 	// for WPS:
-	// let's take the WPS on functional positon SCT.GISC.A1LX.A, the corresponding observation ID is "SCT.GISC.A1LX.A_WPS"
+	// let's take the WPS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_WPS"
 	// call:
-	Eigen::VectorXd WPSRes = apiObject.getEstimateResidual("SCT.GISC.A1LX.A_WPS");
+	Eigen::VectorXd WPSRes = apiObject.getEstimateResidual("SCT.GISCD.A1LX.A_WPS");
 	// returns a Eigen::VectorXd containing 2 parameters
 	values["GTAP.A1LX.A_WPS:X_RESIDUAL_MM"] = WPSRes(0) / 1000;
 	values["GTAP.A1LX.A_WPS:Z_RESIDUAL_MM"] = WPSRes(1) / 1000;
@@ -650,14 +650,14 @@ void object::test<8>()
 
 	// to update an observation:
 	// for HLS:
-	// let's take the HLS on functional positon SCT.GISC.A1LX.A, the corresponding observation ID is "SCT.GISC.A1LX.A_HLS"
+	// let's take the HLS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_HLS"
 	// update the value:
 	// create a  Eigen::VectorXd of 1 element with the value of the observation
 	Eigen::VectorXd hlsObs(1);
 	// extreme "blunder" observation value
 	hlsObs(0) = 1;
 	//// update the measurement
-	apiObject.updateMeas("SCT.GISC.A1LX.A_HLS", hlsObs);
+	apiObject.updateMeas("SCT.GISCD.A1LX.A_HLS", hlsObs);
 	apiObject.adjust();
 
 	// sigma will be very high due to the blunder
@@ -665,14 +665,14 @@ void object::test<8>()
 
 	// update the state of this observation :
 	// call to turn off;
-	apiObject.setActivationStatus("SCT.GISC.A1LX.A_HLS", false);
+	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_HLS", false);
 	apiObject.adjust();
 	double sigmaAfterDeactivation = apiObject.getSigma0();
 
 	// reactivate measurement and reset to a "normal" value around 0 (sensor "repaired")
-	apiObject.setActivationStatus("SCT.GISC.A1LX.A_HLS", true);
+	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_HLS", true);
 	hlsObs(0) = 0;
-	apiObject.updateMeas("SCT.GISC.A1LX.A_HLS", hlsObs);
+	apiObject.updateMeas("SCT.GISCD.A1LX.A_HLS", hlsObs);
 	apiObject.adjust();
 	// sigma should be back to where it was before the blunder
 	double sigmaAfterIntervention = apiObject.getSigma0();
@@ -683,20 +683,20 @@ void object::test<8>()
 
 
 	// for WPS:
-	// let's take the WPS on functional positon SCT.GISC.A1LX.A, the corresponding observation ID is "SCT.GISC.A1LX.A_WPS"
+	// let's take the WPS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_WPS"
 	// update the value:
 	// create a  Eigen::VectorXd of 2 elements with the value of the observations in X and Z
 	Eigen::VectorXd wpsObs = Eigen::VectorXd::Zero(2);
 	wpsObs(0) = 1e-5;
 	wpsObs(1) = 2*1e-5;
 	// update the measurement
-	apiObject.updateMeas("SCT.GISC.A1LX.A_WPS", wpsObs);
+	apiObject.updateMeas("SCT.GISCD.A1LX.A_WPS", wpsObs);
 
 	// update the state of this observation :
 	//  call to turn off;
-	apiObject.setActivationStatus("SCT.GISC.A1LX.A_WPS", false);
+	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_WPS", false);
 	// call to turn on;
-	apiObject.setActivationStatus("SCT.GISC.A1LX.A_WPS", true);
+	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_WPS", true);
 	apiObject.adjust();
 
 	// to freeze/unfreeze the a translation parameters.
