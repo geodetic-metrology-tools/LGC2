@@ -175,6 +175,14 @@ public:
 	// compute the derivatives of the Lor2Lor chain with respect to all involved helmert parameters, as in the Contributions generator (=dH(p1,p2,...,pn,x)/d(p1,p2,..,pn))
 	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> getPartialDerivativesWrtHelmertParameters(const TPositionVector &pos) const;
 
+	// compute the parameters representing the whole chain as a single Helmert transformation. And its derivatives with respect to the parameters of the trafos forming the chain
+	std::vector<std::pair<TAdjustableHelmertTransformation, Eigen::Matrix<double, 7, 7>>> computeComposedTransformationDerivatives() const;
+	// returns the derivatives of the composed helmert parameter in matrix form wrt all LGC parameters
+	TSparseMatrix getComposedParameterDerivatives(const TLGCData *projData) const;
+	// using the derivatives and the parameter covariance matrix to compute the covariance of the composed helmert parameter, always returns a 7x7 matrix
+	TDenseMatrix getComposedParameterCovariance(const TLGCData *projData) const;
+	TransformParameters computeComposedTransformationParameters() const;
+
 	// compute the derivative of the Lor2Lor chain with respect to the coordinates of the transformed point, independent of point position
 	TDenseMatrix getPartialDerivativeWrtPosition() const;
 

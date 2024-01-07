@@ -9,6 +9,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TFreeVector.h>
 #include <TPositionVector.h>
 #include <TRotationMatrix.h>
+#include "TTransformParameters.h"
 //LGC
 #include <Global.h>
 //OTHER
@@ -93,6 +94,9 @@ public:
 
 		/// Returns An identity transformation
 		static TTransformation getIdentity() ;
+
+		// get the Helmert transformation parameters
+		TransformParameters getTrafoParameters() const;
 	//@}
 
 protected:

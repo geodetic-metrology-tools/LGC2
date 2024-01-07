@@ -201,5 +201,135 @@ namespace LOR2LORInputFiles {
 			"REF  0.0 0.0 0.0\n"
 		"*ENDFRAME\n"
 		;
+	
+		char const *const composedHelmertParameter0= R"(*TITR
+test derivatives of chained Helmert frames with respect to Helmert parameters of the chain
+*OLOC
+*CONSI
+*INSTR
+*CALA
+ux 1 0 0 
+uy 0 1 0
+uz 0 0 1
+*FRAME Frame1 1 2 3 4 5 6 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ux 1 0.01 0.023 1 1 1 
+uy 0.053 1 0.017 1 1 1
+uz 0.091 0.0123 1 1 1 1
+*ENDFRAME
+*END)";
+	
+		char const *const composedHelmertParameter1= R"(*TITR
+test derivatives of chained Helmert frames with respect to Helmert parameters of the chain
+The setup is done such that the chain Frame3-Frame1 is per Construction identical to the single frame "singleFrame"
+*OLOC
+*CONSI
+*INSTR
+*CALA
+ux 1 0 0 
+uy 0 1 0
+uz 0 0 1
+*FRAME Frame1 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*CALA
+ux1 1 0 0 
+uy1 0 1 0
+uz1 0 0 1
+*OBSXYZ
+ux 1 0.01 0.023 1 1 1 
+uy 0.053 1 0.017 1 1 1
+uz 0.091 0.0123 1 1 1 1
+*FRAME Frame2 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ux1 1 0.00123 0.054 1 1 1 
+uy1 0.067 1 0.012 1 1 1
+uz1 0.00345 0.00786 1 1 1 1
+*FRAME Frame3 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ux 1 0.1 0 1 1 1
+uy 0 1 0 1 1 1 
+uz 0.1 0 1 1 1 1 
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+% the single frame is determined  by obsxyz observations identical to the observations in Frame3
+% The Chain of Frame1-Frame3 then should have the same combined Helmert parameter as the single frame
+*FRAME singleFrame 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ux 1 0.1 0 1 1 1
+uy 0 1 0 1 1 1 
+uz 0.1 0 1 1 1 1 
+*ENDFRAME
+*END)";
+
+		char const *const composedHelmertParameter2= R"(*TITR
+test derivatives of chained Helmert frames with respect to Helmert parameters of the chain
+The setup is done such that the chain Frame3-Frame1 is per Construction identical to the single frame "singleFrame"
+Freedoms of involved frames is more irregular then in composedHelmertParameter1 case
+*OLOC
+*CONSI
+*INSTR
+*CALA
+ux 1 0 0 
+uy 0 1 0
+uz 0 0 1
+*FRAME Frame1 0 0 0 0 0 0 1 TX RY TZ 
+*CALA
+ux1 1 0 0 
+uy1 0 1 0
+uz1 0 0 1
+*OBSXYZ
+ux 1 0.01 0.023 1 1 1 
+uy 0.053 1 0.017 1 1 1
+uz 0.091 0.0123 1 1 1 1
+*FRAME Frame2 0 0 0 0 0 0 1 RX TY RZ
+*OBSXYZ
+ux1 1 0.00123 0.054 1 1 1 
+uy1 0.067 1 0.012 1 1 1
+uz1 0.00345 0.00786 1 1 1 1
+*FRAME fixFrame 1 2 3 4 5 6 1.6 
+*FRAME Frame3 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ux 1 0.12 -0.23 1 1 1
+uy 0.027 1 -0.013 1 1 1 
+uz 0.117 -0.034 0.956 1 1 1 
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+% the single frame is determined  by obsxyz observations identical to the observations in Frame3
+% The Chain of Frame1-Frame3 then should have the same combined Helmert parameter as the single frame
+*FRAME singleFrame 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ux 1 0.12 -0.23 1 1 1
+uy 0.027 1 -0.013 1 1 1 
+uz 0.117 -0.034 0.956 1 1 1 
+*ENDFRAME
+*END)";
+
+		char const *const composedGimbalLock= R"(*TITR
+two frames that combined give a gimbal lock ry=100gon
+*OLOC
+*INSTR
+*CALA
+ux 1 0 0 
+uy 0 1 0
+uz 0 0 1
+*FRAME Frame1 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+% random values
+ux 1.1 0.05 -0.02 1 1 1 
+uy 0.01753 1.088 -0.099 1 1 1
+uz 0.03 -0.02 1.1 1 1 1
+*FRAME Frame2 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+% going to root should correspond to ry=100 gon gimbal lock
+*OBSXYZ
+ux 0 0 -1 1 1 1 
+uy 0 1 0 1 1 1
+uz 1 0 0 1 1 1
+*ENDFRAME
+*ENDFRAME
+*END)";
+
+
 	}
 #endif

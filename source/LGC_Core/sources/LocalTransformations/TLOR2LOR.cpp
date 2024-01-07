@@ -389,6 +389,176 @@ std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> TLOR2LOR:
 	return trafoContrib;
 }
 
+std::vector<std::pair<TAdjustableHelmertTransformation, Eigen::Matrix<double, 7, 7>>> TLOR2LOR::computeComposedTransformationDerivatives() const
+{
+	// The parameters that represent the complete chain as single Helmert transformation (transformation H(x)=Hrot(x) + Htrans) can be expressed as function of the transformed unit vectors (by the trafo chain)
+	// this way also the derivatives with respect to the parameters can be computed
+
+	// define unit vectors as free vectors. When transforming a free vector by the chain, only the rotation and scale components act on them.
+	// This allows access to the derivatives of the M matrix elements with respect to the chain parameters.
+	// As the Helmert parameters are a function of these M matrix elements, we can also compute their derivatives using the chainrule.
+	TFreeVector ux(1, 0, 0, TCoordSysFactory::k3DCartesian), uy(0, 1, 0, TCoordSysFactory::k3DCartesian), uz(0, 0, 1, TCoordSysFactory::k3DCartesian);
+
+	// the transformed (free) unit vectors are named HUx, HUy, HUz
+	Eigen::Vector3d HUx = transform(ux).toRealVector();
+	Eigen::Vector3d HUy = transform(uy).toRealVector();
+	Eigen::Vector3d HUz = transform(uz).toRealVector();
+
+	// derivative of helper function v=(x,y,z)->x/norm(x,y,z)
+	auto dHelpFun = [](Eigen::Vector3d v) -> Eigen::Matrix<double, 1, 3> {
+		Eigen::Matrix<double, 1, 3> result;
+		result.setZero();
+		double normXYZ = v.norm();
+		result << normXYZ - v(0) * v(0) / normXYZ, -v(1) * v(0) / normXYZ, -v(2) * v(0) / normXYZ;
+		result *= 1.0 / (normXYZ * normXYZ);
+		return result;
+	};
+
+	// computing the derivatives of the composed helmert parameter with respect to all helmert parameters forming the chain
+	// each of the 7 helmert parameters representing the chain can be interpreted as a function of the images (HUx etc.. ) of the unit vectors (ux etc..)
+	// for example the rx rotation can be expressed as f_rx(HUz)= atan2(HUz(2),HUz(1))
+	// the derivatives then can be computed using the chain rule
+	// d f_rx/dp = d f_rx / dv (HUz) * dHUz/dp
+
+	// computing "prefactors" interpreting the f_rx etc all as functions of HUx, HUy, HUz
+	// such that we can compute df_* /dp = prefactor_* * d (HUx, HUy, HUz)/dp
+	
+	// rx rotation
+	// this factor picks the right derivatives from  d (HUx, HUy, HUz)/dp
+	Eigen::Matrix<double, 2, 9> rxAuxFactor = Eigen::Matrix<double, 2, 9>::Zero();
+	// corresponds to HUz(2)
+	rxAuxFactor(0, 8) = 1;
+	// corresponds to HUz(1)
+	rxAuxFactor(1, 7) = 1;
+	Eigen::Matrix<double, 1, 9> rxPreFactor = TAngle::dATan2(HUz(2), HUz(1)) * rxAuxFactor;
+
+	// ry rotation
+	// this factor picks the right derivatives from  d (HUx, HUy, HUz)/dp
+	Eigen::Matrix<double, 3, 9> ryAuxFactor = Eigen::Matrix<double, 3, 9>::Zero();
+	// corresponds to HUz
+	ryAuxFactor(0, 6) = 1;
+	ryAuxFactor(1, 7) = 1;
+	ryAuxFactor(2, 8) = 1;
+	double auxVal = HUz(0) / HUz.norm();
+	Eigen::Matrix<double, 1, 9> ryPreFactor = -TAngle::dASin(auxVal) * dHelpFun(HUz) * ryAuxFactor;
+
+	// rz rotation
+	// this factor picks the right derivatives from  d (HUx, HUy, HUz)/dp
+	Eigen::Matrix<double, 2, 9> rzAuxFactor = Eigen::Matrix<double, 2, 9>::Zero();
+	// corresponds to HUx(0)
+	rzAuxFactor(0, 0) = 1;
+	// corresponds to HUy(0)
+	rzAuxFactor(1, 3) = 1;
+	Eigen::Matrix<double, 1, 9> rzPreFactor = TAngle::dATan2(HUx(0), HUy(0)) * rzAuxFactor;
+
+	// scale 
+	Eigen::Matrix<double, 1, 9> sclPreFactor = Eigen::Matrix<double, 1, 9>::Zero();	
+	// this factor picks the right derivatives from  d (HUx, HUy, HUz)/dp
+	Eigen::Matrix<double, 3, 9> sclAuxFactor = Eigen::Matrix<double, 3, 9>::Zero();
+	// corresponds to HUx
+	sclAuxFactor(0, 0) = 1;
+	sclAuxFactor(1, 1) = 1;
+	sclAuxFactor(2, 2) = 1;
+	Eigen::Matrix<double, 1, 3> normJacobian = Eigen::Matrix<double, 1, 3>::Zero();
+	normJacobian = HUx.transpose()/HUx.norm();
+
+	sclPreFactor = normJacobian * sclAuxFactor;
+
+
+	Eigen::Matrix<double, 4, 9> stackedRotAndScalePreFactor;
+	stackedRotAndScalePreFactor << rxPreFactor, ryPreFactor, rzPreFactor, sclPreFactor;
+
+	// translations
+
+	// the translation parameters are simply the image of a zero (positionvector)
+	TPositionVector zero(0,0,0,TCoordSysFactory::k3DCartesian);
+
+
+
+	// to get the partial derivatives of the image of the zero position vector we can use the getPartialDerivativesWrtHelmertParameters() method
+	// as the getPartialDerivativesWrtHelmertParameters() takes position vectors we need to subtract the derivatives of the zero position 
+	// vector to eliminate the effect of translations
+
+	TPositionVector uxPos(1,0,0,TCoordSysFactory::k3DCartesian);
+	TPositionVector uyPos(0,1,0,TCoordSysFactory::k3DCartesian);
+	TPositionVector uzPos(0,0,1,TCoordSysFactory::k3DCartesian);
+	TPositionVector zeroPos(0,0,0,TCoordSysFactory::k3DCartesian);
+	
+	// prepare derivatives of the transformed unit vectors with respect to each Helmert parameter in the chain
+	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivativesUx = getPartialDerivativesWrtHelmertParameters(uxPos);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivativesUy = getPartialDerivativesWrtHelmertParameters(uyPos);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivativesUz = getPartialDerivativesWrtHelmertParameters(uzPos);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TDenseMatrix>> trafoDerivativesZero = getPartialDerivativesWrtHelmertParameters(zeroPos);
+
+	// create a vector containing the sensitivities of the composed helmert parameter with respect to all helmert parameters defining the chain
+	std::vector<std::pair<TAdjustableHelmertTransformation, Eigen::Matrix<double, 7, 7>>> helmertParameterChainDerivatives;
+	int chainLength = transformationChain.size();
+
+	// loop over the chain and compute the derivatives of the helmert parameters.
+	for (int j = 0; j < chainLength; j++)
+	{
+		Eigen::Matrix<double, 7, 7> helmertDerivatives;
+
+		Eigen::Matrix<double, 3, 7> uxDerivative = trafoDerivativesUx.at(j).second;
+		Eigen::Matrix<double, 3, 7> uyDerivative = trafoDerivativesUy.at(j).second;
+		Eigen::Matrix<double, 3, 7> uzDerivative = trafoDerivativesUz.at(j).second;
+		// as the translation corresponds to the image of the zero position vector, we can use its derivative to compute the erivative of the translation parameters
+		Eigen::Matrix<double, 3, 7> zeroDerivative = trafoDerivativesZero.at(j).second;
+
+		Eigen::Matrix<double, 9, 7> stackedUnitVectorDerivatives;
+		
+		// as we need the derivatives of the action on free vectors, we need to eliminate the translation effect by subtracting the derivative of the image of the zero vector with respect to the the parameters 
+		stackedUnitVectorDerivatives << uxDerivative - zeroDerivative, uyDerivative - zeroDerivative, uzDerivative - zeroDerivative;
+
+		Eigen::Matrix<double, 4, 7> rotAndScaleDerivatives;
+		rotAndScaleDerivatives = stackedRotAndScalePreFactor * stackedUnitVectorDerivatives;
+
+		// combining all derivatives, first 3 rows represent derivatives wrt translation, last 4 rows are rx ry rz and scale
+		// the derivatives of the composed translation parameters can be recovered as the derivatives of the image of the zero position vector
+		helmertDerivatives << zeroDerivative, rotAndScaleDerivatives;
+		helmertParameterChainDerivatives.push_back(std::pair<TAdjustableHelmertTransformation, TDenseMatrix>(trafoDerivativesUx.at(j).first, helmertDerivatives));
+	}
+
+	return helmertParameterChainDerivatives;
+}
+
+TSparseMatrix TLOR2LOR::getComposedParameterDerivatives(const TLGCData *projData) const
+{
+	std::vector<std::pair<TAdjustableHelmertTransformation, Eigen::Matrix<double, 7, 7>>> parameterChainDerivatives = computeComposedTransformationDerivatives();
+	TSparseMatrix jac(7, projData->fUEOIndices.UIndex);
+	jac.setZero();
+	// assemble unknown Jacobian of composed trafo parameter
+	// sensitivity wrt trafo parameters
+	for (auto &pair : parameterChainDerivatives)
+	{
+		TAdjustableHelmertTransformation trafo = pair.first;
+		Eigen::Matrix<double, 7, 7> trafoJac = pair.second;
+		if (trafo.getNumUnkn() > 0)
+		{
+			jac.middleCols(trafo.getFirstUidx(), trafo.getNumUnkn()) = (trafoJac(Eigen::indexing::all, trafo.getRelativeUnknIndices())).sparseView();
+		}
+	}
+
+	return jac;
+}
+
+TDenseMatrix TLOR2LOR::getComposedParameterCovariance(const TLGCData *projData) const
+{
+	TSparseMatrix frameDerivatives = getComposedParameterDerivatives(projData);
+	TDenseMatrix frameDerivativesDense = frameDerivatives.toDense();
+	TSparseMatrix parameterCovars = *projData->getCovMatByConst();
+	TDenseMatrix result(7, 7);
+	// using covariance propagation law
+	result = frameDerivativesDense * parameterCovars.toDense() * frameDerivativesDense.transpose();
+	return result;
+}
+
+TransformParameters TLOR2LOR::computeComposedTransformationParameters() const
+{
+	TransformParameters result = transfo.getTrafoParameters();
+	return result;
+}
+
 TDenseMatrix TLOR2LOR::getPartialDerivativeWrtPosition() const
 {
 
