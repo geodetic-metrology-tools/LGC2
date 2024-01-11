@@ -88,9 +88,12 @@ private:
 	// for a group check for each direction if it can be interpreted as movements from a helmert transformation in ROOT
 	vector<vector<string>> interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors);
 	//std::unordered_map<std::string, Eigen::Vector3d> interpreteNullSpaceDirectionAsPointMovementInRoot(Eigen::VectorXd nullspaceVector);
-	// return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root.
-	std::pair<std::set<std::string>, Eigen::VectorXd> getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector);
+	// return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root + their position in root.
+	std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector);
 	void plotTransformationMessage(vector<vector<string>>);
+	// having n 3d points with a vector of their concatenated positions and a vector of concatenated directions
+	//  try to find a point such that the directions can be interpreted as rotation around that point
+	void findRotationCenter(Eigen::VectorXd pos, Eigen::VectorXd directions);
 };
 
 #endif

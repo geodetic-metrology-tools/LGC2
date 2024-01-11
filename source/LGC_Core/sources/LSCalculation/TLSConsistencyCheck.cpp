@@ -150,6 +150,11 @@ TDenseMatrix TLSConsCheck::getAmbiguousDirectionsInRoot(string pointName, TDense
 {
 	// compute the direction of movement of a point transformed to root defined by the ambiguous direction associated to the nullspace vector.
 
+	// the point coordinates in root p_root are a function of the point coordinates in the subframe (p_sub) + the helmert parameters (p1,..,pn) defining the chain from sub to root
+	// p_root(p_sub,p1,..,p_n)
+	// so the derivative of the point coordinates in root can be computed via the chain rule (let d p_sub, d p_i be the directions indicated in the nullspace)
+	// d p_root = d p_root(p_sub,p1,..,p_n)/d p_sub * d p_sub + sum i=1..n d p_root(p_sub,p1,..,p_n)/d p_i * d p_i
+
 	LGCAdjustablePoint point = projData.getPoints().getObject(pointName);
 	TPositionVector positionInSubframe = point.getEstimatedValue();
 	// get the transformation to root
@@ -265,10 +270,11 @@ vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMove
 }
 
 
-std::pair<std::set<std::string>, Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector)
+std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector)
 {
 	std::set<std::string> affectedPoints;
 	std::unordered_map<std::string, Eigen::Vector3d> points2Movements;
+	std::unordered_map<std::string, Eigen::Vector3d> points2Positions;
 	
 	// Experiment: initialize the points with the points that are in the associated group
 	std::set<int> pointNumbers = getPoints(group);
@@ -283,6 +289,13 @@ std::pair<std::set<std::string>, Eigen::VectorXd> TLSConsCheck::getAffectedPoint
 		Eigen::Vector3d rootDirection;
 		rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
 		points2Movements[pointName] = rootDirection;
+		// also compute root positions
+		LGCAdjustablePoint point = projData.getPoints().getObject(pointName);
+		// transform point to root coordinates
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+		TPositionVector positionInRoot = point.getEstimatedValue();
+		sub2Root.transform(positionInRoot);
+		points2Positions[pointName] = positionInRoot.toRealVector();
 	}
 
 	// loop over ALL points to find the affected points
@@ -294,21 +307,31 @@ std::pair<std::set<std::string>, Eigen::VectorXd> TLSConsCheck::getAffectedPoint
 		if (rootDirection.norm() > 1e-12)
 		{
 			affectedPoints.insert(pointName);
-			points2Movements[pointName] = rootDirection;
+			points2Movements[pointName] = rootDirection;	
+			// also compute root positions
+			LGCAdjustablePoint point = projData.getPoints().getObject(pointName);
+			// transform point to root coordinates
+			TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+			TPositionVector positionInRoot = point.getEstimatedValue();
+			sub2Root.transform(positionInRoot);
+			points2Positions[pointName] = positionInRoot.toRealVector();
 		}
 	}
 	// create a vector with all directions of affected points concatenated. The order is the lexicographic order of the point names.
 	int numberOfAffectedPoints = affectedPoints.size();
 	Eigen::VectorXd names2Movements(3 * numberOfAffectedPoints);
+	Eigen::VectorXd names2Positions(3 * numberOfAffectedPoints);
 	names2Movements.setZero();
+	names2Positions.setZero();
 	int j = 0;
 	for (auto pointName : affectedPoints)
 	{
 		names2Movements.segment(3 * j, 3) = points2Movements[pointName];
+		names2Positions.segment(3 * j, 3) = points2Positions[pointName];
 		j++;
 	}
 
-	return {affectedPoints, names2Movements};
+	return {affectedPoints, names2Movements,names2Positions};
 }
 
 void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
@@ -330,6 +353,61 @@ void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
 		msg << setw(22) << helmertString << "|";
 	}
 	logWarning() << msg.str();
+}
+
+void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::VectorXd directions)
+{
+	if (positions.rows() != directions.rows())
+	{
+		throw std::runtime_error("to find a rotation center, two vectors of the same dimension have to be supplied.");
+	}
+	if (positions.rows()%3!=0)
+	{
+		throw std::runtime_error("Dimension of vector representing positions has to be a multiple of 3.");
+	}
+	int nPoints = positions.rows() / 3;
+
+	// find the rotation center
+	// if there is a rotation center and the directions represent a rotation around this point, the directions need to be orthogonal to the vector from the center to the point
+	// so <(p_i-c),d_i>=0 needs to hold for all points i. This gives nPoint equations linear in c \in R^3 so we can try to solve it. 
+	// If theres a solution it will be the rotation center. If its not solvable the directions dont represent a rotation.
+
+	// compute matrix representation of c-><c,d_i>_i=1..nPoint
+	Eigen::MatrixXd matRep(nPoints, 3);
+	// compute b=<p_i,d_i>_i=1..nPoint
+	Eigen::VectorXd b(nPoints);
+	for (int j = 0; j < nPoints; j++)
+	{
+		matRep.row(j) = directions.segment(j*3,3);
+		b(j) = positions.segment(j * 3, 3).dot(directions.segment(j * 3, 3));
+	}
+	Eigen::MatrixXd axisDirection = matRep.fullPivLu().kernel();
+//	std::cout << "nullspace dimension =" << matRep.fullPivLu().dimensionOfKernel() << std ::endl;
+	// try to solve the linear equation matRep*c=b
+	Eigen::Vector3d solution = matRep.fullPivHouseholderQr().solve(b);
+	bool a_solution_exists = (matRep*solution).isApprox(b, pivotThreshold); 
+	if (a_solution_exists)
+	{
+		std::cout << "succesfully found a rotation axis: " << std::endl << solution << " + t* " << axisDirection << std::endl;
+		// check if any of the existing points is sitting at this position
+		for (auto point : projData.getPoints())
+		{
+			std::string pointName = point.getName();
+			// transform point to root coordinates
+			TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+			TPositionVector positionInRoot = point.getEstimatedValue();
+			sub2Root.transform(positionInRoot);
+			Eigen::Vector3d pos = positionInRoot.toRealVector();
+			// test if the point is on the rotation axis
+			Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
+			bool isOnAxis = (axisDirection * t).isApprox(pos - solution, pivotThreshold);
+			if (isOnAxis)
+			{
+				std::cout << "Point \" " << pointName << "\" is on this axis in Root. Are the other points rotating around this point?" << std::endl;
+			}
+		}
+	}
+
 }
 
 bool TLSConsCheck::getResultStatus()
@@ -382,7 +460,7 @@ set<int> TLSConsCheck::getConnectedNullspaceGroup(int i)
 bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintGroup> &proposedPointGroupConstraints)
 {
 	// go over each group  and transform each ambiguous direction int point movements in root.
-	std::vector<std::pair<std::set<std::string>, Eigen::VectorXd>> groupsOfAffectedPoints;
+	std::vector<std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd>> groupsOfAffectedPoints;
 	for (auto group : connectedNullspaceGroups)
 	{
 		// compute nullspace associated to this group
@@ -399,9 +477,11 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 	std::map<std::set<std::string>, Eigen::MatrixXd> groups2HelmertMovements;
 	for (auto affectedPointGroup : groupsOfAffectedPoints)
 	{
-		int nRows = 3 * affectedPointGroup.first.size();
-		std::set<string> pointNames = affectedPointGroup.first;
-		Eigen::VectorXd rootDirections = affectedPointGroup.second;
+		int nRows = 3 * std::get<0>(affectedPointGroup).size();
+		std::set<string> pointNames = std::get<0>(affectedPointGroup);
+		Eigen::VectorXd rootDirections = std::get<1>(affectedPointGroup);
+		Eigen::VectorXd rootPositions = std::get<2>(affectedPointGroup);
+		findRotationCenter(rootPositions, rootDirections);
 		Eigen::MatrixXd newDir = groups2AmbiguousDirections[pointNames];
 		// prepare the concatentaion of a new column with the corresponding root direction
 		newDir.conservativeResize(nRows, newDir.cols() + 1);
