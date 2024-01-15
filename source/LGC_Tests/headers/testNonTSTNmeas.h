@@ -63,7 +63,7 @@ namespace TestNonTSTN {
 		"*FAUT\n"
 
 		"*INSTR\n"
-		"*LEVEL LEV1 DLS1 0 0.0\n" 
+		"*LEVEL LEV1 DLS1 0.0 0.0 0 0.0\n" 
 		"DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
 
 		"*CALA\n"
@@ -91,7 +91,7 @@ namespace TestNonTSTN {
 		"*FAUT\n"
 
 		"*INSTR\n"
-		"*LEVEL LEV1 DLS1 0 0.0\n" 
+		"*LEVEL LEV1 DLS1 0.0 0.0 0 0.0\n" 
 		"DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
 
 		"*CALA\n"
@@ -116,7 +116,7 @@ namespace TestNonTSTN {
               "*FAUT\n"
 
               "*INSTR\n"
-              "*LEVEL LEV1 DLS1 0 0.0\n" 
+              "*LEVEL LEV1 DLS1 0.0 0.0 0 0.0\n" 
               "DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
 
               "*CALA\n"
@@ -146,7 +146,7 @@ namespace TestNonTSTN {
 		"*FAUT\n"
 
 		"*INSTR\n"
-		"*LEVEL LEV1 DLS1 0 0.0\n" 
+		"*LEVEL LEV1 DLS1 0.0 0.0 0 0.0\n" 
 		"DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
 		"*EDM EDM1 ET1 0.0 0.1 0.1\n"
 		"ET1  0.7  0.0 0 0.0 0.05 0.1 0 0.1\n"
@@ -176,7 +176,7 @@ namespace TestNonTSTN {
 		"*FAUT\n"
 
 		"*INSTR\n"
-		"*LEVEL LEV1 DLS1 0 0.0\n" 
+		"*LEVEL LEV1 DLS1 0.0 0.0 0 0.0\n" 
 		"DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
 		"*EDM EDM1 ET1 0.0 0.1 0.1\n"
 		"ET1  0.7  0.0 0 0.0 0.05 0.1 0 0.1\n"
@@ -206,7 +206,7 @@ namespace TestNonTSTN {
 		"*FAUT\n"
 
 		"*INSTR\n"
-		"*LEVEL LEV1 DLS1 0 0.0\n" 
+		"*LEVEL LEV1 DLS1 0.0 0.0 0 0.0\n" 
 		"DLS1 0.8 0.1 0.0 0.0 0 0.2\n"
 
 		"*CALA\n"
@@ -239,7 +239,7 @@ namespace TestNonTSTN {
 Test DLEV TH
 *OLOC
 *INSTR
-*LEVEL L1 T1 0 0
+*LEVEL L1 T1 0.0 0.0 0 0.0
 T1 0.1 0 0 0 0 0
 T2 0.1 0 0.1 0.1 0.2 0.2
 *CALA
