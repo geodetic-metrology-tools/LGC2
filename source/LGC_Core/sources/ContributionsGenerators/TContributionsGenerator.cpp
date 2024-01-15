@@ -924,6 +924,7 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); // collimination angle in rads
 	TReal cdz = dlev.target.distCorrectionValue.getMetresValue(); // distance correction value
 	TReal tgHeight = dlev.target.staffHt.getMetresValue(); // Target Height
+	TReal instrHeight = levelInstr.instrument.instrHeight.getMetresValue(); // Instrument Height
 	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(); // Distance of the reference point from the plane
 
 	TPositionVector referencePoint = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
@@ -946,7 +947,7 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 
 	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue())
 		+ pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue()));
-	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg * tanq(collAngl) - tgHeight;
+	TReal calcMeas = referencePoint.getZ().getMetresValue() - staffPosition.getZ().getMetresValue() + dRef - cdz - dTg * tanq(collAngl) - tgHeight; //+instrHeight;
 
 	// Station can be defined anywhere, get point contributions and transformations contributions
 	TFreeVector staffContrib = getPointContributions(staffPTLor2RootTrafo, 0, 0, -1);
@@ -962,7 +963,7 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 	TReal fRefPtDistCont = 1.0;
 
 	TReal variance = pow2q(dlev.target.sigmaD.getMetresValue() + dTg / 1000 * dlev.target.ppmD.getMetresValue()) + pow2q(dlev.target.sigmaStaffHt.getMetresValue())
-		+ pow2q(dlev.target.sigmaDCorr.getMetresValue());
+		+ pow2q(levelInstr.instrument.sigmaInstrHeight.getMetresValue()) + pow2q(dlev.target.sigmaDCorr.getMetresValue());
 
 	DLEVContrib dlevContrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, fRefPtDistCont, collAngleContrib, variance};
 	return dlevContrib;

@@ -218,15 +218,17 @@ void TKeyLEVEL::parse(const std::vector<std::string>& tokens, bool /*activeLine*
 	if (tokens.at(0) == "*") {
 		// This is the keyword line
 		auto& station(finstruments.fLEVEL);
-		checkInstrument(6, station, tokens);
+		checkInstrument(8, station, tokens);
 
         currentStation = tokens.at(2);
 
         auto l = std::make_shared<TInstrumentData::TLEVEL>(
             tokens.at(2),
-            tokens.at(3),
-            std::stoi(tokens.at(4)) != 0,
-            TAngle(std::stor(tokens[5]), TAngle::EUnits::kGons),
+            tokens.at(3), 
+			TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres),
+			TLength(std::stor(tokens.at(5)), TLength::EUnits::kMillimetres),
+            std::stoi(tokens.at(6)) != 0,
+            TAngle(std::stor(tokens[7]), TAngle::EUnits::kGons),
             nullptr,
             line
 		);

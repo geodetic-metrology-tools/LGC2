@@ -404,8 +404,22 @@ class TInstrumentData
 			};
 
 			TLEVEL() = default;
-			TLEVEL(const std::string &instr_id, const std::string &defStaff, const bool &collAnglUnknown, const TAngle &collAnglVal, TAdjustableAngle *collAnglAdj, const int line) :
-				ID(instr_id), defStaffID(defStaff), collAngleUnknown(collAnglUnknown), collAngleValue(collAnglVal), collAngleAdjustable(collAnglAdj), line(line)
+			TLEVEL(const std::string &instr_id,
+				const std::string &defStaff,
+				const TLength &instrH,
+				const TLength &sigmaInstrH,
+				const bool &collAnglUnknown,
+				const TAngle &collAnglVal,
+				TAdjustableAngle *collAnglAdj,
+				const int line) :
+				ID(instr_id),
+				defStaffID(defStaff),
+				instrHeight(instrH),
+				sigmaInstrHeight(sigmaInstrH),
+				collAngleUnknown(collAnglUnknown),
+				collAngleValue(collAnglVal),
+				collAngleAdjustable(collAnglAdj),
+				line(line)
 			{
 			}
 
@@ -421,6 +435,8 @@ class TInstrumentData
 
 				ID = other.ID;
 				defStaffID = other.defStaffID;
+				instrHeight = other.instrHeight;
+				sigmaInstrHeight = other.sigmaInstrHeight;
 				collAngleUnknown = other.collAngleUnknown;
 				collAngleValue = other.collAngleValue;
 				collAngleAdjustable = other.collAngleAdjustable;
@@ -436,6 +452,8 @@ class TInstrumentData
 
 			std::string ID;
 			std::string defStaffID;
+			TLength instrHeight; // [m]
+			TLength sigmaInstrHeight; // [m]
 			bool collAngleUnknown;
 			TAngle collAngleValue; // [rad]
 			TAdjustableAngle *collAngleAdjustable;

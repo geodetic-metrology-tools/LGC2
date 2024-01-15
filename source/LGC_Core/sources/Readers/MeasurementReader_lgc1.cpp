@@ -1620,7 +1620,9 @@ void TKeyDLEV_lgc1::parse(const std::vector<std::string>& tokens, bool, int line
         auto l = std::make_shared<TInstrumentData::TLEVEL>(
             "LEVELInstr",
             "Staff1",
-            false,
+			TLength(0.0), //instrument height
+			TLength(0.0), //sigma instrument height
+			false,
             TAngle(0.0), //collimation angle value
             collANGLEAdjustable,
 			0

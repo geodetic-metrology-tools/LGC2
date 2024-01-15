@@ -43,6 +43,9 @@ struct TLEVEL : public TStatusObject {
         /// The reference point
         LGCAdjustablePoint const * fRefPt;
 
+        /// Tells whether the instrument height is fixed or not
+		bool ihfix{false};
+
 		/// Levelling instrument which does the measurements
 		TInstrumentData::TLEVEL  instrument;
 
@@ -57,7 +60,8 @@ struct TLEVEL : public TStatusObject {
             fRefPt(refPt),
 			line(NO_VALi),
 			instrument(instrument),
-			hasDHOR(false)
+			hasDHOR(false), 
+			ihfix(false)
 			{}
 			
 #if USE_SERIALIZER
