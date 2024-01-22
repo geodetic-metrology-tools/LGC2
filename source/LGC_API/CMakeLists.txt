@@ -44,7 +44,7 @@ target_link_libraries(	${PROJECT_NAME}
 )
 
 if(NOT MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0)
+  target_compile_options(${PROJECT_NAME} PUBLIC -D_GLIBCXX_USE_CXX11_ABI=0)
 endif()
 
 find_package(OpenMP)

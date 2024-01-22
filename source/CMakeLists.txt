@@ -13,7 +13,9 @@ cmake_minimum_required(VERSION 3.6)
 #
 # PROJECT NAME
 #
-
+## set compiler path to use gcc 7.1 compiler instead of gcc4.8 on the vnc machine
+set(CMAKE_CXX_COMPILER "/acc/local/Linux/x86_64-linux-gcc/current/gcc/bin/g++")
+set(CMAKE_C_COMPILER "/acc/local/Linux/x86_64-linux-gcc/current/gcc/bin/gcc")
 project(LGC)
 
 # Set version number and provide a header file with corresponding defines
@@ -110,8 +112,11 @@ ADD_SUBDIRECTORY(LGC_API)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
+if(NOT MSVC)
+  target_compile_options(${PROJECT_NAME} PUBLIC -D_GLIBCXX_USE_CXX11_ABI=0)
+endif()
 target_link_libraries(${PROJECT_NAME}
-  LGC_API
+	LGC_API
 	LGC_Core
 	LSAlgorithms
 	ProjectFramework
@@ -119,6 +124,8 @@ target_link_libraries(${PROJECT_NAME}
 	Logs
 	Plugins
 )
+
+
 
 ############################
 # MSVC:
