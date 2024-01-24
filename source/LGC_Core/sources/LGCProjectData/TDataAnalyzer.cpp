@@ -158,7 +158,7 @@ bool TDataAnalyzer::dataConsistent()
 
 					itLEVEL->fRefPt = &fData.getPoints().addObject(
 						LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), false,
-							false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
+							false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found.";
@@ -168,8 +168,8 @@ bool TDataAnalyzer::dataConsistent()
 			auto name = "DLEVPLANE" + std::to_string(itLEVEL->stnId);
 
 			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(
-				LGCAdjustablePlane(itLEVEL->fRefPt, TLength(0.0), TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, name));
+			itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(itLEVEL->fRefPt, TLength(itLEVEL->instrument.instrHeight.getMetresValue()),
+			TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, itLEVEL->ihfix, name));
 		}
 
 		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO)
@@ -216,7 +216,7 @@ bool TDataAnalyzer::dataConsistent()
 
 				auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
 				itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(refPoint.get(), TLength(initialRefPtDistance),
-					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
+					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, false, name));
 			}
 			else
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";

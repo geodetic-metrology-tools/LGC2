@@ -40,18 +40,13 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL& fLevel)
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
 	(*stream).writeStringLeft(nameWidth, "PLANE");
-	(*stream).writeStringLeft(11, "HDIST (MM)");
-	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPtDistEstimatedValue().getMMetresValue());
-	(*stream).writeStringLeft(11, "SHDIST (MM)");
-	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
-	(*stream) << endl;
-	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "PLANE");
 	(*stream).writeStringLeft(11, "HI (M)");
-	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.instrument.instrHeight.getMetresValue()); //.fMeasuredPlane->getRefPtDistEstimatedValue().getMMetresValue());
-	(*stream).writeStringLeft(11, "SHI (MM)");
-	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.instrument.sigmaInstrHeight.getMMetresValue()); //.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue());
+	if (!fLevel.ihfix)
+	{
+		(*stream).writeStringLeft(11, "SHI (MM)");
+		(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());	
+	}
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 }

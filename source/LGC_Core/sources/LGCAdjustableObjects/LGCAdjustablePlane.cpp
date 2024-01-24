@@ -2,7 +2,14 @@
 #include <LGCAdjustablePlane.h>
 #include "LGCAdjustablePoint.h"
 
-LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name)
+LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint *referencePoint,
+	const TLength &refPointDistance,
+	const TAngle &theta,
+	const TAngle &phi,
+	bool thetaFixed,
+	bool phiFixed,
+	bool fRefPtDistFixed,
+	const std::string &name)
 	:
 	fName(name),
 	fReferencePoint(referencePoint),
@@ -23,7 +30,7 @@ LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint,
 	fEstPrecisionPhi(0.0, TAngle::EUnits::kRadians),
 
 
-	fRefPtDistFixed(false),
+	fRefPtDistFixed(fRefPtDistFixed),
 	fThetaFixed(thetaFixed),
 	fPhiFixed(phiFixed),
 
@@ -35,7 +42,7 @@ LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint,
 {}
 
 LGCAdjustablePlane LGCAdjustablePlane::createUninitialized(const std::string& name){
-   LGCAdjustablePlane ap(0, TLength(NO_VALf), TAngle(NO_VALf, TAngle::EUnits::kRadians), TAngle(NO_VALf, TAngle::EUnits::kRadians), true, true, name);
+   LGCAdjustablePlane ap(0, TLength(NO_VALf), TAngle(NO_VALf, TAngle::EUnits::kRadians), TAngle(NO_VALf, TAngle::EUnits::kRadians), true, true, false, name);
 	ap.fInitialized = false;
 	return ap;
 }
@@ -68,8 +75,27 @@ void LGCAdjustablePlane::setFirstUidx(int idx) {
 	if (!fPhiFixed)
 			uidx_Phi = idx++;
 
-	//Ref. Pt distance is always variable
-	uidx_rpDistance = idx++;
+	if (!fRefPtDistFixed)
+			uidx_rpDistance = idx++;
+}
+
+int LGCAdjustablePlane::getFirstUidx() const
+{
+	if (!fThetaFixed)
+		return uidx_Theta;
+	else if (!fPhiFixed)
+		return uidx_Phi;
+	else if (!fRefPtDistFixed)
+		return uidx_rpDistance;
+
+	throw std::logic_error("Trying to get first unknown index from fixed plane.");
+}
+
+int LGCAdjustablePlane::getLastUidx() const
+{
+	return getFirstUidx() + int(!fThetaFixed) + int(!fPhiFixed) + int(!fRefPtDistFixed) - 1;
+
+	throw std::logic_error("Trying to get last unknown index from fixed plane.");
 }
 
 void LGCAdjustablePlane::setCorrection(int idx, TReal value){

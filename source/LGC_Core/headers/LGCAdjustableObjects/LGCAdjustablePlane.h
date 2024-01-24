@@ -44,7 +44,14 @@ public:
 
 			\note Reference point distance (refPointDistance) is always variable, this object therefore introduces from 1 up to 3 unknowns (up to 2 for the two angle THETA and PHI + 1 RP distance). Reference point is adjusted separately from the LGCAdjustablePoint object independently on the plane.
 		*/
-      LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name);
+	LGCAdjustablePlane(const LGCAdjustablePoint *referencePoint,
+		const TLength &refPointDistance,
+		const TAngle &theta,
+		const TAngle &phi,
+		bool thetaFixed,
+		bool phiFixed,
+		bool fRefPtDistFixed,
+		const std::string &name);
 
 		/// Create an unitialized plane. 
 		static LGCAdjustablePlane createUninitialized(const std::string& name);
@@ -101,7 +108,7 @@ public:
 			\brief Returns the number of unknowns for this plane.
 
 			Calculates the number of unknowns that are added to the adjustment by this plane.
-			This number varies from 1 to 3 unknowns (2 angles + 1 for the reference point distance (always)). Reference point itself is adjusted separately outside the plane object.
+			Reference point itself is adjusted separately outside the plane object.
 		*/
 		inline virtual int getNumUnkn() const {
 			return (int)!fThetaFixed + (int)!fPhiFixed + (int)!fRefPtDistFixed;
@@ -110,35 +117,30 @@ public:
 		/*! 
 			\brief See \ref TVAdjustableObject::isFixed
 
-			Reference point distance is never fixed, so the plane either.	
+			Plane is fixed (method returns true) when all three parameters are fixed. 	
 		*/
-		inline virtual bool isFixed() const { return false;}
+		inline virtual bool isFixed() const { return fThetaFixed & fPhiFixed & fRefPtDistFixed; }
 
-		///	Tells if at least one component is unfixed (variable). Reference point distance is always variable. True returned.
-		inline bool hasVariable() const { return true;}
+		///	Tells if at least one component is unfixed (variable). This method serves the same purpose as the "isFixed()".
+		inline bool hasVariable() const { return !this->isFixed();}
  
 		///	See \ref TVAdjustableObject::getFirstUidx
-		inline virtual int getFirstUidx() const {	
-				if (!fThetaFixed)
-					return uidx_Theta;		
-				else if (!fPhiFixed)
-					return uidx_Phi;
-				else
-					return uidx_rpDistance;		
-		}
-
+		virtual int getFirstUidx() const;
 
 		///	Tells if the Theta angle is fixed or unknown.
 		inline bool isThetaFixed(){
 			return fThetaFixed; 
 		}
 
-
 		///	Tells if the Phi angle is fixed or unknown.
 		inline bool isPhiFixed(){
 			return fPhiFixed; 
 		}
 
+		///	Tells if the RefPtDist lenght is fixed or unknown.
+		inline bool isRefPtDistFixed(){ 
+			return fRefPtDistFixed; 
+		}
 
 		/// Returns the index of an unknown index in LS matrices of the Theta angle (horizontal direction) of the plane.
 		inline int getThetaUnknIndex() const { 
@@ -149,22 +151,20 @@ public:
 
 		/// Returns index of an unknown index in LS matrices of the Phi angle (zenith distance) of the plane.
 		inline int getPhiUnknIndex() const { 
-			if(!fThetaFixed)
+			if(!fPhiFixed)
 				return uidx_Phi;
 			throw std::logic_error("Trying to get unknown index from fixed Phi angle of the plane.");
 		}
 
-		/// Returns index of an unknown index of the reference point for the distance in LS matrices.
+		/// Returns index of an unknown index of the reference point for the RefPtDist lenght in LS matrices.
 		inline int getRefPtDistUnknIndex() const { 
-			return uidx_rpDistance;
+			if (!fRefPtDistFixed)
+				return uidx_rpDistance;
+			throw std::logic_error("Trying to get unknown index from fixed RefPtDist lenght of the plane.");
 		}
 
-
-
 		///	See \ref TVAdjustableObject::getLastUidx
-		inline virtual int getLastUidx() const {return uidx_rpDistance;}
-
-		inline int getRefPtDistUidx() const {return uidx_rpDistance;}
+		virtual int getLastUidx() const;
 
 		/// Returns Name of the plane.
 		inline virtual const std::string& getName() const { return fName;}
