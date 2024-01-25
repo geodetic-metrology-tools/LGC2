@@ -145,9 +145,12 @@ bool TDataAnalyzer::dataConsistent()
 
 					referencePoint[0] += targetPos.getX().getMetresValue();
 					referencePoint[1] += targetPos.getY().getMetresValue();
-					referencePoint[2] += targetPos.getZ().getMetresValue();
+					referencePoint[2] += targetPos.getZ().getMetresValue()
+						+ itDLEVMeas->getDistance().getMetresValue() 
+						+ itDLEVMeas->target.staffHt.getMetresValue()
+						- itLEVEL->instrument.instrHeight.getMetresValue();
 				}
-
+				
 				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
 
 				if (numberOfMeasurements > 0)
