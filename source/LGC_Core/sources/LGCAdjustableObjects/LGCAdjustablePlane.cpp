@@ -93,7 +93,8 @@ int LGCAdjustablePlane::getFirstUidx() const
 
 int LGCAdjustablePlane::getLastUidx() const
 {
-	return getFirstUidx() + int(!fThetaFixed) + int(!fPhiFixed) + int(!fRefPtDistFixed) - 1;
+	if (!fThetaFixed | !fPhiFixed | !fRefPtDistFixed)
+		return getFirstUidx() + int(!fThetaFixed) + int(!fPhiFixed) + int(!fRefPtDistFixed) - 1;
 
 	throw std::logic_error("Trying to get last unknown index from fixed plane.");
 }
