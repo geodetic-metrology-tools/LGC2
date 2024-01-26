@@ -29,6 +29,8 @@ public:
 	std::array<bool, 7> whatToBlock(Eigen::MatrixXd mat);
 	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
 	Eigen::MatrixXd intersect(Eigen::MatrixXd A, Eigen::MatrixXd B);
+	// U representing a subspace of V. returns the orthogonal complement of U in V
+	Eigen::MatrixXd orthogonalComplement(Eigen::MatrixXd U, Eigen::MatrixXd V);
 
 private:
 	TLGCData &projData;
@@ -91,9 +93,13 @@ private:
 	// return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root + their position in root.
 	std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector);
 	void plotTransformationMessage(vector<vector<string>>);
-	// having n 3d points with a vector of their concatenated positions and a vector of concatenated directions
+	// having n 3d points with a vector of their concatenated positions and a vector of concatenated directions (or matrix if there are several directions)
 	//  try to find a point such that the directions can be interpreted as rotation around that point
-	void findRotationCenter(Eigen::VectorXd pos, Eigen::VectorXd directions);
+	void findRotationCenter(Eigen::VectorXd pos, Eigen::MatrixXd directions);
+	// method for interpreting nullspace directions of a group as translations/rotations
+	// the method first tries to isolate pure translations and then tries to interprete the remaining orthogonasl complement of the nullspace as rotations.
+	// it will also try to find the corresponding rotation axis
+	void findDirectionsToBlock(Eigen::MatrixXd helmertMovements, Eigen::VectorXd pointPositions, Eigen::MatrixXd nullspaceDirections);
 };
 
 #endif

@@ -276,7 +276,7 @@ std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> TLSConsCheck
 	std::unordered_map<std::string, Eigen::Vector3d> points2Movements;
 	std::unordered_map<std::string, Eigen::Vector3d> points2Positions;
 	
-	// Experiment: initialize the points with the points that are in the associated group
+	// initialize the points with the points that are in the associated group
 	std::set<int> pointNumbers = getPoints(group);
 	for (auto number : pointNumbers)
 	{
@@ -355,7 +355,7 @@ void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
 	logWarning() << msg.str();
 }
 
-void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::VectorXd directions)
+void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::MatrixXd directions)
 {
 	if (positions.rows() != directions.rows())
 	{
@@ -366,6 +366,7 @@ void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::VectorXd
 		throw std::runtime_error("Dimension of vector representing positions has to be a multiple of 3.");
 	}
 	int nPoints = positions.rows() / 3;
+	int nDirections = directions.cols();
 
 	// find the rotation center
 	// if there is a rotation center and the directions represent a rotation around this point, the directions need to be orthogonal to the vector from the center to the point
@@ -373,40 +374,131 @@ void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::VectorXd
 	// If theres a solution it will be the rotation center. If its not solvable the directions dont represent a rotation.
 
 	// compute matrix representation of c-><c,d_i>_i=1..nPoint
-	Eigen::MatrixXd matRep(nPoints, 3);
+	Eigen::MatrixXd matRep(nPoints * nDirections, 3);
 	// compute b=<p_i,d_i>_i=1..nPoint
-	Eigen::VectorXd b(nPoints);
+	Eigen::VectorXd b(nPoints * nDirections);
 	for (int j = 0; j < nPoints; j++)
 	{
-		matRep.row(j) = directions.segment(j*3,3);
-		b(j) = positions.segment(j * 3, 3).dot(directions.segment(j * 3, 3));
+		for (int k = 0; k < nDirections; k++)
+		{
+			matRep.row(j * nDirections + k) = directions.col(k).segment(j * 3, 3);
+			b(j * nDirections + k) = positions.segment(j * 3, 3).dot(directions.col(k).segment(j * 3, 3));
+		}
 	}
 	Eigen::MatrixXd axisDirection = matRep.fullPivLu().kernel();
-//	std::cout << "nullspace dimension =" << matRep.fullPivLu().dimensionOfKernel() << std ::endl;
+	int axisDimension = matRep.fullPivLu().dimensionOfKernel();
+	std::cout << "nullspace dimension =" << axisDimension << std ::endl;
 	// try to solve the linear equation matRep*c=b
 	Eigen::Vector3d solution = matRep.fullPivHouseholderQr().solve(b);
 	bool a_solution_exists = (matRep*solution).isApprox(b, pivotThreshold); 
 	if (a_solution_exists)
 	{
-		std::cout << "succesfully found a rotation axis: " << std::endl << solution << " + t* " << axisDirection << std::endl;
-		// check if any of the existing points is sitting at this position
-		for (auto point : projData.getPoints())
+		if (axisDimension > 0)
 		{
-			std::string pointName = point.getName();
-			// transform point to root coordinates
-			TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
-			TPositionVector positionInRoot = point.getEstimatedValue();
-			sub2Root.transform(positionInRoot);
-			Eigen::Vector3d pos = positionInRoot.toRealVector();
-			// test if the point is on the rotation axis
-			Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
-			bool isOnAxis = (axisDirection * t).isApprox(pos - solution, pivotThreshold);
-			if (isOnAxis)
+			std::cout << "succesfully found a rotation axis: " << std::endl << solution << " + t* " << axisDirection << std::endl;
+			// check if any of the existing points is sitting on this axis
+			for (auto point : projData.getPoints())
 			{
-				std::cout << "Point \" " << pointName << "\" is on this axis in Root. Are the other points rotating around this point?" << std::endl;
+				std::string pointName = point.getName();
+				// transform point to root coordinates
+				TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+				TPositionVector positionInRoot = point.getEstimatedValue();
+				sub2Root.transform(positionInRoot);
+				Eigen::Vector3d pos = positionInRoot.toRealVector();
+				// test if the point is on the rotation axis
+				Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
+				bool isOnAxis = (axisDirection * t).isApprox(pos - solution, pivotThreshold);
+				if (isOnAxis)
+				{
+					std::cout << "Point \" " << pointName << "\" is on this axis in Root. Are the other points rotating around this point?" << std::endl;
+				}
+			}
+		}
+		else
+		{
+			// check if any of the existing points is sitting on this axis
+			for (auto point : projData.getPoints())
+			{
+				std::string pointName = point.getName();
+				// transform point to root coordinates
+				TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+				TPositionVector positionInRoot = point.getEstimatedValue();
+				sub2Root.transform(positionInRoot);
+				Eigen::Vector3d pos = positionInRoot.toRealVector();
+				// test if the point is on the rotation axis
+				Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
+				bool isThisPoint = (pos - solution).norm() < pivotThreshold;
+				if (isThisPoint)
+				{
+					std::cout << "Point \" " << pointName << "\" is at the rotation center of these directions. Are the other points rotating around this point?" << std::endl;
+				}
 			}
 		}
 	}
+	else
+	{
+		std::cout << "no rotation center found for nullspace direction" << std::endl;
+	}
+
+}
+
+void TLSConsCheck::findDirectionsToBlock(Eigen::MatrixXd helmertMovements, Eigen::VectorXd pointPositions, Eigen::MatrixXd nullspaceDirections)
+{
+	if (fmod(pointPositions.rows(), 3) != 0)
+	{
+		std::runtime_error("Dimension of Vector of positions needs to be multiple of 3");
+	}
+	int nAffectedPoints = pointPositions.rows() / 3;
+
+	// do some initial checks
+	if (helmertMovements.rows() != nullspaceDirections.rows())
+	{
+		logWarning() << "Dimension of Helmert directions and nullspace directions has to be equal.";
+	}
+
+	// if there is only one point affected, it is impossible to tell if the ambiguity corresponds to a rotation  or translation
+	// the helmert movements can not be cleanly separated
+	if (nAffectedPoints == 1)
+	{
+		logWarning() << "Only one point affected, impossible to interprete direction in a unique way as linear combination of translations and rotations.";
+	}
+
+	// if the dimension of the nullspaceDirections is greater then 7 it is impossible to interprete all as linear combination of the 7 Helmert directions
+	// the dimension of the nullspaceDirections is the number of columns. The nullspaceDirection matrix is constructed to have linear independent columns
+	int dimNullspace = nullspaceDirections.cols();
+	if (dimNullspace > 7)
+	{
+		logWarning() << "Dimension of the group nullspace is greater then 7 so it will be impossible to explain all these directions as linear combination of "
+						"translations, rotations and scale.";
+	}
+
+	// compute the dimension of the intersection of the helmertMovements and the nullSpaceDirections
+	Eigen::MatrixXd intersection = intersect(helmertMovements, nullspaceDirections);
+	int dimIntersection = intersection.fullPivHouseholderQr().rank();
+	if (dimIntersection != dimNullspace)
+	{
+		logWarning() << "Not all directions in the Nullspace can be interpreted as linear combinations of translations, rotations and scale.";
+	}
+
+	// split the nullspaceDirections into a part purely representing translations and an orthogonal complement
+	Eigen::MatrixXd pureTranslations = intersect(nullspaceDirections, helmertMovements.leftCols(3));
+	std::cout << "translation directions" << std::endl << pureTranslations << std::endl;
+	Eigen::MatrixXd pureTranslationsComplement = orthogonalComplement(pureTranslations, nullspaceDirections);
+
+	// // test complement
+	// Eigen::MatrixXd interAux = intersect(pureTranslations, pureTranslationsComplement);
+	// std::cout << interAux << std::endl;
+	// Eigen::MatrixXd comb(interAux.rows(), pureTranslations.cols()+ pureTranslationsComplement.cols());
+	// comb << pureTranslations, pureTranslationsComplement;
+	// std::cout << "dim comb = " << comb.fullPivHouseholderQr().rank() << std::endl;
+
+	std::cout << "translation directions complement" << std::endl << pureTranslationsComplement << std::endl;
+	findRotationCenter(pointPositions, pureTranslationsComplement);
+	// for (int j = 0; j < pureTranslationsComplement.cols(); j++)
+	// {
+	// 	findRotationCenter(pointPositions, pureTranslationsComplement.col(j));
+	// }
+
 
 }
 
@@ -475,6 +567,7 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 	// need map here because std::set has no default hash function
 	std::map<std::set<std::string>, Eigen::MatrixXd> groups2AmbiguousDirections;
 	std::map<std::set<std::string>, Eigen::MatrixXd> groups2HelmertMovements;
+	std::map<std::set<std::string>, Eigen::VectorXd> groups2Positions;
 	for (auto affectedPointGroup : groupsOfAffectedPoints)
 	{
 		int nRows = 3 * std::get<0>(affectedPointGroup).size();
@@ -487,6 +580,7 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 		newDir.conservativeResize(nRows, newDir.cols() + 1);
 		newDir.col(newDir.cols() - 1) = rootDirections;
 		groups2AmbiguousDirections[pointNames] = newDir;
+		groups2Positions[pointNames] = rootPositions;
 
 		// now for this group compute the hypothetical action af a helmert transformation (in root coordinates)
 		Eigen::MatrixXd helmertMovements = Eigen::MatrixXd::Zero(nRows, 7);	
@@ -513,6 +607,9 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 		std::set<string> pointNames = group.first;
 		// find the intersection of the space of ambiguous directions and the space of the helmert directions
 		Eigen::MatrixXd helmertMovements = groups2HelmertMovements[pointNames];
+		Eigen::VectorXd pointPositions = groups2Positions[pointNames];
+		Eigen::MatrixXd nullspaceDirections= groups2AmbiguousDirections[pointNames];
+		findDirectionsToBlock(helmertMovements, pointPositions, nullspaceDirections);
 		// if there is only one point moved, only allow translations
 		if (pointNames.size() == 1)
 		{
@@ -656,6 +753,34 @@ Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
 	// std::cout << intersection << std::endl;
 
 	return intersection;
+}
+
+Eigen::MatrixXd TLSConsCheck::orthogonalComplement(Eigen::MatrixXd U, Eigen::MatrixXd V)
+{
+	// compute orthogonal complement of U in V.
+	// check dimensions
+	if (U.rows() != V.rows())
+	{
+		std::runtime_error("Inconsistent dimensions.");
+	}
+	int colsU = U.cols();
+	int dimU = U.fullPivHouseholderQr().rank();
+	int colsV = V.cols();
+	int dimV = V.fullPivHouseholderQr().rank();
+
+	// combine both matrices
+	Eigen::MatrixXd combinedMat(U.rows(), colsV + colsU);
+	combinedMat << U, V;
+	// check dimension to see if U really is a subspace of V
+	if (combinedMat.fullPivHouseholderQr().rank() > dimV)
+	{
+		std::runtime_error("U is not a subapace of V.");
+	}
+
+	// the first dimU columns of Q span U, the next dimV-dimU ones span its orthogonal complement in V
+	Eigen::MatrixXd Q = combinedMat.fullPivHouseholderQr().matrixQ();
+
+	return Q.middleCols(dimU, dimV - dimU);
 }
 
 void TLSConsCheck::initialize()
