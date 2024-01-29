@@ -35,7 +35,6 @@ LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string& na
 void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, const TReal& z) {
     fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys());
     fEstimatedValue = fProvisionalValue;
-
     // Use H instead of Z if necessary:
     if(fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH){
         fProvisionalValue.setH(TLength(z, TLength::kMetres));
@@ -53,7 +52,7 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 	TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 
-	if (root == getFrameTreePosition())
+	if ((root == getFrameTreePosition()) && !isVirtual)
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
 		fProvisionalValueInRoot = fProvisionalValue;
@@ -78,7 +77,6 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		TLOR2LOR transfo = TLOR2LOR(getFrameTreePosition(), root, "transfo");
 		// transform coordinates in the ROOT frame
 		transfo.transform(fProvisionalValueInRoot);
-
 		try
 		{
 			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)

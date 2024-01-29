@@ -32,7 +32,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 	try{
 		// Iteration through the points
 		for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)
-		{
+		{	
 			it->transformProvisionalCoordinates(fData.get());
 		}
 
