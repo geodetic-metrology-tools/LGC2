@@ -180,7 +180,8 @@ void TSimFileWriter::writeInstrument()
 
 	for (auto &itLEVEL : data->getInstruments().fLEVEL)
 	{
-		(*stream) << "*LEVEL " << itLEVEL.second->ID << sep << itLEVEL.second->defStaffID << sep << itLEVEL.second->collAngleUnknown << sep
+		(*stream) << "*LEVEL " << itLEVEL.second->ID << sep << itLEVEL.second->defStaffID << sep << itLEVEL.second->instrHeight.getMetresValue() << sep
+				  << itLEVEL.second->sigmaInstrHeight.getMMetresValue() << sep << itLEVEL.second->collAngleUnknown << sep
 				  << itLEVEL.second->collAngleValue.getGonsValue() << sep << endl;
 		for (auto &itTarget : itLEVEL.second->targets)
 			(*stream) << itTarget.second->ID << sep << itTarget.second->sigmaD.getMMetresValue() << sep << itTarget.second->ppmD.getMMetresValue() << sep
@@ -776,18 +777,26 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 	std::string sep = stream->getSeparator();
 
 	auto romDefStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
+	auto levelDefInst = *data->getInstruments().fLEVEL.at(meas->instrument.ID);
 
 	if (!meas->isActive())
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << "*DLEV" << sep << meas->instrument.ID << sep;
-
 	// write point on the line if it is already defined
 	if (meas->fMeasuredPlane->getReferencePoint())
 		for (auto &point : data->getPoints())
 			if (point.getName() == meas->fMeasuredPlane->getReferencePoint()->getName())
 				(*stream) << "RefPt" << sep << meas->fMeasuredPlane->getReferencePoint()->getName() << sep;
-
+	
+	if (meas->ihfix)
+	{
+		(*stream) << "IHFIX" << sep;
+		if (meas->instrument.instrHeight != levelDefInst.instrHeight)
+			(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
+		if (meas->instrument.sigmaInstrHeight != levelDefInst.sigmaInstrHeight)
+			(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+	}
 	(*stream) << endl;
 
 	// write measurement for the plane
