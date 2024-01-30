@@ -211,6 +211,7 @@ void TPunchFileWriter::writeTitle()
 
 	// write date and time
 	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "#BETA VERSION, NOT TO BE USED FOR PRODUCTION." << endl;
 	(*stream) << "#";
 	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		(*stream) << "*SPHE";

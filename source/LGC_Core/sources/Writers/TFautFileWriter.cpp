@@ -87,6 +87,7 @@ void	TFautFileWriter::writeTitle()
 
 	// write date and time
 	(*stream) << "CALCULATED " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "BETA VERSION, NOT TO BE USED FOR PRODUCTION." << endl;
 	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
 }
 

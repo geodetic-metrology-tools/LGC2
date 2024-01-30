@@ -176,6 +176,7 @@ void    TResultsFileWriter::writeTitle()
  
     // write date and time
     (*stream) << "CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "BETA VERSION, NOT TO BE USED FOR PRODUCTION." << endl;
     (*stream)<<"*********************************************************************************************************************************** "<<endl<<endl;
  
 }

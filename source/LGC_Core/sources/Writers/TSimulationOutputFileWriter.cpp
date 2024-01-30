@@ -111,7 +111,7 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 
 	//write date and time
 	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl  << endl << endl;
-
+	(*stream) << "#BETA VERSION, NOT TO BE USED FOR PRODUCTION." << endl;
 	//write title
 	(*stream)<<projTitle<<endl;
 	(*stream)<<"*********************************************************************************************************************************** "<<endl;
