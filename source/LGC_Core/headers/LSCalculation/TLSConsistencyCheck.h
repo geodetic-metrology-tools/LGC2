@@ -96,7 +96,7 @@ private:
 	void plotTransformationMessage(vector<vector<string>>);
 	// having n 3d points with a vector of their concatenated positions and a vector of concatenated directions (or matrix if there are several directions)
 	//  try to find a point such that the directions can be interpreted as rotation around that point
-	void findRotationCenter(const Eigen::VectorXd &pos, const Eigen::MatrixXd &directions);
+	bool findRotationCenter(const Eigen::VectorXd &pos, const Eigen::MatrixXd &directions);
 	// method for interpreting nullspace directions of a group as translations/rotations
 	// the method first tries to isolate pure translations and then tries to interprete the remaining orthogonasl complement of the nullspace as rotations.
 	// it will also try to find the corresponding rotation axis

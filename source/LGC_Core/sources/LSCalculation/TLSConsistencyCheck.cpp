@@ -355,8 +355,10 @@ void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
 	logWarning() << msg.str();
 }
 
-void TLSConsCheck::findRotationCenter(const Eigen::VectorXd &positions, const Eigen::MatrixXd &directions)
+bool TLSConsCheck::findRotationCenter(const Eigen::VectorXd &positions, const Eigen::MatrixXd &directions)
 {
+	// default: no rotation center/axis found
+	bool identifiedAsRotation = false;
 	if (positions.rows() != directions.rows())
 	{
 		throw std::runtime_error("Dimensions inconsistent.");
@@ -377,6 +379,8 @@ void TLSConsCheck::findRotationCenter(const Eigen::VectorXd &positions, const Ei
 	Eigen::MatrixXd matRep(nPoints * nDirections, 3);
 	// compute b=<p_i,d_i>_i=1..nPoint
 	Eigen::VectorXd b(nPoints * nDirections);
+	// std::cout << "pos=" << positions << std::endl;
+	// std::cout << "dir=" << directions<< std::endl;
 	for (int j = 0; j < nPoints; j++)
 	{
 		for (int k = 0; k < nDirections; k++)
@@ -387,55 +391,34 @@ void TLSConsCheck::findRotationCenter(const Eigen::VectorXd &positions, const Ei
 	}
 	Eigen::MatrixXd axisDirection = matRep.fullPivLu().kernel();
 	int axisDimension = matRep.fullPivLu().dimensionOfKernel();
-	std::cout << "nullspace dimension =" << axisDimension << std ::endl;
+	// std::cout << "nullspace dimension =" << axisDimension << std ::endl;
 	// try to solve the linear equation matRep*c=b
 	Eigen::Vector3d solution = matRep.fullPivHouseholderQr().solve(b);
-	bool a_solution_exists = (matRep*solution).isApprox(b, pivotThreshold); 
-	std::cout << "A=" << matRep << std::endl;
-	std::cout << "A*x= " << matRep * solution << " , "
-			  << " b= " << b << std::endl;
-	std::cout << "|Ax-b|=" << (matRep * solution - b).norm() << std::endl;
+	bool a_solution_exists = (matRep * solution - b).norm() < pivotThreshold;
+	//std::cout << "A=" << matRep << std::endl;
+	//std::cout << "A*x= " << matRep * solution << " , "
+	//		  << " b= " << b << std::endl;
+	//std::cout << "|Ax-b|=" << (matRep * solution - b).norm() << std::endl;
 	if (a_solution_exists)
 	{
-		if (axisDimension > 0)
+		std::cout << "succesfully identified a rotation axis: " << std::endl << solution << " + t* " << axisDirection << std::endl;
+		identifiedAsRotation= true;
+		// if the dimension of the kernel is zero and the solution is still valid, then this means that there are several ambiguous rotations and their axis intersect in
+		// the solution point check if any of the existing points is sitting on this axis
+		for (auto point : projData.getPoints())
 		{
-			std::cout << "succesfully found a rotation axis: " << std::endl << solution << " + t* " << axisDirection << std::endl;
-			// check if any of the existing points is sitting on this axis
-			for (auto point : projData.getPoints())
+			std::string pointName = point.getName();
+			// transform point to root coordinates
+			TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+			TPositionVector positionInRoot = point.getEstimatedValue();
+			sub2Root.transform(positionInRoot);
+			Eigen::Vector3d pos = positionInRoot.toRealVector();
+			// test if the point is on the rotation axis
+			Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
+			bool isOnAxis = (axisDirection * t).isApprox(pos - solution, pivotThreshold);
+			if (isOnAxis)
 			{
-				std::string pointName = point.getName();
-				// transform point to root coordinates
-				TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
-				TPositionVector positionInRoot = point.getEstimatedValue();
-				sub2Root.transform(positionInRoot);
-				Eigen::Vector3d pos = positionInRoot.toRealVector();
-				// test if the point is on the rotation axis
-				Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
-				bool isOnAxis = (axisDirection * t).isApprox(pos - solution, pivotThreshold);
-				if (isOnAxis)
-				{
-					std::cout << "Point \" " << pointName << "\" is on this axis in Root. Are the other points rotating around this point?" << std::endl;
-				}
-			}
-		}
-		else
-		{
-			// check if any of the existing points is sitting on this axis
-			for (auto point : projData.getPoints())
-			{
-				std::string pointName = point.getName();
-				// transform point to root coordinates
-				TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
-				TPositionVector positionInRoot = point.getEstimatedValue();
-				sub2Root.transform(positionInRoot);
-				Eigen::Vector3d pos = positionInRoot.toRealVector();
-				// test if the point is on the rotation axis
-				Eigen::VectorXd t = axisDirection.fullPivHouseholderQr().solve(pos - solution);
-				bool isThisPoint = (pos - solution).norm() < pivotThreshold;
-				if (isThisPoint)
-				{
-					std::cout << "Point \" " << pointName << "\" is at the rotation center of these directions. Are the other points rotating around this point?" << std::endl;
-				}
+				std::cout << "Point \" " << pointName << "\" is on this axis in Root. Are the other points rotating around this point?" << std::endl;
 			}
 		}
 	}
@@ -443,7 +426,7 @@ void TLSConsCheck::findRotationCenter(const Eigen::VectorXd &positions, const Ei
 	{
 		std::cout << "no rotation center found for nullspace direction" << std::endl;
 	}
-
+	return identifiedAsRotation;
 }
 
 void TLSConsCheck::findDirectionsToBlock(const Eigen::MatrixXd &helmertMovements, const Eigen::VectorXd &pointPositions, const Eigen::MatrixXd &nullspaceDirections)
