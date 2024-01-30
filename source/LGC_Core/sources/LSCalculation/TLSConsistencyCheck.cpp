@@ -215,7 +215,7 @@ vector<string> TLSConsCheck::involvedHelmertComponents(TVector linComb)
 	return components;
 }
 
-vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, vector<TDenseMatrix> kernGroupBaseVectors)
+vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMovements(set<int> pointsInGroup, const vector<TDenseMatrix> &kernGroupBaseVectors)
 {
 	vector<vector<std::string>> result;
 	int nPoints = pointsInGroup.size();
@@ -270,7 +270,7 @@ vector<vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsHelmertMove
 }
 
 
-std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(std::set<int> group, Eigen::VectorXd nullspaceVector)
+std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> TLSConsCheck::getAffectedPointsAndRootMovements(std::set<int> group, const Eigen::VectorXd &nullspaceVector)
 {
 	std::set<std::string> affectedPoints;
 	std::unordered_map<std::string, Eigen::Vector3d> points2Movements;
@@ -355,11 +355,11 @@ void TLSConsCheck::plotTransformationMessage(vector<vector<string>> input)
 	logWarning() << msg.str();
 }
 
-void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::MatrixXd directions)
+void TLSConsCheck::findRotationCenter(const Eigen::VectorXd &positions, const Eigen::MatrixXd &directions)
 {
 	if (positions.rows() != directions.rows())
 	{
-		throw std::runtime_error("to find a rotation center, two vectors of the same dimension have to be supplied.");
+		throw std::runtime_error("Dimensions inconsistent.");
 	}
 	if (positions.rows()%3!=0)
 	{
@@ -391,6 +391,10 @@ void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::MatrixXd
 	// try to solve the linear equation matRep*c=b
 	Eigen::Vector3d solution = matRep.fullPivHouseholderQr().solve(b);
 	bool a_solution_exists = (matRep*solution).isApprox(b, pivotThreshold); 
+	std::cout << "A=" << matRep << std::endl;
+	std::cout << "A*x= " << matRep * solution << " , "
+			  << " b= " << b << std::endl;
+	std::cout << "|Ax-b|=" << (matRep * solution - b).norm() << std::endl;
 	if (a_solution_exists)
 	{
 		if (axisDimension > 0)
@@ -442,18 +446,18 @@ void TLSConsCheck::findRotationCenter(Eigen::VectorXd positions, Eigen::MatrixXd
 
 }
 
-void TLSConsCheck::findDirectionsToBlock(Eigen::MatrixXd helmertMovements, Eigen::VectorXd pointPositions, Eigen::MatrixXd nullspaceDirections)
+void TLSConsCheck::findDirectionsToBlock(const Eigen::MatrixXd &helmertMovements, const Eigen::VectorXd &pointPositions, const Eigen::MatrixXd &nullspaceDirections)
 {
+	// do some initial checks
 	if (fmod(pointPositions.rows(), 3) != 0)
 	{
-		std::runtime_error("Dimension of Vector of positions needs to be multiple of 3");
+		std::runtime_error("Dimension of Vector of positions has to be multiple of 3");
 	}
 	int nAffectedPoints = pointPositions.rows() / 3;
 
-	// do some initial checks
 	if (helmertMovements.rows() != nullspaceDirections.rows())
 	{
-		logWarning() << "Dimension of Helmert directions and nullspace directions has to be equal.";
+		std::runtime_error("Helmert directions and nullspace directions must span subspaces of the same vector space.");
 	}
 
 	// if there is only one point affected, it is impossible to tell if the ambiguity corresponds to a rotation  or translation
@@ -463,19 +467,17 @@ void TLSConsCheck::findDirectionsToBlock(Eigen::MatrixXd helmertMovements, Eigen
 		logWarning() << "Only one point affected, impossible to interprete direction in a unique way as linear combination of translations and rotations.";
 	}
 
-	// if the dimension of the nullspaceDirections is greater then 7 it is impossible to interprete all as linear combination of the 7 Helmert directions
-	// the dimension of the nullspaceDirections is the number of columns. The nullspaceDirection matrix is constructed to have linear independent columns
+	// if the dimension of the nullspace directions is greater then 7 it is impossible to interprete all as linear combination of the 7 Helmert directions
+	// the dimension of the nullspace directions is the number of columns. The nullspaceDirections matrix is constructed to have linear independent columns
 	int dimNullspace = nullspaceDirections.cols();
 	if (dimNullspace > 7)
 	{
-		logWarning() << "Dimension of the group nullspace is greater then 7 so it will be impossible to explain all these directions as linear combination of "
+		logWarning() << "Dimension of the group nullspace is greater then 7 and it is impossible to explain all these directions as linear combination of "
 						"translations, rotations and scale.";
 	}
 
 	// compute the dimension of the intersection of the helmertMovements and the nullSpaceDirections
-	Eigen::MatrixXd intersection = intersect(helmertMovements, nullspaceDirections);
-	int dimIntersection = intersection.fullPivHouseholderQr().rank();
-	if (dimIntersection != dimNullspace)
+	if (isSubspace(nullspaceDirections, helmertMovements))
 	{
 		logWarning() << "Not all directions in the Nullspace can be interpreted as linear combinations of translations, rotations and scale.";
 	}
@@ -755,7 +757,21 @@ Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
 	return intersection;
 }
 
-Eigen::MatrixXd TLSConsCheck::orthogonalComplement(Eigen::MatrixXd U, Eigen::MatrixXd V)
+bool TLSConsCheck::isSubspace(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
+{
+	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrB(B);
+	Eigen::MatrixXd C(A.rows(), A.cols() + B.cols());
+	C << A, B;
+	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrC(C);
+
+	int rankB = qrB.rank();
+	int rankC = qrC.rank();
+	// A defines a subspace iff C has the same rank as B
+
+	return rankB == rankC;
+}
+
+Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V)
 {
 	// compute orthogonal complement of U in V.
 	// check dimensions

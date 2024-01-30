@@ -202,10 +202,11 @@ void object::test<5>()
 	TLSInputMatrices im;
 	TDataAnalyzer analyzer(*projTest);
 	analyzer.dataConsistent();
-// 	// plot applied constraints
-// 	for (auto group:projTest.get()->getPointGroups()){
-// 		group.plotGroupData();
-// 	}
+	// plot applied constraints
+	for (auto group : projTest.get()->getPointGroups())
+	{
+		group.plotGroupData();
+	}
 	im.initMatrices(projTest->fUEOIndices);
 	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
 	TLSConsCheck consCheck(*projTest.get(), im);
