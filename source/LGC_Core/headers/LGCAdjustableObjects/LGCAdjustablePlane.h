@@ -149,7 +149,7 @@ public:
 
 		/// Returns index of an unknown index in LS matrices of the Phi angle (zenith distance) of the plane.
 		inline int getPhiUnknIndex() const { 
-			if(!fThetaFixed)
+			if (!fPhiFixed)
 				return uidx_Phi;
 			throw std::logic_error("Trying to get unknown index from fixed Phi angle of the plane.");
 		}
