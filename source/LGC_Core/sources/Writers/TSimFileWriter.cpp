@@ -1012,25 +1012,13 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 		(*stream) << "ROT3D" << sep;
 	else
 	{
-		if (meas->instrumentHeightAdjustable)
-		{
-			if (meas->instrumentHeightAdjustable->isFixed())
-			{
-				(*stream) << "IHFIX" << sep;
-				if (meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
-					(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
-
-				if (meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
-					(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
-			}
-		}
-		else if (meas->ihfix)
+		if (meas->ihfix)
 		{
 			(*stream) << "IHFIX" << sep;
-			if (meas->instrument.instrHeight != polarDefInst.sigmaInstrCentering)
+			if (meas->instrument.instrHeight != polarDefInst.instrHeight)
 				(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
 
-			if (meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrCentering)
+			if (meas->instrument.sigmaInstrHeight != polarDefInst.sigmaInstrHeight)
 				(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
 		}
 	}
