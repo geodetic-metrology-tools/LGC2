@@ -8,6 +8,8 @@
 #include <TSparseMatrix.h>
 #include <TVAdjustableObject.h>
 
+#include <chrono>
+
 // constructor
 TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : projData(data)
 {
@@ -1018,31 +1020,40 @@ set<int> TLSConsCheck::getPoints(set<int> group)
 
 TDenseMatrix TLSConsCheck::computeNullspace()
 {
-	// get only the columns of the first design matrix that correspond to the test_set of objects
-	TDenseMatrix firstDense = firstDgnMatrix;
-	// compute kernel representation of this matrix
-	// with pullpivlu
-	Eigen::FullPivLU<TDenseMatrix> lu(firstDense);
-	lu.setThreshold(pivotThreshold);
-	TDenseMatrix nullspace = lu.kernel();
-	if (nullspace.isZero())
+	// compute the nullspace of A using qr decompsotion of A^T. If the nullspace is nonzero, it corresponds to the rightmost columns of Q
+	Eigen::SparseMatrix<double> A = firstDgnMatrix;
+	int nVar = A.cols();
+
+	// set up matrix to get the last (max 20) columns of Q by multiplication, make sure its not bigger then the matrix dimension
+	Eigen::MatrixXd I(nVar, nVar);
+	I.setIdentity();
+	int maxDim = std::min(20, nVar);
+	Eigen::MatrixXd rightColFactor(nVar, maxDim);
+	rightColFactor = I.rightCols(maxDim);
+	// do a QR decomposition
+	Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qr;
+	qr.compute(A.transpose());
+	if (qr.info() != Eigen::Success)
 	{
-		// if only the zero matrix is returned by eigen, the nullspace has dimension 0
-		nullspace.conservativeResize(firstDense.cols(), 0);
+		logWarning() << "Computation of Nullspace failed";
 	}
 
+	Eigen::MatrixXd potentialNullspace = qr.matrixQ() * rightColFactor;
+
+	// no need to explicitely compute the rank as we test the nullspace vectors . We assume the nullspace has not more then maxDim dimensions
 	vector<int> confirmedNullspaceVectors;
 	// check if the proposed vectors are really in the nullspace
-	for (int j = 0; j < nullspace.cols(); j++)
+	for (int j = 0; j < potentialNullspace.cols(); j++)
 	{
-		double testZero = (firstDgnMatrix * nullspace.col(j)).norm();
+		double testZero = (firstDgnMatrix * potentialNullspace.col(j)).norm();
+		//std::cout << testZero << std::endl;
 		if (testZero < pivotThreshold)
 		{
 			confirmedNullspaceVectors.push_back(j);
 		}
 	}
-	TDenseMatrix confirmedNullspace(nullspace.cols(), confirmedNullspaceVectors.size());
-	confirmedNullspace = nullspace(Eigen::indexing::all, confirmedNullspaceVectors);
+	TDenseMatrix confirmedNullspace(A.rows(), confirmedNullspaceVectors.size());
+	confirmedNullspace = potentialNullspace(Eigen::indexing::all, confirmedNullspaceVectors);
 
 	return confirmedNullspace;
 }
