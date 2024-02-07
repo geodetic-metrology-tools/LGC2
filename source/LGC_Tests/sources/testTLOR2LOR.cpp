@@ -5,6 +5,8 @@
 #include <TLGCData.h>
 #include <TLOR2LOR.h>
 #include <TReader.h>
+#include "TLGCCalculation.h"
+#include "Logger.hpp"
 
 #include "TDirectTransformation.h"
 #include "TInverseTransformation.h"
@@ -30,7 +32,6 @@ tut::factory tf("Testing of TLOR2LOR class");
 namespace tut
 {
 typedef TDataTree::iterator TDataTreeIter;
-
 // Testing TLOR2LOR Constructors
 template<>
 template<>
@@ -610,4 +611,164 @@ void object::test<6>()
 			//Testing with scales included
 		}
 #endif
+		
+template<>
+template<>
+void object::test<7>()
+{
+	using namespace LGC;
+	set_test_name("Testing derivative of helmert parameters representing a chain with only one trafo.");
+
+	std::shared_ptr<TLGCData> proj(new TLGCData);
+
+	TReader r(proj);
+	stringstream infile(LOR2LORInputFiles::composedHelmertParameter0);
+	bool succesReading = r.read(infile);
+	ensure_equals("Reading Successfull.", succesReading, true);
+	TDataTree tree = proj->getTree();
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	TLOR2LOR upTrafo(tree, "Frame1", "ROOT", "up");
+
+	TLGCCalculation calcul(proj);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+
+	// the transformation chains need to be updated as the values of the involved adj helmert trafos have changed due to the computation
+	upTrafo.updateTree();
+
+	// compare the composed transformation Frame1-> Root with the single trasformation represented by the singleFrame. They should be equal.
+	const TLGCData &dataset = calcul.getData();
+	TDataTreeIterator singleFrame = dataset.locateNode("Frame1");
+
+	// the frame itself
+	TransformParameters singleFrameParams = singleFrame->get()->frame.getEstParam();
+	// the trafo resulting from the chain defined by only one frame
+	TransformParameters composedFrameParams = upTrafo.computeComposedTransformationParameters();
+
+	// parameters should be approximately equal. Cant use == operator because the parameters here are results of LS iterations, so no perfect match an be expected
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.tX, singleFrameParams.tX, 1e-6);
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.tY, singleFrameParams.tY, 1e-6);
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.tZ, singleFrameParams.tZ, 1e-6);
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.kappa, singleFrameParams.kappa, 1e-6);
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.omega, singleFrameParams.omega, 1e-6);
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.phi, singleFrameParams.phi, 1e-6);
+	ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.scale, singleFrameParams.scale, 1e-6);
+
+	// test the derivatives of the composed trafo with respect to the involved helmert parameters
+	double epsilon = 1e-6;
+
+	// as the chain is only consisting of one trafo, the resulting parameters are identical with the parameters of this single trafo.
+	// therefore the derivatives of the composed trafo parameter with respect to this trafo should be the identity matrix
+	std::vector<std::pair<TAdjustableHelmertTransformation, Eigen::Matrix<double, 7, 7>>> derWRTFrames = upTrafo.computeComposedTransformationDerivatives();
+
+	Eigen::MatrixXd identity(7, 7);
+	identity.setIdentity();
+	Eigen::MatrixXd computedDerivative = derWRTFrames.at(0).second;
+	ensure("Derivative of composed Helmert parameter should be the identity as the chain is defined by a single Frame.", identity.isApprox(computedDerivative));
+
+}
+
+template<>
+template<>
+void object::test<8>()
+{
+	using namespace LGC;
+	set_test_name("Testing derivative of helmert parameters representing a chain of several Helmert transformations.");
+	std::vector<const char*> fileStrings;
+	// two slightly different files
+	fileStrings.push_back(LOR2LORInputFiles::composedHelmertParameter1);
+	fileStrings.push_back(LOR2LORInputFiles::composedHelmertParameter2);
+
+	for (const char *fileString : fileStrings)
+	{
+		std::shared_ptr<TLGCData> proj(new TLGCData);
+
+		TReader r(proj);
+		stringstream infile(fileString);
+		bool succesReading = r.read(infile);
+		ensure_equals("Reading Successfull.", succesReading, true);
+		TDataTree tree = proj->getTree();
+
+		//////////////////////////////////////////////////////////////////////////////////////////////
+		TLOR2LOR upTrafo(tree, "Frame3", "ROOT", "up");
+
+		TLGCCalculation calcul(proj);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+		Behavior succesCalc = calcul.computeResults(fileWriter);
+		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+		// the transformation chains need to be updated as the values of the involved adj helmert trafos have changed due to the computation
+		upTrafo.updateTree();
+
+		// compare the composed transformation Frame3-> Root with the single trasformation represented by the singleFrame. They should be equal.
+		const TLGCData &dataset = calcul.getData();
+		TDataTreeIterator singleFrame = dataset.locateNode("singleFrame");
+
+		TransformParameters singleFrameParams = singleFrame->get()->frame.getEstParam();
+		TransformParameters composedFrameParams = upTrafo.computeComposedTransformationParameters();
+
+		// parameters should be approximately equal. Cant use == operator because the parameters here are results of LS iterations, so no perfect match an be expected
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.tX, singleFrameParams.tX, 1e-6);
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.tY, singleFrameParams.tY, 1e-6);
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.tZ, singleFrameParams.tZ, 1e-6);
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.kappa, singleFrameParams.kappa, 1e-6);
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.omega, singleFrameParams.omega, 1e-6);
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.phi, singleFrameParams.phi, 1e-6);
+		ensure_equals("Frame parameters need to be approximately equal.", composedFrameParams.scale, singleFrameParams.scale, 1e-6);
+
+		// computing the covariances of both transformations
+		TDenseMatrix singleCovar = singleFrame->get()->frame.getCovar();
+		TDenseMatrix composedCovar = upTrafo.getComposedParameterCovariance(&dataset);
+
+		ensure("Frame parameter covariance should be equal for the composed frame and the equivalent single frame.", (composedCovar - singleCovar).norm() < 1e-8);
+	}
+
+}
+
+template<>
+template<>
+void object::test<9>()
+{
+	using namespace LGC;
+	set_test_name("Testing derivative of helmert parameters representing a whole chain");
+
+	std::shared_ptr<TLGCData> proj(new TLGCData);
+
+	TReader r(proj);
+	stringstream infile(LOR2LORInputFiles::composedGimbalLock);
+	bool succesReading = r.read(infile);
+	ensure_equals("Reading Successfull.", succesReading, true);
+	TDataTree tree = proj->getTree();
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	TLOR2LOR upTrafo(tree, "Frame2", "ROOT", "up");
+
+	TLGCCalculation calcul(proj);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// the transformation chains need to be updated as the values of the involved adj helmert trafos have changed due to the computation
+	upTrafo.updateTree();
+
+	// after the computation this composed trafo should produce a gimbal loc ry=100gon
+	const TLGCData &dataset = calcul.getData();
+
+	Logger::getLogger().clearCounters();
+	int numberWarningsBeforeExtraction = Logger::getLogger().warningNumber();
+	ensure_equals("Number of warnings should be reset to 0.", 0, numberWarningsBeforeExtraction);
+
+	// extract the Helmert trafo parameters of the composed transformation
+	TransformParameters composedFrameParams = upTrafo.computeComposedTransformationParameters();
+
+	int numberWarningsAfterExtraction = Logger::getLogger().warningNumber();
+	ensure_equals("Gimbal lock case should have triggered a warning message.", 1, numberWarningsAfterExtraction);
+
+	ensure_equals("In Gimbal lock case, rz=0 should be applied per convention.", composedFrameParams.kappa, 0, 1e-12);
+}
+
+
 } // namespace tut

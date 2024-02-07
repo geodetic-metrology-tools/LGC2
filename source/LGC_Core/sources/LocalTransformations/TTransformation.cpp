@@ -1,4 +1,5 @@
 #include <TTransformation.h>
+#include "Logger.hpp"
 
 TTransformation::TTransformation()  :
 	fTransM(std::unique_ptr<Eigen::Matrix4d>(new Eigen::Matrix4d))
@@ -90,33 +91,33 @@ void TTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TReal rx, 
 
 void TTransformation::setRotationTransformation(TReal rx, TReal ry, TReal rz){
 	auto& m(*(fTransM));
-	TReal omegacos = cosq(rx);
-	zerofy(omegacos);
+	TReal rxcos = cosq(rx);
+	zerofy(rxcos);
 
-	TReal omegasin = sinq(rx);
-	zerofy(omegasin);
+	TReal rxsin = sinq(rx);
+	zerofy(rxsin);
 
-	TReal phicos = cosq(ry);
-	zerofy(phicos);
+	TReal rycos = cosq(ry);
+	zerofy(rycos);
 
-	TReal phisin = sinq(ry);
-	zerofy(phisin);
+	TReal rysin = sinq(ry);
+	zerofy(rysin);
 
-	TReal kappacos = cosq(rz);
-	zerofy(kappacos);
+	TReal rzcos = cosq(rz);
+	zerofy(rzcos);
 
-	TReal kappasin = sinq(rz);
-	zerofy(kappasin);
+	TReal rzsin = sinq(rz);
+	zerofy(rzsin);
 
-	m(0,0)  =  kappacos*phicos;
-	m(0,1)  =  kappasin*phicos;
-	m(0,2)  =  -phisin;
-	m(1,0)  =  kappacos*phisin*omegasin-kappasin*omegacos;
-	m(1,1)  =  kappasin*phisin*omegasin+kappacos*omegacos;
-	m(1,2)  =  phicos*omegasin;
-	m(2,0)  =  kappacos*phisin*omegacos+kappasin*omegasin;
-	m(2,1)  =  kappasin*phisin*omegacos-kappacos*omegasin;
-	m(2,2)  =  phicos*omegacos;
+	m(0,0)  =  rzcos*rycos;
+	m(0,1)  =  rzsin*rycos;
+	m(0,2)  =  -rysin;
+	m(1,0)  =  rzcos*rysin*rxsin-rzsin*rxcos;
+	m(1,1)  =  rzsin*rysin*rxsin+rzcos*rxcos;
+	m(1,2)  =  rycos*rxsin;
+	m(2,0)  =  rzcos*rysin*rxcos+rzsin*rxsin;
+	m(2,1)  =  rzsin*rysin*rxcos-rzcos*rxsin;
+	m(2,2)  =  rycos*rxcos;
 }
 
 TTransformation TTransformation::getIdentity()
@@ -124,6 +125,45 @@ TTransformation TTransformation::getIdentity()
 	TTransformation t;
 	t.setIdentityTransformation(); 
 	return t;
+}
+
+TransformParameters TTransformation::getTrafoParameters() const
+{
+	auto &M(*(fTransM));
+	// compute the Helmert parameters using the M matrix
+	// scale and translations can be recovered directly from the M matrix
+	double s = 1.0 / M(3, 3);
+	double tx = s * M(0, 3);
+	double ty = s * M(1, 3);
+	double tz = s * M(2, 3);
+	// rotation values are initialized and then computed using inverse trigonometric functions
+	double rx(0);
+	double rz(0);
+	double ry(0);
+
+	double sinry = -M(0, 2);
+	// check for "Gimbal Lock" case
+	if (!isZero(fabs(sinry) - 1))
+	{
+		ry = -asin(M(0, 2));
+		rx = atan2(M(1, 2), M(2, 2));
+		rz = atan2(M(0, 1), M(0, 0));
+	}
+	else
+	{
+		// Gimbal lock, in this case we can't divide by cos ry (=0 in that case) and rx and rz are dependant.
+		// We use the convention to fix rz=0 in that case.
+		rz = 0.0;
+		// two cases can happen, sin ry = 1 with ry = +pi/2 or sin ry = -1 with ry = -pi/2
+		double factor = 1.0;
+		if (isZero(sinry + 1))
+			factor = -1.0;
+		ry = factor * PI / 2.0;
+		rx = atan2(factor * M(1, 0), factor * M(2, 0));
+		logWarning() << "Extracting Euler angles of transformation with ry = +/- pi/2: Gimbal Lock rz = 0 convention used.";
+	}
+
+	return TransformParameters(TAngle(rx), TAngle(ry), TAngle(rz), TLength(tx), TLength(ty), TLength(tz), TReal(s));
 }
 
 void TTransformation::setZeroMatrix(){

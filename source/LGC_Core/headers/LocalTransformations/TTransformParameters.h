@@ -35,6 +35,9 @@ struct TransformParameters
 	TReal scale; //!< The unitless scale factor
 
 	TransformParameters() : omega(TAngle(0.0)), phi(TAngle(0.0)), kappa(TAngle(0.0)), tX(TLength(0.0)), tY(TLength(0.0)), tZ(TLength(0.0)), scale(TReal(1.0)) {};
+	// parametrized constructor
+	TransformParameters(TAngle rx, TAngle ry, TAngle rz, TLength tx, TLength ty, TLength tz, TReal s) : omega(rx), phi(ry), kappa(rz), tX(tx), tY(ty), tZ(tz), scale(s) {};
+
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
