@@ -510,8 +510,8 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	}
 	bool identifiedAsRotation = findRotationCenter(pointPositions, pureTranslationsComplement);
 	std::array<bool, 7> chosenRotationConstraints;
-		Eigen::MatrixXd rotationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslationsComplement);
-		chosenRotationConstraints = whatToBlock(rotationsAsHelmertMovements);
+	Eigen::MatrixXd rotationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslationsComplement);
+	chosenRotationConstraints = whatToBlock(rotationsAsHelmertMovements);
 	if (identifiedAsRotation)
 	{
 		//Eigen::MatrixXd rotationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslationsComplement);
@@ -670,9 +670,9 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 		std::set<string> pointNames = group.first;
 		Eigen::MatrixXd helmertMovements = groups2HelmertMovements[pointNames];
 		Eigen::VectorXd pointPositions = groups2Positions[pointNames];
-		Eigen::MatrixXd nullspaceDirections= groups2AmbiguousDirections[pointNames];
+		Eigen::MatrixXd nullspaceDirections = groups2AmbiguousDirections[pointNames];
 	
-		std::array<bool, 7> chosenConstraints;
+		std::array<bool, 7> chosenConstraints{};
 		bool constraintsFound = findDirectionsToBlock(chosenConstraints, helmertMovements, pointPositions, nullspaceDirections);
 
 		// use the found constraints and define a point constraint group
@@ -1020,25 +1020,42 @@ set<int> TLSConsCheck::getPoints(set<int> group)
 
 TDenseMatrix TLSConsCheck::computeNullspace()
 {
-	// compute the nullspace of A using qr decompsotion of A^T. If the nullspace is nonzero, it corresponds to the rightmost columns of Q
-	Eigen::SparseMatrix<double> A = firstDgnMatrix;
-	int nVar = A.cols();
-
-	// set up matrix to get the last (max 20) columns of Q by multiplication, make sure its not bigger then the matrix dimension
-	Eigen::MatrixXd I(nVar, nVar);
-	I.setIdentity();
-	int maxDim = std::min(20, nVar);
-	Eigen::MatrixXd rightColFactor(nVar, maxDim);
-	rightColFactor = I.rightCols(maxDim);
-	// do a QR decomposition
-	Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qr;
-	qr.compute(A.transpose());
-	if (qr.info() != Eigen::Success)
+	bool useFullPivLu = true;
+	Eigen::MatrixXd potentialNullspace;
+	if (useFullPivLu)
 	{
-		logWarning() << "Computation of Nullspace failed";
-	}
+		// use fullpivlu decomposition which has a direct kernel method but needs a dense matrix
+		TDenseMatrix firstDense = firstDgnMatrix;
+		// compute kernel representation of this matrix
+		// with pullpivlu
+		Eigen::FullPivLU<TDenseMatrix> lu(firstDense);
+		lu.setThreshold(pivotThreshold);
 
-	Eigen::MatrixXd potentialNullspace = qr.matrixQ() * rightColFactor;
+		potentialNullspace = lu.kernel();
+	}
+	else
+	{
+		// compute the nullspace of A using qr decompsotion of A^T. If the nullspace is nonzero, it corresponds to the rightmost columns of Q
+		Eigen::SparseMatrix<double> A = firstDgnMatrix;
+		int nVar = A.cols();
+
+		// set up matrix to get the last (max 20) columns of Q by multiplication, make sure its not bigger then the matrix dimension
+		Eigen::MatrixXd I(nVar, nVar);
+		I.setIdentity();
+		int maxDim = std::min(20, nVar);
+		Eigen::MatrixXd rightColFactor(nVar, maxDim);
+		rightColFactor = I.rightCols(maxDim);
+		// do a QR decomposition
+		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qr;
+		qr.setPivotThreshold(pivotThreshold);
+		qr.compute(A.transpose());
+		if (qr.info() != Eigen::Success)
+		{
+			logWarning() << "Computation of Nullspace failed";
+		}
+
+		potentialNullspace = qr.matrixQ() * rightColFactor;
+	}
 
 	// no need to explicitely compute the rank as we test the nullspace vectors . We assume the nullspace has not more then maxDim dimensions
 	vector<int> confirmedNullspaceVectors;
@@ -1052,7 +1069,7 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 			confirmedNullspaceVectors.push_back(j);
 		}
 	}
-	TDenseMatrix confirmedNullspace(A.rows(), confirmedNullspaceVectors.size());
+	TDenseMatrix confirmedNullspace(firstDgnMatrix.rows(), confirmedNullspaceVectors.size());
 	confirmedNullspace = potentialNullspace(Eigen::indexing::all, confirmedNullspaceVectors);
 
 	return confirmedNullspace;

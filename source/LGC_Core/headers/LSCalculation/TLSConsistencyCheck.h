@@ -38,7 +38,7 @@ private:
 	// true if check is passed (no problem detected), false otherwise
 	bool resultStatus = false;
 	// threshold for rank and kernel computations
-	// used for Eigen LU decomposition
+	// used for Eigen decomposition
 	double pivotThreshold = 1e-6;
 	// the first design matrix here is the first design matrix of the measurements and the first design matrix of the constraints (if present)
 	Eigen::SparseMatrix<double, Eigen::RowMajor> firstDgnMatrix;
