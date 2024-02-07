@@ -861,7 +861,8 @@ Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
 	C.rightCols(B.cols()) = -B;
 
     Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(C);
-	lu_decomp.setThreshold(1e-9);
+	//lu_decomp.setThreshold(1e-9);
+	lu_decomp.setThreshold(pivotThreshold);
     Eigen::MatrixXd kernel = lu_decomp.kernel();
 	Eigen::MatrixXd intersection = A * kernel.topRows(A.cols());
 	// std::cout << "~~~~~~~" << std::endl;
@@ -880,6 +881,9 @@ bool TLSConsCheck::isSubspace(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B
 	Eigen::MatrixXd C(A.rows(), A.cols() + B.cols());
 	C << A, B;
 	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrC(C);
+	qrC.setThreshold(pivotThreshold);
+	qrB.setThreshold(pivotThreshold);
+
 
 	int rankB = qrB.rank();
 	int rankC = qrC.rank();
@@ -1020,7 +1024,7 @@ set<int> TLSConsCheck::getPoints(set<int> group)
 
 TDenseMatrix TLSConsCheck::computeNullspace()
 {
-	bool useFullPivLu = true;
+	bool useFullPivLu = false;
 	Eigen::MatrixXd potentialNullspace;
 	if (useFullPivLu)
 	{
