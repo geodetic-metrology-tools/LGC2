@@ -24,12 +24,10 @@ public:
 	void generateErrorMessage();
 	// get set of object indices of the Nullspace connected to certain object in the Nullspace
 	set<int> getConnectedNullspaceGroup(int);
-	// compute a list of point group constraints that can make the problem computable.
+	//try to compute a list of point group constraints that can make the problem computable.
 	bool computeNecessaryLIBRConstraints(std::list<LGCPointConstraintGroup> &proposedPointGroupConstraints);
-	std::array<bool, 7> whatToBlock(Eigen::MatrixXd mat);
 	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
-	Eigen::MatrixXd intersect(Eigen::MatrixXd A, Eigen::MatrixXd B);
-	bool isSubspace(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B);
+	Eigen::MatrixXd intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B);
 	// U representing a subspace of V. returns the orthogonal complement of U in V
 	Eigen::MatrixXd orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V);
 
@@ -102,6 +100,8 @@ private:
 	// the method first tries to isolate pure translations and then tries to interprete the remaining orthogonasl complement of the nullspace as rotations.
 	// it will also try to find the corresponding rotation axis
 	bool findDirectionsToBlock(std::array<bool, 7>& chosenConstraints, const Eigen::MatrixXd &helmertMovements, const Eigen::VectorXd &pointPositions, const Eigen::MatrixXd &nullspaceDirections);
+	// input: matrix with columns representing ambiguous directions in terms of helmert directions. output: constraint signature blocking all of these directions
+	std::array<bool, 7> whatToBlock(const Eigen::MatrixXd &mat);
 };
 
 #endif

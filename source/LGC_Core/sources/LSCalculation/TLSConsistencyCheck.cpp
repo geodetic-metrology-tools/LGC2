@@ -466,13 +466,6 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 		return false;
 	}
 
-	// compute the dimension of the intersection of the helmertMovements and the nullSpaceDirections
-	if (!isSubspace(nullspaceDirections, helmertMovements))
-	{
-		logWarning() << "Not all directions in the Nullspace can be interpreted as linear combinations of translations, rotations and scale.";
-		return false;
-	}
-
 	// split the nullspaceDirections into a part purely representing translations and an orthogonal complement
 	Eigen::MatrixXd pureTranslations = intersect(nullspaceDirections, helmertMovements.leftCols(3));
 	Eigen::MatrixXd pureRot = intersect(nullspaceDirections, helmertMovements.rightCols(4));
@@ -481,55 +474,25 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	//  check which translations are involved
 	Eigen::MatrixXd translationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslations);
 	Eigen::MatrixXd rotAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureRot);
-	std::cout << "pure trans" << std::endl << translationsAsHelmertMovements << std::endl;
-	std::cout << "pure rots" << std::endl << rotAsHelmertMovements << std::endl;
-	std::cout << "pure trans rank =" << translationsAsHelmertMovements.fullPivHouseholderQr().rank() << std::endl;
-	std::cout << "pure rot (rot around 0) rank =" << rotAsHelmertMovements.fullPivHouseholderQr().rank() << std::endl;
 
-	// std::cout << "translation directions" << std::endl << pureTranslations << std::endl;
-	// std::cout << "in terms of the standard basis of the translations " << std::endl << translationsAsHelmertMovements << std::endl;
 	// decide which translations to block
 	std::array<bool, 7> chosenTranslationConstraints = whatToBlock(translationsAsHelmertMovements);
-	// for (auto constraint : chosenTranslationConstraints)
-	// {
-	// 	std::cout << constraint << " , ";
-	// }
-	// std::cout << std::endl;
 
 	Eigen::MatrixXd pureTranslationsComplement = orthogonalComplement(pureTranslations, nullspaceDirections);
-	// // test complement
-	// Eigen::MatrixXd test = pureTranslations.transpose() * pureTranslationsComplement;
-	// std::cout << "~~~~~~~~" << std::endl << test << std::endl;
 
-
-	// TODO: treat scale also
-	// if there is a scale contribution, there may be no rotation axis
-	// for (int j = 0; j < pureTranslationsComplement.cols(); j++)
-	// {
-	// 	bool identifiedAsRotation1 = findRotationCenter(pointPositions, pureTranslationsComplement.col(j));
-	// }
 	bool identifiedAsRotation = findRotationCenter(pointPositions, pureTranslationsComplement);
 	std::array<bool, 7> chosenRotationConstraints;
 	Eigen::MatrixXd rotationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslationsComplement);
 	chosenRotationConstraints = whatToBlock(rotationsAsHelmertMovements);
 	if (identifiedAsRotation)
 	{
-		//Eigen::MatrixXd rotationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslationsComplement);
-		//std::cout << "translation complement directions complement" << std::endl << pureTranslationsComplement << std::endl;
-		//std::cout << "in terms of the standard basis of the helmert movements " << std::endl << rotationsAsHelmertMovements << std::endl;
-		//chosenRotationConstraints = whatToBlock(rotationsAsHelmertMovements);
-		// for (auto constraint : chosenRotationConstraints)
-		// {
-		// 	std::cout << constraint << " , ";
-		// }
-		// std::cout << std::endl;
+		//TODO
 	}
 	else
 	{
 		logWarning() << "Could not find rotation axis.";
 		//return false;
 	}
-
 
 	// combine the translation and rotation constraints
 	for (int j = 0; j < 6; j++)
@@ -555,7 +518,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	transAndRotAmbiguities << translationsAsHelmertMovements, rotationsAsHelmertMovements;
 
 	Eigen::VectorXd scaleRow = transAndRotAmbiguities.row(6);
-	std::cout << scaleRow << std::endl;
+	//std::cout << scaleRow << std::endl;
 	if (transAndRotAmbiguities.fullPivHouseholderQr().rank() > numberOfTransAndRotConstraints && scaleRow.norm() > 1e-10)
 	{
 		chosenConstraints[6] = true;
@@ -719,132 +682,36 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<LGCPointConstraintG
 
 	return result;
 
-//
-//
-//
-//	// TODO: for each group of points find the intersection of the span of ambiguous directions and the span of the linearized hypothetical helmert movements
-//	// numerically compute this space and compare its dimension with the dimension of the ambiguous directions.
-//	// if it is equal, every ambiguos direction is explained as a helmert movement.
-//	std::map<std::set<std::string>, Eigen::MatrixXd> explainableDirections;
-//	
-//	//std::list<LGCPointConstraintGroup> result;
-//	bool explainable = true;
-//	int numberConstraintsAdded = 0;
-//	// iterate over all sets of affected points, use groups2HelmertMovements to avoid duplicates in groupsOfAffectedPoints)
-//	for (auto group : groups2HelmertMovements)
-//	{
-//		std::set<string> pointNames = group.first;
-//		// find the intersection of the space of ambiguous directions and the space of the helmert directions
-//		Eigen::MatrixXd helmertMovements = groups2HelmertMovements[pointNames];
-//		Eigen::VectorXd pointPositions = groups2Positions[pointNames];
-//		Eigen::MatrixXd nullspaceDirections= groups2AmbiguousDirections[pointNames];
-//		// //temporary
-//		// std::array<bool, 7> chosenConstraints;
-//		// findDirectionsToBlock(chosenConstraints, helmertMovements, pointPositions, nullspaceDirections);
-//		// if there is only one point moved, only allow translations
-//		if (pointNames.size() == 1)
-//		{
-//			helmertMovements.rightCols(4).setZero();
-//		}
-//		Eigen::MatrixXd ambiguousDirections = groups2AmbiguousDirections[pointNames];
-//		Eigen::MatrixXd intersection = intersect(helmertMovements, ambiguousDirections);
-//		Eigen::MatrixXd intersectionAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(intersection);
-//
-//		// check if the ambiguous directions can roughly be explained as helmert directions
-//		for (int k = 0; k < ambiguousDirections.cols(); k++)
-//		{
-//			Eigen::VectorXd direction = ambiguousDirections.col(k);
-//			Eigen::VectorXd solution = helmertMovements.fullPivHouseholderQr().solve(direction);
-//			double solQuality = (helmertMovements * solution - direction).norm();
-//			if (solQuality > 1e-6)
-//			{
-//				logWarning() << "difficulties interpreting a direction as helmert direction.";
-//				// remove this direction. This will probably lead to too few constraints
-//				ambiguousDirections.col(k).setZero();
-//			}
-//		}
-//
-//		int dimAmb = ambiguousDirections.fullPivHouseholderQr().rank();
-//		int dimIntersect = intersection.fullPivHouseholderQr().rank();
-//		int dimHelmert = helmertMovements.fullPivHouseholderQr().rank();
-//		// std::cout << "~~~~~~~ Helmert Movements in Root" << std::endl;
-//		// std::cout << helmertMovements << std::endl;
-//		// std::cout << "~~~~~~~ Ambiguous Directions in Root" << std::endl;
-//		// std::cout << ambiguousDirections << std::endl;
-//		// std::cout << "~~~~~~~ Intersection" << std::endl;
-//		// std::cout << intersection << std::endl;
-//		// check if the ambiguous directions can be UNIQUELY represented. This is the case if the intersection has the same dimension as the ambiguous directions and if the helmert movements span a 7 dim space.
-//		// this will exclude 1 or 2 point groups as the helmert movements there can only span 3 or max 6 dimensions..--> experiment without this condition
-//		 if (dimAmb == dimIntersect && dimHelmert == 7)
-//		{ // check if the Helmert directions are linear independent, if so the linear combinations are unique.
-//			// compute a choice of constraints that can be used to block the corresponding movements
-//
-//			Eigen::MatrixXd ambiguousAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(ambiguousDirections);
-//			// std::cout << "helmert movements" << std::endl;
-//			// std::cout << helmertMovements << std::endl;
-//			// std::cout << "amb directions" << std::endl;
-//			// std::cout << ambiguousDirections << std::endl;
-//			// std::cout << ambiguousAsHelmertMovements << std::endl;
-//			// constraintSignature chosenConstraints = whatToBlock(intersectionAsHelmertMovements);
-//			std::array<bool, 7> chosenConstraints = whatToBlock(ambiguousAsHelmertMovements);
-//			LGCPointConstraintGroup newConstraintGroup(projData);
-//			newConstraintGroup.setAffectedPoints(group.first);
-//			newConstraintGroup.setConstraintSignature(chosenConstraints);
-//
-//			// // override constarints
-//			// 	chosenConstraints = {1, 0, 0, 0, 0, 1, 0};
-//			//  newConstraintGroup.setConstraintSignature(chosenConstraints);
-//			proposedPointGroupConstraints.push_back(newConstraintGroup);
-//			numberConstraintsAdded += newConstraintGroup.getConstraintDimension();
-//		}
-//		else
-//		{
-//			logWarning() << "Not all ambiguos directions can be interpreted as Helmert transformation movements in a unique way.";
-//			return false;
-//		}
-//	}
-//	bool result = false;
-//	if (numberConstraintsAdded == nullspace.cols())
-//	{
-//		// nullspace dimension is equal to number of blocking constraints
-//		// enough constraints found to attempt a solution
-//		result = true;
-//	}
-//
-//	return result;
 }
 
-std::array<bool, 7> TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
+std::array<bool, 7> TLSConsCheck::whatToBlock(const Eigen::MatrixXd& mat)
 {
 	std::array<bool, 7> result;
 	result.fill(false);
-	int rank = mat.fullPivHouseholderQr().rank();
+	Eigen::MatrixXd remainingDirections = mat;
+	int rank = remainingDirections.fullPivHouseholderQr().rank();
 	std::cout << "~~~~~~~~" << std::endl;
 	std::cout << mat << std::endl;
-	Eigen::MatrixXd remainingDirections = mat;
 	// based on a matrix with columns representing linear combinations of linearized helmert movements (assuming full rank), chose a set of helmert directions that when blocked prohibit all the directions
 	int addedBlocks = 0;
 	// first block rotations, follow there the order coming from Rot = Rx*Ry*Rz
 	std::vector<int> priority{5, 4, 3, 0, 1, 2, 6};
 	for (int j : priority)
 	{
-		if (mat.row(j).norm() > 1e-9)
+		if (remainingDirections.row(j).norm() > 1e-9)
 		{
 			result[j] = true;
 			addedBlocks++;
 			// find the maximum entry in this row to determine the helmert direction we can block to block this direction
 			int colMax;
-			mat.row(j).cwiseAbs().maxCoeff(&colMax);
+			remainingDirections.row(j).cwiseAbs().maxCoeff(&colMax);
 			// the direction j is now blocked, so intersect the remaining directions with the nullspace of the projection on j
 
 			Eigen::MatrixXd projImage(7, 7);
 			projImage.setIdentity();
 			projImage.row(j).setZero();
 
-			std::cout << "blocking dir = " << j << std::endl;
-			std::cout << "~~~~~~~~" << std::endl;
-			std::cout << mat << std::endl;
-			mat = intersect(mat, projImage);
+			remainingDirections = intersect(remainingDirections, projImage);
 		}
 		if (addedBlocks == rank)
 		{
@@ -854,7 +721,7 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 	}
 	if (addedBlocks < rank)
 	{
-		if (mat.norm() > 1e-6)
+		if (remainingDirections.norm() > 1e-6)
 		{
 			throw std::runtime_error("Attention: Too few blocking constraints were chosen automatically.");
 		}
@@ -863,7 +730,7 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(Eigen::MatrixXd mat)
 	return result;
 }
 
-Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
+Eigen::MatrixXd TLSConsCheck::intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
 {
 	// imA n imB = P_1 ker(C) with C=[A,-B]
 	int nRows = A.rows();
@@ -880,31 +747,8 @@ Eigen::MatrixXd TLSConsCheck::intersect(Eigen::MatrixXd A, Eigen::MatrixXd B)
 	lu_decomp.setThreshold(pivotThreshold);
     Eigen::MatrixXd kernel = lu_decomp.kernel();
 	Eigen::MatrixXd intersection = A * kernel.topRows(A.cols());
-	// std::cout << "~~~~~~~" << std::endl;
-	// std::cout << A << std::endl;
-	// std::cout << "~~~~~~~" << std::endl;
-	// std::cout << B << std::endl;
-	// std::cout << "~~~~~~~" << std::endl;
-	// std::cout << intersection << std::endl;
 
 	return intersection;
-}
-
-bool TLSConsCheck::isSubspace(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
-{
-	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrB(B);
-	Eigen::MatrixXd C(A.rows(), A.cols() + B.cols());
-	C << A, B;
-	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrC(C);
-	qrC.setThreshold(pivotThreshold);
-	qrB.setThreshold(pivotThreshold);
-
-
-	int rankB = qrB.rank();
-	int rankC = qrC.rank();
-	// A defines a subspace iff C has the same rank as B
-
-	return rankB == rankC;
 }
 
 Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V)
@@ -926,11 +770,10 @@ Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, con
 	// check dimension to see if U really is a subspace of V
 	if (combinedMat.fullPivHouseholderQr().rank() > dimV)
 	{
-		std::runtime_error("U is not a subapace of V.");
+		std::runtime_error("U is not a subspace of V.");
 	}
 
 	// the first dimU columns of Q span U, the next dimV-dimU ones span its orthogonal complement in V
-//	Eigen::MatrixXd Q = combinedMat.fullPivHouseholderQr().matrixQ();
 	Eigen::HouseholderQR<Eigen::MatrixXd> qr(combinedMat);
 	Eigen::MatrixXd Q = qr.householderQ();
 
