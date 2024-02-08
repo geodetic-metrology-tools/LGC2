@@ -556,7 +556,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 
 	Eigen::VectorXd scaleRow = transAndRotAmbiguities.row(6);
 	std::cout << scaleRow << std::endl;
-	if (transAndRotAmbiguities.cols() > numberOfTransAndRotConstraints && scaleRow.norm() > 1e-10)
+	if (transAndRotAmbiguities.fullPivHouseholderQr().rank() > numberOfTransAndRotConstraints && scaleRow.norm() > 1e-10)
 	{
 		chosenConstraints[6] = true;
 	}
