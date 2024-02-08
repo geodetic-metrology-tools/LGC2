@@ -481,10 +481,10 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	//  check which translations are involved
 	Eigen::MatrixXd translationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslations);
 	Eigen::MatrixXd rotAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureRot);
-	std::cout << "trans" << std::endl << translationsAsHelmertMovements << std::endl;
-	std::cout << "rots" << std::endl << rotAsHelmertMovements << std::endl;
-	std::cout << "trans rank =" << translationsAsHelmertMovements.fullPivHouseholderQr().rank() << std::endl;
-	std::cout << "rot rank =" << rotAsHelmertMovements.fullPivHouseholderQr().rank() << std::endl;
+	std::cout << "pure trans" << std::endl << translationsAsHelmertMovements << std::endl;
+	std::cout << "pure rots" << std::endl << rotAsHelmertMovements << std::endl;
+	std::cout << "pure trans rank =" << translationsAsHelmertMovements.fullPivHouseholderQr().rank() << std::endl;
+	std::cout << "pure rot (rot around 0) rank =" << rotAsHelmertMovements.fullPivHouseholderQr().rank() << std::endl;
 
 	// std::cout << "translation directions" << std::endl << pureTranslations << std::endl;
 	// std::cout << "in terms of the standard basis of the translations " << std::endl << translationsAsHelmertMovements << std::endl;
@@ -504,10 +504,10 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 
 	// TODO: treat scale also
 	// if there is a scale contribution, there may be no rotation axis
-	for (int j = 0; j < pureTranslationsComplement.cols(); j++)
-	{
-		bool identifiedAsRotation1 = findRotationCenter(pointPositions, pureTranslationsComplement.col(j));
-	}
+	// for (int j = 0; j < pureTranslationsComplement.cols(); j++)
+	// {
+	// 	bool identifiedAsRotation1 = findRotationCenter(pointPositions, pureTranslationsComplement.col(j));
+	// }
 	bool identifiedAsRotation = findRotationCenter(pointPositions, pureTranslationsComplement);
 	std::array<bool, 7> chosenRotationConstraints;
 	Eigen::MatrixXd rotationsAsHelmertMovements = helmertMovements.fullPivHouseholderQr().solve(pureTranslationsComplement);
@@ -546,7 +546,22 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 		}
 	}
 
+
 	// TODO check if there are enough constraints found
+	int numberOfTransAndRotConstraints = std::count(std::begin(chosenConstraints), std::end(chosenConstraints), true);
+
+	// check if there remains a ambiguity involving the scale
+	Eigen::MatrixXd transAndRotAmbiguities(7, translationsAsHelmertMovements.cols() + rotationsAsHelmertMovements.cols());
+	transAndRotAmbiguities << translationsAsHelmertMovements, rotationsAsHelmertMovements;
+
+	Eigen::VectorXd scaleRow = transAndRotAmbiguities.row(6);
+	std::cout << scaleRow << std::endl;
+	if (transAndRotAmbiguities.cols() > numberOfTransAndRotConstraints && scaleRow.norm() > 1e-10)
+	{
+		chosenConstraints[6] = true;
+	}
+
+
 	int numberOfConstraintsFound = std::count(std::begin(chosenConstraints), std::end(chosenConstraints), true);
 	if (numberOfConstraintsFound == dimNullspace)
 	{
@@ -1025,6 +1040,7 @@ set<int> TLSConsCheck::getPoints(set<int> group)
 TDenseMatrix TLSConsCheck::computeNullspace()
 {
 	bool useFullPivLu = false;
+	//bool useFullPivLu = true;
 	Eigen::MatrixXd potentialNullspace;
 	if (useFullPivLu)
 	{
