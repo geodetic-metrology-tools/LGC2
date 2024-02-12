@@ -156,9 +156,12 @@ bool TDataAnalyzer::dataConsistent()
 					referencePoint[1] /= numberOfMeasurements;
 					referencePoint[2] /= numberOfMeasurements;
 
-					itLEVEL->fRefPt = &fData.getPoints().addObject(
-						LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), false,
-							false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin()));
+					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
+					
+					fRefPt.setIsVirtual(true);
+					
+					itLEVEL->fRefPt = &fData.getPoints().addObject(fRefPt);
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found.";
