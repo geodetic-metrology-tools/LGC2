@@ -53,7 +53,7 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 	TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 
-	if (root == getFrameTreePosition())
+	if (root == getFrameTreePosition() && !isVirtual)
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
 		fProvisionalValueInRoot = fProvisionalValue;

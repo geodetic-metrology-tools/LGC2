@@ -191,12 +191,17 @@ public:
 		/// Returns true if this point is defined in the ROOT frame
 		bool isInRootFrame();
 
+		/// Set the isVirtual boolean
+		void setIsVirtual(bool param) { isVirtual = param; };
+
 private:
 
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
 
 	static bool allfixedParam;/*!< Reference to the boolean which indicate if ALLFIXED option is used. By default, the value is false.*/
-
+	
+	bool isVirtual{false}; /*!< True when a point is provided and false when the point is automatically created (e.g., adjustable plane's refererence point*/ 
+	
 	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< initialization of point's provisional value in ROOT*/
 	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< initialization of point's estimated value in ROOT*/
 	TDenseMatrix fCovarianceMatrixInRoot = TDenseMatrix::Zero(3, 3); /*!< initialization of point's covariance matrix in ROOT*/
