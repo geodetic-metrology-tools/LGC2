@@ -33,13 +33,21 @@ class LGCController
 {
 public:
 	LGCController(const std::string path);
+	// get the currently set parameter values
 	Eigen::VectorXd getParameters();
+	// set the parameter values
 	void setParameters(Eigen::VectorXd par);
+	// compute and get the misclosure for a given parameter
 	Eigen::VectorXd getMisclosure(Eigen::VectorXd par);
+	// compute and get the constraint misclosure
 	Eigen::VectorXd getConstraintMisclosure(Eigen::VectorXd par);
+	// compute and get the A matrix (d misclosure /d parameter)
 	Eigen::SparseMatrix<double> getFirstDesignMatrix(Eigen::VectorXd par);
+	// compute and get the A2 matrix (d constraint misclosure /d parameter)
 	Eigen::SparseMatrix<double> getFirstConstraintDesignMatrix(Eigen::VectorXd par);
+	// compute and get the B matrix (d misclosure /d observation)
 	Eigen::SparseMatrix<double> getSecondDesignMatrix(Eigen::VectorXd par);
+	// given a row-index of a element of the misclosure vector or A matrix get the linenumber in the inputfile where the measurement is defined
 	int getLineNumber(int obsIdx) { return fProject->fObsIdx2LineIdx[obsIdx]; }
 	// diagonal of weight matrix
 	Eigen::VectorXd getPv(Eigen::VectorXd par);
