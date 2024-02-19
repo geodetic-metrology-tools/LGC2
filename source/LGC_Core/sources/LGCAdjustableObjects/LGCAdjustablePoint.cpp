@@ -186,51 +186,6 @@ void LGCAdjustablePoint::setCorrection(int idx, TReal value) {
 	throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
-
-
-/*! Sets the XY covariance after calculation */
-void	LGCAdjustablePoint::setXYEstimatedCovariance(TReal value){
-	if (allfixedParam)
-		throw std::logic_error("ALLFIXED is used. No covariance to estimated");
-	else
-	{
-		if (!(fixedState[0]) && !(fixedState[1]))
-			fCovariance.setX(TLength(value));
-		else
-			throw std::logic_error("Point must be variable in both X and Y.");
-	}
-	
-}
-
-/*! Sets the YZ covariance after calculation  */
-void	LGCAdjustablePoint::setYZEstimatedCovariance(TReal value){
-	if (allfixedParam)
-		throw std::logic_error("ALLFIXED is used. No covariance to estimated");
-	else
-	{
-		if (!(fixedState[1]) && !(fixedState[2]))
-			fCovariance.setY(TLength(value));
-		else
-			throw std::logic_error("Point must be variable in both Y and Z.");
-	}
-}
-
-/*! Sets the XZ covariance after calculation 	
-	\param[in] value Value to be set.
-*/
-void	LGCAdjustablePoint::setXZEstimatedCovariance(TReal value){
-
-	if (allfixedParam)
-		throw std::logic_error("ALLFIXED is used. No covariance to estimated");
-	else
-	{
-		if (!(fixedState[0]) && !(fixedState[2]))
-			fCovariance.setZ(TLength(value));
-		else
-			throw std::logic_error("Point must be variable in both X and Z.");
-	}
-}
-
 /*! 
     See \ref TVAdjustableObject::setFirstUidx
 
@@ -345,7 +300,7 @@ bool LGCAdjustablePoint::isInRootFrame()
 TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame)
 {
 	// transfor the covariance matrix of a point to the given frame
-	TDenseMatrix ptCovar = transformCovar(pv, fData, toFrame);
+	Eigen::Matrix3d ptCovar = transformCovar(pv, fData, toFrame);
 
 	// extract sigmas
 	// return the modified sigma
@@ -357,10 +312,10 @@ TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, con
 	return sigmaDestFrame;
 }
 
-TDenseMatrix LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame)
+Eigen::Matrix3d LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame)
 {
 	if (pv.getFrameTreePosition() == toFrame)
-		return pv.fCovarianceMatrix;
+		return pv.getCovarianceMatrix();
 	else
 	{
 		// get the global covariance matrix

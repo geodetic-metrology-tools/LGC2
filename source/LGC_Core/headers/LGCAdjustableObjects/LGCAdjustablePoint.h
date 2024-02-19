@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -145,7 +145,7 @@ public:
 		inline const TLength &getProvisionalHeightInRoot() const { return fProvisionalHeightInRoot; }
 
 		/// Returns a constant reference on the covariance matrix of the point in ROOT
-		inline const TDenseMatrix &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; }
+		inline const Eigen::Matrix3d &getCovarianceMatrixInRoot() const { return fCovarianceMatrixInRoot; }
 
 		/*! 
 			\brief See \ref TVAdjustableObject::setCorrection
@@ -155,15 +155,6 @@ public:
 			\throws Throws a logic_error if the adjusted point does not contain required index.
 		*/
       virtual void setCorrection(int idx, TReal value);
-
-		/// Sets the XY covariance after calculation
-		virtual void	setXYEstimatedCovariance(TReal value);
-
-		/// Sets the YZ covariance after calculation 
-		virtual void	setYZEstimatedCovariance(TReal value);
-
-	   /// Sets the XZ covariance after calculation 
-		virtual void	setXZEstimatedCovariance(TReal value);
 
 		/*! 
 		    \brief See \ref TVAdjustableObject::setFirstUidx
@@ -186,7 +177,7 @@ public:
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame);
 		static TFreeVector transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const std::string toFrame);
 
-		static TDenseMatrix transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame);
+		static Eigen::Matrix3d transformCovar(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame);
 
 		/// Returns true if this point is defined in the ROOT frame
 		bool isInRootFrame();
@@ -204,7 +195,7 @@ private:
 	
 	TPositionVector fProvisionalValueInRoot = getProvisionalValue(); /*!< initialization of point's provisional value in ROOT*/
 	TPositionVector fEstimatedValueInRoot = getEstimatedValue(); /*!< initialization of point's estimated value in ROOT*/
-	TDenseMatrix fCovarianceMatrixInRoot = TDenseMatrix::Zero(3, 3); /*!< initialization of point's covariance matrix in ROOT*/
+	Eigen::Matrix3d fCovarianceMatrixInRoot = Eigen::Matrix3d::Zero(); /*!< initialization of point's covariance matrix in ROOT*/
 
 	TLength fProvisionalHeightInRoot = TLength(0); /*!< point's provisional height value in ROOT*/
 	TLength fEstimatedHeightInRoot = TLength(0); /*!< point's estimated height value in ROOT*/

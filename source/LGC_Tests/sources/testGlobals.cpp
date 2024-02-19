@@ -128,15 +128,14 @@ namespace tut
 		ensure_equals("Estimated values should match",pH.getEstimatedValue().getY().getMetresValue(), 2002);
 		ensure_equals("Estimated value of Z(H is fixed) have to change, because it depends on X a Y which has changed",pH.getEstimatedValue().getZ().getMetresValue(), 2002.73661251304, 1e-8);
 
-		pH.setEstimatedPrecision(5, 0.1);
-		pH.setEstimatedPrecision(6, 0.2);
+		Eigen::Matrix3d covarMat;
+		// according to xyz precisions 0.1, 0.2, 0.0 and xy covariance 0.01
+		covarMat << 0.01, 0.01, 0, 0.01, 0.2 * 0.2, 0, 0, 0, 0;
+		pH.setCovarianceMatrix(covarMat);
+
 		ensure_equals("Estimated precision should match", pH.getXEstPrecision().getMetresValue(), 0.1);
 		ensure_equals("Estimated precision should match", pH.getYEstPrecision().getMetresValue(), 0.2);
 		ensure_equals("Estimated precision should match", pH.getZEstPrecision().getMetresValue(), 0.0);
-
-		pH.setXYEstimatedCovariance(0.01);
-		ensure_THROW(pH.setYZEstimatedCovariance(0.02), std::logic_error);
-		ensure_THROW(pH.setXZEstimatedCovariance(0.02), std::logic_error);
 		ensure_equals("Covariance should match", pH.getXYCovar(), 0.01);
 
 		ensure_equals("Reference frame should match", pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
@@ -206,6 +205,19 @@ namespace tut
 		ensure_equals("Name should match", adjTrafo.getName(), "TrafoName");
 		ensure_equals("Trafo should be initialized", adjTrafo.isInitialized(), true);
 
+		// Testing consistency of covars and precisions for AdjustableHelmertTransformation
+		Eigen::Matrix<double, 7, 7> covar = Eigen::Matrix<double, 7, 7>::Zero();
+		covar.diagonal() << 2, 3, 4, 5, 6, 7, 8;
+		adjTrafo.setCovar(covar);
+		Eigen::Matrix<double, 7, 7> returnedCovar = adjTrafo.getCovar();
+		ensure_equals("Covariance should be as set before", returnedCovar, covar);
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(0, 0)), adjTrafo.getEstimatedPrecisionTransl(0).getMetresValue());
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(1, 1)), adjTrafo.getEstimatedPrecisionTransl(1).getMetresValue());
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(2, 2)), adjTrafo.getEstimatedPrecisionTransl(2).getMetresValue());
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(3, 3)), adjTrafo.getEstimatedPrecisionRot(0).getRadiansValue());
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(4, 4)), adjTrafo.getEstimatedPrecisionRot(1).getRadiansValue());
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(5, 5)), adjTrafo.getEstimatedPrecisionRot(2).getRadiansValue());
+		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(6, 6)), adjTrafo.getEstimatedPrecisionScale());
 	}
 
 	// Test measurments
@@ -225,7 +237,6 @@ namespace tut
 
 		TTSTN tstn( pos, instrument);
 		LGCAdjustablePoint ssa = *tstn.instrumentPos;
-		ssa.setXYEstimatedCovariance(3.0);
 
 		TReader r(proj5);
 		stringstream infile(LOR2LORInputFiles::plateFileOrig);
