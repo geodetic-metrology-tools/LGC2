@@ -377,7 +377,7 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 	std::string				separator = getSeparator();
 
 
-	ERELStat reducedEREL = calculateStatForEREL(data.getRelError());
+	ERELPointStat reducedEREL = calculateStatForERELPoint(data.getRelError().points);
 
 	//for (auto& ptPairIt : reducedEREL.MaxErel /*data.getRelError()*/)
 	for (int ptPairIt = 0; ptPairIt < reducedEREL.MaxErel.size(); ptPairIt++)
@@ -385,8 +385,8 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 
 		// LINE 1 : MIN
 		// write points name
-		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint1Name());
-		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint2Name());
+		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint1());
+		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getPoint2());
 		(*stream).writeStringLeft(nameWidth, reducedEREL.MaxErel.at(ptPairIt).getDestinationFrame());
 		(*stream).writeStringLeft(nameWidth, "MIN");
 		// sets the values format:
@@ -464,11 +464,40 @@ void TSimulationOutputFileWriter::writeRelErrorResults(const TLGCData& data)
 
 	return;
 }
+void TSimulationOutputFileWriter::writeRelErrorFrameHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = std::max(getObsResWidth(), 9);
 
-ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer ERELdata)
+	// write header
+	(*stream) << endl << endl << endl;
+	(*stream) << "ERREURS RELATIVES FRAMES" << endl;
+	(*stream) << "*******************" << endl << endl;
+
+	return;
+}
+void TSimulationOutputFileWriter::writeRelErrorFrameResults(const TLGCData &data)
+{
+	TAStreamFormatter *stream = getStream();
+	// write frame names
+	int nameWidth = getNameWidth();
+	for (auto relFrame : data.getRelError().frames)
+	{
+		std::string relFrameName = "[" + relFrame.getFromFrame() + "->" + relFrame.getToFrame() + "]";
+		(*stream) << "Relative Transformation:";
+		(*stream).writeStringLeft(nameWidth, relFrameName);
+		(*stream) << endl;
+		TFRAMEWriter aux(*stream, &data);
+		aux.writeFRAMEDefinition(relFrame.getResult());
+	}
+	return;
+}
+
+ERELPointStat TSimulationOutputFileWriter::calculateStatForERELPoint(std::vector<TLSCalcRelativeErrorPoint> ERELdata)
 {
 
-	ERELStat statForErel;
+	ERELPointStat statForErel;
 	std::vector<int> numOfPair;
 
 	for (auto& ptPairIt : ERELdata)
@@ -487,7 +516,7 @@ ERELStat TSimulationOutputFileWriter::calculateStatForEREL(LSRelErrorsContainer 
 			for (int itInStat = 0; itInStat < statForErel.MaxErel.size(); itInStat++)
 			{
 				//pair is already save
-				if (statForErel.MinErel.at(itInStat).getPoint1Name() == ptPairIt.getPoint1Name() && statForErel.MinErel.at(itInStat).getPoint2Name() == ptPairIt.getPoint2Name()
+				if (statForErel.MinErel.at(itInStat).getPoint1() == ptPairIt.getPoint1() && statForErel.MinErel.at(itInStat).getPoint2() == ptPairIt.getPoint2()
 					&& statForErel.MinErel.at(itInStat).getDestinationFrame() == ptPairIt.getDestinationFrame())
 				{
 					numOfPair.at(itInStat) += 1;

@@ -112,11 +112,17 @@ void    TResultsFileWriter::writeFile()
 	// Write all the information specific to a frame (points and frames)
 	this->writeFramesResults();
 
-	if (!getDataSet()->getConfig().erelTuples.empty())
+	if (!getDataSet()->getConfig().fRelErrors.points.empty())
 	{
 		this->writeRelErrorHeader();
 		this->writeRelErrorResults(*getDataSet());
 	}
+    if (!getDataSet()->getConfig().fRelErrors.frames.empty())
+	{
+		this->writeRelErrorFrameHeader();
+		this->writeRelErrorFrameResults(*getDataSet());
+	}
+
 
 	// FIN DE FICHIER
 	(*stream) << "*** FIN DE FICHIER ***\n";
@@ -646,12 +652,12 @@ void	TResultsFileWriter::writeRelErrorResults(const TLGCData& data)
 	int					nameWidth = getNameWidth();
 	std::string				separator = getSeparator();
 
-	for (auto& ptPairIt : data.getRelError())
+	for (auto& ptPairIt : data.getRelError().points)
 	{
 		// write points name
 
-		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint1Name());
-		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint2Name());
+		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint1());
+		(*stream).writeStringLeft(nameWidth, ptPairIt.getPoint2());
 		(*stream).writeStringLeft(nameWidth, ptPairIt.getDestinationFrame());
 		// sets the values format:
 		stream->setLengthUnits(TLength::kMillimetres);
@@ -679,5 +685,40 @@ void	TResultsFileWriter::writeRelErrorResults(const TLGCData& data)
 		//(*stream).setDataSpacing();
 	}
 
+	return;
+}
+
+void TResultsFileWriter::writeRelErrorFrameHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = std::max(getObsResWidth(), 9);
+
+	// write header
+	(*stream) << endl << endl << endl;
+	(*stream) << "ERREURS RELATIVES FRAMES" << endl;
+	(*stream) << "*******************" << endl << endl;
+
+	return;
+}
+
+void TResultsFileWriter::writeRelErrorFrameResults(const TLGCData &data)
+{
+	TAStreamFormatter *stream = getStream();
+	// write frame names
+	int nameWidth = getNameWidth();
+	for (auto& relFrame : data.getRelError().frames)
+	{
+		std::string relFrameName = "[" + relFrame.getFromFrame() + "->" + relFrame.getToFrame() + "]";
+		(*stream) << "Relative Transformation:";
+		(*stream).writeStringLeft(nameWidth, relFrameName);
+		(*stream) << endl;
+		TFRAMEWriter aux(*stream, &data);
+		std::vector<int> dummyID;
+		dummyID.push_back(1);
+		dummyID.push_back(2);
+		aux.writeFRAMEHeader(relFrameName);
+		aux.writeFRAMEDefinition(relFrame.getResult());
+	}
 	return;
 }

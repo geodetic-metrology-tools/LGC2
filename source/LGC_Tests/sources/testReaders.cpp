@@ -124,16 +124,27 @@ namespace tut
 
 		// output options (not testing pure boolean options)
 		//
-		TKeyEREL o1(proj);
-		ensure_THROW(o1.parse(tokenizefileString("*EREL P1 P2"), true, -1), std::runtime_error);
-        o1.parse(tokenizefileString("*EREL"), true, -1);
-		o1.parse(tokenizefileString("P1 P2"), true, -1);
-		o1.parse(tokenizefileString("P3 P4"), true, -1);
-		ensure("2 point pairs must be there for relative errors now", cfg.erelTuples.size() == 2);
-		ensure("First point pair for EREL must be P1 P2",  
-			std::get<0>(cfg.erelTuples.at(0)) == "P1" && std::get<1>(cfg.erelTuples.at(0)) == "P2");
-		ensure("Second point pair for EREL must be P3 P4", 
-			std::get<0>(cfg.erelTuples.at(1)) == "P3" && std::get<1>(cfg.erelTuples.at(1)) == "P4");
+		TKeyEREL o11(proj);
+		// pairs only allowed after keyword definition line
+		ensure_THROW(o11.parse(tokenizefileString("*EREL P1 P2"), true, -1), std::runtime_error);
+        o11.parse(tokenizefileString("*EREL"), true, -1);
+		o11.parse(tokenizefileString("P1 P2"), true, -1);
+		o11.parse(tokenizefileString("P3 P4 specialFrame"), true, -1);
+		ensure("2 point pairs must be there for relative errors now", cfg.fRelErrors.points.size() == 2);
+		ensure("First point pair for EREL must be P1 P2", cfg.fRelErrors.points.at(0).getPoint1() == "P1" && cfg.fRelErrors.points.at(0).getPoint2() == "P2");
+		ensure("First point pair for EREL must have default destination frame ROOT", cfg.fRelErrors.points.at(0).getDestinationFrame() == "ROOT");
+		ensure("Second point pair for EREL must be P3 P4", cfg.fRelErrors.points.at(1).getPoint1() == "P3" && cfg.fRelErrors.points.at(1).getPoint2() == "P4");
+		ensure("Second point pair for EREL must have destination frame \"specialFrame\"", cfg.fRelErrors.points.at(1).getDestinationFrame() == "specialFrame");
+		TKeyERELFRAME o12(proj);
+		// pairs only allowed after keyword definition line
+		ensure_THROW(o12.parse(tokenizefileString("*ERELFRAME F1 F2"), true, -1), std::runtime_error);
+        o12.parse(tokenizefileString("*ERELFRAME"), true, -1);
+		o12.parse(tokenizefileString("F1 F2"), true, -1);
+		o12.parse(tokenizefileString("F3 F4"), true, -1);
+		ensure("2 frame pairs must be there for relative errors now", cfg.fRelErrors.frames.size() == 2);
+		ensure("First frame pair for ERELFRAME must be F1 F2", cfg.fRelErrors.frames.at(0).getFromFrame() == "F1" && cfg.fRelErrors.frames.at(0).getToFrame() == "F2");
+		ensure("Second frame pair for EREL must be F3 F4", cfg.fRelErrors.frames.at(1).getFromFrame	() == "F3" && cfg.fRelErrors.frames.at(1).getToFrame() == "F4");
+
 		//
 		TKeyFMTO o2(proj);
         o2.parse(tokenizefileString("*FMTO COL"), true, -1);

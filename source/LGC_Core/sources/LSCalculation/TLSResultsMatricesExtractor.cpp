@@ -3,7 +3,6 @@
 #include <Logger.hpp>
 #include <TLGCData.h>
 
-#include "TLSCalcRelativeError.h"
 #include "TLSResultsMatrices.h"
 
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData *fData) : fDataSet(fData), fLastIteration(false)
@@ -862,17 +861,20 @@ bool TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices &rm)
 {
 	try
 	{
-		TReal fS0 = 0.0;
-		if (rm.getSigmaZero2() != NO_VALf)
-			fS0 = sqrtq(rm.getSigmaZero2());
-
-		for (auto erelTuple : fDataSet->getConfig().erelTuples)
+		// point tuples
+		// copy rel error object, compute, store in TLGCData
+		// no reference here because the erels in the config are only initialized with names and do not contain the computed error data
+		// the finished erel objects are only stored in the TLGCData object, they are not part of the configuration
+		for (auto erelPointTuple : fDataSet->getConfig().fRelErrors.points)
 		{
-			auto &pt1 = fDataSet->getPoints().getObject(std::get<0>(erelTuple));
-			auto &pt2 = fDataSet->getPoints().getObject(std::get<1>(erelTuple));
-			TLSCalcRelativeError re(pt1, pt2, std::get<2>(erelTuple));
-			re.computeErel(fDataSet);
-			fDataSet->getRelError().push_back(re);
+			erelPointTuple.computeErel(fDataSet);
+			fDataSet->getRelError().points.push_back(erelPointTuple);
+		}
+		// frame tuples
+		for (auto erelFrameTuple : fDataSet->getConfig().fRelErrors.frames)
+		{
+			erelFrameTuple.computeErel(fDataSet);
+			fDataSet->getRelError().frames.push_back(erelFrameTuple);
 		}
 	}
 	catch (std::exception const &excp)

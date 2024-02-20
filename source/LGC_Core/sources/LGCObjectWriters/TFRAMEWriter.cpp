@@ -61,7 +61,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
 	if (frameIt->get()->frame.getName() != "ROOT")
-		writeFRAMEDefinition(*frameIt->get());
+		writeFRAMEDefinition(frameIt->get()->frame);
 
 	writePoints(frameIt);
 
@@ -812,7 +812,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
 	if (frameIt->get()->frame.getName() != "ROOT")
-		writeFRAMEDefinition(*frameIt->get());
+		writeFRAMEDefinition(frameIt->get()->frame);
 	else
 		writePoints(frameIt); // Write points for SIMU only in ROOT, not in local nodes
 
@@ -889,7 +889,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 	writeFRAMEHeader(frameIt->get()->frame.getName(), frameIt->get()->ID);
 
 	if (frameIt->get()->frame.getName() != "ROOT")
-		writeFRAMEDefinition(*frameIt->get());
+		writeFRAMEDefinition(frameIt->get()->frame);
 
 	writeTSTNReliability(frameIt);
 	writeCAMReliability(frameIt);
@@ -976,7 +976,11 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 
 	(*stream) << endl << endl;
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "FRAME\t" + name + "  ID(" + nameID + ")" + slaveNote);
+	std::string namestring = "FRAME\t" + name;
+	if (ID.size() > 0)
+		namestring += "  ID(" + nameID + ")";
+	namestring += slaveNote;
+	(*stream).writeStringLeft(nameWidth, namestring);
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -996,7 +1000,7 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 	}
 }
 
-void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry &node)
+void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &frame)
 {
 	TAStreamFormatter *stream = getStream();
 	int nameWidth = getNameWidth();
@@ -1014,40 +1018,40 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry &node)
 	// Writing translations
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TX");
-	writeTranslationParameter(node.frame, 0);
+	writeTranslationParameter(frame, 0);
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TY");
-	writeTranslationParameter(node.frame, 1);
+	writeTranslationParameter(frame, 1);
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TZ");
-	writeTranslationParameter(node.frame, 2);
+	writeTranslationParameter(frame, 2);
 
 	stream->setPrecisionFormat(anglePrecision);
 
 	// Writing rotations
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "RX");
-	writeRotationParameter(node.frame, 0);
+	writeRotationParameter(frame, 0);
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "RY");
-	writeRotationParameter(node.frame, 1);
+	writeRotationParameter(frame, 1);
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "RZ");
-	writeRotationParameter(node.frame, 2);
+	writeRotationParameter(frame, 2);
 
 	// Writing scale factor
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "SCALE");
 	(*stream).writeString(obsWidth, "");
-	(*stream).writeDouble(obsWidth, lengthPrecision, node.frame.getProvScale());
+	(*stream).writeDouble(obsWidth, lengthPrecision, frame.getProvScale());
 
-	if (!node.frame.isScaleFixed())
+	if (!frame.isScaleFixed())
 	{
-		(*stream).writeDouble(obsWidth, lengthPrecision, node.frame.getEstScale());
+		(*stream).writeDouble(obsWidth, lengthPrecision, frame.getEstScale());
 	}
 	else
 	{
@@ -1055,14 +1059,14 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry &node)
 	}
 
 	(*stream).writeString(obsWidth, "");
-	if (node.frame.hasScaleStandDev())
-		(*stream).writeDouble(obsResWidth, lengthResidualPrecision, node.frame.getScaleStandDev()); //*M2MM????
+	if (frame.hasScaleStandDev())
+		(*stream).writeDouble(obsResWidth, lengthResidualPrecision, frame.getScaleStandDev()); //*M2MM????
 	else
 		(*stream).writeString(obsResWidth, "");
 
-	if (!node.frame.isScaleFixed())
+	if (!frame.isScaleFixed())
 	{
-		(*stream).writeDouble(obsWidth, lengthPrecision, node.frame.getEstimatedPrecisionScale());
+		(*stream).writeDouble(obsWidth, lengthPrecision, frame.getEstimatedPrecisionScale());
 		(*stream).writeString(obsWidth, "FALSE");
 	}
 	else
@@ -1071,26 +1075,26 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry &node)
 		(*stream).writeString(obsWidth, "TRUE");
 	}
 
-	if (!node.frame.isFixed())
+	if (!frame.isFixed())
 	{
 		(*stream) << endl << endl;
-		TDenseMatrix frameCovar = node.frame.getCovar();
+		TDenseMatrix frameCovar = frame.getCovar();
 
-		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(1))
+		if (!frame.isRotationFixed(0) && !frame.isRotationFixed(1))
 		{
 			(*stream) << TABs;
 			(*stream).writeStringLeft(nameWidth, "XY ROT. COVAR (GON²): ");
 			(*stream) << frameCovar(3, 4) * RAD2GON << (separator);
 		}
 
-		if (!node.frame.isRotationFixed(1) && !node.frame.isRotationFixed(2))
+		if (!frame.isRotationFixed(1) && !frame.isRotationFixed(2))
 		{
 			(*stream) << TABs;
 			(*stream).writeStringLeft(nameWidth, "YZ ROT. COVAR (GON²): ");
 			(*stream) << frameCovar(4, 5) * RAD2GON << (separator);
 		}
 
-		if (!node.frame.isRotationFixed(0) && !node.frame.isRotationFixed(2))
+		if (!frame.isRotationFixed(0) && !frame.isRotationFixed(2))
 		{
 			(*stream) << TABs;
 			(*stream).writeStringLeft(nameWidth, "XZ ROT. COVAR (GON²): ");
@@ -1099,21 +1103,21 @@ void TFRAMEWriter::writeFRAMEDefinition(const TTreeEntry &node)
 
 		(*stream) << endl;
 
-		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(1))
+		if (!frame.isTranslationFixed(0) && !frame.isTranslationFixed(1))
 		{
 			(*stream) << TABs;
 			(*stream).writeStringLeft(nameWidth, "XY TRANS. COVAR (m²): ");
 			(*stream) << frameCovar(0, 1) << (separator);
 		}
 
-		if (!node.frame.isTranslationFixed(1) && !node.frame.isTranslationFixed(2))
+		if (!frame.isTranslationFixed(1) && !frame.isTranslationFixed(2))
 		{
 			(*stream) << TABs;
 			(*stream).writeStringLeft(nameWidth, "YZ TRANS. COVAR (m²): ");
 			(*stream) << frameCovar(1, 2) << (separator);
 		}
 
-		if (!node.frame.isTranslationFixed(0) && !node.frame.isTranslationFixed(2))
+		if (!frame.isTranslationFixed(0) && !frame.isTranslationFixed(2))
 		{
 			(*stream) << TABs;
 			(*stream).writeStringLeft(nameWidth, "XZ TRANS. COVAR (m²): ");

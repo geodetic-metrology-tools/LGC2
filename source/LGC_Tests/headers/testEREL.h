@@ -86,6 +86,72 @@ P3 10
 P3 1
 *ENDFRAME
 *END)";
+
+
+char const *const ERELFRAME_test_1 = R"(*TITR
+Test frame erel
+*OLOC
+*EREL
+PA PB
+*ERELFRAME
+A B
+fixedFrame ROOT
+*INSTR
+*OBSXYZ
+PA 0 0 0 1 1 1
+PB 1 2 3 1 1 1
+*FRAME A 1 2 3 4 5 6 1 TX TY TZ
+*CALA 
+PA 0 0 0 
+*ENDFRAME
+*FRAME B 1 2 3 4 5 6 1 RY RZ
+*CALA
+PB 1 2 3 
+*ENDFRAME
+*FRAME fixedFrame 1 2 3 4 5 6 7
+*CALA
+deadPoint 1 2 3
+*ENDFRAME
+*END)";
+
+char const *const ERELFRAME_test_2 = R"(*TITR
+test for ERELFRAME
+Here the relative trafo from F3 to ROOT is determined completely by the obsxyz inside F3.
+These obsxyz are duplicsates of the F1 frame with its obsxyz.
+Consequently the relative Trafo F3->ROOT should be equivalent to F1->ROOT (=F1).
+To check after computation: are the helmert parameters equal, are the covariances equal?
+*OLOC
+*PREC 6
+*ERELFRAME
+F3 ROOT
+*INSTR
+*CALA
+ex 1 0 0
+ey 0 1 0
+ez 0 0 1
+*FRAME F1 1 2 3 4 5 6 1 TX TY TZ RX RY RZ SCL
+%equivalent to obsxyz in F3
+*OBSXYZ
+ex 0.879  1.011 3.086   1 1 1
+ey 1.284  2.049 3.957   1 1 1
+ez 0.048  2.140 3.275   1 1 1
+*ENDFRAME
+% this frame does not influence the relative trafo between F6 and ROOT
+*FRAME F2 3 4 5 6 7 8 1 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+ex  0.813 -0.440  0.378 1 1 1 
+ey  0.469  0.882  0.018 1 1 1 
+ez -0.342  0.163  0.925 1 1 1 
+*FRAME F3 10 11 12 13 14 15 1 TX TY TZ RX RY RZ SCL
+%equivalent to obsxyz in F1
+*OBSXYZ
+ex 0.879  1.011 3.086   1 1 1
+ey 1.284  2.049 3.957   1 1 1
+ez 0.048  2.140 3.275   1 1 1
+*ENDFRAME
+*ENDFRAME
+*END)";
+
 }
 #endif
 

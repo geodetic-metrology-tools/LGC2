@@ -35,10 +35,10 @@ public:
 	void writeFRAMEAllReliability(TDataTreeIterator frameIt);
 
 	/// Writes the frame header.
-	void writeFRAMEHeader(const std::string& name, const std::vector<int>& ID);
+	void writeFRAMEHeader(const std::string& name, const std::vector<int>& ID=std::vector<int>());
 
-	/// Writes the frame definition.
-	void writeFRAMEDefinition(const TTreeEntry& frame);
+	/// Writes the frame definition, taking a adjustableHelmertTRansformation for reusability.
+	void writeFRAMEDefinition(const TAdjustableHelmertTransformation& frame);
 
 	/*! 
 		\brief Writes all points defined in this frame. 

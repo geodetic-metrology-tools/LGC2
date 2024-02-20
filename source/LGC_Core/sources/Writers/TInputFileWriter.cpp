@@ -86,12 +86,23 @@ void TInputFileWriter::writeHeader()
     if(config.writeDefa.isActive())
         (*stream) << "*DEFA" << endl;
 
-    if(!config.erelTuples.empty()){
-        (*stream) << "*EREL" << endl;
-        for(const auto &erelTuple : config.erelTuples) {
-			(*stream) << std::get<0>(erelTuple) << "  " << std::get<1>(erelTuple) << "  " << std::get<2>(erelTuple) << endl;
-        }
-    }
+    if (!config.fRelErrors.points.empty())
+	{
+		(*stream) << "*EREL" << endl;
+		for (const auto &erelTuple : config.fRelErrors.points)
+		{
+			(*stream) << erelTuple.getPoint1() << "  " << erelTuple.getPoint2() << "  " << erelTuple.getDestinationFrame() << endl;
+		}
+	}
+    if (!config.fRelErrors.frames.empty())
+	{
+		(*stream) << "*ERELFRAME" << endl;
+		for (const auto &erelTuple : config.fRelErrors.frames)
+		{
+			(*stream) << erelTuple.getFromFrame() << "  " << erelTuple.getToFrame() << endl;
+		}
+	}
+
 
     if(config.faut.isActive() || config.faut.alpha != FAUT_DEF_ALPHA || config.faut.beta != FAUT_DEF_BETA){
         if(!config.faut.isActive())

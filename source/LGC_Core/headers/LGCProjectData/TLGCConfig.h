@@ -11,6 +11,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include "TStatusObject.h"
 //LGC
 #include <Global.h>
+#include "TLSCalcRelativeError.h"
+
 
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
@@ -263,8 +265,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	TBinaryOption histo;
 	/// Enables error-ellipse data output
 	TBinaryOption errorEllipses;
-	/// Pairs of points for relative error analysis together with destination frame
-	std::vector<std::tuple<std::string, std::string, std::string>> erelTuples;
+	// the structure holding the relative errors (between points and between frames)
+	TRelativeErrors fRelErrors;
 	/// See \ref CustomOutputSep
 	TCustomOutputSep CustomOutputSeparator;
 	/// See \ref CustomOutputSep
@@ -322,7 +324,7 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("CustomOutputSeparator", CustomOutputSeparator);
 	obj.addProperty("CustomOutputSeparatorPunch", CustomOutputSeparatorPunch);
 
-	//obj.addProperty("erelPairs", erelPairs);
+	obj.addProperty("relativeErrors", fRelErrors);
 	obj.addProperty("errorEllipses", errorEllipses);
 	obj.addProperty("faut", faut);
 	obj.addProperty("histo", histo);
