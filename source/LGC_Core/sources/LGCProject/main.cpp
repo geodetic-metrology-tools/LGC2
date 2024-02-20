@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 		try
 		{
 			logInfo() << "This Log File contains more detailed data when application launched in Debug mode with -D option!";
-			logInfo() << "See User Guide: https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide";
+			logInfo() << "See User Guide: https://confluence.cern.ch/display/SUS/LGC2+User+Guide";
 			logInfo() << "Starting the calculations...";
 			TLGCApp lgc(inputFilePath, outputFilePath, nMaxIterations);
 			Behavior b = lgc.exec();

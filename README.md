@@ -51,7 +51,7 @@ Documentation
 ### User guide ###
 
 You can find all the user documentation here:
-- [user guide](https://readthedocs.web.cern.ch/display/SUS/LGC2+User+Guide)
+- [user guide](https://confluence.cern.ch/display/SUS/LGC2+User+Guide)
 
 ### Doxygen ###
 
@@ -66,7 +66,7 @@ You can find further documentation in the folder [doc](./doc).
 Build instructions
 ------------------
 
-Before starting, you can have a look at the documentation about [Getting started with C++](https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=22153013) for the CERN survey applications.
+Before starting, you can have a look at the documentation about [Getting started with C++](https://confluence.cern.ch/pages/viewpage.action?pageId=22153013) for the CERN survey applications.
 
 ### Requirements ###
 
@@ -77,7 +77,7 @@ LGC2 can be built on Windows or Linux. To do so, you need at least:
 - Eigen
 - TUT
 
-For Windows, you can follow the steps in the aforementioned [Getting started with C++](https://readthedocs.web.cern.ch/pages/viewpage.action?pageId=22153013) documentation.
+For Windows, you can follow the steps in the aforementioned [Getting started with C++](https://confluence.cern.ch/pages/viewpage.action?pageId=22153013) documentation.
 
 For Linux, you have an example of the needed steps in the dockerfiles of the [sus_ci_cppworker](https://gitlab.cern.ch/apc/common/docker-image-susoft-cpp) project (the Docker image used to automatically run the tests on GitLab-CI).
 Note that the `devtoolset` trick is only necessary on the CC7 (Cern CentOS 7) as it doesn't provide a C++14 compiler by default.
