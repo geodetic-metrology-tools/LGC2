@@ -1,28 +1,30 @@
+#include "LGCAdjustablePoint.h"
+
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
-#include "LGCAdjustablePoint.h"
-#include "TXYH2CCS.h"
+
+#include <Logger.hpp>
+#include <TLGCData.h>
+#include <TPointTransformer.h>
 #include <TTreeEntry.h>
 
-#include <TPointTransformer.h>
-#include <TLGCData.h>
-#include <Logger.hpp>
+#include "TXYH2CCS.h"
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
 bool LGCAdjustablePoint::allfixedParam = false;
 
-LGCAdjustablePoint::LGCAdjustablePoint(const std::string& name):
-TAdjustablePoint(name)
-{}
+LGCAdjustablePoint::LGCAdjustablePoint(const std::string &name) : TAdjustablePoint(name)
+{
+}
 
-LGCAdjustablePoint::LGCAdjustablePoint(const TPositionVector& pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string& name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree) :
-TAdjustablePoint(pos,isXfixed, isYfixed, isZHfixed, name, referential),
-fFramePosition(positionInTree)
-{}
+LGCAdjustablePoint::LGCAdjustablePoint(const TPositionVector &pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string &name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree) :
+	TAdjustablePoint(pos, isXfixed, isYfixed, isZHfixed, name, referential), fFramePosition(positionInTree)
+{
+}
 
-LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string& name)
+LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string &name)
 {
 	LGCAdjustablePoint ap(name);
 	return ap;
@@ -32,20 +34,22 @@ LGCAdjustablePoint LGCAdjustablePoint::createUninitialized(const std::string& na
 // PUBLIC ACCESS METHODS
 ///////////////////////////////////////////////////////////////////////////
 
-void LGCAdjustablePoint::setProvisionalValue(const TReal& x, const TReal& y, const TReal& z) {
-    fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys());
-    fEstimatedValue = fProvisionalValue;
+void LGCAdjustablePoint::setProvisionalValue(const TReal &x, const TReal &y, const TReal &z)
+{
+	fProvisionalValue = TPositionVector(x, y, z, fProvisionalValue.getCoordSys());
+	fEstimatedValue = fProvisionalValue;
 
-    // Use H instead of Z if necessary:
-    if(fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH){
-        fProvisionalValue.setH(TLength(z, TLength::kMetres));
-        TAdjustablePoint::transformEstimatedValue();
-    }
+	// Use H instead of Z if necessary:
+	if (fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH)
+	{
+		fProvisionalValue.setH(TLength(z, TLength::kMetres));
+		TAdjustablePoint::transformEstimatedValue();
+	}
 }
 
 void LGCAdjustablePoint::setCovarianceMatrixInRoot(const TLGCData *fData)
 {
-		fCovarianceMatrixInRoot = transformCovar(*this, fData, fData->getTree().begin());
+	fCovarianceMatrixInRoot = transformCovar(*this, fData, fData->getTree().begin());
 }
 
 void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
@@ -95,7 +99,9 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 				fProvisionalHeightInRoot = fProvisionalInRootForHCalc.getH();
 			}
 		}
-		catch (...) {}
+		catch (...)
+		{
+		}
 	}
 }
 
@@ -153,26 +159,33 @@ void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
 	}
 }
 
-void LGCAdjustablePoint::setCorrection(int idx, TReal value) {
-	for (int i = 0; i < 3; i++){
-		if (uidx[i] == idx) {
-			if (i == 0 ){
-            fCorrection[i]=(TLength(value));
-            fEstimatedValue.setX(fEstimatedValue.getX() + TLength(value));
+void LGCAdjustablePoint::setCorrection(int idx, TReal value)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (uidx[i] == idx)
+		{
+			if (i == 0)
+			{
+				fCorrection[i] = (TLength(value));
+				fEstimatedValue.setX(fEstimatedValue.getX() + TLength(value));
 				fXValueSet = true;
 			}
-			else if(i == 1){
-            fCorrection[i]=(TLength(value));
-            fEstimatedValue.setY(fEstimatedValue.getY() + TLength(value));
+			else if (i == 1)
+			{
+				fCorrection[i] = (TLength(value));
+				fEstimatedValue.setY(fEstimatedValue.getY() + TLength(value));
 				fYValueSet = true;
 			}
-			else{
-            fCorrection[2]=(TLength(value));
-            fEstimatedValue.setZ(fEstimatedValue.getZ() + TLength(value));
+			else
+			{
+				fCorrection[2] = (TLength(value));
+				fEstimatedValue.setZ(fEstimatedValue.getZ() + TLength(value));
 			}
 
-			//If H value is fixed and all variables were set in this step, we need to make transformation: X1Y1Z1 -> X1Y1H0 --> X1Y1Z0new
-			if (fHfixed && fXValueSet && fYValueSet){
+			// If H value is fixed and all variables were set in this step, we need to make transformation: X1Y1Z1 -> X1Y1H0 --> X1Y1Z0new
+			if (fHfixed && fXValueSet && fYValueSet)
+			{
 				transformEstimatedValue();
 				if (!(fixedState[0] | allfixedParam))
 					fXValueSet = false;
@@ -186,31 +199,32 @@ void LGCAdjustablePoint::setCorrection(int idx, TReal value) {
 	throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
-/*! 
-    See \ref TVAdjustableObject::setFirstUidx
+/*!
+	See \ref TVAdjustableObject::setFirstUidx
 
 	\throws Throws a logic_error if no component of the point is variable, i.e. a fixed point.
 */
-void LGCAdjustablePoint::setFirstUidx(int idx) {
+void LGCAdjustablePoint::setFirstUidx(int idx)
+{
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to a fixed point.");
 	else if (allfixedParam)
 		throw std::logic_error("Trying to assign unknown index to a fixed point.(ALLFIXED is used)");
 	for (int i = 0; i < 3; i++)
-		if (!(fixedState[i]| allfixedParam))
+		if (!(fixedState[i] | allfixedParam))
 			uidx[i] = idx++;
 }
 
 /// Update the adjustment information of an uninitialized point
-void LGCAdjustablePoint::updateFixedState(bool lx, bool ly, bool lz) {
-	fixedState[0] = (lx|allfixedParam);
-	fixedState[1] = (ly|allfixedParam);
-	fixedState[2] = (lz|allfixedParam);
+void LGCAdjustablePoint::updateFixedState(bool lx, bool ly, bool lz)
+{
+	fixedState[0] = (lx | allfixedParam);
+	fixedState[1] = (ly | allfixedParam);
+	fixedState[2] = (lz | allfixedParam);
 
-	fXValueSet = (lx|allfixedParam);
-	fYValueSet = (ly|allfixedParam);
+	fXValueSet = (lx | allfixedParam);
+	fYValueSet = (ly | allfixedParam);
 }
-
 
 int LGCAdjustablePoint::getNumUnkn() const
 {
@@ -228,19 +242,21 @@ bool LGCAdjustablePoint::hasVariable() const
 		return false;
 }
 
-int LGCAdjustablePoint::getFirstUidx() const {
+int LGCAdjustablePoint::getFirstUidx() const
+{
 	if (allfixedParam)
 		throw std::logic_error("Trying to get unknown index from fixed coordinate. (ALLFIXED is used)");
 	else
-	{	
-	for (int i = 0; i < 3; i++)
-		if (!fixedState[i])
-			return uidx[i];
-	throw std::logic_error("Trying to get unknown index from fixed coordinate.");
+	{
+		for (int i = 0; i < 3; i++)
+			if (!fixedState[i])
+				return uidx[i];
+		throw std::logic_error("Trying to get unknown index from fixed coordinate.");
 	}
 }
 
-int LGCAdjustablePoint::getLastUidx() const {
+int LGCAdjustablePoint::getLastUidx() const
+{
 	if (allfixedParam)
 		throw std::logic_error("Trying to get unknown index from fixed coordinate. (ALLFIXED is used)");
 	else
@@ -252,7 +268,8 @@ int LGCAdjustablePoint::getLastUidx() const {
 	}
 }
 
-int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
+int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const
+{
 	assert3D(d);
 	if (allfixedParam)
 		throw std::logic_error("Trying to get unknown index from fixed coordinate. (ALLFIXED is used)");
@@ -261,7 +278,6 @@ int LGCAdjustablePoint::getCoordinateUnknIndex(int d) const {
 	else
 		throw std::logic_error("Trying to get unknown index from fixed coordinate.");
 }
-
 
 #if USE_SERIALIZER
 // Inherited via Serializable
@@ -297,7 +313,7 @@ bool LGCAdjustablePoint::isInRootFrame()
 	return fFramePosition->get()->isROOTNode();
 }
 
-TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint& pv, const TLGCData* fData, const TDataTreeIterator toFrame)
+TFreeVector LGCAdjustablePoint::transformSigma(const LGCAdjustablePoint &pv, const TLGCData *fData, const TDataTreeIterator toFrame)
 {
 	// transfor the covariance matrix of a point to the given frame
 	Eigen::Matrix3d ptCovar = transformCovar(pv, fData, toFrame);
