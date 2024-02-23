@@ -726,11 +726,10 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices 
 {
 	for (auto &point : fDataSet->getPoints())
 	{
+		Eigen::Matrix3d fullCovar = Eigen::Matrix3d::Zero();
 		if (point.hasVariable())
 		{
 			// Filling the full covariance matrix
-			TDenseMatrix fullCovar(3, 3);
-			fullCovar.setConstant(NO_VALf);
 			std::vector<int> relUnkIdx = point.getRelativeUnknIndices();
 			const TSparseMatrix *covMat = rm.getUnkCovarMtrxByConst();
 			int dimPoint = point.getNumUnkn();
@@ -739,66 +738,9 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices 
 				int firstIdx = point.getFirstUidx();
 				fullCovar(relUnkIdx, relUnkIdx) = (covMat->block(firstIdx, firstIdx, dimPoint, dimPoint)).toDense();
 			}
-			point.setCovarianceMatrix(fullCovar);
-
-			// Filling standard deviations (estimated precision)
-			for (int unknIdx = point.getFirstUidx(); unknIdx <= point.getLastUidx(); ++unknIdx)
-			{
-				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-					// -> Sets the values arbitrary to -1
-					point.setEstimatedPrecision(unknIdx, -1);
-				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
-					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
-				else
-				{
-					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx)); // Set standard deviation in metres [m], sqrt(variance)
-					point.setEstimatedPrecision(unknIdx, sigma);
-				}
-			}
-			// Filling XY covariance
-			if (!point.isCoordinateFixed(0) && !point.isCoordinateFixed(1))
-			{
-				int xi = point.getCoordinateUnknIndex(0);
-				int yi = point.getCoordinateUnknIndex(1);
-				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-					// -> Sets the values arbitrary to -1
-					point.setXYEstimatedCovariance(-1);
-				else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (yi >= rm.getUnkCovarMtrxByConst()->rows()))
-					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
-				else
-					point.setXYEstimatedCovariance(rm.getUnkCovarMtrxElmt(xi, yi)); // Here it is multiplied by a factor of 1000 in LGC1 , weird
-			}
-			// Filling YZ covariance
-			if (!point.isCoordinateFixed(1) && !point.isCoordinateFixed(2))
-			{
-				int yi = point.getCoordinateUnknIndex(1);
-				int zi = point.getCoordinateUnknIndex(2);
-				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-					// -> Sets the values arbitrary to -1
-					point.setYZEstimatedCovariance(-1);
-				else if ((yi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
-					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
-				else
-					point.setYZEstimatedCovariance(rm.getUnkCovarMtrxElmt(yi, zi)); // Here it is multiplied by a factor of 1000 in LGC1 , weird
-			}
-			// Filling XZ covariance
-			if (!point.isCoordinateFixed(0) && !point.isCoordinateFixed(2))
-			{
-				int xi = point.getCoordinateUnknIndex(0);
-				int zi = point.getCoordinateUnknIndex(2);
-				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-					// -> Sets the values arbitrary to -1
-					point.setXZEstimatedCovariance(-1);
-				else if ((xi >= rm.getUnkCovarMtrxByConst()->rows()) || (zi >= rm.getUnkCovarMtrxByConst()->rows()))
-					throw std::runtime_error("Unknown index of a point: " + point.getName() + " exceeds matrix dimensions!");
-				else
-					point.setXZEstimatedCovariance(rm.getUnkCovarMtrxElmt(xi, zi)); // Here it is multiplied by a factor of 1000 in LGC1 , weird
-			}
 		}
+		// Calas will have 0 as covariance matrix
+		point.setCovarianceMatrix(fullCovar);
 	}
 }
 
@@ -893,7 +835,7 @@ void TLSResultsMatricesExtractor::extractLineVarCovar(const TLSResultsMatrices &
 				}
 			}
 
-			/* Eventually store covarinace between angles if needed in the future.*/
+			/* Eventually store covariance between angles if needed in the future.*/
 		}
 	}
 }
@@ -903,29 +845,7 @@ void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResults
 	for (auto it(fDataSet->getTree().begin()); it != fDataSet->getTree().end(); ++it)
 	{
 		auto &trafo(it.node->data.get()->frame);
-
-		if (trafo.hasVariable())
-		{
-			// Filling standard deviations (estimated precision)
-			for (int unknIdx = trafo.getFirstUidx(); unknIdx <= trafo.getLastUidx(); unknIdx++)
-			{
-				if (rm.getUnkCovarMtrxByConst()->rows() == 0)
-					// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
-					// -> Sets the values arbitrary to -1
-					trafo.setEstimatedPrecision(unknIdx, -1);
-				else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows()) // rm.getSolutionVctr()->size())
-					throw std::runtime_error("Unknown index of a transformation: " + trafo.getName() + " exceeds matrix dimensions!");
-				else
-				{
-					TReal sigma = sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx));
-					trafo.setEstimatedPrecision(unknIdx, sigma); // Store standard deviations in METRES
-				}
-			}
-		}
-
-		// Filling the full covariance matrix, initialize entries to NO_VALf to mark the fixed indices
-		TDenseMatrix fullCovar(7, 7);
-		fullCovar.setConstant(NO_VALf);
+		Eigen::Matrix<double, 7, 7> fullCovar = Eigen::Matrix<double, 7, 7>::Zero();
 		std::vector<int> relUnkIdx = trafo.getRelativeUnknIndices();
 		const TSparseMatrix *covMat = rm.getUnkCovarMtrxByConst();
 		int dimTrafo = trafo.getNumUnkn();
