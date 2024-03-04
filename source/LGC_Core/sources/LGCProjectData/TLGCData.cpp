@@ -858,6 +858,7 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("slaveGroups", slaveGroups);
+	obj.addProperty("pointConstraintGroups", pointGroups);
 }
 
 void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const

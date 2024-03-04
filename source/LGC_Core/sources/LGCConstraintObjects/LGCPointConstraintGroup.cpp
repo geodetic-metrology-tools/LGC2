@@ -109,9 +109,9 @@ void LGCPointConstraintGroup::plotGroupData()
 #if USE_SERIALIZER
 void LGCPointConstraintGroup::serialize(ObjectSerializer &obj) const
 {
-	//obj.addProperty("groupName", groupName);
-	obj.addProperty("constraintDim", constraintDim);
 	//obj.addProperty("firstCIndex", firstCIndex);
-	//obj.addProperty("slaves", slaves);
+	obj.addProperty("affectedPoints", fAffectedPoints);
+	obj.addProperty("constraints", fConstraints);
+
 }
 #endif // USE_SERIALIZER
