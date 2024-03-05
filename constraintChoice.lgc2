@@ -1,0 +1,27 @@
+*TITR
+for analysis: why is rz blocked and not rx?
+*OLOC
+*JSON
+*CONSI LIBR
+*INSTR
+*CALA
+ux 1 0 0 
+uy 0 1 0
+uz 0 0 1
+*OBSXYZ
+ux 1 0 0 1 1 1 
+uy 0 1 0 1 1 1
+uz 0 0 0 1 1 1
+ux 1 0 0 1 1 1 
+uy 0 1 0 1 1 1
+uz 0 0 0 1 1 1
+ux 1 0 0 1 1 1 
+uy 0 1 0 1 1 1
+uz 0 0 0 1 1 1
+*FRAME Frame3 0 0 0 0 0 0 1 RX
+*CALA
+ux3 10 2 3 
+uy3 40 1 6
+uz3 6 70 1
+*ENDFRAME
+*END
