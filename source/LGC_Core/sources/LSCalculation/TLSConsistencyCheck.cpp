@@ -467,6 +467,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	}
 
 	// split the nullspaceDirections into a part purely representing translations and an orthogonal complement
+
 	Eigen::MatrixXd pureTranslations = intersect(nullspaceDirections, helmertMovements.leftCols(3));
 	Eigen::MatrixXd pureRot = intersect(nullspaceDirections, helmertMovements.rightCols(4));
 
@@ -754,6 +755,7 @@ Eigen::MatrixXd TLSConsCheck::intersect(const Eigen::MatrixXd &A, const Eigen::M
 
 Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V)
 {
+	// TODO: check + improve this method
 	// compute orthogonal complement of U in V.
 	// check dimensions
 	if (U.rows() != V.rows())
@@ -764,6 +766,12 @@ Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, con
 	int dimU = U.fullPivHouseholderQr().rank();
 	int colsV = V.cols();
 	int dimV = V.fullPivHouseholderQr().rank();
+
+	if (U.cols() == 1 && U.norm() <= 1e-9)
+	{
+		// complement of empty space is the whole space
+		return V;
+	}
 
 	// combine both matrices
 	Eigen::MatrixXd combinedMat(U.rows(), colsV + colsU);
