@@ -2072,7 +2072,25 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 			// this can happen for example if a TX constraint was added but the only points defined are *VZ (they only vary in Z)
 			for (int i = group.getFirstCIndex(); i <group.getFirstCIndex()+group.getConstraintDimension();i++)
 			{
-				if (matrices->getCnstrFirstDgnMtrx()->row(i).norm() < EPSILON)
+				// Check if there are non-zero entries in row i
+				TSparseMatrix A2 = *matrices->getCnstrFirstDgnMtrx();
+				bool hasEntries = false;
+				for (int k = 0; k < A2.outerSize(); ++k)
+				{
+					for (Eigen::SparseMatrix<double>::InnerIterator it(A2, k); it; ++it)
+					{
+						if (it.row() == i)
+						{ // Check if the current element is in row i
+							hasEntries = true;
+							break;
+						}
+					}
+					if (hasEntries)
+					{
+						break;
+					}
+				}
+				if (!hasEntries)
 				{
 					throw std::runtime_error("A constraint that does not depend on any variable was added.");
 				}

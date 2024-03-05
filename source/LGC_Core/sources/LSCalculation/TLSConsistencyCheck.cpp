@@ -698,6 +698,7 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(const Eigen::MatrixXd& mat)
 	std::vector<int> priority{5, 4, 3, 0, 1, 2, 6};
 	for (int j : priority)
 	{
+		std::cout << remainingDirections << std::endl;
 		if (remainingDirections.row(j).norm() > 1e-9)
 		{
 			result[j] = true;
