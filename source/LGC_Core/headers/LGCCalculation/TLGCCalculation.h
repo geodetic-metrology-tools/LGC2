@@ -38,6 +38,8 @@ class TLGCCalculation{
 		@param dat[in] fileWriter The writer is only used for SIMULATION, where we output values after each simulation run. 
 	*/
 	Behavior computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter);
+	// try to find a solution with armijo stepsize regularization starting from several randomly sampled initial values
+	void tryArmijoSampling();
 
 	/// Returns the project data.
 	const TLGCData& getData(){ return *fData.get();}
