@@ -46,25 +46,8 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
-		// For more robust Tsunami prototype
-		if (fData.get()->fUEOIndices.CIndex == 0 && fData.get()->fUEOIndices.UIndex > 0)
-		{
-			// use Armijo linesearch to find solution
-			TLSEvaluator evaluator(fData);
-			Eigen::VectorXd provVal = evaluator.getEstParams(); 
-			std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
-			solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
-			TLSGaussNewtonSolver gnObject(evalPtr);
-			gnObject.setConfig(armijoGN);
-			GNresult result= gnObject.solve();
-			if (result.success == false)
-			{
-				// reset to provisional values
-				evaluator.setParameters(provVal);
-			}
+		tryArmijoSampling();
 
-			// continue LGC normally, if solution was already found only one iteration will be made
-		}
 
 		if (fData->getConfig().sim.isActive())
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
@@ -97,6 +80,88 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
         initialiseObsSummaries();
 
 	return successCalculation;
+}
+
+void TLGCCalculation::tryArmijoSampling()
+{
+	int dim = fData.get()->fUEOIndices.UIndex;
+	TLSEvaluator evaluator(fData);
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+	solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+	TLSGaussNewtonSolver gnObject(evalPtr);
+	gnObject.setConfig(armijoGN);
+
+	// For more robust Tsunami prototype
+	if (fData.get()->fUEOIndices.CIndex == 0 && dim > 0)
+	{
+		// use Armijo linesearch to find solution
+		Eigen::VectorXd provVal = evaluator.getEstParams();
+
+		// create a bunch of random starting values
+		int numberSamples = 10;
+		std::vector<Eigen::VectorXd> startValues;
+		// include the provided provisional value in the sample list
+		startValues.push_back(provVal);
+		for (int j = 0; j < numberSamples; j++)
+		{
+			Eigen::VectorXd randVal = Eigen::VectorXd::Random(dim);
+			// std::cout << "randVal=" << std::endl << randVal << std::endl;
+			// startValues.push_back(randVal);
+			startValues.push_back(provVal + randVal);
+		}
+
+		// prepare results
+		std::vector<GNresult> results;
+		for (auto sval : startValues)
+		{
+			// set initial value and start armijo GN from this value
+			evaluator.setParameters(sval);
+			try
+			{
+				GNresult result = gnObject.solve();
+				results.push_back(result);
+				if (result.sigma0Aposteriori < 5 && result.success)
+				{
+					logWarning() << "Solution with Sigma <5 found.";
+					break;
+				}
+			}
+			catch (...)
+			{
+				logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value";
+			}
+		}
+
+		// find best solution candidate
+		double bestSigma = 1e+12;
+		Eigen::VectorXd bestSol;
+		bool solFound = false;
+		for (auto result : results)
+		{
+			if (result.sigma0Aposteriori < bestSigma && result.success)
+			{
+				bestSigma = result.sigma0Aposteriori;
+				bestSol = result.solution;
+				solFound = true;
+			}
+		}
+		if (solFound)
+		{
+			logWarning() << "Random initial value sampling found a solution with sigma a posteriori= " << bestSigma;
+			logWarning() << "LGC will continue with this solution";
+			evaluator.setParameters(bestSol);
+		}
+		else
+		{
+			logWarning() << "Random initial value sampling was unable to find a solution.";
+			evaluator.setParameters(provVal);
+		}
+	}
+	else
+	{
+		logWarning() << "Armijo stepsize globalization strategy only implemented for unconstrained problems -- continuing with classic LGC";
+	}
+	// continue LGC normally, if solution was already found only one iteration will be made
 }
 
 void TLGCCalculation::initialiseObsSummaries(){
