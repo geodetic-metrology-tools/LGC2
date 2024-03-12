@@ -56,6 +56,7 @@ GNresult TLSGaussNewtonSolver::solve()
 		grad = getGradient(parameterIterate);
 		// compute the current objective to compare the gradient predicted descent in the search direction with the true descent.
 		sigma0 = fEvaluator->getObjective();
+		residual = fEvaluator->getResidual();
 		stepsize = 1;
 		if (fConfig.useArmijo)
 		{
@@ -83,7 +84,7 @@ GNresult TLSGaussNewtonSolver::solve()
 
 
 	// compute expected sigmas limits
-	int d = residual.rows() - direction.rows();
+	int d = fEvaluator->dimensions.EIndex - direction.rows();
 	double chiUp = deviates_chi_sq_0975(d);
 	double chiLow = deviates_chi_sq_0025(d);
 	// Limits
