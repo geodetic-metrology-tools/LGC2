@@ -66,6 +66,9 @@ class TFileLogger {
 	/// Returns TRUE, if at least one error has occured, FALSE otherwise.
 	 bool hasErrors() const;
 
+	 // reset number of errors to 0
+	 void cleanErrors() { numErrors = 0; };
+
 	 //@}
 
     private:

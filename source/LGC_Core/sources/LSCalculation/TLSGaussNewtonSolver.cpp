@@ -79,18 +79,24 @@ GNresult TLSGaussNewtonSolver::solve()
 
 		itIdx++;
 		stepsizeCrit = (direction.cwiseAbs().maxCoeff() < fConfig.terminationTol);
+		//stepsizeCrit = (stepsize * direction.cwiseAbs().maxCoeff() < fConfig.terminationTol);
 		maxIterReached =  (itIdx >= fConfig.maxIter);
 	}
 
 
 	// compute expected sigmas limits
 	int d = fEvaluator->dimensions.EIndex - direction.rows();
+
 	double chiUp = deviates_chi_sq_0975(d);
 	double chiLow = deviates_chi_sq_0025(d);
 	// Limits
 	double s0PostUpLimit = sqrtq(chiUp / d);
 	double s0PostLoLimit = sqrtq(chiLow / d);
-	double sigma0Aposteriori = sqrtq(sigma0 / d);
+	double sigma0Aposteriori = sqrtq(sigma0);
+	if (d != 0)
+	{
+		sigma0Aposteriori *= sqrtq(1 / d);
+	}
 	bool isInLimits = (sigma0Aposteriori < s0PostUpLimit) && (sigma0Aposteriori > s0PostLoLimit);
 
 
@@ -277,7 +283,7 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::V
 	double trialSigma = trialResidual.transpose() * fEvaluator->getPv() * trialResidual;
 	double realDescent = trialSigma - sigma0;
 	// testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
-	while (c * alpha* expectedDescent < realDescent && alpha>0.01)
+	while (c * alpha* expectedDescent < realDescent && alpha>1e-16)
 	{
 		// reduce stepsize
 		alpha *= tau;

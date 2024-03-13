@@ -52,7 +52,6 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		// this is a heuristiv that shall reduce the probability to end up in a suboptimal local minimum
 		tryArmijoSampling();
 
-
 		if (fData->getConfig().sim.isActive())
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
 		else if (fData->getConfig().allfixed.isActive())
@@ -93,7 +92,8 @@ void TLGCCalculation::tryArmijoSampling()
 	int dim = fData.get()->fUEOIndices.UIndex;
 	TLSEvaluator evaluator(fData);
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
-	solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+	solverConfig armijoGN = {2, true, false, 0, 100, 1e-7};
+	//solverConfig armijoGN = {2, false, true, 1e+2, 100, 1e-6};
 	TLSGaussNewtonSolver gnObject(evalPtr);
 	gnObject.setConfig(armijoGN);
 
@@ -110,10 +110,11 @@ void TLGCCalculation::tryArmijoSampling()
 		startValues.push_back(provVal);
 		for (int j = 0; j < numberSamples; j++)
 		{
+			//Eigen::VectorXd randVal = (Eigen::VectorXd::Ones(dim) + Eigen::VectorXd::Random(dim))/2;
 			Eigen::VectorXd randVal = Eigen::VectorXd::Random(dim);
 			// both try a perturbed version of the supplied provisional value as well as a totally random initial value.
-			startValues.push_back(provVal + randVal);
 			startValues.push_back(randVal);
+			startValues.push_back(provVal + randVal);
 		}
 
 		// prepare results
@@ -168,6 +169,11 @@ void TLGCCalculation::tryArmijoSampling()
 		logWarning() << "Armijo stepsize globalization strategy only implemented for unconstrained problems -- continuing with classic LGC";
 	}
 	// continue LGC normally, if solution was already found only one iteration will be made
+	// clean errors that potentially happened during input filling
+	TFileLogger &fileLog = fData->getFileLogger();
+	fileLog.cleanErrors();
+
+
 }
 
 void TLGCCalculation::initialiseObsSummaries(){
