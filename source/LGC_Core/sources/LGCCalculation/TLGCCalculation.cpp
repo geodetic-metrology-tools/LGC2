@@ -46,6 +46,10 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
+		// try to find solution using armijo-stepsize regularization
+		// several attempts with different initial values are tried
+		// the one that converges to the lowest sigma will be the prefered solution
+		// this is a heuristiv that shall reduce the probability to end up in a suboptimal local minimum
 		tryArmijoSampling();
 
 
@@ -84,6 +88,8 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 void TLGCCalculation::tryArmijoSampling()
 {
+	// set seed for ranwom number generation
+	srand(static_cast<unsigned int>(0));
 	int dim = fData.get()->fUEOIndices.UIndex;
 	TLSEvaluator evaluator(fData);
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
@@ -105,9 +111,9 @@ void TLGCCalculation::tryArmijoSampling()
 		for (int j = 0; j < numberSamples; j++)
 		{
 			Eigen::VectorXd randVal = Eigen::VectorXd::Random(dim);
-			// std::cout << "randVal=" << std::endl << randVal << std::endl;
-			// startValues.push_back(randVal);
+			// both try a perturbed version of the supplied provisional value as well as a totally random initial value.
 			startValues.push_back(provVal + randVal);
+			startValues.push_back(randVal);
 		}
 
 		// prepare results
