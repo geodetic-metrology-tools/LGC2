@@ -16,7 +16,6 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #include <TFileLogger.h>
 #include <TLGCConfig.h>
 #include <TLGCStatistic.h>
-#include <TLSCalcRelativeError.h>
 #include <TMeasurements.h>
 #include <TTreeEntry.h>
 
@@ -206,10 +205,10 @@ public:
 	/// Returns the constant reference on statistics of the project
 	TLGCStatistic const &getStatistics() const { return stat; }
 
-	/// Returns the file logger used to write on an output file
-	LSRelErrorsContainer &getRelError() { return fRelError; }
-	/// Returns the constant reference on file logger used to write on an output file
-	LSRelErrorsContainer const &getRelError() const { return fRelError; }
+	/// Returns relative error struct
+	TRelativeErrors &getRelError() { return fRelErrors; }
+	/// Returns the constant reference to the error container
+	TRelativeErrors const &getRelError() const { return fRelErrors; }
 
 	/// Returns the file logger used to write on an output file
 	TFileLogger &getFileLogger() { return *fileLogger; }
@@ -333,8 +332,8 @@ private:
 	/// Statistic output
 	TLGCStatistic stat;
 
-	/// List of relative errors
-	LSRelErrorsContainer fRelError;
+	// List of relative errors
+	TRelativeErrors fRelErrors;
 
 	// contains references: not assignable
 	TLGCData &operator=(const TLGCData &);

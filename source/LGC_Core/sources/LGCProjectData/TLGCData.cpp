@@ -373,13 +373,7 @@ std::shared_ptr<TLGCData> TLGCData::clone() const
 	d->fCovMat = fCovMat;
 
 	// Copy relative errors:
-	for (const auto &erelTuple : fRelError)
-	{
-		// use the copy constructor
-		TLSCalcRelativeError erel(erelTuple);
-		// Add to the new container:
-		d->fRelError.push_back(erel);
-	}
+	d->fRelErrors = fRelErrors;
 
 	// Copy comments
 	d->comments = comments;
@@ -847,7 +841,7 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("fMeasInfo", fMeasInfo);
 	obj.addProperty("fPointInfo", fPointInfo);
-	obj.addProperty("fRelError", fRelError);
+	obj.addProperty("fRelErrors", fRelErrors);
 	obj.addProperty("fUEOIndices", fUEOIndices);
 	obj.addProperty("instruments", instruments);
 	obj.addProperty("islgc1", islgc1);

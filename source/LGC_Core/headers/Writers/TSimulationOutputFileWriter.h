@@ -21,10 +21,10 @@ class		TLGCData;
 
 	Provides functions to write different parts of the simulation file.
 */
-struct ERELStat{
-	std::vector<TLSCalcRelativeError> MinErel;
-	std::vector<TLSCalcRelativeError> MaxErel;
-	std::vector<TLSCalcRelativeError> MeanErel;
+struct ERELPointStat{
+	std::vector<TLSCalcRelativeErrorPoint> MinErel;
+	std::vector<TLSCalcRelativeErrorPoint> MaxErel;
+	std::vector<TLSCalcRelativeErrorPoint> MeanErel;
 };
 
 class  TSimulationOutputFileWriter : public TResultsFileWriter
@@ -63,6 +63,10 @@ public:
 			void writeRelErrorHeader();
 			/// Write the relative errors results
 			void writeRelErrorResults(const TLGCData&);
+			///  Write the relative errors frames header
+			void writeRelErrorFrameHeader();
+			/// Write the relative errors frames results
+			void writeRelErrorFrameResults(const TLGCData&);
 		//@}
 
 
@@ -72,7 +76,7 @@ private:
 	/*!default constructor*/
 	TSimulationOutputFileWriter();
 
-	ERELStat calculateStatForEREL(LSRelErrorsContainer ERELdata);
+	ERELPointStat calculateStatForERELPoint(std::vector<TLSCalcRelativeErrorPoint> ERELdata);
 
 	/*!@name Private member functions*/
 	//@{

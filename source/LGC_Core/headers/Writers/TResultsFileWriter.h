@@ -80,6 +80,10 @@ protected:
 			void writeRelErrorHeader();
 			/// Write the relative errors results
 			void writeRelErrorResults(const TLGCData&);
+			///  Write the relative errors frame header
+			void writeRelErrorFrameHeader();
+			/// Write the relative errors frame results
+			void writeRelErrorFrameResults(const TLGCData&);
 
 			/// Write general information about the adjustable objects
 			void writeAdjustableObjGeneralInfo(const std::string adjObjName, const int numAdj, const int numUnkn);

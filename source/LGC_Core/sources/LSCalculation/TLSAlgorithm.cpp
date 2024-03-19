@@ -131,7 +131,6 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 	{
 		TSparseMatrix *UnkCovar = resultMatrices->getUnkCovarMtrx();
 		(*UnkCovar) *= resultMatrices->getSigmaZero2();
-		resultMatrices->setUnkCovarMtrx(*UnkCovar);
 	}
 
 	if (!fExtractor->extractVarCovarParams(*resultMatrices))
@@ -158,7 +157,7 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());
 	}
 
-	if (!data->getConfig().erelTuples.empty())
+	if (data->getConfig().fRelErrors.points.size() > 0 || data->getConfig().fRelErrors.frames.size() > 0)
 	{
 		if (!fExtractor->extractRelError(*resultMatrices))
 		{

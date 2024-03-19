@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -16,10 +16,63 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TTreeEntry.h>
 
 #include "LGCAdjustablePoint.h"
+#include "TAdjustableHelmertTransformation.h"
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
+/*!
+\ingroup LGCProjectData
+
+Class for writing the relative error between two frames
+*/
+
+#if USE_SERIALIZER
+struct TLSCalcRelativeErrorFrame : public Serializable
+#else
+struct TLSCalcRelativeErrorFrame
+#endif // USE_SERIALIZER
+{
+public:
+	/*!@name Constructor / destructor */
+	//@{
+	/*! Constructor
+	\param source and destination frame names */
+	TLSCalcRelativeErrorFrame(std::string fromFrame, std::string toFrame);
+
+	/*! Destructor */
+	virtual ~TLSCalcRelativeErrorFrame();
+	//@}
+	void computeErel(const TLGCData *projData);
+	const TAdjustableHelmertTransformation &getResult() const { return fRelativeTransformation; };
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const override;
+#endif // USE_SERIALIZER
+
+	/*!@name Acces methods : */
+	//@{
+	/*! returns the name of source frame */
+	std::string getFromFrame() const { return fFromFrame; }
+
+	/*! returns the name of destination frame */
+	std::string getToFrame() const { return fToFrame; }
+	//@}
+
+private:
+	std::string fFromFrame; /*!< frame name for source frame */
+	std::string fToFrame; /*!< frame name for destination frame*/
+
+	TAdjustableHelmertTransformation fRelativeTransformation; // the transformation going from fromFrame to toFrame
+	bool fIsComputed{false};
+};
+
+/*!
+\ingroup LGCProjectData
+
+Class for writing the relative error between two points
+*/
 struct functionEval
 {
 	// storing a relative error value and Jacobian
@@ -27,30 +80,22 @@ struct functionEval
 	TDenseMatrix jacobian;
 };
 
-/*!
-\ingroup LGCProjectData
-
-Class for writing the relative error between a list of points.
-*/
 #if USE_SERIALIZER
-struct TLSCalcRelativeError : public Serializable
+struct TLSCalcRelativeErrorPoint : public Serializable
 #else
-struct TLSCalcRelativeError
+struct TLSCalcRelativeErrorPoint
 #endif // USE_SERIALIZER
 {
 public:
 	/*!@name Constructor / destructor */
 	//@{
 	/*! Constructor
-	\param pt1 position vector iterator for the 1st point
-	\param pt2 position vector iterator for the 2nd point */
-	TLSCalcRelativeError(LGCAdjustablePoint &pt1, LGCAdjustablePoint &pt2, std::string destFrame);
-
-	/*! Copy constructor */
-	TLSCalcRelativeError(const TLSCalcRelativeError &source);
+	\param pt1 name for the 1st point
+	\param pt2 name for the 2nd point */
+	TLSCalcRelativeErrorPoint(std::string pt1, std::string pt2, std::string destFrame);
 
 	/*! Destructor */
-	virtual ~TLSCalcRelativeError();
+	virtual ~TLSCalcRelativeErrorPoint();
 	//@}
 
 #if USE_SERIALIZER
@@ -58,25 +103,15 @@ public:
 	virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 
-	/*! Overloaded equality operator */
-	bool operator==(const TLSCalcRelativeError &right);
-
 	/*!@name Acces methods : iterator */
 	//@{
 	/*! returns the iterator to point 1 */
-	LGCAdjustablePoint *getPoint1() const { return fPoint1; }
+	std::string getPoint1() const { return fPoint1; }
 
 	/*! returns the iterator to point 2 */
-	LGCAdjustablePoint *getPoint2() const { return fPoint2; }
+	std::string getPoint2() const { return fPoint2; }
 	//@}
 
-	/*!@name Acces methods : facade */
-	//@{
-	/*! returns the point 1 name */
-	std::string getPoint1Name() const { return fPoint1->getName(); }
-
-	/*! returns the point 2 name*/
-	std::string getPoint2Name() const { return fPoint2->getName(); }
 	/*! returns the destination frame name*/
 	std::string getDestinationFrame() const { return fDestinationFrame; }
 
@@ -118,11 +153,11 @@ public:
 	//@}
 
 private:
-	/*! Copy assignment operator: not implemented */
-	TLSCalcRelativeError &operator=(const TLSCalcRelativeError &right);
+	std::string fPoint1; /*!< name of the 1st point */
+	std::string fPoint2; /*!< name of the 2nd point */
+	std::string fDestinationFrame; /*!< frame name in defining coordinate system in which error is calculated */
 
-	LGCAdjustablePoint *fPoint1; /*!< position vector iterator for the 1st point */
-	LGCAdjustablePoint *fPoint2; /*!< position vector iterator for the 2nd point */
+	bool fIsComputed{false};
 
 	/*!@name EREL related parameters */
 	//@{
@@ -131,17 +166,23 @@ private:
 	TLength fSigmaR = TLength(LITERAL(0.0)); /*!< radial (transversal) error */
 	TLength fSigmaZ = TLength(LITERAL(0.0)); /*!< error in the height difference*/
 	TAngle fSigmaV = TAngle(LITERAL(0.0)); /*!< error in the vertical angle */
-	std::string fDestinationFrame; /*!< frame name in defining coordinate system in which error is calculated */
 	//@}
 	// evaluate all the relative errors and their jacobians in the destination frame
 	std::vector<functionEval> evaluateRelErrorFunctions(const TVector &d);
 };
 
-/*! List of relative errors */
-typedef std::list<TLSCalcRelativeError> LSRelErrorsContainer;
-/*! Iterator of the list of relative errors */
-typedef LSRelErrorsContainer::iterator LSRelErrorIter;
-/*! Const iterator of the list of relative errors */
-typedef LSRelErrorsContainer::const_iterator LSRelErrorConstIter;
+// struct for  collecting both points and frame errors
+#if USE_SERIALIZER
+struct TRelativeErrors : public Serializable
+#else
+struct TRelativeErrors : public Serializable
+#endif
+{
+	std::vector<TLSCalcRelativeErrorPoint> points;
+	std::vector<TLSCalcRelativeErrorFrame> frames;
+#if USE_SERIALIZER
+	virtual void serialize(ObjectSerializer &obj) const override;
+#endif
+};
 
 #endif // SU_LS_EREL

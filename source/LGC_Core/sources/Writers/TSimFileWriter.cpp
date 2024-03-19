@@ -96,6 +96,23 @@ void TSimFileWriter::writeHeader()
 
 	if (data->getConfig().useApriori.isActive())
 		(*stream) << "*APRI" << endl;
+	if (!data->getConfig().fRelErrors.points.empty())
+	{
+		(*stream) << "*EREL" << endl;
+		for (const auto &erelTuple : data->getConfig().fRelErrors.points)
+		{
+			(*stream) << erelTuple.getPoint1() << "  " << erelTuple.getPoint2() << "  " << erelTuple.getDestinationFrame() << endl;
+		}
+	}
+    if (!data->getConfig().fRelErrors.frames.empty())
+	{
+		(*stream) << "*ERELFRAME" << endl;
+		for (const auto &erelTuple : data->getConfig().fRelErrors.frames)
+		{
+			(*stream) << erelTuple.getFromFrame() << "  " << erelTuple.getToFrame() << endl;
+		}
+	}
+
 
 	if (data->getConfig().writeDefa.isActive())
 		(*stream) << "*DEFA" << endl;

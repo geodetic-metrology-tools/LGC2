@@ -206,7 +206,33 @@ void TKeyEREL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	}
 	if (activeLine && erelActive)
 	{
-		fconfig.erelTuples.push_back(std::tuple(tokens.at(0), tokens.at(1), destinationFrame));
+		TLSCalcRelativeErrorPoint newErelPair(tokens.at(0), tokens.at(1), destinationFrame);
+		fconfig.fRelErrors.points.push_back(newErelPair);
+	}
+}
+
+void TKeyERELFRAME::parse(const std::vector<std::string>& tokens, bool activeLine, int) {
+    auto numtokens(tokens.size());
+	// this is a multi-line keyword, react just on the following calls
+	if ((tokens.at(0) == "*") && (tokens.at(1) == "ERELFRAME"))
+	{
+		if (numtokens > 2)
+		{
+			throw std::runtime_error("*ERELFRAME accepts no additional arguments. The frame pairs must follow on subsequent lines.");
+		}
+		erelFrameActive = activeLine;
+		return;
+	}
+	// Frames must occur in pairs
+	if ((numtokens < 2) || (numtokens > 2))
+	{
+		throw std::runtime_error(
+			"The Relative Frame error section only accepts pairs of frames.");
+	}
+
+	if (activeLine && erelFrameActive)
+	{
+		fconfig.fRelErrors.frames.push_back(TLSCalcRelativeErrorFrame(tokens.at(0), tokens.at(1)));
 	}
 }
 
