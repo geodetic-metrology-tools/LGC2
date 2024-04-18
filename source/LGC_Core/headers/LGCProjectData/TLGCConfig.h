@@ -6,47 +6,45 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef _LGCOPTIONS_H_
 #define _LGCOPTIONS_H_
 
-//SURVEYLIB
+// SURVEYLIB
 #include <TRefSystemFactory.h>
-#include "TStatusObject.h"
-//LGC
-#include <Global.h>
-#include "TLSCalcRelativeError.h"
 
+#include "TStatusObject.h"
+// LGC
+#include <Global.h>
+
+#include "TLSCalcRelativeError.h"
 
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
-
 /*!
 	\ingroup LGCProjectData
 
-	\brief This class contains the configuration options of the input file. 
+	\brief This class contains the configuration options of the input file.
 	Options are set to defined default values by the starndard constructors of the
-	related classes. 
+	related classes.
 */
 
 #if USE_SERIALIZER
-	struct TLGCConfig : public Serializable
+struct TLGCConfig : public Serializable
 #else
-	struct TLGCConfig
+struct TLGCConfig
 #endif // USE_SERIALIZER
 {
-
 	/*!
 		Base class for options that are either einabled or disabled.
-		The default is that the options are disabled this is done by 
+		The default is that the options are disabled this is done by
 		the default constructor.
 	*/
-	class TBinaryOption : public TStatusObject {
-		
-		public:
-			/// Base constructor for binary options, disables an option by default.
-			TBinaryOption(bool active = false) : TStatusObject(active) {}
-			/// This virtual destructor does nothing.
-			virtual ~TBinaryOption() {}
-
+	class TBinaryOption : public TStatusObject
+	{
+	public:
+		/// Base constructor for binary options, disables an option by default.
+		TBinaryOption(bool active = false) : TStatusObject(active) {}
+		/// This virtual destructor does nothing.
+		virtual ~TBinaryOption() {}
 	};
 
 	/*!
@@ -54,70 +52,57 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 		input and output.
 	*/
 
-	class TSimulation : public TBinaryOption {
-		public:
-			/// The number of simulations to perform
-			int  numSims;
-			/// The seed number for the pseudo-random number generation/engine
-			int  numSeed;
-			/// write an output file that can be used as an imput file again
-			bool writeLGCFile;
+	class TSimulation : public TBinaryOption
+	{
+	public:
+		/// The number of simulations to perform
+		int numSims;
+		/// The seed number for the pseudo-random number generation/engine
+		int numSeed;
+		/// write an output file that can be used as an imput file again
+		bool writeLGCFile;
 
-			/// The default constructor disables simulations. 
-			// Disable simulation means that ignoreMeasurements should be, by default, set to FALSE not TRUE!
-			TSimulation() :
-				TBinaryOption(),
-				numSims(0),
-				numSeed(0),
-				writeLGCFile(false) {}
-			/*!
-			\brief This constructor sets the default values for enabled simulations.
+		/// The default constructor disables simulations.
+		// Disable simulation means that ignoreMeasurements should be, by default, set to FALSE not TRUE!
+		TSimulation() : TBinaryOption(), numSims(0), numSeed(0), writeLGCFile(false) {}
+		/*!
+		\brief This constructor sets the default values for enabled simulations.
 
-			\param n The number of simulations to run
-			\param s The seed number
-			\param ignoreMeas The measurement values in the input file are ignored
-			*/
-			TSimulation(int n, int s) :
-				TBinaryOption(true),
-				numSims(n),
-				numSeed(s),
-				writeLGCFile(false) {}
+		\param n The number of simulations to run
+		\param s The seed number
+		\param ignoreMeas The measurement values in the input file are ignored
+		*/
+		TSimulation(int n, int s) : TBinaryOption(true), numSims(n), numSeed(s), writeLGCFile(false) {}
 
 #if USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(ObjectSerializer &obj) const override;
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
 	/*!
 		Controls the blunder detection module.
 	*/
-	class TFautDetect : public TBinaryOption {
-		public:
+	class TFautDetect : public TBinaryOption
+	{
+	public:
+		TReal alpha, ///< alpha quantile for the fisher test
+			beta; ///< beta quantile for the fisher test
 
-			TReal alpha, ///< alpha quantile for the fisher test
-				  beta;  ///< beta quantile for the fisher test
-			
-			/// The default constructor disables the blunder detection
-			TFautDetect()
-                : TBinaryOption()
-                , alpha(FAUT_DEF_ALPHA)
-                , beta(FAUT_DEF_BETA) {}
+		/// The default constructor disables the blunder detection
+		TFautDetect() : TBinaryOption(), alpha(FAUT_DEF_ALPHA), beta(FAUT_DEF_BETA) {}
 
-			/*! 
-				\brief Enables the blunder detection module with given quantiles.
+		/*!
+			\brief Enables the blunder detection module with given quantiles.
 
-				\param alpha_ left quantile for the test
-				\param beta_ right quantile for the test
-			*/
-			TFautDetect(TReal alpha_ , TReal beta_) :
-				TBinaryOption(true),
-				alpha(alpha_),
-				beta(beta_) {}
+			\param alpha_ left quantile for the test
+			\param beta_ right quantile for the test
+		*/
+		TFautDetect(TReal alpha_, TReal beta_) : TBinaryOption(true), alpha(alpha_), beta(beta_) {}
 
 #if USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(ObjectSerializer &obj) const override;
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
@@ -126,86 +111,85 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	*/
 	class TPDOR : public TBinaryOption
 	{
-			public:
-				/// Point name of the the orientation point
-				std::string fptname;
-				/// Constant gisement of the result
-				TAngle fgis;
-				// boolean to know if the bearing is given in the input file
-				bool hasBearing;
-				// line where it is defined
-				int line;
+	public:
+		/// Point name of the the orientation point
+		std::string fptname;
+		/// Constant gisement of the result
+		TAngle fgis;
+		// boolean to know if the bearing is given in the input file
+		bool hasBearing;
+		// line where it is defined
+		int line;
 
-				/// There is no orientation point for the adjustment
-				TPDOR() : TBinaryOption(), fptname(""), fgis(TAngle(0.0)), hasBearing(false), line(-1) {}
-				/*!
-					\brief Adds an orientation point to the adjustment with an optional gisement.
+		/// There is no orientation point for the adjustment
+		TPDOR() : TBinaryOption(), fptname(""), fgis(TAngle(0.0)), hasBearing(false), line(-1) {}
+		/*!
+			\brief Adds an orientation point to the adjustment with an optional gisement.
 
-					\param ptname The name of the orientation point as it is given in the points section
-					\param gisement Constant gisement of the solution
-				*/
-				TPDOR(const std::string &ptname, TAngle gisement = TAngle(0.0), int lineNumber = -1) :
-					TBinaryOption(true), fptname(ptname), fgis(gisement), hasBearing(false), line(lineNumber)
-				{
-				}
+			\param ptname The name of the orientation point as it is given in the points section
+			\param gisement Constant gisement of the solution
+		*/
+		TPDOR(const std::string &ptname, TAngle gisement = TAngle(0.0), int lineNumber = -1) :
+			TBinaryOption(true), fptname(ptname), fgis(gisement), hasBearing(false), line(lineNumber)
+		{
+		}
 
 #if USE_SERIALIZER
-				// Inherited via Serializable
-				virtual void serialize(ObjectSerializer &obj) const override;
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
-	
+
 	/// Defines the column separator for the output files.
 	/// If no string is defined a fixed spaced output is used.
-	class TCustomOutputSep : public TBinaryOption {
-		public:
-			/// Column separator string.
-			std::string separator;
-			
-			/// A fixed spaced output is used by default.
-			TCustomOutputSep() : TBinaryOption(), separator("") {}
-			/// Sets a separator string, e.g. ';' or '\t'
-			TCustomOutputSep(const std::string& sepstr) :
-				TBinaryOption(true),
-				separator(sepstr) {}
+	class TCustomOutputSep : public TBinaryOption
+	{
+	public:
+		/// Column separator string.
+		std::string separator;
+
+		/// A fixed spaced output is used by default.
+		TCustomOutputSep() : TBinaryOption(), separator("") {}
+		/// Sets a separator string, e.g. ';' or '\t'
+		TCustomOutputSep(const std::string &sepstr) : TBinaryOption(true), separator(sepstr) {}
 
 #if USE_SERIALIZER
-			// Inherited via Serializable
-			virtual void serialize(ObjectSerializer &obj) const override;
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
-	
-	/// Specifies the coordinate output for deformation analysis or punc files.
-	class TCoordOut : public TBinaryOption {
-		public:
-			/// Valid output modes
-			enum eMode {
-				kPLAIN, ///< Nom_Pt X Y Z
-				kE,     ///< Nom_Pt X Y Z Vx Vy Vz Cxy Cxz Cyz Dx Dy Dz
-				kEE,    ///< Nom_Pt X Y Z Gist_gd_axe Gd_axe Pt_axe Sz dx dy dz
-				kH,     ///< Nom_Pt X Y H
-				kZ,     ///< Nom_Pt X Y Z
-				kHZ,    ///< Nom_Pt X Y Z H
-				kHN,    ///< Nom_Pt X Y Z H NLEP
-				kZHN,   ///< Nom_Pt X Y Z H NLEP
-				kT,     ///< Nom_Pt X Y Z Sx Sy Sz
-				kOUT1,  ///< .coo file for GEODE
-				kOUT3,  ///< .coo file for GEODE
-			};
 
-			/// The desired output mode
-			eMode fmode;
-			
-			/// The default behavior is to disable .coo files
-			TCoordOut() : TBinaryOption(), fmode(kPLAIN) {}
-			/// Enables vompensation results for the points in a given format
-			TCoordOut(eMode mode) :
-				TBinaryOption(true),
-				fmode(mode) {}
+	/// Specifies the coordinate output for deformation analysis or punc files.
+	class TCoordOut : public TBinaryOption
+	{
+	public:
+		/// Valid output modes
+		enum eMode
+		{
+			kPLAIN, ///< Nom_Pt X Y Z
+			kE, ///< Nom_Pt X Y Z Vx Vy Vz Cxy Cxz Cyz Dx Dy Dz
+			kEE, ///< Nom_Pt X Y Z Gist_gd_axe Gd_axe Pt_axe Sz dx dy dz
+			kH, ///< Nom_Pt X Y H
+			kZ, ///< Nom_Pt X Y Z
+			kHZ, ///< Nom_Pt X Y Z H
+			kHN, ///< Nom_Pt X Y Z H NLEP
+			kZHN, ///< Nom_Pt X Y Z H NLEP
+			kT, ///< Nom_Pt X Y Z Sx Sy Sz
+			kOUT1, ///< .coo file for GEODE
+			kOUT3, ///< .coo file for GEODE
+		};
+
+		/// The desired output mode
+		eMode fmode;
+
+		/// The default behavior is to disable .coo files
+		TCoordOut() : TBinaryOption(), fmode(kPLAIN) {}
+		/// Enables vompensation results for the points in a given format
+		TCoordOut(eMode mode) : TBinaryOption(true), fmode(mode) {}
 
 #if USE_SERIALIZER
-			// Inherited via Serializable
-			virtual void serialize(ObjectSerializer &obj) const override;
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
@@ -216,48 +200,42 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	struct TPrecision
 #endif // USE_SERIALIZER
 	{
-		public:
-			/// Number of digits after the comma
-			int digits;
-			/// Convergence criterion based on the precision, see \ref calcConv .
-			TReal convCrit;
-			
-			/// Sets the default precision, see \ref defaults.h
-			TPrecision() :
-				digits(PREC_DEF_DIGITS),
-				convCrit(calcConv(digits)) {}
-			TPrecision(int prec) :
-				digits(prec),
-				convCrit(calcConv(digits)) {}
+	public:
+		/// Number of digits after the comma
+		int digits;
+		/// Convergence criterion based on the precision, see \ref calcConv .
+		TReal convCrit;
 
-			/// the convergence criterion is calculated by 5.0*pow(0.1, prec+1)
-			// as it was done in previous LGC versions
-			inline TReal calcConv(int prec) {
-				return 5.0*powq(0.1, prec+1);
-			}
+		/// Sets the default precision, see \ref defaults.h
+		TPrecision() : digits(PREC_DEF_DIGITS), convCrit(calcConv(digits)) {}
+		TPrecision(int prec) : digits(prec), convCrit(calcConv(digits)) {}
+
+		/// the convergence criterion is calculated by 5.0*pow(0.1, prec+1)
+		// as it was done in previous LGC versions
+		inline TReal calcConv(int prec) { return 5.0 * powq(0.1, prec + 1); }
 
 #if USE_SERIALIZER
-			// Inherited via Serializable
-			virtual void serialize(ObjectSerializer &obj) const override;
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 	};
 
 	/// The title of the adjustment including newlines
-	std::string  title;
+	std::string title;
 	/// See \ref Simulation
-	TSimulation   sim;
+	TSimulation sim;
 	/// See \ref FautDetect
-	TFautDetect   faut;
+	TFautDetect faut;
 	/// See \ref TRefSystemFactory
 	TRefSystemFactory::ERefFrame referential;
-	
+
 	/// Sets all points to be fixed points in spite of their configuration
 	TBinaryOption allfixed;
 	/// duplicate measurements to a point are forbidden
 	TBinaryOption nodup;
 	/// See \ref PDOR
-	TPDOR         pdor;
-	
+	TPDOR pdor;
+
 	/// See keyword APRI
 	TBinaryOption useApriori;
 	/// Creates ASCII-art histograms
@@ -271,17 +249,17 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	/// See \ref CustomOutputSep
 	TCustomOutputSep CustomOutputSeparatorPunch;
 	/// See \ref Precision
-	TPrecision	outPrecision;
+	TPrecision outPrecision;
 
 	/// Write a file for deformation analysis
 	TBinaryOption writeDefa;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
-	TCoordOut     writePunch;
+	TCoordOut writePunch;
 	/// Write a file with adjustment results ,see \ref CoordOut for format details
-	TCoordOut     writePlot;
+	TCoordOut writePlot;
 	/// Write a file for covariance analysis
 	TBinaryOption covar;
-	/// Write a file for best-fit analysis 
+	/// Write a file for best-fit analysis
 	TBinaryOption chaba;
 	/// Make a consistency check to find groups of unidentifiable objects
 	TBinaryOption consCheck;
@@ -290,34 +268,32 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	/// are manually specified constraints added?
 	TBinaryOption hasManualConstraints;
 	// signature of the manual added constraints (TX,TY,TZ,RX,RZ,RY,SCL)
-	std::array<bool, 7>  manualConstraints;
+	std::array<bool, 7> manualConstraints;
 	/// Write a JSON serialized object file
 	TBinaryOption writeJSON;
 	/// Write a separate COVAR JSON file in addition to the general JSON file
 	TBinaryOption writeJSON_COVAR;
 
-	///width of point's name
+	/// width of point's name
 	int pointNameWidth = 0;
-	///width of observation's ID
+	/// width of observation's ID
 	int obsIDwidth = 0;
 
 	/*
-	Checklist: 
-		Referentiel defined? 
+	Checklist:
+		Referentiel defined?
 		if PDOR is used, is the given point defined?
 		writePunch/ writePlot must not be set to kHN/kZHN when OLOC is used
 		If a new LGC file should be written, SIM must be active
 
 	*/
-	void checkSanity();  //empty
+	void checkSanity(); // empty
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
-
 };
-
 
 #if USE_SERIALIZER
 inline void TLGCConfig::serialize(ObjectSerializer &obj) const
@@ -342,7 +318,7 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("referential", referential);
 	obj.addProperty("sim", sim);
 	obj.addProperty("title", title);
-	
+
 	obj.addProperty("useApriori", useApriori);
 	obj.addProperty("writeDefa", writeDefa);
 	obj.addProperty("writePlot", writePlot);
@@ -393,4 +369,4 @@ inline void TLGCConfig::TPrecision::serialize(ObjectSerializer &obj) const
 
 #endif // USE_SERIALIZER
 
-#endif 
+#endif

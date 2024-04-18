@@ -8,7 +8,7 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 
 namespace pointConstraintTest
 {
-char const *const testfile1= R"(*TITR
+char const *const testfile1 = R"(*TITR
 testFile
 *OLOC
 *INSTR
@@ -30,7 +30,7 @@ p2 6 7 8 1 1 1
 p3 9 10 11 1 1 1
 )";
 
-char const *const testfile2= R"(*TITR
+char const *const testfile2 = R"(*TITR
 testFile
 *OLOC
 *INSTR
@@ -55,7 +55,7 @@ p2 6 7 8 1 1 1
 p3 9 10 11 1 1 1
 )";
 
-char const *const rotation_testfile= R"(*TITR
+char const *const rotation_testfile = R"(*TITR
 testFile
 *OLOC
 *INSTR
@@ -79,7 +79,7 @@ pz 0 0 1
 *ENDFRAME
 )";
 
-char const *const translation_testfile= R"(*TITR
+char const *const translation_testfile = R"(*TITR
 testFile
 *OLOC
 *INSTR
@@ -103,7 +103,7 @@ pz 0 0 1
 *ENDFRAME
 )";
 
-char const *const constraintDetection_testfile= R"(*TITR
+char const *const constraintDetection_testfile = R"(*TITR
 testFile
 find necessary libr constraint groups
 *OLOC
@@ -150,7 +150,7 @@ p9 6 7.01 8
 
 )";
 
-char const *const constraintDetection_pyramidFull= R"(*TITR
+char const *const constraintDetection_pyramidFull = R"(*TITR
 testing libr constraint choice. points form a rigid pyramid.
 Depending on the degrees of freedom of the points, the pyramid is "floating" in space or fully/partially determined
 *OLOC
@@ -187,8 +187,7 @@ Top 1.224
 *END
 )";
 
-
-char const *const constraintDetection_pyramidRotationXYZ= R"(*TITR
+char const *const constraintDetection_pyramidRotationXYZ = R"(*TITR
 testing libr constraint choice. points form a rigid pyramid.
 Depending on the degrees of freedom of the points, the pyramid is "floating" in space or fully/partially determined
 *OLOC
@@ -226,9 +225,5 @@ Top 1.224
 *END
 )";
 
-
-
-
-
-}
+} // namespace pointConstraintTest
 #endif

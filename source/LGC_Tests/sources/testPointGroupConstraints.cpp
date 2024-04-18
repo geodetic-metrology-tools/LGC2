@@ -7,9 +7,9 @@
 #include <TLGCData.h>
 #include <TReader.h>
 
-#include "TLGCPointConstraintGroup.h"
 #include "TDataAnalyzer.h"
 #include "TLGCCalculation.h"
+#include "TLGCPointConstraintGroup.h"
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatrices.h"
 #include "TLSInputMatricesFiller.h"
@@ -194,7 +194,6 @@ void object::test<5>()
 	im.initMatrices(projTest->fUEOIndices);
 	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
 	TLSConsCheck consCheck(*projTest.get(), im);
-
 }
 
 template<>
@@ -225,7 +224,6 @@ void object::test<6>()
 	bool isAsExpected = (actualSignature == expectedSignature);
 	ensure_equals("Constraints for this group are not as expected.", isAsExpected, true);
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
 }
 
 template<>
@@ -258,6 +256,5 @@ void object::test<7>()
 	ensure_equals("Momentum for all 3 rotations should be blocked.", isAsExpected, true);
 	ensure_equals("Calculation is expected to work.", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
-
 
 }; // namespace tut

@@ -7,8 +7,8 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 #define TLS_CONSI_H
 
 #include <TLGCData.h>
-#include <TVAdjustableObject.h>
 #include <TLGCPointConstraintGroup.h>
+#include <TVAdjustableObject.h>
 
 #include "TSparseMatrix.h"
 

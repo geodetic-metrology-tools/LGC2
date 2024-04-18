@@ -101,7 +101,6 @@ void TSimFileWriter::writeHeader()
 		(*stream) << endl;
 	}
 
-
 	if (data->getConfig().covar.isActive())
 		(*stream) << "*COVAR " << endl;
 
@@ -124,7 +123,7 @@ void TSimFileWriter::writeHeader()
 			(*stream) << erelTuple.getPoint1() << "  " << erelTuple.getPoint2() << "  " << erelTuple.getDestinationFrame() << endl;
 		}
 	}
-    if (!data->getConfig().fRelErrors.frames.empty())
+	if (!data->getConfig().fRelErrors.frames.empty())
 	{
 		(*stream) << "*ERELFRAME" << endl;
 		for (const auto &erelTuple : data->getConfig().fRelErrors.frames)
@@ -132,7 +131,6 @@ void TSimFileWriter::writeHeader()
 			(*stream) << erelTuple.getFromFrame() << "  " << erelTuple.getToFrame() << endl;
 		}
 	}
-
 
 	if (data->getConfig().writeDefa.isActive())
 		(*stream) << "*DEFA" << endl;
@@ -988,7 +986,7 @@ void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << "*ECWI" << sep << wpsrDefInst.ID << sep << meas->sagAdjustable->getProvisionalValue().getMetresValue() << sep << meas->sigmaWire.getMMetresValue() << sep
-			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName; 
+			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName;
 	if (meas->sagfix)
 	{
 		(*stream) << sep << "SAGFIX";

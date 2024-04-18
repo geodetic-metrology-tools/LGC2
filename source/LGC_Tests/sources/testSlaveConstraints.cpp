@@ -3,8 +3,8 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
-#include <TLGCFrameConstraintGroup.h>
 #include <TLGCData.h>
+#include <TLGCFrameConstraintGroup.h>
 #include <TReader.h>
 
 #include "TLGCCalculation.h"

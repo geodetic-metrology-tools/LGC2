@@ -12,10 +12,10 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 // LGC
 #include <Global.h>
 #include <LGCAdjustableObjectCollection.h>
-#include <TLGCFrameConstraintGroup.h>
-#include <TLGCPointConstraintGroup.h>
 #include <TFileLogger.h>
 #include <TLGCConfig.h>
+#include <TLGCFrameConstraintGroup.h>
+#include <TLGCPointConstraintGroup.h>
 #include <TLGCStatistic.h>
 #include <TMeasurements.h>
 #include <TTreeEntry.h>
@@ -197,7 +197,6 @@ public:
 	std::list<TLGCPointConstraintGroup> &getPointGroups() { return pointGroups; }
 	/// Returns a constant reference of the Constraint groups
 	std::list<TLGCPointConstraintGroup> const &getPointGroups() const { return pointGroups; }
-
 
 	/// Returns the instruments defined
 	TInstrumentData &getInstruments() { return instruments; }

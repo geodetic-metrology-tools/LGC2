@@ -9,7 +9,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 class TLGCData;
 class TFileLogger;
 
-/*! 
+/*!
 	\ingroup LGCProjectData
 
 	Class responsible for:
@@ -24,46 +24,46 @@ class TFileLogger;
 
 		- LS scenario identification (combined case, parametric case), with constraints/without constraints etc.
 */
-class TDataAnalyzer{
+class TDataAnalyzer
+{
 public:
 	/*!
 		\brief Constructs a new TDataAnalyzer instance.
 
 		\param[in] dat given TLGCData class instance to be analyzed
 	*/
-	TDataAnalyzer(TLGCData& dat);
+	TDataAnalyzer(TLGCData &dat);
 
 	/*!
-		\brief Returns TRUE if data is consistent, FALSE otherwise. 
+		\brief Returns TRUE if data is consistent, FALSE otherwise.
 
 		\note This method is also responsible for assigning indices to unknowns and initializing some uninitialized objects (e.g. planes in DLEV measurement).
 	*/
 	bool dataConsistent();
 
 	/// Returns TRUE if at least one standard deviation assigned to a point or frame element.
-	inline bool hasStandardDeviations() {return fStandDevUsed;};
+	inline bool hasStandardDeviations() { return fStandDevUsed; };
 
 private:
-
-    //! Manage the deactivated points, measurements etc. from the data
-    bool cleanDeactivated();
+	//! Manage the deactivated points, measurements etc. from the data
+	bool cleanDeactivated();
 
 	bool checkParameters();
 	bool checkConfigOptions();
 
-    //! Assign observation and equation indices to measurements.
-    void assignEOIndices();
+	//! Assign observation and equation indices to measurements.
+	void assignEOIndices();
 
-	void checkPDOR(TFileLogger& fileLog, bool dataConsistent);
+	void checkPDOR(TFileLogger &fileLog, bool dataConsistent);
 	void predeterminePLR3DV0();
 
 	bool fStandDevUsed; // If at least one standard deviation assigned to a point or frame element.
 
 	// contains references: not assignable
-	TDataAnalyzer& operator=(const TDataAnalyzer&);
+	TDataAnalyzer &operator=(const TDataAnalyzer &);
 
 	// LGC data set
-	TLGCData& fData;
+	TLGCData &fData;
 };
 
 #endif

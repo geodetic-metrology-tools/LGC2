@@ -459,7 +459,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 		logWarning() << "not all ambiguous directions can be represented as helmert movements.";
 		return false;
 	}
-	// 2. find pure translations and pure rot+scale
+	// 3. find pure translations and pure rot+scale
 	Eigen::MatrixXd transBase(7, 3);
 	transBase.setZero();
 	transBase.topRows(3) = Eigen::MatrixXd::Identity(3, 3);
@@ -470,7 +470,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	Eigen::MatrixXd pureRotAndScale = intersect(nullspaceAsHelmert, rotAndScaleBase);
 	int dimPureTrans = pureTrans.fullPivHouseholderQr().rank();
 	int dimPureRotAndScale = pureRotAndScale.fullPivHouseholderQr().rank();
-	// 3. check if pure decomposition already covers all
+	// 4. check if pure decomposition already covers all
 	Eigen::MatrixXd rest;
 	if (dimPureTrans + dimPureRotAndScale == dimNullspace)
 	{
@@ -482,7 +482,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 		// make sure that here no translation is blocked anymore
 		rest.topRows(3).setZero();
 	}
-	// 4. block pure translations and rest
+	// 5. block pure translations and rest
 	// decide which translations to block
 	std::array<bool, 7> translationConstraints = whatToBlock(pureTrans);
 	// initialize the rest

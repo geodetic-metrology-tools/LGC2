@@ -9,10 +9,10 @@
 #include "TAllfixedParamGenerator.h"
 #include "TDist.h"
 #include "TLOR2LOR.h"
-#include "TXYH2CCS.h"
-#include "TLSInputMatricesFiller.h"
-#include "TLSInputMatrices.h"
 #include "TLSConsistencyCheck.h"
+#include "TLSInputMatrices.h"
+#include "TLSInputMatricesFiller.h"
+#include "TXYH2CCS.h"
 
 TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
 {
@@ -21,7 +21,6 @@ TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
 bool TDataAnalyzer::dataConsistent()
 {
 	bool consistent = true;
-	//int nCALAinROOT = 0;
 	auto &outputMessages(fData.getFileLogger());
 	outputMessages.writeReportHeader("Data consistency check:");
 	const TDataTree &fTree = fData.getTree();
@@ -65,13 +64,11 @@ bool TDataAnalyzer::dataConsistent()
 
 	checkPDOR(outputMessages, consistent);
 
-
 	// checking parameter related data, assigning parameter indices
 	consistent = consistent && checkParameters();
-	
+
 	// checking different config options
 	consistent = consistent && checkConfigOptions();
-
 
 	return consistent;
 }
@@ -384,8 +381,7 @@ bool TDataAnalyzer::cleanDeactivated()
 }
 
 bool TDataAnalyzer::checkParameters()
-{	
-
+{
 	int lastUidx = 0; // Unknown indices
 	const TDataTree &fTree = fData.getTree();
 	int nCALAinROOT = 0;
@@ -459,9 +455,9 @@ bool TDataAnalyzer::checkParameters()
 
 					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
 						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
-					
+
 					fRefPt.setIsVirtual(true);
-					
+
 					itLEVEL->fRefPt = &fData.getPoints().addObject(fRefPt);
 				}
 				else
@@ -776,7 +772,7 @@ bool TDataAnalyzer::checkConfigOptions()
 	int lastCidx = 0; // Constraint indices
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
-	
+
 	// check for slave group constraints
 	// remove groups with no added constraints
 	fData.getSlaveGroups().remove_if([](TLGCFrameConstraintGroup group) {
@@ -857,7 +853,7 @@ bool TDataAnalyzer::checkConfigOptions()
 			if (fData.getConfig().hasManualConstraints.isActive())
 			{
 				// use the manually defined constraints
-				TLGCPointConstraintGroup manuallyAddedConstraints(fData,fData.getConfig().manualConstraints);
+				TLGCPointConstraintGroup manuallyAddedConstraints(fData, fData.getConfig().manualConstraints);
 				// communicate the constraints to the TLGCData object
 				pointGroups.push_back(manuallyAddedConstraints);
 				logWarning() << "User specified constraints were added.";
@@ -904,7 +900,6 @@ bool TDataAnalyzer::checkConfigOptions()
 					pointGroup.plotGroupData();
 				}
 			}
-
 		}
 		else
 		{

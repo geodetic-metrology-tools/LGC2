@@ -1422,8 +1422,7 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 
 	// Compute the variance of the observation
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue() + incly.target.sigmaPpm.getRadiansValue())
-		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue())
-		+ pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
+		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 
 	// CalcMeas, transformationContributions, variance
 	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt), obsVariance};
@@ -2116,7 +2115,7 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		sub2Root.transform(pointInRoot);
 		Eigen::Vector3d positionInRoot = pointInRoot.toRealVector();
 		Eigen::Vector3d provisionalInRoot = pointConstraintGroup.getProvRootPos(pointName);
-			
+
 		// COG
 		// derivative wrt point coordinates
 		resultCOG.PointContrib[pointName] = averagingFactor * sub2Root.getPartialDerivativeWrtPosition();
@@ -2145,14 +2144,14 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> point2RootTransformationsContribMOM;
 		addTransformationsContributions3D(sub2Root, pointInSubframe, -A, point2RootTransformationsContribMOM);
 		resultMOM.TransformContrib[pointName] = point2RootTransformationsContribMOM;
-	
+
 		// Scale
 		Eigen::Vector3d diff2COG = positionInRoot - estCOG;
 
 		// used in scale misclosure
 		currentScale += pow2(diff2COG.norm());
 		// derivatives with respect to point coordinates:
-		Eigen::Vector3d Aline = 2 * diff2COG; 
+		Eigen::Vector3d Aline = 2 * diff2COG;
 		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
 		resultScale.PointContrib[pointName] = derWRTPos;
 		// derivative wrt transformations

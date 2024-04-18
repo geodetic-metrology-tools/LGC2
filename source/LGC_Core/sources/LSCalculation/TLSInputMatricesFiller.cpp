@@ -31,8 +31,6 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 	bool fillOK = true;
 	auto &outputMessages(projData->getFileLogger());
 
-
-
 	try
 	{
 		// Input matrices have to be initialized each time they are filled.
@@ -47,9 +45,8 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 		if (fillWeightUnkn)
 			fillOK &= fillWeightUnkMtrx(projData, matrices);
 
-		fillOK &= fillSlaveConstraints(projData, matrices);	
+		fillOK &= fillSlaveConstraints(projData, matrices);
 		fillOK &= fillPointGroupConstraints(projData, matrices);
-
 
 		// Itteration through the nodes of the tree
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++)
@@ -1636,9 +1633,9 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *
 		// Setting the misclosure vector elements
 		TFreeVector obsVec = meas->getVectorValue();
 		TReal obsDistance = meas->getDistance().getMetresValue();
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx , contributions.fCalcMeas[0]-obsVec.getX().getMetresValue());
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx +1, contributions.fCalcMeas[1]-obsVec.getY().getMetresValue());
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx + 2, contributions.fCalcMeas[2]-obsDistance);
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx, contributions.fCalcMeas[0] - obsVec.getX().getMetresValue());
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx + 1, contributions.fCalcMeas[1] - obsVec.getY().getMetresValue());
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx + 2, contributions.fCalcMeas[2] - obsDistance);
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance[0] < nullLimit || contributions.fObsVariance[1] < nullLimit || contributions.fObsVariance[2] < nullLimit)
@@ -1658,7 +1655,6 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of UVD measurement occurred.");
 	}
-
 }
 
 void TLSInputMatricesFiller::addUVECContribution(TCAM &camera, TLSInputMatrices *matrices)
@@ -1780,7 +1776,7 @@ bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &poin
 }
 
 bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices)
-{	
+{
 	bool isProcessOK = true;
 
 	for (int i = 0; i < 3; i++)
@@ -1789,7 +1785,6 @@ bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustableP
 			isProcessOK = isProcessOK && matrices->setCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
 	}
 	return isProcessOK;
-
 }
 
 bool TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices)
@@ -1932,7 +1927,8 @@ bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMa
 }
 
 bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSInputMatrices *matrices)
-{	bool fillOK = true;
+{
+	bool fillOK = true;
 	auto &outputMessages(projData->getFileLogger());
 	try
 	{
@@ -1993,7 +1989,7 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 						if (relCIdx == 6)
 						{
 							// contribution from the point coordinates itself
-							fillOK = fillOK && addPointConstraintContribution(adjPoint, TFreeVector(contrib.scaleConstraintContrib.PointContrib[pointName]), cIdx, matrices); 
+							fillOK = fillOK && addPointConstraintContribution(adjPoint, TFreeVector(contrib.scaleConstraintContrib.PointContrib[pointName]), cIdx, matrices);
 							// contribution of helmert transformations
 							for (auto frameContribPair : contrib.scaleConstraintContrib.TransformContrib[pointName])
 							{
@@ -2024,7 +2020,7 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 			}
 			// check if there is a constraint that does not depend on any parameter
 			// this can happen for example if a TX constraint was (manually) added but the only points defined are *VZ (they only vary in Z)
-			for (size_t i = group.getFirstCIndex(); i <group.getFirstCIndex()+group.getConstraintDimension();i++)
+			for (size_t i = group.getFirstCIndex(); i < group.getFirstCIndex() + group.getConstraintDimension(); i++)
 			{
 				// Check if there are non-zero entries in row i
 				TSparseMatrix A2 = *matrices->getCnstrFirstDgnMtrx();
@@ -2058,5 +2054,4 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 	}
 
 	return fillOK;
-
 }
