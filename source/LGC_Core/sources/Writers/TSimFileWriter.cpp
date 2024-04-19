@@ -79,8 +79,27 @@ void TSimFileWriter::writeHeader()
 
 	if (data->getConfig().allfixed.isActive())
 		(*stream) << "*ALLFIXED" << endl;
-	else if (data->getConfig().libre.isActive())
-		(*stream) << "*LIBR" << endl;
+
+	if (data->getConfig().consCheck.isActive())
+	{
+		(*stream) << "*CONSI";
+		if (data->getConfig().useConsiLibr.isActive())
+		{
+			(*stream) << " LIBR ";
+			if (data->getConfig().hasManualConstraints.isActive())
+			{
+				std::array<std::string, 7> labels = {"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"};
+				for (size_t i = 0; i < 7; i++)
+				{
+					if (data->getConfig().manualConstraints[i])
+					{
+						(*stream) << labels[i] + " ";
+					}
+				}
+			}
+		}
+		(*stream) << endl;
+	}
 
 	if (data->getConfig().covar.isActive())
 		(*stream) << "*COVAR " << endl;
@@ -104,7 +123,7 @@ void TSimFileWriter::writeHeader()
 			(*stream) << erelTuple.getPoint1() << "  " << erelTuple.getPoint2() << "  " << erelTuple.getDestinationFrame() << endl;
 		}
 	}
-    if (!data->getConfig().fRelErrors.frames.empty())
+	if (!data->getConfig().fRelErrors.frames.empty())
 	{
 		(*stream) << "*ERELFRAME" << endl;
 		for (const auto &erelTuple : data->getConfig().fRelErrors.frames)
@@ -112,7 +131,6 @@ void TSimFileWriter::writeHeader()
 			(*stream) << erelTuple.getFromFrame() << "  " << erelTuple.getToFrame() << endl;
 		}
 	}
-
 
 	if (data->getConfig().writeDefa.isActive())
 		(*stream) << "*DEFA" << endl;
@@ -304,7 +322,7 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 			(*stream) << "SCL" << sep;
 
 		// check if it is part of a slave group
-		for (LGCFrameConstraintGroup group : fProjectData->getSlaveGroups())
+		for (TLGCFrameConstraintGroup group : fProjectData->getSlaveGroups())
 		{
 			if (group.isPartOfGroup(frameIt->get()->frame.getName()))
 			{
@@ -968,7 +986,7 @@ void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << "*ECWI" << sep << wpsrDefInst.ID << sep << meas->sagAdjustable->getProvisionalValue().getMetresValue() << sep << meas->sigmaWire.getMMetresValue() << sep
-			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName; 
+			  << meas->anchorPtFirst->getName() << sep << meas->anchorPtSecond->getName() << sep << "WIID" << sep << meas->romName;
 	if (meas->sagfix)
 	{
 		(*stream) << sep << "SAGFIX";

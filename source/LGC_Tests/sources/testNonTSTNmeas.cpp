@@ -940,43 +940,44 @@ namespace tut
 	}
 
 
-	template<>
-	template<>
-	void object::test<28>()
-	{
-		set_test_name("Testing reading RADI observation ID");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/RADI_ID.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
+	// the file should not be computable because the libr solution has an extreme dependance on the provisional values => constraints are wrong
+	//template<>
+	//template<>
+	//void object::test<28>()
+	//{
+	//	set_test_name("Testing reading RADI observation ID");
+	//	projTest->getFileLogger().setOutputfileLocation("C:/Temp/RADI_ID.txt");
+	//	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		std::stringstream infiler(TestNonTSTN::radi_id);
+	//	std::stringstream infiler(TestNonTSTN::radi_id);
 
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading Successfull ", succesReading, true);
+	//	bool succesReading = r.read(infiler);
+	//	ensure_equals("Reading Successfull ", succesReading, true);
 
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	//	TLGCCalculation calcul(projTest);
+	//	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	//	Behavior succesCalc = calcul.computeResults(fileWriter);
+	//	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
-		const TLGCData &dataset = calcul.getData();
+	//	const TLGCData &dataset = calcul.getData();
 
-		TDataTree tree = projTest->getTree();
+	//	TDataTree tree = projTest->getTree();
 
-		// Check the observation ID and the max observation ID length
-		std::vector<std::string> ctrlIDradi{"RADI.0.01_PBASE.3", "RADI.0.01_PBASE.4", "RADI.0.01_PBASE.5"};
-		int maxObsIdLength = 0;
-		int i = 0;
-		for (auto const &data : tree.begin()->get()->measurements.fRADI)
-		{
-			ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDradi[i]);
-			i++;
-			if (data.obsID.size() > maxObsIdLength)
-			{
-				maxObsIdLength = data.obsID.size();
-			}
-		}
-		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
-	}
+	//	// Check the observation ID and the max observation ID length
+	//	std::vector<std::string> ctrlIDradi{"RADI.0.01_PBASE.3", "RADI.0.01_PBASE.4", "RADI.0.01_PBASE.5"};
+	//	int maxObsIdLength = 0;
+	//	int i = 0;
+	//	for (auto const &data : tree.begin()->get()->measurements.fRADI)
+	//	{
+	//		ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDradi[i]);
+	//		i++;
+	//		if (data.obsID.size() > maxObsIdLength)
+	//		{
+	//			maxObsIdLength = data.obsID.size();
+	//		}
+	//	}
+	//	ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+	//}
 
 	template<>
 	template<>

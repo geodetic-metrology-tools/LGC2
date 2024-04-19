@@ -1,7 +1,7 @@
 
-#include <TLGCData.h>	
 #include <map>
 
+#include <TLGCData.h>
 
 TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandardDeviations(false), fUEOIndices({0, 0, 0, 0})
 {
@@ -63,7 +63,6 @@ TTreeEntry &TLGCData::addChild(TAdjustableHelmertTransformation *transfo)
 	n.ID = std::vector<int>(depth + 1);
 	peka::tree_node_<TDataSPtr> *posNode = pos.node;
 	TDataTreeIterator parent = TDataTree::parent(pos);
-
 
 	n.branch = std::vector<std::string>(depth + 1);
 	n.branch[depth] = posNode->data.get()->frame.getName();
@@ -852,6 +851,7 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("slaveGroups", slaveGroups);
+	obj.addProperty("pointConstraintGroups", pointGroups);
 }
 
 void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const

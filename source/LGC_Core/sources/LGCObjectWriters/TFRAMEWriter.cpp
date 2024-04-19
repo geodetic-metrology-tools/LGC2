@@ -965,7 +965,7 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 			nameID += "_" + std::to_string(*it);
 	}
 	std::string slaveNote{""};
-	for (LGCFrameConstraintGroup group : fProjectData->getSlaveGroups())
+	for (TLGCFrameConstraintGroup group : fProjectData->getSlaveGroups())
 	{
 		if (group.isPartOfGroup(name))
 		{

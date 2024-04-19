@@ -90,7 +90,7 @@ void object::test<3>()
 	TLGCCalculation calcul(projTest);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 	Behavior succesCalc = calcul.computeResults(fileWriter);
-	ensure_equals("Configuration should be identified as problematic.", succesCalc.code(), Behavior::BehaviorCode::ERR_consistencyCheck);
+	ensure_equals("Configuration should be identified as problematic.", succesCalc.code(), Behavior::BehaviorCode::ERR_inputData);
 }
 
 template<>

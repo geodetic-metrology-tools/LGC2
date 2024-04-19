@@ -16,19 +16,19 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
-#ifndef _LGC_FRAMECONSTRAINTGROUP_H
-#	define _LGC_FRAMECONSTRAINTGROUP_H
+#ifndef _TLGC_FRAMECONSTRAINTGROUP_H
+#	define _TLGC_FRAMECONSTRAINTGROUP_H
 #	if USE_SERIALIZER
-class LGCFrameConstraintGroup : public Serializable
+class TLGCFrameConstraintGroup : public Serializable
 #	else
-class LGCFrameConstraintGroup
+class TLGCFrameConstraintGroup
 #	endif // USE_SERIALIZER
 {
 public:
 	// constructor
-	LGCFrameConstraintGroup(){};
+	TLGCFrameConstraintGroup(){};
 	// destructor
-	~LGCFrameConstraintGroup(){};
+	~TLGCFrameConstraintGroup(){};
 
 	void setGroupName(std::string name) { groupName = name; };
 	std::string getGroupName() { return groupName; };

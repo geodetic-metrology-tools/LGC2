@@ -97,7 +97,7 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 		std::string groupName = opts.getParam("SLAVE");
 		// does this slave group already exist?
 		bool groupAlreadyExists{false};
-		for (LGCFrameConstraintGroup &group : proj.getSlaveGroups())
+		for (TLGCFrameConstraintGroup &group : proj.getSlaveGroups())
 		{
 			if (group.getGroupName() == groupName)
 			{
@@ -107,7 +107,7 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 		}
 		if (!groupAlreadyExists)
 		{
-			LGCFrameConstraintGroup newGroup;
+			TLGCFrameConstraintGroup newGroup;
 			newGroup.setGroupName(groupName);
 			newGroup.addFrameToGroup(adjTrafo.getName(), proj);
 			proj.getSlaveGroups().push_back(newGroup);

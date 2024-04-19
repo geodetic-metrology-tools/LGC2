@@ -12,9 +12,10 @@ Any permission to use it shall be granted in writing. Request shall be addressed
 // LGC
 #include <Global.h>
 #include <LGCAdjustableObjectCollection.h>
-#include <LGCFrameConstraintGroup.h>
 #include <TFileLogger.h>
 #include <TLGCConfig.h>
+#include <TLGCFrameConstraintGroup.h>
+#include <TLGCPointConstraintGroup.h>
 #include <TLGCStatistic.h>
 #include <TMeasurements.h>
 #include <TTreeEntry.h>
@@ -118,6 +119,9 @@ struct TMeasurementsGlobal
 	is reduced to interacting with a single object.
 */
 
+// forward declaration
+class TLGCPointConstraintGroup;
+
 #if USE_SERIALIZER
 class TLGCData : public Serializable
 #else
@@ -186,9 +190,13 @@ public:
 	TAdjustableLengthCollection const &getLength() const { return lengths; }
 
 	// Returns list of to the frame Constraint groups
-	std::list<LGCFrameConstraintGroup> &getSlaveGroups() { return slaveGroups; }
+	std::list<TLGCFrameConstraintGroup> &getSlaveGroups() { return slaveGroups; }
 	/// Returns a constant reference of the Constraint groups
-	std::list<LGCFrameConstraintGroup> const &getSlaveGroups() const { return slaveGroups; }
+	std::list<TLGCFrameConstraintGroup> const &getSlaveGroups() const { return slaveGroups; }
+	// Returns list of to the point Constraint groups
+	std::list<TLGCPointConstraintGroup> &getPointGroups() { return pointGroups; }
+	/// Returns a constant reference of the Constraint groups
+	std::list<TLGCPointConstraintGroup> const &getPointGroups() const { return pointGroups; }
 
 	/// Returns the instruments defined
 	TInstrumentData &getInstruments() { return instruments; }
@@ -310,7 +318,9 @@ private:
 	TAdjustableLengthCollection lengths;
 	//@}
 	// vector containing data associated to frame constraint groups
-	std::list<LGCFrameConstraintGroup> slaveGroups;
+	std::list<TLGCFrameConstraintGroup> slaveGroups;
+	// vector containing data associated to point constraint groups
+	std::list<TLGCPointConstraintGroup> pointGroups;
 
 	bool islgc1{false};
 

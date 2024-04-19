@@ -9,7 +9,9 @@
 #include "TAllfixedParamGenerator.h"
 #include "TDist.h"
 #include "TLOR2LOR.h"
-#include "TLibrCnstrGenerator.h"
+#include "TLSConsistencyCheck.h"
+#include "TLSInputMatrices.h"
+#include "TLSInputMatricesFiller.h"
 #include "TXYH2CCS.h"
 
 TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
@@ -19,11 +21,8 @@ TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
 bool TDataAnalyzer::dataConsistent()
 {
 	bool consistent = true;
-	int nCALAinROOT = 0;
 	auto &outputMessages(fData.getFileLogger());
 	outputMessages.writeReportHeader("Data consistency check:");
-	int lastUidx = 0; // Unknown indices
-	int lastCidx = 0; // Constraint indices
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 
@@ -65,479 +64,14 @@ bool TDataAnalyzer::dataConsistent()
 
 	checkPDOR(outputMessages, consistent);
 
-	// set constraint dimensions
-	if (fData.getConfig().libre.isActive())
-	{
-		TLibrCnstrGenerator librCnstrGenerator(fPointTransfo, fData);
-		librCnstrGenerator.initCnstrIdentifier(fData);
-		lastCidx += librCnstrGenerator.getNumberOfConstraint();
-	}
-	// check for slave group constraints
-	// remove groups with no added constraints
-	fData.getSlaveGroups().remove_if([](LGCFrameConstraintGroup group) {
-		bool isTrivialGroup = group.getConstraintDimension() == 0;
-		if (isTrivialGroup)
-		{
-			logWarning() << "Slave group" << group.getGroupName() << "is ignored as it adds no constraints.";
-		}
-		return isTrivialGroup;
-	});
-	// set the indices for the slave groups
-	for (auto groupIt = fData.getSlaveGroups().begin(); groupIt != fData.getSlaveGroups().end(); groupIt++)
-	{
-		groupIt->setFirstCIndex(lastCidx);
-		lastCidx += groupIt->getConstraintDimension();
-	}
-	fData.fUEOIndices.CIndex = lastCidx;
-
-	// Run through tree and check that whether all frames were initialized, assign unknown indices
-	// It is necessary to firstly iterate over the tree, because a Reference point might be created in DLEV measurement and measured plane is initialized
-	for (auto it(fTree.begin()); it != fTree.end(); ++it)
-	{
-		auto &frame(it.node->data.get()->frame);
-
-		if (!frame.isInitialized())
-		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frame: " + frame.getName() + " is not initialized!";
-			return false;
-		}
-		// Assign unknown indices
-		if (!frame.isFixed())
-		{
-			frame.setFirstUidx(lastUidx);
-			lastUidx = frame.getLastUidx() + 1;
-		}
-
-		if (frame.hasStandDev())
-		{ // If a frame has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
-		}
-
-		// only ANGL, ZEND and DIST are allowed in a subframe for a total station
-		if (!it.node->data.get()->isROOTNode())
-		{
-			for (auto &tstn : it.node->data.get()->measurements.fTSTN)
-			{
-				for (auto &rom : tstn->roms)
-				{
-					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
-					{
-						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
-						return false;
-					}
-				}
-			}
-		}
-
-		// If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized
-		for (auto itLEVEL(it.node->data.get()->measurements.fLEVEL.begin()); itLEVEL != it.node->data.get()->measurements.fLEVEL.end(); ++itLEVEL)
-		{
-			// Create the reference point if it was not given:
-			if (!itLEVEL->fRefPt)
-			{
-				TReal referencePoint[3] = {0, 0, 0};
-				for (auto itDLEVMeas(itLEVEL->measDLEV.begin()); itDLEVMeas != itLEVEL->measDLEV.end(); ++itDLEVMeas)
-				{
-					TPositionVector targetPos = itDLEVMeas->targetPos->getEstimatedValue();
-					TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-					transformation.transform(targetPos);
-
-					referencePoint[0] += targetPos.getX().getMetresValue();
-					referencePoint[1] += targetPos.getY().getMetresValue();
-					referencePoint[2] += targetPos.getZ().getMetresValue();
-				}
-
-				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
-
-				if (numberOfMeasurements > 0)
-				{
-					referencePoint[0] /= numberOfMeasurements;
-					referencePoint[1] /= numberOfMeasurements;
-					referencePoint[2] /= numberOfMeasurements;
-
-					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
-						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
-					
-					fRefPt.setIsVirtual(true);
-					
-					itLEVEL->fRefPt = &fData.getPoints().addObject(fRefPt);
-				}
-				else
-					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found.";
-			}
-
-			// Name of the measured adjustable plane:
-			auto name = "DLEVPLANE" + std::to_string(itLEVEL->stnId);
-
-			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(
-				LGCAdjustablePlane(itLEVEL->fRefPt, TLength(0.0), TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, name));
-		}
-
-		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO)
-		{
-			TReal referencePoint[3] = {0, 0, 0};
-			TReal initialRefPtDistance = 0.0;
-
-			for (auto itECHOMeas(itECHO->measECHO.begin()); itECHOMeas != itECHO->measECHO.end(); ++itECHOMeas)
-			{
-				TPositionVector stationPos = itECHOMeas->targetPos->getEstimatedValue(); /*In ECHO the targetPos is a stationPos (SCALE instrument used has no target)*/
-				TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-				transformation.transform(stationPos);
-
-				referencePoint[0] += stationPos.getX().getMetresValue();
-				referencePoint[1] += stationPos.getY().getMetresValue();
-				referencePoint[2] += stationPos.getZ().getMetresValue();
-
-				if (!fData.getConfig().sim.isActive())
-					initialRefPtDistance += itECHOMeas->getDistance();
-			}
-
-			int numberOfMeasurements = (int)itECHO->measECHO.size();
-
-			if (numberOfMeasurements > 0)
-			{
-				referencePoint[0] /= numberOfMeasurements;
-				referencePoint[1] /= numberOfMeasurements;
-				referencePoint[2] /= numberOfMeasurements;
-
-				initialRefPtDistance /= numberOfMeasurements;
-
-				/*Fixed reference point for the ECHO measurement*/
-				std::shared_ptr<LGCAdjustablePoint> refPoint = std::make_shared<LGCAdjustablePoint>(
-					TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), true, true, true,
-					"ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin());
-				itECHO->fReferencePoint = refPoint;
-
-				/*Calculation of the initial approximation value for the theta angle of the plane.*/
-				const TPositionVector &firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
-				const TPositionVector &lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
-
-				TReal thetaLineVectorAngle = atan2q(
-					lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
-
-				auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
-				itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(refPoint.get(), TLength(initialRefPtDistance),
-					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
-			}
-			else
-				outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
-		}
-
-		for (auto &itINCLY : it.node->data.get()->measurements.fINCLY)
-		{
-			int numberOfMeasurements = (int)itINCLY.measINCLY.size();
-			if (numberOfMeasurements == 0)
-			{
-				itINCLY.setActive(false);
-				const std::string nlinestr("Line " + std::to_string(itINCLY.line) + ": ");
-				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
-			}
-		}
-
-		for (auto &itECWS : it.node->data.get()->measurements.fECWS)
-		{
-			int numberOfMeasurements = (int)itECWS.measECWS.size();
-			if (numberOfMeasurements == 0)
-			{
-				itECWS.setActive(false);
-				const std::string nlinestr("Line " + std::to_string(itECWS.line) + ": ");
-				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
-			}
-			else
-			{
-				// Initialisation of the water surface height
-				TReal referencelength = 0;
-				for (auto &itECWSMeas : itECWS.measECWS)
-				{
-					TPositionVector stationPos = itECWSMeas.targetPos->getEstimatedValue();
-					TLOR2LOR transformation(itECWSMeas.targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-					transformation.transform(stationPos);
-					auto refFrame = fPointTransfo.getRefFrame();
-
-					if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-					{
-						if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-							TXYH2CCS::CCS2XYHg2000Machine(stationPos);
-						else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-							TXYH2CCS::CCS2XYHg1985Machine(stationPos);
-						else
-							TXYH2CCS::CCS2XYHs(stationPos);
-						referencelength += stationPos.getH().getMetresValue();
-					}
-					else
-					{
-						referencelength += stationPos.getZ().getMetresValue();
-					}
-
-					if (!fData.getConfig().sim.isActive())
-					{
-						TFreeVector measValue(0, 0, itECWSMeas.getDistance(), TCoordSysFactory::ECoordSys::k3DCartesian);
-						transformation.transform(measValue);
-						referencelength += measValue.getZ().getMetresValue();
-					}
-				}
-				referencelength /= numberOfMeasurements;
-
-				TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS.romName.data());
-
-				itECWS.fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
-			}
-		}
-
-		for (auto &itECWI : it.node->data.get()->measurements.fECWI)
-		{
-			// Create the fixed reference point for the wire
-			TReal referencePoint[3] = {0, 0, 0};
-			TPositionVector firstAnchorPos = itECWI.anchorPtFirst->getEstimatedValue();
-
-			TLOR2LOR firstAnchor2Root(itECWI.anchorPtFirst->getFrameTreePosition(), fTree.begin(), "FirstAnchor2ROOT");
-			firstAnchor2Root.transform(firstAnchorPos);
-
-			TPositionVector secondAnchorPos = itECWI.anchorPtSecond->getEstimatedValue();
-			TLOR2LOR secondAnchor2Root(itECWI.anchorPtSecond->getFrameTreePosition(), fTree.begin(), "SecondAnchor2ROOT");
-			secondAnchor2Root.transform(secondAnchorPos);
-
-			// Fixed reference point for the ECWI measurement
-			TPositionVector refPointVector = (TFreeVector(firstAnchorPos) + TFreeVector(secondAnchorPos)) * 0.5;
-
-			// Calculation of the initial approximated values for the wire bearing and slope
-			TFreeVector anchorVector = secondAnchorPos - firstAnchorPos;
-			TReal bearingLineVectorAngle = atan2q(anchorVector.getX().getMetresValue(), anchorVector.getY().getMetresValue());
-			TReal slopeLineVectorAngle = atan2q(-anchorVector.getZ().getMetresValue(), anchorVector.getHorDist().getMetresValue());
-
-			// Create the Adjustable Objects
-			std::string name = itECWI.romName + "_" + itECWI.anchorPtFirst->getName() + "_" + itECWI.anchorPtSecond->getName();
-
-			itECWI.referencePoint = refPointVector;
-
-			itECWI.fWireDx = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DX"));
-			itECWI.fWireDz = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DZ"));
-
-			itECWI.sagAdjustable = &fData.getLength().addObject(TAdjustableLength(itECWI.instrument.sagWire, itECWI.sagfix, name + "_SAG"));
-
-			TAdjustableAngle adjBearing(TAngle(bearingLineVectorAngle), false, name + "_BEARING");
-			itECWI.fWireBearing = &fData.getAngles().addObject(adjBearing);
-
-			TAdjustableAngle adjSlope(TAngle(slopeLineVectorAngle), false, name + "_SLOPE");
-			itECWI.fWireSlope = &fData.getAngles().addObject(adjSlope);
-		}
-		cleanDeactivated();
-
-		// If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
-		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE)
-		{
-			if (!itECVE->fPtLine)
-			{
-				TReal referencePoint[3] = {0, 0, 0};
-				for (auto itECVEMeas(itECVE->measECVE.begin()); itECVEMeas != itECVE->measECVE.end(); ++itECVEMeas)
-				{
-					TPositionVector targetPos = itECVEMeas->targetPos->getEstimatedValue();
-					TLOR2LOR transformation(itECVEMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
-					transformation.transform(targetPos);
-
-					referencePoint[0] += targetPos.getX().getMetresValue();
-					referencePoint[1] += targetPos.getY().getMetresValue();
-					referencePoint[2] += targetPos.getZ().getMetresValue();
-				}
-				int numberOfMeasurements = (int)itECVE->measECVE.size();
-				if (numberOfMeasurements > 0)
-				{
-					referencePoint[0] /= numberOfMeasurements;
-					referencePoint[1] /= numberOfMeasurements;
-					referencePoint[2] /= numberOfMeasurements;
-
-					itECVE->fPtLine = &fData.getPoints().addObject(
-						LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), false,
-							false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
-				}
-				else
-					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
-			}
-
-			// Name of the measured adjustable line
-			auto name = "ECVELINE" + std::to_string(itECVE->romId);
-
-			// Create the measured line:
-			itECVE->fMeasuredLine = &fData.getLines().addObject(
-				LGCAdjustableLine(itECVE->fPtLine, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
-		}
-	}
-
-	// cannot predetermine V0 in simulation and LIBR
-	if (!fData.getConfig().libre.isActive() && !fData.getConfig().sim.isActive())
-		predeterminePLR3DV0();
-
-	// Run through point collection and check whether all points were initialized, assign unknown indices at the same time and check that if PDOR used exactly one point in ROOT defined as CALA
-	for (auto &point : fData.getPoints())
-	{
-		// Check whether initialized
-		if (!point.isInitialized())
-		{
-			logCritical() << "Point: " << point.getName() << " is not initialized!";
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!";
-			return false;
-		}
-		// Count number of CALA in ROOT
-		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
-			nCALAinROOT++;
-
-		if (point.hasStandDeviations())
-		{ // If point has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
-		}
-
-		// Assign unknown indices
-		if (!point.isFixed())
-		{
-			point.setFirstUidx(lastUidx);
-			lastUidx = point.getLastUidx() + 1;
-		}
-	}
-
-	// Run through length collection and check whether all objects were initialized, assign unknown indices
-	for (auto &length : fData.getLength())
-	{
-		if (!length.isInitialized())
-		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Length: " + length.getName() + " is not initialized!";
-			return false;
-		}
-
-		if (!length.isFixed())
-		{
-			length.setFirstUidx(lastUidx);
-			lastUidx = length.getLastUidx() + 1;
-		}
-	}
-
-	// Run through angle collection and check whether all objects were initialized, assign unknown indices
-	for (auto &angle : fData.getAngles())
-	{
-		if (!angle.isInitialized())
-		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Angle: " + angle.getName() + " is not initialized!";
-			return false;
-		}
-
-		if (!angle.isFixed())
-		{
-			angle.setFirstUidx(lastUidx);
-			lastUidx = angle.getLastUidx() + 1;
-		}
-	}
-
-	// Run through line collection and check whether all objects were initialized, assign unknown indices
-	for (auto &line : fData.getLines())
-	{
-		if (!line.isInitialized())
-		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Line: " + line.getName() + " is not initialized!";
-			return false;
-		}
-
-		if (!line.isFixed())
-		{
-			line.setFirstUidx(lastUidx);
-			lastUidx = line.getLastUidx() + 1;
-		}
-	}
-
-	// Run through plane collection and check whether all objects were initialized, assign unknown indices
-	for (auto &plane : fData.getPlanes())
-	{
-		if (!plane.isInitialized())
-		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Plane: " + plane.getName() + " is not initialized!";
-			return false;
-		}
-
-		if (!plane.isFixed())
-		{
-			plane.setFirstUidx(lastUidx);
-			lastUidx = plane.getLastUidx() + 1;
-		}
-	}
-
-	// Save total number of unknowns without sigmas
-	fData.fUEOIndices.UIndex = lastUidx;
-
-	// Not run ALLFIXED and LIBR in the same time
-	if (fData.getConfig().libre.isActive() && fData.getConfig().allfixed.isActive())
-	{
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED and LIBR option cannot be used in the same calculation";
-		return false;
-	}
-
-	// Not SIMU + LIBR with free frame
-	if (fData.getConfig().libre.isActive() && fData.getConfig().sim.isActive())
-	{
-		for (auto it(fTree.begin()); it != fTree.end(); ++it)
-		{
-			auto &frame(it.node->data.get()->frame);
-
-			// free frame
-			if (!frame.isFixed())
-			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + LIBR options cannot cannot have free subframe";
-				return false;
-			}
-
-			if (frame.hasStandDev())
-			{ // If a frame has standard deviation assigned
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + LIBR options cannot cannot have free subframe";
-				return false;
-			}
-		}
-	}
-
-	// Not ALLFIXED with free frame
-	if (fData.getConfig().allfixed.isActive())
-	{
-		for (auto it(fTree.begin()); it != fTree.end(); ++it)
-		{
-			auto &frame(it.node->data.get()->frame);
-
-			// free frame
-			if (!frame.isFixed() || frame.hasStandDev())
-			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED options cannot cannot have free subframe";
-				return false;
-			}
-		}
-	}
-
-	// Not LIBR with free frame
-	if (fData.getConfig().libre.isActive())
-	{
-		for (auto it(fTree.begin()); it != fTree.end(); ++it)
-		{
-			auto &frame(it.node->data.get()->frame);
-
-			// free frame
-			if (!frame.isFixed() || frame.hasStandDev())
-			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "LIBR options cannot have free subframe";
-				return false;
-			}
-		}
-	}
-
-	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex)
-	{
-		outputMessages << TFileLogger::e_logType::LOG_ERROR
-					   << "There are more unknowns than equations+constraints, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) + ", EQUATIONS+CONSTRAINTS = "
-				+ std::to_string(fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex) + ". LS calculation can not work. Add measurements or fix some unknowns.";
-		return false;
-	}
+	// checking parameter related data, assigning parameter indices
+	consistent = consistent && checkParameters();
+
+	// checking different config options
+	consistent = consistent && checkConfigOptions();
 
 	return consistent;
 }
-
-namespace
-{
 
 template<class TAMEAS>
 // Remove the deactivated measurements from the given list of measurements,
@@ -579,7 +113,6 @@ bool rmDeactivated_and_checkTargetPos_noInstr(std::list<TAMEAS> &meass)
 	}
 	return true;
 }
-} // namespace
 
 bool TDataAnalyzer::cleanDeactivated()
 {
@@ -843,6 +376,564 @@ bool TDataAnalyzer::cleanDeactivated()
 
 	// Remove all deactivated points:
 	fData.getPoints().removeObjectIf([](const LGCAdjustablePoint &pt) -> bool { return !pt.isActive(); });
+
+	return true;
+}
+
+bool TDataAnalyzer::checkParameters()
+{
+	int lastUidx = 0; // Unknown indices
+	const TDataTree &fTree = fData.getTree();
+	int nCALAinROOT = 0;
+	auto &outputMessages(fData.getFileLogger());
+	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+	// Run through tree and check that whether all frames were initialized, assign unknown indices
+	// It is necessary to firstly iterate over the tree, because a Reference point might be created in DLEV measurement and measured plane is initialized
+	for (auto it(fTree.begin()); it != fTree.end(); ++it)
+	{
+		auto &frame(it.node->data.get()->frame);
+
+		if (!frame.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frame: " + frame.getName() + " is not initialized!";
+			return false;
+		}
+		// Assign unknown indices
+		if (!frame.isFixed())
+		{
+			frame.setFirstUidx(lastUidx);
+			lastUidx = frame.getLastUidx() + 1;
+		}
+
+		if (frame.hasStandDev())
+		{ // If a frame has standard deviation assigned
+			fStandDevUsed = true;
+			fData.setStandDevUsed();
+		}
+
+		// only ANGL, ZEND and DIST are allowed in a subframe for a total station
+		if (!it.node->data.get()->isROOTNode())
+		{
+			for (auto &tstn : it.node->data.get()->measurements.fTSTN)
+			{
+				for (auto &rom : tstn->roms)
+				{
+					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
+					{
+						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
+						return false;
+					}
+				}
+			}
+		}
+
+		// If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized
+		for (auto itLEVEL(it.node->data.get()->measurements.fLEVEL.begin()); itLEVEL != it.node->data.get()->measurements.fLEVEL.end(); ++itLEVEL)
+		{
+			// Create the reference point if it was not given:
+			if (!itLEVEL->fRefPt)
+			{
+				TReal referencePoint[3] = {0, 0, 0};
+				for (auto itDLEVMeas(itLEVEL->measDLEV.begin()); itDLEVMeas != itLEVEL->measDLEV.end(); ++itDLEVMeas)
+				{
+					TPositionVector targetPos = itDLEVMeas->targetPos->getEstimatedValue();
+					TLOR2LOR transformation(itDLEVMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+					transformation.transform(targetPos);
+
+					referencePoint[0] += targetPos.getX().getMetresValue();
+					referencePoint[1] += targetPos.getY().getMetresValue();
+					referencePoint[2] += targetPos.getZ().getMetresValue();
+				}
+
+				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
+
+				if (numberOfMeasurements > 0)
+				{
+					referencePoint[0] /= numberOfMeasurements;
+					referencePoint[1] /= numberOfMeasurements;
+					referencePoint[2] /= numberOfMeasurements;
+
+					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
+						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
+
+					fRefPt.setIsVirtual(true);
+
+					itLEVEL->fRefPt = &fData.getPoints().addObject(fRefPt);
+				}
+				else
+					outputMessages << TFileLogger::e_logType::LOG_WARNING << "DLEV group of measurements defined, using *DLEV keyword, but no measurement found.";
+			}
+
+			// Name of the measured adjustable plane:
+			auto name = "DLEVPLANE" + std::to_string(itLEVEL->stnId);
+
+			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
+			itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(
+				LGCAdjustablePlane(itLEVEL->fRefPt, TLength(0.0), TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, name));
+		}
+
+		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO)
+		{
+			TReal referencePoint[3] = {0, 0, 0};
+			TReal initialRefPtDistance = 0.0;
+
+			for (auto itECHOMeas(itECHO->measECHO.begin()); itECHOMeas != itECHO->measECHO.end(); ++itECHOMeas)
+			{
+				TPositionVector stationPos = itECHOMeas->targetPos->getEstimatedValue(); /*In ECHO the targetPos is a stationPos (SCALE instrument used has no target)*/
+				TLOR2LOR transformation(itECHOMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+				transformation.transform(stationPos);
+
+				referencePoint[0] += stationPos.getX().getMetresValue();
+				referencePoint[1] += stationPos.getY().getMetresValue();
+				referencePoint[2] += stationPos.getZ().getMetresValue();
+
+				if (!fData.getConfig().sim.isActive())
+					initialRefPtDistance += itECHOMeas->getDistance();
+			}
+
+			int numberOfMeasurements = (int)itECHO->measECHO.size();
+
+			if (numberOfMeasurements > 0)
+			{
+				referencePoint[0] /= numberOfMeasurements;
+				referencePoint[1] /= numberOfMeasurements;
+				referencePoint[2] /= numberOfMeasurements;
+
+				initialRefPtDistance /= numberOfMeasurements;
+
+				/*Fixed reference point for the ECHO measurement*/
+				std::shared_ptr<LGCAdjustablePoint> refPoint = std::make_shared<LGCAdjustablePoint>(
+					TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), true, true, true,
+					"ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin());
+				itECHO->fReferencePoint = refPoint;
+
+				/*Calculation of the initial approximation value for the theta angle of the plane.*/
+				const TPositionVector &firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
+				const TPositionVector &lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+
+				TReal thetaLineVectorAngle = atan2q(
+					lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
+
+				auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
+				itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(refPoint.get(), TLength(initialRefPtDistance),
+					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
+			}
+			else
+				outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";
+		}
+
+		for (auto &itINCLY : it.node->data.get()->measurements.fINCLY)
+		{
+			int numberOfMeasurements = (int)itINCLY.measINCLY.size();
+			if (numberOfMeasurements == 0)
+			{
+				itINCLY.setActive(false);
+				const std::string nlinestr("Line " + std::to_string(itINCLY.line) + ": ");
+				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "INCLY group of measurements defined, using *INCLY keyword, but no measurement found.";
+			}
+		}
+
+		for (auto &itECWS : it.node->data.get()->measurements.fECWS)
+		{
+			int numberOfMeasurements = (int)itECWS.measECWS.size();
+			if (numberOfMeasurements == 0)
+			{
+				itECWS.setActive(false);
+				const std::string nlinestr("Line " + std::to_string(itECWS.line) + ": ");
+				outputMessages << TFileLogger::e_logType::LOG_WARNING << nlinestr + "ECWS group of measurements defined, using *ECWS keyword, but no measurement found.";
+			}
+			else
+			{
+				// Initialisation of the water surface height
+				TReal referencelength = 0;
+				for (auto &itECWSMeas : itECWS.measECWS)
+				{
+					TPositionVector stationPos = itECWSMeas.targetPos->getEstimatedValue();
+					TLOR2LOR transformation(itECWSMeas.targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+					transformation.transform(stationPos);
+					auto refFrame = fPointTransfo.getRefFrame();
+
+					if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+					{
+						if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+							TXYH2CCS::CCS2XYHg2000Machine(stationPos);
+						else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+							TXYH2CCS::CCS2XYHg1985Machine(stationPos);
+						else
+							TXYH2CCS::CCS2XYHs(stationPos);
+						referencelength += stationPos.getH().getMetresValue();
+					}
+					else
+					{
+						referencelength += stationPos.getZ().getMetresValue();
+					}
+
+					if (!fData.getConfig().sim.isActive())
+					{
+						TFreeVector measValue(0, 0, itECWSMeas.getDistance(), TCoordSysFactory::ECoordSys::k3DCartesian);
+						transformation.transform(measValue);
+						referencelength += measValue.getZ().getMetresValue();
+					}
+				}
+				referencelength /= numberOfMeasurements;
+
+				TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS.romName.data());
+
+				itECWS.fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
+			}
+		}
+
+		for (auto &itECWI : it.node->data.get()->measurements.fECWI)
+		{
+			// Create the fixed reference point for the wire
+			TReal referencePoint[3] = {0, 0, 0};
+			TPositionVector firstAnchorPos = itECWI.anchorPtFirst->getEstimatedValue();
+
+			TLOR2LOR firstAnchor2Root(itECWI.anchorPtFirst->getFrameTreePosition(), fTree.begin(), "FirstAnchor2ROOT");
+			firstAnchor2Root.transform(firstAnchorPos);
+
+			TPositionVector secondAnchorPos = itECWI.anchorPtSecond->getEstimatedValue();
+			TLOR2LOR secondAnchor2Root(itECWI.anchorPtSecond->getFrameTreePosition(), fTree.begin(), "SecondAnchor2ROOT");
+			secondAnchor2Root.transform(secondAnchorPos);
+
+			// Fixed reference point for the ECWI measurement
+			TPositionVector refPointVector = (TFreeVector(firstAnchorPos) + TFreeVector(secondAnchorPos)) * 0.5;
+
+			// Calculation of the initial approximated values for the wire bearing and slope
+			TFreeVector anchorVector = secondAnchorPos - firstAnchorPos;
+			TReal bearingLineVectorAngle = atan2q(anchorVector.getX().getMetresValue(), anchorVector.getY().getMetresValue());
+			TReal slopeLineVectorAngle = atan2q(-anchorVector.getZ().getMetresValue(), anchorVector.getHorDist().getMetresValue());
+
+			// Create the Adjustable Objects
+			std::string name = itECWI.romName + "_" + itECWI.anchorPtFirst->getName() + "_" + itECWI.anchorPtSecond->getName();
+
+			itECWI.referencePoint = refPointVector;
+
+			itECWI.fWireDx = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DX"));
+			itECWI.fWireDz = &fData.getLength().addObject(TAdjustableLength(TLength(0), false, name + "_DZ"));
+
+			itECWI.sagAdjustable = &fData.getLength().addObject(TAdjustableLength(itECWI.instrument.sagWire, itECWI.sagfix, name + "_SAG"));
+
+			TAdjustableAngle adjBearing(TAngle(bearingLineVectorAngle), false, name + "_BEARING");
+			itECWI.fWireBearing = &fData.getAngles().addObject(adjBearing);
+
+			TAdjustableAngle adjSlope(TAngle(slopeLineVectorAngle), false, name + "_SLOPE");
+			itECWI.fWireSlope = &fData.getAngles().addObject(adjSlope);
+		}
+		cleanDeactivated();
+
+		// If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
+		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE)
+		{
+			if (!itECVE->fPtLine)
+			{
+				TReal referencePoint[3] = {0, 0, 0};
+				for (auto itECVEMeas(itECVE->measECVE.begin()); itECVEMeas != itECVE->measECVE.end(); ++itECVEMeas)
+				{
+					TPositionVector targetPos = itECVEMeas->targetPos->getEstimatedValue();
+					TLOR2LOR transformation(itECVEMeas->targetPos->getFrameTreePosition(), fTree.begin(), "Target2ROOT");
+					transformation.transform(targetPos);
+
+					referencePoint[0] += targetPos.getX().getMetresValue();
+					referencePoint[1] += targetPos.getY().getMetresValue();
+					referencePoint[2] += targetPos.getZ().getMetresValue();
+				}
+				int numberOfMeasurements = (int)itECVE->measECVE.size();
+				if (numberOfMeasurements > 0)
+				{
+					referencePoint[0] /= numberOfMeasurements;
+					referencePoint[1] /= numberOfMeasurements;
+					referencePoint[2] /= numberOfMeasurements;
+
+					itECVE->fPtLine = &fData.getPoints().addObject(
+						LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), false,
+							false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
+				}
+				else
+					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
+			}
+
+			// Name of the measured adjustable line
+			auto name = "ECVELINE" + std::to_string(itECVE->romId);
+
+			// Create the measured line:
+			itECVE->fMeasuredLine = &fData.getLines().addObject(
+				LGCAdjustableLine(itECVE->fPtLine, TFreeVector(0.0, 0.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian), std::bitset<3>(111), name));
+		}
+	}
+
+	// cannot predetermine V0 in simulation and LIBR
+	// changed to consilibr
+	if (!fData.getConfig().useConsiLibr.isActive() && !fData.getConfig().sim.isActive())
+		predeterminePLR3DV0();
+
+	// Run through point collection and check whether all points were initialized, assign unknown indices at the same time and check that if PDOR used exactly one point in ROOT defined as CALA
+	for (auto &point : fData.getPoints())
+	{
+		// Check whether initialized
+		if (!point.isInitialized())
+		{
+			logCritical() << "Point: " << point.getName() << " is not initialized!";
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Point: " + point.getName() + " is not initialized!";
+			return false;
+		}
+		// Count number of CALA in ROOT
+		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
+			nCALAinROOT++;
+
+		if (point.hasStandDeviations())
+		{ // If point has standard deviation assigned
+			fStandDevUsed = true;
+			fData.setStandDevUsed();
+		}
+
+		// Assign unknown indices
+		if (!point.isFixed())
+		{
+			point.setFirstUidx(lastUidx);
+			lastUidx = point.getLastUidx() + 1;
+		}
+	}
+
+	// Run through length collection and check whether all objects were initialized, assign unknown indices
+	for (auto &length : fData.getLength())
+	{
+		if (!length.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Length: " + length.getName() + " is not initialized!";
+			return false;
+		}
+
+		if (!length.isFixed())
+		{
+			length.setFirstUidx(lastUidx);
+			lastUidx = length.getLastUidx() + 1;
+		}
+	}
+
+	// Run through angle collection and check whether all objects were initialized, assign unknown indices
+	for (auto &angle : fData.getAngles())
+	{
+		if (!angle.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Angle: " + angle.getName() + " is not initialized!";
+			return false;
+		}
+
+		if (!angle.isFixed())
+		{
+			angle.setFirstUidx(lastUidx);
+			lastUidx = angle.getLastUidx() + 1;
+		}
+	}
+
+	// Run through line collection and check whether all objects were initialized, assign unknown indices
+	for (auto &line : fData.getLines())
+	{
+		if (!line.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Line: " + line.getName() + " is not initialized!";
+			return false;
+		}
+
+		if (!line.isFixed())
+		{
+			line.setFirstUidx(lastUidx);
+			lastUidx = line.getLastUidx() + 1;
+		}
+	}
+
+	// Run through plane collection and check whether all objects were initialized, assign unknown indices
+	for (auto &plane : fData.getPlanes())
+	{
+		if (!plane.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Plane: " + plane.getName() + " is not initialized!";
+			return false;
+		}
+
+		if (!plane.isFixed())
+		{
+			plane.setFirstUidx(lastUidx);
+			lastUidx = plane.getLastUidx() + 1;
+		}
+	}
+
+	// Save total number of unknowns without sigmas
+	fData.fUEOIndices.UIndex = lastUidx;
+
+	return true;
+}
+
+bool TDataAnalyzer::checkConfigOptions()
+{
+	bool isConsistent = false;
+	auto &outputMessages(fData.getFileLogger());
+	int lastCidx = 0; // Constraint indices
+	const TDataTree &fTree = fData.getTree();
+	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+
+	// check for slave group constraints
+	// remove groups with no added constraints
+	fData.getSlaveGroups().remove_if([](TLGCFrameConstraintGroup group) {
+		bool isTrivialGroup = group.getConstraintDimension() == 0;
+		if (isTrivialGroup)
+		{
+			logWarning() << "Slave group" << group.getGroupName() << "is ignored as it adds no constraints.";
+		}
+		return isTrivialGroup;
+	});
+	// set the indices for the slave groups
+	for (auto groupIt = fData.getSlaveGroups().begin(); groupIt != fData.getSlaveGroups().end(); groupIt++)
+	{
+		groupIt->setFirstCIndex(lastCidx);
+		lastCidx += groupIt->getConstraintDimension();
+	}
+	fData.fUEOIndices.CIndex = lastCidx;
+
+	// Not run ALLFIXED and LIBR in the same time
+	if (fData.getConfig().useConsiLibr.isActive() && fData.getConfig().allfixed.isActive())
+	{
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED and CONSI LIBR option cannot be used in the same calculation";
+		return false;
+	}
+
+	// Not SIMU + LIBR with free frame
+	if (fData.getConfig().useConsiLibr.isActive() && fData.getConfig().sim.isActive())
+	{
+		for (auto it(fTree.begin()); it != fTree.end(); ++it)
+		{
+			auto &frame(it.node->data.get()->frame);
+
+			// free frame
+			if (!frame.isFixed())
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + CONSI LIBR options cannot cannot have free subframe";
+				return false;
+			}
+
+			if (frame.hasStandDev())
+			{ // If a frame has standard deviation assigned
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + CONSI LIBR options cannot cannot have free subframe";
+				return false;
+			}
+		}
+	}
+
+	// Not ALLFIXED with free frame
+	if (fData.getConfig().allfixed.isActive())
+	{
+		for (auto it(fTree.begin()); it != fTree.end(); ++it)
+		{
+			auto &frame(it.node->data.get()->frame);
+
+			// free frame
+			if (!frame.isFixed() || frame.hasStandDev())
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED options cannot cannot have free subframe";
+				return false;
+			}
+		}
+	}
+
+	if (fData.getConfig().consCheck.isActive())
+	{
+		// do geometric consistency check already here
+		TLSInputMatricesFiller iFiller(&fData.getTree(), fData.getConfig().referential, fData);
+		TLSInputMatrices im;
+		iFiller.fillMatrices(&fData, true, &im);
+		TLSConsCheck consCheck(fData, im);
+		outputMessages.writeReportHeader("Geometry consistency check:");
+		consCheck.generateErrorMessage();
+
+		if (fData.getConfig().useConsiLibr.isActive())
+		{
+			// attempt to fix potential inconsistencies either by automatically generated or manually specified constraints
+			std::list<TLGCPointConstraintGroup> &pointGroups = fData.getPointGroups();
+			if (fData.getConfig().hasManualConstraints.isActive())
+			{
+				// use the manually defined constraints
+				TLGCPointConstraintGroup manuallyAddedConstraints(fData, fData.getConfig().manualConstraints);
+				// communicate the constraints to the TLGCData object
+				pointGroups.push_back(manuallyAddedConstraints);
+				logWarning() << "User specified constraints were added.";
+			}
+			else
+			{
+				// check if there is a problem or not
+				if (consCheck.getResultStatus())
+				{
+					outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
+					logWarning() << "Consistency check detected no problems and automatic constraint detection did not add any constraints.";
+				}
+				else
+				{
+					// display the output of the consistency check
+					logWarning() << "Trying to automatically identify necessary LIBR constraints to make the problem computable.";
+					// try to automatically generate the necessary constraints
+					std::list<TLGCPointConstraintGroup> proposedConstraintGroups;
+					bool success = consCheck.computeNecessaryLIBRConstraints(proposedConstraintGroups);
+					if (success)
+					{
+						logWarning() << "Automatic Constraint Detection has found a set of constraints making the computation potentially possible.";
+						// communicate the constraints to the TLGCData object
+						for (auto pointGroup : proposedConstraintGroups)
+						{
+							pointGroups.push_back(pointGroup);
+						}
+					}
+					else
+					{
+						logCritical() << "Automatic Constraint detection (*CONSI LIBR) failed to identify enough constraints to make the problem computable. Try manual "
+										 "constraints and consult the error messaeg generated by CONSI";
+						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Automatic constraint detection failed.";
+						return false;
+					}
+				}
+			}
+			// display constraints that are added
+			if (pointGroups.size() != 0)
+			{
+				logWarning() << "~~~~~~ The following point group constraint was added: ~~~~~~";
+				for (auto pointGroup : pointGroups)
+				{
+					pointGroup.plotGroupData();
+				}
+			}
+		}
+		else
+		{
+			// default behavior: show the results of the consistency check
+			if (consCheck.getResultStatus())
+			{
+				outputMessages << TFileLogger::e_logType::LOG_INFO << "No geometric inconsistency detected.";
+			}
+			else
+			{
+				logCritical() << "Nullspace of first design matrix is nonzero. There are groups of unidentifiable objects and the problem has no unique solution";
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Geometric inconsistency detected, see log2 file.";
+				return false;
+			}
+		}
+	}
+
+	// now the point constraint groups should be ready, we can assign the constraint indices
+	// loop over all point constraint groups and set the cindices
+	for (TLGCPointConstraintGroup &group : fData.getPointGroups())
+	{
+		group.setFirstCIndex(lastCidx);
+		lastCidx += group.getConstraintDimension();
+	}
+	fData.fUEOIndices.CIndex = lastCidx;
+
+	// basic number of parameters vs number of equations+constraimts plausibility test
+	if (fData.fUEOIndices.UIndex > fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex)
+	{
+		outputMessages << TFileLogger::e_logType::LOG_ERROR
+					   << "There are more unknowns than equations+constraints, UNKNOWNS = " + std::to_string(fData.fUEOIndices.UIndex) + ", EQUATIONS+CONSTRAINTS = "
+				+ std::to_string(fData.fUEOIndices.EIndex + fData.fUEOIndices.CIndex) + ". LS calculation can not work. Add measurements or fix some unknowns.";
+		return false;
+	}
 
 	return true;
 }

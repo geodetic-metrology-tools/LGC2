@@ -1,6 +1,6 @@
-#include "LGCFrameConstraintGroup.h"
+#include "TLGCFrameConstraintGroup.h"
 
-void LGCFrameConstraintGroup::addFrameToGroup(std::string slave, const TLGCData &projData)
+void TLGCFrameConstraintGroup::addFrameToGroup(std::string slave, const TLGCData &projData)
 {
 	TDataTreeIterator slaveIt = projData.locateNode(slave);
 	TAdjustableHelmertTransformation &slaveFrame = projData.locateNode(slave).node->data.get()->frame;
@@ -41,13 +41,13 @@ void LGCFrameConstraintGroup::addFrameToGroup(std::string slave, const TLGCData 
 	slaves.push_back(slave);
 }
 
-bool LGCFrameConstraintGroup::isPartOfGroup(std::string frame)
+bool TLGCFrameConstraintGroup::isPartOfGroup(std::string frame)
 {
 	return std::count(slaves.begin(), slaves.end(), frame) > 0;
 }
 
 #if USE_SERIALIZER
-void LGCFrameConstraintGroup::serialize(ObjectSerializer &obj) const
+void TLGCFrameConstraintGroup::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("groupName", groupName);
 	obj.addProperty("constraintDim", constraintDim);

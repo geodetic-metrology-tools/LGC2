@@ -34,7 +34,7 @@ set(tests_SOURCES
 	${LGCCoreTests_MODULE_PATH}/sources/main.cpp
 	${LGCCoreTests_MODULE_PATH}/sources/tests_with_ScaleInstr.cpp
 	${LGCCoreTests_MODULE_PATH}/sources/testAllfixed.cpp
-	${LGCCoreTests_MODULE_PATH}/sources/testLIBR.cpp
+	${LGCCoreTests_MODULE_PATH}/sources/testPointGroupConstraints.cpp
 	${LGCCoreTests_MODULE_PATH}/sources/testLgc1Reader.cpp
 )
 
@@ -49,7 +49,7 @@ set(tests_INPUT
 	${LGCCoreTests_MODULE_PATH}/headers/testDVER.h
 	${LGCCoreTests_MODULE_PATH}/headers/tests_with_ScaleInstr.h
 	${LGCCoreTests_MODULE_PATH}/headers/testAllfixed.h
-	${LGCCoreTests_MODULE_PATH}/headers/testLIBR.h
+	${LGCCoreTests_MODULE_PATH}/headers/testPointGroupConstraints.cpp
 	${LGCCoreTests_MODULE_PATH}/headers/testLgc1Reader.h
 )
 

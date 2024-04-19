@@ -72,7 +72,7 @@ void TLSCalcRelativeErrorPoint::setSigma(TVector sigmas)
 {
 	if (sigmas.size() != 5)
 	{
-		std::logic_error("There need to be 5 relative error sigmas assigned.");
+		throw std::logic_error("There need to be 5 relative error sigmas assigned.");
 	}
 	fSigmaL = TLength(sigmas(0));
 	fSigmaG = TAngle(sigmas(1));

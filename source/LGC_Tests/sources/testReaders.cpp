@@ -86,9 +86,7 @@ namespace tut
 
 		// calc options
 		//
-		ensure("All options must be OFF ion init", 
-			!cfg.allfixed.isActive() && !cfg.nodup.isActive() && 
-			!cfg.libre.isActive()    && !cfg.pdor.isActive() && !cfg.sim.isActive());
+		ensure("All options must be OFF on init", !cfg.allfixed.isActive() && !cfg.nodup.isActive() && !cfg.pdor.isActive() && !cfg.sim.isActive());
 		//
 		TKeyALLFIXED c1(proj);
 		c1.parse(empty, true, -1);
@@ -106,10 +104,6 @@ namespace tut
         cfg.allfixed = TLGCConfig::TBinaryOption(false);
 		LGCAdjustablePoint::setAllFixedParam(false);
 
-		//
-		TKeyLIBR c3(proj);
-		c3.parse(empty, true, -1);
-		ensure("LIBRE must be ON now", cfg.libre.isActive());
 		//
 		TKeyPDOR c4(proj);
 		ensure_THROW(c4.parse(empty, true, -1), std::runtime_error);

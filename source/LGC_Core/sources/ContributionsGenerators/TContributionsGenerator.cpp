@@ -1422,8 +1422,7 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 
 	// Compute the variance of the observation
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue() + incly.target.sigmaPpm.getRadiansValue())
-		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue())
-		+ pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
+		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 
 	// CalcMeas, transformationContributions, variance
 	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt), obsVariance};
@@ -1927,6 +1926,14 @@ void TContributionsGenerator::addTransformationsContributions(const TLOR2LOR &tr
 	}
 }
 
+void TContributionsGenerator::addTransformationsContributions(const TLOR2LOR &lorTrafo,
+	const TPositionVector &pointPos,
+	const Eigen::Vector3d &vec,
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib)
+{
+	addTransformationsContributions(lorTrafo, pointPos, vec[0], vec[1], vec[2], transfContrib);
+}
+
 void TContributionsGenerator::addTransformationsContributions3D(const TLOR2LOR &lorTrafo,
 	const TPositionVector &pointPos,
 	const TFreeVector &line1AMat,
@@ -1989,6 +1996,15 @@ void TContributionsGenerator::addTransformationsContributions3D(const TLOR2LOR &
 		TransformationContrib3D stContrib = {firstEqContribSt, secondEqContribSt, thirdEqContribSt};
 		transfContrib.push_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>(*it->adjTrafo, stContrib));
 	}
+}
+
+void TContributionsGenerator::addTransformationsContributions3D(const TLOR2LOR &lorTrafo,
+	const TPositionVector &pointPos,
+	const Eigen::Matrix3d &AMat,
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> &transfContrib)
+{
+	TFreeVector line1(AMat.row(0)), line2(AMat.row(1)), line3(AMat.row(2));
+	addTransformationsContributions3D(lorTrafo, pointPos, line1, line2, line3, transfContrib);
 }
 
 void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR &lorTrafo, const Eigen::Matrix3d &Amat, Point3DContrib &pointContrib, bool station)
@@ -2058,4 +2074,95 @@ std::string TContributionsGenerator::getNameAndLine(const LGCAdjustablePoint &po
 void TContributionsGenerator::generateContributionError(const std::string &message) const
 {
 	throw std::logic_error(message);
+}
+
+LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(const TLGCPointConstraintGroup pointConstraintGroup, const TLGCData &data)
+{
+	// all constraints (COG, Momentum and scale) are computed, the inputmatrixfiller will use only the activated ones
+	PointGroupConstraintContrib3D resultCOG;
+	PointGroupConstraintContrib3D resultMOM;
+	PointGroupConstraintContrib resultScale;
+
+	//// Scale Constraint
+	//// we use here the version sum |p_i-COG(p)|^2
+	//// note d (p_i-COG(p)) / d(p_i) = (1-1/#points)Id
+
+	// preparatory steps before computations are done in a loop over affected points
+	std::set<std::string> affectedPoints = pointConstraintGroup.getAffectedPoints();
+	int numberOfPoints = affectedPoints.size();
+	if (numberOfPoints == 0)
+	{
+		throw std::logic_error("Contribution of point constraint group undefined for empty group.");
+	}
+	double averagingFactor = 1.0 / double(numberOfPoints);
+	Eigen::Vector3d provCOG = pointConstraintGroup.getProvCOG();
+	Eigen::Vector3d estCOG = pointConstraintGroup.computeEstCOG();
+	Eigen::Vector3d currentMomentum = Eigen::Vector3d::Zero();
+	double provScale = pointConstraintGroup.getProvScale();
+	double currentScale = 0;
+
+	// the COG misclosure can be computed outside the loop
+	resultCOG.constraintMisclosure = estCOG - provCOG;
+
+	// all derivatives and the misclosure of the Momentum and scale constraint require a loop over the affected points
+	for (auto pointName : affectedPoints)
+	{
+		// preparatory data used in computations
+		LGCAdjustablePoint point = data.getPoints().getObject(pointName);
+		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
+		TPositionVector pointInSubframe = point.getEstimatedValue();
+		TPositionVector pointInRoot = point.getEstimatedValue();
+		sub2Root.transform(pointInRoot);
+		Eigen::Vector3d positionInRoot = pointInRoot.toRealVector();
+		Eigen::Vector3d provisionalInRoot = pointConstraintGroup.getProvRootPos(pointName);
+
+		// COG
+		// derivative wrt point coordinates
+		resultCOG.PointContrib[pointName] = averagingFactor * sub2Root.getPartialDerivativeWrtPosition();
+
+		// derivative wrt transformations
+		Eigen::Matrix3d normalizedIdentity;
+		normalizedIdentity.setIdentity();
+		normalizedIdentity *= averagingFactor;
+
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> point2RootTransformationsContrib;
+		addTransformationsContributions3D(sub2Root, pointInSubframe, normalizedIdentity, point2RootTransformationsContrib);
+		resultCOG.TransformContrib[pointName] = point2RootTransformationsContrib;
+
+		// Momentum
+		// update momentum sum used in momentum misclosure
+		Eigen::Vector3d diff2Root = provCOG - provisionalInRoot;
+		currentMomentum += positionInRoot.cross(diff2Root);
+
+		// derivative wrt point coordinates
+		// prepare the matrix that is multiplied from the left with the partial derivatives
+		Eigen::Matrix3d A = Eigen::Matrix3d::Zero();
+		A << 0, -diff2Root[2], diff2Root[1], diff2Root[2], 0, -diff2Root[0], -diff2Root[1], diff2Root[0], 0;
+		resultMOM.PointContrib[pointName] = -A * sub2Root.getPartialDerivativeWrtPosition();
+
+		// derivative wrt transformations
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> point2RootTransformationsContribMOM;
+		addTransformationsContributions3D(sub2Root, pointInSubframe, -A, point2RootTransformationsContribMOM);
+		resultMOM.TransformContrib[pointName] = point2RootTransformationsContribMOM;
+
+		// Scale
+		Eigen::Vector3d diff2COG = positionInRoot - estCOG;
+
+		// used in scale misclosure
+		currentScale += pow2(diff2COG.norm());
+		// derivatives with respect to point coordinates:
+		Eigen::Vector3d Aline = 2 * diff2COG;
+		Eigen::Vector3d derWRTPos = (Aline.transpose() * sub2Root.getPartialDerivativeWrtPosition()).transpose();
+		resultScale.PointContrib[pointName] = derWRTPos;
+		// derivative wrt transformations
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> point2RootTransformationsContribScale;
+		addTransformationsContributions(sub2Root, pointInSubframe, Aline, point2RootTransformationsContribScale);
+		resultScale.TransformContrib[pointName] = point2RootTransformationsContribScale;
+	}
+
+	// set the momentum and scale misclosure which are ready now
+	resultMOM.constraintMisclosure = currentMomentum;
+	resultScale.constraintMisclosure = currentScale - provScale;
+
+	return LIBRPointGroupContrib{resultCOG, resultMOM, resultScale};
 }
