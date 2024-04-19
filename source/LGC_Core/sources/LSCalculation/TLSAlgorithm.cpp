@@ -3,6 +3,7 @@
 
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
+#include <unsupported/Eigen/SparseExtra>
 
 TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosterioriVariances(false), fPointTransformer(&data.getTree(), data.getConfig().referential),lastSimu(true)
 {
