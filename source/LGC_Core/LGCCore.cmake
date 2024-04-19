@@ -1,8 +1,8 @@
 # Configure version when called from UI
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR "2")
-set (LGC_VERSION_MINOR "7")
-set (LGC_VERSION_PATCH "beta_6_Apriori_covariances")
+set (LGC_VERSION_MINOR "8")
+set (LGC_VERSION_PATCH "beta_1_Apriori_covariances")
 
 # Versions files
 configure_file (
