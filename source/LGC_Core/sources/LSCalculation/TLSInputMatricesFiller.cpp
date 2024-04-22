@@ -175,7 +175,14 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 		//			point.getFirstWeightIndex(), point.getFirstWeightIndex(), -Eigen::MatrixXd::Identity(point.getNumUnkn(), point.getNumUnkn()));
 
 			TPositionVector estPos = point.getEstimatedValue();
-			TPositionVector provPos = point.getProvisionalValue();
+			LGCAdjustablePoint provPoint = point;
+			if (projData->getConfig().referential != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+			{
+				// this only has a effect for points in root as otherwise the point will be already in 3d coordinate system (its variable in the adjustment is the cartesian coordinate in the subframe)
+				// if the point is in root, the provisional value is in the reference frame coordinates but the "observation" is applied in ccs, the variable in the adjustemnt is in ccs
+				provPoint.changeProvValueToCCS(projData);
+			}
+			TPositionVector provPos = provPoint.getProvisionalValue();
 			TFreeVector Misc = estPos - provPos;
 			TVector weightMisclosure(3);
 			weightMisclosure << Misc.getX(), Misc.getY(), Misc.getZ();
@@ -183,6 +190,7 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			for (int i = 0; i < point.getNumUnkn(); i++)
 			{
 				// weights associated part of A matrix
+				// NOTE: z derivative is only an approximation. really the local vertical nneds to be computed to get the h sensitivity wrt xyz if point is in root.
 				isProcessOK = isProcessOK && matrices->setWeightsFirstDgnMtrxElement(point.getFirstWeightIndex() + i, point.getFirstUidx() + i, 1);
 				// weight associated misclosure
 				isProcessOK = isProcessOK && matrices->setWeightMisclosureVectorElement(point.getFirstWeightIndex() + i, weightMisclosure(relInd.at(i)));
