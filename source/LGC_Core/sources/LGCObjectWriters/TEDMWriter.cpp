@@ -2,7 +2,6 @@
 #include "TObservationFormat.h"
 #include "TAStreamFormatter.h"
 
-#include "TTSTNWriter.h" // getDistanceSigmaInMM, getDistanceSensibility
 
 TEDMWriter::TEDMWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream), isAllfixed(false)
 {}
@@ -183,8 +182,8 @@ void TEDMWriter::writeDSPTResultsData(const std::list<TDSPT> measDSPT, const TIn
 		//write the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual().getMMetresValue());//Output value in meters [mm], stored in [m]
 
-		//write the sensibility
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, TTSTNWriter::getDistanceSensibility<TDSPT, TInstrumentData::TEDM>(&ItDSPT, instrPos, instr));
+		//write sensibility, stored unitless but in res file displayed as mm/cm		
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * ItDSPT.fDistSensi);
 
 		//write the res/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDSPT.getDistanceResidual() / ItDSPT.target.sigmaCombinedDist);

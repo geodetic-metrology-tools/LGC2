@@ -5,8 +5,7 @@
 //////Total station measurements
 ///////////////////////////////////////////////////////////
 TPLR3D::TPLR3D(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt) : 
-			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>(pos, tgt),
-			fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
+			TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>(pos, tgt), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf), fDistSensi(NO_VALf)
 			{ 
 				fAllFixedRx[0] = (TAngle(NO_VALf));
 				fAllFixedRy[0] = (TAngle(NO_VALf));
@@ -18,11 +17,11 @@ TPLR3D::TPLR3D(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget t
 }
 
 TLINE::TLINE(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt): 
-TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
+TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf), fDistSensi(NO_VALf)
     {}
 
 TLINE::TLINE(const LGCAdjustablePoint& pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v) :
-TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf)
+TAScalarMeas<TInstrumentData::TPOLAR::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf), fDistSensi(NO_VALf)
     {}
 
 
@@ -166,6 +165,8 @@ void TPLR3D::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fAllFixedRx", fAllFixedRx);
 	obj.addProperty("fAllFixedRy", fAllFixedRy);
 	obj.addProperty("fAllFixedV0", fAllFixedV0);
+	// sensibility stored unitless
+	obj.addProperty("fDistSensi", fDistSensi);
 }
 
 void TANGL::serialize(ObjectSerializer &obj) const
@@ -185,6 +186,8 @@ void TLINE::serialize(ObjectSerializer &obj) const
 	TAScalarMeas<TInstrumentData::TPOLAR::TTarget>::serialize(obj);
 	obj.addProperty("fAllFixedCs", fAllFixedCs.getMetresValue());
 	obj.addProperty("fAllFixedHi", fAllFixedHi.getMetresValue());
+	// sensibility stored unitless
+	obj.addProperty("fDistSensi", fDistSensi);
 }
 
 void TECTH::serialize(ObjectSerializer &obj) const
@@ -206,6 +209,8 @@ void TDSPT::serialize(ObjectSerializer &obj) const
 {
 	TAScalarMeas<TInstrumentData::TEDM::TTarget>::serialize(obj);
 	obj.addProperty("fAllFixedCs", fAllFixedCs.getMetresValue());
+	// sensibility stored unitless
+	obj.addProperty("fDistSensi", fDistSensi);
 }
 
 void TDVER::serialize(ObjectSerializer &obj) const

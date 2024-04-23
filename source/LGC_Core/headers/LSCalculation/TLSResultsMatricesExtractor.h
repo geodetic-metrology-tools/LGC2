@@ -16,6 +16,8 @@ class TUVD;
 class TUVEC;
 class TPdorObs;
 class TRADI;
+struct TEDM;
+struct TTSTN;
 struct TLEVEL;
 struct TECHOROM;
 struct TECVEROM;
@@ -70,7 +72,10 @@ public:
 	bool extractVarCovarParams(const TLSResultsMatrices&);
 
 	/// Extract results for relative error computation, returning true if successful, false otherwise
-	bool extractRelError(const TLSResultsMatrices&);
+	bool extractRelError();
+	
+	/// Extract distance sensitivities
+	void computeDistSensi();
 
 private:
 	/*!@name Methods responsible for extracting corrections from result matrices and filling them into the adjustable objects.*/
@@ -104,7 +109,7 @@ private:
 		void extractDistObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget>& distanceMeas);
 
 		/// Sets the PLR3D measurement residual.
-		void extractPLR3DObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles,  2>& plr3DMeas);
+		void extractPLR3DObs(const TLSResultsMatrices& rm, TPLR3D& plr3DMeas);
 
 
 		/// Sets the UVD measurement residual.
@@ -131,7 +136,7 @@ private:
 		void extractORIEROMObs(const TLSResultsMatrices& rm, TORIEROM& orieMeas);
 
 		/// Sets the DSPT measurement residual.
-		void extractDSPTObs(const TLSResultsMatrices& rm, TAScalarMeas<TInstrumentData::TEDM::TTarget>& distanceMeas);
+		void extractDSPTObs(const TLSResultsMatrices &rm, TDSPT &distanceMeas);
 
 		/// Sets the DVER measurement residual.
 		void extractDVERObs(const TLSResultsMatrices& rm, std::list<TDVER>& dver);
@@ -160,7 +165,18 @@ private:
 
 
 	TLGCData*				fDataSet;			/*!< pointer to a project data*/
-	bool					fLastIteration;		/*!< indicates if the convergence criteria has been exceeded and if a new iteration is necessary (default value = false)*/
+		bool fLastIteration; /*!< indicates if the convergence criteria has been exceeded and if a new iteration is necessary (default value = false)*/
 };
-#endif
 
+// TMEAS must have distance observation and residual, and its target a distCorrectionAdjustable
+// TINSTR must have property instrHeight
+template<class TMEAS, class TINSTR>
+TReal computeDistanceSensibility(TMEAS const *const meas, LGCAdjustablePoint const *const instrPos, const TINSTR &instr)
+{
+	// computes the distance sensibility (unitless)
+	TReal dz = meas->targetPos->getEstValue(2) + meas->target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
+	return meas->target.distCorrectionUnknown ? dz / (meas->getDistance() + meas->getDistanceResidual() + meas->target.distCorrectionAdjustable->getEstimatedValue())
+											  : dz / (meas->getDistance() + meas->getDistanceResidual());
+}
+
+#endif

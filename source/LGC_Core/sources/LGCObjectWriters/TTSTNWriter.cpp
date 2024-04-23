@@ -820,8 +820,8 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D>& measPLR3D, const TIns
 		(*stream) << " | ";
 
 		//DIST
-		//sensibility		
-        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSensibility<TPLR3D>(&ItPLR3D, instrPos, instr));
+		//write sensibility, stored unitless but in res file displayed as mm/cm		
+        (*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * ItPLR3D.fDistSensi);
 
 		if (!ItPLR3D.target.distCorrectionAdjustable->isFixed()){
 			//write the distance cste calculated(TLength (M))
@@ -1061,8 +1061,8 @@ void TTSTNWriter::writeDISTResults(const std::list<TLINE>& measDIST, const TInst
 		//write the residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDIST.getDistanceResidual().getMMetresValue());
 
-		//write the sensibility	
-        (*stream).writeDouble(obsResWidth, lengthResPrecision, getDistanceSensibility<TLINE>(&ItDIST, instrPos, instr));
+		//write sensibility, stored unitless but in res file displayed as mm/cm		
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, 10 * ItDIST.fDistSensi);
 
 		//write the residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, (ItDIST.getDistanceResidual().getMetresValue() / ItDIST.target.sigmaCombinedDist.getMetresValue() ) );

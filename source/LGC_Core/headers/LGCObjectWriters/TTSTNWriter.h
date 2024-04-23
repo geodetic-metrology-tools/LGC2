@@ -93,15 +93,6 @@ public:
         return (meas->target.sigmaDist + meas->target.ppmDist * meas->getDistance() / 1000)*M2MM;
     }
 
-    // TMEAS must have distance observation and residual, and its target a distCorrectionAdjustable
-    // TINSTR must have property instrHeight
-    template<class TMEAS, class TINSTR>
-    static TReal getDistanceSensibility(TMEAS const * const meas, LGCAdjustablePoint const * const instrPos, const TINSTR& instr) {
-        TReal dz = meas->targetPos->getEstValue(2) + meas->target.targetHt - instrPos->getEstValue(2) - instr.instrHeight;
-        return meas->target.distCorrectionUnknown ?
-            10 * dz / (meas->getDistance() + meas->getDistanceResidual() + meas->target.distCorrectionAdjustable->getEstimatedValue()) :
-            10 * dz / (meas->getDistance() + meas->getDistanceResidual());
-    }
 
     /// Get the estimated euclidean distance between two points
     static TReal getEstEuclDistance(LGCAdjustablePoint const * const p1, LGCAdjustablePoint const * const p2){

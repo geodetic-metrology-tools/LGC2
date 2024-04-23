@@ -58,6 +58,8 @@ public:
 	TAngle fAllFixedRx[2];
 	/// Allfixed parameter: Ry
 	TAngle fAllFixedRy[2];
+	// distance sensibility
+	TReal fDistSensi;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -135,6 +137,8 @@ public:
 	TLength fAllFixedCs;
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
+	// distance sensibility
+	TReal fDistSensi;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -234,8 +238,8 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget>
 public:
 	/*!@name Constructors */
 	//@{
-	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt) : TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt), fAllFixedCs(NO_VALf) {}
-	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt, TLength v) : TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf)
+	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt) : TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fDistSensi(NO_VALf) {}
+	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt, TLength v) : TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf), fDistSensi(NO_VALf)
 	{
 	}
 	//@}
@@ -245,6 +249,8 @@ public:
 
 	/// Allfixed parameter: distance correction
 	TLength fAllFixedCs;
+	// distance sensibility
+	TReal fDistSensi;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
