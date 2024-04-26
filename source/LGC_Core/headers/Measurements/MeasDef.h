@@ -238,8 +238,12 @@ class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget>
 public:
 	/*!@name Constructors */
 	//@{
-	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt) : TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fDistSensi(NO_VALf) {}
-	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt, TLength v) : TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf), fDistSensi(NO_VALf)
+	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt) :
+		TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt), fAllFixedCs(NO_VALf), fDistSensi(NO_VALf)
+	{
+	}
+	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt, TLength v) :
+		TAScalarMeas<TInstrumentData::TEDM::TTarget>(pos, tgt, v), fAllFixedCs(NO_VALf), fDistSensi(NO_VALf)
 	{
 	}
 	//@}
