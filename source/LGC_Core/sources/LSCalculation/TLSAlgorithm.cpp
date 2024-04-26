@@ -37,7 +37,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 	fNumberOfIterations = 0;
 
 	TFileLogger &fileLog = data.getFileLogger();
-	
+
 	// Iterate to find solution
 	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
 	{
@@ -113,6 +113,8 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 	}
 
 	fExtractor->extractResiduals(*resultMatrices);
+	// compute the distance sensitivities
+	fExtractor->computeDistSensi();
 
 	TReal S0 = sqrt(resultMatrices->getSigmaZero2());
 	// Apply S02 only if APRI is not used and S02 is outside the limits
@@ -148,7 +150,7 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 
 	if (data->getConfig().fRelErrors.points.size() > 0 || data->getConfig().fRelErrors.frames.size() > 0)
 	{
-		if (!fExtractor->extractRelError(*resultMatrices))
+		if (!fExtractor->extractRelError())
 		{
 			logWarning() << "Problem during relative error computation";
 			return false;

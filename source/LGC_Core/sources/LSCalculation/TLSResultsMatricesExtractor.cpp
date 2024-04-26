@@ -5,6 +5,7 @@
 
 #include "TLSResultsMatrices.h"
 
+
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData *fData) : fDataSet(fData), fLastIteration(false)
 {
 }
@@ -103,9 +104,9 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices &rm)
 			// In every node iterate through the EDM's measurements
 			for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
 			{
-				// Iterate through DPST measurements
-				for (auto &itDPST : itEDM->measDSPT)
-					extractDSPTObs(rm, itDPST);
+				// Iterate through DSPT measurements
+				for (auto &itDSPT : itEDM->measDSPT)
+					extractDSPTObs(rm, itDSPT);
 			}
 
 			// In every node iterate through the LEVEL's measurements
@@ -221,7 +222,7 @@ void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices &rm, T
 	}
 }
 
-void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TEDM::TTarget> &distanceMeas)
+void TLSResultsMatricesExtractor::extractDSPTObs(const TLSResultsMatrices &rm, TDSPT &distanceMeas)
 {
 	MatrixIndex i = distanceMeas.getFirstObservationIndex();
 	if (i < rm.getResidualsVectByConst()->size())
@@ -246,7 +247,7 @@ void TLSResultsMatricesExtractor::extractDistObs(const TLSResultsMatrices &rm, T
 	}
 }
 
-void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices &rm, TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2> &plr3DMeas)
+void TLSResultsMatricesExtractor::extractPLR3DObs(const TLSResultsMatrices &rm, TPLR3D &plr3DMeas)
 {
 	MatrixIndex ANGLidx = plr3DMeas.getFirstObservationIndex();
 	if (ANGLidx < rm.getResidualsVectByConst()->size())
@@ -857,7 +858,7 @@ void TLSResultsMatricesExtractor::extractTransformationVarCovar(const TLSResults
 	}
 }
 
-bool TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices &rm)
+bool TLSResultsMatricesExtractor::extractRelError()
 {
 	try
 	{
@@ -884,4 +885,43 @@ bool TLSResultsMatricesExtractor::extractRelError(const TLSResultsMatrices &rm)
 	}
 
 	return true;
+}
+
+void TLSResultsMatricesExtractor::computeDistSensi()
+{
+	try
+	{
+		// loop containing all measurements with distance sensitivity value: *PLR3D distances, *DIST distances, *DHOR and *DSPT
+		for (TDataTreeIterator itTree = fDataSet->getTree().begin(); itTree != fDataSet->getTree().end(); itTree++)
+		{
+			// Iterate through the Total station measurements (TSTN)
+			for (auto itTSTN : itTree.node->data->measurements.fTSTN)
+			{
+				// Iterate through every ROM of TSTN
+				for (auto itROM : itTSTN->roms)
+				{
+					for (auto &itDIST : itROM->measDIST)
+						itDIST.fDistSensi = computeDistanceSensibility(&itDIST, itTSTN->instrumentPos, itTSTN->instrument);
+
+					for (auto &itDHOR : itROM->measDHOR)
+						itDHOR.fDistSensi = computeDistanceSensibility(&itDHOR, itTSTN->instrumentPos, itTSTN->instrument);
+
+					for (auto &itPLR3D : itROM->measPLR3D)
+						itPLR3D.fDistSensi = computeDistanceSensibility(&itPLR3D, itTSTN->instrumentPos, itTSTN->instrument);
+				}
+			}
+
+			// In every node iterate through the EDM's measurements
+			for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
+			{
+				// Iterate through DSPT measurements
+				for (auto &itDSPT : itEDM->measDSPT)
+					itDSPT.fDistSensi = computeDistanceSensibility(&itDSPT, itEDM->instrumentPos, itEDM->instrument);
+			}
+		}
+	}
+	catch (std::exception const &excp)
+	{
+		fDataSet->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
+	}
 }
