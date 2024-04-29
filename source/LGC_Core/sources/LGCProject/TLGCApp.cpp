@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
-const std::string TLGCApp::fCopyright = "Copyright 2022, CERN SU. All rights reserved.";
+const std::string TLGCApp::fCopyright = "Copyright 2024, CERN BE-GM. All rights reserved.";
 std::string TLGCApp::startProcessingTimestampISO = "";
 std::string TLGCApp::startProcessingTimestampOUT = "";
 double TLGCApp::processingElapsedSeconds = 0;
