@@ -33,9 +33,9 @@ bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& t
 	try{
 		//If TRGT keyword used,  target has to be updated.
 		if (firstline && tokens.size() == 4 && tokens.at(2) == "TRGT")
-			currentTargetApplied = tokens.at(3);
+			defaultTargetApplied = tokens.at(3);
 		else if(firstline) //Line starts with '*', but TRGT keyword not used, i.e. taking default taget value from ROM
-			currentTargetApplied = getROM()->defaultTargetId;
+			defaultTargetApplied = getROM()->defaultTargetId;
 	}
 	catch(std::exception e) { }
 
@@ -115,7 +115,7 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 	if (firstline){ //If this is the line starting with *UVEC, where only default target can be changed, use the default from the CAM definition or override it
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
+		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
         getCAM().uvecActive = getCAM().isActive() && activeLine; // Active only if station is active as well
 	}
 	else{//Get here, if the line does NOT start with a "*", it means that is the concrete measurement 
@@ -136,18 +136,9 @@ void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, in
 			for(auto& point : camera.measUVEC)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("An UVEC measurement is duplicated");
-
 		
-		
-		std::string currentTarget = currentTargetApplied; //Take the current target, which is used
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
-
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(camera.instrument.targets, currentTarget));	//If not found throws exception, that the target was not found
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(camera.instrument.targets, opts.getParamS("TRGT", defaultTargetApplied))); 
 		
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
@@ -195,7 +186,7 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 
 	if (firstline){ //If this is the line starting with *UVD, where only default target can be changed
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		currentTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
+		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
         getCAM().uvdActive = getCAM().isActive() && activeLine; // Active only if station is active as well
     }
 	else{//Enter if the line does NOT start with a "*"
@@ -217,15 +208,8 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("An UVD measurement is duplicated");
 		
-		std::string currentTarget = currentTargetApplied; //Take the current target, which is used
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
-
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(camera.instrument.targets, currentTarget));	//If not found throws exception, that the target was not found
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(camera.instrument.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 		
 		// optionally change target sigmas
 		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX);
@@ -317,16 +301,8 @@ void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		// get a station reference to update default values
 		auto& stn(getStation());
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
-
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 
 		//NODUP used
 		if (proj.getConfig().nodup.isActive())
@@ -412,19 +388,11 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
-
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 		
-      tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaAngl));
-      tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaAngl));
+		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 		
 		// set measurement value
 		TANGL angl(obspt, tgt);
@@ -472,16 +440,8 @@ void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, in
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
-
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 		
 		// set optional target modifications
 		tgt.sigmaZenD            = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaZenD));
@@ -548,22 +508,14 @@ void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, in
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DIST measurement is duplicated");
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
-
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 		
-      tgt.sigmaDist            = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
-      tgt.ppmDist              = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
-      tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
-      tgt.sigmaTargetHt        = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
-      tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+		tgt.sigmaDist            = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
+		tgt.ppmDist              = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
+		tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
+		tgt.sigmaTargetHt        = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
+		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store  the measured value
 		getROM()->measDIST.emplace_back(
@@ -598,7 +550,7 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		fScaleInstID =  tokens.at(3);
 
 		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
         
         // Update the activation status of the ECTH rom:
         getROM()->ecthActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
@@ -620,10 +572,8 @@ void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, in
 				if (stPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ECTH measurement is duplicated");
 	   
-
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		// get a copy of the specified target and update it
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied)); 
 
 		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
 		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
@@ -660,7 +610,7 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		fVertAngle = TAngle(std::stor(tokens.at(3)), TAngle::kGons);
 
 		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 
         // Update the activation status of the ECDIR rom:
         getROM()->ecdirActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
@@ -683,9 +633,8 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 					throw std::runtime_error("A ECDIR measurement is duplicated");
 
 
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		// get a copy of the specified target and update it
+		auto scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied));
 
 		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
 		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
@@ -733,20 +682,12 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
-		//Use the current target (either from V0 or from the previous measurement)
-		std::string currentTarget = currentTargetApplied;
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		if (opts.has("TRGT")){
-			currentTarget = opts.getParam("TRGT");
-			currentTargetApplied = currentTarget;
-		}
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 
-		// get a copy of  the specified target and update it
-		auto tgt(finstruments.getDevice(stn.targets, currentTarget));
-
-      tgt.sigmaDist = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
-      tgt.ppmDist = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
-      tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+		tgt.sigmaDist = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
+		tgt.ppmDist = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
+		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store the measured value
 		getROM()->measDHOR.emplace_back(
@@ -772,7 +713,6 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	//TOptionHelper opts(tokens.cbegin(), tokens.cend());
 
 	if (firstline) {
 		// look up station point and EDM ID
@@ -818,16 +758,14 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// get a station reference to update default values
 		TInstrumentData::TEDM& instrument = proj.getCurrentNode().measurements.fEDM.back().instrument;
 
-		// update the default target if specified
-		instrument.defTarget  = opts.getParamS("TRGT", instrument.defTarget);
-		// get a copy of  the specified target and update it
-		TInstrumentData::TEDM::TTarget tgt(finstruments.getDevice(instrument.targets, instrument.defTarget));
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(instrument.targets, opts.getParamS("TRGT", instrument.defTarget)));
 		
-      tgt.sigmaDSpt = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDSpt));
-      tgt.ppmDSpt = TLength(opts.getParamRmm2m("PPM", tgt.ppmDSpt));
-      tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
-      tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
-      tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+		tgt.sigmaDSpt = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDSpt));
+		tgt.ppmDSpt = TLength(opts.getParamRmm2m("PPM", tgt.ppmDSpt));
+		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
+		tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
+		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
@@ -920,6 +858,7 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		}
 
         TLEVEL level(refPt, finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
+		level.instrument.defStaffID = opts.getParamS("TRGT", level.instrument.defStaffID);
         level.line = line;
         level.setActive(activeLine);
 
@@ -941,17 +880,16 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 				if (tgtfPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DLEV measurement is duplicated");
 
-		levelGrOfMeas.instrument.defStaffID = opts.getParamS("TRGT",  levelGrOfMeas.instrument.defStaffID); //Overrides current target (staff) ID, current value
-
-		TInstrumentData::TLEVEL::TTarget tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, levelGrOfMeas.instrument.defStaffID);
-
-      tgt.sigmaD       = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaD));
-      tgt.ppmD         = TLength(opts.getParamRmm2m("PPM", tgt.ppmD));
-      tgt.staffHt      = TLength(opts.getParamR("TH", tgt.staffHt)); //Vertical offset of the staff == height
-      tgt.sigmaStaffHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaStaffHt));
+		// get a copy of the specified target and update it
+		auto tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, opts.getParamS("TRGT", levelGrOfMeas.instrument.defStaffID));
+		
+		tgt.sigmaD = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaD));
+		tgt.ppmD         = TLength(opts.getParamRmm2m("PPM", tgt.ppmD));
+		tgt.staffHt      = TLength(opts.getParamR("TH", tgt.staffHt)); //Vertical offset of the staff == height
+		tgt.sigmaStaffHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaStaffHt));
 
 		// Store  the dlev measured value
-      TDLEV dlev(tgtfPoint, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
+		TDLEV dlev(tgtfPoint, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
 		// Store  the dhor measured value if keyword is used
 		if (opts.has("DHOR"))
@@ -994,7 +932,7 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement
 
 		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -1005,9 +943,9 @@ void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
 		TOptionHelper opts(tokens.cbegin()+1, tokens.cend()); 
-		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
 
-		TInstrumentData::TSCALE instr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		// get a copy of the specified target and update it
+		auto instr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied)); 
 
 		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
 		instr.ppmD = TLength(opts.getParamRmm2m("PPM", instr.ppmD));
@@ -1064,7 +1002,7 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		proj.getCurrentNode().measurements.fECVE.emplace_back(ecveRom); //add new round of measurement
 
 		//The SCALE instrument is only the default one used, it is not stored in TECVEROM because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -1077,10 +1015,8 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// look up the stationed point
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
-
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		// get a copy of the specified target and update it
+		auto scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied));
 
 		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
 		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
@@ -1129,7 +1065,7 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
 
 		//The SCALE instrument is only the default one used, it is not stored in TECSPROM because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(4)).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(4)).ID;
 	}
 	else{
         bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -1142,9 +1078,8 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// look up the stationed point
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurement
-		currentTargetApplied = opts.getParamS("SCALE", currentTargetApplied); //If SCALE is used then change ID of CurrentTargetApplied for the following measurements.
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		// get a copy of the specified target and update it
+		auto scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied)); // Throws exception if instrument not found, catched on the top level
 
 		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
 		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
@@ -1218,11 +1153,8 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// get a station reference to update default values
 		TInstrumentData::TPOLAR& instrument = proj.getCurrentNode().measurements.fORIE.back().instrument;
 
-		// update the default target if specified
-		instrument.defTarget  = opts.getParamS("TRGT", instrument.defTarget);
-
-		// get a copy of  the specified target and update it
-		TInstrumentData::TPOLAR::TTarget tgt(finstruments.getDevice(instrument.targets, instrument.defTarget));
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(instrument.targets, opts.getParamS("TRGT", instrument.defTarget)));
 		
 		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE",  tgt.sigmaAngl));
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE",  tgt.sigmaTargetCentering));
@@ -1359,7 +1291,7 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		proj.getCurrentNode().measurements.fINCLY.emplace_back(inclyRom); //add new round of measurement
 
 		//The INCL instrument is only the default one used, it is not stored in TINCLYROM because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fINCL, tokens.at(2)).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fINCL, tokens.at(2)).ID;
 	}
 	else {
 		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -1372,10 +1304,8 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		// look up the stationed point, i.e. the target
 		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
 
-		currentTargetApplied = opts.getParamS("INSTR", currentTargetApplied); //If TINCL is used then change ID of CurrentTargetApplied for the following measurements.
-
 		// get a station reference to update default values
-		TInstrumentData::TINCL instrument = finstruments.getDevice(finstruments.fINCL, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		TInstrumentData::TINCL instrument = finstruments.getDevice(finstruments.fINCL, opts.getParamS("INSTR", defaultTargetApplied)); // Throws exception if instrument not found, catched on the top level
 
 		// get a station reference to update default values
 		//TInstrumentData::TINCL instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
@@ -1446,7 +1376,7 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement
 
 		//The HLSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fHLSR, tokens.at(2)).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fHLSR, tokens.at(2)).ID;
 	}
 	else {
 		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
@@ -1458,16 +1388,9 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-		std::string currentTarget = currentTargetApplied; //Take the current target, which is used
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
-		if (opts.has("INSTR")) {
-			currentTarget = opts.getParam("INSTR");
-			currentTargetApplied = currentTarget;
-		}
-
-		TInstrumentData::THLSR instr = finstruments.getDevice(finstruments.fHLSR, currentTargetApplied); //Throws exception if instrument not found, catched on the top level
+		// get a copy of the specified instrument and update it
+		auto instr = finstruments.getDevice(finstruments.fHLSR, opts.getParamS("INSTR", defaultTargetApplied));
 		TECWSROM& ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
-
 
 		instr.sigmaDist = TLength(opts.getParamRmm2m("OBSE", instr.sigmaDist));
 		instr.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instr.sigmaInstrHeight));
@@ -1545,7 +1468,7 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		proj.getCurrentNode().measurements.fECWI.emplace_back(ecwiRom); // add new round of measurement
 
 		// The WPSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
-		currentTargetApplied = finstruments.getDevice(finstruments.fWPSR, tokens.at(2)).ID;
+		defaultTargetApplied = finstruments.getDevice(finstruments.fWPSR, tokens.at(2)).ID;
 	}
 	else
 	{
@@ -1557,15 +1480,8 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-		std::string currentTarget = currentTargetApplied; // Take the current target, which is used
-		// Overwrite the target if specified and update the 'currentTargetApplied' to be used for upcoming measurements
-		if (opts.has("INSTR"))
-		{
-			currentTarget = opts.getParam("INSTR");
-			currentTargetApplied = currentTarget;
-		}
-
-		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, currentTargetApplied); // Throws exception if instrument not found, caught on the top level
+		// get a copy of the specified instrument and update it
+		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, opts.getParamS("INSTR", defaultTargetApplied)); 
 		TECWIROM &ecwiROMLatest = proj.getCurrentNode().measurements.fECWI.back();
 
 		instr.sigmaX = TLength(opts.getParamRmm2m("XSE", instr.sigmaX));

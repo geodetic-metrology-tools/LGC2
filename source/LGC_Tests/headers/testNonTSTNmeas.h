@@ -361,6 +361,24 @@ PT4 0.7 TRGT T2
 			"REF5 -70.7106781187\n"
 		;
 
+	/*Testing the ECHO SCALE keywords */
+	char const *const ECHO_SCALE_READ = R"(*TITR 
+test readers ECHO SCALE
+*OLOC 
+*INSTR 
+*SCALE RS_1   0.8 0.1 0 0 0
+*SCALE RS_2   0.9 0.2 0 0 0
+*CALA
+P1   10.00000   10.00000   1.00000   
+P2   11.00000   9.00000   2.00000   
+P3   12.00000   13.00000   10.00000   
+*ECHO   RS_1
+P1   0.46232   
+P2   -0.92455   SCALE RS_2
+P3   0.46220
+*END 
+)";
+
 	//----------------------------- ORIE --------------------------------//
 	char const *const orie_SPHE =
 		"*TITR												\n" 
@@ -606,7 +624,29 @@ PT4 0.7 TRGT T2
 		"*END												\n"
 
 		;
-	
+
+	/*Testing the ORIE TRGT keywords */
+	char const *const ORIE_TRGT_READ = R"(*TITR 
+test readers ORIE TRGT
+*OLOC 
+*INSTR 
+*POLAR AT   CCR   0.1898   0   0   0   
+CCR   3   3   0.02   6   0   0   0   0   0   0  
+CCR2   4   4   0.04   3   0   0   0   0   0   0  
+*CALA
+P0   0.00000   0.00000   0.00000   
+P1   10.00000   10.00000   1.00000 
+*ORIE   P0   AT   TRGT CCR2
+P1   50.00030 
+P1   50.00030 TRGT CCR
+P1   50.00030 
+*ORIE   P0   AT   
+P1   50.00030 
+P1   50.00030 TRGT CCR2
+P1   50.00030 
+*END 
+)";
+
 	char const *const OBSXYZ_subframe = R"(*TITR
 Test for correct OBSXYZ handling of measurements in rotated subframes
 see SUS-2095

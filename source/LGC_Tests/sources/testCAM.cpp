@@ -742,4 +742,52 @@ namespace tut
 		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
 	}
 
-}
+	template<>
+	template<>
+	void object::test<23>()
+	{
+		set_test_name("Testing CAM TRGT keywords");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/CAM_READ.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestCAM::CAM_TRGT_READ);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+
+		// testing the first UVD ROM
+		auto obsUVDIt = projTest->getTree().begin().node->data->measurements.fCAM.begin()->measUVD.begin();
+		ensure_equals("observation TRGT should be one defined on the *UVD line", obsUVDIt->target.ID, "T2");
+		obsUVDIt++;
+		ensure_equals("observation TRGT should be one defined on the measurement line", obsUVDIt->target.ID, "T1");
+		obsUVDIt++;
+		ensure_equals("observation TRGT should be one defined on the *UVD line", obsUVDIt->target.ID, "T2");
+
+		// testing the second UVD ROM
+		obsUVDIt++;
+		ensure_equals("observation TRGT should be one defined on the *CAM line", obsUVDIt->target.ID, "T1");
+		obsUVDIt++;
+		ensure_equals("observation TRGT should be one defined on the measurement line", obsUVDIt->target.ID, "T2");
+		obsUVDIt++;
+		ensure_equals("observation TRGT should be one defined on the *CAM line", obsUVDIt->target.ID, "T1");
+
+		// testing the first UVEC ROM
+		auto obsUVECIt = projTest->getTree().begin().node->data->measurements.fCAM.begin()->measUVEC.begin();
+		ensure_equals("observation TRGT should be one defined on the *UVEC line", obsUVECIt->target.ID, "T2");
+		obsUVECIt++;
+		ensure_equals("observation TRGT should be one defined on the measurement line", obsUVECIt->target.ID, "T1");
+		obsUVECIt++;
+		ensure_equals("observation TRGT should be one defined on the *UVEC line", obsUVECIt->target.ID, "T2");
+
+		// testing the second UVEC ROM
+		obsUVECIt++;
+		ensure_equals("observation TRGT should be one defined on the *CAM line", obsUVECIt->target.ID, "T1");
+		obsUVECIt++;
+		ensure_equals("observation TRGT should be one defined on the measurement line", obsUVECIt->target.ID, "T2");
+		obsUVECIt++;
+		ensure_equals("observation TRGT should be one defined on the *CAM line", obsUVECIt->target.ID, "T1");
+	}
+	} // namespace tut

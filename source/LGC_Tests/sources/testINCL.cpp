@@ -440,4 +440,30 @@ namespace tut
 		ensure_equals("PPM Flag does not match", romIt->measINCLY.begin()->target.sigmaPpm.getGonsValue(), ppmse.getGonsValue(), 1e-7);
 		ensure_equals("Combined Sigma from INCL does not match", romIt->measINCLY.begin()->target.sigmaCombinedAngle.getGonsValue(), combinedse.getGonsValue(), 1e-7);
 	}
+
+	template<>
+	template<>
+	void object::test<12>()
+	{
+		set_test_name("Testing INCL INSTR");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_SUBF_8.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestINCL::INCLY_SUBF_8);
+
+		ensure_equals("Reading Successfull", r.read(infiler), true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+
+		TDataTreeIterator frameIt = projTest->getTree().begin();
+		frameIt++;
+
+		auto obsIt = frameIt.node->data->measurements.fINCLY.begin()->measINCLY.begin();
+		ensure_equals("INCLY instrument for this observation should be the default one", obsIt->target.ID, "I1");
+		obsIt++;
+		ensure_equals("INCLY instrument for this observation should be the modified one", obsIt->target.ID, "I2");
+		obsIt++;
+		ensure_equals("INCLY instrument for this observation should be the default one", obsIt->target.ID, "I1");
+	}
 	}

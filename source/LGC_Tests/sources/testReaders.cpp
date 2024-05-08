@@ -466,7 +466,7 @@ namespace tut
 			ensure_equals("Target of this measurement should be updated", ts1->roms.back()->measPLR3D.back().target.ID, "PT2");
 
             plr.parse(tokenizefileString("P4 1 2 3 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
-			ensure_equals("Target of this measurement taken from previous measurement (currValue)", ts1->roms.back()->measPLR3D.back().target.ID, "PT2");
+			ensure_equals("Target of this measurement taken from the *PLR3D line", ts1->roms.back()->measPLR3D.back().target.ID, "PT8");
 
             plr.parse(tokenizefileString("P5 1 2 3 TRGT PT7 TH 11 THSE 12 TCSE 13 ASE 14 ZSE 15 DSE 16 PPM 17"), true, -1);
 			ensure_equals("Target of this measurement should be updated", ts1->roms.back()->measPLR3D.back().target.ID, "PT7");
@@ -487,6 +487,10 @@ namespace tut
 			ensure_equals(angmeas.target.sigmaAngl.getRadiansValue(), 21 * CC2RAD);
 			ensure_equals(angmeas.target.sigmaTargetCentering, 22 * MM2M);
 			ensure_equals(angmeas.obsID, "Angle1");
+
+			ang.parse(tokenizefileString("P4 88"), true, -1);
+			ensure_equals("Default target in this ROM should not be affected", ts1->roms.back()->defaultTargetId, "PT9");
+			ensure_equals("ANGL target of this measurement should be the default one", ts1->roms.back()->measANGL.back().target.ID, "PT9");
 			//
 			// ZEND
 			TKeyZEND zend(proj);
@@ -503,6 +507,9 @@ namespace tut
 
             zend.parse(tokenizefileString("P3 22 TRGT PT7 OBSE 31 TH 32 THSE 33 TCSE 34"), true, -1);
 			ensure_equals("Target of this measurement updated ZEND",  ts1->roms.back()->measZEND.back().target.ID, "PT7");
+
+			zend.parse(tokenizefileString("P4 22"), true, -1);
+			ensure_equals("Target of this measurement ZEND should be the default one", ts1->roms.back()->measZEND.back().target.ID, "PT8");
 			//
 			// DIST
 			//New v0 occured i.e. without any parametr, default value from TSTN taken
@@ -513,13 +520,20 @@ namespace tut
             dist.parse(tokenizefileString("P2 40 OBSE 41 PPM 42 TH 43 THSE 44 TCSE 45 ID Dist1"), true, -1);
 			ensure_equals("Default target taken from new ROM, which takes default target implicitly from TSTN", ts1->roms.back()->measDIST.back().target.ID, "PT2");
 
-			const auto& distmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDIST.back());
+			const auto &distmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDIST.back());
 			ensure_equals(distmeas.target.sigmaDist, 41 * MM2M);
 			ensure_equals(distmeas.target.ppmDist, 42 * MM2M);
 			ensure_equals(distmeas.target.targetHt, 43);
 			ensure_equals(distmeas.target.sigmaTargetHt, 44 * MM2M);
 			ensure_equals(distmeas.target.sigmaTargetCentering, 45 * MM2M);
 			ensure_equals(distmeas.obsID, "Dist1");
+
+            dist.parse(tokenizefileString("P3 40 TRGT PT7"), true, -1);
+			ensure_equals("Target should be updated for this DIST observation", ts1->roms.back()->measDIST.back().target.ID, "PT7");
+
+			dist.parse(tokenizefileString("P4 40"), true, -1);
+			ensure_equals("Target should be the defaut one for this DIST observation", ts1->roms.back()->measDIST.back().target.ID, "PT2");
+
 			//
 			// ECTH
 			TKeyECTH ecth(proj);
@@ -543,16 +557,41 @@ namespace tut
 
             ecth.parse(tokenizefileString("P2 0.9"), true, -1);
 			const auto& ecthmeas3(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECTH.back());
-			ensure_equals("This takes current instrument from previous", ecthmeas3.target.ID, "SC2");
+			ensure_equals("This takes instrument from the *ECTH line", ecthmeas3.target.ID, "SC1");
 			ensure_equals("Has default values", ecthmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
-			
+
+			// ECDIR
+			TKeyECDIR ecdir(proj);
+			ecdir.parse(tokenizefileString("*ECDIR 1 2 SC1"), true, -1);
+			ecdir.parse(tokenizefileString("P2 1.1 OBSE 0.01 PPM 0.1 ICSE 0.5 ID Ecart1"), true, -1);
+			const auto &ecdirmeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECDIR.back());
+			ensure_equals(ecdirmeas.targetPos->getName(), "P2");
+			ensure_equals(ecdirmeas.obsHorAngle.getGonsValue(), 1);
+			ensure_equals(ecdirmeas.target.ID, "SC1");
+			ensure_equals(ecdirmeas.target.sigmaD, 0.01 * MM2M);
+			ensure_equals(ecdirmeas.target.ppmD, 0.1 * MM2M);
+			ensure_equals(ecdirmeas.target.sigmaInstrCentering, 0.5 * MM2M);
+			ensure_equals(ecdirmeas.getDistance(), 1.1);
+			ensure_equals(ecdirmeas.obsID, "Ecart1");
+			ensure_equals("Default values in instrument data not affected", proj.getInstruments().getDevice(proj.getInstruments().fSCALE, "SC1").sigmaInstrCentering, 5 * MM2M);
+
+			ecdir.parse(tokenizefileString("P2 0.9 SCALE SC2 OBSE 0.01 PPM 0.1 ICSE 0.5"), true, -1);
+			const auto &ecdirmeas2(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECDIR.back());
+			ensure_equals(ecdirmeas2.target.ID, "SC2");
+			ensure_equals(ecdirmeas2.getDistance(), 0.9);
+
+			ecdir.parse(tokenizefileString("P2 0.9"), true, -1);
+			const auto &ecdirmeas3(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measECDIR.back());
+			ensure_equals("This takes instrument from the *ECDIR line", ecdirmeas3.target.ID, "SC1");
+			ensure_equals("Has default values", ecdirmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
+
 			// DHOR
 			TKeyDHOR dhor(proj);
             dhor.parse(tokenizefileString("*DHOR"), true, -1);
             dhor.parse(tokenizefileString("P2 50 TRGT PT7 OBSE 51 PPM 52 TCSE 53"), true, -1);
 			ensure_equals("Target of the measurement should match", ts1->roms.back()->measDHOR.back().target.ID, "PT7");
             dhor.parse(tokenizefileString("P2 50 OBSE 51 PPM 52 TCSE 53 ID HoriDist1"), true, -1);
-			ensure_equals("Target implicitly taken from previous measurement", ts1->roms.back()->measDHOR.back().target.ID, "PT7");
+			ensure_equals("Target implicitly taken from the *TSTN line", ts1->roms.back()->measDHOR.back().target.ID, "PT2");
 
 			const auto& dhormeas(proj.getCurrentNode().measurements.fTSTN.back()->roms.back()->measDHOR.back());
 			ensure_equals(dhormeas.target.sigmaDist, 51 * MM2M);
@@ -571,11 +610,11 @@ namespace tut
 
 			ensure_equals("DPST default target from instrument section",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET1");
             dspt.parse(tokenizefileString("P2 63 TRGT ET2 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), true, -1);
-			ensure_equals("DPST default target updated",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET2");
+			ensure_equals("DPST target",proj.getCurrentNode().measurements.fEDM.back().measDSPT.back().target.ID , "ET2");
             dspt.parse(tokenizefileString("P3 63 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68"), true, -1);
-			ensure_equals("DPST default target implicitly taken from preceding",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET2");
+			ensure_equals("DPST default target implicitly taken *DSPT line", proj.getCurrentNode().measurements.fEDM.back().measDSPT.back().target.ID, "ET1");
             dspt.parse(tokenizefileString("P3 63 TRGT ET1 OBSE 64 PPM 65 TH 66 THSE 67 TCSE 68 ID Dist1"), true, -1);
-			ensure_equals("DPST default target updated",proj.getCurrentNode().measurements.fEDM.back().instrument.defTarget , "ET1");
+			ensure_equals("DPST target", proj.getCurrentNode().measurements.fEDM.back().measDSPT.back().target.ID, "ET1");
 
 			const auto& dspPOLAR(proj.getCurrentNode().measurements.fEDM.back().instrument);
 			ensure_equals(dspPOLAR.ID, "DM1");
@@ -612,21 +651,21 @@ namespace tut
 
 			const auto& levelRound(proj.getCurrentNode().measurements.fLEVEL.back());
 			ensure_equals("Instrument ID should match", levelRound.instrument.ID,"LI1");
-			ensure_equals("Default staff ID should match", levelRound.instrument.defStaffID,"ST2");
+			ensure_equals("Default staff ID should match", levelRound.instrument.defStaffID,"ST1");
 			//ensure_equals("Reference point given, plane should be initialized", levelRound.fMeasuredPlane->isInitialized(),true);
 			//ensure_equals("Distance of the reference point should be zero", levelRound.fMeasuredPlane->getRefPtDistProvisionalValue().getMetresValue(), 0.0);
 
 			auto& firstDLEVMeasurement(levelRound.measDLEV.front());
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement.targetPos->getName(),"P1");
 			ensure_equals("Measured vertical distance should match", firstDLEVMeasurement.getDistance(),5);
-			ensure_equals("Target should be overidden", firstDLEVMeasurement.target.ID,"ST2");
+			ensure_equals("Target for this observation", firstDLEVMeasurement.target.ID,"ST2");
 			ensure_equals("Target's ppm value should be overidden", firstDLEVMeasurement.target.ppmD, 0.01 * MM2M);
 			ensure_equals("Observation ID should match", firstDLEVMeasurement.obsID, "LevelObs1");
 
 			auto& firstDLEVMeasurement2(*(std::next(levelRound.measDLEV.begin(), 1)));
 			ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(),"P3");
 			ensure_equals("Measured vertical distance should match", firstDLEVMeasurement2.getDistance(),6);
-			ensure_equals("Target should be overidden", firstDLEVMeasurement2.target.ID,"ST2");
+			ensure_equals("Target for this observation shôuld be the default one", firstDLEVMeasurement2.target.ID,"ST1");
 			ensure_equals("Target's ppm value should be default", firstDLEVMeasurement2.target.ppmD, 1e-8, 2.0 * MM2M);
 
             dlev.parse(tokenizefileString("*DLEV LI1"), true, -1);
@@ -655,7 +694,7 @@ namespace tut
 
 			ecve.parse(tokenizefileString("P2 0.9"), true, -1);
 			const auto& ecvemeas3(proj.getCurrentNode().measurements.fECVE.back().measECVE.back());
-			ensure_equals("This takes current instrument from previous", ecvemeas3.target.ID, "SC2");
+			ensure_equals("This takes current instrument from *ECVE line", ecvemeas3.target.ID, "SC1");
 			ensure_equals("Has default values", ecvemeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
 			// ECSP
@@ -682,7 +721,7 @@ namespace tut
 
 			ecsp.parse(tokenizefileString("P2 0.9"), true, -1);
 			const auto& ecspmeas3(proj.getCurrentNode().measurements.fECSP.back().measECSP.back());
-			ensure_equals("This takes current instrument from previous", ecspmeas3.target.ID, "SC2");
+			ensure_equals("This takes default instrument from *ECSP line", ecspmeas3.target.ID, "SC1");
 			ensure_equals("Has default values", ecspmeas3.target.sigmaInstrCentering, 1e-8, 5 * MM2M);
 			//
 			// RADI

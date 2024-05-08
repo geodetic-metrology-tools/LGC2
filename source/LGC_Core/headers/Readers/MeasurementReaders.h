@@ -57,8 +57,8 @@ class TAMeasurementKey : public TAKeyWord {
 			return proj.getCurrentNode().measurements.fCAM.back();
 		}
 
-		///Currently used target, e.g. in ROM (V0 keyword) reading for *TSTN and also for *CAM
-		std::string currentTargetApplied;
+		///default used target used in a ROM
+		std::string defaultTargetApplied;
 
 	private:
 		TAMeasurementKey& operator=(const TAMeasurementKey&);

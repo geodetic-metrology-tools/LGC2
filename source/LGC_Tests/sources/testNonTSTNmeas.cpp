@@ -1035,4 +1035,64 @@ namespace tut
 		Behavior succesCalc = calcul.computeResults(fileWriter);
 		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 	}
+
+	template<>
+	template<>
+	void object::test<32>()
+	{
+		set_test_name("Testing ECHO SCALE keywords");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECHO_SCALE_READ.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::ECHO_SCALE_READ);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+
+		// testing the ECHO ROM
+		auto obsIt = projTest->getTree().begin().node->data->measurements.fECHO.begin()->measECHO.begin();
+		ensure_equals("observation SCALE should be one defined on the *ECHO line", obsIt->target.ID, "RS_1");
+		obsIt++;
+		ensure_equals("observation SCALE should be one defined on the measurement line", obsIt->target.ID, "RS_2");
+		obsIt++;
+		ensure_equals("observation SCALE should be one defined on the *ECHO line", obsIt->target.ID, "RS_1");
 	}
+
+	template<>
+	template<>
+	void object::test<33>()
+	{
+		set_test_name("Testing ORIE TRGT keywords");
+		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ORIE_TRGT_READ.txt");
+		projTest->getFileLogger().writeReportHeader("LGC output file");
+
+		std::stringstream infiler(TestNonTSTN::ORIE_TRGT_READ);
+
+		bool succesReading = r.read(infiler);
+		ensure_equals("Reading file successful", succesReading, true);
+
+		TLGCCalculation calcul(projTest);
+		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+
+		// testing the first ORIE ROM
+		auto romIt = projTest->getTree().begin().node->data->measurements.fORIE.begin();
+		auto obsIt = romIt->measORIE.begin();
+		ensure_equals("observation TRGT should be one defined on the *ORIE line", obsIt->target.ID, "CCR2");
+		obsIt++;
+		ensure_equals("observation TRGT should be one defined on the measurement line", obsIt->target.ID, "CCR");
+		obsIt++;
+		ensure_equals("observation TRGT should be one defined on the *ORIE line", obsIt->target.ID, "CCR2");
+
+		// testing the second ORIE ROM
+		romIt++;
+		obsIt = romIt->measORIE.begin();
+		ensure_equals("observation TRGT should be the *INSTR default one", obsIt->target.ID, "CCR");
+		obsIt++;
+		ensure_equals("observation TRGT should be one defined on the measurement line", obsIt->target.ID, "CCR2");
+		obsIt++;
+		ensure_equals("observation TRGT should be the *INSTR default one", obsIt->target.ID, "CCR");
+	}
+	} // namespace tut

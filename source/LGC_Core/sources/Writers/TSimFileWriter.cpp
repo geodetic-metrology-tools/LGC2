@@ -555,10 +555,6 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 				(*stream) << "DSE" << sep << uvd.target.sigmaDist.getMMetresValue() << sep;
 
 			(*stream) << endl;
-
-			// Update the rom def target if necessary
-			if (uvd.target.ID != romDefTarget.ID)
-				romDefTarget = uvd.target;
 		}
 	}
 
@@ -591,10 +587,6 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 				(*stream) << "YSE" << sep << uvec.target.sigmaY * M2MM << sep;
 
 			(*stream) << endl;
-
-			// Update the rom def target if necessary
-			if (uvec.target.ID != romDefTarget.ID)
-				romDefTarget = uvec.target;
 		}
 	}
 }
@@ -650,10 +642,6 @@ void TSimFileWriter::writeECHOMeas(TECHOROM *meas)
 			(*stream) << "ICSE" << sep << itECHO.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
-
-		// Update the default target if necessary
-		if (itECHO.target.ID != scaleDefInst.ID)
-			scaleDefInst = itECHO.target;
 	}
 }
 
@@ -697,10 +685,6 @@ void TSimFileWriter::writeECVEMeas(TECVEROM *meas)
 			(*stream) << "ISCE" << sep << itECVE.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
-
-		// Update the default target if necessary
-		if (itECVE.target.ID != scaleDefInst.ID)
-			scaleDefInst = itECVE.target;
 	}
 }
 
@@ -737,10 +721,6 @@ void TSimFileWriter::writeECSPMeas(TECSPROM *meas)
 			(*stream) << "ICSE" << sep << ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
-
-		// Update the default target if necessary
-		if (ecsp.target.ID != scaleDefInst.ID)
-			scaleDefInst = ecsp.target;
 	}
 }
 
@@ -798,10 +778,6 @@ void TSimFileWriter::writeEDMMeas(TEDM *meas)
 			(*stream) << "TCSE" << sep << itDspt.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
-
-		// Update the rom def target if necessary
-		if (itDspt.target.ID != romDefTarget.ID)
-			romDefTarget = itDspt.target;
 	}
 }
 
@@ -852,10 +828,6 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 			(*stream) << "THSE" << sep << itDLEV.target.sigmaStaffHt.getMMetresValue() << sep;
 
 		(*stream) << endl;
-
-		// Update the rom def target if necessary
-		if (itDLEV.target.ID != romDefStaff.ID)
-			romDefStaff = itDLEV.target;
 	}
 }
 
@@ -901,10 +873,6 @@ void TSimFileWriter::writeORIEMeas(TORIEROM *meas)
 			(*stream) << "TCSE" << sep << itORIE.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 		(*stream) << endl;
-
-		// Update the rom def target if necessary
-		if (itORIE.target.ID != romDefTarget.ID)
-			romDefTarget = itORIE.target;
 	}
 }
 
@@ -954,10 +922,6 @@ void TSimFileWriter::writeECWSMeas(TECWSROM *meas)
 
 		if (itECWS.target.ID != hlsrDefInst.ID)
 			(*stream) << "INSTR" << sep << itECWS.target.ID << sep;
-
-		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
-		if (itECWS.target.ID != hlsrDefInst.ID)
-			hlsrDefInst = *data->getInstruments().fHLSR.at(itECWS.target.ID);
 
 		if (itECWS.target.sigmaDist != hlsrDefInst.sigmaDist)
 			(*stream) << "OBSE" << sep << itECWS.target.sigmaDist.getMMetresValue() << sep;
@@ -1009,10 +973,6 @@ void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
 
 		if (itECWI.target.ID != wpsrDefInst.ID)
 			(*stream) << "INSTR" << sep << itECWI.target.ID << sep;
-
-		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
-		if (itECWI.target.ID != wpsrDefInst.ID)
-			wpsrDefInst = *data->getInstruments().fWPSR.at(itECWI.target.ID);
 
 		if (itECWI.target.sigmaX != wpsrDefInst.sigmaX)
 			(*stream) << "XSE" << sep << itECWI.target.sigmaX.getMMetresValue() << sep;
@@ -1107,10 +1067,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					(*stream) << "TCSE" << sep << angl.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 				(*stream) << endl;
-
-				// Update the rom def target if necessary
-				if (angl.target.ID != romDefTarget.ID)
-					romDefTarget = *meas->instrument.targets.at(angl.target.ID);
 			}
 		}
 
@@ -1146,10 +1102,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					(*stream) << "TCSE" << sep << zend.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 				(*stream) << endl;
-
-				// Update the rom def target if necessary
-				if (zend.target.ID != romDefTarget.ID)
-					romDefTarget = *meas->instrument.targets.at(zend.target.ID);
 			}
 		}
 
@@ -1189,10 +1141,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					(*stream) << "TCSE" << sep << dist.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 				(*stream) << endl;
-
-				// Update the rom def target if necessary
-				if (dist.target.ID != romDefTarget.ID)
-					romDefTarget = *meas->instrument.targets.at(dist.target.ID);
 			}
 		}
 
@@ -1225,10 +1173,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					(*stream) << "TCSE" << sep << dhor.target.sigmaTargetCentering.getMMetresValue() << sep;
 
 				(*stream) << endl;
-
-				// Update the rom def target if necessary
-				if (dhor.target.ID != romDefTarget.ID)
-					romDefTarget = *meas->instrument.targets.at(dhor.target.ID);
 			}
 		}
 
@@ -1275,10 +1219,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					(*stream) << "PPM" << sep << plr.target.ppmDist.getMMetresValue() << sep;
 
 				(*stream) << endl;
-
-				// Update the rom def target if necessary
-				if (plr.target.ID != romDefTarget.ID)
-					romDefTarget = *meas->instrument.targets.at(plr.target.ID);
 			}
 		}
 
@@ -1345,10 +1285,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
 					(*stream) << endl;
 				}
-
-				// Update the default target if necessary
-				if (ecth.target.ID != scaleDefInst.ID)
-					scaleDefInst = ecth.target;
 			}
 		}
 
@@ -1416,10 +1352,6 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
 					(*stream) << endl;
 				}
-
-				// Update the default target if necessary
-				if (ecdir.target.ID != scaleDefInst.ID)
-					scaleDefInst = ecdir.target;
 			}
 		}
 	}
@@ -1447,10 +1379,6 @@ void TSimFileWriter::writeINCLYMeas(TINCLYROM *meas)
 
 		if (itINCLY.target.ID != inclDefInst.ID)
 			(*stream) << "INSTR" << sep << itINCLY.target.ID << sep;
-
-		// Update the default target if necessary, to do before updating other values to avoid unecessary values.
-		if (itINCLY.target.ID != inclDefInst.ID)
-			inclDefInst = *data->getInstruments().fINCL.at(itINCLY.target.ID);
 
 		if (itINCLY.target.sigmaAngl != inclDefInst.sigmaAngl)
 			(*stream) << "OBSE" << sep << itINCLY.target.sigmaAngl.getSignedCCValue() << sep;

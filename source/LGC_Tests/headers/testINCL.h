@@ -256,5 +256,25 @@ PT1 1
 *ENDFRAME 
 *END 
 )";
+
+	/*Testing the INSTR keyword */
+	char const *const INCLY_SUBF_8 = R"(*TITR 
+test Corrections 
+*OLOC 
+*INSTR 
+*INCL I1   4  3  0.5  1  0.3  2 
+*INCL I2   5  4  0.6  2  0.4  3 
+*FRAME TEST 0 0 0 0 0 0 1  RY 
+*CALA 
+PT1 0 0 0 
+PT2 0 0 0 
+P31 0 0 0 
+*INCLY I1
+PT1 1   
+PT2 1  INSTR I2
+PT3 1  
+*ENDFRAME 
+*END 
+)";
 	} // namespace TestINCL
 #endif
