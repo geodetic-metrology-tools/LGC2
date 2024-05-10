@@ -39,6 +39,7 @@ GNresult TLSGaussNewtonSolver::solve()
 	bool maxIterReached = false;
 	double sigma0=1;
 	double stepsize = 1;
+	double currentLambda = 1e+1;
 	Eigen::VectorXd residual;
 	while (stepsizeCrit == false && maxIterReached == false)
 	{
@@ -56,7 +57,7 @@ GNresult TLSGaussNewtonSolver::solve()
 
 		if (fConfig.useLM)
 		{
-			direction = getGNDirection(r, J, 1e-2);
+			direction = lmStep(parameterIterate, currentLambda);
 		}
 		if (fConfig.useArmijo)
 		{
@@ -81,9 +82,9 @@ GNresult TLSGaussNewtonSolver::solve()
 			// stepsize=armijo stepsize
 			if (itIdx % 20 == 0)
 			{
-				printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+				printf(" %4s %15s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
 			}
-			printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
+			printf(" %4i %4.9e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
 		}
 
 		itIdx++;
@@ -124,8 +125,8 @@ GNresult TLSGaussNewtonSolver::solve()
 	{
 		std::cout << "Final Results" << std::endl;
 		std::cout << "Success Status = " << result.success << std::endl;
-		printf(" %4s %10s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
-		printf(" %4i %4.4e %4.4e %4.4e %4.4f  \n", itIdx-1, sigma0, grad.norm(), direction.norm(), stepsize);
+		printf(" %4s %15s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+		printf(" %4i %4.9e %4.4e %4.4e %4.4f  \n", itIdx-1, sigma0, grad.norm(), direction.norm(), stepsize);
 		std::cout << headerLine << std::endl;
 	}
 
@@ -194,6 +195,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, Eigen::M
 	Eigen::MatrixXd N = J.transpose() * J;
 	Eigen::MatrixXd Ndiag = Eigen::MatrixXd::Zero(nx, nx);
 	Ndiag.diagonal() = N.diagonal();
+	//Eigen::MatrixXd Ndiag = Eigen::MatrixXd::Identity(nx, nx);
 	//Eigen::MatrixXd Nregularized=N+LMLambda *Ndiag;
 	Eigen::MatrixXd Nregularized = N + LMLambda * Ndiag;
 	Eigen::VectorXd b = -J.transpose() * r;
@@ -231,6 +233,55 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double sigma0, Eigen::Ve
 		realDescent = trialSigma - sigma0;
 	}
 	return alpha;
+}
+
+Eigen::VectorXd TLSGaussNewtonSolver::lmStep(Eigen::VectorXd p, double &lambda)
+{
+	double Lup = 11;
+	double Ldown = 9;
+	double eps4 = 0.1;
+	fEvaluator->setParameters(p);
+	Eigen::VectorXd weightedRes = fEvaluator->getWeightedResidual();
+	Eigen::MatrixXd weightedResJac = fEvaluator->getWeightedResidualJacobian();
+	Eigen::VectorXd step(fEvaluator->dimensions.UIndex);
+	double rho = 0;
+	while (rho < eps4)
+	{
+		// compute L step urrent lambda
+		step = getGNDirection(weightedRes, weightedResJac, lambda);
+		Eigen::VectorXd pUpdated = p + step;
+		fEvaluator->setParameters(pUpdated);
+		Eigen::VectorXd updatedWeightedRes = fEvaluator->getWeightedResidual();
+		// real descent
+		double nominator = pow2(weightedRes.norm()) - pow2(updatedWeightedRes.norm());
+		// expected descent
+		double denominator = fabs(pow2(weightedRes.norm()) - pow2((weightedRes + weightedResJac * step).norm()));
+		rho = nominator / denominator;
+		if (rho < eps4)
+		{
+			// increase the lm regularization
+			lambda *= Lup;
+			std::cout << "lambda increased " << lambda << std::endl;
+			double maxL = 1e+0;
+			if (lambda > maxL)
+			{
+				lambda = maxL;
+				break;
+			}
+
+		}
+		else
+		{ // decrease the LM reg
+			lambda *= (1 / Ldown);
+			lambda = std::max(lambda, 1e-10);
+			std::cout << "lambda decreased " << lambda << std::endl;
+			// do step
+			//break;
+		}
+
+	}
+
+	return step;
 }
 
 Eigen::SparseMatrix<double> TLSGaussNewtonSolver::getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M)
