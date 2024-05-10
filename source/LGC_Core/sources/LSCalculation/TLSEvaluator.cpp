@@ -90,9 +90,18 @@ Eigen::VectorXd TLSEvaluator::getWeightedResidual(bool useMask)
 	evaluate();
 	return getSqrtPv(useMask) * getResidual(useMask);
 }
+Eigen::MatrixXd TLSEvaluator::getWeightedResidualJacobian(bool useMask)
+{
+	evaluate();
+	return getSqrtPv(useMask) * getA(useMask);
+}
 double TLSEvaluator::getObjective(bool useMask)
 {
 	return getWeightedResidual().squaredNorm();
+}
+Eigen::VectorXd TLSEvaluator::getGradient(bool useMask)
+{
+	return 2 * getA(useMask).transpose() * getPv(useMask) * getResidual(useMask);
 }
 const TSparseMatrix TLSEvaluator::getA(bool useMask)
 {

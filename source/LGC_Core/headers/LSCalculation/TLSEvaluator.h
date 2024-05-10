@@ -26,14 +26,18 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 /*!
 \ingroup Evaluator
 \brief For evaluating the mathematical models at arbitrary values
-original LS problem: min |PV|^2 s.t. F(x,L+V)=0 (& C(x)=0)
+original LS problem: min |sqrt(P)V|^2 s.t. F(x,L+V)=0 (& C(x)=0)
 for iterative GN method in LGC, inputMatricFiller evaluates
 - "A-matrix" A = dF/dx(x,L)
 - constraint A martrix A2 = dC/dx(x)
 - "Misclosure" W = F(x,L)(=F(x)-L for the relevant parametric case)
+- residual: equal to misclosure in parametric case
+- weighted residual: sqrt(P) * res(x)
 - constraint misclosure C = F(x)
+- objective = |sqrt(P)(F(x)-L)|^2 = (F(x)-L)^T P (F(x)-L)
 As the residual V can be interpreted as function of the parameter x (we only have the "parametric" case F(x)-(L+V)=0) we also implement the residual function
 - residual r(x)=V(x)=W (from 0=F(x)-(L+V)=W-V)
+- gradient = (d objective / d x )^T
 */
 
 struct maskData {
@@ -53,7 +57,10 @@ public:
 	// using the relation W+Bv=0, assuming B is invertible
 	Eigen::VectorXd getResidual(bool useMask = true);
 	Eigen::VectorXd getWeightedResidual(bool useMask = true);
+	Eigen::MatrixXd getWeightedResidualJacobian(bool useMask = true);
 	double getObjective(bool useMask = true);
+	Eigen::VectorXd getGradient(bool useMask = true);
+
 
 	void setParameters(Eigen::VectorXd para, bool useMask = true);
 	// first design matrix

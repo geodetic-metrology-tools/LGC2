@@ -68,8 +68,8 @@ public:
 
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
-	Eigen::VectorXd getGNDirection(Eigen::VectorXd);
-	Eigen::VectorXd getGradient(Eigen::VectorXd);
+	// solve min ||r+J dx||^2 + sqrt(lambda)||dx||^2, which has normal matrix J^T J +lambda*Id
+	Eigen::VectorXd getGNDirection(Eigen::VectorXd r, Eigen::MatrixXd J, double LMLambda);
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
 	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);

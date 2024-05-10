@@ -15,7 +15,7 @@ GNresult TLSGaussNewtonSolver::solve()
 {
 	// Gauss Newton with armijo stepsize regularization
 	Eigen::VectorXd parameterIterate = fEvaluator->getEstParams();
-	Eigen::VectorXd grad = getGradient(parameterIterate);
+	Eigen::VectorXd grad = fEvaluator->getGradient();
 	Eigen::VectorXd direction(fEvaluator->dimensions.UIndex);
 	direction.setConstant(1);
 
@@ -42,27 +42,36 @@ GNresult TLSGaussNewtonSolver::solve()
 	Eigen::VectorXd residual;
 	while (stepsizeCrit == false && maxIterReached == false)
 	{
+		fEvaluator->setParameters(parameterIterate);
 		// compute the search direction
-		direction = getGNDirection(parameterIterate);	
-		if (direction.norm() > 1e+12)
-		{
-			std::cout << "Computed direction too big, stopping iterations" << std::endl;
-			break;
-		}
-
-
-		//std::cout << "GN direction = " << direction << std::endl;
-		// compute the gradient along this direction. Needed for the armijo linesearch
-		grad = getGradient(parameterIterate);
+		Eigen::MatrixXd J = fEvaluator->getWeightedResidualJacobian();
+		Eigen::VectorXd r = fEvaluator->getWeightedResidual();
+		//  compute the gradient along this direction. Needed for the armijo linesearch
+		// grad = getGradient(parameterIterate);
+		grad = fEvaluator->getGradient();
 		// compute the current objective to compare the gradient predicted descent in the search direction with the true descent.
 		sigma0 = fEvaluator->getObjective();
 		residual = fEvaluator->getResidual();
-		stepsize = 1;
+
+
+		if (fConfig.useLM)
+		{
+			direction = getGNDirection(r, J, 1e-2);
+		}
 		if (fConfig.useArmijo)
 		{
+			//direction = getGNDirection(parameterIterate, 0);
+			direction = getGNDirection(r, J, 0);
+			if (direction.norm() > 1e+12)
+			{
+				std::cout << "Computed direction too big, stopping iterations" << std::endl;
+				break;
+			}
+
+			// std::cout << "GN direction = " << direction << std::endl;
+			stepsize = 1;
 			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
 		}
-	
 
 		// do the regularized step
 		parameterIterate += stepsize * direction;
@@ -179,118 +188,46 @@ void TLSGaussNewtonSolver::resetOptions()
 	fConfig.terminationTol = 1e-6;
 }
 
-
-Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd parameter)
+Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, Eigen::MatrixXd J, double LMLambda)
 {
-	fEvaluator->setParameters(parameter);
-	// compute dx, as in TLSUniversalMtdComputer class
-	const TSparseMatrix &A = fEvaluator->getA();
-
-	const TVector &W = fEvaluator->getMisclosure();
-
-	int nbUnk = fEvaluator->dimensions.UIndex;
-	int nbEq = fEvaluator->dimensions.EIndex;
-	// assume nbConstr=0;
-	int nbCnstr = fEvaluator->dimensions.CIndex;
-	if (nbCnstr != 0)
-	{
-		throw std::runtime_error("Armijo Gauss Newton only implemented without constraints.");
-	}
-
-	// set invN1
-	TSparseMatrix invN1;
-	const TSparseMatrix &Pv = fEvaluator->getPv();
-	invN1 = Pv;
-
-	// Calculate Normal matrix N2 = At * inv( B * inv(P) * Bt ) * A , matrix dimensions (u,u)
-	TSparseMatrix N2;
-	N2 = A.transpose() * invN1 * A;
-
-	// construct NBig = (N2, A2t
-	//                   A2, 0  )
-	TSparseMatrix NBig;
-	// no constraints
-	NBig = N2;
-	TVector VBig;
-	VBig = A.transpose() * invN1 * W;
-
-	// Calculates solution NBig * X = -VBig and keeps only the part corresponding to adjusted parameters
-
-	// solve the system
-	TVector solution;
-	// solve directly without scaling
-	//double scaleFactor = fConfig.LMpenalty;
-	double scaleFactor = fConfig.LMpenalty * fEvaluator->getObjective();
-	scaleFactor = std::clamp(scaleFactor, 1e-15, 1e+6);
-	if (fConfig.useLM)
-	{
-		Eigen::SparseMatrix<double> identity(NBig.rows(), NBig.cols());
-		identity.setIdentity();
-		//NBig += scaleFactor * getDiagonalLMScaleFactor(NBig);
-		NBig += scaleFactor * identity;
-	}
-	// penalize/regularize some special indices
-	double penalty = 1e+2;
-	for (auto j : fConfig.penalizedIndices)
-	{
-		NBig.coeffRef(j, j) += penalty;
-	}
-
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(NBig);
-	solution = decomp.solve(-VBig);
-	double solNorm = solution.norm();
-	double VBigNorm = VBig.norm();
-	if (decomp.info() == 1)
-	{
-		std::cout << "Numerical issue during decomposition" << std::endl;
-		// set dummy solution to stop GN
-		solution.setOnes();
-		solution *= 1e+13;
-		//throw std::logic_error("problem determining linear subsystem solution");
-	}
-
-	return solution;
+	int nx = fEvaluator->dimensions.UIndex;
+	Eigen::MatrixXd N = J.transpose() * J;
+	Eigen::MatrixXd Ndiag = Eigen::MatrixXd::Zero(nx, nx);
+	Ndiag.diagonal() = N.diagonal();
+	//Eigen::MatrixXd Nregularized=N+LMLambda *Ndiag;
+	Eigen::MatrixXd Nregularized = N + LMLambda * Ndiag;
+	Eigen::VectorXd b = -J.transpose() * r;
+	// solve Nreg * dx = b to compute dx
+	return Nregularized.fullPivHouseholderQr().solve(b);
 }
 
-Eigen::VectorXd TLSGaussNewtonSolver::getGradient(Eigen::VectorXd parameter)
-{
-	fEvaluator->setParameters(parameter);
-	Eigen::VectorXd grad(fEvaluator->dimensions.UIndex);
-	Eigen::VectorXd misclosure = fEvaluator->getMisclosure();
-	const TSparseMatrix &Pv = fEvaluator->getPv();
-	const TSparseMatrix &A = fEvaluator->getA();
-	Eigen::VectorXd residual = fEvaluator->getResidual();
-
-	grad = A.transpose() * Pv * residual;
-
-	return grad;
-}
-
-double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double  sigma0, Eigen::VectorXd x0, Eigen::VectorXd direction)
+double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double sigma0, Eigen::VectorXd x0, Eigen::VectorXd direction)
 {
 	// |f(x0)|^2 = sigma0, search direction 'direction'
 	// armijo parameters
 	// tau: reduction in case Armijo–Goldstein condition is not satisfied
 	double tau = 0.5;
 	// c: Armijo–Goldstein condition: real descent vs descent predicted by gradient
-	double c = 0.5;
+	double c = 0.25;
 	//fEvaluator
-	double expectedDescent = getGradient(x0).dot(direction);
+	double expectedDescent = fEvaluator->getGradient().dot(direction);
 	double alpha = 1;
 	Eigen::VectorXd trialParameter = x0 + alpha * direction;
 	fEvaluator->setParameters(trialParameter);
-	Eigen::VectorXd trialResidual = fEvaluator->getResidual();
-	double trialSigma = trialResidual.transpose() * fEvaluator->getPv() * trialResidual;
+	//Eigen::VectorXd trialResidual = fEvaluator->getResidual();
+	//double trialSigma = trialResidual.transpose() * fEvaluator->getPv() * trialResidual;
+	double trialSigma = fEvaluator->getObjective();
+
 	double realDescent = trialSigma - sigma0;
 	// testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
-	while (c * alpha* expectedDescent < realDescent && alpha>1e-2)
+	while (c * alpha * expectedDescent < realDescent && alpha > 1e-2)
 	{
 		// reduce stepsize
 		alpha *= tau;
 		trialParameter = x0 + alpha * direction;
 		fEvaluator->setParameters(trialParameter);
-		trialResidual = fEvaluator->getResidual();
-		trialSigma = trialResidual.transpose() * fEvaluator->getPv() * trialResidual;
+		//trialResidual = fEvaluator->getResidual();
+		trialSigma = fEvaluator->getObjective();
 		realDescent = trialSigma - sigma0;
 	}
 	return alpha;
