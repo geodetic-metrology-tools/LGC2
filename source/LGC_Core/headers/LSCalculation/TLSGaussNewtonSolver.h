@@ -72,6 +72,8 @@ private:
 	Eigen::VectorXd getGNDirection(Eigen::VectorXd r, Eigen::MatrixXd J, double LMLambda);
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
+	Eigen::VectorXd lmStep(Eigen::VectorXd p, double &lambda);
+
 	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);
 
 	solverConfig fConfig;
