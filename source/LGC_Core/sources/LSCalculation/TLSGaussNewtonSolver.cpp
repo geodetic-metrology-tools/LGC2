@@ -39,13 +39,13 @@ GNresult TLSGaussNewtonSolver::solve()
 	bool maxIterReached = false;
 	double sigma0=1;
 	double stepsize = 1;
-	double currentLambda = 1e+1;
+	double currentLambda = 0;
 	Eigen::VectorXd residual;
 	while (stepsizeCrit == false && maxIterReached == false)
 	{
 		fEvaluator->setParameters(parameterIterate);
 		// compute the search direction
-		Eigen::MatrixXd J = fEvaluator->getWeightedResidualJacobian();
+		TSparseMatrix J = fEvaluator->getWeightedResidualJacobian();
 		Eigen::VectorXd r = fEvaluator->getWeightedResidual();
 		//  compute the gradient along this direction. Needed for the armijo linesearch
 		// grad = getGradient(parameterIterate);
@@ -62,8 +62,8 @@ GNresult TLSGaussNewtonSolver::solve()
 		if (fConfig.useArmijo)
 		{
 			//direction = getGNDirection(parameterIterate, 0);
-			direction = getGNDirection(r, J, 0);
-			if (direction.norm() > 1e+6)
+			direction = getGNDirection(r, J, currentLambda);
+			if (direction.norm() > 1e+12)
 			{
 				std::cout << "Computed direction too big, stopping iterations" << std::endl;
 				break;
@@ -189,21 +189,29 @@ void TLSGaussNewtonSolver::resetOptions()
 	fConfig.terminationTol = 1e-6;
 }
 
-Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, Eigen::MatrixXd J, double LMLambda)
+Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, TSparseMatrix &J, double LMLambda)
 {
 	int nx = fEvaluator->dimensions.UIndex;
 	int ne = fEvaluator->dimensions.EIndex;
 	
 	
-	Eigen::MatrixXd N = J.transpose() * J;
-	Eigen::MatrixXd Ndiag = Eigen::MatrixXd::Zero(nx, nx);
-	Ndiag.diagonal() = N.diagonal();
+	TSparseMatrix Nregularized = J.transpose() * J;
+	for (int j = 0; j < nx; j++)
+	{
+		Nregularized.coeffRef(j, j) *= (LMLambda + 1);
+	}
+	//Ndiag.diagonal() = N.diagonal();
 	//Eigen::MatrixXd Ndiag = Eigen::MatrixXd::Identity(nx, nx);
 	//Eigen::MatrixXd Nregularized=N+LMLambda *Ndiag;
-	Eigen::MatrixXd Nregularized = N + LMLambda * Ndiag;
+	// if (LMLambda > 0)
+	// {
+	// 	TSparseMatrix Nregularized = N + LMLambda * Ndiag;
+	// }
+	Eigen::MatrixXd Ndense = Nregularized.toDense();
 	Eigen::VectorXd b = -J.transpose() * r;
 	// solve Nreg * dx = b to compute dx
-	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(Nregularized.sparseView());
+	//Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(Nregularized);
+	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(Ndense.sparseView());
 
 	return decomp.solve(b);
 	//return Nregularized.fullPivHouseholderQr().solve(b);
@@ -268,7 +276,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::lmStep(Eigen::VectorXd p, double &lambda)
 	double eps4 = 0.01;
 	fEvaluator->setParameters(p);
 	Eigen::VectorXd weightedRes = fEvaluator->getWeightedResidual();
-	Eigen::MatrixXd weightedResJac = fEvaluator->getWeightedResidualJacobian();
+	TSparseMatrix weightedResJac = fEvaluator->getWeightedResidualJacobian();
 	Eigen::VectorXd step(fEvaluator->dimensions.UIndex);
 	double rho = 0;
 	while (rho < eps4)
