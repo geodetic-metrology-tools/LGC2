@@ -90,7 +90,7 @@ Eigen::VectorXd TLSEvaluator::getWeightedResidual(bool useMask)
 	evaluate();
 	return getSqrtPv(useMask) * getResidual(useMask);
 }
-Eigen::MatrixXd TLSEvaluator::getWeightedResidualJacobian(bool useMask)
+TSparseMatrix  TLSEvaluator::getWeightedResidualJacobian(bool useMask)
 {
 	evaluate();
 	return getSqrtPv(useMask) * getA(useMask);
