@@ -69,7 +69,7 @@ public:
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
 	// solve min ||r+J dx||^2 + sqrt(lambda)||dx||^2, which has normal matrix J^T J +lambda*Id
-	Eigen::VectorXd getGNDirection(Eigen::VectorXd r, Eigen::MatrixXd J, double LMLambda);
+	Eigen::VectorXd getGNDirection(Eigen::VectorXd r, TSparseMatrix &J, double LMLambda);
 	// compute armijo stepsize via backtracking
 	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
 	Eigen::VectorXd lmStep(Eigen::VectorXd p, double &lambda);
