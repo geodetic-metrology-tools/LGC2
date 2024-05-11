@@ -63,7 +63,7 @@ GNresult TLSGaussNewtonSolver::solve()
 		{
 			//direction = getGNDirection(parameterIterate, 0);
 			direction = getGNDirection(r, J, 0);
-			if (direction.norm() > 1e+12)
+			if (direction.norm() > 1e+6)
 			{
 				std::cout << "Computed direction too big, stopping iterations" << std::endl;
 				break;
@@ -82,9 +82,9 @@ GNresult TLSGaussNewtonSolver::solve()
 			// stepsize=armijo stepsize
 			if (itIdx % 20 == 0)
 			{
-				printf(" %4s %15s %10s %10s %6s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize");
+				printf(" %4s %15s %10s %10s %6s %10s  \n", "It", "sigma", "|grad|", "|dx|", "stepsize", "LM lambda");
 			}
-			printf(" %4i %4.9e %4.4e %4.4e %4.4f  \n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize);
+			printf(" %4i %4.9e %4.4e %4.4e %4.4f  %4.4e\n", itIdx, sigma0, grad.norm(), direction.norm(), stepsize, currentLambda);
 		}
 
 		itIdx++;
@@ -192,6 +192,9 @@ void TLSGaussNewtonSolver::resetOptions()
 Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, Eigen::MatrixXd J, double LMLambda)
 {
 	int nx = fEvaluator->dimensions.UIndex;
+	int ne = fEvaluator->dimensions.EIndex;
+	
+	
 	Eigen::MatrixXd N = J.transpose() * J;
 	Eigen::MatrixXd Ndiag = Eigen::MatrixXd::Zero(nx, nx);
 	Ndiag.diagonal() = N.diagonal();
@@ -200,7 +203,30 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, Eigen::M
 	Eigen::MatrixXd Nregularized = N + LMLambda * Ndiag;
 	Eigen::VectorXd b = -J.transpose() * r;
 	// solve Nreg * dx = b to compute dx
-	return Nregularized.fullPivHouseholderQr().solve(b);
+	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(Nregularized.sparseView());
+
+	return decomp.solve(b);
+	//return Nregularized.fullPivHouseholderQr().solve(b);
+
+	// alternative: use qr decomposition
+	///    Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qrSolver;
+	///    Eigen::MatrixXd Jaugmented = Eigen::MatrixXd::Zero(ne + nx, nx);
+	///    Jaugmented.topRows(ne) = J;
+	///    Eigen::MatrixXd diagPenalty= Eigen::MatrixXd::Zero(nx, nx);
+	///    Eigen::MatrixXd N = J.transpose() * J;
+	///    for (int j = 0; j < nx; j++)
+	///    {
+	///    	diagPenalty.diagonal()[j] = sqrt(N.diagonal()[j]);
+	///    }
+
+	///    Jaugmented.bottomRows(nx) = sqrt(LMLambda) * diagPenalty;
+	///    Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qrSolver;
+	///    qrSolver.compute(Jaugmented.sparseView());
+	///    Eigen::VectorXd bAugmented = Eigen::VectorXd::Zero(ne + nx);
+	///    bAugmented.topRows(ne) = -r;
+	///    //return Jaugmented.fullPivHouseholderQr().solve(bAugmented);
+	///    return qrSolver.solve(bAugmented);
+
 }
 
 double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double sigma0, Eigen::VectorXd x0, Eigen::VectorXd direction)
@@ -222,7 +248,7 @@ double TLSGaussNewtonSolver::backtrackingArmijoStepsize(double sigma0, Eigen::Ve
 
 	double realDescent = trialSigma - sigma0;
 	// testing armijo goldstein descent condition (real descent has to be at least stepsize * c * full step expected descent )
-	while (c * alpha * expectedDescent < realDescent && alpha > 1e-2)
+	while (c * alpha * expectedDescent < realDescent && alpha > 1e-1)
 	{
 		// reduce stepsize
 		alpha *= tau;
@@ -239,7 +265,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::lmStep(Eigen::VectorXd p, double &lambda)
 {
 	double Lup = 11;
 	double Ldown = 9;
-	double eps4 = 0.1;
+	double eps4 = 0.01;
 	fEvaluator->setParameters(p);
 	Eigen::VectorXd weightedRes = fEvaluator->getWeightedResidual();
 	Eigen::MatrixXd weightedResJac = fEvaluator->getWeightedResidualJacobian();
@@ -261,20 +287,20 @@ Eigen::VectorXd TLSGaussNewtonSolver::lmStep(Eigen::VectorXd p, double &lambda)
 		{
 			// increase the lm regularization
 			lambda *= Lup;
-			std::cout << "lambda increased " << lambda << std::endl;
-			double maxL = 1e+0;
+			//std::cout << "lambda increased " << lambda << std::endl;
+			double maxL = 1e+7;
 			if (lambda > maxL)
 			{
 				lambda = maxL;
-				break;
+				//break;
 			}
 
 		}
 		else
 		{ // decrease the LM reg
 			lambda *= (1 / Ldown);
-			lambda = std::max(lambda, 1e-10);
-			std::cout << "lambda decreased " << lambda << std::endl;
+			lambda = std::max(lambda, 1e-7);
+			//std::cout << "lambda decreased " << lambda << std::endl;
 			// do step
 			//break;
 		}
