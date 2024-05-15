@@ -40,6 +40,10 @@ GNresult TLSGaussNewtonSolver::solve()
 	double sigma0=1;
 	double stepsize = 1;
 	double currentLambda = 0;
+	if (fConfig.useLM)
+	{
+		currentLambda = 1;
+	}
 	Eigen::VectorXd residual;
 	while (stepsizeCrit == false && maxIterReached == false)
 	{
@@ -75,7 +79,9 @@ GNresult TLSGaussNewtonSolver::solve()
 		}
 
 		// do the regularized step
-		parameterIterate += stepsize * direction;
+		direction *= stepsize;
+		parameterIterate += direction;
+		//parameterIterate += stepsize * direction;
 
 		if (fConfig.plotLevel == 2)
 		{
@@ -273,7 +279,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::lmStep(Eigen::VectorXd p, double &lambda)
 {
 	double Lup = 11;
 	double Ldown = 9;
-	double eps4 = 0.01;
+	double eps4 = 0.5;
 	fEvaluator->setParameters(p);
 	Eigen::VectorXd weightedRes = fEvaluator->getWeightedResidual();
 	TSparseMatrix weightedResJac = fEvaluator->getWeightedResidualJacobian();
