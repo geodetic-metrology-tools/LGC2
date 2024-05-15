@@ -92,8 +92,8 @@ void TLGCCalculation::tryArmijoSampling()
 	int dim = fData.get()->fUEOIndices.UIndex;
 	TLSEvaluator evaluator(fData);
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
-	solverConfig armijoGN = {2, true, false, 0, 100, 1e-7};
-	//solverConfig armijoGN = {2, false, true, 1e+2, 100, 1e-6};
+	solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+	//solverConfig armijoGN = {2, false, true, 1e+2, 300, 1e-7};
 	TLSGaussNewtonSolver gnObject(evalPtr);
 	gnObject.setConfig(armijoGN);
 
@@ -119,8 +119,10 @@ void TLGCCalculation::tryArmijoSampling()
 
 		// prepare results
 		std::vector<GNresult> results;
+		int j = 0;
 		for (auto sval : startValues)
 		{
+			j++;
 			// set initial value and start armijo GN from this value
 			evaluator.setParameters(sval);
 			try

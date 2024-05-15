@@ -63,23 +63,25 @@ GNresult TLSGaussNewtonSolver::solve()
 		{
 			direction = lmStep(parameterIterate, currentLambda);
 		}
-		if (fConfig.useArmijo)
+		else
 		{
-			//direction = getGNDirection(parameterIterate, 0);
+			// direction = getGNDirection(parameterIterate, 0);
 			direction = getGNDirection(r, J, currentLambda);
 			if (direction.norm() > 1e+12)
 			{
 				std::cout << "Computed direction too big, stopping iterations" << std::endl;
 				break;
 			}
-
-			// std::cout << "GN direction = " << direction << std::endl;
+		}
+		
+		if (fConfig.useArmijo)
+		{
 			stepsize = 1;
 			stepsize = backtrackingArmijoStepsize(sigma0, parameterIterate, direction);
-		}
 
-		// do the regularized step
-		direction *= stepsize;
+			// apply the armijo stepsize
+			direction *= stepsize;
+		}
 		parameterIterate += direction;
 		//parameterIterate += stepsize * direction;
 
@@ -279,7 +281,7 @@ Eigen::VectorXd TLSGaussNewtonSolver::lmStep(Eigen::VectorXd p, double &lambda)
 {
 	double Lup = 11;
 	double Ldown = 9;
-	double eps4 = 0.5;
+	double eps4 = 0.1;
 	fEvaluator->setParameters(p);
 	Eigen::VectorXd weightedRes = fEvaluator->getWeightedResidual();
 	TSparseMatrix weightedResJac = fEvaluator->getWeightedResidualJacobian();
