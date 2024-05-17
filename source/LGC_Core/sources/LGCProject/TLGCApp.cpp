@@ -395,7 +395,8 @@ const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
 	id << "LGC2 " << getLGCVersion() << ", compiled on " <<   __DATE__ ;
-	id << std::endl << "ATTENTION: EXPERIMENTAL VERSION using a basic linesearch for more robust behavior with respect to provisional values.";
+	id << std::endl << "ATTENTION: EXPERIMENTAL VERSION using a basic Levenberg Marquardt regularization for more robust behavior with respect to provisional values. In case LM converges, no additional LGC full step least square iterations are made.";
+	id << std::endl << "ATTENTION: This version does not work with constraints (slave option, libr).";
 	return id.str();
 }
 

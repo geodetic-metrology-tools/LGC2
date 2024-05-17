@@ -9,7 +9,7 @@
 
 #define LGC_VERSION_MAJOR "2"
 #define LGC_VERSION_MINOR "7"
-#define LGC_VERSION_PATCH "beta_5_GaussNewtonArmijoLineSearch"
+#define LGC_VERSION_PATCH "beta_9_LMregularization"
 
 static std::string getLGCVersion(void) {
 	std::stringstream ss;

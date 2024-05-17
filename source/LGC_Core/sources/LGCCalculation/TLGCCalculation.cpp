@@ -57,6 +57,12 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		else if (fData->getConfig().allfixed.isActive())
 			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
 		
+		if (fData->fUEOIndices.CIndex > 0)
+		{
+			logFatal() << "No constraints allowed in this version.";
+			throw std::runtime_error("calculation stopped, no constraints allowed.");
+		}
+
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 
 		if (successCalculation)
@@ -92,8 +98,9 @@ void TLGCCalculation::tryArmijoSampling()
 	int dim = fData.get()->fUEOIndices.UIndex;
 	TLSEvaluator evaluator(fData);
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
-	solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
-	//solverConfig armijoGN = {2, false, true, 1e+2, 300, 1e-7};
+	//solverConfig armijoGN = {2, true, false, 0, 100, 1e-6};
+	//solverConfig armijoGN = {2, false, true, 1e+2, 300, 1e-6};
+	solverConfig armijoGN = {2, false, true, 1e+2, 300, fData.get()->getConfig().outPrecision.convCrit};
 	TLSGaussNewtonSolver gnObject(evalPtr);
 	gnObject.setConfig(armijoGN);
 

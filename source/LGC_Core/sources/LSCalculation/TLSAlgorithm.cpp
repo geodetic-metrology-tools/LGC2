@@ -39,9 +39,9 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 
 	TFileLogger &fileLog = data.getFileLogger();
 	
-	// Iterate to find solution
-	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
-	{
+//	// Iterate to find solution
+//	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
+//	{
 		bool fillOK = false;
 		if (fNumberOfIterations == 0) // First iteration, fill also the weight unknown matrix.
 		{
@@ -59,42 +59,54 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 				return Behavior(Behavior::BehaviorCode::ERR_consistencyCheck, L"Problem with measurement configuration.\n");
 			}
 		}
+		hasReachedCriteria = true;	
+		// compute solution
+		bool computationOK = computer->computeResults(inputMtr, resultMatrices);
 
-		if (fillOK)
-		{
-			// compute solution
-			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
+		//if (computationOK)
+		//{
+		//	logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done\n=============================";
 
-			if (computationOK)
-			{
-				logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done\n=============================";
+		//	bool extractOK = false;
+		//	extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
+		//}
 
-				bool extractOK = false;
-				extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
 
-				if (extractOK)
-					hasReachedCriteria = fExtractor->lastIteration();
-				else
-				{
-					fileLog << "Problem in LS matrices extraction.\n";
-					return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); // Error during extraction, errors written out already, STOP the calculation.
-				}
-			}
-			else
-			{
-				// Write errors which occured in computer of LS methos
-				logCritical() << "Problem with LS computation: ended at the iteration step" << fNumberOfIterations;
-				fileLog << "Problem with LS computation: " << computer->getError() << " \n";
-				return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation. Matrix not inverted\n");
-			}
-		}
-		else
-		{
-			fileLog << "Matrices filling was not successful.\n";
-			return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Matrices filling was not successful.\n");
-		}
-		fNumberOfIterations++;
-	}
+	//	if (fillOK)
+	//	{
+	//		// compute solution
+	//		bool computationOK = computer->computeResults(inputMtr, resultMatrices);
+
+	//		if (computationOK)
+	//		{
+	//			logDebug() << "Iteration" << fNumberOfIterations << "step: Calculation successfully done\n=============================";
+
+	//			bool extractOK = false;
+	//			extractOK = fExtractor->extractResults(*resultMatrices, convCrit);
+
+	//			if (extractOK)
+	//				hasReachedCriteria = fExtractor->lastIteration();
+	//			else
+	//			{
+	//				fileLog << "Problem in LS matrices extraction.\n";
+	//				return Behavior(Behavior::BehaviorCode::ERR_results, L"Problem in LS matrices extraction.\n"); // Error during extraction, errors written out already, STOP the calculation.
+	//			}
+	//		}
+	//		else
+	//		{
+	//			// Write errors which occured in computer of LS methos
+	//			logCritical() << "Problem with LS computation: ended at the iteration step" << fNumberOfIterations;
+	//			fileLog << "Problem with LS computation: " << computer->getError() << " \n";
+	//			return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Problem with LS computation. Matrix not inverted\n");
+	//		}
+	//	}
+	//	else
+	//	{
+	//		fileLog << "Matrices filling was not successful.\n";
+	//		return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Matrices filling was not successful.\n");
+	//	}
+	//	fNumberOfIterations++;
+	//}
 
 	// Checks if maximal number of iteration steps has been reached without satisfying the converging criteria
 	if (fNumberOfIterations == fMaxIterations && !hasReachedCriteria)
