@@ -26,7 +26,7 @@ struct GNresult: public Serializable
 	bool success = false;
 	bool isInLimits = false;
 	double sigma0Aposteriori;
-	void serialize(SerializerObject::SerializationHelper &obj) const;
+	void serialize(ObjectSerializer &obj) const;
 
 //	GNresult() = default;
 };
@@ -43,7 +43,7 @@ struct solverConfig : public Serializable
 	int maxIter = 0;
 	double terminationTol = 0;
 	std::vector<int> penalizedIndices;
-	virtual void serialize(SerializerObject::SerializationHelper &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 	//
 	solverConfig(int plotLevel, bool useArmijo, bool useLM, double LMpenalty, int maxIter, double terminationTol) :
 		plotLevel(plotLevel), useArmijo(useArmijo), useLM(useLM), LMpenalty(LMpenalty), maxIter(maxIter), terminationTol(terminationTol){};

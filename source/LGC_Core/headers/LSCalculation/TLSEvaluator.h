@@ -13,7 +13,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //LGC
 #include <TVAbstractAlgorithm.h>
 #include <TLSResultsMatricesExtractor.h>
-#include <TLibrCnstrGenerator.h>
 #include <TLSConsistencyCheck.h>
 #include "TLSInputMatricesFiller.h"
 
