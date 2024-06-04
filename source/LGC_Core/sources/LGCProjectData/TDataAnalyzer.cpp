@@ -777,6 +777,36 @@ bool TDataAnalyzer::checkParameters()
 		}
 	}
 
+
+	// add artificial observation with the provided apriori covariance
+	// TODO:
+	// load file with list of pointnames+coordinates and big covarianc matrix
+	
+	// create dummy apricovdata
+	apriCovData dummyData;
+	dummyData.pointList.push_back("P3");
+	dummyData.pointList.push_back("P2");
+	Eigen::VectorXd coords(6);
+	coords << 11, 22, 33, 44, 55, 66;
+	dummyData.pointCoords = coords;
+	Eigen::SparseMatrix<double> covMat(6, 6);
+	for (int j = 0; j < 6; j++)
+	{
+		covMat.coeffRef(j, j) = (j + 1) / 10.0;
+		if (j < 3)
+		{
+			covMat.coeffRef(j, j + 3) = 10000;
+			covMat.coeffRef(j + 3, j) = 10000;
+		}
+	}
+	dummyData.pointCovariance = covMat;
+
+	fData.aprioriPointCovars = dummyData;
+	
+	int nApriPoints = fData.aprioriPointCovars.pointList.size();
+	fData.aprioriPointCovars.firstWidx = lastWidx;
+	lastWidx += nApriPoints * 3;
+
 	// Save total number of unknowns without sigmas
 	fData.fUEOIndices.UIndex = lastUidx;
 	fData.fUEOIndices.WIndex = lastWidx;
@@ -1297,6 +1327,7 @@ void TDataAnalyzer::assignEOIndices()
 			}
 		}
 	}
+
 }
 
 void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)

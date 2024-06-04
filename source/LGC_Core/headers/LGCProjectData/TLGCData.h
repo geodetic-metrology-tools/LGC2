@@ -107,6 +107,15 @@ struct TMeasurementsGlobal
 	virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 };
+// structure for including covariance data of several points
+struct apriCovData
+{
+	std::vector<std::string> pointList;
+	Eigen::VectorXd pointCoords;
+	Eigen::SparseMatrix<double> pointCovariance;
+	int firstWidx{-1};
+};
+
 
 /**
 	\ingroup LGCProjectData
@@ -234,6 +243,10 @@ public:
 
 	/// Number of unknowns, equations, observations and constraints.
 	UEOIndices fUEOIndices;
+
+	// data holding apriori covariance data
+	apriCovData aprioriPointCovars;
+
 
 	/// Sets the number of LS iterations.
 	void setNumberOfLSIterations(int noi) { fLSRelatedInfo.fNumberOfLSIterations = noi; }
