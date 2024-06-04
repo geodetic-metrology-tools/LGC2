@@ -228,6 +228,55 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 		}
 	}
 
+	// additional experimental development: 
+	// supplying a list of points with covariances also between the points
+	// fill the data of apriori point covar data
+	// run through the list of points and set the corresponding data
+	int nApriPoints = projData->aprioriPointCovars.pointList.size();
+	Eigen::VectorXd apriMisc(3 * nApriPoints);
+	Eigen::VectorXd currentCoords(3 * nApriPoints);
+	Eigen::SparseMatrix<double> apriWeights(3 * nApriPoints, 3 * nApriPoints);
+	int ptCounter = 0;
+	for (std::string pointName : projData->aprioriPointCovars.pointList)
+	{
+		if (projData->getPoints().doesObjectExist(pointName))
+		{
+			const LGCAdjustablePoint adPoint = projData->getPoints().getObject(pointName);
+			std::cout << "coord of pt " << pointName << " = " << adPoint.getEstimatedValue().toRealVector() << std::endl;
+			currentCoords.middleRows(ptCounter * 3, 3) = adPoint.getEstimatedValue().toRealVector();
+			for (int i = 0; i < 3; i++)
+			{
+				isProcessOK = isProcessOK && matrices->setWeightsFirstDgnMtrxElement(projData->aprioriPointCovars.firstWidx + 3 * ptCounter + i, adPoint.getFirstUidx() + i, 1);
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Apriori covariances: point " + pointName + " not defined");
+		}
+		ptCounter++;
+	}
+	apriWeights = (projData->aprioriPointCovars.pointCovariance).toDense().fullPivHouseholderQr().inverse().sparseView();
+	// std::cout << "current coords " << currentCoords << std::endl;
+	// std::cout << "given coords " << projData->aprioriPointCovars.pointCoords << std::endl;
+	apriMisc = currentCoords - projData->aprioriPointCovars.pointCoords;
+
+	// std::cout << "apri point weights" << std::endl << apriWeights.toDense() << std::endl;
+	isProcessOK = isProcessOK && matrices->setWeightUnkMtrxBlock(projData->aprioriPointCovars.firstWidx, apriWeights);
+	for (int j = 0; j < nApriPoints; j++)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			int idx = 3 * j + i;
+			//isProcessOK = isProcessOK && matrices->setWeightsFirstDgnMtrxElement(projData->aprioriPointCovars.firstWidx + idx, projData->aprioriPointCovars.firstWidx + idx, 1);
+			isProcessOK = isProcessOK && matrices->setWeightMisclosureVectorElement(projData->aprioriPointCovars.firstWidx + idx, apriMisc(idx));
+		}
+	}
+
+
+
+
+
+
 	return isProcessOK;
 }
 
