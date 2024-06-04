@@ -14,6 +14,10 @@
 #include "TLSInputMatricesFiller.h"
 #include "TXYH2CCS.h"
 
+#include <StringManager.h>
+#include <fstream>
+#include <sstream>
+
 TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
 {
 }
@@ -782,27 +786,37 @@ bool TDataAnalyzer::checkParameters()
 	// TODO:
 	// load file with list of pointnames+coordinates and big covarianc matrix
 	
-	// create dummy apricovdata
-	apriCovData dummyData;
-	dummyData.pointList.push_back("P3");
-	dummyData.pointList.push_back("P2");
-	Eigen::VectorXd coords(6);
-	coords << 11, 22, 33, 44, 55, 66;
-	dummyData.pointCoords = coords;
-	Eigen::SparseMatrix<double> covMat(6, 6);
-	for (int j = 0; j < 6; j++)
-	{
-		covMat.coeffRef(j, j) = (j + 1) / 10.0;
-		if (j < 3)
-		{
-			covMat.coeffRef(j, j + 3) = 10000;
-			covMat.coeffRef(j + 3, j) = 10000;
-		}
-	}
-	dummyData.pointCovariance = covMat;
 
-	fData.aprioriPointCovars = dummyData;
-	
+	// // create dummy apricovdata
+	// apriCovData dummyData;
+	// dummyData.pointList.push_back("P3");
+	// dummyData.pointList.push_back("P2");
+	// Eigen::VectorXd coords(6);
+	// coords << 11, 22, 33, 44, 55, 66;
+	// dummyData.pointCoords = coords;
+	// Eigen::SparseMatrix<double> covMat(6, 6);
+	// for (int j = 0; j < 6; j++)
+	// {
+	// 	covMat.coeffRef(j, j) = (j + 1) / 10.0;
+	// }
+	// covMat.coeffRef(3, 1) = 10;
+	// covMat.coeffRef(1, 3) = 10;
+	// dummyData.pointCovariance = covMat;
+
+	// fData.aprioriPointCovars = dummyData;
+	// 
+	logWarning() << "trying to load apricovMat.txt containing apriori covariances between points. User responsibility to guarantee symmetric and positive definite covariance matrix.";
+	std::ifstream in("apricovMat.txt");
+	if (!in.is_open())
+	{
+		logWarning() << "unable to load apriori covariance data file. Continuing without apriori information";
+	}
+	else
+	{
+		loadAprioriCovarianceData();
+		logWarning() << "file found and computing with apriori covar information";
+	}
+
 	int nApriPoints = fData.aprioriPointCovars.pointList.size();
 	fData.aprioriPointCovars.firstWidx = lastWidx;
 	lastWidx += nApriPoints * 3;
@@ -1462,4 +1476,75 @@ void TDataAnalyzer::predeterminePLR3DV0()
 					}
 			}
 	}
+}
+
+void TDataAnalyzer::loadAprioriCovarianceData()
+{
+	std::vector<std::string> points;
+	std::vector<Eigen::Vector3d> coordinates;
+	std::vector<Eigen::Triplet<double>> tripletList;
+	// load file
+	std::ifstream in("apricovMat.txt");
+	if (!in.is_open())
+	{
+		throw std::runtime_error("Unable to open file");
+	}
+	std::string currentMode = "noMode";
+	std::string line;
+	while (std::getline(in, line))
+	{
+		if (line == "points")
+		{
+			currentMode = "pointMode";
+			continue;
+		}	
+		if (line == "covmat")
+		{
+			currentMode = "covmatMode";
+			continue;
+		}
+		if (currentMode == "pointMode")
+		{
+			auto tokens = tokenizefileString(line);
+			if (tokens.size() != 4)
+			{
+				throw std::runtime_error("expecting point name and 3 coordinates");
+			}
+			//std::cout << tokens.at(0) << std::endl;
+			points.push_back(tokens.at(0));
+			Eigen::Vector3d coord(std::stod(tokens.at(1)), std::stod(tokens.at(2)), std::stod(tokens.at(3)));
+			coordinates.push_back(coord);
+		}
+		if (currentMode == "covmatMode")
+		{
+			auto tokens = tokenizefileString(line);
+			if (tokens.size() != 3)
+			{
+				throw std::runtime_error("expecting 3 entries, row, column, value");
+			}
+			int row = std::stoi(tokens[0]);
+			int col = std::stoi(tokens[1]);
+			double value = std::stod(tokens[2]);
+			tripletList.push_back(Eigen::Triplet<double>(row, col, value));
+		}
+	}
+	//determine matrix size
+	int dim = 3 * points.size();
+	Eigen::SparseMatrix<double> covarMat;
+	covarMat.resize(dim, dim);
+	covarMat.setFromTriplets(tripletList.begin(), tripletList.end());
+	//std::cout << covarMat.toDense() << std::endl;
+	// assemble complete coordinate vector
+	Eigen::VectorXd completeCoords(dim);
+	for (int i = 0; i < points.size(); i++)
+	{
+		completeCoords.middleRows(i * 3, 3) = coordinates.at(i);
+	}
+
+	// covar data is ready and can be copied to LGCData
+	apriCovData covarData;
+	covarData.pointList = points;
+	covarData.pointCoords = completeCoords;
+	covarData.pointCovariance = covarMat;
+	fData.aprioriPointCovars = covarData;
 }

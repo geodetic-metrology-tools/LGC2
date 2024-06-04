@@ -1,0 +1,17 @@
+*TITR
+Fichier d'input créé le 17-JUL-2018
+Opération n 14736, Alignement H4
+*OLOC
+*INSTR
+*POLAR AT402.392781 CCR1.5.1143L .1898 0 0 0
+CCR1.5.1143L 3 3 .02 6 0 0 0 0 0 0
+*POIN
+%P1 1 2 3 apriCov diag(1,2,3)
+P0 1 2 3
+P2 3 4 5
+P17 45 685 874
+P3 6 7 8
+*OBSXYZ
+P17 1 2 3 1 1 1
+P0 8 7 6 1 1 1
+*END
