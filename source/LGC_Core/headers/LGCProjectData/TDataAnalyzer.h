@@ -57,6 +57,9 @@ private:
 	void checkPDOR(TFileLogger &fileLog, bool dataConsistent);
 	void predeterminePLR3DV0();
 
+	// parsing extrenal covariance data: reading a file with a list of points, coordinates and covariance data between all these points
+	void loadAprioriCovarianceData();
+
 	bool fStandDevUsed; // If at least one standard deviation assigned to a point or frame element.
 
 	// contains references: not assignable

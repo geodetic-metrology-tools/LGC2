@@ -242,7 +242,7 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 		if (projData->getPoints().doesObjectExist(pointName))
 		{
 			const LGCAdjustablePoint adPoint = projData->getPoints().getObject(pointName);
-			std::cout << "coord of pt " << pointName << " = " << adPoint.getEstimatedValue().toRealVector() << std::endl;
+			//std::cout << "coord of pt " << pointName << " = " << adPoint.getEstimatedValue().toRealVector() << std::endl;
 			currentCoords.middleRows(ptCounter * 3, 3) = adPoint.getEstimatedValue().toRealVector();
 			for (int i = 0; i < 3; i++)
 			{
