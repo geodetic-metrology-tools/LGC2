@@ -634,7 +634,7 @@ void object::test<18>()
 	testFlags(instrumentWPSR1); // PTMINUS
 
 	measIt++; // PT0
-	testFlags(instrumentWPSR1);
+	testFlags(instrumentWPSR2);
 
 	measIt++; // PT1
 	testFlags(instrumentWPSR2);
@@ -646,10 +646,10 @@ void object::test<18>()
 	testFlags(instrumentWPSR1);
 
 	measIt++; // PT4
-	testFlags(instrumentWPSR1);
+	testFlags(instrumentWPSR2);
 
 	measIt++; // PT5
-	testFlags(instrumentWPSR1);
+	testFlags(instrumentWPSR2);
 }
 
 template<>
