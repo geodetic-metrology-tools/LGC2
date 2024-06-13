@@ -1,216 +1,230 @@
 #include "MeasurementReaders.h"
-#include <TMeasurements.h>
-#include <string>
+
 #include <sstream>
+#include <string>
+
+#include <TMeasurements.h>
 
 const TReal lengthTolerance = 1e-5;
 
-namespace{
-    bool isNumber(const std::string &str){
-        try{
-            std::stod(str);
-        } catch(...){
-            return false;
-        }
-        return true;
-    }
+namespace
+{
+bool isNumber(const std::string &str)
+{
+	try
+	{
+		std::stod(str);
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return true;
+}
+} // namespace
+
+TAMeasurementKey::TAMeasurementKey(TLGCData &project, const std::string &key) :
+	TAKeyWord(key, project),
+	fpoints(project.getPoints()),
+	finstruments(project.getInstruments()),
+	flengths(project.getLength()),
+	fangles(project.getAngles()),
+	fplanes(project.getPlanes()),
+	flines(project.getLines())
+{
 }
 
-TAMeasurementKey::TAMeasurementKey(TLGCData& project, const std::string& key) : 
-			TAKeyWord(key, project),
-			fpoints(project.getPoints()),
-			finstruments(project.getInstruments()),
-			flengths(project.getLength()),
-			fangles(project.getAngles()),
-			fplanes(project.getPlanes()),
-			flines(project.getLines())
-			{}
-
-bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string>& tokens) 
+bool TAMeasurementKey::updateDefaultTargetTSTN(const std::vector<std::string> &tokens)
 {
-	bool firstline(tokens.size() > 0 && tokens.at(0) == "*"); //If true, then it is a first line of the measurement definition, i.e. PLR3D, ZEND, DIST,etc.
-	
-	try{
-		//If TRGT keyword used,  target has to be updated.
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*"); // If true, then it is a first line of the measurement definition, i.e. PLR3D, ZEND, DIST,etc.
+
+	try
+	{
+		// If TRGT keyword used,  target has to be updated.
 		if (firstline && tokens.size() == 4 && tokens.at(2) == "TRGT")
 			defaultTargetApplied = tokens.at(3);
-		else if(firstline) //Line starts with '*', but TRGT keyword not used, i.e. taking default taget value from ROM
+		else if (firstline) // Line starts with '*', but TRGT keyword not used, i.e. taking default taget value from ROM
 			defaultTargetApplied = getROM()->defaultTargetId;
 	}
-	catch(std::exception e) { }
+	catch (std::exception e)
+	{
+	}
 
 	return firstline;
 }
 
-void TKeyTSTN::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
+void TKeyTSTN::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	auto numTokens = tokens.size();
 	using namespace LGC;
 
 	if (numTokens < 4)
 		throw std::runtime_error("Key *TSTN takes at least two arguments: Positioned point ID  and InstrumentID.");
-	
+
 	// Initialize the station
-	std::shared_ptr<TTSTN> tstn = std::make_shared<TTSTN>(fpoints.getObject(tokens.at(2)),
-		finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
+	std::shared_ptr<TTSTN> tstn = std::make_shared<TTSTN>(fpoints.getObject(tokens.at(2)), finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
 	tstn->line = line;
-    tstn->setActive(activeLine);
+	tstn->setActive(activeLine);
 
 	// Parse the rest of the options
-	TInstrumentData::TPOLAR& instrument(tstn->instrument);
+	TInstrumentData::TPOLAR &instrument(tstn->instrument);
 
-	TOptionHelper opts(tokens.cbegin()+3, tokens.cend());
+	TOptionHelper opts(tokens.cbegin() + 3, tokens.cend());
 
 	tstn->ihfix = opts.has("IHFIX");
 	// Look for optional "IH" and "IHSE" flags only if the "IHFIX" flag used, ignore otherwise
-	if(tstn->ihfix){
-		instrument.instrHeight    = TLength(opts.getParamR("IH",   instrument.instrHeight));
-      instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
+	if (tstn->ihfix)
+	{
+		instrument.instrHeight = TLength(opts.getParamR("IH", instrument.instrHeight));
+		instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
 	}
 
 	tstn->rot3D = opts.has("ROT3D");
 
-	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
+	instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
 	instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
 
-	//emplace this station
+	// emplace this station
 	proj.getCurrentNode().measurements.fTSTN.emplace_back(tstn);
 
 	if (tstn->ihfix && tstn->rot3D)
 		throw std::runtime_error("ROT3D and IHFIX cannot be specified at the same time for TSTN.");
 }
 
-void TKeyCAM::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
+void TKeyCAM::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	auto numTokens = tokens.size();
-	
+
 	if (numTokens < 4)
 		throw std::runtime_error("Key *CAM takes at least two arguments: Positioned point ID  and InstrumentID.");
-	
+
 	// Initialize the station
-	TCAM cam(fpoints.getObject(tokens.at(2)),
-		finstruments.getDevice(finstruments.fCAMD, tokens.at(3)));
+	TCAM cam(fpoints.getObject(tokens.at(2)), finstruments.getDevice(finstruments.fCAMD, tokens.at(3)));
 
 	cam.line = line;
-    cam.setActive(activeLine);
+	cam.setActive(activeLine);
 
 	// Parse the rest of the options
-	TInstrumentData::TCAMD& instrument(cam.instrument);
+	TInstrumentData::TCAMD &instrument(cam.instrument);
 
-	TOptionHelper opts(tokens.cbegin()+3, tokens.cend());
+	TOptionHelper opts(tokens.cbegin() + 3, tokens.cend());
 
-	instrument.defTarget           = opts.getParamS("TRGT", instrument.defTarget);
-	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); //value given in mili-meters [mm], returned value in meters [m]
-	
-	//emplace this Camera
+	instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
+	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); // value given in mili-meters [mm], returned value in meters [m]
+
+	// emplace this Camera
 	proj.getCurrentNode().measurements.fCAM.emplace_back(cam);
 }
 
 ///////////////////////
 //   CAMERA MEAS       //
 ///////////////////////
-void TKeyUVEC::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
+void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-	if (firstline){ //If this is the line starting with *UVEC, where only default target can be changed, use the default from the CAM definition or override it
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+	if (firstline)
+	{ // If this is the line starting with *UVEC, where only default target can be changed, use the default from the CAM definition or override it
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
-        getCAM().uvecActive = getCAM().isActive() && activeLine; // Active only if station is active as well
+		getCAM().uvecActive = getCAM().isActive() && activeLine; // Active only if station is active as well
 	}
-	else{//Get here, if the line does NOT start with a "*", it means that is the concrete measurement 
-        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
+	else
+	{ // Get here, if the line does NOT start with a "*", it means that is the concrete measurement
+		bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A UVEC measurement must have at least 4 entries: "
 									 "The observed point and 3 components of the unit vector.");
-		
-		// prepare the options analysis, i.e. searching for optional keywords
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a camera reference to update default values
-		auto& camera(getCAM());
 
-		//NODUP used
+		// prepare the options analysis, i.e. searching for optional keywords
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		// look up the observed point
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
+		// get a camera reference to update default values
+		auto &camera(getCAM());
+
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for(auto& point : camera.measUVEC)
+			for (auto &point : camera.measUVEC)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("An UVEC measurement is duplicated");
-		
+
 		// get a copy of the specified target and update it
-		auto tgt(finstruments.getDevice(camera.instrument.targets, opts.getParamS("TRGT", defaultTargetApplied))); 
-		
+		auto tgt(finstruments.getDevice(camera.instrument.targets, opts.getParamS("TRGT", defaultTargetApplied)));
+
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// optionally change target sigmas
-		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX );
-		tgt.sigmaY = opts.getParamRmm2m("YSE", tgt.sigmaY );
-		
+		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX);
+		tgt.sigmaY = opts.getParamRmm2m("YSE", tgt.sigmaY);
+
 		// set measurement value
 		TUVEC uvec(obspt, tgt);
 		uvec.line = line;
-        uvec.setActive(getCAM().uvecActive && activeLine); // Active only if ROM is active as well
+		uvec.setActive(getCAM().uvecActive && activeLine); // Active only if ROM is active as well
 		uvec.obsID = std::string(opts.getParamS("ID", uvec.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			uvec.eolcomment = tokens.back();
 
 		// Measured unit vector save, if it is not a simulation
-		if (hasAllParams){
-			TFreeVector vectorMeasurement(std::stor(tokens.at(1)),std::stor(tokens.at(2)),std::stor(tokens.at(3)),TCoordSysFactory::k3DCartesian);
+		if (hasAllParams)
+		{
+			TFreeVector vectorMeasurement(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::k3DCartesian);
 
-			if(isZero(vectorMeasurement.getZ().getMetresValue()))
+			if (isZero(vectorMeasurement.getZ().getMetresValue()))
 				throw std::runtime_error("Input of UVEC measurement is not correct: "
 										 "Z coordinate of the unit vector can not be ZERO or close to it.");
 
-         TReal vectorLength = vectorMeasurement.length().getMetresValue();
+			TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
-			if(!((1-lengthTolerance)<vectorLength && (1+lengthTolerance)>vectorLength)) //If vectorLength is not 1 with a given tolerance
+			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength)) // If vectorLength is not 1 with a given tolerance
 				throw std::runtime_error("UVEC measurement input values are not correct: "
 										 "Given vector is not a unit vector.");
 
 			uvec.setVectorMeasurement(vectorMeasurement);
 		}
 
-		//Store this UVEC measurement
+		// Store this UVEC measurement
 		getCAM().measUVEC.emplace_back(uvec);
 	}
 }
 
-
-void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
+void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-	if (firstline){ //If this is the line starting with *UVD, where only default target can be changed
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+	if (firstline)
+	{ // If this is the line starting with *UVD, where only default target can be changed
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
-        getCAM().uvdActive = getCAM().isActive() && activeLine; // Active only if station is active as well
-    }
-	else{//Enter if the line does NOT start with a "*"
-        bool hasAllParams = (tokens.size() > 4) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3)) && isNumber(tokens.at(4));
+		getCAM().uvdActive = getCAM().isActive() && activeLine; // Active only if station is active as well
+	}
+	else
+	{ // Enter if the line does NOT start with a "*"
+		bool hasAllParams = (tokens.size() > 4) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3)) && isNumber(tokens.at(4));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A UVD measurement must have at least 5 entries: "
 									 "The observed point, 3 components of the unit vector and the spatial distance.");
-		
-		// prepare the options analysis
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a camera reference to update default values
-		auto& camera(getCAM());
 
-		//NODUP used
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		// look up the observed point
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
+		// get a camera reference to update default values
+		auto &camera(getCAM());
+
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : camera.measUVD)
+			for (auto &point : camera.measUVD)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("An UVD measurement is duplicated");
-		
+
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(camera.instrument.targets, opts.getParamS("TRGT", defaultTargetApplied)));
-		
+
 		// optionally change target sigmas
 		tgt.sigmaX = opts.getParamRmm2m("XSE", tgt.sigmaX);
 		tgt.sigmaY = opts.getParamRmm2m("YSE", tgt.sigmaY);
@@ -219,25 +233,26 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 		// set measurement value
 		TUVD uvd(obspt, tgt);
 		uvd.line = line;
-        uvd.setActive(getCAM().uvdActive && activeLine); // Active only if ROM is active as well
+		uvd.setActive(getCAM().uvdActive && activeLine); // Active only if ROM is active as well
 		uvd.obsID = std::string(opts.getParamS("ID", uvd.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			uvd.eolcomment = tokens.back();
 
-		//Measured unit vector and distance save if it is not a simulation
-		if (hasAllParams) {
-			TFreeVector vectorMeasurement(std::stor(tokens.at(1)),std::stor(tokens.at(2)),std::stor(tokens.at(3)),TCoordSysFactory::k3DCartesian);
+		// Measured unit vector and distance save if it is not a simulation
+		if (hasAllParams)
+		{
+			TFreeVector vectorMeasurement(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::k3DCartesian);
 
-         if(isZero(vectorMeasurement.getZ().getMetresValue()))
+			if (isZero(vectorMeasurement.getZ().getMetresValue()))
 				throw std::runtime_error("UVD measurement input values are not correct: "
 										 "Z coordinate of the unit vector can not be ZERO or close to it.");
 
-         TReal vectorLength = vectorMeasurement.length().getMetresValue();
+			TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
-			if(!((1-lengthTolerance)<vectorLength && (1+lengthTolerance)>vectorLength)) //If vectorLength is not 1 with a given tolerance
+			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength)) // If vectorLength is not 1 with a given tolerance
 				throw std::runtime_error("UVD measurement input values are not correct: "
 										 "Given vector is not a unit vector.");
 
@@ -245,132 +260,132 @@ void TKeyUVD::parse(const std::vector<std::string>& tokens, bool activeLine, int
 			uvd.setDistance(TLength(std::stor(tokens.at(4))));
 		}
 
-		//Store this UVEC measurement
+		// Store this UVEC measurement
 		getCAM().measUVD.emplace_back(uvd);
 	}
 }
 
-
 ///////////////////////
 //   TSTN MEAS       //
 ///////////////////////
-void TKeyV0::parse(const std::vector<std::string>& tokens, bool activeLine, int)
+void TKeyV0::parse(const std::vector<std::string> &tokens, bool activeLine, int)
 {
-	TOptionHelper opts(tokens.cbegin()+2, tokens.cend());
+	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
 	// get a reference to the modifyable station copy
-	auto& stn(getStation());
+	auto &stn(getStation());
 
-    // Update the default target, if specified, or take one from TSTN (stn.defTarget):
-    // (NB. use the following function to get the standard error message)
-    auto tgtId = finstruments.getDevice(stn.targets, opts.getParamS("TRGT", stn.defTarget)).ID;
+	// Update the default target, if specified, or take one from TSTN (stn.defTarget):
+	// (NB. use the following function to get the standard error message)
+	auto tgtId = finstruments.getDevice(stn.targets, opts.getParamS("TRGT", stn.defTarget)).ID;
 
-    // Create the ROM:
+	// Create the ROM:
 	std::shared_ptr<TTSTN::TROM> rom = std::make_shared<TTSTN::TROM>(tgtId, nullptr);
-    rom->setActive(proj.getCurrentNode().measurements.fTSTN.back()->isActive() && activeLine); // Active only if station is active as well
+	rom->setActive(proj.getCurrentNode().measurements.fTSTN.back()->isActive() && activeLine); // Active only if station is active as well
 
 	// set a constant orientation if defined
 	if (opts.has("ACST"))
-		rom->acst.setGonsValue(opts.getParamR("ACST"));	//Value in the input file given in GON
+		rom->acst.setGonsValue(opts.getParamR("ACST")); // Value in the input file given in GON
 	else
 		rom->acst.setRadiansValue(stn.constAngle); // Value stored in RAD
-				
+
 	// Add the ROM
 	proj.getCurrentNode().measurements.fTSTN.back()->roms.emplace_back(rom);
 }
 
-void TKeyPLR3D::parse(const std::vector<std::string>& tokens, bool activeLine, int line) 
+void TKeyPLR3D::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	using namespace LGC;
 
-    // If first line, update the active status of the PLR3D rom:
-    if(updateDefaultTargetTSTN(tokens))
-        getROM()->plrActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+	// If first line, update the active status of the PLR3D rom:
+	if (updateDefaultTargetTSTN(tokens))
+		getROM()->plrActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
-    // Else handle the measurement line:
-    else {
-		//We get here if line does NOT start with a "*"
-        bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
+	// Else handle the measurement line:
+	else
+	{
+		// We get here if line does NOT start with a "*"
+		bool hasAllParams = (tokens.size() > 3) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A PLR3D measurement must have at least 4 entries: "
 									 "The observed point and 3 measurement values.");
-		
+
 		// prepare the options analysis
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
 		// get a station reference to update default values
-		auto& stn(getStation());
+		auto &stn(getStation());
 
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measPLR3D)
+			for (auto &point : getROM()->measPLR3D)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A PLR3D measurement is duplicated");
-		
+
 		// set optional target modifications
-		tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
-		tgt.sigmaTargetHt        = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
+		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
+		tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
-	
+
 		// optionally change target sigmas
 		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("ASE", tgt.sigmaAngl));
 		tgt.sigmaZenD = TAngle(opts.getParamRcc2rad("ZSE", tgt.sigmaZenD));
 		tgt.sigmaDist = TLength(opts.getParamRmm2m("DSE", tgt.sigmaDist));
-		tgt.ppmDist   = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
-		
+		tgt.ppmDist = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
+
 		// set measurement values
 		TPLR3D plr(obspt, tgt);
 		plr.line = line;
-        plr.setActive(getROM()->plrActive && activeLine); // Active only if ROM is active as well
+		plr.setActive(getROM()->plrActive && activeLine); // Active only if ROM is active as well
 		plr.obsID = std::string(opts.getParamS("ID", plr.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			plr.eolcomment = tokens.back();
 
+		if (hasAllParams)
+		{ // Store value if it is not a simulation
 
-
-		if (hasAllParams) { //Store value if it is not a simulation
-			
-			// (VV) Here we will check whether the angle measurements are performed 
+			// (VV) Here we will check whether the angle measurements are performed
 			// (VV) in the first face (left circle) or in the second face (right circle) of the theodolite (total station, tracker).
 			// (VV) The tokens arleady contain the angle measurements in radians in the range (-pi, pi), therefore,
 			// (VV) the zenith angle in the first face is positive and the zenith anlge in the second face is negative.
 
 			// (VV) If the zenith angle is positive (or equal to zero) then just copy the angle values.
-			if (TAngle(std::stor(tokens.at(2)), TAngle::kGons) >= TAngle(0, TAngle::kGons)) { // 
+			if (TAngle(std::stor(tokens.at(2)), TAngle::kGons) >= TAngle(0, TAngle::kGons))
+			{ //
 				plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons), kANGL);
 				plr.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons), kZEND);
 			}
 			// (VV) If the zenith angle is negative (right circle) then we store the equivalent values of the left circle.
-			else {
-				plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons) + TAngle(200.0, TAngle::kGons), kANGL);  // (VV) either -200 or +200 has the same result.
+			else
+			{
+				plr.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons) + TAngle(200.0, TAngle::kGons), kANGL); // (VV) either -200 or +200 has the same result.
 				plr.setAngle(TAngle(400.0, TAngle::kGons) - TAngle(std::stor(tokens.at(2)), TAngle::kGons), kZEND);
 			}
 			plr.setDistance(TLength(std::stor(tokens.at(3))));
 		}
-		//Ad this PLR3D measurement to TSTN's ROM 
+		// Ad this PLR3D measurement to TSTN's ROM
 		getROM()->measPLR3D.emplace_back(plr);
-
 	}
 }
 
-
-void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyANGL::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	using namespace LGC;
 
-    // If first line, update the active status of the ANGL rom:
-    if(updateDefaultTargetTSTN(tokens))
-        getROM()->anglActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+	// If first line, update the active status of the ANGL rom:
+	if (updateDefaultTargetTSTN(tokens))
+		getROM()->anglActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
-    // Else handle the measurement line:
-    else {
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	// Else handle the measurement line:
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("An ANGL measurement must have at least 2 entries: "
 									 "The observed point and the measured angle.");
@@ -378,29 +393,29 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
 		// get a station reference to update default values
-		auto& stn(getStation());
+		auto &stn(getStation());
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measANGL)
+			for (auto &point : getROM()->measANGL)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ANGL measurement is duplicated");
 
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
-		
+
 		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaAngl));
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
-		
+
 		// set measurement value
 		TANGL angl(obspt, tgt);
 		angl.line = line;
-        angl.setActive(getROM()->anglActive && activeLine); // Active only if ROM is active as well
+		angl.setActive(getROM()->anglActive && activeLine); // Active only if ROM is active as well
 		angl.obsID = std::string(opts.getParamS("ID", angl.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			angl.eolcomment = tokens.back();
@@ -412,226 +427,228 @@ void TKeyANGL::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	}
 }
 
-void TKeyZEND::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
-{	
+void TKeyZEND::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
+{
 	using namespace LGC;
 
-    // If first line, update the active status of the ZEND rom:
-    if(updateDefaultTargetTSTN(tokens))
-        getROM()->zendActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+	// If first line, update the active status of the ZEND rom:
+	if (updateDefaultTargetTSTN(tokens))
+		getROM()->zendActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
-    // Else handle the measurement line:
-    else {
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	// Else handle the measurement line:
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A ZEND measurement must have at least 2 entries: "
 									 "The observed point and the measured angle.");
-		
-		// prepare the options analysis
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a station reference to update default values
-		auto& stn(getStation());
 
-		//NODUP used
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		// look up the observed point
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
+		// get a station reference to update default values
+		auto &stn(getStation());
+
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measZEND)
+			for (auto &point : getROM()->measZEND)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ZEND measurement is duplicated");
 
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
-		
+
 		// set optional target modifications
-		tgt.sigmaZenD            = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaZenD));
-		tgt.targetHt           = TLength(opts.getParamR("TH",   tgt.targetHt));
-		tgt.sigmaTargetHt        = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
+		tgt.sigmaZenD = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaZenD));
+		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
+		tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// set measurement value
 		TZEND zend(obspt, tgt);
 		zend.line = line;
-        zend.setActive(getROM()->zendActive && activeLine); // Active only if ROM is active as well
+		zend.setActive(getROM()->zendActive && activeLine); // Active only if ROM is active as well
 		zend.obsID = std::string(opts.getParamS("ID", zend.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			zend.eolcomment = tokens.back();
 
-		
-		if (hasAllParams) {
-
-			// (VV) Here we will check whether the angle measurements are performed 
+		if (hasAllParams)
+		{
+			// (VV) Here we will check whether the angle measurements are performed
 			// (VV) in the first face (left circle) or in the second face (right circle) of the theodolite (total station, tracker).
 			// (VV) The tokens arleady contain the angle measurements in radians in the range (-pi, pi), therefore,
 			// (VV) the zenith angle in the first face is positive and the zenith anlge in the second face is negative.
 
 			// (VV) If the zenith angle is positive (or equal to zero) then just copy the angle values.
-			if (TAngle(std::stor(tokens.at(1)), TAngle::kGons) >= TAngle(0, TAngle::kGons)) {
+			if (TAngle(std::stor(tokens.at(1)), TAngle::kGons) >= TAngle(0, TAngle::kGons))
+			{
 				zend.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 			}
 			// (VV) If the zenith angle is negative (right circle) then we store the equivalent values of the left circle.
-			else {
+			else
+			{
 				zend.setAngle(TAngle(400.0, TAngle::kGons) - TAngle(std::stor(tokens.at(1)), TAngle::kGons));
 			}
 		}
 		getROM()->measZEND.emplace_back(zend);
-		
 	}
 }
 
-void TKeyDIST::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyDIST::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
-    // If first line, update the active status of the DIST rom:
-    if(updateDefaultTargetTSTN(tokens))
-        getROM()->distActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+	// If first line, update the active status of the DIST rom:
+	if (updateDefaultTargetTSTN(tokens))
+		getROM()->distActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
-    // Else handle the measurement line:
-    else {
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	// Else handle the measurement line:
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A DIST measurement must have at least 2 entries: "
 									 "The observed point and the measured distance.");
-		
-		// prepare the options analysis
-	   TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a station reference to update default values
-		auto& stn(getStation());
 
-		//NODUP used
+		// prepare the options analysis
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		// look up the observed point
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
+		// get a station reference to update default values
+		auto &stn(getStation());
+
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measDIST)
+			for (auto &point : getROM()->measDIST)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DIST measurement is duplicated");
 
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(stn.targets, opts.getParamS("TRGT", defaultTargetApplied)));
-		
-		tgt.sigmaDist            = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
-		tgt.ppmDist              = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
-		tgt.targetHt             = TLength(opts.getParamR("TH", tgt.targetHt));
-		tgt.sigmaTargetHt        = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
+
+		tgt.sigmaDist = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDist));
+		tgt.ppmDist = TLength(opts.getParamRmm2m("PPM", tgt.ppmDist));
+		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
+		tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store  the measured value
-		getROM()->measDIST.emplace_back(
-         TLINE(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))))
-		);
+		getROM()->measDIST.emplace_back(TLINE(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)))));
 
-		//get a reference to the inserted measurement
-	   auto& dist(getROM()->measDIST.back());
+		// get a reference to the inserted measurement
+		auto &dist(getROM()->measDIST.back());
 
 		dist.line = line;
-        dist.setActive(getROM()->distActive && activeLine); // Active only if ROM is active as well
+		dist.setActive(getROM()->distActive && activeLine); // Active only if ROM is active as well
 		dist.obsID = std::string(opts.getParamS("ID", dist.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dist.eolcomment = tokens.back();
-
 	}
 }
 
-void TKeyECTH::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyECTH::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
+	if (firstline)
+	{
 		// look up station point
 		if (tokens.size() < 4)
 			throw std::runtime_error("An ECTH measurement must have 2 entries: "
 									 "The observed horizontal angle defining the reference plane and ID of a SCALE instrument.");
-	
-		fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
-		fScaleInstID =  tokens.at(3);
 
-		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
+		fObservedAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
+		fScaleInstID = tokens.at(3);
+
+		// The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
-        
-        // Update the activation status of the ECTH rom:
-        getROM()->ecthActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+
+		// Update the activation status of the ECTH rom:
+		getROM()->ecthActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("An ECTH measurement must have at least 2 entries: "
 									 "The observed point and the measured distance.");
 		// prepare the options analysis
-	   TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// look up the stationed point
-		const auto& stPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stPoint(fpoints.getObject(tokens.at(0)));
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measECTH)
+			for (auto &point : getROM()->measECTH)
 				if (stPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ECTH measurement is duplicated");
-	   
+
 		// get a copy of the specified target and update it
-		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied)); 
+		TInstrumentData::TSCALE scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied));
 
 		scaleInstr.sigmaD = TLength(opts.getParamRmm2m("OBSE", scaleInstr.sigmaD));
 		scaleInstr.ppmD = TLength(opts.getParamRmm2m("PPM", scaleInstr.ppmD));
 		scaleInstr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", scaleInstr.sigmaInstrCentering));
 
-	   // Store  the measured value
-	   getROM()->measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)))));
+		// Store  the measured value
+		getROM()->measECTH.emplace_back(TECTH(stPoint, scaleInstr, fObservedAngle, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)))));
 
-	   //get a reference to the inserted measurement
-	   auto& ecth(getROM()->measECTH.back());
+		// get a reference to the inserted measurement
+		auto &ecth(getROM()->measECTH.back());
 
-	   ecth.line = line;
-       ecth.setActive(getROM()->ecthActive && activeLine); // Active only if ROM is active as well
-	   ecth.obsID = std::string(opts.getParamS("ID", ecth.obsID));
-	   
-	   	//If last token starts with a comment character, store it as a end of line comment
+		ecth.line = line;
+		ecth.setActive(getROM()->ecthActive && activeLine); // Active only if ROM is active as well
+		ecth.obsID = std::string(opts.getParamS("ID", ecth.obsID));
+
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			ecth.eolcomment = tokens.back();
 	}
 }
 
-void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyECDIR::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
+	if (firstline)
+	{
 		// look up station point
 		if (tokens.size() < 5)
 			throw std::runtime_error("An ECDIR measurement must have 3 entries: "
-			"The horizontal and vertical angles defining the line and ID of a SCALE instrument.");
+									 "The horizontal and vertical angles defining the line and ID of a SCALE instrument.");
 
 		fScaleInstID = tokens.at(4);
 		fHorAngle = TAngle(std::stor(tokens.at(2)), TAngle::kGons);
 		fVertAngle = TAngle(std::stor(tokens.at(3)), TAngle::kGons);
 
-		//The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
+		// The SCALE instrument is only the default one used, it is not stored in TECTH because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, fScaleInstID).ID;
 
-        // Update the activation status of the ECDIR rom:
-        getROM()->ecdirActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+		// Update the activation status of the ECDIR rom:
+		getROM()->ecdirActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("An ECTH measurement must have at least 2 entries: "
-			"The observed point and the measured distance.");
+									 "The observed point and the measured distance.");
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// look up the stationed point
-		const auto& stPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stPoint(fpoints.getObject(tokens.at(0)));
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measECDIR)
+			for (auto &point : getROM()->measECDIR)
 				if (stPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A ECDIR measurement is duplicated");
-
 
 		// get a copy of the specified target and update it
 		auto scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied));
@@ -643,42 +660,43 @@ void TKeyECDIR::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		// Store  the measured value
 		getROM()->measECDIR.emplace_back(TECDIR(stPoint, scaleInstr, fHorAngle, fVertAngle, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)))));
 
-		//get a reference to the inserted measurement
-		auto& ecdir(getROM()->measECDIR.back());
+		// get a reference to the inserted measurement
+		auto &ecdir(getROM()->measECDIR.back());
 
 		ecdir.line = line;
-        ecdir.setActive(getROM()->ecdirActive && activeLine); // Active only if ROM is active as well
+		ecdir.setActive(getROM()->ecdirActive && activeLine); // Active only if ROM is active as well
 		ecdir.obsID = std::string(opts.getParamS("ID", ecdir.obsID));
-		
-		//If last token starts with a comment character, store it as a end of line comment
+
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			ecdir.eolcomment = tokens.back();
 	}
 }
 
-void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyDHOR::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
-    // If first line, update the active status of the DHOR rom:
-    if(updateDefaultTargetTSTN(tokens))
-        getROM()->dhorActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
+	// If first line, update the active status of the DHOR rom:
+	if (updateDefaultTargetTSTN(tokens))
+		getROM()->dhorActive = getROM()->isActive() && activeLine; // Active only if ROM is active as well
 
-    // Else handle the measurement line:
-    else {
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	// Else handle the measurement line:
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A DHOR measurement must have at least 2 entries: "
 									 "The observed point and the measured horizontal distance.");
-		
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
-		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
-		// get a station reference to update default values
-		auto& stn(getStation());
 
-		//NODUP used
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		// look up the observed point
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
+		// get a station reference to update default values
+		auto &stn(getStation());
+
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : getROM()->measDHOR)
+			for (auto &point : getROM()->measDHOR)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DHOR measurement is duplicated");
 
@@ -690,17 +708,15 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store the measured value
-		getROM()->measDHOR.emplace_back(
-         TLINE(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))))
-		);
+		getROM()->measDHOR.emplace_back(TLINE(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)))));
 
-		//get a reference to the inserted measurement
-		auto& dhor(getROM()->measDHOR.back());
+		// get a reference to the inserted measurement
+		auto &dhor(getROM()->measDHOR.back());
 		dhor.line = line;
-        dhor.setActive(getROM()->dhorActive && activeLine); // Active only if ROM is active as well
+		dhor.setActive(getROM()->dhorActive && activeLine); // Active only if ROM is active as well
 		dhor.obsID = std::string(opts.getParamS("ID", dhor.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dhor.eolcomment = tokens.back();
@@ -710,57 +726,58 @@ void TKeyDHOR::parse(const std::vector<std::string>& tokens, bool activeLine, in
 ///////////////////////
 //   NON TSTN MEAS   //
 ///////////////////////
-void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyDSPT::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-	if (firstline) {
+	if (firstline)
+	{
 		// look up station point and EDM ID
 		if (tokens.size() < 4)
 			throw std::runtime_error("Not enough entries for a DSPT station, "
-			                         "needs stationed point and instrument ID.");
+									 "needs stationed point and instrument ID.");
 
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 3, tokens.cend());
 		// Initialize the station
-		TEDM edm(fpoints.getObject(tokens.at(2)),
-			finstruments.getDevice(finstruments.fEDM, tokens.at(3)));
-        edm.line = line;
-        edm.setActive(activeLine);
-		
-		// get a reference to modify the default values for this station
-		auto& instrument(edm.instrument);
+		TEDM edm(fpoints.getObject(tokens.at(2)), finstruments.getDevice(finstruments.fEDM, tokens.at(3)));
+		edm.line = line;
+		edm.setActive(activeLine);
 
-        instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
-        instrument.instrHeight = TLength(opts.getParamR("IH", instrument.instrHeight));
-        instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
-        instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
+		// get a reference to modify the default values for this station
+		auto &instrument(edm.instrument);
+
+		instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
+		instrument.instrHeight = TLength(opts.getParamR("IH", instrument.instrHeight));
+		instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
+		instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
 
 		proj.getCurrentNode().measurements.fEDM.emplace_back(edm);
-	} 
-	else {
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	}
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A DSPT measurement must have at least 2 entries: "
 									 "The observed point and the measured distance.");
-		
+
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		// look up the observed point
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : proj.getCurrentNode().measurements.fEDM.back().measDSPT)
+			for (auto &point : proj.getCurrentNode().measurements.fEDM.back().measDSPT)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DSPT measurement is duplicated");
 
 		// get a station reference to update default values
-		TInstrumentData::TEDM& instrument = proj.getCurrentNode().measurements.fEDM.back().instrument;
+		TInstrumentData::TEDM &instrument = proj.getCurrentNode().measurements.fEDM.back().instrument;
 
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(instrument.targets, opts.getParamS("TRGT", instrument.defTarget)));
-		
+
 		tgt.sigmaDSpt = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaDSpt));
 		tgt.ppmDSpt = TLength(opts.getParamRmm2m("PPM", tgt.ppmDSpt));
 		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
@@ -768,124 +785,122 @@ void TKeyDSPT::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
 
 		// Store  the measured value
-		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(
-         TDSPT(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))))
-		);
-		
-		//get a reference to the inserted measurement
-        auto& dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
-        dspt.line = line;
-        dspt.setActive(proj.getCurrentNode().measurements.fEDM.back().isActive() && activeLine); // Active only if station active as well
+		proj.getCurrentNode().measurements.fEDM.back().measDSPT.emplace_back(TDSPT(obspt, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)))));
+
+		// get a reference to the inserted measurement
+		auto &dspt(proj.getCurrentNode().measurements.fEDM.back().measDSPT.back());
+		dspt.line = line;
+		dspt.setActive(proj.getCurrentNode().measurements.fEDM.back().isActive() && activeLine); // Active only if station active as well
 		dspt.obsID = std::string(opts.getParamS("ID", dspt.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-            dspt.eolcomment = tokens.back();
+			dspt.eolcomment = tokens.back();
 	}
 }
 
-void TKeyDVER::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyDVER::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-	//On first line nothing appears so far: to be discussed
-	if (firstline) {
+	// On first line nothing appears so far: to be discussed
+	if (firstline)
+	{
 		if (tokens.size() > 2)
 			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
 		else
 			sigma = TLength(1.0, TLength::EUnits::kMillimetres);
 
-        // Update the activation status of the DVER rom:
-        proj.getCurrentNode().measurements.dverActive = activeLine;
+		// Update the activation status of the DVER rom:
+		proj.getCurrentNode().measurements.dverActive = activeLine;
 	}
-	else {
-        bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(2));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A DVER measurement must have at least 3 entries: "
 									 "Two points and the measured distance.");
 
-		TOptionHelper opts(tokens.cbegin()+2, tokens.cend());
+		TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fDVER.emplace_back(
-         TDVER(fpoints.getObject(tokens.at(0)), fpoints.getObject(tokens.at(1)), TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2))))
-			);
+			TDVER(fpoints.getObject(tokens.at(0)), fpoints.getObject(tokens.at(1)), TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(2)))));
 
-		auto& dver(proj.getCurrentNode().measurements.fDVER.back());
-
+		auto &dver(proj.getCurrentNode().measurements.fDVER.back());
 
 		if (opts.has("OBSE"))
 			dver.setObservedStDev(TLength(opts.getParamRmm2m("OBSE", proj.getCurrentNode().measurements.fDVER.back().getObservedStDev())));
 		else
 			dver.setObservedStDev(sigma);
 
-      
 		dver.setDistanceCorrection(TLength(opts.getParamR("DCOR", proj.getCurrentNode().measurements.fDVER.back().getDistanceCorrection())));
 
 		dver.line = line;
-        dver.setActive(proj.getCurrentNode().measurements.dverActive && activeLine); // Active only if ROM active as well
+		dver.setActive(proj.getCurrentNode().measurements.dverActive && activeLine); // Active only if ROM active as well
 		dver.obsID = std::string(opts.getParamS("ID", dver.obsID));
-		
-		//If last token starts with a comment character, store it as a end of line comment
+
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			dver.eolcomment = tokens.back();
-
 	}
 }
 
-void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	
-	if (firstline) {
+
+	if (firstline)
+	{
 		if (tokens.size() < 3)
 			throw std::runtime_error("A DLEV group of measurements must have at least 1 entry, the levelling instrument ID");
 
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+		const LGCAdjustablePoint *refPt = nullptr;
 
-        const LGCAdjustablePoint* refPt = nullptr;
+		if (opts.has("RefPt"))
+		{
+			std::string rpName = opts.getParamS("RefPt", "NULL");
 
-		if(opts.has("RefPt")){
-			std::string rpName = opts.getParamS("RefPt", "NULL"); 
-			
 			if (!fpoints.doesObjectExist(rpName))
-				throw std::runtime_error("Point" +  rpName + "used as reference point in DLEV measurement, must be declared before used");
+				throw std::runtime_error("Point" + rpName + "used as reference point in DLEV measurement, must be declared before used");
 
-            refPt = &fpoints.getObject(rpName);
+			refPt = &fpoints.getObject(rpName);
 		}
 
-        TLEVEL level(refPt, finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
+		TLEVEL level(refPt, finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
 		level.instrument.defStaffID = opts.getParamS("TRGT", level.instrument.defStaffID);
-        level.line = line;
-        level.setActive(activeLine);
+		level.line = line;
+		level.setActive(activeLine);
 
-		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); //add new measurement
+		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); // add new measurement
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A DLEV measurement must have at least 2 entries: stationed point ID and observed vertical distance");
 
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-		const auto& tgtfPoint(fpoints.getObject(tokens.at(0)));
-		TLEVEL& levelGrOfMeas = proj.getCurrentNode().measurements.fLEVEL.back();
+		const auto &tgtfPoint(fpoints.getObject(tokens.at(0)));
+		TLEVEL &levelGrOfMeas = proj.getCurrentNode().measurements.fLEVEL.back();
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : levelGrOfMeas.measDLEV)
+			for (auto &point : levelGrOfMeas.measDLEV)
 				if (tgtfPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("A DLEV measurement is duplicated");
 
 		// get a copy of the specified target and update it
 		auto tgt = finstruments.getDevice(levelGrOfMeas.instrument.targets, opts.getParamS("TRGT", levelGrOfMeas.instrument.defStaffID));
-		
+
 		tgt.sigmaD = TLength(opts.getParamRmm2m("OBSE", tgt.sigmaD));
-		tgt.ppmD         = TLength(opts.getParamRmm2m("PPM", tgt.ppmD));
-		tgt.staffHt      = TLength(opts.getParamR("TH", tgt.staffHt)); //Vertical offset of the staff == height
+		tgt.ppmD = TLength(opts.getParamRmm2m("PPM", tgt.ppmD));
+		tgt.staffHt = TLength(opts.getParamR("TH", tgt.staffHt)); // Vertical offset of the staff == height
 		tgt.sigmaStaffHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaStaffHt));
 
 		// Store  the dlev measured value
@@ -894,126 +909,128 @@ void TKeyDLEV::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Store  the dhor measured value if keyword is used
 		if (opts.has("DHOR"))
 		{
-			if(!hasAllParams)
-            dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(NO_VALf)));
+			if (!hasAllParams)
+				dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(NO_VALf)));
 			else
-			   //If horizontal distance is given, DHOR measurement is introduced.
-            dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(opts.getParamR("DHOR", NO_VALf))));
+				// If horizontal distance is given, DHOR measurement is introduced.
+				dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(opts.getParamR("DHOR", NO_VALf))));
 
 			dlev.dhor->line = line;
-			TReal horDistSigma  = opts.getParamRmm2m("DSE",  NO_VALf);
-			if(!isnotanumber(horDistSigma))
-            dlev.dhor->setDHORSigma(TLength(horDistSigma));
+			TReal horDistSigma = opts.getParamRmm2m("DSE", NO_VALf);
+			if (!isnotanumber(horDistSigma))
+				dlev.dhor->setDHORSigma(TLength(horDistSigma));
 			else
 				throw std::runtime_error("If DHOR distance is provided, standard deviation (DSE) needs to be assigned!");
-
 		}
 
 		dlev.line = line;
-        dlev.setActive(levelGrOfMeas.isActive() && activeLine); // Active only if station active as well
+		dlev.setActive(levelGrOfMeas.isActive() && activeLine); // Active only if station active as well
 		dlev.obsID = std::string(opts.getParamS("ID", dlev.obsID));
 
 		levelGrOfMeas.measDLEV.emplace_back(dlev);
 	}
 }
 
-void TKeyECHO::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyECHO::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
-
-	bool firstline(tokens.size() > 0 && tokens.at(0) == "*"); 
-	if(firstline){
-		if (tokens.size() < 3 )
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline)
+	{
+		if (tokens.size() < 3)
 			throw std::runtime_error("ECHO measurement must have at least 1 entry, the SCALE instrument ID");
 
 		TECHOROM echoRom(nullptr);
 		echoRom.line = line;
-        echoRom.setActive(activeLine);
-      
-		proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); //add new round of measurement
+		echoRom.setActive(activeLine);
 
-		//The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
+		proj.getCurrentNode().measurements.fECHO.emplace_back(echoRom); // add new round of measurement
+
+		// The SCALE instrument is only the default one used, it is not stored in TECHOROM because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("ECHO measurement must have at least 2 entries: stationed point ID and observed horizontal offset");
 
 		/*This is a position of station point from which the plane is measured in the ECHO class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
-		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
 
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend()); 
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// get a copy of the specified target and update it
-		auto instr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied)); 
+		auto instr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied));
 
 		instr.sigmaD = TLength(opts.getParamRmm2m("OBSE", instr.sigmaD));
 		instr.ppmD = TLength(opts.getParamRmm2m("PPM", instr.ppmD));
 		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
-		
+
 		// Store  the measured value
 		TECHO echo(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-        TECHOROM& echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
+		TECHOROM &echoROMLatest = proj.getCurrentNode().measurements.fECHO.back();
 
 		echo.line = line;
-        echo.setActive(echoROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		echo.setActive(echoROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		echo.obsID = std::string(opts.getParamS("ID", echo.obsID));
 
 		echoROMLatest.measECHO.emplace_back(echo);
 
-
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : echoROMLatest.measECHO)
+			for (auto &point : echoROMLatest.measECHO)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECHO measurement is duplicated");
 	}
 }
 
-void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyECVE::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
+	if (firstline)
+	{
 		// look up station point
 		if (tokens.size() < 3)
 			throw std::runtime_error("An ECVE measurement must have 1 entries: "
-			"The ID of a SCALE instrument.");
+									 "The ID of a SCALE instrument.");
 
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-        LGCAdjustablePoint const * ptLine = nullptr;
+		LGCAdjustablePoint const *ptLine = nullptr;
 
-		if (opts.has("PtLine")){
-			std::string  rpName = opts.getParamS("PtLine", "NULL");
+		if (opts.has("PtLine"))
+		{
+			std::string rpName = opts.getParamS("PtLine", "NULL");
 
 			if (!fpoints.doesObjectExist(rpName))
 				throw std::runtime_error("Point" + rpName + "used as reference point in ECVE measurement, must be declared before used");
 
-            ptLine = &fpoints.getObject(rpName);
+			ptLine = &fpoints.getObject(rpName);
 		}
 
-		 //The line will be initialized in TDataAnalyzer class, when checked for consistency
+		// The line will be initialized in TDataAnalyzer class, when checked for consistency
 		TECVEROM ecveRom(ptLine);
 
 		ecveRom.line = line;
-        ecveRom.setActive(activeLine);
+		ecveRom.setActive(activeLine);
 
-		proj.getCurrentNode().measurements.fECVE.emplace_back(ecveRom); //add new round of measurement
+		proj.getCurrentNode().measurements.fECVE.emplace_back(ecveRom); // add new round of measurement
 
-		//The SCALE instrument is only the default one used, it is not stored in TECVEROM because it is specific for each observation
+		// The SCALE instrument is only the default one used, it is not stored in TECVEROM because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(2)).ID;
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("An ECVE measurement must have at least 2 entries: "
-			"The stationned point and the measured distance.");
+									 "The stationned point and the measured distance.");
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// look up the stationed point
-		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
 
 		// get a copy of the specified target and update it
 		auto scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied));
@@ -1025,58 +1042,58 @@ void TKeyECVE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Store  the measured value
 		TECVE ecve(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-        TECVEROM& ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
-        
-        ecve.line = line;
-        ecve.setActive(ecveROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		TECVEROM &ecveROMLatest = proj.getCurrentNode().measurements.fECVE.back();
+
+		ecve.line = line;
+		ecve.setActive(ecveROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		ecve.obsID = std::string(opts.getParamS("ID", ecve.obsID));
 
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : ecveROMLatest.measECVE)
+			for (auto &point : ecveROMLatest.measECVE)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECVE measurement is duplicated");
-
 	}
 }
 
-void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyECSP::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
+	if (firstline)
+	{
 		// look up station point
 		if (tokens.size() < 5)
 			throw std::runtime_error("An ECSP measurement must have 3 entries: "
-			"The 2 points defining the line and ID of a SCALE instrument.");
+									 "The 2 points defining the line and ID of a SCALE instrument.");
 
-
-		const std::string& name = "ECSPLINE" + std::to_string(proj.getCurrentNode().measurements.fECSP.size()); //name of the measured adjustable line
+		const std::string &name = "ECSPLINE" + std::to_string(proj.getCurrentNode().measurements.fECSP.size()); // name of the measured adjustable line
 		if (!fpoints.doesObjectExist(tokens.at(2)))
 			throw std::runtime_error("the first point on the line doesn't exit");
 		if (!fpoints.doesObjectExist(tokens.at(3)))
 			throw std::runtime_error("the second point on the line doesn't exit");
 		TECSPROM ecspRom(name, fpoints.getObject(tokens.at(2)), fpoints.getObject(tokens.at(3)));
 
-		ecspRom.line = line; 
-        ecspRom.setActive(activeLine);
+		ecspRom.line = line;
+		ecspRom.setActive(activeLine);
 
-		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); //add new round of measurement
+		proj.getCurrentNode().measurements.fECSP.emplace_back(ecspRom); // add new round of measurement
 
-		//The SCALE instrument is only the default one used, it is not stored in TECSPROM because it is specific for each observation
+		// The SCALE instrument is only the default one used, it is not stored in TECSPROM because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fSCALE, tokens.at(4)).ID;
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("An ECSP measurement must have at least 2 entries: "
-			"The observed point and the measured distance.");
+									 "The observed point and the measured distance.");
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// look up the stationed point
-		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
 
 		// get a copy of the specified target and update it
 		auto scaleInstr = finstruments.getDevice(finstruments.fSCALE, opts.getParamS("SCALE", defaultTargetApplied)); // Throws exception if instrument not found, catched on the top level
@@ -1088,53 +1105,53 @@ void TKeyECSP::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		// Store  the measured value
 		TECSP ecsp(stationPoint, scaleInstr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-        TECSPROM& ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
-        
-        ecsp.line = line;
-        ecsp.setActive(ecspROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		TECSPROM &ecspROMLatest = proj.getCurrentNode().measurements.fECSP.back();
+
+		ecsp.line = line;
+		ecsp.setActive(ecspROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		ecsp.obsID = std::string(opts.getParamS("ID", ecsp.obsID));
 
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
-
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : ecspROMLatest.measECSP)
+			for (auto &point : ecspROMLatest.measECSP)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECSP measurement is duplicated");
 	}
 	// auto& debug = proj.getCurrentNode().measurements;
 }
 
-void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyORIE::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
-
-	bool firstline(tokens.size() > 0 && tokens.at(0) == "*"); 
-	if(firstline){
-		if (tokens.size() < 4 )
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	if (firstline)
+	{
+		if (tokens.size() < 4)
 			throw std::runtime_error("ORIE measurement must have at least 2 entries, the Station point and the Polar instrument ID");
 
 		TORIEROM orieROM(fpoints.getObject(tokens.at(2)), finstruments.getDevice(finstruments.fPOLAR, tokens.at(3)));
 
 		orieROM.line = line;
-        orieROM.setActive(activeLine);
+		orieROM.setActive(activeLine);
 
-		TInstrumentData::TPOLAR& instrument(orieROM.instrument);
-		TOptionHelper opts(tokens.cbegin()+1, tokens.cend());
+		TInstrumentData::TPOLAR &instrument(orieROM.instrument);
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-		instrument.defTarget  = opts.getParamS("TRGT", instrument.defTarget);
+		instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
 
-      instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering)); //value given in mili-meters [mm], returned value in meters [m]
+		instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering)); // value given in mili-meters [mm], returned value in meters [m]
 
 		if (opts.has("CST"))
-			orieROM.fConstantAngle.setGonsValue(opts.getParamR("CST"));	// Value in the input file given in GONs, store it
+			orieROM.fConstantAngle.setGonsValue(opts.getParamR("CST")); // Value in the input file given in GONs, store it
 		else
 			orieROM.fConstantAngle.setRadiansValue(instrument.constAngle); // Value stored in radians, set the default one from the instrument definition
 
-		proj.getCurrentNode().measurements.fORIE.emplace_back(orieROM); //add new round of measurement
+		proj.getCurrentNode().measurements.fORIE.emplace_back(orieROM); // add new round of measurement
 	}
-	else{
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("ORIE measurement must have at least 2 entries: targeted point ID and observed value");
 
@@ -1142,31 +1159,31 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// look up the observed point, i.e. the target
-		const auto& obspt(fpoints.getObject(tokens.at(0)));
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
 
-		//NODUP used
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : proj.getCurrentNode().measurements.fORIE.back().measORIE)
+			for (auto &point : proj.getCurrentNode().measurements.fORIE.back().measORIE)
 				if (obspt.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ORIE measurement is duplicated");
 
 		// get a station reference to update default values
-		TInstrumentData::TPOLAR& instrument = proj.getCurrentNode().measurements.fORIE.back().instrument;
+		TInstrumentData::TPOLAR &instrument = proj.getCurrentNode().measurements.fORIE.back().instrument;
 
 		// get a copy of the specified target and update it
 		auto tgt(finstruments.getDevice(instrument.targets, opts.getParamS("TRGT", instrument.defTarget)));
-		
-		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE",  tgt.sigmaAngl));
-		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE",  tgt.sigmaTargetCentering));
-		
+
+		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaAngl));
+		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+
 		// set measurement value
-		TORIE orie(obspt,tgt);
+		TORIE orie(obspt, tgt);
 
 		orie.line = line;
-        orie.setActive(proj.getCurrentNode().measurements.fORIE.back().isActive() && activeLine); // Active only if ROM active as well
+		orie.setActive(proj.getCurrentNode().measurements.fORIE.back().isActive() && activeLine); // Active only if ROM active as well
 		orie.obsID = std::string(opts.getParamS("ID", orie.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			orie.eolcomment = tokens.back();
@@ -1178,109 +1195,105 @@ void TKeyORIE::parse(const std::vector<std::string>& tokens, bool activeLine, in
 	}
 }
 
-void TKeyRADI::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyRADI::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-	//On first line nothing appears so far: to be discussed
+	// On first line nothing appears so far: to be discussed
 	if (firstline)
 	{
 		if (tokens.size() < 3)
 			throw std::runtime_error("RADI measurement must have at least 1 entry, the sigma value");
 		else
 			sigma = TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres);
-		
+
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		constAngle = TAngle(opts.getParamRgon2rad("ACST", 0.0));
 
-        // Update the activation status of the RADI rom:
-        proj.getCurrentNode().measurements.radiActive = activeLine;
+		// Update the activation status of the RADI rom:
+		proj.getCurrentNode().measurements.radiActive = activeLine;
 	}
-	else {
-        bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+	else
+	{
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A RADI constraint must have at least 2 entries: "
-			"One point and the angle.");
+									 "One point and the angle.");
 
 		TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
 
 		// Store  the measured value
 		proj.getCurrentNode().measurements.fRADI.emplace_back(
-			TRADI(fpoints.getObject(tokens.at(0)), TAngle(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)), TAngle::EUnits::kGons))
-			);
+			TRADI(fpoints.getObject(tokens.at(0)), TAngle(!hasAllParams ? NO_VALf : std::stor(tokens.at(1)), TAngle::EUnits::kGons)));
 
-		auto& radi(proj.getCurrentNode().measurements.fRADI.back());
-		
+		auto &radi(proj.getCurrentNode().measurements.fRADI.back());
+
 		radi.setObservedStDev(TLength(opts.getParamRmm2m("OBSE", sigma)));
 		radi.setConstAngle(TAngle(opts.getParamRgon2rad("ACST", constAngle)));
 
 		radi.line = line;
-        radi.setActive(proj.getCurrentNode().measurements.radiActive && activeLine); // Active only if ROM active as well
+		radi.setActive(proj.getCurrentNode().measurements.radiActive && activeLine); // Active only if ROM active as well
 		radi.obsID = std::string(opts.getParamS("ID", radi.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			radi.eolcomment = tokens.back();
-
 	}
 }
 
-
-void TKeyOBSXYZ::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyOBSXYZ::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
-    if(firstline){
+	if (firstline)
+	{
+		// On the first line no additional data is given for now: to be discussed
 
-        // On the first line no additional data is given for now: to be discussed
-
-        // Update the activation status of the OBSXYZ rom:
-        proj.getCurrentNode().measurements.obsxyzActive = activeLine;
-    }
-    else {
-		bool hasAllParams = (tokens.size() >= 7) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3))
-			&& isNumber(tokens.at(4)) && isNumber(tokens.at(5)) && isNumber(tokens.at(6));
+		// Update the activation status of the OBSXYZ rom:
+		proj.getCurrentNode().measurements.obsxyzActive = activeLine;
+	}
+	else
+	{
+		bool hasAllParams = (tokens.size() >= 7) && isNumber(tokens.at(1)) && isNumber(tokens.at(2)) && isNumber(tokens.at(3)) && isNumber(tokens.at(4))
+			&& isNumber(tokens.at(5)) && isNumber(tokens.at(6));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("A OBSXYZ measurements must have at least 7 entries: "
-			"One point, 3 observed coordinates, and 3 sigmas");
-		
+									 "One point, 3 observed coordinates, and 3 sigmas");
+
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// Store  the measured value
-		proj.getCurrentNode().measurements.fOBSXYZ.emplace_back(
-			TOBSXYZ(fpoints.getObject(tokens.at(0)),
+		proj.getCurrentNode().measurements.fOBSXYZ.emplace_back(TOBSXYZ(fpoints.getObject(tokens.at(0)),
 			TPositionVector(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::ECoordSys::k3DCartesian),
-			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(4))), TLength::EUnits::kMillimetres), 
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(4))), TLength::EUnits::kMillimetres),
 			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(5))), TLength::EUnits::kMillimetres),
-			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(6))), TLength::EUnits::kMillimetres),
-			proj.getCurrentPosition()
-			));
-		
-		auto& obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
+			TLength((!hasAllParams ? NO_VALf : std::stor(tokens.at(6))), TLength::EUnits::kMillimetres), proj.getCurrentPosition()));
+
+		auto &obsxyz(proj.getCurrentNode().measurements.fOBSXYZ.back());
 		obsxyz.line = line;
-        obsxyz.setActive(proj.getCurrentNode().measurements.obsxyzActive && activeLine); // Active only if ROM active as well
+		obsxyz.setActive(proj.getCurrentNode().measurements.obsxyzActive && activeLine); // Active only if ROM active as well
 		obsxyz.obsID = std::string(opts.getParamS("ID", obsxyz.obsID));
 
-		//If last token starts with a comment character, store it as a end of line comment
+		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
 			obsxyz.eolcomment = tokens.back();
-			
 	}
 }
 
-void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyINCLY::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
-
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
+	if (firstline)
+	{
 		if (tokens.size() < 3)
 			throw std::runtime_error("INCLY measurement must have at least 1 entry, the INCL instrument ID");
 
-		if (proj.getCurrentNode().ID.size() == 1) {
+		if (proj.getCurrentNode().ID.size() == 1)
+		{
 			throw std::runtime_error("INCLY keyword is only allowed in the root frame");
 		}
 
@@ -1288,46 +1301,48 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 		inclyRom.line = line;
 		inclyRom.setActive(activeLine);
 
-		proj.getCurrentNode().measurements.fINCLY.emplace_back(inclyRom); //add new round of measurement
+		proj.getCurrentNode().measurements.fINCLY.emplace_back(inclyRom); // add new round of measurement
 
-		//The INCL instrument is only the default one used, it is not stored in TINCLYROM because it is specific for each observation
+		// The INCL instrument is only the default one used, it is not stored in TINCLYROM because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fINCL, tokens.at(2)).ID;
 	}
-	else {
+	else
+	{
 		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("INCLY measurement must have at least 2 entries: stationed point ID and observed horizontal offset");
-	
+
 		// prepare the options analysis
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// look up the stationed point, i.e. the target
-		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
 
 		// get a station reference to update default values
-		TInstrumentData::TINCL instrument = finstruments.getDevice(finstruments.fINCL, opts.getParamS("INSTR", defaultTargetApplied)); // Throws exception if instrument not found, catched on the top level
+		TInstrumentData::TINCL instrument = finstruments.getDevice(
+			finstruments.fINCL, opts.getParamS("INSTR", defaultTargetApplied)); // Throws exception if instrument not found, catched on the top level
 
 		// get a station reference to update default values
-		//TInstrumentData::TINCL instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
+		// TInstrumentData::TINCL instrument = proj.getCurrentNode().measurements.fINCLY.back().instrument;
 
-		instrument.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE",instrument.sigmaAngl));
+		instrument.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", instrument.sigmaAngl));
 		instrument.sigmaPpm = TAngle(opts.getParamRurad2rad("PPM", instrument.sigmaPpm));
 		instrument.angleCorrectionValue = TAngle(opts.getParamRgon2rad("AC", instrument.angleCorrectionValue));
 		instrument.sigmaCorrectionValue = TAngle(opts.getParamRcc2rad("ACSE", instrument.sigmaCorrectionValue));
 		instrument.refAngleCorrectionValue = TAngle(opts.getParamRgon2rad("RF", instrument.refAngleCorrectionValue));
 		instrument.refSigmaCorrectionValue = TAngle(opts.getParamRcc2rad("RFSE", instrument.refSigmaCorrectionValue));
-			
+
 		// set measurement value
 		TINCLY incly(stationPoint, instrument);
 
-		TINCLYROM& inclyROMLatest = proj.getCurrentNode().measurements.fINCLY.back();
-		
-		//NODUP used
+		TINCLYROM &inclyROMLatest = proj.getCurrentNode().measurements.fINCLY.back();
+
+		// NODUP used
 		if (proj.getConfig().nodup.isActive())
-			for (auto& point : inclyROMLatest.measINCLY)
+			for (auto &point : inclyROMLatest.measINCLY)
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An INCLY measurement is duplicated");
-		
+
 		if (hasAllParams)
 			incly.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
 
@@ -1339,15 +1354,16 @@ void TKeyINCLY::parse(const std::vector<std::string>& tokens, bool activeLine, i
 	}
 }
 
-
-void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, int line)
+void TKeyECWS::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
-	if (firstline) {
+	if (firstline)
+	{
 		if (tokens.size() < 3)
 			throw std::runtime_error("ECWS measurement must have at least 2 entries, the HLSR instrument ID and the water surface standard error");
 
-		if (proj.getCurrentNode().ID.size() != 1) {
+		if (proj.getCurrentNode().ID.size() != 1)
+		{
 			throw std::runtime_error("ECWS keyword is only allowed in the root frame");
 		}
 
@@ -1358,55 +1374,59 @@ void TKeyECWS::parse(const std::vector<std::string>& tokens, bool activeLine, in
 		ecwsRom.line = line;
 		ecwsRom.setActive(activeLine);
 
-		//Read the WS sigma
+		// Read the WS sigma
 		ecwsRom.sigmaWS = TLength(std::stor(tokens.at(3)), TLength::EUnits::kMillimetres);
-		
+
 		if (opts.has("WSID"))
 			ecwsRom.romName = opts.getParam("WSID");
 		else
 			ecwsRom.romName = "ECWS_line" + std::to_string(line);
-	
-		//Check if the name is unique 
-		for (auto& itRomName : proj.getCurrentNode().measurements.fECWS) {
+
+		// Check if the name is unique
+		for (auto &itRomName : proj.getCurrentNode().measurements.fECWS)
+		{
 			if (itRomName.romName == ecwsRom.romName)
 				throw std::runtime_error("Water Surface Names must be unique: " + ecwsRom.romName + " is duplicated");
 		}
-			
-		//check if the name is unique, the ECWS can only be in the root.
-		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); //add new round of measurement
 
-		//The HLSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
+		// check if the name is unique, the ECWS can only be in the root.
+		proj.getCurrentNode().measurements.fECWS.emplace_back(ecwsRom); // add new round of measurement
+
+		// The HLSR instrument is only the default one used, it is not stored in TECWSROM because it is specific for each observation
 		defaultTargetApplied = finstruments.getDevice(finstruments.fHLSR, tokens.at(2)).ID;
 	}
-	else {
+	else
+	{
 		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
 		if (!hasAllParams && !proj.getConfig().sim.isActive())
 			throw std::runtime_error("ECWS measurement must have at least 2 entries: the HLSR instrument ID and the water surface standard error");
 
 		/*This is a position of station point from which the plane is measured in the ECWS class it has a 'traget' name, since the abstract class is used. Bit confusing to be improved. */
-		const auto& stationPoint(fpoints.getObject(tokens.at(0)));
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
 
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// get a copy of the specified instrument and update it
 		auto instr = finstruments.getDevice(finstruments.fHLSR, opts.getParamS("INSTR", defaultTargetApplied));
-		TECWSROM& ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
+		TECWSROM &ecwsROMLatest = proj.getCurrentNode().measurements.fECWS.back();
 
 		instr.sigmaDist = TLength(opts.getParamRmm2m("OBSE", instr.sigmaDist));
 		instr.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instr.sigmaInstrHeight));
 		instr.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instr.sigmaInstrCentering));
-		
+
 		if (opts.has("WSSE"))
 			instr.sigmaWS = TLength(opts.getParamRmm2m("WSSE", instr.sigmaWS));
 		else
 			instr.sigmaWS = TLength(ecwsROMLatest.sigmaWS.getMetresValue());
-	
+
 		// Store  the measured value
 		TECWS ecws(stationPoint, instr, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
 
-		//NODUP used
-		if (proj.getConfig().nodup.isActive()) {
-			for (auto& point : ecwsROMLatest.measECWS) {
+		// NODUP used
+		if (proj.getConfig().nodup.isActive())
+		{
+			for (auto &point : ecwsROMLatest.measECWS)
+			{
 				if (stationPoint.getName() == point.targetPos->getName())
 					throw std::runtime_error("An ECWS measurement is duplicated");
 			}
@@ -1481,7 +1501,7 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
 		// get a copy of the specified instrument and update it
-		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, opts.getParamS("INSTR", defaultTargetApplied)); 
+		TInstrumentData::TWPSR instr = finstruments.getDevice(finstruments.fWPSR, opts.getParamS("INSTR", defaultTargetApplied));
 		TECWIROM &ecwiROMLatest = proj.getCurrentNode().measurements.fECWI.back();
 
 		instr.sigmaX = TLength(opts.getParamRmm2m("XSE", instr.sigmaX));
@@ -1513,4 +1533,3 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		ecwiROMLatest.measECWI.emplace_back(ecwi);
 	}
 }
-
