@@ -1493,12 +1493,12 @@ void TDataAnalyzer::loadAprioriCovarianceData()
 	std::string line;
 	while (std::getline(in, line))
 	{
-		if (line == "points")
+		if (line.rfind("points", 0) == 0)
 		{
 			currentMode = "pointMode";
 			continue;
 		}	
-		if (line == "covmat")
+		if (line.rfind("covmat", 0) == 0)
 		{
 			currentMode = "covmatMode";
 			continue;
