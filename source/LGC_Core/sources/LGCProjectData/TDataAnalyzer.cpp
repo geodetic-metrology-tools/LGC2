@@ -809,12 +809,12 @@ bool TDataAnalyzer::checkParameters()
 	std::ifstream in("apricovMat.txt");
 	if (!in.is_open())
 	{
-		logWarning() << "unable to load apriori covariance data file. Continuing without apriori information";
+		logWarning() << "unable to load apriori covariance data file (apricovMat.txt, to be placed at same place as LGC.exe). Continuing without apriori information";
 	}
 	else
 	{
 		loadAprioriCovarianceData();
-		logWarning() << "file found and computing with apriori covar information";
+		logWarning() << "apricovMat.txt file found. Computation with apriori covar information.";
 	}
 
 	int nApriPoints = fData.aprioriPointCovars.pointList.size();

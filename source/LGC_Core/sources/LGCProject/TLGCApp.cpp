@@ -394,7 +394,7 @@ const std::string TLGCApp::getProgId()
 {
 	std::stringstream id;
 	id << "LGC2 " << getLGCVersion() << ", compiled on " <<   __DATE__ ;
-	id << std::endl << "ATTENTION: EXPERIMENTAL VERSION with option of apricovariances for points and frames + new LIBR via Consi check.";
+	id << std::endl << "ATTENTION: EXPERIMENTAL VERSION with possibility to load a apricovMat.txt file to supply a-priori covariances for a list of points.";
 	return id.str();
 }
 
