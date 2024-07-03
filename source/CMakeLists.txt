@@ -20,7 +20,7 @@ project(LGC)
 # /!\ IMPORTANT : Modify it in LGC_Core/LGCCore.cmake AS WELL !
 set (EXE_VERSION_MAJOR "2")
 set (EXE_VERSION_MINOR "8")
-set (EXE_VERSION_PATCH "beta_3_robustGN")
+set (EXE_VERSION_PATCH "beta_5_robustGN")
 
 #############################################################
 #

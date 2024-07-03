@@ -220,6 +220,10 @@ Eigen::VectorXd TLSGaussNewtonSolver::getGNDirection(Eigen::VectorXd r, TSparseM
 	// solve Nreg * dx = b to compute dx
 	//Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(Nregularized);
 	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> decomp(Ndense.sparseView());
+	if (decomp.info() != Eigen::Success)
+	{
+		throw std::logic_error("Decomposition during Gauss Newton step failed.");
+	}
 
 	return decomp.solve(b);
 	//return Nregularized.fullPivHouseholderQr().solve(b);
