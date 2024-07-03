@@ -154,8 +154,9 @@ void TLGCCalculation::testGlobalizationMethods()
 
 	for (auto config : testConfigs)
 	{
-		jsonSerializerObject ser;
-		SerializerObject::SerializationHelper serobj = ser.getSerializationHelper();
+		// JSONObjectSerializer ser;
+		// ObjectSerializer serobj = ser.getSerializationHelper();
+		JSONObjectSerializer serobj;
 		// set initial value
 		evalPtr->setParameters(iniVal, false);
 		// set config
@@ -175,7 +176,7 @@ void TLGCCalculation::testGlobalizationMethods()
 		serobj.addProperty("Configuration", config);
 		//std::cout << ser.getStringRepresentation() << std::endl;
 		std::ofstream outputFile("../studyResults.txt", std::ios::app);
-		outputFile << ser.getStringRepresentation() << "\n";
+		outputFile << serobj.getStringRepresentation() << "\n";
 		outputFile.close();
 		if (result.success == true)
 		{

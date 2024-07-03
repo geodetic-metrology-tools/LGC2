@@ -300,7 +300,7 @@ Eigen::SparseMatrix<double> TLSGaussNewtonSolver::getDiagonalLMScaleFactor(Eigen
 	return result;
 }
 
-void GNresult::serialize(SerializerObject::SerializationHelper &obj) const
+void GNresult::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("solution", solution);
 	obj.addProperty("residual", residual);
@@ -310,7 +310,7 @@ void GNresult::serialize(SerializerObject::SerializationHelper &obj) const
 	obj.addProperty("sigma0Aposteriori", sigma0Aposteriori);
 }
 
-void solverConfig::serialize(SerializerObject::SerializationHelper &obj) const
+void solverConfig::serialize(ObjectSerializer &obj) const
 { 
 	obj.addProperty("plotLevel", plotLevel);
 	obj.addProperty("useArmijo", useArmijo);
