@@ -20,11 +20,6 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 
 	// use the universal LS algorithm for parametric, combined and constrained case.
 	computer.reset(new TLSUniversalMtdComputer());
-	if (data.getSlaveGroups().size() != 0 || data.getPointGroups().size() != 0)
-	{
-		// use strict threshold only for slave option. temporary fix until LIBR is refactored
-		computer->activateStrictThreshold();
-	}
 
 	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
