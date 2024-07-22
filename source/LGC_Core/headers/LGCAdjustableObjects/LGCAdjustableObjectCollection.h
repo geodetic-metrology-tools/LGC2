@@ -94,29 +94,52 @@ class LGCAdjustableObjectCollection
 
 			\note The container takes a copy of the reference for the object that is passed here.
 		*/
-		T& addObject(const T& obj) {
-			auto o = findObject(obj.getName());
-			if (o != objects.cend()) {
-				// Object was forward-declared, initialize it
-				*o = obj;
-				return *o;
+		T &addObject(const T &obj)
+		{
+			auto it = objectMap.find(obj.getName());
+			if (it != objectMap.end())
+			{
+				// Object was forward-declared, initialize it. The name->location in list map does not have to be updated
+				*(it->second) = obj;
+				return *(it->second);
 			}
-			else {
+			else
+			{
 				objects.emplace_back(obj);
-				return objects.back();
+				auto listIt = --objects.end();
+				// update the name->location in list map
+				objectMap[obj.getName()] = listIt;
+				return *listIt;
 			}
 		}
 
-        /// Remove the given object
-        void removeObject(const T& obj) {
-            objects.remove(obj);
-        }
+		/// Remove the given object
+		void removeObject(const T &obj)
+		{
+			auto it = objectMap.find(obj.getName());
+			if (it != objectMap.end())
+			{
+				objects.erase(it->second);
+				objectMap.erase(it);
+			}
+		}
 
 		template<class UnaryPredicate>
-		void removeObjectIf(UnaryPredicate p)
-		{
-			objects.remove_if(p);
-		}
+			void removeObjectIf(UnaryPredicate p)
+			{
+				for (auto it = objects.begin(); it != objects.end();/* no increment here to keep iterator valid in case object has been removed */)
+				{
+					if (p(*it))
+					{
+						objectMap.erase(it->getName());
+						it = objects.erase(it);
+					}
+					else
+					{
+						++it;
+					}
+				}
+			}
 
 		/// Returns The reference to the last adjustable object
 		T& back() {
@@ -158,20 +181,45 @@ class LGCAdjustableObjectCollection
 			return objects.cend();
 		}
 
+		// check consistency of map and list
+		bool checkMapConsistency() const
+		{
+			if (objects.size() != objectMap.size())
+			{
+				return false;
+			}
+			// the loop will pass if all objects in the list can be found via the map
+			for (auto object : objects)
+			{
+				std::string objectName = object.getName();
+				auto it = objectMap.find(objectName);
+				if (it == objectMap.end())
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
 	protected:
 
 		/// Returns The  object position in the collection by its name
-		typename std::list<T>::iterator findObject(const std::string& objName) {
-         for(auto it = objects.begin() ; it != objects.end() ;it++)
-				if( (*it).getName() == objName)
-               return it;
-            return objects.end();
+		typename std::list<T>::iterator findObject(const std::string &objName)
+		{
+			auto it = objectMap.find(objName);
+			if (it != objectMap.end())
+			{
+				return it->second;
+			}
+			return objects.end();
 		}
 
 	private : 
 
 		/// The container of objects
 		typename std::list<T> objects;
+		// map names -> object locations, used to efficiently searching for objects
+		std::unordered_map<std::string, typename std::list<T>::iterator> objectMap;
 
 };
 

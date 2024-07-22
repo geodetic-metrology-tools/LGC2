@@ -220,10 +220,94 @@ namespace tut
 		ensure_equals("Precisions and covariance need to be consistent.", sqrt(returnedCovar(6, 6)), adjTrafo.getEstimatedPrecisionScale());
 	}
 
-	// Test measurments
+	// Test adjustable object collection
 	template<>
 	template<>
 	void object::test<2>()
+	{
+		set_test_name("Testing adjustable Object collection");
+		// create empty collection
+		LGCAdjustablePointCollection testCollection;
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+		// cretae a point object
+		LGCAdjustablePoint point1 = LGCAdjustablePoint::createUninitialized("Point1");
+		// necessary to have a initialized object
+		point1.setProvisionalValue(1, 2, 3);
+		// add the object
+		testCollection.addObject(point1);
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+		// test if it is added succesfully
+		ensure_equals("Point1 needs to be in collection", true, testCollection.doesObjectExist("Point1"));
+		LGCAdjustablePoint &ref1 = testCollection.getObject("Point1");
+		ref1.setActive(false);
+		LGCAdjustablePoint &ref2 = testCollection.getObject("Point1");
+		ensure_equals("Point1 in collection now needs to be deactivated", false, ref2.isActive());
+		// create a new point with the same name and add it to collection. the previous point content should be overwritten
+		LGCAdjustablePoint secondPoint1 = LGCAdjustablePoint::createUninitialized("Point1");
+		testCollection.addObject(secondPoint1);
+		ensure_equals("Point1 in collection now needs to be activated again", true, testCollection.getObject("Point1").isActive());
+
+		int nObjects = testCollection.numObjects();
+
+		// test adding objects via getObject
+		testCollection.getObject("newPoint1");
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+		LGCAdjustablePoint &newRef1 = testCollection.back();
+		ensure_equals("last point in collection needs to be \"newPoint1\"", newRef1.getName(), "newPoint1");
+		ensure_equals("number of objects need to increase by one", ++nObjects, testCollection.numObjects());
+
+		// test adding object via add method
+		LGCAdjustablePoint point2 = LGCAdjustablePoint::createUninitialized("newPoint2");
+		testCollection.addObject(point2);
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+		LGCAdjustablePoint &newRef2 = testCollection.back();
+		ensure_equals("last point in collection needs to be \"newPoint2\"", newRef2.getName(), "newPoint2");
+		ensure_equals("number of objects need to increase by one", ++nObjects, testCollection.numObjects());
+
+		// test remove method
+		testCollection.removeObject(newRef2);
+		LGCAdjustablePoint &newRef3 = testCollection.back();
+		ensure_equals("New last point has to be ", newRef1.getName(), newRef3.getName());
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+
+		// test the removeIf method
+		// create a point collection with a few active and deactivated points
+		LGCAdjustablePointCollection testCollection2;
+		int numPoints = 10;
+		for (int j = 0; j < numPoints; j++)
+		{
+			std::string nameInactive = "inactivePoint" + std::to_string(j);
+			std::string nameActive = "activePoint" + std::to_string(j);
+			LGCAdjustablePoint inactPt = LGCAdjustablePoint::createUninitialized(nameInactive);
+			LGCAdjustablePoint actPt = LGCAdjustablePoint::createUninitialized(nameActive);
+			testCollection2.addObject(inactPt);
+			testCollection2.addObject(actPt);
+		}
+		ensure_equals("Collection contains wrong number of objects", testCollection2.numObjects(), 2 * numPoints);
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+
+		// now deactivate some points
+		for (int j = 0; j < numPoints; j++)
+		{
+			std::string nameInactive = "inactivePoint" + std::to_string(j);
+			testCollection2.getObject(nameInactive).setActive(false);
+		}
+
+		// remove deactivated points from collection, as it is done e.g. in the TDataAnalyzer
+		testCollection2.removeObjectIf([](const LGCAdjustablePoint &pt) -> bool { return !pt.isActive(); });
+		ensure_equals("Collection contains wrong number of objects", testCollection2.numObjects(), numPoints);
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+		// remove also the rest
+		testCollection2.removeObjectIf([](const LGCAdjustablePoint &pt) -> bool { return pt.isActive(); });
+		ensure_equals("Collection contains wrong number of objects", testCollection2.numObjects(), 0);
+		ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
+	}
+
+
+	// Test measurments
+	template<>
+	template<>
+	void object::test<3>()
 	{
 		std::shared_ptr<TLGCData> proj5(new TLGCData);
 		using namespace LGC;
