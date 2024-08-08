@@ -98,14 +98,14 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	if (frameIt->get()->isROOTNode())
 	{
 		initialiseAllObsSummaries();
-		(*stream) << TABs << "*** RESUME DES MESURES ***" << "\n" << "\n";
+		(*stream) << TABs << "*** MEASUREMENTS SUMMARY ***" << "\n" << "\n";
 		writeMeasurementsSummaryRootOnly();
 		if (fProjectData->getConfig().histo.isActive())
 			writeHistogrammeRootOnly();
 	}
 
 	// Measures
-	(*stream) << "\n" << "\n" << TABs << "*** MESURES ***" << "\n" << "\n";
+	(*stream) << endl << endl << TABs << "*** MEASUREMENTS ***" << "\n" << "\n";
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResults(itTSTN);
 
@@ -1795,41 +1795,41 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	std::string title = "";
 	if (status == TSpatialStatus::kCala)
 	{
-		title = "POINTS DE CALAGE";
+		title = "CONTROL POINTS";
 	}
 	if (status == TSpatialStatus::kVz)
 	{
-		title = "POINTS VARIABLES EN Z UNIQUEMENT";
+		title = "POINTS VARIABLE IN Z ONLY";
 	}
 	if (status == TSpatialStatus::kVxy)
 	{
-		title = "POINTS INVARIABLES EN Z";
+		title = "INVARIABLE POINTS IN Z";
 	}
 	if (status == TSpatialStatus::kVxz)
 	{
-		title = "POINTS INVARIABLES EN Y";
+		title = "INVARIABLE POINTS IN Y";
 	}
 	if (status == TSpatialStatus::kVyz)
 	{
-		title = "POINTS INVARIABLES EN X";
+		title = "INVARIABLE POINTS IN X";
 	}
 	if (status == TSpatialStatus::kVxyz)
 	{
-		title = "POINTS VARIABLES EN XYZ";
+		title = "VARIABLE POINTS IN XYZ";
 	}
 
 	(*stream) << "\n";
 
 	(*stream) << title << separator;
 	if (!localFRAME)
-		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << refSys << " )";
+		(*stream) << "(NB. = " << ptNumber << ",  REFERENCE FRAME = " << refSys << " )";
 
 	(*stream) << "\n";
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
 	(*stream).writeString(3, "SFP"); // tell if point defined in subframe
-	(*stream).writeString(nameWidth, "NOM"); // Nom
+	(*stream).writeString(nameWidth, "NAME"); // Nom
 	(*stream).writeString(coordWidth, "X "); // X
 	(*stream).writeString(coordWidth, "Y "); // Y
 	(*stream).writeString(coordWidth, "Z "); // Z
@@ -1887,11 +1887,11 @@ void TFRAMEWriter::writeEllipsHeader()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
-	stream->writeStringLeft(nameWidth, "NOM");
+	stream->writeStringLeft(nameWidth, "NAME");
 	stream->writeString(coordWidth, "SEMI-MAJ.(A)");
 	stream->writeString(coordWidth, "SEMI-MIN.(B)");
 	stream->writeString(coordWidth, "ORIE. OF (A)");
-	stream->writeStringLeft(nameWidth, "SYSTEME");
+	stream->writeStringLeft(nameWidth, "SYSTEM");
 
 	*stream << "\n";
 
@@ -1922,13 +1922,13 @@ void TFRAMEWriter::writeEllipsoidHeader()
 	stream->writeStringLeft(nameWidth, "NOM");
 	// Direction vectors: (+0.000, -0.000, +0.000) => 24
 	const int vecwidth(24);
-	stream->writeString(vecwidth, "DIRECTION X");
-	stream->writeString(vecwidth, "DIRECTION Y");
-	stream->writeString(vecwidth, "DIRECTION Z");
-	stream->writeString(coordWidth, "LONGUEUR X");
-	stream->writeString(coordWidth, "LONGUEUR Y");
-	stream->writeString(coordWidth, "LONGUEUR Z");
-	stream->writeStringLeft(nameWidth, "SYSTEME");
+	stream->writeString(vecwidth, "UNIT VECT X");
+	stream->writeString(vecwidth, "UNIT VECT Y");
+	stream->writeString(vecwidth, "UNIT VECT Z");
+	stream->writeString(coordWidth, "LENGTH X");
+	stream->writeString(coordWidth, "LENGTH Y");
+	stream->writeString(coordWidth, "LENGTH Z");
+	stream->writeStringLeft(nameWidth, "SYSTEM");
 	*stream << "\n";
 
 	/////////////////////////////////////////////////////////////////////////////////////////////

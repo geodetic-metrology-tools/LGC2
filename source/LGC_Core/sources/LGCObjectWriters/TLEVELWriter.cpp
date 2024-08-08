@@ -78,15 +78,15 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
 	////////////////////////////////////////////////////////////
-	// first line
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEV), nOObs);
-	// Second line
+	//first line
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDLEV), nOObs);
+	//Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
-	(*stream).writeString(obsWidth, "OBSERVE"); // DLEV: mesurement
+	(*stream).writeString(obsWidth, "OBSERVED"); // DLEV: mesurement
 	(*stream).writeString(obsResWidth, "SIGMA"); // DLEV: sigma
-	(*stream).writeString(obsWidth, "CALCULE"); // DLEV: estimation
-	(*stream).writeString(obsResWidth, "RESIDU"); // DLEV: residual
+	(*stream).writeString(obsWidth, "CALC"); // DLEV: estimation
+	(*stream).writeString(obsResWidth, "RES"); // DLEV: residual
 	(*stream).writeString(obsResWidth, "RES/SIG"); // DLEV: residual/sigma
 	(*stream).writeString(obsWidth, "COLLIMATION"); // DLEV: collimation angle
 	(*stream).writeString(obsResWidth, "SCOLL"); // DLEV: sigma of collimation angle
@@ -133,13 +133,13 @@ void TLEVELWriter::writeDLEVDHORResultsHeader(int nOObs)
 	std::string TABs = stream->getCurrSpaceExtended(2);
 	////////////////////////////////////////////////////////////
 	// first line
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEVDHOR), nOObs);
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDLEVDHOR), nOObs);
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
-	(*stream).writeString(obsWidth, "OBSERVE"); // DLEV DHOR: mesurement
+	(*stream).writeString(obsWidth, "OBSERVED"); // DLEV DHOR: mesurement
 	(*stream).writeString(obsResWidth, "SIGMA"); // DLEV DHOR: sigma
-	(*stream).writeString(obsWidth, "CALCULE"); // DLEV DHOR: estimation
-	(*stream).writeString(obsResWidth, "RESIDU"); // DLEV DHOR: residual
+	(*stream).writeString(obsWidth, "CALC"); // DLEV DHOR: estimation
+	(*stream).writeString(obsResWidth, "RES"); // DLEV DHOR: residual
 	(*stream).writeString(obsResWidth, "RES/SIG"); // DLEV DHOR: residual/sigma
 	(*stream).writeString(obsResWidth, "DSE"); // DLEV DHOR: 1-sigma precision of the horizontal distance
 	(*stream).writeString(obsResWidth, "DHPPM"); // DLEV DHOR: ppm value for the horizontal distance correction
@@ -290,15 +290,14 @@ void TLEVELWriter::writeLEVELSIMUResults(const TLEVEL &fLevel)
 
 	writeLEVELHeader(fLevel);
 
-	if (fLevel.measDLEV.size() > 0)
-	{
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEV), (int)fLevel.measDLEV.size());
+	if (fLevel.measDLEV.size() > 0){
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDLEV), (int)fLevel.measDLEV.size());
 		writeDistanceResultsSummary(fLevel.getDLEVObsSummary(), TABs);
 	}
 	// The DHOR result summary
 	if (fLevel.hasDHOR)
 	{
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEVDHOR), fLevel.nbDHOR);
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDLEVDHOR), fLevel.nbDHOR);
 		writeDistanceResultsSummary(fLevel.getDHORObsSummary(), TABs);
 	}
 }
@@ -399,8 +398,8 @@ void TLEVELWriter::writeLEVELSynthesisHeader()
 	(*stream).writeStringLeft(nameWidth, "DLEV_PLANE"); // plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
