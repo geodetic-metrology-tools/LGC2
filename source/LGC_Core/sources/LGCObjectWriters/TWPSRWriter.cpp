@@ -95,7 +95,7 @@ void TWPSRWriter::writeECWIResults(const TECWIROM &ecwirom)
 	writeWPSRHeader(ecwirom);
 
 	// data summury
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI), (int)ecwirom.measECWI.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWI), (int)ecwirom.measECWI.size());
 	writeWPSRResultsHeader(); // write the title line for the observations
 
 	for (auto const &ItECWI : ecwirom.measECWI)
@@ -166,16 +166,16 @@ void TWPSRWriter::writeECWISIMUResults(const TECWIROM &ecwirom)
 	TAStreamFormatter *stream = getStream();
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI), (int)ecwirom.measECWI.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWI), (int)ecwirom.measECWI.size());
 
 	writeWPSRHeader(ecwirom);
 
 	if (ecwirom.measECWI.size() > 0)
 	{
 		const auto &summary = ecwirom.getECWIObsSummary();
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI) + ": X", (int)ecwirom.measECWI.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWI) + ": X", (int)ecwirom.measECWI.size());
 		writeDistanceResultsSummary(summary.xObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWI) + ": Z", (int)ecwirom.measECWI.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWI) + ": Z", (int)ecwirom.measECWI.size());
 		writeDistanceResultsSummary(summary.zObsSum, TABs);
 	}
 }
@@ -196,11 +196,11 @@ void TWPSRWriter::writeWPSRHeader(const TECWIROM &ecwirom)
 	(*stream) << TABs << "ECWI"
 			  << "\n";
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "NOM DU FIL");
+	(*stream).writeStringLeft(nameWidth, "WIRE NAME");
 	(*stream).writeStringLeft(nameWidth, ecwirom.romName);
 	(*stream) << "\n";
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "PARAMETRE FIL");
+	(*stream).writeStringLeft(nameWidth, "WIRE PARAMETERS");
 	(*stream).writeStringLeft(nameWidth, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.referencePoint.getX().getMetresValue());
 	(*stream).writeStringLeft(nameWidth, "Y (M)");
@@ -210,13 +210,13 @@ void TWPSRWriter::writeWPSRHeader(const TECWIROM &ecwirom)
 	(*stream) << "\n";
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "GISEMENT (GON)");
+	(*stream).writeStringLeft(nameWidth, "BEARING (GON)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireBearing->getEstimatedValue().getGonsValue());
-	(*stream).writeStringLeft(nameWidth, "SGISEMENT (CC)");
+	(*stream).writeStringLeft(nameWidth, "SBEARING (CC)");
 	(*stream).writeDouble(obsWidth, lengthPrecision - 3, ecwirom.fWireBearing->getEstimatedPrecision().getSignedCCValue());
-	(*stream).writeStringLeft(nameWidth, "PENTE (GON)");
+	(*stream).writeStringLeft(nameWidth, "SLOPE (GON)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireSlope->getEstimatedValue().getGonsValue());
-	(*stream).writeStringLeft(nameWidth, "SPENTE (CC)");
+	(*stream).writeStringLeft(nameWidth, "SSLOPE (CC)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, ecwirom.fWireSlope->getEstimatedPrecision().getSignedCCValue());
 	(*stream) << "\n";
 	(*stream) << TABs;
@@ -266,8 +266,8 @@ void TWPSRWriter::writeWPSRSynthesisHeader()
 	(*stream).writeStringLeft(nameWidth, "REF. POINT"); // plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////

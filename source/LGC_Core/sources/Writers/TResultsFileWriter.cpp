@@ -121,7 +121,7 @@ void TResultsFileWriter::writeFile()
 	}
 
 	// FIN DE FICHIER
-	(*stream) << "*** FIN DE FICHIER ***\n";
+	(*stream) << "*** END OF FILE ***\n";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ void TResultsFileWriter::writeTitle()
 	(*stream) << endl;
 
 	// write date and time
-	(*stream) << "CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
 	(*stream) << "*********************************************************************************************************************************** " << endl << endl;
 }
 
@@ -185,13 +185,13 @@ void TResultsFileWriter::writeDataSummary()
 {
 	TAStreamFormatter *stream = getStream();
 
-	(*stream) << "DATA SET -  INFO GENERAL:" << endl << endl;
+	(*stream) << "DATA SET - GENERAL INFO:" << endl << endl;
 	(*stream) << "\tFRAMES :" << int(fProjectData->getNumberOfFrames()) << endl << endl;
 
 	if (fProjectData->getPoints().numObjects() > 0)
 		writeAdjustableObjGeneralInfo("POINTS", (int)fProjectData->getPoints().numObjects(), (int)fProjectData->getPoints().numUnknowns());
 	if (fProjectData->getLines().numObjects() > 0)
-		writeAdjustableObjGeneralInfo("LIGNES", (int)fProjectData->getLines().numObjects(), (int)fProjectData->getLines().numUnknowns());
+		writeAdjustableObjGeneralInfo("LINES", (int)fProjectData->getLines().numObjects(), (int)fProjectData->getLines().numUnknowns());
 
 	if (fProjectData->getPlanes().numObjects() > 0)
 		writeAdjustableObjGeneralInfo("PLANS", (int)fProjectData->getPlanes().numObjects(), (int)fProjectData->getPlanes().numUnknowns());
@@ -215,44 +215,44 @@ void TResultsFileWriter::writeDataSummary()
 	int nPointsWithSigma = std::count_if(pointCollection.begin(), pointCollection.end(), [](const auto &pt) { return pt.hasPointSigma(); });
 
 	(*stream) << "POINTS : " << endl << endl;
-	// insure impose de mettre les endl en en retour de ligne....
-	// LECTURE DES POINTS DE CALAGE
+	
+	// Reading *CALA
 	if (fNumFixedPoint != 0)
-		writePointDataSummary("DE CALAGE", fNumFixedPoint);
+		writePointDataSummary("CONTROL (CALA)", fNumFixedPoint);
 
-	// LECTURE DES POINTS VARIABLES EN XYZ
+	// Reading *VXYZ
 	if (fNumVxyzPoint != 0)
 	{
-		writePointDataSummary("VARIABLES EN XYZ", fNumVxyzPoint);
+		writePointDataSummary("VARIABLES IN XYZ", fNumVxyzPoint);
 		TAStreamFormatter &stream = getStreamRef();
-		stream << "	DONT AVEC SIGMA : " << nPointsWithSigma << "\n";
+		stream << "	INCLUDED WITH SIGMA : " << nPointsWithSigma << "\n";
 	}
 
-	// LECTURE DES POINTS INVARIABLES EN X
+	// Reading *VYZ
 	if (fNumVyzPoint != 0)
-		writePointDataSummary("INVARIABLES EN X", fNumVyzPoint);
+		writePointDataSummary("INVARIABLE IN X (VYZ)", fNumVyzPoint);
 
-	// LECTURE DES POINTS INVARIABLES EN Y
+	// Reading *VXZ
 	if (fNumVxzPoint != 0)
-		writePointDataSummary("INVARIABLES EN Y", fNumVxzPoint);
+		writePointDataSummary("INVARIABLE IN Y (VXZ)", fNumVxzPoint);
 
-	// LECTURE DES POINTS INVARIABLES EN Z
+	// Reading *VXY
 	if (fNumVxyPoint != 0)
-		writePointDataSummary("INVARIABLES EN Z", fNumVxyPoint);
+		writePointDataSummary("INVARIABLE IN Z (VXY)", fNumVxyPoint);
 
-	// LECTURE DES POINTS VARIABLES EN X UNIQUEMENT
+	// Reading *VX
 	if (fNumVxPoint != 0)
-		writePointDataSummary("VARIABLES EN X UNIQUEMENT", fNumVxPoint);
+		writePointDataSummary("VARIABLE IN X ONLY (VX)", fNumVxPoint);
 
-	// LECTURE DES POINTS VARIABLES EN Y UNIQUEMENT
+	// Reading *VY
 	if (fNumVyPoint != 0)
-		writePointDataSummary("VARIABLES EN Y UNIQUEMENT", fNumVyPoint);
+		writePointDataSummary("VARIABLE IN Y ONLY (VY)", fNumVyPoint);
 
-	// LECTURE DES POINTS VARIABLES EN Z UNIQUEMENT
+	// Reading *VZ
 	if (fNumVzPoint != 0)
-		writePointDataSummary("VARIABLES EN Z UNIQUEMENT", fNumVzPoint);
+		writePointDataSummary("VARIABLE IN Z ONLY (VZ)", fNumVzPoint);
 
-	// LECTURE DES OBSERVATIONS
+	// Reading Observations
 	int fNumHorAng = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kANGL);
 	int fNumZenDist = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kZEND);
 	int fNumDistMeas = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDIST);
@@ -277,78 +277,78 @@ void TResultsFileWriter::writeDataSummary()
 	int fNumECWS = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWS);
 	int fNumECWI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWI);
 
-	(*stream) << endl << "MESURES :" << endl << endl;
+	(*stream) << endl << "MEASUREMENTS :" << endl << endl;
 	if (fNumHorAng != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kANGL), fNumHorAng);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kANGL), fNumHorAng);
 
 	if (fNumZenDist != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kZEND), fNumZenDist);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kZEND), fNumZenDist);
 
 	if (fNumDistMeas != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDIST), fNumDistMeas);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kDIST), fNumDistMeas);
 
 	if (fNumPLR3D != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kPLR3D), fNumPLR3D);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kPLR3D), fNumPLR3D);
 
 	if (fNumECDIR != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECDIR), fNumECDIR);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECDIR), fNumECDIR);
 
 	if (fNumECTH != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECTH), fNumECTH);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECTH), fNumECTH);
 
 	if (fNumDHOR != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDHOR), fNumDHOR);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kDHOR), fNumDHOR);
 
 	if (fNumUVEC != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kUVEC), fNumUVEC);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kUVEC), fNumUVEC);
 
 	if (fNumUVD != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kUVD), fNumUVD);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kUVD), fNumUVD);
 
 	if (fNumDSPT != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDSPT), fNumDSPT);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kDSPT), fNumDSPT);
 
 	if (fNumDLEV != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDLEV), fNumDLEV);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kDLEV), fNumDLEV);
 
 	if (fNumDLEVDHOR != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDLEVDHOR), fNumDLEVDHOR);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kDLEVDHOR), fNumDLEVDHOR);
 
 	if (fNumDVER != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDVER), fNumDVER);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kDVER), fNumDVER);
 
 	if (fNumECHO != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECHO), fNumECHO);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECHO), fNumECHO);
 
 	if (fNumECSP != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECSP), fNumECSP);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECSP), fNumECSP);
 
 	if (fNumECVE != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECVE), fNumECVE);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECVE), fNumECVE);
 
 	if (fNumORIE != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kORIE), fNumORIE);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kORIE), fNumORIE);
 
 	if (fNumPDOR != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kPDOR), fNumPDOR);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kPDOR), fNumPDOR);
 
 	if (fNumRADI != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kRADI), fNumRADI);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kRADI), fNumRADI);
 
 	if (fNumINCLY != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kINCLY), fNumINCLY);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kINCLY), fNumINCLY);
 
 	if (fNumROLLY != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kROLLY), fNumROLLY);
 
 	if (fNumECWS != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECWS), fNumECWS);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECWS), fNumECWS);
 
 	if (fNumECWI != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECWI), fNumECWI);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECWI), fNumECWI);
 
 	// FIN DE FICHIER
-	(*stream) << endl << "*** STATISTIQUES ***";
+	(*stream) << endl << "*** STATISTICS ***";
 	(*stream) << endl << endl;
 }
 
@@ -357,7 +357,7 @@ void TResultsFileWriter::writeAdjustableObjGeneralInfo(const std::string adjObjN
 {
 	TAStreamFormatter &stream = getStreamRef();
 	stream << "\t" << adjObjName << " : " << numAdj << endl;
-	stream << "\t INCONNUES INTRODUITES " << adjObjName << ": " << numUnkn << endl << endl;
+	stream << "\t INTRODUCED UNKNOWNS " << adjObjName << ": " << numUnkn << endl << endl;
 }
 
 // write the summary for the number of points of the given description
@@ -365,7 +365,7 @@ void TResultsFileWriter::writePointDataSummary(const std::string description, co
 {
 	TAStreamFormatter &stream = getStreamRef();
 
-	stream << "	LECTURE DES POINTS " << description << " : " << numPts << endl;
+	stream << "	READING POINTS " << description << " : " << numPts << endl;
 	return;
 }
 
@@ -375,23 +375,23 @@ void TResultsFileWriter::writeCalcDataSummary()
 	TAStreamFormatter &stream = getStreamRef();
 
 	// NOMBRE D'OBSERVATIONS
-	stream << "	NOMBRE D'OBSERVATIONS =  " << fProjectData->fUEOIndices.OIndex;
+	stream << "	NUMBER OF OBSERVATIONS =  " << fProjectData->fUEOIndices.OIndex;
 	if (fProjectData->getConfig().pdor.isActive())
 	{
-		stream << "	(PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
+		stream << "	(PDOR INCLUDED - WARNING, FIRST CONTROL POINT DEFINED IN ROOT USED)";
 	}
 	stream << endl;
 
 	// NOMBRE D'INCONNUES
-	stream << "	NOMBRE D'INCONNUES =     " << fProjectData->fUEOIndices.UIndex;
+	stream << "	NUMBER OF UNKNOWNS =     " << fProjectData->fUEOIndices.UIndex;
 	stream << endl;
 
 	// NOMBRE DE CONTRAINTES
-	stream << "	NOMBRE DE CONTRAINTES =  " << fProjectData->fUEOIndices.CIndex;
+	stream << "	NUMBER OF CONSTRAINTS =  " << fProjectData->fUEOIndices.CIndex;
 	stream << endl;
 
 	// NUMBER OF ITERATIONS
-	stream << "	NOMBRE D'ITERATIONS =    " << fProjectData->getNumberOfLSIterations();
+	stream << "	NUMBER OF ITERATIONS =    " << fProjectData->getNumberOfLSIterations();
 	stream << endl << endl;
 
 	if (fProjectData->getConfig().useConsiLibr.isActive())
@@ -437,14 +437,14 @@ void TResultsFileWriter::writeSigmaAPosteriori()
 	TReal S0LowLimit = fProjectData->getChiS0LowLimit();
 	TReal S0UpLimit = fProjectData->getChiS0UpLimit();
 
-	// SIGMA ZERO A POSTERIORI
+	// A POSTERIORI SIGMA ZERO
 	int obsWidth = stream->getObsFormat()->getObsWidth();
 	int obsPrecision = obsWidth > 3 ? (obsWidth - 6) : 0;
 	stream->precision(obsPrecision);
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
-	(*stream) << "SIGMA ZERO A POSTERIORI =" << S0Aposteriori;
+	(*stream) << "A POSTERIORI SIGMA ZERO =" << S0Aposteriori;
 
-	(*stream) << ", VALEUR CRITIQUE = (";
+	(*stream) << ", CRITICAL VALUE = (";
 	stream->precision(5);
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
 	(*stream) << S0LowLimit << ", ";
@@ -456,17 +456,17 @@ void TResultsFileWriter::writeSigmaAPosteriori()
 
 	if (fProjectData->fUEOIndices.UIndex == fProjectData->fUEOIndices.OIndex)
 	{
-		(*stream) << "SOLUTION STRICTEMENT DETERMINEE: LES ECARTS-TYPES NE SONT PAS CALCULES!";
+		(*stream) << "STRICTLY DETERMINED SOLUTION: THE STANDARD DEVIATIONS ARE NOT CALCULATED!";
 		(*stream) << endl;
 	}
 	else if ((S0Aposteriori < S0UpLimit && S0Aposteriori > S0LowLimit) || fProjectData->getConfig().useApriori.isActive())
 	{
-		(*stream) << "LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)";
+		(*stream) << "STANDARD DEVIATIONS ARE CALCULATED WITH RESPECT TO THE A PRIORI SIGMA ZERO (EQUAL TO 1)";
 		(*stream) << endl;
 	}
 	else
 	{
-		(*stream) << "LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A POSTERIORI";
+		(*stream) << "STANDARD DEVIATIONS ARE CALCULATED WITH RESPECT TO THE A POSTERIORI SIGMA ZERO";
 		(*stream) << endl;
 	}
 
@@ -488,12 +488,12 @@ void TResultsFileWriter::writeSigmaAPosteriori(const TLGCData &data)
 	TReal S0LowLimit = data.getChiS0LowLimit();
 	TReal S0UpLimit = data.getChiS0UpLimit();
 
-	// SIGMA ZERO A POSTERIORI
+	// A POSTERIORI SIGMA ZERO
 	stream->precision(5);
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
-	(*stream) << "SIGMA ZERO A POSTERIORI =" << S0Aposteriori;
+	(*stream) << "A POSTERIORI SIGMA ZERO =" << S0Aposteriori;
 
-	(*stream) << ", VALEUR CRITIQUE = (";
+	(*stream) << ", CRITICAL VALUE = (";
 	stream->precision(5);
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
 	(*stream) << S0LowLimit << ", ";
@@ -505,17 +505,17 @@ void TResultsFileWriter::writeSigmaAPosteriori(const TLGCData &data)
 
 	if (fProjectData->fUEOIndices.UIndex == fProjectData->fUEOIndices.OIndex)
 	{
-		(*stream) << "SOLUTION STRICTEMENT DETERMINEE: LES ECARTS-TYPES NE SONT PAS CALCULES!";
+		(*stream) << "STRICTLY DETERMINED SOLUTION: THE STANDARD DEVIATIONS ARE NOT CALCULATED!";
 		(*stream) << endl;
 	}
 	else if ((S0Aposteriori < S0UpLimit && S0Aposteriori > S0LowLimit) /*|| isSAPrioriUsed()*/) //  || isSAPrioriUsed()  INVESTIGATE WHAT DOES THIS EXACTLY MEAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	{
-		(*stream) << "LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)";
+		(*stream) << "STANDARD DEVIATIONS ARE CALCULATED WITH RESPECT TO THE A PRIORI SIGMA ZERO (EQUAL TO 1)";
 		(*stream) << endl;
 	}
 	else
 	{
-		(*stream) << "LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A POSTERIORI";
+		(*stream) << "STANDARD DEVIATIONS ARE CALCULATED WITH RESPECT TO THE A POSTERIORI SIGMA ZERO";
 		(*stream) << endl;
 	}
 
@@ -556,8 +556,8 @@ void TResultsFileWriter::writeMeasDataSummary(const std::string description, con
 {
 	TAStreamFormatter &stream = getStreamRef();
 
-	// insure impose de mettre les endl en en retour de ligne....
-	stream << "	LECTURE DES " << description << " : " << numObs << endl;
+	// insure impose de mettre les endl en en retour de ligne...
+	stream << "	READING OF " << description << " : " << numObs << endl;
 
 	return;
 }
@@ -570,7 +570,7 @@ void TResultsFileWriter::writeRelErrorHeader()
 
 	// write header
 	(*stream) << endl << endl << endl;
-	(*stream) << "ERREURS RELATIVES " << endl;
+	(*stream) << "RELATIVE ERRORS " << endl;
 	(*stream) << "*******************" << endl << endl;
 
 	//////////////////////////////////////////////////////////////
@@ -578,7 +578,7 @@ void TResultsFileWriter::writeRelErrorHeader()
 	//  point 1 & 2 & frame
 	(*stream).writeStringLeft(nameWidth, "POINT 1");
 	(*stream).writeStringLeft(nameWidth, "POINT 2");
-	(*stream).writeStringLeft(nameWidth, "Frame  ");
+	(*stream).writeStringLeft(nameWidth, "FRAME  ");
 	// Sigmas
 	(*stream).writeString(obsResWidth, "SIGMA L");
 	(*stream).writeString(obsResWidth, "SIGMA G");
@@ -653,7 +653,7 @@ void TResultsFileWriter::writeRelErrorFrameHeader()
 
 	// write header
 	(*stream) << endl << endl << endl;
-	(*stream) << "ERREURS RELATIVES FRAMES" << endl;
+	(*stream) << "RELATIVE ERRORS FRAMES" << endl;
 	(*stream) << "*******************" << endl << endl;
 
 	return;

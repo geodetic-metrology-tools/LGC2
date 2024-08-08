@@ -63,7 +63,7 @@ void TSimFileWriter::writeHeader()
 
 	(*stream) << "*TITR" << endl;
 	(*stream) << data->getConfig().title << endl;
-	(*stream) << "DANS CE FICHIER, LES OBSERVATIONS SONT SIMULEES !" << endl;
+	(*stream) << "IN THIS FILE, OBSERVATIONS ARE SIMULATED !" << endl;
 
 	if (data->getConfig().referential == 106)
 		(*stream) << "*LEP" << endl;
