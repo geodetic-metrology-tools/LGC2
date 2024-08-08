@@ -31,8 +31,8 @@ void TEDMWriter::writeEDMSynthesisHeader()
 	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); // plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ void TEDMWriter::writeEDMHeader(const TEDM &fEdm)
 
 	////////////////////////////////////////////////////////////
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "INSTRUMENT EDM: " + fEdm.instrument.ID);
+	(*stream).writeStringLeft(nameWidth, "EDM INSTRUMENT: " + fEdm.instrument.ID);
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
@@ -104,10 +104,10 @@ void TEDMWriter::writeDSPTResultsHeader(const int)
 	// first line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POINT "); // second point's Name
-	(*stream).writeString(obsWidth, "OBSERVE"); // mesured distance
+	(*stream).writeString(obsWidth, "OBSERVED"); // mesured distance
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsWidth, "CALCULE"); // estimated distance
-	(*stream).writeString(obsResWidth, "RESIDU"); // offset (mm)
+	(*stream).writeString(obsWidth, "CALC"); // estimated distance
+	(*stream).writeString(obsResWidth, "RES"); // offset (mm)
 	(*stream).writeString(obsResWidth, "SENSI"); // sensitivity
 	(*stream).writeString(obsResWidth, "RES/SIG"); // offset/sigma
 	(*stream).writeString(obsWidth, "CONST"); // dist corr
@@ -153,7 +153,7 @@ void TEDMWriter::writeEDMResults(const TEDM &fEdm)
 
 	writeEDMHeader(fEdm);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
 
 	if (fEdm.measDSPT.size() > 0)
 		// Write the measurements
@@ -255,7 +255,7 @@ void TEDMWriter::writeEDMSIMUResults(const TEDM &fEdm)
 
 	writeEDMHeader(fEdm);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDSPT), (int)fEdm.measDSPT.size());
 
 	if (fEdm.measDSPT.size() > 0)
 		// Write the measurements

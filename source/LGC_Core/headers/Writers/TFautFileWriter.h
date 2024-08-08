@@ -54,7 +54,7 @@ private:
 	//@{
 		/// write title and date 
 		void	writeTitle();
-		/// write data summary (sigma zero a posteriori, alpha, beta, and others) 
+		/// write data summary (A POSTERIORI SIGMA ZERO, alpha, beta, and others) 
 		void	writeDataSummary();
 
 	//@}

@@ -56,7 +56,7 @@ void TCAMWriter::writeUVDResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
-	this->writeObsTitle(this->getObsDescriptionFR(TCAMWriter::kUVD), nOObs);
+	this->writeObsTitle(this->getObsDescription(TCAMWriter::kUVD), nOObs);
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
@@ -123,7 +123,7 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	////////////////////////////////////////////////////////////
 	//first line
 	(*stream) << TABs;
-	this->writeObsTitle(this->getObsDescriptionFR(TALGCObjectWriter::kUVEC), nOObs);
+	this->writeObsTitle(this->getObsDescription(TALGCObjectWriter::kUVEC), nOObs);
 	//second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TRGT"); //Name of the target used
@@ -312,18 +312,18 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM& camera){
 
 	if (camera.measUVD.size() > 0){
 		const auto &summary = camera.getUVDObsSummary();
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": XVECT", (int)camera.measUVD.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kUVD) + ": XVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": YVECT", (int)camera.measUVD.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kUVD) + ": YVECT", (int)camera.measUVD.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVD) + ": DIST", (int)camera.measUVD.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kUVD) + ": DIST", (int)camera.measUVD.size());
 		writeDistanceResultsSummary(summary.distObsSum, TABs);
 	}
 	if (camera.measUVEC.size() > 0){
 		const auto &summary = camera.getUVECObsSummary();
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": XVECT", (int)camera.measUVEC.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kUVEC) + ": XVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs);
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
 	}
 }
@@ -492,16 +492,16 @@ void TCAMWriter::writeUVDSynthesisHeader()
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -540,12 +540,12 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -580,8 +580,8 @@ void TCAMWriter::writeResultsSynthesisHeaderUnitless()
 	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -610,8 +610,8 @@ void TCAMWriter::writeResultsSynthesisHeaderDistance()
 	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line

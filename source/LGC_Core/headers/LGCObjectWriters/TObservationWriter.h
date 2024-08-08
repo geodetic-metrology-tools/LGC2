@@ -40,12 +40,9 @@ public:
 		virtual  ~TObservationWriter();
 	//@}
 
-		/// get the descriptive text in French for an observation type
-	    static std::string	getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key);
+		/// get the descriptive text for an observation type
+	    static std::string	getObsDescription(TALGCObjectWriter::ELGCObservations key);
 						
-		/// get the descriptive text in English for an observation type
-		static std::string	getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key);
-
 		/// write a title of an observation, including description and number of obs.
 		void writeObsTitle(const std::string& description, const int numObs);
 

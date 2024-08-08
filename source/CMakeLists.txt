@@ -103,7 +103,7 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
 
-# Python C API bindings (plain shared library — no Python or pybind11 needed to build)
+# Python C API bindings (plain shared library � no Python or pybind11 needed to build)
 ADD_SUBDIRECTORY(pyLGC)
 
 # INSTALL for creation of the LGC2 installer

@@ -236,7 +236,7 @@ void TPunchFileWriter::writeTitle()
 	}
 
 	// write date and time
-	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "#CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
 	(*stream) << "#";
 	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		(*stream) << "*SPHE";
@@ -261,7 +261,7 @@ void TPunchFileWriter::writeXYZHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -292,13 +292,13 @@ void TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	if (fData->getConfig().useApriori.isActive())
 	{
 		(*stream) << "%";
-		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl;
+		(*stream) << "SIGMAS AND COVARIANCES ARE CALCULATED WITH RESPECT TO THE A PRIORI SIGMA ZERO (EQUAL TO 1)" << endl;
 		(*stream) << "%" << endl;
 	}
 	else
 	{
 		(*stream) << "%";
-		(*stream) << "LES SIGMAS ET COVARIANCES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl;
+		(*stream) << "SIGMAS AND COVARIANCES ARE CALCULATED WITH RESPECT TO THE A POSTERIORI SIGMA ZERO" << endl;
 		(*stream) << "%" << endl;
 	}
 
@@ -306,7 +306,7 @@ void TPunchFileWriter::writeXYZVarCovarDeltaHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -366,13 +366,13 @@ void TPunchFileWriter::writeXYZErrorEllHeader()
 	if (fData->getConfig().useApriori.isActive())
 	{
 		(*stream) << "%";
-		(*stream) << "LES ELLIPSES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)" << endl;
+		(*stream) << "ELLIPSES ARE CALCULATED WITH RESPECT TO THE A PRIORI SIGMA ZERO (EQUAL TO 1)" << endl;
 		(*stream) << "%" << endl;
 	}
 	else
 	{
 		(*stream) << "%";
-		(*stream) << "LES ELLIPSES SONT CALCULEES PAR RAPPORT AU SIGMA ZERO A POSTERIORI" << endl;
+		(*stream) << "ELLIPSES ARE CALCULATED WITH RESPECT TO THE A POSTERIORI SIGMA ZERO" << endl;
 		(*stream) << "%" << endl;
 	}
 
@@ -380,7 +380,7 @@ void TPunchFileWriter::writeXYZErrorEllHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM  ");
+	(*stream).writeStringLeft(nameWidth, "NAME  ");
 	stream->writeString(coordWidth, "X");
 	stream->writeString(coordWidth, "Y");
 	stream->writeString(coordWidth, "Z");
@@ -389,9 +389,9 @@ void TPunchFileWriter::writeXYZErrorEllHeader()
 	stream->writeString(vecwidth, "DIRECTION X");
 	stream->writeString(vecwidth, "DIRECTION Y");
 	stream->writeString(vecwidth, "DIRECTION Z");
-	stream->writeString(coordWidth, "LONGUEUR X");
-	stream->writeString(coordWidth, "LONGUEUR Y");
-	stream->writeString(coordWidth, "LONGUEUR Z");
+	stream->writeString(coordWidth, "LENGTH X");
+	stream->writeString(coordWidth, "LENGTH Y");
+	stream->writeString(coordWidth, "LENGTH Z");
 	stream->writeString(coordWidth, "DX");
 	stream->writeString(coordWidth, "DY");
 	stream->writeString(coordWidth, "DZ");
@@ -432,7 +432,7 @@ void TPunchFileWriter::writeXYHHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "H ");
@@ -462,7 +462,7 @@ void TPunchFileWriter::writeXYZHHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -493,7 +493,7 @@ void TPunchFileWriter::writeXYHNHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "H ");
@@ -523,7 +523,7 @@ void TPunchFileWriter::writeXYZHNHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -555,7 +555,7 @@ void TPunchFileWriter::writeXYZSigmaHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	(*stream).writeString(coordWidth, "Z ");
@@ -589,7 +589,7 @@ void TPunchFileWriter::writeCooHeader()
 	// First line
 	(*stream).width(1);
 	(*stream) << "%";
-	(*stream).writeStringLeft(nameWidth, "NOM");
+	(*stream).writeStringLeft(nameWidth, "NAME");
 	(*stream).writeString(coordWidth, "X ");
 	(*stream).writeString(coordWidth, "Y ");
 	if (fData->getConfig().referential != TRefSystemFactory::ERefFrame::kLocalRefFrame)

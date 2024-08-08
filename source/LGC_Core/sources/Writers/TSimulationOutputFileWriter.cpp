@@ -91,17 +91,13 @@ void TSimulationOutputFileWriter::writeSimHeader(TLGCData &data, int i)
 {
 	TAStreamFormatter *stream = getStream();
 	std::string separator = getSeparator();
-
-	// write title
-	(*stream) << "SIMULATION NUMERO" << separator << i << endl
-			  << "*********************" << endl
-			  << endl
-			  << endl
-			  << " DANS CE FICHIER, LES OBSERVATIONS SONT SIMULEES !" << endl
-			  << endl
-			  << endl;
-
-	// write sigma0 a posteriori
+	
+	//write title
+	(*stream)<<"SIMULATION NUMBER"<<separator<< i <<endl<<
+		"*********************"<<endl<<endl<<endl<<
+		" IN THIS FILE, OBSERVATIONS ARE SIMULATED !"<<endl<<endl<<endl;
+	
+	//write sigma0 a posteriori
 	writeSigmaAPosteriori(data);
 }
 
@@ -118,11 +114,11 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 	(*stream) << "*********************************************************************************************************************************** " << endl;
 	(*stream) << endl << endl << endl;
 
-	// simulation summary
-	(*stream) << "RESUME APRES : " << i << " SIMULATIONS" << endl;
+	//simulation summary
+	(*stream)<<"SUMMARY AFTER: " << i	<< " SIMULATIONS" <<endl;
 
 	TLGCApp::updateProcessingElapsedSeconds();
-	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS ";
+	(*stream) << "#CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS ";
 	(*stream).writeDouble(0, 7, TLGCApp::getProcessingElapsedSeconds());
 	(*stream) << "\n"
 			  << "\n"
@@ -134,16 +130,17 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 
 	// header
 	(*stream).writeString(nameCoordWidth, objectType);
-	(*stream).writeString(9 * (coordResWidth + 1) + 44, "ECARTS-TYPES DES " + objectType);
+	(*stream).writeString(9*(coordResWidth+1)+44,"STANDARD DEVIATIONS OF " + objectType);
 	(*stream) << endl;
 	(*stream).writeString(nameCoordWidth + 1 + 9 * (coordResWidth + 1) + 44, "(SIG ZERO = 1         ");
 	(*stream) << endl;
-	(*stream).writeString(nameCoordWidth + 1 + 9 * (coordResWidth + 1) + 44, " R = SIGMA/ECART-TYPE)");
+	(*stream).writeString(nameCoordWidth+1+9*(coordResWidth+1)+44," R = SIGMA/STANDARD DEVIATION)");
 	(*stream) << endl << endl;
 
-	// Nom
-	(*stream).writeStringLeft(nameCoordWidth, "NOM");
-	(*stream).writeStringLeft(nameCoordWidth, "FRAME");
+	
+	//Nom
+	(*stream).writeStringLeft(nameCoordWidth,"NAME");
+	(*stream).writeStringLeft(nameCoordWidth,"FRAME");
 
 	// X offset
 	(*stream).writeString(5, "");
@@ -215,11 +212,11 @@ void TSimulationOutputFileWriter::writeSimFRAMEDescription()
 
 	// header
 	(*stream).writeString(nameCoordWidth, "FRAME");
-	(*stream).writeString(9 * (coordResWidth + 1) + 44, "ECARTS-TYPES");
+	(*stream).writeString(9*(coordResWidth+1)+44,"STANDARD DEVIATIONS");
 	(*stream) << endl;
 	(*stream).writeString(nameCoordWidth + 1 + 9 * (coordResWidth + 1) + 44, "(SIG ZERO = 1         ");
 	(*stream) << endl;
-	(*stream).writeString(nameCoordWidth + 1 + 9 * (coordResWidth + 1) + 44, " R = SIGMA/ECART-TYPE)");
+	(*stream).writeString(nameCoordWidth+1+9*(coordResWidth+1)+44," R = SIGMA/STANDARD DEVIATION)");
 	(*stream) << endl << endl;
 
 	// Nom
@@ -355,7 +352,7 @@ void TSimulationOutputFileWriter::writeRelErrorHeader()
 	//  point 1 & 2 & frame
 	(*stream).writeStringLeft(nameWidth, "POINT 1");
 	(*stream).writeStringLeft(nameWidth, "POINT 2");
-	(*stream).writeStringLeft(nameWidth, "Frame  ");
+	(*stream).writeStringLeft(nameWidth, "FRAME  ");
 	(*stream).writeStringLeft(nameWidth, "");
 	// Sigmas
 	(*stream).writeString(obsResWidth, "SIGMA L");
@@ -480,7 +477,7 @@ void TSimulationOutputFileWriter::writeRelErrorFrameHeader()
 
 	// write header
 	(*stream) << endl << endl << endl;
-	(*stream) << "ERREURS RELATIVES FRAMES" << endl;
+	(*stream) << "RELATIVE ERRORS FRAMES" << endl;
 	(*stream) << "*******************" << endl << endl;
 
 	return;
@@ -493,7 +490,7 @@ void TSimulationOutputFileWriter::writeRelErrorFrameResults(const TLGCData &data
 	for (auto relFrame : data.getRelError().frames)
 	{
 		std::string relFrameName = "[" + relFrame.getFromFrame() + "->" + relFrame.getToFrame() + "]";
-		(*stream) << "Relative Transformation:";
+		(*stream) << "RELATIVE TRANSFORMATION:";
 		(*stream).writeStringLeft(nameWidth, relFrameName);
 		(*stream) << endl;
 		TFRAMEWriter aux(*stream, &data);
@@ -645,7 +642,7 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary &simP
 	{
 		(*stream).writeString(5, "MAX");
 		writeDouble(coordResWidth, precisionMM, deltaMax.getX().getMMetresValue());
-		(*stream).writeString(7, "MOYEN");
+		(*stream).writeString(7,"MEAN");
 		writeDouble(coordResWidth, precisionMM, deltaMoy.getX().getMMetresValue());
 	}
 	else
@@ -660,7 +657,7 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary &simP
 	{
 		(*stream).writeString(5, "MAX");
 		writeDouble(coordResWidth, precisionMM, deltaMax.getY().getMMetresValue());
-		(*stream).writeString(7, "MOYEN");
+		(*stream).writeString(7,"MEAN");
 		writeDouble(coordResWidth, precisionMM, deltaMoy.getY().getMMetresValue());
 	}
 	else
@@ -675,7 +672,7 @@ void TSimulationOutputFileWriter::writeSimPointData(const TSimPointSummary &simP
 	{
 		(*stream).writeString(5, "MAX");
 		writeDouble(coordResWidth, precisionMM, deltaMax.getZ().getMMetresValue());
-		(*stream).writeString(7, "MOYEN");
+		(*stream).writeString(7,"MEAN");
 		writeDouble(coordResWidth, precisionMM, deltaMoy.getZ().getMMetresValue());
 	}
 	else
@@ -868,7 +865,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMax.tX.getMMetresValue());
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.tX.getMMetresValue());
 		}
 		else
@@ -883,7 +880,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMax.tY.getMMetresValue());
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.tY.getMMetresValue());
 		}
 		else
@@ -898,7 +895,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMax.tZ.getMMetresValue());
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.tZ.getMMetresValue());
 		}
 		else
@@ -914,7 +911,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, angleResPrecision, deltaMax.omega.getSignedCCValue());
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, angleResPrecision, deltaMoy.omega.getSignedCCValue());
 		}
 		else
@@ -929,7 +926,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, angleResPrecision, deltaMax.phi.getSignedCCValue());
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, angleResPrecision, deltaMoy.phi.getSignedCCValue());
 		}
 		else
@@ -944,7 +941,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, angleResPrecision, deltaMax.kappa.getSignedCCValue());
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, angleResPrecision, deltaMoy.kappa.getSignedCCValue());
 		}
 		else
@@ -960,7 +957,7 @@ void TSimulationOutputFileWriter::writeSimFRAMEData(const TSimFrameSummary &simF
 		{
 			(*stream).writeString(5, "MAX");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMax.scale * M2MM);
-			(*stream).writeString(7, "MOYEN");
+			(*stream).writeString(7,"MEAN");
 			writeDouble(coordResWidth, lengthResPrecision, deltaMoy.scale * M2MM);
 		}
 		else
