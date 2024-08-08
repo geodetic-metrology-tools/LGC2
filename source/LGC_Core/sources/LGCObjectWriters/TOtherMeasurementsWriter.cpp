@@ -28,16 +28,15 @@ void TOtherMeasurementWriter::writeDVERResultsHeader()
 	////////////////////////////////////////////////////////////
 	// First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "POINT 1"); // Position of the inst
-	(*stream).writeStringLeft(nameWidth, "POINT 2"); // Position of the scale
-	(*stream).writeString(obsWidth, "OBSERVE"); // observed dver
-	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsWidth, "CALCULE"); // estimated dver
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
-	(*stream).writeString(obsResWidth, "RES/SIG"); // residual/sigma
-	(*stream).writeString(obsWidth, "DCOR"); // DVER: distance correction value
-	if (obsIdWidth != 0)
-		(*stream).writeString(obsIdWidth, "ID"); // Observation ID
+	(*stream).writeStringLeft(nameWidth, "POINT 1"); //Position of the inst
+	(*stream).writeStringLeft(nameWidth, "POINT 2"); //Position of the scale
+	(*stream).writeString(obsWidth, "OBSERVED"); //observed dver
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
+	(*stream).writeString(obsWidth, "CALC"); //estimated dver 
+	(*stream).writeString(obsResWidth, "RES"); //residual
+	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	(*stream).writeString(obsWidth, "DCOR");      //DVER: distance correction value 
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID");      //Observation ID
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -67,19 +66,18 @@ void TOtherMeasurementWriter::writeORIEResultsHeader()
 	////////////////////////////////////////////////////////////
 	// First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "STATION"); // Position of the inst
-	(*stream).writeStringLeft(nameWidth, "POINT"); // Position of the scale
-	(*stream).writeString(obsWidth, "OBSERVE"); // observed orie
-	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsWidth, "CALCULE"); // estimated orie
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
-	(*stream).writeString(obsResWidth, "RES/SIG"); // residu/sigma
-	(*stream).writeString(nameWidth, "TRGT"); // Name of the target
-	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ORIE
-	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
-	if (obsIdWidth != 0)
-		(*stream).writeString(obsIdWidth, "ID"); // observation ID
-	(*stream) << endl;
+	(*stream).writeStringLeft(nameWidth, "STATION"); //Position of the inst
+	(*stream).writeStringLeft(nameWidth, "POINT"); //Position of the scale
+	(*stream).writeString(obsWidth, "OBSERVED"); //observed orie
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
+	(*stream).writeString(obsWidth, "CALC"); //estimated orie 
+	(*stream).writeString(obsResWidth, "RES"); //residual
+	(*stream).writeString(obsResWidth, "RES/SIG");//residu/sigma
+	(*stream).writeString(nameWidth, "TRGT");     //Name of the target
+	(*stream).writeString(obsResWidth, "OBSE");   // observation sigma ORIE
+	(*stream).writeString(obsResWidth, "TCSE");   // target centering sigma
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID");   // observation ID
+	(*stream) << endl; 
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
@@ -112,11 +110,10 @@ void TOtherMeasurementWriter::writePDORResultsHeader()
 	(*stream) << TABs;
 	(*stream).writeString(nameWidth, "CALA POINT");
 	(*stream).writeString(nameWidth, "POINT");
-	(*stream).writeString(obsWidth, "OBSERVE"); // observed bearing
-	(*stream).writeString(obsWidth, "CALCULE"); // estimated bearing
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
-	if (obsIdWidth != 0)
-		(*stream).writeString(obsIdWidth, "ID"); // observation id
+	(*stream).writeString(obsWidth, "OBSERVED"); //observed bearing
+	(*stream).writeString(obsWidth, "CALC"); //estimated bearing 
+	(*stream).writeString(obsResWidth, "RES"); //residual
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); //observation id
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -143,15 +140,14 @@ void TOtherMeasurementWriter::writeRADIResultsHeader()
 	////////////////////////////////////////////////////////////
 	// First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "POINT"); // Position of the ponit
-	(*stream).writeString(obsWidth, "GIS"); // observed radi
-	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
-	(*stream).writeString(obsResWidth, "RES/SIG"); // residual/sigma
-	(*stream).writeString(obsResWidth, "OBSE"); // observation standard error
-	(*stream).writeString(obsWidth, "ACST"); // constant angle
-	if (obsIdWidth != 0)
-		(*stream).writeString(obsIdWidth, "ID"); // observation id
+	(*stream).writeStringLeft(nameWidth, "POINT"); //Position of the ponit
+	(*stream).writeString(obsWidth, "OBSERVED"); //observed radi
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
+	(*stream).writeString(obsResWidth, "RES"); //residual
+	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	(*stream).writeString(obsResWidth, "OBSE"); //observation standard error 
+	(*stream).writeString(obsWidth, "ACST"); //constant angle
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); //observation id
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -177,12 +173,11 @@ void TOtherMeasurementWriter::writeOBSXYZResultsHeader()
 	////////////////////////////////////////////////////////////
 	// First line
 	(*stream) << TAB;
-	(*stream).writeStringLeft(nameWidth, "POINT"); // Position of the ponit
-	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
-	(*stream).writeString(obsResWidth, "RES/SIG"); // residual/sigma
-	if (obsIdWidth != 0)
-		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
+	(*stream).writeStringLeft(nameWidth, "POINT"); //Position of the ponit
+	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
+	(*stream).writeString(obsResWidth, "RES"); //residual
+	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
+	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -256,21 +251,36 @@ void TOtherMeasurementWriter::writePDORResults(const TPdorObs &fPDOR)
 	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int anglePrecision = getAnglePrecision();
 
-	// first line
-	this->writeObsTitle(this->getObsDescriptionFR(TALGCObjectWriter::kPDOR), 1);
+	////////////////////////////////////////////////////////////
+	// First line
+	this->writeObsTitle(this->getObsDescription(TALGCObjectWriter::kPDOR), 1);
 
 	(*stream).writeString(nameWidth, "CALA POINT");
-	(*stream).writeString(nameWidth, fPDOR.calaPt->getName());
 	(*stream).writeString(nameWidth, "POINT");
-	(*stream).writeString(nameWidth, fPDOR.orientationPt->getName());
-	(*stream).writeString(obsWidth, "OBS (GON)"); // observed bearing
-	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue());
-	(*stream).writeString(obsWidth, "CALC (GON)"); // estimated bearing
-	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue() + fPDOR.getAngleResidual().getGonsValue());
-	(*stream).writeString(obsResWidth, "RES (CC)"); // residual
-	(*stream).writeDouble(obsResWidth, angleResPrecision, fPDOR.getAngleResidual().getSignedCCValue());
+	(*stream).writeString(obsWidth, "OBSERVED"); //observed bearing
+	(*stream).writeString(obsWidth, "CALC"); //estimated bearing 
+	(*stream).writeString(obsResWidth, "RES"); //residual
 	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// second line
+	(*stream).writeString(nameWidth, "");
+	(*stream).writeString(nameWidth, "");
+	(*stream).writeString(obsWidth, "(GON)"); 
+	(*stream).writeString(obsWidth, "(GON)");
+	(*stream).writeString(obsResWidth, "(CC)");
+	(*stream) << endl;
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// third line
+	(*stream).writeString(nameWidth, fPDOR.calaPt->getName());
+	(*stream).writeString(nameWidth, fPDOR.orientationPt->getName());
+	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue());
+	(*stream).writeDouble(obsWidth, anglePrecision, fPDOR.getBearing().getGonsValue() + fPDOR.getAngleResidual().getGonsValue());
+	(*stream).writeDouble(obsResWidth, angleResPrecision, fPDOR.getAngleResidual().getSignedCCValue());
+
 	(*stream) << endl << endl;
+
 }
 
 void TOtherMeasurementWriter::writeDVERResults(const std::list<TDVER> &fDVER)
@@ -286,7 +296,7 @@ void TOtherMeasurementWriter::writeDVERResults(const std::list<TDVER> &fDVER)
 
 	// first line
 	(*stream) << stream->getCurrSpaceExtended(1) << "DVER" << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDVER), (int)fDVER.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDVER), (int)fDVER.size());
 	writeDVERResultsHeader(); // write the title line for the observations
 
 	for (auto const &ItDVER : fDVER)
@@ -335,9 +345,9 @@ void TOtherMeasurementWriter::writeORIEResults(const std::list<TORIE> &fORIE, co
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
-	// first line
-	(*stream) << stream->getCurrSpaceExtended(1) << "CONTRAINTES D'ORIENTATION" << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)fORIE.size());
+	//first line
+	(*stream) << stream->getCurrSpaceExtended(1) << "ORIENTATION CONSTRAINTS" << endl;
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kORIE), (int)fORIE.size());
 	writeORIEResultsHeader(); // write the title line for the observations
 
 	for (auto const &ItORIE : fORIE)
@@ -392,9 +402,9 @@ void TOtherMeasurementWriter::writeRADIResults(const std::list<TRADI> &fRADI)
 	int anglePrecision = getAnglePrecision();
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
-	// first line
-	(*stream) << stream->getCurrSpaceExtended(1) << "CONTRAINTES RADIALES" << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kRADI), (int)fRADI.size());
+	//first line
+	(*stream) << stream->getCurrSpaceExtended(1) << "RADIAL CONSTRAINTS" << endl;
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kRADI), (int)fRADI.size());
 	writeRADIResultsHeader(); // write the title line for the observations
 
 	for (auto const &It : fRADI)
@@ -437,8 +447,8 @@ void TOtherMeasurementWriter::writeOBSXYZResults(const std::list<TOBSXYZ> &fOBSX
 	int obsIdWidth = getObsIdWidth();
 	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
-	// first line
-	this->writeObsTitle(TAB + this->getObsDescriptionFR(TALGCObjectWriter::kOBSXYZ), (int)fOBSXYZ.size());
+	//first line
+	this->writeObsTitle(TAB + this->getObsDescription(TALGCObjectWriter::kOBSXYZ), (int)fOBSXYZ.size());
 	writeOBSXYZResultsHeader(); // write the title line for the observations
 
 	for (auto const &It : fOBSXYZ)
@@ -495,7 +505,7 @@ void TOtherMeasurementWriter::writePointSigmaResults(const LGCAdjustablePointCol
 	if (nPointsWithSigma > 0)
 	{
 		this->writeObsTitle(TAB + "POINTS WITH SIGMA", nPointsWithSigma);
-		(*stream) << "	LES PRECISIONS ET LES RESIDUS SONT EXPRIMES PAR RAPPORT AU(X) SYSTEME(S) DE COORDONNEES TOURNE(S).\n";
+		(*stream) << "	THE PRECISIONS AND RESIDUALS ARE EXPRESSED RELATIVE TO THE ROTATED COORDINATE SYSTEM(S).\n";
 		writePointSigmaResultsHeader(); // write the title line for the observations
 
 		for (const auto &pt : pointCollection)
@@ -564,11 +574,10 @@ void TOtherMeasurementWriter::writeDVERSIMUResults(const TMeasurements &tmeas)
 	// Third hierarchy level from local FRAME
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
-	if (!tmeas.fDVER.empty())
-	{
-		(*stream) << TAB << "DIFFERENCES VERTICALES";
-		(*stream) << endl << endl;
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDVER), (int)tmeas.fDVER.size());
+	if (!tmeas.fDVER.empty()){
+		(*stream) << TAB << "VERTICAL DIFFERENCES";
+		(*stream) << endl<<endl;
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kDVER), (int)tmeas.fDVER.size());
 		writeDistanceResultsSummary(tmeas.getDVERObsSummary(), TABs);
 	}
 }
@@ -579,11 +588,11 @@ void TOtherMeasurementWriter::writeORIESIMUResults(const TORIEROM &orieRom)
 	std::string STAB = stream->getCurrSpaceExtended(1);
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
-	(*stream) << STAB << "CONTRAINTES D ORIENTATION";
-	// Write definition of ROM
+	(*stream) << STAB << "ORIENTATION CONSTRAINTS";
+	//Write definition of ROM
 	(*stream) << endl << endl;
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kORIE), (int)orieRom.measORIE.size());
-	writeAngleResultsSummary(orieRom.getORIEObsSummary(), TABs);
+    this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kORIE), (int)orieRom.measORIE.size());
+    writeAngleResultsSummary(orieRom.getORIEObsSummary(), TABs);
 }
 
 void TOtherMeasurementWriter::writeRADISIMUResults(const TMeasurements &tmeas)
@@ -592,11 +601,10 @@ void TOtherMeasurementWriter::writeRADISIMUResults(const TMeasurements &tmeas)
 	// Third hierarchy level from local FRAME
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
-	if (!tmeas.fRADI.empty())
-	{
-		(*stream) << TAB << "CONTRAINTES RADIALES";
+	if (!tmeas.fRADI.empty()){
+		(*stream) << TAB << "RADIAL CONSTRAINTS";
 		(*stream) << endl << endl;
-		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kRADI), (int)tmeas.fRADI.size());
+		this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kRADI), (int)tmeas.fRADI.size());
 		writeDistanceResultsSummary(tmeas.getRADIObsSummary(), TABs);
 	}
 }
@@ -795,11 +803,11 @@ void TOtherMeasurementWriter::writeResultsSynthesisHeader()
 	////////////////////////////////////////////////////////////
 	// First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); // instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
@@ -824,11 +832,11 @@ void TOtherMeasurementWriter::writeResultsSynthesisHeaderAngles()
 	////////////////////////////////////////////////////////////
 	// First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); // instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
