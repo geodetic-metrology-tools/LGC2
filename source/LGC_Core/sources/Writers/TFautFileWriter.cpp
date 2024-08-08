@@ -86,7 +86,7 @@ void	TFautFileWriter::writeTitle()
 	(*stream)<<endl;
 
 	// write date and time
-	(*stream) << "CALCULATED " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
 	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
 }
 
@@ -100,12 +100,12 @@ void	TFautFileWriter::writeDataSummary()
 	TReal S0UpLimit = fProjectData->getChiS0UpLimit();
 
 
-	//SIGMA ZERO A POSTERIORI
+	//A POSTERIORI SIGMA ZERO
 	stream->precision(5);
 	stream->width( stream->getObsFormat()->getObsResidualWidth() );
-	(*stream)<<"SIGMA ZERO A POSTERIORI ="<<S0Aposteriori;
+	(*stream)<<"A POSTERIORI SIGMA ZERO ="<<S0Aposteriori;
 
-	(*stream)<<", VALEUR CRITIQUE = (";
+	(*stream)<<", CRITICAL VALUE = (";
 	stream->precision(5);
 	stream->width( stream->getObsFormat()->getObsResidualWidth() );
 	(*stream)<<S0LowLimit<<", ";

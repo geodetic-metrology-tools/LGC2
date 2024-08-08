@@ -35,14 +35,14 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary &summary,
 	// Write statistic
 	//  mean residual
 	stream << TABs;
-	stream << "RESIDU MOYEN =  ";
-	stream.width(obsResWidth);
+	stream << "MEAN RES =  "; 
+	stream.width( obsResWidth );
 	stream.precision(angleResidualPrecision);
 	stream << summary.getMean();
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " CC :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream<<" CC :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(angleResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(angleResidualPrecision);
@@ -51,14 +51,14 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary &summary,
 
 	// variance of residuals
 	stream << TABs;
-	stream << "ECART-TYPE   =  ";
-	stream.width(obsResWidth);
+	stream<<"STD DEV  =  ";
+	stream.width( obsResWidth );
 	stream.precision(angleResidualPrecision);
 	stream << summary.getStdev();
 	stream << getSeparator();
 
-	// variance of residuals statistical test limits
-	stream << " CC :  LIMITES DE CONFIANCE A 95.0 = (";
+	//variance of residuals statistical test limits
+	stream<<" CC :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(angleResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(angleResidualPrecision);
@@ -76,14 +76,14 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary &summa
 	stream << TABs;
 
 	// mean residual
-	stream << "RESIDU MOYEN =  ";
-	stream.width(obsResWidth);
+	stream<<"MEAN RES =  "; 
+	stream.width( obsResWidth );
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMean();
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " MM :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream<<" MM :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -92,14 +92,14 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary &summa
 
 	stream << TABs;
 	// variance of residuals
-	stream << "ECART-TYPE   =  ";
-	stream.width(obsResWidth);
+	stream<<"STD DEV  =  ";
+	stream.width( obsResWidth );
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdev();
 	stream << getSeparator();
 
-	// variance of residuals statistical test limits
-	stream << " MM :  LIMITES DE CONFIANCE A 95.0 = (";
+	//variance of residuals statistical test limits
+	stream<<" MM :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -120,14 +120,14 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summa
 	stream << TABs;
 
 	// mean residual
-	stream << "RESIDU MOYEN =  ";
-	stream.width(obsResWidth);
+	stream<<"MEAN RES =  "; 
+	stream.width( obsResWidth );
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMean();
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " [] :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream<<" [] :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -136,14 +136,14 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summa
 
 	stream << TABs;
 	// variance of residuals
-	stream << "ECART-TYPE   =  ";
-	stream.width(obsResWidth);
+	stream<<"STD DEV  =  ";
+	stream.width( obsResWidth );
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdev();
 	stream << getSeparator();
 
-	// variance of residuals statistical test limits
-	stream << " [] :  LIMITES DE CONFIANCE A 95.0 = (";
+	//variance of residuals statistical test limits
+	stream<<" [] :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -206,7 +206,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary &summary, std::string d
 					break;
 				}
 			}
-			stream << "REPARTITION DES " << description << getSeparator() << ech;
+			stream << "DISTRIBUTION OF " << description << getSeparator() << ech;
 			stream << endl << endl;
 		}
 
@@ -271,7 +271,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary &summary, std::string d
 			}
 
 			// write the number of pointsthat don't lie within the histogram limits
-			stream << "NOMBRE DE POINTS HORS-HISTOGRAMME" << getSeparator() << summary.getNumBeyondHistoLimits();
+			stream << "NUMBER OF POINTS OUTSIDE HISTOGRAM" << getSeparator() << summary.getNumBeyondHistoLimits();
 			stream << endl << endl << endl;
 		}
 	}
@@ -289,22 +289,22 @@ void TObservationWriter::writeReliabilityHeader(std::string name1, std::string n
 	int obsResWidth = getObsResWidth();
 
 	////////////////////////////////////////////////////////////////////////////////////
-	// First line
-	(*stream).writeStringLeft(nameWidth, name1); // name of the first point
-	(*stream).writeStringLeft(nameWidth, name2); // name of the second point
-	(*stream).writeStringLeft(nameWidth, name3); // name of the third point
-	(*stream).writeString(obsWidth, Observation); // mesured
-	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsResWidth, "RESIDU"); // residue
-	(*stream).writeString(obsResWidth, "ZI"); // local reliability statistic zi
-	(*stream).writeString(3, ""); // zi flag
-	(*stream).writeString(8, "WI"); // Gross-error detection statistics wi
-	(*stream).writeString(3, ""); // wi flag
-	(*stream).writeString(obsResWidth, "GI"); // Estimation of the gross-error gi
-	(*stream).writeString(obsResWidth, "NABLA"); // Greatest undetected error NABLA
-	(*stream).writeString(obsResWidth, "TI"); // Level of ease a gross error of size NABLA can be detected: Ti
-	(*stream).writeString(obsResWidth, "DELTY"); // Maximum effect of an undetected gross-error: DELTY
-	(*stream) << endl;
+	//First line
+	(*stream).writeStringLeft(nameWidth,	name1); // name of the first point
+	(*stream).writeStringLeft(nameWidth,	name2); // name of the second point
+	(*stream).writeStringLeft(nameWidth,	name3); // name of the third point
+	(*stream).writeString(obsWidth,	Observation); //mesured
+	(*stream).writeString(obsResWidth,	"SIGMA"); //sigma
+	(*stream).writeString(obsResWidth,	"RES"); //residue 
+	(*stream).writeString(obsResWidth,			"ZI");//local reliability statistic zi
+	(*stream).writeString(3,			"");//zi flag
+	(*stream).writeString(8,			"WI");//Gross-error detection statistics wi
+	(*stream).writeString(3,			"");//wi flag
+	(*stream).writeString(obsResWidth,			"GI");//Estimation of the gross-error gi
+	(*stream).writeString(obsResWidth,			"NABLA");// Greatest undetected error NABLA
+	(*stream).writeString(obsResWidth,			"TI");//Level of ease a gross error of size NABLA can be detected: Ti
+	(*stream).writeString(obsResWidth,			"DELTY");//Maximum effect of an undetected gross-error: DELTY
+	(*stream)<<endl;
 
 	////////////////////////////////////////////////////////////////////////////////////
 	// Second line
@@ -380,12 +380,10 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 
 		// get nabla
 		if (stat.getDeltaComputed(index))
-		{ // tests that the nabla has been correctly computed
-			(*stream).writeDouble(obsResWidth, 2, stat.getNabla().coeff(index) * RAD2CC);
-		}
-		else
-		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+		{ //tests that the nabla has been correctly computed
+			(*stream).writeDouble(obsResWidth,2, stat.getNabla().coeff(index)*RAD2CC);
+		}else{
+			(*stream).writeString(obsResWidth,"UND");
 		}
 
 		// get T
@@ -393,25 +391,22 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 
 		// get DELTY
 		stream->width(10);
-		if (stat.getDeltaComputed(index)) /*tests that the delty has been correctly computed*/
-		{
-			(*stream).writeDouble(obsResWidth, 2, stat.getDelty().coeff(index));
+		if (stat.getDeltaComputed(index))/*tests that the delty has been correctly computed*/
+		{ 
+			(*stream).writeDouble(obsResWidth,2, stat.getDelty().coeff(index));
+		}else{
+			(*stream).writeString(obsResWidth,"UND");
 		}
-		else
-		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
-		}
-	}
-	else
-	{
-		(*stream).writeString(obsResWidth, "0.0"); // z
-		(*stream).writeString(3, "");
-		(*stream).writeString(8, "INDETERMINE"); // wi
-		(*stream).writeString(0, "");
-		(*stream).writeString(obsResWidth, ""); // gi
-		(*stream).writeString(obsResWidth, ""); // nabla
-		(*stream).writeString(obsResWidth, "INFINI"); // T
-		(*stream).writeString(obsResWidth, ""); // DELTY
+
+	}else { 
+			(*stream).writeString(obsResWidth,"0.0");//z
+			(*stream).writeString(3,"");
+			(*stream).writeString(8,"UNDETERMINED");//wi
+			(*stream).writeString(0,"");
+			(*stream).writeString(obsResWidth,"");//gi
+			(*stream).writeString(obsResWidth,"");//nabla
+			(*stream).writeString(obsResWidth,"INFINITE");//T
+			(*stream).writeString(obsResWidth,"");//DELTY
 	}
 
 	(*stream) << endl;
@@ -474,9 +469,8 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat
 		{ // tests that the nabla has been correctly computed
 			(*stream).writeDouble(obsResWidth, 2, stat.getNabla().coeff(index) * M2MM);
 		}
-		else
-		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+		else{
+			(*stream).writeString(obsResWidth, "UND");
 		}
 
 		// get T
@@ -488,52 +482,53 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat
 		{
 			(*stream).writeDouble(obsResWidth, 2, stat.getDelty().coeff(index));
 		}
-		else
-		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+		else{
+			(*stream).writeString(obsResWidth, "UND");
 		}
 	}
 	else
 	{
 		(*stream).writeString(obsResWidth, "0.0"); // z
 		(*stream).writeString(3, "");
-		(*stream).writeString(8, "INDETERMINE"); // wi
+		(*stream).writeString(8, "UNDETERMINED");//wi
 		(*stream).writeString(0, "");
-		(*stream).writeString(obsResWidth, ""); // gi
-		(*stream).writeString(obsResWidth, ""); // nabla
-		(*stream).writeString(obsResWidth, "INFINI"); // T
-		(*stream).writeString(obsResWidth, ""); // DELTY
+		(*stream).writeString(obsResWidth, "");//gi
+		(*stream).writeString(obsResWidth, "");//nabla
+		(*stream).writeString(obsResWidth, "INFINITE");//T
+		(*stream).writeString(obsResWidth, "");//DELTY
 	}
 
 	(*stream) << endl;
 }
 
-// Get the French version of the observation description
+// Get the observation description
 // returns a string with the description
-std::string TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)
+std::string	TObservationWriter::getObsDescription(TALGCObjectWriter::ELGCObservations key)
 {
-	static const char *descriptions[] = {"PLR3D", "Vecteur directeur (UVEC)", "Vecteur directeur + Distance (UVD)", "ANGLES HORIZONTAUX (ANGL)",
-		"DISTANCES ZENITHALES (ZEND)", "DISTANCES MESUREES (DIST)", "ECART A UN PLAN VERTICAL (ECTH)", "ECART A UNE DIRECTION (ECDIR)", "DISTANCES HORIZONTALES (DHOR)",
-		"DISTANCES SPATIALES (DSPT)", "DISTANCES VERTICALES (DLEV)", "DISTANCES HORIZONTALES (DLEVDHOR)", "DISTANCES VERTICALES (DVER)",
-		"ECARTS DANS LE PLAN HORIZONTAL (ECHO)", "ECARTS A UNE DROITE (ECSP)", "ECARTS A UNE DROITE VERTICALE (ECVE)", "ORIENTATIONS (ORIE)", "POINT D'ORIENTATION (PDOR)",
-		"CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)", "INCLINAISONS/VERTICALE (INCLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
-
-	static_assert((sizeof(descriptions) / sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");
-
-	return descriptions[key];
-}
-
-// Get the English version of the observation description
-// returns a string with the description
-std::string TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key)
-{
-	static const char *descriptions[] = {
-		"PLR3D", "Unit Vector Measurment (UVEC)", "Unit Vector Measurement + Distance (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)", "ZENITHAL DISTANCE OBSERVATIONS (ZEND)",
-		"OBSERVED SPATIAL DISTANCES (DIST)", "OFFSETS TO A THEODOLITE PLAN (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)", "HORIZONTAL DISTANCES (DHOR)",
-		"SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)", "OFFSETS IN AN HORIZONTAL PLAN (ECHO)",
-		"OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)", "POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)",
-		"3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY (INCLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)"
-		//"NoObs"
+	static const char* descriptions[] = {
+		"PLR3D", 
+		"UNIT VECTOR (UVEC)",
+		"UNIT VECTOR + DISTANCE (UVD)",
+		"HORIZONTAL ANGLE (ANGL)",
+		"ZENITHAL DISTANCE (ZEND)",
+		"SPATIAL DISTANCE (DIST)",
+		"OFFSET TO A VERTICAL PLAN (ECTH)",
+		"OFFSET TO A DIRECTION (ECDIR)",
+		"HORIZONTAL DISTANCE (DHOR)",
+		"SPATIAL DISTANCE (DSPT)",
+		"VERTICAL DISTANCE (DLEV)",
+		"HORIZONTAL DISTANCE (DLEVDHOR)",
+		"VERTICAL DISTANCE (DVER)",
+		"OFFSET IN AN HORIZONTAL PLAN (ECHO)",
+		"OFFSET TO A SPATIAL LINE (ECSP)",
+		"OFFSET TO A VERTICAL LINE (ECVE)",
+		"ORIENTATION (ORIE)",
+		"POINT OF ORIENTATION (PDOR)",
+		"RADIAL CONSTRAINT (RADI)",
+		"3D POINT CONSTRAINT (OBSXYZ)",
+		"ANGLE W.R.T LOCAL VERTICAL (INCLY)",
+		"OFFSET TO A WATER SURFACE (ECWS)", 
+		"OFFSET TO A WIRE (ECWI)"
 	};
 
 	static_assert((sizeof(descriptions) / sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");

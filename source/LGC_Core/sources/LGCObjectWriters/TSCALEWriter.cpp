@@ -27,10 +27,10 @@ void TSCALEWriter::writeSCALEResultsHeader()
 	//First line
 	(*stream)<<TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the scale
-	(*stream).writeString(obsWidth,	"OBSERVE"); //mesured offset
+	(*stream).writeString(obsWidth,	"OBSERVED"); //mesured offset
 	(*stream).writeString(obsResWidth,	"SIGMA"); //sigma DIST
-	(*stream).writeString(obsWidth,	"CALCULE"); //estimated offset 
-	(*stream).writeString(obsResWidth,	"RESIDU"); //residual
+	(*stream).writeString(obsWidth,	"CALC"); //estimated offset 
+	(*stream).writeString(obsResWidth,	"RES"); //residual
 	(*stream).writeString(obsResWidth,	"RES/SIG");    //residual/sigma
 	(*stream).writeString(nameWidth,	"SCALE ID");    //scale ID
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma for ECHO and ECVE
@@ -85,7 +85,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(2));
 	(*stream) << endl;
 	(*stream) << TABs1;
-	(*stream).writeStringLeft(nameWidth, "PARAMETRE DU FIL");
+	(*stream).writeStringLeft(nameWidth, "WIRE PARAMETER");
 	(*stream).writeStringLeft(nameWidth, "");
 	(*stream).writeStringLeft(nameWidth, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, echorom.fMeasuredPlane->getReferencePoint()->getEstValue(0) + echorom.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue() * sin(echorom.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue()+M_PI_2));
@@ -107,7 +107,7 @@ void TSCALEWriter::writeECHOResults(const  TECHOROM& echorom)
 	(*stream) << endl;
 	
 	//data summury
-   this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
+   this->writeObsTitle(TABs3 + this->getObsDescription(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 	writeSCALEResultsHeader(); // write the title line for the observations
 
 	for(auto const& ItECHO : echorom.measECHO)
@@ -181,7 +181,7 @@ void TSCALEWriter::writeECVEResults(const  TECVEROM& ecverom)
 	///////////////////////////////////////////////////////////////////////////////////
 
 	//data summury
-	this->writeObsTitle(TABs3 + this->getObsDescriptionFR(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
+	this->writeObsTitle(TABs3 + this->getObsDescription(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
 	writeSCALEResultsHeader(); // write the title line for the observations
 
 	for (auto const& ItECVE : ecverom.measECVE)
@@ -245,10 +245,10 @@ void TSCALEWriter::writeECSPResults(const TECSPROM& ecsprom)
 	////////////////////////////////////////////////////////////
 	(*stream) << TABs2;
 	(*stream).writeStringLeft(nameWidth, "POINT"); //second point's Name
-	(*stream).writeString(obsWidth, "OBSERVE"); //mesured ECSP
+	(*stream).writeString(obsWidth, "OBSERVED"); //mesured ECSP
 	(*stream).writeString(obsResWidth, "SIGMA"); //sigma ECSP
-	(*stream).writeString(obsWidth, "CALCULE"); //estimated ECSP
-	(*stream).writeString(obsResWidth, "RESIDU"); //offset ECSP
+	(*stream).writeString(obsWidth, "CALC"); //estimated ECSP
+	(*stream).writeString(obsResWidth, "RES"); //offset ECSP
 	(*stream).writeString(obsResWidth, "RES/SIG"); //offset/sigma
 	(*stream).writeString(nameWidth, "SCALE ID");    //scale ID
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ECSP
@@ -325,7 +325,7 @@ void TSCALEWriter::writeECHOSIMUResults(const  TECHOROM& echorom)
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECHO), (int)echorom.measECHO.size());
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF POINT"); //Reference point
@@ -351,7 +351,7 @@ void TSCALEWriter::writeECVESIMUResults(const  TECVEROM& ecverom)
 	std::string				separator = getSeparator();
 	std::string         TABs = stream->getCurrSpaceExtended(1);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECVE), (int)ecverom.measECVE.size());
 
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POINT ON THE LINE"); //Reference point
@@ -380,7 +380,7 @@ void TSCALEWriter::writeECSPSIMUResults(const  TECSPROM& ecsprom)
 	(*stream) << TABs;
 	(*stream) << "LINE: " << ecsprom.p1->getName() << ", " << ecsprom.p2->getName() << endl;
 	(*stream) << endl;
-	this->writeObsTitle(TAB2 + this->getObsDescriptionFR(TALGCObjectWriter::kECSP), (int)ecsprom.measECSP.size());
+	this->writeObsTitle(TAB2 + this->getObsDescription(TALGCObjectWriter::kECSP), (int)ecsprom.measECSP.size());
 
 	writeDistanceResultsSummary(ecsprom.getECSPObsSummary(), stream->getCurrSpaceExtended(2));
 }
@@ -525,11 +525,11 @@ void TSCALEWriter::writeSCALESynthesisHeader()
 	////////////////////////////////////////////////////////////
 	//First line
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "LIGNE"); //plane name
+	(*stream).writeStringLeft(nameWidth, "LINE"); //plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
 	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); //residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
