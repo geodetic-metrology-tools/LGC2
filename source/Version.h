@@ -9,7 +9,7 @@
 
 #define LGC_VERSION_MAJOR "2"
 #define LGC_VERSION_MINOR "8"
-#define LGC_VERSION_PATCH "beta_4_apriCovar"
+#define LGC_VERSION_PATCH "beta_6_apriCovar"
 
 static std::string getLGCVersion(void) {
 	std::stringstream ss;
