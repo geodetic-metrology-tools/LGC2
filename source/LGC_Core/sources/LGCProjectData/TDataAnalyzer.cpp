@@ -781,35 +781,12 @@ bool TDataAnalyzer::checkParameters()
 		}
 	}
 
-
-	// add artificial observation with the provided apriori covariance
-	// TODO:
-	// load file with list of pointnames+coordinates and big covarianc matrix
-	
-
-	// // create dummy apricovdata
-	// apriCovData dummyData;
-	// dummyData.pointList.push_back("P3");
-	// dummyData.pointList.push_back("P2");
-	// Eigen::VectorXd coords(6);
-	// coords << 11, 22, 33, 44, 55, 66;
-	// dummyData.pointCoords = coords;
-	// Eigen::SparseMatrix<double> covMat(6, 6);
-	// for (int j = 0; j < 6; j++)
-	// {
-	// 	covMat.coeffRef(j, j) = (j + 1) / 10.0;
-	// }
-	// covMat.coeffRef(3, 1) = 10;
-	// covMat.coeffRef(1, 3) = 10;
-	// dummyData.pointCovariance = covMat;
-
-	// fData.aprioriPointCovars = dummyData;
 	// 
 	logWarning() << "trying to load apricovMat.txt containing apriori covariances between points. User responsibility to guarantee symmetric and positive definite covariance matrix.";
 	std::ifstream in("apricovMat.txt");
 	if (!in.is_open())
 	{
-		logWarning() << "unable to load apriori covariance data file (apricovMat.txt, to be placed at same place as LGC.exe). Continuing without apriori information";
+		logWarning() << "unable to load apriori covariance data file (apricovMat.txt, to be placed in the working directory, from which LGC is called). Continuing without apriori information";
 	}
 	else
 	{
