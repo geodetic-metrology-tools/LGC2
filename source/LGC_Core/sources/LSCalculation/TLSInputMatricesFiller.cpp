@@ -26,7 +26,7 @@ TLSInputMatricesFiller::~TLSInputMatricesFiller()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnkn, TLSInputMatrices *matrices)
+bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *matrices)
 {
 	bool fillOK = true;
 	auto &outputMessages(projData->getFileLogger());
@@ -40,10 +40,6 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, bool fillWeightUnk
 
 		// LGC uses only parametric measurement models, so the B matrix is -Identity
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
-
-		// If weight unknown matrix should be filled
-		if (fillWeightUnkn)
-			fillOK &= fillWeightUnkMtrx(projData, matrices);
 
 		fillOK &= fillSlaveConstraints(projData, matrices);
 		fillOK &= fillPointGroupConstraints(projData, matrices);
@@ -1786,81 +1782,6 @@ bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustableP
 			isProcessOK = isProcessOK && matrices->setCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
 	}
 	return isProcessOK;
-}
-
-bool TLSInputMatricesFiller::fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices)
-{
-	bool fillOK = true;
-	auto &outputMessages(projData->getFileLogger());
-
-	for (auto &point : projData->getPoints())
-	{
-		if (point.hasStandDeviations())
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				TReal variance = pow2(point.getStandDev(i));
-
-				if (variance < nullLimit)
-				{
-					fillOK = false;
-					outputMessages << TFileLogger::e_logType::LOG_ERROR
-								   << "Standard deviation assigned to a cordinate of a point " + point.getName() + " is too small, causes zero division.";
-				}
-				else
-					matrices->setWeightUnkMtrxElement(point.getCoordinateUnknIndex(i), point.getCoordinateUnknIndex(i), 1 / variance);
-			}
-		}
-	}
-
-	for (auto it(projData->getTree().begin()); it != projData->getTree().end(); ++it)
-	{
-		auto &frame(it.node->data.get()->frame);
-		if (frame.hasStandDev())
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				if (frame.hasRotationStandDev(i))
-				{
-					TReal variance = pow2(frame.getRotationStandDev(i).getRadiansValue());
-					if (variance < nullLimit)
-					{
-						fillOK = false;
-						outputMessages << TFileLogger::e_logType::LOG_ERROR
-									   << "Standard deviation assigned to a rotation of a frame: " + frame.getName() + " is too small, causes zero division";
-					}
-					else
-						matrices->setWeightUnkMtrxElement(frame.getRotationUnknIndex(i), frame.getRotationUnknIndex(i), 1 / variance);
-				}
-
-				if (frame.hasTranslStandDev(i))
-				{
-					TReal variance = pow2(frame.getTranslationStandDev(i).getMetresValue());
-					if (variance < nullLimit)
-					{
-						fillOK = false;
-						outputMessages << TFileLogger::e_logType::LOG_ERROR
-									   << "Standard deviation assigned to a translation of a frame: " + frame.getName() + " is too small, causes zero division";
-					}
-					else
-						matrices->setWeightUnkMtrxElement(frame.getTranslationUnknIndex(i), frame.getTranslationUnknIndex(i), 1 / variance);
-				}
-			}
-
-			if (frame.hasScaleStandDev())
-			{
-				TReal variance = pow2(frame.getScaleStandDev());
-				if (variance < nullLimit)
-				{
-					fillOK = false;
-					outputMessages << TFileLogger::e_logType::LOG_ERROR << "Standard deviation assigned to a scale of a frame: " + frame.getName() + " is too small, causes zero division";
-				}
-				else
-					matrices->setWeightUnkMtrxElement(frame.getScaleUnknIndex(), frame.getScaleUnknIndex(), 1 / variance);
-			}
-		}
-	}
-	return fillOK;
 }
 
 bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices)

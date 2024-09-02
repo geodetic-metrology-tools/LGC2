@@ -57,7 +57,7 @@ public:
 		\param[in] fillWeightUnkn If the weight unknown matrix will be filled or not.
 		\param[out] inpMtr Input matrices to be filled.
 	*/
-	bool fillMatrices(TLGCData *projData, bool fillWeightUnkn, TLSInputMatrices *matrices);
+	bool fillMatrices(TLGCData *projData, TLSInputMatrices *matrices);
 
 private:
 	/// Default constructor: not implemented
@@ -75,9 +75,6 @@ private:
 
 	/// Initialise the dimensions of the input matrices from the project data.
 	void initMatriceDimension(const TLGCData &projData, TLSInputMatrices *matrices);
-
-	/// Fills the weight unknown matrix.
-	bool fillWeightUnkMtrx(TLGCData *projData, TLSInputMatrices *matrices);
 
 	// fill in the slave constraints
 	bool fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices);

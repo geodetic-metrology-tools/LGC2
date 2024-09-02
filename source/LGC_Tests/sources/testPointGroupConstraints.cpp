@@ -192,7 +192,7 @@ void object::test<5>()
 		group.plotGroupData();
 	}
 	im.initMatrices(projTest->fUEOIndices);
-	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
+	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), &im);
 	TLSConsCheck consCheck(*projTest.get(), im);
 }
 

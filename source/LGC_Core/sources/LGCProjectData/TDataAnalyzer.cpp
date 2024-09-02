@@ -405,12 +405,6 @@ bool TDataAnalyzer::checkParameters()
 			lastUidx = frame.getLastUidx() + 1;
 		}
 
-		if (frame.hasStandDev())
-		{ // If a frame has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
-		}
-
 		// only ANGL, ZEND and DIST are allowed in a subframe for a total station
 		if (!it.node->data.get()->isROOTNode())
 		{
@@ -685,12 +679,6 @@ bool TDataAnalyzer::checkParameters()
 		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
 			nCALAinROOT++;
 
-		if (point.hasStandDeviations())
-		{ // If point has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
-		}
-
 		// Assign unknown indices
 		if (!point.isFixed())
 		{
@@ -815,12 +803,6 @@ bool TDataAnalyzer::checkConfigOptions()
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + CONSI LIBR options cannot cannot have free subframe";
 				return false;
 			}
-
-			if (frame.hasStandDev())
-			{ // If a frame has standard deviation assigned
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + CONSI LIBR options cannot cannot have free subframe";
-				return false;
-			}
 		}
 	}
 
@@ -832,7 +814,7 @@ bool TDataAnalyzer::checkConfigOptions()
 			auto &frame(it.node->data.get()->frame);
 
 			// free frame
-			if (!frame.isFixed() || frame.hasStandDev())
+			if (!frame.isFixed())
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED options cannot cannot have free subframe";
 				return false;
@@ -845,7 +827,7 @@ bool TDataAnalyzer::checkConfigOptions()
 		// do geometric consistency check already here
 		TLSInputMatricesFiller iFiller(&fData.getTree(), fData.getConfig().referential, fData);
 		TLSInputMatrices im;
-		iFiller.fillMatrices(&fData, true, &im);
+		iFiller.fillMatrices(&fData, &im);
 		TLSConsCheck consCheck(fData, im);
 		outputMessages.writeReportHeader("Geometry consistency check:");
 		consCheck.generateErrorMessage();

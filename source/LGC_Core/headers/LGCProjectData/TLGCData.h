@@ -254,10 +254,6 @@ public:
 	/// Returns the upper limit of the S0 range
 	TReal getChiS0UpLimit() const { return fLSRelatedInfo.fChiUpLimit; }
 
-	/// Sets if the standard deviation are used to TRUE
-	void setStandDevUsed() { fhasStandardDeviations = true; }
-	/// Returns if the standard deviation are used
-	bool hasStandDeviations() { return fhasStandardDeviations; }
 	//@}
 
 	/*!@name Counters of points and measurements related functions.*/
@@ -347,9 +343,6 @@ private:
 
 	// contains references: not assignable
 	TLGCData &operator=(const TLGCData &);
-
-	// If standard deviations to points or frames assigned
-	bool fhasStandardDeviations;
 
 #if USE_SERIALIZER
 	struct TLSRelatedInfo : public Serializable

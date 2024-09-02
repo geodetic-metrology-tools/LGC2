@@ -111,7 +111,7 @@ void object::test<4>()
 	TDataAnalyzer analyzer(*projTest);
 	analyzer.dataConsistent();
 	im.initMatrices(projTest->fUEOIndices);
-	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), true, &im);
+	bool fillSuccess = matrFiller.fillMatrices(projTest.get(), &im);
 	TLSConsCheck consCheck(*projTest.get(), im);
 
 	ensure_equals("Configuration should be identified as problematic", consCheck.getResultStatus(), false);

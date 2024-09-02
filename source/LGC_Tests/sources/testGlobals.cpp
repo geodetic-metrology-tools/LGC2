@@ -115,10 +115,8 @@ void object::test<1>()
 	ensure_equals("First active point place is 0", pH.getRelativeUnknIndices().at(0), 0);
 	ensure_equals("Second active point place is 1", pH.getRelativeUnknIndices().at(1), 1);
 
-	ensure_THROW(pH.getStandDev(0), std::runtime_error);
 	ensure_equals("Reference frame should match", pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 	ensure_equals("Point is initialized", pH.isInitialized(), true);
-	ensure_equals("No standard deviations", pH.hasStandDeviations(), false);
 
 	pH.setCorrection(5, 150);
 	pH.setCorrection(6, 2000);
@@ -140,15 +138,8 @@ void object::test<1>()
 
 	ensure_equals("Reference frame should match", pH.getReferenceFrame(), TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
 	ensure_equals("Point is initialized", pH.isInitialized(), true);
-	ensure_equals("No standard deviations", pH.hasStandDeviations(), false);
 
 	ensure_THROW(pH.setCorrection(10, 10), std::logic_error);
-	pH.setStandardDeviations(0.1, 0.2, 0.3);
-	ensure_equals("Standard deviations should match", pH.getStandDev(0), 0.1);
-	ensure_equals("Standard deviations should match", pH.getStandDev(1), 0.2);
-	ensure_equals("Standard deviations should match", pH.getStandDev(2), 0.3);
-	ensure_equals("No standard deviations", pH.hasStandDeviations(), true);
-
 	ensure_equals("Reference system should match", pH.getProvisionalValue().getCoordSys(), position2.getCoordSys());
 
 	LGCAdjustablePoint unit = p.createUninitialized("point2");

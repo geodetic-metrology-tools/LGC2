@@ -3,7 +3,7 @@
 
 #include <TLGCData.h>
 
-TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fhasStandardDeviations(false), fUEOIndices({0, 0, 0, 0})
+TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fUEOIndices({0, 0, 0, 0})
 {
 	fLSRelatedInfo.fNumberOfLSIterations = 0;
 	setDefaultValues();
@@ -355,7 +355,6 @@ std::shared_ptr<TLGCData> TLGCData::clone() const
 
 	// Copy configuration:
 	d->config = config;
-	d->fhasStandardDeviations = fhasStandardDeviations;
 	d->fUEOIndices = fUEOIndices;
 	d->fLSRelatedInfo = fLSRelatedInfo;
 	d->fPointInfo = fPointInfo;
@@ -836,7 +835,6 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("angles", angles);
 	obj.addProperty("comments", comments);
 	obj.addProperty("config", config);
-	obj.addProperty("fhasStandardDeviations", fhasStandardDeviations);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("fMeasInfo", fMeasInfo);
 	obj.addProperty("fPointInfo", fPointInfo);

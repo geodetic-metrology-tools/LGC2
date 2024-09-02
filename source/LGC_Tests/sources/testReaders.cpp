@@ -229,21 +229,6 @@ void object::test<3>()
 	// ensure_equals(pt2.hdrcomment, "%Pc1 1 2 3\n%Pc2 1 2 3");
 	ensure("Lock state must match", pt2.isCoordinateFixed(1));
 	ensure_equals(proj.getPoints().numObjects(), (size_t)5);
-
-	// Testing POIN point definition
-	TKeyPOIN poin1(proj);
-	// Incorrect definition, all 3 standard deviations should be assigned in POIN used. Just warning is produced, point is defined, but sigmas are not assigned.
-	poin1.parse(tokenizefileString("POIN1 1 2 3 SX 0.1 SY 0.2"), true, -1);
-	ensure("Point should be defined", proj.getPoints().doesObjectExist("POIN1"));
-	ensure_equals("Standard deviations should not be assigned.", proj.getPoints().getObject("POIN1").hasStandDeviations(), false);
-
-	// Correct definition
-	poin1.parse(tokenizefileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), true, -1);
-	ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
-
-	ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); // Values are stored in metres
-	ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M); // Values are stored in metres
-	ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); // Values are stored in metres
 }
 
 template<>
@@ -763,24 +748,6 @@ void object::test<5>()
 	ensure_equals("SZ should match", obsXYZM.getZObservedStDev().getMMetresValue(), 0.8);
 	ensure_equals("Observation ID should match", obsXYZM.obsID, "3Dobs1");
 
-	////////////////////////////////////
-	// Testing FRAME measurements
-	////////////////////////////////////
-	TLGCData measProj;
-	const std::string line = "*FRAME fff1  1 2 3 4 5 6 1 STX 0.1";
-	const std::string lineClose = "*ENDFRAME";
-	TKeyFRAME fr(measProj);
-	TKeyENDFRAME endFr(measProj);
-	fr.parse(tokenizefileString(line), true, 1);
-	endFr.parse(tokenizefileString(lineClose), true, 2);
-	TDataTreeIterator pos = measProj.getCurrentPosition()++;
-	TDataTreeIterator currentNodeIter = measProj.getTree().begin();
-	++currentNodeIter;
-
-	ensure_equals("One FRAME measurement", currentNodeIter->get()->frame.getTranslationStandDev(0).getMMetresValue(), 0.1);
-	ensure_THROW(currentNodeIter->get()->frame.getTranslationStandDev(1), std::runtime_error);
-
-	ensure_not("Scale standard deviation not assigned", currentNodeIter->get()->frame.getScaleStandDev() * M2MM == 5);
-}
+	}
 
 } // namespace tut

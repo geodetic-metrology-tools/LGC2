@@ -1059,10 +1059,7 @@ void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &
 	}
 
 	(*stream).writeString(obsWidth, "");
-	if (frame.hasScaleStandDev())
-		(*stream).writeDouble(obsResWidth, lengthResidualPrecision, frame.getScaleStandDev()); //*M2MM????
-	else
-		(*stream).writeString(obsResWidth, "");
+	(*stream).writeString(obsResWidth, "");
 
 	if (!frame.isScaleFixed())
 	{
@@ -1246,11 +1243,7 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 	}
 
 	(*stream).writeString(obsWidth, "(MM)");
-	// Write the initial standard deviation, if specified in the input file
-	if (frameDef.hasTranslStandDev(transl))
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, frameDef.getTranslationStandDev(transl).getMMetresValue());
-	else
-		(*stream).writeString(obsResWidth, "");
+	(*stream).writeString(obsResWidth, "");
 
 	// Write the standard deviation after calculation if translation is variable and the status (fixed or variable)
 	if (!frameDef.isTranslationFixed(transl))
@@ -1291,11 +1284,6 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 
 	(*stream).writeString(obsWidth, "(CC)");
 
-	// Write the initial standard deviation, if specified in the input file
-	if (frameDef.hasRotationStandDev(rot))
-		(*stream).writeDouble(obsResWidth, angleResidualPrecision, frameDef.getRotationStandDev(rot).getSignedCCValue());
-
-	else
 		(*stream).writeString(obsResWidth, "");
 
 	// Write the standard deviation after calculation if rotation is variable and the status (fixed or variable)
