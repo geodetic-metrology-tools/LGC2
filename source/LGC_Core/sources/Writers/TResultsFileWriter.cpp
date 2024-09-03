@@ -208,6 +208,10 @@ void TResultsFileWriter::writeDataSummary()
 	int fNumVyPoint = fProjectData->getPointsDimension(TSpatialStatus::kVy);
 	int fNumVzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVz);
 
+
+	const LGCAdjustablePointCollection &pointCollection = fProjectData->getPoints();
+	int nPointsWithSigma = std::count_if(pointCollection.begin(), pointCollection.end(), [](const auto &pt) { return pt.hasPointSigma(); });
+
 	(*stream) << "POINTS : " << endl << endl;
 	// insure impose de mettre les endl en en retour de ligne....
 	// LECTURE DES POINTS DE CALAGE
@@ -216,7 +220,11 @@ void TResultsFileWriter::writeDataSummary()
 
 	// LECTURE DES POINTS VARIABLES EN XYZ
 	if (fNumVxyzPoint != 0)
+	{
 		writePointDataSummary("VARIABLES EN XYZ", fNumVxyzPoint);
+		TAStreamFormatter &stream = getStreamRef();
+		stream << "	DONT AVEC SIGMA : " << nPointsWithSigma << "\n";
+	}
 
 	// LECTURE DES POINTS INVARIABLES EN X
 	if (fNumVyzPoint != 0)

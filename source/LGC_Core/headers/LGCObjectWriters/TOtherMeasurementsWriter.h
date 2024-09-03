@@ -16,13 +16,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	\ingroup LGCObjectWriters
 	\brief Write DVER, ORIE, RADI and PDOR observations to an LGC output file.
 @{*/
-class  TOtherMeasurentWriter : public TObservationWriter
+class  TOtherMeasurementWriter : public TObservationWriter
 {
 public:
 	/// Constructor
-	TOtherMeasurentWriter(TAStreamFormatter& stream, bool hist);
+	TOtherMeasurementWriter(TAStreamFormatter& stream, bool hist);
 	/// Destructor
-	virtual ~TOtherMeasurentWriter();
+	virtual ~TOtherMeasurementWriter();
 
 	/*!@name Headers */
 	//@{
@@ -36,7 +36,8 @@ public:
 		void writePDORResultsHeader();
 		/// Write OBSXYZ results header
 		void writeOBSXYZResultsHeader();
-
+		///  Write the points with sigma results header
+		void writePointSigmaResultsHeader();
 		/// Write DVER reliability header  
 		void writeDVERReliabilityHeader();
 		/// Write ORIE reliability header
@@ -65,6 +66,8 @@ public:
 		void writeRADIResults(const std::list<TRADI>& fRADI);
 		/// Write OBSXYZ results data
 		void writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ);
+		/// Write point sigma results data
+		void writePointSigmaResults(const LGCAdjustablePointCollection& pointCollection, TDataTreeIterator itTree);
 
 		//Write Default results data
 		void writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision);

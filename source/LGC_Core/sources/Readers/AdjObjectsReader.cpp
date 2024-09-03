@@ -167,10 +167,113 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 	pt.line = line;
 	pt.setActive(activeLine);
 
+
 	if (tokens.at(0).size() > proj.getConfig().pointNameWidth)
 		proj.getConfig().pointNameWidth = (int)tokens.at(0).size();
 
 	TOptionHelper opts(tokens.cbegin(), tokens.cend());
+
+	// check if this point comes with weights and modify the pt object accordingly
+	pointSigmaData &ptSigma = pt.getPointSigmaData();
+
+	// check for values of bearing, roll, slope, deflection (bear,roll,slope,half defl)
+	for (int j = 0; j < ptSigma.fAngles.size(); j++)
+		ptSigma.fAngles[j].setGonsValue(opts.getParamR(ptSigma.fAngleNames[j]));
+
+	ptSigma.fHasAngle = (!isZero(ptSigma.fAngles[0]) || !isZero(ptSigma.fAngles[1]) || !isZero(ptSigma.fAngles[2]) || !isZero(ptSigma.fAngles[3]));
+
+	// create the rotation matrix in case some angles are defined, if no angle is defined the rotation matrix is the identity
+	if (ptSigma.fHasAngle)
+	{
+		ptSigma.calcAndSetRotMat();
+	}
+
+	// values are given in mm
+	bool hasSigmas = false;
+	std::vector<std::string> stdDevNames({"SX", "SY", "SZ"});
+	for (int idx = 0; idx < stdDevNames.size(); ++idx)
+	{
+		if (opts.has(stdDevNames[idx]))
+		{
+			ptSigma.fSigmas[idx] = MM2M * opts.getParamR(stdDevNames[idx]);
+			hasSigmas = true;
+		}
+	}
+	if ((ptSigma.fSigmas.array() < 0).any())
+	{
+		throw std::runtime_error("Standard deviation cannot be negative.");
+	}
+	if ((ptSigma.fSigmas.array() < nullLimit && ptSigma.fSigmas.array() > 0.0).any())
+	{
+		throw std::runtime_error("Specified standard deviation is too small, consider to set it to 0 to fix the variable.");
+	}
+
+	//check if a apriori covariance matrix is given
+	if (opts.has("APRICOV"))
+	{
+		if (hasSigmas)
+			throw std::runtime_error("Either a point apriori covariance is provided OR sigmas are provided.");
+		if (ptSigma.fHasAngle)
+			// in theory we could apply the covariance matrix to the rotated system but to avoid confusion we do not allow it
+			throw std::runtime_error("A-priori covariance can't be combined with rotation angles.");
+		std::string test = opts.getParam("APRICOV");
+		Eigen::Matrix3d apriCovMat = opts.commaSeparatedStringToMat(test, 3);
+		if (!apriCovMat.isApprox(apriCovMat.transpose()))
+			throw std::runtime_error("a-priori covariance matrix must be symmetric");
+		if (!TSparseUtils::isPositiveDefinite(apriCovMat))
+			throw std::runtime_error("a-priori covariance matrix must be positive definite");
+
+		ptSigma.fApriCovMat = apriCovMat;
+		ptSigma.fHasApriCovMat = true;
+	}
+
+	// check if apriori information is attached to point
+	if (hasSigmas || ptSigma.fHasApriCovMat)
+	{
+		// for now only allow point with sigma for points defined in a *POIN section
+		// this prevents ambiguous lines like
+		// *VZ
+		// A 1 2 3 SZ 1
+		// which would be overriden to a point free in x,y,z with a weight on z
+		// this will become obsolete when *VZ will be replaced by A 1 2 3 SX 0 SY 0 and so on..
+		if (pt.getNumUnkn()!=3)
+		{
+			throw std::runtime_error("Attaching a precision in a point definition is only possible in *POIN section. Point " + pt.getName());
+		}
+		pt.activatePointSigma();
+	}
+
+	// store the matrix in the point
+	if (ptSigma.fHasApriCovMat)
+		pt.setAprioriCovarianceMatrix(ptSigma.fApriCovMat);
+	else
+	{
+		// if matrix was not set by user, calculate it from the sigmas
+		// if any sigma will be not defined (point free in this axis) and theres a rotation, the apriori covariance matrix will remain NAN, which is ok.
+		Eigen::Matrix3d apriCovMat;
+		apriCovMat.setZero();
+		apriCovMat.diagonal() << pow2(ptSigma.fSigmas[0]), pow2(ptSigma.fSigmas[1]), pow2(ptSigma.fSigmas[2]);
+		if (ptSigma.fHasAngle)
+		{
+			Eigen::Matrix3d rotMat = ptSigma.fRotMat;
+			pt.setAprioriCovarianceMatrix(rotMat.transpose() * apriCovMat * rotMat);
+		}
+		else
+			pt.setAprioriCovarianceMatrix(apriCovMat);
+	}
+
+	// check if one of the weights was set to zero
+	// if no angle was used we block the corresponding freedoms
+	// if rotations are used, a constraint has to be introduced (see TDataAnalyzer)
+	if (hasSigmas)
+	{
+		if (!ptSigma.fHasAngle)
+		{
+			// if no angles are involved we can block the degrees of freedom directly
+			pt.updateFixedState(isZero(ptSigma.fSigmas[0]), isZero(ptSigma.fSigmas[1]), isZero(ptSigma.fSigmas[2]));
+		}
+	}
+
 
 	// If last token starts with a comment chararcter, store it
 	const char fOfLastToken = tokens.back().at(0);

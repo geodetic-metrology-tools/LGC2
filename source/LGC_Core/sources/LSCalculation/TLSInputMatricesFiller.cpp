@@ -41,6 +41,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 		// LGC uses only parametric measurement models, so the B matrix is -Identity
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
+		fillOK &= fillParameterWeights(projData, matrices);
 		fillOK &= fillSlaveConstraints(projData, matrices);
 		fillOK &= fillPointGroupConstraints(projData, matrices);
 
@@ -1780,6 +1781,82 @@ bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustableP
 	{
 		if (!pointAdj.isCoordinateFixed(i))
 			isProcessOK = isProcessOK && matrices->setCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
+	}
+	return isProcessOK;
+}
+
+bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMatrices *matrices)
+{
+	bool isProcessOK = true;
+	auto &outputMessages(projData->getFileLogger());
+
+	// loop through points and add weight contributions
+	for (auto &pt : projData->getPoints())
+	{
+		if (pt.hasPointSigma())
+		{
+			pointSigmaData &ptSigma = pt.getPointSigmaData();
+			pointSigmaContrib contribution = fCGenerator.getPointSigmaContrib(pt, projData);
+			int cIdx = ptSigma.firstCIdx;
+			int obsIdx = ptSigma.firstObsIdx;
+			if (ptSigma.fHasApriCovMat)
+			{
+				// user has assigned a full 3x3 apriori covariance matrix
+				isProcessOK &= matrices->setWeightMtrxBlock(obsIdx, obsIdx, ptSigma.fApriCovMat);
+				// its an 3 dimendional observation, A matrix needs to be filled
+				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
+				{
+					for (int colIdx = 0; colIdx < 3; colIdx++)
+					{
+						if (!pt.isCoordinateFixed(colIdx))
+							isProcessOK &= matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
+					}
+					isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(rowIdx));
+					obsIdx++;
+				}
+			}
+			else
+			{
+				// as no full apriori covariance matrix was defined, the weights have been defined via standard deviations
+				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
+				{
+					double sigma = ptSigma.fSigmas(rowIdx);
+					// check the sigma value, sigma 0 is either a constraint or a fixed variable, sigma>0 is a observation, sigma=infinity means no condition
+					if (isZero(sigma))
+					{
+						// its a constraint or a fixed variable, depending on the rot mat
+						// if there is no rotation, the variable itself is treated as fixed -> we do not need to fill anything here
+						// if there is a rotation, there needs to be a corresponding constraint on the rotated coordinate
+						if (!ptSigma.fRotMat.isIdentity())
+						{
+							// there is a rotation so the sigma=0 has to be interpreted as a strict constraint
+							// set first constraint matrix entries + constraint misclosure
+							for (int colIdx = 0; colIdx < 3; colIdx++)
+							{
+								// point will have 3 free coordinates if any rotation was defined => no need to check the variable index
+								isProcessOK &= matrices->addCnstrFirstDgnMtrxElement(cIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
+							}
+							isProcessOK &= matrices->setCnstrMisclosureVectorElement(cIdx, contribution.misclosure(rowIdx));
+							cIdx++;
+						}
+					}
+					else if (isPositiveFinite(sigma))
+					{
+						// its a observation
+						// set the row of the A matrix and the diagonal elements of the weight matrices
+						for (int colIdx = 0; colIdx < 3; colIdx++)
+						{
+							if (!pt.isCoordinateFixed(colIdx))
+								matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
+						}
+						isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(rowIdx));
+						isProcessOK &= matrices->setWeightMtrxElement(obsIdx, obsIdx, 1 / pow2(ptSigma.fSigmas(rowIdx)));
+						isProcessOK &= matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(ptSigma.fSigmas(rowIdx)));
+						obsIdx++;
+					}
+				}
+			}
+		}
 	}
 	return isProcessOK;
 }

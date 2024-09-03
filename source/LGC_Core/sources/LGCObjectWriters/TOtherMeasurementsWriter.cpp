@@ -4,14 +4,14 @@
 #include "TAStreamFormatter.h"
 #include "LGCAdjustablePoint.h"
 
-TOtherMeasurentWriter::TOtherMeasurentWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream)
+TOtherMeasurementWriter::TOtherMeasurementWriter(TAStreamFormatter& stream, bool /*hist*/) : TObservationWriter(stream)
 {}
 
-TOtherMeasurentWriter::~TOtherMeasurentWriter()
+TOtherMeasurementWriter::~TOtherMeasurementWriter()
 {}
 
 //------------------ Result header---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writeDVERResultsHeader()
+void TOtherMeasurementWriter::writeDVERResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -50,7 +50,7 @@ void TOtherMeasurentWriter::writeDVERResultsHeader()
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeORIEResultsHeader()
+void TOtherMeasurementWriter::writeORIEResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -93,7 +93,7 @@ void TOtherMeasurentWriter::writeORIEResultsHeader()
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writePDORResultsHeader()
+void TOtherMeasurementWriter::writePDORResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -126,7 +126,7 @@ void TOtherMeasurentWriter::writePDORResultsHeader()
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeRADIResultsHeader()
+void TOtherMeasurementWriter::writeRADIResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -163,7 +163,7 @@ void TOtherMeasurentWriter::writeRADIResultsHeader()
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeOBSXYZResultsHeader()
+void TOtherMeasurementWriter::writeOBSXYZResultsHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -190,8 +190,59 @@ void TOtherMeasurentWriter::writeOBSXYZResultsHeader()
 	(*stream) << endl;
 }
 
+void TOtherMeasurementWriter::writePointSigmaResultsHeader()
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
+	int headerWidth = 9;
+
+	////////////////////////////////////////////////////////////
+	// First line
+	(*stream) << TAB;
+	(*stream).writeStringLeft(nameWidth, "POINT"); // point name
+	for (auto angleName : pointSigmaData().fAngleNames)
+		(*stream).writeString(headerWidth, angleName); // angle
+	(*stream).writeString(headerWidth, "SX"); // a-priori sigma
+	(*stream).writeString(headerWidth, "SY"); // a-priori sigma
+	(*stream).writeString(headerWidth, "SZ"); // a-priori sigma
+	(*stream).writeString(headerWidth, "RESX"); // residual
+	(*stream).writeString(headerWidth, "RESY"); // residual
+	(*stream).writeString(headerWidth, "RESZ"); // residual
+	(*stream).writeString(headerWidth, "RESX"); // residual/sigma
+	(*stream).writeString(headerWidth, "RESY"); // residual/sigma
+	(*stream).writeString(headerWidth, "RESZ"); // residual/sigma
+	(*stream).writeString(headerWidth, "SXPOST"); // a-posteriori sigma
+	(*stream).writeString(headerWidth, "SYPOST"); // a-posteriori sigma
+	(*stream).writeString(headerWidth, "SZPOST"); // a-posteriori sigma
+	(*stream) << "\n";
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// second line
+	(*stream) << TAB;
+	(*stream).writeStringLeft(nameWidth, ""); // point name
+	(*stream).writeString(headerWidth, "(GON)"); // angle
+	(*stream).writeString(headerWidth, "(GON)"); // angle
+	(*stream).writeString(headerWidth, "(GON)"); // angle
+	(*stream).writeString(headerWidth, "(GON)"); // angle
+	(*stream).writeString(headerWidth, "(MM)"); // a-priori sigma
+	(*stream).writeString(headerWidth, "(MM)"); // a-priori sigma
+	(*stream).writeString(headerWidth, "(MM)"); // a-priori sigma
+	(*stream).writeString(headerWidth, "(MM)"); // residual
+	(*stream).writeString(headerWidth, "(MM)"); // residual
+	(*stream).writeString(headerWidth, "(MM)"); // residual
+	(*stream).writeString(headerWidth, "/SX"); // residual/sigma
+	(*stream).writeString(headerWidth, "/SY"); // residual/sigma
+	(*stream).writeString(headerWidth, "/SZ"); // residual/sigma
+	(*stream).writeString(headerWidth, "(MM)"); // a-posteriori sigma
+	(*stream).writeString(headerWidth, "(MM)"); // a-posteriori sigma
+	(*stream).writeString(headerWidth, "(MM)"); // a-posteriori sigma
+	(*stream) << "\n";
+}
+
 //------------------ Result data---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
+void TOtherMeasurementWriter::writePDORResults(const TPdorObs& fPDOR)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -217,7 +268,7 @@ void TOtherMeasurentWriter::writePDORResults(const TPdorObs& fPDOR)
 	(*stream) << endl << endl;
 }
 
-void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
+void TOtherMeasurementWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -266,7 +317,7 @@ void TOtherMeasurentWriter::writeDVERResults(const std::list<TDVER>& fDVER)
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
+void TOtherMeasurementWriter::writeORIEResults(const std::list<TORIE>& fORIE, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -325,7 +376,7 @@ void TOtherMeasurentWriter::writeORIEResults(const std::list<TORIE>& fORIE, cons
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
+void TOtherMeasurementWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -373,7 +424,7 @@ void TOtherMeasurentWriter::writeRADIResults(const std::list<TRADI>& fRADI)
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ)
+void TOtherMeasurementWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -421,7 +472,80 @@ void TOtherMeasurentWriter::writeOBSXYZResults(const std::list<TOBSXYZ>& fOBSXYZ
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeDVERSIMUResults(const TMeasurements &tmeas)
+void TOtherMeasurementWriter::writePointSigmaResults(const LGCAdjustablePointCollection &pointCollection, TDataTreeIterator itTree)
+{
+	TAStreamFormatter*	stream = getStream();
+	int					nameWidth = getNameWidth();
+	int					obsResWidth = getObsResWidth();
+	int					obsIdWidth = getObsIdWidth();
+	int					lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	int					anglePrecision = getAnglePrecision();
+
+	int headerWidth = 9;
+
+	// first line, count points with sigma in this frame
+	int nPointsWithSigma = std::count_if(
+		pointCollection.begin(), pointCollection.end(), [itTree](const auto &pt) { return pt.hasPointSigma() && pt.getFrameTreePosition() == itTree; });
+
+	if (nPointsWithSigma > 0)
+	{
+		this->writeObsTitle(TAB + "POINTS WITH SIGMA", nPointsWithSigma);
+		(*stream) << "	LES PRECISIONS ET LES RESIDUS SONT EXPRIMES PAR RAPPORT AU SYSTEME DE COORDONNEES TOURNE.\n";
+		writePointSigmaResultsHeader(); // write the title line for the observations
+
+		for (const auto &pt : pointCollection)
+		{
+			if (pt.hasPointSigma() && pt.getFrameTreePosition() == itTree)
+			{
+				const pointSigmaData &ptSigma = pt.getPointSigmaData();
+				Eigen::Vector3d rotOffset = ptSigma.fRotRes;
+				Eigen::Vector3d rotOffsetNormalized = ptSigma.fRotResNormalized;
+
+				Eigen::Matrix3d rotatedCovarMat = ptSigma.fRotCovar;
+
+				(*stream) << TAB;
+				(*stream).writeStringLeft(nameWidth, pt.getName());
+				for (const TAngle &angle : ptSigma.fAngles)
+					(*stream).writeDouble(headerWidth, anglePrecision, angle.getGonsValue());
+
+				Eigen::Vector3d rotatedAposterioriSigmas = rotatedCovarMat.diagonal().array().sqrt();
+				// write the given precisions
+				if (ptSigma.fHasApriCovMat)
+				{
+					for (int j = 0; j < 3; j++)
+						(*stream).writeStringLeft(headerWidth, "*APRICOV*");
+				}
+				else
+				{
+					for (int j = 0; j < 3; j++)
+						(*stream).writeDouble(headerWidth, lengthResPrecision, ptSigma.fSigmas(j) * M2MM);
+				}
+				// write the residuals (=offsets in the rotated sytems)
+				for (int j = 0; j < 3; j++)
+					(*stream).writeDouble(headerWidth, lengthResPrecision, rotOffset(j) * M2MM);
+				// write the normalized residual
+				if (ptSigma.fHasApriCovMat)
+				{
+					for (int j = 0; j < 3; j++)
+						(*stream).writeStringLeft(headerWidth, "*APRICOV*");
+				}
+				else
+				{
+					for (int j = 0; j < 3; j++)
+						(*stream).writeDouble(headerWidth, lengthResPrecision, rotOffsetNormalized(j));
+				}
+				// write the a-posteriori precisions
+				for (int j = 0; j < 3; j++)
+					(*stream).writeDouble(headerWidth, lengthResPrecision, rotatedAposterioriSigmas(j) * M2MM);
+
+				(*stream) << "\n";
+			}
+		}
+		(*stream) << "\n";
+	}
+}
+
+void TOtherMeasurementWriter::writeDVERSIMUResults(const TMeasurements &tmeas)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
@@ -435,7 +559,7 @@ void TOtherMeasurentWriter::writeDVERSIMUResults(const TMeasurements &tmeas)
 	}
 }
 
-void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& orieRom)
+void TOtherMeasurementWriter::writeORIESIMUResults(const TORIEROM& orieRom)
 {
 	TAStreamFormatter*	stream = getStream();
 	std::string        STAB = stream->getCurrSpaceExtended(1);
@@ -448,7 +572,7 @@ void TOtherMeasurentWriter::writeORIESIMUResults(const TORIEROM& orieRom)
     writeAngleResultsSummary(orieRom.getORIEObsSummary(), TABs);
 }
 
-void TOtherMeasurentWriter::writeRADISIMUResults(const TMeasurements &tmeas)
+void TOtherMeasurementWriter::writeRADISIMUResults(const TMeasurements &tmeas)
 {
 	TAStreamFormatter*	stream = getStream();
 	//Third hierarchy level from local FRAME
@@ -464,32 +588,32 @@ void TOtherMeasurentWriter::writeRADISIMUResults(const TMeasurements &tmeas)
 
 
 //------------------ Reliability header---------------------------------------------------------------------------
-void	TOtherMeasurentWriter::writeDVERReliabilityHeader()
+void	TOtherMeasurementWriter::writeDVERReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("POINT 1","POINT 2", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
-void	TOtherMeasurentWriter::writeORIEReliabilityHeader()
+void	TOtherMeasurementWriter::writeORIEReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("STATION", "POINT", "", "OBSERVATION", "GON", "CC");
 	return;
 }
 
-void	TOtherMeasurentWriter::writeRADIReliabilityHeader()
+void	TOtherMeasurementWriter::writeRADIReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("POINT", "", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
-void	TOtherMeasurentWriter::writeOBSXYZReliabilityHeader()
+void	TOtherMeasurementWriter::writeOBSXYZReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("POINT", "", "", "OBSERVATION", "M", "MM");
 	return;
 }
 
 //------------------ Reliability data---------------------------------------------------------------------------
-void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::list<TDVER>& fDVER, const TLGCStatistic& stat)
+void	TOtherMeasurementWriter::writeDVERReliabilityData(const std::list<TDVER>& fDVER, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -523,7 +647,7 @@ void	TOtherMeasurentWriter::writeDVERReliabilityData(const std::list<TDVER>& fDV
 	return;
 }
 
-void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::list<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos)
+void	TOtherMeasurementWriter::writeORIEReliabilityData(const std::list<TORIE>& fORIE, const TLGCStatistic& stat, const LGCAdjustablePoint& instPos)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -559,7 +683,7 @@ void	TOtherMeasurentWriter::writeORIEReliabilityData(const std::list<TORIE>& fOR
 	return;
 }
 
-void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat)
+void	TOtherMeasurementWriter::writeRADIReliabilityData(const std::list<TRADI>& fRADI, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -591,7 +715,7 @@ void	TOtherMeasurentWriter::writeRADIReliabilityData(const std::list<TRADI>& fRA
 	return;
 }
 
-void	TOtherMeasurentWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ>& fOBSXYZ, const TLGCStatistic& stat)
+void	TOtherMeasurementWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ>& fOBSXYZ, const TLGCStatistic& stat)
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -646,7 +770,7 @@ void	TOtherMeasurentWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ>&
 }
 
 //------------------ Synthesis header---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writeResultsSynthesisHeader()
+void TOtherMeasurementWriter::writeResultsSynthesisHeader()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -676,7 +800,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeader()
 	(*stream) << endl;
 }
 
-void TOtherMeasurentWriter::writeResultsSynthesisHeaderAngles()
+void TOtherMeasurementWriter::writeResultsSynthesisHeaderAngles()
 {
 	TAStreamFormatter*	stream = getStream();
 	int					nameWidth = getNameWidth();
@@ -708,7 +832,7 @@ void TOtherMeasurentWriter::writeResultsSynthesisHeaderAngles()
 
 
 //------------------ Synthesis data---------------------------------------------------------------------------
-void TOtherMeasurentWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
+void TOtherMeasurementWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meassum, int obsResWidth, int ResPrecision) {
 	TAStreamFormatter* stream = getStream();
 	int					nameWidth = getNameWidth();
 	std::string         TABs = stream->getCurrSpaceExtended(1);

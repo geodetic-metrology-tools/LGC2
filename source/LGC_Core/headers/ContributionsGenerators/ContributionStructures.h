@@ -502,4 +502,10 @@ struct LIBRPointGroupContrib
 	PointGroupConstraintContrib3D momentumConstraintContrib;
 	PointGroupConstraintContrib scaleConstraintContrib;
 };
+
+struct pointSigmaContrib
+{
+	// misclosure is the (rotated) offset, the only contribution that needs to be calculated, all other data (derivatives, weights..) does not change during the iterations
+	Eigen::Vector3d misclosure;
+};
 #endif

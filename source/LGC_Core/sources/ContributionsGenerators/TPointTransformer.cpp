@@ -165,7 +165,6 @@ void TPointTransformer::transformCCS22DH(TPositionVector &pv)
 		throw std::runtime_error("TPointTransformer::transformCCS22DH attempting to transform a 2D+H vector instead of a 3D vector");
 
 	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
-		;
 	{
 		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
 			TXYH2CCS::CCS2XYHs(pv);

@@ -217,7 +217,11 @@ void LGCAdjustablePoint::updateFixedState(bool lx, bool ly, bool lz)
 {
 	fixedState[0] = (lx | allfixedParam);
 	fixedState[1] = (ly | allfixedParam);
-	fixedState[2] = (lz | allfixedParam);
+	fixedState[2] = (lz | allfixedParam);	
+	// make sure also the h is updated
+	if (fProvisionalValue.getCoordSys() == TCoordSysFactory::k2DPlusH)
+		fHfixed = fixedState[2];
+
 
 	fXValueSet = (lx | allfixedParam);
 	fYValueSet = (ly | allfixedParam);
@@ -292,6 +296,8 @@ void LGCAdjustablePoint::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fEstimatedHeightInRoot", fEstimatedHeightInRoot);
 
 	obj.addProperty("fCovarianceMatrixInRoot", fCovarianceMatrixInRoot);
+	obj.addProperty("fHasPointSigma", fHasPointSigma);
+	obj.addProperty("fPointSigma", fPointSigma);
 }
 #endif
 
@@ -349,3 +355,19 @@ Eigen::Matrix3d LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv,
 		return (jac * covar) * jac.transpose();
 	}
 }
+
+Eigen::Vector3d pointSigmaData::calcRotOffset(const LGCAdjustablePoint &pt, const TLGCData *fData) const
+{
+	TPositionVector provVal = pt.getProvisionalValue();
+	
+	if (provVal.getCoordSys() == TCoordSysFactory::k2DPlusH)
+	{ // If position is given in 2D + H system transform it to CCS
+		TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
+		fPointTransfo.transform2DH2CCS(provVal);
+	}
+
+	Eigen::Vector3d provValVect = provVal.toRealVector();
+	Eigen::Vector3d estValVect = pt.getEstimatedValue().toRealVector();
+	return fRotMat * (estValVect - provValVect);
+}
+

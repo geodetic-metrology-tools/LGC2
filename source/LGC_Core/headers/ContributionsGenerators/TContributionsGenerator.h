@@ -138,6 +138,7 @@ public:
 
 	//@}
 	LIBRPointGroupContrib getPointGroupConstraintContrib(const TLGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
+	pointSigmaContrib getPointSigmaContrib(LGCAdjustablePoint &, const TLGCData *);
 
 private:
 	// Contains references: not assignable

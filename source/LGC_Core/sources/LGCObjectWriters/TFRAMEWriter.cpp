@@ -79,7 +79,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
@@ -145,6 +145,8 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 		otherMeasWriter.writeOBSXYZResults(tmeas.fOBSXYZ);
 	}
 
+	otherMeasWriter.writePointSigmaResults(fProjectData->getPoints(), frameIt);
+
 	for (auto &itEDM : tmeas.fEDM)
 		edmWriter.writeEDMResults(itEDM);
 
@@ -172,7 +174,7 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
@@ -506,7 +508,7 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
@@ -821,7 +823,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive());
@@ -879,7 +881,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter *stream = getStream();
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 
 	auto &tmeas = (*frameIt)->measurements;
 
@@ -1722,7 +1724,7 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 
 	(*stream).writeString(coordResWidth, "DX "); // X offset
 	(*stream).writeString(coordResWidth, "DY "); // Y offset
-	(*stream).writeString(coordResWidth, "DZ "); // Z offset
+	(*stream).writeString(coordResWidth, "DZ "); // Z offset	
 	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////

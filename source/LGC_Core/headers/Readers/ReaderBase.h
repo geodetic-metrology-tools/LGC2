@@ -187,6 +187,79 @@ class TOptionHelper {
 			return std::stoi(getParam(opt));
 		}
 
+		TDenseMatrix commaSeparatedStringToMat(std::string opt, int dim)
+		{
+			// e.g. transform (1,2,3,4) to eigen matrix [[1,2];[3,4]], first we assume its a square matrix
+			//
+
+			// check if matrix is supplied via MAT (full matrix) or DIAG (only diag elements) tag
+			// example MAT(1,2,3,4)->[[1,2];[3,4]], DIAG(1,2)->[[1,0];[0,2]]
+
+			bool isDiag = false;
+			if (opt.rfind("MAT", 0) == 0)
+			{
+				// full matrix is supplied
+				// strip keyword
+				opt = opt.erase(0, 3);
+			}
+			else if (opt.rfind("DIAG", 0) == 0)
+			{
+				// diagonal elements are supplied
+				isDiag = true;
+				// strip keyword
+				opt = opt.erase(0, 4);
+			}
+			else
+			{
+				std::string msg;
+				msg = "Unrecognized option: " + opt + "\n Matrix has to be supplied either in MAT(..,..,..) or DIAG(..,..,..) format (full matrix or only diagonal elements).";
+				throw std::runtime_error(msg);
+			}
+
+			// strip parenthesis
+			opt = opt.substr(1, opt.size() - 2);
+			std::stringstream optStream(opt);
+			std::vector<double> entries;
+			while (optStream.good())
+			{
+				std::string strEntry;
+				std::getline(optStream, strEntry, ',');
+				entries.push_back(std::stod(strEntry));
+			}
+			// assemble the matrix either as full or diagonal matrix
+			TDenseMatrix result(dim, dim);
+			result.setZero();
+			if (isDiag)
+			{
+				if (entries.size() != dim)
+				{
+					throw std::logic_error("Expecting " + std::to_string(dim) + " diagonal entries for matrix. Found " + std::to_string(entries.size()));
+				}
+				TVector diagonalElements(dim);
+				for (int iRow = 0; iRow < dim; iRow++)
+				{
+					diagonalElements(iRow) = entries.at(iRow);
+				}
+				result.diagonal() = diagonalElements;
+			}
+			else
+			{
+				if (entries.size() != dim * dim)
+				{
+					throw std::logic_error("Expecting " + std::to_string(dim * dim) + " matrix entries. Found " + std::to_string(entries.size()));
+				}
+				for (int iRow = 0; iRow < dim; iRow++)
+				{
+					for (int iCol = 0; iCol < dim; iCol++)
+					{
+						result(iRow, iCol) = entries.at(iRow * dim + iCol);
+					}
+				}
+			}
+			return result;
+		}
+
+
 	private:
 		std::vector<std::string>::const_iterator fbegin;
 		std::vector<std::string>::const_iterator fend;
