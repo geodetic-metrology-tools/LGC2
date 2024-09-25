@@ -36,12 +36,12 @@ void TWPSRWriter::writeWPSRResultsHeader()
 	(*stream).writeString(obsWidth, "CALCX"); // estimated offset
 	(*stream).writeString(obsResWidth, "RESX"); // residual
 	(*stream).writeString(obsResWidth, "RESX/SX"); // residual/sigma
-	(*stream).writeString(obsWidth, "OBSX"); // mesured ws distance
+	(*stream).writeString(obsWidth, "OBSZ"); // mesured ws distance
 	(*stream).writeString(obsResWidth, "SZ"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALCZ"); // estimated offset
 	(*stream).writeString(obsResWidth, "RESZ"); // residual
 	(*stream).writeString(obsResWidth, "RESZ/SZ"); // residual/sigma
-	(*stream).writeString(obsResWidth, "XSE"); // OBSE value for Z
+	(*stream).writeString(obsResWidth, "XSE"); // OBSE value for X
 	(*stream).writeString(obsResWidth, "XICSE"); // instrument centering X sigma
 	(*stream).writeString(obsResWidth, "ZSE"); // OBSE value for Z
 	(*stream).writeString(obsResWidth, "ZICSE"); // instrument centering Z sigma
@@ -65,7 +65,7 @@ void TWPSRWriter::writeWPSRResultsHeader()
 	(*stream).writeString(obsWidth, "(M)"); // estimated offset
 	(*stream).writeString(obsResWidth, "(MM)"); // residual
 	(*stream).writeString(obsResWidth, ""); // residual/sigma
-	(*stream).writeString(obsResWidth, "(MM)"); // OBSE value for Z
+	(*stream).writeString(obsResWidth, "(MM)"); // OBSE value for X
 	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering X sigma
 	(*stream).writeString(obsResWidth, "(MM)"); // OBSE value for Z
 	(*stream).writeString(obsResWidth, "(MM)"); // instrument centering Z sigma
