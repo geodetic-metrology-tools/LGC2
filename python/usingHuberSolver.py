@@ -12,7 +12,8 @@ import matplotlib.pyplot as plt
 from huberTools import huberSolver,huberSolution, prepend_to_line, attemptBlunderRemoval
 
 # example from Dirks Presentation, see SUS-2235
-obj = pyLGC.LGCController("huberExamples/20697_V2_Dirk_ESA_experimental.lgc")
+#obj = pyLGC.LGCController("huberExamples/20697_V2_Dirk_ESA_experimental.lgc")
+obj = pyLGC.LGCController("huberExamples/LGC_file_RS2K_with_Blunder.lgc")
 
 myTool= huberSolver(obj)
 initialValue = obj.getParameter()
@@ -32,8 +33,9 @@ for huberGamma in [2.95,10000000]:
     print("difference to previous huber solution=",diffNorm)
     initialValue=solution.primalSolution
 
-filename="huberExamples/20697_V2_Dirk_ESA_experimental.lgc"
+#filename="huberExamples/20697_V2_Dirk_ESA_experimental.lgc"
 #filename = "huberExamples/20190814_10h06_Polar_Module_ATLAS_Blunder.lgc"
+filename = "huberExamples/LGC_file_RS2K_with_Blunder.lgc"
 attemptBlunderRemoval(filename)
 
 # to prevent closing the windows immediatelly
