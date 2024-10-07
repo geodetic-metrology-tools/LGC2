@@ -293,11 +293,32 @@ void object::test<2>()
 	ensure_equals("Collection contains wrong number of objects", testCollection2.numObjects(), 0);
 	ensure_equals("Map and List have to be consistent", true, testCollection.checkMapConsistency());
 }
-
-// Test measurments
+// Test adjustable object collection
 template<>
 template<>
 void object::test<3>()
+{
+	set_test_name("Testing adjustable Object collection copy");
+	// create empty collection
+	LGCAdjustablePointCollection testCollection;
+	// cretae a point object
+	LGCAdjustablePoint point1 = LGCAdjustablePoint::createUninitialized("Point1");
+	// necessary to have a initialized object
+	point1.setProvisionalValue(1, 2, 3);
+	// add the object
+	testCollection.addObject(point1);
+	LGCAdjustablePointCollection testCollectionCopy = testCollection;
+	// the checkMapConsistency does not detect a problem
+	ensure_equals("map consistency", testCollectionCopy.checkMapConsistency(), true);
+	// this line crashes the process when compiled in Debug mode: (Release mode works)
+	LGCAdjustablePoint point1Copy = testCollectionCopy.getObject("Point1");
+	ensure_equals("recovered point should have the same name", point1Copy.getName(), point1.getName());
+
+}
+// Test measurments
+template<>
+template<>
+void object::test<4>()
 {
 	std::shared_ptr<TLGCData> proj5(new TLGCData);
 	using namespace LGC;
