@@ -32,8 +32,24 @@ public:
 	typedef T value_type;
 
 	/// Default constructor creating an empty collection
-	LGCAdjustableObjectCollection() {}
-
+	LGCAdjustableObjectCollection() = default;
+	/// Copy Constructor and Copy Assignment operator
+	LGCAdjustableObjectCollection(LGCAdjustableObjectCollection const &other) : objects(other.objects), objectMap() 
+	{
+		for (auto it = objects.begin(); it != objects.end(); it++)
+		{
+			objectMap[it->getName()] = it;
+		}
+	}
+	LGCAdjustableObjectCollection& operator=(LGCAdjustableObjectCollection const &other)
+	{
+		if (this != &other)
+		{
+			LGCAdjustableObjectCollection tmp(other);
+			std::swap(tmp, *this);
+		}
+		return *this;
+	}
 	/*!
 		\brief Returns a reference to the adjustable object.
 
