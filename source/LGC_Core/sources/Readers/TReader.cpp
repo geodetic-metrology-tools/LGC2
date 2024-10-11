@@ -233,7 +233,7 @@ std::istream& safeGetline(std::istream& is, std::string& t)
         default:
 
 			// Avoid double * case
-			if( !(c==42 && t=="*"))
+			if (!(c == '*' && t == "*"))
 				t += (char)c;
         }
     }
@@ -266,15 +266,25 @@ bool TReader::read(std::istream& lgcStream) {
 	// read until the next keyword
 	safeGetline(lgcStream, line);
 	nline++;
+	bool titleProvided = false;
 	while (line.compare(0, 1, "*"))
 	{
 		// store the read title in the config
-		project.getConfig().title += line +" ";
+		project.getConfig().title += line + " ";
+		titleProvided = true;
 		safeGetline(lgcStream, line);
 		nline++;
 	}
-    // Remove the last added whitespace:
-    project.getConfig().title.pop_back();
+	// check if the title is proper before removing the last added whitespace
+	if (titleProvided)
+	{
+		// Remove the last added whitespace:
+		project.getConfig().title.pop_back();
+	}
+	else
+	{ // set a default title
+		project.getConfig().title = "Default title";
+	}
  
 	// read the rest of the file
 	auto lasthandler(finterpreters.back().get());
