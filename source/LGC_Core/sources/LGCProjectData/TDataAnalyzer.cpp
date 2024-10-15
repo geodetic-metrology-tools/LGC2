@@ -442,7 +442,8 @@ bool TDataAnalyzer::checkParameters()
 
 					referencePoint[0] += targetPos.getX().getMetresValue();
 					referencePoint[1] += targetPos.getY().getMetresValue();
-					referencePoint[2] += targetPos.getZ().getMetresValue();
+					referencePoint[2] += targetPos.getZ().getMetresValue() + itDLEVMeas->getDistance().getMetresValue() + itDLEVMeas->target.staffHt.getMetresValue()
+						- itLEVEL->instrument.instrHeight.getMetresValue();
 				}
 
 				int numberOfMeasurements = (int)itLEVEL->measDLEV.size();
@@ -453,10 +454,13 @@ bool TDataAnalyzer::checkParameters()
 					referencePoint[1] /= numberOfMeasurements;
 					referencePoint[2] /= numberOfMeasurements;
 
-					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian),
-						false, false, true, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
+					// The referencePoint is in XYZ, it should be transformed in the correct referential before inserted in the dataset to profit from all the pre-processing steps.
+					auto stationPoint = TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian);
+					fPointTransfo.transformCCS22DH(stationPoint);
 
-					fRefPt.setIsVirtual(true);
+					// The Adjustable Point automated creation should be a POIN if IHFIX, otherwise should be a VXY
+					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(
+						stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
 
 					itLEVEL->fRefPt = &fData.getPoints().addObject(fRefPt);
 				}
@@ -467,9 +471,9 @@ bool TDataAnalyzer::checkParameters()
 			// Name of the measured adjustable plane:
 			auto name = "DLEVPLANE" + std::to_string(itLEVEL->stnId);
 
-			/*Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed*/
-			itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(
-				LGCAdjustablePlane(itLEVEL->fRefPt, TLength(0.0), TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, name));
+			// Both angle are 0, which is a (0 0 1) direction vector, both angles are fixed. The angles are relative to the local vertical over the fRefPt
+			itLEVEL->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(itLEVEL->fRefPt, TLength(itLEVEL->instrument.instrHeight.getMetresValue()),
+				TAngle(0.0, TAngle::kRadians), TAngle(0.0, TAngle::kRadians), true, true, itLEVEL->ihfix, name));
 		}
 
 		for (auto itECHO(it.node->data.get()->measurements.fECHO.begin()); itECHO != it.node->data.get()->measurements.fECHO.end(); ++itECHO)
@@ -516,7 +520,7 @@ bool TDataAnalyzer::checkParameters()
 
 				auto name = "ECHOPLANE" + std::to_string(itECHO->romId); // Name of the measured adjustable plane
 				itECHO->fMeasuredPlane = &fData.getPlanes().addObject(LGCAdjustablePlane(refPoint.get(), TLength(initialRefPtDistance),
-					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, name));
+					TAngle(thetaLineVectorAngle, TAngle::EUnits::kRadians), TAngle(M_PI_2, TAngle::EUnits::kRadians), false, true, false, name));
 			}
 			else
 				outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECHO group of measurements defined, using *ECHO keyword, but no measurement found.";

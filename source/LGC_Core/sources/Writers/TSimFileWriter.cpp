@@ -1,10 +1,3 @@
-////////////////////////////////////////////////////////////////////
-// TSimFileWriter.cpp : implementation class
-// Write an LGC "input" file with simulated values for observations
-//
-// Copyright 2003-2008 M.Jones, CERN, EST/SU. All rights reserved.
-////////////////////////////////////////////////////////////////////////////////////
-
 #include "TSimFileWriter.h"
 
 #include <TLGCData.h>
@@ -215,8 +208,9 @@ void TSimFileWriter::writeInstrument()
 
 	for (auto &itLEVEL : data->getInstruments().fLEVEL)
 	{
-		(*stream) << "*LEVEL " << itLEVEL.second->ID << sep << itLEVEL.second->defStaffID << sep << itLEVEL.second->collAngleUnknown << sep
-				  << itLEVEL.second->collAngleValue.getGonsValue() << sep << endl;
+		(*stream) << "*LEVEL " << itLEVEL.second->ID << sep << itLEVEL.second->defStaffID << sep << itLEVEL.second->instrHeight.getMetresValue() << sep
+				  << itLEVEL.second->sigmaInstrHeight.getMMetresValue() << sep << itLEVEL.second->collAngleUnknown << sep << itLEVEL.second->collAngleValue.getGonsValue()
+				  << sep << endl;
 		for (auto &itTarget : itLEVEL.second->targets)
 			(*stream) << itTarget.second->ID << sep << itTarget.second->sigmaD.getMMetresValue() << sep << itTarget.second->ppmD.getMMetresValue() << sep
 					  << itTarget.second->distCorrectionValue.getMetresValue() << sep << itTarget.second->sigmaDCorr.getMMetresValue() << sep
@@ -348,11 +342,15 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 			(*stream) << DEACTIVATION_CHAR;
 
 		if ((data->getConfig().referential == 106 || data->getConfig().referential == 107 || data->getConfig().referential == 104) && frameIt->get()->isROOTNode())
+		{
 			(*stream) << fPoint.getName() << sep << fPoint.getProvisionalValue().getX() << sep << fPoint.getProvisionalValue().getY() << sep
 					  << fPoint.getProvisionalHeightInRoot() << sep << fPoint.eolcomment << endl;
+		}
 		else
+		{
 			(*stream) << fPoint.getName() << sep << fPoint.getProvisionalValue().getX() << sep << fPoint.getProvisionalValue().getY() << sep
 					  << fPoint.getProvisionalValue().getZ() << sep << fPoint.eolcomment << endl;
+		}
 	};
 
 	// write PDOR if we are in ROOT & PDOR is used
@@ -787,18 +785,26 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 	std::string sep = stream->getSeparator();
 
 	auto romDefStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
+	auto levelDefInst = *data->getInstruments().fLEVEL.at(meas->instrument.ID);
 
 	if (!meas->isActive())
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << "*DLEV" << sep << meas->instrument.ID << sep;
-
 	// write point on the line if it is already defined
 	if (meas->fMeasuredPlane->getReferencePoint())
 		for (auto &point : data->getPoints())
 			if (point.getName() == meas->fMeasuredPlane->getReferencePoint()->getName())
 				(*stream) << "RefPt" << sep << meas->fMeasuredPlane->getReferencePoint()->getName() << sep;
 
+	if (meas->ihfix)
+	{
+		(*stream) << "IHFIX" << sep;
+		if (meas->instrument.instrHeight != levelDefInst.instrHeight)
+			(*stream) << "IH" << sep << meas->instrument.instrHeight.getMetresValue() << sep;
+		if (meas->instrument.sigmaInstrHeight != levelDefInst.sigmaInstrHeight)
+			(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
+	}
 	(*stream) << endl;
 
 	// write measurement for the plane

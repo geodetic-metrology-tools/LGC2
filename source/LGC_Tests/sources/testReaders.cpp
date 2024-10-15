@@ -368,28 +368,28 @@ void object::test<4>()
 	ensure_equals(dt2.sigmaTargetHt, 17 * MM2M);
 	// ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
 
-	//
-	// Leveling with staffs
-	TKeyLEVEL m3(proj);
-	m3.parse(tokenizefileString("*LEVEL LI1 ST1 0 100"), true, -1);
-	// staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt
-	m3.parse(tokenizefileString("ST1 1 2 3 4 5 6"), true, -1);
-	m3.parse(tokenizefileString("ST2 1 2 3 4 5 6"), true, -1);
-	const TInstrumentData::TLEVEL &ls1(instr.getDevice(instr.fLEVEL, "LI1"));
-	ensure_equals(ls1.ID, "LI1");
-	ensure_equals(ls1.defStaffID, "ST1");
-	ensure_equals(ls1.collAngleUnknown, false);
-	// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
-	ensure_equals(ls1.collAngleValue, 100 * GON2RAD); // in CC
-	// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
-	const TInstrumentData::TLEVEL::TTarget &lt1(instr.getDevice(ls1.targets, "ST1"));
-	ensure_equals(lt1.ID, "ST1");
-	ensure_equals(lt1.sigmaD, 1 * MM2M);
-	ensure_equals(lt1.ppmD, 2 * MM2M);
-	ensure_equals(lt1.distCorrectionValue, 3);
-	ensure_equals(lt1.sigmaDCorr, 4 * MM2M);
-	ensure_equals(lt1.staffHt, 5);
-	ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
+		//
+		// Leveling with staffs
+		TKeyLEVEL m3(proj);
+        m3.parse(tokenizefileString("*LEVEL LI1 ST1 0.0 0.0 0 100"), true, -1);
+		//staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt    
+		m3.parse(tokenizefileString( "ST1 1 2 3 4 5 6"), true, -1);
+		m3.parse(tokenizefileString( "ST2 1 2 3 4 5 6"), true, -1);
+		const TInstrumentData::TLEVEL& ls1(instr.getDevice(instr.fLEVEL, "LI1"));			
+		ensure_equals(ls1.ID, "LI1");
+		ensure_equals(ls1.defStaffID, "ST1");
+		ensure_equals(ls1.collAngleUnknown, false);
+		// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
+		ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
+		// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
+		const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
+		ensure_equals(lt1.ID, "ST1"); 
+		ensure_equals(lt1.sigmaD, 1 * MM2M); 
+		ensure_equals(lt1.ppmD, 2 * MM2M); 
+		ensure_equals(lt1.distCorrectionValue, 3); 
+		ensure_equals(lt1.sigmaDCorr, 4 * MM2M); 
+		ensure_equals(lt1.staffHt, 5); 
+		ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
 
 	//
 	// Scales
