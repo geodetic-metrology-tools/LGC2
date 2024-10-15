@@ -962,7 +962,7 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 	TReal fRefPtDistCont = 1.0;
 
 	TReal variance = pow2q(dlev.target.sigmaD.getMetresValue() + dTg / 1000 * dlev.target.ppmD.getMetresValue()) + pow2q(dlev.target.sigmaStaffHt.getMetresValue())
-		+ pow2q(dlev.target.sigmaDCorr.getMetresValue());
+		+ pow2q(levelInstr.instrument.sigmaInstrHeight.getMetresValue()) + pow2q(dlev.target.sigmaDCorr.getMetresValue());
 
 	DLEVContrib dlevContrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, fRefPtDistCont, collAngleContrib, variance};
 	return dlevContrib;

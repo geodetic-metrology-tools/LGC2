@@ -57,15 +57,13 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 	TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 
-	if (root == getFrameTreePosition() && !isVirtual)
+	if (root == getFrameTreePosition())
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
 		fProvisionalValueInRoot = fProvisionalValue;
-
 		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
 			fProvisionalHeightInRoot = fProvisionalValueInRoot.getH();
-
 			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 				TXYH2CCS::XYHs2CCS(fProvisionalValueInRoot);
 			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
@@ -82,7 +80,6 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		TLOR2LOR transfo = TLOR2LOR(getFrameTreePosition(), root, "transfo");
 		// transform coordinates in the ROOT frame
 		transfo.transform(fProvisionalValueInRoot);
-
 		try
 		{
 			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)

@@ -876,6 +876,14 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		level.line = line;
 		level.setActive(activeLine);
 
+		level.ihfix = opts.has("IHFIX");
+		// Look for optional "IH" and "IHSE" flags only if the "IHFIX" flag used, ignore otherwise
+		if (level.ihfix)
+		{
+			level.instrument.instrHeight = TLength(opts.getParamR("IH", level.instrument.instrHeight));
+			level.instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", level.instrument.sigmaInstrHeight));
+		}
+
 		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); // add new measurement
 	}
 	else

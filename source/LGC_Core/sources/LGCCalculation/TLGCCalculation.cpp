@@ -1,17 +1,20 @@
 #include "TLGCCalculation.h"
-#include "TDataAnalyzer.h"
-#include "TLSSimulation.h"
-#include "TLSAllfixed.h"
-#include <TLSAlgorithm.h>
-#include "TVAbstractAlgorithm.h"
-#include "TLSResultsMatrices.h"
+
 #include <Logger.hpp>
+#include <TLSAlgorithm.h>
+
+#include "TDataAnalyzer.h"
+#include "TLSAllfixed.h"
+#include "TLSResultsMatrices.h"
+#include "TLSSimulation.h"
+#include "TVAbstractAlgorithm.h"
 
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
 TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat, int maxIterations) : fData(dat), fMaxIterations(maxIterations), fResultsMtr(nullptr)
-{}
+{
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // PUBLIC METHODS
@@ -23,13 +26,14 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*fData.get());
-	// Checks whether the data are consistent, assign unknown indices and initialize uninitialized objects (points, lines, planes), reference poiints for certain observations, etc. 
+	// Checks whether the data are consistent, assign unknown indices and initialize uninitialized objects (points, lines, planes), reference poiints for certain observations, etc.
 	if (!analyzer.dataConsistent())
 	{
 		// throw std::runtime_error("Data are not consistent, see the output file: " + fData->getFileLogger().getOutputFileLocation() + " for more information.");
 		return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Data are not consistent, see the log file for more information.");
 	}
-	try{
+	try
+	{
 		// Iteration through the points
 		for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)
 		{
@@ -42,7 +46,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
 		else if (fData->getConfig().allfixed.isActive())
 			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
-		
+
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 
 		if (successCalculation)
@@ -58,23 +62,23 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 			}
 		}
 	}
-	catch (std::exception& e)
+	catch (std::exception &e)
 	{
 		fData->getFileLogger() << TFileLogger::e_logType::LOG_ERROR << e.what();
 		successCalculation += Behavior(Behavior::BehaviorCode::ERR_results, L"Problem during computation.");
 	}
 
-    // If the calculation succeeded, initialise the observation summaries:
-    if(successCalculation)
-        initialiseObsSummaries();
+	// If the calculation succeeded, initialise the observation summaries:
+	if (successCalculation)
+		initialiseObsSummaries();
 
 	return successCalculation;
 }
 
-void TLGCCalculation::initialiseObsSummaries(){
-
-    // Iterate the whole tree and initialise the
-    // observation summaries in each node:
-    for(auto &node : fData->getTree())
-        node->measurements.initialiseObsSummaries();
+void TLGCCalculation::initialiseObsSummaries()
+{
+	// Iterate the whole tree and initialise the
+	// observation summaries in each node:
+	for (auto &node : fData->getTree())
+		node->measurements.initialiseObsSummaries();
 }

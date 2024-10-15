@@ -1,17 +1,19 @@
 #include <TPointTransformer.h>
+
+#include "GeodeticConstants.h"
 #include "TTreeEntry.h"
 #include "TXYH2CCS.h"
-#include "GeodeticConstants.h"
 
-TPointTransformer::TPointTransformer(const TDataTree* tree, const TRefSystemFactory::ERefFrame& refFrame) : fTree(tree), fRefFrame(refFrame),
-fMLAused(false), fCGRFused(false), fIsSphere(false), fccs2cgrf()
+TPointTransformer::TPointTransformer(const TDataTree *tree, const TRefSystemFactory::ERefFrame &refFrame) :
+	fTree(tree), fRefFrame(refFrame), fMLAused(false), fCGRFused(false), fIsSphere(false), fccs2cgrf()
 {
-	fLastStationPtName = ""; //No point can have empty name
+	fLastStationPtName = ""; // No point can have empty name
 
-	if (refFrame == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS){
+	if (refFrame == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+	{
 		fIsSphere = true;
 		fGeoidModel = TRefSystemFactory::EGeoid::kCGSphere;
-		fccs2cgrf.reInitialize(fIsSphere); //Implicitly the ccs2cgrf transformation uses ellipsoidal CGRF, if SPHE is used, a SPHE CGRF (cgrfs) shoud be used
+		fccs2cgrf.reInitialize(fIsSphere); // Implicitly the ccs2cgrf transformation uses ellipsoidal CGRF, if SPHE is used, a SPHE CGRF (cgrfs) shoud be used
 	}
 	else if (refFrame == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
 		fGeoidModel = TRefSystemFactory::EGeoid::kCG2000Machine;
@@ -22,18 +24,22 @@ fMLAused(false), fCGRFused(false), fIsSphere(false), fccs2cgrf()
 }
 
 //////////////////////////////
-//Tree update
+// Tree update
 //////////////////////////////
-void TPointTransformer::updateTransformations(){
-	for (std::list<TLOR2LOR>::iterator it = fLORTrafo.begin(); it != fLORTrafo.end(); ++it){
+void TPointTransformer::updateTransformations()
+{
+	for (std::list<TLOR2LOR>::iterator it = fLORTrafo.begin(); it != fLORTrafo.end(); ++it)
+	{
 		it->updateTree();
 	}
 	fLastStationPtName = "";
 	fMLAused = false;
 }
 
-void TPointTransformer::transformPointsToMLASystem(std::string originName, TPositionVector& originOfMLAPos, TPositionVector& additPointPos){
-	if (!(fLastStationPtName == originName) || !fMLAused){
+void TPointTransformer::transformPointsToMLASystem(std::string originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos)
+{
+	if (!(fLastStationPtName == originName) || !fMLAused)
+	{
 		set2MLATransformation(originOfMLAPos);
 		fLastStationPtName = originName;
 	}
@@ -46,25 +52,28 @@ void TPointTransformer::transformPointsToMLASystem(std::string originName, TPosi
 ////////////////////////////////////////
 // Transformations related functions
 ////////////////////////////////////////
-void TPointTransformer::transform2MLA(TPositionVector& pv){
+void TPointTransformer::transform2MLA(TPositionVector &pv)
+{
 	fccs2cgrf.transform(pv);
 	fcgrf2ilg.transform(pv);
 	filg2ila.transform(pv);
 	fla2mla.transform(pv);
 }
 
-void TPointTransformer::transform2MLA(TFreeVector& fv){
+void TPointTransformer::transform2MLA(TFreeVector &fv)
+{
 	fccs2cgrf.transform(fv);
 	fcgrf2ilg.transform(fv);
 	filg2ila.transform(fv);
 	fla2mla.transform(fv);
 }
 
-void TPointTransformer::transform2MLA(TDenseMatrix& pmat, bool isFreeVector)
+void TPointTransformer::transform2MLA(TDenseMatrix &pmat, bool isFreeVector)
 {
 	// throw error if row dim is not 3
-	if (pmat.rows()!=3){
-			throw std::runtime_error("TPointTransformer::transform2MLA attempting to transform columns of a matrix to MLA but row dimension not equal to 3.");
+	if (pmat.rows() != 3)
+	{
+		throw std::runtime_error("TPointTransformer::transform2MLA attempting to transform columns of a matrix to MLA but row dimension not equal to 3.");
 	}
 	for (int colIdx = 0; colIdx < pmat.cols(); colIdx++)
 	{
@@ -87,21 +96,25 @@ void TPointTransformer::transform2MLA(TDenseMatrix& pmat, bool isFreeVector)
 }
 
 // used only for the dver and incl measurements
-void TPointTransformer::transformMLA2CGRF(TFreeVector& fv){
+void TPointTransformer::transformMLA2CGRF(TFreeVector &fv)
+{
 	fla2mla.transformInverse(fv);
 	filg2ila.transformInverse(fv);
 	fcgrf2ilg.transformInverse(fv);
 }
 
 // used only for the incl measurements
-void TPointTransformer::transformCGRF2CCS(TFreeVector& fv) {
+void TPointTransformer::transformCGRF2CCS(TFreeVector &fv)
+{
 	fccs2cgrf.transformInverse(fv);
 }
 
 // returns index of a transformation with given name in the 'fLORTrafo' vector, if vector does not include this transformation, function \returns -1
-int TPointTransformer::getTransformationIndex(const std::string& transfName) const{
+int TPointTransformer::getTransformationIndex(const std::string &transfName) const
+{
 	int index = 0;
-	for (auto itLOR2LOR(fLORTrafo.begin()); itLOR2LOR != fLORTrafo.end(); ++itLOR2LOR){
+	for (auto itLOR2LOR(fLORTrafo.begin()); itLOR2LOR != fLORTrafo.end(); ++itLOR2LOR)
+	{
 		if (itLOR2LOR->getName() == transfName)
 			return index;
 		index++;
@@ -110,33 +123,72 @@ int TPointTransformer::getTransformationIndex(const std::string& transfName) con
 }
 
 // Set a new origin of LA system, initialize the transformation
-void	TPointTransformer::set2MLATransformation(TPositionVector originInCCS){
-	//Use origin CGRF position as an origin of the Local Geodetic system
+void TPointTransformer::set2MLATransformation(TPositionVector originInCCS)
+{
+	// Use origin CGRF position as an origin of the Local Geodetic system
 	fcgrf2ilg = TCGRF2LGTransformation(originInCCS, fIsSphere);
-	//Use origin CCS position as an origin of the Local Astronomical system
+	// Use origin CCS position as an origin of the Local Astronomical system
 	filg2ila = TILG2ILATransformation(originInCCS, fGeoidModel);
-	//Use origin CCS position as an origin of the Local Astronomical system
+	// Use origin CCS position as an origin of the Local Astronomical system
 	fla2mla = TLA2MLATransformation(originInCCS, fGeoidModel, TAngle(0.0), TAngle(0.0));
 }
 
-TLOR2LOR TPointTransformer::getIdentityTransformation(){
-	//ROOT2ROOT transformation index == an identity transformation
+TLOR2LOR TPointTransformer::getIdentityTransformation()
+{
+	// ROOT2ROOT transformation index == an identity transformation
 	auto rootFramePosition(fTree->begin());
 	return TLOR2LOR(rootFramePosition, rootFramePosition, "IDENTITY");
 }
 
-const TLOR2LOR& TPointTransformer::getLORTransformation(TDataTreeIterator originalTreePos, TDataTreeIterator destinationTreePos){
+const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator originalTreePos, TDataTreeIterator destinationTreePos)
+{
 	std::string originalFrameName = originalTreePos->get()->frame.getName();
 	std::string destinationFrameName = destinationTreePos->get()->frame.getName();
 
 	int trIndex = getTransformationIndex(originalFrameName + destinationFrameName);
 
-	//If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
-	if (trIndex == -1){
+	// If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
+	if (trIndex == -1)
+	{
 		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName));
 		trIndex = (int)fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
 	}
 	std::list<TLOR2LOR>::iterator it = fLORTrafo.begin();
 	std::advance(it, trIndex);
 	return *it;
+}
+
+void TPointTransformer::transformCCS22DH(TPositionVector &pv)
+{
+	// check if the position vector is defined in 3d cartesian system, the k2DCartesian is not used in LGC
+	if (pv.getCoordSys() != TCoordSysFactory::ECoordSys::k3DCartesian)
+		throw std::runtime_error("TPointTransformer::transformCCS22DH attempting to transform a 2D+H vector instead of a 3D vector");
+
+	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
+		;
+	{
+		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
+			TXYH2CCS::CCS2XYHs(pv);
+		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
+			TXYH2CCS::CCS2XYHg2000Machine(pv);
+		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
+			TXYH2CCS::CCS2XYHg1985Machine(pv);
+	}
+}
+
+void TPointTransformer::transform2DH2CCS(TPositionVector &pv)
+{
+	// check if the position vector is defined in 2D+H, the other TCoordSysFactory::ECoordSys are not used in LGC
+	if (pv.getCoordSys() != TCoordSysFactory::ECoordSys::k2DPlusH)
+		throw std::runtime_error("TPointTransformer::transform2DH2CCS attempting to transform a 3D vector instead of a 2D+H vector");
+
+	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
+	{
+		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
+			TXYH2CCS::XYHs2CCS(pv);
+		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
+			TXYH2CCS::XYHg2000Machine2CCS(pv);
+		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
+			TXYH2CCS::XYHg1985Machine2CCS(pv);
+	}
 }

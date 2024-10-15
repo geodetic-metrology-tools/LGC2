@@ -716,8 +716,9 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 				isProcessOK = isProcessOK && addTransformationContribution(itRefPTTransform->first, itRefPTTransform->second, eqIdx, matrices);
 		}
 
-		// Adding controbution to a reference poiunt distance, which is at any case variable
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, levelSt.fMeasuredPlane->getRefPtDistUidx(), contributions.fRefPtDistContrib);
+		// Adding contribution to a reference point distance
+		if (!levelSt.ihfix)
+			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, levelSt.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib);
 
 		// Adding Distance correction contribution
 		if (!levelSt.instrument.collAngleAdjustable->isFixed())
@@ -876,8 +877,8 @@ void TLSInputMatricesFiller::addECHOContributions(TECHOROM &echoROM, TLSInputMat
 		// Adding controbution to a theta angle, which is for ECHO always variable
 		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getThetaUnknIndex(), contributions.fThetaPlaneAngleContrib);
 
-		// Adding controbution to a reference point distance, which is at any case variable
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getRefPtDistUidx(), contributions.fRefPtDistContrib);
+		// Adding contribution to a reference point distance, which is at any case variable
+		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib);
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECHO->getDistance() - contributions.fCalcMeas));

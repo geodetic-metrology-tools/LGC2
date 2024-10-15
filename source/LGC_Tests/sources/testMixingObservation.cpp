@@ -3,460 +3,457 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
-
+#include <Behavior.h>
 #include <TLGCData.h>
 #include <TReader.h>
-#include "testMixingObservation.h"
+
 #include "TLGCCalculation.h"
-#include <Behavior.h>
+#include "testMixingObservation.h"
 
 namespace tut
 {
-    struct test_MixingObs
-	{
+struct test_MixingObs
+{
 	test_MixingObs() : projTest(std::make_shared<TLGCData>()), r(projTest) {}
 
 	std::shared_ptr<TLGCData> projTest;
 	TReader r;
-	};
-    typedef test_group<test_MixingObs> factory;
-    typedef factory::object object;
-}
+};
+typedef test_group<test_MixingObs> factory;
+typedef factory::object object;
+} // namespace tut
 
 namespace
 {
-    tut::factory tf("Test files with mixed observation types");
+tut::factory tf("Test files with mixed observation types");
 }
 
 namespace tut
-{	
-	template<>
-	template<>
-	void object::test<1>()
-	{ 
-		set_test_name("Testing ANGL_ZEND_DIST");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
-		std::stringstream infiler(MixObs::ANGL_ZEND_DIST);
+{
+template<>
+template<>
+void object::test<1>()
+{
+	set_test_name("Testing ANGL_ZEND_DIST");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
+	std::stringstream infiler(MixObs::ANGL_ZEND_DIST);
 
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
 
-		const TLGCData& dataset = calcul.getData();
-		//P2  99.79174     99.99156     99.89158  237.61  237.45  247.38
-		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
-		ensure_equals("P2 x coordinate should match",P2.getX().getMetresValue(), 99.79174  , 1e-5);
-		ensure_equals("P2 y coordinate should match",P2.getY().getMetresValue(), 99.99156, 1e-5);
-		ensure_equals("P2 z coordinate should match",P2.getZ().getMetresValue(), 99.89158  , 1e-5);
-		//sigma are store in m in lgc2
-		ensure_equals("P2 sx should match",dataset.getPoints().getObject("P2").getXEstPrecision(), 0.23761  , 1e-5);
-		ensure_equals("P2 sy should match",dataset.getPoints().getObject("P2").getYEstPrecision(), 0.23745, 1e-5);
-		ensure_equals("P2 sz should match",dataset.getPoints().getObject("P2").getZEstPrecision(), 0.24738  , 1e-5);
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
- 	}
+	const TLGCData &dataset = calcul.getData();
+	// P2  99.79174     99.99156     99.89158  237.61  237.45  247.38
+	TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
+	ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.79174, 1e-5);
+	ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 99.99156, 1e-5);
+	ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.89158, 1e-5);
+	// sigma are store in m in lgc2
+	ensure_equals("P2 sx should match", dataset.getPoints().getObject("P2").getXEstPrecision(), 0.23761, 1e-5);
+	ensure_equals("P2 sy should match", dataset.getPoints().getObject("P2").getYEstPrecision(), 0.23745, 1e-5);
+	ensure_equals("P2 sz should match", dataset.getPoints().getObject("P2").getZEstPrecision(), 0.24738, 1e-5);
+}
 
-	template<>
-	template<>
-	void object::test<2>()
-	{ 
-		set_test_name("Testing ANGL_ZEND_DHOR");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DHOR.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
-		std::stringstream infiler(MixObs::ANGL_ZEND_DHOR);
+template<>
+template<>
+void object::test<2>()
+{
+	set_test_name("Testing ANGL_ZEND_DHOR");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DHOR.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
+	std::stringstream infiler(MixObs::ANGL_ZEND_DHOR);
 
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
 
-		const TLGCData& dataset = calcul.getData();
-		//P2     99.89996    100.09999     99.98884   74.85   74.74  130.85
-		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
-      ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.89996, 1e-5);
-      ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 100.09999, 1e-5);
-      ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.98884, 1e-5);
-		//sigma are store in m in lgc2
-		ensure_equals("P2 sx should match",dataset.getPoints().getObject("P2").getXEstPrecision(), 0.07485  , 1e-5);
-		ensure_equals("P2 sy should match",dataset.getPoints().getObject("P2").getYEstPrecision(), 0.07474, 1e-5);
-		ensure_equals("P2 sz should match",dataset.getPoints().getObject("P2").getZEstPrecision(), 0.13085  , 1e-5);
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
- 	}
+	const TLGCData &dataset = calcul.getData();
+	// P2     99.89996    100.09999     99.98884   74.85   74.74  130.85
+	TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
+	ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.89996, 1e-5);
+	ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 100.09999, 1e-5);
+	ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.98884, 1e-5);
+	// sigma are store in m in lgc2
+	ensure_equals("P2 sx should match", dataset.getPoints().getObject("P2").getXEstPrecision(), 0.07485, 1e-5);
+	ensure_equals("P2 sy should match", dataset.getPoints().getObject("P2").getYEstPrecision(), 0.07474, 1e-5);
+	ensure_equals("P2 sz should match", dataset.getPoints().getObject("P2").getZEstPrecision(), 0.13085, 1e-5);
+}
 
-	template<>
-	template<>
-	void object::test<3>()
-	{ 
-		set_test_name("Testing ANGL_ZEND_DSPT");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DSPT.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
-		std::stringstream infiler(MixObs::ANGL_ZEND_DSPT);
+template<>
+template<>
+void object::test<3>()
+{
+	set_test_name("Testing ANGL_ZEND_DSPT");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DSPT.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
+	std::stringstream infiler(MixObs::ANGL_ZEND_DSPT);
 
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
 
-		const TLGCData& dataset = calcul.getData();
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
-		TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
+	const TLGCData &dataset = calcul.getData();
 
-		// Results for TSTN ICSE value = 1.0, after the bug fix decribed in SUS-1880.
+	TPositionVector P2 = dataset.getPoints().getObject("P2").getEstimatedValue();
 
-		ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.9347090, 1e-7);
-		ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 99.9417144, 1e-7);
-		ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.9270390, 1e-7);
-	}
+	// Results for TSTN ICSE value = 1.0, after the bug fix decribed in SUS-1880.
 
-	template<>
-	template<>
-	void object::test<4>()
+	ensure_equals("P2 x coordinate should match", P2.getX().getMetresValue(), 99.9347090, 1e-7);
+	ensure_equals("P2 y coordinate should match", P2.getY().getMetresValue(), 99.9417144, 1e-7);
+	ensure_equals("P2 z coordinate should match", P2.getZ().getMetresValue(), 99.9270390, 1e-7);
+}
+
+template<>
+template<>
+void object::test<4>()
+{
+	set_test_name("Testing PDOR");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::PDOR_1CALA_GIS);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	const TLGCData &dataset = calcul.getData();
+
+	/*part of results with lgc1
+	QFA____61610S   4176.4377368   6627.9083784   2400.7350565   0.2732   0.1101          5392.4768 1162.4784
+	QDA____61710E   4205.6083632   6627.6994929   2400.7261137   1.4187   0.4154          61057.4832 13161.6429
+	QDA____61710S   4208.4349988   6627.6791832   2400.7251390   1.4448   0.4464          66451.3888 14324.3132
+	...
+	MST____61779E   4228.0494246   6627.5950878   2400.7516599   1.7305   0.7786          103860.1246 22492.1978
+	MST____61779S   4230.3293623   6627.5797501   2400.7508631   1.7518   0.8167          108210.1723 23432.4001
+	VEBX___61793E   4230.7062787   6627.5777204   2400.5644826   1.7779   0.8231          108929.3787 23588.4104
+	...
+	MSE____61872S   4257.4832675   6627.4261818   2400.7414491   2.3148   1.2797          160009.6475 34679.5018
+	VEBW___61876E   4257.8602335   6627.4266159   2400.5550652   2.3346   1.2862          160727.5935 34840.8259
+	VEBW___61876S   4258.0602385   6627.4274141   2400.5549937   2.3505   1.2896          161108.4885 34926.9641
+	*/
+
+	TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
+	ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4176.4377368, 1e-7);
+	ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6627.9083784, 1e-7);
+	ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7350565, 1e-7);
+	ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 0.2732, 1e-4);
+	ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.1101, 1e-4);
+
+	TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
+	ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4230.3293623, 1e-7);
+	ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6627.5797501, 1e-7);
+	ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.7508631, 1e-7);
+	ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 1.7518, 1e-4);
+	ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 0.8167, 1e-4);
+
+	TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
+	ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4257.8602335, 1e-7);
+	ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6627.4266159, 1e-7);
+	ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.5550652, 1e-7);
+	ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 2.3346, 1e-4);
+	ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 1.2862, 1e-4);
+}
+
+template<>
+template<>
+void object::test<5>()
+{
+	set_test_name("Testing PDOR");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::PDOR_1CALA_0);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	const TLGCData &dataset = calcul.getData();
+
+	/*part of results with lgc1
+	QFA____61610S   4171.0442076   6626.7482039   2400.7377214   0.2522   0.1521           -1.0524   2.3039
+	QDA____61710E   4144.5399430   6614.5624426   2400.7562879   1.3016   0.7008          -10.9370  24.5926
+	QDA____61710S   4141.9716490   6613.3817036   2400.7579787   1.3269   0.7253          -11.9610  26.8336
+	...
+	VEBX___61778E   4124.6977353   6605.3788684   2400.6164693   1.5627   0.9889          -15.4547  34.1984
+	VEBX___61778S   4124.5161914   6605.2949434   2400.6165892   1.5824   0.9976          -15.4186  34.1034
+	MST____61779E   4124.1740144   6605.1369692   2400.8030651   1.6068   1.0096          -15.2856  34.0792
+	MST____61779S   4122.1028954   6604.1836508   2400.8044196   1.6290   1.0403          -16.2946  36.3008
+	...
+	VEBX___61871S   4099.8569652   6593.9248235   2400.6328278   2.1336   1.4708          -24.7048  55.1835
+	MSE____61872E   4099.5155817   6593.7651522   2400.8193030   2.1519   1.4808          -24.3183  54.6222
+	MSE____61872S   4097.4483525   6592.8033393   2400.8206625   2.1701   1.5122          -25.2675  56.6593
+	VEBW___61876E   4097.1071077   6592.6427484   2400.6346380   2.1882   1.5221          -25.5323  56.9584
+	VEBW___61876S   4096.9263304   6592.5571783   2400.6347579   2.2025   1.5287          -25.4196  56.7283
+	*/
+	TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
+	ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0442076, 1e-7);
+	ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7482039, 1e-7);
+	ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377214, 1e-7);
+	ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 0.2522, 1e-4);
+	ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.1521, 1e-4);
+
+	TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
+	ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1028954, 1e-7);
+	ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1836508, 1e-7);
+	ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044196, 1e-7);
+	ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 1.6290, 1e-4);
+	ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 1.0403, 1e-4);
+
+	TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
+	ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1071077, 1e-7);
+	ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.6427484, 1e-7);
+	ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346380, 1e-7);
+	ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 2.1882, 1e-4);
+	ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 1.5221, 1e-4);
+}
+
+template<>
+template<>
+void object::test<6>()
+{
+	set_test_name("Testing PDOR");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::PDOR_2CALA);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	const TLGCData &dataset = calcul.getData();
+
+	/*part of results with lgc1
+	QFA____61610S   4171.0419520   6626.7526980   2400.7377190   1.4802   0.7192           -3.3080   6.7980
+	QDA____61710E   4144.5478999   6614.5451520   2400.7562974   6.1860   2.9359           -2.9801   7.3020
+	QDA____61710S   4141.9806353   6613.3623246   2400.7579894   6.2254   2.8870           -2.9747   7.4546
+	...
+	MST____61779E   4124.1894389   6605.1030340   2400.8030840   6.3999   2.9892            0.1389   0.1440
+	MST____61779S   4122.1190879   6604.1480000   2400.8044394   6.3832   2.9752           -0.1021   0.6500
+	VEBX___61793E   4121.7769551   6603.9893703   2400.6184155   6.3556   2.9617            0.0551   0.0603
+	..
+	MSE____61872E   4099.5400014   6593.7106624   2400.8193334   2.6253   1.2613            0.1014   0.1324
+	MSE____61872S   4097.4735554   6592.7471312   2400.8206938   2.2018   1.0722           -0.0646   0.4512
+	VEBW___61876E   4097.1324292   6592.5862509   2400.6346696   1.4892   0.7709           -0.2108   0.4609
+	*/
+	TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
+	ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0419520, 1e-7);
+	ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7526980, 1e-7);
+	ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377190, 1e-7);
+	ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 1.4802, 1e-4);
+	ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.7192, 1e-4);
+
+	TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
+	ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1190879, 1e-7);
+	ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1480000, 1e-7);
+	ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044394, 1e-7);
+	ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 6.3832, 1e-4);
+	ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 2.9752, 1e-4);
+
+	TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
+	ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1324292, 1e-7);
+	ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.5862509, 1e-7);
+	ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346696, 1e-7);
+	ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 1.4892, 1e-4);
+	ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 0.7709, 1e-4);
+}
+
+template<>
+template<>
+void object::test<7>()
+{
+	set_test_name("Testing if only one PDOR is active");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::PDOR_2CALA);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	// now the TDataAnalyzer has set the PDORS
+	// iterate over frame tree and check if PDOR is only initialised once.
+	int numberInitializedPDOR = 0;
+	// Iteration through nodes of the LOR tree
+	for (TDataTreeIterator itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
 	{
-		set_test_name("Testing PDOR");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		std::stringstream infiler(MixObs::PDOR_1CALA_GIS);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
-		const TLGCData& dataset = calcul.getData();
-
-		/*part of results with lgc1
-		QFA____61610S   4176.4377368   6627.9083784   2400.7350565   0.2732   0.1101          5392.4768 1162.4784          
-		QDA____61710E   4205.6083632   6627.6994929   2400.7261137   1.4187   0.4154          61057.4832 13161.6429          
-		QDA____61710S   4208.4349988   6627.6791832   2400.7251390   1.4448   0.4464          66451.3888 14324.3132          
-		...
-		MST____61779E   4228.0494246   6627.5950878   2400.7516599   1.7305   0.7786          103860.1246 22492.1978
-		MST____61779S   4230.3293623   6627.5797501   2400.7508631   1.7518   0.8167          108210.1723 23432.4001
-		VEBX___61793E   4230.7062787   6627.5777204   2400.5644826   1.7779   0.8231          108929.3787 23588.4104
-		...
-		MSE____61872S   4257.4832675   6627.4261818   2400.7414491   2.3148   1.2797          160009.6475 34679.5018
-		VEBW___61876E   4257.8602335   6627.4266159   2400.5550652   2.3346   1.2862          160727.5935 34840.8259
-		VEBW___61876S   4258.0602385   6627.4274141   2400.5549937   2.3505   1.2896          161108.4885 34926.9641
-		*/
-
-		TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
-		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4176.4377368, 1e-7);
-		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6627.9083784, 1e-7);
-		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7350565, 1e-7);
-		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 0.2732, 1e-4);
-		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.1101, 1e-4);
-
-		TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
-		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4230.3293623, 1e-7);
-		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6627.5797501, 1e-7);
-		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.7508631, 1e-7);
-		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 1.7518, 1e-4);
-		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 0.8167, 1e-4);
-
-		TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
-		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4257.8602335, 1e-7);
-		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6627.4266159, 1e-7);
-		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.5550652, 1e-7);
-		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 2.3346, 1e-4);
-		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 1.2862, 1e-4);
+		if (itTree.node->data->measurements.fPDOR.isInitialised())
+		{
+			numberInitializedPDOR++;
+		}
 	}
+	ensure_equals("There should be exactly one node with initialized PDOR", numberInitializedPDOR, 1);
+}
 
-	template<>
-	template<>
-	void object::test<5>()
+template<>
+template<>
+void object::test<8>()
+{
+	set_test_name("Testing if all PDORs are uninitialized when PDOR is inactive.");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	// load example without PDOR
+	std::stringstream infiler(MixObs::ANGL_ZEND_DIST);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	ensure_equals("PDOR should be inactive", projTest->getConfig().pdor.isActive(), false);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	// now the TDataAnalyzer has set the PDORS
+	int numberInitializedPDOR = 0;
+	// Iteration through nodes of the LOR tree
+	for (TDataTreeIterator itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
 	{
-		set_test_name("Testing PDOR");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		std::stringstream infiler(MixObs::PDOR_1CALA_0);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
-		const TLGCData& dataset = calcul.getData();
-
-		/*part of results with lgc1
-		QFA____61610S   4171.0442076   6626.7482039   2400.7377214   0.2522   0.1521           -1.0524   2.3039
-		QDA____61710E   4144.5399430   6614.5624426   2400.7562879   1.3016   0.7008          -10.9370  24.5926
-		QDA____61710S   4141.9716490   6613.3817036   2400.7579787   1.3269   0.7253          -11.9610  26.8336
-		...
-		VEBX___61778E   4124.6977353   6605.3788684   2400.6164693   1.5627   0.9889          -15.4547  34.1984
-		VEBX___61778S   4124.5161914   6605.2949434   2400.6165892   1.5824   0.9976          -15.4186  34.1034
-		MST____61779E   4124.1740144   6605.1369692   2400.8030651   1.6068   1.0096          -15.2856  34.0792
-		MST____61779S   4122.1028954   6604.1836508   2400.8044196   1.6290   1.0403          -16.2946  36.3008
-		...
-		VEBX___61871S   4099.8569652   6593.9248235   2400.6328278   2.1336   1.4708          -24.7048  55.1835
-		MSE____61872E   4099.5155817   6593.7651522   2400.8193030   2.1519   1.4808          -24.3183  54.6222
-		MSE____61872S   4097.4483525   6592.8033393   2400.8206625   2.1701   1.5122          -25.2675  56.6593
-		VEBW___61876E   4097.1071077   6592.6427484   2400.6346380   2.1882   1.5221          -25.5323  56.9584
-		VEBW___61876S   4096.9263304   6592.5571783   2400.6347579   2.2025   1.5287          -25.4196  56.7283
-		*/
-		TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
-		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0442076, 1e-7);
-		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7482039, 1e-7);
-		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377214, 1e-7);
-		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 0.2522, 1e-4);
-		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.1521, 1e-4);
-
-
-		TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
-		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1028954, 1e-7);
-		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1836508, 1e-7);
-		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044196, 1e-7);
-		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 1.6290, 1e-4);
-		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 1.0403, 1e-4);
-
-		TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
-		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1071077, 1e-7);
-		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.6427484, 1e-7);
-		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346380, 1e-7);
-		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 2.1882, 1e-4);
-		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 1.5221, 1e-4);
+		if (itTree.node->data->measurements.fPDOR.isInitialised())
+		{
+			numberInitializedPDOR++;
+		}
 	}
+	ensure_equals("No node should contain an initialized PDOR", numberInitializedPDOR, 0);
+}
 
-	template<>
-	template<>
-	void object::test<6>()
+template<>
+template<>
+void object::test<9>()
+{
+	set_test_name("Testing ANGL_ZEND_DIST observation ID reading");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST_id.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::ANGL_ZEND_DIST_id);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	const TLGCData &dataset = calcul.getData();
+
+	TDataTree tree = projTest->getTree();
+
+	// Check the observation ID and the max observation ID length
+	int maxObsIdLength = 0;
+	int i = 0;
+	std::vector<std::string> ctrlIDangl{"STN_ANGL_P1", "STN_ANGL_P2", "STN_ANGL_P3", "STN_ANGL_P4"};
+	for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measANGL)
 	{
-		set_test_name("Testing PDOR");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		std::stringstream infiler(MixObs::PDOR_2CALA);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
-		const TLGCData& dataset = calcul.getData();
-
-		/*part of results with lgc1
-		QFA____61610S   4171.0419520   6626.7526980   2400.7377190   1.4802   0.7192           -3.3080   6.7980
-		QDA____61710E   4144.5478999   6614.5451520   2400.7562974   6.1860   2.9359           -2.9801   7.3020
-		QDA____61710S   4141.9806353   6613.3623246   2400.7579894   6.2254   2.8870           -2.9747   7.4546
-		...
-		MST____61779E   4124.1894389   6605.1030340   2400.8030840   6.3999   2.9892            0.1389   0.1440
-		MST____61779S   4122.1190879   6604.1480000   2400.8044394   6.3832   2.9752           -0.1021   0.6500
-		VEBX___61793E   4121.7769551   6603.9893703   2400.6184155   6.3556   2.9617            0.0551   0.0603
-		..
-		MSE____61872E   4099.5400014   6593.7106624   2400.8193334   2.6253   1.2613            0.1014   0.1324
-		MSE____61872S   4097.4735554   6592.7471312   2400.8206938   2.2018   1.0722           -0.0646   0.4512
-		VEBW___61876E   4097.1324292   6592.5862509   2400.6346696   1.4892   0.7709           -0.2108   0.4609
-		*/
-		TAdjustablePoint QFA = dataset.getPoints().getObject("QFA____61610S");
-		ensure_equals("QFA x coordinate should match", QFA.getEstimatedValue().getX().getMetresValue(), 4171.0419520, 1e-7);
-		ensure_equals("QFA y coordinate should match", QFA.getEstimatedValue().getY().getMetresValue(), 6626.7526980, 1e-7);
-		ensure_equals("QFA z coordinate should match", QFA.getEstimatedValue().getZ().getMetresValue(), 2400.7377190, 1e-7);
-		ensure_equals("QFA sx coordinate should match", QFA.getXEstPrecision().getMMetresValue(), 1.4802, 1e-4);
-		ensure_equals("QFA sy coordinate should match", QFA.getYEstPrecision().getMMetresValue(), 0.7192, 1e-4);
-
-		TAdjustablePoint MST = dataset.getPoints().getObject("MST____61779S");
-		ensure_equals("MST x coordinate should match", MST.getEstimatedValue().getX().getMetresValue(), 4122.1190879, 1e-7);
-		ensure_equals("MST y coordinate should match", MST.getEstimatedValue().getY().getMetresValue(), 6604.1480000, 1e-7);
-		ensure_equals("MST z coordinate should match", MST.getEstimatedValue().getZ().getMetresValue(), 2400.8044394, 1e-7);
-		ensure_equals("MST sx coordinate should match", MST.getXEstPrecision().getMMetresValue(), 6.3832, 1e-4);
-		ensure_equals("MST sy coordinate should match", MST.getYEstPrecision().getMMetresValue(), 2.9752, 1e-4);
-
-		TAdjustablePoint VEBW = dataset.getPoints().getObject("VEBW___61876E");
-		ensure_equals("VEBW x coordinate should match", VEBW.getEstimatedValue().getX().getMetresValue(), 4097.1324292, 1e-7);
-		ensure_equals("VEBW y coordinate should match", VEBW.getEstimatedValue().getY().getMetresValue(), 6592.5862509, 1e-7);
-		ensure_equals("VEBW z coordinate should match", VEBW.getEstimatedValue().getZ().getMetresValue(), 2400.6346696, 1e-7);
-		ensure_equals("VEBW sx coordinate should match", VEBW.getXEstPrecision().getMMetresValue(), 1.4892, 1e-4);
-		ensure_equals("VEBW sy coordinate should match", VEBW.getYEstPrecision().getMMetresValue(), 0.7709, 1e-4);
+		ensure_equals("The ANGL observation ID is correct", data.obsID, ctrlIDangl[i]);
+		i++;
+		if (data.obsID.size() > maxObsIdLength)
+		{
+			maxObsIdLength = data.obsID.size();
+		}
 	}
-
-	template<>
-	template<>
-	void object::test<7>()
+	std::vector<std::string> ctrlIDzend{"STN_TS1_ZEND_P1", "STN_ZEND_P2", "STN_ZEND_P3", "STN_ZEND_P4"};
+	i = 0;
+	for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measZEND)
 	{
-		set_test_name("Testing if only one PDOR is active");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		std::stringstream infiler(MixObs::PDOR_2CALA);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		// now the TDataAnalyzer has set the PDORS
-		// iterate over frame tree and check if PDOR is only initialised once.
-		int numberInitializedPDOR = 0;
-		// Iteration through nodes of the LOR tree
-		for (TDataTreeIterator  itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
+		ensure_equals("The ZEND observation ID is correct", data.obsID, ctrlIDzend[i]);
+		i++;
+		if (data.obsID.size() > maxObsIdLength)
 		{
-			if (itTree.node->data->measurements.fPDOR.isInitialised())
-			{
-				numberInitializedPDOR++;
-			}
+			maxObsIdLength = data.obsID.size();
 		}
-		ensure_equals("There should be exactly one node with initialized PDOR", numberInitializedPDOR, 1);
 	}
-
-	template<>
-	template<>
-	void object::test<8>()
+	std::vector<std::string> ctrlIDdist{"STN_DIST_P1", "STN_DIST_P2", "STN_DIST_P3", "STN_DIST_P4"};
+	i = 0;
+	for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measDIST)
 	{
-		set_test_name("Testing if all PDORs are uninitialized when PDOR is inactive.");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/PDOR.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		//load example without PDOR
-		std::stringstream infiler(MixObs::ANGL_ZEND_DIST);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-		ensure_equals("PDOR should be inactive", projTest->getConfig().pdor.isActive(), false);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		// now the TDataAnalyzer has set the PDORS
-		int numberInitializedPDOR = 0;
-		// Iteration through nodes of the LOR tree
-		for (TDataTreeIterator  itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
+		ensure_equals("The DIST observation ID is correct", data.obsID, ctrlIDdist[i]);
+		i++;
+		if (data.obsID.size() > maxObsIdLength)
 		{
-			if (itTree.node->data->measurements.fPDOR.isInitialised())
-			{
-				numberInitializedPDOR++;
-			}
+			maxObsIdLength = data.obsID.size();
 		}
-		ensure_equals("No node should contain an initialized PDOR", numberInitializedPDOR, 0);
 	}
-
-	template<>
-	template<>
-	void object::test<9>()
+	std::vector<std::string> ctrlIDdhor{"STN_DHOR_P1", "STN_DHOR_P2", "STN_DHOR_P3", "STN_DHOR_P4"};
+	i = 0;
+	for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measDHOR)
 	{
-		set_test_name("Testing ANGL_ZEND_DIST observation ID reading");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/ANGL_ZEND_DIST_id.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		std::stringstream infiler(MixObs::ANGL_ZEND_DIST_id);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
-		const TLGCData &dataset = calcul.getData();
-		
-		TDataTree tree = projTest->getTree();
-
-		// Check the observation ID and the max observation ID length
-		int maxObsIdLength = 0;
-		int i = 0;
-		std::vector<std::string> ctrlIDangl{"STN_ANGL_P1", "STN_ANGL_P2", "STN_ANGL_P3", "STN_ANGL_P4"};
-		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measANGL)
+		ensure_equals("The DHOR observation ID is correct", data.obsID, ctrlIDdhor[i]);
+		i++;
+		if (data.obsID.size() > maxObsIdLength)
 		{
-			ensure_equals("The ANGL observation ID is correct", data.obsID, ctrlIDangl[i]);
-			i++;
-			if (data.obsID.size() > maxObsIdLength)
-			{
-				maxObsIdLength = data.obsID.size();
-			}
+			maxObsIdLength = data.obsID.size();
 		}
-		std::vector<std::string> ctrlIDzend{"STN_TS1_ZEND_P1", "STN_ZEND_P2", "STN_ZEND_P3", "STN_ZEND_P4"};
-		i = 0;
-		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measZEND)
-		{
-			ensure_equals("The ZEND observation ID is correct", data.obsID, ctrlIDzend[i]);
-			i++;
-			if (data.obsID.size() > maxObsIdLength)
-			{
-				maxObsIdLength = data.obsID.size();
-			}
-		}
-		std::vector<std::string> ctrlIDdist{"STN_DIST_P1", "STN_DIST_P2", "STN_DIST_P3", "STN_DIST_P4"};
-		i = 0;
-		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measDIST)
-		{
-			ensure_equals("The DIST observation ID is correct", data.obsID, ctrlIDdist[i]);
-			i++;
-			if (data.obsID.size() > maxObsIdLength)
-			{
-				maxObsIdLength = data.obsID.size();
-			}
-		}
-		std::vector<std::string> ctrlIDdhor{"STN_DHOR_P1", "STN_DHOR_P2", "STN_DHOR_P3", "STN_DHOR_P4"};
-		i = 0;
-		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measDHOR)
-		{
-			ensure_equals("The DHOR observation ID is correct", data.obsID, ctrlIDdhor[i]);
-			i++;
-			if (data.obsID.size() > maxObsIdLength)
-			{
-				maxObsIdLength = data.obsID.size();
-			}
-		}
-		std::vector<std::string> ctrlIDecth{"ECTH_SC1_P1", "ECTH_SC1_P2", "ECTH_SC1_P3", "ECTH_SC1_P4"};
-		i = 0;
-		for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measECTH)
-		{
-			ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDecth[i]);
-			i++;
-			if (data.obsID.size() > maxObsIdLength)
-			{
-				maxObsIdLength = data.obsID.size();
-			}
-		}
-		ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
 	}
-	template<>
-	template<>
-	void object::test<10>()
+	std::vector<std::string> ctrlIDecth{"ECTH_SC1_P1", "ECTH_SC1_P2", "ECTH_SC1_P3", "ECTH_SC1_P4"};
+	i = 0;
+	for (auto const &data : tree.begin()->get()->measurements.fTSTN.begin()->get()->roms.begin()->get()->measECTH)
 	{
-		set_test_name("Testing total station frame contributions");
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_FrameContribTest.txt");
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		std::stringstream infiler(MixObs::TSTN_FrameContribTest);
-
-		bool succesReading = r.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
-		TDataTree tree = projTest->getTree().begin();
-
-		// estimated TY translation should be 0
-		TDataTreeIterator frameIt = ++tree.begin();
-		double estimatedYTranslation = frameIt.node->data.get()->frame.getEstTranslation(1);
-		ensure_equals("Y translation should be 0", estimatedYTranslation, 0, 1e-9);
+		ensure_equals("The ECTH observation ID is correct", data.obsID, ctrlIDecth[i]);
+		i++;
+		if (data.obsID.size() > maxObsIdLength)
+		{
+			maxObsIdLength = data.obsID.size();
+		}
 	}
+	ensure_equals("The length of the biggest observation ID is correct", dataset.getConfig().obsIDwidth, maxObsIdLength);
+}
+template<>
+template<>
+void object::test<10>()
+{
+	set_test_name("Testing total station frame contributions");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_FrameContribTest.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-	};
+	std::stringstream infiler(MixObs::TSTN_FrameContribTest);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree().begin();
+
+	// estimated TY translation should be 0
+	TDataTreeIterator frameIt = ++tree.begin();
+	double estimatedYTranslation = frameIt.node->data.get()->frame.getEstTranslation(1);
+	ensure_equals("Y translation should be 0", estimatedYTranslation, 0, 1e-9);
+}
+
+}; // namespace tut

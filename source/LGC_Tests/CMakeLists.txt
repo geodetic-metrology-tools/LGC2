@@ -40,6 +40,7 @@ set(tests_SOURCES
 	sources/testSlaveConstraints.cpp
 	sources/testPointGroupConstraints.cpp
 	sources/testEREL.cpp
+	sources/testDLEV.cpp
 )
 
 set(tests_INPUT
@@ -62,6 +63,7 @@ set(tests_INPUT
 	headers/testSlaveConstraints.h
 	headers/testPointGroupConstraints.h
 	headers/testEREL.h
+	headers/testDLEV.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
@@ -82,5 +84,3 @@ foreach(test_file ${COPY_TESTFILES})
 	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")
 	file(COPY "${test_file}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test_files")
 endforeach()
-
-

@@ -1,9 +1,17 @@
 #include <stdexcept>
+
 #include <LGCAdjustablePlane.h>
+
 #include "LGCAdjustablePoint.h"
 
-LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed, const std::string& name)
-	:
+LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint *referencePoint,
+	const TLength &refPointDistance,
+	const TAngle &theta,
+	const TAngle &phi,
+	bool thetaFixed,
+	bool phiFixed,
+	bool fRefPtDistFixed,
+	const std::string &name) :
 	fName(name),
 	fReferencePoint(referencePoint),
 
@@ -22,8 +30,7 @@ LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint,
 	fEstValPhi(phi),
 	fEstPrecisionPhi(0.0, TAngle::EUnits::kRadians),
 
-
-	fRefPtDistFixed(false),
+	fRefPtDistFixed(fRefPtDistFixed),
 	fThetaFixed(thetaFixed),
 	fPhiFixed(phiFixed),
 
@@ -32,15 +39,18 @@ LGCAdjustablePlane::LGCAdjustablePlane(const LGCAdjustablePoint* referencePoint,
 	uidx_rpDistance(-1),
 
 	fInitialized(true)
-{}
+{
+}
 
-LGCAdjustablePlane LGCAdjustablePlane::createUninitialized(const std::string& name){
-   LGCAdjustablePlane ap(0, TLength(NO_VALf), TAngle(NO_VALf, TAngle::EUnits::kRadians), TAngle(NO_VALf, TAngle::EUnits::kRadians), true, true, name);
+LGCAdjustablePlane LGCAdjustablePlane::createUninitialized(const std::string &name)
+{
+	LGCAdjustablePlane ap(0, TLength(NO_VALf), TAngle(NO_VALf, TAngle::EUnits::kRadians), TAngle(NO_VALf, TAngle::EUnits::kRadians), true, true, false, name);
 	ap.fInitialized = false;
 	return ap;
 }
 
-void LGCAdjustablePlane::initialize(const LGCAdjustablePoint* referencePoint, const TLength& refPointDistance, const TAngle& theta, const TAngle& phi, bool thetaFixed, bool phiFixed){
+void LGCAdjustablePlane::initialize(const LGCAdjustablePoint *referencePoint, const TLength &refPointDistance, const TAngle &theta, const TAngle &phi, bool thetaFixed, bool phiFixed)
+{
 	fReferencePoint = referencePoint;
 
 	fProvValRefPtDist = refPointDistance;
@@ -58,31 +68,55 @@ void LGCAdjustablePlane::initialize(const LGCAdjustablePoint* referencePoint, co
 	fInitialized = true;
 }
 
-void LGCAdjustablePlane::setFirstUidx(int idx) {
+void LGCAdjustablePlane::setFirstUidx(int idx)
+{
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to fixed plane.");
-	
+
 	if (!fThetaFixed)
-			uidx_Theta = idx++;
+		uidx_Theta = idx++;
 
 	if (!fPhiFixed)
-			uidx_Phi = idx++;
+		uidx_Phi = idx++;
 
-	//Ref. Pt distance is always variable
-	uidx_rpDistance = idx++;
+	if (!fRefPtDistFixed)
+		uidx_rpDistance = idx++;
 }
 
-void LGCAdjustablePlane::setCorrection(int idx, TReal value){
-	
-   if (uidx_rpDistance == idx){
-      fCorrectionRefPtDist = TLength(value);
-      fEstValRefPointDist += TLength(value);
+int LGCAdjustablePlane::getFirstUidx() const
+{
+	if (!fThetaFixed)
+		return uidx_Theta;
+	else if (!fPhiFixed)
+		return uidx_Phi;
+	else if (!fRefPtDistFixed)
+		return uidx_rpDistance;
+
+	throw std::logic_error("Trying to get first unknown index from fixed plane.");
+}
+
+int LGCAdjustablePlane::getLastUidx() const
+{
+	if (!fThetaFixed | !fPhiFixed | !fRefPtDistFixed)
+		return getFirstUidx() + int(!fThetaFixed) + int(!fPhiFixed) + int(!fRefPtDistFixed) - 1;
+
+	throw std::logic_error("Trying to get last unknown index from fixed plane.");
+}
+
+void LGCAdjustablePlane::setCorrection(int idx, TReal value)
+{
+	if (uidx_rpDistance == idx)
+	{
+		fCorrectionRefPtDist = TLength(value);
+		fEstValRefPointDist += TLength(value);
 	}
-	else if  (uidx_Theta == idx){
+	else if (uidx_Theta == idx)
+	{
 		fCorrectionTheta.setRadiansValue(value);
 		fEstValTheta.setRadiansValue(fEstValTheta.getRadiansValue() + value);
 	}
-	else if  (uidx_Phi == idx){
+	else if (uidx_Phi == idx)
+	{
 		fCorrectionPhi.setRadiansValue(value);
 		fEstValPhi.setRadiansValue(fEstValPhi.getRadiansValue() + value);
 	}
@@ -90,9 +124,10 @@ void LGCAdjustablePlane::setCorrection(int idx, TReal value){
 		throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
-void	LGCAdjustablePlane::setEstimatedPrecision(int idx, TReal value){
+void LGCAdjustablePlane::setEstimatedPrecision(int idx, TReal value)
+{
 	if (uidx_rpDistance == idx)
-      fEstPrecisionRefPtDist = TLength(value);
+		fEstPrecisionRefPtDist = TLength(value);
 	else if (uidx_Theta == idx)
 		fEstPrecisionTheta.setRadiansValue(value);
 	else if (uidx_Phi == idx)
@@ -101,10 +136,11 @@ void	LGCAdjustablePlane::setEstimatedPrecision(int idx, TReal value){
 		throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
-void LGCAdjustablePlane::reInitialise(){
+void LGCAdjustablePlane::reInitialise()
+{
 	fEstValRefPointDist = fProvValRefPtDist;
-   fCorrectionRefPtDist = TLength(0.0);
-   fEstPrecisionRefPtDist = TLength(0.0);
+	fCorrectionRefPtDist = TLength(0.0);
+	fEstPrecisionRefPtDist = TLength(0.0);
 
 	fEstValTheta = fProvValTheta;
 	fCorrectionTheta.setRadiansValue(0.0);
@@ -114,7 +150,6 @@ void LGCAdjustablePlane::reInitialise(){
 	fCorrectionPhi.setRadiansValue(0.0);
 	fEstPrecisionPhi.setRadiansValue(0.0);
 }
-
 
 #if USE_SERIALIZER
 void LGCAdjustablePlane::serialize(ObjectSerializer &obj) const
@@ -147,4 +182,3 @@ void LGCAdjustablePlane::serialize(ObjectSerializer &obj) const
 	obj.addProperty("uidx_Theta", uidx_Theta);
 }
 #endif // USE_SERIALIZER
-
