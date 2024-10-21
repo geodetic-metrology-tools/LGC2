@@ -762,6 +762,8 @@ inline void TInstrumentData::TLEVEL::serialize(ObjectSerializer &obj) const
 	obj.addProperty("collAngleAdjustable", collAngleAdjustable);
 	obj.addProperty("collAngleUnknown", collAngleUnknown);
 	obj.addProperty("collAngleValue", collAngleValue.getRadiansValue());
+	obj.addProperty("instrHeight", instrHeight.getMetresValue());
+	obj.addProperty("sigmaInstrHeight", sigmaInstrHeight.getMetresValue());
 	obj.addProperty("defStaffID", defStaffID);
 	obj.addProperty("ID", ID);
 	obj.addProperty("line", line);

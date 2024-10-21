@@ -24,36 +24,44 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL &fLevel)
 	std::string TABs = stream->getCurrSpaceExtended(1);
 	int obsWidth = getObsWidth();
 	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	int headerWidth = 10;
 
-	////////////////////////////////////////////////////////////
 	// first line
-	(*stream) << endl << TABs;
+	(*stream) << '\n' << TABs;
 	(*stream).writeStringLeft(nameWidth, "LEVEL INSTRUMENT: " + fLevel.instrument.ID);
-	(*stream) << endl;
-	///////////////////////////////////////////////////////////////////////////////////
-	// second line
+	(*stream) << '\n';
+
+	// second line: Definition of the reference point
 	(*stream) << TABs;
-	(*stream).writeStringLeft(nameWidth, "REF POINT"); // Reference point
+	(*stream).writeStringLeft(headerWidth, "REF POINT");
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
-	(*stream).writeStringLeft(11, "X (M)");
+	(*stream).writeStringLeft(headerWidth, "X (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
-	(*stream).writeStringLeft(11, "Y (M)");
+	(*stream).writeStringLeft(headerWidth, "Y (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
-	(*stream).writeStringLeft(11, "Z (M)");
+	(*stream).writeStringLeft(headerWidth, "Z (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
-	(*stream) << endl;
+
+	// third line: definition of the PLANE
+	(*stream) << '\n';
 	(*stream) << TABs;
+	(*stream).writeStringLeft(headerWidth, "PLANE");
 	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(nameWidth, "PLANE");
-	(*stream).writeStringLeft(11, "HI (M)");
+	(*stream).writeStringLeft(headerWidth, "IH (M)");
 	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue());
+	std::string ihFixed = "TRUE";
 	if (!fLevel.ihfix)
 	{
-		(*stream).writeStringLeft(11, "SHI (MM)");
+		(*stream).writeStringLeft(headerWidth, "SIH (MM)");
 		(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.fMeasuredPlane->getRefPDistEstimatedPrecision().getMMetresValue());
+		ihFixed = "FALSE";
 	}
-	(*stream) << endl << endl;
-	///////////////////////////////////////////////////////////////////////////////////
+	(*stream).writeStringLeft(headerWidth, "IHFIX");
+	(*stream).writeString(obsWidth, ihFixed);
+	(*stream).writeStringLeft(headerWidth, "IHSE (MM)");
+	(*stream).writeDouble(obsWidth, lengthResPrecision, fLevel.instrument.sigmaInstrHeight.getMMetresValue());
+
+	(*stream) << '\n' << '\n';
 }
 
 void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
