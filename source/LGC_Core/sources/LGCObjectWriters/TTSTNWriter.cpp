@@ -620,52 +620,58 @@ void TTSTNWriter::writeTSTNHeader(std::shared_ptr<TTSTN> tstn)
 	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 	int lengthPrecision = getLengthPrecision();
 	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	int headerWidth = 10;
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
-	////////////////////////////////////////////////////////////
 	// first line
-	(*stream) << endl << TABs;
+	(*stream) << '\n' << TABs;
 	(*stream).writeStringLeft(nameWidth, "INSTRUMENT POLAIRE: " + tstn->instrument.ID);
-	(*stream) << endl;
-	///////////////////////////////////////////////////////////////////////////////////
+	(*stream) << '\n';
+
 	// second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Point on which is the TSTN positioned
 	(*stream).writeStringLeft(nameWidth, tstn->instrumentPos->getName());
 
 	// write INSTRUMENT HEIGHT
-	if (!tstn->instrumentHeightAdjustable)
+	(*stream).writeStringLeft(headerWidth, "IH (M)");
+	std::string ihFixed = "FALSE";
+	if (tstn->ihfix)
 	{
-		(*stream).writeStringLeft(obsWidth, "HI (M)");
 		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrument.instrHeight);
+		ihFixed = "TRUE";
 	}
 	else
 	{
-		(*stream).writeStringLeft(obsWidth, "HI (M)");
 		(*stream).writeDouble(obsWidth, lengthPrecision, tstn->instrumentHeightAdjustable->getEstimatedValue());
-		(*stream).writeStringLeft(obsResWidth, "SHI (MM)");
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, tstn->instrumentHeightAdjustable->getEstimatedPrecision().getMMetresValue());
+		(*stream).writeStringLeft(headerWidth, "SIH (MM)");
+		(*stream).writeDouble(obsWidth, lengthResPrecision, tstn->instrumentHeightAdjustable->getEstimatedPrecision().getMMetresValue());
 	}
+	(*stream).writeStringLeft(headerWidth, "IHFIX");
+	(*stream).writeString(obsWidth, ihFixed);
+	(*stream).writeStringLeft(headerWidth, "IHSE (MM)");
+	(*stream).writeDouble(obsWidth, lengthResPrecision, tstn->instrument.sigmaInstrHeight.getMMetresValue());
 
-	(*stream).writeString(obsWidth, "ROT3D"); // indiacates if station can rotate freely
+	// write the ROT3D data, from this point, no need to align with the V0 line
+	(*stream).writeStringLeft(headerWidth, "ROT3D");
 
 	if (tstn->rot3D)
 	{
-		(*stream).writeStringLeft(obsWidth, "TRUE");
-		(*stream).writeStringLeft(obsWidth, "rotX"); // rotation around X axis
+		(*stream).writeStringLeft(obsResWidth, "TRUE");
+		(*stream).writeStringLeft(headerWidth, "RX (GON)"); // rotation around X axis
 		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotX->getEstimatedValue().getGonsValue());
-		(*stream).writeStringLeft(obsWidth, "rotY"); // rotation around Y axis
+		(*stream).writeStringLeft(headerWidth, "RY (GON)"); // rotation around Y axis
 		(*stream).writeDouble(obsWidth, anglePrecision, tstn->rotY->getEstimatedValue().getGonsValue());
-		(*stream).writeStringLeft(obsResWidth, "SrX"); // rotation around Y axis
+		(*stream).writeStringLeft(headerWidth, "SRX (CC)"); // precision of the rotation around X axis
 		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotX->getEstimatedPrecision().getSignedCCValue());
-		(*stream).writeStringLeft(obsResWidth, "SrY"); // rotation around Y axis
+		(*stream).writeStringLeft(headerWidth, "SRY (CC)"); // precision of the rotation around Y axis
 		(*stream).writeDouble(obsResWidth, angleResPrecision, tstn->rotY->getEstimatedPrecision().getSignedCCValue());
 	}
 	else
-		(*stream).writeStringLeft(obsWidth, "FALSE");
+		(*stream).writeStringLeft(obsResWidth, "FALSE");
 
-	(*stream) << endl;
+	(*stream) << '\n';
 }
 
 void TTSTNWriter::writeV0Header(std::shared_ptr<TTSTN::TROM> rom)
@@ -676,21 +682,21 @@ void TTSTNWriter::writeV0Header(std::shared_ptr<TTSTN::TROM> rom)
 	int obsResWidth = getObsResWidth();
 	int anglePrecision = getAnglePrecision();
 	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
+	int headerWidth = 10;
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
-	//////////////////////////////////////
 	// first line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "ROM");
 	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeStringLeft(obsWidth, "ACST (GON)"); // Constant orientation
+	(*stream).writeStringLeft(headerWidth, "ACST (GON)"); // Constant orientation
 	(*stream).writeDouble(obsWidth, anglePrecision, rom->acst.getGonsValue());
-	(*stream).writeStringLeft(obsWidth, "V0 (GON)"); // V0 calculated angle
+	(*stream).writeStringLeft(headerWidth, "V0 (GON)"); // V0 calculated angle
 	(*stream).writeDouble(obsWidth, anglePrecision, rom->v0->getEstimatedValue().getGonsValue());
-	(*stream).writeStringLeft(obsResWidth, "SV0 (CC)"); // V0 calculated angle
-	(*stream).writeDouble(obsResWidth, angleResPrecision, rom->v0->getEstimatedPrecision().getSignedCCValue());
+	(*stream).writeStringLeft(headerWidth, "SV0 (CC)"); // precision of the V0 calculated angle
+	(*stream).writeDouble(obsWidth, angleResPrecision, rom->v0->getEstimatedPrecision().getSignedCCValue());
 
-	(*stream) << endl << endl;
+	(*stream) << '\n' << '\n';
 }
 
 //------------------ Result data---------------------------------------------------------------------------

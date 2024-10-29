@@ -78,6 +78,14 @@ void TKeyTSTN::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		instrument.instrHeight = TLength(opts.getParamR("IH", instrument.instrHeight));
 		instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", instrument.sigmaInstrHeight));
 	}
+	else
+	{
+		if (opts.has("IH") || opts.has("IHSE"))
+			proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING << "Line " + std::to_string(line) + " : IH/IHSE flags are ignored when the instrument height is a free parameter!";
+
+		// To avoid taking the default instrument value, the precision on the instrument height should be set to 0.
+		instrument.sigmaInstrHeight = TLength(0);
+	}
 
 	tstn->rot3D = opts.has("ROT3D");
 
@@ -882,6 +890,14 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		{
 			level.instrument.instrHeight = TLength(opts.getParamR("IH", level.instrument.instrHeight));
 			level.instrument.sigmaInstrHeight = TLength(opts.getParamRmm2m("IHSE", level.instrument.sigmaInstrHeight));
+		}
+		else
+		{
+			if (opts.has("IH") || opts.has("IHSE"))
+				proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING << "Line " + std::to_string(line) + " : IH/IHSE flags are ignored when the instrument height is a free parameter!";
+
+			// To avoid taking the default instrument value, the precision on the instrument height should be set to 0.
+			level.instrument.sigmaInstrHeight = TLength(0);
 		}
 
 		proj.getCurrentNode().measurements.fLEVEL.emplace_back(level); // add new measurement
