@@ -12,8 +12,8 @@
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatrices.h"
 #include "TLSInputMatricesFiller.h"
-#include "TXYH2CCS.h"
 #include "TSparseMatrix.h"
+#include "TXYH2CCS.h"
 
 TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
 {
@@ -1297,7 +1297,6 @@ void TDataAnalyzer::assignEOIndices()
 			fData.fUEOIndices.EIndex += nObservations;
 		}
 	}
-
 }
 
 void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)

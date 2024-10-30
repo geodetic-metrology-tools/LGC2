@@ -5,7 +5,6 @@
 
 #include "TLSResultsMatrices.h"
 
-
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData *fData) : fDataSet(fData), fLastIteration(false)
 {
 }
@@ -750,9 +749,8 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices 
 		point.setCovarianceMatrix(fullCovar);
 		if (point.hasPointSigma())
 		{
-			pointSigmaData& ptSigma = point.getPointSigmaData();
+			pointSigmaData &ptSigma = point.getPointSigmaData();
 			ptSigma.fRotCovar = ptSigma.fRotMat * fullCovar * ptSigma.fRotMat.transpose();
-
 		}
 	}
 }

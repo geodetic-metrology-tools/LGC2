@@ -1286,7 +1286,7 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 
 	(*stream).writeString(obsWidth, "(CC)");
 
-		(*stream).writeString(obsResWidth, "");
+	(*stream).writeString(obsResWidth, "");
 
 	// Write the standard deviation after calculation if rotation is variable and the status (fixed or variable)
 	if (!frameDef.isRotationFixed(rot))
@@ -1724,7 +1724,7 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 
 	(*stream).writeString(coordResWidth, "DX "); // X offset
 	(*stream).writeString(coordResWidth, "DY "); // Y offset
-	(*stream).writeString(coordResWidth, "DZ "); // Z offset	
+	(*stream).writeString(coordResWidth, "DZ "); // Z offset
 	(*stream) << endl;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -1862,18 +1862,13 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
 		// Write point's estimated precision after calculation
-		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, 
-			pt->getXEstPrecision(),
-			pt->getYEstPrecision(), 
-			pt->getZEstPrecision(), 
-			""); /*sigma*/
+		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, pt->getXEstPrecision(),
+			pt->getYEstPrecision(), pt->getZEstPrecision(), ""); /*sigma*/
 
 		// Write DX, DY, DZ difference between provisional and estimated value
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(estimatedValue.getX() - provisionalValue.getX()), 
-			TLength(estimatedValue.getY() - provisionalValue.getY()),
-			TLength(estimatedValue.getZ() - provisionalValue.getZ()), 
-			""); /*offset*/
+			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
+			TLength(estimatedValue.getZ() - provisionalValue.getZ()), ""); /*offset*/
 	}
 	else
 	{ // It is ROOT
@@ -1901,17 +1896,12 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		}
 
 		// status = vxyz to write sigma because with CALA, no sigma are writen
-		converter.writeCoordinateParam(status, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(sqrtq(covarianceMatrix(0, 0))), 
-			TLength(sqrtq(covarianceMatrix(1, 1))), 
-			TLength(sqrtq(covarianceMatrix(2, 2))), 
-			""); /*sigma convert in root*/
+		converter.writeCoordinateParam(status, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, TLength(sqrtq(covarianceMatrix(0, 0))),
+			TLength(sqrtq(covarianceMatrix(1, 1))), TLength(sqrtq(covarianceMatrix(2, 2))), ""); /*sigma convert in root*/
 
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(estimatedValue.getX() - provisionalValue.getX()), 
-			TLength(estimatedValue.getY() - provisionalValue.getY()),
-			TLength(estimatedValue.getZ() - provisionalValue.getZ()), 
-			""); /*offset*/
+			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
+			TLength(estimatedValue.getZ() - provisionalValue.getZ()), ""); /*offset*/
 	}
 
 	(*stream) << endl; // end line

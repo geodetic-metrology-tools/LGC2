@@ -208,7 +208,6 @@ void TResultsFileWriter::writeDataSummary()
 	int fNumVyPoint = fProjectData->getPointsDimension(TSpatialStatus::kVy);
 	int fNumVzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVz);
 
-
 	const LGCAdjustablePointCollection &pointCollection = fProjectData->getPoints();
 	int nPointsWithSigma = std::count_if(pointCollection.begin(), pointCollection.end(), [](const auto &pt) { return pt.hasPointSigma(); });
 

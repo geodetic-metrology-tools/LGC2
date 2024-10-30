@@ -54,7 +54,6 @@ ez 0 0 1 1 1 1
 *END
 )";
 
-
 char const *const computationHeightFixed = R"(*TITR
 % to test if H is really fixed when using the sz=0 method instead of vxy
 *RS2K
@@ -72,7 +71,7 @@ P1 1000 2000 3000 1 1 1
 *END
 )";
 
-char const *const computationAnglesDefinition= R"(*TITR
+char const *const computationAnglesDefinition = R"(*TITR
 % check if the point with sigma works correctly with angles with respect to the definition in https://gitlab.cern.ch/apc/susofts/interfaces/scripts/PyEllipsoidRotation
 *OLOC
 *APRI
@@ -95,5 +94,5 @@ pointWithSigmaInRSTPerturbed 1 2 3 7 8 9
 *END
 )";
 
-} // namespace pointWithSigmaTest
+} // namespace pointWithSigma
 #endif

@@ -59,7 +59,7 @@ void object::test<1>()
 	// point with apriCov matrix (diagonal matrix)
 	pr.parse(tokenizefileString("P7 1 2 3 APRICOV DIAG(1,4,9)"), true, -1);
 
-	// all different point types 
+	// all different point types
 	pr.parse(tokenizefileString("P_CALA 1 2 3 SX 0 SY 0 SZ 0"), true, -1);
 	pr.parse(tokenizefileString("P_VX 1 2 3 SY 0 SZ 0"), true, -1);
 	pr.parse(tokenizefileString("P_VY 1 2 3 SX 0 SZ 0"), true, -1);
@@ -88,8 +88,8 @@ void object::test<1>()
 	pointSigmaData P2Data = P2.getPointSigmaData();
 	ensure_equals("P2 sigmas are not set correctly.", P2Data.fSigmas, MM2M * Eigen::Vector3d(1, 0, 3));
 	ensure_equals("y coordinate of P2 should be fixed", P2.isCoordinateFixed(1), true);
-//	ensure_equals("There should be 2 sigma-observations for P2", P2Data.obsDim, 2);
-	//ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P2Data.cstrDim, 0);
+	//	ensure_equals("There should be 2 sigma-observations for P2", P2Data.obsDim, 2);
+	// ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P2Data.cstrDim, 0);
 
 	const LGCAdjustablePoint &P3 = ptCollection.getObject("P3");
 	pointSigmaData P3Data = P3.getPointSigmaData();
@@ -107,7 +107,7 @@ void object::test<1>()
 	const LGCAdjustablePoint &P5 = ptCollection.getObject("P5");
 	pointSigmaData P5Data = P5.getPointSigmaData();
 	ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P5Data.firstCIdx, 0);
-	//ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P5Data.cstrDim, 1);
+	// ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P5Data.cstrDim, 1);
 	const LGCAdjustablePoint &P6 = ptCollection.getObject("P6");
 	pointSigmaData P6Data = P6.getPointSigmaData();
 	Eigen::Matrix3d expectedCovMat;
@@ -123,7 +123,7 @@ void object::test<1>()
 	ensure_equals("P7 covar matrix not set correctly.", P7Data.fApriCovMat.isApprox(expectedCovMat), true);
 
 	// check the point type definitions
-	auto freedomSignature = [](auto  obj) -> std::array<bool, 3> { return {obj.isCoordinateFixed(0), obj.isCoordinateFixed(1), obj.isCoordinateFixed(2)}; };
+	auto freedomSignature = [](auto obj) -> std::array<bool, 3> { return {obj.isCoordinateFixed(0), obj.isCoordinateFixed(1), obj.isCoordinateFixed(2)}; };
 	ensure_equals("Fixed coordinate signature not read correctly.", freedomSignature(ptCollection.getObject("P_CALA")) == std::array<bool, 3>{true, true, true}, true);
 	ensure_equals("Fixed coordinate signature not read correctly.", freedomSignature(ptCollection.getObject("P_VX")) == std::array<bool, 3>{false, true, true}, true);
 	ensure_equals("Fixed coordinate signature not read correctly.", freedomSignature(ptCollection.getObject("P_VY")) == std::array<bool, 3>{true, false, true}, true);
@@ -131,7 +131,7 @@ void object::test<1>()
 	ensure_equals("Fixed coordinate signature not read correctly.", freedomSignature(ptCollection.getObject("P_VXY")) == std::array<bool, 3>{false, false, true}, true);
 	ensure_equals("Fixed coordinate signature not read correctly.", freedomSignature(ptCollection.getObject("P_VXZ")) == std::array<bool, 3>{false, true, false}, true);
 	ensure_equals("Fixed coordinate signature not read correctly.", freedomSignature(ptCollection.getObject("P_VYZ")) == std::array<bool, 3>{true, false, false}, true);
-	
+
 	// the following setups should fail
 	// negative sigma
 
@@ -150,8 +150,6 @@ void object::test<1>()
 	// point with sigma should only be allowed in a *POIN section, not in *VZ etc..
 	TKeyVZ prVZ(*projTest);
 	ensure_THROW(prVZ.parse(tokenizefileString("P15 1 2 3 SX 1 SY 1 SZ 3"), true, -1), std::runtime_error);
-
-
 }
 
 template<>
@@ -161,32 +159,32 @@ void object::test<2>()
 	set_test_name("Testing calculations with points with sigma.");
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/test.txt");
 	projTest->getFileLogger().writeReportHeader("LGC output file");
-	
+
 	std::stringstream infiler(pointWithSigma::computation1);
-	
+
 	bool succesReading = reader.read(infiler);
 	ensure_equals("Reading file successful", succesReading, true);
 	TLGCCalculation calcul(projTest);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 	Behavior succesCalc = calcul.computeResults(fileWriter);
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-	const LGCAdjustablePointCollection& ptCollection = projTest->getPoints();
+	const LGCAdjustablePointCollection &ptCollection = projTest->getPoints();
 	LGCAdjustablePoint P1 = ptCollection.getObject("P1");
-	LGCAdjustablePoint P1_aux= ptCollection.getObject("P1_aux");
+	LGCAdjustablePoint P1_aux = ptCollection.getObject("P1_aux");
 	// covariance matrices in root have to be identical, the frame setup simulates the rotated coordinate system defined by the point sigma angles of p1
 	ensure_equals("P1 and P1_aux need to have equal covariance matrices in ROOT.", P1.getCovarianceMatrix().isApprox(P1_aux.getCovarianceMatrixInRoot()), true);
 
-	LGCAdjustablePoint independent_point= ptCollection.getObject("independentPoint");
+	LGCAdjustablePoint independent_point = ptCollection.getObject("independentPoint");
 	Eigen::Matrix3d expectedCovMat;
 	expectedCovMat << 1, 0, 0, 0, 4, 0, 0, 0, 9;
 	expectedCovMat *= pow2(MM2M);
 	ensure_equals("covariance matrix of point is wrong", independent_point.getCovarianceMatrix().isApprox(expectedCovMat), true);
 
 	// test if the xParellel point moved
-	LGCAdjustablePoint xParallel= ptCollection.getObject("xParallel");
+	LGCAdjustablePoint xParallel = ptCollection.getObject("xParallel");
 	Eigen::Vector3d expectedPosXPar(0, 1, 1);
 	ensure_equals("point should be at expected Position.", expectedPosXPar.isApprox(xParallel.getEstimatedValue().toRealVector()), true);
-	LGCAdjustablePoint xLine= ptCollection.getObject("xLine");
+	LGCAdjustablePoint xLine = ptCollection.getObject("xLine");
 	Eigen::Vector3d expectedPosXLine(0.5, 0.5, 0);
 	ensure_equals("point should be at expected Position.", expectedPosXLine.isApprox(xLine.getEstimatedValue().toRealVector()), true);
 
@@ -200,10 +198,9 @@ void object::test<2>()
 
 	LGCAdjustablePoint P3 = ptCollection.getObject("P3");
 	Eigen::Matrix3d expectedApriCovP3;
-	expectedApriCovP3<<10,2,3,2,40,2,3,2,30;
+	expectedApriCovP3 << 10, 2, 3, 2, 40, 2, 3, 2, 30;
 	ensure_equals("apriori covariance matrix not set correctly.", (expectedApriCovP3 - P3.getPointSigmaData().fApriCovMat).norm(), 0.0);
 	ensure_equals("a-posteriori covariance matrix has to match a-priori covariance matrix for P3", P3.getCovarianceMatrix().isApprox(P3.getPointSigmaData().fApriCovMat), true);
-
 }
 
 template<>
@@ -253,7 +250,7 @@ void object::test<4>()
 	// get teh adjusted points and compare their estimated covariances
 	LGCAdjustablePoint pointWithSigmaInRoot = ptCollection.getObject("pointWithSigmaInRoot");
 	LGCAdjustablePoint pointWithSigmaInRootPerturbed = ptCollection.getObject("pointWithSigmaInRootPerturbed");
-	LGCAdjustablePoint pointWithSigmaInRST= ptCollection.getObject("pointWithSigmaInRoot");
+	LGCAdjustablePoint pointWithSigmaInRST = ptCollection.getObject("pointWithSigmaInRoot");
 	LGCAdjustablePoint pointWithSigmaInRSTPerturbed = ptCollection.getObject("pointWithSigmaInRootPerturbed");
 	ensure_equals("Covariance matrices in root have to be identical", pointWithSigmaInRoot.getCovarianceMatrix().isApprox(pointWithSigmaInRST.getCovarianceMatrixInRoot()), true);
 	ensure_equals("Covariance matrices in root have to be identical",

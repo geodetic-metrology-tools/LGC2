@@ -67,7 +67,6 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 	// remember the line of the frame definition
 	adjTrafo.getLine() = line;
 
-
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
 
@@ -167,7 +166,6 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 	pt.line = line;
 	pt.setActive(activeLine);
 
-
 	if (tokens.at(0).size() > proj.getConfig().pointNameWidth)
 		proj.getConfig().pointNameWidth = (int)tokens.at(0).size();
 
@@ -208,7 +206,7 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		throw std::runtime_error("Specified standard deviation is too small, consider to set it to 0 to fix the variable.");
 	}
 
-	//check if a apriori covariance matrix is given
+	// check if a apriori covariance matrix is given
 	if (opts.has("APRICOV"))
 	{
 		if (hasSigmas)
@@ -236,7 +234,7 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		// A 1 2 3 SZ 1
 		// which would be overriden to a point free in x,y,z with a weight on z
 		// this will become obsolete when *VZ will be replaced by A 1 2 3 SX 0 SY 0 and so on..
-		if (pt.getNumUnkn()!=3)
+		if (pt.getNumUnkn() != 3)
 		{
 			throw std::runtime_error("Attaching a precision in a point definition is only possible in *POIN section. Point " + pt.getName());
 		}
@@ -273,7 +271,6 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 			pt.updateFixedState(isZero(ptSigma.fSigmas[0]), isZero(ptSigma.fSigmas[1]), isZero(ptSigma.fSigmas[2]));
 		}
 	}
-
 
 	// If last token starts with a comment chararcter, store it
 	const char fOfLastToken = tokens.back().at(0);

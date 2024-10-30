@@ -2167,7 +2167,7 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 	return LIBRPointGroupContrib{resultCOG, resultMOM, resultScale};
 }
 
-pointSigmaContrib TContributionsGenerator::getPointSigmaContrib(LGCAdjustablePoint& pt, const TLGCData *data)
+pointSigmaContrib TContributionsGenerator::getPointSigmaContrib(LGCAdjustablePoint &pt, const TLGCData *data)
 {
 	// model is:
 	// min |weightMat*V|^2

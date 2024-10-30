@@ -368,7 +368,6 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 		(*stream) << sep << fPoint.eolcomment << "\n";
 	};
 
-
 	// write PDOR if we are in ROOT & PDOR is used
 	if (frameIt->get()->isROOTNode())
 	{
