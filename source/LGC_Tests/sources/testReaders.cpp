@@ -229,21 +229,6 @@ void object::test<3>()
 	// ensure_equals(pt2.hdrcomment, "%Pc1 1 2 3\n%Pc2 1 2 3");
 	ensure("Lock state must match", pt2.isCoordinateFixed(1));
 	ensure_equals(proj.getPoints().numObjects(), (size_t)5);
-
-	// Testing POIN point definition
-	TKeyPOIN poin1(proj);
-	// Incorrect definition, all 3 standard deviations should be assigned in POIN used. Just warning is produced, point is defined, but sigmas are not assigned.
-	poin1.parse(tokenizefileString("POIN1 1 2 3 SX 0.1 SY 0.2"), true, -1);
-	ensure("Point should be defined", proj.getPoints().doesObjectExist("POIN1"));
-	ensure_equals("Standard deviations should not be assigned.", proj.getPoints().getObject("POIN1").hasStandDeviations(), false);
-
-	// Correct definition
-	poin1.parse(tokenizefileString("POIN2 1 2 3 SX 0.1 SY 0.2 SZ 0.01"), true, -1);
-	ensure_equals("Standard deviations should be assigned", proj.getPoints().getObject("POIN2").hasStandDeviations(), true);
-
-	ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(0), 0.1 * MM2M); // Values are stored in metres
-	ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(1), 0.2 * MM2M); // Values are stored in metres
-	ensure_equals("POIN standard deviations should match", proj.getPoints().getObject("POIN2").getStandDev(2), 0.01 * MM2M); // Values are stored in metres
 }
 
 template<>
@@ -368,28 +353,28 @@ void object::test<4>()
 	ensure_equals(dt2.sigmaTargetHt, 17 * MM2M);
 	// ensure_equals(dt2.distCorrectionAdjustable->getProvisionalValue(), 13);
 
-		//
-		// Leveling with staffs
-		TKeyLEVEL m3(proj);
-        m3.parse(tokenizefileString("*LEVEL LI1 ST1 0.0 0.0 0 100"), true, -1);
-		//staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt    
-		m3.parse(tokenizefileString( "ST1 1 2 3 4 5 6"), true, -1);
-		m3.parse(tokenizefileString( "ST2 1 2 3 4 5 6"), true, -1);
-		const TInstrumentData::TLEVEL& ls1(instr.getDevice(instr.fLEVEL, "LI1"));			
-		ensure_equals(ls1.ID, "LI1");
-		ensure_equals(ls1.defStaffID, "ST1");
-		ensure_equals(ls1.collAngleUnknown, false);
-		// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
-		ensure_equals(ls1.collAngleValue, 100 * GON2RAD); //in CC
-		// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
-		const TInstrumentData::TLEVEL::TTarget& lt1(instr.getDevice(ls1.targets, "ST1"));
-		ensure_equals(lt1.ID, "ST1"); 
-		ensure_equals(lt1.sigmaD, 1 * MM2M); 
-		ensure_equals(lt1.ppmD, 2 * MM2M); 
-		ensure_equals(lt1.distCorrectionValue, 3); 
-		ensure_equals(lt1.sigmaDCorr, 4 * MM2M); 
-		ensure_equals(lt1.staffHt, 5); 
-		ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
+	//
+	// Leveling with staffs
+	TKeyLEVEL m3(proj);
+	m3.parse(tokenizefileString("*LEVEL LI1 ST1 0.0 0.0 0 100"), true, -1);
+	// staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt
+	m3.parse(tokenizefileString("ST1 1 2 3 4 5 6"), true, -1);
+	m3.parse(tokenizefileString("ST2 1 2 3 4 5 6"), true, -1);
+	const TInstrumentData::TLEVEL &ls1(instr.getDevice(instr.fLEVEL, "LI1"));
+	ensure_equals(ls1.ID, "LI1");
+	ensure_equals(ls1.defStaffID, "ST1");
+	ensure_equals(ls1.collAngleUnknown, false);
+	// ensure_equals(ls1.collAngleAdjustable->isFixed(), true);
+	ensure_equals(ls1.collAngleValue, 100 * GON2RAD); // in CC
+	// ensure_equals(ls1.collAngleAdjustable->getEstimatedValue().getDegreesValue(), 90);
+	const TInstrumentData::TLEVEL::TTarget &lt1(instr.getDevice(ls1.targets, "ST1"));
+	ensure_equals(lt1.ID, "ST1");
+	ensure_equals(lt1.sigmaD, 1 * MM2M);
+	ensure_equals(lt1.ppmD, 2 * MM2M);
+	ensure_equals(lt1.distCorrectionValue, 3);
+	ensure_equals(lt1.sigmaDCorr, 4 * MM2M);
+	ensure_equals(lt1.staffHt, 5);
+	ensure_equals(lt1.sigmaStaffHt, 6 * MM2M);
 
 	//
 	// Scales
@@ -762,25 +747,6 @@ void object::test<5>()
 	ensure_equals("SY should match", obsXYZM.getYObservedStDev().getMMetresValue(), 0.5);
 	ensure_equals("SZ should match", obsXYZM.getZObservedStDev().getMMetresValue(), 0.8);
 	ensure_equals("Observation ID should match", obsXYZM.obsID, "3Dobs1");
-
-	////////////////////////////////////
-	// Testing FRAME measurements
-	////////////////////////////////////
-	TLGCData measProj;
-	const std::string line = "*FRAME fff1  1 2 3 4 5 6 1 STX 0.1";
-	const std::string lineClose = "*ENDFRAME";
-	TKeyFRAME fr(measProj);
-	TKeyENDFRAME endFr(measProj);
-	fr.parse(tokenizefileString(line), true, 1);
-	endFr.parse(tokenizefileString(lineClose), true, 2);
-	TDataTreeIterator pos = measProj.getCurrentPosition()++;
-	TDataTreeIterator currentNodeIter = measProj.getTree().begin();
-	++currentNodeIter;
-
-	ensure_equals("One FRAME measurement", currentNodeIter->get()->frame.getTranslationStandDev(0).getMMetresValue(), 0.1);
-	ensure_THROW(currentNodeIter->get()->frame.getTranslationStandDev(1), std::runtime_error);
-
-	ensure_not("Scale standard deviation not assigned", currentNodeIter->get()->frame.getScaleStandDev() * M2MM == 5);
 }
 
 } // namespace tut

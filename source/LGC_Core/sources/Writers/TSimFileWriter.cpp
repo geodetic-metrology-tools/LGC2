@@ -284,35 +284,21 @@ void TSimFileWriter::writeFrameHeader(TDataTreeIterator frameIt)
 				  << frameIt->get()->frame.getProvRotation(0).getGonsValue() << sep << frameIt->get()->frame.getProvRotation(1).getGonsValue() << sep
 				  << frameIt->get()->frame.getProvRotation(2).getGonsValue() << sep << frameIt->get()->frame.getProvScale() << sep;
 
-		if (frameIt->get()->frame.hasTranslStandDev(0))
-			(*stream) << "STX" << sep << frameIt->get()->frame.getTranslationStandDev(0).getMMetresValue() << sep;
-		else if (!frameIt->get()->frame.isTranslationFixed(0))
+		if (!frameIt->get()->frame.isTranslationFixed(0))
 			(*stream) << "TX" << sep;
-		if (frameIt->get()->frame.hasTranslStandDev(1))
-			(*stream) << "STY" << sep << frameIt->get()->frame.getTranslationStandDev(1).getMMetresValue() << sep;
-		else if (!frameIt->get()->frame.isTranslationFixed(1))
+		if (!frameIt->get()->frame.isTranslationFixed(1))
 			(*stream) << "TY" << sep;
-		if (frameIt->get()->frame.hasTranslStandDev(2))
-			(*stream) << "STZ" << sep << frameIt->get()->frame.getTranslationStandDev(2).getMMetresValue() << sep;
-		else if (!frameIt->get()->frame.isTranslationFixed(2))
+		if (!frameIt->get()->frame.isTranslationFixed(2))
 			(*stream) << "TZ" << sep;
 
-		if (frameIt->get()->frame.hasRotationStandDev(0))
-			(*stream) << "SRX" << sep << frameIt->get()->frame.getRotationStandDev(0).getSignedCCValue() << sep;
-		else if (!frameIt->get()->frame.isRotationFixed(0))
+		if (!frameIt->get()->frame.isRotationFixed(0))
 			(*stream) << "RX" << sep;
-		if (frameIt->get()->frame.hasRotationStandDev(1))
-			(*stream) << "SRY" << sep << frameIt->get()->frame.getRotationStandDev(1).getSignedCCValue() << sep;
-		else if (!frameIt->get()->frame.isRotationFixed(1))
+		if (!frameIt->get()->frame.isRotationFixed(1))
 			(*stream) << "RY" << sep;
-		if (frameIt->get()->frame.hasRotationStandDev(2))
-			(*stream) << "SRZ" << sep << frameIt->get()->frame.getRotationStandDev(2).getSignedCCValue() << sep;
-		else if (!frameIt->get()->frame.isRotationFixed(2))
+		if (!frameIt->get()->frame.isRotationFixed(2))
 			(*stream) << "RZ" << sep;
 
-		if (frameIt->get()->frame.hasScaleStandDev())
-			(*stream) << "SSCL" << sep << frameIt->get()->frame.getScaleStandDev() * M2MM << sep;
-		else if (!frameIt->get()->frame.isScaleFixed())
+		if (!frameIt->get()->frame.isScaleFixed())
 			(*stream) << "SCL" << sep;
 
 		// check if it is part of a slave group
@@ -336,21 +322,50 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 	std::string sep = stream->getSeparator();
 	stream->setPrecisionFormat(data->getConfig().outPrecision.digits);
 
-	// lambda function to write the point coordinate
-	auto writeXYZorH = [&](LGCAdjustablePoint const &fPoint) {
+	// lambda function to write the provisional point coordinate and point sigma data
+	auto writeXYZorHAndSigma = [&](LGCAdjustablePoint const &fPoint) {
 		if (!fPoint.isActive())
 			(*stream) << DEACTIVATION_CHAR;
-
+		TLength zOrH;
 		if ((data->getConfig().referential == 106 || data->getConfig().referential == 107 || data->getConfig().referential == 104) && frameIt->get()->isROOTNode())
-		{
-			(*stream) << fPoint.getName() << sep << fPoint.getProvisionalValue().getX() << sep << fPoint.getProvisionalValue().getY() << sep
-					  << fPoint.getProvisionalHeightInRoot() << sep << fPoint.eolcomment << endl;
-		}
+			zOrH = fPoint.getProvisionalHeightInRoot();
 		else
+			zOrH = fPoint.getProvisionalValue().getZ();
+		TLength x = fPoint.getProvisionalValue().getX();
+		TLength y = fPoint.getProvisionalValue().getY();
+		(*stream) << fPoint.getName() << sep << x << sep << y << sep << zOrH << sep;
+		if (fPoint.hasPointSigma())
 		{
-			(*stream) << fPoint.getName() << sep << fPoint.getProvisionalValue().getX() << sep << fPoint.getProvisionalValue().getY() << sep
-					  << fPoint.getProvisionalValue().getZ() << sep << fPoint.eolcomment << endl;
+			const pointSigmaData &ptData = fPoint.getPointSigmaData();
+			if (ptData.fHasAngle)
+			{
+				for (int j = 0; j < ptData.fAngles.size(); j++)
+					(*stream) << sep << ptData.fAngleNames[j] << sep << ptData.fAngles[j] * RAD2GON;
+			}
+			if (isfinite(ptData.fSigmas[0]))
+				(*stream) << sep << "SX" << sep << ptData.fSigmas[0] * M2MM;
+			if (isfinite(ptData.fSigmas[1]))
+				(*stream) << sep << "SY" << sep << ptData.fSigmas[1] * M2MM;
+			if (isfinite(ptData.fSigmas[2]))
+				(*stream) << sep << "SZ" << sep << ptData.fSigmas[2] * M2MM;
+			if (ptData.fHasApriCovMat)
+			{
+				(*stream) << sep << "APRICOV MAT(";
+				for (int row = 0; row < 3; ++row)
+				{
+					for (int col = 0; col < 3; ++col)
+					{
+						if (row != 0 || col != 0)
+						{
+							(*stream) << ",";
+						}
+						(*stream) << ptData.fApriCovMat(row, col);
+					}
+				}
+				(*stream) << ")";
+			}
 		}
+		(*stream) << sep << fPoint.eolcomment << "\n";
 	};
 
 	// write PDOR if we are in ROOT & PDOR is used
@@ -420,7 +435,7 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 					break;
 				}
 			}
-			writeXYZorH(point);
+			writeXYZorHAndSigma(point);
 			// copy current point status to point type for checking whether the next point has same type
 			previousPointType = currentPointType;
 		}

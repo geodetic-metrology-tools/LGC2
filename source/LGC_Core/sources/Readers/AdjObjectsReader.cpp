@@ -26,19 +26,19 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
 
 	// If flag is used, change state of appropriate bit set and make the element of transl. rotation or scale variable (set 0)
-	if (opts.has("TX") || opts.has("STX"))
+	if (opts.has("TX"))
 		translations.set(0, 0);
-	if (opts.has("TY") || opts.has("STY"))
+	if (opts.has("TY"))
 		translations.set(1, 0);
-	if (opts.has("TZ") || opts.has("STZ"))
+	if (opts.has("TZ"))
 		translations.set(2, 0);
-	if (opts.has("RX") || opts.has("SRX"))
+	if (opts.has("RX"))
 		rotations.set(0, 0);
-	if (opts.has("RY") || opts.has("SRY"))
+	if (opts.has("RY"))
 		rotations.set(1, 0);
-	if (opts.has("RZ") || opts.has("SRZ"))
+	if (opts.has("RZ"))
 		rotations.set(2, 0);
-	if (opts.has("SCL") || opts.has("SSCL"))
+	if (opts.has("SCL"))
 		scale.set(0, 0);
 
 	const auto gon(TAngle::kGons);
@@ -67,27 +67,6 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 	// remember the line of the frame definition
 	adjTrafo.getLine() = line;
 
-	// If at least one of these options is used, create FRAME measurement
-	if (opts.has("STX") || opts.has("STY") || opts.has("STZ") || opts.has("SRX") || opts.has("SRY") || opts.has("SRZ") || opts.has("SSCL"))
-	{
-		// FRK: Voir units MM ou M ?????
-
-		if (opts.has("STX"))
-			adjTrafo.setTranslationStandDev(X, TLength(opts.getParamR("STX"), TLength::EUnits::kMillimetres)); // Value given in mili-metres, but stored in metres
-		if (opts.has("STY"))
-			adjTrafo.setTranslationStandDev(Y, TLength(opts.getParamR("STY"), TLength::EUnits::kMillimetres)); // Value given in mili-metres, but stored in metres
-		if (opts.has("STZ"))
-			adjTrafo.setTranslationStandDev(Z, TLength(opts.getParamR("STZ"), TLength::EUnits::kMillimetres)); // Value given in mili-metres, but stored in metres
-		if (opts.has("SRX"))
-			adjTrafo.setRotationStandDev(X, TAngle(opts.getParamR("SRX"), TAngle::kCCs)); // Value given in cc, stored in angle object
-		if (opts.has("SRY"))
-			adjTrafo.setRotationStandDev(Y, TAngle(opts.getParamR("SRY"), TAngle::kCCs)); // Value given in cc, stored in angle object
-		if (opts.has("SRZ"))
-			adjTrafo.setRotationStandDev(Z, TAngle(opts.getParamR("SRZ"), TAngle::kCCs)); // Value given in cc, stored in angle object
-		if (opts.has("SSCL"))
-			adjTrafo.setScaleStandDev(opts.getParamR("SSCL") * MM2M);
-	}
-
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
 
@@ -113,21 +92,6 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 			proj.getSlaveGroups().push_back(newGroup);
 		}
 	}
-
-	if (opts.has("RX") && opts.has("SRX"))
-		throw std::runtime_error("Either \"RX\" flag or \"SRX\" option used, both are not allowed");
-	if (opts.has("RY") && opts.has("SRY"))
-		throw std::runtime_error("Either \"RY\" flag or \"SRY\" option used, both are not allowed");
-	if (opts.has("RZ") && opts.has("SRZ"))
-		throw std::runtime_error("Either \"RZ\" flag or \"SRZ\" option used, both are not allowed");
-	if (opts.has("TX") && opts.has("STX"))
-		throw std::runtime_error("Either \"TX\" flag or \"TRX\" option used, both are not allowed");
-	if (opts.has("TY") && opts.has("STY"))
-		throw std::runtime_error("Either \"TY\" flag or \"TRY\" option used, both are not allowed");
-	if (opts.has("TZ") && opts.has("STZ"))
-		throw std::runtime_error("Either \"TZ\" flag or \"TRZ\" option used, both are not allowed");
-	if (opts.has("SCL") && opts.has("SSCL"))
-		throw std::runtime_error("Either \"SCL\" flag or \"SSCL\" option used, both are not allowed");
 }
 
 ///////////////////////////////////////////////////////
@@ -207,26 +171,105 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 
 	TOptionHelper opts(tokens.cbegin(), tokens.cend());
 
-	// If point defined using POIN
-	if (key == "POIN")
+	// check if this point comes with weights and modify the pt object accordingly
+	pointSigmaData &ptSigma = pt.getPointSigmaData();
+
+	// check for values of bearing, roll, slope, deflection (bear,roll,slope,half defl)
+	for (int j = 0; j < ptSigma.fAngles.size(); j++)
+		ptSigma.fAngles[j].setGonsValue(opts.getParamR(ptSigma.fAngleNames[j]));
+
+	ptSigma.fHasAngle = (!isZero(ptSigma.fAngles[0]) || !isZero(ptSigma.fAngles[1]) || !isZero(ptSigma.fAngles[2]) || !isZero(ptSigma.fAngles[3]));
+
+	// create the rotation matrix in case some angles are defined, if no angle is defined the rotation matrix is the identity
+	if (ptSigma.fHasAngle)
 	{
-		// If all 3 standard deviations are listed => store standard deviations
-		if (opts.has("SX") && opts.has("SY") && opts.has("SZ"))
-			pt.setStandardDeviations(opts.getParamR("SX") * MM2M, opts.getParamR("SY") * MM2M, opts.getParamR("SZ") * MM2M); // Standard deviations given in mili-meters, butstored in meters
+		ptSigma.calcAndSetRotMat();
+	}
 
-		// NB. June 2017:
-		// With the new observation OBSXYZ the standard deviations
-		// of POIN are not used any longer (for now).
-		// -------------------------------------------------------
-		// else if(!pt.getFrameTreePosition().node->data->isROOTNode())
-		//     //POIN is not in a ROOT node and standard deviations are not provided => then it is an error
-		//     proj.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << "Line " + std::to_string(line) + +" : point is defined using POIN in a sub-frame. Standard deviations are needed!";
-		// -------------------------------------------------------
+	// values are given in mm
+	bool hasSigmas = false;
+	std::vector<std::string> stdDevNames({"SX", "SY", "SZ"});
+	for (int idx = 0; idx < stdDevNames.size(); ++idx)
+	{
+		if (opts.has(stdDevNames[idx]))
+		{
+			ptSigma.fSigmas[idx] = MM2M * opts.getParamR(stdDevNames[idx]);
+			hasSigmas = true;
+		}
+	}
+	if ((ptSigma.fSigmas.array() < 0).any())
+	{
+		throw std::runtime_error("Standard deviation cannot be negative.");
+	}
+	if ((ptSigma.fSigmas.array() < nullLimit && ptSigma.fSigmas.array() > 0.0).any())
+	{
+		throw std::runtime_error("Specified standard deviation is too small, consider to set it to 0 to fix the variable.");
+	}
 
-		else if (opts.has("SX") || opts.has("SY") || opts.has("SZ"))
-			// If only some of these options are set => standard deviations are not stored and warning is produced => warning
-			proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING
-								 << "Line " + std::to_string(line) + " : point is defined using POIN, but not all standard errors specified (SX,SY,SZ)!";
+	// check if a apriori covariance matrix is given
+	if (opts.has("APRICOV"))
+	{
+		if (hasSigmas)
+			throw std::runtime_error("Either a point apriori covariance is provided OR sigmas are provided.");
+		if (ptSigma.fHasAngle)
+			// in theory we could apply the covariance matrix to the rotated system but to avoid confusion we do not allow it
+			throw std::runtime_error("A-priori covariance can't be combined with rotation angles.");
+		std::string test = opts.getParam("APRICOV");
+		Eigen::Matrix3d apriCovMat = opts.commaSeparatedStringToMat(test, 3);
+		if (!apriCovMat.isApprox(apriCovMat.transpose()))
+			throw std::runtime_error("a-priori covariance matrix must be symmetric");
+		if (!TSparseUtils::isPositiveDefinite(apriCovMat))
+			throw std::runtime_error("a-priori covariance matrix must be positive definite");
+
+		ptSigma.fApriCovMat = apriCovMat;
+		ptSigma.fHasApriCovMat = true;
+	}
+
+	// check if apriori information is attached to point
+	if (hasSigmas || ptSigma.fHasApriCovMat)
+	{
+		// for now only allow point with sigma for points defined in a *POIN section
+		// this prevents ambiguous lines like
+		// *VZ
+		// A 1 2 3 SZ 1
+		// which would be overriden to a point free in x,y,z with a weight on z
+		// this will become obsolete when *VZ will be replaced by A 1 2 3 SX 0 SY 0 and so on..
+		if (pt.getNumUnkn() != 3)
+		{
+			throw std::runtime_error("Attaching a precision in a point definition is only possible in *POIN section. Point " + pt.getName());
+		}
+		pt.activatePointSigma();
+	}
+
+	// store the matrix in the point
+	if (ptSigma.fHasApriCovMat)
+		pt.setAprioriCovarianceMatrix(ptSigma.fApriCovMat);
+	else
+	{
+		// if matrix was not set by user, calculate it from the sigmas
+		// if any sigma will be not defined (point free in this axis) and theres a rotation, the apriori covariance matrix will remain NAN, which is ok.
+		Eigen::Matrix3d apriCovMat;
+		apriCovMat.setZero();
+		apriCovMat.diagonal() << pow2(ptSigma.fSigmas[0]), pow2(ptSigma.fSigmas[1]), pow2(ptSigma.fSigmas[2]);
+		if (ptSigma.fHasAngle)
+		{
+			Eigen::Matrix3d rotMat = ptSigma.fRotMat;
+			pt.setAprioriCovarianceMatrix(rotMat.transpose() * apriCovMat * rotMat);
+		}
+		else
+			pt.setAprioriCovarianceMatrix(apriCovMat);
+	}
+
+	// check if one of the weights was set to zero
+	// if no angle was used we block the corresponding freedoms
+	// if rotations are used, a constraint has to be introduced (see TDataAnalyzer)
+	if (hasSigmas)
+	{
+		if (!ptSigma.fHasAngle)
+		{
+			// if no angles are involved we can block the degrees of freedom directly
+			pt.updateFixedState(isZero(ptSigma.fSigmas[0]), isZero(ptSigma.fSigmas[1]), isZero(ptSigma.fSigmas[2]));
+		}
 	}
 
 	// If last token starts with a comment chararcter, store it

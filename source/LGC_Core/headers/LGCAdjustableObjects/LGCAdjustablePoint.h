@@ -14,6 +14,77 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 class TLGCData;
 
+#if USE_SERIALIZER
+struct pointSigmaData : public Serializable
+#else
+struct pointSigmaData
+#endif // USE_SERIALIZER
+{
+	// allowing to associate a weight to the point
+	// the weight is either given via a rotated system with bearing slope roll and half deflection or directly with a covariance matrix
+	// in case a matrix is supplied directly the standard deviaton values are kept as NAN
+	// for the meaning of the angles, see https://edms.cern.ch/document/1476360/2
+	std::array<TAngle, 4> fAngles;
+	std::array<std::string, 4> fAngleNames;
+	Eigen::Matrix3d fRotMat;
+	bool fHasAngle, fHasApriCovMat;
+
+	Eigen::Vector3d fSigmas;
+	Eigen::Matrix3d fApriCovMat;
+	int firstObsIdx, firstCIdx;
+	// the rotated offset
+	Eigen::Vector3d fRotRes;
+	Eigen::Vector3d fRotResNormalized;
+	// the a-posteriori covar matrix (in the rotated coordinate system)
+	Eigen::Matrix3d fRotCovar;
+	// constructor
+	pointSigmaData() :
+		fAngles({TAngle(0), TAngle(0), TAngle(0), TAngle(0)}),
+		fAngleNames({"BEAR", "SLOPE", "ROLL", "HDEFL"}),
+		fRotMat(Eigen::Matrix3d::Identity(3, 3)),
+		fHasAngle(false),
+		fApriCovMat(Eigen::Matrix3d::Constant(NAN)),
+		fHasApriCovMat(false),
+		fSigmas(Eigen::Vector3d::Constant(NAN)),
+		firstObsIdx(-1),
+		firstCIdx(-1),
+		fRotRes(Eigen::Vector3d::Constant(NAN)),
+		fRotResNormalized(Eigen::Vector3d::Constant(NAN)),
+		fRotCovar(Eigen::Matrix3d::Constant(NAN)){};
+	// xyz rotation order
+	// for the meaning of the angles, see https://edms.cern.ch/document/1476360/2
+	// see also LGC user guide
+	// rotation matrix describes the transformation from local coordinates (usually CCS) to rotated system ("RST" coordinates)
+	void calcAndSetRotMat()
+	{
+		TRotationMatrix RSTI(TRotationMatrix::ERotationType::kRxyz, 0, 0, fAngles[0]);
+		TRotationMatrix RST(TRotationMatrix::ERotationType::kRxyz, -fAngles[1], fAngles[2], -fAngles[3]);
+		TRotationMatrix rot2Loc = RSTI * RST;
+		TRotationMatrix loc2Rot = rot2Loc.inverse();
+		fRotMat = loc2Rot.getMat();
+	}
+	Eigen::Vector3d calcRotOffset(const LGCAdjustablePoint &pt, const TLGCData *fData) const;
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	void serialize(ObjectSerializer &obj) const
+	{
+		obj.addProperty("fAngles", fAngles);
+		obj.addProperty("fAngleNames", fAngleNames);
+		obj.addProperty("fHasAngle", fHasAngle);
+		obj.addProperty("fApriCovMat", fApriCovMat);
+		obj.addProperty("fHasApriCovMat", fHasApriCovMat);
+		obj.addProperty("fSigmas", fSigmas);
+		obj.addProperty("firstObsIdx", firstObsIdx);
+		obj.addProperty("firstCIdx", firstCIdx);
+		obj.addProperty("fRotRes", fRotRes);
+		obj.addProperty("fRotResNormalized", fRotResNormalized);
+		obj.addProperty("fRotCovar", fRotCovar);
+		obj.addProperty("fSigmasPost", fRotCovar.diagonal().array().sqrt());
+	};
+#endif
+};
+
 /*!
 	\ingroup AdjustableObjects
 	\brief Adds adjustable information to a point represented by a TPositionVector class.
@@ -176,6 +247,13 @@ public:
 	/// Returns true if this point is defined in the ROOT frame
 	bool isInRootFrame();
 
+	// returns a reference of the point weight data
+	inline pointSigmaData &getPointSigmaData() { return fPointSigma; }
+	// const version, needed for result writer
+	inline const pointSigmaData &getPointSigmaData() const { return fPointSigma; }
+	inline bool hasPointSigma() const { return fHasPointSigma; }
+	inline void activatePointSigma() { fHasPointSigma = true; }
+
 private:
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
 
@@ -188,6 +266,9 @@ private:
 	TLength fProvisionalHeightInRoot = TLength(0); /*!< point's provisional height value in ROOT*/
 	TLength fEstimatedHeightInRoot = TLength(0); /*!< point's estimated height value in ROOT*/
 
+	// indicating whether the point has associated weights
+	bool fHasPointSigma{false};
+	pointSigmaData fPointSigma;
 	/*!Private constructor for creating uninitialized object	*/
 	LGCAdjustablePoint(const std::string &name);
 };

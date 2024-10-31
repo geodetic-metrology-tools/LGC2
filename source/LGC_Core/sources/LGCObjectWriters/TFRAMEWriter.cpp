@@ -79,7 +79,7 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
@@ -145,6 +145,8 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 		otherMeasWriter.writeOBSXYZResults(tmeas.fOBSXYZ);
 	}
 
+	otherMeasWriter.writePointSigmaResults(fProjectData->getPoints(), frameIt);
+
 	for (auto &itEDM : tmeas.fEDM)
 		edmWriter.writeEDMResults(itEDM);
 
@@ -172,7 +174,7 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
@@ -506,7 +508,7 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 	levelWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	edmWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive()); // no allfixed parameter
@@ -821,7 +823,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TSCALEWriter scaleWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
 	THLSRWriter hlsrWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TWPSRWriter wpsrWriter(*stream, fProjectData->getConfig().histo.isActive());
@@ -879,7 +881,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 {
 	TAStreamFormatter *stream = getStream();
 	TEDMWriter edmWriter(*stream, fProjectData->getConfig().histo.isActive());
-	TOtherMeasurentWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
+	TOtherMeasurementWriter otherMeasWriter(*stream, fProjectData->getConfig().histo.isActive());
 
 	auto &tmeas = (*frameIt)->measurements;
 
@@ -1059,10 +1061,7 @@ void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &
 	}
 
 	(*stream).writeString(obsWidth, "");
-	if (frame.hasScaleStandDev())
-		(*stream).writeDouble(obsResWidth, lengthResidualPrecision, frame.getScaleStandDev()); //*M2MM????
-	else
-		(*stream).writeString(obsResWidth, "");
+	(*stream).writeString(obsResWidth, "");
 
 	if (!frame.isScaleFixed())
 	{
@@ -1246,11 +1245,7 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 	}
 
 	(*stream).writeString(obsWidth, "(MM)");
-	// Write the initial standard deviation, if specified in the input file
-	if (frameDef.hasTranslStandDev(transl))
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, frameDef.getTranslationStandDev(transl).getMMetresValue());
-	else
-		(*stream).writeString(obsResWidth, "");
+	(*stream).writeString(obsResWidth, "");
 
 	// Write the standard deviation after calculation if translation is variable and the status (fixed or variable)
 	if (!frameDef.isTranslationFixed(transl))
@@ -1291,12 +1286,7 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 
 	(*stream).writeString(obsWidth, "(CC)");
 
-	// Write the initial standard deviation, if specified in the input file
-	if (frameDef.hasRotationStandDev(rot))
-		(*stream).writeDouble(obsResWidth, angleResidualPrecision, frameDef.getRotationStandDev(rot).getSignedCCValue());
-
-	else
-		(*stream).writeString(obsResWidth, "");
+	(*stream).writeString(obsResWidth, "");
 
 	// Write the standard deviation after calculation if rotation is variable and the status (fixed or variable)
 	if (!frameDef.isRotationFixed(rot))
@@ -1872,18 +1862,13 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
 		// Write point's estimated precision after calculation
-		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, 
-			pt->getXEstPrecision(),
-			pt->getYEstPrecision(), 
-			pt->getZEstPrecision(), 
-			""); /*sigma*/
+		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, pt->getXEstPrecision(),
+			pt->getYEstPrecision(), pt->getZEstPrecision(), ""); /*sigma*/
 
 		// Write DX, DY, DZ difference between provisional and estimated value
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(estimatedValue.getX() - provisionalValue.getX()), 
-			TLength(estimatedValue.getY() - provisionalValue.getY()),
-			TLength(estimatedValue.getZ() - provisionalValue.getZ()), 
-			""); /*offset*/
+			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
+			TLength(estimatedValue.getZ() - provisionalValue.getZ()), ""); /*offset*/
 	}
 	else
 	{ // It is ROOT
@@ -1911,17 +1896,12 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		}
 
 		// status = vxyz to write sigma because with CALA, no sigma are writen
-		converter.writeCoordinateParam(status, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(sqrtq(covarianceMatrix(0, 0))), 
-			TLength(sqrtq(covarianceMatrix(1, 1))), 
-			TLength(sqrtq(covarianceMatrix(2, 2))), 
-			""); /*sigma convert in root*/
+		converter.writeCoordinateParam(status, coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator, TLength(sqrtq(covarianceMatrix(0, 0))),
+			TLength(sqrtq(covarianceMatrix(1, 1))), TLength(sqrtq(covarianceMatrix(2, 2))), ""); /*sigma convert in root*/
 
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
-			TLength(estimatedValue.getX() - provisionalValue.getX()), 
-			TLength(estimatedValue.getY() - provisionalValue.getY()),
-			TLength(estimatedValue.getZ() - provisionalValue.getZ()), 
-			""); /*offset*/
+			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
+			TLength(estimatedValue.getZ() - provisionalValue.getZ()), ""); /*offset*/
 	}
 
 	(*stream) << endl; // end line

@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -501,5 +501,11 @@ struct LIBRPointGroupContrib
 	PointGroupConstraintContrib3D cogConstraintContrib;
 	PointGroupConstraintContrib3D momentumConstraintContrib;
 	PointGroupConstraintContrib scaleConstraintContrib;
+};
+
+struct pointSigmaContrib
+{
+	// misclosure is the (rotated) offset, the only contribution that needs to be calculated, all other data (derivatives, weights..) does not change during the iterations
+	Eigen::Vector3d misclosure;
 };
 #endif

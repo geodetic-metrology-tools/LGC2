@@ -5,7 +5,6 @@
 
 #include "TLSResultsMatrices.h"
 
-
 TLSResultsMatricesExtractor::TLSResultsMatricesExtractor(TLGCData *fData) : fDataSet(fData), fLastIteration(false)
 {
 }
@@ -567,6 +566,13 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices &r
 
 				TReal correction = rm.getSolutionVctrElmt(unknIdx);
 				point.setCorrection(unknIdx, correction);
+				// set the offset in the rotated system if point has associated weight data
+				if (point.hasPointSigma())
+				{
+					pointSigmaData &ptSigma = point.getPointSigmaData();
+					ptSigma.fRotRes = ptSigma.calcRotOffset(point, fDataSet);
+					ptSigma.fRotResNormalized = ptSigma.fRotRes.array() / ptSigma.fSigmas.array();
+				}
 
 				nParamsTotal++;
 				if (fabsq(correction) > convCrit)
@@ -741,6 +747,11 @@ void TLSResultsMatricesExtractor::extractPointVarCovar(const TLSResultsMatrices 
 		}
 		// Calas will have 0 as covariance matrix
 		point.setCovarianceMatrix(fullCovar);
+		if (point.hasPointSigma())
+		{
+			pointSigmaData &ptSigma = point.getPointSigmaData();
+			ptSigma.fRotCovar = ptSigma.fRotMat * fullCovar * ptSigma.fRotMat.transpose();
+		}
 	}
 }
 

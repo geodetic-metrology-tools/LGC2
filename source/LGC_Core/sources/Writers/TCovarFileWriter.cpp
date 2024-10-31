@@ -251,10 +251,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(const LGCAdjust
 		}
 		else
 		{
-			if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(0)))
-				fStream->writeDouble(20, 16, pow2(point.getStandDev(0)));
-			else
-				fStream->writeDouble(20, 16, 0.0);
+			fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
 			fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
@@ -287,10 +284,7 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(const LGCAdjust
 		{
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(1)))
-				fStream->writeDouble(20, 16, pow2(point.getStandDev(1)));
-			else
-				fStream->writeDouble(20, 16, 0.0);
+			fStream->writeDouble(20, 16, 0.0);
 			(*stream) << TABs;
 			fStream->writeDouble(20, 16, 0.0);
 			(*stream) << endl;
@@ -312,30 +306,18 @@ void TCovarFileWriter::writePointUpperTriangularCovarianceMatrix(const LGCAdjust
 			(*stream) << TABs;
 			fStream->writeString(20, "");
 			(*stream) << TABs;
-			if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(2)))
-				fStream->writeDouble(20, 16, pow2(point.getStandDev(2)));
-			else
-				fStream->writeDouble(20, 16, 0.0);
+			fStream->writeDouble(20, 16, 0.0);
 			(*stream) << endl;
 		}
 	}
 	else
 	{
 		(*stream) << TABs;
-		if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(0)))
-			fStream->writeDouble(20, 16, pow2(point.getStandDev(0)));
-		else
-			fStream->writeString(20, "");
+		fStream->writeString(20, "");
 		(*stream) << TABs;
-		if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(1)))
-			fStream->writeDouble(20, 16, pow2(point.getStandDev(1)));
-		else
-			fStream->writeString(20, "");
+		fStream->writeString(20, "");
 		(*stream) << TABs;
-		if (point.hasStandDeviations() && !isnotanumber(point.getStandDev(2)))
-			fStream->writeDouble(20, 16, pow2(point.getStandDev(2)));
-		else
-			fStream->writeString(20, "");
+		fStream->writeString(20, "");
 		(*stream) << endl;
 	}
 }

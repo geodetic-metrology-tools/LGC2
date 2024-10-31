@@ -37,12 +37,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
 	{
 		bool fillOK = false;
-		if (fNumberOfIterations == 0) // First iteration, fill also the weight unknown matrix.
-		{
-			fillOK = matrFiller->fillMatrices(&data, true, inputMtr);
-		}
-		else // In the following iteration the weight matrix remains unchanged, no need to be filled with the same values again.
-			fillOK = matrFiller->fillMatrices(&data, false, inputMtr);
+		fillOK = matrFiller->fillMatrices(&data, inputMtr);
 
 		if (fillOK)
 		{

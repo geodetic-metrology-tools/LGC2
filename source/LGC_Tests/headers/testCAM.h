@@ -266,7 +266,7 @@ char const *const UVD_2STROOT_SUBF = "*TITR\n"
 									 "P3  0 -100 100\n"
 									 "P4  100 -100 100\n"
 									 "*POIN\n"
-									 "P2VAR 0.005 0.056 0.1 SX 10 SY 10 SZ 10\n" /* Correct values in subframe: 0 0 0*/
+									 "P2VAR 0.005 0.056 0.1 \n" /* Correct values in subframe: 0 0 0*/
 									 "*ENDFRAME\n"
 
 									 "*CAM STN BCAM1 IHFIX\n"

@@ -12,6 +12,7 @@
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatrices.h"
 #include "TLSInputMatricesFiller.h"
+#include "TSparseMatrix.h"
 #include "TXYH2CCS.h"
 
 TDataAnalyzer::TDataAnalyzer(TLGCData &dat) : fData(dat), fStandDevUsed(false)
@@ -405,12 +406,6 @@ bool TDataAnalyzer::checkParameters()
 			lastUidx = frame.getLastUidx() + 1;
 		}
 
-		if (frame.hasStandDev())
-		{ // If a frame has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
-		}
-
 		// only ANGL, ZEND and DIST are allowed in a subframe for a total station
 		if (!it.node->data.get()->isROOTNode())
 		{
@@ -685,12 +680,6 @@ bool TDataAnalyzer::checkParameters()
 		if (fData.getConfig().pdor.isActive() && point.isInRootFrame() && point.isFixed() == true)
 			nCALAinROOT++;
 
-		if (point.hasStandDeviations())
-		{ // If point has standard deviation assigned
-			fStandDevUsed = true;
-			fData.setStandDevUsed();
-		}
-
 		// Assign unknown indices
 		if (!point.isFixed())
 		{
@@ -773,7 +762,7 @@ bool TDataAnalyzer::checkConfigOptions()
 {
 	bool isConsistent = false;
 	auto &outputMessages(fData.getFileLogger());
-	int lastCidx = 0; // Constraint indices
+	int lastCidx = fData.fUEOIndices.CIndex; // Constraint indices
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 
@@ -815,12 +804,6 @@ bool TDataAnalyzer::checkConfigOptions()
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + CONSI LIBR options cannot cannot have free subframe";
 				return false;
 			}
-
-			if (frame.hasStandDev())
-			{ // If a frame has standard deviation assigned
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "SIMU + CONSI LIBR options cannot cannot have free subframe";
-				return false;
-			}
 		}
 	}
 
@@ -832,7 +815,7 @@ bool TDataAnalyzer::checkConfigOptions()
 			auto &frame(it.node->data.get()->frame);
 
 			// free frame
-			if (!frame.isFixed() || frame.hasStandDev())
+			if (!frame.isFixed())
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << "ALLFIXED options cannot cannot have free subframe";
 				return false;
@@ -845,7 +828,7 @@ bool TDataAnalyzer::checkConfigOptions()
 		// do geometric consistency check already here
 		TLSInputMatricesFiller iFiller(&fData.getTree(), fData.getConfig().referential, fData);
 		TLSInputMatrices im;
-		iFiller.fillMatrices(&fData, true, &im);
+		iFiller.fillMatrices(&fData, &im);
 		TLSConsCheck consCheck(fData, im);
 		outputMessages.writeReportHeader("Geometry consistency check:");
 		consCheck.generateErrorMessage();
@@ -1279,6 +1262,39 @@ void TDataAnalyzer::assignEOIndices()
 				fData.fUEOIndices.OIndex += 2;
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECWI);
 			}
+		}
+	}
+
+	// iterate through the points to assign the point sigma observation and constraint indices
+	for (auto &pt : fData.getPoints())
+	{
+		if (pt.hasPointSigma())
+		{
+			pointSigmaData &ptSigma = pt.getPointSigmaData();
+			int nObservations = 0;
+			if (ptSigma.fHasApriCovMat)
+			{
+				// apricovMat needs to be symmetric positive definite, it will always induce 3 observations
+				nObservations = 3;
+			}
+			else
+			{
+				// weights are set via sigmas
+				int nZeroSigmas = (ptSigma.fSigmas.array() == 0.0).count();
+				int nPositiveSigmas = (ptSigma.fSigmas.unaryExpr(&isPositiveFinite).array()).count();
+				if (!ptSigma.fRotMat.isIdentity())
+				{
+					// rotations used: if there are sigmas with value 0 they will be treated as constraints (not observations)
+					ptSigma.firstCIdx = fData.fUEOIndices.CIndex;
+					fData.fUEOIndices.CIndex += nZeroSigmas;
+				}
+				nObservations = nPositiveSigmas;
+			}
+			// if there were observations, set the first index, otherwise the firstObsIdx will remain at is default initial value of -1
+			if (nObservations > 0)
+				ptSigma.firstObsIdx = fData.fUEOIndices.OIndex;
+			fData.fUEOIndices.OIndex += nObservations;
+			fData.fUEOIndices.EIndex += nObservations;
 		}
 	}
 }

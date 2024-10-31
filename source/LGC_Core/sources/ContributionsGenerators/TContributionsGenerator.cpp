@@ -2166,3 +2166,14 @@ LIBRPointGroupContrib TContributionsGenerator::getPointGroupConstraintContrib(co
 
 	return LIBRPointGroupContrib{resultCOG, resultMOM, resultScale};
 }
+
+pointSigmaContrib TContributionsGenerator::getPointSigmaContrib(LGCAdjustablePoint &pt, const TLGCData *data)
+{
+	// model is:
+	// min |weightMat*V|^2
+	// rotMat (est-prov)+V=0
+	// the left product is the rotated offset
+	const pointSigmaData &ptSigma = pt.getPointSigmaData();
+	Eigen::Vector3d rotOffset = ptSigma.calcRotOffset(pt, data);
+	return pointSigmaContrib({rotOffset});
+}
