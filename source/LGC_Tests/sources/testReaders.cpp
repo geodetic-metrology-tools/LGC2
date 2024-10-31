@@ -76,7 +76,6 @@ void object::test<2>()
 	ensure_equals("Inputfile with empty title should result in default title.", projShared->getConfig().title, "Default title");
 }
 
-
 TLGCData proj;
 auto &cfg(proj.getConfig());
 

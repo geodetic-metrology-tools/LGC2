@@ -1,14 +1,17 @@
-#include "AdjObjectsReader.h"
-#include "InstrumentReaders.h"
-#include "MeasurementReaders.h"
-#include "MeasurementReader_lgc1.h"
-#include "OptionReaders.h"
 #include "TReader.h"
 
 #include <StringManager.h>
 
-namespace {
-		static inline void skipBOM(std::istream& stream) {
+#include "AdjObjectsReader.h"
+#include "InstrumentReaders.h"
+#include "MeasurementReader_lgc1.h"
+#include "MeasurementReaders.h"
+#include "OptionReaders.h"
+
+namespace
+{
+static inline void skipBOM(std::istream &stream)
+{
 	static const int NUM_BOMs(3);
 	static const int BOM_LEN(3);
 
@@ -18,23 +21,25 @@ namespace {
 		{0xFE, 0xFF, 0x00}, // UTF16 (LE)
 		{0xFF, 0xFE, 0x00}, // UTF16 (LE)
 	};
-	
+
 	char y;
-	for (int b=0; b < NUM_BOMs; b++) {
-		for (int c=0; c < BOM_LEN; c++) {
+	for (int b = 0; b < NUM_BOMs; b++)
+	{
+		for (int c = 0; c < BOM_LEN; c++)
+		{
 			int x = stream.peek();
 			// if the current character is a BOM character: remove it.
 			if (x == boms[b][c])
 				stream.get(y);
-		}	
+		}
 	}
 }
-}
+} // namespace
 
-TReader::TReader(std::shared_ptr<TLGCData> proj):
-	project(*proj.get()){
+TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
+{
 	typedef std::unique_ptr<TAKeyWord> UPK; // Unique pointer (to) Keyword object
-	
+
 	// Options Section
 
 	// reference frames
@@ -75,7 +80,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 
 	finterpreters_lgc1.emplace_back(UPK(new TKeyAPRI(project, nb_allowed_apri_lgc1, allowed_APRI_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyEREL(project, nb_allowed_erel_lgc1, allowed_EREL_lgc1)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyFMTO(project, nb_allowed_fmto_lgc1, allowed_FMTO_lgc1)));
+	// finterpreters_lgc1.emplace_back(UPK(new TKeyFMTO(project, nb_allowed_fmto_lgc1, allowed_FMTO_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyFMTP(project, nb_allowed_fmtp_lgc1, allowed_FMTP_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyHIST(project, nb_allowed_hist_lgc1, allowed_HIST_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyPREC(project, nb_allowed_prec_lgc1, allowed_PREC_lgc1)));
@@ -93,9 +98,8 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDEFA(project, nb_allowed_defa_lgc1, allowed_DEFA_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyFAUT(project, nb_allowed_faut_lgc1, allowed_FAUT_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyPUNC(project, nb_allowed_punc_lgc1, allowed_PUNC_lgc1)));
-	//finterpreters_lgc1.emplace_back(UPK(new TKeyPLOT(project, nb_allowed_plot_lgc1, allowed_PLOT_lgc1)));
+	// finterpreters_lgc1.emplace_back(UPK(new TKeyPLOT(project, nb_allowed_plot_lgc1, allowed_PLOT_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeySOBS(project, nb_allowed_sobs_lgc1, allowed_SOBS_lgc1)));
-
 
 	// Adjusted Objects (points) Section
 	finterpreters.emplace_back(UPK(new TKeyCALA(project)));
@@ -111,9 +115,8 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters_lgc1.emplace_back(UPK(new TKeyVYZ(project, nb_allowed_vyz_lgc1, allowed_VYZ_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyVZ(project, nb_allowed_vz_lgc1, allowed_VZ_lgc1)));
 
-		
 	// Instruments Section
-	//no instrument define in lgc1
+	// no instrument define in lgc1
 	finterpreters.emplace_back(UPK(new TKeyINSTR(project)));
 	finterpreters.emplace_back(UPK(new TKeyPOLAR(project)));
 	finterpreters.emplace_back(UPK(new TKeyCAMD(project)));
@@ -124,18 +127,17 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters.emplace_back(UPK(new TKeyHLSR(project)));
 	finterpreters.emplace_back(UPK(new TKeyWPSR(project)));
 
-
-	// Observations Section	
+	// Observations Section
 	/*TSTN*/
-	TAKeyWord* tstn  = new TKeyTSTN(project);
-	TAKeyWord* v0    = new TKeyV0(project);
-	TAKeyWord* angl  = new TKeyANGL(project);
-	TAKeyWord* zend  = new TKeyZEND(project);
-	TAKeyWord* dist  = new TKeyDIST(project);
-	TAKeyWord* ecth  = new TKeyECTH(project);
-	TAKeyWord* ecdir = new TKeyECDIR(project);
-	TAKeyWord* dhor  = new TKeyDHOR(project);
-	TAKeyWord* plr3d = new TKeyPLR3D(project);
+	TAKeyWord *tstn = new TKeyTSTN(project);
+	TAKeyWord *v0 = new TKeyV0(project);
+	TAKeyWord *angl = new TKeyANGL(project);
+	TAKeyWord *zend = new TKeyZEND(project);
+	TAKeyWord *dist = new TKeyDIST(project);
+	TAKeyWord *ecth = new TKeyECTH(project);
+	TAKeyWord *ecdir = new TKeyECDIR(project);
+	TAKeyWord *dhor = new TKeyDHOR(project);
+	TAKeyWord *plr3d = new TKeyPLR3D(project);
 
 	/*add keywords to interpreters*/
 	finterpreters.emplace_back(UPK(tstn));
@@ -154,11 +156,10 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters_lgc1.emplace_back(UPK(new TKeyECTH_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDHOR_lgc1(project)));
 
-
 	/*CAMERA*/
-	TAKeyWord* cam  = new TKeyCAM(project);
-	TAKeyWord* uvec2dCam = new TKeyUVEC(project);
-	TAKeyWord* uvd3dCam = new TKeyUVD(project);
+	TAKeyWord *cam = new TKeyCAM(project);
+	TAKeyWord *uvec2dCam = new TKeyUVEC(project);
+	TAKeyWord *uvd3dCam = new TKeyUVD(project);
 
 	/*set hierarchical structure*/
 	cam->addChild(uvec2dCam);
@@ -191,62 +192,62 @@ TReader::TReader(std::shared_ptr<TLGCData> proj):
 	finterpreters_lgc1.emplace_back(UPK(new TKeyECVE_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyORIE_lgc1(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyRADI_lgc1(project)));
-	
 
 	finterpreters.emplace_back(UPK(new TKeyFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyENDFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyTITR(project)));
 
 	finterpreters_lgc1.emplace_back(UPK(new TKeyTITR(project)));
-
 }
 
-
 // This function handles all three line endings ("\r", "\n" and "\r\n") and avoid problems when input files are created in a plateform and used in another:
-std::istream& safeGetline(std::istream& is, std::string& t)
+std::istream &safeGetline(std::istream &is, std::string &t)
 {
-    t.clear();
+	t.clear();
 
-    // The characters in the stream are read one-by-one using a std::streambuf.
-    // That is faster than reading them one-by-one using the std::istream.
-    // Code that uses streambuf this way must be guarded by a sentry object.
-    // The sentry object performs various tasks,
-    // such as thread synchronization and updating the stream state.
+	// The characters in the stream are read one-by-one using a std::streambuf.
+	// That is faster than reading them one-by-one using the std::istream.
+	// Code that uses streambuf this way must be guarded by a sentry object.
+	// The sentry object performs various tasks,
+	// such as thread synchronization and updating the stream state.
 
-    std::istream::sentry se(is, true);
-    std::streambuf* sb = is.rdbuf();
+	std::istream::sentry se(is, true);
+	std::streambuf *sb = is.rdbuf();
 
-    for(;;) {
-        int c = sb->sbumpc();
-        switch (c) {
-        case '\n':
-            return is;
-        case '\r':
-            if(sb->sgetc() == '\n')
-                sb->sbumpc();
-            return is;
-        case EOF:
-            // Also handle the case when the last line has no line ending
-            if(t.empty())
-                is.setstate(std::ios::eofbit);
-            return is;
-        default:
+	for (;;)
+	{
+		int c = sb->sbumpc();
+		switch (c)
+		{
+		case '\n':
+			return is;
+		case '\r':
+			if (sb->sgetc() == '\n')
+				sb->sbumpc();
+			return is;
+		case EOF:
+			// Also handle the case when the last line has no line ending
+			if (t.empty())
+				is.setstate(std::ios::eofbit);
+			return is;
+		default:
 
 			// Avoid double * case
 			if (!(c == '*' && t == "*"))
 				t += (char)c;
-        }
-    }
+		}
+	}
 }
 
-//fOutFilename is the output file used for writing results, possibly can be used for writing errors, might be better to create separate log file for errors and warnings
-bool TReader::read(std::istream& lgcStream) {
+// fOutFilename is the output file used for writing results, possibly can be used for writing errors, might be better to create separate log file for errors and warnings
+bool TReader::read(std::istream &lgcStream)
+{
 	using namespace std;
 	string line;
 	int nline(0);
-	bool isReferenceSystemDefined = false;	
+	bool isReferenceSystemDefined = false;
 
-	auto& outputMessages(project.getFileLogger());
+	auto &outputMessages(project.getFileLogger());
 	outputMessages.writeReportHeader("Reading input file:");
 
 	// be sure to omit the byte order mark if there is one
@@ -255,14 +256,14 @@ bool TReader::read(std::istream& lgcStream) {
 	// read the first line of the file
 	safeGetline(lgcStream, line);
 	nline++;
-	const auto& titlrline(tokenizefileString(line));
+	const auto &titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
 	if (titlrline.size() != 2)
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
 	else if (titlrline[1] != "TITR")
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
-			
+
 	// read until the next keyword
 	safeGetline(lgcStream, line);
 	nline++;
@@ -285,15 +286,13 @@ bool TReader::read(std::istream& lgcStream) {
 	{ // set a default title
 		project.getConfig().title = "Default title";
 	}
- 
+
 	// read the rest of the file
 	auto lasthandler(finterpreters.back().get());
-	for (auto currenthandler(lasthandler);
-		lgcStream.good() && (line != "*END" && line != "*FIN");
-		++nline) 
+	for (auto currenthandler(lasthandler); lgcStream.good() && (line != "*END" && line != "*FIN"); ++nline)
 	{
 		// Prepare the error message for this line
-		const string nlinestr("Line " + to_string(nline) + ": ");  
+		const string nlinestr("Line " + to_string(nline) + ": ");
 		// tokenize the current line
 		auto tokLine(tokenizefileString(line));
 
@@ -304,35 +303,39 @@ bool TReader::read(std::istream& lgcStream) {
 			continue;
 		}
 		// % means comment line, i.e. to be ignored
-		if (tokLine[0][0] == *"%"){
+		if (tokLine[0][0] == *"%")
+		{
 			project.pushComment(std::pair<int, std::string>(nline, line));
 			safeGetline(lgcStream, line);
 			continue;
 		}
 
-        // Check if the line begins with the deactivation characer, store the activation status
-        bool activeLine = true;
-        if(tokLine[0][0] == *DEACTIVATION_CHAR){
-            activeLine = false;
-            // Remove the deactivation character from the beginning of the string:
-            tokLine[0].erase(tokLine[0].begin());
-        }
+		// Check if the line begins with the deactivation characer, store the activation status
+		bool activeLine = true;
+		if (tokLine[0][0] == *DEACTIVATION_CHAR)
+		{
+			activeLine = false;
+			// Remove the deactivation character from the beginning of the string:
+			tokLine[0].erase(tokLine[0].begin());
+		}
 
 		// This means that it is the last keyword, which actually ends the reading process.
 		if (tokLine[0] == "*" && (tokLine[1] == "END" || tokLine[1] == "FIN"))
 			break;
 
 		// If the line starts with a keyword
-		if (tokLine[0] == "*")  
+		if (tokLine[0] == "*")
 		{
-			const auto& currentkey(tokLine[1]);
+			const auto &currentkey(tokLine[1]);
 			lasthandler = currenthandler;
 			currenthandler = nullptr;
 
 			// look for an appropriate handler
-			for (auto& handler : finterpreters) {
+			for (auto &handler : finterpreters)
+			{
 				// if the handler matches the keyword: store it as the current handler
-				if (handler.get()->key == currentkey) {
+				if (handler.get()->key == currentkey)
+				{
 					currenthandler = handler.get();
 					break;
 				}
@@ -341,10 +344,11 @@ bool TReader::read(std::istream& lgcStream) {
 			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
 				isReferenceSystemDefined = true;
 
-			try {
-
+			try
+			{
 				// abort if there is no valid handler
-				if (!currenthandler){
+				if (!currenthandler)
+				{
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + "\"";
 					return !outputMessages.hasErrors();
 				}
@@ -355,52 +359,52 @@ bool TReader::read(std::istream& lgcStream) {
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "The keyword \"" + currentkey + "\" is not allowed here.";
 					return !outputMessages.hasErrors();
 				}
-				//else // Particular case : TSTN authorized after ENDFRAME if all frames are closed
+				// else // Particular case : TSTN authorized after ENDFRAME if all frames are closed
 				//	if (currenthandler->getKey() == TSTN && (TKeyFRAME::getNumberOfOpenedFrames() != TKeyENDFRAME::getNumberOfClosedFrames()))
 				//	{
 				//		outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "TSTN keyword is not allowed in a frame ";
 				//		return !outputMessages.hasErrors();
 				//	}
 			}
-			catch (std::exception const& excp) {
+			catch (std::exception const &excp)
+			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
 				return !outputMessages.hasErrors();
 			}
 		}
 
+		try
+		{ // Handler was found, try to parse
 
-		try{ //Handler was found, try to parse
-			
 			currenthandler->parse(tokLine, activeLine, nline);
 			safeGetline(lgcStream, line);
 		}
-		catch (std::exception const & excp) {  // Catch exceptions which can emerge during parsing
+		catch (std::exception const &excp)
+		{ // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
-			//need return error during reading since the fisrt failure. because if no instrument are defined after *INSTR. When the first instr ID is not found, the software crashs.
+			// need return error during reading since the fisrt failure. because if no instrument are defined after *INSTR. When the first instr ID is not found, the software crashs.
 			return !outputMessages.hasErrors();
 		}
 	}
 
-	
-
-	if(!isReferenceSystemDefined) {
+	if (!isReferenceSystemDefined)
+	{
 		// Define OLOC as default
 		project.getConfig().referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
 
 		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
 	}
 
-	if(project.getCurrentNode().ID.size() != 1)
+	if (project.getCurrentNode().ID.size() != 1)
 	{
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << "The number of opened frames (*FRAME) and closed frames (*ENDFRAME) must be equal!";
 	}
 
-
 	// CHECK FRAMES WITH THE NAME "ROOT", DUPLICATE FRAME NAMES AND OBSERVATION ID
 
-	std::vector<std::string> frameNames;	// Declare a vector of strings for the names of the frames
-	std::vector<int> frameLines;			// Declare a vector of integers for the lines of the *FRAME keywords
-	std::vector<std::string> listObsId;		// Declare a vector of strings for the observation ID
+	std::vector<std::string> frameNames; // Declare a vector of strings for the names of the frames
+	std::vector<int> frameLines; // Declare a vector of integers for the lines of the *FRAME keywords
+	std::vector<std::string> listObsId; // Declare a vector of strings for the observation ID
 
 	// Iterate the frames
 	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
@@ -415,31 +419,32 @@ bool TReader::read(std::istream& lgcStream) {
 		}
 
 		// Iterate the vector starting from the second item, i.e., the second frame name.
-		for (std::size_t i = 2; i < frameNames.size(); ++i) {
+		for (std::size_t i = 2; i < frameNames.size(); ++i)
+		{
 			if (frameNames.back().compare(frameNames[i - 1]) == 0)
 			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Frames at lines " + to_string(frameLines[i - 1]) + \
-					" and " + to_string(frameLines.back()) + " have the same name: \"" + frameNames.back() + "\".";
+				outputMessages
+					<< TFileLogger::e_logType::LOG_ERROR
+					<< "Frames at lines " + to_string(frameLines[i - 1]) + " and " + to_string(frameLines.back()) + " have the same name: \"" + frameNames.back() + "\".";
 			}
 		}
 
 		listObsId = updateListObsID(itTree);
 		// Check for duplicates
-		if (hasDuplicateObsId(itTree, listObsId, outputMessages)) break;
-		
+		if (hasDuplicateObsId(itTree, listObsId, outputMessages))
+			break;
+
 		// Update obsIdwidth
 		std::sort(listObsId.begin(), listObsId.end(), [](const std::string &s1, const std::string &s2) { return s1.size() < s2.size(); });
 		if (listObsId.back().size() > project.getConfig().obsIDwidth)
 			project.getConfig().obsIDwidth = listObsId.back().size();
-
 	}
-    project.setLGCv1(false);
+	project.setLGCv1(false);
 
 	return !outputMessages.hasErrors();
 }
 
-
-bool TReader::readLgc1File(std::istream& lgcStream)
+bool TReader::readLgc1File(std::istream &lgcStream)
 {
 	using namespace std;
 	string line;
@@ -447,7 +452,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	bool isReferenceSystemDefined = false;
 	// bool isLgc1 = true;
 
-	auto& outputMessages(project.getFileLogger());
+	auto &outputMessages(project.getFileLogger());
 	outputMessages.writeReportHeader("Reading input file:");
 
 	// be sure to omit the byte order mark if there is one
@@ -456,7 +461,7 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	// read the first line of the file
 	safeGetline(lgcStream, line);
 	nline++;
-	const auto& titlrline(tokenizefileString(line));
+	const auto &titlrline(tokenizefileString(line));
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
 	if (titlrline.size() != 2)
@@ -474,16 +479,15 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 		safeGetline(lgcStream, line);
 		nline++;
 
-		if (lgcStream.peek() == EOF) break; // End of file
+		if (lgcStream.peek() == EOF)
+			break; // End of file
 	}
-    // Remove the last added whitespace:
-    project.getConfig().title.pop_back();
+	// Remove the last added whitespace:
+	project.getConfig().title.pop_back();
 
 	// read the rest of the file
 	auto lasthandler(finterpreters_lgc1.back().get());
-	for (auto currenthandler(lasthandler);
-		lgcStream.good() && (line != "*END" && line != "*FIN");
-		++nline)
+	for (auto currenthandler(lasthandler); lgcStream.good() && (line != "*END" && line != "*FIN"); ++nline)
 	{
 		// Prepare the error message for this line
 		const string nlinestr("Line " + to_string(nline) + ": ");
@@ -497,8 +501,9 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			continue;
 		}
 		// % means comment line, i.e. to be ignored
-        // The deactivation character behaves as commented line in LGC1 mode
-        if(tokLine[0][0] == *"%" || tokLine[0][0] == *DEACTIVATION_CHAR){
+		// The deactivation character behaves as commented line in LGC1 mode
+		if (tokLine[0][0] == *"%" || tokLine[0][0] == *DEACTIVATION_CHAR)
+		{
 			project.getComments()[nline] = line;
 			safeGetline(lgcStream, line);
 			continue;
@@ -509,16 +514,18 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			break;
 
 		// If the line starts with a keyword
-		if (tokLine[0] == "*")  
+		if (tokLine[0] == "*")
 		{
-			const auto& currentkey(tokLine[1]);
+			const auto &currentkey(tokLine[1]);
 			lasthandler = currenthandler;
 			currenthandler = nullptr;
 
 			// look for an appropriate handler
-			for (auto& handler : finterpreters_lgc1) {
+			for (auto &handler : finterpreters_lgc1)
+			{
 				// if the handler matches the keyword: store it as the current handler
-				if (handler.get()->key == currentkey) {
+				if (handler.get()->key == currentkey)
+				{
 					currenthandler = handler.get();
 					break;
 				}
@@ -527,33 +534,34 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
 				isReferenceSystemDefined = true;
 
-			try {
+			try
+			{
 				// abort if there is no valid handler
-				if (!currenthandler){
+				if (!currenthandler)
+				{
 					outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + "Cannot handle keyword \"" + currentkey + "\"";
-					//allow to get to the next line, avoid infinite loop
+					// allow to get to the next line, avoid infinite loop
 					safeGetline(lgcStream, line);
 					continue;
 				}
-
 			}
-			catch (std::exception const& excp)
+			catch (std::exception const &excp)
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
-				//allow to get to the next line, avoid infinite loop
+				// allow to get to the next line, avoid infinite loop
 				safeGetline(lgcStream, line);
 			}
 		}
 
-
-		try{ //Handler was found, try to parse
+		try
+		{ // Handler was found, try to parse
 			currenthandler->parse(tokLine, true, nline);
 			safeGetline(lgcStream, line);
 		}
-		catch (std::exception const & excp) 
-		{  // Catch exceptions which can emerge during parsing
+		catch (std::exception const &excp)
+		{ // Catch exceptions which can emerge during parsing
 			outputMessages << TFileLogger::e_logType::LOG_ERROR << nlinestr + excp.what();
-			//allow to get to the next line, avoid infinite loop
+			// allow to get to the next line, avoid infinite loop
 			safeGetline(lgcStream, line);
 		}
 	}
@@ -561,45 +569,55 @@ bool TReader::readLgc1File(std::istream& lgcStream)
 	if (!isReferenceSystemDefined)
 		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
 
-    project.setLGCv1(true);
+	project.setLGCv1(true);
 
-    if(outputMessages.hasErrors()) return false;
+	if (outputMessages.hasErrors())
+		return false;
 
-    std::shared_ptr<TInstrumentData::TPOLAR::TTarget> polarDefTgt = project.getInstruments().fPOLAR.empty() ? nullptr : project.getInstruments().fPOLAR.begin()->second->targets.begin()->second;
-    std::shared_ptr<TInstrumentData::TEDM::TTarget> edmDefTgt = project.getInstruments().fEDM.empty() ? nullptr : project.getInstruments().fEDM.begin()->second->targets.at(project.getInstruments().fEDM.begin()->second->defTarget);
-    std::shared_ptr<TInstrumentData::TEDM::TTarget> edmAdjTgt = project.getInstruments().fEDM.size() == 2 ? project.getInstruments().fEDM.begin()->second->targets.at("EDMAdjTgt") : nullptr;
-    std::shared_ptr<TInstrumentData::TLEVEL::TTarget> defStaff = project.getInstruments().fLEVEL.empty() ? nullptr : project.getInstruments().fLEVEL.begin()->second->targets.begin()->second;
+	std::shared_ptr<TInstrumentData::TPOLAR::TTarget> polarDefTgt = project.getInstruments().fPOLAR.empty()
+		? nullptr
+		: project.getInstruments().fPOLAR.begin()->second->targets.begin()->second;
+	std::shared_ptr<TInstrumentData::TEDM::TTarget> edmDefTgt = project.getInstruments().fEDM.empty()
+		? nullptr
+		: project.getInstruments().fEDM.begin()->second->targets.at(project.getInstruments().fEDM.begin()->second->defTarget);
+	std::shared_ptr<TInstrumentData::TEDM::TTarget> edmAdjTgt = project.getInstruments().fEDM.size() == 2
+		? project.getInstruments().fEDM.begin()->second->targets.at("EDMAdjTgt")
+		: nullptr;
+	std::shared_ptr<TInstrumentData::TLEVEL::TTarget> defStaff = project.getInstruments().fLEVEL.empty()
+		? nullptr
+		: project.getInstruments().fLEVEL.begin()->second->targets.begin()->second;
 
-    // Update the targets in instruments stored in stations for data consistency
-    
-    if(polarDefTgt || edmDefTgt || defStaff) {
-        
-        for(auto& node : project.getTree()){
-        
-            for(auto &tstn : node->measurements.fTSTN)
-                *tstn->instrument.targets.begin()->second = *polarDefTgt;
+	// Update the targets in instruments stored in stations for data consistency
 
-            for(auto &edm : node->measurements.fEDM){
-                *edm.instrument.targets.at(edmDefTgt->ID) = *edmDefTgt;
+	if (polarDefTgt || edmDefTgt || defStaff)
+	{
+		for (auto &node : project.getTree())
+		{
+			for (auto &tstn : node->measurements.fTSTN)
+				*tstn->instrument.targets.begin()->second = *polarDefTgt;
 
-                // Copy the adjustable target to the station if it exists:
-                if(edmAdjTgt)
-                    *edm.instrument.targets[edmAdjTgt->ID] = *edmAdjTgt;
-            }
+			for (auto &edm : node->measurements.fEDM)
+			{
+				*edm.instrument.targets.at(edmDefTgt->ID) = *edmDefTgt;
 
-            for(auto &level : node->measurements.fLEVEL)
-                *level.instrument.targets.begin()->second = *defStaff;
+				// Copy the adjustable target to the station if it exists:
+				if (edmAdjTgt)
+					*edm.instrument.targets[edmAdjTgt->ID] = *edmAdjTgt;
+			}
 
-            for(auto &orierom : node->measurements.fORIE)
-                *orierom.instrument.targets.begin()->second = *polarDefTgt;
-        }
-    }
+			for (auto &level : node->measurements.fLEVEL)
+				*level.instrument.targets.begin()->second = *defStaff;
 
-    return true;
+			for (auto &orierom : node->measurements.fORIE)
+				*orierom.instrument.targets.begin()->second = *polarDefTgt;
+		}
+	}
+
+	return true;
 }
 
 // Check if the given file is in LGC2 format (i.e., it contains the *INSTR keyword)
-bool TReader::isLgc2File(std::istream& lgcStream)
+bool TReader::isLgc2File(std::istream &lgcStream)
 {
 	// be sure to omit the byte order mark if there is one
 	skipBOM(lgcStream);
@@ -610,11 +628,12 @@ bool TReader::isLgc2File(std::istream& lgcStream)
 		auto tokLine(tokenizefileString(line));
 
 		// skip empty lines
-		if (tokLine.empty()) continue;
+		if (tokLine.empty())
+			continue;
 
 		// If the line starts with a keyword
-        if(tokLine[0] == "*" && (tokLine[1] == INSTR || tokLine[1] == CHABA))
-            return true;
+		if (tokLine[0] == "*" && (tokLine[1] == INSTR || tokLine[1] == CHABA))
+			return true;
 	}
 	return false;
 }
