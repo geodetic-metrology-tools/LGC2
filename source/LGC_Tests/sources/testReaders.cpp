@@ -58,12 +58,30 @@ void object::test<1>()
 	ensure("Input title must match extracted title.", projShared->getConfig().title == title);
 }
 
+template<>
+template<>
+void object::test<2>()
+{
+	set_test_name("Empty title");
+
+	std::shared_ptr<TLGCData> projShared(new TLGCData);
+
+	TReader r(projShared);
+	// test empty title
+	istringstream mockfile("*TITR\n*OLOC");
+
+	bool readSuccess = r.read(mockfile);
+	// title should be the "Default title"
+	ensure_equals("Inputfile with empty title should be allowed.", readSuccess, true);
+	ensure_equals("Inputfile with empty title should result in default title.", projShared->getConfig().title, "Default title");
+}
+
 TLGCData proj;
 auto &cfg(proj.getConfig());
 
 template<>
 template<>
-void object::test<2>()
+void object::test<3>()
 {
 	set_test_name("Testing options");
 
@@ -186,7 +204,7 @@ void object::test<2>()
 
 template<>
 template<>
-void object::test<3>()
+void object::test<4>()
 {
 	set_test_name("Testing point input");
 
@@ -233,7 +251,7 @@ void object::test<3>()
 
 template<>
 template<>
-void object::test<4>()
+void object::test<5>()
 {
 	set_test_name("Testing instrument input");
 
@@ -394,7 +412,7 @@ void object::test<4>()
 
 template<>
 template<>
-void object::test<5>()
+void object::test<6>()
 {
 	set_test_name("Testing measurement input");
 	using namespace LGC;
