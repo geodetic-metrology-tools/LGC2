@@ -241,24 +241,6 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		pt.activatePointSigma();
 	}
 
-	// store the matrix in the point
-	if (ptSigma.fHasApriCovMat)
-		pt.setAprioriCovarianceMatrix(ptSigma.fApriCovMat);
-	else
-	{
-		// if matrix was not set by user, calculate it from the sigmas
-		// if any sigma will be not defined (point free in this axis) and theres a rotation, the apriori covariance matrix will remain NAN, which is ok.
-		Eigen::Matrix3d apriCovMat;
-		apriCovMat.setZero();
-		apriCovMat.diagonal() << pow2(ptSigma.fSigmas[0]), pow2(ptSigma.fSigmas[1]), pow2(ptSigma.fSigmas[2]);
-		if (ptSigma.fHasAngle)
-		{
-			Eigen::Matrix3d rotMat = ptSigma.fRotMat;
-			pt.setAprioriCovarianceMatrix(rotMat.transpose() * apriCovMat * rotMat);
-		}
-		else
-			pt.setAprioriCovarianceMatrix(apriCovMat);
-	}
 
 	// check if one of the weights was set to zero
 	// if no angle was used we block the corresponding freedoms
