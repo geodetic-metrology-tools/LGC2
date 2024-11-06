@@ -15,6 +15,7 @@ linux_release:
     extends: .linux_release
     needs: ["linux_build_and_test"]
     script:
+        - !reference [.default_linux_before_scripts, script]
         - echo "Building executable | -j$(nproc)"
         - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
         - cp LGC ..
@@ -35,8 +36,9 @@ windows64_release:
     extends: .windows64_release
     needs: ["windows64_build_and_test"]
     script:
+        - !reference [.default_windows_before_scripts, script]
         - echo "Building executable"
-        - cmake --build . -j %NUMBER_OF_PROCESSORS% --config Release --target PACKAGE
+        - cmake --build . -j $env:NUMBER_OF_PROCESSORS --config Release --target PACKAGE
         - cp LGCInstaller-*.exe ..
     artifacts:
         paths:
