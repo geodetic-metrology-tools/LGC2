@@ -340,7 +340,7 @@ bool TLSEvaluator::evaluate()
 		// evaluate
 		iMat->initMatrices(fData->fUEOIndices);
 		// evaluate using the standard inputMatrixFiller
-		success = fMatFiller->fillMatrices(fData.get(), true, iMat);
+		success = fMatFiller->fillMatrices(fData.get(), iMat);
 		isUptoDate = true;
 	}
 	return success;

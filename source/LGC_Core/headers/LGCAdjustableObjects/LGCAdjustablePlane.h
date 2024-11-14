@@ -85,7 +85,9 @@ public:
 	/// Returns a constant reference on the estimated value of the Phi angle.
 	inline const TAngle &getPhiEstimatedValue() const { return fEstValPhi; }
 
-		const Eigen::VectorXd getEstParamVector();
+	const Eigen::VectorXd getEstParamVector();
+
+	const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const;
 		/// Returns a constant reference on the estimated precision of the Phi angle. 
 		inline const TAngle&		getPhiEstimatedPrecision() const {	return fEstPrecisionPhi;}
 
@@ -114,26 +116,15 @@ public:
 
 	/*!
 		\brief See \ref TVAdjustableObject::isFixed
+		Plane is fixed (method returns true) when all three parameters are fixed.
+	*/
+	inline virtual bool isFixed() const { return fThetaFixed & fPhiFixed & fRefPtDistFixed; }
 
-			Reference point distance is never fixed, so the plane either.	
-		*/
-		inline virtual bool isFixed() const { return false;}
-		
-		// returns vector of relative indices of free parameters
-		const std::vector<int> getRelativeUnknIndices() const;
+	///	Tells if at least one component is unfixed (variable). This method serves the same purpose as the "isFixed()".
+	inline bool hasVariable() const { return !this->isFixed(); }
 
-		///	Tells if at least one component is unfixed (variable). Reference point distance is always variable. True returned.
-		inline bool hasVariable() const { return true;}
- 
-		///	See \ref TVAdjustableObject::getFirstUidx
-		inline virtual int getFirstUidx() const {	
-				if (!fThetaFixed)
-					return uidx_Theta;		
-				else if (!fPhiFixed)
-					return uidx_Phi;
-				else
-					return uidx_rpDistance;		
-		}
+	///	See \ref TVAdjustableObject::getFirstUidx
+	virtual int getFirstUidx() const;
 
 	///	Tells if the Theta angle is fixed or unknown.
 	inline bool isThetaFixed() { return fThetaFixed; }

@@ -11,6 +11,7 @@
 #include <TLSGaussNewtonSolver.h>
 #include <TLSRobustSolver.h>
 #include <TLSLMSolver.h>
+#include "TLSSimulation.h"
 #include "TVAbstractAlgorithm.h"
 #include "TLSResultsMatrices.h"
 #include <Logger.hpp>
@@ -18,7 +19,6 @@
 #include <TLSGraph.h>
 #include "Serializer_json.hpp"
 #include <fstream>
-#include <Timer.h>
 #include <algorithm>
 
 
@@ -58,7 +58,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		{
 			// only now the constraint dimensions are set.
 			// testing derivatives
-			//	TLSDerivativeTester tester(fData);
+			// TLSDerivativeTester tester(fData);
 		
 			// test different globalization methods
 			try
