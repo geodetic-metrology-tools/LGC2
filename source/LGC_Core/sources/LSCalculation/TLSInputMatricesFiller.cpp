@@ -1801,9 +1801,9 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			int obsIdx = ptSigma.firstObsIdx;
 			if (ptSigma.fHasApriCovMat)
 			{
-				// user has assigned a full 3x3 apriori covariance matrix
-				isProcessOK &= matrices->setWeightMtrxBlock(obsIdx, obsIdx, ptSigma.fApriCovMat);
-				// its an 3 dimendional observation, A matrix needs to be filled
+				// user has assigned a full 3x3 apriori covariance matrix, the weight is the inverse of this matrix
+				isProcessOK &= matrices->setWeightMtrxBlock(obsIdx, ptSigma.fApriCovMat.inverse());
+				// its a 3-dimensional observation, the A matrix needs to be filled
 				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
 				{
 					for (int colIdx = 0; colIdx < 3; colIdx++)
