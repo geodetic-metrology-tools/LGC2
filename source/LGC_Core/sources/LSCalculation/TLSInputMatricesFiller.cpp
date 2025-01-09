@@ -322,7 +322,9 @@ void TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM>
 		}
 
 		// Add Misclosure vector's contribution
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
+		TAngle testttt;
+		testttt.setGonsValue(meas->getAngle().getGonsValue() - contributions.fCalcMeas.getGonsValue());
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * testttt.getGonsValue()/200*PI);
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)

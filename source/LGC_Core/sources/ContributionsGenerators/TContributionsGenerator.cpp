@@ -195,7 +195,9 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 	TReal yTg = targetPos.getY().getMetresValue();
 
 	// Calculated measurement value
-	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
+	TAngle calcMeas;
+	calcMeas.setGonsValue(TAngle::aTan2((xTg - xSt), (yTg - ySt)).getGonsValue() - rom->v0->getEstimatedValue().getGonsValue() - rom->acst.getGonsValue());
+	//TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
 
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)

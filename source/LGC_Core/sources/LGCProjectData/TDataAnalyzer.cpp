@@ -1,6 +1,8 @@
 #include "TDataAnalyzer.h"
 
 #include <bitset>
+#include <iostream>
+#include <string>
 
 #include <Logger.hpp>
 #include <TLGCData.h>
@@ -1379,6 +1381,47 @@ void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)
 void TDataAnalyzer::predeterminePLR3DV0()
 {
 	const TDataTree &fTree = fData.getTree();
+	for (auto it(fTree.begin()); it != fTree.end(); ++it)
+	{
+		auto &frame(it.node->data.get()->frame);
+		for (auto &tstn : it.node->data.get()->measurements.fTSTN)
+		{
+			for (auto itrom : tstn->roms)
+			{
+				TReal averageV0 = 0.0;
+				int numberOfMeasurements = (int)itrom->measANGL.size();
+				for (auto itANGL : itrom->measANGL)
+				{
+					//V0 must be done in the station frame.
+					TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
+					TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+					TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
+					targetPos = itANGL.targetPos->getEstimatedValue();
+					const TLOR2LOR &tgLor2StTrafo = fPointTransfo.getLORTransformation(
+						itANGL.targetPos->getFrameTreePosition(), tstn->instrumentPos->getFrameTreePosition()); // Get transformation from "Target lor" to "ROOT"
+					tgLor2StTrafo.transform(targetPos);
+					stationPos = tstn->instrumentPos->getEstimatedValue();
+					TReal xSt = stationPos.getX().getMetresValue();
+					TReal ySt = stationPos.getY().getMetresValue();
+
+					TReal xTg = targetPos.getX().getMetresValue();
+					TReal yTg = targetPos.getY().getMetresValue();
+					
+					// Calculated measurement value
+					TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itrom->acst - itANGL.getAngle();
+					std::cout << std::setprecision(10);
+					std::cout << tstn->instrumentPos->getName() << "\t" << itANGL.targetPos->getName() << "\t" << V0app.getGonsValue() << "\n";
+					
+					averageV0 += V0app.getRadiansValue() / numberOfMeasurements;
+
+				}
+				TAngle averageAngle(averageV0);
+				std::cout << tstn->instrumentPos->getName() << "\t" << averageV0 << "\n";
+				std::cout << tstn->instrumentPos->getName() << "\t" << averageAngle.getGonsValue() << "\n";
+				auto testttt = 1;
+			}
+		}
+	}
 
 	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) != 0)
 	{
@@ -1386,6 +1429,7 @@ void TDataAnalyzer::predeterminePLR3DV0()
 			if (it.node->data->isROOTNode())
 			{
 				for (auto itTSTN : it.node->data->measurements.fTSTN)
+				{
 					for (auto itplr : itTSTN->roms)
 					{
 						if (itplr->measPLR3D.size() != 0)
@@ -1429,6 +1473,7 @@ void TDataAnalyzer::predeterminePLR3DV0()
 							itplr->v0->setCorrection(indexV0, V0app);
 						}
 					}
+				}
 			}
 	}
 }
