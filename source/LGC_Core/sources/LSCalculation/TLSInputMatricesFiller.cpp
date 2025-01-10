@@ -322,11 +322,21 @@ void TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM>
 		}
 
 		// Add Misclosure vector's contribution
-		TAngle testttt;
-		testttt.setGonsValue(meas->getAngle().getGonsValue() - contributions.fCalcMeas.getGonsValue());
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * testttt.getGonsValue()/200*PI);
-
-		// Add weight unknown matrix element
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
+		//TAngle testttt;
+		//testttt.setGonsValue(meas->getAngle().getGonsValue() - contributions.fCalcMeas.getGonsValue());
+		//std::cout << meas->targetPos->getName() << "\t";
+		//std::cout << meas->getAngle().getGonsValue() << "\t";
+		//std::cout << meas->getAngle() << "\t";
+		//std::cout << meas->getAngle().getRadiansValue() << "\t";
+		//std::cout << contributions.fCalcMeas.getGonsValue() << "\t";
+		//std::cout << contributions.fCalcMeas << "\t";
+		//std::cout << contributions.fCalcMeas.getRadiansValue() << "\t";
+		//std::cout  << "\n";
+		//std::cout << contributions.fCalcMeas.getRadiansValue() << "\t";
+		//std::cout  << "\n";
+		//isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * testttt.getGonsValue() / 200 * PI);
+		//// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)
 			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
 		else

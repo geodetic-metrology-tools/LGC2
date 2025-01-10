@@ -665,7 +665,8 @@ bool TDataAnalyzer::checkParameters()
 
 	// cannot predetermine V0 in simulation and LIBR
 	// changed to consilibr
-	if (!fData.getConfig().useConsiLibr.isActive() && !fData.getConfig().sim.isActive())
+	//if (!fData.getConfig().useConsiLibr.isActive() && !fData.getConfig().sim.isActive())
+	if (!fData.getConfig().sim.isActive())
 		predeterminePLR3DV0();
 
 	// Run through point collection and check whether all points were initialized, assign unknown indices at the same time and check that if PDOR used exactly one point in ROOT defined as CALA
@@ -1388,11 +1389,12 @@ void TDataAnalyzer::predeterminePLR3DV0()
 		{
 			for (auto itrom : tstn->roms)
 			{
-				TReal averageV0 = 0.0;
-				int numberOfMeasurements = (int)itrom->measANGL.size();
+				std::vector<TAngle> anglesVector;
+				// rework the vector sizing.
+
 				for (auto itANGL : itrom->measANGL)
 				{
-					//V0 must be done in the station frame.
+					// V0 must be done in the station frame.
 					TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 					TPositionVector targetPos(TCoordSysFactory::ECoordSys::k3DCartesian);
 					TPositionVector stationPos(TCoordSysFactory::ECoordSys::k3DCartesian);
@@ -1406,23 +1408,26 @@ void TDataAnalyzer::predeterminePLR3DV0()
 
 					TReal xTg = targetPos.getX().getMetresValue();
 					TReal yTg = targetPos.getY().getMetresValue();
-					
+
 					// Calculated measurement value
 					TAngle V0app = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - itrom->acst - itANGL.getAngle();
+					anglesVector.emplace_back(V0app);
 					std::cout << std::setprecision(10);
-					std::cout << tstn->instrumentPos->getName() << "\t" << itANGL.targetPos->getName() << "\t" << V0app.getGonsValue() << "\n";
-					
-					averageV0 += V0app.getRadiansValue() / numberOfMeasurements;
 
+					// std::cout << tstn->instrumentPos->getName() << "\t" << averageV0 << "\n";
+					TAngle meannnnn = TAngle::average(anglesVector);
+					std::cout << tstn->instrumentPos->getName() << "\t" << meannnnn.getGonsValue() << "\n";
+					// std::cout << tstn->instrumentPos->getName() << "\t" << averageAngle.getRadiansValue() << "\n";
+					auto testttt = 1;
+					int indexV0 = itrom->v0->getFirstUidx();
+					itrom->v0->setCorrection(indexV0, meannnnn.getRadiansValue());
+					std::cout << itrom->v0->getEstimatedValue() - meannnnn.getRadiansValue() << "\n";
+					auto poi = 1;
 				}
-				TAngle averageAngle(averageV0);
-				std::cout << tstn->instrumentPos->getName() << "\t" << averageV0 << "\n";
-				std::cout << tstn->instrumentPos->getName() << "\t" << averageAngle.getGonsValue() << "\n";
-				auto testttt = 1;
 			}
 		}
 	}
-
+	auto test = 1;
 	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) != 0)
 	{
 		for (auto it(fTree.begin()); it != fTree.end(); ++it) // FRK 17/11/2016: suppressed reference "auto&"
