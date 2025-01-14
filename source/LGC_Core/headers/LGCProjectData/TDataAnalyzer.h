@@ -55,7 +55,9 @@ private:
 	void assignEOIndices();
 
 	void checkPDOR(TFileLogger &fileLog, bool dataConsistent);
-	void predeterminePLR3DV0();
+
+	//! Predetermine v0 for total station measurements in the root system
+	void predetermineV0();
 
 	bool fStandDevUsed; // If at least one standard deviation assigned to a point or frame element.
 

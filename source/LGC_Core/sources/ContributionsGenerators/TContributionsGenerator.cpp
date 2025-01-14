@@ -195,18 +195,8 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 	TReal yTg = targetPos.getY().getMetresValue();
 
 	// Calculated measurement value
-	//TAngle calcMeas;
-	//calcMeas.setGonsValue(TAngle::aTan2((xTg - xSt), (yTg - ySt)).getGonsValue() - rom->v0->getEstimatedValue().getGonsValue() - rom->acst.getGonsValue());
 	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
-	//if (angl.targetPos->getName() == "SR.A-GOF1D.C30-G4-EI")
-	//{
-	//	std::cout << "TCONTRIBBBB"<< "\t";
-	//	std::cout << TAngle::aTan2((xTg - xSt), (yTg - ySt)) << "\t";
-	//	std::cout << rom->v0->getEstimatedValue() << "\t";
-	//	std::cout << rom->acst << "\t";
-	//	std::cout << "\n";
-	//	auto test = 1;
-	//}
+
 	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
 	if (dist2 < nullLimit)
 	{
