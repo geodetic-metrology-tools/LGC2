@@ -1392,7 +1392,6 @@ void TDataAnalyzer::predetermineV0()
 		return TAngle::aTan2((xTg - xSt), (yTg - ySt));
 	};
 
-	
 	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kANGL) == 0 && fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) == 0)
 	{
 		return; // No measurements to process
@@ -1400,15 +1399,15 @@ void TDataAnalyzer::predetermineV0()
 
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
-	
-	// V0 can is only a free parameter in the root frame
-	for (auto &tstn : fTree.begin().node->data.get()->measurements.fTSTN)
+
+	// V0 can only a free parameter in the root frame
+	for (const auto &tstn : fTree.begin().node->data.get()->measurements.fTSTN)
 	{
 		const TLOR2LOR &stLor2RootTrafo = fPointTransfo.getLORTransformation(
 			tstn->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); // Get transformation from "Station lor" to "ROOT"
 
 		// Calculated V0 value per Rom: a TSTN can only have one rom
-		for (auto itrom : tstn->roms)
+		for (const auto &itrom : tstn->roms)
 		{
 			if (itrom->measANGL.size() + itrom->measPLR3D.size() != 0)
 			{
