@@ -2019,17 +2019,17 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 			}
 			// check if there is a constraint that does not depend on any parameter
 			// this can happen for example if a TX constraint was (manually) added but the only points defined are *VZ (they only vary in Z)
+			const TSparseMatrix &A2 = *matrices->getCnstrFirstDgnMtrx();
 			for (size_t i = group.getFirstCIndex(); i < group.getFirstCIndex() + group.getConstraintDimension(); i++)
 			{
 				// Check if there are non-zero entries in row i
-				TSparseMatrix A2 = *matrices->getCnstrFirstDgnMtrx();
 				bool hasEntries = false;
 				for (size_t k = 0; k < A2.outerSize(); ++k)
 				{
 					for (Eigen::SparseMatrix<double>::InnerIterator it(A2, k); it; ++it)
 					{
-						if (it.row() == i)
-						{ // Check if the current element is in row i
+						if ((it.row() == i) && !isZero(it.value()))
+						{ // Check if the current nonzero element is in row i
 							hasEntries = true;
 							break;
 						}

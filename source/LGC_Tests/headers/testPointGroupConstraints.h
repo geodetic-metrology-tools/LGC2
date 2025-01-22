@@ -225,5 +225,19 @@ Top 1.224
 *END
 )";
 
+char const *const constraintDetection_emptyConstraint = R"(*TITR
+testing libr constraint choice. manually added constraint can lead to "empty" constraints. This should abort the calculation.
+*OLOC
+*CONSI LIBR TZ
+*INSTR
+*VXY
+A 1 2 3
+B 4 5 6
+*OBSXYZ
+A 1 2 3 1 1 1
+B 4 5 6 1 1 1
+*END
+)";
+
 } // namespace pointConstraintTest
 #endif

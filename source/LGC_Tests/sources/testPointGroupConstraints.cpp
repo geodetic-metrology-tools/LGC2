@@ -257,4 +257,25 @@ void object::test<7>()
 	ensure_equals("Calculation is expected to work.", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
 
+template<>
+template<>
+void object::test<8>()
+{
+	set_test_name("Testing empty constraints detection");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/test.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	// more complicated testfile, with 7 DOF frame with free point inside frame
+	std::stringstream infiler(pointConstraintTest::constraintDetection_emptyConstraint);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	TLGCCalculation calcul(projTest);
+	// compute
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	// check if the empty constraints have been detected
+	ensure_equals("Calculation is expected to be aborted.", succesCalc.code(), Behavior::BehaviorCode::ERR_inputData);
+}
+
 }; // namespace tut
