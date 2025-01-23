@@ -739,8 +739,8 @@ void TOtherMeasurementWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ
 		(*stream).writeStringLeft(nameWidth, It.station->getName() + " (x)");
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
-		// get the difference between estimated and provisionnal value
-		(*stream).writeDouble(obsWidth, lengthPrecision, It.station->getEstValue(0) - It.station->getProvisionalValue().getX());
+		// get the observed X coordinate
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.obsValue.getX().getMetresValue());
 		// get the standard deviation
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getXObservedStDev().getMMetresValue());
 		// get the residual
@@ -751,8 +751,8 @@ void TOtherMeasurementWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ
 		(*stream).writeStringLeft(nameWidth, It.station->getName() + " (y)");
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
-		// get the difference between estimated and provisionnal value
-		(*stream).writeDouble(obsWidth, lengthPrecision, It.station->getEstValue(1) - It.station->getProvisionalValue().getY());
+		// get the observed Y coordinate
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.obsValue.getY().getMetresValue());
 		// get the standard deviation
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getYObservedStDev().getMMetresValue());
 		// get the residual
@@ -763,8 +763,8 @@ void TOtherMeasurementWriter::writeOBSXYZReliabilityData(const std::list<TOBSXYZ
 		(*stream).writeStringLeft(nameWidth, It.station->getName() + " (z)");
 		(*stream).writeStringLeft(nameWidth, "");
 		(*stream).writeStringLeft(nameWidth, "");
-		// get the difference between estimated and provisionnal value
-		(*stream).writeDouble(obsWidth, lengthPrecision, It.station->getEstValue(2) - It.station->getProvisionalValue().getZ());
+		// get the observed Z coordinate
+		(*stream).writeDouble(obsWidth, lengthPrecision, It.obsValue.getZ().getMetresValue());
 		// get the standard deviation
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, It.getZObservedStDev().getMMetresValue());
 		// get the residual
