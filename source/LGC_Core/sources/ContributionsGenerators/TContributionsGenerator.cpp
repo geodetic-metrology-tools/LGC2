@@ -1346,12 +1346,12 @@ PtOrientationContrib TContributionsGenerator::getRADIContrib(const TRADI &radi)
 	TAngle bear = radi.getAngleCnstr() + radi.getConstAngle();
 
 	// gets calc value and sigma
-	TLength calcmeas = TLength(-LITERAL(1.0) * sinq(bear) * (ye - yp) + cosq(bear) * (xe - xp));
+	TLength calcmeas = TLength(-sinq(bear) * (ye - yp) + cosq(bear) * (xe - xp));
 
 	// calculated contibutions in a local system
-	TReal a = -LITERAL(1.0) * cosq(bear); // xPt coefficient
-	TReal b = sinq(bear); // yPt coefficient
-	TReal c = LITERAL(0.0); // zPt coefficient
+	TReal a = cosq(bear); // xPt coefficient
+	TReal b = -sinq(bear); // yPt coefficient
+	TReal c = 0.0; // zPt coefficient
 
 	// Point can be defined anywhere, get point contributions and transformations contributions
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> festimatedPtTransformContrib;

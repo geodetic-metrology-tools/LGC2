@@ -1291,5 +1291,26 @@ p2 0
 % fixing the frame but allowing y movements by the low precision. Used to exploits the wrong sensitivity with respect to TY of the TSTN measurements
 zeroInFrame 0 0 0 1 2000 1
 *END)";
-} // namespace MixObs
+
+char const *const RadiVsPointWithSigma= R"(*TITR
+RADI vs point with sigma
+*OLOC
+*PREC 7
+*JSON
+*INSTR
+*POIN
+P0 0 0 0 SX 1000 SY 1000 SZ 1000 BEAR 0
+*RADI 1000
+% bearing 0 => should be offset in x-direction
+P0 0
+% bearing -100 => should be offset in y-direction
+P0 0 ACST -100
+*OBSXYZ
+P0 0 0 0 1000 1000 1000
+P0 1 2 3 1000 1000 1000
+*END)";
+} 
+
+// namespace MixObs
+
 #endif

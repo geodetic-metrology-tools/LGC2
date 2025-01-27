@@ -1203,7 +1203,7 @@ void TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI> &radiMe
 		}
 
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (contributions.calcmeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, contributions.calcmeas);
 
 		// Add weight matrix element
 		if (pow2(meas->getObservedStDev()) < nullLimit)

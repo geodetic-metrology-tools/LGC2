@@ -456,4 +456,43 @@ void object::test<10>()
 	ensure_equals("Y translation should be 0", estimatedYTranslation, 0, 1e-9);
 }
 
+
+template<>
+template<>
+void object::test<11>()
+{
+	set_test_name("Testing consistency of RADI and point with sigma");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_FrameContribTest.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::RadiVsPointWithSigma);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	std::string pointName = "P0";
+	// get RADI observation residual
+	TDataTree tree = projTest->getTree();
+	TDataTreeIterator frameIt = tree.begin();
+	auto radiIt = frameIt.node->data->measurements.fRADI.begin();
+	// first Radi has bearing 0 -> should correspond to radial offset, i.e. perpendicular to beam (y-direction): offset in x-direction
+	TLength firstRadiRes = radiIt->getResidual();
+	radiIt++;
+	// second Radi has bearing -100 -> should correspond to longitudinal offset: y-direction
+	TLength secondRadiRes = radiIt->getResidual();
+
+	// get point with sigma residual 
+	LGCAdjustablePoint test = calcul.getData().getPoints().getObject(pointName);
+	pointSigmaData sigmaData = test.getPointSigmaData();
+	Eigen::Vector3d pointSigmaResidual = sigmaData.fRotRes;
+	// compare results
+	ensure_equals("RADI with 0 gon bearing should correspond to x-offset", firstRadiRes.getMetresValue(), pointSigmaResidual(0));
+	ensure_equals("RADI with -100 gon bearing should correspond to y-offset", secondRadiRes.getMetresValue(), pointSigmaResidual(1));
+}
+
 }; // namespace tut
