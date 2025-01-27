@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2025. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -55,7 +55,9 @@ private:
 	void assignEOIndices();
 
 	void checkPDOR(TFileLogger &fileLog, bool dataConsistent);
-	void predeterminePLR3DV0();
+
+	//! Predetermine v0 for total station measurements in the root system
+	void predetermineV0();
 
 	bool fStandDevUsed; // If at least one standard deviation assigned to a point or frame element.
 

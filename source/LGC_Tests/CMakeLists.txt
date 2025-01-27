@@ -16,6 +16,7 @@ include_directories(${CMAKE_SOURCE_DIR}
 
 set(tests_SOURCES
 	sources/testReaders.cpp
+	sources/testPOLAR.cpp
 	sources/testGlobals.cpp
 	sources/testsTransformationClasses.cpp
 	sources/testTstnInputFiles.cpp
@@ -66,6 +67,7 @@ set(tests_INPUT
 	headers/testPointWithSigma.h
 	headers/testEREL.h
 	headers/testDLEV.h
+	headers/testPOLAR.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
