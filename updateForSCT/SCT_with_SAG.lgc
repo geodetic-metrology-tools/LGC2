@@ -1,0 +1,229 @@
+*TITR
+FRAS System v1 with additional modification for modeling of sag of the cold mass
+(inside RSTR_SCT.GTAP.A1LX frame)  
+- for simplicity: remove unused CALA points 
+- create perfect observations (using *SIMU and *SOBS)
+- introduce a fixed sag element (sag0) associate it to a new frame marking the
+  middle of the sagged element (elementMiddle Frame), choose values that make
+  sense: sag -2e-4m, curvature such that the SCT.GTAP.A1LX.L_WPS is at y=9.004108 is vertically not changed because its at a pilar position.
+ This means curvature*(9.004108-5.575625)^2+sag=0 => curvature = 1.7015e-5)
+- introduce sagged versions of the points that will be subject to a sag (here
+  the points in the GTAP frame on which the HLS and wire sensors are placed)
+- tell LGC that the _SAGGED points are associated to the normal points via the
+  sag0 deformation variable (using *SAGCONNECT)
+- introduce two new WPS in the middle of the GTAP element (otherwise we cant
+  determine the element sag), introduce the sagged positions of them and also
+  tell LGC they are associated
+- introduce new wire observations from the middle sensors (find out what the
+  reading at their sagged position would (keeping the sag fixed) be by
+  overriding the default precision with huge values: XSE and ZSE)
+- general: replace all water level and wire observations in the tap frame by
+  observations from the sagged position and find what their reading would be
+- remove all GTAP obervations from the "straight" positions, remove the
+  overriden precisions: OBSE and XSE,ZSE
+- result is a file with very low sigma, almost 0
+- in principle the observations should now provide enough information to be able
+  to free the sag parameters and be able to estimate them at the values that
+  were used in the process of generating the simulated observations
+- problem: computation does not work when freeing VS and VC (vertical sag and
+  vertical curvature)
+- Reason for problem: The frame RSTRI_SCT.GTAP.A1LX has a TZ freedom and the sag
+  deformation of a point (only affecting its z coordinate in root) is computed
+  as [dz= curvature*(distance to middle of bending element)^2 + sag] and the sag
+  is a parameter that needs to be estimated as well. So the TZ and the sag are
+  redundant which makes the problem not well defined.
+- solution: we need to give LGC a information such that it can separate the TZ
+  variable and the sag variable
+- it can be done because we know that the GTAP is supported by the two pillars,
+  so we know that at the two pillars, the vertical sag is almost zero. We know
+  that for example the SCT.GTAP.A1LX.L_WPS sensor is placed on this pillar, so we
+  need to tell LGC that SCT.GTAP.A1LX.L_WPS and SCT.GTAP.A1LX.L_WPS_SAGGED are
+  almost at the same place. This can be done by introducing a *OBSXYZ on
+  SCT.GTAP.A1LX.L_WPS_SAGGED with the coordinates of SCT.GTAP.A1LX.L_WPS and low
+  standard deviation
+- the result is a very precise estimate of sag and curvature. (sag estimated at -0.199829mm +-0.0008mm)
+
+*RS2K
+*PREC 6
+*JSON
+*EREL
+SCT.GTAP.A1LX.L_WPS zero elementMiddle
+*INSTR
+
+*SAGELEMENT sag0 elementMiddle 11.45 -2e-4 1.7015e-5 0 0 VS VC  
+*HLSR HLS1   0.03   0   0   
+*WPSR WPS1   0.03   0.03   0   0
+   
+*ECWS   HLS1   0   WSID   GIHLN.A1LX.A
+% SCT.GTAP.A1LX.D_HLS   -0.00227754   
+% SCT.GTAP.A1LX.L_HLS   0.00201337   
+% SCT.GTAP.A1LX.A_HLS   -0.00250505   
+% SCT.GTAP.A1LX.Q_HLS   0.00218501   
+SCT.GTAP.A1LX.D_HLS_SAGGED   -0.002336 % OBSE 100000 
+SCT.GTAP.A1LX.L_HLS_SAGGED    0.002013 % OBSE 100000
+SCT.GTAP.A1LX.A_HLS_SAGGED   -0.002563 % OBSE 100000 
+SCT.GTAP.A1LX.Q_HLS_SAGGED    0.002185 % OBSE 100000
+SCT.GISCD.A1LX.A_HLS   0.00254119   
+SCT.GISCD.A1LX.D_HLS   0.00250666   
+SCT.GISCD.B1LX.A_HLS   -0.00237203   
+SCT.GISCD.B1LX.D_HLS   -0.00209157   
+*ECWI   WPS1   0.0003589   0   SCT.GISCD.A1LX.D_WPS   SCT.GISCD.B1LX.D_WPS   WIID   GIWPN.A1LX.Q
+%SCT.GTAP.A1LX.D_WPS   9.692e-05   0.000417679   
+%SCT.GTAP.A1LX.Q_WPS   0.000220964   0.000380497   
+SCT.GISCD.A1LX.D_WPS   -2.97422e-13   -2.07538e-13   
+SCT.GISCD.B1LX.D_WPS   -7.20309e-14   -4.49245e-13 
+SCT.GTAP.A1LX.D_WPS_SAGGED    0.000097 	   0.000359   % XSE 10000 ZSE 10000 
+SCT.GTAP.A1LX.Q_WPS_SAGGED    0.000221 	   0.000380   % XSE 10000 ZSE 10000
+middleWPS_1_SAGGED            0.000152     0.000303   % XSE 10000 ZSE 10000   
+*ECWI   WPS1   0.0003592   0   SCT.GISCD.A1LX.A_WPS   SCT.GISCD.B1LX.A_WPS   WIID   GIWPN.A1LX.T
+%SCT.GTAP.A1LX.L_WPS   -1.66224e-05   -1.978e-05   
+%SCT.GTAP.A1LX.A_WPS   4.48344e-05   0.000255025   
+SCT.GISCD.A1LX.A_WPS   -5.61757e-14   6.22098e-13   
+SCT.GISCD.B1LX.A_WPS   -1.556e-13   1.84145e-13   
+SCT.GTAP.A1LX.L_WPS_SAGGED -0.000017   -0.000020 % XSE 10000 ZSE 10000 
+SCT.GTAP.A1LX.A_WPS_SAGGED  0.000045    0.000197 % XSE 10000 ZSE 10000
+middleWPS_2_SAGGED          0.000013   -0.000037 % XSE 10000 ZSE 10000   
+*SAGCONNECT sag0
+SCT.GTAP.A1LX.D_WPS  SCT.GTAP.A1LX.D_WPS_SAGGED
+SCT.GTAP.A1LX.L_WPS  SCT.GTAP.A1LX.L_WPS_SAGGED
+SCT.GTAP.A1LX.A_WPS  SCT.GTAP.A1LX.A_WPS_SAGGED
+SCT.GTAP.A1LX.Q_WPS  SCT.GTAP.A1LX.Q_WPS_SAGGED
+SCT.GTAP.A1LX.D_HLS  SCT.GTAP.A1LX.D_HLS_SAGGED
+SCT.GTAP.A1LX.L_HLS  SCT.GTAP.A1LX.L_HLS_SAGGED
+SCT.GTAP.A1LX.A_HLS  SCT.GTAP.A1LX.A_HLS_SAGGED
+SCT.GTAP.A1LX.Q_HLS  SCT.GTAP.A1LX.Q_HLS_SAGGED
+
+middleWPS_1 middleWPS_1_SAGGED
+middleWPS_2 middleWPS_2_SAGGED
+
+*FRAME   RST_SCT.GTAP.A1LX   996   5296   2460.12   0.0318995   0.0098449   211.45   1   
+*FRAME   RSTB_SCT.GTAP.A1LX   0   0   0   0   0   0   1
+*FRAME   RSTRI_SCT.GTAP.A1LX   0   0   0   0   0   0   1   TX   TZ   RX   RZ   
+*FRAME   RSTR_SCT.GTAP.A1LX   0   0   0   0   0   0   1   RY   
+
+% defining the middle of the deforming frame
+*FRAME elementMiddle 0 5.575625 0 0 0 0 1
+*CALA 
+zero 0 0 0
+*ENDFRAME
+
+% define the two simulated wire sensors in the middle of the element (took the x
+% and z avlues from the other wire sensor frames and adjusted the y coordinate
+% such that the sensors are approximately in the middle)
+*FRAME   middleWPS_1   -0.546425   5.575625   0.547587   199.867164   0.035158   200.007926   1.000000   
+*CALA
+middleWPS_1   0.000000   -0.035000   0.000000   
+*POIN
+middleWPS_1_SAGGED   0.000000   -0.035000   0.000000
+*ENDFRAME
+*FRAME   middleWPS_2  0.546645   5.575625   0.547316   200.147077   0.145366   199.934086   1.000000   
+*CALA
+middleWPS_2   0.000000   -0.035000   0.000000   
+*POIN
+middleWPS_2_SAGGED   0.000000   -0.035000   0.000000
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.D_WPS   -0.546425   2.72752   0.547587   199.867   0.035158   200.008   1   
+*CALA
+SCT.GTAP.A1LX.D_WPS   0.000000   -0.035000   0.000000   
+*POIN
+SCT.GTAP.A1LX.D_WPS_SAGGED   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.D_HLS   -0.415358   2.692186   0.804136   199.821323   0.098676   199.999745   1.000000   
+*CALA
+SCT.GTAP.A1LX.D_HLS   0.000000   0.000000   -0.019064   
+*POIN
+SCT.GTAP.A1LX.D_HLS_SAGGED   0.000000   0.000000   -0.019064   
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.L_WPS   0.546645   9.039108   0.547316   200.147077   0.145366   199.934086   1.000000   
+*CALA
+SCT.GTAP.A1LX.L_WPS   0.000000   -0.035000   0.000000   
+*POIN
+SCT.GTAP.A1LX.L_WPS_SAGGED   0.000000   -0.035000   0.000000   
+*OBSXYZ
+%% telling LGC that at this poition, the relative sag is vanishing=>it will help
+%% separating the TZ and the sag parameter
+SCT.GTAP.A1LX.L_WPS_SAGGED   0.000000   -0.035000   0.000000  100 100 0.1
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.L_HLS   0.417308   9.002884   0.814587   200.026920   399.920599   12.477834   1.000000   
+*CALA
+SCT.GTAP.A1LX.L_HLS   -0.000054   0.000095   -0.012904   
+*POIN
+SCT.GTAP.A1LX.L_HLS_SAGGED   -0.000054   0.000095   -0.012904   
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.A_HLS   0.413356   2.688063   0.803904   200.160534   399.914821   199.999807   1.000000   
+*CALA
+SCT.GTAP.A1LX.A_HLS   0.000000   0.000000   -0.019069   
+*POIN
+SCT.GTAP.A1LX.A_HLS_SAGGED   0.000000   0.000000   -0.019069   
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.A_WPS   0.546609   2.724302   0.547475   200.100320   0.055430   200.012225   1.000000   
+*CALA
+SCT.GTAP.A1LX.A_WPS   0.000000   -0.035000   0.000000   
+*POIN
+SCT.GTAP.A1LX.A_WPS_SAGGED   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.Q_HLS   -0.417149   9.001393   0.814590   199.986026   399.867911   211.708820   1.000000   
+*CALA
+SCT.GTAP.A1LX.Q_HLS   -0.000061   -0.000032   -0.013072   
+*POIN
+SCT.GTAP.A1LX.Q_HLS_SAGGED   -0.000061   -0.000032   -0.013072   
+*ENDFRAME
+*FRAME   RSU_SCT.GTAP.A1LX.Q_WPS   -0.546364   9.035726   0.547497   200.044689   0.027953   199.901811   1.000000   
+*CALA
+SCT.GTAP.A1LX.Q_WPS   0.000000   -0.035000   0.000000   
+*POIN
+SCT.GTAP.A1LX.Q_WPS_SAGGED   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*FRAME   RST_SCT.GISCD.A1LX   993.952467   5284.738739   2460.126723   0.031899   0.009845   211.449999   1.000000   
+*FRAME   RSTB_SCT.GISCD.A1LX   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   
+*FRAME   RSTRI_SCT.GISCD.A1LX   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   
+*FRAME   RSTR_SCT.GISCD.A1LX   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   
+*FRAME   RSU_SCT.GISCD.A1LX.A_HLS   0.410575   -0.031236   0.814842   200.068756   399.849705   12.615584   1.000000   
+*CALA
+SCT.GISCD.A1LX.A_HLS   0.000000   0.000117   -0.013175   
+*ENDFRAME
+*FRAME   RSU_SCT.GISCD.A1LX.A_WPS   0.546615   0.003077   0.547764   199.874922   0.277043   200.057302   1.000000   
+*CALA
+SCT.GISCD.A1LX.A_WPS   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*FRAME   RSU_SCT.GISCD.A1LX.D_HLS   -0.417216   -0.039605   0.814626   199.971164   0.066477   213.161421   1.000000   
+*CALA
+SCT.GISCD.A1LX.D_HLS   0.000033   0.000085   -0.013356   
+*ENDFRAME
+*FRAME   RSU_SCT.GISCD.A1LX.D_WPS   -0.546728   -0.003201   0.547352   200.054948   0.024506   200.077794   1.000000   
+*CALA
+SCT.GISCD.A1LX.D_WPS   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*FRAME   RST_SCT.GISCD.B1LX   996.028116   5296.154637   2460.121324   0.031899   0.009845   211.449999   1.000000   
+*FRAME   RSTB_SCT.GISCD.B1LX   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   
+*FRAME   RSTRI_SCT.GISCD.B1LX   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   
+*FRAME   RSTR_SCT.GISCD.B1LX   0.000000   0.000000   0.000000   0.000000   0.000000   0.000000   1.000000   
+*FRAME   RSU_SCT.GISCD.B1LX.A_HLS   0.400812   -0.034927   0.804114   199.786569   0.104481   200.003447   1.000000   
+*CALA
+SCT.GISCD.B1LX.A_HLS   0.000000   0.000000   -0.018990   
+*ENDFRAME
+*FRAME   RSU_SCT.GISCD.B1LX.A_WPS   0.546573   0.000764   0.547579   199.843571   0.124273   199.949869   1.000000   
+*CALA
+SCT.GISCD.B1LX.A_WPS   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*FRAME   RSU_SCT.GISCD.B1LX.D_HLS   -0.416231   -0.034292   0.804208   200.142469   0.243562   200.004343   1.000000   
+*CALA
+SCT.GISCD.B1LX.D_HLS   0.000000   0.000000   -0.019176   
+*ENDFRAME
+*FRAME   RSU_SCT.GISCD.B1LX.D_WPS   -0.546439   -0.000844   0.547362   199.994003   399.956642   199.957182   1.000000   
+*CALA
+SCT.GISCD.B1LX.D_WPS   0.000000   -0.035000   0.000000   
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*ENDFRAME
+*END

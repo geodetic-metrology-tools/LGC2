@@ -10,6 +10,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <LGCAdjustableLine.h>
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustablePoint.h>
+#include <LGCAdjustableSag.h>
 
 class TAdjustableScalar;
 class TAdjustableHelmertTransformation;
@@ -211,6 +212,7 @@ typedef LGCAdjustableObjectCollection<TAdjustableHelmertTransformation> TAdjusta
 typedef LGCAdjustableObjectCollection<LGCAdjustablePoint> LGCAdjustablePointCollection;
 typedef LGCAdjustableObjectCollection<LGCAdjustableLine> LGCAdjustableLineCollection;
 typedef LGCAdjustableObjectCollection<LGCAdjustablePlane> LGCAdjustablePlaneCollection;
+typedef LGCAdjustableObjectCollection<LGCAdjustableSag> LGCAdjustableSagCollection;
 typedef LGCAdjustableObjectCollection<TAdjustableAngle> TAdjustableAngleCollection;
 typedef LGCAdjustableObjectCollection<TAdjustableLength> TAdjustableLengthCollection;
 typedef LGCAdjustableObjectCollection<TAdjustableScalar> TAdjustableScalarCollection;

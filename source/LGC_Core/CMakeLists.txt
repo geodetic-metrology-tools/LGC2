@@ -27,6 +27,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableLine.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustablePlane.h
+	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableSag.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableObjectCollection.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TLGCCalculation.h
 	${CORE_INCLUDE_PATH}/LGCCalculation/TSimFrameSummary.h
@@ -35,6 +36,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TALGCObjectWriter.h
 	${CORE_INCLUDE_PATH}/LGCConstraintObjects/TLGCFrameConstraintGroup.h
 	${CORE_INCLUDE_PATH}/LGCConstraintObjects/TLGCPointConstraintGroup.h
+	${CORE_INCLUDE_PATH}/LGCConstraintObjects/TLGCSagConstraintPair.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TTSTNWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TCAMWriter.h
 	${CORE_INCLUDE_PATH}/LGCObjectWriters/TLEVELWriter.h
@@ -94,6 +96,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Readers/ReaderBase.h
 	${CORE_INCLUDE_PATH}/Readers/KeywordRights.h
 	${CORE_INCLUDE_PATH}/Readers/MeasurementReader_lgc1.h
+	${CORE_INCLUDE_PATH}/Readers/SagConstraintReader.h
 	${CORE_INCLUDE_PATH}/Writers/TAFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TResultsFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TPunchFileWriter.h
@@ -115,11 +118,13 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustableLine.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePlane.cpp
+	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustableSag.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TLGCCalculation.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimPointSummary.cpp
 	${CORE_SOURCES_PATH}/LGCCalculation/TSimFrameSummary.cpp
 	${CORE_SOURCES_PATH}/LGCConstraintObjects/TLGCFrameConstraintGroup.cpp
 	${CORE_SOURCES_PATH}/LGCConstraintObjects/TLGCPointConstraintGroup.cpp
+	${CORE_SOURCES_PATH}/LGCConstraintObjects/TLGCSagConstraintPair.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TALGCObjectWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TTSTNWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TCAMWriter.cpp
@@ -168,6 +173,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/Readers/MeasurementReaders.cpp
 	${CORE_SOURCES_PATH}/Readers/OptionReaders.cpp
 	${CORE_SOURCES_PATH}/Readers/MeasurementReader_lgc1.cpp
+	${CORE_SOURCES_PATH}/Readers/SagConstraintReader.cpp
 	${CORE_SOURCES_PATH}/Writers/TAFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TResultsFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TPunchFileWriter.cpp

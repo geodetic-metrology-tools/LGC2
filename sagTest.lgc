@@ -1,0 +1,29 @@
+*TITR
+testing sag calculation
+*OLOC
+*CONSI
+*INSTR
+% defining the adjustable sag element
+% sag element describes 
+*SAGELEMENT sag0 0 2 0 0 1.2345
+%*POIN
+*CALA
+P1_ref 1 0 0
+P2_ref -1 0 0
+P3_ref 1 1 0
+P4_ref -1 1 0
+*POIN
+P1_sag 1 0 1
+P2_sag -1 0 1
+P3_sag 1 1 1
+P4_sag -1 1 1
+*OBSXYZ
+P1_sag 1.1 0 4 1 1 1 
+P2_sag -1 0 4 1 1 1 
+P3_sag 1 1 4 1 1 1 
+P4_sag -1 1 4 1 1 1
+*SAGCONNECT P1_ref P1_sag sag0
+*SAGCONNECT P2_ref P2_sag sag0
+*SAGCONNECT P3_ref P3_sag sag0
+*SAGCONNECT P4_ref P4_sag sag0
+*END

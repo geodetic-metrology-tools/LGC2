@@ -1,0 +1,85 @@
+*TITR
+proof of concept for estimating a sag with only wire observations
+1. version: 5 wire observations, two left and right that will not move + 3 in the coldmass frame that shall sag later
+2. adding fixed asg element and create 3 sagged points for the sensor positions in the coldMassFrame
+3. add observations from the sagged elements (use low weights via ZSE to generate a zero residual solution) -> consistent observations both from sagged and straight positions
+4. free the sag element and remove the observations from the straight positions
+
+
+=> conclusion
+estimation of the  sag parameters seems working well only when the wire sag and the sag element sag can be distinguished
+This is the case when the wire sag can be determined with sensors that are placed on positins that are not affected by the element sag at the same time
+% IND in result can result from close to zero negative entries in the covariance matrix (happening due to the constraints)
+%*RS2K
+*OLOC
+*CONSI
+*APRI
+*PREC 6
+*JSON
+*INSTR
+%*HLSR	HLS1	0.0300000	0.0000000	0.0000000	
+*WPSR	WPS1	0.0300000	0.0300000	0.0000000	0.0000000	
+% fixed sag element with vertical sag and curvature
+*SAGELEMENT sag0 middleColdMass 0 -1.23456e-4 5.678910e-5 0 0 0 VS VC
+*CALA
+leftAnchor 0 0 1
+rightAnchor 0 1 1
+*SAGCONNECT sag0
+leftColdMassSensorPos   leftColdMassSensorPos_SAGGED 
+middleColdMassSensorPos middleColdMassSensorPos_SAGGED 
+rightColdMassSensorPos  rightColdMassSensorPos_SAGGED 
+*ECWI	WPS1	0	0.0000000	leftAnchor rightAnchor %SAGFIX
+leftSensorPos 0 0 
+% this sensor is needed to separate wire and element sag
+%middleWireSensorGroundPos 0 0
+leftWireSensorGroundPos 0 0.000003 % ZSE 10000
+%leftColdMassSensorPos 0 0 
+%middleColdMassSensorPos 0 0
+%rightColdMassSensorPos 0 0
+rightSensorPos 0 0 
+% observations from the sagged positions
+leftColdMassSensorPos_SAGGED 0    0.000118 % ZSE 10000
+middleColdMassSensorPos_SAGGED 0  0.000123 % ZSE 10000
+rightColdMassSensorPos_SAGGED 0   0.000118 % ZSE 10000
+*FRAME leftWireSensorGround 0 -1 1 0 0 0 1
+*CALA
+leftWireSensorGroundPos 0 0 0
+*ENDFRAME
+*FRAME leftWireSensor 0 0.1 1 0 0 0 1
+*CALA
+leftSensorPos 0 0 0
+*ENDFRAME
+% shall represent a sensor mounted in the middle but on the ground and not on the cold mass.
+% this helps to determine the sag of the wire and helps to distinguish wire sagand element sag
+*FRAME middleWireSensorGround 0 0.5 1 0 0 0 1
+*CALA
+middleWireSensorGroundPos 0 0 0
+*ENDFRAME
+% zero is on the "entre" of the cold mass
+*FRAME coldMass 0 0.2 0 0 0 0 1
+*FRAME middleColdMass 0 0.3 0 0 0 0 1
+*ENDFRAME
+*FRAME leftColdMassSensor 0 0 1 0 0 0 1
+*CALA
+leftColdMassSensorPos 0 0 0
+*POIN
+leftColdMassSensorPos_SAGGED 0 0 0
+*ENDFRAME
+*FRAME middleColdMassSensor 0 0.3 1 0 0 0 1
+*CALA
+middleColdMassSensorPos 0 0 0
+*POIN
+middleColdMassSensorPos_SAGGED 0 0 0
+*ENDFRAME
+*FRAME rightColdMassSensor 0 0.6 1 0 0 0 1
+*CALA
+rightColdMassSensorPos 0 0 0 
+*POIN
+rightColdMassSensorPos_SAGGED 0 0 0 
+*ENDFRAME
+*ENDFRAME
+*FRAME rightWireSensor 0 0.9 1 0 0 0 1
+*CALA
+rightSensorPos 0 0 0
+*ENDFRAME
+*END

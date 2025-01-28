@@ -42,6 +42,7 @@ set(tests_SOURCES
 	sources/testPointGroupConstraints.cpp
 	sources/testPointWithSigma.cpp
 	sources/testEREL.cpp
+	sources/testSAG.cpp
 	sources/testDLEV.cpp
 )
 
@@ -66,6 +67,7 @@ set(tests_INPUT
 	headers/testPointGroupConstraints.h
 	headers/testPointWithSigma.h
 	headers/testEREL.h
+	headers/testSAG.h
 	headers/testDLEV.h
 	headers/testPOLAR.h
 )
