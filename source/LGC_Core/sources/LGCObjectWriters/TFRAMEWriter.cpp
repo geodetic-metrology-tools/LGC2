@@ -79,6 +79,16 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 		(*stream) << TABs + "SFP = Sub-Frame Point; * = TRUE" << "\n";
 	(*stream) << "\n" << "\n";
 
+	if (frameIt->get()->isROOTNode())
+	{
+		// write adjusdtable sag info
+		if (fProjectData->getSags().numObjects() > 0)
+		{
+			writeSagAdjustable();
+			writeSagPairs();
+		}
+	}
+
 	// Start to write the measurements
 	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
 	tstnWriter.setAllfixed(fProjectData->getConfig().allfixed.isActive()); // to be able to write the allfixed parameter
@@ -365,6 +375,110 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 		wpsrWriter.writeHisto(TLGCObsSummary::merge(allEcwiXSummaries_), "ECWI: X");
 		(*stream) << "\n";
 		wpsrWriter.writeHisto(TLGCObsSummary::merge(allEcwiZSummaries_), "ECWI: Z");
+	}
+}
+
+void TFRAMEWriter::writeSagAdjustable()
+{
+	TAStreamFormatter *stream = getStream();
+	std::string TABs = stream->getCurrSpace();
+	int nameWidth = getNameWidth();
+	//int coordWidth = getCoordWidth();
+	//int coordPrecision = getCoordPrecision();
+	int coordWidth = 14;
+	//int coordPrecision = 10;
+	stream->setWidthFormat(10);
+	stream->setPrecisionFormat(10);
+	int coordPrecision = this->getCoordPrecision();
+
+
+	for (auto& sagElement : fProjectData->getSags())
+	{
+		(*stream) << "Sag adjustable element " << sagElement.getName() << endl;
+		(*stream) << "associated frame: " << sagElement.getBaseFrame() << endl;
+		(*stream).writeString(coordWidth, "");
+		(*stream).writeString(coordWidth, "Bearing [gon]");
+		(*stream).writeString(coordWidth, "VS [mm]");
+		(*stream).writeString(coordWidth, "VC []");
+		(*stream).writeString(coordWidth, "RS [mm]");
+		(*stream).writeString(coordWidth, "RC []");
+		(*stream) << endl;
+		(*stream).writeString(coordWidth, "");
+		for (int j = 0; j < 5; j++)
+			(*stream).writeString(coordWidth, (sagElement.isCoordinateFixed(j)) ? "fixed" : "free");
+		(*stream) << endl;
+		(*stream).writeString(coordWidth, "");
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getBearing().getEstimatedValue().getGonsValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getVertSag().getEstimatedValue().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getVertCurv().getEstimatedValue().getMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getRadSag().getEstimatedValue().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getRadCurv().getEstimatedValue().getMetresValue());
+		(*stream) << endl;	
+		(*stream).writeString(coordWidth, "Precision unit");
+		(*stream).writeString(coordWidth, "[cc]");
+		(*stream).writeString(coordWidth, "[mm]");
+		(*stream).writeString(coordWidth, "[]");
+		(*stream).writeString(coordWidth, "[mm]");
+		(*stream).writeString(coordWidth, "[]");
+		(*stream) << endl;
+		(*stream).writeString(coordWidth, "");
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getBearing().getEstimatedPrecision().getGonsValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getVertSag().getEstimatedPrecision().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision + 3, sagElement.getVertCurv().getEstimatedPrecision().getMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getRadSag().getEstimatedPrecision().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision + 3, sagElement.getRadCurv().getEstimatedPrecision().getMetresValue());
+		(*stream) << endl;
+	}
+}
+
+void TFRAMEWriter::writeSagPairs()
+{
+	TAStreamFormatter *stream = getStream();
+	std::string TABs = stream->getCurrSpace();
+	int nameWidth = 40;
+	//int nameWidth = getNameWidth();
+	//int coordWidth = getCoordWidth();
+	int coordPrecision = getCoordPrecision();
+	int coordWidth = 14;
+	(*stream) << "List of Sag connected pairs: " << endl;
+	(*stream).writeStringLeft(nameWidth, "sag element");
+	(*stream).writeStringLeft(nameWidth, "Reference Point");
+	(*stream).writeStringLeft(nameWidth, "Associated Point");
+	(*stream).writeString(coordWidth, "Ref z");
+	(*stream).writeString(coordWidth, "Assoc z");
+	(*stream).writeString(coordWidth, "z offset [mm]");
+	(*stream) << endl;
+
+	for (auto sagPair : fProjectData->getSagPointPairs())
+	{
+		LGCAdjustablePoint assoc = fProjectData->getPoints().getObject(sagPair.assocPoint);
+		(*stream).writeStringLeft(nameWidth, sagPair.fSag.getName());
+		(*stream).writeStringLeft(nameWidth, sagPair.refPoint);
+		(*stream).writeStringLeft(nameWidth, sagPair.assocPoint);
+		//(*stream) << sagPair.refPoint << " <-" << sagPair.fSag.getName() << "-> " << sagPair.assocPoint;
+		double assocZ = assoc.getEstimatedValueInRoot().getZ().getMetresValue();
+		double refZ;
+		if (sagPair.isAssociatedToProvisionalCoordinates)
+		{
+			// transform the provisional value to root using the up-to-date transformation (relevant in this case)
+			TLOR2LOR assoc2Root(assoc.getFrameTreePosition(), fProjectData->getTree().begin(), "assoc2Root");
+			TPositionVector provRoot = assoc.getProvisionalValue();
+			assoc2Root.transform(provRoot);
+			refZ = provRoot.getZ().getMetresValue();
+			(*stream).writeDouble(coordWidth, 6, refZ);
+		}
+		else
+		{
+			LGCAdjustablePoint ref = fProjectData->getPoints().getObject(sagPair.refPoint);
+			refZ = ref.getEstimatedValueInRoot().getZ().getMetresValue();
+			(*stream).writeDouble(coordWidth, 6, refZ);
+		}
+		(*stream).writeDouble(coordWidth, 6, assocZ);
+		double zOffset = assocZ - refZ;
+		(*stream).writeDouble(coordWidth, 6, zOffset*M2MM);
+		if (sagPair.isAssociatedToProvisionalCoordinates)
+			(*stream).writeStringLeft(nameWidth, "(Point follows sagged provisional coordinates)");
+		(*stream) << endl;
 	}
 }
 

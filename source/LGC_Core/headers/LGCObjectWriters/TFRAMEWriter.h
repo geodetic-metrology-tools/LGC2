@@ -99,9 +99,14 @@ public:
 	/// write Histogramme summary in the rootOnly
 	void writeHistogrammeRootOnly();
 
-	/// WriteEllipsHeader
-	void writeEllipsHeader();
-	/// WriteEllipsoidHeader
+    /// write sag adjustable information
+    void writeSagAdjustable();
+    ///  information on sag pairs
+    void writeSagPairs();
+
+    /// WriteEllipsHeader
+    void writeEllipsHeader();
+    /// WriteEllipsoidHeader
 	void writeEllipsoidHeader();
 	/// WriteEllipsData
 	void writeEllipsData(AdjPointIter &pt);

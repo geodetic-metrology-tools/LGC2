@@ -1,0 +1,1 @@
+creating a lgc file that shall serve as proof of concept for estimating the sag of an element only based on wire sensors.

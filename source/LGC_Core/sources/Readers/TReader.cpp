@@ -12,6 +12,8 @@
 #include "MeasurementReader_lgc1.h"
 #include "MeasurementReaders.h"
 #include "OptionReaders.h"
+#include "TReader.h"
+#include "SagConstraintReader.h"
 
 namespace
 {
@@ -133,7 +135,10 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyHLSR(project)));
 	finterpreters.emplace_back(UPK(new TKeyWPSR(project)));
 
-	// Observations Section
+	finterpreters.emplace_back(UPK(new TKeySAG(project)));
+	finterpreters.emplace_back(UPK(new TASagConstraintPairKey(project)));
+
+	// Observations Section	
 	/*TSTN*/
 	TAKeyWord *tstn = new TKeyTSTN(project);
 	TAKeyWord *v0 = new TKeyV0(project);
@@ -203,6 +208,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyENDFRAME(project)));
 	finterpreters.emplace_back(UPK(new TKeyTITR(project)));
+
 
 	finterpreters_lgc1.emplace_back(UPK(new TKeyTITR(project)));
 }

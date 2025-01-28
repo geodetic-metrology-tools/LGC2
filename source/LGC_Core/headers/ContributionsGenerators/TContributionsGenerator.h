@@ -11,6 +11,7 @@
 #include <ContributionStructures.h>
 #include <TInverseTransformation.h>
 #include <TLGCPointConstraintGroup.h>
+#include <LGCAdjustableSag.h>
 #include <TPointTransformer.h>
 #include <TTSTN.h>
 
@@ -145,6 +146,10 @@ public:
 	LIBRPointGroupContrib getPointGroupConstraintContrib(const TLGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
 	pointSigmaContrib getPointSigmaContrib(LGCAdjustablePoint &, const TLGCData *);
 
+	SagElementContrib getSagElementContrib(const LGCAdjustableSag, const TLGCData &data);
+	SagPairContrib getSagPairContrib(const TLGCSagConstraintPair, const TLGCData &data);
+
+
 private:
 	// Contains references: not assignable
 	TContributionsGenerator &operator=(const TContributionsGenerator &);
@@ -160,14 +165,20 @@ private:
 	TFreeVector getPointContributions(const TLOR2LOR &lorTrafo, TReal a, TReal b, TReal c);
 
 	/// Adds contribution of a LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
+	template<typename T>
 	void addTransformationsContributions(const TLOR2LOR &lorTrafo,
-		const TPositionVector &pointPos,
+		//const TPositionVector &pointPos,
+		const T& pointPos,
 		TReal a,
 		TReal b,
 		TReal c,
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
 	void addTransformationsContributions(const TLOR2LOR &lorTrafo,
 		const TPositionVector &pointPos,
+		const Eigen::Vector3d &vec,
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
+	void addTransformationsContributions(const TLOR2LOR &lorTrafo,
+		const TFreeVector &pointPos,
 		const Eigen::Vector3d &vec,
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
 

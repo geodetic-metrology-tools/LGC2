@@ -86,6 +86,7 @@ private:
 	bool extractPlaneParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractTransformationParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractLineParams(const TLSResultsMatrices &rm, const TReal convCrit);
+	bool extractSagParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	//@}
 
 	/*!@name Methods responsible for final extraction of variances covariances in order to be filled into the adjustable objects. */
@@ -97,6 +98,7 @@ private:
 	void extractPlaneVarCovar(const TLSResultsMatrices &rm);
 	void extractTransformationVarCovar(const TLSResultsMatrices &rm);
 	void extractLineVarCovar(const TLSResultsMatrices &rm);
+	void extractSagVarCovar(const TLSResultsMatrices &rm);
 	//@}
 
 	/*!@name Methods relative to the measurements, responsible for extracting residuals.*/

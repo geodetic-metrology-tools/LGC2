@@ -1,0 +1,63 @@
+*TITR
+testfile for comparing LGC jacobians with finite difference reference
+*OLOC
+*CONSI
+*JSON
+*INSTR
+% defining the adjustable sag element
+*SAGELEMENT sagElement sagFrame 10 240 
+*OBSXYZ
+ex1 1 0 0 1 1 1  
+ey1 0 1 0 1 1 1  
+ez1 0 0 1 1 1 1  
+ex2 1 0 0 1 1 1  
+ey2 0 1 0 1 1 1  
+ez2 0 0 1 1 1 1  
+ex3 1 0 0 1 1 1  
+ey3 0 1 0 1 1 1  
+ez3 0 0 1 1 1 1  
+ex4 1 0 0 1 1 1
+ey4 0 1 0 1 1 1
+ez4 0 0 1 1 1 1
+assocPt 1 2 3 1 1 1
+refPt 4 5 6 1 1 1
+*SAGCONNECT assocPt refPt sagElement
+*FRAME makeItComplicatedFrame 6 5 4 3 2 1 1 %TX TY TZ RX RY RZ SCL
+*CALA
+ex4 1 0 0
+ey4 0 1 0
+ez4 0 0 1
+*FRAME sagFrame 2 4 8 4 5 7 1 TX TY TZ RX RY RZ SCL
+*POIN
+ex1 1 0 0
+ey1 0 1 0
+ez1 0 0 1
+*OBSXYZ
+ex1 1 0 0 1 1 1  
+ey1 0 1 0 1 1 1  
+ez1 0 0 1 1 1 1  
+*ENDFRAME
+*FRAME assocFrame 100 200 300 4 5 6 1 TX TY TZ RX RY RZ SCL
+*POIN
+assocPt 4 5 6
+ex2 1 0 0
+ey2 0 1 0
+ez2 0 0 1
+*OBSXYZ
+ex2 1 0 0 1 1 1  
+ey2 0 1 0 1 1 1  
+ez2 0 0 1 1 1 1  
+*ENDFRAME
+*FRAME refFrame 1000 2000 3000 40 50 60 1 TX TY TZ RX RY RZ SCL
+*POIN
+refPt 4 5 6
+ex3 1 0 0
+ey3 0 1 0
+ez3 0 0 1
+*OBSXYZ
+ex3 1 0 0 1 1 1  
+ey3 0 1 0 1 1 1  
+ez3 0 0 1 1 1 1  
+*ENDFRAME
+*ENDFRAME
+*END

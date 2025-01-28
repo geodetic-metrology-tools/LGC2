@@ -72,6 +72,9 @@ bool TDataAnalyzer::dataConsistent()
 	// checking parameter related data, assigning parameter indices
 	consistent = consistent && checkParameters();
 
+	// checking adjustable sag constraints, could/should be a borader category handling slave, libr, sag constraint indices, however the sag adjustable element itself should not be handled there?
+	consistent = consistent && checkSagConnections();
+
 	// checking different config options
 	consistent = consistent && checkConfigOptions();
 
@@ -385,9 +388,40 @@ bool TDataAnalyzer::cleanDeactivated()
 	return true;
 }
 
+bool TDataAnalyzer::checkSagConnections()
+{
+	auto &outputMessages(fData.getFileLogger());
+	int lastCidx = fData.fUEOIndices.CIndex;
+	bool result = true;
+	// loop through all sag connections
+	for (auto &sagConnection : fData.getSagPointPairs())
+	{
+		// check if points are defined
+		if (!fData.getPoints().doesObjectExist(sagConnection.refPoint))
+		{
+			// if the point is associated to provisional coordinates, the reference point is represented by the provisional value and not by an independent LGC adjustable point
+			// Therefore the check for the reference point only applies when the point is not associated to its provisional coordinates.
+			if (!sagConnection.isAssociatedToProvisionalCoordinates)
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection reference point " + sagConnection.refPoint + " is not defined.";
+				result = false;
+			}
+		}
+		if (!fData.getPoints().doesObjectExist(sagConnection.assocPoint))
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection associated point " + sagConnection.assocPoint + " is not defined.";
+			result = false;
+		}
+		sagConnection.firstCIndex = lastCidx;
+		lastCidx += 3;
+	}
+	fData.fUEOIndices.CIndex = lastCidx;
+	return result;
+}
 bool TDataAnalyzer::checkParameters()
 {
-	int lastUidx = 0; // Unknown indices
+	int lastUidx = fData.fUEOIndices.UIndex; // Unknown indices
+	int lastCidx = fData.fUEOIndices.CIndex; // constraint indices
 	const TDataTree &fTree = fData.getTree();
 	int nCALAinROOT = 0;
 	auto &outputMessages(fData.getFileLogger());
@@ -765,8 +799,29 @@ bool TDataAnalyzer::checkParameters()
 		}
 	}
 
+
+	// Run through list of adjustable sag elements
+	for (auto &sagElement : fData.getSags())
+	{
+		// assign unknown index for this element
+		sagElement.setFirstUidx(lastUidx);
+		lastUidx += sagElement.getNumUnkn();
+		// assign constraint index because the element contains a line which is defined as a point on the line and a bearing together with a orthogonality constraint
+		sagElement.setFirstCidx(lastCidx);
+		lastCidx += 1;
+		// compute the initial guess the sag bearing (= angle between y axis root and y xis subframe projected to xy plane in root)
+		TLOR2LOR sub2Root(fData.locateNode(sagElement.getBaseFrame()), fData.getTree().begin(), "base2Root");
+		TFreeVector ey_root(0, 1, 0, TCoordSysFactory::ECoordSys::k3DCartesian);
+		sub2Root.transform(ey_root);
+		Eigen::Vector3d p = ey_root.toRealVector();
+		double bearingAngle = atan2(p(0), p(1));
+		TAdjustableAngle &bearing = sagElement.getBearing();
+		bearing.setCorrection(bearing.getFirstUidx(), TAngle(bearingAngle));
+	}
+
 	// Save total number of unknowns
 	fData.fUEOIndices.UIndex = lastUidx;
+	fData.fUEOIndices.CIndex = lastCidx;
 
 	return true;
 }

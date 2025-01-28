@@ -121,6 +121,52 @@ void TKeyENDFRAME::parse(const std::vector<std::string> &tokens, bool, int)
 	proj.moveUp();
 }
 
+// TODO: remove the bearing prov value and compute it in the datananalyzer
+TKeySAG::TKeySAG(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(SAGELEMENT, project), fSagAccess(proj.getSags())
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeySAG::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
+{
+	using namespace LGC;
+	auto numTokens = tokens.size();
+
+	// The asterisk and the keyword itself are already two tokens
+	if (numTokens <= 7)
+		throw std::runtime_error("Key *SAG takes at least 6 arguments: Name, Name of associated Frame, vertical and radial sag and curvature plus optionally the tags for free transformation parameters, VS, VC, RS, RC");
+
+
+	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+
+
+	std::string sagName = tokens[2];
+	std::string frameName = tokens[3];
+	TLength vertSag(std::stor(tokens[4]));
+	TLength vertCurv(std::stor(tokens[5]));
+	TLength radSag(std::stor(tokens[6]));
+	TLength radCurv(std::stor(tokens[7]));
+	std::bitset<5> fixedStates("11110");
+	if (opts.has("VS"))
+		fixedStates[1] = 0;
+	if (opts.has("VC"))
+		fixedStates[2] = 0;
+	if (opts.has("RS"))
+		fixedStates[3] = 0;
+	if (opts.has("RC"))
+		fixedStates[4] = 0;
+	LGCAdjustableSag sagObject(sagName, frameName, vertSag, vertCurv, radSag, radCurv, fixedStates);
+
+	// remember the line of the element definition
+	sagObject.getLine() = line;
+	if (fSagAccess.doesObjectExist(sagName))
+		throw std::runtime_error("Sag adjustable element " + sagName + " is already defined.");
+	else
+		fSagAccess.addObject(sagObject);
+
+}
+
 ///////////////////////////////////////////////////////
 // TAPointKey
 ///////////////////////////////////////////////////////

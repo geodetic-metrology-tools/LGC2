@@ -152,6 +152,12 @@ public:
 		\returns Partial derivatives of the point 'p' with respect to the "translation".
 	*/
 	TFreeVector partialDerivativesTranslation(const std::string &transfoName, const TPositionVector &p, int translation) const;
+	
+	// overload to also accept TFreeVector. The result of the trafo does not depend on translations, so return per default 0 vector
+	TFreeVector partialDerivativesTranslation(const std::string &transfoName, const TFreeVector &v, int translation) const
+	{
+		return TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian);
+	};
 
 	/*!
 		\brief Partial derivatives with respect to scale factor for a Position Vector.

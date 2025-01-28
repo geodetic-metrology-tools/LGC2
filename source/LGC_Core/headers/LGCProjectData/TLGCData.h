@@ -17,6 +17,7 @@
 #include <TLGCConfig.h>
 #include <TLGCFrameConstraintGroup.h>
 #include <TLGCPointConstraintGroup.h>
+#include <TLGCSagConstraintPair.h>
 #include <TLGCStatistic.h>
 #include <TMeasurements.h>
 #include <TTreeEntry.h>
@@ -177,6 +178,10 @@ public:
 	LGCAdjustablePointCollection &getPoints() { return points; }
 	/// Returns a constant reference of the vector/ collection of all the adjustable points
 	LGCAdjustablePointCollection const &getPoints() const { return points; }
+	/// Returns the vector/ collection of all the adjustable sags
+	LGCAdjustableSagCollection &getSags() { return sags; }
+	/// Returns a constant reference of the vector/ collection of all the adjustable sags
+	LGCAdjustableSagCollection const &getSags() const { return sags; }
 	/// Returns the vector/ collection of all the adjustable lines
 	LGCAdjustableLineCollection &getLines() { return lines; }
 	/// Returns a constant reference of the vector/ collection of all the adjustable lines
@@ -202,6 +207,11 @@ public:
 	std::list<TLGCPointConstraintGroup> &getPointGroups() { return pointGroups; }
 	/// Returns a constant reference of the Constraint groups
 	std::list<TLGCPointConstraintGroup> const &getPointGroups() const { return pointGroups; }
+	// Returns vector of to the sag point pairs
+	std::vector<TLGCSagConstraintPair> &getSagPointPairs() { return sagPointPairs; }
+	/// Returns a constant reference of the sag point pairs
+	std::vector<TLGCSagConstraintPair> const &getSagPointPairs() const { return sagPointPairs; }
+
 
 	/// Returns the instruments defined
 	TInstrumentData &getInstruments() { return instruments; }
@@ -311,6 +321,8 @@ private:
 	LGCAdjustablePointCollection points;
 	/// Adjustable lines are collected globally
 	LGCAdjustableLineCollection lines;
+	/// Adjustable sag object are collected globally
+	LGCAdjustableSagCollection sags;
 	/// Adjustable planes are collected globally
 	LGCAdjustablePlaneCollection planes;
 	/// Adjustable angles are collected globally
@@ -322,6 +334,9 @@ private:
 	std::list<TLGCFrameConstraintGroup> slaveGroups;
 	// vector containing data associated to point constraint groups
 	std::list<TLGCPointConstraintGroup> pointGroups;
+	// vector containing the sag point pairs
+	std::vector<TLGCSagConstraintPair> sagPointPairs;
+
 
 	bool islgc1{false};
 

@@ -19,6 +19,7 @@ TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : p
 	A.topRows(projData.fUEOIndices.EIndex) = inputMtr.getFirstDgnMtrx();
 	A.bottomRows(projData.fUEOIndices.CIndex) = inputMtr.getCnstrFirstDgnMtrx();
 
+	//std::cout << "A1;A2" << std::endl << A.toDense() << std::endl;
 	firstDgnMatrix = A;
 
 	initialize();
@@ -753,6 +754,10 @@ void TLSConsCheck::initialize()
 	for (auto &object : projData.getLength())
 	{
 		addObject(object, "Length");
+	}
+	for (auto &object : projData.getSags())
+	{
+		addObject(object, "Sag");
 	}
 	for (auto it(projData.getTree().begin()); it != projData.getTree().end(); ++it)
 	{
