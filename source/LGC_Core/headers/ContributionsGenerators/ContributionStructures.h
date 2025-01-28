@@ -69,6 +69,10 @@ struct TransformationContrib3D
 	}
 };
 
+// often used to store sensitivities with respect to all transformations along a transformation chain
+typedef std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransformationContribVector;
+typedef std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> TransformationContrib3DVector;
+
 /*!
 	\ingroup ContributionsGenerators
 
@@ -483,6 +487,36 @@ struct PointGroupConstraintContrib
 	std::map<std::string, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>> TransformContrib;
 	// with respect to involved points
 	std::map<std::string, Eigen::Vector3d> PointContrib;
+};
+
+struct SagElementContrib
+{
+	// containing data for the bearing constraint
+	TReal constraintMisclosure;
+	// derivatives
+	// wrt bearing of sag adjustable
+	TReal dBearing;
+	// with respect to frame trafos (from associated frame to root)
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransformContrib;
+};
+
+struct SagPairContrib
+{
+	// containing data of a sag pair, i.e. two points connected via a sag connect constraint
+	// it is a 3D constraint expressed in Root
+	Eigen::Vector3d constraintMisclosure;
+	// derivatives
+	// for associated and reference point
+	Point3DContrib dAssocRootdAssocSub, dRefRootdRefSub;
+	TransformationContrib3DVector dAssocRootdAssocHelmert, dRefRootdRefHelmert;
+	// for the vertical and radial offset
+	// wrt to sag parameters
+	Eigen::Vector3d dVertOffsetdBear, dVertOffsetdVertSag, dVertOffsetdVertCurv;
+	Eigen::Vector3d dRadOffsetdBear, dRadOffsetdRadSag, dRadOffsetdRadCurv;
+	// wrt to ref point coordinates and helmert trafos + helmert trafo sagframe->root
+	Point3DContrib dVertOffsetdRefSub, dRadOffsetdRefSub;
+	TransformationContrib3DVector dVertOffsetdRefHelmert, dRadOffsetdRefHelmert;
+	TransformationContrib3DVector dVertOffsetdSagframeHelmert, dRadOffsetdSagframeHelmert;
 };
 
 struct PointGroupConstraintContrib3D

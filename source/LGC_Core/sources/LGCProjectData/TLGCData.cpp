@@ -347,9 +347,11 @@ std::shared_ptr<TLGCData> TLGCData::clone() const
 	// Copy adjustable objects collections:
 	d->points = points;
 	d->lines = lines;
+	d->sags= sags;
 	d->planes = planes;
 	d->angles = angles;
 	d->lengths = lengths;
+	d->sags = sags;
 
 	// Copy tree and reset position:
 	copyTree(this, d.get());
@@ -852,10 +854,12 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("lines", lines);
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
+	obj.addProperty("sags", sags);
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("slaveGroups", slaveGroups);
 	obj.addProperty("pointConstraintGroups", pointGroups);
+	obj.addProperty("sagPointPairs", sagPointPairs);
 }
 
 void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const

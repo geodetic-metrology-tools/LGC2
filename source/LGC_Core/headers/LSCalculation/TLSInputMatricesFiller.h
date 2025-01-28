@@ -82,6 +82,8 @@ private:
 	bool fillSlaveConstraints(TLGCData *projData, TLSInputMatrices *matrices);
 	// fill in the point group constraints
 	bool fillPointGroupConstraints(TLGCData *projData, TLSInputMatrices *matrices);
+	// fill in the constraints data associated with sag adjustable elements and sag pairs
+	bool fillSagConstraints(TLGCData *projData, TLSInputMatrices *matrices);
 
 	/*!@name Methods to add the design matrix contributions for each type of observation*/
 	//@{

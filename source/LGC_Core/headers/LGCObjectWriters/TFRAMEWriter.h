@@ -87,6 +87,11 @@ private:
 		///write Histogramme summary in the rootOnly
 		void writeHistogrammeRootOnly();
 
+		/// write sag adjustable information
+		void writeSagAdjustable();
+		///  information on sag pairs
+		void writeSagPairs();
+
 		///WriteEllipsHeader
 		void writeEllipsHeader();
 		///WriteEllipsoidHeader
