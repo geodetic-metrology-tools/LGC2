@@ -158,6 +158,9 @@ public:
 	///	See \ref TVAdjustableObject::getLastUidx
 	virtual int getLastUidx() const;
 
+	// returns vector of relative indices of free parameters
+	const std::vector<int> getRelativeUnknIndices() const override;
+
 	/// Returns Name of the plane.
 	inline virtual const std::string &getName() const { return fName; }
 

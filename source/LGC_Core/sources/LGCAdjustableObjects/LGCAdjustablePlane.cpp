@@ -103,6 +103,18 @@ int LGCAdjustablePlane::getLastUidx() const
 	throw std::logic_error("Trying to get last unknown index from fixed plane.");
 }
 
+const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
+{
+	std::vector<int> activeIndices;
+	if (!fThetaFixed)
+		activeIndices.push_back(0);
+	else if (!fPhiFixed)
+		activeIndices.push_back(1);
+	else if (!fRefPtDistFixed)
+		activeIndices.push_back(2);
+	return activeIndices;
+}
+
 void LGCAdjustablePlane::setCorrection(int idx, TReal value)
 {
 	if (uidx_rpDistance == idx)

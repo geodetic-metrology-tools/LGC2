@@ -90,6 +90,15 @@ int LGCAdjustableLine::getLastUidx() const {
 	throw std::logic_error("Trying to get last unknown index from fixed line.");
 }
 
+const std::vector<int> LGCAdjustableLine::getRelativeUnknIndices() const
+{
+	std::vector<int> activeIndices;
+	for (int i = 0; i < 3; i++)
+		if (!fixedStateLineVector[i])
+			activeIndices.push_back(i);
+	return activeIndices;
+}
+
 void LGCAdjustableLine::setFirstUidx(int idx) {
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to fixed line.");
