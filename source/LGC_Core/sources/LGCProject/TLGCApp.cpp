@@ -47,8 +47,7 @@ TLGCApp::~TLGCApp()
 */
 Behavior TLGCApp::exec()
 {
-	std::ifstream inputFileStream (fInputFileLoc, std::ifstream::in);
-	std::ifstream cp_inputFileStream(fInputFileLoc, std::ifstream::in);
+	std::ifstream inputFileStream(fInputFileLoc, std::ifstream::in);
 	std::shared_ptr<TLGCData> projectData(new TLGCData);
 
 	//The input file exists, already test in main.cpp.
@@ -68,7 +67,7 @@ Behavior TLGCApp::exec()
 
 	//Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
 	TReader r(projectData);
-	if (r.isLgc2File(cp_inputFileStream))
+	if (r.isLgc2File(inputFileStream))
 	{
 		if (!r.read(inputFileStream))
 		{

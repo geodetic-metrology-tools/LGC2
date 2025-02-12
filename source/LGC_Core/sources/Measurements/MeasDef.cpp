@@ -7,6 +7,8 @@
 TPLR3D::TPLR3D(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt) :
 	TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>(pos, tgt), fAllFixedCs(NO_VALf), fAllFixedHi(NO_VALf), fDistSensi(NO_VALf)
 {
+	fMeasIdx.eqDim = 3;
+	fMeasIdx.obsDim = 3;
 	fAllFixedRx[0] = (TAngle(NO_VALf));
 	fAllFixedRy[0] = (TAngle(NO_VALf));
 	fAllFixedV0[0] = TAngle(NO_VALf);
@@ -132,6 +134,8 @@ TOBSXYZ::TOBSXYZ() :
 	// Set TAMeas<int>::targetPos nullptr here, since the TAMeas
 	// constructor leaves an invalid reference as its value:
 	targetPos = nullptr;
+	fMeasIdx.eqDim = 3;
+	fMeasIdx.obsDim = 3;
 }
 
 TOBSXYZ::TOBSXYZ(const LGCAdjustablePoint &point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree) :
@@ -146,6 +150,8 @@ TOBSXYZ::TOBSXYZ(const LGCAdjustablePoint &point, TPositionVector pos, TLength s
 	positionInTree(itTree),
 	TAMeas<int>(point, 0)
 {
+	fMeasIdx.eqDim = 3;
+	fMeasIdx.obsDim = 3;
 }
 
 #if USE_SERIALIZER

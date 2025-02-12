@@ -158,6 +158,9 @@ public:
 	///	See \ref TVAdjustableObject::getLastUidx
 	virtual int getLastUidx() const;
 
+	// returns vector of relative indices of free parameters
+	const std::vector<int> getRelativeUnknIndices() const override;
+
 	/// Returns Name of the plane.
 	inline virtual const std::string &getName() const { return fName; }
 
@@ -185,8 +188,12 @@ public:
 	/// Set the refPt to *point*
 	void setReferencePoint(const LGCAdjustablePoint *point) { fReferencePoint = point; }
 
-	///	See \ref TVAdjustableObject::setCorrection
-	virtual void setCorrection(int idx, TReal value);
+	// getting the estimated vector with all variables
+	virtual Eigen::VectorXd getEstVector() const override;
+	// get value corresponding to unknown index
+	virtual TReal getValue(int idx) const override;
+	// set the value corresponding to an index
+	virtual void setValue(int idx, TReal value) override;
 
 	/// Sets the estimated precision after calculation
 	void setEstimatedPrecision(int idx, TReal value);

@@ -24,13 +24,10 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 
 		TUVD(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
 			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
-		{}
-
-		/// Returns the last LS-matrices equation index of this measurement 
-		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex() + 2;}
-
-		/// Returns the last observation index of this measurement 
-		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex() + 2;}
+		{
+			fMeasIdx.eqDim = 3;
+			fMeasIdx.obsDim = 3;
+		}
 
 		/// Sets the new distance 
       void setDistance(TLength dist) { sdist = dist; }
@@ -43,6 +40,22 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 
 		/// Returns the distance residual 
       TLength getDistanceResidual() const { return sdistResidual; }
+	  virtual void setObsVector(const Eigen::VectorXd &obsVect) override
+	  {
+		  // internally UVD has 3 residuals: x,y, and distance
+		  // zcomp is such that x,y,z is normalized
+		  double zObs = sqrt(1 - pow2(obsVect(0)) - pow2(obsVect(1)));
+		  TFreeVector direction(obsVect(0), obsVect(1), zObs, TCoordSysFactory::k3DCartesian);
+		  setVectorMeasurement(direction);
+		  setDistance(TLength(obsVect(2)));
+	  }
+	  virtual Eigen::VectorXd getObsVector() const override
+	  {
+		  Eigen::VectorXd result(3);
+		  result << getVectorValue().getX().getMetresValue(), getVectorValue().getY().getMetresValue(), getDistance().getMetresValue();
+		  return result;
+	  }
+
 
 #if USE_SERIALIZER
 	  // Inherited via Serializable

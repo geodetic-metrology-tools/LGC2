@@ -344,6 +344,22 @@ void TKeyCONSI::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		}
 	}
 }
+void TKeyLM::parse(const std::vector<std::string> &tokens, bool activeLine, int)
+{
+	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+	if (tokens.size() > 3)
+		throw std::runtime_error("*LM expects at most one optional argument.");
+	if (tokens.size() == 3)
+	{
+		if (tokens.at(2) == "ONLY")
+			fconfig.useRegularizationOnly = TLGCConfig::TBinaryOption(activeLine);
+		else
+		{
+			throw std::runtime_error("Optional arguments allowed for *LM are \"ONLY\" ");
+		}
+	}
+	fconfig.useRegularization = TLGCConfig::TBinaryOption(activeLine);
+}
 
 void TKeyJSON::parse(const std::vector<std::string> &tokens, bool activeLine, int)
 {
@@ -506,3 +522,4 @@ void TKeySOBS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");
 	}
 }
+

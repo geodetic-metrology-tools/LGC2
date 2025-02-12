@@ -33,7 +33,7 @@ class TLGCApp {
 			\param[in] infileLocation[in] Location of the LGC file including the extension, e.g. C:/temp/net.lgc
 			\param[in] outfileLocation[in] Location of the LGC result files including the extension, e.g. C:/temp/net.out
 		*/
-		TLGCApp(const std::string& infileLocation, const std::string& outfileBasename, const int maxIterations = MAX_ITERATIONS);
+		TLGCApp(const std::string &infileLocation, const std::string &outfileBasename, const int maxIterations = MAX_ITERATIONS);
 
 		/// Destructor
 		~TLGCApp();

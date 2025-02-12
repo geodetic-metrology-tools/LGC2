@@ -220,44 +220,41 @@ uz 0.091 0.0123 1 1 1 1
 *END)";
 	
 		char const *const composedHelmertParameter1= R"(*TITR
-test derivatives of chained Helmert frames with respect to Helmert parameters of the chain
-The setup is done such that the chain Frame3-Frame1 is per Construction identical to the single frame "singleFrame"
+test derivatives of chained Helmert frames with respect to Helmert parameters of the chain The setup is done such that the chain Frame3-Frame1 is per Construction identical to the single frame "singleFrame" DANS CE FICHIER, LES OBSERVATIONS SONT SIMULEES !
 *OLOC
 *CONSI
 *INSTR
 *CALA
-ux 1 0 0 
-uy 0 1 0
-uz 0 0 1
-*FRAME Frame1 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+ux   1.00000   0.00000   0.00000      
+uy   0.00000   1.00000   0.00000      
+uz   0.00000   0.00000   1.00000      
+*FRAME   Frame1   3.00000   4.00000   5.00000   6.00000   7.00000   8.00000   1.00000   TX   TY   TZ   RX   RY   RZ   SCL   
 *CALA
-ux1 1 0 0 
-uy1 0 1 0
-uz1 0 0 1
+ux1   1.00000   0.00000   0.00000      
+uy1   0.00000   1.00000   0.00000      
+uz1   0.00000   0.00000   1.00000      
 *OBSXYZ
-ux 1 0.01 0.023 1 1 1 
-uy 0.053 1 0.017 1 1 1
-uz 0.091 0.0123 1 1 1 1
-*FRAME Frame2 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+ux   -2.11501   -3.80681   -5.10244   0.01000   0.01000   0.01000
+uy   -3.21568   -2.94240   -4.89916   0.01000   0.01000   0.01000
+uz   -2.98097   -4.01106   -4.00315   0.01000   0.01000   0.01000
+*FRAME   Frame2   9.00000   10.00000   11.00000   12.00000   13.00000   14.00000   1.00000   TX   TY   TZ   RX   RY   RZ   SCL   
 *OBSXYZ
-ux1 1 0.00123 0.054 1 1 1 
-uy1 0.067 1 0.012 1 1 1
-uz1 0.00345 0.00786 1 1 1 1
-*FRAME Frame3 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+ux1   -8.46118   -9.84453   -10.79324   0.01000   0.01000   0.01000
+uy1   -9.59401   -9.09121   -10.40695   0.01000   0.01000   0.01000
+uz1   -9.18152   -10.19753   -9.62856   0.01000   0.01000   0.01000
+*FRAME   Frame3   0.00000   0.00000   0.00000   0.00000   0.00000   0.00000   1.00000   TX   TY   TZ   RX   RY   RZ   SCL   
 *OBSXYZ
-ux 1 0.1 0 1 1 1
-uy 0 1 0 1 1 1 
-uz 0.1 0 1 1 1 1 
+ux   -0.07356   -1.82269   -3.11004   0.00100   0.00100   0.00100
+uy   -1.15507   -0.92245   -2.96899   0.00100   0.00100   0.00100
+uz   -0.98219   -1.97166   -2.03664   0.00100   0.00100   0.00100
 *ENDFRAME
 *ENDFRAME
 *ENDFRAME
-% the single frame is determined  by obsxyz observations identical to the observations in Frame3
-% The Chain of Frame1-Frame3 then should have the same combined Helmert parameter as the single frame
-*FRAME singleFrame 0 0 0 0 0 0 1 TX TY TZ RX RY RZ SCL
+*FRAME   singleFrame   1.00000   2.00000   3.00000   4.00000   5.00000   6.00000   1.00000   TX   TY   TZ   RX   RY   RZ   SCL   
 *OBSXYZ
-ux 1 0.1 0 1 1 1
-uy 0 1 0 1 1 1 
-uz 0.1 0 1 1 1 1 
+ux   -0.07356   -1.82269   -3.11004   0.00100   0.00100   0.00100
+uy   -1.15507   -0.92245   -2.96899   0.00100   0.00100   0.00100
+uz   -0.98219   -1.97166   -2.03664   0.00100   0.00100   0.00100
 *ENDFRAME
 *END)";
 

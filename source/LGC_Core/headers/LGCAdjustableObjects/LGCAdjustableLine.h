@@ -116,6 +116,9 @@ public:
 		*/
 		virtual int getLastUidx() const;
 
+		// returns vector of relative indices of free parameters
+		const std::vector<int> getRelativeUnknIndices() const override;
+
 		/// Returns Name of the transformation.
 		virtual const std::string& getName() const { return fName;}
 		
@@ -133,12 +136,14 @@ public:
 		virtual void setFirstUidx(int idx);
 
         /// Set the linePoint to *point*
-        void setLinePoint(const LGCAdjustablePoint* point) { fLinePoint = point; }
-		
-		/*! 
-			See \ref TVAdjustableObject::setCorrection
-		*/
-      virtual void setCorrection(int idx, TReal value);
+		void setLinePoint(const LGCAdjustablePoint *point) { fLinePoint = point; }
+
+		// getting the estimated vector with all variables
+		virtual Eigen::VectorXd getEstVector() const override;
+		// get value corresponding to unknown index
+		virtual TReal getValue(int idx) const override;
+		// set the value corresponding to an index
+		virtual void setValue(int idx, TReal value) override;
 
 		/// Sets the estimated precision after calculation to a line's point
       void setLineVectorEstimatedPrecision(int idx, TReal value);

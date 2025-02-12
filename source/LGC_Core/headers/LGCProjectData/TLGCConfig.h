@@ -266,6 +266,10 @@ struct TLGCConfig
 	TBinaryOption consCheck;
 	/// LIBR mode activated by CONSI
 	TBinaryOption useConsiLibr;
+	// use regularization for least square process
+	TBinaryOption useRegularization;
+	// do not run full step Gauss Newton after regularized solve (aggressive option)
+	TBinaryOption useRegularizationOnly;
 	/// are manually specified constraints added?
 	TBinaryOption hasManualConstraints;
 	// signature of the manual added constraints (TX,TY,TZ,RX,RZ,RY,SCL)
@@ -302,6 +306,9 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("allfixed", allfixed);
 	obj.addProperty("chaba", chaba);
 	obj.addProperty("consCheck", consCheck);
+	obj.addProperty("useConsiLibr", useConsiLibr);
+	obj.addProperty("useRegularization", useRegularization);
+	obj.addProperty("useRegularizationOnly", useRegularizationOnly);
 	obj.addProperty("covar", covar);
 	obj.addProperty("CustomOutputSeparator", CustomOutputSeparator);
 	obj.addProperty("CustomOutputSeparatorPunch", CustomOutputSeparatorPunch);

@@ -464,6 +464,10 @@ void TResultsFileWriter::writeSigmaAPosteriori()
 		(*stream) << endl;
 	}
 
+	if (fProjectData->getConfig().useRegularizationOnly.isActive() || fProjectData->getConfig().useRegularization.isActive())
+	{
+		(*stream) << "THE COMPUTATION USES A lEVENBERG-MARQUARDT ALGORITHM, TO SEE ITS LIMITATIONS SEE THE USERGUIDE";
+	}
 	(*stream) << endl;
 
 	return;

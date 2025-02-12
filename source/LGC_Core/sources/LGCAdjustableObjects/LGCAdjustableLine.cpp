@@ -90,6 +90,15 @@ int LGCAdjustableLine::getLastUidx() const {
 	throw std::logic_error("Trying to get last unknown index from fixed line.");
 }
 
+const std::vector<int> LGCAdjustableLine::getRelativeUnknIndices() const
+{
+	std::vector<int> activeIndices;
+	for (int i = 0; i < 3; i++)
+		if (!fixedStateLineVector[i])
+			activeIndices.push_back(i);
+	return activeIndices;
+}
+
 void LGCAdjustableLine::setFirstUidx(int idx) {
 	if (isFixed())
 		throw std::logic_error("Trying to assign unknown index to fixed line.");
@@ -99,30 +108,53 @@ void LGCAdjustableLine::setFirstUidx(int idx) {
 			uidx_lineVector[i] = idx++;
 }
 
-void LGCAdjustableLine::setCorrection(int idx, TReal value) {
+Eigen::VectorXd LGCAdjustableLine::getEstVector() const
+{
+	Eigen::VectorXd estVect(3);
+	estVect << TReal(fLineVectorEstimatedValue.getX()), TReal(fLineVectorEstimatedValue.getY()), TReal(fLineVectorEstimatedValue.getZ());
+	return estVect;
+}
 
-   TLength val(value);
-
-	for (int i = 0; i < 3; i++){
-		if (uidx_lineVector[i] == idx) {
-			if (i == 0 ){
-            fLineVectorCorrection.setX(val);
-            fLineVectorEstimatedValue.setX(fLineVectorEstimatedValue.getX() + val);
+TReal LGCAdjustableLine::getValue(int idx) const
+{
+	TReal value = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		if (uidx_lineVector[i] == idx)
+		{
+			switch (i)
+			{
+			case 0:
+				return TReal(fLineVectorEstimatedValue.getX());
+			case 1:
+				return TReal(fLineVectorEstimatedValue.getY());
+			case 2:
+				return TReal(fLineVectorEstimatedValue.getZ());
 			}
-			else if(i == 1){
-            fLineVectorCorrection.setY(val);
-            fLineVectorEstimatedValue.setY(fLineVectorEstimatedValue.getY() + val);
-			}
-			else{
-            fLineVectorCorrection.setZ(val);
-            fLineVectorEstimatedValue.setZ(fLineVectorEstimatedValue.getZ() + val);
-			}
-			return;
 		}
 	}
 	throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
+void LGCAdjustableLine::setValue(int idx, TReal value)
+{
+	TLength val(value);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (uidx_lineVector[i] == idx)
+		{
+			if (i == 0)
+				fLineVectorEstimatedValue.setX(val);
+			else if (i == 1)
+				fLineVectorEstimatedValue.setY(val);
+			else
+				fLineVectorEstimatedValue.setZ(val);
+			return;
+		}
+	}
+	throw std::logic_error("Invalid unknown index in parameter access.");
+}
 
 /*! Sets the estimated precision after calculation to a line's point.*/
 void	LGCAdjustableLine::setLineVectorEstimatedPrecision(int idx, TReal value){

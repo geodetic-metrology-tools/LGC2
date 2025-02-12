@@ -93,6 +93,20 @@ void TSimFileWriter::writeHeader()
 		}
 		(*stream) << endl;
 	}
+	if (data->getConfig().useRegularization.isActive())
+	{
+		(*stream) << "*LM ";
+		if (data->getConfig().useRegularizationOnly.isActive())
+		{
+			(*stream) << "ONLY"
+					  << "\n";
+		}
+		else
+		{
+			(*stream) << "\n";
+		}
+	}
+
 
 	if (data->getConfig().covar.isActive())
 		(*stream) << "*COVAR " << endl;

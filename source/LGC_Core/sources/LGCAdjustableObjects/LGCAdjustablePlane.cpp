@@ -103,22 +103,52 @@ int LGCAdjustablePlane::getLastUidx() const
 	throw std::logic_error("Trying to get last unknown index from fixed plane.");
 }
 
-void LGCAdjustablePlane::setCorrection(int idx, TReal value)
+const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
+{
+	std::vector<int> activeIndices;
+	if (!fThetaFixed)
+		activeIndices.push_back(0);
+	if (!fPhiFixed)
+		activeIndices.push_back(1);
+	if (!fRefPtDistFixed)
+		activeIndices.push_back(2);
+	return activeIndices;
+}
+
+Eigen::VectorXd LGCAdjustablePlane::getEstVector() const
+{
+	Eigen::VectorXd estVect(3);
+	estVect << fEstValTheta.getRadiansValue(), fEstValPhi.getRadiansValue(), TReal(fEstValRefPointDist);
+	return estVect;
+}
+
+TReal LGCAdjustablePlane::getValue(int idx) const
+{
+	TReal value = 0;
+	if (uidx_rpDistance == idx)
+		value = TReal(fEstValRefPointDist);
+	else if (uidx_Theta == idx)
+		value = fEstValTheta.getRadiansValue();
+	else if (uidx_Phi == idx)
+		value = fEstValPhi.getRadiansValue();
+	else
+		throw std::logic_error("Invalid unknown index in parameter access.");
+	return value;
+}
+
+void LGCAdjustablePlane::setValue(int idx, TReal value)
 {
 	if (uidx_rpDistance == idx)
 	{
-		fCorrectionRefPtDist = TLength(value);
-		fEstValRefPointDist += TLength(value);
+		fEstValRefPointDist = TLength(value);
 	}
 	else if (uidx_Theta == idx)
 	{
-		fCorrectionTheta.setRadiansValue(value);
-		fEstValTheta.setRadiansValue(fEstValTheta.getRadiansValue() + value);
+		fEstValTheta.setRadiansValue(value);
 	}
 	else if (uidx_Phi == idx)
 	{
-		fCorrectionPhi.setRadiansValue(value);
-		fEstValPhi.setRadiansValue(fEstValPhi.getRadiansValue() + value);
+		fEstValPhi.setRadiansValue(value);
 	}
 	else
 		throw std::logic_error("Invalid unknown index in parameter access.");
