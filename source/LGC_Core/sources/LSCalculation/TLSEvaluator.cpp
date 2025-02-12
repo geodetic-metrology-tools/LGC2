@@ -226,7 +226,7 @@ bool TLSEvaluator::evaluate()
 	if (fMatFiller->fillMatrices(fData.get(), iMat.get()))
 	{
 		// evaluation completed successfully
-		isUptoDate = true;
+			isUptoDate = true;
 		return true;
 	}
 	return false;
