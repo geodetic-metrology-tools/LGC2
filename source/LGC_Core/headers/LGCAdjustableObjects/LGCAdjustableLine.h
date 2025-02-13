@@ -136,8 +136,10 @@ public:
 		virtual void setFirstUidx(int idx);
 
         /// Set the linePoint to *point*
-        void setLinePoint(const LGCAdjustablePoint* point) { fLinePoint = point; }
+		void setLinePoint(const LGCAdjustablePoint *point) { fLinePoint = point; }
 
+		// getting the estimated vector with all variables
+		virtual Eigen::VectorXd getEstVector() const override;
 		// get value corresponding to unknown index
 		virtual TReal getValue(int idx) const override;
 		// set the value corresponding to an index
