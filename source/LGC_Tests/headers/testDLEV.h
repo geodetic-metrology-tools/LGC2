@@ -442,5 +442,137 @@ PT5		2
 *END
 )";
 
+//-----------------------------------Staff vertical at the level of the target------------------------------//
+char const *const DLEV_STAFFV_1 = R"(*TITR
+Testing the staff verticality
+*RS2K
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 0 0 0 0
+*CALA
+ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
+PT1 6000 6000 0          %a point far far away
+*POIN
+PT2 2000 2000 400
+*OBSXYZ
+PT2 2000 2000 2000 0.1 0.1 0.1
+*DLEV default RefPt ST1 IHFIX IH 0
+% PT1 502.4181242 %old implementation with the staff following the station vertical
+PT1	502.41831302343815 %Computed using CSGEO
+*END
+)";
+
+char const *const DLEV_STAFFV_2 = R"(*TITR
+Testing the staff verticality: also for TH and dCorr 
+see INSTR section
+*RS2K
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 250 0 250 0
+*CALA
+ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
+PT1 6000 6000 0          %a point far far away
+*POIN
+PT2 2000 2000 400
+*OBSXYZ
+PT2 2000 2000 2000 0.1 0.1 0.1
+*DLEV default RefPt ST1 IHFIX IH 0
+% PT1 502.4181242 %old implementation with the staff following the station vertical
+PT1	2.41831302343815 %Computed using CSGEO
+*END
+)";
+
+char const *const DLEV_STAFFV_3 = R"(*TITR
+Testing the staff verticality: IH should still follow local vertical vector at the station position 
+see INSTR section
+*RS2K
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 250 0 250 0
+*CALA
+ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
+PT1 6000 6000 0          %a point far far away
+*DLEV default RefPt ST1 IH 1000
+% PT1 502.4181242 %old implementation with the staff following the station vertical
+PT1	2.41831302343815 %Computed using CSGEO
+*END
+)";
+
+char const *const DLEV_STAFFV_4 = R"(*TITR
+Testing the staff verticality, LEP
+*LEP
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 0 0 0 0
+*CALA
+ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
+PT1 6000 6000 0          %a point far far away
+*POIN
+PT2 2000 2000 400
+*OBSXYZ
+PT2 2000 2000 2000 0.1 0.1 0.1
+*DLEV default RefPt ST1 IHFIX IH 0
+PT1	502.4193667124958 %Computed using CSGEO
+*END
+)";
+
+char const *const DLEV_STAFFV_5 = R"(*TITR
+Testing the staff verticality, SPHE
+*SPHE
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 0 0 0 0
+*CALA
+ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
+PT1 6000 6000 0          %a point far far away
+*POIN
+PT2 2000 2000 400
+*OBSXYZ
+PT2 2000 2000 2000 0.1 0.1 0.1
+*DLEV default RefPt ST1 IHFIX IH 0
+PT1	502.4509253775075 %Computed using CSGEO
+*END
+)";
+
+char const *const DLEV_STAFFV_6 = R"(*TITR
+Testing the staff verticality, SPHE, with the station not at P0
+*SPHE
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 0 0 0 0
+*CALA
+ST1 1000 1000 500  
+PT1 6000 6000 0          %a point far far away
+*POIN
+PT2 2000 2000 400
+*OBSXYZ
+PT2 2000 2000 2000 0.1 0.1 0.1
+*DLEV default RefPt ST1 IHFIX IH 0
+PT1	503.92421241858614 %Computed using CSGEO
+*END
+)";
+
+char const *const DLEV_STAFFV_7 = R"(*TITR
+Testing the staff verticality: also for TH, dCorr and IH, with the station not at P0
+see INSTR section
+*SPHE
+*PREC 7 
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 250 0 250 0
+*CALA
+ST1 1000 1000 500
+PT1 6000 6000 0          %a point far far away
+*DLEV default RefPt ST1 IH 1000
+PT1	3.92421241858614 %Computed using CSGEO
+*END
+)";
+
 } // namespace TestDLEV
 #endif //_LGC_TESTS_DLEV_H

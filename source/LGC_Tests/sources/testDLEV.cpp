@@ -585,4 +585,150 @@ void object::test<17>()
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
 
+template<>
+template<>
+void object::test<18>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target");
+	readTest(TestDLEV::DLEV_STAFFV_1, "DLEV_STAFFV_1");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<19>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target, checking TH and dCorr");
+	readTest(TestDLEV::DLEV_STAFFV_2, "DLEV_STAFFV_2");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<20>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target, IH should be still vertical");
+	readTest(TestDLEV::DLEV_STAFFV_3, "DLEV_STAFFV_3");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	ensure_equals("IH should be 0", romIt->fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<21>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target, LEP");
+	readTest(TestDLEV::DLEV_STAFFV_4, "DLEV_STAFFV_4");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<22>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target, SPHE");
+	readTest(TestDLEV::DLEV_STAFFV_5, "DLEV_STAFFV_5");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<23>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target, SPHE, Station not on P0");
+	readTest(TestDLEV::DLEV_STAFFV_6, "DLEV_STAFFV_6");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<24>()
+{
+	set_test_name("Testing: Staff vertical at the level of the target, TH, dcorr and IH, Station not on P0");
+	readTest(TestDLEV::DLEV_STAFFV_7, "DLEV_STAFFV_7");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+	ensure_equals("IH should be 0", romIt->fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(), 0, 1e-7);
+}
 } // namespace tut
