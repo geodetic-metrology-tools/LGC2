@@ -128,6 +128,26 @@ TReal LGCAdjustableLine::getValue(int idx) const
 	return value;
 }
 
+void LGCAdjustableLine::setValue(int idx, TReal value)
+{
+	TLength val(value);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (uidx_lineVector[i] == idx)
+		{
+			if (i == 0)
+				fLineVectorEstimatedValue.setX(val);
+			else if (i == 1)
+				fLineVectorEstimatedValue.setY(val);
+			else
+				fLineVectorEstimatedValue.setZ(val);
+			return;
+		}
+	}
+	throw std::logic_error("Invalid unknown index in parameter access.");
+}
+
 void LGCAdjustableLine::setCorrection(int idx, TReal value)
 {
 
