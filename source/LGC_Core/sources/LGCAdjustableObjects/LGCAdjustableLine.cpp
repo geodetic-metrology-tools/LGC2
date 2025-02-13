@@ -108,6 +108,13 @@ void LGCAdjustableLine::setFirstUidx(int idx) {
 			uidx_lineVector[i] = idx++;
 }
 
+Eigen::VectorXd LGCAdjustableLine::getEstVector() const
+{
+	Eigen::VectorXd estVect(3);
+	estVect << TReal(fLineVectorEstimatedValue.getX()), TReal(fLineVectorEstimatedValue.getY()), TReal(fLineVectorEstimatedValue.getZ());
+	return estVect;
+}
+
 TReal LGCAdjustableLine::getValue(int idx) const
 {
 	TReal value = 0;

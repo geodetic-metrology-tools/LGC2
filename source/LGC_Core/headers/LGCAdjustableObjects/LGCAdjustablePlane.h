@@ -188,6 +188,8 @@ public:
 	/// Set the refPt to *point*
 	void setReferencePoint(const LGCAdjustablePoint *point) { fReferencePoint = point; }
 
+	// getting the estimated vector with all variables
+	virtual Eigen::VectorXd getEstVector() const override;
 	// get value corresponding to unknown index
 	virtual TReal getValue(int idx) const override;
 	// set the value corresponding to an index

@@ -115,6 +115,13 @@ const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
 	return activeIndices;
 }
 
+Eigen::VectorXd LGCAdjustablePlane::getEstVector() const
+{
+	Eigen::VectorXd estVect(3);
+	estVect << TReal(fEstValRefPointDist), fEstValTheta.getRadiansValue(), fEstValPhi.getRadiansValue();
+	return estVect;
+}
+
 TReal LGCAdjustablePlane::getValue(int idx) const
 {
 	TReal value = 0;
