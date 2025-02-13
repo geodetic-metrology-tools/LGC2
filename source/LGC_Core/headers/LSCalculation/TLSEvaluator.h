@@ -20,9 +20,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #include "TLSInputMatricesFiller.h"
 
-// class TLSInputMatricesFiller;
-// class TLSResultsMatrices;
-
 /*!
 \ingroup Evaluator
 \brief For evaluating the mathematical models at arbitrary values
@@ -36,11 +33,6 @@ As the residual V can be interpreted as function of the parameter x (we only hav
 - residual r(x)=V(x)=W (from 0=F(x)-(L+V)=W-V)
 */
 
-struct maskData
-{
-	std::vector<int> parameterIndices;
-	std::vector<int> equationIndices;
-};
 class TLSEvaluator
 {
 public:
@@ -48,45 +40,15 @@ public:
 
 	~TLSEvaluator();
 
-	Eigen::VectorXd getMisclosure(bool useMask = true);
-	Eigen::VectorXd getConstraintMisclosure(bool useMask = true);
-	// using the relation W+Bv=0, assuming B is invertible
-	Eigen::VectorXd getResidual(bool useMask = true);
-	Eigen::VectorXd getWeightedResidual(bool useMask = true);
-	double getObjective(bool useMask = true);
-
-	void setParameters(Eigen::VectorXd para, bool useMask = true);
-	// first design matrix
-	const TSparseMatrix getA(bool useMask = true);
-	// first design matrix
-	const TSparseMatrix getB(bool useMask = true);
-	//// constraint first design matrix
-	const TSparseMatrix getA2(bool useMask = true);
-	// weights
-	const TSparseMatrix getPv(bool useMask = true);
-	const TSparseMatrix getSqrtPv(bool useMask = true);
-
-	Eigen::VectorXd getEstParams(bool useMask = true);
+	void setParameters(Eigen::VectorXd para);
+	Eigen::VectorXd getEstParams();
 	UEOIndices dimensions;
-	void testSetterAndGetter();
-	bool testSetterEffect();
-	// maskData vectors of indices of active parameters and active equations
-	maskData currentMask;
-	// reset the mask to default: consider all equations and all parameters
-	void unmask();
-
 private:
+	bool isUptoDate;
 	// a copy of data for manipulating parameter and observation values.
 	std::shared_ptr<TLGCData> fData;
-	// TLGCData fData;
 	TLSInputMatricesFiller *fMatFiller;
 	TLSInputMatrices *iMat;
-	// update iMat objects by evaluating at current parameter/observation
-	bool evaluate();
-	// indicating that iMat object corresponds to evaluation at current parameter. reset to false in any setParam method call
-	bool isUptoDate = false;
-
-	// helper methods for setting and getting current parameter and observation values
 
 	// Parameter related
 	// setter helpers
@@ -105,9 +67,6 @@ private:
 	void getTransformationParams(Eigen::VectorXd &para);
 	void getLineParams(Eigen::VectorXd &para);
 
-	// Observation related
-	void setObservations(Eigen::VectorXd L);
-	void getObservations(Eigen::VectorXd &L);
 };
 
 #endif
