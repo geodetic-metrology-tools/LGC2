@@ -188,6 +188,9 @@ public:
 	/// Set the refPt to *point*
 	void setReferencePoint(const LGCAdjustablePoint *point) { fReferencePoint = point; }
 
+	// get value corresponding to unknown index
+	virtual TReal getValue(int idx) const override;
+
 	///	See \ref TVAdjustableObject::setCorrection
 	virtual void setCorrection(int idx, TReal value);
 

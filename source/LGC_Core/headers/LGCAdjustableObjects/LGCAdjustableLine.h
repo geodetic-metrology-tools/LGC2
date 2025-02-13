@@ -137,7 +137,10 @@ public:
 
         /// Set the linePoint to *point*
         void setLinePoint(const LGCAdjustablePoint* point) { fLinePoint = point; }
-		
+
+		// get value corresponding to unknown index
+		virtual TReal getValue(int idx) const override;
+
 		/*! 
 			See \ref TVAdjustableObject::setCorrection
 		*/
