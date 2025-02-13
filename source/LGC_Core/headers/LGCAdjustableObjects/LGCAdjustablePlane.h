@@ -193,10 +193,6 @@ public:
 	// set the value corresponding to an index
 	virtual void setValue(int idx, TReal value) override;
 
-
-	///	See \ref TVAdjustableObject::setCorrection
-	virtual void setCorrection(int idx, TReal value);
-
 	/// Sets the estimated precision after calculation
 	void setEstimatedPrecision(int idx, TReal value);
 

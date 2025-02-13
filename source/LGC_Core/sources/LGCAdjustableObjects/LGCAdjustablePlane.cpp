@@ -146,27 +146,6 @@ void LGCAdjustablePlane::setValue(int idx, TReal value)
 		throw std::logic_error("Invalid unknown index in parameter access.");
 }
 
-void LGCAdjustablePlane::setCorrection(int idx, TReal value)
-{
-	if (uidx_rpDistance == idx)
-	{
-		fCorrectionRefPtDist = TLength(value);
-		fEstValRefPointDist += TLength(value);
-	}
-	else if (uidx_Theta == idx)
-	{
-		fCorrectionTheta.setRadiansValue(value);
-		fEstValTheta.setRadiansValue(fEstValTheta.getRadiansValue() + value);
-	}
-	else if (uidx_Phi == idx)
-	{
-		fCorrectionPhi.setRadiansValue(value);
-		fEstValPhi.setRadiansValue(fEstValPhi.getRadiansValue() + value);
-	}
-	else
-		throw std::logic_error("Invalid unknown index in parameter access.");
-}
-
 void LGCAdjustablePlane::setEstimatedPrecision(int idx, TReal value)
 {
 	if (uidx_rpDistance == idx)
