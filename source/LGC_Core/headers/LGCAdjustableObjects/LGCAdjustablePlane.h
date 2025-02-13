@@ -190,6 +190,9 @@ public:
 
 	// get value corresponding to unknown index
 	virtual TReal getValue(int idx) const override;
+	// set the value corresponding to an index
+	virtual void setValue(int idx, TReal value) override;
+
 
 	///	See \ref TVAdjustableObject::setCorrection
 	virtual void setCorrection(int idx, TReal value);
