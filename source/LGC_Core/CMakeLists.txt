@@ -72,6 +72,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSInputMatricesFiller.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSResultsMatricesExtractor.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSAlgorithm.h
+	${CORE_INCLUDE_PATH}/LSCalculation/TLSEvaluator.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSSimulation.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSAllfixed.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSConsistencyCheck.h
@@ -150,6 +151,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSInputMatricesFiller.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSResultsMatricesExtractor.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAlgorithm.cpp
+	${CORE_SOURCES_PATH}/LSCalculation/TLSEvaluator.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSSimulation.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAllfixed.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSConsistencyCheck.cpp
