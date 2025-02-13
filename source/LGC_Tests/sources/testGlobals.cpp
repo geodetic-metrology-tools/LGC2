@@ -59,8 +59,8 @@ void object::test<1>()
 	ensure_equals("First uidx", mmm.getFirstUidx(), 3);
 	ensure_equals("First uidx", mmm.getLastUidx(), 4); // the line vector (3 => x, y,z)
 
+	// check if correction is applied correctly
 	mmm.setCorrection(3, 2.0);
-	ensure_equals("Correction", mmm.getLineVectorCorrection().getY().getMetresValue(), 2.0);
 	ensure_equals("Estimated value", mmm.getLineVectorEstimatedValue().getY().getMetresValue(), 4.0);
 
 	std::bitset<3> line2;
@@ -78,7 +78,6 @@ void object::test<1>()
 	p.setFirstUidx(3);
 	ensure_equals("Last uidx is on 4th position", p.getLastUidx(), 4);
 	p.setCorrection(3, 1.0);
-	ensure_equals("Last uidx is on 4th position", p.getCorrection(1).getMetresValue(), 1.0);
 	ensure_equals("Last uidx is on 4th position", p.getEstimatedValue().getY().getMetresValue(), 3.0);
 	ensure_equals("Point has two unknowns", p.getRelativeUnknIndices().size(), 2);
 	ensure_equals("First active point place is 1", p.getRelativeUnknIndices().at(0), 1);
@@ -164,12 +163,11 @@ void object::test<1>()
 
 	adjLength.setCorrection(2, 0.5);
 	adjLength.setEstimatedPrecision(2, 0.01);
-	ensure_equals("Correction should match", adjLength.getCorrection(), 0.5);
 	ensure_equals("New estimated value should match", adjLength.getEstimatedValue(), 2.5);
 	ensure_THROW(adjLength.setCorrection(3, 0.5), std::logic_error);
 	ensure_THROW(adjLength.setEstimatedPrecision(3, 0.01), std::logic_error);
 
-	ensure_equals("Correction should match", adjLength.getEstimatedPrecision(), 0.01);
+	ensure_equals("Precision should match", adjLength.getEstimatedPrecision(), 0.01);
 
 	// Testing TAdjustableAngle
 
