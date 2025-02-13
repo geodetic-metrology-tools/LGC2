@@ -126,6 +126,7 @@ TReal LGCAdjustablePlane::getValue(int idx) const
 		value = fEstValPhi.getRadiansValue();
 	else
 		throw std::logic_error("Invalid unknown index in parameter access.");
+	return value;
 }
 
 void LGCAdjustablePlane::setValue(int idx, TReal value)
