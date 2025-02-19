@@ -25,7 +25,10 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 		/// Constructor
 		TUVEC(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
 			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
-		{}
+		{
+			fMeasIdx.eqDim = 2;
+			fMeasIdx.obsDim = 2;
+		}
 #if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(ObjectSerializer &obj) const override
@@ -33,11 +36,5 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 			TAVectorMeas<TInstrumentData::TCAMD::TTarget>::serialize(obj);
 		}
 #endif
-		/// Returns the last equation index of this measurement (UVEC introduces 2 equations). 
-		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex() + 1;}
-
-		/// Returns the last observation index of this measurement (UVEC introduces 2 equations). 
-		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex() + 1;}
-
 };
 #endif

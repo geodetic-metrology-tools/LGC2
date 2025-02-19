@@ -24,13 +24,10 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 
 		TUVD(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
 			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
-		{}
-
-		/// Returns the last LS-matrices equation index of this measurement 
-		inline MatrixIndex getLastEquationIndex() const {return getFirstEquationIndex() + 2;}
-
-		/// Returns the last observation index of this measurement 
-		inline MatrixIndex getLastObservationIndex() const {return getFirstObservationIndex() + 2;}
+		{
+			fMeasIdx.eqDim = 3;
+			fMeasIdx.obsDim = 3;
+		}
 
 		/// Sets the new distance 
       void setDistance(TLength dist) { sdist = dist; }
