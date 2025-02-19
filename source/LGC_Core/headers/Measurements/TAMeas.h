@@ -114,7 +114,7 @@ class TAMeas : public TStatusObject
 
 			/// get observation vector
 			virtual Eigen::VectorXd getObsVector() const = 0;
-			virtual void setObsVector(Eigen::VectorXd) = 0;
+			virtual void setObsVector(const Eigen::VectorXd &) = 0;
 
 
 #if USE_SERIALIZER
