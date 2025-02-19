@@ -25,7 +25,28 @@ enum ENoValues {};
 enum ESingleValue {
 	kValue ///< Symbolic access to a single value in a measurement
 };
-	
+
+#if USE_SERIALIZER
+struct measIdx : public Serializable
+#else
+struct measIdx
+#endif
+{
+	int firstEqIdx = -1, firstObsIdx = -1, eqDim = 1, obsDim = 1; // default values
+	measIdx() = default;
+	measIdx(int eqIdx, int obsIdx, int eqD, int obsD) : firstEqIdx(eqIdx), firstObsIdx(obsIdx), eqDim(eqD), obsDim(obsD){};
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const
+	{
+		obj.addProperty("firstEqIdx", firstEqIdx);
+		obj.addProperty("firstObsIdx", firstObsIdx);
+		obj.addProperty("eqDim", eqDim);
+		obj.addProperty("obsDim", obsDim);
+	};
+#endif
+};
 
 /*!
 	\ingroup Measurements
@@ -43,10 +64,8 @@ class TAMeas : public TStatusObject
 
 	protected:
 
-		/// Index of first EQUATION introduced by this measurement in the LS design matrices 
-		MatrixIndex fFirstEquationIndex;
-		/// Index of first OBSERVATION introduced by this measurement in the LS design matrices 
-		MatrixIndex fFirstObservationIndex;
+		// measurement indices: first equation/observation index, equation and observation dimension
+		measIdx fMeasIdx;
 
 	public:
 		/// A copy of the target with individual properties
@@ -77,9 +96,7 @@ class TAMeas : public TStatusObject
 			TAMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
 				target(tgt),
 				targetPos(&targetPos),
-				line(NO_VALi),
-				fFirstEquationIndex(NO_VALi),
-				fFirstObservationIndex(NO_VALi)
+				line(NO_VALi), fMeasIdx()
 			{};
 
 		//@}
@@ -87,13 +104,13 @@ class TAMeas : public TStatusObject
 		/*!@name Access methods*/
 		//@{
 			/// Returns LS-matrices index of the first equation of the model.
-			MatrixIndex getFirstEquationIndex ()const{return fFirstEquationIndex;}
+			MatrixIndex getFirstEquationIndex() const { return fMeasIdx.firstEqIdx; }
 
 			/// Returns LS-matrices observation index of a first observation of this measurement
-			MatrixIndex getFirstObservationIndex ()const{return fFirstObservationIndex;}
+			MatrixIndex getFirstObservationIndex() const { return fMeasIdx.firstObsIdx; }
 
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
-			virtual MatrixIndex getLastEquationIndex() const = 0;
+			MatrixIndex getLastEquationIndex() const { return fMeasIdx.firstEqIdx + fMeasIdx.eqDim - 1; }
 
 #if USE_SERIALIZER
 			// Inherited via Serializable
@@ -105,10 +122,10 @@ class TAMeas : public TStatusObject
 		/*!@name Setting methods */
 		//@{
 			/// Sets LS matrices EQUATION index of the first equation in the measurement model
-			void setFirstEquationIndex(MatrixIndex firstEquationIndex){fFirstEquationIndex = firstEquationIndex;}
+			void setFirstEquationIndex(MatrixIndex firstEquationIndex){fMeasIdx.firstEqIdx = firstEquationIndex;}
 
 			/// Sets LS matrices OBSERVATION index of the first observation of this measurement
-			void setFirstObservationIndex(MatrixIndex firstObservationIndex){fFirstObservationIndex = firstObservationIndex;}
+			void setFirstObservationIndex(MatrixIndex firstObservationIndex){fMeasIdx.firstObsIdx = firstObservationIndex;}
 		//@}
 };
 

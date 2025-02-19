@@ -8,8 +8,9 @@ template<typename TTarget>
 void TAMeas<TTarget>::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("eolcomment", eolcomment);
-	obj.addProperty("fFirstEquationIndex", fFirstEquationIndex);
-	obj.addProperty("fFirstObservationIndex", fFirstObservationIndex);
+	obj.addProperty("fMeasIdx", fMeasIdx);
+	//obj.addProperty("fFirstEquationIndex", fFirstEquationIndex);
+	//obj.addProperty("fFirstObservationIndex", fFirstObservationIndex);
 	obj.addProperty("line", line);
 	obj.addProperty("obsID", obsID);
 	obj.addProperty("measCounter", measCounter);
