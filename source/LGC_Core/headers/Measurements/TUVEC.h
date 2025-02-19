@@ -29,7 +29,7 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 			fMeasIdx.obsDim = 2;
 		}
 				
-		virtual void setObsVector(Eigen::VectorXd obsVect) override
+		virtual void setObsVector(const Eigen::VectorXd &obsVect) override
 		{
 			// internally UVEC has 2 residuals: x,y
 			// zcomp is such that x,y,z is normalized
