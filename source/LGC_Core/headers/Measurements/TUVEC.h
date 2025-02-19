@@ -23,12 +23,28 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 {
 	public:
 		/// Constructor
-		TUVEC(const LGCAdjustablePoint& pos, TInstrumentData::TCAMD::TTarget tgt) : 
-			TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
+		TUVEC(const LGCAdjustablePoint &pos, TInstrumentData::TCAMD::TTarget tgt) : TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 		{
 			fMeasIdx.eqDim = 2;
 			fMeasIdx.obsDim = 2;
 		}
+				
+		virtual void setObsVector(Eigen::VectorXd obsVect) override
+		{
+			// internally UVEC has 2 residuals: x,y
+			// zcomp is such that x,y,z is normalized
+			double zObs = sqrt(1 - pow2(obsVect(0)) - pow2(obsVect(1)));
+			TFreeVector direction(obsVect(0), obsVect(1), zObs, TCoordSysFactory::k3DCartesian);
+			setVectorMeasurement(direction);
+		}
+
+		virtual Eigen::VectorXd getObsVector() const override
+		{
+			Eigen::VectorXd result(2);
+			result << getVectorValue().getX().getMetresValue(), getVectorValue().getY().getMetresValue();
+			return result;
+		}
+
 #if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(ObjectSerializer &obj) const override

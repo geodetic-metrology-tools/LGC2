@@ -40,6 +40,22 @@ class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 
 		/// Returns the distance residual 
       TLength getDistanceResidual() const { return sdistResidual; }
+	  virtual void setObsVector(Eigen::VectorXd obsVect) override
+	  {
+		  // internally UVD has 3 residuals: x,y, and distance
+		  // zcomp is such that x,y,z is normalized
+		  double zObs = sqrt(1 - pow2(obsVect(0)) - pow2(obsVect(1)));
+		  TFreeVector direction(obsVect(0), obsVect(1), zObs, TCoordSysFactory::k3DCartesian);
+		  setVectorMeasurement(direction);
+		  setDistance(TLength(obsVect(2)));
+	  }
+	  virtual Eigen::VectorXd getObsVector() const override
+	  {
+		  Eigen::VectorXd result(3);
+		  result << getVectorValue().getX().getMetresValue(), getVectorValue().getY().getMetresValue(), getDistance().getMetresValue();
+		  return result;
+	  }
+
 
 #if USE_SERIALIZER
 	  // Inherited via Serializable

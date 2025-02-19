@@ -54,6 +54,19 @@ public:
 	TAngle fAllFixedRy[2];
 	// distance sensibility
 	TReal fDistSensi;
+	virtual void setObsVector(Eigen::VectorXd obsVect) override
+	{
+		setAngle(TAngle(obsVect(0)), kANGL);
+		setAngle(TAngle(obsVect(1)), kZEND);
+		setDistance(TLength(obsVect(2)));
+	}	
+	virtual Eigen::VectorXd getObsVector() const override
+	{
+		Eigen::VectorXd result(3);
+		result << getAngle(kANGL).getRadiansValue(), getAngle(kZEND).getRadiansValue(), getDistance().getMetresValue();
+		return result;
+	}
+
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -76,6 +89,8 @@ public:
 
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0;
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -98,6 +113,8 @@ public:
 
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -123,7 +140,9 @@ public:
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
 	// distance sensibility
-	TReal fDistSensi;
+	TReal fDistSensi;	
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -152,6 +171,8 @@ public:
 
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0;
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -177,7 +198,9 @@ public:
 	//@}
 
 	/// Allfixed parameter: V0
-	TAngle fAllFixedV0[2];
+	TAngle fAllFixedV0[2];	
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -197,6 +220,8 @@ public:
 	TECSP(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr);
 	TECSP(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr, TLength v);
 	//@}
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -227,7 +252,9 @@ public:
 	/// Allfixed parameter: distance correction
 	TLength fAllFixedCs;
 	// distance sensibility
-	TReal fDistSensi;
+	TReal fDistSensi;	
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -248,6 +275,8 @@ public:
 	TECHO(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
 	TECHO(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr, TLength v) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 	//@}
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -267,6 +296,8 @@ public:
 	TECVE(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
 	TECVE(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr, TLength v) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 	//@}
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -309,6 +340,8 @@ public:
 	/// Sets standard deviation of the observed value
 	inline void setObservedStDev(TLength stDev) { fSigmaObsVal = stDev; }
 	//@}
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); };
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -343,6 +376,9 @@ public:
 
 		/// Stes DHOR sigma
 		inline void setDHORSigma(TLength sigma) { dhorSigma = sigma; }
+		
+		virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); };
+		virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
@@ -360,12 +396,14 @@ public:
 	//@{
 	TDLEV(const LGCAdjustablePoint &pos, TInstrumentData::TLEVEL::TTarget target, TLength measValue);
 	//@}
-
 	/// The optional DHOR measurment
 	std::shared_ptr<TDLEV::TDHOR> dhor;
 
 	/// Allfixed parameter: collimation angle
 	TAngle fAllFixedCollimation;
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); };
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
+
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -386,6 +424,8 @@ public:
 	TORIE(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt) : TAScalarMeas(pos, tgt) {}
 	//@}
 
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override { TAScalarMeas::serialize(obj); }
@@ -435,6 +475,9 @@ public:
 	inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
 
+	// radi is seen as a "constraint"
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setAngleCnstr(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngleCnstr().getRadiansValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const;
@@ -497,6 +540,8 @@ public:
 	/// Sets a residual of observed angle
 	void setAngleResidual(const TAngle &a) { fbearingResidual = a; }
 	//@}
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { fbearing = TAngle(obsVect(0)); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getBearing().getRadiansValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -555,6 +600,13 @@ public:
 	inline void setYResidual(TLength res) { fYResidual = res; }
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { TPositionVector obsVector(obsVect(0), obsVect(1), obsVect(2), TCoordSysFactory::ECoordSys::k3DCartesian); }
+	virtual Eigen::VectorXd getObsVector() const override 
+	{
+		Eigen::VectorXd result(3);
+		result << obsValue.getX().getMetresValue(), obsValue.getY().getMetresValue(), obsValue.getZ().getMetresValue();
+		return result;
+	}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -589,6 +641,8 @@ public:
 	/// Destructor
 	~TINCLY() override = default;
 
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override { TAScalarMeas::serialize(obj); }
@@ -608,6 +662,8 @@ public:
 	~TECWS() override = default;
 	//@}
 
+	virtual void setObsVector(Eigen::VectorXd obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const;
@@ -636,7 +692,18 @@ public:
 
 	/// Destructor
 	~TECWI() override = default;
-	//@}
+	//@}virtual 
+	virtual void setObsVector(Eigen::VectorXd obsVect) override
+	{
+		setDistance(TLength(obsVect(0)), EECWIDistances::kX);
+		setDistance(TLength(obsVect(1)), EECWIDistances::kZ);
+	}	
+	virtual Eigen::VectorXd getObsVector() const override
+	{
+		Eigen::VectorXd result(2);
+		result << getDistance(EECWIDistances::kX).getMetresValue(), getDistance(EECWIDistances::kZ).getMetresValue();
+		return result;
+	}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
