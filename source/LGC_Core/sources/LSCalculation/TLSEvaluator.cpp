@@ -7,12 +7,65 @@
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
+//#include <Behavior.h>
+//#include <TLGCData.h>
+//#include <TLSAlgorithm.h>
+#include <TReader.h>
+//
+//#include "FileUtils.h"
+#include "TDataAnalyzer.h"
+//#include "TLGCCalculation.h"
+//#include "TLSResultsMatrices.h"
+//#include "TLSSimulation.h"
+//#include "TVAbstractAlgorithm.h"
+//#include "TInputFileWriter.h"
+//#include "TSimFileWriter.h"
+//#include "TStreamFormatterFactory.h"
+//#include <iomanip> // put_time
+//#include <chrono>
+//#include "TLSEvaluator.h"
 
 TLSEvaluator::TLSEvaluator(std::shared_ptr<TLGCData> data) : iMat(new TLSInputMatrices)
 {
 	fData = data;
 	fMatFiller = new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential, *fData);
-	dimensions = data->fUEOIndices;
+}
+
+TLSEvaluator::TLSEvaluator(std::stringstream& fileStream) : iMat(new TLSInputMatrices)
+{
+	Behavior successCalculation;
+	std::shared_ptr<TLGCData> project(new TLGCData);
+	//fProject = project;
+	TReader r(project);
+
+	project->getFileLogger().setOutputfileLocation("C:/Temp/pyLog.txt");
+	// is this necessary?
+	project->getFileLogger().writeReportHeader("Dummy output file python lib");
+
+	// why 2 streams?
+	//std::stringstream inputFileStream = fileStream;
+	//std::ifstream inputFileStream(lgcFilePath, std::ifstream::in);
+	//std::ifstream cp_inputFileStream(lgcFilePath, std::ifstream::in);
+
+	if (r.isLgc2File(fileStream))
+	{
+		bool readSuccess = r.read(fileStream);
+		if (!readSuccess)
+		{
+			throw std::runtime_error("Errors found in the input file.");
+		}
+	}
+	else
+	{
+		std::cout << "Only LGC2 input files are supported." << std::endl;
+	}
+	TDataAnalyzer analyzer(*project.get());
+	bool configSuccess = analyzer.dataConsistent();
+	if (!configSuccess)
+		throw std::runtime_error("Error during problem initialization");
+
+	fData = project;
+	fMatFiller = new TLSInputMatricesFiller(&fData->getTree(), fData->getConfig().referential, *fData);
 }
 
 TLSEvaluator::~TLSEvaluator()
@@ -33,7 +86,7 @@ Eigen::VectorXd TLSEvaluator::getEstParams()
 	return result;
 }
 
-void TLSEvaluator::setParameters(Eigen::VectorXd para)
+void TLSEvaluator::setParameters(const Eigen::VectorXd &para)
 {
 	isUptoDate = false;
 	Eigen::VectorXd globalPar;

@@ -35,6 +35,7 @@ set(tests_SOURCES
 	sources/testINCL.cpp
 	sources/testHLSR.cpp
 	sources/testCONSI.cpp
+	sources/testEvaluator.cpp
 	sources/testWPSR.cpp
 	sources/testJSON.cpp
 	sources/testSimulation.cpp
@@ -60,6 +61,7 @@ set(tests_INPUT
 	headers/testINCL.h
 	headers/testHLSR.h
 	headers/testCONSI.h
+	headers/testEvaluator.h
 	headers/testWPSR.h
 	headers/testSimulation.h
 	headers/testSlaveConstraints.h

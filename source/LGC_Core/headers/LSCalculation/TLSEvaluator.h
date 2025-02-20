@@ -36,13 +36,15 @@ As the residual V can be interpreted as function of the parameter x (we only hav
 class TLSEvaluator
 {
 public:
+	// construct with a prepared project data
 	TLSEvaluator(std::shared_ptr<TLGCData> data);
+	// construct with a lgc input file
+	TLSEvaluator(std::stringstream& fileStream);
 
 	~TLSEvaluator();
 
-	void setParameters(Eigen::VectorXd para);
+	void setParameters(const Eigen::VectorXd &para);
 	Eigen::VectorXd getEstParams();
-	UEOIndices dimensions;
 private:
 	bool isUptoDate;
 	// a copy of data for manipulating parameter and observation values.
