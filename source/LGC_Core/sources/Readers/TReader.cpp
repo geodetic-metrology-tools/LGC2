@@ -619,6 +619,7 @@ bool TReader::readLgc1File(std::istream &lgcStream)
 // Check if the given file is in LGC2 format (i.e., it contains the *INSTR keyword)
 bool TReader::isLgc2File(std::istream &lgcStream)
 {
+	std::istream::pos_type originalPos = lgcStream.tellg(); // Save position
 	// be sure to omit the byte order mark if there is one
 	skipBOM(lgcStream);
 
@@ -633,8 +634,12 @@ bool TReader::isLgc2File(std::istream &lgcStream)
 
 		// If the line starts with a keyword
 		if (tokLine[0] == "*" && (tokLine[1] == INSTR || tokLine[1] == CHABA))
+		{
+			lgcStream.seekg(originalPos); // Reset position
 			return true;
+		}
 	}
+	lgcStream.seekg(originalPos); // Reset position
 	return false;
 }
 
