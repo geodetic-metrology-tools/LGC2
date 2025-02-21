@@ -45,6 +45,9 @@ public:
 
 	void setParameters(const Eigen::VectorXd &para);
 	Eigen::VectorXd getEstParams();
+	bool testSetAndGet();
+// 	void setObservations(const Eigen::VectorXd &para);
+// 	Eigen::VectorXd getObservations();
 private:
 	bool isUptoDate;
 	// a copy of data for manipulating parameter and observation values.
