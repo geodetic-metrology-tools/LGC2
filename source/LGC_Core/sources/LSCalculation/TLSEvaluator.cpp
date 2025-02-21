@@ -35,18 +35,7 @@ TLSEvaluator::TLSEvaluator(std::stringstream& fileStream) : iMat(new TLSInputMat
 {
 	Behavior successCalculation;
 	std::shared_ptr<TLGCData> project(new TLGCData);
-	//fProject = project;
 	TReader r(project);
-
-	project->getFileLogger().setOutputfileLocation("C:/Temp/pyLog.txt");
-	// is this necessary?
-	project->getFileLogger().writeReportHeader("Dummy output file python lib");
-
-	// why 2 streams?
-	//std::stringstream inputFileStream = fileStream;
-	//std::ifstream inputFileStream(lgcFilePath, std::ifstream::in);
-	//std::ifstream cp_inputFileStream(lgcFilePath, std::ifstream::in);
-
 	if (r.isLgc2File(fileStream))
 	{
 		bool readSuccess = r.read(fileStream);
@@ -57,7 +46,10 @@ TLSEvaluator::TLSEvaluator(std::stringstream& fileStream) : iMat(new TLSInputMat
 	}
 	else
 	{
-		std::cout << "Only LGC2 input files are supported." << std::endl;
+		if (!r.readLgc1File(fileStream))
+		{
+			throw std::runtime_error("Errors found in the input file.");
+		}
 	}
 	TDataAnalyzer analyzer(*project.get());
 	bool configSuccess = analyzer.dataConsistent();
@@ -84,6 +76,26 @@ Eigen::VectorXd TLSEvaluator::getEstParams()
 	getLineParams(result);
 
 	return result;
+}
+
+bool TLSEvaluator::testSetAndGet()
+{
+	// parameters
+	// set, get and compare
+	Eigen::VectorXd testPar = Eigen::VectorXd::LinSpaced(fData->fUEOIndices.UIndex, 0.5, 1.5);
+	setParameters(testPar);
+	Eigen::VectorXd recoveredPar = getEstParams();
+	double diffParameters = (testPar - recoveredPar).norm();
+	// // observations
+	// // set, get and compare
+	// Eigen::VectorXd testObs = Eigen::VectorXd::LinSpaced(fData->fUEOIndices.OIndex, 0.5, 1.5);
+	// setObservations(testObs);
+	// Eigen::VectorXd recoveredObs = getObservations();
+	// double diffObservations = (testObs - recoveredObs).norm();
+
+	bool success = isZero(diffParameters);
+	//&&isZero(diffObservations);
+	return success;
 }
 
 void TLSEvaluator::setParameters(const Eigen::VectorXd &para)
