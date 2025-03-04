@@ -78,7 +78,7 @@ Eigen::VectorXd TLSEvaluator::getEstParams()
 	return result;
 }
 
-bool TLSEvaluator::testSetAndGet()
+bool TLSEvaluator::testParameterSetAndGet()
 {
 	// parameters
 	// set, get and compare
@@ -96,6 +96,35 @@ bool TLSEvaluator::testSetAndGet()
 	bool success = isZero(diffParameters);
 	//&&isZero(diffObservations);
 	return success;
+}
+
+bool TLSEvaluator::testEvaluate()
+{
+	// set a parameter
+	Eigen::VectorXd testPar = Eigen::VectorXd::LinSpaced(fData->fUEOIndices.UIndex, 0.5, 1.5);
+	setParameters(testPar);
+	// evaluate
+	//evaluate();
+	// recover some data
+	Eigen::VectorXd misc = getMisclosure();
+	TSparseMatrix A = getAMatrix();
+	TSparseMatrix B = getBMatrix();
+	TSparseMatrix A2 = getA2Matrix();
+	TSparseMatrix P = getPMatrix();
+
+	std::cout << "misclosure = " << std::endl;
+	std::cout << misc << std::endl;
+	std::cout << "A = " << std::endl;
+	std::cout << A.toDense() << std::endl;
+	std::cout << "B = " << std::endl;
+	std::cout << B.toDense() << std::endl;
+	std::cout << "A2 = " << std::endl;
+	std::cout << A2.toDense() << std::endl;
+	std::cout << "P = " << std::endl;
+	std::cout << P.toDense() << std::endl;
+
+
+	return false;
 }
 
 void TLSEvaluator::setParameters(const Eigen::VectorXd &para)
@@ -273,4 +302,65 @@ void TLSEvaluator::getTransformationParams(Eigen::VectorXd &para)
 			para.middleRows(trafo.getFirstUidx(), trafo.getNumUnkn()) = trafoParams;
 		}
 	}
+}
+
+bool TLSEvaluator::evaluate()
+{
+	bool success = false;
+	if (isUptoDate)
+	{
+		// nothing to compute, results are already there
+		success = true;
+	}
+	else
+	{
+		// trigger the evaluation
+		success = fMatFiller->fillMatrices(fData.get(), iMat);
+		if (success)
+			// results are ready
+			isUptoDate = true;
+	}
+	return success;
+}
+
+Eigen::VectorXd TLSEvaluator::getMisclosure() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return iMat->getMisclosureVctr();
+}
+
+TSparseMatrix TLSEvaluator::getAMatrix() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat->getFirstDgnMtrx();
+}
+
+TSparseMatrix TLSEvaluator::getBMatrix() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat->getSecondDgnMtrx();
+}
+
+Eigen::VectorXd TLSEvaluator::getConstraintMisclosure() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return iMat->getCnstrMisclosureVctr();
+}
+
+TSparseMatrix TLSEvaluator::getA2Matrix() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat->getCnstrFirstDgnMtrx();
+}
+
+TSparseMatrix TLSEvaluator::getPMatrix() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat->getWeightInvMtrx();
 }
