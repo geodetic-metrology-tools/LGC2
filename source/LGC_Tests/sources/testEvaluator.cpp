@@ -38,8 +38,11 @@ void object::test<1>()
 	std::stringstream infiler(MixObs::TSTN_FrameContribTest);
 	TLSEvaluator myEvaluator(infiler);
 	Eigen::VectorXd testVect = myEvaluator.getEstParams();
-	bool succes = myEvaluator.testSetAndGet();
+	bool succes = myEvaluator.testParameterSetAndGet();
 	ensure_equals("Problem with setter/getter of evaluator object.", succes, true);
+
+	myEvaluator.testEvaluate();
+
 }
 
 }; // namespace tut
