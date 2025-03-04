@@ -127,6 +127,98 @@ bool TLSEvaluator::testEvaluate()
 	return false;
 }
 
+Eigen::VectorXd TLSEvaluator::getObservations()
+{
+	// initialize the observation vector
+	Eigen::VectorXd L(fData->fUEOIndices.OIndex);
+	L.setZero();
+//	auto updateL = [&L](const auto &itObs) { L.middleRows(itObs.getFirstObservationIndex(), itObs.getObsDim()) = itObs.getObsVector(); };
+	auto updateL = [&L](const auto &measGroup) {
+		for (const auto &itObs : measGroup)
+		{
+			L.middleRows(itObs.getFirstObservationIndex(), itObs.getObsDim()) = itObs.getObsVector();
+		}
+	};
+
+	// off course it would be nice to have just one big container of measurement objects. but the TAMeas class is templated.
+	// maybe there should be a non templated base class and aomewhere a global collection of all measurement objects with the basic methods.
+	// also not all observations are derived from TAMeas..
+	for (TDataTreeIterator itTree = fData.get()->getTree().begin(); itTree != fData.get()->getTree().end(); itTree++)
+	{
+		// TODO: iterate over all points and add the point with sigma observations
+
+		// PDOR
+		if (itTree.node->data->measurements.fPDOR.isInitialised())
+		{
+			TPdorObs &pdor = itTree.node->data->measurements.fPDOR;
+			L.middleRows(pdor.getFirstObservationIndex(), pdor.getObsDim()) = pdor.getObsVector();
+		}
+
+		// Iterate through the Total station measurements (TSTN)
+		for (auto itTSTN : itTree.node->data->measurements.fTSTN)
+		{
+			// Iterate through every ROM of TSTN
+			for (auto itROM : itTSTN->roms)
+			{
+				updateL(itROM->measANGL);
+				updateL(itROM->measZEND);
+				updateL(itROM->measDIST);
+				updateL(itROM->measECTH);
+				updateL(itROM->measECDIR);
+				updateL(itROM->measDHOR);
+				updateL(itROM->measPLR3D);
+			}
+		}
+
+		// Iterate through camera (CAM) measurements
+		for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM)
+		{
+			updateL(itCAM->measUVD);
+			updateL(itCAM->measUVEC);
+		}
+		// In every node iterate through the EDM's measurements
+		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
+			updateL(itEDM->measDSPT);
+		// In every node iterate through the LEVEL's measurements
+		for (auto &itLEVEL : itTree.node->data->measurements.fLEVEL)
+		{
+			updateL(itLEVEL.measDLEV);
+			// here we need to additionally check the dhor because they are only stored inside the dlev
+			for (auto &itDLEV : itLEVEL.measDLEV)
+			{
+				if (itDLEV.dhor)
+				{ // i.e. !=nullptr
+					L.middleRows(itDLEV.getFirstObservationIndex(), itDLEV.getObsDim()) = itDLEV.getObsVector();
+				}
+			}
+		}
+		// In every node iterate through the ECHOROM's measurements
+		for (auto &itECHOrom : itTree.node->data->measurements.fECHO)
+			updateL(itECHOrom.measECHO);
+		// In every node iterate through the ECSP measurements
+		for (auto &itECSProm : itTree.node->data->measurements.fECSP)
+			updateL(itECSProm.measECSP);
+		// In every node iterate through the ECVEROM's measurements
+		for (auto &itECVErom : itTree.node->data->measurements.fECVE)
+			updateL(itECVErom.measECVE);
+		// In every node iterate through the ORIEROM's measurements
+		for (auto &itORIErom : itTree.node->data->measurements.fORIE)
+			updateL(itORIErom.measORIE);
+
+		updateL(itTree.node->data->measurements.fDVER);
+		updateL(itTree.node->data->measurements.fRADI);
+		updateL(itTree.node->data->measurements.fOBSXYZ);
+
+		for (auto &itINCLYrom : itTree.node->data->measurements.fINCLY)
+			updateL(itINCLYrom.measINCLY);
+		for (auto &itECWSrom : itTree.node->data->measurements.fECWS)
+			updateL(itECWSrom.measECWS);
+		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
+			updateL(itECWIrom.measECWI);
+	}
+	return L;
+}
+
 void TLSEvaluator::setParameters(const Eigen::VectorXd &para)
 {
 	isUptoDate = false;

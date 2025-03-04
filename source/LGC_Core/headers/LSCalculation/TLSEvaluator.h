@@ -51,7 +51,7 @@ public:
 
 	// set observations has lower priority because in LGC as of now all mathematical models are parametric
 	// 	void setObservations(const Eigen::VectorXd &para);
-	// 	Eigen::VectorXd getObservations();
+	Eigen::VectorXd getObservations();
 
 	// mathematical model relates parameters x with observations L and residuals V
 	// general model is of the form

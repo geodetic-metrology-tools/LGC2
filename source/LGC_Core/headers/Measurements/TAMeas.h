@@ -108,6 +108,8 @@ class TAMeas : public TStatusObject
 
 			/// Returns LS-matrices observation index of a first observation of this measurement
 			MatrixIndex getFirstObservationIndex() const { return fMeasIdx.firstObsIdx; }
+			/// observation dimension
+			MatrixIndex getObsDim() const { return fMeasIdx.obsDim; }
 
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
 			MatrixIndex getLastEquationIndex() const { return fMeasIdx.firstEqIdx + fMeasIdx.eqDim - 1; }
