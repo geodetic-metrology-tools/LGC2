@@ -104,7 +104,7 @@ bool TLSEvaluator::testEvaluate()
 	Eigen::VectorXd testPar = Eigen::VectorXd::LinSpaced(fData->fUEOIndices.UIndex, 0.5, 1.5);
 	setParameters(testPar);
 	// evaluate
-	//evaluate();
+	evaluate();
 	// recover some data
 	Eigen::VectorXd misc = getMisclosure();
 	TSparseMatrix A = getAMatrix();
