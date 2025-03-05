@@ -64,7 +64,10 @@ class TFileLogger {
     friend TFileLogger &operator << (TFileLogger &logger, const std::string& text);
 
 	/// Returns TRUE, if at least one error has occured, FALSE otherwise.
-	 bool hasErrors() const;
+	bool hasErrors() const;
+
+	// reset number of errors to 0
+	void cleanErrors() { numErrors = 0; };
 
 	 //@}
 

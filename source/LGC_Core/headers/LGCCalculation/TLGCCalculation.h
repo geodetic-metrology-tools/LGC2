@@ -52,6 +52,10 @@ class TLGCCalculation{
 
 	// split the problem in asequence of subproblems of increasing dimensions corresponding to the fine dulmage decomposition
 	void computeDulmageSequence();
+
+	// try arminjo stepsize regularization
+	void tryArmijoSampling();
+
 	// test different globalization methods
 	void testGlobalizationMethods();
 

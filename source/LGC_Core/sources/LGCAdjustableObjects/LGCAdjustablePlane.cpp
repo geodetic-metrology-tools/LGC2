@@ -80,11 +80,11 @@ const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
 {
 	std::vector<int> relIndices;
 	
-	if (!fRefPtDistFixed)
-		relIndices.push_back(0);
 	if (!fThetaFixed)
-		relIndices.push_back(1);
+		relIndices.push_back(0);
 	if (!fPhiFixed)
+		relIndices.push_back(1);
+	if (!fRefPtDistFixed)
 		relIndices.push_back(2);
 
 	return relIndices;
