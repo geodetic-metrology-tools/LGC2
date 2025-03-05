@@ -182,7 +182,7 @@ void TLSRobustSolver::setHuberObjective(const Eigen::VectorXd par, Eigen::Sparse
 	if (dumpMat)
 	{
 		Eigen::saveMarket(hessian, "hessian.mtx");
-		Eigen::saveMarketDense(gradient, "gradient.mtx");
+		Eigen::saveMarketVector(gradient, "gradient.mtx");
 	}
 
 }
@@ -404,7 +404,7 @@ void TLSRobustSolver::setL1Objective(Eigen::SparseMatrix<double> &hessian, Eigen
 	if (dumpMat)
 	{
 		Eigen::saveMarket(hessian, "hessian.mtx");
-		Eigen::saveMarketDense(gradient, "gradient.mtx");
+		Eigen::saveMarketVector(gradient, "gradient.mtx");
 	}
 
 }
