@@ -186,7 +186,9 @@ void TLGCCalculation::tryArmijoSampling()
 	{
 		logWarning() << "Random initial value sampling found a solution with sigma a posteriori= " << bestSigma;
 		logWarning() << "LGC will continue with this solution";
-		evaluator.setParameters(bestSol);
+		// apply a random perturbation such that the LGC least square method still makes a proper iteration
+		evaluator.setParameters(bestSol + 1e-4 * Eigen::VectorXd::Random(dim));
+		//evaluator.setParameters(bestSol);
 	}
 	else
 	{
