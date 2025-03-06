@@ -56,16 +56,29 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		algorithm.reset(new TLSAlgorithm(*fData.get()));
 
-		// try to find solution using armijo-stepsize regularization
-		// several attempts with different initial values are tried
-		// the one that converges to the lowest sigma will be the prefered solution
-		// this is a heuristiv that shall reduce the probability to end up in a suboptimal local minimum
-		tryArmijoSampling();
-
 		if (fData->getConfig().sim.isActive())
 			algorithm.reset(new TLSSimulation(*fData.get(), fMaxIterations, fileWriter));
 		else if (fData->getConfig().allfixed.isActive())
 			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
+		// For more robust Tsunami prototype
+		if (fData.get()->fUEOIndices.CIndex == 0 && fData->fUEOIndices.UIndex > 0 && !fData->getConfig().sim.isActive())
+		{
+			// try to find solution using armijo-stepsize regularization
+			// several attempts with different initial values are tried
+			// the one that converges to the lowest sigma will be the prefered solution
+			// this is a heuristiv that shall reduce the probability to end up in a suboptimal local minimum
+			tryArmijoSampling();
+		}
+		else
+		{
+			logWarning() << "Armijo stepsize globalization strategy only implemented for unconstrained problems, no simulation -- continuing with classic LGC";
+			// problem with simulations: the simulated observations are generated in the run method of the simulation algorithm based on the current estimated parameters.
+			// if the GN starts before this, it potentially can change the current est parameters (they will already be at the solution based on the actual observations)
+			// we dont want to use the run method before the GN because it uses no regularization -- the intent of this LGC version is to robustify the solution process.
+
+		}
+
+
 
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 		if (successCalculation)
@@ -115,86 +128,76 @@ void TLGCCalculation::tryArmijoSampling()
 	TLSGaussNewtonSolver gnObject(evalPtr);
 	gnObject.setConfig(armijoGN);
 
-	// For more robust Tsunami prototype
-	if (fData.get()->fUEOIndices.CIndex == 0 && dim > 0)
+	// use Armijo linesearch to find solution
+	Eigen::VectorXd provVal = evaluator.getEstParams();
+
+	// create a bunch of random starting values
+	int numberSamples = 10;
+	std::vector<Eigen::VectorXd> startValues;
+	// include the provided provisional value in the sample list
+	startValues.push_back(provVal);
+	for (int j = 0; j < numberSamples; j++)
 	{
-		// use Armijo linesearch to find solution
-		Eigen::VectorXd provVal = evaluator.getEstParams();
+		// Eigen::VectorXd randVal = (Eigen::VectorXd::Ones(dim) + Eigen::VectorXd::Random(dim))/2;
+		Eigen::VectorXd randVal = Eigen::VectorXd::Random(dim);
+		// both try a perturbed version of the supplied provisional value as well as a totally random initial value.
+		startValues.push_back(provVal + randVal);
+		startValues.push_back(randVal);
+	}
 
-		// create a bunch of random starting values
-		int numberSamples = 10;
-		std::vector<Eigen::VectorXd> startValues;
-		// include the provided provisional value in the sample list
-		startValues.push_back(provVal);
-		for (int j = 0; j < numberSamples; j++)
+	// prepare results
+	std::vector<GNresult> results;
+	int j = 0;
+	for (auto sval : startValues)
+	{
+		j++;
+		// set initial value and start armijo GN from this value
+		evaluator.setParameters(sval);
+		try
 		{
-			// Eigen::VectorXd randVal = (Eigen::VectorXd::Ones(dim) + Eigen::VectorXd::Random(dim))/2;
-			Eigen::VectorXd randVal = Eigen::VectorXd::Random(dim);
-			// both try a perturbed version of the supplied provisional value as well as a totally random initial value.
-			startValues.push_back(provVal + randVal);
-			startValues.push_back(randVal);
-		}
-
-		// prepare results
-		std::vector<GNresult> results;
-		int j = 0;
-		for (auto sval : startValues)
-		{
-			j++;
-			// set initial value and start armijo GN from this value
-			evaluator.setParameters(sval);
-			try
+			GNresult result = gnObject.solve();
+			results.push_back(result);
+			if (result.sigma0Aposteriori < 5 && result.success)
 			{
-				GNresult result = gnObject.solve();
-				results.push_back(result);
-				if (result.sigma0Aposteriori < 5 && result.success)
-				{
-					logWarning() << "Solution with Sigma <5 found.";
-					break;
-				}
-			}
-			catch (...)
-			{
-				logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value";
+				logWarning() << "Solution with Sigma <5 found.";
+				break;
 			}
 		}
+		catch (...)
+		{
+			logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value";
+		}
+	}
 
-		// find best solution candidate
-		double bestSigma = 1e+12;
-		Eigen::VectorXd bestSol;
-		bool solFound = false;
-		for (auto result : results)
+	// find best solution candidate
+	double bestSigma = 1e+12;
+	Eigen::VectorXd bestSol;
+	bool solFound = false;
+	for (auto result : results)
+	{
+		if (result.sigma0Aposteriori < bestSigma && result.success)
 		{
-			if (result.sigma0Aposteriori < bestSigma && result.success)
-			{
-				bestSigma = result.sigma0Aposteriori;
-				bestSol = result.solution;
-				solFound = true;
-			}
+			bestSigma = result.sigma0Aposteriori;
+			bestSol = result.solution;
+			solFound = true;
 		}
-		if (solFound)
-		{
-			logWarning() << "Random initial value sampling found a solution with sigma a posteriori= " << bestSigma;
-			logWarning() << "LGC will continue with this solution";
-			evaluator.setParameters(bestSol);
-		}
-		else
-		{
-			logWarning() << "Random initial value sampling was unable to find a solution.";
-			evaluator.setParameters(provVal);
-		}
+	}
+	if (solFound)
+	{
+		logWarning() << "Random initial value sampling found a solution with sigma a posteriori= " << bestSigma;
+		logWarning() << "LGC will continue with this solution";
+		evaluator.setParameters(bestSol);
 	}
 	else
 	{
-		logWarning() << "Armijo stepsize globalization strategy only implemented for unconstrained problems -- continuing with classic LGC";
+		logWarning() << "Random initial value sampling was unable to find a solution.";
+		evaluator.setParameters(provVal);
 	}
 	// continue LGC normally, if solution was already found only one iteration will be made
 	// clean errors that potentially happened during input filling
 	TFileLogger &fileLog = fData->getFileLogger();
 	fileLog.cleanErrors();
 }
-
-
 
 void TLGCCalculation::testGlobalizationMethods()
 {
@@ -214,7 +217,7 @@ void TLGCCalculation::testGlobalizationMethods()
 		iniVal(j) = 50 + 10 * double(j + 1) / double(iniVal.rows());
 	}
 	evalPtr->setParameters(iniVal, false);
-	
+
 	// create Gauss Newton solver instance
 	TLSGaussNewtonSolver gnObject(evalPtr);
 
