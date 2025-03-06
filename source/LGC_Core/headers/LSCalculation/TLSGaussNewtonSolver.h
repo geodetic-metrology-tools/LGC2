@@ -6,18 +6,16 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef TLS_GAUSSNEWTONSOLVER
 #define TLS_GAUSSNEWTONSOLVER
 
-
-//LGC
-#include <TLSEvaluator.h>
-
+// LGC
 #include <Eigen/Dense>
 
+#include <TLSEvaluator.h>
 
 /*!
 \ingroup GaussNewtonSolver
 \brief Gauss Newton method
 */
-struct GNresult: public Serializable
+struct GNresult : public Serializable
 {
 	Eigen::VectorXd solution;
 	Eigen::VectorXd residual;
@@ -28,7 +26,7 @@ struct GNresult: public Serializable
 	double sigma0Aposteriori;
 	void serialize(ObjectSerializer &obj) const;
 
-//	GNresult() = default;
+	//	GNresult() = default;
 };
 struct solverConfig : public Serializable
 {
@@ -51,8 +49,7 @@ struct solverConfig : public Serializable
 	solverConfig() = default;
 };
 
-
-class TLSGaussNewtonSolver //public Serializable
+class TLSGaussNewtonSolver // public Serializable
 {
 public:
 	TLSGaussNewtonSolver(std::shared_ptr<TLSEvaluator> evaluator);
@@ -65,34 +62,31 @@ public:
 	void setConfig(solverConfig config) { fConfig = config; };
 	void resetOptions();
 
-
 private:
 	std::shared_ptr<TLSEvaluator> fEvaluator;
-	Eigen::VectorXd getGNDirection(Eigen::VectorXd);
-	Eigen::VectorXd getGradient(Eigen::VectorXd);
+	// solve min ||r+J dx||^2 + sqrt(lambda)||dx||^2, which has normal matrix J^T J +lambda*Id
+	Eigen::VectorXd getGNDirection(Eigen::VectorXd r, TSparseMatrix &J, double LMLambda);
 	// compute armijo stepsize via backtracking
-	double backtrackingArmijoStepsize(double sigma0 , Eigen::VectorXd x0, Eigen::VectorXd direction);
-	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double>& M);
+	double backtrackingArmijoStepsize(double sigma0, Eigen::VectorXd x0, Eigen::VectorXd direction);
+	Eigen::VectorXd lmStep(Eigen::VectorXd p, double &lambda);
+
+	Eigen::SparseMatrix<double> getDiagonalLMScaleFactor(Eigen::SparseMatrix<double> &M);
 
 	solverConfig fConfig;
 
-//	struct
-//	{
-//		// plotLevel 
-//		// 0 -> show no information
-//		// 1 -> show information at end of iterations
-//		// 2 -> show information after each step
-//		int plotLevel;
-//		bool useArmijo;
-//		bool useLM;
-//		double LMpenalty;
-//		int maxIter;
-//		double terminationTol;
-//	} config;
-
-
+	//	struct
+	//	{
+	//		// plotLevel
+	//		// 0 -> show no information
+	//		// 1 -> show information at end of iterations
+	//		// 2 -> show information after each step
+	//		int plotLevel;
+	//		bool useArmijo;
+	//		bool useLM;
+	//		double LMpenalty;
+	//		int maxIter;
+	//		double terminationTol;
+	//	} config;
 };
-
-
 
 #endif
