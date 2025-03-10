@@ -77,6 +77,8 @@ void object::test<1>()
 	const LGCAdjustablePoint &P_VXYZ = ptCollection.getObject("P_VXYZ");
 	pointSigmaData P_VXYZ_Data = P_VXYZ.getPointSigmaData();
 	ensure_equals("P_VXYZ has no fixed dimension.", P_VXYZ.getNumUnkn(), 3);
+	ensure_equals("P_VXYZ should introduce no observation.", P_VXYZ_Data.fRelObsIdx.size(), 0);
+	ensure_equals("P_VXYZ should introduce no constraint.", P_VXYZ_Data.fRelCIdx.size(), 0);
 	ensure_equals("P_VXYZ has no angles set.", P_VXYZ_Data.fHasAngle, false);
 	ensure_equals("P_VXYZ has no apriCovMat set.", P_VXYZ_Data.fHasApriCovMat, false);
 	ensure_equals("P_VXYZ has no sigma data set.", P_VXYZ.hasPointSigma(), false);
@@ -88,14 +90,16 @@ void object::test<1>()
 	pointSigmaData P2Data = P2.getPointSigmaData();
 	ensure_equals("P2 sigmas are not set correctly.", P2Data.fSigmas, MM2M * Eigen::Vector3d(1, 0, 3));
 	ensure_equals("y coordinate of P2 should be fixed", P2.isCoordinateFixed(1), true);
-	//	ensure_equals("There should be 2 sigma-observations for P2", P2Data.obsDim, 2);
-	// ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P2Data.cstrDim, 0);
+	ensure_equals("P2 should result in 2 observations.", P2Data.fRelObsIdx.size(), 2);
+	ensure_equals("P2 should result in 0 constraints.", P2Data.fRelCIdx.size(), 0);
 
 	const LGCAdjustablePoint &P3 = ptCollection.getObject("P3");
 	pointSigmaData P3Data = P3.getPointSigmaData();
 	ensure_equals("P3 sigmas are not set correctly.", P3Data.fSigmas.topRows(2), MM2M * Eigen::Vector<double, 2>(1, 0));
 	ensure_equals("P3 z sigma should be nan.", std::isnan(P3Data.fSigmas(2)), true);
 	ensure_equals("y coordinate of P2 should be fixed", P2.isCoordinateFixed(1), true);
+	ensure_equals("P3 should result in 1 observations.", P3Data.fRelObsIdx.size(), 1);
+	ensure_equals("P3 should result in 0 constraints.", P3Data.fRelCIdx.size(), 0);
 
 	const LGCAdjustablePoint &P4 = ptCollection.getObject("P4");
 	pointSigmaData P4Data = P4.getPointSigmaData();
@@ -103,17 +107,21 @@ void object::test<1>()
 	Eigen::Vector<double, 4> expectedAngles(1, 2, 3, 4);
 	ensure_equals("P4 angles set wrong.", angles.isApprox(GON2RAD * expectedAngles), true);
 	ensure_equals("P4 .", P4Data.fHasAngle, true);
+	ensure_equals("P4 should result in 3 observations.", P4Data.fRelObsIdx.size(), 3);
+	ensure_equals("P4 should result in 0 constraints.", P4Data.fRelCIdx.size(), 0);
 
 	const LGCAdjustablePoint &P5 = ptCollection.getObject("P5");
 	pointSigmaData P5Data = P5.getPointSigmaData();
 	ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P5Data.firstCIdx, 0);
-	// ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P5Data.cstrDim, 1);
+	ensure_equals("sigma=0 for p5 should introduce a constraint because of the rotations.", P5Data.fRelCIdx.size(), 1);
+	ensure_equals("P5 should introduce 2 observations.", P5Data.fRelObsIdx.size(), 2);
 	const LGCAdjustablePoint &P6 = ptCollection.getObject("P6");
 	pointSigmaData P6Data = P6.getPointSigmaData();
 	Eigen::Matrix3d expectedCovMat;
 	expectedCovMat << 1, 0, 0, 0, 4, 0, 0, 0, 9;
 	ensure_equals("P6 should have a apriori covariance matrix.", P6Data.fHasApriCovMat, true);
 	ensure_equals("P6 covar matrix not set correctly.", P6Data.fApriCovMat.isApprox(expectedCovMat), true);
+	ensure_equals("P6 should introduce 3 observations.", P6Data.fRelObsIdx.size(), 3);
 
 	const LGCAdjustablePoint &P7 = ptCollection.getObject("P7");
 	pointSigmaData P7Data = P7.getPointSigmaData();
@@ -180,7 +188,7 @@ void object::test<2>()
 	expectedCovMat *= pow2(MM2M);
 	ensure_equals("covariance matrix of point is wrong", independent_point.getCovarianceMatrix().isApprox(expectedCovMat), true);
 
-	// test if the xParellel point moved
+	// test if the xParallel point moved
 	LGCAdjustablePoint xParallel = ptCollection.getObject("xParallel");
 	Eigen::Vector3d expectedPosXPar(0, 1, 1);
 	ensure_equals("point should be at expected Position.", expectedPosXPar.isApprox(xParallel.getEstimatedValue().toRealVector()), true);

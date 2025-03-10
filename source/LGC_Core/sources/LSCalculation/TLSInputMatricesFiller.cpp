@@ -1802,62 +1802,33 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			pointSigmaContrib contribution = fCGenerator.getPointSigmaContrib(pt, projData);
 			int cIdx = ptSigma.firstCIdx;
 			int obsIdx = ptSigma.firstObsIdx;
-			if (ptSigma.fHasApriCovMat)
-			{
-				// user has assigned a full 3x3 apriori covariance matrix, the weight is the inverse of this matrix
-				isProcessOK &= matrices->addWeightMtrxBlock(obsIdx, ptSigma.fApriCovMat.inverse());
-				// its a 3-dimensional observation, the A matrix needs to be filled
-				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
+			// handle observations
+			// cut out the weight matrix from the coordinates that are treated as observations
+			Eigen::MatrixXd activeObsWeightMatrix = ptSigma.fWeightMatrix(ptSigma.fRelObsIdx, ptSigma.fRelObsIdx);
+
+			isProcessOK &= matrices->addWeightMtrxBlock(obsIdx, activeObsWeightMatrix);
+			for (int relRowIdx : ptSigma.fRelObsIdx)
+			{ // its a observation
+				// set the row of the A matrix
+				for (int colIdx = 0; colIdx < 3; colIdx++)
 				{
-					for (int colIdx = 0; colIdx < 3; colIdx++)
-					{
-						if (!pt.isCoordinateFixed(colIdx))
-							isProcessOK &= matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
-					}
-					isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(rowIdx));
-					obsIdx++;
+					if (!pt.isCoordinateFixed(colIdx))
+						matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(relRowIdx, colIdx));
 				}
+				isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(relRowIdx));
+				obsIdx++;
 			}
-			else
+
+			// handle constraints
+			for (int relRowIdx : ptSigma.fRelCIdx)
 			{
-				// as no full apriori covariance matrix was defined, the weights have been defined via standard deviations
-				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
+				for (int colIdx = 0; colIdx < 3; colIdx++)
 				{
-					double sigma = ptSigma.fSigmas(rowIdx);
-					// check the sigma value, sigma 0 is either a constraint or a fixed variable, sigma>0 is a observation, sigma=infinity means no condition
-					if (isZero(sigma))
-					{
-						// its a constraint or a fixed variable, depending on the rot mat
-						// if there is no rotation, the variable itself is treated as fixed -> we do not need to fill anything here
-						// if there is a rotation, there needs to be a corresponding constraint on the rotated coordinate
-						if (!ptSigma.fRotMat.isIdentity())
-						{
-							// there is a rotation so the sigma=0 has to be interpreted as a strict constraint
-							// set first constraint matrix entries + constraint misclosure
-							for (int colIdx = 0; colIdx < 3; colIdx++)
-							{
-								// point will have 3 free coordinates if any rotation was defined => no need to check the variable index
-								isProcessOK &= matrices->addCnstrFirstDgnMtrxElement(cIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
-							}
-							isProcessOK &= matrices->setCnstrMisclosureVectorElement(cIdx, contribution.misclosure(rowIdx));
-							cIdx++;
-						}
-					}
-					else if (isPositiveFinite(sigma))
-					{
-						// its a observation
-						// set the row of the A matrix and the diagonal elements of the weight matrices
-						for (int colIdx = 0; colIdx < 3; colIdx++)
-						{
-							if (!pt.isCoordinateFixed(colIdx))
-								matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
-						}
-						isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(rowIdx));
-						isProcessOK &= matrices->addWeightMtrxElement(obsIdx, obsIdx, 1 / pow2(ptSigma.fSigmas(rowIdx)));
-						isProcessOK &= matrices->addWeightInvMtrxElement(obsIdx, obsIdx, pow2(ptSigma.fSigmas(rowIdx)));
-						obsIdx++;
-					}
+					if (!pt.isCoordinateFixed(colIdx))
+						matrices->addCnstrFirstDgnMtrxElement(cIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(relRowIdx, colIdx));
 				}
+				isProcessOK &= matrices->setCnstrMisclosureVectorElement(cIdx, contribution.misclosure(relRowIdx));
+				cIdx++;
 			}
 		}
 	}

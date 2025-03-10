@@ -751,7 +751,7 @@ bool TDataAnalyzer::checkParameters()
 		}
 	}
 
-	// Save total number of unknowns without sigmas
+	// Save total number of unknowns
 	fData.fUEOIndices.UIndex = lastUidx;
 
 	return true;
@@ -1270,30 +1270,15 @@ void TDataAnalyzer::assignEOIndices()
 		if (pt.hasPointSigma())
 		{
 			pointSigmaData &ptSigma = pt.getPointSigmaData();
-			int nObservations = 0;
-			if (ptSigma.fHasApriCovMat)
-			{
-				// apricovMat needs to be symmetric positive definite, it will always induce 3 observations
-				nObservations = 3;
-			}
-			else
-			{
-				// weights are set via sigmas
-				int nZeroSigmas = (ptSigma.fSigmas.array() == 0.0).count();
-				int nPositiveSigmas = (ptSigma.fSigmas.unaryExpr(&isPositiveFinite).array()).count();
-				if (!ptSigma.fRotMat.isIdentity())
-				{
-					// rotations used: if there are sigmas with value 0 they will be treated as constraints (not observations)
-					ptSigma.firstCIdx = fData.fUEOIndices.CIndex;
-					fData.fUEOIndices.CIndex += nZeroSigmas;
-				}
-				nObservations = nPositiveSigmas;
-			}
-			// if there were observations, set the first index, otherwise the firstObsIdx will remain at is default initial value of -1
+			int nObservations = ptSigma.fRelObsIdx.size();
+			int nConstraints = ptSigma.fRelCIdx.size();
 			if (nObservations > 0)
 				ptSigma.firstObsIdx = fData.fUEOIndices.OIndex;
+			if (nConstraints > 0)
+				ptSigma.firstCIdx = fData.fUEOIndices.CIndex;
 			fData.fUEOIndices.OIndex += nObservations;
 			fData.fUEOIndices.EIndex += nObservations;
+			fData.fUEOIndices.CIndex += nConstraints;
 		}
 	}
 }
