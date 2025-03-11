@@ -1,4 +1,19 @@
 #
+# Set policies for CMake to avoid backward compatibility warnings
+
+# Set CMP0175 to use the new behavior (add_custom_command() must include PRE_BUILD, PRE_LINK, or POST_BUILD)
+cmake_policy(SET CMP0175 NEW)
+
+# Set CMP0148 to use the new behavior (FindPythonInterp and FindPythonLibs are removed, use FindPython instead)
+cmake_policy(SET CMP0148 NEW)
+
+# Set CMP0177 to use the new behavior (install() DESTINATION paths should be normalized)
+cmake_policy(SET CMP0177 NEW)
+
+
+
+
+
 # CMake file for LGC2
 #
 # To create a solution with this CMake file, you need to first define the following variables in a CMake style file.
@@ -7,7 +22,7 @@
 # - `REFRAME_LIBRARY_DIR`: The path to Reframe folder
 # - `TUT_INCLUDE_PATH`: The path to Tut folder
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 #############################################################
 #
@@ -99,6 +114,7 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
+ADD_SUBDIRECTORY(pyLGC)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
