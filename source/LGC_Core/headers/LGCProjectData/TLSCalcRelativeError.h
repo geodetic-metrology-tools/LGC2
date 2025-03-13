@@ -175,7 +175,7 @@ private:
 #if USE_SERIALIZER
 struct TRelativeErrors : public Serializable
 #else
-struct TRelativeErrors : public Serializable
+struct TRelativeErrors
 #endif
 {
 	std::vector<TLSCalcRelativeErrorPoint> points;

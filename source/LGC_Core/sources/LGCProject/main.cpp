@@ -126,7 +126,6 @@ int main(int argc, char *argv[])
 			outputFilePath = svlTools::getFilePathWithoutExtension(inputFilePath) + ".res";
 
 		svlTools::createOutputFile(outputFilePath);
-		std::cout << "Calc meas of " << obsName << " = " << mockup.getCalcMeas(obsName) << std::endl;
 
 		// Changes the log file attached to this handler
 		// Log file becomes the input filename with the ".log2" extension

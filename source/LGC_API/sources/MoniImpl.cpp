@@ -646,7 +646,7 @@ TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
 		throw std::runtime_error("No measurement with ID " + id + " found.");
 	}
 
-	string type = measRefs.types.at(id);
+	std::string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
 		return measRefs.ANGL.at(id);
@@ -761,7 +761,7 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 		return;
 	}
 
-	string type = measRefs.types.at(id);
+	std::string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
 		measRefs.ANGL.at(id).setAngle(TAngle(measurementVector[0], TAngle::kGons));
@@ -896,7 +896,7 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 		return res;
 	}
 
-	string type = measRefs.types.at(id);
+	std::string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
 		Eigen::VectorXd res(1);
@@ -1121,7 +1121,7 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 		return result;
 	}
 
-	string type = measRefs.types.at(id);
+	std::string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
 		Eigen::VectorXd result(1);
@@ -1262,7 +1262,7 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 		throw std::runtime_error("No measurement with ID " + id + " found.");
 	}
 
-	string type = measRefs.types.at(id);
+	std::string type = measRefs.types.at(id);
 	if (type == "ANGL")
 	{
 		measRefs.ANGL.at(id).target.sigmaAngl.setRadiansValue(sigma(0));

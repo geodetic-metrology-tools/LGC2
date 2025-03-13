@@ -86,8 +86,10 @@ add_test(
 # Copy test files for unit tests
 set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFiles)
 file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
-set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
-file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
+set(TEST_FILE_DIR_API ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
+file(GLOB ADDITIONAL_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR_API}/*)
+
+list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})
 
 foreach(test_file ${COPY_TESTFILES})
 	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")

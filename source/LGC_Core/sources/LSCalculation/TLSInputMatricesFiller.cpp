@@ -1830,7 +1830,7 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			if (ptSigma.fHasApriCovMat)
 			{
 				// user has assigned a full 3x3 apriori covariance matrix
-				isProcessOK &= matrices->setWeightMtrxBlock(obsIdx, obsIdx, ptSigma.fApriCovMat);
+				isProcessOK &= matrices->setWeightMtrxBlock(obsIdx, ptSigma.fApriCovMat);
 				// its an 3 dimendional observation, A matrix needs to be filled
 				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
 				{
