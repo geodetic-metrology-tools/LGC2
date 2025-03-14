@@ -35,6 +35,16 @@ set(CPACK_BUILD ON)
 set(USE_SERIALIZER 0)
 add_compile_definitions(USE_SERIALIZER=${USE_SERIALIZER})
 
+# for the dll in general use the pre cxx11 abi
+# dll has to run on Fesa instances that require the pre cxx11 abi
+set(USE_OLD_ABI 1)
+if(USE_OLD_ABI)
+    message(STATUS "Using old C++ ABI")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
+else()
+    message(STATUS "Using modern C++ ABI")
+endif()
+
 set(LIBRARIES_PATH "${CMAKE_SOURCE_DIR}/../lib")
 include(${LIBRARIES_PATH}/SUSoftCMakeCommon/CMakeLists.txt)
 
@@ -119,6 +129,7 @@ target_link_libraries(${PROJECT_NAME}
 	Logs
 	Plugins
 )
+
 
 ############################
 # MSVC:

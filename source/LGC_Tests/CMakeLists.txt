@@ -75,6 +75,16 @@ set(tests_INPUT
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
+# Ensure LGC_API is built first
+add_dependencies(LGC_Tests LGC_API)
+
+add_custom_command(TARGET LGC_Tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy 
+    "$<TARGET_FILE:LGC_API>" 
+    "$<TARGET_FILE_DIR:LGC_Tests>/$<TARGET_FILE_NAME:LGC_API>"
+)
+
+
 target_link_libraries(LGC_Tests LGC_API LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
 
 add_test(
@@ -92,13 +102,7 @@ file(GLOB ADDITIONAL_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR_API}/*)
 list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})
 
 foreach(test_file ${COPY_TESTFILES})
-	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")
 	file(COPY "${test_file}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test_files")
 endforeach()
 
-# make sure api dll is available in test build folder
-#if (WIN32)
-#add_custom_command(TARGET LGC_Tests POST_BUILD
-#                    COMMAND ${CMAKE_COMMAND} -E copy  "${CMAKE_BINARY_DIR}/LGC_API/Debug/LGC_API.dll" "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll")
-#endif()
 
