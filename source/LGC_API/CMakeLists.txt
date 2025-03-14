@@ -53,15 +53,21 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
 endif()
 
-# Ensure correct DLL copying on Windows, independent of build type
-if(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy 
-        "$<TARGET_FILE:${PROJECT_NAME}>" 
-        "${CMAKE_BINARY_DIR}/LGC_API.dll")
 
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy 
-        "$<TARGET_FILE:${PROJECT_NAME}>" 
-        "${CMAKE_BINARY_DIR}/LGC_Tests/LGC_API.dll")
-endif()
+
+
+# Automatically detect the correct shared library extension
+set(SHARED_LIB_EXT ${CMAKE_SHARED_LIBRARY_SUFFIX})  # ".dll" on Windows, ".so" on Linux/macOS
+
+# Generalized post-build copy command for all platforms
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy 
+    "$<TARGET_FILE:${PROJECT_NAME}>" 
+    "${CMAKE_BINARY_DIR}/LGC_API${SHARED_LIB_EXT}"
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy 
+    "$<TARGET_FILE:${PROJECT_NAME}>" 
+    "${CMAKE_BINARY_DIR}/LGC_Tests/LGC_API${SHARED_LIB_EXT}"
+)
