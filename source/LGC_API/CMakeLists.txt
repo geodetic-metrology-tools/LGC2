@@ -1,14 +1,12 @@
 PROJECT (LGC_API)
 
-# do not use the serializer in the API
+# Do not use the serializer in the API
 set(USE_SERIALIZER 0)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/)
 
 SET(API_INCLUDE_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/headers/)
 SET(API_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources)
-					
 					
 # Create a variable containing all .h files:
 set(API_HEADERS 	
@@ -21,20 +19,17 @@ set(API_SOURCES
 	${API_SOURCES_PATH}/MoniImpl.cpp
 )
 
-
 # Define VS folders:
 file(GLOB API_H ${API_INCLUDE_PATH}/*.*)
-
 file(GLOB API_CPP ${API_SOURCES_PATH}/*.*)
 
 source_group("\\Headers" FILES ${API_H})
-
 source_group("\\Sources" FILES ${API_CPP})
-
 
 # Create a dynamic library from sources:
 add_library(${PROJECT_NAME} SHARED ${API_HEADERS} ${API_SOURCES})
-target_link_libraries(	${PROJECT_NAME}
+
+target_link_libraries(${PROJECT_NAME}
 	LGC_Core
 	LSAlgorithms
 	ProjectFramework
@@ -47,26 +42,26 @@ if(NOT MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0)
 endif()
 
+# Find OpenMP
 find_package(OpenMP)
 if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    target_link_libraries(${PROJECT_NAME} OpenMP::OpenMP_CXX)
 endif()
 
+# Set default build type if not specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+endif()
 
-# set default build type
-#if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug)
-#endif()
-#message(${CMAKE_CURRENT_BINARY_DIR})
+# Ensure correct DLL copying on Windows, independent of build type
 if(WIN32)
-# how to access the build types set by visual studio to make sure the dll is copied to the debug/release folder of visual studio?
-# for now: hard coded: Debug mode
- add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_API.dll")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy 
+        "$<TARGET_FILE:${PROJECT_NAME}>" 
+        "${CMAKE_BINARY_DIR}/LGC_API.dll")
 
- add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/Debug/LGC_API.dll" "${CMAKE_BINARY_DIR}/LGC_Tests/LGC_API.dll")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy 
+        "$<TARGET_FILE:${PROJECT_NAME}>" 
+        "${CMAKE_BINARY_DIR}/LGC_Tests/LGC_API.dll")
 endif()
-
