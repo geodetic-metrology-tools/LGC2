@@ -94,17 +94,18 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 
 	// compute z
 	TDenseMatrix Z(nbObs,nbEq);
-	Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());
+	Z = *(rm->getResCovarMtrxByConst()) * (im->getWeightMtrx());
 
 	//loop for each unknowns
 	int i = 0;
+	const TSparseMatrix &weightInvMatrix = im->getWeightInvMtrx();
 	while (i<nbObs)
 	{		
 		// reset the variables, necessary if the object is reused (e.g. in simulations)
 		(*fAreDetermined)(i) = (*fGToCompute)(i) = (*fDeltaComputed)(i) = false;
 
-		varAPriori = im->getWeightInvMtrx()->coeff(i,i);
-		varRes = rm->getResCovarMtrxElmt(i,i);
+		varAPriori = weightInvMatrix.coeff(i, i);
+		varRes = rm->getResCovarMtrxElmt(i, i);
 		res = rm->getResidualsVctrElmt(i);
 
 		if (varAPriori != LITERAL(0.0) && varRes != LITERAL(0.0)) {

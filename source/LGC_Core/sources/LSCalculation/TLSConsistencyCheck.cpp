@@ -12,8 +12,8 @@
 TLSConsCheck::TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr) : projData(data)
 {
 	Eigen::SparseMatrix<double, Eigen::RowMajor> A(projData.fUEOIndices.EIndex + projData.fUEOIndices.CIndex, projData.fUEOIndices.UIndex);
-	A.topRows(projData.fUEOIndices.EIndex) = *inputMtr.getFirstDgnMtrx();
-	A.bottomRows(projData.fUEOIndices.CIndex) = *inputMtr.getCnstrFirstDgnMtrx();
+	A.topRows(projData.fUEOIndices.EIndex) = inputMtr.getFirstDgnMtrx();
+	A.bottomRows(projData.fUEOIndices.CIndex) = inputMtr.getCnstrFirstDgnMtrx();
 
 	firstDgnMatrix = A;
 
