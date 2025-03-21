@@ -84,6 +84,8 @@ public:
 	Eigen::VectorXd getEstimateResidual(std::string obsName);
 	// get calculated measurement
 	Eigen::VectorXd getCalcMeas(std::string obsName) { return getMeas(obsName) + getEstimateResidual(obsName); };
+	// get observation sigma
+	Eigen::VectorXd getObsSigma(std::string obsName);
 	// get the sigma0 after adjustment
 	double getSigma0();
 	// for water and wire network related data

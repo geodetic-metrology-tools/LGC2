@@ -50,9 +50,9 @@ public:
 #endif
 	// write lgc input file with current measurements with timestamp
 	DECLSPEC void writeLGCInputFile();
-	// updating observations
-	DECLSPEC void setActivationStatus(std::string id, bool status);
 	// set activtaionStatus
+	DECLSPEC void setActivationStatus(std::string id, bool status);
+	// updating observations
 	DECLSPEC void updateMeas(std::string id, Eigen::VectorXd measurementVector);
 	// changing observation Sigma
 	DECLSPEC void setObsSigma(std::string id, Eigen::VectorXd sigma);
@@ -91,6 +91,8 @@ public:
 	DECLSPEC Eigen::VectorXd getEstimateResidual(std::string obsName);
 	// get "calculated" measurement = obs+residual
 	DECLSPEC Eigen::VectorXd getCalcMeas(std::string obsname);
+	// get observation sigma
+	DECLSPEC Eigen::VectorXd getObsSigma(std::string obsname);
 	// get the sigma0 after adjustment
 	DECLSPEC double getSigma0();
 	DECLSPEC waterRom getECWSData(std::string ecwsRomName);

@@ -95,6 +95,9 @@ void object::test<1>()
 	Eigen::VectorXd newObsxyzSigma(3);
 	newObsxyzSigma << 0.12345, 0.23456, 0.34567;
 	apiObject.setObsSigma("testObs1", newObsxyzSigma);
+	Eigen::VectorXd expectedObsxyzSigma = apiObject.getObsSigma("testObs1");
+	ensure("Retrieved Sigma has to match newly set sigma.", expectedObsxyzSigma.isApprox(newObsxyzSigma, 1e-12));
+
 	apiObject.adjust();
 	expectedFramePrecisions << newObsxyzSigma, 0, 0, 0, 0;
 	framePrecisions = apiObject.getFrameEstimatePrec("testFrame");

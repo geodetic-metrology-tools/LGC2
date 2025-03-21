@@ -121,6 +121,11 @@ Eigen::VectorXd Moni::getCalcMeas(std::string obsId)
 	return pimpl_->getCalcMeas(obsId);
 }
 
+DECLSPEC Eigen::VectorXd Moni::getObsSigma(std::string obsId)
+{
+	return pimpl_->getObsSigma(obsId);
+}
+
 
 // get Meas IDs
 std::vector<std::string> Moni::getECWSMeasIds()
@@ -1066,6 +1071,149 @@ std::vector<std::string> Moni::MoniImpl::getECWSMeasIds()
 	}
 	return theIds;
 }
+Eigen::VectorXd Moni::MoniImpl::getObsSigma(std::string id)
+{	
+	// get observation sigma
+	// check if id exists
+	if (measRefs.types.count(id) == 0)
+	{
+		throw std::runtime_error("No measurement with ID " + id + " found.");
+		Eigen::VectorXd result(1);
+		result[0] = 0;
+		return result;
+	}
+
+	std::string type = measRefs.types.at(id);
+	if (type == "ANGL")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double)measRefs.ANGL.at(id).target.sigmaAngl.getRadiansValue());
+		return result;
+	}
+	else if (type == "ZEND")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double)measRefs.ZEND.at(id).target.sigmaZenD.getRadiansValue());
+		return result;
+	}
+	else if (type == "DIST")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double)measRefs.DIST.at(id).target.sigmaDist.getMetresValue());
+		return result;
+	}
+	else if (type == "ECTH")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double)measRefs.ECTH.at(id).target.sigmaD.getMetresValue());
+		return result;
+	}
+	else if (type == "ECDIR")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double)measRefs.ECDIR.at(id).target.sigmaD.getMetresValue());
+		return result;
+	}
+	else if (type == "DHOR")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = ((double)measRefs.DHOR.at(id).target.sigmaDist.getMetresValue());
+		return result;
+	}
+	else if (type == "PLR3D")
+	{
+		Eigen::VectorXd result(3);
+		result << measRefs.PLR3D.at(id).target.sigmaAngl.getRadiansValue(), measRefs.PLR3D.at(id).target.sigmaZenD.getRadiansValue(),
+			measRefs.PLR3D.at(id).target.sigmaDist.getMetresValue();
+		return result;
+	}
+	else if (type == "ORIE")
+	{
+		Eigen::VectorXd result(1);
+		result << measRefs.ORIE.at(id).target.sigmaAngl.getRadiansValue();
+		return result;
+	}
+	else if (type == "UVEC")
+	{
+		Eigen::VectorXd result(2);
+		result << measRefs.UVEC.at(id).target.sigmaX, measRefs.UVEC.at(id).target.sigmaY;
+		return result;
+	}
+	else if (type == "UVD")
+	{
+		Eigen::VectorXd result(3);
+		result << measRefs.UVD.at(id).target.sigmaX, measRefs.UVD.at(id).target.sigmaY, measRefs.UVD.at(id).target.sigmaDist.getMetresValue();
+		return result;
+	}
+	else if (type == "DSPT")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.DSPT.at(id).target.sigmaDSpt.getMetresValue();
+		return result;
+	}
+	else if (type == "DLEV")
+	{
+		// ignoring DHOR
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.DLEV.at(id).target.sigmaD.getMetresValue();
+		return result;
+	}
+	else if (type == "ECHO")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECHO.at(id).target.sigmaD.getMetresValue();
+		return result;
+	}
+	else if (type == "ECSP")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECSP.at(id).target.sigmaD.getMetresValue();
+		return result;
+	}
+	else if (type == "ECVE")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECVE.at(id).target.sigmaD.getMetresValue();
+		return result;
+	}
+	else if (type == "INCLY")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.INCLY.at(id).target.sigmaAngl.getRadiansValue();
+		return result;
+	}
+	else if (type == "ECWS")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.ECWS.at(id).target.sigmaDist.getMetresValue();
+		return result;
+	}
+	else if (type == "ECWI")
+	{
+		Eigen::VectorXd result(2);
+		result << measRefs.ECWI.at(id).target.sigmaX.getMetresValue(), measRefs.ECWI.at(id).target.sigmaZ.getMetresValue();
+		return result;
+	}
+	else if (type == "DVER")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.DVER.at(id).getObservedStDev().getMetresValue();
+		return result;
+	}
+	else if (type == "RADI")
+	{
+		Eigen::VectorXd result(1);
+		result[0] = measRefs.RADI.at(id).getObservedStDev().getMetresValue();
+		return result;
+	}
+	else if (type == "OBSXYZ")
+	{
+		Eigen::VectorXd result(3);
+		result << measRefs.OBSXYZ.at(id).getXObservedStDev().getMetresValue(), measRefs.OBSXYZ.at(id).getYObservedStDev().getMetresValue(),
+			measRefs.OBSXYZ.at(id).getZObservedStDev().getMetresValue();
+		return result;
+	}
+}
 double Moni::MoniImpl::getSigma0()
 {
 	return project->getS0APosteriori();
@@ -1176,8 +1324,9 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	}
 	else if (type == "UVD")
 	{	
-		Eigen::VectorXd result(4);
-		result << toVectorXd(measRefs.UVD.at(id).getVectorValue()), measRefs.UVD.at(id).getDistance().getMetresValue();
+		Eigen::VectorXd result(3);
+		Eigen::VectorXd direction = toVectorXd(measRefs.UVD.at(id).getVectorValue());
+		result << direction[0], direction[1], measRefs.UVD.at(id).getDistance().getMetresValue();
 		return result;
 	}
 	else if (type == "DSPT")
@@ -1255,7 +1404,6 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	// reset estimationStatus to false as soon as new weights are provided
 	estimationStatus = false;
 
-	// get observation value
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
 	{
@@ -1277,17 +1425,15 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 	else if (type == "ECTH")
 	{
-		measRefs.ECTH.at(id).obsHorAngle.setRadiansValue(sigma(0));
+		measRefs.ECTH.at(id).target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "ECDIR")
 	{
-		measRefs.ECDIR.at(id).obsHorAngle.setRadiansValue(sigma(0));
-		measRefs.ECDIR.at(id).obsVertAngle.setRadiansValue(sigma(1));
+		measRefs.ECDIR.at(id).target.sigmaD.setMetresValue(sigma(0));
 	}
 	else if (type == "DHOR")
 	{
-		// not supported
-		//	measRefs.DHOR.at(id).setDHORSigma(TLength(sigma(0)));
+		measRefs.DHOR.at(id).target.sigmaDist.setMetresValue(TLength(sigma(0)));
 	}
 	else if (type == "PLR3D")
 	{
