@@ -79,9 +79,11 @@ public:
 	Eigen::VectorXd getMisclosure() const;
 	TSparseMatrix getAMatrix() const;
 	TSparseMatrix getBMatrix() const;
+	TSparseMatrix getInvBMatrix() const;
 	Eigen::VectorXd getConstraintMisclosure() const;
 	TSparseMatrix getA2Matrix() const;
 	TSparseMatrix getPMatrix() const;
+	UEOIndices getIndices() const { return fData->fUEOIndices; };
 
 private:
 	// indicates tha results are ready for access

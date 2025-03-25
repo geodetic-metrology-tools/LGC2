@@ -112,16 +112,16 @@ bool TLSEvaluator::testEvaluate()
 	TSparseMatrix A2 = getA2Matrix();
 	TSparseMatrix P = getPMatrix();
 
-	std::cout << "misclosure = " << std::endl;
-	std::cout << misc << std::endl;
-	std::cout << "A = " << std::endl;
-	std::cout << A.toDense() << std::endl;
-	std::cout << "B = " << std::endl;
-	std::cout << B.toDense() << std::endl;
-	std::cout << "A2 = " << std::endl;
-	std::cout << A2.toDense() << std::endl;
-	std::cout << "P = " << std::endl;
-	std::cout << P.toDense() << std::endl;
+//	std::cout << "misclosure = " << std::endl;
+//	std::cout << misc << std::endl;
+//	std::cout << "A = " << std::endl;
+//	std::cout << A.toDense() << std::endl;
+//	std::cout << "B = " << std::endl;
+//	std::cout << B.toDense() << std::endl;
+//	std::cout << "A2 = " << std::endl;
+//	std::cout << A2.toDense() << std::endl;
+//	std::cout << "P = " << std::endl;
+//	std::cout << P.toDense() << std::endl;
 
 
 	return false;
@@ -434,6 +434,13 @@ TSparseMatrix TLSEvaluator::getBMatrix() const
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
 	return *iMat->getSecondDgnMtrx();
+}
+
+TSparseMatrix TLSEvaluator::getInvBMatrix() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat->getSecondDgnBlockDiagInvMtrx();
 }
 
 Eigen::VectorXd TLSEvaluator::getConstraintMisclosure() const
