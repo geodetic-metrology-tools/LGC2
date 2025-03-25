@@ -46,7 +46,7 @@ TVector TLSGaussNewton::solve(Eigen::VectorXd initial)
 	// mark the dxTrial nonzero
 //	dxTrial.setConstant(1);
 	
-	double lmPenalty = 1e-4;
+	double lmPenalty = 1e-12;
 	//double lmPenalty = 0;
 	
 	// outer loop
@@ -163,14 +163,22 @@ bool TLSGaussNewton::decideAcceptance(double currObj, double predObj, double tri
 //	std::cout << "pRed=" << predictedDecrease << std::endl;
 //	std::cout << "aRed=" << actualDecrease << std::endl;
 	if (trialObj < 1e-16)
+	{
 		return true;
+	}
 	if (actualDecrease < 0)
+	{
 		accept &= false;
+	}
 	if (predictedDecrease < 0)
+	{
 		throw std::runtime_error("predicted objective increased! We need decrease");
-	double acceptanceFactor = 0.01;
-	if (actualDecrease > acceptanceFactor * predictedDecrease)
-		accept &= true;
+	}
+	double acceptanceFactor = 0.1;
+	if (actualDecrease < acceptanceFactor * predictedDecrease)
+	{
+		accept &= false;
+	}
 	return accept;
 }
 
