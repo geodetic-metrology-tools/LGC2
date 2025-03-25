@@ -461,5 +461,5 @@ TSparseMatrix TLSEvaluator::getPMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	return iMat->getWeightInvMtrx();
+	return iMat->getWeightMtrx();
 }
