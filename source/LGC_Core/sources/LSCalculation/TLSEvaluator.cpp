@@ -426,21 +426,21 @@ TSparseMatrix TLSEvaluator::getAMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	return *iMat->getFirstDgnMtrx();
+	return iMat->getFirstDgnMtrx();
 }
 
 TSparseMatrix TLSEvaluator::getBMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	return *iMat->getSecondDgnMtrx();
+	return iMat->getSecondDgnMtrx();
 }
 
 TSparseMatrix TLSEvaluator::getInvBMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	return *iMat->getSecondDgnBlockDiagInvMtrx();
+	return iMat->getSecondDgnBlockDiagInvMtrx();
 }
 
 Eigen::VectorXd TLSEvaluator::getConstraintMisclosure() const
@@ -454,12 +454,12 @@ TSparseMatrix TLSEvaluator::getA2Matrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	return *iMat->getCnstrFirstDgnMtrx();
+	return iMat->getCnstrFirstDgnMtrx();
 }
 
 TSparseMatrix TLSEvaluator::getPMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	return *iMat->getWeightInvMtrx();
+	return iMat->getWeightInvMtrx();
 }
