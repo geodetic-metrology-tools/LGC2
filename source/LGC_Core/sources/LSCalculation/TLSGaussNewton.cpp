@@ -198,14 +198,9 @@ TSparseMatrix TLSGaussNewton::getN2Matrix(TSparseMatrix &A, TSparseMatrix &invN1
 TSparseMatrix TLSGaussNewton::getNBig(TSparseMatrix &N2, TSparseMatrix &C, double lmCoefficient)
 {
 	TSparseMatrix N2regularized = N2;
-	//std::cout << "N2=" <<std::endl<< N2.toDense() << std::endl;
-	// apply the LM regularization. Add lmCoefficient * diagonal entry to the diagonal (this corresponds to a variable scaling)
-	for (int j = 0; j < indices.UIndex; j++)
-	{
-		N2regularized.coeffRef(j, j) *= lmCoefficient + 1;
-	}
+	
+	bool useScaledPenalty = true;
 
-	//std::cout << "N2reg=" << std::endl << N2regularized.toDense() << std::endl;
 	TSparseMatrix NBig(indices.UIndex + indices.CIndex, indices.UIndex + indices.CIndex);
 	std::vector<TTriplet> coeffs;
 	coeffs.reserve(N2regularized.nonZeros() + 2 * C.nonZeros());
@@ -214,7 +209,17 @@ TSparseMatrix TLSGaussNewton::getNBig(TSparseMatrix &N2, TSparseMatrix &C, doubl
 	for (int k = 0; k < N2regularized.outerSize(); ++k)
 	{
 		for (TSparseMatrix::InnerIterator it(N2regularized, k); it; ++it)
-			coeffs.push_back(TTriplet(it.row(), it.col(), it.value()));
+		{
+			double value = it.value();
+			if (it.row()==it.col()){
+				// add penalty diagonal term, either scaled according to J^T J or unscaled
+				if (useScaledPenalty)
+					value *= (1 + lmCoefficient);
+				else
+					value += lmCoefficient;
+			}
+			coeffs.push_back(TTriplet(it.row(), it.col(), value));
+		}
 	}
 
 	// Fill the C and CT, if no constraints, nothing should happen
