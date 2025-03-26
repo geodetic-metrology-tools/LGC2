@@ -15,10 +15,11 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 //\ingroup GaussNewton
 //\brief Gauss Newton method
 //*/
-struct GNresult// : public Serializable
+struct GNResult// : public Serializable
 {
-	Eigen::VectorXd solution;
-	Eigen::VectorXd residual;
+	TVector iniVal;
+	TVector solution;
+	TVector residual;
 	double objective = -1;
 	int nIterations = 0;
 	bool success = false;
@@ -55,7 +56,7 @@ public:
 	TLSGaussNewton(std::shared_ptr<TLSEvaluator> evaluator);
 	//~TLSGaussNewton();
 	// apply GN solver
-	TVector solve(TVector initial);
+	GNResult solve(TVector initial);
 
 private:
 	double computeObjective(TSparseMatrix &A, TSparseMatrix &invB, TSparseMatrix &Pv, TVector &W, TVector &dxTrial);

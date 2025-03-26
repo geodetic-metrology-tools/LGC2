@@ -2,6 +2,8 @@
 
 #include <Logger.hpp>
 #include <TLSAlgorithm.h>
+#include <TLSEvaluator.h>
+#include <TLSGaussNewton.h>
 
 #include "TDataAnalyzer.h"
 #include "TLSAllfixed.h"
@@ -47,6 +49,8 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		else if (fData->getConfig().allfixed.isActive())
 			algorithm.reset(new TLSAllfixed(*fData.get(), fMaxIterations));
 
+		tryRegularizedSolve();
+
 		successCalculation = algorithm->run(*fData.get(), fMaxIterations);
 
 		if (successCalculation)
@@ -73,6 +77,86 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 		initialiseObsSummaries();
 
 	return successCalculation;
+}
+
+void TLGCCalculation::tryRegularizedSolve()
+{
+	TLSEvaluator evaluator(fData);
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+
+	TLSGaussNewton gnObject(evalPtr);
+
+	Eigen::VectorXd provVal = evaluator.getEstParams();
+
+	// create a bunch of random starting values
+	int numberSamples = 10;
+	std::vector<Eigen::VectorXd> startValues;
+	// include the provided provisional value in the sample list
+	startValues.push_back(provVal);
+	for (int j = 0; j < numberSamples; j++)
+	{
+		// Eigen::VectorXd randVal = (Eigen::VectorXd::Ones(dim) + Eigen::VectorXd::Random(dim))/2;
+		Eigen::VectorXd randVal = Eigen::VectorXd::Random(fData->fUEOIndices.UIndex);
+		// both try a perturbed version of the supplied provisional value as well as a totally random initial value.
+		startValues.push_back(provVal + randVal);
+		startValues.push_back(randVal);
+	}
+
+	// attempt to solve
+	// prepare results
+	std::vector<GNResult> results;
+	int j = 0;
+	for (auto sval : startValues)
+	{
+		j++;
+		// set initial value and start armijo GN from this value
+		// evaluator.setParameters(sval);
+		try
+		{
+			GNResult result = gnObject.solve(sval);
+			results.push_back(result);
+			if (result.sigma0Aposteriori < 5 && result.success)
+			{
+				logWarning() << "Solution with Sigma <5 found.";
+				break;
+			}
+		}
+		catch (...)
+		{
+			logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value";
+		}
+	}
+
+	// find best solution candidate
+	double bestSigma = 1e+12;
+	Eigen::VectorXd bestSol;
+	bool solFound = false;
+	for (auto result : results)
+	{
+		if (result.sigma0Aposteriori < bestSigma && result.success)
+		{
+			bestSigma = result.sigma0Aposteriori;
+			bestSol = result.solution;
+			solFound = true;
+		}
+	}
+	if (solFound)
+	{
+		logWarning() << "Random initial value sampling found a solution with sigma a posteriori= " << bestSigma;
+		logWarning() << "LGC will continue with this solution";
+		// apply a random perturbation such that the LGC least square method still makes a proper iteration
+		//evaluator.setParameters(bestSol + 1e-4 * Eigen::VectorXd::Random(fData->fUEOIndices.UIndex));
+		 evaluator.setParameters(bestSol);
+	}
+	else
+	{
+		logWarning() << "Random initial value sampling was unable to find a solution.";
+		evaluator.setParameters(provVal);
+	}
+	// continue LGC normally, if solution was already found only one iteration will be made
+	// clean errors that potentially happened during input filling
+	TFileLogger &fileLog = fData->getFileLogger();
+	fileLog.cleanErrors();
 }
 
 void TLGCCalculation::initialiseObsSummaries()
