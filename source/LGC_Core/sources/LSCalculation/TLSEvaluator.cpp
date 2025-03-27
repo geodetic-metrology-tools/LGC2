@@ -9,7 +9,7 @@
 #include "TLSUniversalMtdComputer.h"
 //#include <Behavior.h>
 //#include <TLGCData.h>
-//#include <TLSAlgorithm.h>
+#include <TLSAlgorithm.h>
 #include <TReader.h>
 //
 //#include "FileUtils.h"
@@ -125,6 +125,21 @@ bool TLSEvaluator::testEvaluate()
 
 
 	return false;
+}
+
+bool TLSEvaluator::tryLGCSolve(TVector &solution)
+{
+	bool success = false;
+	Behavior successCalculation;
+	TLSAlgorithm algo(*fData);
+	successCalculation = algo.run(*fData, 80);
+	if (successCalculation)
+	{
+		success = true;
+		solution = getEstParams();
+	}
+
+	return success;
 }
 
 Eigen::VectorXd TLSEvaluator::getObservations()

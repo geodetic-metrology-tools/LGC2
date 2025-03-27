@@ -49,6 +49,9 @@ public:
 	bool testParameterSetAndGet();
 	bool testEvaluate();
 
+	// this will attempt a normal LGC solve operation
+	bool tryLGCSolve(TVector& solution);
+
 	// set observations has lower priority because in LGC as of now all mathematical models are parametric
 	// 	void setObservations(const Eigen::VectorXd &para);
 	Eigen::VectorXd getObservations();
