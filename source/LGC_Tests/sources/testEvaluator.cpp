@@ -55,9 +55,18 @@ void object::test<2>()
 	std::stringstream infiler(pointWithSigma::computation1);
 	TLSEvaluator myEvaluator(infiler);
 	TLSGaussNewton mySolver(std::make_shared<TLSEvaluator>(myEvaluator));
-	Eigen::VectorXd testVect = myEvaluator.getEstParams();
+	Eigen::VectorXd provVal = myEvaluator.getEstParams();
+	GNResult result = mySolver.solve(provVal);
+	// also solve with LGC
+	myEvaluator.setParameters(provVal);
+	TVector lgcSol;
+	bool lgcSuccess = myEvaluator.tryLGCSolve(lgcSol);
 
-	mySolver.solve(testVect);
+	ensure_equals("Lgc solve method should have succeeded.", lgcSuccess, true);
+	ensure_equals("Regularized Gauss Newton solve method should have succeeded.", result.success, true);
+	ensure("LGC solution and regularized Gauss Newton solution should be equal.", (lgcSol - result.solution).norm() < 1e-8);
+
+	// 
 
 }
 

@@ -14,7 +14,7 @@ TLSGaussNewton::TLSGaussNewton(std::shared_ptr<TLSEvaluator> evaluator) : fEvalu
 //GNresult TLSGaussNewton::solve(Eigen::VectorXd initial)
 GNResult TLSGaussNewton::solve(Eigen::VectorXd initial)
 {
-	int maxIter = 500;
+	int maxIter = 100;
 
 	double currentObjective = 1e+12;
 	double predictedObjective = 1e+12;
@@ -127,7 +127,7 @@ GNResult TLSGaussNewton::solve(Eigen::VectorXd initial)
 	int d = indices.EIndex - indices.UIndex + indices.CIndex;
 	result.sigma0Aposteriori = sqrt(currentObjective / d);
 
-	limits fisherLim;
+	limits fisherLim = {0, 0};
 	if (d > 0)
 	{
 		double chiUp = deviates_chi_sq_0975(d);
