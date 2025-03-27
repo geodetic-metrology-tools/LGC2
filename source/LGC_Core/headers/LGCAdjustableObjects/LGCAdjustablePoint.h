@@ -31,7 +31,10 @@ struct pointSigmaData
 
 	Eigen::Vector3d fSigmas;
 	Eigen::Matrix3d fApriCovMat;
+	Eigen::Matrix3d fWeightMatrix;
 	int firstObsIdx, firstCIdx;
+	// which indices are interpreted as observations and which as constraints
+	std::vector<int> fRelObsIdx, fRelCIdx;
 	// the rotated offset
 	Eigen::Vector3d fRotRes;
 	Eigen::Vector3d fRotResNormalized;
@@ -41,10 +44,11 @@ struct pointSigmaData
 	pointSigmaData() :
 		fAngles({TAngle(0), TAngle(0), TAngle(0), TAngle(0)}),
 		fAngleNames({"BEAR", "SLOPE", "ROLL", "HDEFL"}),
-		fRotMat(Eigen::Matrix3d::Identity(3, 3)),
+		fRotMat(Eigen::Matrix3d::Identity()),
 		fHasAngle(false),
 		fApriCovMat(Eigen::Matrix3d::Constant(NAN)),
 		fHasApriCovMat(false),
+		fWeightMatrix(Eigen::Vector3d::Constant(NAN).asDiagonal()),
 		fSigmas(Eigen::Vector3d::Constant(NAN)),
 		firstObsIdx(-1),
 		firstCIdx(-1),
@@ -74,9 +78,12 @@ struct pointSigmaData
 		obj.addProperty("fHasAngle", fHasAngle);
 		obj.addProperty("fApriCovMat", fApriCovMat);
 		obj.addProperty("fHasApriCovMat", fHasApriCovMat);
+		obj.addProperty("fWeightMatrix", fWeightMatrix);
 		obj.addProperty("fSigmas", fSigmas);
 		obj.addProperty("firstObsIdx", firstObsIdx);
 		obj.addProperty("firstCIdx", firstCIdx);
+		obj.addProperty("fRelObsIdx", fRelObsIdx);
+		obj.addProperty("fRelCIdx", fRelCIdx);
 		obj.addProperty("fRotRes", fRotRes);
 		obj.addProperty("fRotResNormalized", fRotResNormalized);
 		obj.addProperty("fRotCovar", fRotCovar);
