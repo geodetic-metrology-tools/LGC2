@@ -12,9 +12,10 @@ TLSGaussNewton::TLSGaussNewton(std::shared_ptr<TLSEvaluator> evaluator) : fEvalu
 }
 
 //GNresult TLSGaussNewton::solve(Eigen::VectorXd initial)
-TVector TLSGaussNewton::solve(Eigen::VectorXd initial)
+GNResult TLSGaussNewton::solve(Eigen::VectorXd initial)
 {
-	TVector result(indices.UIndex);
+	int maxIter = 500;
+
 	double currentObjective = 1e+12;
 	double predictedObjective = 1e+12;
 	double trialObjective = 1e+12;
@@ -114,8 +115,32 @@ TVector TLSGaussNewton::solve(Eigen::VectorXd initial)
 	}
 
 
+	GNResult result;
+	if ((dx.norm() < 1e-6) && (outerIt < maxIter))
+		result.success = true;
+	result.iniVal = initial;
+	result.objective = currentObjective;
+	result.solution = currentIterate;
+	result.nIterations = outerIt;
 
-	result = currentIterate;
+	// compute expected sigmas limits
+	int d = indices.EIndex - indices.UIndex + indices.CIndex;
+	result.sigma0Aposteriori = sqrt(currentObjective / d);
+
+	limits fisherLim;
+	if (d > 0)
+	{
+		double chiUp = deviates_chi_sq_0975(d);
+		double chiLow = deviates_chi_sq_0025(d);
+
+		// Limits
+		fisherLim.s0PostUpLimit = sqrtq(chiUp / d);
+		fisherLim.s0PostLoLimit = sqrtq(chiLow / d);
+	}
+
+	result.isInLimits = (result.sigma0Aposteriori < fisherLim.s0PostUpLimit) && (result.sigma0Aposteriori > fisherLim.s0PostLoLimit);
+
+
 	return result;
 }
 
