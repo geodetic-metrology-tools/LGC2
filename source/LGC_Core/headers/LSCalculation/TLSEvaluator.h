@@ -49,6 +49,12 @@ public:
 	bool testParameterSetAndGet();
 	bool testEvaluate();
 
+<<<<<<< HEAD
+=======
+	// this will attempt a normal LGC solve operation
+	bool tryLGCSolve(TVector& solution);
+
+>>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 	// set observations has lower priority because in LGC as of now all mathematical models are parametric
 	// 	void setObservations(const Eigen::VectorXd &para);
 	Eigen::VectorXd getObservations();
@@ -79,9 +85,17 @@ public:
 	Eigen::VectorXd getMisclosure() const;
 	TSparseMatrix getAMatrix() const;
 	TSparseMatrix getBMatrix() const;
+<<<<<<< HEAD
 	Eigen::VectorXd getConstraintMisclosure() const;
 	TSparseMatrix getA2Matrix() const;
 	TSparseMatrix getPMatrix() const;
+=======
+	TSparseMatrix getInvBMatrix() const;
+	Eigen::VectorXd getConstraintMisclosure() const;
+	TSparseMatrix getA2Matrix() const;
+	TSparseMatrix getPMatrix() const;
+	UEOIndices getIndices() const { return fData->fUEOIndices; };
+>>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 
 private:
 	// indicates tha results are ready for access

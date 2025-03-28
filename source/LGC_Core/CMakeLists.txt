@@ -73,6 +73,10 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSResultsMatricesExtractor.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSAlgorithm.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSEvaluator.h
+<<<<<<< HEAD
+=======
+	${CORE_INCLUDE_PATH}/LSCalculation/TLSGaussNewton.h
+>>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSSimulation.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSAllfixed.h
 	${CORE_INCLUDE_PATH}/LSCalculation/TLSConsistencyCheck.h
@@ -152,6 +156,10 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LSCalculation/TLSResultsMatricesExtractor.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAlgorithm.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSEvaluator.cpp
+<<<<<<< HEAD
+=======
+	${CORE_SOURCES_PATH}/LSCalculation/TLSGaussNewton.cpp
+>>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 	${CORE_SOURCES_PATH}/LSCalculation/TLSSimulation.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSAllfixed.cpp
 	${CORE_SOURCES_PATH}/LSCalculation/TLSConsistencyCheck.cpp

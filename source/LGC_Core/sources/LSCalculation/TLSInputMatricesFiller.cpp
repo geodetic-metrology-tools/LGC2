@@ -139,6 +139,9 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 	if (projData->getFileLogger().hasErrors())
 		fillOK = false;
 
+	// creates sparse matrix objects from the triplet lists
+	matrices->finalizeMatrices();
+
 	return fillOK;
 }
 
@@ -188,11 +191,11 @@ void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE> &distMeas,
 
 		// Adding Distance correction contribution
 		if (!meas->target.distCorrectionAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
 		// Adding instrument height contribution
 		if (!station->instrumentHeightAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
 
 		// Adding contributions for STATION transformations parameters
 		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform)
@@ -216,8 +219,8 @@ void TLSInputMatricesFiller::addSpaDistContributions(std::list<TLINE> &distMeas,
 			throw std::runtime_error("Error when filling Spatial Distance contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -252,7 +255,7 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE> &dist
 
 		// Adding Distance correction contribution
 		if (!meas->target.distCorrectionAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
 		// Adding contributions for TARGET transformations parameters
 		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform)
@@ -269,8 +272,8 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE> &dist
 			throw std::runtime_error("Error when filling Spatial Distance contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -305,7 +308,7 @@ void TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM>
 
 		// Add V0 contribution
 		if (!rom->v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
 		// Adding contributions of STATION transformation's parameters
 		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform)
@@ -329,8 +332,8 @@ void TLSInputMatricesFiller::addHorAngContributions(std::shared_ptr<TTSTN::TROM>
 			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -378,8 +381,8 @@ void TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN::
 			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -414,7 +417,7 @@ void TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND> &zendMeas,
 
 		// Add instrument height contribution
 		if (!station->instrumentHeightAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fHIContrib);
 
 		// Adding contributions for STATION transformations parameters
 		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform)
@@ -438,8 +441,8 @@ void TLSInputMatricesFiller::addZenDistContributions(std::list<TZEND> &zendMeas,
 			throw std::runtime_error("Error when filling Zenith Distance contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -487,8 +490,8 @@ void TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND> &zend
 			throw std::runtime_error("Error when filling Zenith Distance contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -523,7 +526,7 @@ void TLSInputMatricesFiller::addHorDistContributions(std::list<TLINE> &dhorMeas,
 
 		// Adding Distance Correction contribution
 		if (!meas->target.distCorrectionAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
 		// Adding contributions for STATION transformations parameters
 		for (auto itStTransform(contributions.fStTransformContrib.begin()); itStTransform != contributions.fStTransformContrib.end(); ++itStTransform)
@@ -546,8 +549,8 @@ void TLSInputMatricesFiller::addHorDistContributions(std::list<TLINE> &dhorMeas,
 			throw std::runtime_error("Error when filling Horizontal distance contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -582,7 +585,7 @@ void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> r
 
 		// Add V0 contribution
 		if (!rom->v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
 		// Adding contributions for STATION transformations parameters
 		for (auto &itStTransform : contributions.fTSTNPtTransformContrib)
@@ -606,8 +609,8 @@ void TLSInputMatricesFiller::addECTHContributions(std::shared_ptr<TTSTN::TROM> r
 			throw std::runtime_error("Error when filling ECTH contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -642,7 +645,7 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 
 		// Add V0 contribution
 		if (!rom->v0->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib);
 
 		// Adding contributions for STATION transformations parameters
 		for (auto &itStTransform : contributions.fTSTNPtTransformContrib)
@@ -666,8 +669,8 @@ void TLSInputMatricesFiller::addECDIRContributions(std::shared_ptr<TTSTN::TROM> 
 			throw std::runtime_error("Error when filling ECDIR contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -715,11 +718,11 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 
 		// Adding contribution to a reference point distance
 		if (!levelSt.ihfix)
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, levelSt.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, levelSt.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib);
 
 		// Adding Distance correction contribution
 		if (!levelSt.instrument.collAngleAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, levelSt.instrument.collAngleAdjustable->getFirstUidx(), contributions.fCollAngleContrib);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, levelSt.instrument.collAngleAdjustable->getFirstUidx(), contributions.fCollAngleContrib);
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itDLEV->getDistance() - contributions.fCalcMeas));
@@ -728,8 +731,8 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			throw std::runtime_error("Error when filling DLEV contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		// In a case that optional DHOR measurement is done
@@ -767,8 +770,8 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 
 			if (!isnotanumber(itDLEV->dhor->getDHORSigma()))
 			{
-				isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdxHd, obsIdxHd, 1.0 / pow2q(itDLEV->dhor->getDHORSigma()));
-				isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdxHd, obsIdxHd, pow2q(itDLEV->dhor->getDHORSigma()));
+				isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdxHd, obsIdxHd, 1.0 / pow2q(itDLEV->dhor->getDHORSigma()));
+				isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdxHd, obsIdxHd, pow2q(itDLEV->dhor->getDHORSigma()));
 			}
 			else
 			{
@@ -836,8 +839,8 @@ void TLSInputMatricesFiller::addORIEContributions(TORIEROM &orieROM, TLSInputMat
 			throw std::runtime_error("Error when filling Horizontal Angle contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -872,10 +875,10 @@ void TLSInputMatricesFiller::addECHOContributions(TECHOROM &echoROM, TLSInputMat
 		}
 
 		// Adding controbution to a theta angle, which is for ECHO always variable
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getThetaUnknIndex(), contributions.fThetaPlaneAngleContrib);
+		isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getThetaUnknIndex(), contributions.fThetaPlaneAngleContrib);
 
 		// Adding contribution to a reference point distance, which is at any case variable
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib);
+		isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, echoROM.fMeasuredPlane->getRefPtDistUnknIndex(), contributions.fRefPtDistContrib);
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECHO->getDistance() - contributions.fCalcMeas));
@@ -884,8 +887,8 @@ void TLSInputMatricesFiller::addECHOContributions(TECHOROM &echoROM, TLSInputMat
 			throw std::runtime_error("Error when filling ECHO contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -937,8 +940,8 @@ void TLSInputMatricesFiller::addECVEContributions(TECVEROM &ecveROM, TLSInputMat
 			throw std::runtime_error("Error when filling ECVE contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -1000,8 +1003,8 @@ void TLSInputMatricesFiller::addECSPContributions(TECSPROM &ecspRom, TLSInputMat
 			throw std::runtime_error("Error when filling ECSP contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -1036,7 +1039,7 @@ void TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT> &dsptMeas, con
 
 		// Adding Distance correction contribution
 		if (!meas->target.distCorrectionAdjustable->isFixed())
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
 		// Adding contributions for TARGET transformations parameters
 		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform)
@@ -1060,8 +1063,8 @@ void TLSInputMatricesFiller::addDSPTContribution(std::list<TDSPT> &dsptMeas, con
 			throw std::runtime_error("Error when filling DSPT contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -1113,8 +1116,8 @@ void TLSInputMatricesFiller::addDVERContribution(const std::list<TDVER> &dverMea
 			throw std::runtime_error("Error when filling DVER contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -1162,8 +1165,8 @@ void TLSInputMatricesFiller::addPDORContributions(const TPdorObs &pdorObs, TLSIn
 		throw std::runtime_error("Error when filling pdor contribution, variance is zero or too small, can not set weight matrix element.");
 	else
 	{
-		isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / pow2(pdorObs.getSigma().getRadiansValue()));
-		isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(pdorObs.getSigma().getRadiansValue()));
+		isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / pow2(pdorObs.getSigma().getRadiansValue()));
+		isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, pow2(pdorObs.getSigma().getRadiansValue()));
 	}
 
 	if (!isProcessOK)
@@ -1210,8 +1213,8 @@ void TLSInputMatricesFiller::addRADIContributions(const std::list<TRADI> &radiMe
 			throw std::runtime_error("Error when filling RADI contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / pow2(meas->getObservedStDev()));
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(meas->getObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / pow2(meas->getObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, pow2(meas->getObservedStDev()));
 		}
 
 		if (!isProcessOK)
@@ -1262,24 +1265,24 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 			throw std::runtime_error("Error when filling OBSXYZ contribution, X variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / pow2(meas->getXObservedStDev()));
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx, firstObsIdx, pow2(meas->getXObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / pow2(meas->getXObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx, firstObsIdx, pow2(meas->getXObservedStDev()));
 		}
 
 		if (pow2(meas->getYObservedStDev()) < nullLimit)
 			throw std::runtime_error("Error when filling OBSXYZ contribution, Y variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / pow2(meas->getYObservedStDev()));
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, pow2(meas->getYObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / pow2(meas->getYObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, pow2(meas->getYObservedStDev()));
 		}
 
 		if (pow2(meas->getZObservedStDev()) < nullLimit)
 			throw std::runtime_error("Error when filling OBSXYZ contribution, Z variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / pow2(meas->getZObservedStDev()));
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, pow2(meas->getZObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / pow2(meas->getZObservedStDev()));
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, pow2(meas->getZObservedStDev()));
 		}
 
 		if (!isProcessOK)
@@ -1319,8 +1322,8 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 			throw std::runtime_error("Error when filling Incly contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -1354,7 +1357,7 @@ void TLSInputMatricesFiller::addECWSContributions(TECWSROM &ecwsROM, TLSInputMat
 		}
 
 		// Adding controbution to a WS Height, which is at any case variable
-		isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fWSContrib);
+		isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, ecwsROM.fMeasuredWSHeight->getFirstUidx(), contributions.fWSContrib);
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itECWS->getDistance() - contributions.fCalcMeas));
@@ -1364,8 +1367,8 @@ void TLSInputMatricesFiller::addECWSContributions(TECWSROM &ecwsROM, TLSInputMat
 			throw std::runtime_error("Error when filling ECWS contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
 		}
 
 		if (!isProcessOK)
@@ -1417,26 +1420,26 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 			&& matrices->setMisclosureVectorElement(firstEqIdx + 1, -1.0 * (itECWI->getDistance(EECWIDistances::kZ) - contributions.fCalcMeas[1]));
 
 		// Adding controbution to the wire Bearing angle (always variable)
-		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[0])
-			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[1]);
+		isProcessOK &= matrices->addFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[0])
+			&& matrices->addFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireBearing->getFirstUidx(), contributions.fBearingWireContrib[1]);
 
 		// Adding controbution to the wire DRefX (always variable)
-		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[0])
-			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[1]);
+		isProcessOK &= matrices->addFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[0])
+			&& matrices->addFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDx->getFirstUidx(), contributions.fDRefXDistContrib[1]);
 
 		// Adding controbution to the wire DRefZ (always variable)
-		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[0])
-			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[1]);
+		isProcessOK &= matrices->addFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[0])
+			&& matrices->addFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireDz->getFirstUidx(), contributions.fDRefZDistContrib[1]);
 
 		// Adding controbution to the wire Slope (always variable)
-		isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[0])
-			&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[1]);
+		isProcessOK &= matrices->addFirstDgnMtrxElement(firstEqIdx, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[0])
+			&& matrices->addFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.fWireSlope->getFirstUidx(), contributions.fSlopeWireContrib[1]);
 
 		// Adding controbution to the wire SAG (variable or fixed)
 		if (!ecwiROM.sagfix)
 		{
-			isProcessOK &= matrices->setFirstDgnMtrxElement(firstEqIdx, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[0])
-				&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[1]);
+			isProcessOK &= matrices->addFirstDgnMtrxElement(firstEqIdx, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[0])
+				&& matrices->addFirstDgnMtrxElement(firstEqIdx + 1, ecwiROM.sagAdjustable->getFirstUidx(), contributions.fSagContrib[1]);
 		}
 
 		// Add weight unknown matrix element
@@ -1446,8 +1449,8 @@ void TLSInputMatricesFiller::addECWIContributions(TECWIROM &ecwiROM, TLSInputMat
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				isProcessOK &= matrices->setWeightMtrxElement(firstObsIdx + i, firstObsIdx + i, 1.0 / contributions.fObsVariance[i])
-					&& matrices->setWeightInvMtrxElement(firstObsIdx + i, firstObsIdx + i, contributions.fObsVariance[i]);
+				isProcessOK &= matrices->addWeightMtrxElement(firstObsIdx + i, firstObsIdx + i, 1.0 / contributions.fObsVariance[i])
+					&& matrices->addWeightInvMtrxElement(firstObsIdx + i, firstObsIdx + i, contributions.fObsVariance[i]);
 			}
 		}
 
@@ -1499,9 +1502,9 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 		if (!meas->target.distCorrectionAdjustable->isFixed())
 		{
 			int distCorUidx = meas->target.distCorrectionAdjustable->getFirstUidx();
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, distCorUidx, contributions.fDistAndCsContrib[0]);
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, distCorUidx, contributions.fDistAndCsContrib[1]);
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 2, distCorUidx, contributions.fDistAndCsContrib[2]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx, distCorUidx, contributions.fDistAndCsContrib[0]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + 1, distCorUidx, contributions.fDistAndCsContrib[1]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + 2, distCorUidx, contributions.fDistAndCsContrib[2]);
 		}
 
 		// Add contributions of STATION transformations parameters
@@ -1536,32 +1539,32 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 			throw std::runtime_error("Error when filling PLR3D contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / contributions.fObsVariance[0]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx, firstObsIdx, contributions.fObsVariance[0]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / contributions.fObsVariance[0]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx, firstObsIdx, contributions.fObsVariance[0]);
 
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / contributions.fObsVariance[1]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / contributions.fObsVariance[1]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
 
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / contributions.fObsVariance[2]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, contributions.fObsVariance[2]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / contributions.fObsVariance[2]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, contributions.fObsVariance[2]);
 		}
 
 		// Add V0's contribution, V0 is variable at any case. Check in a case of future change.
 		if (!rom->v0->isFixed())
 		{
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib[0]);
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 1, rom->v0->getFirstUidx(), contributions.fV0Contrib[1]);
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + 2, rom->v0->getFirstUidx(), contributions.fV0Contrib[2]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx, rom->v0->getFirstUidx(), contributions.fV0Contrib[0]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + 1, rom->v0->getFirstUidx(), contributions.fV0Contrib[1]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + 2, rom->v0->getFirstUidx(), contributions.fV0Contrib[2]);
 		}
 
 		// Add instrument height contributions
 		if (!station->instrumentHeightAdjustable->isFixed())
 		{
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[0]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[0]);
 			isProcessOK = isProcessOK
-				&& matrices->setFirstDgnMtrxElement(firstEqIdx + 1, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[1]);
+				&& matrices->addFirstDgnMtrxElement(firstEqIdx + 1, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[1]);
 			isProcessOK = isProcessOK
-				&& matrices->setFirstDgnMtrxElement(firstEqIdx + 2, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[2]);
+				&& matrices->addFirstDgnMtrxElement(firstEqIdx + 2, station->instrumentHeightAdjustable->getFirstUidx(), contributions.fInstrHeightContrib[2]);
 		}
 
 		if (station->rot3D)
@@ -1570,8 +1573,8 @@ void TLSInputMatricesFiller::addPLR3DContributions(std::shared_ptr<TTSTN::TROM> 
 				throw std::runtime_error("TSTN can rotate freely, but rotation angle around X or Y axis is nullptr.");
 			for (int i = 0; i < 3; i++)
 			{
-				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + i, station->rotX->getFirstUidx(), contributions.fRxContrib[i]);
-				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(firstEqIdx + i, station->rotY->getFirstUidx(), contributions.fRyContrib[i]);
+				isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + i, station->rotX->getFirstUidx(), contributions.fRxContrib[i]);
+				isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + i, station->rotY->getFirstUidx(), contributions.fRyContrib[i]);
 			}
 		}
 
@@ -1640,14 +1643,14 @@ void TLSInputMatricesFiller::addUVDContribution(TCAM &camera, TLSInputMatrices *
 			throw std::runtime_error("Error when filling UVD contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / contributions.fObsVariance[0]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx, firstObsIdx, contributions.fObsVariance[0]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / contributions.fObsVariance[0]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx, firstObsIdx, contributions.fObsVariance[0]);
 
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / contributions.fObsVariance[1]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / contributions.fObsVariance[1]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
 
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / contributions.fObsVariance[2]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, contributions.fObsVariance[2]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 2, firstObsIdx + 2, 1.0 / contributions.fObsVariance[2]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 2, firstObsIdx + 2, contributions.fObsVariance[2]);
 		}
 
 		if (!isProcessOK)
@@ -1708,11 +1711,11 @@ void TLSInputMatricesFiller::addUVECContribution(TCAM &camera, TLSInputMatrices 
 			throw std::runtime_error("Error when filling UVEC contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / contributions.fObsVariance[0]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx, firstObsIdx, contributions.fObsVariance[0]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx, firstObsIdx, 1.0 / contributions.fObsVariance[0]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx, firstObsIdx, contributions.fObsVariance[0]);
 
-			isProcessOK = isProcessOK && matrices->setWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / contributions.fObsVariance[1]);
-			isProcessOK = isProcessOK && matrices->setWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + 1, firstObsIdx + 1, 1.0 / contributions.fObsVariance[1]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + 1, firstObsIdx + 1, contributions.fObsVariance[1]);
 		}
 
 		if (!isProcessOK)
@@ -1768,7 +1771,7 @@ bool TLSInputMatricesFiller::addPointContribution(const LGCAdjustablePoint &poin
 	for (int i = 0; i < 3; i++)
 	{
 		if (!pointAdj.isCoordinateFixed(i))
-			isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
+			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
 	}
 	return isProcessOK;
 }
@@ -1780,7 +1783,7 @@ bool TLSInputMatricesFiller::addPointConstraintContribution(const LGCAdjustableP
 	for (int i = 0; i < 3; i++)
 	{
 		if (!pointAdj.isCoordinateFixed(i))
-			isProcessOK = isProcessOK && matrices->setCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
+			isProcessOK = isProcessOK && matrices->addCnstrFirstDgnMtrxElement(eqIdx, pointAdj.getCoordinateUnknIndex(i), pointContrib[i]);
 	}
 	return isProcessOK;
 }
@@ -1799,62 +1802,33 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 			pointSigmaContrib contribution = fCGenerator.getPointSigmaContrib(pt, projData);
 			int cIdx = ptSigma.firstCIdx;
 			int obsIdx = ptSigma.firstObsIdx;
-			if (ptSigma.fHasApriCovMat)
-			{
-				// user has assigned a full 3x3 apriori covariance matrix, the weight is the inverse of this matrix
-				isProcessOK &= matrices->setWeightMtrxBlock(obsIdx, ptSigma.fApriCovMat.inverse());
-				// its a 3-dimensional observation, the A matrix needs to be filled
-				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
+			// handle observations
+			// cut out the weight matrix from the coordinates that are treated as observations
+			Eigen::MatrixXd activeObsWeightMatrix = ptSigma.fWeightMatrix(ptSigma.fRelObsIdx, ptSigma.fRelObsIdx);
+
+			isProcessOK &= matrices->addWeightMtrxBlock(obsIdx, activeObsWeightMatrix);
+			for (int relRowIdx : ptSigma.fRelObsIdx)
+			{ // its a observation
+				// set the row of the A matrix
+				for (int colIdx = 0; colIdx < 3; colIdx++)
 				{
-					for (int colIdx = 0; colIdx < 3; colIdx++)
-					{
-						if (!pt.isCoordinateFixed(colIdx))
-							isProcessOK &= matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
-					}
-					isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(rowIdx));
-					obsIdx++;
+					if (!pt.isCoordinateFixed(colIdx))
+						matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(relRowIdx, colIdx));
 				}
+				isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(relRowIdx));
+				obsIdx++;
 			}
-			else
+
+			// handle constraints
+			for (int relRowIdx : ptSigma.fRelCIdx)
 			{
-				// as no full apriori covariance matrix was defined, the weights have been defined via standard deviations
-				for (int rowIdx = 0; rowIdx < 3; rowIdx++)
+				for (int colIdx = 0; colIdx < 3; colIdx++)
 				{
-					double sigma = ptSigma.fSigmas(rowIdx);
-					// check the sigma value, sigma 0 is either a constraint or a fixed variable, sigma>0 is a observation, sigma=infinity means no condition
-					if (isZero(sigma))
-					{
-						// its a constraint or a fixed variable, depending on the rot mat
-						// if there is no rotation, the variable itself is treated as fixed -> we do not need to fill anything here
-						// if there is a rotation, there needs to be a corresponding constraint on the rotated coordinate
-						if (!ptSigma.fRotMat.isIdentity())
-						{
-							// there is a rotation so the sigma=0 has to be interpreted as a strict constraint
-							// set first constraint matrix entries + constraint misclosure
-							for (int colIdx = 0; colIdx < 3; colIdx++)
-							{
-								// point will have 3 free coordinates if any rotation was defined => no need to check the variable index
-								isProcessOK &= matrices->addCnstrFirstDgnMtrxElement(cIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
-							}
-							isProcessOK &= matrices->setCnstrMisclosureVectorElement(cIdx, contribution.misclosure(rowIdx));
-							cIdx++;
-						}
-					}
-					else if (isPositiveFinite(sigma))
-					{
-						// its a observation
-						// set the row of the A matrix and the diagonal elements of the weight matrices
-						for (int colIdx = 0; colIdx < 3; colIdx++)
-						{
-							if (!pt.isCoordinateFixed(colIdx))
-								matrices->addFirstDgnMtrxElement(obsIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(rowIdx, colIdx));
-						}
-						isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, contribution.misclosure(rowIdx));
-						isProcessOK &= matrices->setWeightMtrxElement(obsIdx, obsIdx, 1 / pow2(ptSigma.fSigmas(rowIdx)));
-						isProcessOK &= matrices->setWeightInvMtrxElement(obsIdx, obsIdx, pow2(ptSigma.fSigmas(rowIdx)));
-						obsIdx++;
-					}
+					if (!pt.isCoordinateFixed(colIdx))
+						matrices->addCnstrFirstDgnMtrxElement(cIdx, pt.getCoordinateUnknIndex(colIdx), ptSigma.fRotMat(relRowIdx, colIdx));
 				}
+				isProcessOK &= matrices->setCnstrMisclosureVectorElement(cIdx, contribution.misclosure(relRowIdx));
+				cIdx++;
 			}
 		}
 	}
@@ -1890,16 +1864,16 @@ bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMa
 							{
 								double translMisclosure = masterFrame.getEstTranslation(idx).getMetresValue() - slaveFrame.getEstTranslation(idx).getMetresValue();
 								matrices->setCnstrMisclosureVectorElement(cIdx, translMisclosure);
-								matrices->setCnstrFirstDgnMtrxElement(cIdx, masterFrame.getTranslationUnknIndex(idx), 1);
-								matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getTranslationUnknIndex(idx), -1);
+								matrices->addCnstrFirstDgnMtrxElement(cIdx, masterFrame.getTranslationUnknIndex(idx), 1);
+								matrices->addCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getTranslationUnknIndex(idx), -1);
 								cIdx++;
 							}
 							if (!masterFrame.isRotationFixed(idx))
 							{
 								double rotMisclosure = masterFrame.getEstRotation(idx).getRadiansValue() - slaveFrame.getEstRotation(idx).getRadiansValue();
 								matrices->setCnstrMisclosureVectorElement(cIdx, rotMisclosure);
-								matrices->setCnstrFirstDgnMtrxElement(cIdx, masterFrame.getRotationUnknIndex(idx), 1);
-								matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getRotationUnknIndex(idx), -1);
+								matrices->addCnstrFirstDgnMtrxElement(cIdx, masterFrame.getRotationUnknIndex(idx), 1);
+								matrices->addCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getRotationUnknIndex(idx), -1);
 								cIdx++;
 							}
 						}
@@ -1907,8 +1881,8 @@ bool TLSInputMatricesFiller::fillSlaveConstraints(TLGCData *projData, TLSInputMa
 						{
 							double misclosure = masterFrame.getEstScale() - slaveFrame.getEstScale();
 							matrices->setCnstrMisclosureVectorElement(cIdx, misclosure);
-							matrices->setCnstrFirstDgnMtrxElement(cIdx, masterFrame.getScaleUnknIndex(), 1);
-							matrices->setCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getScaleUnknIndex(), -1);
+							matrices->addCnstrFirstDgnMtrxElement(cIdx, masterFrame.getScaleUnknIndex(), 1);
+							matrices->addCnstrFirstDgnMtrxElement(cIdx, slaveFrame.getScaleUnknIndex(), -1);
 							cIdx++;
 						}
 					}
@@ -2019,30 +1993,9 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 			}
 			// check if there is a constraint that does not depend on any parameter
 			// this can happen for example if a TX constraint was (manually) added but the only points defined are *VZ (they only vary in Z)
-			const TSparseMatrix &A2 = *matrices->getCnstrFirstDgnMtrx();
-			for (size_t i = group.getFirstCIndex(); i < group.getFirstCIndex() + group.getConstraintDimension(); i++)
+			if (matrices->hasDegenerateConstraints())
 			{
-				// Check if there are non-zero entries in row i
-				bool hasEntries = false;
-				for (size_t k = 0; k < A2.outerSize(); ++k)
-				{
-					for (Eigen::SparseMatrix<double>::InnerIterator it(A2, k); it; ++it)
-					{
-						if ((it.row() == i) && !isZero(it.value()))
-						{ // Check if the current nonzero element is in row i
-							hasEntries = true;
-							break;
-						}
-					}
-					if (hasEntries)
-					{
-						break;
-					}
-				}
-				if (!hasEntries)
-				{
-					throw std::runtime_error("A constraint that does not depend on any variable was added.");
-				}
+				throw std::runtime_error("A constraint that does not depend on any variable was added.");
 			}
 		}
 	}

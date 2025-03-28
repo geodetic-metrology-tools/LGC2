@@ -39,6 +39,9 @@ class TLGCCalculation{
 	*/
 	Behavior computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter);
 
+	// try to compute a solutiuon using regularized Gauss Newton
+	void tryRegularizedSolve();
+
 	/// Returns the project data.
 	const TLGCData& getData(){ return *fData.get();}
 
