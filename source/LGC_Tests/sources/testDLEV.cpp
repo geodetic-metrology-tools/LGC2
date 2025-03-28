@@ -731,4 +731,19 @@ void object::test<24>()
 	ensure_equals("Residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
 	ensure_equals("IH should be 0", romIt->fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(), 0, 1e-7);
 }
+
+template<>
+template<>
+void object::test<21>()
+{
+	set_test_name("Checking the computation with negative values DLEV and DHOR");
+	readTest(TestDLEV::DLEV_OLOC_7, "DLEV_OLOC_7");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-7);
+}
 } // namespace tut

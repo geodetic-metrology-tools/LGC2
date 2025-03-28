@@ -749,7 +749,7 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			MatrixIndex eqIdxHd = itDLEV->dhor->getFirstEquationIndex();
 			MatrixIndex obsIdxHd = itDLEV->dhor->getFirstObservationIndex();
 
-			contributionsDHOR = fCGenerator.getHorDistContrib(levelSt.fMeasuredPlane->getReferencePoint(), *itDLEV->dhor); // Get the observation contribution
+			contributionsDHOR = fCGenerator.getHorDistContrib(levelSt, *itDLEV); // Get the observation contribution
 
 			// Update the sigma
 			itDLEV->dhor->target.sigmaCombinedDHor = TLength(sqrt(contributionsDHOR.fObsVariance));
@@ -761,6 +761,10 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			// Add reference point's contributions
 			if (!levelSt.fMeasuredPlane->getReferencePoint()->isFixed())
 				isProcessOK = isProcessOK && addPointContribution(*levelSt.fMeasuredPlane->getReferencePoint(), contributionsDHOR.fRefPtContrib, eqIdxHd, matrices);
+			
+			// Adding contribution to a reference point distance
+			if (!levelSt.ihfix)
+				isProcessOK = isProcessOK && matrices->setFirstDgnMtrxElement(eqIdxHd, levelSt.fMeasuredPlane->getRefPtDistUnknIndex(), contributionsDHOR.fRefPtDistContrib);
 
 			// Adding contributions of STATION transformation's parameters
 			for (auto itStaffTransform(contributionsDHOR.fStaffTransformContrib.begin()); itStaffTransform != contributionsDHOR.fStaffTransformContrib.end(); ++itStaffTransform)

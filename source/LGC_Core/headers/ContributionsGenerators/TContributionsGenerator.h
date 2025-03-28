@@ -115,7 +115,7 @@ public:
 	DistMeasContrib getDSPTContrib(const TEDM &edmST, const TDSPT &dspt);
 
 	///  Returns the horizontal distance measurement contribution (RDHOR), made as a part of DLEV measurement
-	HorDistContribLEVEL getHorDistContrib(const LGCAdjustablePoint *referencePoint, const TDLEV::TDHOR &dhor);
+	HorDistContribLEVEL getHorDistContrib(const TLEVEL &levelST, const TDLEV &dlev);
 
 	/// Returns contribution for the Gyro-Theodolithe measurement (TORIE)
 	AnglMeasContrib getOrieContrib(const TORIEROM &orieROM, const TORIE &orie);
