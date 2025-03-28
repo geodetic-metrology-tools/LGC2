@@ -105,15 +105,17 @@ void TLGCCalculation::tryRegularizedSolve()
 	// attempt to solve
 	// prepare results
 	std::vector<GNResult> results;
+	// needed to clean the error logs after each solution attempt
+	TFileLogger &fileLog = fData->getFileLogger();
 	int j = 0;
 	for (auto sval : startValues)
 	{
 		j++;
 		// set initial value and start armijo GN from this value
-		// evaluator.setParameters(sval);
 		try
 		{
 			GNResult result = gnObject.solve(sval);
+
 			results.push_back(result);
 			if (result.sigma0Aposteriori < 5 && result.success)
 			{
@@ -121,12 +123,19 @@ void TLGCCalculation::tryRegularizedSolve()
 				break;
 			}
 		}
+		catch (const std::exception &e)
+		{
+				// Handles exceptions derived from std::exception.
+				logWarning()
+				<< "Problem occured during attempting solution of problem with randomly generated initial value: " << std::string(e.what());
+		}
 		catch (...)
 		{
 			logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value";
 		}
 	}
 
+		fileLog.cleanErrors();
 	// find best solution candidate
 	double bestSigma = 1e+12;
 	Eigen::VectorXd bestSol;
@@ -146,7 +155,7 @@ void TLGCCalculation::tryRegularizedSolve()
 		logWarning() << "LGC will continue with this solution";
 		// apply a random perturbation such that the LGC least square method still makes a proper iteration
 		//evaluator.setParameters(bestSol + 1e-4 * Eigen::VectorXd::Random(fData->fUEOIndices.UIndex));
-		 evaluator.setParameters(bestSol);
+		evaluator.setParameters(bestSol);
 	}
 	else
 	{
@@ -155,7 +164,6 @@ void TLGCCalculation::tryRegularizedSolve()
 	}
 	// continue LGC normally, if solution was already found only one iteration will be made
 	// clean errors that potentially happened during input filling
-	TFileLogger &fileLog = fData->getFileLogger();
 	fileLog.cleanErrors();
 }
 

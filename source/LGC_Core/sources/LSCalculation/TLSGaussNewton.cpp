@@ -52,7 +52,7 @@ GNResult TLSGaussNewton::solve(Eigen::VectorXd initial)
 	
 	// outer loop
 	int outerIt = 0;
-	while (dx.norm() > 1e-6 && (currentObjective>1e-16))
+	while (dx.norm() > 1e-6 && (currentObjective > 1e-16) && outerIt < maxIter)
 	{
 		// prepare the ingredients that are needed for each inner loop step:
 		// the normal matrix (before regularization), the right hand side of the normal equation system
