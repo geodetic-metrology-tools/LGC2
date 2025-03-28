@@ -193,17 +193,16 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 	{
 		if (opts.has(stdDevNames[idx]))
 		{
-			ptSigma.fSigmas[idx] = MM2M * opts.getParamR(stdDevNames[idx]);
+			// check the values
+			double sigma = opts.getParamRmm2m(stdDevNames[idx]);
+			if (sigma < 0)
+				throw std::runtime_error("Standard deviation cannot be negative.");
+			if (sigma < nullLimit && sigma > 0.0)
+				throw std::runtime_error("Specified standard deviation is too small, consider to set it to 0 to fix the variable.");
+			ptSigma.fSigmas[idx] = opts.getParamRmm2m(stdDevNames[idx]);
+			ptSigma.fWeightMatrix(idx, idx) = 1 / pow2(ptSigma.fSigmas[idx]);
 			hasSigmas = true;
 		}
-	}
-	if ((ptSigma.fSigmas.array() < 0).any())
-	{
-		throw std::runtime_error("Standard deviation cannot be negative.");
-	}
-	if ((ptSigma.fSigmas.array() < nullLimit && ptSigma.fSigmas.array() > 0.0).any())
-	{
-		throw std::runtime_error("Specified standard deviation is too small, consider to set it to 0 to fix the variable.");
 	}
 
 	// check if a apriori covariance matrix is given
@@ -222,6 +221,8 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 			throw std::runtime_error("a-priori covariance matrix must be positive definite");
 
 		ptSigma.fApriCovMat = apriCovMat;
+		ptSigma.fWeightMatrix = apriCovMat.inverse();
+		ptSigma.fRelObsIdx = {0, 1, 2};
 		ptSigma.fHasApriCovMat = true;
 	}
 
@@ -236,22 +237,39 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		// this will become obsolete when *VZ will be replaced by A 1 2 3 SX 0 SY 0 and so on..
 		if (pt.getNumUnkn() != 3)
 		{
-			throw std::runtime_error("Attaching a precision in a point definition is only possible in *POIN section. Point " + pt.getName());
+			throw std::runtime_error(
+				"Attaching a precision in a point definition is only possible in *POIN section. Point " + pt.getName() + " defined in line " + std::to_string(pt.line));
 		}
 		pt.activatePointSigma();
 	}
-
 
 	// check if one of the weights was set to zero
 	// if no angle was used we block the corresponding freedoms
 	// if rotations are used, a constraint has to be introduced (see TDataAnalyzer)
 	if (hasSigmas)
 	{
-		if (!ptSigma.fHasAngle)
+		std::array<bool, 3> fixedStates = {false, false, false};
+		for (int j = 0; j < 3; j++)
 		{
-			// if no angles are involved we can block the degrees of freedom directly
-			pt.updateFixedState(isZero(ptSigma.fSigmas[0]), isZero(ptSigma.fSigmas[1]), isZero(ptSigma.fSigmas[2]));
+			double sigma = ptSigma.fSigmas[j];
+			if (isZero(sigma))
+			{
+				if (ptSigma.fHasAngle)
+				{ // if rotations are present sigma=0 implies a constraint
+					ptSigma.fRelCIdx.push_back(j);
+				}
+				else
+				{ // if no rotations are present, the coordinate is not a variable in the adjustment and no explicit constraint is needed
+					fixedStates[j] = true;
+				}
+			}
+			else if (isPositiveFinite(sigma))
+			{ // finite positive sigma will always be a observation
+				ptSigma.fRelObsIdx.push_back(j);
+			}
+			// the case of a nan sigma means that the offset of this coordinate is ignored
 		}
+		pt.updateFixedState(fixedStates[0], fixedStates[1], fixedStates[2]);
 	}
 
 	// If last token starts with a comment chararcter, store it
