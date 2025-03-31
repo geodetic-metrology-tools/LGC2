@@ -523,7 +523,12 @@ void TOtherMeasurementWriter::writePointSigmaResults(const LGCAdjustablePointCol
 				else
 				{
 					for (int j = 0; j < 3; j++)
-						(*stream).writeDouble(headerWidth, lengthResPrecision, ptSigma.fSigmas(j) * M2MM);
+					{
+						if (ptSigma.fHasSigmaValues[j])
+							(*stream).writeDouble(headerWidth, lengthResPrecision, ptSigma.fSigmas(j) * M2MM);
+						else
+							(*stream).writeString(headerWidth, "FREE");
+					}
 				}
 				// write the residuals (=offsets in the rotated sytems)
 				for (int j = 0; j < 3; j++)
@@ -537,7 +542,10 @@ void TOtherMeasurementWriter::writePointSigmaResults(const LGCAdjustablePointCol
 				else
 				{
 					for (int j = 0; j < 3; j++)
-						(*stream).writeDouble(headerWidth, lengthResPrecision, rotOffsetNormalized(j));
+						if (ptSigma.fHasSigmaValues[j])
+							(*stream).writeDouble(headerWidth, lengthResPrecision, rotOffsetNormalized(j));
+						else
+							(*stream).writeString(headerWidth, "FREE");
 				}
 				// write the a-posteriori precisions
 				for (int j = 0; j < 3; j++)
