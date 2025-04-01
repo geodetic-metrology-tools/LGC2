@@ -8,18 +8,12 @@
 // #include <TReader.h>
 
 #include "TLSEvaluator.h"
-<<<<<<< HEAD
-=======
 #include "TLSGaussNewton.h"
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 #include "TLSInputMatrices.h"
 #include "testEvaluator.h"
 // testing on some input files
 #include "testMixingObservation.h"
-<<<<<<< HEAD
-=======
 #include "testPointWithSigma.h"
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 
 namespace tut
 {
@@ -52,8 +46,6 @@ void object::test<1>()
 	myEvaluator.testEvaluate();
 
 }
-<<<<<<< HEAD
-=======
 template<>
 template<>
 void object::test<2>()
@@ -77,6 +69,5 @@ void object::test<2>()
 	// 
 
 }
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 
 }; // namespace tut

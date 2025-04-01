@@ -108,15 +108,9 @@ const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
 	std::vector<int> activeIndices;
 	if (!fThetaFixed)
 		activeIndices.push_back(0);
-<<<<<<< HEAD
-	else if (!fPhiFixed)
-		activeIndices.push_back(1);
-	else if (!fRefPtDistFixed)
-=======
 	if (!fPhiFixed)
 		activeIndices.push_back(1);
 	if (!fRefPtDistFixed)
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 		activeIndices.push_back(2);
 	return activeIndices;
 }
@@ -124,11 +118,7 @@ const std::vector<int> LGCAdjustablePlane::getRelativeUnknIndices() const
 Eigen::VectorXd LGCAdjustablePlane::getEstVector() const
 {
 	Eigen::VectorXd estVect(3);
-<<<<<<< HEAD
-	estVect << TReal(fEstValRefPointDist), fEstValTheta.getRadiansValue(), fEstValPhi.getRadiansValue();
-=======
 	estVect << fEstValTheta.getRadiansValue(), fEstValPhi.getRadiansValue(), TReal(fEstValRefPointDist);
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 	return estVect;
 }
 

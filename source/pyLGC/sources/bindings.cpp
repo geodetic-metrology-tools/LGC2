@@ -20,7 +20,6 @@ PYBIND11_MODULE(pyLGC, m)
             std::stringstream stream(content);  // Create a stringstream from the Python string
             return new TLSEvaluator(stream);    // Return a new instance of TLSEvaluator
         }), py::arg("content"))  // Bind the constructor to a string input
-		
 
         // Get and set parameters
         .def("setParameters", &TLSEvaluator::setParameters, py::arg("para"))
@@ -28,12 +27,20 @@ PYBIND11_MODULE(pyLGC, m)
         .def("testParameterSetAndGet", &TLSEvaluator::testParameterSetAndGet)
         .def("testEvaluate", &TLSEvaluator::testEvaluate)
 
+        // tryLGCSolve bindings: using lambda to return a tuple of bool and solution
+        .def("tryLGCSolve", [](TLSEvaluator &self) {
+            // Convert the Python object (list or array) to the corresponding C++ vector
+            Eigen::VectorXd solution = self.getEstParams();
+            bool result = self.tryLGCSolve(solution); // Call the method
+            return py::make_tuple(result, solution);  // Return both result and solution as a tuple
+        })
+
         // Get observations
         .def("getObservations", &TLSEvaluator::getObservations)
 
         // Evaluation and matrices
         .def("evaluate", &TLSEvaluator::evaluate)
-		.def("getMisclosure", &TLSEvaluator::getMisclosure, py::return_value_policy::reference) // for the silent error adding py::return_value_policy::reference should work
+        .def("getMisclosure", &TLSEvaluator::getMisclosure, py::return_value_policy::move) // for the silent error adding py::return_value_policy::reference should work
         .def("getAMatrix", &TLSEvaluator::getAMatrix)
         .def("getBMatrix", &TLSEvaluator::getBMatrix)
         .def("getConstraintMisclosure", &TLSEvaluator::getConstraintMisclosure)

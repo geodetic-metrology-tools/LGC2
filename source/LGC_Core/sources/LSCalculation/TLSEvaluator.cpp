@@ -9,11 +9,7 @@
 #include "TLSUniversalMtdComputer.h"
 //#include <Behavior.h>
 //#include <TLGCData.h>
-<<<<<<< HEAD
-//#include <TLSAlgorithm.h>
-=======
 #include <TLSAlgorithm.h>
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 #include <TReader.h>
 //
 //#include "FileUtils.h"
@@ -116,18 +112,6 @@ bool TLSEvaluator::testEvaluate()
 	TSparseMatrix A2 = getA2Matrix();
 	TSparseMatrix P = getPMatrix();
 
-<<<<<<< HEAD
-	std::cout << "misclosure = " << std::endl;
-	std::cout << misc << std::endl;
-	std::cout << "A = " << std::endl;
-	std::cout << A.toDense() << std::endl;
-	std::cout << "B = " << std::endl;
-	std::cout << B.toDense() << std::endl;
-	std::cout << "A2 = " << std::endl;
-	std::cout << A2.toDense() << std::endl;
-	std::cout << "P = " << std::endl;
-	std::cout << P.toDense() << std::endl;
-=======
 //	std::cout << "misclosure = " << std::endl;
 //	std::cout << misc << std::endl;
 //	std::cout << "A = " << std::endl;
@@ -138,14 +122,11 @@ bool TLSEvaluator::testEvaluate()
 //	std::cout << A2.toDense() << std::endl;
 //	std::cout << "P = " << std::endl;
 //	std::cout << P.toDense() << std::endl;
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 
 
 	return false;
 }
 
-<<<<<<< HEAD
-=======
 bool TLSEvaluator::tryLGCSolve(TVector &solution)
 {
 	bool success = false;
@@ -161,7 +142,6 @@ bool TLSEvaluator::tryLGCSolve(TVector &solution)
 	return success;
 }
 
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 Eigen::VectorXd TLSEvaluator::getObservations()
 {
 	// initialize the observation vector
@@ -454,6 +434,7 @@ Eigen::VectorXd TLSEvaluator::getMisclosure() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
+	std::cout << "inside getMisclosure\n";
 	return iMat->getMisclosureVctr();
 }
 
@@ -461,20 +442,13 @@ TSparseMatrix TLSEvaluator::getAMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-<<<<<<< HEAD
-	return *iMat->getFirstDgnMtrx();
-=======
 	return iMat->getFirstDgnMtrx();
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 }
 
 TSparseMatrix TLSEvaluator::getBMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-<<<<<<< HEAD
-	return *iMat->getSecondDgnMtrx();
-=======
 	return iMat->getSecondDgnMtrx();
 }
 
@@ -483,7 +457,6 @@ TSparseMatrix TLSEvaluator::getInvBMatrix() const
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
 	return iMat->getSecondDgnBlockDiagInvMtrx();
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 }
 
 Eigen::VectorXd TLSEvaluator::getConstraintMisclosure() const
@@ -497,20 +470,12 @@ TSparseMatrix TLSEvaluator::getA2Matrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-<<<<<<< HEAD
-	return *iMat->getCnstrFirstDgnMtrx();
-=======
 	return iMat->getCnstrFirstDgnMtrx();
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 }
 
 TSparseMatrix TLSEvaluator::getPMatrix() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-<<<<<<< HEAD
-	return *iMat->getWeightInvMtrx();
-=======
 	return iMat->getWeightMtrx();
->>>>>>> 46fadf621b75dbbcbf43a2f4b38160e8acfdad40
 }
