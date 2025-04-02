@@ -258,5 +258,37 @@ PT3 1
 *ENDFRAME 
 *END 
 )";
+
+// testing wyler observation model
+char const *const INCLY_SUBF_9 = R"(*TITR 
+Goal: reproduce the setup in Florians inclinometer illustration
+*OLOC
+*JSON
+*INSTR
+%*INCL  instr_ID  sigma_angle_cc  sigma_ppm  aCorr_gon  sigma_aCorr_cc  refAngle_gon  sigma_refAngle_cc
+% assuming 30 murad angle precision = 120 cc?;
+*INCL  myWyler 120 0 0 0 0 1
+*POIN
+% to indtroduce a variable. LGC will not compute without any free variable
+dummy 0 0 0 SX 1 SY 1 SZ 1
+*CALA
+origin 0 0 0
+% parameters describe transformation from subframe coordinates to root coordinates. rotation oder Rxyz = Rx * Ry * Rz
+% RY = primary angle, RX = secondary angle
+*FRAME originFrame1 0 0 0 0 7.145846 0 1
+*INCLY myWyler
+% no secondary rotation: wyler and lgc model agree
+origin 7.145846 Wyler
+origin 7.145846 
+*ENDFRAME
+*FRAME originFrame2 0 0 0 10 7.145846 0 1
+*INCLY myWyler
+% secondary rotation: wyler and lgc model disagree, wyler is affected
+origin 7.145846 Wyler % will produce a substantial residual because the wyler model observes a smaller angle because of the big secondary rotation component
+origin 7.145846 
+*ENDFRAME
+*END)";
+
+
 } // namespace TestINCL
 #endif

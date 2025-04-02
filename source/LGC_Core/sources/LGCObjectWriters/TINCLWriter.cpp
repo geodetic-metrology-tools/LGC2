@@ -31,6 +31,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the scale
+	(*stream).writeStringLeft(nameWidth, "Obs-Model"); // observation model: normal or wyler
 	(*stream).writeString(obsWidth, "OBSERVE"); // mesured offset
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALCULE"); // estimated offset
@@ -50,6 +51,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	// second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); // POSITION
+	(*stream).writeStringLeft(nameWidth, ""); // observation model: normal or wyler
 	(*stream).writeString(obsWidth, "(GON)"); // OBSERVED VALUE
 	(*stream).writeString(obsResWidth, "(CC)"); // sigma observed value
 	(*stream).writeString(obsWidth, "(GON)"); // estimated offset
@@ -90,6 +92,15 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 		(*stream) << TABs;
 		// write TARGET POSITION
 		(*stream).writeStringLeft(nameWidth, ItINCLY.targetPos->getName());
+
+		// write Observation model
+		std::string obsModel;
+		if (ItINCLY.fUseWyler)
+			obsModel = "Wyler";
+		else
+			obsModel = "default";
+
+		(*stream).writeStringLeft(nameWidth, obsModel);
 
 		// write the observed angle
 		(*stream).writeDouble(obsWidth, anglePrecision, ItINCLY.getAngle().getGonsValue()); // Output value in gradians [gon], stored in [rad]

@@ -183,7 +183,7 @@ private:
 	void addPointContributionsPLR3D(const TLOR2LOR &lorTrafo, const Eigen::Matrix3d &Amat, Point3DContrib &pointContrib, bool station);
 
 	/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
-	decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator);
+	decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator, bool useWyler = false);
 
 	// helper for error generation
 	std::string getNameAndLine(const LGCAdjustablePoint &point) const;

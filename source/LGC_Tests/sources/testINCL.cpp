@@ -10,6 +10,7 @@
 
 #include "TLGCCalculation.h"
 #include "testINCL.h"
+#include <Quad.h>
 
 namespace tut
 {
@@ -458,4 +459,47 @@ void object::test<12>()
 	obsIt++;
 	ensure_equals("INCLY instrument for this observation should be the default one", obsIt->target.ID, "I1");
 }
+
+template<>
+template<>
+void object::test<13>()
+{
+	set_test_name("Testing Wyler Incli model");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_SUBF_8.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestINCL::INCLY_SUBF_9);
+
+	ensure_equals("Reading Successfull", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	std::vector<TINCLY> inclyMeas;
+	for (TDataTreeIterator itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
+	{
+		for (auto &itINCLYRom : itTree.node->data->measurements.fINCLY)
+		{
+			for (auto &itINCLY : itINCLYRom.measINCLY)
+			{
+				inclyMeas.push_back(itINCLY);
+			}
+		}
+	}
+	ensure_equals("Wyler model:observed angle should be equal to predicted angle for 0 secondary rotation", inclyMeas.at(0).getAngleResidual(), 0, 1e-6);
+	ensure_equals("Default model:observed angle should be equal to predicted angle for 0 secondary rotation", inclyMeas.at(1).getAngleResidual(), 0, 1e-6);
+
+	double rx = 10 * GON2RAD;
+	double ryGon = 7.145846;
+	double ry = ryGon * GON2RAD;
+	double wylerPredicted = asin(sin(ry) * cos(rx));
+	double wylerResidual = wylerPredicted - ry;
+
+
+	ensure_equals("wyler model: observed angle should not be equal to primary rotation because of nonzero secondary rotation.", inclyMeas.at(2).getAngleResidual(), wylerResidual, 1e-6);
+
+}
+
 } // namespace tut

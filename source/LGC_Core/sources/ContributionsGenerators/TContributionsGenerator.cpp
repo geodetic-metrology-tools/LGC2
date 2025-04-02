@@ -1422,14 +1422,20 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	// Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
 	TReal XSt = stationV.getX().getMetresValue();
 	TReal ZSt = stationV.getZ().getMetresValue();
-	TAngle calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
+
+	bool useWyler = incly.fUseWyler;
+	TAngle calcMeas;
+	if (!useWyler)
+		calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
+	else if (useWyler)
+		calcMeas = TAngle(asin(XSt)) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
 
 	// Compute the variance of the observation
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue() + incly.target.sigmaPpm.getRadiansValue())
 		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 
 	// CalcMeas, transformationContributions, variance
-	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt), obsVariance};
+	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt, useWyler), obsVariance};
 }
 
 ////ECWS contribution
@@ -2031,7 +2037,7 @@ void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR &lorTraf
 	}
 }
 
-decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator)
+decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator, bool useWyler)
 {
 	const std::vector<TLOR2LOR::TransformAndParams> &trafoChain = lorTrafo.getTransformationChain();
 
@@ -2057,10 +2063,48 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 		if ((pow2q(numerator) + pow2q(denominator)) < nullLimit)
 			throw std::logic_error("TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");
 
-		omegaContrib = (omegaPD.getX().getMetresValue() * denominator - numerator * omegaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-		phiContrib = (phiPD.getX().getMetresValue() * denominator - numerator * phiPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-		kappaContrib = (kappaPD.getX().getMetresValue() * denominator - numerator * kappaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-		scaleContrib = (scalePD.getX().getMetresValue() * denominator - numerator * scalePD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+		// atan2: (x,y,z)->atan2(x,z)
+		// notation in this function: numerator = x, denominator = z, y = 0
+
+		// for atan2
+		double square = pow2q(numerator) + pow2q(denominator);
+		Eigen::Vector3d trigoDiffAtan2(denominator / square, 0.0, -numerator / square);
+		Eigen::Vector3d trigoDiffAsin(1 / sqrt(1 - pow2q(numerator)), 0.0, 0.0);
+
+		Eigen::Vector3d trigoDiff;
+		if (!useWyler)
+		{
+			if (isZero(square))
+			{
+				throw std::logic_error(
+					"TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");
+			}
+			trigoDiff << denominator / square, 0.0, -numerator / square;
+		}
+		else if (useWyler)
+		{
+			if (isZero(1 - pow2q(numerator)))
+			{
+				throw std::logic_error(
+					"TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");
+			}
+			trigoDiff << 1 / sqrt(1 - pow2q(numerator)), 0.0, 0.0;
+		}
+
+		//omegaContrib = (omegaPD.getX().getMetresValue() * denominator - numerator * omegaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+		omegaContrib = trigoDiff.dot(omegaPD.toRealVector());
+		//phiContrib = (phiPD.getX().getMetresValue() * denominator - numerator * phiPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+		phiContrib = trigoDiff.dot(phiPD.toRealVector());
+		//kappaContrib = (kappaPD.getX().getMetresValue() * denominator - numerator * kappaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+		kappaContrib =trigoDiff.dot(kappaPD.toRealVector()); 
+		//scaleContrib = (scalePD.getX().getMetresValue() * denominator - numerator * scalePD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+		scaleContrib = trigoDiff.dot(scalePD.toRealVector());
+		
+	//	// this is  d asin/d xyz * omegaPD
+	//	omegaContrib = (omegaPD.getX().getMetresValue() * denominator - numerator * omegaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+	//	phiContrib = (phiPD.getX().getMetresValue() * denominator - numerator * phiPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+	//	kappaContrib = (kappaPD.getX().getMetresValue() * denominator - numerator * kappaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
+	//	scaleContrib = (scalePD.getX().getMetresValue() * denominator - numerator * scalePD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
 
 		TransformationContrib trContrib = {
 			TFreeVector(omegaContrib, phiContrib, kappaContrib, TCoordSysFactory::k3DCartesian), TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian), scaleContrib};
