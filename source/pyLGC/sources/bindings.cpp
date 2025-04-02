@@ -18,7 +18,7 @@ PYBIND11_MODULE(pyLGC, m)
         // Custom constructor binding that accepts a Python string (str) and converts it to std::stringstream
         .def(py::init([](const std::string& content) {
             std::stringstream stream(content);  // Create a stringstream from the Python string
-            return new TLSEvaluator(stream);    // Return a new instance of TLSEvaluator
+            return TLSEvaluator(stream);    // if you "return new TLSEvaluator(stream)" it will do some weird stuff probably
         }), py::arg("content"))  // Bind the constructor to a string input
 
         // Get and set parameters
@@ -40,7 +40,7 @@ PYBIND11_MODULE(pyLGC, m)
 
         // Evaluation and matrices
         .def("evaluate", &TLSEvaluator::evaluate)
-        .def("getMisclosure", &TLSEvaluator::getMisclosure, py::return_value_policy::move) // for the silent error adding py::return_value_policy::reference should work
+        .def("getMisclosure", &TLSEvaluator::getMisclosure) 
         .def("getAMatrix", &TLSEvaluator::getAMatrix)
         .def("getBMatrix", &TLSEvaluator::getBMatrix)
         .def("getConstraintMisclosure", &TLSEvaluator::getConstraintMisclosure)

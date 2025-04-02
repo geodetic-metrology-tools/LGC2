@@ -434,7 +434,6 @@ Eigen::VectorXd TLSEvaluator::getMisclosure() const
 {
 	if (!isUptoDate)
 		throw std::logic_error("Must call evaluate() before using getters");
-	std::cout << "inside getMisclosure\n";
 	return iMat->getMisclosureVctr();
 }
 
