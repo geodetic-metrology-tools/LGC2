@@ -102,6 +102,9 @@ public:
 	///  Returns the contribution for a levelling measurement (TDLEV) measurement
 	DLEVContrib getDLEVContrib(const TLEVEL &levelST, const TDLEV &dlev);
 
+	///  Returns the contribution for a levelling measurement (TDLEV) measurement
+	std::pair<DLEVContrib, HorDistContribLEVEL> getDLEVContribCombined(const TLEVEL &levelST, const TDLEV &dlev);
+
 	///  Returns the contribution for offset to a vertical plane (TECHO)
 	ECHOContrib getECHOContrib(const TECHOROM &echoROM, const TECHO &echo);
 

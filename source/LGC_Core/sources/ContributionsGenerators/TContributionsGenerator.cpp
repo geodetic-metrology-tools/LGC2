@@ -932,10 +932,9 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const TLEVEL &lev
 	TReal vx = staffV.getX().getMetresValue();
 	TReal vy = staffV.getY().getMetresValue();
 
-	TReal a, b, c;
-	a = -dx / calcMeas; // xTg coefficient
-	b = -dy / calcMeas; // yTg coefficient
-	c = (dx * vx + dy * vy) / (calcMeas * vz); // zTg coefficient
+	TReal a = -dx / calcMeas; // xTg coefficient
+	TReal b = -dy / calcMeas; // yTg coefficient
+	TReal c = (dx * vx + dy * vy) / (calcMeas * vz); // zTg coefficient
 
 	// Staff can be defined anywhere, get point contributions and transformations contributions
 	TFreeVector staffContrib(TCoordSysFactory::k3DCartesian);
@@ -964,15 +963,15 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const TLEVEL &lev
 DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, const TDLEV &dlev)
 {
 	// get all the points in the root frame
-	TPositionVector referencePoint = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
+	TPositionVector referencePointPosition = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
 	const TLOR2LOR &refPTLor2RootTrafo = fPointTransfo.getLORTransformation(
 		levelInstr.fMeasuredPlane->getReferencePoint()->getFrameTreePosition(), fPointTransfo.getTree()->begin());
-	refPTLor2RootTrafo.transform(referencePoint);
+	refPTLor2RootTrafo.transform(referencePointPosition);
 
 	TPositionVector staffPosition = dlev.targetPos->getEstimatedValue(); // this Target / Levelling Staff / SCALE assumed to be in ROOT!!!!!
 	const TLOR2LOR &staffPTLor2RootTrafo = fPointTransfo.getLORTransformation(dlev.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 	staffPTLor2RootTrafo.transform(staffPosition);
-	
+
 	// get all the corrections
 	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); // collimination angle in rads
 	TReal cdz = dlev.target.distCorrectionValue.getMetresValue(); // distance correction value
@@ -986,38 +985,55 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		// Vector should be vertical at the staff position
-		fPointTransfo.set2MLATransformation(staffPosition);
-		fPointTransfo.transformMLA2CGRF(staffV);
-		fPointTransfo.transformCGRF2CCS(staffV);
+		fPointTransfo.transformVectorFromMLAToCCS(dlev.targetPos->getName(), staffPosition, staffV);
 
 		// Transform the free vector to the MLA at the station level
-		fPointTransfo.set2MLATransformation(referencePoint);
-		fPointTransfo.transform2MLA(staffV);
+		fPointTransfo.transformVectorToMLASystem(levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePointPosition, staffV);
+		staffV.normalize();
 
 		// watchout if transform to MLA is set to true, we have a problem here
-		fPointTransfo.transformPointsToMLASystem(levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePoint, staffPosition);
+		fPointTransfo.transformPointsToMLASystem(levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePointPosition, staffPosition);
 		fPointTransfo.setMLA(true);
 	}
 	else
 	{
 		fPointTransfo.setMLA(false);
 	}
-		
-	//dTg for collimation angle 
-	TReal dTg = sqrtq(pow2q(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue())
-		+ pow2q(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue()));
+
+	TReal xSt = referencePointPosition.getX().getMetresValue();
+	TReal ySt = referencePointPosition.getY().getMetresValue();
+
+	TReal vz = staffV.getZ().getMetresValue();
+
+	// compute the intersection vertical vector and plane
+	if (std::abs(vz) < nullLimit)
+	{
+		generateContributionError(
+			"TContributionGenerator::getHorDistContrib: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
+			+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.targetPos));
+	}
+
+	TReal scale = (dRef - staffPosition.getZ().getMetresValue()) / vz;
+	TPositionVector intersection = staffPosition + staffV * scale;
+
+	TReal xTgInt = intersection.getX().getMetresValue();
+	TReal yTgInt = intersection.getY().getMetresValue();
+
+	// dTg for collimation angle
+	TReal dTg = dist(xSt, ySt, xTgInt, yTgInt);
+
+	TReal calcMeas = (referencePointPosition.getZ().getMetresValue() + dRef - dTg * tanq(collAngl) - staffPosition.getZ().getMetresValue()) / staffV.getZ().getMetresValue()
+		- (cdz + tgHeight);
 
 	TReal a = 0;
 	TReal b = 0;
 	if (dTg > nullLimit)
 	{
-		//choice to not throw an error is Dtg = 0
-		a = -(staffPosition.getX().getMetresValue() - referencePoint.getX().getMetresValue()) * tanq(collAngl) / (dTg * staffV.getZ().getMetresValue());
-		b = -(staffPosition.getY().getMetresValue() - referencePoint.getY().getMetresValue()) * tanq(collAngl) / (dTg * staffV.getZ().getMetresValue());
+		// choice to not throw an error if Dtg = 0
+		a = -(staffPosition.getX().getMetresValue() - xTgInt) * tanq(collAngl) / (dTg * vz);
+		b = -(staffPosition.getY().getMetresValue() - yTgInt) * tanq(collAngl) / (dTg * vz);
 	}
 	TReal c = 1 / staffV.getZ().getMetresValue();
-
-	TReal calcMeas = (referencePoint.getZ().getMetresValue() + dRef - dTg * tanq(collAngl) - staffPosition.getZ().getMetresValue()) / staffV.getZ().getMetresValue() - (cdz + tgHeight);
 
 	// staffPosition contribution
 	TFreeVector staffContrib = getPointContributions(staffPTLor2RootTrafo, -a, -b, -c);
@@ -1039,7 +1055,138 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 	return dlevContrib;
 }
 
-// ECHO contribution
+
+std::pair<DLEVContrib, HorDistContribLEVEL> TContributionsGenerator::getDLEVContribCombined(const TLEVEL &levelInstr, const TDLEV &dlev)
+{
+	// get all the points in the root frame
+	TPositionVector referencePointPosition = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue();
+	const TLOR2LOR &refPTLor2RootTrafo = fPointTransfo.getLORTransformation(
+		levelInstr.fMeasuredPlane->getReferencePoint()->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	refPTLor2RootTrafo.transform(referencePointPosition);
+
+	TPositionVector staffPosition = dlev.targetPos->getEstimatedValue();
+	const TLOR2LOR &staffPTLor2RootTrafo = fPointTransfo.getLORTransformation(dlev.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	staffPTLor2RootTrafo.transform(staffPosition);
+
+	// get all the corrections
+	TReal collAngl = levelInstr.instrument.collAngleAdjustable->getEstimatedValue().getRadiansValue(); // Collimation Angle
+	TReal cdz = dlev.target.distCorrectionValue.getMetresValue(); // Correction on the reading
+	TReal tgHeight = dlev.target.staffHt.getMetresValue(); // Target Height
+	TReal dRef = levelInstr.fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(); // Instrument Height over the point
+
+	// Creating the Local Vertical vector (no change if OLOC)
+	TFreeVector staffVerticalVector(0, 0, 1, TCoordSysFactory::k3DCartesian);
+
+	// If not OLOC => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+	{
+		// Vector should be vertical at the staff position
+		fPointTransfo.transformVectorFromMLAToCCS(dlev.targetPos->getName(), staffPosition, staffVerticalVector);
+
+		// Transform the free vector to the MLA at the station level
+		fPointTransfo.transformVectorToMLASystem(levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePointPosition, staffVerticalVector);
+		staffVerticalVector.normalize();
+
+		// watchout if transform to MLA is set to true, we have a problem here
+		fPointTransfo.transformPointsToMLASystem(levelInstr.fMeasuredPlane->getReferencePoint()->getName(), referencePointPosition, staffPosition);
+		fPointTransfo.setMLA(true);
+	}
+	else
+	{
+		fPointTransfo.setMLA(false);
+	}
+
+	TReal xSt = referencePointPosition.getX().getMetresValue();
+	TReal ySt = referencePointPosition.getY().getMetresValue();
+	TReal vz = staffVerticalVector.getZ().getMetresValue();
+
+	// compute the intersection vertical vector and plane
+	if (std::abs(vz) < nullLimit)
+	{
+		generateContributionError(
+			"TContributionGenerator::getHorDistContrib: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
+			+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.targetPos));
+	}
+
+	TReal scale = (dRef - staffPosition.getZ().getMetresValue()) / vz;
+	TPositionVector intersection = staffPosition + staffVerticalVector * scale;
+
+	TReal xTgInPlane = intersection.getX().getMetresValue();
+	TReal yTgInPlane = intersection.getY().getMetresValue();
+
+	// dTg for collimation angle
+	TReal calcMeasDhor = dist(xSt, ySt, xTgInPlane, yTgInPlane);
+
+	TReal dx = xSt - xTgInPlane;
+	TReal dy = ySt - yTgInPlane;
+
+	TReal calcMeas = (referencePointPosition.getZ().getMetresValue() + dRef - calcMeasDhor * tanq(collAngl) - staffPosition.getZ().getMetresValue()) / vz - (cdz + tgHeight);
+
+	TReal a = 0;
+	TReal b = 0;
+	if (calcMeasDhor > nullLimit)
+	{
+		// choice to not throw an error if Dtg = 0
+		a = -dx * tanq(collAngl) / (calcMeasDhor * vz);
+		b = -dy * tanq(collAngl) / (calcMeasDhor * vz);
+	}
+	TReal c = 1 / vz;
+
+	// staffPosition contribution
+	TFreeVector staffContrib = getPointContributions(staffPTLor2RootTrafo, -a, -b, -c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> staffTransfContributions;
+	addTransformationsContributions(staffPTLor2RootTrafo, dlev.targetPos->getEstimatedValue(), -a, -b, -c, staffTransfContributions);
+
+	// reference Point contribution
+	TFreeVector referencePTContrib = getPointContributions(refPTLor2RootTrafo, a, b, c);
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> referencePTTransfContributions;
+	addTransformationsContributions(refPTLor2RootTrafo, levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue(), a, b, c, referencePTTransfContributions);
+
+	TReal collAngleContrib = -calcMeasDhor * (1.0 + powq(tanq(collAngl), 2)) / vz;
+	TReal fRefPtDistCont = c;
+
+	TReal variance = pow2q(dlev.target.sigmaD.getMetresValue() + calcMeasDhor / 1000 * dlev.target.ppmD.getMetresValue()) + pow2q(dlev.target.sigmaStaffHt.getMetresValue())
+		+ pow2q(levelInstr.instrument.sigmaInstrHeight.getMetresValue()) + pow2q(dlev.target.sigmaDCorr.getMetresValue());
+
+	DLEVContrib dlevContrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, fRefPtDistCont, collAngleContrib, variance};
+
+	HorDistContribLEVEL dhorContrib;
+	if (dlev.dhor)
+	{
+		if (calcMeasDhor < nullLimit)
+		{
+			generateContributionError(
+				"TContributionGenerator::getHorDistContrib: Division by zero because x and y coordinates of station and target are identical. Points: "
+				+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.dhor->targetPos));
+		}
+		TReal vx = staffVerticalVector.getX().getMetresValue();
+		TReal vy = staffVerticalVector.getY().getMetresValue();
+
+		TReal aDhor = -dx / calcMeasDhor; // xTg coefficient
+		TReal bDhor = -dy / calcMeasDhor; // yTg coefficient
+		TReal cDhor = (dx * vx + dy * vy) / (calcMeasDhor * vz); // zTg coefficient
+
+		// Staff can be defined anywhere, get point contributions and transformations contributions
+		TFreeVector staffContribDhor(TCoordSysFactory::k3DCartesian);
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> staffTransfContributionsDhor;
+		staffContribDhor = getPointContributions(staffPTLor2RootTrafo, aDhor, bDhor, cDhor);
+		addTransformationsContributions(staffPTLor2RootTrafo, dlev.targetPos->getEstimatedValue(), aDhor, bDhor, cDhor, staffTransfContributionsDhor);
+
+		// Reference point can be defined anywhere, get point contributions and transformations contributions
+		TFreeVector referencePTContribDhor(TCoordSysFactory::k3DCartesian);
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> referencePTTransfContributionsDhor;
+		referencePTContribDhor = getPointContributions(refPTLor2RootTrafo, -aDhor, -bDhor, -cDhor);
+		addTransformationsContributions(refPTLor2RootTrafo, levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue(), -aDhor, -bDhor, -cDhor, referencePTTransfContributionsDhor);
+
+		// Contribution for the instrument height
+		TReal fRefPtDistContDhor = -cDhor;
+
+		dhorContrib = {calcMeasDhor, staffContribDhor, referencePTContribDhor, staffTransfContributionsDhor, referencePTTransfContributionsDhor, fRefPtDistContDhor};
+	}
+	return {dlevContrib, dhorContrib};
+}
+
+	// ECHO contribution
 ECHOContrib TContributionsGenerator::getECHOContrib(const TECHOROM &echoROM, const TECHO &echo)
 {
 	TReal theta = echoROM.fMeasuredPlane->getThetaEstimatedValue().getRadiansValue(); // Theta angle of the plane

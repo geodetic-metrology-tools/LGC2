@@ -697,7 +697,8 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 		MatrixIndex eqIdx = itDLEV->getFirstEquationIndex();
 		MatrixIndex obsIdx = itDLEV->getFirstObservationIndex();
 
-		contributions = fCGenerator.getDLEVContrib(levelSt, *itDLEV); // Get the observation contribution
+		auto contribPair = fCGenerator.getDLEVContribCombined(levelSt, *itDLEV); // Get the observation contribution
+		contributions = contribPair.first;
 
 		// Update the sigma
 		itDLEV->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
@@ -746,6 +747,7 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 		// In a case that optional DHOR measurement is done
 		if (itDLEV->dhor)
 		{ // i.e. !=nullptr
+			contributionsDHOR = contribPair.second;
 			MatrixIndex eqIdxHd = itDLEV->dhor->getFirstEquationIndex();
 			MatrixIndex obsIdxHd = itDLEV->dhor->getFirstObservationIndex();
 
