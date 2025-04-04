@@ -36,7 +36,11 @@ void TPointTransformer::updateTransformations()
 	fMLAused = false;
 }
 
-void TPointTransformer::transformPointsToMLASystem(std::string originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos)
+////////////////////////////////////////
+// Transformations related functions
+////////////////////////////////////////
+
+void TPointTransformer::transformPointsToMLASystem(const std::string &originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos)
 {
 	if (!(fLastStationPtName == originName) || !fMLAused)
 	{
@@ -49,9 +53,27 @@ void TPointTransformer::transformPointsToMLASystem(std::string originName, TPosi
 	originOfMLAPos.setZ(TLength(0.0));
 }
 
-////////////////////////////////////////
-// Transformations related functions
-////////////////////////////////////////
+void TPointTransformer::transformVectorToMLASystem(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector)
+{
+	if (!(fLastStationPtName == originName) || !fMLAused)
+	{
+		set2MLATransformation(originOfMLAPos);
+		fLastStationPtName = originName;
+	}
+	transform2MLA(freeVector);
+}
+
+void TPointTransformer::transformVectorFromMLAToCCS(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector)
+{
+	if (!(fLastStationPtName == originName) || !fMLAused)
+	{
+		set2MLATransformation(originOfMLAPos);
+		fLastStationPtName = originName;
+	}
+	transformMLA2CGRF(freeVector);
+	transformCGRF2CCS(freeVector);
+}
+
 void TPointTransformer::transform2MLA(TPositionVector &pv)
 {
 	fccs2cgrf.transform(pv);
@@ -95,7 +117,23 @@ void TPointTransformer::transform2MLA(TDenseMatrix &pmat, bool isFreeVector)
 	}
 }
 
-// used only for the dver and incl measurements
+void TPointTransformer::computeCovariance2MLA(Eigen::Matrix3d &ptCovMat)
+{
+	// Step 1: Build the rotation Matrix
+	Eigen::Matrix4d fullTransfoMatrix = fccs2cgrf.getTransformer().getMatrix() 
+		* fcgrf2ilg.getTransformer().getMatrix() 
+		* filg2ila.getTransformer().getMatrix()
+		* fla2mla.getTransformer().getMatrix();
+
+	// Step 2: Extract the upper-left 3x3 rotation block
+	Eigen::Matrix3d rotationTransfoMatrix = fullTransfoMatrix.topLeftCorner<3, 3>();
+
+	// Step 3: compute and update
+	ptCovMat = rotationTransfoMatrix * ptCovMat * rotationTransfoMatrix.transpose();
+
+}
+
+	// used only for the dver and incl measurements
 void TPointTransformer::transformMLA2CGRF(TFreeVector &fv)
 {
 	fla2mla.transformInverse(fv);

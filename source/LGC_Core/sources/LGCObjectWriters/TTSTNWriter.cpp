@@ -302,9 +302,10 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "ECART"); // ecart
 	(*stream).writeString(obsResWidth, "RES"); // residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); // Name of the target
-	// (*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
+	(*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ANGL
 	(*stream).writeString(obsResWidth, "TCSE"); // target centering sigma
+	(*stream).writeString(obsResWidth, "THSE"); // target height sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "V0"); // allfixed parameter: v0
 	if (obsIdWidth != 0)
@@ -322,9 +323,10 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "(MM)"); // ecart
 	(*stream).writeString(obsResWidth, "/SIG"); // residual/sigma
 	(*stream).writeString(nameWidth, ""); // TARGET ID
-	// (*stream).writeString(obsWidth,	"(M)"); //provisional target height
+	(*stream).writeString(obsWidth,	"(M)"); //provisional target height
 	(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ANGL
 	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // target height sigma
 	if (isAllfixed)
 		(*stream).writeString(obsWidth, "(GONS)"); // allfixed parameter: v0
 	(*stream) << endl;
@@ -950,7 +952,7 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL> &measANGL, const LGCAd
 		(*stream).writeString(nameWidth, ItANGL.target.ID);
 
 		// write the target height
-		//  (*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt);
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItANGL.target.targetHt.getMetresValue());
 
 		// Write the sigma of the angle observation (OBSE)
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItANGL.target.sigmaAngl.getSignedCCValue());
@@ -958,6 +960,9 @@ void TTSTNWriter::writeANGLResults(const std::list<TANGL> &measANGL, const LGCAd
 		// Write the sigma of the target centering (TCSE)
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.target.sigmaTargetCentering.getMMetresValue());
 
+		// Write the sigma of the target height (THSE)
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItANGL.target.sigmaTargetHt.getMMetresValue());
+		
 		// write allfixed parameter
 		if (isAllfixed)
 			if (!isnotanumber(ItANGL.fAllFixedV0))

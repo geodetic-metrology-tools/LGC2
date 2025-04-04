@@ -26,6 +26,27 @@ struct TCAM;
 struct TINCLYROM;
 struct TECWSROM;
 struct TECWIROM;
+struct TSTNCommonDataInRoot
+{
+	TPositionVector stationPos;
+	TPositionVector targetPos;
+	TFreeVector targetVerticalVector;
+	const TLOR2LOR &st2RootTrafo;
+	const TLOR2LOR &tg2RootTrafo;
+	const TLOR2LOR &root2TgTrafo;
+	TPositionVector targetPosInRoot;
+	TPositionVector targetPosInTg;
+};
+struct TSTNCommonDataInFrame
+{
+	TPositionVector stationPos;
+	TPositionVector targetPos;
+	TFreeVector targetVerticalVector;
+	const TLOR2LOR &tg2stTrafo;
+	const TLOR2LOR &root2TgTrafo;
+	TPositionVector targetPosInRoot;
+	TPositionVector targetPosInTg;
+};
 
 /*!
 	\ingroup ContributionsGenerators
@@ -161,6 +182,7 @@ private:
 		TReal b,
 		TReal c,
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
+
 	void addTransformationsContributions(const TLOR2LOR &lorTrafo,
 		const TPositionVector &pointPos,
 		const Eigen::Vector3d &vec,
@@ -188,7 +210,12 @@ private:
 	// helper for error generation
 	std::string getNameAndLine(const LGCAdjustablePoint &point) const;
 	void generateContributionError(const std::string &message) const;
+	
+	// Compute the station and target position within the station frame at the level of the optics and the reflector
+	TSTNCommonDataInFrame TContributionsGenerator::TSTNprepareStationAndTargetInFrame(const std::shared_ptr<TTSTN> station, const LGCAdjustablePoint *target, const TReal targetHt);
 
+	// Compute the station and target position within the station MLA at the level of the optics and the reflector
+	TSTNCommonDataInRoot TContributionsGenerator::TSTNprepareStationAndTargetInRoot(const std::shared_ptr<TTSTN> station, const LGCAdjustablePoint *target, const TReal targetHt);
 	//@}
 };
 

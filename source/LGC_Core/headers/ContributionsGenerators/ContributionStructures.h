@@ -415,7 +415,7 @@ struct AnglMeasContribFrame
 	TFreeVector fStCoordContrib;
 	TFreeVector fTgCoordContrib;
 
-	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
+	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the ANGL measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
 
 	TReal fHIContrib; //!< Instrument (station) height contribution

@@ -8,7 +8,8 @@
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
-TLOR2LOR::TLOR2LOR(const TDataTree &tree, const std::string &from, const std::string &to, const std::string &name) : fName(name), fTurningPointLocated(false), transfo()
+TLOR2LOR::TLOR2LOR(const TDataTree &tree, const std::string &from, const std::string &to, const std::string &name) :
+	fName(name), fTurningPointLocated(false), transfo()
 {
 	locateNodes(tree, from, to);
 	locateTurningPoint();

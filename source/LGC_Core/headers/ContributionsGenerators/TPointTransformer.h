@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+© Copyright CERN 2000-2025. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -48,13 +48,20 @@ public:
 	 Be carefoul, in a case it is called for second time in a function and the transformation is not yet in the vector, it is reallocated and the reference to the first transformation is lost.
 	*/
 	const TLOR2LOR &getLORTransformation(TDataTreeIterator from, TDataTreeIterator to);
-
-	/// Transform points into an MLA system, where the first point is the origin of the system.
-	void transformPointsToMLASystem(std::string originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos);
 	//@}
 
 	/*!@name CCS2MLA related stuff */
 	//@{
+
+	/// Transform points into an MLA system, where the first point is the origin of the system.
+	void transformPointsToMLASystem(const std::string &originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos);
+
+	/// Transform a vector into an MLA system, where the first point is the origin of the system.
+	void transformVectorToMLASystem(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector);
+
+	/// Transform a vector definedinto an MLA system to the CSS.
+	void transformVectorFromMLAToCCS(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector);
+
 	/// Sets new origin of the transformation to MLA system
 	void set2MLATransformation(TPositionVector originInCCS);
 
@@ -77,6 +84,9 @@ public:
 	void transform2MLA(TFreeVector &pv);
 	// transform each column of a matrix to MLA, assume Cartesian Coord system
 	void transform2MLA(TDenseMatrix &pmat, bool isFreeVector = false);
+
+	// transform a point 3x3 covariance matrix
+	void computeCovariance2MLA(Eigen::Matrix3d &ptCovMat);
 
 	/// Sets the boolean value to tell is MLA is used
 	void setMLA(bool fBool) { fMLAused = fBool; }
