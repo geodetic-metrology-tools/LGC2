@@ -1424,18 +1424,26 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	TReal ZSt = stationV.getZ().getMetresValue();
 
 	bool useWyler = incly.fUseWyler;
+	bool useCorr = incly.fUseCorr;
 	TAngle calcMeas;
 	if (!useWyler)
 		calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
 	else if (useWyler)
-		calcMeas = TAngle(asin(XSt)) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
+	{
+		double gLHC = 9.805770;
+		double gWinter = 9.806670;
+		double corr = 1;
+		if (useCorr)
+			corr = gLHC / gWinter;
+		calcMeas = TAngle(asin(XSt * corr) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue);
+	}
 
 	// Compute the variance of the observation
 	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue() + incly.target.sigmaPpm.getRadiansValue())
 		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
 
 	// CalcMeas, transformationContributions, variance
-	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt, useWyler), obsVariance};
+	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt, useWyler, useCorr), obsVariance};
 }
 
 ////ECWS contribution
@@ -2037,7 +2045,7 @@ void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR &lorTraf
 	}
 }
 
-decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator, bool useWyler)
+decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator, bool useWyler, bool useCorr)
 {
 	const std::vector<TLOR2LOR::TransformAndParams> &trafoChain = lorTrafo.getTransformationChain();
 
@@ -2069,6 +2077,12 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 		// for atan2
 		double square = pow2q(numerator) + pow2q(denominator);
 		Eigen::Vector3d trigoDiffAtan2(denominator / square, 0.0, -numerator / square);
+		double gLHC = 9.805770;
+		double gWinter = 9.806670;
+		double corr = 1;
+		if (useCorr)
+			corr = gLHC / gWinter;
+
 		Eigen::Vector3d trigoDiffAsin(1 / sqrt(1 - pow2q(numerator)), 0.0, 0.0);
 
 		Eigen::Vector3d trigoDiff;
@@ -2088,7 +2102,7 @@ decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLCont
 				throw std::logic_error(
 					"TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");
 			}
-			trigoDiff << 1 / sqrt(1 - pow2q(numerator)), 0.0, 0.0;
+			trigoDiff << corr * 1 / sqrt(1 - pow2q(numerator)), 0.0, 0.0;
 		}
 
 		//omegaContrib = (omegaPD.getX().getMetresValue() * denominator - numerator * omegaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));

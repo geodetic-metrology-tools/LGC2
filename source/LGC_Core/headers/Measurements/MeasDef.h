@@ -638,6 +638,7 @@ public:
 	~TINCLY() override = default;
 
 	bool fUseWyler;
+	bool fUseCorr = true;
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
