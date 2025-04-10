@@ -289,6 +289,31 @@ origin 7.145846
 *ENDFRAME
 *END)";
 
+// testing wyler observation model
+char const *const INCLY_SUBF_10 = R"(*TITR 
+testing reading of incly instrument type
+*OLOC
+*JSON
+*INSTR
+%*INCL  instr_ID  sigma_angle_cc  sigma_ppm  aCorr_gon  sigma_aCorr_cc  refAngle_gon  sigma_refAngle_cc
+% assuming 30 murad angle precision = 120 cc?;
+*INCL  myInc0 120 0 0 0 0 1 Type 1
+*INCL  myInc1 120 0 0 0 0 1 Type 0
+*POIN
+% to indtroduce a variable. LGC will not compute without any free variable
+dummy 0 0 0 SX 1 SY 1 SZ 1
+*CALA
+origin 0 0 0
+*FRAME originFrame0 0 0 0 0 7.145846 0 1
+*INCLY myInc0
+origin 7.145846 
+*ENDFRAME
+*FRAME originFrame1 0 0 0 0 7.145846 0 1
+*INCLY myInc1
+origin 7.145846 
+*ENDFRAME
+
+*END)";
 
 } // namespace TestINCL
 #endif

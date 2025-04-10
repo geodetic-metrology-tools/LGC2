@@ -502,4 +502,35 @@ void object::test<13>()
 
 }
 
+template<>
+template<>
+void object::test<14>()
+{
+	set_test_name("Testing Wyler Incli model");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/INCLY_SUBF_8.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestINCL::INCLY_SUBF_10);
+
+	ensure_equals("Reading Successfull", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	std::vector<TINCLY> inclyMeas;
+	for (TDataTreeIterator itTree = projTest->getTree().begin(); itTree != projTest->getTree().end(); itTree++)
+	{
+		for (auto &itINCLYRom : itTree.node->data->measurements.fINCLY)
+		{
+			for (auto &itINCLY : itINCLYRom.measINCLY)
+			{
+				inclyMeas.push_back(itINCLY);
+			}
+		}
+	}
+	ensure_equals("Inclinometer instrument type not read correctly", inclyMeas.at(0).target.type, 1);
+	ensure_equals("Inclinometer instrument type not read correctly", inclyMeas.at(1).target.type, 0);
+}
+
 } // namespace tut

@@ -516,6 +516,7 @@ public:
 			TAngle sigmaCorrectionValue = TAngle(),
 			TAngle refAngleCorrectionValue = TAngle(),
 			TAngle refSigmaCorrectionValue = TAngle(),
+			int type = 0,
 			int line = 0,
 			TAngle sigmaCombinedAngle = TAngle()) :
 			ID(ID),
@@ -525,6 +526,7 @@ public:
 			sigmaCorrectionValue(sigmaCorrectionValue),
 			refAngleCorrectionValue(refAngleCorrectionValue),
 			refSigmaCorrectionValue(refSigmaCorrectionValue),
+			type(type),
 			line(line),
 			sigmaCombinedAngle(sigmaCombinedAngle) {};
 
@@ -535,6 +537,7 @@ public:
 		TAngle sigmaCorrectionValue; // [rad]
 		TAngle refAngleCorrectionValue; // [rad]
 		TAngle refSigmaCorrectionValue; // [rad]
+		int type;
 		int line;
 		TAngle sigmaCombinedAngle; // [rad]
 

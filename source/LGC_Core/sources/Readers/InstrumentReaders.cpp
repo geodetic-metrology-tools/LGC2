@@ -278,11 +278,24 @@ void TKeyINCL::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 	using namespace LGC;
 
 	auto &incls(finstruments.fINCL);
-	checkInstrument(9, incls, tokens);
+	// line may have optional arguments: the type of instrument (wyler or normal)
+	// take care, the check also makes sure no duplicate instruments are created
+//	checkInstrument(9, incls, tokens);
+	TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
-		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kMicroRadians), TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kGons), TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kCCs),
-		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kGons), TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs), line));
+	int type = 0;
+	if (opts.has("Type"))
+		type = opts.getParamI("Type");
+
+	// not necessary to pass a constructed object
+//	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
+//		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kMicroRadians), TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kGons), TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kCCs),
+//		TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kGons), TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs), type, line));
+	// we can directly pass the cosntructor arguments
+	auto i = std::make_shared<TInstrumentData::TINCL>(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
+		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kMicroRadians), TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kCCs), TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kGons),
+		TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs), type, line);
 
 	// store the new inclinometer
 	incls.insert(std::make_pair(tokens.at(2), i));
