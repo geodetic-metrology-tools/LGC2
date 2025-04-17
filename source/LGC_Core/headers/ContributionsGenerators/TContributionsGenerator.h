@@ -31,11 +31,9 @@ struct TSTNCommonDataInRoot
 	TPositionVector stationPos;
 	TPositionVector targetPos;
 	TFreeVector targetVerticalVector;
+	TFreeVector targetVerticalVectorInRoot;
 	const TLOR2LOR &st2RootTrafo;
 	const TLOR2LOR &tg2RootTrafo;
-	const TLOR2LOR &root2TgTrafo;
-	TPositionVector targetPosInRoot;
-	TPositionVector targetPosInTg;
 };
 struct TSTNCommonDataInFrame
 {
@@ -181,7 +179,8 @@ private:
 		TReal a,
 		TReal b,
 		TReal c,
-		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib,
+		bool rotation = false);
 
 	void addTransformationsContributions(const TLOR2LOR &lorTrafo,
 		const TPositionVector &pointPos,
