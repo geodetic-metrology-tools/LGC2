@@ -4,7 +4,7 @@
 #include "TDirectTransformation.h"
 #include "TInverseTransformation.h"
 #include "TTreeEntry.h"
-
+#include <iostream>
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
@@ -16,11 +16,106 @@ TLOR2LOR::TLOR2LOR(const TDataTree &tree, const std::string &from, const std::st
 	initialize();
 }
 
-TLOR2LOR::TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::string &name) :
+TLOR2LOR::TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::string &name, bool startFromRoot, bool passByRoot, TFreeVector theVertical) :
 	fName(name), fFromNode(from), fToNode(to), fTurningPointLocated(false), transfo()
 {
-	locateTurningPoint();
-	initialize();
+
+	TDataTreeIterator currentNode = fFromNode;
+	std::vector<TransformAndParams> transformationChainDown;
+	if (startFromRoot)
+	{
+		complexPath = true;
+		if (!currentNode.node->data.get()->isROOTNode())
+		{
+			currentNode = currentNode.node->parent; // ignore first to avoid duplication in the trasnforamtion chain
+		}
+		while(!currentNode.node->data.get()->isROOTNode())
+		{
+			//need to go down (inverse transformation, but safer to work from the node to the root to use the parent
+			TInverseTransformation inverseTransfo;
+			inverseTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
+			// Store pointer to adjustable transformation, the direct transformation and information that it was direct in a transformationChain
+			TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TInverseTransformation>(inverseTransfo), false};
+			transformationChainDown.push_back(trPar);
+			currentNode = currentNode.node->parent; // Move up
+		}
+		
+		//Transformation DOWN has to be pushed to the 'transformationChain' in opposite order to connect the chain correctly
+		for (int i = (int)transformationChainDown.size() - 1; i >= 0; i--)
+			transformationChain.push_back(transformationChainDown[i]);
+	}
+	
+	if (passByRoot)
+	{
+		complexPath = true;
+		currentNode = fFromNode;
+		while (!currentNode.node->data.get()->isROOTNode())
+		{
+			// If we go up, DIRECT transformation of the one stored in the node is needed
+			TDirectTransformation directTransfo;
+			directTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
+			// Store pointer to an adjustable transformation, the DIRECT transformation and information that it was DIRECT in a transformationChain vector
+			TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TDirectTransformation>(directTransfo), true};
+			transformationChain.push_back(trPar);
+
+			currentNode = currentNode.node->parent; // Move up
+		}
+		TransformParameters targetHeight;
+		targetHeight.tX.setMetresValue(theVertical.getX().getMetresValue());
+		targetHeight.tY.setMetresValue(theVertical.getY().getMetresValue());
+		targetHeight.tZ.setMetresValue(theVertical.getZ().getMetresValue());
+		TInverseTransformation inverseTransfoForHtg;
+		inverseTransfoForHtg.setTransformParam(targetHeight);
+		std::bitset<3> translations(std::string("111"));
+		std::bitset<3> rotations(std::string("111"));
+		std::bitset<1> scale(std::string("1"));
+		testTg = TAdjustableHelmertTransformation( // Wrapper containing adjustable related information
+			translations, // Bits telling which of the translations are fixed
+			rotations, // Bits telling which of the rotations around an axis are fixed
+			scale, // Bit telling whether scale is fixed
+			"Htg" // Transformation name
+		);
+		testTg.setName("YOUUUUUUU");
+		testTg.setParam( // The transformation itself
+			theVertical.getX(), // Translation along X
+			theVertical.getY(), // Translation along Y
+			theVertical.getZ(), // Translation along Z
+			TAngle(0), // Rotation around X
+			TAngle(0), // Rotation around Y
+			TAngle(0), // Rotation around Z
+			TReal(1) // SCALE factor
+		);
+		TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(testTg), std::make_shared<TInverseTransformation>(inverseTransfoForHtg), false};
+		transformationChain.push_back(trPar);
+		
+		currentNode = fToNode;
+		while (!currentNode.node->data.get()->isROOTNode())
+		{
+			// need to go down (inverse transformation, but safer to work from the node to the root to use the parent
+			TInverseTransformation inverseTransfo;
+			inverseTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
+			// Store pointer to adjustable transformation, the direct transformation and information that it was direct in a transformationChain
+			TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TInverseTransformation>(inverseTransfo), false};
+			transformationChainDown.push_back(trPar);
+			currentNode = currentNode.node->parent; // Move up
+		}
+
+		// Transformation DOWN has to be pushed to the 'transformationChain' in opposite order to connect the chain correctly
+		for (int i = (int)transformationChainDown.size() - 1; i >= 0; i--)
+			transformationChain.push_back(transformationChainDown[i]);
+
+		fTurningPoint.push_back(fFromNode.node->data.get()->ID[0]);
+		fTurningPointLocated = true;
+		// fill up the tree from --> root
+		// add the TX TY TZ as a going down.
+		// fill up the root to station as a going down
+		updateTransformation();
+	}
+	else
+	{
+		locateTurningPoint();
+		initialize();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -230,30 +325,30 @@ TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string &transfoName, co
 	assert3D(angle);
 	try
 	{
-		int positionInChain = getTransformationPosition(transfoName);
-
-		TTransformation t;
-		TTransformation cumulativTransformationBegin = getCumulativeBegin(positionInChain); // Pre multiplication
-		TTransformation cumulativTransformationEnd = getCumulativeEnd(positionInChain); // Post multiplication
-
+		auto positionsInChain = getTransformationPositions(transfoName);
 		TFreeVector derivated_vector(0.0, 0.0, 0.0, TCoordSysFactory::ECoordSys::k3DCartesian);
-
-		// Make partial derivative of the transformation
-		if (transformationChain[positionInChain].direct)
+		if (!positionsInChain.empty())
 		{
-			std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
-			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
-			TDerivativeTransformation dt = direct_transformation->differentiatedTransformationAngle(angle);
-			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+			for (int position : positionsInChain)
+			{
+				TTransformation cumulativTransformationBegin = getCumulativeBegin(position); // Pre multiplication
+				TTransformation cumulativTransformationEnd = getCumulativeEnd(position); // Post multiplication
+				if (transformationChain[position].direct)
+				{
+					std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[position].trafo);
+					// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
+					TDerivativeTransformation dt = direct_transformation->differentiatedTransformationAngle(angle);
+					derivated_vector += cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+				}
+				else
+				{
+					std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[position].trafo);
+					// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
+					TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationAngle(angle);
+					derivated_vector += cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+				}
+			}
 		}
-		else
-		{
-			std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
-			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
-			TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationAngle(angle);
-			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
-		}
-
 		return derivated_vector;
 	}
 	catch (std::runtime_error &ex)
@@ -261,6 +356,7 @@ TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string &transfoName, co
 		throw ex;
 	}
 }
+
 
 TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string &transfoName, const TFreeVector &v, int angle) const
 {
@@ -268,35 +364,36 @@ TFreeVector TLOR2LOR::partialDerivativesAngle(const std::string &transfoName, co
 		- partialDerivativesAngle(transfoName, TPositionVector(0, 0, 0, TCoordSysFactory::ECoordSys::k3DCartesian), angle);
 }
 
+
 TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string &transfoName, const TPositionVector &p, int translation) const
 {
 	assert3D(translation);
 	try
 	{
-		int positionInChain = getTransformationPosition(transfoName);
-
-		TTransformation t;
-		TTransformation cumulativTransformationBegin = getCumulativeBegin(positionInChain); // Pre multiplication
-		TTransformation cumulativTransformationEnd = getCumulativeEnd(positionInChain); // Post multiplication
-
+		auto positionsInChain = getTransformationPositions(transfoName);
 		TFreeVector derivated_vector(0.0, 0.0, 0.0, TCoordSysFactory::ECoordSys::k3DCartesian);
-
-		// Make partial derivative of the transformation
-		if (transformationChain[positionInChain].direct)
+		if (!positionsInChain.empty())
 		{
-			std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
-			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
-			TDerivativeTransformation dt = direct_transformation->differentiatedTransformationTranslation(translation);
-			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+			for (int position : positionsInChain)
+			{
+				TTransformation cumulativTransformationBegin = getCumulativeBegin(position); // Pre multiplication
+				TTransformation cumulativTransformationEnd = getCumulativeEnd(position); // Post multiplication
+				if (transformationChain[position].direct)
+				{
+					std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[position].trafo);
+					// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
+					TDerivativeTransformation dt = direct_transformation->differentiatedTransformationTranslation(translation);
+					derivated_vector += cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+				}
+				else
+				{
+					std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[position].trafo);
+					// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
+					TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationTranslation(translation);
+					derivated_vector += cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+				}
+			}
 		}
-		else
-		{
-			std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
-			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
-			TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationTranslation(translation);
-			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
-		}
-
 		return derivated_vector;
 	}
 	catch (std::runtime_error &ex)
@@ -305,34 +402,35 @@ TFreeVector TLOR2LOR::partialDerivativesTranslation(const std::string &transfoNa
 	}
 }
 
+
 TFreeVector TLOR2LOR::partialDerivativesScale(const std::string &transfoName, const TPositionVector &p) const
 {
 	try
 	{
-		int positionInChain = getTransformationPosition(transfoName);
-
-		TTransformation t;
-		TTransformation cumulativTransformationBegin = getCumulativeBegin(positionInChain); // Pre multiplication
-		TTransformation cumulativTransformationEnd = getCumulativeEnd(positionInChain); // Post multiplication
-
+		auto positionsInChain = getTransformationPositions(transfoName);
 		TFreeVector derivated_vector(0.0, 0.0, 0.0, TCoordSysFactory::ECoordSys::k3DCartesian);
-
-		// Make partial derivative of the transformation
-		if (transformationChain[positionInChain].direct)
+		if (!positionsInChain.empty())
 		{
-			std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[positionInChain].trafo);
-			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
-			TDerivativeTransformation dt = direct_transformation->differentiatedTransformationScaleFactor();
-			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+			for (int position : positionsInChain)
+			{
+				TTransformation cumulativTransformationBegin = getCumulativeBegin(position); // Pre multiplication
+				TTransformation cumulativTransformationEnd = getCumulativeEnd(position); // Post multiplication
+				if (transformationChain[position].direct)
+				{
+					std::shared_ptr<TDirectTransformation> direct_transformation = std::static_pointer_cast<TDirectTransformation>(transformationChain[position].trafo);
+					// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
+					TDerivativeTransformation dt = direct_transformation->differentiatedTransformationScaleFactor();
+					derivated_vector += cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+				}
+				else
+				{
+					std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[position].trafo);
+					// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
+					TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationScaleFactor();
+					derivated_vector += cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
+				}
+			}
 		}
-		else
-		{
-			std::shared_ptr<TInverseTransformation> inverse_transformation = std::static_pointer_cast<TInverseTransformation>(transformationChain[positionInChain].trafo);
-			// Derivative transformation is used to represent a partial derivative. Translation is set to 0 during transformation
-			TDerivativeTransformation dt = inverse_transformation->differentiatedTransformationScaleFactor();
-			derivated_vector = cumulativTransformationBegin * (dt * (cumulativTransformationEnd * p));
-		}
-
 		return derivated_vector;
 	}
 	catch (std::runtime_error &ex)
@@ -651,6 +749,26 @@ int TLOR2LOR::getTransformationPosition(const std::string &transfoName) const
 		return positionInChain;
 }
 
+std::vector<int> TLOR2LOR::getTransformationPositions(const std::string &transfoName) const
+{
+	std::vector<int> positions;
+	bool transfoFound = false;
+	for (unsigned int i = 0; i < transformationChain.size(); ++i)
+	{
+		if (transformationChain[i].adjTrafo->getName() == transfoName)
+		{
+			transfoFound = true;
+			positions.push_back(i);
+			if (!complexPath)
+				break;
+		}
+	}
+	if (!transfoFound)
+		throw std::runtime_error("Transformation does not belong to the transformation chain.");
+	return positions;
+}
+
+
 void TLOR2LOR::locateNodes(const TDataTree &tree, const std::string &from, const std::string &to)
 {
 	TDataTreeIterator currentNodeIter = tree.begin();
@@ -699,7 +817,7 @@ void TLOR2LOR::initialize()
 			TDirectTransformation directTransfo;
 			directTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
 			// Store pointer to an adjustable transformation, the DIRECT transformation and information that it was DIRECT in a transformationChain vector
-			TransformAndParams trPar = {&currentNode.node->data->frame, std::make_shared<TDirectTransformation>(directTransfo), true};
+			TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TDirectTransformation>(directTransfo), true};
 			transformationChain.push_back(trPar);
 
 			currentNode = currentNode.node->parent; // Move up
@@ -715,7 +833,7 @@ void TLOR2LOR::initialize()
 			inverseTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
 
 			// Store pointer to adjustable transformation, the direct transformation and information that it was direct in a transformationChain
-			TransformAndParams trPar = {&currentNode.node->data->frame, std::make_shared<TInverseTransformation>(inverseTransfo), false};
+			TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TInverseTransformation>(inverseTransfo), false};
 			transformationChainDown.push_back(trPar);
 
 			currentNode = currentNode.node->parent; // Move up
@@ -737,7 +855,7 @@ void TLOR2LOR::initialize()
 				directTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
 
 				// Store pointer to adjustable transformation, the direct transformation and information that it was direct in a transformationChain
-				TransformAndParams trPar = {&currentNode.node->data->frame, std::make_shared<TDirectTransformation>(directTransfo), true};
+				TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TDirectTransformation>(directTransfo), true};
 				transformationChain.push_back(trPar);
 
 				currentNode = currentNode.node->parent; // Move up
@@ -756,7 +874,7 @@ void TLOR2LOR::initialize()
 				inverseTransfo.setTransformParam(currentNode.node->data->frame.getEstParam());
 
 				// Store pointer to adjustable transformation, the direct transformation and information that it was direct in a transformationChain
-				TransformAndParams trPar = {&currentNode.node->data->frame, std::make_shared<TInverseTransformation>(inverseTransfo), false};
+				TransformAndParams trPar = {std::make_shared<TAdjustableHelmertTransformation>(currentNode.node->data->frame), std::make_shared<TInverseTransformation>(inverseTransfo), false};
 				transformationChainDown.push_back(trPar);
 
 				currentNode = currentNode.node->parent; // Move up
@@ -797,3 +915,4 @@ TTransformation TLOR2LOR::getCumulativeEnd(int positionInChain) const
 
 	return cumulativTransformationEnd;
 }
+

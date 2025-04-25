@@ -30,7 +30,7 @@ public:
 	*/
 	struct TransformAndParams
 	{
-		TAdjustableHelmertTransformation *adjTrafo; // Pointer to an adjustable transformation stored in a tree
+		std::shared_ptr<TAdjustableHelmertTransformation> adjTrafo; // Pointer to an adjustable transformation stored in a tree
 		std::shared_ptr<TTransformation> trafo; // Transformation (direct or inverse) between two nodes, constructed from the adjTrafo transformation parameters.
 		bool direct; // TRUE means it is a direct transformation, FALSE means inverse
 	};
@@ -53,7 +53,7 @@ public:
 		\param to Iterator set on the destination node.
 		\param name Name of the transformation to be established.
 	*/
-	TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::string &name);
+	TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::string &name, bool startFromRoot = false, bool passByRoot = false, TFreeVector theVertical = TFreeVector());
 
 	/// Destructor
 	~TLOR2LOR(){};
@@ -217,6 +217,8 @@ public:
 	*/
 	void updateTree();
 
+	bool complexPath = false;
+
 private:
 	/// Source node of the transformation chain.
 	TDataTreeIterator fFromNode;
@@ -230,10 +232,13 @@ private:
 	/// Transformation between source and destination nodes.
 	TTransformation transfo;
 
+	//Target height test
+	TAdjustableHelmertTransformation testTg;
+
 	// ID of a node in which we stop going up from "from" and start going down to "to". If going up inverse transformation taken.
 	std::vector<int> fTurningPoint;
 	bool fTurningPointLocated;
-
+	
 	/*! Returns the cumulative matrix which multiplies from left the matrix of partial derivatives (pre-multiplication)*/
 	TTransformation getCumulativeBegin(int positionInChain) const;
 	/*! Returns the cumulative matrix which should multiply from right the matrix of partial derivatives (post-multiplication)*/
@@ -244,7 +249,7 @@ private:
 		\throws Throws a logic_error if transformation was not found in the transformationChain.
 	*/
 	int getTransformationPosition(const std::string &transfoName) const;
-
+	std::vector<int>  getTransformationPositions(const std::string &transfoName) const;
 	/// Initialize the transformation, finds shortest path between the two nodes and sets up the transformation between them.
 	void initialize();
 

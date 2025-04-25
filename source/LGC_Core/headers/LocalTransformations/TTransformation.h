@@ -81,6 +81,7 @@ public:
 		/// Multiplication operator for Tranformations, it is the multiplication of the transformation matrices, enabling to chain the transformations.
 		TTransformation& operator*=(const TTransformation& trans);
 
+
 		/// Multiplication operator on TPositionVector
 		TPositionVector operator*(const TPositionVector& pos) const;
 		/// Multiplication operator on TFreeVector

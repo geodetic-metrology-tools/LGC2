@@ -269,6 +269,7 @@ TTransformation& TTransformation::operator*=(const TTransformation& trans) {
 	return  *this;
 }
 
+
 TPositionVector TTransformation::operator*(const TPositionVector& pos) const
 {
 	TPositionVector result(pos);

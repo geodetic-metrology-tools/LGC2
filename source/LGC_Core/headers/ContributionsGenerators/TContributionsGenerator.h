@@ -40,10 +40,17 @@ struct TSTNCommonDataInFrame
 	TPositionVector stationPos;
 	TPositionVector targetPos;
 	TFreeVector targetVerticalVector;
+	TFreeVector targetVerticalVectorInRoot;
 	const TLOR2LOR &tg2stTrafo;
 	const TLOR2LOR &root2TgTrafo;
+	const TLOR2LOR &root2stTrafo;
+	const TLOR2LOR &tg2stTrafoByRoot;
+	const TLOR2LOR &tg2rootTrafo;
+	const TLOR2LOR &root2tg2stTrafo;
+	const TLOR2LOR &tg2root2stTrafo;
 	TPositionVector targetPosInRoot;
 	TPositionVector targetPosInTg;
+	TPositionVector targetPosInRootWithoutHtg;
 };
 
 /*!
@@ -179,13 +186,13 @@ private:
 		TReal a,
 		TReal b,
 		TReal c,
-		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib,
-		bool rotation = false);
+		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
 
 	void addTransformationsContributions(const TLOR2LOR &lorTrafo,
 		const TPositionVector &pointPos,
 		const Eigen::Vector3d &vec,
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
+
 
 	/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 	void addTransformationsContributions3D(const TLOR2LOR &lorTrafo,

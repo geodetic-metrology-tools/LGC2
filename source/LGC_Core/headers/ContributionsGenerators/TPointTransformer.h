@@ -47,7 +47,7 @@ public:
 	\brief Returns the a transformation from 'from' node into 'to' node
 	 Be carefoul, in a case it is called for second time in a function and the transformation is not yet in the vector, it is reallocated and the reference to the first transformation is lost.
 	*/
-	const TLOR2LOR &getLORTransformation(TDataTreeIterator from, TDataTreeIterator to);
+	const TLOR2LOR &getLORTransformation(TDataTreeIterator from, TDataTreeIterator to, bool startFromRoot = false, bool passByRoot = false, TFreeVector theVertical = TFreeVector());
 	//@}
 
 	/*!@name CCS2MLA related stuff */

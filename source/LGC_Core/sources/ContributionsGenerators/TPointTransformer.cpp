@@ -178,17 +178,21 @@ TLOR2LOR TPointTransformer::getIdentityTransformation()
 	return TLOR2LOR(rootFramePosition, rootFramePosition, "IDENTITY");
 }
 
-const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator originalTreePos, TDataTreeIterator destinationTreePos)
+const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator originalTreePos, TDataTreeIterator destinationTreePos,bool startFromRoot, bool passByRoot, TFreeVector theVertical)
 {
 	std::string originalFrameName = originalTreePos->get()->frame.getName();
 	std::string destinationFrameName = destinationTreePos->get()->frame.getName();
+	
+	std::string byRoot = "false";
+	if (passByRoot)
+		byRoot = "true";
 
-	int trIndex = getTransformationIndex(originalFrameName + destinationFrameName);
+	int trIndex = getTransformationIndex(originalFrameName + destinationFrameName + byRoot);
 
 	// If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
 	if (trIndex == -1)
 	{
-		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName));
+		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName, startFromRoot, passByRoot, theVertical));
 		trIndex = (int)fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
 	}
 	std::list<TLOR2LOR>::iterator it = fLORTrafo.begin();
