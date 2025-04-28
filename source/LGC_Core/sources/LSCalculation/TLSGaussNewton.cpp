@@ -47,12 +47,12 @@ GNResult TLSGaussNewton::solve(Eigen::VectorXd initial)
 	// mark the dxTrial nonzero
 //	dxTrial.setConstant(1);
 	
-	double lmPenalty = 1e-12;
+	double lmPenalty = 1e-6;
 	//double lmPenalty = 0;
 	
 	// outer loop
 	int outerIt = 0;
-	while (dx.norm() > 1e-6 && (currentObjective > 1e-16) && outerIt < maxIter)
+	while (dx.norm() > 1e-6 && (currentObjective > 1e-12) && outerIt < maxIter)
 	{
 		// prepare the ingredients that are needed for each inner loop step:
 		// the normal matrix (before regularization), the right hand side of the normal equation system
@@ -90,8 +90,10 @@ GNResult TLSGaussNewton::solve(Eigen::VectorXd initial)
 			TSparseMatrix &C_trial = fEvaluator->getA2Matrix();
 			// TVector &W2_trial= fEvaluator->getConstraintMisclosure();
 			trialObjective = computeObjective(A_trial, invB_trial, Pv_trial, W_trial);
-			acceptLMStep = decideAcceptance(currentObjective, predictedObjective, trialObjective);
-			std::cout << " . Step accepted: " << acceptLMStep << std::endl;
+			// sufficient decreaseor step is already small
+			acceptLMStep = decideAcceptance(currentObjective, predictedObjective, trialObjective) || dxTrial.norm()<1e-6;
+			std::cout << " step accecpted: " << acceptLMStep << std::endl;
+
 			
 			if (acceptLMStep){
 				// decrease lm penalty
@@ -182,27 +184,30 @@ bool TLSGaussNewton::decideAcceptance(double currObj, double predObj, double tri
 	bool accept = true;
 	double predictedDecrease = currObj - predObj;
 	double actualDecrease = currObj - trialObj;
-//	std::cout << "cObj=" << currObj << std::endl;
-//	std::cout << "pObj=" << predObj << std::endl;
-//	std::cout << "tObj=" << trialObj << std::endl;
-//	std::cout << "pRed=" << predictedDecrease << std::endl;
-//	std::cout << "aRed=" << actualDecrease << std::endl;
-	if (trialObj < 1e-16)
+	std::cout << "current, predicted,trial " << currObj << " , " << predObj << " , " << trialObj << std::endl;
+	std::cout << std::endl << "actual decrease /predictedDecrease=" << actualDecrease / predictedDecrease << std::endl;
+	// checks for early acceptance
+	// accept if the trial objective is close to zero or the predicted decrease is not significant anymore
+	if ((trialObj < 1e-12) || (fabs(predictedDecrease) < 1e-4))
 	{
 		return true;
 	}
+	// do not allow actual increase
 	if (actualDecrease < 0)
 	{
-		accept &= false;
+		return false;
 	}
-	if (predictedDecrease < 0)
+	// raise error if linearized model objective increases (theoretically impossible, if this is the case there is a numeriocal problem with the linear system)
+	if (predictedDecrease < -1e-12)
 	{
 		throw std::runtime_error("predicted objective increased! We need decrease");
 	}
+
+	// the actual acceptance check for sufficient objectivedecrease
 	double acceptanceFactor = 0.1;
 	if (actualDecrease < acceptanceFactor * predictedDecrease)
 	{
-		accept &= false;
+		return false;
 	}
 	return accept;
 }
