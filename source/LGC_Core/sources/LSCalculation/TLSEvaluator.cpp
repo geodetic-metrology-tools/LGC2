@@ -478,3 +478,16 @@ TSparseMatrix TLSEvaluator::getPMatrix() const
 		throw std::logic_error("Must call evaluate() before using getters");
 	return iMat->getWeightMtrx();
 }
+
+Eigen::VectorXd TLSEvaluator::getResidual() const
+{
+	const Eigen::VectorXd wSqrt = iMat->getWeightMtrx().diagonal().cwiseSqrt();
+	Eigen::VectorXd residual = wSqrt.asDiagonal() * iMat->getMisclosureVctr();
+	return residual;
+}
+TSparseMatrix TLSEvaluator::getResidualJacobian() const
+{
+	const Eigen::VectorXd wSqrt = iMat->getWeightMtrx().diagonal().cwiseSqrt();
+	Eigen::SparseMatrix<double> residualJacobian = wSqrt.asDiagonal() * iMat->getFirstDgnMtrx();
+	return residualJacobian;
+}

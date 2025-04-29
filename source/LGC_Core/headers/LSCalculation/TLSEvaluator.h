@@ -88,6 +88,11 @@ public:
 	TSparseMatrix getPMatrix() const;
 	UEOIndices getIndices() const { return fData->fUEOIndices; };
 
+	// residual function and Jacobian: this is the abstract mathematical form (the weighted residual)
+	Eigen::VectorXd getResidual() const;
+	TSparseMatrix getResidualJacobian() const;
+
+
 private:
 	// indicates tha results are ready for access
 	bool isUptoDate;
