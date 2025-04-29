@@ -41,7 +41,7 @@ public:
 		double deltaInc = 2.0; /*  > 1               */
 		double deltaDec = 0.25; /*  0 < … < 1         */
 		bool showInfo = true;
-		bool relativeLambda = true;
+		bool relativeLambda = false;
 	};
 
 	/*----------------------------- results ------------------------------*/
@@ -97,13 +97,16 @@ public:
 		Eigen::VectorXd x = x0;
 		fEvaluator->setParameters(x);
 		fEvaluator->evaluate();
+		Eigen::VectorXd             v  = fEvaluator->getMisclosure();  // size m
+		Eigen::SparseMatrix<double> A = fEvaluator->getAMatrix(); // m×n
+		Eigen::SparseMatrix<double> W = fEvaluator->getPMatrix(); // m×m SPD
+
 
 		/* --- initial residual & Jacobian --- */
-		Eigen::VectorXd r = fEvaluator->getResidual();
-		Eigen::SparseMatrix<double> J = fEvaluator->getResidualJacobian();
+	//	Eigen::VectorXd r = fEvaluator->getResidual();
 
 		const std::size_t n = static_cast<std::size_t>(x.size());
-		double f = 0.5 * r.squaredNorm();
+		double f = 0.5 * v.dot(W * v);
 
 		/* --- initial damping λ --- */
 		double lambda = mCfg.lambdaInit;
@@ -113,7 +116,7 @@ public:
 				lambda = 1e-3;
 			else
 			{
-				Eigen::SparseMatrix<double> H = J.transpose() * J;
+				Eigen::SparseMatrix<double> H = A.transpose() *W*A;
 				Eigen::VectorXd diag = H.diagonal();
 				double maxDiag = (diag.size() > 0) ? diag.cwiseAbs().maxCoeff() : 1.0;
 				lambda = 1.0e-3 * (maxDiag > 1.0 ? maxDiag : 1.0);
@@ -128,43 +131,60 @@ public:
 		for (; k < mCfg.maxIterations; ++k)
 		{
 			/* gradient */
-			Eigen::VectorXd g = J.transpose() * r;
+			Eigen::VectorXd g = A.transpose() * (W * v);
 			if (g.cwiseAbs().maxCoeff() <= mCfg.tolGradient)
 			{
 				status = Status::SuccessGradient;
 				break; /* SuccessGradient */
 			}
 
-			/* (JᵀJ + λ I) p = −g  or relative lambda */
-			Eigen::SparseMatrix<double> A = J.transpose() * J;
-			if (mCfg.relativeLambda)
-			{
-				for (int i = 0; i < static_cast<int>(n); ++i)
-					A.coeffRef(i, i) *= (1+lambda);
-			}
-			else
-			{
-				for (int i = 0; i < static_cast<int>(n); ++i)
-					A.coeffRef(i, i) += lambda;
-			}
+			///*---------------- initial data ----------------*/
+			//Eigen::VectorXd v = fEvaluator->getMisclosure(); // un-weighted
+			//Eigen::SparseMatrix<double> A = fEvaluator->getAMatrix(); // Jacobian
+			//TSparseMatrix W = fEvaluator->getPMatrix(); // diag W
 
-			Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
-			solver.compute(A);
-			if (solver.info() != Eigen::Success)
+			f = 0.5 * v.dot(W * v);
+
+
+			/* -------- new step computation ----------------*/
+			Eigen::VectorXd p;
+			if (!computeLMStep(A, v, W, lambda, p))
 			{
 				status = Status::LinearSolverFailure;
 				break;
-				//return {x, k, Status::LinearSolverFailure, f};
 			}
 
-			//Eigen::VectorXd p = solver.solve(-g);
-			p = solver.solve(-g);
-			if (solver.info() != Eigen::Success)
-			{
-				status = Status::LinearSolverFailure;
-				break;
-				//return {x, k, Status::LinearSolverFailure, f};
-			}
+
+		//////	/* (JᵀJ + λ I) p = −g  or relative lambda */
+		//////	Eigen::SparseMatrix<double> A = J.transpose() * J;
+		//////	if (mCfg.relativeLambda)
+		//////	{
+		//////		for (int i = 0; i < static_cast<int>(n); ++i)
+		//////			A.coeffRef(i, i) *= (1+lambda);
+		//////	}
+		//////	else
+		//////	{
+		//////		for (int i = 0; i < static_cast<int>(n); ++i)
+		//////			A.coeffRef(i, i) += lambda;
+		//////	}
+
+		//////	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+		//////	solver.compute(A);
+		//////	if (solver.info() != Eigen::Success)
+		//////	{
+		//////		status = Status::LinearSolverFailure;
+		//////		break;
+		//////		//return {x, k, Status::LinearSolverFailure, f};
+		//////	}
+
+		//////	//Eigen::VectorXd p = solver.solve(-g);
+		//////	p = solver.solve(-g);
+		//////	if (solver.info() != Eigen::Success)
+		//////	{
+		//////		status = Status::LinearSolverFailure;
+		//////		break;
+		//////		//return {x, k, Status::LinearSolverFailure, f};
+		//////	}
 
 			/* trust-region clipping */
 			double pNorm = p.norm();
@@ -193,26 +213,47 @@ public:
 			}
 
 			/* evaluate trial point */
+			TVector vTrial;
+			TSparseMatrix ATrial, WTrial;
 			Eigen::VectorXd xTrial = x + p;
 			fEvaluator->setParameters(xTrial);
 			fEvaluator->evaluate();
-			Eigen::VectorXd rTrial = fEvaluator->getResidual();
-			Eigen::SparseMatrix<double> JTrial = fEvaluator->getResidualJacobian();
-			double fTrial = 0.5 * rTrial.squaredNorm();
+			vTrial = fEvaluator->getMisclosure();
+			ATrial = fEvaluator->getAMatrix();
+			WTrial = fEvaluator->getPMatrix();
 
-			/* predicted reduction */
-			Eigen::VectorXd Jp = J * p;
-			double predicted = -(g.dot(p) + 0.5 * Jp.squaredNorm());
-			double rho = (f - fTrial) / predicted;
+			double fTrial = 0.5 * vTrial.dot(WTrial * vTrial);
+
+			///* predicted reduction */
+			//Eigen::VectorXd Jp = J * p;
+			//double predicted = -(g.dot(p) + 0.5 * Jp.squaredNorm());
+			//double rho = (f - fTrial) / predicted;
+			//double fOld = f;
+
+			/* ---------- predicted reduction ----------------------------------- *
+			 *  m(p) = f + gᵀp + ½ pᵀ H p   with
+			 *        g = Aᵀ W v ,   H = Aᵀ W A
+			 *  We compute ½ pᵀ H p  via ½ (Ap)ᵀ W (Ap)
+			 *-------------------------------------------------------------------*/
+			Eigen::VectorXd Ap = A * p; // m-vector
+			double modelSecond = 0.5 * Ap.dot(W * Ap); // ½ pᵀ H p
+			double predicted = -(g.dot(p) + modelSecond);
+
+			double rho = (f - fTrial) / predicted; // agreement ratio
 			double fOld = f;
 
+			/* ---------- accept / reject --------------------------------------- */
 			bool accept = rho > 0.0;
 			if (accept)
 			{
+				/* promote trial quantities */
 				x = std::move(xTrial);
-				r = std::move(rTrial);
-				J = std::move(JTrial);
+				v = std::move(vTrial);
+				A = std::move(ATrial);
+				W = std::move(WTrial);
 				f = fTrial;
+
+				/* damp-parameter update */
 				lambda = (mCfg.lambdaDec * lambda > 1.0e-10) ? mCfg.lambdaDec * lambda : 1.0e-10;
 			}
 			else
@@ -220,7 +261,9 @@ public:
 				lambda *= mCfg.lambdaInc;
 			}
 
-			/* radius update */
+
+
+					/* radius update */
 			if (rho < 0.25)
 			{
 				delta = (delta * mCfg.deltaDec > 1.0e-12) ? delta * mCfg.deltaDec : 1.0e-12;
@@ -243,7 +286,7 @@ public:
 		//Status status = Status::MaxIterations;
 		if (k < mCfg.maxIterations)
 		{
-			Eigen::VectorXd g = J.transpose() * r;
+			Eigen::VectorXd g = A.transpose() * W * v;
 		//	if (g.cwiseAbs().maxCoeff() <= mCfg.tolGradient)
 		//	{
 		//		status = Status::SuccessGradient;
@@ -298,6 +341,47 @@ private:
 			return "unknown status";
 		}
 	}
+
+	/*--------------------------------------------------------------------
+ *  Solve   (Aᵀ W A + λ R) p = -Aᵀ W v
+ *  ‣ W   given as its diagonal  w   (size m)
+ *  ‣ R   = I            if !mCfg.relativeLambda
+ *        = diag(Aᵀ W A) if  mCfg.relativeLambda
+ *-------------------------------------------------------------------*/
+bool computeLMStep(const Eigen::SparseMatrix<double>& A,
+                   const Eigen::VectorXd&             v,
+                   const TSparseMatrix&             W,
+                   double                             lambda,
+                   Eigen::VectorXd&                   p) const
+{
+    /* gradient g = Aᵀ W v  */
+    Eigen::VectorXd g = A.transpose() * (W * v);
+
+    /* Hessian H = Aᵀ W A   */
+    Eigen::SparseMatrix<double> H = A.transpose() * (W * A);
+
+    /* add damping on the diagonal */
+    if (mCfg.relativeLambda)
+    {
+        Eigen::VectorXd dH = H.diagonal();
+        for (int i = 0; i < H.rows(); ++i)
+            H.coeffRef(i,i) += lambda * dH(i);
+    }
+    else
+    {
+        for (int i = 0; i < H.rows(); ++i)
+            H.coeffRef(i,i) += lambda;
+    }
+
+    /* sparse LDLᵀ */
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+    solver.compute(H);
+    if (solver.info() != Eigen::Success) return false;
+
+    p = solver.solve(-g);
+    return solver.info() == Eigen::Success;
+}
+
 
 };
 
