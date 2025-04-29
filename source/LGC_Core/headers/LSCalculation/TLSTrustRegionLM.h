@@ -31,7 +31,7 @@ public:
 	struct Config
 	{
 		std::size_t maxIterations = 1000;
-		double deltaMax = 1e+6;
+		double deltaMax = 1e+3;
 		double tolGradient = 1.0e-6;
 		double tolStep = 1.0e-12;
 		double tolObjective = 1.0e-10;
@@ -40,7 +40,8 @@ public:
 		double lambdaDec = 0.1; /*  0 < … < 1         */
 		double deltaInc = 2.0; /*  > 1               */
 		double deltaDec = 0.25; /*  0 < … < 1         */
-		double showInfo = true;
+		bool showInfo = true;
+		bool relativeLambda = true;
 	};
 
 	/*----------------------------- results ------------------------------*/
@@ -108,10 +109,15 @@ public:
 		double lambda = mCfg.lambdaInit;
 		if (lambda <= 0.0)
 		{
-			Eigen::SparseMatrix<double> H = J.transpose() * J;
-			Eigen::VectorXd diag = H.diagonal();
-			double maxDiag = (diag.size() > 0) ? diag.cwiseAbs().maxCoeff() : 1.0;
-			lambda = 1.0e-3 * (maxDiag > 1.0 ? maxDiag : 1.0);
+			if (mCfg.relativeLambda)
+				lambda = 1e-3;
+			else
+			{
+				Eigen::SparseMatrix<double> H = J.transpose() * J;
+				Eigen::VectorXd diag = H.diagonal();
+				double maxDiag = (diag.size() > 0) ? diag.cwiseAbs().maxCoeff() : 1.0;
+				lambda = 1.0e-3 * (maxDiag > 1.0 ? maxDiag : 1.0);
+			}
 		}
 
 		/* --- trust-region radius --- */
@@ -129,10 +135,18 @@ public:
 				break; /* SuccessGradient */
 			}
 
-			/* (JᵀJ + λ I) p = −g */
+			/* (JᵀJ + λ I) p = −g  or relative lambda */
 			Eigen::SparseMatrix<double> A = J.transpose() * J;
-			for (int i = 0; i < static_cast<int>(n); ++i)
-				A.coeffRef(i, i) += lambda;
+			if (mCfg.relativeLambda)
+			{
+				for (int i = 0; i < static_cast<int>(n); ++i)
+					A.coeffRef(i, i) *= (1+lambda);
+			}
+			else
+			{
+				for (int i = 0; i < static_cast<int>(n); ++i)
+					A.coeffRef(i, i) += lambda;
+			}
 
 			Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 			solver.compute(A);
@@ -199,7 +213,7 @@ public:
 				r = std::move(rTrial);
 				J = std::move(JTrial);
 				f = fTrial;
-				lambda = (mCfg.lambdaDec * lambda > 1.0e-7) ? mCfg.lambdaDec * lambda : 1.0e-7;
+				lambda = (mCfg.lambdaDec * lambda > 1.0e-10) ? mCfg.lambdaDec * lambda : 1.0e-10;
 			}
 			else
 			{
@@ -244,7 +258,7 @@ public:
 		//	}
 			if (mCfg.showInfo)
 			{
-				std::cout << std::setw(4) << k << std::setw(12) << p.norm() << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << f << std::setw(14)
+				std::cout << std::setw(4) << k << std::setw(12) << p.norm() << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << 2*f << std::setw(14)
 						  << sqrt(2*f/d) << std::setw(14) << g.norm() << std::endl;
 				std::cout << "\n>>> Termination: " << statusMessage(status) << "  |  iterations = " << k << "  |  final f = " << f << std::endl;
 			}
