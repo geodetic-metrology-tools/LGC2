@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <TLSEvaluator.h>
 #include <iomanip>                  /* for nice column formatting */
+#include "QuantileFunctions.h"
 
 
 #include <Eigen/Core>
@@ -58,6 +59,9 @@ public:
 		std::size_t iterations;
 		Status status;
 		double finalCost; /* ½‖r‖²                        */
+		double sigma0APosteriori;
+		bool isInLimits;
+
 	};
 
 	/*------------------------- constructor ------------------------------*/
@@ -69,7 +73,23 @@ public:
 
 	/*--------------------------- solver ---------------------------------*/
 	Result solve(const Eigen::VectorXd &x0)
-	{
+	{	
+		// compute expected sigmas limits
+		int d = fEvaluator->getIndices().EIndex - fEvaluator->getIndices().UIndex;
+
+		limits fisherLim = {0, 0};
+		if (d > 0)
+		{
+			double chiUp = deviates_chi_sq_0975(d);
+			double chiLow = deviates_chi_sq_0025(d);
+			// Limits
+			fisherLim.s0PostUpLimit = sqrtq(chiUp / d);
+			fisherLim.s0PostLoLimit = sqrtq(chiLow / d);
+		}
+
+
+
+
 		Status status = Status::MaxIterations;
 		Eigen::VectorXd p;
 		/* --- initial parameter vector --- */
@@ -144,12 +164,12 @@ public:
 			{
 				if (k % 10 == 0)
 				{
-					std::cout << std::setw(4) << "Iter" << std::setw(12) << "|dx|" << std::setw(12) << "TR Rad" << std::setw(12) << "lambda" << std::setw(14) << "f" << std::setw(14)
-							  << "|grad|" << std::endl;
+					std::cout << std::setw(4) << "Iter" << std::setw(12) << "|dx|" << std::setw(12) << "TR Rad" << std::setw(12) << "lambda" << std::setw(14) << "2*f"
+							  << std::setw(14) << "sqrt(2*f/dof)" << std::setw(14) << "|grad|" << std::endl;
 				}
 
-				std::cout << std::setw(4) << k << std::setw(12) << pNorm << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << f << std::setw(14)
-						  << gNorm << std::endl;
+				std::cout << std::setw(4) << k << std::setw(12) << pNorm << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << 2*f << std::setw(14)
+						  << sqrt(2*f / d) << std::setw(14) << gNorm << std::endl;
 			}
 
 			if (pNorm <= mCfg.tolStep * (1.0 + x.norm()))
@@ -225,12 +245,20 @@ public:
 			if (mCfg.showInfo)
 			{
 				std::cout << std::setw(4) << k << std::setw(12) << p.norm() << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << f << std::setw(14)
-						  << g.norm() << std::endl;
+						  << sqrt(2*f/d) << std::setw(14) << g.norm() << std::endl;
 				std::cout << "\n>>> Termination: " << statusMessage(status) << "  |  iterations = " << k << "  |  final f = " << f << std::endl;
 			}
 		}
 
-		return {x, k, status, f};
+		// compute expected sigmas limits
+		double currentObjective = 2 * f;
+		double sigma0APosteriori = sqrt(currentObjective / d);
+
+		bool isInLimits = (sigma0APosteriori < fisherLim.s0PostUpLimit) && (sigma0APosteriori > fisherLim.s0PostLoLimit);
+		std::cout << "S0Post" << sigma0APosteriori<< std::endl;
+		std::cout << "inLimits " << isInLimits << std::endl;
+
+		return {x, k, status, f, sigma0APosteriori, isInLimits};
 	}
 
 	/* ---------------- public data member (as requested) ---------------- */
