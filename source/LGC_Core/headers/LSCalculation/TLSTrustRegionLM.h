@@ -30,7 +30,7 @@ public:
 	struct Config
 	{
 		std::size_t maxIterations = 1000;
-		double deltaMax = 1000.0;
+		double deltaMax = 1e+6;
 		double tolGradient = 1.0e-6;
 		double tolStep = 1.0e-12;
 		double tolObjective = 1.0e-10;
@@ -117,12 +117,20 @@ public:
 			Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
 			solver.compute(A);
 			if (solver.info() != Eigen::Success)
-				return {x, k, Status::LinearSolverFailure, f};
+			{
+				status = Status::LinearSolverFailure;
+				break;
+				//return {x, k, Status::LinearSolverFailure, f};
+			}
 
 			//Eigen::VectorXd p = solver.solve(-g);
 			p = solver.solve(-g);
 			if (solver.info() != Eigen::Success)
-				return {x, k, Status::LinearSolverFailure, f};
+			{
+				status = Status::LinearSolverFailure;
+				break;
+				//return {x, k, Status::LinearSolverFailure, f};
+			}
 
 			/* trust-region clipping */
 			double pNorm = p.norm();
