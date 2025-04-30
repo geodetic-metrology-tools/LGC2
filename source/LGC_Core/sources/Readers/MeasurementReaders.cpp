@@ -1356,10 +1356,8 @@ void TKeyINCLY::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		instrument.refAngleCorrectionValue = TAngle(opts.getParamRgon2rad("RF", instrument.refAngleCorrectionValue));
 		instrument.refSigmaCorrectionValue = TAngle(opts.getParamRcc2rad("RFSE", instrument.refSigmaCorrectionValue));
 
-		bool useWyler = opts.has("Wyler");
-
 		// set measurement value
-		TINCLY incly(stationPoint, instrument, useWyler);
+		TINCLY incly(stationPoint, instrument);
 
 		TINCLYROM &inclyROMLatest = proj.getCurrentNode().measurements.fINCLY.back();
 

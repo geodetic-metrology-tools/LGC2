@@ -265,26 +265,28 @@ Goal: reproduce the setup in Florians inclinometer illustration
 *OLOC
 *JSON
 *INSTR
-%*INCL  instr_ID  sigma_angle_cc  sigma_ppm  aCorr_gon  sigma_aCorr_cc  refAngle_gon  sigma_refAngle_cc
 % assuming 30 murad angle precision = 120 cc?;
-*INCL  myWyler 120 0 0 0 0 1
+*INCL  WylerInclino 120 0 0 0 0 1 Type Wyler
+*INCL StandardInclino 120 0 0 0 0 1 Type Normal
 *POIN
 % to indtroduce a variable. LGC will not compute without any free variable
 dummy 0 0 0 SX 1 SY 1 SZ 1
 *CALA
 origin 0 0 0
-% parameters describe transformation from subframe coordinates to root coordinates. rotation oder Rxyz = Rx * Ry * Rz
+% parameters describe transformation from subframe coordinates to root coordinates. rotation order Rxyz = Rx * Ry * Rz
 % RY = primary angle, RX = secondary angle
 *FRAME originFrame1 0 0 0 0 7.145846 0 1
-*INCLY myWyler
+*INCLY WylerInclino
 % no secondary rotation: wyler and lgc model agree
-origin 7.145846 Wyler
+origin 7.145846 
+*INCLY StandardInclino
 origin 7.145846 
 *ENDFRAME
 *FRAME originFrame2 0 0 0 10 7.145846 0 1
-*INCLY myWyler
-% secondary rotation: wyler and lgc model disagree, wyler is affected
-origin 7.145846 Wyler % will produce a substantial residual because the wyler model observes a smaller angle because of the big secondary rotation component
+*INCLY WylerInclino
+% secondary rotation: wyler and standard lgc model disagree, wyler is affected, lgc model not
+origin 7.145846 % will produce a substantial residual because the wyler model observes a smaller angle because of the big secondary rotation component
+*INCLY StandardInclino
 origin 7.145846 
 *ENDFRAME
 *END)";
@@ -297,8 +299,8 @@ testing reading of incly instrument type
 *INSTR
 %*INCL  instr_ID  sigma_angle_cc  sigma_ppm  aCorr_gon  sigma_aCorr_cc  refAngle_gon  sigma_refAngle_cc
 % assuming 30 murad angle precision = 120 cc?;
-*INCL  myInc0 120 0 0 0 0 1 Type 1
-*INCL  myInc1 120 0 0 0 0 1 Type 0
+*INCL  myInc0 120 0 0 0 0 1 Type Wyler
+*INCL  myInc1 120 0 0 0 0 1 Type Normal
 *POIN
 % to indtroduce a variable. LGC will not compute without any free variable
 dummy 0 0 0 SX 1 SY 1 SZ 1

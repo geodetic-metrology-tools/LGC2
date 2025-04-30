@@ -31,7 +31,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the scale
-	(*stream).writeStringLeft(nameWidth, "Obs-Model"); // observation model: normal or wyler
+	(*stream).writeStringLeft(nameWidth, "Instr-Model"); // observation model: normal or wyler
 	(*stream).writeString(obsWidth, "OBSERVE"); // mesured offset
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALCULE"); // estimated offset
@@ -87,6 +87,13 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
 	writeINCLResultsHeader(); // write the title line for the observations
 
+	TInstrumentData::TINCL::InstrumentType instrType = inclyrom.instrument.type;
+	std::string obsModel;
+	if (instrType == TInstrumentData::TINCL::InstrumentType::Normal)
+		obsModel = "default";
+	else if (instrType == TInstrumentData::TINCL::InstrumentType::Wyler)
+		obsModel = "Wyler";
+
 	for (auto const &ItINCLY : inclyrom.measINCLY)
 	{
 		(*stream) << TABs;
@@ -94,11 +101,6 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 		(*stream).writeStringLeft(nameWidth, ItINCLY.targetPos->getName());
 
 		// write Observation model
-		std::string obsModel;
-		if (ItINCLY.fUseWyler)
-			obsModel = "Wyler";
-		else
-			obsModel = "default";
 
 		(*stream).writeStringLeft(nameWidth, obsModel);
 

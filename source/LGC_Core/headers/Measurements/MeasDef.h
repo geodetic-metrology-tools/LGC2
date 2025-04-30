@@ -628,17 +628,14 @@ public:
 	/*!@name Constructors */
 	//@{
 
-	TINCLY(const LGCAdjustablePoint &pos, TInstrumentData::TINCL tgt, bool useWyler) :
-		TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>(pos, tgt), fUseWyler(useWyler)
+	TINCLY(const LGCAdjustablePoint &pos, TInstrumentData::TINCL tgt) :
+		TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>(pos, tgt)
 	{
 	}
 	//@}
 
 	/// Destructor
 	~TINCLY() override = default;
-
-	bool fUseWyler;
-	bool fUseCorr = true;
 
 	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
 	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }

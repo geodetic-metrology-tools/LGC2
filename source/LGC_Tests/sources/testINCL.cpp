@@ -529,8 +529,8 @@ void object::test<14>()
 			}
 		}
 	}
-	ensure_equals("Inclinometer instrument type not read correctly", inclyMeas.at(0).target.type, 1);
-	ensure_equals("Inclinometer instrument type not read correctly", inclyMeas.at(1).target.type, 0);
+	ensure("Inclinometer instrument type should be \"Wyler\"", (inclyMeas.at(0).target.type== TInstrumentData::TINCL::InstrumentType::Wyler));
+	ensure("Inclinometer instrument type should be \"Normal\"", (inclyMeas.at(1).target.type== TInstrumentData::TINCL::InstrumentType::Normal));
 }
 
 } // namespace tut

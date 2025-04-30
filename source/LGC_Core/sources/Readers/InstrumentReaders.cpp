@@ -283,9 +283,19 @@ void TKeyINCL::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 //	checkInstrument(9, incls, tokens);
 	TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 
-	int type = 0;
+	std::string type;
+	TInstrumentData::TINCL::InstrumentType instrType = TInstrumentData::TINCL::InstrumentType::Normal;
 	if (opts.has("Type"))
-		type = opts.getParamI("Type");
+	{
+		type = opts.getParamS("Type", "");
+		if (type == "Normal")
+			instrType = TInstrumentData::TINCL::InstrumentType::Normal;
+		else if (type == "Wyler")
+			instrType = TInstrumentData::TINCL::InstrumentType::Wyler;
+		else
+			throw std::runtime_error("Inclinometer type \"" + type + "\" is unknown.");
+
+	}
 
 	// not necessary to pass a constructed object
 //	auto i = std::make_shared<TInstrumentData::TINCL>(TInstrumentData::TINCL(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
@@ -295,7 +305,7 @@ void TKeyINCL::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 	auto i = std::make_shared<TInstrumentData::TINCL>(tokens.at(2), TAngle(std::stor(tokens.at(3)), TAngle::EUnits::kCCs),
 		TAngle(std::stor(tokens.at(4)), TAngle::EUnits::kMicroRadians), TAngle(std::stor(tokens.at(5)), TAngle::EUnits::kGons),
 		TAngle(std::stor(tokens.at(6)), TAngle::EUnits::kCCs), TAngle(std::stor(tokens.at(7)), TAngle::EUnits::kGons),
-		TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs), type, line);
+		TAngle(std::stor(tokens.at(8)), TAngle::EUnits::kCCs), instrType, line);
 
 	// store the new inclinometer
 	incls.insert(std::make_pair(tokens.at(2), i));

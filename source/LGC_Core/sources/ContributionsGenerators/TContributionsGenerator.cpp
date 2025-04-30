@@ -1424,18 +1424,20 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	TReal ZSt = stationV.getZ().getMetresValue();
 	TReal XStNormalized = XSt / stationV.length();
 
-	bool useWyler = incly.fUseWyler;
-	bool useCorr = incly.fUseCorr;
+	TInstrumentData::TINCL::InstrumentType instrType = inclST.instrument.type;
 	TAngle calcMeas;
-	if (!useWyler)
+	if (instrType == TInstrumentData::TINCL::InstrumentType::Normal)
 		calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
-	else if (useWyler)
+	else if (instrType == TInstrumentData::TINCL::InstrumentType::Wyler)
 	{
+		//gravity correction
 		double gLHC = 9.805770;
-		double gWinter = 9.806670;
+		double gWinterthur = 9.806670;
 		double corr = 1;
+		// correction should be done during acquisition
+		bool useCorr = false;
 		if (useCorr)
-			corr = gLHC / gWinter;
+			corr = gLHC / gWinterthur;
 		calcMeas = TAngle(asin(XStNormalized * corr) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue);
 	}
 
@@ -1445,7 +1447,7 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 
 	// CalcMeas, transformationContributions, variance
 	Eigen::Vector3d locVert = stationV.toRealVector();
-	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, locVert, useWyler, useCorr), obsVariance};
+	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, locVert, instrType), obsVariance};
 }
 
 ////ECWS contribution
@@ -2048,7 +2050,7 @@ void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR &lorTraf
 }
 
 decltype(INCLYContrib::fStTransformContrib)
-	TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, const Eigen::Vector3d &locVert, bool useWyler, bool useCorr)
+	TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, const Eigen::Vector3d &locVert, TInstrumentData::TINCL::InstrumentType instrType)
 {
 	const std::vector<TLOR2LOR::TransformAndParams> &trafoChain = lorTrafo.getTransformationChain();
 
@@ -2076,7 +2078,7 @@ decltype(INCLYContrib::fStTransformContrib)
 		double z = locVert(2);
 	
 		Eigen::Vector3d trigoDiff;
-		if (!useWyler)
+		if (instrType == TInstrumentData::TINCL::InstrumentType::Normal)
 		{
 			double square = pow2q(x) + pow2q(z);
 			if (isZero(square))
@@ -2088,7 +2090,7 @@ decltype(INCLYContrib::fStTransformContrib)
 			// for atan2
 			trigoDiff << z / square, 0.0, -x / square;
 		}
-		else if (useWyler)
+		else if (instrType == TInstrumentData::TINCL::InstrumentType::Wyler)
 		{
 			if (isZero(1 - pow2q(x)))
 			{
@@ -2101,13 +2103,15 @@ decltype(INCLYContrib::fStTransformContrib)
 			double r2_x2 = r2 - x * x;
 			double sqrtR2_x2 = sqrt(r2_x2);
 			Eigen::Vector3d trigoDiffAsin;
-			//trigoDiffAsin << sqrtR2_x2 / r2, -(x * y) / (r2 * sqrtR2_x2), -(x * z) / (r2 * sqrtR2_x2);
-			trigoDiffAsin << 1 / sqrt(1 - x * x),0,0;
+			trigoDiffAsin << sqrtR2_x2 / r2, -(x * y) / (r2 * sqrtR2_x2), -(x * z) / (r2 * sqrtR2_x2);
+			// trigoDiffAsin << 1 / sqrt(1 - x * x),0,0;
 			double gLHC = 9.805770;
-			double gWinter = 9.806670;
+			double gWinterthur = 9.806670;
 			double corr = 1;
+			// correction should be done during acquisition
+			bool useCorr = false;
 			if (useCorr)
-				corr = gLHC / gWinter;
+				corr = gLHC / gWinterthur;
 
 			trigoDiff = corr * trigoDiffAsin;
 		}

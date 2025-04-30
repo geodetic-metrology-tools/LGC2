@@ -509,6 +509,12 @@ public:
 	struct TINCL
 #endif // USE_SERIALIZER
 	{
+		enum class InstrumentType
+		{
+			Normal,
+			Wyler
+		};
+
 		TINCL(std::string ID = "",
 			TAngle sigmaAngl = TAngle(),
 			TAngle sigmaPpm = TAngle(),
@@ -516,7 +522,7 @@ public:
 			TAngle sigmaCorrectionValue = TAngle(),
 			TAngle refAngleCorrectionValue = TAngle(),
 			TAngle refSigmaCorrectionValue = TAngle(),
-			int type = 0,
+			InstrumentType type = InstrumentType::Normal,
 			int line = 0,
 			TAngle sigmaCombinedAngle = TAngle()) :
 			ID(ID),
@@ -537,7 +543,7 @@ public:
 		TAngle sigmaCorrectionValue; // [rad]
 		TAngle refAngleCorrectionValue; // [rad]
 		TAngle refSigmaCorrectionValue; // [rad]
-		int type;
+		InstrumentType type;
 		int line;
 		TAngle sigmaCombinedAngle; // [rad]
 
