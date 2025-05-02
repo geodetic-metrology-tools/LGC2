@@ -9,19 +9,21 @@
 
 #include <cmath>
 #include <cstddef>
+#include <iomanip> /* for nice column formatting */
 #include <limits>
 #include <memory>
 #include <stdexcept>
-#include <TLSEvaluator.h>
-#include <iomanip>                  /* for nice column formatting */
-#include "QuantileFunctions.h"
-
 
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <Eigen/SparseCholesky>
 
- /*=========================================================================*/
+#include <TLSEvaluator.h>
+#include <TSparseMatrix.h>
+
+#include "QuantileFunctions.h"
+
+/*=========================================================================*/
 /*  Solver class                                                           */
 /*=========================================================================*/
 class TLSTrustRegionLM
@@ -35,11 +37,13 @@ public:
 		double tolGradient = 1.0e-6;
 		double tolRelStep = 1.0e-12;
 		double tolRelObj = 1.0e-10;
-		double lambdaInit = -1.0; /*  < 0 → heuristic    */
+		double lambdaInit = 100.0; /*  < 0 → heuristic    */
 		double lambdaInc = 10.0; /*  > 1               */
 		double lambdaDec = 0.1; /*  0 < … < 1         */
 		double deltaInc = 2.0; /*  > 1               */
 		double deltaDec = 0.25; /*  0 < … < 1         */
+		double trRadiusInit = 10;
+		double rhoThreshold = 0.1;
 		bool showInfo = true;
 		bool relativeLambda = false;
 	};
@@ -57,12 +61,10 @@ public:
 	struct Result
 	{
 		Eigen::VectorXd x;
-		std::size_t iterations;
+		Eigen::VectorXd mult;
+		int iterations;
 		Status status;
 		double finalCost; /* ½‖r‖²                        */
-		double sigma0APosteriori;
-		bool isInLimits;
-
 	};
 
 	/*------------------------- constructor ------------------------------*/
@@ -72,255 +74,235 @@ public:
 			throw std::invalid_argument("TLSTrustRegionLM: evaluator is null");
 	}
 
-	/*--------------------------- solver ---------------------------------*/
-	Result solve(const Eigen::VectorXd &x0)
-	{	
-		// compute expected sigmas limits
-		int d = fEvaluator->getIndices().EIndex - fEvaluator->getIndices().UIndex;
+	Result Solve(const Eigen::VectorXd &x0)
+	{
+		Eigen::VectorXd xCurr = x0;
+		Eigen::VectorXd xTrial = xCurr;
+		Eigen::VectorXd dx = 1e+12 * Eigen::VectorXd::Ones(xCurr.size());
+		Eigen::VectorXd mult = Eigen::VectorXd::Zero(fEvaluator->getIndices().CIndex);
+		Eigen::VectorXd newMult = mult;
+		double delta = mCfg.trRadiusInit;
+		double lmDamping = mCfg.lambdaInit;
 
-		limits fisherLim = {0, 0};
-		if (d > 0)
-		{
-			double chiUp = deviates_chi_sq_0975(d);
-			double chiLow = deviates_chi_sq_0025(d);
-			// Limits
-			fisherLim.s0PostUpLimit = sqrtq(chiUp / d);
-			fisherLim.s0PostLoLimit = sqrtq(chiLow / d);
-		}
-
-
-
-
-		Status status = Status::MaxIterations;
-		Eigen::VectorXd p;
-		/* --- initial parameter vector --- */
-		Eigen::VectorXd x = x0;
-		fEvaluator->setParameters(x);
+		// do initial evaluation
+		fEvaluator->setParameters(xCurr);
 		fEvaluator->evaluate();
-		Eigen::VectorXd             v  = fEvaluator->getMisclosure();  // size m
-		Eigen::SparseMatrix<double> A = fEvaluator->getAMatrix(); // m×n
-		Eigen::SparseMatrix<double> W = fEvaluator->getPMatrix(); // m×m SPD
+		TLSInputMatrices modelEval_xCurr = fEvaluator->getInputMatricesCopy();
+		TLSInputMatrices modelEval_xTrial = modelEval_xCurr;
 
+		double fCurr = 1e+12;
+		double fPrev = fCurr;
+		Status status;
 
-		/* --- initial residual & Jacobian --- */
-
-		const std::size_t n = static_cast<std::size_t>(x.size());
-		double f = 0.5 * v.dot(W * v);
-
-		/* --- initial damping λ --- */
-		double lambda = mCfg.lambdaInit;
-		if (lambda <= 0.0)
+		for (int k = 0; k < mCfg.maxIterations; ++k)
 		{
-			if (mCfg.relativeLambda)
-				lambda = 1e-3;
-			else
+			fCurr = modelEval_xCurr.getObj();
+			if (CheckConvergence(dx, mult, modelEval_xCurr, fPrev, fCurr, status))
+				return Result{xCurr, mult, k, status, fCurr};
+
+			if (!SolveKKTStep(modelEval_xCurr, lmDamping, dx, newMult))
 			{
-				Eigen::SparseMatrix<double> H = A.transpose() *W*A;
-				Eigen::VectorXd diag = H.diagonal();
-				double maxDiag = (diag.size() > 0) ? diag.cwiseAbs().maxCoeff() : 1.0;
-				lambda = 1.0e-3 * (maxDiag > 1.0 ? maxDiag : 1.0);
+				delta *= mCfg.deltaDec;
+				lmDamping *= mCfg.lambdaInc;
+				continue;
 			}
-		}
+			std::cout << "|dx|=" << dx.norm() << "    f=" << fCurr << "    lambda=" << lmDamping << std::endl;
 
-		/* --- trust-region radius --- */
-		double delta = mCfg.deltaMax;
+			ClipStep(dx, mult, delta);
 
-		/* ==================== main loop =================== */
-		std::size_t k = 0;
-		for (; k < mCfg.maxIterations; ++k)
-		{
-			/* gradient */
-			Eigen::VectorXd g = A.transpose() * (W * v);
-			if (g.cwiseAbs().maxCoeff() <= mCfg.tolGradient)
-			{
-				status = Status::SuccessGradient;
-				break; /* SuccessGradient */
-			}
-
-			f = 0.5 * v.dot(W * v);
-
-
-			/* -------- new step computation ----------------*/
-			Eigen::VectorXd p;
-			if (!computeLMStep(A, v, W, lambda, p))
-			{
-				status = Status::LinearSolverFailure;
-				break;
-			}
-
-			/* trust-region clipping */
-			double pNorm = p.norm();
-			if (pNorm > delta)
-			{
-				p *= delta / pNorm;
-				pNorm = delta;
-			}	
-			double gNorm = g.norm();
-			if (mCfg.showInfo)
-			{
-				if (k % 10 == 0)
-				{
-					std::cout << std::setw(4) << "Iter" << std::setw(12) << "|dx|" << std::setw(12) << "TR Rad" << std::setw(12) << "lambda" << std::setw(14) << "2*f"
-							  << std::setw(14) << "sqrt(2*f/dof)" << std::setw(14) << "|grad|" << std::endl;
-				}
-
-				std::cout << std::setw(4) << k << std::setw(12) << pNorm << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << 2*f << std::setw(14)
-						  << sqrt(2*f / d) << std::setw(14) << gNorm << std::endl;
-			}
-
-			if (pNorm <= mCfg.tolRelStep * (1.0 + x.norm()))
-			{
-				status = Status::SuccessStep;
-				break; /* SuccessStep */
-			}
-
-			/* evaluate trial point */
-			TVector vTrial;
-			TSparseMatrix ATrial, WTrial;
-			Eigen::VectorXd xTrial = x + p;
+			Eigen::VectorXd xTrial = xCurr + dx;
 			fEvaluator->setParameters(xTrial);
 			fEvaluator->evaluate();
-			vTrial = fEvaluator->getMisclosure();
-			ATrial = fEvaluator->getAMatrix();
-			WTrial = fEvaluator->getPMatrix();
+			modelEval_xTrial = fEvaluator->getInputMatricesCopy();
 
-			double fTrial = 0.5 * vTrial.dot(WTrial * vTrial);
+			double fTrial = modelEval_xTrial.getObj();
 
+			double predictedObjective = PredictedObjective(modelEval_xTrial, dx);
+			double predictedReduction = predictedObjective - fCurr;
+			double actualReduction = fTrial - fCurr;
 
-			/* ---------- predicted reduction ----------------------------------- *
-			 *  m(p) = f + gᵀp + ½ pᵀ H p   with
-			 *        g = Aᵀ W v ,   H = Aᵀ W A
-			 *  We compute ½ pᵀ H p  via ½ (Ap)ᵀ W (Ap)
-			 *-------------------------------------------------------------------*/
-			Eigen::VectorXd Ap = A * p; // m-vector
-			double modelSecond = 0.5 * Ap.dot(W * Ap); // ½ pᵀ H p
-			double predicted = -(g.dot(p) + modelSecond);
-
-			double rho = (f - fTrial) / predicted; // agreement ratio
-			double fOld = f;
-
-			/* ---------- accept / reject --------------------------------------- */
-			bool accept = rho > 0.0;
+			double rho = actualReduction / predictedReduction;
+			// TODO: check constraint violation
+			//bool accept = (rho > mCfg.rhoThreshold) && (actualReduction < 0);
+			bool accept = checkStepAndUpdateTrustRegion(lmDamping, delta, rho, dx, actualReduction);
+			std::cout << accept << std::endl;
 			if (accept)
 			{
-				/* promote trial quantities */
-				x = std::move(xTrial);
-				v = std::move(vTrial);
-				A = std::move(ATrial);
-				W = std::move(WTrial);
-				f = fTrial;
-
-				/* damp-parameter update */
-				lambda = (mCfg.lambdaDec * lambda > 1.0e-10) ? mCfg.lambdaDec * lambda : 1.0e-10;
-			}
-			else
-			{
-				lambda *= mCfg.lambdaInc;
+				xCurr += dx;
+				mult = newMult;
+				fPrev = fCurr;
+				// save one evaluation
+				modelEval_xCurr = modelEval_xTrial;
 			}
 
-
-
-					/* radius update */
-			if (rho < 0.25)
-			{
-				// poor agreement: shrink trust region radius
-				delta = (delta * mCfg.deltaDec > 1.0e-12) ? delta * mCfg.deltaDec : 1.0e-12;
-			}
-			else if (rho > 0.75 && std::abs(pNorm - delta) <= 1.0e-12)
-			{
-				delta = (delta * mCfg.deltaInc < mCfg.deltaMax) ? delta * mCfg.deltaInc : mCfg.deltaMax;
-			}
-
-			/* objective convergence */
-			if (accept && std::abs(fOld - fTrial) <= mCfg.tolRelObj * fOld)
-			{
-				status = Status::SuccessObjective;
-				break; /* SuccessObjective */
-			}
 		}
 
-		/* --- exit classification --- */
-		//Status status = Status::MaxIterations;
-		if (k < mCfg.maxIterations)
+		return Result{xCurr, mult, 100000, Status::MaxIterations, fCurr};
+	}
+
+private:
+	bool CheckConvergence(const Eigen::VectorXd &dx, const Eigen::VectorXd &mult, const TLSInputMatrices &input, double fPrev, double fCurr, Status &statusOut)
+	{
+		// 1. Check gradient norm (KKT stationarity)
+		Eigen::VectorXd fGrad = input.getObjGrad();
+		Eigen::VectorXd cGrad = input.getCnstrFirstDgnMtrx().transpose() * mult;
+		Eigen::VectorXd grad = fGrad + cGrad;
+
+		if (grad.norm() <= mCfg.tolGradient)
 		{
-			Eigen::VectorXd g = A.transpose() * W * v;
-			if (mCfg.showInfo)
+			statusOut = Status::SuccessGradient;
+			return true;
+		}
+
+		Eigen::VectorXd residual = input.getV();
+		// 2. Check step size (relative)
+		double relStep = dx.norm() / (1.0 + residual.size());
+		//if (dx.norm() <= mCfg.tolRelStep * (1.0 + residual.norm()))
+		if (dx.norm() <=1e-7)
+		{
+			statusOut = Status::SuccessStep;
+			return true;
+		}
+
+		// 3. Check relative objective change
+		double absObjDiff = std::abs(fPrev - fCurr);
+		if (absObjDiff <= mCfg.tolRelObj * fPrev)
+		{
+			statusOut = Status::SuccessObjective;
+			return true;
+		}
+
+		// No convergence yet
+		return false;
+	}
+
+	bool SolveKKTStep(const TLSInputMatrices &input, double lmDamping, Eigen::VectorXd &dx, Eigen::VectorXd &mult)
+	{
+		const auto &A = input.getFirstDgnMtrx();
+		const auto &invB = input.getSecondDgnBlockDiagInvMtrx();
+		const auto &P = input.getWeightMtrx();
+		const auto &invW = input.getWeightInvMtrx();
+		const auto &Ac = input.getCnstrFirstDgnMtrx();
+		const auto &W = input.getMisclosureVctr();
+		const auto &Wc = input.getCnstrMisclosureVctr();
+
+		const int n = A.cols(); // number of parameters
+		const int nc = Ac.rows(); // number of constraints
+
+		TSparseMatrix invN1 = invB.transpose() * P * invB;
+		TSparseMatrix N2 = A.transpose() * invN1 * A;
+		// construct NBig = (N2, Act
+		//                   Ac, 0  )
+		TSparseMatrix NBig(n + nc, n + nc);
+		std::vector<TTriplet> coeffs;
+		coeffs.reserve(N2.nonZeros() + 2 * Ac.nonZeros());
+
+		// Fill in the N2 part
+		for (int k = 0; k < N2.outerSize(); ++k)
+		{
+			for (TSparseMatrix::InnerIterator it(N2, k); it; ++it)
 			{
-				std::cout << std::setw(4) << k << std::setw(12) << p.norm() << std::setw(12) << delta << std::setw(12) << lambda << std::setw(14) << 2*f << std::setw(14)
-						  << sqrt(2*f/d) << std::setw(14) << g.norm() << std::endl;
-				std::cout << "\n>>> Termination: " << statusMessage(status) << "  |  iterations = " << k << "  |  final f = " << 2 * f << std::endl;
+				// apply LM damping
+				if (it.row() == it.col())
+					coeffs.push_back(TTriplet(it.row(), it.col(), it.value() + lmDamping));
+				else
+					coeffs.push_back(TTriplet(it.row(), it.col(), it.value()));
 			}
 		}
 
-		// compute expected sigmas limits
-		double currentObjective = 2 * f;
-		double sigma0APosteriori = sqrt(currentObjective / d);
+		// Fill the Ac and AcT
+		for (int k = 0; k < Ac.outerSize(); ++k)
+		{
+			for (TSparseMatrix::InnerIterator it(Ac, k); it; ++it)
+			{
+				coeffs.push_back(TTriplet(it.row() + N2.rows(), it.col(), it.value())); // A2
+				coeffs.push_back(TTriplet(it.col(), it.row() + N2.cols(), it.value())); // A2T
+			}
+		}
+		NBig.setFromTriplets(coeffs.begin(), coeffs.end());
 
-		bool isInLimits = (sigma0APosteriori < fisherLim.s0PostUpLimit) && (sigma0APosteriori > fisherLim.s0PostLoLimit);
-		std::cout << "S0Post = " << sigma0APosteriori<< std::endl;
-		std::cout << "inLimits =" << isInLimits << std::endl;
+		// RHS: [-AT * invN1 * W; -Wc]
+		Eigen::VectorXd rhs(n + nc);
+		rhs.head(n) = -A.transpose() * invN1 * W;
+		rhs.tail(nc) = -Wc;
 
-		return {x, k, status, f, sigma0APosteriori, isInLimits};
+		Eigen::VectorXd sol;
+		// use Cholesky decomposition if nbCnstr=0, otherwise SparseLU as positive definiteness of NBig may be violated
+		if (!TSparseUtils::solveUnique(NBig, rhs, sol, (nc == 0), (nc == 0)))
+		{
+			logCritical() << "No solution could be found when solving equation system: Nbig * dX = -VBig (extended matrices with conditions)";
+			return false;
+		}
+		dx = sol.head(n);
+		mult = sol.tail(nc);
+
+		return true;
+	}
+
+	void ClipStep(Eigen::VectorXd &dx, Eigen::VectorXd &mult, double delta)
+	{
+		double normDx = dx.norm();
+		if (normDx > delta && normDx > 0.0)
+		{
+			double alpha = delta / normDx;
+			dx *= alpha;
+			mult *= alpha;
+		}
+	}
+	double PredictedObjective(const TLSInputMatrices &input, const Eigen::VectorXd &dx)
+	{
+		const Eigen::VectorXd &g = input.getObjGrad();
+		const auto &A = input.getFirstDgnMtrx();
+		const auto &W = input.getMisclosureVctr();
+		const auto &invB = input.getSecondDgnBlockDiagInvMtrx();
+		const auto &P = input.getWeightMtrx();
+		Eigen::VectorXd predictedResidual = invB * (A * dx + W);
+		double predictedObjective = 0.5 * predictedResidual.dot(P * predictedResidual);
+
+		return predictedObjective;
+	}
+
+	bool checkStepAndUpdateTrustRegion(double &lambda, double &delta, const double rho, const Eigen::VectorXd &dx, const double actualReduction)
+	{
+		const bool nearBoundary = std::abs(dx.norm() - delta) < 1e-12;
+		const bool accept = (rho > mCfg.rhoThreshold) && (actualReduction < 0);
+
+		if (rho < 0.25 || !accept)
+		{
+			delta = std::max(delta * mCfg.deltaDec, 1e-12);
+			lambda *= mCfg.lambdaInc;
+		}
+		else if (rho > 0.75 && nearBoundary)
+		{
+			delta = std::min(delta * mCfg.deltaInc, mCfg.deltaMax);
+			lambda = std::max(lambda * mCfg.lambdaDec, 1e-10);
+		}
+
+		return accept;
+	}
+
+
+	void UpdateTrustRegion(double &lambda, double &delta, double rho, const Eigen::VectorXd &dx)
+	{
+		const double lambdaMin = 1e-10;
+		const double dxNorm = dx.norm();
+		const bool nearBoundary = std::abs(dxNorm - delta) < 1e-12;
+
+		// Case 1: bad model agreement → shrink trust region, increase damping
+		if (rho < 0.25)
+		{
+			delta = std::max(delta * mCfg.deltaDec, 1e-12);
+			lambda *= mCfg.lambdaInc;
+		}
+		// Case 2: very good agreement + step at boundary → expand region
+		else if (rho > 0.75 && nearBoundary)
+		{
+			delta = std::min(delta * mCfg.deltaInc, mCfg.deltaMax);
+			lambda = std::max(lambda * mCfg.lambdaDec, lambdaMin);
+		}
 	}
 
 	std::shared_ptr<TLSEvaluator> fEvaluator;
-
-private:
 	Config mCfg;
-	static const std::string statusMessage(TLSTrustRegionLM::Status s)
-	{
-		switch (s)
-		{
-		case Status::SuccessGradient:
-			return "gradient-norm tolerance reached";
-		case Status::SuccessStep:
-			return "step-size tolerance reached";
-		case Status::SuccessObjective:
-			return "objective-change tolerance reached";
-		case Status::LinearSolverFailure:
-			return "numerical factorisation failed";
-		case Status::MaxIterations:
-			return "maximum iterations exceeded";
-		default:
-			return "unknown status";
-		}
-	}
-
-	/*--------------------------------------------------------------------
- *  Solve   (Aᵀ W A + λ R) p = -Aᵀ W v
- *  ‣ R   = I            if !mCfg.relativeLambda
- *        = diag(Aᵀ W A) if  mCfg.relativeLambda
- *-------------------------------------------------------------------*/
-	bool computeLMStep(const Eigen::SparseMatrix<double> &A, const Eigen::VectorXd &v, const TSparseMatrix &W, double lambda, Eigen::VectorXd &p) const
-	{
-		/* gradient g = Aᵀ W v  */
-		Eigen::VectorXd g = A.transpose() * (W * v);
-
-		/* Hessian H = Aᵀ W A   */
-		Eigen::SparseMatrix<double> H = A.transpose() * (W * A);
-
-		/* add damping on the diagonal */
-		if (mCfg.relativeLambda)
-		{
-			Eigen::VectorXd dH = H.diagonal();
-			for (int i = 0; i < H.rows(); ++i)
-				H.coeffRef(i, i) += lambda * dH(i);
-		}
-		else
-		{
-			for (int i = 0; i < H.rows(); ++i)
-				H.coeffRef(i, i) += lambda;
-		}
-
-		/* sparse LDLᵀ */
-		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
-		solver.compute(H);
-		if (solver.info() != Eigen::Success)
-			return false;
-
-		p = solver.solve(-g);
-		return solver.info() == Eigen::Success;
-	}
 };
-
 #endif /* TLS_TRUST_REGION_LM_HPP */
