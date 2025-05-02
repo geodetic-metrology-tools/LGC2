@@ -479,6 +479,20 @@ TSparseMatrix TLSEvaluator::getPMatrix() const
 	return iMat->getWeightMtrx();
 }
 
+const TLSInputMatrices &TLSEvaluator::getInputMatricesRef() const
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat;
+}
+
+TLSInputMatrices TLSEvaluator::getInputMatricesCopy()
+{
+	if (!isUptoDate)
+		throw std::logic_error("Must call evaluate() before using getters");
+	return *iMat;
+}
+
 Eigen::VectorXd TLSEvaluator::getResidual() const
 {
 	const Eigen::VectorXd wSqrt = iMat->getWeightMtrx().diagonal().cwiseSqrt();

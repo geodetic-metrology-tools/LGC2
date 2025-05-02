@@ -81,12 +81,12 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 void TLGCCalculation::tryRegularizedSolve()
 {
-	TLSEvaluator evaluator(fData);
-	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(evaluator);
+	//TLSEvaluator evaluator(fData);
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(fData);
 
 	TLSGaussNewton gnObject(evalPtr);
 
-	Eigen::VectorXd provVal = evaluator.getEstParams();
+	Eigen::VectorXd provVal = evalPtr->getEstParams();
 
 	// create a bunch of random starting values
 	int numberSamples = 10;
@@ -155,12 +155,12 @@ void TLGCCalculation::tryRegularizedSolve()
 		logWarning() << "LGC will continue with this solution";
 		// apply a random perturbation such that the LGC least square method still makes a proper iteration
 		//evaluator.setParameters(bestSol + 1e-4 * Eigen::VectorXd::Random(fData->fUEOIndices.UIndex));
-		evaluator.setParameters(bestSol);
+		evalPtr->setParameters(bestSol);
 	}
 	else
 	{
 		logWarning() << "Random initial value sampling was unable to find a solution.";
-		evaluator.setParameters(provVal);
+		evalPtr->setParameters(provVal);
 	}
 	// continue LGC normally, if solution was already found only one iteration will be made
 	// clean errors that potentially happened during input filling
