@@ -32,17 +32,17 @@ public:
 	/*--------------------------- configuration --------------------------*/
 	struct Config
 	{
-		std::size_t maxIterations = 1000;
-		double deltaMax = 1e+3;
+		std::size_t maxIterations = 100;
+		double deltaMax = 1e+4;
 		double tolGradient = 1.0e-6;
 		double tolRelStep = 1.0e-12;
 		double tolRelObj = 1.0e-10;
-		double lambdaInit = 100.0; /*  < 0 → heuristic    */
+		double lambdaInit = 1e-9; /*  < 0 → triggers heuristic    */
 		double lambdaInc = 10.0; /*  > 1               */
 		double lambdaDec = 0.1; /*  0 < … < 1         */
 		double deltaInc = 2.0; /*  > 1               */
 		double deltaDec = 0.25; /*  0 < … < 1         */
-		double trRadiusInit = 10;
+		//double trRadiusInit = 1000;
 		double rhoThreshold = 0.1;
 		bool showInfo = true;
 		bool relativeLambda = false;
@@ -74,15 +74,16 @@ public:
 			throw std::invalid_argument("TLSTrustRegionLM: evaluator is null");
 	}
 
-	Result Solve(const Eigen::VectorXd &x0)
+	Result solve(const Eigen::VectorXd &x0)
 	{
 		Eigen::VectorXd xCurr = x0;
 		Eigen::VectorXd xTrial = xCurr;
 		Eigen::VectorXd dx = 1e+12 * Eigen::VectorXd::Ones(xCurr.size());
 		Eigen::VectorXd mult = Eigen::VectorXd::Zero(fEvaluator->getIndices().CIndex);
 		Eigen::VectorXd newMult = mult;
-		double delta = mCfg.trRadiusInit;
+		double delta = mCfg.deltaMax;
 		double lmDamping = mCfg.lambdaInit;
+		Eigen::VectorXd penaltyDiag = Eigen::VectorXd::Ones(xCurr.size());
 
 		// do initial evaluation
 		fEvaluator->setParameters(xCurr);
@@ -90,6 +91,8 @@ public:
 		TLSInputMatrices modelEval_xCurr = fEvaluator->getInputMatricesCopy();
 		TLSInputMatrices modelEval_xTrial = modelEval_xCurr;
 
+		lmDamping = computeInitialDamping(modelEval_xCurr);
+		
 		double fCurr = 1e+12;
 		double fPrev = fCurr;
 		Status status;
@@ -100,7 +103,7 @@ public:
 			if (CheckConvergence(dx, mult, modelEval_xCurr, fPrev, fCurr, status))
 				return Result{xCurr, mult, k, status, fCurr};
 
-			if (!SolveKKTStep(modelEval_xCurr, lmDamping, dx, newMult))
+			if (!SolveKKTStep(modelEval_xCurr, lmDamping, penaltyDiag, dx, newMult))
 			{
 				delta *= mCfg.deltaDec;
 				lmDamping *= mCfg.lambdaInc;
@@ -118,8 +121,8 @@ public:
 			double fTrial = modelEval_xTrial.getObj();
 
 			double predictedObjective = PredictedObjective(modelEval_xTrial, dx);
-			double predictedReduction = predictedObjective - fCurr;
-			double actualReduction = fTrial - fCurr;
+			double predictedReduction = fCurr-predictedObjective ;
+			double actualReduction = fCurr - fTrial;
 
 			double rho = actualReduction / predictedReduction;
 			// TODO: check constraint violation
@@ -176,7 +179,27 @@ private:
 		return false;
 	}
 
-	bool SolveKKTStep(const TLSInputMatrices &input, double lmDamping, Eigen::VectorXd &dx, Eigen::VectorXd &mult)
+double computeInitialDamping(const TLSInputMatrices &input)
+	{
+		const auto &A = input.getFirstDgnMtrx();
+		const auto &invB = input.getSecondDgnBlockDiagInvMtrx();
+		const auto &P = input.getWeightMtrx();
+		const auto &invW = input.getWeightInvMtrx();
+		const auto &Ac = input.getCnstrFirstDgnMtrx();
+		const auto &W = input.getMisclosureVctr();
+		const auto &Wc = input.getCnstrMisclosureVctr();
+
+		const int n = A.cols(); // number of parameters
+
+		TSparseMatrix invN1 = invB.transpose() * P * invB;
+		TSparseMatrix N2 = A.transpose() * invN1 * A;
+		Eigen::VectorXd diag = N2.diagonal();
+
+		double maxDiag = (diag.size() > 0) ? diag.cwiseAbs().maxCoeff() : 1.0;
+		return 1.0e-10 * (maxDiag > 1.0 ? maxDiag : 1.0);
+	}
+
+	bool SolveKKTStep(const TLSInputMatrices &input, double lmDamping, const Eigen::VectorXd &penaltyDiag, Eigen::VectorXd &dx, Eigen::VectorXd &mult)
 	{
 		const auto &A = input.getFirstDgnMtrx();
 		const auto &invB = input.getSecondDgnBlockDiagInvMtrx();
@@ -202,9 +225,18 @@ private:
 		{
 			for (TSparseMatrix::InnerIterator it(N2, k); it; ++it)
 			{
+				/* add damping on the diagonal */
+
 				// apply LM damping
 				if (it.row() == it.col())
-					coeffs.push_back(TTriplet(it.row(), it.col(), it.value() + lmDamping));
+				{
+					double val = 0;
+					if (mCfg.relativeLambda)
+						val = it.value() * (1 + lmDamping);
+					else
+						val = it.value() + lmDamping;
+					coeffs.push_back(TTriplet(it.row(), it.col(), val));
+				}
 				else
 					coeffs.push_back(TTriplet(it.row(), it.col(), it.value()));
 			}
@@ -245,6 +277,7 @@ private:
 		if (normDx > delta && normDx > 0.0)
 		{
 			double alpha = delta / normDx;
+			std::cout << "clipping factor " << alpha << std::endl;
 			dx *= alpha;
 			mult *= alpha;
 		}
@@ -264,19 +297,22 @@ private:
 
 	bool checkStepAndUpdateTrustRegion(double &lambda, double &delta, const double rho, const Eigen::VectorXd &dx, const double actualReduction)
 	{
-		const bool nearBoundary = std::abs(dx.norm() - delta) < 1e-12;
-		const bool accept = (rho > mCfg.rhoThreshold) && (actualReduction < 0);
-
-		if (rho < 0.25 || !accept)
-		{
-			delta = std::max(delta * mCfg.deltaDec, 1e-12);
+		double dxNorm = dx.norm();
+		const bool nearBoundary = std::abs(dxNorm - delta) < 1e-12;
+		const bool accept = (rho > mCfg.rhoThreshold) && (actualReduction > 0);
+		//const bool accept = (actualReduction < 0);
+		// lambda update
+		if (accept)
+			lambda = (mCfg.lambdaDec * lambda > 1.0e-10) ? mCfg.lambdaDec * lambda : 1.0e-10;
+		else
 			lambda *= mCfg.lambdaInc;
-		}
+
+						/* radius update */
+		if (rho < 0.25)
+			// poor agreement: shrink trust region radius
+			delta = (delta * mCfg.deltaDec > 1.0e-0) ? delta * mCfg.deltaDec : 1.0e-0;
 		else if (rho > 0.75 && nearBoundary)
-		{
-			delta = std::min(delta * mCfg.deltaInc, mCfg.deltaMax);
-			lambda = std::max(lambda * mCfg.lambdaDec, 1e-10);
-		}
+			delta = (delta * mCfg.deltaInc < mCfg.deltaMax) ? delta * mCfg.deltaInc : mCfg.deltaMax;
 
 		return accept;
 	}
