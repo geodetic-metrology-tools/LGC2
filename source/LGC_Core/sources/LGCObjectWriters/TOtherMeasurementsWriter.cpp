@@ -495,7 +495,7 @@ void TOtherMeasurementWriter::writePointSigmaResults(const LGCAdjustablePointCol
 	if (nPointsWithSigma > 0)
 	{
 		this->writeObsTitle(TAB + "POINTS WITH SIGMA", nPointsWithSigma);
-		(*stream) << "	LES PRECISIONS ET LES RESIDUS SONT EXPRIMES PAR RAPPORT AU SYSTEME DE COORDONNEES TOURNE.\n";
+		(*stream) << "	LES PRECISIONS ET LES RESIDUS SONT EXPRIMES PAR RAPPORT AU(X) SYSTEME(S) DE COORDONNEES TOURNE(S).\n";
 		writePointSigmaResultsHeader(); // write the title line for the observations
 
 		for (const auto &pt : pointCollection)
