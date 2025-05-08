@@ -68,6 +68,6 @@ private:
 	static int stnCounter_;
 
 	TLGCObsSummary dlevSummary_;
-	TLGCObsSummary dhorSummary_;
+	TLGCObsSummary dlevDhorSummary_;
 };
 #endif

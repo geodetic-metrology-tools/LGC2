@@ -92,19 +92,22 @@ void TLGCObsSummary::initialise() {
     // determine the mean for the observation residuals
     if(fNumberOfObs > 0)
         //calculate the mean
-        fMean = (fSumRes) / (fNumberOfObs);
+        fMean = fSumRes / fNumberOfObs;
 
-    // determine the standard deviation for the observation residuals
-    if(fNumberOfObs > 1)
-        //calculate the standard deviation
-		fStdev = sqrtq((fSumRes2 - (fSumRes) * (fSumRes) / fNumberOfObs) / (fNumberOfObs - 1));
-
-    //Degree of freedom
-    int dof = fNumberOfObs - 1;
-
+	// Degree of freedom
+	int dof = fNumberOfObs - 1;
+	
+    TReal variance = 0.0;
     // Calculate the mean low and high limits, and the standard deviation high and low limits
     if(dof > 0)
     {
+		variance = (fSumRes2 - pow2q(fSumRes)/ fNumberOfObs) / dof;
+		// With really small values negative values are possible due to floating-point round-off error.
+		if (variance < nullLimit)
+			variance = 0.0;
+
+		// calculate the standard deviation
+		fStdev = sqrtq(variance);
         TReal prob, STLo, STHi, chiLo, chiHi;
 
         // calculate the confidence limits from the Student T distribution

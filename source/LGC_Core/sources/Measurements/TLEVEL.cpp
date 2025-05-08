@@ -6,19 +6,20 @@ int TLEVEL::stnCounter_ = 0;
 void TLEVEL::initialiseObsSummaries() {
     // First clear the old contents away
     dlevSummary_.clear();
-    dhorSummary_.clear();
+    dlevDhorSummary_.clear();
 
     if(measDLEV.size() != 0) {
         // Add the residuals of each measurement:
         for(auto const& ItDLEV : measDLEV){
             dlevSummary_.addNewResidual(ItDLEV.getDistanceResidual().getMMetresValue());
             if(ItDLEV.dhor)
-                dhorSummary_.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
+				dlevDhorSummary_.addNewResidual(ItDLEV.dhor->getDistanceResidual().getMMetresValue());
         }
 
         // Initialise the obsSummaries:
         dlevSummary_.initialise();
-        if(dhorSummary_.getNumberOfObs() != 0) dhorSummary_.initialise();
+		if (dlevDhorSummary_.getNumberOfObs() != 0)
+			dlevDhorSummary_.initialise();
     }
 }
 
@@ -29,18 +30,21 @@ const TLGCObsSummary& TLEVEL::getDLEVObsSummary(std::string text) noexcept {
 	return dlevSummary_;
 }
 
-const TLGCObsSummary&  TLEVEL::getDHORObsSummary() const { return dhorSummary_; }
+const TLGCObsSummary &TLEVEL::getDHORObsSummary() const
+{
+	return dlevDhorSummary_;
+}
 
 const TLGCObsSummary& TLEVEL::getDHORObsSummary(std::string text) noexcept {
-	dhorSummary_.setObsText(text);
-	return dhorSummary_;
+	dlevDhorSummary_.setObsText(text);
+	return dlevDhorSummary_;
 }
 
 #if USE_SERIALIZER
 // Inherited via Serializable
 void TLEVEL::serialize(ObjectSerializer &obj) const
 {
-	obj.addProperty("dhorSummary_", dhorSummary_);
+	obj.addProperty("dlevDhorSummary_", dlevDhorSummary_);
 	obj.addProperty("dlevSummary_", dlevSummary_);
 	obj.addProperty("fMeasuredPlane", fMeasuredPlane);
 	obj.addProperty("fRefPt", fRefPt);

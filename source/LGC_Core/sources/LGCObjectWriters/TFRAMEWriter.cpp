@@ -259,6 +259,12 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 	{
 		(*stream) << endl;
 		levelWriter.writeHisto(TLGCObsSummary::merge(allDLEVSummaries_), "DLEV");
+		if (!allDlevDHORSummaries_.empty())
+		{
+			(*stream) << "\n";
+			levelWriter.writeHisto(TLGCObsSummary::merge(allDlevDHORSummaries_), "DLEV: DHOR");
+		}
+			
 	}
 
 	// DVER
@@ -427,7 +433,11 @@ void TFRAMEWriter::initialiseAllObsSummaries()
 
 		if (tmeas.fLEVEL.size() > 0)
 			for (auto &itLEVEL : tmeas.fLEVEL)
+			{
 				allDLEVSummaries_.push_back(&itLEVEL.getDLEVObsSummary(itLEVEL.fMeasuredPlane->getReferencePoint()->getName()));
+				if (itLEVEL.hasDHOR)
+					allDlevDHORSummaries_.push_back(&itLEVEL.getDHORObsSummary(itLEVEL.fMeasuredPlane->getReferencePoint()->getName()));
+			}
 
 		if (tmeas.fECWS.size() > 0)
 			for (auto &itECWS : tmeas.fECWS)
@@ -654,10 +664,20 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 	{
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "DLEV");
-		(*stream) << endl;
+		(*stream) << "\n";
 		levelWriter.writeLEVELSynthesisHeader();
 		levelWriter.writeLEVELResultsSynthesis(allDLEVSummaries_);
 		levelWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDLEVSummaries_), TABs);
+		// DLEV:DHOR
+		if (!allDlevDHORSummaries_.empty())
+		{
+			(*stream) << TABs;
+			(*stream).writeStringLeft(nameWidth, "DLEV: DHOR");
+			(*stream) << "\n";
+			levelWriter.writeLEVELSynthesisHeader();
+			levelWriter.writeLEVELResultsSynthesis(allDlevDHORSummaries_);
+			levelWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allDlevDHORSummaries_), TABs);
+		}
 	}
 
 	// DVER
