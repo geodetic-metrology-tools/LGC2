@@ -53,15 +53,60 @@ Documentation
 You can find all the user documentation here:
 - [user guide](https://confluence.cern.ch/display/SUS/LGC2+User+Guide)
 
+#### MkDocs 
+
+The plan is to move the full documentation (on-going)  [MkDocs](https://www.mkdocs.org/).
+
+**Build and serve the MkDocs documentation**
+
+With `Python` available on your  machine, to serve the documentation locally:
+
+```bash
+# Navigate to the root of the project (where mkdocs.yml is)
+cd LGC2/doc
+
+# (optional) Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install MkDocs and the Material theme
+pip install mkdocs mkdocs-material
+
+# Serve the docs locally
+mkdocs serve
+```
+
+Then open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
+
+To build the static site:
+
+```bash
+mkdocs build
+```
+
+The resulting HTML will be in the `site/` folder.
+
+#### CI/CD Integration
+
+> ⚠️ The current documentation system is not yet integrated into the project’s CI/CD pipelines. Work is still required to:
+> - Automate the building and deployment of the MkDocs site
+> - Possibly publish to CERN GitLab Pages or another hosting service
+> - Include checks or preview builds in merge requests
+
 ### Doxygen ###
 
 The Doxygen documentation is meant for developers only. Follow the [Build instructions](#build-instructions) to set up your projects. Then you can build the `doc` target to create the Doxygen documentation. You will need [Doxygen](https://www.stack.nl/~dimitri/doxygen/download.html#srcbin) and [GraphViz](http://www.graphviz.org/download/#executable-packages) installed and configured.
 
 Once built, you can open the file `build/html/index.html` as an entry point to the documentation.
 
+> ⚠️ Doxygen code documentation is partial and is not thoroughly implemented evywhere. To be decided if it should be generalized or abandoned. 
+
+
 ### Other ###
 
 You can find further documentation in the folder [doc](./doc).
+
+> ⚠️ The mathematical model PDF is no longer actively maintained (last update: 2020). While still largely accurate, it is pending review and intended to be integrated directly into the new user manual in MkDocs format.
 
 Build instructions
 ------------------
@@ -118,6 +163,8 @@ you can see that CMake has generated several targets, among others:
 ### Tests ###
 
 To build the tests, build the target `LGC_Tests` and run it. We Use TUT to generate unit tests. Note that the tests are automatically performed on Gitlab-CI for each contribution. You can see the results in the [CI page](https://gitlab.cern.ch/apc/susofts/processing/LGC2/pipelines).
+
+###  ###
 
 Contribute
 ----------

@@ -1,0 +1,9 @@
+pip install Pygments
+From the project root, run:
+
+bash
+Copy
+Edit
+pip install -e .
+
+Pygments 2.16+

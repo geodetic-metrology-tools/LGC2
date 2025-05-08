@@ -1,0 +1,23 @@
+:root {
+    --md-primary-fg-color:        #0054A6;
+    --md-primary-fg-color--light: rgba(0, 51, 160, 0.267);
+    --md-primary-fg-color--dark:  #0054A6;
+  }
+
+.md-typeset details.note {
+    font-size: 90%;
+  }
+
+.md-typeset details.danger {
+    font-size: 90%;
+  }
+
+.md-typeset details.warning {
+    font-size: 90%;
+  }
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: bold;
+}

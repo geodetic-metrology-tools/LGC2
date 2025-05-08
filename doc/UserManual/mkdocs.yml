@@ -1,0 +1,72 @@
+site_name: LGC
+
+repo_name: GitLab
+repo_url: https://gitlab.cern.ch/apc/susofts/processing/LGC2
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/LGC.ico
+  #highlightjs: false  #use of pygments
+
+plugins:
+  - search
+#  - lgcLexerPlugin
+      
+markdown_extensions:
+  - pymdownx.arithmatex:
+       generic: true
+  - pymdownx.extra
+  - pymdownx.magiclink
+  - pymdownx.tilde
+  - pymdownx.tasklist
+  - pymdownx.smartsymbols
+  - pymdownx.mark
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - admonition
+  - footnotes
+  - toc
+  - codehilite
+#       guess_lang: false
+#      use_pygments: true
+#markdown_extensions:
+#  - toc:
+#      permalink: true
+#  - admonition
+#  - codehilite  
+#  - pymdownx.superfences
+#  - pymdownx.arithmatex:
+#      
+  
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - css/extra.css
+
+nav:
+  - Introduction: Introduction.md
+  - Invocation: Invocation.md
+  - Input File:
+       - File Layout: GeneralFileLayout.md 
+       - Options:
+           - Datum: OptionDatum.md 
+           - Calculation: OptionCalculation.md
+           - Output: OptionOutput.md
+       - Frames (*FRAME): 
+            - Introduction: Frame/FrameIntroduction.md
+            - Usage : Frame/FrameUsage.md
+            - 3D Helmert Transfromation Convention : Frame/FrameHelmertTransformation.md
+       - Instruments (*INSTR): InstrumentSection.md 
+       - Points Declaration: PointDeclaration.md 
+       - Measurement: JSON/00_Introduction.md
+  - Output Files:
+       - Result File (.res) :  JSON/00_Introduction.md
+       - JSON : 
+            - Introduction: JSON/00_Introduction.md
+            - Structure : JSON/01_Structure.md
+            - St : JSON/JSON_part1.md
+            
+  - Example : Example.md
