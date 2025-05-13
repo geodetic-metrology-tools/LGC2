@@ -1012,11 +1012,10 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, "PARAMETER");
 		(*stream).writeString(obsWidth, "UNIT");
-		(*stream).writeString(obsWidth, "INIT VAL");
-		(*stream).writeString(obsWidth, "CALC VAL");
-		(*stream).writeString(obsWidth, "UNIT S");
-		(*stream).writeString(obsResWidth, "SIGMA");
-		(*stream).writeString(obsResWidth, "CSIGMA");
+		(*stream).writeString(obsWidth, "INITIAL");
+		(*stream).writeString(obsWidth, "CALCULE");
+		(*stream).writeString(obsWidth, "SUNIT");
+		(*stream).writeString(obsWidth, "SIGMA");
 		(*stream).writeString(obsWidth, "FIXED");
 		(*stream) << endl;
 	}
@@ -1068,7 +1067,8 @@ void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &
 	// Writing scale factor
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "SCALE");
-	(*stream).writeString(obsWidth, "");
+	// the scale is unitless
+	(*stream).writeString(obsWidth, "-");
 	(*stream).writeDouble(obsWidth, lengthPrecision, frame.getProvScale());
 
 	if (!frame.isScaleFixed())
@@ -1077,11 +1077,10 @@ void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &
 	}
 	else
 	{
-		(*stream).writeString(obsWidth, "");
+		(*stream).writeString(obsWidth, "-");
 	}
-
-	(*stream).writeString(obsWidth, "");
-	(*stream).writeString(obsResWidth, "");
+	// the scale is unitless
+	(*stream).writeString(obsWidth, "-");
 
 	if (!frame.isScaleFixed())
 	{
@@ -1090,7 +1089,7 @@ void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &
 	}
 	else
 	{
-		(*stream).writeString(obsResWidth, "");
+		(*stream).writeString(obsWidth, "-");
 		(*stream).writeString(obsWidth, "TRUE");
 	}
 
@@ -1249,7 +1248,7 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 	int obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
 	int lengthPrecision = getLengthPrecision();
-	int lengthResPrecision = getLengthResidualPrecision();
+	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	// Write initial and calculated value
 	(*stream).writeString(obsWidth, "(M)");
@@ -1261,21 +1260,20 @@ void TFRAMEWriter::writeTranslationParameter(const TAdjustableHelmertTransformat
 	}
 	else
 	{
-		(*stream).writeString(obsWidth, "");
+		(*stream).writeString(obsWidth, "-");
 	}
 
 	(*stream).writeString(obsWidth, "(MM)");
-	(*stream).writeString(obsResWidth, "");
 
 	// Write the standard deviation after calculation if translation is variable and the status (fixed or variable)
 	if (!frameDef.isTranslationFixed(transl))
 	{
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, frameDef.getEstimatedPrecisionTransl(transl).getMMetresValue());
+		(*stream).writeDouble(obsWidth, lengthResPrecision, frameDef.getEstimatedPrecisionTransl(transl).getMMetresValue());
 		(*stream).writeString(obsWidth, "FALSE");
 	}
 	else
 	{
-		(*stream).writeString(obsResWidth, "");
+		(*stream).writeString(obsWidth, "-");
 		(*stream).writeString(obsWidth, "TRUE");
 	}
 	(*stream) << endl;
@@ -1288,7 +1286,7 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 	int obsWidth = getObsWidth();
 	int obsResWidth = getObsResWidth();
 	int anglePrecision = getAnglePrecision();
-	int angleResidualPrecision = getAngleResidualPrecision();
+	int angleResidualPrecision = std::max(getAngleResidualPrecision() - 4, 0);
 
 	// Write initial and calculated value
 	(*stream).writeString(obsWidth, "(GON)");
@@ -1301,22 +1299,20 @@ void TFRAMEWriter::writeRotationParameter(const TAdjustableHelmertTransformation
 	}
 	else
 	{
-		(*stream).writeString(obsWidth, "");
+		(*stream).writeString(obsWidth, "-");
 	}
 
 	(*stream).writeString(obsWidth, "(CC)");
 
-	(*stream).writeString(obsResWidth, "");
-
 	// Write the standard deviation after calculation if rotation is variable and the status (fixed or variable)
 	if (!frameDef.isRotationFixed(rot))
 	{
-		(*stream).writeDouble(obsResWidth, angleResidualPrecision, frameDef.getEstimatedPrecisionRot(rot).getSignedCCValue());
+		(*stream).writeDouble(obsWidth, angleResidualPrecision, frameDef.getEstimatedPrecisionRot(rot).getSignedCCValue());
 		(*stream).writeString(obsWidth, "FALSE");
 	}
 	else
 	{
-		(*stream).writeString(obsResWidth, "");
+		(*stream).writeString(obsWidth, "-");
 		(*stream).writeString(obsWidth, "TRUE");
 	}
 	(*stream) << endl;
