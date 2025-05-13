@@ -226,9 +226,9 @@ void TSimFileWriter::writeInstrument()
 
 	for (auto &itINCL : data->getInstruments().fINCL)
 	{
-		(*stream) << "*INCL " << itINCL.second->ID << sep << itINCL.second->sigmaAngl.getSignedCCValue() << sep << itINCL.second->angleCorrectionValue.getGonsValue()
-				  << sep << itINCL.second->sigmaCorrectionValue.getSignedCCValue() << sep << itINCL.second->refAngleCorrectionValue.getGonsValue() << sep
-				  << itINCL.second->refSigmaCorrectionValue.getSignedCCValue() << sep << endl;
+		(*stream) << "*INCL " << itINCL.second->ID << sep << itINCL.second->sigmaAngl.getSignedCCValue() << sep << itINCL.second->sigmaPpm.getMicroRadiansValue() << sep
+				  << itINCL.second->angleCorrectionValue.getGonsValue()
+				  << sep << itINCL.second->sigmaCorrectionValue.getSignedCCValue() << sep << itINCL.second->refAngleCorrectionValue.getGonsValue() << sep << itINCL.second->refSigmaCorrectionValue.getSignedCCValue() << sep << "\n";
 	}
 
 	for (auto &itHLSR : data->getInstruments().fHLSR)
