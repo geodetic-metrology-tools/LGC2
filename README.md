@@ -127,6 +127,18 @@ For Windows, you can follow the steps in the aforementioned [Getting started wit
 For Linux, you have an example of the needed steps in the dockerfiles of the [sus_ci_cppworker](https://gitlab.cern.ch/apc/common/docker-image-susoft-cpp) project (the Docker image used to automatically run the tests on GitLab-CI).
 Note that the `devtoolset` trick is only necessary on the CC7 (Cern CentOS 7) as it doesn't provide a C++14 compiler by default.
 
+### External Dependencies ###
+
+LGC2 uses the following third-party libraries fetched automatically during the CMake configuration phase via [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html):
+
+- **[tree.hh](https://github.com/kpeeters/tree.hh)** – A lightweight C++ header-only tree container used for hierarchical data.  
+  _Licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html)._
+
+These dependencies are cloned automatically during the build configuration step. You do **not** need to install them manually.
+
+> `tree.hh` is licensed under GPL-3.0, a strong copyleft license. If you distribute binaries that include `tree.hh`, your project must comply with the GPL-3.0—this typically means making the full corresponding source code and license available to users.
+
+
 ### Generate project ###
 
 We use CMake to generate projects, thus it is possible to generate projects for MSVC, Eclipse, or simple Unix makefiles. See the [CMake Generators documentation](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html) page.
@@ -190,3 +202,9 @@ Once your PR has been reviewed by another developer and accepted, it can be merg
 Automatic tests are performed each time you push a commit. These tests include compilation of `ALL_BUILD` target, and running the `LGC_Tests` target, all on Linux 64 bits, Windows 32 and 64 bits. If the tests don't pass, your PR will not be merged.
 
 For each release, when `master` is updated, GitLab-CI will automatically build the installers.
+
+### Third-Party Libraries ### 
+
+| Library   | Purpose                          | License      |
+|-----------|----------------------------------|--------------|
+| `tree.hh` | Lightweight tree data structure  | [GPL v3.0](https://www.gnu.org/licenses/gpl-3.0.html) |
