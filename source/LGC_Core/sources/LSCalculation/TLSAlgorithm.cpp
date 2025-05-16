@@ -24,14 +24,26 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 	// use the universal LS algorithm for parametric, combined and constrained case.
 	computer.reset(new TLSUniversalMtdComputer());
 
+	Behavior computationIsOK;
 	bool useLM = true;
 	if (useLM)
 	{
 		std::shared_ptr<TLGCData> dataPtr(&data, [](TLGCData*){});
 		tryRegularizedSolve(dataPtr);
+		// finish computation by doing normal full step Gauss-Newton + all subsequent necessary postprocessing
+		bool onlyOneIteration = false;
+		if (onlyOneIteration)
+		{ // this is the aggressive variant which just takes the regularized solution and makes one additional iteration to get all the prostprocessing (covariance matrix etc.)
+			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), 1, 10 * data.getConfig().outPrecision.convCrit);
+		}
+		else
+			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	}
+	else
+	{
+		computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 	}
 
-	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 
 	return computationIsOK;
 }
@@ -168,8 +180,10 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(dataPtr);
 
 	TLSGaussNewton gnObject(evalPtr);
+	TLSTrustRegionLM trObject(evalPtr);
 
 	Eigen::VectorXd provVal = evalPtr->getEstParams();
+	trObject.solve(provVal);
 
 	// create a bunch of random starting values
 	int numberSamples = 10;
