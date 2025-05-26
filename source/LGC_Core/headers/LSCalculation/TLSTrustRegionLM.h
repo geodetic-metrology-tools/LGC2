@@ -32,12 +32,12 @@ public:
 	/*--------------------------- configuration --------------------------*/
 	struct Config
 	{
-		std::size_t maxIterations = 100;
+		int maxIterations = 100;
 		double deltaMax = 1e+4;
 		double tolGradient = 1.0e-6;
-		double tolRelStep = 1.0e-12;
+		double tolRelStep = 1.0e-9;
 		double tolRelObj = 1.0e-10;
-		double lambdaInit = 1e-9; /*  < 0 → triggers heuristic    */
+		double lambdaInit = 1e-15; /*  < 0 → triggers heuristic    */
 		double lambdaInc = 10.0; /*  > 1               */
 		double lambdaDec = 0.1; /*  0 < … < 1         */
 		double deltaInc = 2.0; /*  > 1               */
@@ -109,7 +109,6 @@ public:
 				double sigma0Aposteriori = sqrt(2 * fCurr / degreeOfFreedom);
 				return Result{xCurr, mult, k, status, fCurr, sigma0Aposteriori};
 			}
-
 			if (!SolveKKTStep(modelEval_xCurr, lmDamping, penaltyDiag, dx, newMult))
 			{
 				delta *= mCfg.deltaDec;
@@ -147,7 +146,7 @@ public:
 
 		}
 		double sigma0Aposteriori = sqrt(2 * fCurr / degreeOfFreedom);
-		return Result{xCurr, mult, 100000, Status::MaxIterations, fCurr, sigma0Aposteriori};
+		return Result{xCurr, mult, mCfg.maxIterations, Status::MaxIterations, fCurr, sigma0Aposteriori};
 	}
 
 private:
@@ -168,7 +167,7 @@ private:
 		// 2. Check step size (relative)
 		double relStep = dx.norm() / (1.0 + residual.size());
 		//if (dx.norm() <= mCfg.tolRelStep * (1.0 + residual.norm()))
-		if (dx.norm() <=1e-7)
+		if (dx.norm() <= 1e-6)
 		{
 			statusOut = Status::SuccessStep;
 			return true;

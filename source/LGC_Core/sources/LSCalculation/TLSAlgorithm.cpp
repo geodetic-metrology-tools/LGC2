@@ -32,9 +32,10 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 		tryRegularizedSolve(dataPtr);
 		// finish computation by doing normal full step Gauss-Newton + all subsequent necessary postprocessing
 		bool onlyOneIteration = false;
+		//bool onlyOneIteration = true;
 		if (onlyOneIteration)
 		{ // this is the aggressive variant which just takes the regularized solution and makes one additional iteration to get all the prostprocessing (covariance matrix etc.)
-			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), 1, 10 * data.getConfig().outPrecision.convCrit);
+			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), 1, 1.0);
 		}
 		else
 			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
@@ -179,11 +180,11 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(dataPtr);
 
-	TLSGaussNewton gnObject(evalPtr);
+	//TLSGaussNewton gnObject(evalPtr);
 	TLSTrustRegionLM trObject(evalPtr);
 
 	Eigen::VectorXd provVal = evalPtr->getEstParams();
-	trObject.solve(provVal);
+	//trObject.solve(provVal);
 
 	// create a bunch of random starting values
 	int numberSamples = 10;
