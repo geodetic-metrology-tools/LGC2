@@ -201,7 +201,8 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 
 	// attempt to solve
 	// prepare results
-	std::vector<GNResult> results;
+	//std::vector<GNResult> results;
+	std::vector<TLSTrustRegionLM::Result> results;
 	// needed to clean the error logs after each solution attempt
 	TFileLogger &fileLog = dataPtr->getFileLogger();
 	int j = 0;
@@ -211,10 +212,12 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 		// set initial value and start armijo GN from this value
 		try
 		{
-			GNResult result = gnObject.solve(sval);
+			TLSTrustRegionLM::Result result = trObject.solve(sval);
+			//GNResult result = gnObject.solve(sval);
 
 			results.push_back(result);
-			if (result.sigma0Aposteriori < 5 && result.success)
+			//if (result.sigma0Aposteriori < 5 && result.success)
+			if (result.sigma0Aposteriori < 5)
 			{
 				logWarning() << "Solution with Sigma <5 found.";
 				break;
@@ -239,10 +242,12 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 	bool solFound = false;
 	for (auto result : results)
 	{
-		if (result.sigma0Aposteriori < bestSigma && result.success)
+		//if (result.sigma0Aposteriori < bestSigma && result.success)
+		if (result.sigma0Aposteriori < bestSigma)
 		{
 			bestSigma = result.sigma0Aposteriori;
-			bestSol = result.solution;
+			//bestSol = result.solution;
+			bestSol = result.x;
 			solFound = true;
 		}
 	}

@@ -65,6 +65,7 @@ public:
 		int iterations;
 		Status status;
 		double finalCost; /* ½‖r‖²                        */
+		double sigma0Aposteriori;
 	};
 
 	/*------------------------- constructor ------------------------------*/
@@ -76,15 +77,18 @@ public:
 
 	Result solve(const Eigen::VectorXd &x0)
 	{
+		UEOIndices indices = fEvaluator->getIndices();
 		Eigen::VectorXd xCurr = x0;
 		Eigen::VectorXd xTrial = xCurr;
 		Eigen::VectorXd dx = 1e+12 * Eigen::VectorXd::Ones(xCurr.size());
-		Eigen::VectorXd mult = Eigen::VectorXd::Zero(fEvaluator->getIndices().CIndex);
+		Eigen::VectorXd mult = Eigen::VectorXd::Zero(indices.CIndex);
 		Eigen::VectorXd newMult = mult;
 		double delta = mCfg.deltaMax;
 		double lmDamping = mCfg.lambdaInit;
 		Eigen::VectorXd penaltyDiag = Eigen::VectorXd::Ones(xCurr.size());
 
+		int degreeOfFreedom = indices.EIndex - indices.UIndex + indices.CIndex;
+		
 		// do initial evaluation
 		fEvaluator->setParameters(xCurr);
 		fEvaluator->evaluate();
@@ -101,7 +105,10 @@ public:
 		{
 			fCurr = modelEval_xCurr.getObj();
 			if (CheckConvergence(dx, mult, modelEval_xCurr, fPrev, fCurr, status))
-				return Result{xCurr, mult, k, status, fCurr};
+			{
+				double sigma0Aposteriori = sqrt(2 * fCurr / degreeOfFreedom);
+				return Result{xCurr, mult, k, status, fCurr, sigma0Aposteriori};
+			}
 
 			if (!SolveKKTStep(modelEval_xCurr, lmDamping, penaltyDiag, dx, newMult))
 			{
@@ -139,8 +146,8 @@ public:
 			}
 
 		}
-
-		return Result{xCurr, mult, 100000, Status::MaxIterations, fCurr};
+		double sigma0Aposteriori = sqrt(2 * fCurr / degreeOfFreedom);
+		return Result{xCurr, mult, 100000, Status::MaxIterations, fCurr, sigma0Aposteriori};
 	}
 
 private:
