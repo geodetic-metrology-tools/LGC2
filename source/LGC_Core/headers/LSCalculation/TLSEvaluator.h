@@ -88,6 +88,18 @@ public:
 	TSparseMatrix getPMatrix() const;
 	UEOIndices getIndices() const { return fData->fUEOIndices; };
 
+	// also possible to get the whole inputrmatrices object
+	const TLSInputMatrices &getInputMatricesRef() const;
+	// get a copy
+	TLSInputMatrices getInputMatricesCopy();
+
+
+
+	// residual function and Jacobian: this is the abstract mathematical form (the weighted residual)
+	Eigen::VectorXd getResidual() const;
+	TSparseMatrix getResidualJacobian() const;
+
+
 private:
 	// indicates tha results are ready for access
 	bool isUptoDate;

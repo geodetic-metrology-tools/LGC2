@@ -1,5 +1,8 @@
 #include <Logger.hpp>
 #include <TLSAlgorithm.h>
+#include <TLSEvaluator.h>
+#include <TLSGaussNewton.h>
+#include <TLSTrustRegionLM.h>
 
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
@@ -21,7 +24,27 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 	// use the universal LS algorithm for parametric, combined and constrained case.
 	computer.reset(new TLSUniversalMtdComputer());
 
-	Behavior computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	Behavior computationIsOK;
+	bool useLM = true;
+	if (useLM)
+	{
+		std::shared_ptr<TLGCData> dataPtr(&data, [](TLGCData*){});
+		tryRegularizedSolve(dataPtr);
+		// finish computation by doing normal full step Gauss-Newton + all subsequent necessary postprocessing
+		bool onlyOneIteration = false;
+		//bool onlyOneIteration = true;
+		if (onlyOneIteration)
+		{ // this is the aggressive variant which just takes the regularized solution and makes one additional iteration to get all the prostprocessing (covariance matrix etc.)
+			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), 1, 1.0);
+		}
+		else
+			computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	}
+	else
+	{
+		computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
+	}
+
 
 	return computationIsOK;
 }
@@ -150,3 +173,100 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 
 	return true;
 }
+
+void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
+{
+	//TLSEvaluator evaluator(fData);
+
+	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(dataPtr);
+
+	//TLSGaussNewton gnObject(evalPtr);
+	TLSTrustRegionLM trObject(evalPtr);
+
+	Eigen::VectorXd provVal = evalPtr->getEstParams();
+	//trObject.solve(provVal);
+
+	// create a bunch of random starting values
+	int numberSamples = 10;
+	std::vector<Eigen::VectorXd> startValues;
+	// include the provided provisional value in the sample list
+	startValues.push_back(provVal);
+	for (int j = 0; j < numberSamples; j++)
+	{
+		// Eigen::VectorXd randVal = (Eigen::VectorXd::Ones(dim) + Eigen::VectorXd::Random(dim))/2;
+		Eigen::VectorXd randVal = Eigen::VectorXd::Random(dataPtr->fUEOIndices.UIndex);
+		// both try a perturbed version of the supplied provisional value as well as a totally random initial value.
+		startValues.push_back(provVal + randVal);
+		startValues.push_back(randVal);
+	}
+
+	// attempt to solve
+	// prepare results
+	//std::vector<GNResult> results;
+	std::vector<TLSTrustRegionLM::Result> results;
+	// needed to clean the error logs after each solution attempt
+	TFileLogger &fileLog = dataPtr->getFileLogger();
+	int j = 0;
+	for (auto sval : startValues)
+	{
+		j++;
+		// set initial value and start armijo GN from this value
+		try
+		{
+			TLSTrustRegionLM::Result result = trObject.solve(sval);
+			//GNResult result = gnObject.solve(sval);
+
+			results.push_back(result);
+			//if (result.sigma0Aposteriori < 5 && result.success)
+			if (result.sigma0Aposteriori < 5)
+			{
+				logWarning() << "Solution with Sigma <5 found.";
+				break;
+			}
+		}
+		catch (const std::exception &e)
+		{
+				// Handles exceptions derived from std::exception.
+				logWarning()
+				<< "Problem occured during attempting solution of problem with randomly generated initial value: " << std::string(e.what());
+		}
+		catch (...)
+		{
+			logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value";
+		}
+	}
+
+		fileLog.cleanErrors();
+	// find best solution candidate
+	double bestSigma = 1e+12;
+	Eigen::VectorXd bestSol;
+	bool solFound = false;
+	for (auto result : results)
+	{
+		//if (result.sigma0Aposteriori < bestSigma && result.success)
+		if (result.sigma0Aposteriori < bestSigma)
+		{
+			bestSigma = result.sigma0Aposteriori;
+			//bestSol = result.solution;
+			bestSol = result.x;
+			solFound = true;
+		}
+	}
+	if (solFound)
+	{
+		logWarning() << "Random initial value sampling found a solution with sigma a posteriori= " << bestSigma;
+		logWarning() << "LGC will continue with this solution";
+		// apply a random perturbation such that the LGC least square method still makes a proper iteration
+		//evaluator.setParameters(bestSol + 1e-4 * Eigen::VectorXd::Random(fData->fUEOIndices.UIndex));
+		evalPtr->setParameters(bestSol);
+	}
+	else
+	{
+		logWarning() << "Random initial value sampling was unable to find a solution.";
+		evalPtr->setParameters(provVal);
+	}
+	// continue LGC normally, if solution was already found only one iteration will be made
+	// clean errors that potentially happened during input filling
+	fileLog.cleanErrors();
+}
+

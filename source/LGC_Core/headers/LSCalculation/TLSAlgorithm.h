@@ -56,7 +56,9 @@ protected:
 								TReal convCrit);
 
 	/// Compute the covariance matrix, the residual vector and the reliabilities
-	bool computeVarCovarAndReliability(TLGCData* data, TLSInputMatrices* inputMtr, TALSComputer* computer);
+	bool computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer);
+
+	void tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr);
 
 private:
 
