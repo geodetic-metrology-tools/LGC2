@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.12)
 PROJECT (pyLGC)
 
@@ -60,7 +59,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::module
 	Logs
 	Plugins
 )
-
+# target_compile_definitions(${PROJECT_NAME} PRIVATE Py_LIMITED_API=0x03070000)  # Removed to avoid errors
 set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pyd")
 
 find_package(OpenMP)
