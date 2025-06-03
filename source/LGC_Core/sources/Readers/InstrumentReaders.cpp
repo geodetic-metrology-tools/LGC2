@@ -212,13 +212,14 @@ void TKeyLEVEL::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 		auto &targets(finstruments.fLEVEL[currentStation]->targets);
 
 		// the token count includes *, the keyword and the parameters
-		int expectedTokenCount = 7;
+		int expectedTokenCount = 10;
 		checkTarget(expectedTokenCount, targets, tokens);
 
-		auto t = std::make_shared<TInstrumentData::TLEVEL::TTarget>(TInstrumentData::TLEVEL::TTarget(tokens.at(0),
-			TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres), TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres),
-			TLength(std::stor(tokens.at(3)), TLength::EUnits::kMetres), TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres),
-			TLength(std::stor(tokens[5]), TLength::EUnits::kMetres), TLength(std::stor(tokens[6]), TLength::EUnits::kMillimetres), line));
+		auto t = std::make_shared<TInstrumentData::TLEVEL::TTarget>(TInstrumentData::TLEVEL::TTarget(tokens.at(0), TLength(std::stor(tokens.at(1)), TLength::EUnits::kMillimetres),
+			TLength(std::stor(tokens.at(2)), TLength::EUnits::kMillimetres), TLength(std::stor(tokens.at(3)), TLength::EUnits::kMetres),
+			TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), TLength(std::stor(tokens.at(5)), TLength::EUnits::kMetres),
+			TLength(std::stor(tokens.at(6)), TLength::EUnits::kMillimetres), TLength(std::stor(tokens.at(7)), TLength::EUnits::kMillimetres),
+			TLength(std::stor(tokens.at(8)), TLength::EUnits::kMillimetres), TLength(std::stor(tokens.at(9)), TLength::EUnits::kMetres), line));
 
 		// store the new target
 		targets[tokens.at(0)] = t;

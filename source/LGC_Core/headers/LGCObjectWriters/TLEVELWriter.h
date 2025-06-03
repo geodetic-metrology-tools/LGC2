@@ -58,8 +58,10 @@ private:
 	void writeLEVELHeader(const TLEVEL &fLevel);
 
 	// DLEV measurements
-	void writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrumentData::TLEVEL &instr);
+	void writeDLEVResults(const std::list<TDLEV> &measDLEV, const TInstrumentData::TLEVEL &instr);
+	void writeDLEVDHORResults(const std::list<TDLEV> &measDLEV, const int &numberOfDHOR);
 	void writeDLEVResultsHeader(int nOObs);
+	void writeDLEVDHORResultsHeader(int nOObs);
 
 	bool isAllfixed;
 };

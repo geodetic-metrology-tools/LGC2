@@ -71,8 +71,7 @@ TDLEV::TDLEV(const LGCAdjustablePoint &targetPos, TInstrumentData::TLEVEL::TTarg
 {
 }
 
-TDLEV::TDHOR::TDHOR(const LGCAdjustablePoint &pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v) :
-	TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(pos, tgt, v), dhorSigma(NO_VALf)
+TDLEV::TDHOR::TDHOR(const LGCAdjustablePoint &pos, TInstrumentData::TLEVEL::TTarget tgt, TLength v) : TAScalarMeas<TInstrumentData::TLEVEL::TTarget>(pos, tgt, v)
 {
 }
 ///////////////////////////////////////////////////////////
@@ -220,7 +219,6 @@ void TDVER::serialize(ObjectSerializer &obj) const
 void TDLEV::TDHOR::serialize(ObjectSerializer &obj) const
 {
 	TAScalarMeas<TInstrumentData::TLEVEL::TTarget>::serialize(obj);
-	obj.addProperty("dhorSigma", dhorSigma.getMetresValue());
 }
 
 void TDLEV::serialize(ObjectSerializer &obj) const

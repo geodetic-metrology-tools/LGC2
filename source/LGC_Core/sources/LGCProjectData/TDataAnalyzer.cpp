@@ -457,6 +457,9 @@ bool TDataAnalyzer::checkParameters()
 					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(
 						stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
 
+					// Add the line number of the DLEV for this point.
+					fRefPt.line = itLEVEL->line;
+
 					itLEVEL->fRefPt = &fData.getPoints().addObject(fRefPt);
 				}
 				else
@@ -1149,9 +1152,10 @@ void TDataAnalyzer::assignEOIndices()
 				{
 					dlev.dhor->setFirstEquationIndex(fData.fUEOIndices.EIndex++);
 					dlev.dhor->setFirstObservationIndex(fData.fUEOIndices.OIndex++);
-
-					// If DHOR exists, tell the station:
+					fData.addToMeasurementNum(TMeasurementsGlobal::kDLEVDHOR);
+					// If DHOR exists, tell the station and increment the number of DHOR
 					level.hasDHOR = true;
+					level.nbDHOR++;
 				}
 			}
 		}

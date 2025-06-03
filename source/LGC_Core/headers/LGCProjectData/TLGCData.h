@@ -60,6 +60,7 @@ struct TMeasurementsGlobal
 		kDIST,
 		kPLR3D,
 		kDLEV,
+		kDLEVDHOR,
 		kDHOR,
 		kECTH,
 		kECDIR,
@@ -84,6 +85,7 @@ struct TMeasurementsGlobal
 	int fNumDIST;
 	int fNumPLR3D;
 	int fNumDLEV;
+	int fNumDLEVDHOR;
 	int fNumDHOR;
 	int fNumECTH;
 	int fNumECDIR;

@@ -22,8 +22,11 @@ struct TLEVEL : public TStatusObject
 	/// All DLEV measurements, measuring the plane (fmeasuredPlane).
 	std::list<TDLEV> measDLEV;
 
-	/// Tells if the Level Station has AT LEST one DHOR measurement
+	/// Tells if the Level Station has AT LEAST one DHOR measurement
 	bool hasDHOR;
+
+	/// Counter for the number of DHOR in this ROM
+	int nbDHOR;
 
 	//! Initialise the observation summaries
 	void initialiseObsSummaries();
@@ -55,7 +58,7 @@ struct TLEVEL : public TStatusObject
 
 	// The station attribute is a copy of the parameter to override defaults
 	TLEVEL(const LGCAdjustablePoint *refPt, const TInstrumentData::TLEVEL &instrument) :
-		fMeasuredPlane(nullptr), fRefPt(refPt), line(NO_VALi), instrument(instrument), hasDHOR(false), ihfix(false)
+		fMeasuredPlane(nullptr), fRefPt(refPt), line(NO_VALi), instrument(instrument), hasDHOR(false), ihfix(false), nbDHOR(0)
 	{
 	}
 

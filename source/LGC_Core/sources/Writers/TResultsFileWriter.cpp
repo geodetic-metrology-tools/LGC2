@@ -261,6 +261,7 @@ void TResultsFileWriter::writeDataSummary()
 	int fNumUVEC = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVEC);
 	int fNumUVD = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVD);
 	int fNumDLEV = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEV);
+	int fNumDLEVDHOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEVDHOR);
 	int fNumDVER = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDVER);
 	int fNumECHO = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECHO);
 	int fNumECSP = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECSP);
@@ -305,6 +306,9 @@ void TResultsFileWriter::writeDataSummary()
 
 	if (fNumDLEV != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDLEV), fNumDLEV);
+
+	if (fNumDLEVDHOR != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDLEVDHOR), fNumDLEVDHOR);
 
 	if (fNumDVER != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDVER), fNumDVER);

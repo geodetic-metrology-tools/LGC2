@@ -36,11 +36,11 @@ void TLEVELWriter::writeLEVELHeader(const TLEVEL &fLevel)
 	(*stream).writeStringLeft(headerWidth, "REF POINT");
 	(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
 	(*stream).writeStringLeft(headerWidth, "X (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(0));
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstimatedValueInRoot().getX().getMetresValue());
 	(*stream).writeStringLeft(headerWidth, "Y (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(1));
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstimatedValueInRoot().getY().getMetresValue());
 	(*stream).writeStringLeft(headerWidth, "Z (M)");
-	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstValue(2));
+	(*stream).writeDouble(obsWidth, lengthPrecision, fLevel.fMeasuredPlane->getReferencePoint()->getEstimatedValueInRoot().getZ().getMetresValue());
 
 	// third line: definition of the PLANE
 	(*stream) << '\n';
@@ -86,24 +86,17 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "RES/SIG"); // DLEV: residual/sigma
 	(*stream).writeString(obsWidth, "COLLIMATION"); // DLEV: collimation angle
 	(*stream).writeString(obsResWidth, "SCOLL"); // DLEV: sigma of collimation angle
-
-	(*stream).writeString(obsWidth, "DHOR"); // DHOR: mesurement
-	(*stream).writeString(obsResWidth, "DSE"); // DHOR: sigma
-	(*stream).writeString(obsWidth, "CALCDHOR"); // DHOR: estimation
-	(*stream).writeString(obsResWidth, "RESDHOR"); // DHOR: residual
-	(*stream).writeString(obsResWidth, "RES/SIG"); // DHOR: residual/sigma
-
-	(*stream).writeString(obsWidth, "CONST"); // DHOR: Distance correction
-	(*stream).writeString(obsResWidth, "SCONST"); // DHOR: 1-Sigma precision for the distance correction
-	(*stream).writeString(obsResWidth, "OBSE"); // DHOR: 1-sigma precision for the vertical distance observation
-	(*stream).writeString(obsResWidth, "PPM"); // DHOR: ppm value for the distance correction
-	(*stream).writeString(obsWidth, "H_TRGT"); // DHOR: Vertical offset of the staff
-	(*stream).writeString(obsResWidth, "THSE"); // DHOR: 1-sigma precision for the vertical offset of the staff
+	(*stream).writeString(obsWidth, "CONST"); // DLEV: Distance correction
+	(*stream).writeString(obsResWidth, "SCONST"); // DLEV: 1-Sigma precision for the vertical distance correction
+	(*stream).writeString(obsResWidth, "OBSE"); // DLEV: 1-sigma precision for the vertical distance observation
+	(*stream).writeString(obsResWidth, "PPM"); // DLEV: ppm value for the vertical distance correction
+	(*stream).writeString(obsWidth, "H_TRGT"); // DLEV: Vertical offset of the staff
+	(*stream).writeString(obsResWidth, "THSE"); // DLEV: 1-sigma precision for the vertical offset of the staff
 
 	if (obsIdWidth != 0)
 		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 
-	(*stream) << endl;
+	(*stream) << "\n";
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
@@ -117,20 +110,50 @@ void TLEVELWriter::writeDLEVResultsHeader(int nOObs)
 	(*stream).writeString(obsWidth, "GONS"); // DLEV: collimation angle
 	(*stream).writeString(obsResWidth, "CC"); // DLEV: sigma collimation angle
 
-	(*stream).writeString(obsWidth, "(M)"); // DHOR: mesurement
-	(*stream).writeString(obsResWidth, "(MM)"); // DHOR: sigma
-	(*stream).writeString(obsWidth, "(M)"); // DHOR: estimation
-	(*stream).writeString(obsResWidth, "(MM)"); // DHOR: residual
-	(*stream).writeString(obsResWidth, ""); // DHOR: residual/sigma
+	(*stream).writeString(obsWidth, "(M)"); // DLEV: Distance correction
+	(*stream).writeString(obsResWidth, "(MM)"); // DLEV: 1-Sigma precision for the distance correction
+	(*stream).writeString(obsResWidth, "(MM)"); // DLEV: 1-sigma precision for the vertical distance observation
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // DLEV: ppm value for the distance correction
+	(*stream).writeString(obsWidth, "(M)"); // DLEV: Vertical offset of the staff
+	(*stream).writeString(obsResWidth, "(MM)"); // DLEV: 1-sigma precision for the vertical offset of the staff
 
-	(*stream).writeString(obsWidth, "(M)"); // DHOR: Distance correction
-	(*stream).writeString(obsResWidth, "(MM)"); // DHOR: 1-Sigma precision for the distance correction
-	(*stream).writeString(obsResWidth, "(MM)"); // DHOR: 1-sigma precision for the vertical distance observation
-	(*stream).writeString(obsResWidth, "(MM/KM)"); // DHOR: ppm value for the distance correction
-	(*stream).writeString(obsWidth, "(M)"); // DHOR: Vertical offset of the staff
-	(*stream).writeString(obsResWidth, "(MM)"); // DHOR: 1-sigma precision for the vertical offset of the staff
+	(*stream) << "\n";
+}
 
-	(*stream) << endl;
+void TLEVELWriter::writeDLEVDHORResultsHeader(int nOObs)
+{
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	int obsResWidth = getObsResWidth();
+	std::string TABs = stream->getCurrSpaceExtended(2);
+	////////////////////////////////////////////////////////////
+	// first line
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEVDHOR), nOObs);
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
+	(*stream).writeString(obsWidth, "OBSERVE"); // DLEV DHOR: mesurement
+	(*stream).writeString(obsResWidth, "SIGMA"); // DLEV DHOR: sigma
+	(*stream).writeString(obsWidth, "CALCULE"); // DLEV DHOR: estimation
+	(*stream).writeString(obsResWidth, "RESIDU"); // DLEV DHOR: residual
+	(*stream).writeString(obsResWidth, "RES/SIG"); // DLEV DHOR: residual/sigma
+	(*stream).writeString(obsResWidth, "DSE"); // DLEV DHOR: 1-sigma precision of the horizontal distance
+	(*stream).writeString(obsResWidth, "DHPPM"); // DLEV DHOR: ppm value for the horizontal distance correction
+	(*stream).writeString(obsWidth, "DHDCOR"); // DLEV DHOR: Distance correction value for the horizontal distance correction
+	(*stream) << "\n";
+	///////////////////////////////////////////////////////////////////////////////////
+	// second line
+	(*stream) << TABs;
+	(*stream).writeString(nameWidth, ""); // POSITION
+	(*stream).writeString(obsWidth, "(M)"); // DLEV: mesurement
+	(*stream).writeString(obsResWidth, "(MM)"); // DLEV: sigma
+	(*stream).writeString(obsWidth, "(M)"); // DLEV: estimation
+	(*stream).writeString(obsResWidth, "(MM)"); // DLEV: residual
+	(*stream).writeString(obsResWidth, ""); // DLEV: residual/sigma
+	(*stream).writeString(obsResWidth, "(MM)"); // DHOR: 1-sigma precision of the horizontal distance
+	(*stream).writeString(obsResWidth, "(MM/KM)"); // DHOR: ppm value for the horizontal distance correction
+	(*stream).writeString(obsWidth, "(M)"); // DHOR: Distance correction value for the horizontal distance correction
+	(*stream) << "\n";
 }
 
 //------------------ Result data---------------------------------------------------------------------------
@@ -138,12 +161,18 @@ void TLEVELWriter::writeLEVELResults(const TLEVEL &fLevel)
 {
 	writeLEVELHeader(fLevel);
 
-	if (fLevel.measDLEV.size() > 0)
-		// The eventual DHOR result to be written inside this method
+	if (!fLevel.measDLEV.empty())
+	{
+		// Write the DLEV Result
 		writeDLEVResults(fLevel.measDLEV, fLevel.instrument);
+
+		if (fLevel.hasDHOR)
+			// Write the eventual DLEV:DHOR
+			writeDLEVDHORResults(fLevel.measDLEV, fLevel.nbDHOR);
+	}
 }
 
-void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrumentData::TLEVEL &instr)
+void TLEVELWriter::writeDLEVResults(const std::list<TDLEV> &measDLEV, const TInstrumentData::TLEVEL &instr)
 {
 	TAStreamFormatter *stream = getStream();
 	int nameWidth = getNameWidth();
@@ -157,31 +186,31 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 	writeDLEVResultsHeader((int)measDLEV.size());
 
 	// For each DHOR measurement of the station
-	for (auto const &ItDlev : measDLEV)
+	for (auto const &itDlev : measDLEV)
 	{
 		(*stream) << TABs;
 
 		// Position of the target
-		(*stream).writeStringLeft(nameWidth, ItDlev.targetPos->getName());
+		(*stream).writeStringLeft(nameWidth, itDlev.targetPos->getName());
 
 		// DLEV
 		//  mesured offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistance());
+		(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.getDistance());
 		// sigma DIST
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaCombinedDist.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.target.sigmaCombinedDist.getMMetresValue());
 		// estimated offset
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.getDistanceResidual() + ItDlev.getDistance());
+		(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.getDistanceResidual() + itDlev.getDistance());
 		// residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.getDistanceResidual().getMMetresValue());
 		// residual/sima
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.getDistanceResidual().getMetresValue() / ItDlev.target.sigmaCombinedDist.getMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.getDistanceResidual().getMetresValue() / itDlev.target.sigmaCombinedDist.getMetresValue());
 
 		// Collimation angle
 		if (!instr.collAngleAdjustable->isFixed())
 		{
 			if (isAllfixed)
-				if (!isnotanumber(ItDlev.fAllFixedCollimation))
-					(*stream).writeDouble(obsWidth, getAnglePrecision(), ItDlev.fAllFixedCollimation.getGonsValue());
+				if (!isnotanumber(itDlev.fAllFixedCollimation))
+					(*stream).writeDouble(obsWidth, getAnglePrecision(), itDlev.fAllFixedCollimation.getGonsValue());
 				else
 					(*stream).writeString(obsWidth, "FIXED");
 			else
@@ -195,46 +224,58 @@ void TLEVELWriter::writeDLEVResults(std::list<TDLEV> measDLEV, const TInstrument
 			(*stream).writeString(obsResWidth, "FIXED");
 		}
 
-		// DHOR
-		if (ItDlev.dhor)
-		{
-			// mesured dhor
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.dhor.get()->getDistance());
-			// sigma Dhor
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.dhor.get()->getDHORSigma().getMMetresValue());
-			// estimated offset
-			(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.dhor.get()->getDistanceResidual() + ItDlev.dhor.get()->getDistance());
-			// residual
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.dhor.get()->getDistanceResidual().getMMetresValue());
-			// res/sigma
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.dhor.get()->getDistanceResidual() / ItDlev.dhor.get()->getDHORSigma());
-		}
-		else
-		{
-			// mesured dhor
-			(*stream).writeString(obsWidth, "");
-			// sigma Dhor
-			(*stream).writeString(obsResWidth, "");
-			// estimated offset
-			(*stream).writeString(obsWidth, "");
-			// residual
-			(*stream).writeString(obsResWidth, "");
-			// res/sigma
-			(*stream).writeString(obsResWidth, "");
-		}
-
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.target.distCorrectionValue.getMetresValue()); // DHOR: Distance correction
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaDCorr.getMMetresValue()); // DHOR: 1-Sigma precision for the distance correction
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaD.getMMetresValue()); // DHOR: 1-sigma precision for the vertical distance observation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.ppmD.getMMetresValue()); // DHOR: ppm value for the distance correction
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDlev.target.staffHt.getMetresValue()); // DHOR: Vertical offset of the staff
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDlev.target.sigmaStaffHt.getMMetresValue()); // DHOR: 1-sigma precision for the vertical offset of the staff
+		(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.target.distCorrectionValue.getMetresValue()); // DHOR: Distance correction
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.target.sigmaDCorr.getMMetresValue()); // DHOR: 1-Sigma precision for the distance correction
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.target.sigmaD.getMMetresValue()); // DHOR: 1-sigma precision for the vertical distance observation
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.target.ppmD.getMMetresValue()); // DHOR: ppm value for the distance correction
+		(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.target.staffHt.getMetresValue()); // DHOR: Vertical offset of the staff
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.target.sigmaStaffHt.getMMetresValue()); // DHOR: 1-sigma precision for the vertical offset of the staff
 
 		// Write the observation identifier
-		(*stream).writeString(obsIdWidth, ItDlev.obsID);
-		(*stream) << endl;
+		(*stream).writeString(obsIdWidth, itDlev.obsID);
+		(*stream) << "\n";
 	}
-	(*stream) << endl;
+	(*stream) << "\n";
+}
+
+void TLEVELWriter::writeDLEVDHORResults(const std::list<TDLEV> &measDLEV, const int &numberOfDHOR)
+{
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	int obsResWidth = getObsResWidth();
+	int lengthPrecision = getLengthPrecision();
+	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	std::string TABs = stream->getCurrSpaceExtended(2);
+
+	writeDLEVDHORResultsHeader(numberOfDHOR);
+
+	// For each DHOR measurement of the station
+	for (auto const &itDlev : measDLEV)
+	{
+		if (itDlev.dhor)
+		{
+			(*stream) << TABs;
+			// Position of the target
+			(*stream).writeStringLeft(nameWidth, itDlev.targetPos->getName());
+			// measured dhor
+			(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.dhor.get()->getDistance());
+			// sigma Dhor
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.dhor->target.sigmaCombinedDHor.getMMetresValue());
+			// estimated offset
+			(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.dhor.get()->getDistanceResidual() + itDlev.dhor.get()->getDistance());
+			// residual
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.dhor.get()->getDistanceResidual().getMMetresValue());
+			// res/sigma
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.dhor.get()->getDistanceResidual() / itDlev.dhor->target.sigmaCombinedDHor.getMetresValue());
+
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.dhor->target.sigmaDHor.getMMetresValue()); // DHOR: 1-sigma precision of the horizontal distance
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.dhor->target.ppmDHor.getMMetresValue()); // DHOR: ppm value for the horizontal distance correction
+			(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.dhor->target.dhorCorrectionValue.getMetresValue()); // DHOR: Distance correction value for the horizontal distance correction
+			(*stream) << "\n";
+		}
+	}
+	(*stream) << "\n";
 }
 
 //------------------ Simu data---------------------------------------------------------------------------
@@ -253,8 +294,7 @@ void TLEVELWriter::writeLEVELSIMUResults(const TLEVEL &fLevel)
 	// The DHOR result summary
 	if (fLevel.hasDHOR)
 	{
-		(*stream) << TABs;
-		(*stream) << "DHOR" << endl;
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kDLEVDHOR), fLevel.nbDHOR);
 		writeDistanceResultsSummary(fLevel.getDHORObsSummary(), TABs);
 	}
 }
@@ -295,7 +335,7 @@ void TLEVELWriter::writeDHORReliabilityData(const TLEVEL &fLevel, const TLGCStat
 			// get the observed distance
 			(*stream).writeDouble(obsWidth, lengthPrecision, ItDhor.dhor->getDistance());
 			// get the standard deviation
-			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDHORSigma().getMMetresValue());
+			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->target.sigmaCombinedDHor.getMMetresValue());
 			// get the residual
 			(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDhor.dhor->getDistanceResidual().getMMetresValue());
 
@@ -315,24 +355,24 @@ void TLEVELWriter::writeDLEVReliabilityData(const TLEVEL &fLevel, const TLGCStat
 	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 
 	// For each DLEV measurement of the station
-	for (auto const &ItDLEV : fLevel.measDLEV)
+	for (auto const &itDlev : fLevel.measDLEV)
 	{
 		// Observation index to take the right value in the statistic vector
-		int index = ItDLEV.getFirstObservationIndex();
+		int index = itDlev.getFirstObservationIndex();
 
 		// get reference point to the plane
 		(*stream).writeStringLeft(nameWidth, fLevel.fMeasuredPlane->getReferencePoint()->getName());
 		// get Tg point
-		(*stream).writeStringLeft(nameWidth, ItDLEV.targetPos->getName());
+		(*stream).writeStringLeft(nameWidth, itDlev.targetPos->getName());
 		// get Point 3
 		(*stream).writeStringLeft(nameWidth, "");
 
 		// get the observed distance
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItDLEV.getDistance());
+		(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.getDistance());
 		// get the standard deviation
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.target.sigmaCombinedDist.getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.target.sigmaCombinedDist.getMMetresValue());
 		// get the residual
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV.getDistanceResidual().getMMetresValue());
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.getDistanceResidual().getMMetresValue());
 
 		writeReliabilityMM(index, stat);
 	}
@@ -381,14 +421,14 @@ void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary *> 
 	int lengthResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
-	for (auto const &ItDLEV : dlevsum)
+	for (auto const &itDlev : dlevsum)
 	{
 		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, ItDLEV->getObsText()); // Reference point
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMax()); // residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getResMin()); // residu min
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItDLEV->getStdev()); // ecart type
+		(*stream).writeStringLeft(nameWidth, itDlev->getObsText()); // Reference point
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getResMax()); // residu max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getResMin()); // residu min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getMean()); // residu moy
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getStdev()); // ecart type
 		(*stream) << endl;
 	}
 }

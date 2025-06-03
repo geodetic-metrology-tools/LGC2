@@ -262,9 +262,8 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 		if (!allDlevDHORSummaries_.empty())
 		{
 			(*stream) << "\n";
-			levelWriter.writeHisto(TLGCObsSummary::merge(allDlevDHORSummaries_), "DLEV: DHOR");
+			levelWriter.writeHisto(TLGCObsSummary::merge(allDlevDHORSummaries_), "DLEVDHOR");
 		}
-			
 	}
 
 	// DVER
@@ -672,7 +671,7 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 		if (!allDlevDHORSummaries_.empty())
 		{
 			(*stream) << TABs;
-			(*stream).writeStringLeft(nameWidth, "DLEV: DHOR");
+			(*stream).writeStringLeft(nameWidth, "DLEVDHOR");
 			(*stream) << "\n";
 			levelWriter.writeLEVELSynthesisHeader();
 			levelWriter.writeLEVELResultsSynthesis(allDlevDHORSummaries_);
@@ -836,7 +835,11 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	if (frameIt->get()->frame.getName() != "ROOT")
 		writeFRAMEDefinition(frameIt->get()->frame);
 	else
+	{
 		writePoints(frameIt); // Write points for SIMU only in ROOT, not in local nodes
+		(*stream) << "SFP = Sub-Frame Point; * = TRUE" << "\n";
+	}
+	(*stream) << "\n" << "\n";
 
 	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());
@@ -855,7 +858,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	// Measures
-	(*stream) << endl << endl << TABs << "*** MEASUREMENTS DATA ***" << endl << endl;
+	(*stream) << endl << endl << TABs << "*** MESURES ***" << endl << endl;
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResultsSIMU(itTSTN);
 

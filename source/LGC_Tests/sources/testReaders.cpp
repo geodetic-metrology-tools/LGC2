@@ -376,8 +376,8 @@ void object::test<5>()
 	TKeyLEVEL m3(proj);
 	m3.parse(tokenizefileString("*LEVEL LI1 ST1 0.0 0.0 0 100"), true, -1);
 	// staffID   sigmaD   ppmD   distCorrectionValue    sigmaDCorr    staffHt    sigmaStaffHt
-	m3.parse(tokenizefileString("ST1 1 2 3 4 5 6"), true, -1);
-	m3.parse(tokenizefileString("ST2 1 2 3 4 5 6"), true, -1);
+	m3.parse(tokenizefileString("ST1 1 2 3 4 5 6 7 8 9"), true, -1);
+	m3.parse(tokenizefileString("ST2 1 2 3 4 5 6 7 8 9"), true, -1);
 	const TInstrumentData::TLEVEL &ls1(instr.getDevice(instr.fLEVEL, "LI1"));
 	ensure_equals(ls1.ID, "LI1");
 	ensure_equals(ls1.defStaffID, "ST1");

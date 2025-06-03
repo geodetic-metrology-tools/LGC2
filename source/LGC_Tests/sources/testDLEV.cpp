@@ -116,7 +116,7 @@ void object::test<5>()
 	ensure_equals("First measurement: ID should match", measDlevIt->obsID, "TEST1");
 	ensure_equals("First measurement: DLEV measurement should match", measDlevIt->getDistance().getMetresValue(), 0.5);
 	ensure_equals("First measurement: DHOR measurement should match", measDlevIt->dhor->getDistance().getMetresValue(), 7.071067812);
-	ensure_equals("First measurement: DHOR sigma should match", measDlevIt->dhor->getDHORSigma().getMMetresValue(), 1.0);
+	ensure_equals("First measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMMetresValue(), 1.0);
 
 	measDlevIt++;
 	ensure_equals("Second measurement: Instrument name should match", measDlevIt->target.ID, "TARG1");
@@ -129,7 +129,7 @@ void object::test<5>()
 	ensure_equals("Second measurement: ID should match", measDlevIt->obsID, "TEST2");
 	ensure_equals("Second measurement: DLEV measurement should match", measDlevIt->getDistance().getMetresValue(), 1.0);
 	ensure_equals("Second measurement: DHOR measurement should match", measDlevIt->dhor->getDistance().getMetresValue(), 7.071067812);
-	ensure_equals("Second measurement: DHOR sigma should match", measDlevIt->dhor->getDHORSigma().getMMetresValue(), 3.0);
+	ensure_equals("Second measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMMetresValue(), 3.0);
 
 	measDlevIt++;
 	ensure_equals("Third measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
@@ -141,7 +141,7 @@ void object::test<5>()
 	ensure_equals("Third measurement: THSE should match", measDlevIt->target.sigmaStaffHt.getMMetresValue(), 0.00);
 	ensure_equals("Third measurement: DLEV measurement should match", measDlevIt->getDistance().getMetresValue(), 1.0);
 	ensure_equals("Third measurement: DHOR measurement should match", measDlevIt->dhor->getDistance().getMetresValue(), 7.071067812);
-	ensure_equals("Third measurement: DHOR sigma should match", measDlevIt->dhor->getDHORSigma().getMMetresValue(), 2.0);
+	ensure_equals("Third measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMMetresValue(), 2.0);
 
 	measDlevIt++;
 	ensure_equals("Fourth measurement: Instrument name should match", measDlevIt->target.ID, "TARG1");
@@ -153,7 +153,7 @@ void object::test<5>()
 	ensure_equals("Fourth measurement: THSE should match", measDlevIt->target.sigmaStaffHt.getMMetresValue(), 0.03);
 	ensure_equals("Fourth measurement: DLEV measurement should match", measDlevIt->getDistance().getMetresValue(), 1.0);
 	ensure_equals("Fourth measurement: DHOR measurement should match", measDlevIt->dhor->getDistance().getMetresValue(), 7.071067812);
-	ensure_equals("Fourth measurement: DHOR sigma should match", measDlevIt->dhor->getDHORSigma().getMMetresValue(), 1.0);
+	ensure_equals("Fourth measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMMetresValue(), 1.0);
 }
 
 template<>
@@ -438,6 +438,147 @@ void object::test<13>()
 	LGCAdjustablePoint PT5 = dataset.getPoints().getObject("PT5");
 	ensure_equals("PT5 Z coordinate should match", PT5.getEstimatedValue().getZ().getMetresValue(), 2329.00041, 1e-5);
 	ensure_equals("PT5 H coordinate should match", PT5.getEstimatedHeightInRoot().getMetresValue(), 329.00001, 1e-5);
+}
+
+template<>
+template<>
+void object::test<14>()
+{
+	set_test_name("Testing reading DHOR Keyword and flags");
+	readTest(TestDLEV::DLEV_OLOC_7, "DLEV_OLOC_7");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// Checking that the DHOR correction are applied in the right direction via the S0.
+	ensure_equals("S0 should be 0", projTest->getS0APosteriori(), 0, 1e-6);
+
+	TDataTree tree = projTest->getTree();
+	auto romIt = tree.begin().node->data->measurements.fLEVEL.begin();
+
+	auto measDlevIt = romIt->measDLEV.begin();
+	ensure_equals("First measurement: Instrument name should match", measDlevIt->target.ID, "TARG1");
+	ensure_equals("First measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 10);
+	ensure_equals("First measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 20);
+	ensure_equals("First measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), 1.0);
+	ensure_equals("First measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.010121421, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Second measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
+	ensure_equals("Second measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 30);
+	ensure_equals("Second measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 40);
+	ensure_equals("Second measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), -1.0);
+	ensure_equals("Second measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.030322843, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Third measurement: Instrument name should match", measDlevIt->target.ID, "TARG1");
+	ensure_equals("Third measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 50);
+	ensure_equals("Third measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 60);
+	ensure_equals("Third measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), 0.0);
+	ensure_equals("Third measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.050424264, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Fourth measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
+	ensure_equals("Fourth measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 50);
+	ensure_equals("Fourth measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 60);
+	ensure_equals("Fourth measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), 0.0);
+	ensure_equals("Fourth measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.050424264, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Fifth measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
+	ensure_equals("Fifth measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 50);
+	ensure_equals("Fifth measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 60);
+	ensure_equals("Fifth measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), 0.0);
+	ensure_equals("Fifth measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.050424264, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Sixth measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
+	ensure_equals("Sixth measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 50);
+	ensure_equals("Sixth measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 40);
+	ensure_equals("Sixth measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), -1.0);
+	ensure_equals("Sixth measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.050322843, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Seventh measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
+	ensure_equals("Seventh measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 30);
+	ensure_equals("Seventh measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 60);
+	ensure_equals("Seventh measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), -1.0);
+	ensure_equals("Seventh measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.030484264, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Eigth measurement: Instrument name should match", measDlevIt->target.ID, "TARG2");
+	ensure_equals("Eigth measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 30);
+	ensure_equals("Eigth measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 40);
+	ensure_equals("Eigth measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), -2.0);
+	ensure_equals("Eigth measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.030362843, 1e-8);
+
+	measDlevIt++;
+	ensure_equals("Nineth measurement: Instrument name should match", measDlevIt->target.ID, "TARG1");
+	ensure_equals("Nineth measurement: DHOR sigma should match", measDlevIt->dhor->target.sigmaDHor.getMMetresValue(), 50);
+	ensure_equals("Nineth measurement: DHOR PPM should match", measDlevIt->dhor->target.ppmDHor.getMMetresValue(), 20);
+	ensure_equals("Nineth measurement: DHOR correction should match", measDlevIt->dhor->target.dhorCorrectionValue.getMetresValue(), 0.0);
+	ensure_equals("Nineth measurement: DHOR combined sigma should match", measDlevIt->dhor->target.sigmaCombinedDHor.getMetresValue(), 0.050141421, 1e-8);
+}
+
+template<>
+template<>
+void object::test<15>()
+{
+	set_test_name("Testing reading DHOR Keyword and flags");
+	readTest(TestDLEV::DLEV_OLOC_8, "DLEV_OLOC_8");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// Checking that the DHOR correction are applied in the right direction via the S0.
+	ensure_equals("S0 should be 0", projTest->getS0APosteriori(), 0, 1e-6);
+
+	TDataTree tree = projTest->getTree();
+	TDataTreeIterator frameIt = tree.begin();
+	frameIt++;
+	ensure_equals("TZ ForTarget frame should match", frameIt.node->data->frame.getEstTranslation(2).getMetresValue(), -1, 1e-6);
+
+	frameIt++;
+	ensure_equals("TX ForStation frame should match", frameIt.node->data->frame.getEstTranslation(0).getMetresValue(), 10, 1e-6);
+	ensure_equals("TY ForStation frame should match", frameIt.node->data->frame.getEstTranslation(1).getMetresValue(), 10, 1e-6);
+	ensure_equals("TZ ForStation frame should match", frameIt.node->data->frame.getEstTranslation(2).getMetresValue(), -2, 1e-6);
+}
+
+template<>
+template<>
+void object::test<16>()
+{
+	set_test_name("Checking contribution with frames, computatibility with residuals");
+	readTest(TestDLEV::DLEV_OLOC_9, "DLEV_OLOC_9");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// Checking that the DHOR and DLEV contributions, Sigma0 should be below 1.
+	ensure(projTest->getS0APosteriori() < 1);
+}
+
+template<>
+template<>
+void object::test<17>()
+{
+	set_test_name("Checking REFPT and edge cases for DHOR FLAGS");
+	readTest(TestDLEV::DLEV_OLOC_10, "DLEV_OLOC_10");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
 
 } // namespace tut

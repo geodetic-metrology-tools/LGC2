@@ -6,20 +6,19 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #ifndef SU_TA_LGC_OBJECTWRITER
 #define SU_TA_LGC_OBJECTWRITER
 
-//STL
+// STL
 #include <map>
 #include <string>
-//SURVEYLIB
+// SURVEYLIB
 #include "TAConverter.h"
 
 /*!
 	\ingroup LGCObjectWriters
-	\brief Base class for writing functionalities in LGC. 
+	\brief Base class for writing functionalities in LGC.
 @{*/
-class  TALGCObjectWriter : public TAConverter
+class TALGCObjectWriter : public TAConverter
 {
 public:
-
 	/*!@name Enum Observation Types Definitions*/
 	//@{
 	enum ELGCObservations
@@ -35,6 +34,7 @@ public:
 		kDHOR,
 		kDSPT,
 		kDLEV,
+		kDLEVDHOR,
 		kDVER,
 		kECHO,
 		kECSP,
@@ -50,27 +50,26 @@ public:
 	};
 	//@}
 
-
 	/*!@name Constructors and Destructors*/
 	//@{
-		/*!
-		\brief Constructor
+	/*!
+	\brief Constructor
 
-		\param[in] TAStreamFormatter& stream used to convert the data and write out into the output file. */
-		TALGCObjectWriter(TAStreamFormatter& stream);
+	\param[in] TAStreamFormatter& stream used to convert the data and write out into the output file. */
+	TALGCObjectWriter(TAStreamFormatter &stream);
 
-		/// Destructor 
-		virtual  ~TALGCObjectWriter();
+	/// Destructor
+	virtual ~TALGCObjectWriter();
 
-		/// Write the keyword
-		void writeKeyWord(const std::string &keyword);
+	/// Write the keyword
+	void writeKeyWord(const std::string &keyword);
 	//@}
 
 protected:
 	/*!@name Protected member functions*/
 	//@{
-		/*! default Constructor*/
-		TALGCObjectWriter();
+	/*! default Constructor*/
+	TALGCObjectWriter();
 	//@}
 };
 
