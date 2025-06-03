@@ -875,12 +875,12 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const LGCAdjustab
 
 	TPositionVector staffPos = dhor.targetPos->getEstimatedValue(); // Levelling staff is the 'target'
 	const TLOR2LOR &staffPTLor2RootTrafo = fPointTransfo.getLORTransformation(dhor.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
-	refPTLor2RootTrafo.transform(staffPos);
+	staffPTLor2RootTrafo.transform(staffPos);
 
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
-		fPointTransfo.transformPointsToMLASystem(dhor.targetPos->getName(), staffPos, refPointPos);
+		fPointTransfo.transformPointsToMLASystem(dhor.targetPos->getName(), refPointPos, staffPos);
 		fPointTransfo.setMLA(true);
 	}
 	else
@@ -892,11 +892,12 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const LGCAdjustab
 	TReal xTg = refPointPos.getX().getMetresValue();
 	TReal yTg = refPointPos.getY().getMetresValue();
 
-	calcMeas = dist(xSt, ySt, xTg, yTg);
+	calcMeas = dist(xSt, ySt, xTg, yTg) - dhor.target.dhorCorrectionValue.getMetresValue();
 
-	if (calcMeas < nullLimit)
+	if (isZero(calcMeas))
 	{
-		generateContributionError("TContributionGenerator::getHorDistContrib: Division by zero because x and y coordinates of station and target are identical. Points: "
+		generateContributionError("TContributionGenerator::getHorDistContrib: Division by zero because x and y coordinates of station and target are identical or the "
+								  "correction matches the distance defined by the coordinates. Points: "
 			+ getNameAndLine(*referencePoint) + " and " + getNameAndLine(*dhor.targetPos));
 	}
 
@@ -913,7 +914,10 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const LGCAdjustab
 	referencePTContrib = getPointContributions(refPTLor2RootTrafo, -a, -b, -c);
 	addTransformationsContributions(refPTLor2RootTrafo, referencePoint->getEstimatedValue(), -a, -b, -c, referencePTTransfContributions);
 
-	HorDistContribLEVEL contrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions};
+	// Variance calculation
+	TReal variance = pow2q(dhor.target.sigmaDHor.getMetresValue() + dhor.getDistance().getKMetresValue() * dhor.target.ppmDHor);
+
+	HorDistContribLEVEL contrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, variance};
 
 	return contrib;
 }

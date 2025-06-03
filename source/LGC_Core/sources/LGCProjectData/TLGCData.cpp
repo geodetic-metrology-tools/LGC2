@@ -173,6 +173,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type)
 	case TMeasurementsGlobal::kDLEV:
 		fMeasInfo.fNumDLEV++;
 		break;
+	case TMeasurementsGlobal::kDLEVDHOR:
+		fMeasInfo.fNumDLEVDHOR++;
+		break;
 	case TMeasurementsGlobal::kDVER:
 		fMeasInfo.fNumDVER++;
 		break;
@@ -240,6 +243,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumECDIR;
 	case TMeasurementsGlobal::kDLEV:
 		return fMeasInfo.fNumDLEV;
+	case TMeasurementsGlobal::kDLEVDHOR:
+		return fMeasInfo.fNumDLEVDHOR;
 	case TMeasurementsGlobal::kDVER:
 		return fMeasInfo.fNumDVER;
 	case TMeasurementsGlobal::kUVEC:
@@ -283,6 +288,7 @@ void TLGCData::setDefaultValues()
 	fMeasInfo.fNumANGL = 0;
 	fMeasInfo.fNumDIST = 0;
 	fMeasInfo.fNumDLEV = 0;
+	fMeasInfo.fNumDLEVDHOR = 0;
 	fMeasInfo.fNumPLR3D = 0;
 	fMeasInfo.fNumZEND = 0;
 	fMeasInfo.fNumDHOR = 0;
@@ -859,6 +865,7 @@ void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fNumDIST", fNumDIST);
 	obj.addProperty("fNumPLR3D", fNumPLR3D);
 	obj.addProperty("fNumDLEV", fNumDLEV);
+	obj.addProperty("fNumDLEVDHOR", fNumDLEVDHOR);
 	obj.addProperty("fNumDHOR", fNumDHOR);
 	obj.addProperty("fNumECTH", fNumECTH);
 	obj.addProperty("fNumECDIR", fNumECDIR);

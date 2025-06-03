@@ -869,14 +869,16 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 
 		const LGCAdjustablePoint *refPt = nullptr;
 
-		if (opts.has("RefPt"))
+		std::vector<std::string> refPtOptions = {"RefPt", "REFPT"};
+		for (const auto &key : refPtOptions)
 		{
-			std::string rpName = opts.getParamS("RefPt", "NULL");
+			if (opts.has(key))
+			{
+				std::string rpName = opts.getParamS(key, "NULL");
 
-			if (!fpoints.doesObjectExist(rpName))
-				throw std::runtime_error("Point" + rpName + "used as reference point in DLEV measurement, must be declared before used");
-
-			refPt = &fpoints.getObject(rpName);
+				refPt = &fpoints.getObject(rpName);
+				break; // Use the first matching key only
+			}
 		}
 
 		TLEVEL level(refPt, finstruments.getDevice(finstruments.fLEVEL, tokens.at(2)));
@@ -894,7 +896,8 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		else
 		{
 			if (opts.has("IH") || opts.has("IHSE"))
-				proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING << "Line " + std::to_string(line) + " : IH/IHSE flags are ignored when the instrument height is a free parameter!";
+				proj.getFileLogger() << TFileLogger::e_logType::LOG_WARNING
+									 << "Line " + std::to_string(line) + " : IH/IHSE flags are ignored when the instrument height is a free parameter!";
 
 			// To avoid taking the default instrument value, the precision on the instrument height should be set to 0.
 			level.instrument.sigmaInstrHeight = TLength(0);
@@ -926,6 +929,9 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		tgt.ppmD = TLength(opts.getParamRmm2m("PPM", tgt.ppmD));
 		tgt.staffHt = TLength(opts.getParamR("TH", tgt.staffHt)); // Vertical offset of the staff == height
 		tgt.sigmaStaffHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaStaffHt));
+		tgt.sigmaDHor = TLength(opts.getParamRmm2m("DSE", tgt.sigmaDHor));
+		tgt.ppmDHor = TLength(opts.getParamRmm2m("DHPPM", tgt.ppmDHor));
+		tgt.dhorCorrectionValue = TLength(opts.getParamR("DHDCOR", tgt.dhorCorrectionValue));
 
 		// Store  the dlev measured value
 		TDLEV dlev(tgtfPoint, tgt, TLength(!hasAllParams ? NO_VALf : std::stor(tokens.at(1))));
@@ -938,13 +944,7 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 			else
 				// If horizontal distance is given, DHOR measurement is introduced.
 				dlev.dhor = std::make_shared<TDLEV::TDHOR>(TDLEV::TDHOR(tgtfPoint, tgt, TLength(opts.getParamR("DHOR", NO_VALf))));
-
 			dlev.dhor->line = line;
-			TReal horDistSigma = opts.getParamRmm2m("DSE", NO_VALf);
-			if (!isnotanumber(horDistSigma))
-				dlev.dhor->setDHORSigma(TLength(horDistSigma));
-			else
-				throw std::runtime_error("If DHOR distance is provided, standard deviation (DSE) needs to be assigned!");
 		}
 
 		dlev.line = line;

@@ -375,20 +375,10 @@ public:
 		/// Returns the last LS-matrices equation index of this measurement, DIST, DHOR introduce 1 equation.
 		inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
-		/// Returns the DHOR sigma
-		inline TLength getDHORSigma() const { return dhorSigma; }
-
-		/// Stes DHOR sigma
-		inline void setDHORSigma(TLength sigma) { dhorSigma = sigma; }
-
 #if USE_SERIALIZER
 		// Inherited via Serializable
 		virtual void serialize(ObjectSerializer &obj) const;
 #endif
-
-	private:
-		/*Optinal horizontal distance sigma which can be assigned to a DHOR measurement inside DLEV.*/
-		TLength dhorSigma;
 	};
 
 	virtual ~TDLEV() {}
@@ -693,7 +683,7 @@ class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENo
 public:
 	/*!@name Constructors */
 	//@{
-	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr){};
+	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr) {};
 
 	/// Destructor
 	~TECWI() override = default;

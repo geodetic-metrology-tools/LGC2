@@ -206,15 +206,17 @@ void TSimFileWriter::writeInstrument()
 					  << itTarget.second->targetHt.getMetresValue() << sep << itTarget.second->sigmaTargetHt.getMMetresValue() << sep << endl;
 	}
 
-	for (auto &itLEVEL : data->getInstruments().fLEVEL)
+	for (auto const &itLEVEL : data->getInstruments().fLEVEL)
 	{
 		(*stream) << "*LEVEL " << itLEVEL.second->ID << sep << itLEVEL.second->defStaffID << sep << itLEVEL.second->instrHeight.getMetresValue() << sep
 				  << itLEVEL.second->sigmaInstrHeight.getMMetresValue() << sep << itLEVEL.second->collAngleUnknown << sep << itLEVEL.second->collAngleValue.getGonsValue()
 				  << sep << endl;
-		for (auto &itTarget : itLEVEL.second->targets)
+		for (auto const &itTarget : itLEVEL.second->targets)
 			(*stream) << itTarget.second->ID << sep << itTarget.second->sigmaD.getMMetresValue() << sep << itTarget.second->ppmD.getMMetresValue() << sep
 					  << itTarget.second->distCorrectionValue.getMetresValue() << sep << itTarget.second->sigmaDCorr.getMMetresValue() << sep
-					  << itTarget.second->staffHt.getMetresValue() << sep << itTarget.second->sigmaStaffHt.getMMetresValue() << sep << endl;
+					  << itTarget.second->staffHt.getMetresValue() << sep << itTarget.second->sigmaStaffHt.getMMetresValue() << sep
+					  << itTarget.second->sigmaDHor.getMMetresValue() << sep << itTarget.second->ppmDHor.getMetresValue() << sep
+					  << itTarget.second->dhorCorrectionValue.getMetresValue() << sep << "\n";
 	}
 
 	for (auto &itSCALE : data->getInstruments().fSCALE)
@@ -227,8 +229,8 @@ void TSimFileWriter::writeInstrument()
 	for (auto &itINCL : data->getInstruments().fINCL)
 	{
 		(*stream) << "*INCL " << itINCL.second->ID << sep << itINCL.second->sigmaAngl.getSignedCCValue() << sep << itINCL.second->sigmaPpm.getMicroRadiansValue() << sep
-				  << itINCL.second->angleCorrectionValue.getGonsValue()
-				  << sep << itINCL.second->sigmaCorrectionValue.getSignedCCValue() << sep << itINCL.second->refAngleCorrectionValue.getGonsValue() << sep << itINCL.second->refSigmaCorrectionValue.getSignedCCValue() << sep << "\n";
+				  << itINCL.second->angleCorrectionValue.getGonsValue() << sep << itINCL.second->sigmaCorrectionValue.getSignedCCValue() << sep
+				  << itINCL.second->refAngleCorrectionValue.getGonsValue() << sep << itINCL.second->refSigmaCorrectionValue.getSignedCCValue() << sep << "\n";
 	}
 
 	for (auto &itHLSR : data->getInstruments().fHLSR)
@@ -799,8 +801,9 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
-	auto romDefStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
-	auto levelDefInst = *data->getInstruments().fLEVEL.at(meas->instrument.ID);
+	const auto romDefStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
+	const auto levelDefInst = *data->getInstruments().fLEVEL.at(meas->instrument.ID);
+	auto currentStaff = *meas->instrument.targets.at(meas->instrument.defStaffID);
 
 	if (!meas->isActive())
 		(*stream) << DEACTIVATION_CHAR;
@@ -820,35 +823,51 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 		if (meas->instrument.sigmaInstrHeight != levelDefInst.sigmaInstrHeight)
 			(*stream) << "IHSE" << sep << meas->instrument.sigmaInstrHeight.getMMetresValue() << sep;
 	}
-	(*stream) << endl;
+	(*stream) << "\n";
 
 	// write measurement for the plane
-	for (auto &itDLEV : meas->measDLEV)
+	for (auto const &itDLEV : meas->measDLEV)
 	{
 		if (!itDLEV.isActive())
 			(*stream) << DEACTIVATION_CHAR;
 
 		(*stream) << itDLEV.targetPos->getName() << sep << itDLEV.getDistance().getMetresValue() << sep;
 
-		if (itDLEV.dhor.get())
-			(*stream) << "DHOR" << sep << itDLEV.dhor.get()->getDistance().getMetresValue() << sep << "DSE" << sep << itDLEV.dhor.get()->getDHORSigma().getMMetresValue() << sep;
-
 		if (itDLEV.target.ID != romDefStaff.ID)
+		{
 			(*stream) << "TRGT" << sep << itDLEV.target.ID << sep;
+			currentStaff = *meas->instrument.targets.at(itDLEV.target.ID);
+		}
+		else
+			currentStaff = romDefStaff;
 
-		if (itDLEV.target.sigmaD != romDefStaff.sigmaD)
+		if (itDLEV.target.sigmaD != currentStaff.sigmaD)
 			(*stream) << "OBSE" << sep << itDLEV.target.sigmaD.getMMetresValue() << sep;
 
-		if (itDLEV.target.ppmD != romDefStaff.ppmD)
+		if (itDLEV.target.ppmD != currentStaff.ppmD)
 			(*stream) << "PPM" << sep << itDLEV.target.ppmD.getMMetresValue() << sep;
 
-		if (itDLEV.target.staffHt != romDefStaff.staffHt)
+		if (itDLEV.target.staffHt != currentStaff.staffHt)
 			(*stream) << "TH" << sep << itDLEV.target.staffHt.getMetresValue() << sep;
 
-		if (itDLEV.target.sigmaStaffHt != romDefStaff.sigmaStaffHt)
+		if (itDLEV.target.sigmaStaffHt != currentStaff.sigmaStaffHt)
 			(*stream) << "THSE" << sep << itDLEV.target.sigmaStaffHt.getMMetresValue() << sep;
 
-		(*stream) << endl;
+		if (itDLEV.dhor.get())
+		{
+			(*stream) << "DHOR" << sep << itDLEV.dhor.get()->getDistance().getMetresValue() << sep;
+
+			if (itDLEV.dhor->target.sigmaDHor != currentStaff.sigmaDHor)
+				(*stream) << "DSE" << sep << itDLEV.dhor->target.sigmaDHor.getMMetresValue() << sep;
+
+			if (itDLEV.dhor->target.ppmDHor != currentStaff.ppmDHor)
+				(*stream) << "DHPPM" << sep << itDLEV.dhor->target.ppmDHor.getMMetresValue() << sep;
+
+			if (itDLEV.dhor->target.dhorCorrectionValue != currentStaff.dhorCorrectionValue)
+				(*stream) << "DHDCOR" << sep << itDLEV.dhor->target.dhorCorrectionValue.getMetresValue() << sep;
+		}
+
+		(*stream) << "\n";
 	}
 }
 

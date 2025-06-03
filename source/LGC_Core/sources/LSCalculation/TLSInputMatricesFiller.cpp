@@ -743,6 +743,9 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 
 			contributionsDHOR = fCGenerator.getHorDistContrib(levelSt.fMeasuredPlane->getReferencePoint(), *itDLEV->dhor); // Get the observation contribution
 
+			// Update the sigma
+			itDLEV->dhor->target.sigmaCombinedDHor = TLength(sqrt(contributionsDHOR.fObsVariance));
+
 			// Add levelling staff's contributions
 			if (!itDLEV->dhor->targetPos->isFixed())
 				isProcessOK = isProcessOK && addPointContribution(*itDLEV->dhor->targetPos, contributionsDHOR.fStaffContrib, eqIdxHd, matrices);
@@ -768,15 +771,12 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			// Set Misclosure vector
 			isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdxHd, -1.0 * (itDLEV->dhor->getDistance() - contributionsDHOR.fCalcMeas));
 
-			if (!isnotanumber(itDLEV->dhor->getDHORSigma()))
-			{
-				isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdxHd, obsIdxHd, 1.0 / pow2q(itDLEV->dhor->getDHORSigma()));
-				isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdxHd, obsIdxHd, pow2q(itDLEV->dhor->getDHORSigma()));
-			}
+			if (contributions.fObsVariance < nullLimit)
+				throw std::runtime_error("Error when filling DLEV:DHOR contribution, variance is zero or too small, can not set weight matrix element.");
 			else
 			{
-				// Throw exception or set some typical sigma, but we should force user to provide it
-				throw std::runtime_error("If DHOR defined for DLEV measurement, standard deviation has to be provided!");
+				isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdxHd, obsIdxHd, 1.0 / contributionsDHOR.fObsVariance);
+				isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdxHd, obsIdxHd, contributionsDHOR.fObsVariance);
 			}
 		}
 
