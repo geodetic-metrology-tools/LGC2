@@ -143,16 +143,16 @@ void object::test<4>()
 
 	const LGCAdjustablePlane &plane1 = *dataset.getPlanes().begin();
 
-		ensure_equals("Reference point distance should be 6", plane1.getRefPtDistEstimatedValue().getMetresValue(), 6.0, 1e-7);
+	ensure_equals("Reference point distance should be 6", plane1.getRefPtDistEstimatedValue().getMetresValue(), 6.0, 1e-7);
 
 	TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 	ensure_equals("PT z coordinate should match", PT.getZ().getMetresValue(), 50.0, 1e-7);
 
-		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line17").getEstimatedValue();
-		ensure_equals("PT x coordinate should match",PTRP.getX().getMetresValue(), 40  , 1e-7);
-		ensure_equals("PT y coordinate should match",PTRP.getY().getMetresValue(), 34.0  , 1e-7);
-		ensure_equals("PT z coordinate should match",PTRP.getZ().getMetresValue(), 94.0  , 1e-7);
- 	}
+	TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line17").getEstimatedValue();
+	ensure_equals("PT x coordinate should match", PTRP.getX().getMetresValue(), 40, 1e-7);
+	ensure_equals("PT y coordinate should match", PTRP.getY().getMetresValue(), 34.0, 1e-7);
+	ensure_equals("PT z coordinate should match", PTRP.getZ().getMetresValue(), 94.0, 1e-7);
+}
 
 template<>
 template<>
@@ -176,15 +176,15 @@ void object::test<5>()
 
 	const LGCAdjustablePlane &plane1 = *dataset.getPlanes().begin();
 
-		ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
+	ensure_equals("Reference point distance should be -14", plane1.getRefPtDistEstimatedValue().getMetresValue(), -14.0, 1e-7);
 
 	TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 	ensure_equals("PT z coordinate should match", PT.getZ().getMetresValue(), 50.0, 1e-7);
 
-		TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line21").getEstimatedValue();
-		ensure_equals("PT x coordinate should match",PTRP.getX().getMetresValue(), 40  , 1e-7);
-		ensure_equals("PT y coordinate should match",PTRP.getY().getMetresValue(), 34.0  , 1e-7);
-		ensure_equals("PT z coordinate should match",PTRP.getZ().getMetresValue(), 114.0  , 1e-7);
+	TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line21").getEstimatedValue();
+	ensure_equals("PT x coordinate should match", PTRP.getX().getMetresValue(), 40, 1e-7);
+	ensure_equals("PT y coordinate should match", PTRP.getY().getMetresValue(), 34.0, 1e-7);
+	ensure_equals("PT z coordinate should match", PTRP.getZ().getMetresValue(), 114.0, 1e-7);
 
 	TDataTreeIterator frameIt = dataset.getTree().begin();
 	frameIt++;
@@ -1082,5 +1082,29 @@ void object::test<33>()
 	ensure_equals("observation TRGT should be one defined on the measurement line", obsIt->target.ID, "CCR2");
 	obsIt++;
 	ensure_equals("observation TRGT should be the *INSTR default one", obsIt->target.ID, "CCR");
+}
+
+template<>
+template<>
+void object::test<34>()
+{
+	set_test_name("Testing the wire direction initialization");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/ECHO_WIRE_DIRECTION.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestNonTSTN::ECHO_WIRE_DIRECTION);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	ensure("S0 should be under 1", projTest->getS0APosteriori() < TReal(1));
+
+	// check the computation of the plane theta provisional value
+	const auto computedValue = projTest->getTree().begin().node->data->measurements.fECHO.begin()->fMeasuredPlane->getThetaProvisionalValue().getGonsValue();
+	ensure_equals("Plane theta provisional value should match", computedValue, 203.35635445235, 1e-7);
 }
 } // namespace tut
