@@ -50,9 +50,9 @@ windows64_release:
 
 stages:
   - build
-  - sbom
   - test
   - release
+  - sbom
 
 generate_sbom_linux:
   stage: sbom
