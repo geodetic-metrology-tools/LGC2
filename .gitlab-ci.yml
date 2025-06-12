@@ -52,6 +52,7 @@ stages:
   - build
   - sbom
   - test
+  - release
 
 generate_sbom_linux:
   stage: sbom
