@@ -68,31 +68,24 @@ generate_sbom:
   script:
     - apk add --no-cache curl bash
     - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-    - echo "Current working directory: $(pwd)"
-    - echo "Project root: $CI_PROJECT_DIR"
-    - echo "Directory structure under project root:"
-    - ls -alh $CI_PROJECT_DIR
-    - echo "Checking if LGC2/source exists..."
-    - ls -alh "$CI_PROJECT_DIR/LGC2/source" || echo "LGC2/source not found"
-
     - echo "Generating SBOM for Linux binary..."
     - >
       if [ -f LGC ]; then
         syft file:LGC -o cyclonedx-json > sbom-linux.json;
       else
-        syft dir:$CI_PROJECT_DIR/LGC2/source -o cyclonedx-json > sbom-linux.json;
+        syft dir:LGC2/source -o cyclonedx-json > sbom-linux.json;
       fi
-
     - echo "Generating SBOM for Windows installer..."
     - >
       if ls LGCInstaller-*.exe 1> /dev/null 2>&1; then
         syft file:LGCInstaller-*.exe -o cyclonedx-json > sbom-windows.json;
       else
-        syft dir:$CI_PROJECT_DIR/LGC2/source -o cyclonedx-json > sbom-windows.json;
+        syft dir:LGC2/source -o cyclonedx-json > sbom-windows.json;
       fi
   artifacts:
     paths:
       - sbom-linux.json
       - sbom-windows.json
     expire_in: 1 week
+
 
