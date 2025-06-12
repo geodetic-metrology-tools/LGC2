@@ -23,7 +23,6 @@ linux_release:
       - LGC
     expire_in: 1 week
 
-
 ##################
 # WINDOWS BUILDS #
 ##################
@@ -44,6 +43,7 @@ windows64_release:
   artifacts:
     paths:
       - LGCInstaller-*.exe
+    expire_in: 1 week
 
 ##################
 # SBOM GENERATION #
@@ -69,12 +69,11 @@ generate_sbom:
     - apk add --no-cache curl bash
     - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
     - echo "Generating SBOM for Linux binary..."
-    - if [ -f LGC ]; then syft file:LGC -o cyclonedx-json > sbom-linux.json; else syft dir:. -o cyclonedx-json > sbom-linux.json; fi
+    - if [ -f LGC ]; then syft file:LGC -o cyclonedx-json > sbom-linux.json; else syft dir:LGC2/source/ -o cyclonedx-json > sbom-linux.json; fi
     - echo "Generating SBOM for Windows installer..."
-    - if ls LGCInstaller-*.exe 1> /dev/null 2>&1; then syft file:LGCInstaller-*.exe -o cyclonedx-json > sbom-windows.json; else syft dir:. -o cyclonedx-json > sbom-windows.json; fi
+    - if ls LGCInstaller-*.exe 1> /dev/null 2>&1; then syft file:LGCInstaller-*.exe -o cyclonedx-json > sbom-windows.json; else syft dir:LGC2/source/ -o cyclonedx-json > sbom-windows.json; fi
   artifacts:
     paths:
       - sbom-linux.json
       - sbom-windows.json
     expire_in: 1 week
-
