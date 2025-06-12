@@ -56,15 +56,15 @@ stages:
 
 generate_sbom_linux:
   stage: sbom
-  image: alpine:latest
+  image: debian:bullseye
   needs:
     - job: linux_release
       optional: true
   script:
-    - apk add --no-cache curl bash
-    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+    - apt-get update && apt-get install -y curl bash
+    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | bash -s -- -b /usr/local/bin
     - echo "Generating SBOM for Linux binary..."
-    - syft file:../LGC -o cyclonedx-json > sbom-linux.json || syft dir:. -o cyclonedx-json > sbom-linux.json
+    - syft file:LGC -o cyclonedx-json > sbom-linux.json || syft dir:. -o cyclonedx-json > sbom-linux.json
   artifacts:
     paths:
       - sbom-linux.json
@@ -72,13 +72,13 @@ generate_sbom_linux:
 
 generate_sbom_windows:
   stage: sbom
-  image: alpine:latest
+  image: debian:bullseye
   needs:
     - job: windows64_release
       optional: true
   script:
-    - apk add --no-cache curl bash
-    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+    - apt-get update && apt-get install -y curl bash
+    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | bash -s -- -b /usr/local/bin
     - echo "Generating SBOM for Windows installer..."
     - syft file:../LGCInstaller-*.exe -o cyclonedx-json > sbom-windows.json || syft dir:. -o cyclonedx-json > sbom-windows.json
   artifacts:
