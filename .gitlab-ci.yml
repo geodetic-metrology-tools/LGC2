@@ -57,7 +57,9 @@ stages:
 generate_sbom_linux:
   stage: sbom
   image: alpine:latest
-  needs: ["linux_release"]
+  needs:
+    - job: linux_release
+      optional: true
   script:
     - apk add --no-cache curl bash
     - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
@@ -71,7 +73,9 @@ generate_sbom_linux:
 generate_sbom_windows:
   stage: sbom
   image: alpine:latest
-  needs: ["windows64_release"]
+  needs:
+    - job: windows64_release
+      optional: true
   script:
     - apk add --no-cache curl bash
     - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
