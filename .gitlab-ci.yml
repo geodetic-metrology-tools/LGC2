@@ -51,6 +51,7 @@ windows64_release:
 stages:
   - build
   - sbom
+  - test
 
 generate_sbom_linux:
   stage: sbom
