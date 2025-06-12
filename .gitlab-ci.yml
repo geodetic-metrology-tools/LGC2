@@ -18,10 +18,11 @@ linux_release:
     - !reference [.default_linux_before_scripts, script]
     - echo "Building executable | -j$(nproc)"
     - $CMAKEBIN --build . -j $(nproc) --config Release --target LGC
-    - cp LGC ..
   artifacts:
     paths:
       - LGC
+    expire_in: 1 week
+
 
 ##################
 # WINDOWS BUILDS #
@@ -54,34 +55,26 @@ stages:
   - release
   - sbom
 
-generate_sbom_linux:
+generate_sbom:
   stage: sbom
-  image: debian:bullseye
+  image: alpine:3.18
   needs:
     - job: linux_release
+      artifacts: true
+      optional: true
+    - job: windows64_release
+      artifacts: true
       optional: true
   script:
-    - apt-get update && apt-get install -y curl bash
-    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | bash -s -- -b /usr/local/bin
+    - apk add --no-cache curl bash
+    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
     - echo "Generating SBOM for Linux binary..."
-    - syft file:LGC -o cyclonedx-json > sbom-linux.json || syft dir:. -o cyclonedx-json > sbom-linux.json
+    - if [ -f LGC ]; then syft file:LGC -o cyclonedx-json > sbom-linux.json; else syft dir:. -o cyclonedx-json > sbom-linux.json; fi
+    - echo "Generating SBOM for Windows installer..."
+    - if ls LGCInstaller-*.exe 1> /dev/null 2>&1; then syft file:LGCInstaller-*.exe -o cyclonedx-json > sbom-windows.json; else syft dir:. -o cyclonedx-json > sbom-windows.json; fi
   artifacts:
     paths:
       - sbom-linux.json
-    expire_in: 1 week
-
-generate_sbom_windows:
-  stage: sbom
-  image: debian:bullseye
-  needs:
-    - job: windows64_release
-      optional: true
-  script:
-    - apt-get update && apt-get install -y curl bash
-    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | bash -s -- -b /usr/local/bin
-    - echo "Generating SBOM for Windows installer..."
-    - syft file:../LGCInstaller-*.exe -o cyclonedx-json > sbom-windows.json || syft dir:. -o cyclonedx-json > sbom-windows.json
-  artifacts:
-    paths:
       - sbom-windows.json
     expire_in: 1 week
+
