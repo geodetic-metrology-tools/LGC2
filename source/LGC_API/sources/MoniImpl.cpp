@@ -1,16 +1,17 @@
 #include "MoniImpl.h"
-#include "Moni.h"
 
-#include "TAStreamFormatter.h"
 #include <iostream>
 
+#include "Moni.h"
+#include "TAStreamFormatter.h"
 
 // constructor
-Moni::Moni(std::string inputFilePath) : pimpl_(new MoniImpl(inputFilePath)){}
+Moni::Moni(const std::string &inputFilePath) : pimpl_(new MoniImpl(inputFilePath))
+{
+}
 Moni::~Moni() = default;
 
-
-//void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+// void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 
 #if USE_SERIALIZER
 void Moni::writeResultFile()
@@ -24,50 +25,48 @@ void Moni::writeLGCInputFile()
 	pimpl_->writeLGCInputFile();
 }
 
-void Moni::updateMeas(std::string id, Eigen::VectorXd measurementVector)
+void Moni::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
 {
 	pimpl_->updateMeas(id, measurementVector);
 }
-	
-void Moni::setActivationStatus(std::string id, bool status)
+
+void Moni::setActivationStatus(const std::string &id, bool status)
 {
 	pimpl_->setActivationStatus(id, status);
 }
 
-void Moni::setObsSigma(std::string id, Eigen::VectorXd sigma)
+void Moni::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
 {
 	pimpl_->setObsSigma(id, sigma);
 }
 
-
-void Moni::setFixedFrameParameter(std::string frameName, int idx, double val)
+void Moni::setFixedFrameParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->setFixedFrameParameter(frameName, idx, val);
 }
-void Moni::setFixedPointParameter(std::string frameName, int idx, double val)
+void Moni::setFixedPointParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->setFixedPointParameter(frameName, idx, val);
 }
 
-void Moni::freezeFrameParameter(std::string frameName, int idx, double val)
+void Moni::freezeFrameParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->freezeFrameParameter(frameName, idx, val);
 }
 
-void Moni::unfreezeFrameParameter(std::string frameName, int idx)
+void Moni::unfreezeFrameParameter(const std::string &frameName, int idx)
 {
 	pimpl_->unfreezeFrameParameter(frameName, idx);
 }
-void Moni::freezePointParameter(std::string pointName, int idx, double val)
+void Moni::freezePointParameter(const std::string &pointName, int idx, double val)
 {
 	pimpl_->freezePointParameter(pointName, idx, val);
 }
 
-void Moni::unfreezePointParameter(std::string pointName, int idx)
+void Moni::unfreezePointParameter(const std::string &pointName, int idx)
 {
 	pimpl_->unfreezePointParameter(pointName, idx);
 }
-
 
 // triggering the adjustment calculation
 bool Moni::adjust()
@@ -79,60 +78,58 @@ bool Moni::getStatus()
 	return pimpl_->getStatus();
 }
 // get estimate of point
-Eigen::VectorXd Moni::getPointEstimate(std::string pointId)
+Eigen::VectorXd Moni::getPointEstimate(const std::string &pointId)
 {
 	return pimpl_->getPointEstimate(pointId);
 }
 // get estimate of frame
-Eigen::VectorXd Moni::getFrameEstimate(std::string frameId)
+Eigen::VectorXd Moni::getFrameEstimate(const std::string &frameId)
 {
 	return pimpl_->getFrameEstimate(frameId);
 }
-Eigen::VectorXd Moni::getFrameEstimatePrec(std::string frameId)
+Eigen::VectorXd Moni::getFrameEstimatePrec(const std::string &frameId)
 {
 	return pimpl_->getFrameEstimatePrec(frameId);
 }
 
-
 // get estimate of point in subframe
-Eigen::VectorXd Moni::getPointEstimate(std::string id, std::string frameName)
+Eigen::VectorXd Moni::getPointEstimate(const std::string &id, const std::string &frameName)
 {
 	return pimpl_->getPointEstimate(id, frameName);
 }
 // get diagonal elements of covariances of the estimated parameters
-Eigen::VectorXd Moni::getPointEstimatePrec(std::string id)
+Eigen::VectorXd Moni::getPointEstimatePrec(const std::string &id)
 {
 	return pimpl_->getPointEstimatePrec(id);
 }
 // get diagonal elements of covariances of the estimated parameters transformed to a subframe
-Eigen::VectorXd Moni::getPointEstimatePrec(std::string id, std::string frameName)
+Eigen::VectorXd Moni::getPointEstimatePrec(const std::string &id, const std::string &frameName)
 {
 	return pimpl_->getPointEstimatePrec(id, frameName);
 }
 // get estimated residual
-Eigen::VectorXd Moni::getEstimateResidual(std::string obsId)
+Eigen::VectorXd Moni::getEstimateResidual(const std::string &obsId)
 {
 	return pimpl_->getEstimateResidual(obsId);
 }
 
 // get calculated measurement
-Eigen::VectorXd Moni::getCalcMeas(std::string obsId)
+Eigen::VectorXd Moni::getCalcMeas(const std::string &obsId)
 {
 	return pimpl_->getCalcMeas(obsId);
 }
 
-DECLSPEC Eigen::VectorXd Moni::getObsSigma(std::string obsId)
+DECLSPEC Eigen::VectorXd Moni::getObsSigma(const std::string &obsId)
 {
 	return pimpl_->getObsSigma(obsId);
 }
-
 
 // get Meas IDs
 std::vector<std::string> Moni::getECWSMeasIds()
 {
 	return pimpl_->getECWSMeasIds();
 }
-Eigen::VectorXd Moni::getMeas(std::string id)
+Eigen::VectorXd Moni::getMeas(const std::string &id)
 {
 	return pimpl_->getMeas(id);
 }
@@ -142,12 +139,12 @@ double Moni::getSigma0()
 	return pimpl_->getSigma0();
 }
 
-waterRom Moni::getECWSData(std::string ecwsRomName)
+waterRom Moni::getECWSData(const std::string &ecwsRomName)
 {
 	return pimpl_->getECWSData(ecwsRomName);
 }
 
-DECLSPEC wireRom Moni::getECWIData(std::string ecwiRomName)
+DECLSPEC wireRom Moni::getECWIData(const std::string &ecwiRomName)
 {
 	return pimpl_->getECWIData(ecwiRomName);
 }
@@ -157,7 +154,7 @@ void Moni::MoniImpl::initialize()
 {
 	estimationStatus = false;
 	Behavior successCalculation;
-	std::cout << "Creating monitoring object with LGC input file "<< inputFilePath << std::endl;
+	std::cout << "Creating monitoring object with LGC input file " << inputFilePath << std::endl;
 	std::shared_ptr<TLGCData> projTest(new TLGCData);
 	project = projTest;
 	TReader r(project);
@@ -178,7 +175,6 @@ void Moni::MoniImpl::initialize()
 	createMeasurementReferences();
 	createParameterReferences();
 	std::cout << "Monitor object initialized." << std::endl;
-
 }
 
 #if USE_SERIALIZER
@@ -190,7 +186,7 @@ void Moni::MoniImpl::writeResultFile()
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);
 	std::stringstream filename;
-	filename << "resultDump_"<< std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".json";
+	filename << "resultDump_" << std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".json";
 	std::ofstream fout(filename.str());
 	fout << ser.getStringRepresentation();
 }
@@ -198,41 +194,42 @@ void Moni::MoniImpl::writeResultFile()
 
 void Moni::MoniImpl::writeLGCInputFile()
 {
-    // Create and initialise stream:
-    std::shared_ptr<TAStreamFormatter> stream;
+	// Create and initialise stream:
+	std::shared_ptr<TAStreamFormatter> stream;
 	TFileParameters resultFileParam;
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);
 	std::stringstream filename;
-	filename << "inputDump_"<< std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".lgc";
+	filename << "inputDump_" << std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".lgc";
 
 	resultFileParam.setFileName(filename.str());
 
-	//Some keywords(options) in the input file responsible for this, for now just setting here one of them (column), but can be semi-colon, dash etc.
+	// Some keywords(options) in the input file responsible for this, for now just setting here one of them (column), but can be semi-colon, dash etc.
 	TAStreamFormatter::ETextFormat resultsFileFormat = TAStreamFormatter::ETextFormat::kColumnFormat;
 
-	TStreamFormatterFactory* formatterFactory = TStreamFormatterFactory::instance();
+	TStreamFormatterFactory *formatterFactory = TStreamFormatterFactory::instance();
 	TDataParameters dataParam;
-	dataParam.setRefFrame(TRefSystemFactory::ERefFrame::kCCS); //default param because not redefine
+	dataParam.setRefFrame(TRefSystemFactory::ERefFrame::kCCS); // default param because not redefine
 	dataParam.setPrecision(project->getConfig().outPrecision.digits);
 	dataParam.setObsIdWidth(project->getConfig().obsIDwidth);
 
 	TADataSet tads(resultFileParam, dataParam);
-    stream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));
-    stream->setReferenceFrame(dataParam.getRefFrame());  //default param because not redefine
-    stream->setCoordSys(TCoordSysFactory::k3DCartesian);
+	stream.reset(formatterFactory->getFormatter(&tads, resultsFileFormat, "   " /* separator */));
+	stream->setReferenceFrame(dataParam.getRefFrame()); // default param because not redefine
+	stream->setCoordSys(TCoordSysFactory::k3DCartesian);
 
-    TPointFormat* pointFormat = stream->getPointFormat();
-	//Set the name width to the max width of a name point +1 characters.
-	if (project->getConfig().pointNameWidth>pointFormat->getNameWidth())
+	TPointFormat *pointFormat = stream->getPointFormat();
+	// Set the name width to the max width of a name point +1 characters.
+	if (project->getConfig().pointNameWidth > pointFormat->getNameWidth())
 	{
-		pointFormat->setNameWidth(project->getConfig().pointNameWidth+1);
-        stream->setPointFormat(*pointFormat);
+		pointFormat->setNameWidth(project->getConfig().pointNameWidth + 1);
+		stream->setPointFormat(*pointFormat);
 	}
-	//As the name width is used also for frames. Set the name width to the max of of frame name +1 characters, if necessary.
-	for (const auto& itTree : project->getTree())
+	// As the name width is used also for frames. Set the name width to the max of of frame name +1 characters, if necessary.
+	for (const auto &itTree : project->getTree())
 	{
-		if (itTree.get()->frame.getName().length() >= pointFormat->getNameWidth()) {
+		if (itTree.get()->frame.getName().length() >= pointFormat->getNameWidth())
+		{
 			pointFormat->setNameWidth((int)itTree.get()->frame.getName().length() + 1);
 			stream->setPointFormat(*pointFormat);
 		}
@@ -241,7 +238,7 @@ void Moni::MoniImpl::writeLGCInputFile()
 	TInputFileWriter infileWriter(stream.get(), project.get());
 	infileWriter.writeFile();
 }
-void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, double val)
+void Moni::MoniImpl::setFixedFrameParameter(const std::string &frameName, int idx, double val)
 {
 	// set a fixed frame parameter (for example scale of Frame which is determined by temperature)
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -249,9 +246,9 @@ void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, doub
 		throw std::runtime_error("Frame " + frameName + " does not exist.");
 	}
 
-	//this method will change the solution of the estimation, so reset of status necessary
+	// this method will change the solution of the estimation, so reset of status necessary
 	estimationStatus = false;
-	
+
 	// check if the associated parameter of the frame is really fixed
 	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
 	bool isFixed = frameRef.isFixedVar(idx);
@@ -273,20 +270,19 @@ void Moni::MoniImpl::setFixedFrameParameter(std::string frameName, int idx, doub
 	{
 		frameRef.setScale(TReal(val));
 	}
-
 }
 
-void Moni::MoniImpl::setFixedPointParameter(std::string pointName, int idx, double val)
+void Moni::MoniImpl::setFixedPointParameter(const std::string &pointName, int idx, double val)
 {
-	// set a fixed point parameter 
+	// set a fixed point parameter
 	if (paramRefs.POINTS.count(pointName) == 0)
 	{
 		throw std::runtime_error("Point " + pointName + " does not exist.");
 	}
 
-	//this method will change the solution of the estimation, so reset of status necessary
+	// this method will change the solution of the estimation, so reset of status necessary
 	estimationStatus = false;
-	
+
 	// check if the associated parameter of the frame is really fixed
 	TAdjustablePoint &pointRef = paramRefs.POINTS.at(pointName);
 	bool isFixed = pointRef.isCoordinateFixed(idx);
@@ -296,10 +292,9 @@ void Moni::MoniImpl::setFixedPointParameter(std::string pointName, int idx, doub
 	}
 
 	pointRef.setEstVal(idx, val);
-
 }
 
-void Moni::MoniImpl::freezeFrameParameter(std::string frameName, int idx, double val)
+void Moni::MoniImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -337,7 +332,7 @@ void Moni::MoniImpl::freezeFrameParameter(std::string frameName, int idx, double
 	}
 }
 
-void Moni::MoniImpl::unfreezeFrameParameter(std::string frameName, int idx)
+void Moni::MoniImpl::unfreezeFrameParameter(const std::string &frameName, int idx)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -388,7 +383,7 @@ void Moni::MoniImpl::unfreezeFrameParameter(std::string frameName, int idx)
 	}
 }
 
-void Moni::MoniImpl::freezePointParameter(std::string pointName, int idx, double val)
+void Moni::MoniImpl::freezePointParameter(const std::string &pointName, int idx, double val)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -413,7 +408,7 @@ void Moni::MoniImpl::freezePointParameter(std::string pointName, int idx, double
 	project->fParameterMask.insert(pointRef.getCoordinateUnknIndex(idx));
 }
 
-void Moni::MoniImpl::unfreezePointParameter(std::string pointName, int idx)
+void Moni::MoniImpl::unfreezePointParameter(const std::string &pointName, int idx)
 {
 	// freeze a point parameter that is free in the original configuration
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -479,7 +474,7 @@ void Moni::MoniImpl::createParameterReferences()
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
 	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)
 	{
-		auto& object(it.node->data.get()->frame);
+		auto &object(it.node->data.get()->frame);
 		paramRefs.FRAMES.insert({object.getName(), object});
 	}
 }
@@ -629,7 +624,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 				measRefs.ECWS.insert({itECWS.obsID, itECWS});
 				measRefs.types.insert({itECWS.obsID, "ECWS"});
 			}
-		}	
+		}
 		for (auto &itECWIrom : itTree.node->data->measurements.fECWI)
 		{
 			romRefs.ecwiRoms.insert({itECWIrom.romName, itECWIrom});
@@ -639,11 +634,10 @@ void Moni::MoniImpl::createMeasurementReferences()
 				measRefs.types.insert({itECWI.obsID, "ECWI"});
 			}
 		}
-
 	}
 }
 
-TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
+TStatusObject &Moni::MoniImpl::getStatusObject(const std::string &id)
 {
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
@@ -721,7 +715,7 @@ TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
 		return measRefs.ECWS.at(id);
 	}
 	else if (type == "ECWI")
-	{	
+	{
 		return measRefs.ECWI.at(id);
 	}
 	else if (type == "DVER")
@@ -736,7 +730,6 @@ TStatusObject &Moni::MoniImpl::getStatusObject(std::string id)
 	{
 		return measRefs.OBSXYZ.at(id);
 	}
-
 }
 
 Eigen::VectorXd Moni::MoniImpl::toVectorXd(TFreeVector freeVector)
@@ -753,9 +746,8 @@ Eigen::VectorXd Moni::MoniImpl::toVectorXd(TPositionVector posVector)
 	return vector;
 }
 
-void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVector)
+void Moni::MoniImpl::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
 {
-
 	// reset estimationStatus to false as soon as new measurement data is supplied
 	estimationStatus = false;
 	// manipulate the corresponding measurement by accessing it via the reference map.
@@ -860,7 +852,7 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 		return;
 	}
 	else if (type == "ECWI")
-	{	
+	{
 		measRefs.ECWI.at(id).setDistance(TLength(measurementVector[0]), EECWIDistances::kX);
 		measRefs.ECWI.at(id).setDistance(TLength(measurementVector[1]), EECWIDistances::kZ);
 		return;
@@ -884,12 +876,12 @@ void Moni::MoniImpl::updateMeas(std::string id, Eigen::VectorXd measurementVecto
 		return;
 	}
 }
-void Moni::MoniImpl::setActivationStatus(std::string id, bool status)
+void Moni::MoniImpl::setActivationStatus(const std::string &id, bool status)
 {
 	estimationStatus = false;
 	getStatusObject(id).setActive(status);
 }
-Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
+Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(const std::string &id)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
 	// check if id exists
@@ -905,13 +897,13 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	if (type == "ANGL")
 	{
 		Eigen::VectorXd res(1);
-		res<<(double) measRefs.ANGL.at(id).getAngleResidual();
+		res << (double)measRefs.ANGL.at(id).getAngleResidual();
 		return res;
 	}
 	else if (type == "ZEND")
 	{
 		Eigen::VectorXd res(1);
-		res<<(double) measRefs.ZEND.at(id).getAngleResidual();
+		res << (double)measRefs.ZEND.at(id).getAngleResidual();
 		return res;
 	}
 	else if (type == "DIST")
@@ -953,22 +945,22 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(std::string id)
 	}
 	else if (type == "UVEC")
 	{
-		// to be checked! 
+		// to be checked!
 		Eigen::VectorXd res(2);
 		res << measRefs.UVEC.at(id).getXCompVectorResidual(), measRefs.UVEC.at(id).getYCompVectorResidual();
-		//TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
-		//measRefs.UVEC.at(id).setVectorMeasurement(direction);
+		// TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		// measRefs.UVEC.at(id).setVectorMeasurement(direction);
 		return res;
 	}
 	else if (type == "UVD")
 	{
-		// to be checked, particular the order! 
+		// to be checked, particular the order!
 		Eigen::VectorXd res(3);
 		res << measRefs.UVD.at(id).getXCompVectorResidual(), measRefs.UVD.at(id).getYCompVectorResidual(), measRefs.UVD.at(id).getDistanceResidual();
-		//TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
-		//TLength distance(measurementVector[3]);
-		//measRefs.UVD.at(id).setVectorMeasurement(direction);
-		//measRefs.UVD.at(id).setDistance(distance);
+		// TFreeVector direction(measurementVector[0], measurementVector[1], measurementVector[2], TCoordSysFactory::k3DCartesian);
+		// TLength distance(measurementVector[3]);
+		// measRefs.UVD.at(id).setVectorMeasurement(direction);
+		// measRefs.UVD.at(id).setDistance(distance);
 		return res;
 	}
 	else if (type == "DSPT")
@@ -1053,7 +1045,7 @@ bool Moni::MoniImpl::adjust()
 	{
 		results = algorithm->resultMatrices;
 		estimationStatus = true;
-		//std::cout << "Adjustment method finished succesfully." << std::endl;
+		// std::cout << "Adjustment method finished succesfully." << std::endl;
 	}
 	else
 	{
@@ -1071,8 +1063,8 @@ std::vector<std::string> Moni::MoniImpl::getECWSMeasIds()
 	}
 	return theIds;
 }
-Eigen::VectorXd Moni::MoniImpl::getObsSigma(std::string id)
-{	
+Eigen::VectorXd Moni::MoniImpl::getObsSigma(const std::string &id)
+{
 	// get observation sigma
 	// check if id exists
 	if (measRefs.types.count(id) == 0)
@@ -1218,7 +1210,7 @@ double Moni::MoniImpl::getSigma0()
 {
 	return project->getS0APosteriori();
 }
-waterRom Moni::MoniImpl::getECWSData(std::string ecwsRomName)
+waterRom Moni::MoniImpl::getECWSData(const std::string &ecwsRomName)
 {
 	// find the ecws rom reference
 	auto it = romRefs.ecwsRoms.find(ecwsRomName);
@@ -1232,10 +1224,9 @@ waterRom Moni::MoniImpl::getECWSData(std::string ecwsRomName)
 	{
 		throw std::runtime_error("No ECWS round of measurements named " + ecwsRomName + " found.");
 	}
-
 }
-wireRom Moni::MoniImpl::getECWIData(std::string ecwiRomName)
-{	
+wireRom Moni::MoniImpl::getECWIData(const std::string &ecwiRomName)
+{
 	// find the ecwi rom reference
 	auto it = romRefs.ecwiRoms.find(ecwiRomName);
 	if (it != romRefs.ecwiRoms.end())
@@ -1248,16 +1239,15 @@ wireRom Moni::MoniImpl::getECWIData(std::string ecwiRomName)
 			double(rom.fWireSlope->getEstimatedPrecision()), double(rom.sagAdjustable->getEstimatedPrecision());
 		auto &sagAdj = rom.sagAdjustable;
 
-		return wireRom(ecwiRomName,data,sigmas);
+		return wireRom(ecwiRomName, data, sigmas);
 	}
 	else
 	{
 		throw std::runtime_error("No ecwi round of measurements named " + ecwiRomName + " found.");
 	}
-
 }
 // get measurement
-Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
+Eigen::VectorXd Moni::MoniImpl::getMeas(const std::string &id)
 {
 	// get observation value
 	// check if id exists
@@ -1273,37 +1263,37 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	if (type == "ANGL")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ANGL.at(id).getAngle());
+		result[0] = ((double)measRefs.ANGL.at(id).getAngle());
 		return result;
 	}
 	else if (type == "ZEND")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ZEND.at(id).getAngle());
+		result[0] = ((double)measRefs.ZEND.at(id).getAngle());
 		return result;
 	}
 	else if (type == "DIST")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.DIST.at(id).getDistance());
+		result[0] = ((double)measRefs.DIST.at(id).getDistance());
 		return result;
 	}
 	else if (type == "ECTH")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ECTH.at(id).getDistance());
+		result[0] = ((double)measRefs.ECTH.at(id).getDistance());
 		return result;
 	}
 	else if (type == "ECDIR")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.ECDIR.at(id).getDistance());
+		result[0] = ((double)measRefs.ECDIR.at(id).getDistance());
 		return result;
 	}
 	else if (type == "DHOR")
 	{
 		Eigen::VectorXd result(1);
-		result[0] = ((double) measRefs.DHOR.at(id).getDistance());
+		result[0] = ((double)measRefs.DHOR.at(id).getDistance());
 		return result;
 	}
 	else if (type == "PLR3D")
@@ -1323,7 +1313,7 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 		return toVectorXd(measRefs.UVEC.at(id).getVectorValue());
 	}
 	else if (type == "UVD")
-	{	
+	{
 		Eigen::VectorXd result(3);
 		Eigen::VectorXd direction = toVectorXd(measRefs.UVD.at(id).getVectorValue());
 		result << direction[0], direction[1], measRefs.UVD.at(id).getDistance().getMetresValue();
@@ -1363,7 +1353,7 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	else if (type == "INCLY")
 	{
 		Eigen::VectorXd result(1);
-		result[0]=measRefs.INCLY.at(id).getAngle();
+		result[0] = measRefs.INCLY.at(id).getAngle();
 		return result;
 	}
 	else if (type == "ECWS")
@@ -1373,7 +1363,7 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 		return result;
 	}
 	else if (type == "ECWI")
-	{	
+	{
 		Eigen::VectorXd result(2);
 		result << measRefs.ECWI.at(id).getDistance(EECWIDistances::kX), measRefs.ECWI.at(id).getDistance(EECWIDistances::kZ);
 		return result;
@@ -1399,8 +1389,8 @@ Eigen::VectorXd Moni::MoniImpl::getMeas(std::string id)
 	}
 }
 
-void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
-{	
+void Moni::MoniImpl::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
+{
 	// reset estimationStatus to false as soon as new weights are provided
 	estimationStatus = false;
 
@@ -1451,7 +1441,7 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 		measRefs.UVEC.at(id).target.sigmaY = sigma(1); // unitless
 	}
 	else if (type == "UVD")
-	{	
+	{
 		measRefs.UVD.at(id).target.sigmaX = sigma(0); // unitless
 		measRefs.UVD.at(id).target.sigmaY = sigma(1); // unitless
 		measRefs.UVD.at(id).target.sigmaDist.setMetresValue(sigma(2));
@@ -1485,7 +1475,7 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 		measRefs.ECWS.at(id).target.sigmaDist.setMetresValue(sigma(0));
 	}
 	else if (type == "ECWI")
-	{	
+	{
 		measRefs.ECWI.at(id).target.sigmaX.setMetresValue(sigma(0));
 		measRefs.ECWI.at(id).target.sigmaZ.setMetresValue(sigma(1));
 	}
@@ -1505,10 +1495,8 @@ void Moni::MoniImpl::setObsSigma(std::string id, Eigen::VectorXd sigma)
 	}
 }
 
-
-
 // get estimate
-Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId)
+Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
@@ -1517,7 +1505,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId)
 	TPositionVector result = paramRefs.POINTS.at(pointId).getEstimatedValue();
 	return toVectorXd(result);
 }
-Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::string destFrame)
+Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId, const std::string &destFrame)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
@@ -1529,13 +1517,13 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(std::string pointId, std::strin
 	}
 
 	// transform to destination frame
-	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();	
+	TPositionVector point = paramRefs.POINTS.at(pointId).getEstimatedValue();
 	const TLOR2LOR lorTrafo(paramRefs.POINTS.at(pointId).getFrameTreePosition(), project->locateNode(destFrame), "sub2Dest");
 	lorTrafo.transform(point);
 	return toVectorXd(point);
 }
 
-Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(std::string frameId)
+Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(const std::string &frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
@@ -1554,7 +1542,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(std::string frameId)
 	return resultVector;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(std::string frameId)
+Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(const std::string &frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
@@ -1562,7 +1550,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(std::string frameId)
 	}
 
 	Eigen::VectorXd resultVector(7);
-	TAdjustableHelmertTransformation& aux = paramRefs.FRAMES.at(frameId);
+	TAdjustableHelmertTransformation &aux = paramRefs.FRAMES.at(frameId);
 	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(0);
 	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(1);
 	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(2);
@@ -1574,9 +1562,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(std::string frameId)
 	return resultVector;
 }
 
-
-
-Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId)
+Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(const std::string &pointId)
 {
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
 	if (paramRefs.POINTS.count(pointId) == 0)
@@ -1592,8 +1578,8 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId)
 	return prec;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId, std::string destFrame)
-{	
+Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(const std::string &pointId, const std::string &destFrame)
+{
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
 		throw std::runtime_error("No Point with Id " + pointId + " found");
@@ -1604,7 +1590,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(std::string pointId, std::s
 	}
 
 	LGCAdjustablePoint point = paramRefs.POINTS.at(pointId);
-	Eigen::VectorXd prec = toVectorXd(point.transformSigma(point, project.get(),destFrame));
+	Eigen::VectorXd prec = toVectorXd(point.transformSigma(point, project.get(), destFrame));
 
 	return prec;
 }

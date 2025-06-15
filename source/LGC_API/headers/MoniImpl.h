@@ -9,6 +9,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include "Moni.h"
 
 // STL
+#include <chrono>
+#include <iomanip> // put_time
+
 #include <Eigen/Dense>
 
 #include <Behavior.h>
@@ -18,18 +21,13 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 
 #include "FileUtils.h"
 #include "TDataAnalyzer.h"
+#include "TInputFileWriter.h"
 #include "TLGCCalculation.h"
 #include "TLSResultsMatrices.h"
 #include "TLSSimulation.h"
-#include "TVAbstractAlgorithm.h"
-#include "TInputFileWriter.h"
 #include "TSimFileWriter.h"
 #include "TStreamFormatterFactory.h"
-#include <iomanip> // put_time
-#include <chrono>
-
-
-
+#include "TVAbstractAlgorithm.h"
 
 #if USE_SERIALIZER
 #	include <Serializer_json.hpp>
@@ -39,26 +37,26 @@ class Moni::MoniImpl
 {
 public:
 	// constructor
-	MoniImpl(std::string path) : inputFilePath(path) { MoniImpl::initialize(); }
+	MoniImpl(const std::string &path) : inputFilePath(path) { MoniImpl::initialize(); }
 	~MoniImpl() = default;
-	void updateMeas(std::string id, Eigen::VectorXd measurementVector);
+	void updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector);
 	// set activtaionstatus
-	void setActivationStatus(std::string, bool);
+	void setActivationStatus(const std::string &, bool);
 	// set observation standard deviation (optional, otherwise the ones from the inputfile are used)
-	void setObsSigma(std::string id, Eigen::VectorXd sigma);
+	void setObsSigma(const std::string &id, const Eigen::VectorXd &sigma);
 	// methods for manipulating fixed point and frame parameters
-	void setFixedFrameParameter(std::string frameName, int idx, double val);
-	void setFixedPointParameter(std::string pointName, int idx, double val);
+	void setFixedFrameParameter(const std::string &frameName, int idx, double val);
+	void setFixedPointParameter(const std::string &pointName, int idx, double val);
 	// methods for freezing variables. Only possible if parameter is free
-	void freezeFrameParameter(std::string frameName, int idx, double val);
+	void freezeFrameParameter(const std::string &frameName, int idx, double val);
 	// unfreeze a frame parameter (only possible if it was freezed previously)
-	void unfreezeFrameParameter(std::string frameName, int idx);
-	void freezePointParameter(std::string PointName, int idx, double val);
+	void unfreezeFrameParameter(const std::string &frameName, int idx);
+	void freezePointParameter(const std::string &PointName, int idx, double val);
 	// unfreeze. only possible for previously freezed parameters
-	void unfreezePointParameter(std::string PointName, int idx);
+	void unfreezePointParameter(const std::string &PointName, int idx);
 
 	// get measurement
-	Eigen::VectorXd getMeas(std::string id);
+	Eigen::VectorXd getMeas(const std::string &id);
 	// triggering the adjustment calculation
 	bool adjust();
 	// for checking the estimation status
@@ -70,28 +68,27 @@ public:
 
 	// Parameter Result methods
 	// get estimate of point
-	Eigen::VectorXd getPointEstimate(std::string);
+	Eigen::VectorXd getPointEstimate(const std::string &);
 	// get estimate of point in a subframe
-	Eigen::VectorXd getPointEstimate(std::string, std::string frameName);
-	Eigen::VectorXd getPointEstimatePrec(std::string);
-	Eigen::VectorXd getPointEstimatePrec(std::string, std::string detsFrame);
+	Eigen::VectorXd getPointEstimate(const std::string &, const std::string &frameName);
+	Eigen::VectorXd getPointEstimatePrec(const std::string &);
+	Eigen::VectorXd getPointEstimatePrec(const std::string &, const std::string &detsFrame);
 	// get estimate of frame
-	Eigen::VectorXd getFrameEstimate(std::string);
-	Eigen::VectorXd getFrameEstimatePrec(std::string);
+	Eigen::VectorXd getFrameEstimate(const std::string &);
+	Eigen::VectorXd getFrameEstimatePrec(const std::string &);
 
 	// Residual result methods
 	// get estimated residual
-	Eigen::VectorXd getEstimateResidual(std::string obsName);
+	Eigen::VectorXd getEstimateResidual(const std::string &obsName);
 	// get calculated measurement
-	Eigen::VectorXd getCalcMeas(std::string obsName) { return getMeas(obsName) + getEstimateResidual(obsName); };
+	Eigen::VectorXd getCalcMeas(const std::string &obsName) { return getMeas(obsName) + getEstimateResidual(obsName); };
 	// get observation sigma
-	Eigen::VectorXd getObsSigma(std::string obsName);
+	Eigen::VectorXd getObsSigma(const std::string &obsName);
 	// get the sigma0 after adjustment
 	double getSigma0();
 	// for water and wire network related data
-	waterRom getECWSData(std::string ecwsRomName);
-	wireRom getECWIData(std::string ecwiRomName);
-
+	waterRom getECWSData(const std::string &ecwsRomName);
+	wireRom getECWIData(const std::string &ecwiRomName);
 
 	// get Meas IDs
 	std::vector<std::string> getECWSMeasIds();
@@ -100,14 +97,13 @@ private:
 	void initialize();
 	void createParameterReferences();
 	void createMeasurementReferences();
-	TStatusObject &getStatusObject(std::string obsId);
+	TStatusObject &getStatusObject(const std::string &obsId);
 
 	// containing measurement configuration, observations, estimates
 	std::shared_ptr<TLGCData> project;
 	// helper methods for conversion to Eigen vector
 	Eigen::VectorXd toVectorXd(TFreeVector);
 	Eigen::VectorXd toVectorXd(TPositionVector);
-
 
 	std::string inputFilePath;
 	// LGC adjustment algorithm used by adjust method
@@ -157,8 +153,7 @@ private:
 		std::unordered_map<std::string, TECWIROM &> ecwiRoms;
 
 	} romRefs;
-	
-	
+
 	// containing maps to parameter object references
 	// maybe needs to be more specific as a universal method a la getEstimate does not exists in LGC, rather there
 	// are methods like getEstimatedValue, getEstParam etc..
@@ -177,8 +172,6 @@ private:
 	// status of estimation. True if estimation results are ready for extraction.
 	// False if not (after calling updateMeas or if estimation failed)
 	bool estimationStatus;
-
-
 };
 
 #endif
