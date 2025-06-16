@@ -510,8 +510,15 @@ bool TDataAnalyzer::checkParameters()
 				itECHO->fReferencePoint = refPoint;
 
 				/*Calculation of the initial approximation value for the theta angle of the plane.*/
-				const TPositionVector &firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
-				const TPositionVector &lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+				TPositionVector firstPoint = itECHO->measECHO.begin()->targetPos->getEstimatedValue();
+				TPositionVector lastPoint = itECHO->measECHO.back().targetPos->getEstimatedValue();
+
+				// Transform the points in root
+				const TLOR2LOR firstPointTransfo(itECHO->measECHO.begin()->targetPos->getFrameTreePosition(), fTree.begin(), "firstMeas2ROOT");
+				const TLOR2LOR lastPointTransfo(itECHO->measECHO.back().targetPos->getFrameTreePosition(), fTree.begin(), "lastMeas2ROOT");
+
+				firstPointTransfo.transform(firstPoint);
+				lastPointTransfo.transform(lastPoint);
 
 				TReal thetaLineVectorAngle = atan2q(
 					lastPoint.getX().getMetresValue() - firstPoint.getX().getMetresValue(), lastPoint.getY().getMetresValue() - firstPoint.getY().getMetresValue());
