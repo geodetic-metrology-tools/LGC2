@@ -159,6 +159,9 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		existComment = true;
 	}
 
+	// Save the current writeLGCFile value
+	bool writeLGCFile = fconfig.sim.writeLGCFile;
+
 	// (VV) If the tokens are more than five, e.g., "*SIMU N S %comment" or
 	// (VV) if the tokens are four without a comment at the end, e.g., "*SIMU N S",
 	// (VV) then get the number of the simulation N (tokens.at(2)) and the seed number S (tokens.at(3))
@@ -182,6 +185,9 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	{
 		throw std::runtime_error("*SIMU accepts either 1 or 2 arguments but zero (0) arguments were provided.");
 	}
+
+	// Restore the writeLGCFile value
+	fconfig.sim.writeLGCFile = writeLGCFile;
 }
 
 ////////////////////
@@ -489,7 +495,9 @@ void TKeySOBS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	auto numtokens = tokens.size();
 
 	if (numtokens >= 2)
+	{
 		fconfig.sim.writeLGCFile = activeLine;
+	}
 	else
 	{
 		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");
