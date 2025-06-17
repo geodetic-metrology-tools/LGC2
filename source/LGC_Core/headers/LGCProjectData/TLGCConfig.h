@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+ï¿½ Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -71,8 +71,9 @@ struct TLGCConfig
 		\param n The number of simulations to run
 		\param s The seed number
 		\param ignoreMeas The measurement values in the input file are ignored
+		\param writeFile Whether to write LGC file
 		*/
-		TSimulation(int n, int s) : TBinaryOption(true), numSims(n), numSeed(s), writeLGCFile(false) {}
+		TSimulation(int n, int s, bool writeFile) : TBinaryOption(true), numSims(n), numSeed(s), writeLGCFile(writeFile) {}
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
