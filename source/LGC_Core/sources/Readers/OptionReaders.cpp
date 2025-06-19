@@ -144,16 +144,15 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 {
 	auto numTokens = tokens.size();
 
+	// (VV) Get the number of the simulation: numSimulation (tokens.at(2))
+	int numSimulation = std::stoi(tokens.at(2));
 
-	// (VV) Get the number of the simulation: num_simulations (tokens.at(2)) and the seed number input_seed_number (tokens.at(3))
-	int num_simulations = std::stoi(tokens.at(2));
-
-	// (VV) Use a time difference to create a seed (random_seed_number) for the pseudo-random number generator/engine
+	// (VV) Use a time difference to create a seed (randomSeedNum) for the pseudo-random number generator/engine
 	typedef std::chrono::high_resolution_clock myclock;
 	myclock::time_point time1 = myclock::now(); // (VV) current timestamp
 	myclock::time_point time0 = myclock::time_point::min(); // (VV) reference timestamp
 	myclock::duration d = time1 - time0; // (VV) time difference
-	int random_seed_number = d.count();
+	int randomSeedNum = d.count();
 
 	// (VV) If the last token starts with a comment character, the variable existComment becomes true
 	const char fOfLastToken = tokens.back().at(0);
@@ -169,8 +168,10 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	
 	if (numTokens >= 5 || (numTokens == 4 && !(fOfLastToken == '$' || fOfLastToken == '%')))
 	{
-		int input_seed_number = std::stoi(tokens.at(3));
-		fconfig.sim = TLGCConfig::TSimulation(num_simulations, input_seed_number ,fconfig.sim.writeLGCFile);
+		// (VV) Get the seed number from the input file
+		int inputSeedNum = std::stoi(tokens.at(3));
+		// (VV) Create a simulation object with the number of simulations and the seed number provided by the user
+		fconfig.sim = TLGCConfig::TSimulation(numSimulation, inputSeedNum ,fconfig.sim.writeLGCFile);
 		fconfig.sim.setActive(activeLine);
 	}
 	// (VV) If the tokens are four with a comment, e.g., "*SIMU N %comment" or
@@ -179,7 +180,7 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 
 	else if (numTokens == 4 || (numTokens == 3 && !(fOfLastToken == '$' || fOfLastToken == '%')))
 	{
-		fconfig.sim = TLGCConfig::TSimulation(num_simulations, random_seed_number, fconfig.sim.writeLGCFile);
+		fconfig.sim = TLGCConfig::TSimulation(numSimulation, randomSeedNum, fconfig.sim.writeLGCFile);
 		fconfig.sim.setActive(activeLine);
 	}
 	// (VV) If the tokens are three with a comment, e.g., "*SIMU %comment" or
