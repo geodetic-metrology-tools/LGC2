@@ -541,6 +541,21 @@ void TLSResultsMatricesExtractor::extractECWIROMObs(const TLSResultsMatrices &rm
 	}
 }
 
+void TLSResultsMatricesExtractor::extractPointSigmaOffset(LGCAdjustablePoint &point)
+{
+	pointSigmaData &ptSigma = point.getPointSigmaData();
+	ptSigma.fRotRes = ptSigma.calcRotOffset(point, fDataSet);
+	for (int j = 0; j < 3; j++)
+	{
+		double sigma = ptSigma.fSigmas(j);
+		double rotRes = ptSigma.fRotRes(j);
+		if (ptSigma.fHasSigmaValues[j] && isPositiveFinite(sigma))
+			ptSigma.fRotResNormalized(j) = (rotRes / sigma);
+		else
+			ptSigma.fRotResNormalized(j) = NAN;
+	}
+}
+
 ///////////////////////////////////////////////////////////////
 // Methods relative to the adjustable objects
 ///////////////////////////////////////////////////////////////
@@ -563,16 +578,8 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices &r
 					logCritical() << "Extract parameters of the adjustable points from the calculated matrices: Unknown index of point" << point.getName() << " exceeds matrix dimensions!";
 					throw std::runtime_error("Unknown index of an point: " + point.getName() + " exceeds matrix dimensions!");
 				}
-
 				TReal correction = rm.getSolutionVctrElmt(unknIdx);
 				point.setCorrection(unknIdx, correction);
-				// set the offset in the rotated system if point has associated weight data
-				if (point.hasPointSigma())
-				{
-					pointSigmaData &ptSigma = point.getPointSigmaData();
-					ptSigma.fRotRes = ptSigma.calcRotOffset(point, fDataSet);
-					ptSigma.fRotResNormalized = ptSigma.fRotRes.array() / ptSigma.fSigmas.array();
-				}
 
 				nParamsTotal++;
 				if (fabsq(correction) > convCrit)
@@ -582,6 +589,9 @@ bool TLSResultsMatricesExtractor::extractPointParams(const TLSResultsMatrices &r
 				}
 			}
 		}
+		// set the offset in the rotated system if point has associated weight data
+		if (point.hasPointSigma())
+			extractPointSigmaOffset(point);
 	}
 	logDebug() << "Checking converging criteria on point parameters: " << nParamsOutsideCriteria << "of" << nParamsTotal << "coordinates outside criteria (" << convCrit << ")";
 

@@ -199,8 +199,13 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 				throw std::runtime_error("Standard deviation cannot be negative.");
 			if (sigma < nullLimit && sigma > 0.0)
 				throw std::runtime_error("Specified standard deviation is too small, consider to set it to 0 to fix the variable.");
-			ptSigma.fSigmas[idx] = opts.getParamRmm2m(stdDevNames[idx]);
-			ptSigma.fWeightMatrix(idx, idx) = 1 / pow2(ptSigma.fSigmas[idx]);
+			ptSigma.fSigmas(idx) = sigma;
+			ptSigma.fHasSigmaValues[idx] = true;
+			if (isPositiveFinite(sigma))
+				ptSigma.fWeightMatrix(idx, idx) = 1 / pow2(sigma);
+			else
+				ptSigma.fWeightMatrix(idx, idx) = NAN;
+
 			hasSigmas = true;
 		}
 	}
@@ -249,25 +254,34 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 	if (hasSigmas)
 	{
 		std::array<bool, 3> fixedStates = {false, false, false};
-		for (int j = 0; j < 3; j++)
+		const Eigen::Vector3d &sigmas = ptSigma.fSigmas;
+		if (sigmas.isZero())
 		{
-			double sigma = ptSigma.fSigmas[j];
-			if (isZero(sigma))
+			// in this case no observations and no constraints are needed because no unknown for this point is introduced
+			fixedStates = {true, true, true};
+		}
+		else
+		{
+			for (int j = 0; j < 3; j++)
 			{
-				if (ptSigma.fHasAngle)
-				{ // if rotations are present sigma=0 implies a constraint
-					ptSigma.fRelCIdx.push_back(j);
+				double sigma = sigmas(j);
+				if (isZero(sigma))
+				{
+					if (ptSigma.fHasAngle)
+					{ // if rotations are present sigma=0 implies a constraint
+						ptSigma.fRelCIdx.push_back(j);
+					}
+					else
+					{ // if no rotations are present, the coordinate is not a variable in the adjustment and no explicit constraint is needed
+						fixedStates[j] = true;
+					}
 				}
-				else
-				{ // if no rotations are present, the coordinate is not a variable in the adjustment and no explicit constraint is needed
-					fixedStates[j] = true;
+				else if (isPositiveFinite(sigma))
+				{ // finite positive sigma will always be a observation
+					ptSigma.fRelObsIdx.push_back(j);
 				}
+				// the case of a nan sigma means that the offset of this coordinate is ignored
 			}
-			else if (isPositiveFinite(sigma))
-			{ // finite positive sigma will always be a observation
-				ptSigma.fRelObsIdx.push_back(j);
-			}
-			// the case of a nan sigma means that the offset of this coordinate is ignored
 		}
 		pt.updateFixedState(fixedStates[0], fixedStates[1], fixedStates[2]);
 	}

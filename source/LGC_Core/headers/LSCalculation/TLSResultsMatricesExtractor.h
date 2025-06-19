@@ -158,6 +158,8 @@ private:
 	/// Sets the ECWI measurement residual.
 	void extractECWIROMObs(const TLSResultsMatrices &rm, TECWIROM &ecwiMeas);
 	//@}
+	// calculates and sets the point sigma offset
+	void extractPointSigmaOffset(LGCAdjustablePoint &point);
 
 	TLGCData *fDataSet; /*!< pointer to a project data*/
 	bool fLastIteration; /*!< indicates if the convergence criteria has been exceeded and if a new iteration is necessary (default value = false)*/

@@ -28,8 +28,8 @@ struct pointSigmaData
 	std::array<std::string, 4> fAngleNames;
 	Eigen::Matrix3d fRotMat;
 	bool fHasAngle, fHasApriCovMat;
-
 	Eigen::Vector3d fSigmas;
+	std::array<bool, 3> fHasSigmaValues;
 	Eigen::Matrix3d fApriCovMat;
 	Eigen::Matrix3d fWeightMatrix;
 	int firstObsIdx, firstCIdx;
@@ -50,6 +50,7 @@ struct pointSigmaData
 		fHasApriCovMat(false),
 		fWeightMatrix(Eigen::Vector3d::Constant(NAN).asDiagonal()),
 		fSigmas(Eigen::Vector3d::Constant(NAN)),
+		fHasSigmaValues({false, false, false}),
 		firstObsIdx(-1),
 		firstCIdx(-1),
 		fRotRes(Eigen::Vector3d::Constant(NAN)),
@@ -80,6 +81,7 @@ struct pointSigmaData
 		obj.addProperty("fHasApriCovMat", fHasApriCovMat);
 		obj.addProperty("fWeightMatrix", fWeightMatrix);
 		obj.addProperty("fSigmas", fSigmas);
+		obj.addProperty("fHasSigmaValues", fHasSigmaValues);
 		obj.addProperty("firstObsIdx", firstObsIdx);
 		obj.addProperty("firstCIdx", firstCIdx);
 		obj.addProperty("fRelObsIdx", fRelObsIdx);
