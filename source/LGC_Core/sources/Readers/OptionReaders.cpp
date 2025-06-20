@@ -144,12 +144,15 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 {
 	auto numTokens = tokens.size();
 
-	// (VV) Use a time difference to create a seed (seedNumber) for the pseudo-random number generator/engine
+	// (VV) Get the number of the simulation: numSimulation (tokens.at(2))
+	int numSimulation = std::stoi(tokens.at(2));
+
+	// (VV) Use a time difference to create a seed (randomSeedNum) for the pseudo-random number generator/engine
 	typedef std::chrono::high_resolution_clock myclock;
 	myclock::time_point time1 = myclock::now(); // (VV) current timestamp
 	myclock::time_point time0 = myclock::time_point::min(); // (VV) reference timestamp
 	myclock::duration d = time1 - time0; // (VV) time difference
-	int seedNumber = d.count();
+	int randomSeedNum = d.count();
 
 	// (VV) If the last token starts with a comment character, the variable existComment becomes true
 	const char fOfLastToken = tokens.back().at(0);
@@ -161,18 +164,23 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 
 	// (VV) If the tokens are more than five, e.g., "*SIMU N S %comment" or
 	// (VV) if the tokens are four without a comment at the end, e.g., "*SIMU N S",
-	// (VV) then get the number of the simulation N (tokens.at(2)) and the seed number S (tokens.at(3))
+	// (VV) then create a simulation object with the number of simulations and the seed number provided by the user
+	
 	if (numTokens >= 5 || (numTokens == 4 && !(fOfLastToken == '$' || fOfLastToken == '%')))
 	{
-		fconfig.sim = TLGCConfig::TSimulation(std::stoi(tokens.at(2)), std::stoi(tokens.at(3)));
+		// (VV) Get the seed number from the input file
+		int inputSeedNum = std::stoi(tokens.at(3));
+		// (VV) Create a simulation object with the number of simulations and the seed number provided by the user
+		fconfig.sim = TLGCConfig::TSimulation(numSimulation, inputSeedNum ,fconfig.sim.writeLGCFile);
 		fconfig.sim.setActive(activeLine);
 	}
 	// (VV) If the tokens are four with a comment, e.g., "*SIMU N %comment" or
 	// (VV) if the tokens are three without a comment at the end, e.g., "*SIMU N",
-	// (VV) then get the number of the simulation N (tokens.at(2))
+	// (VV) then create a simulation object with the number of simulations and the seed number randomly generated
+
 	else if (numTokens == 4 || (numTokens == 3 && !(fOfLastToken == '$' || fOfLastToken == '%')))
 	{
-		fconfig.sim = TLGCConfig::TSimulation(std::stoi(tokens.at(2)), seedNumber);
+		fconfig.sim = TLGCConfig::TSimulation(numSimulation, randomSeedNum, fconfig.sim.writeLGCFile);
 		fconfig.sim.setActive(activeLine);
 	}
 	// (VV) If the tokens are three with a comment, e.g., "*SIMU %comment" or
@@ -182,6 +190,7 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	{
 		throw std::runtime_error("*SIMU accepts either 1 or 2 arguments but zero (0) arguments were provided.");
 	}
+
 }
 
 ////////////////////
@@ -489,7 +498,9 @@ void TKeySOBS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	auto numtokens = tokens.size();
 
 	if (numtokens >= 2)
+	{
 		fconfig.sim.writeLGCFile = activeLine;
+	}
 	else
 	{
 		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");
