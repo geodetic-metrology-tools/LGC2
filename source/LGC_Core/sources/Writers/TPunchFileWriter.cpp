@@ -570,9 +570,6 @@ void	TPunchFileWriter::writeCooHeader()
 	TAStreamFormatter*	stream = getStream();
 	int	nameWidth = getNameWidth();
 	int	coordWidth = getCoordWidth();
-	// int coordResWidth = getCoordResWidth();
-
-
 
 	//First line
 	(*stream).width(1);
