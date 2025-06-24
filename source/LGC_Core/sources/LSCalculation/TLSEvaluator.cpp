@@ -105,6 +105,7 @@ Eigen::VectorXd TLSEvaluator::getEstParams() const
 	fillParamForCollection(fData->getPlanes(), result);
 	fillParamForCollection(fData->getLength(), result);
 	fillParamForCollection(fData->getLines(), result);
+	fillParamForCollection(fData->getSags(), result);
 	// frames are not organized in adjustable object collection
 	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
 	{
@@ -207,6 +208,7 @@ void TLSEvaluator::setParameters(const Eigen::VectorXd &para)
 	setAdjObjFromParamForCollection(fData->getPlanes(), para);
 	setAdjObjFromParamForCollection(fData->getLength(), para);
 	setAdjObjFromParamForCollection(fData->getLines(), para);
+	setAdjObjFromParamForCollection(fData->getSags(), para);
 	// frames are not organized in adjustable object collection
 	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
 	{
