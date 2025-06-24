@@ -96,8 +96,12 @@ public:
 	inline const TAdjustableLength &getRadCurv() const { return fRadCurv; }
 	inline TAdjustableLength &getRadCurv() { return fRadCurv; }
 
-
-
+	// getting the estimated vector with all variables
+	virtual Eigen::VectorXd getEstVector() const override;
+	// get value corresponding to unknown index
+	virtual TReal getValue(int idx) const override;
+	// set the value corresponding to an index
+	virtual void setValue(int idx, TReal value) override;
 
 
 	/*!
@@ -151,7 +155,7 @@ public:
 
 
 	///	See \ref TVAdjustableObject::setCorrection
-	virtual void setCorrection(int idx, TReal value);
+	//virtual void setCorrection(int idx, TReal value);
 	void setCovar(Eigen::Matrix<double, 5, 5> covarMat) { fCovar = covarMat; }
 	const Eigen::Matrix<double, 5, 5> &getCovar() const { return fCovar; }
 

@@ -95,21 +95,49 @@ void LGCAdjustableSag::setFirstUidx(int idx)
 	}
 }
 
-void LGCAdjustableSag::setCorrection(int idx, TReal value)
+Eigen::VectorXd LGCAdjustableSag::getEstVector() const
+{
+	Eigen::VectorXd estVect(5);
+	estVect << fBearing.getEstimatedValue().getRadiansValue(), fVertSag.getEstimatedValue().getMetresValue(), fVertCurv.getEstimatedValue().getMetresValue(),
+		fRadSag.getEstimatedValue().getMetresValue(), fRadCurv.getEstimatedValue().getMetresValue();
+	return estVect;
+}
+
+TReal LGCAdjustableSag::getValue(int idx) const
+{	
+
+	if (idx < getFirstUidx() || idx > getLastUidx())
+		throw std::logic_error("Attempting to get variable with wrong index.");
+	TReal value = 0;
+	if (fUidx[0] == idx)
+		value = fBearing.getValue(idx);
+	else if (fUidx[1] == idx)
+		value = fVertSag.getValue(idx);
+	else if (fUidx[2] == idx)
+		value = fVertCurv.getValue(idx);
+	else if (fUidx[3] == idx)
+		value = fRadSag.getValue(idx);
+	else if (fUidx[4] == idx)
+		value = fRadCurv.getValue(idx);
+	
+	return value;
+}
+
+void LGCAdjustableSag::setValue(int idx, TReal value)
 {
 	if (idx < getFirstUidx() || idx > getLastUidx())
 		throw std::logic_error("Attempting to set variable with wrong index.");
 
 	if (fUidx[0] == idx)
-		fBearing.setCorrection(idx, value);
+		fBearing.setValue(idx, value);
 	else if (fUidx[1] == idx)
-		fVertSag.setCorrection(idx, value);
+		fVertSag.setValue(idx, value);
 	else if (fUidx[2] == idx)
-		fVertCurv.setCorrection(idx, value);
+		fVertCurv.setValue(idx, value);
 	else if (fUidx[3] == idx)
-		fRadSag.setCorrection(idx, value);
+		fRadSag.setValue(idx, value);
 	else if (fUidx[4] == idx)
-		fRadCurv.setCorrection(idx, value);
+		fRadCurv.setValue(idx, value);
 }
 
 	
