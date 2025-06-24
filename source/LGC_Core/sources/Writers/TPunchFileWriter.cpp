@@ -211,11 +211,11 @@ void TPunchFileWriter::writeTitle()
 	// Add warning for CONSI LIBR usage
 	if (fProjectData->getConfig().useConsiLibr.isActive())
 	{
-		(*stream) << "#WARNING: THIS IS THE RESULT OF A FREE CALCULATION WITH *CONSI LIBR, SEE .LOG2 FILE. DO NOT INSERT THESE COORDINATES!" << endl;
+		(*stream) << "#WARNING: THIS IS THE RESULT OF A FREE CALCULATION WITH *CONSI LIBR, SEE .LOG2 FILE. DO NOT INSERT THESE COORDINATES!" << '\n';
 	}
 	else
 	{
-		(*stream) << "#" << endl;
+		(*stream) << "#" << '\n';
 	}
 
 	// write date and time
