@@ -207,7 +207,16 @@ void TPunchFileWriter::writeTitle()
 	//write title
 	(*stream)<<"# "<<endl;
 	(*stream) << "#" << (fProjectData->getConfig().title) << endl;
-	(*stream) << "#"  << endl;
+	
+	// Add warning for CONSI LIBR usage
+	if (fProjectData->getConfig().useConsiLibr.isActive())
+	{
+		(*stream) << "#WARNING: THIS IS THE RESULT OF A FREE CALCULATION WITH *CONSI LIBR, SEE .LOG2 FILE. DO NOT INSERT THESE COORDINATES!" << '\n';
+	}
+	else
+	{
+		(*stream) << "#" << '\n';
+	}
 
 	// write date and time
 	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
@@ -561,7 +570,6 @@ void	TPunchFileWriter::writeCooHeader()
 	TAStreamFormatter*	stream = getStream();
 	int	nameWidth = getNameWidth();
 	int	coordWidth = getCoordWidth();
-	// int coordResWidth = getCoordResWidth();
 
 	//First line
 	(*stream).width(1);
