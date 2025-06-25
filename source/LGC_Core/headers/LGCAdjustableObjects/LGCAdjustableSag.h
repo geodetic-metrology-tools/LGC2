@@ -103,6 +103,7 @@ public:
 	// set the value corresponding to an index
 	virtual void setValue(int idx, TReal value) override;
 
+	void setEstValue(int idx, TReal value);
 
 	/*!
 		\brief Returns the number of unknowns for this sag element.
@@ -119,6 +120,9 @@ public:
 	{
 		return (fIsFixed[d]);
 	}
+	// vs,vc,rs,rc=0,1,2,3
+	// get the unknown index, returns -1 if variable is fixed 
+	int getUnknIndex(int d) const;
 
 	
 	// returning the constraint index of the bearing constraint

@@ -58,7 +58,7 @@ inline int LGCAdjustableSag::getLastUidx() const
 
 const std::vector<int> LGCAdjustableSag::getRelativeUnknIndices() const
 {
-	// for now: bearing, curvature and slack free always
+	// for now: bearing free always
 	std::vector<int> activeIndices;
 	for (int j = 0; j < 5; j++)
 	{
@@ -66,6 +66,11 @@ const std::vector<int> LGCAdjustableSag::getRelativeUnknIndices() const
 			activeIndices.push_back(j);
 	}
 	return activeIndices;
+}
+
+int LGCAdjustableSag::getUnknIndex(int d) const
+{
+	return fUidx[d];
 }
 
 void LGCAdjustableSag::setFirstUidx(int idx)
@@ -138,6 +143,24 @@ void LGCAdjustableSag::setValue(int idx, TReal value)
 		fRadSag.setValue(idx, value);
 	else if (fUidx[4] == idx)
 		fRadCurv.setValue(idx, value);
+}
+
+void LGCAdjustableSag::setEstValue(int idx, TReal value)
+{
+	//0,1,2,3,4=bear,vertsag,vertcurv,radsag,radcurv
+	switch (idx)
+	{
+	case 0:
+		fBearing.setEstValue(value);
+	case 1:
+		fVertSag.setEstValue(value);
+	case 2:
+		fVertCurv.setEstValue(value);
+	case 3:
+		fRadSag.setEstValue(value);
+	case 4:
+		fRadCurv.setEstValue(value);
+	}
 }
 
 	
