@@ -2108,3 +2108,25 @@ bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatr
 
 	return fillOK;
 }
+
+template<typename Meas>
+inline void TLSInputMatricesFiller::updateMask(Meas meas, TLSInputMatrices *matrices)
+{
+	// for now ignore obsidx as they are equal.
+	// lastObsidx metho
+	if (!meas->isActive())
+	{
+		int firstEqIdx = meas->getFirstEquationIndex();
+		int lastEqIdx = meas->getLastEquationIndex();
+		for (int j = firstEqIdx; j <= lastEqIdx; j++)
+		{
+			matrices->fMaskData.EIndices.insert(j);
+		}
+		int firstObsIdx = meas->getFirstObservationIndex();
+		int lastObsIdx = meas->getLastObservationIndex();
+		for (int j = firstObsIdx; j <= lastObsIdx; j++)
+		{
+			matrices->fMaskData.OIndices.insert(j);
+		}
+	}
+}

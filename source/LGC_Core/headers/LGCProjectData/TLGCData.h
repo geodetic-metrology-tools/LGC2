@@ -247,6 +247,10 @@ public:
 	/// Number of unknowns, equations, observations and constraints.
 	UEOIndices fUEOIndices;
 
+	// masked parameter indices, managed globally. Corresponding indices of variables will be masked in adjustment
+	std::set<int> fParameterMask;
+
+
 	/// Sets the number of LS iterations.
 	void setNumberOfLSIterations(int noi) { fLSRelatedInfo.fNumberOfLSIterations = noi; }
 	///	Returns The number of LS iterations made to reach the solution.

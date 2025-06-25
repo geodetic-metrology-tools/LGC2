@@ -31,7 +31,8 @@ set(CREATE_DOC ON)
 set(DOXYGEN_CONF_PATH ".")
 set(ENABLE_CONSOLE ON)
 set(CPACK_BUILD ON)
-set(USE_SERIALIZER 1)
+# Fras: avoid pulling json
+set(USE_SERIALIZER 0)
 add_compile_definitions(USE_SERIALIZER=${USE_SERIALIZER})
 
 set(LIBRARIES_PATH "${CMAKE_SOURCE_DIR}/../lib")
@@ -58,10 +59,16 @@ message("    Using MinGW")
 	ADD_DEFINITIONS(-D_USE_MATH_DEFINES) #defined variable added FRK 17/11/2016
 ENDIF(MINGW)
 
+# set -fpic compiler flag for linux
+IF(NOT MSVC)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ENDIF(NOT MSVC)
+
 include_directories (
 	SYSTEM
+	${CMAKE_SOURCE_DIR}/LGC_API/headers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
-	${CMAKE_SOURCE_PATH}/LGC_Core/headers/LGCConstraintObjects
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCConstraintObjects
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Readers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
@@ -99,10 +106,12 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
+ADD_SUBDIRECTORY(LGC_API)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
 target_link_libraries(${PROJECT_NAME}
+	#LGC_API
 	LGC_Core
 	LSAlgorithms
 	ProjectFramework
