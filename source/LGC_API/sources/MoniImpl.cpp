@@ -300,7 +300,8 @@ void Moni::MoniImpl::setFixedPointParameter(const std::string &pointName, int id
 		throw std::runtime_error("Index " + std::to_string(idx) + " of point " + pointName + " is not a fixed variable. ");
 	}
 
-	pointRef.setValue(pointRef.getCoordinateUnknIndex(idx), val);
+	pointRef.setEstVal(idx, val);
+	
 }
 
 void Moni::MoniImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
@@ -316,8 +317,8 @@ void Moni::MoniImpl::freezeFrameParameter(const std::string &frameName, int idx,
 
 	// check if the associated parameter of the frame is really free
 	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
-	bool isFree = isFreeVar(frameRef, idx);
-	if (isFree)
+	bool isFixed = !isFreeVar(frameRef, idx);
+	if (isFixed)
 	{
 		// maybe not throw an error only a warning?
 		throw std::runtime_error("Index " + std::to_string(idx) + " of frame " + frameName + " is not a free variable. Nothing to freeze!");
@@ -354,8 +355,8 @@ void Moni::MoniImpl::unfreezeFrameParameter(const std::string &frameName, int id
 
 	// check if the associated parameter of the frame is really free
 	TAdjustableHelmertTransformation &frameRef = paramRefs.FRAMES.at(frameName);
-	bool isFree = isFreeVar(frameRef, idx);
-	if (!isFree)
+	bool isFixed = !isFreeVar(frameRef, idx);
+	if (isFixed)
 	{
 		// maybe not throw an error only a warning?
 		throw std::runtime_error("Index " + std::to_string(idx) + " of frame " + frameName + " is not a free variable. Nothing to unfreeze!");
