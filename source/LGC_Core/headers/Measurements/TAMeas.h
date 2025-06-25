@@ -108,6 +108,7 @@ class TAMeas : public TStatusObject
 
 			/// Returns LS-matrices observation index of a first observation of this measurement
 			MatrixIndex getFirstObservationIndex() const { return fMeasIdx.fFirstObservationIndex; }
+			MatrixIndex getLastObservationIndex() const { return fMeasIdx.fFirstObservationIndex + fMeasIdx.obsDim - 1; }
 			/// observation dimension
 			MatrixIndex getObsDim() const { return fMeasIdx.obsDim; }
 
