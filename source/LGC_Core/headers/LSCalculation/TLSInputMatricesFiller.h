@@ -174,6 +174,8 @@ private:
 	bool addPointContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices);
 	bool addPointConstraintContribution(const LGCAdjustablePoint &pointAdj, const TFreeVector &pointContrib, int eqIdx, TLSInputMatrices *matrices);
 	//@}
+	template<typename Meas>
+	void updateMask(Meas meas, TLSInputMatrices *matrices);
 };
 
 #endif // TLS_INPUT_MATRICES_FILLER
