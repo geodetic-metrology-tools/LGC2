@@ -110,7 +110,7 @@ ADD_SUBDIRECTORY(LGC_API)
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
 target_link_libraries(${PROJECT_NAME}
-	#LGC_API
+	LGC_API
 	LGC_Core
 	LSAlgorithms
 	ProjectFramework
