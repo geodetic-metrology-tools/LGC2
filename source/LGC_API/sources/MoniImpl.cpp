@@ -480,6 +480,11 @@ void Moni::MoniImpl::createParameterReferences()
 	{
 		paramRefs.LENGTHS.insert({object.getName(), object});
 	}
+	for (auto &object : project.get()->getSags())
+	{
+		paramRefs.SAGS.insert({object.getName(), object});
+	}
+
 	// now the unknowns associated to transformations.. (as in TLSResultsMatricesExtractor::extractTransformationParams)
 	// as there is no "adjustable transformation collection", we have to iterate over the tree and get them on our own.
 	for (auto it(project.get()->getTree().begin()); it != project.get()->getTree().end(); ++it)

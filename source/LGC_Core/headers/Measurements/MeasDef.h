@@ -590,7 +590,10 @@ public:
 	inline void setYResidual(TLength res) { fYResidual = res; }
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
-	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { TPositionVector obsVector(obsVect(0), obsVect(1), obsVect(2), TCoordSysFactory::ECoordSys::k3DCartesian); }
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override
+	{
+		obsValue = TPositionVector(obsVect(0), obsVect(1), obsVect(2), TCoordSysFactory::ECoordSys::k3DCartesian);
+	}
 	virtual Eigen::VectorXd getObsVector() const override 
 	{
 		Eigen::VectorXd result(3);

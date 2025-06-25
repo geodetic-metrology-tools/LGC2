@@ -167,6 +167,7 @@ private:
 		std::unordered_map<std::string, LGCAdjustablePlane &> PLANES;
 		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
 		std::unordered_map<std::string, TAdjustableHelmertTransformation &> FRAMES;
+		std::unordered_map<std::string, LGCAdjustableSag&> SAGS;
 	} paramRefs;
 
 	// status of estimation. True if estimation results are ready for extraction.
