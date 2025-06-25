@@ -59,30 +59,30 @@ public:
 	// changing the value of a fixed frame parameter
 	DECLSPEC void setFixedFrameParameter(const std::string &frameName, int idx, double val);
 	DECLSPEC void setFixedPointParameter(const std::string &pointName, int idx, double val);
-	// "freezing" of free parameters
+	DECLSPEC void setFixedSagParameter(const std::string &sagName, int idx, double val);
+	// freeze methods
 	DECLSPEC void freezeFrameParameter(const std::string &frameName, int idx, double val);
-	// "unfreezing" of free parameters
-	DECLSPEC void unfreezeFrameParameter(const std::string &frameName, int idx);
-	// "freezing" of free parameters
 	DECLSPEC void freezePointParameter(const std::string &pointName, int idx, double val);
-	// "unfreezing" of free parameters
+	DECLSPEC void freezeSagParameter(const std::string &sagName, int idx, double val);
+	// unfreeze methods
+	DECLSPEC void unfreezeFrameParameter(const std::string &frameName, int idx);
 	DECLSPEC void unfreezePointParameter(const std::string &pointName, int idx);
+	DECLSPEC void unfreezeSagParameter(const std::string &sagName, int idx);
 
 	// triggering the adjustment calculation
 	DECLSPEC bool adjust();
 	// for checking the estimation status
 	DECLSPEC bool getStatus();
-	// get estimate of point
+	// get estimates
 	DECLSPEC Eigen::VectorXd getPointEstimate(const std::string &);
-	// get estimate of point in subframe
 	DECLSPEC Eigen::VectorXd getPointEstimate(const std::string &, const std::string &);
-	// get estimate of frame
 	DECLSPEC Eigen::VectorXd getFrameEstimate(const std::string &);
-	DECLSPEC Eigen::VectorXd getFrameEstimatePrec(const std::string &);
-	// get diagonal elements of covariances of the estimated parameters
+	DECLSPEC Eigen::VectorXd getSagEstimate(const std::string &);
+	// get precisions of estimations
 	DECLSPEC Eigen::VectorXd getPointEstimatePrec(const std::string &);
-	// get diagonal elements of covariances of the estimated parameters in a subframe, in a first version only Root frame is allowed
 	DECLSPEC Eigen::VectorXd getPointEstimatePrec(const std::string &pointName, const std::string &frameName);
+	DECLSPEC Eigen::VectorXd getFrameEstimatePrec(const std::string &);
+	DECLSPEC Eigen::VectorXd getSagEstimatePrec(const std::string &);
 	// get Meas IDs
 	DECLSPEC std::vector<std::string> getECWSMeasIds();
 	// get measurement

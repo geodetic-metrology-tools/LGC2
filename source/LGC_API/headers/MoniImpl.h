@@ -47,13 +47,16 @@ public:
 	// methods for manipulating fixed point and frame parameters
 	void setFixedFrameParameter(const std::string &frameName, int idx, double val);
 	void setFixedPointParameter(const std::string &pointName, int idx, double val);
-	// methods for freezing variables. Only possible if parameter is free
+	void setFixedSagParameter(const std::string &sagName, int idx, double val);
+	// freeze
 	void freezeFrameParameter(const std::string &frameName, int idx, double val);
-	// unfreeze a frame parameter (only possible if it was freezed previously)
-	void unfreezeFrameParameter(const std::string &frameName, int idx);
 	void freezePointParameter(const std::string &PointName, int idx, double val);
-	// unfreeze. only possible for previously freezed parameters
+	// bearing of sag is hidden in interface, idx=0 means vertical sags
+	void freezeSagParameter(const std::string &sagName, int idx, double val);
+	// unfreeze
+	void unfreezeFrameParameter(const std::string &frameName, int idx);
 	void unfreezePointParameter(const std::string &PointName, int idx);
+	void unfreezeSagParameter(const std::string &sagName, int idx);
 
 	// get measurement
 	Eigen::VectorXd getMeas(const std::string &id);
@@ -71,11 +74,13 @@ public:
 	Eigen::VectorXd getPointEstimate(const std::string &);
 	// get estimate of point in a subframe
 	Eigen::VectorXd getPointEstimate(const std::string &, const std::string &frameName);
+	Eigen::VectorXd getFrameEstimate(const std::string &);
+	Eigen::VectorXd getSagEstimate(const std::string &);
+	// precisions
 	Eigen::VectorXd getPointEstimatePrec(const std::string &);
 	Eigen::VectorXd getPointEstimatePrec(const std::string &, const std::string &detsFrame);
-	// get estimate of frame
-	Eigen::VectorXd getFrameEstimate(const std::string &);
 	Eigen::VectorXd getFrameEstimatePrec(const std::string &);
+	Eigen::VectorXd getSagEstimatePrec(const std::string &);
 
 	// Residual result methods
 	// get estimated residual
