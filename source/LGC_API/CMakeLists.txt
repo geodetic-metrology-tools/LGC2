@@ -38,9 +38,9 @@ target_link_libraries(${PROJECT_NAME}
 	Plugins
 )
 
-if(NOT MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0)
-endif()
+##if(NOT MSVC)
+##  target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_USE_CXX11_ABI=0)
+##endif()
 
 # Find OpenMP
 find_package(OpenMP)
