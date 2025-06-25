@@ -498,267 +498,76 @@ void object::test<7>()
 	auto duration = duration_cast<seconds>(stop - start);
 	std::cout << "Elapsed time (s): " << duration.count() << std::endl;
 }
-
 template<>
 template<>
 void object::test<8>()
 {
-	set_test_name("Testing a realistic application scenario for FRAS");
-	Moni apiObject("test_files/231219_LGC_SCT.lgc");
+	set_test_name("Testing simple sag example: freezing, setFixed, getEst, getEstPrec");
+	Moni apiObject("test_files/minimalSag.lgc");
+	apiObject.adjust();
+	Eigen::Vector3d leftEst = apiObject.getPointEstimate("left");
+	Eigen::Vector3d middleEst = apiObject.getPointEstimate("middle");
+	Eigen::Vector3d rightEst = apiObject.getPointEstimate("right");
+	Eigen::VectorXd sagParEst(4);
+	sagParEst = apiObject.getSagEstimate("sag1");
+	Eigen::Vector3d leftEstExpected(0.007, -1.0, 0.003);
+	Eigen::Vector3d middleEstExpected(0.003, 0.0, 0.001);
+	Eigen::Vector3d rightEstExpected(0.007, 1.0, 0.003);
+	Eigen::Vector4d sagParEstExpected(4);
+	sagParEstExpected << 0.001, 0.002, 0.003, 0.004;
+	ensure("position should be estimated correctly", leftEst.isApprox(leftEstExpected));
+	ensure("position should be estimated correctly", middleEst.isApprox(middleEstExpected));
+	ensure("position should be estimated correctly", rightEst.isApprox(rightEstExpected));
+	ensure("sag parameter should be estimated correctly", sagParEst.isApprox(sagParEstExpected));
+
+	// now freeze the curvature values to 0
+	// VC =>index 1
+	apiObject.freezeSagParameter("sag1", 1, 0.0);
+	// apiObject.freezeSagParameter("sag1", 3, 0.0);
+	apiObject.adjust();
+	leftEst = apiObject.getPointEstimate("left");
+	middleEst = apiObject.getPointEstimate("middle");
+	rightEst = apiObject.getPointEstimate("right");
+	// as the curvature is zero, the z offset is fully determined by the vertical sag
+	sagParEst = apiObject.getSagEstimate("sag1");
+	ensure_equals("height should be equal", leftEst(2), middleEst(2));
+	ensure_equals("height should be equal", leftEst(2), rightEst(2));
+	ensure_equals("vertical curvature should be frozen at 0", sagParEst(1), 0.0);
+
+	// change the observations to have equal height for all points. Then the precision of the vertical sag should be recognizble
+	Eigen::Vector3d leftObs(0.007, -1, 0.0);
+	Eigen::Vector3d middleObs(0.003, 0, 0.0);
+	Eigen::Vector3d rightObs(0.007, 1, 0.0);
+	apiObject.updateMeas("leftObs", leftObs);
+	apiObject.updateMeas("middleObs", middleObs);
+	apiObject.updateMeas("rightObs", rightObs);
 	apiObject.adjust();
 
-	// create a map from variable name to double (some variable names like "GTAP.A1LX.RST.TX:MM" can't be used directly because : is used by c++)
-	std::map<std::string, double> values;
+	sagParEst = apiObject.getSagEstimate("sag1");
+	ensure_equals("vertical sag should be estimated 0", 0.0, sagParEst(0));
+	Eigen::VectorXd sagParEstPrec = apiObject.getSagEstimatePrec("sag1");
+	// as the sag paramater is determined by 3 z observatuions each with precision 0.1234mm, its total precision shoudl be 0.000123m / sqrt(3)
+	ensure_equals("vertical sag precision should be 0.001234m/sqrt 3", 0.0001234 / sqrt(3), sagParEstPrec(0));
 
-	// W.r.t. NXCALS Variables names available in the last version furnished by Vincent on 12/12/2023:
-	// get the FUV/S02
-	// call:
-	double initialSigma = apiObject.getSigma0();
-	// returns a double to log into the corresponding NXCALS variable
+	// now test setFixed method
+	Eigen::Vector3d P1Est = apiObject.getPointEstimate("P1");
+	Eigen::Vector3d P2Est = apiObject.getPointEstimate("P2");
+	Eigen::Vector3d P1EstExpected(0, 0, 0);
+	Eigen::Vector3d P2EstExpected(0, 1, 0);
+	ensure("point should be estimated correctly", P1Est.isApprox(P1EstExpected));
+	ensure("point should be estimated correctly", P2Est.isApprox(P2EstExpected));
 
-	// Let's assume the position GTAP.A1LX
-	// position transformation info tab:
-	// call:
-	// the string should always be "RSTRI_" + "Accelerator" "." position
-	Eigen::VectorXd pos = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
-	// Will return the an Eigen::VectorXd containing 7 parameters : TX, TY, TZ, RX, RY, RZ, Scale
-	// The translation are always returned in meter. the NXCALS variable is in mm
-	values["GTAP.A1LX.RST.TX:MM"] = pos(0) / 1000;
-	values["GTAP.A1LX.RST.TY:MM"] = pos(1) / 1000;
-	values["GTAP.A1LX.RST.TZ:MM"] = pos(2) / 1000;
-	// The translation are always returned in radians. the NXCALS variable is in mrad
-	values["GTAP.A1LX.RST.RX:MRAD"] = pos(3) / 1000;
-	values["GTAP.A1LX.RST.RZ:MRAD"] = pos(5) / 1000;
-	// Scale factor is unitless
-	values["GTAP.A1LX.RST.SCALE:PPM"] = pos(6);
-
-	// Watchout for the roll angle (GTAP.A1LX.RST.RY_MRAD), something specific need to be done due to GEODE integration
-	// the string should always be "RSTR_" + "Accelerator" "." position
-	Eigen::VectorXd posRoll = apiObject.getFrameEstimate("RSTR_SCT.GTAP.A1LX");
-	values["GTAP.A1LX.RST.RY:mRAD"] = posRoll(4) / 1000;
-
-	// position transformation ACCURACY tab:
-	// call:
-	// the string should always be "RSTRI_" +  accelerator_name + "." position
-	Eigen::VectorXd posAcc = apiObject.getFrameEstimatePrec("RSTRI_SCT.GTAP.A1LX");
-	// Will return the an Eigen::VectorXd containing 7 parameters precision along: TX, TY, TZ, RX, RY, RZ, Scale
-	// The translation are always returned in meter. the NXCALS variable is in mm
-	values["GTAP.A1LX.RST.TX:ACCURACY_MM"] = posAcc(0) / 1000;
-	values["GTAP.A1LX.RST.TY:ACCURACY_MM"] = posAcc(2) / 1000;
-	// The translation are always returned in radians. the NXCALS variable is in mrad
-	values["GTAP.A1LX.RST.RX:ACCURACY_MRAD"] = posAcc(3) / 1000;
-	values["GTAP.A1LX.RST.RZ:ACCURACY_MRAD"] = posAcc(5) / 1000;
-	// Scale factor is unitless
-	values["GTAP.A1LX.RST.Scale:ACCURACY_PPM"] = posAcc(6);
-
-	// Watchout for the roll angle (GTAP.A1LX.RST.RY_mRAD), something specific need to be done
-	// the string should always be "RSTR_" + accelerator_name + "." position
-	Eigen::VectorXd posAccRoll = apiObject.getFrameEstimatePrec("RSTR_SCT.GTAP.A1LX");
-	values["GTAP.A1LX.RST.RY:ACCURACY_MRAD"] = posAccRoll(4) / 1000;
-
-	// BeamPoint coordinate offsets Info tab:
-	// For the entry point call:
-	// the string for the point name should always be "BEAM_" +  accelerator_name + "." position + ".E"
-	// the string for the frame name should always be "RSTB_" +  accelerator_name + "." position
-	Eigen::VectorXd entry = apiObject.getPointEstimate("BEAM_SCT.GTAP.A1LX.E", "RSTB_SCT.GTAP.A1LX") - apiObject.getPointEstimate("BEAM_SCT.GTAP.A1LX.E");
-	// or alternatively this works too:
-	// entry = apiObject.getPointEstimate("BEAM_SCT.GTAP.A1LX.E", "RSTB_SCT.GTAP.A1LX") - apiObject.getPointEstimate("BEAM_SCT.GTAP.A1LX.E", "RSTR_SCT.GTAP.A1LX");
-	// Will return the an Eigen::VectorXd containing 3 parameters precision along: X, Y, Z
-	values["GTAP.A1LX.E:X_MM"] = entry(0) / 1000;
-	values["GTAP.A1LX.E:Y_MM"] = entry(1) / 1000;
-	values["GTAP.A1LX.E:Z_MM"] = entry(2) / 1000;
-	// The dimensions are always returned in meters. the NXCALS variable is in mm
-
-	// for the exit point ("sortie") do the same by calling:
-	// the string for the point name should always be "BEAM_" +  accelerator_name + "." position + ".S"
-	Eigen::VectorXd sortie = apiObject.getPointEstimate("BEAM_SCT.GTAP.A1LX.S", "RSTB_SCT.GTAP.A1LX") - apiObject.getPointEstimate("BEAM_SCT.GTAP.A1LX.S");
-	values["GTAP.A1LX.S:X_MM"] = sortie(0) / 1000;
-	values["GTAP.A1LX.S:Y_MM"] = sortie(1) / 1000;
-	values["GTAP.A1LX.S:Z_MM"] = sortie(2) / 1000;
-
-	// for motor points:
-	// same than beam points with the associated special naming (defined?), if in geode would be something along the lines accelerator_name + "." position + ".MOTOR1" then call
-	//	Eigen::VectorXd motor1 = apiObject.getPointEstimate("SCT.GTAP.A1LX.MOTOR1", "RSTB_SCT.GTAP.A1LX") - apiObject.getPointEstimate("SCT.GTAP.A1LX.MOTOR1");
-
-	// BeamPoint coordinate accuracy Info tab:
-	// For the entry point call:
-	// the string for the point name should always be "BEAM_" +  accelerator_name + "." position + ".E"
-	// the string for the frame name should always be "RSTB_" +  accelerator_name + "." position
-	Eigen::VectorXd entryAcc = apiObject.getPointEstimatePrec("BEAM_SCT.GTAP.A1LX.E", "RSTB_SCT.GTAP.A1LX");
-	// Will return the an Eigen::VectorXd containing 3 parameters precision along: X, Y, Z
-	values["GTAP.A1LX.E:X_ACCURACY_MM"] = entryAcc(0) / 1000;
-	values["GTAP.A1LX.E:Y_ACCURACY_MM"] = entryAcc(1) / 1000;
-	values["GTAP.A1LX.E:Z_ACCURACY_MM"] = entryAcc(2) / 1000;
-	// The dimensions are always returned in meters. the NXCALS variable is in mm
-
-	// for the exit point ("sortie") do the same by calling:
-	// the string for the point name should always be "BEAM_" +  accelerator_name + "." position + ".S"
-	Eigen::VectorXd sortieAcc = apiObject.getPointEstimatePrec("BEAM_SCT.GTAP.A1LX.S", "RSTB_SCT.GTAP.A1LX");
-	values["GTAP.A1LX.S:X_ACCURACY_MM"] = sortieAcc(0) / 1000;
-	values["GTAP.A1LX.S:Y_ACCURACY_MM"] = sortieAcc(1) / 1000;
-	values["GTAP.A1LX.S:Z_ACCURACY_MM"] = sortieAcc(2) / 1000;
-
-	// same for motor points if needed
-
-	// get the WPS/HLS network parameters:
-	// for WPS call:
-	// The name of the WPS network is given as a functional position in InforEAM.
-	wireRom WPSNetwork = apiObject.getECWIData("GIWPN.A1LX.T");
-	// returns a custom struct wireRom see declaration in the header file.
-	// then w.r.t NXCALS variables:
-	// For the info tab:
-	// again all the lengths and angles are given in m and radians
-	values["GIWPN.A1LX.T:DELTA_X:MM"] = WPSNetwork.estimate(0) / 1000;
-	values["GIWPN.A1LX.T:DELTA_Z:MM"] = WPSNetwork.estimate(1) / 1000;
-	values["GIWPN.A1LX.T:DELTA_GISEMENT_MRAD"] = WPSNetwork.estimate(2) / 1000;
-	values["GIWPN.A1LX.T:DELTA_PENTE_MRAD"] = WPSNetwork.estimate(3) / 1000;
-	values["GIWPN.A1LX.T:SAG:MM"] = WPSNetwork.estimate(4) / 1000;
-	// For the accuracy tab:
-	// again all the lengths and angles are given in m and radians
-	values["GIWPN.A1LX.T:DELTA_X_ACCURACY:MM"] = WPSNetwork.prec(0) / 1000;
-	values["GIWPN.A1LX.T:DELTA_Z_ACCURACY:MM"] = WPSNetwork.prec(1) / 1000;
-	values["GIWPN.A1LX.T:DELTA_GISEMENT_ACCURACY_MRAD"] = WPSNetwork.prec(2) / 1000;
-	values["GIWPN.A1LX.T:DELTA_PENTE_ACCURACY_MRAD"] = WPSNetwork.prec(3) / 1000;
-	values["GIWPN.A1LX.T:SAG_ACCURACY:MM"] = WPSNetwork.prec(4) / 1000;
-
-	// for HLS call:
-	// The name of the HLS network is given as a functional position in InforEAM.
-	waterRom HLSNetwork = apiObject.getECWSData("GIHLN.A1LX.A");
-	// returns a custom struct waterRom see declaration in the header file.
-	// then w.r.t NXCALS variables:
-	// For the info tab:
-	// again all the lengths are given in m
-	values["GIHLN.A1LX.A:HWATER_MM"] = HLSNetwork.estimate / 1000;
-	// For the accuracy tab:
-	// again all the lengths and angles are given in m and radians
-	values["GIHLN.A1LX.A:HWATER_ACCURACY_MM"] = HLSNetwork.prec / 1000;
-
-	// for residuals
-	// for HLS:
-	// let's take the HLS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_HLS"
-	// call:
-	Eigen::VectorXd HLSRes = apiObject.getEstimateResidual("SCT.GISCD.A1LX.A_HLS");
-	// returns a Eigen::VectorXd containing 1 parameter
-	values["GTAP.A1LX.A_HLS:RESIDUAL_MM"] = HLSRes(0) / 1000;
-	// given in meters, to transform to mm
-
-	// for WPS:
-	// let's take the WPS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_WPS"
-	// call:
-	Eigen::VectorXd WPSRes = apiObject.getEstimateResidual("SCT.GISCD.A1LX.A_WPS");
-	// returns a Eigen::VectorXd containing 2 parameters
-	values["GTAP.A1LX.A_WPS:X_RESIDUAL_MM"] = WPSRes(0) / 1000;
-	values["GTAP.A1LX.A_WPS:Z_RESIDUAL_MM"] = WPSRes(1) / 1000;
-	// given in meters, to transform to mm
-
-	// to update an observation:
-	// for HLS:
-	// let's take the HLS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_HLS"
-	// update the value:
-	// create a  Eigen::VectorXd of 1 element with the value of the observation
-	Eigen::VectorXd hlsObs(1);
-	// extreme "blunder" observation value
-	hlsObs(0) = 1;
-	//// update the measurement
-	apiObject.updateMeas("SCT.GISCD.A1LX.A_HLS", hlsObs);
+	// change the sag element
+	apiObject.setFixedSagParameter("sag2", 0, 1.0);
+	apiObject.setFixedSagParameter("sag2", 1, 2.0);
+	apiObject.setFixedSagParameter("sag2", 2, 3.0);
+	apiObject.setFixedSagParameter("sag2", 3, 4.0);
 	apiObject.adjust();
-
-	// sigma will be very high due to the blunder
-	double sigmaAfterMeasUpdateWithBlunder = apiObject.getSigma0();
-
-	// update the state of this observation :
-	// call to turn off;
-	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_HLS", false);
-	apiObject.adjust();
-	double sigmaAfterDeactivation = apiObject.getSigma0();
-
-	// reactivate measurement and reset to a "normal" value around 0 (sensor "repaired")
-	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_HLS", true);
-	hlsObs(0) = 0;
-	apiObject.updateMeas("SCT.GISCD.A1LX.A_HLS", hlsObs);
-	apiObject.adjust();
-	// sigma should be back to where it was before the blunder
-	double sigmaAfterIntervention = apiObject.getSigma0();
-	
-	ensure("Sigma after blunder observation should be very high.", sigmaAfterMeasUpdateWithBlunder > 1000);
-	ensure("Sigma after deactivation of blunder observation should be close to where it was before blunder.", fabs(sigmaAfterDeactivation - initialSigma) < 10);
-	ensure_equals("Sigma should be back to normal.", initialSigma, sigmaAfterIntervention, 1e-3);
-
-
-	// for WPS:
-	// let's take the WPS on functional positon SCT.GISCD.A1LX.A, the corresponding observation ID is "SCT.GISCD.A1LX.A_WPS"
-	// update the value:
-	// create a  Eigen::VectorXd of 2 elements with the value of the observations in X and Z
-	Eigen::VectorXd wpsObs = Eigen::VectorXd::Zero(2);
-	wpsObs(0) = 1e-5;
-	wpsObs(1) = 2*1e-5;
-	// update the measurement
-	apiObject.updateMeas("SCT.GISCD.A1LX.A_WPS", wpsObs);
-
-	// update the state of this observation :
-	//  call to turn off;
-	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_WPS", false);
-	// call to turn on;
-	apiObject.setActivationStatus("SCT.GISCD.A1LX.A_WPS", true);
-	apiObject.adjust();
-
-	// to freeze/unfreeze the a translation parameters.
-	// by defaults a parameters can only be freezed if in the full configuration it is a DOF
-	// the following NXCALS are available
-	// GTAP.A1LX:RST_TX_USE
-	// GTAP.A1LX:RST_TY_USE
-	// GTAP.A1LX:RST_TZ_USE
-	// GTAP.A1LX:RST_RX_USE
-	// GTAP.A1LX:RST_RY_USE
-	// GTAP.A1LX:RST_RZ_USE
-	// GTAP.A1LX:RST_SCALE_USE
-	// let's take the GTAP.A1LX:RST_TX_USE and it's a boolean
-
-	Eigen::VectorXd frameParameters = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
-	double TXBeforeFreeze = frameParameters(0);
-	// to freeze a parameter a value should be specified, here let's take 1m)
-	apiObject.freezeFrameParameter("RSTRI_SCT.GTAP.A1LX", 0, 1.0);
-	apiObject.adjust();
-	frameParameters = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
-	ensure_equals("TX of frame should be frozen to 1.0.", frameParameters(0), 1.0, 1e-6);
-
-	// to unfreeze a parameter
-	apiObject.unfreezeFrameParameter("RSTRI_SCT.GTAP.A1LX", 0);
-	apiObject.adjust();
-	frameParameters = apiObject.getFrameEstimate("RSTRI_SCT.GTAP.A1LX");
-	ensure_equals("TX of frame should be back to its original value.", frameParameters(0), TXBeforeFreeze, 1e-6);
-
-	/* the T* are in meter, the R* are in gon, the Scale is unitless
-   here is the index map
-   GTAP.A1LX:RST_TX_USE		-->	1
-   GTAP.A1LX:RST_TY_USE		-->	2
-   GTAP.A1LX:RST_TZ_USE		-->	3
-   GTAP.A1LX:RST_RX_USE		-->	4
-   GTAP.A1LX:RST_RY_USE		-->	5
-   GTAP.A1LX:RST_RZ_USE		-->	6
-   GTAP.A1LX:RST_SCALE_USE	-->	7
-   */
-
-	/*
-   For the newer below variables:
-   GISCD.A1LX.RST_TX:MM
-   GISCD.A1LX.RST_TY:MM
-   GISCD.A1LX.RST_TZ:MM
-   GISCD.A1LX.RST_RX:MRAD
-   GISCD.A1LX.RST_RY:MRAD
-   GISCD.A1LX.RST_RZ:MRAD
-   GISCD.A1LX.RST_SCALE:PPM
-
-   GISCD.A1LX.RST_TX:ACCURACY_MM
-   GISCD.A1LX.RST_TY:ACCURACY_MM
-   GISCD.A1LX.RST_TZ:ACCURACY_MM
-   GISCD.A1LX.RST_RX:ACCURACY_MRAD
-   GISCD.A1LX.RST_RY:ACCURACY_MRAD
-   GISCD.A1LX.RST_RZ:ACCURACY_MRAD
-   GISCD.A1LX.RST_SCALE:ACCURACY_PPM
-   Nothing is available in the DBs yet.
-   Methods in LGC will be available quickly for the transforamtion parameters.
-   For the accuracy, needed? Will take a bit more time as not that straightforward
-   */
+	P1Est = apiObject.getPointEstimate("P1");
+	P2Est = apiObject.getPointEstimate("P2");
+	P1EstExpected << 3, 0, 1;
+	P2EstExpected << 7, 1, 3;
+	ensure("point should be estimated correctly", P1Est.isApprox(P1EstExpected));
+	ensure("point should be estimated correctly", P2Est.isApprox(P2EstExpected));
 }
 }; // namespace tut

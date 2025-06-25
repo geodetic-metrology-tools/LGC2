@@ -330,6 +330,10 @@ void Moni::MoniImpl::setFixedPointParameter(const std::string &pointName, int id
 
 void Moni::MoniImpl::setFixedSagParameter(const std::string &sagName, int idx, double val)
 {
+	if (idx<0 || idx>3)
+	{
+		throw std::runtime_error("Index of sag element " + sagName + " has to be 0,1,2 or 3.");
+	}
 	// set a fixed sag parameter
 	if (paramRefs.SAGS.count(sagName) == 0)
 	{
@@ -348,7 +352,7 @@ void Moni::MoniImpl::setFixedSagParameter(const std::string &sagName, int idx, d
 		throw std::runtime_error("Index " + std::to_string(idx) + " of sag element " + sagName + " is not a fixed variable. ");
 	}
 
-	sagRef.setEstValue(idx, val);
+	sagRef.setEstValue(idx+1, val);
 
 }
 
@@ -469,6 +473,10 @@ void Moni::MoniImpl::freezePointParameter(const std::string &pointName, int idx,
 
 void Moni::MoniImpl::freezeSagParameter(const std::string &sagName, int idx, double val)
 {
+	if (idx<0 || idx>3)
+	{
+		throw std::runtime_error("Index of sag element " + sagName + " has to be 0,1,2 or 3.");
+	}
 	// freeze a sag parameter that is free in the original configuration
 	if (paramRefs.SAGS.count(sagName) == 0)
 	{
@@ -536,6 +544,10 @@ void Moni::MoniImpl::unfreezePointParameter(const std::string &pointName, int id
 
 void Moni::MoniImpl::unfreezeSagParameter(const std::string &sagName, int idx)
 {	// unfreeze a sag parameter that is free in the original configuration
+	if (idx<0 || idx>3)
+	{
+		throw std::runtime_error("Index of sag element " + sagName + " has to be 0,1,2 or 3.");
+	}
 	if (paramRefs.SAGS.count(sagName) == 0)
 	{
 		throw std::runtime_error("Sag element " + sagName + " does not exist.");
@@ -1683,9 +1695,7 @@ Eigen::VectorXd Moni::MoniImpl::getSagEstimate(const std::string &sagId)
 
 	Eigen::VectorXd resultVector(4);
 	// bearing (index 0 is not wanted)
-	paramRefs.SAGS.at(sagId).getEstVector().bottomRows(4);
-
-	return resultVector;
+	return paramRefs.SAGS.at(sagId).getEstVector().bottomRows(4);
 }
 
 Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(const std::string &frameId)
@@ -1715,12 +1725,10 @@ Eigen::VectorXd Moni::MoniImpl::getSagEstimatePrec(const std::string &sagId)
 		throw std::runtime_error("No Sag element with Id " + sagId + " found");
 	}
 
-	Eigen::VectorXd resultVector(4);
 	// bearing (index 0 is not wanted)
 	Eigen::MatrixXd fullCovar = paramRefs.SAGS.at(sagId).getCovar().bottomRightCorner(4,4);
-	resultVector = fullCovar.diagonal().array().sqrt();
 
-	return resultVector;
+	return fullCovar.diagonal().array().sqrt();
 }
 
 Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(const std::string &pointId)
