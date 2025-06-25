@@ -1,0 +1,31 @@
+*TITR
+simple file with sag parameter for LGC API testing
+*OLOC
+*APRI
+*CONSI
+*PREC 6
+*INSTR
+*FRAME testFrame 0 0 0 0 0 0 1
+*POIN
+left 	0 -1 0	%SX 1 SY 1 SZ 1
+middle 	0 0 0	%SX 1 SY 1 SZ 1
+right 	0 1 0	%SX 1 SY 1 SZ 1
+P1 0 0 0
+P2 0 1 0
+*ENDFRAME
+% observations are chosen such that VS=0.001, VC=0.002, RS=0.003, RC=0.004 (units sag:meter, curvature:unitless)
+*OBSXYZ
+left 	0.007 -1 0.003	1 1 0.1234 ID leftObs
+middle 	0.003 0  0.001	1 1 0.1234 ID middleObs
+right 	0.007 1  0.003	1 1 0.1234 ID rightObs
+*SAGCONNECT sag1 testFrame 0 0 0 0 VS VC  RS RC %RC %Vert Sag, Vert curbature, Rad Sag, Rad curbature
+%*SAGCONNECT sag1 testFrame 0 0 0 0 VC  RS RC %RC %Vert Sag, Vert curbature, Rad Sag, Rad curbature
+left
+middle
+right
+% this sag element is fixed. it determines the position of the points
+*SAGCONNECT sag2 testFrame 0 0 0 0
+P1
+P2
+*END
+
