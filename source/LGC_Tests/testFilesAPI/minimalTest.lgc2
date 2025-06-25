@@ -1,0 +1,19 @@
+*TITR
+Simple API testfile
+*OLOC 		
+*APRI		
+*PREC 6
+*INSTR
+*FRAME testFrame 0 0 0 0 0 0 1 TX TY TZ
+*CALA
+P1 0 0 0 
+*ENDFRAME
+*OBSXYZ 
+P1 1 2 3 1 1 1 ID testObs1
+*POIN
+P2 0 0 0
+*OBSXYZ
+P2 -1 -1 -1 1 1 1 ID testObs2
+P2 1 1 1 1 1 1 ID testObs3
+
+*END

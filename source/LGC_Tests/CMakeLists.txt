@@ -46,6 +46,8 @@ set(tests_SOURCES
 	sources/testEREL.cpp
 	sources/testSAG.cpp
 	sources/testDLEV.cpp
+	sources/testAPI.cpp
+
 )
 
 set(tests_INPUT
@@ -74,11 +76,21 @@ set(tests_INPUT
 	headers/testSAG.h
 	headers/testDLEV.h
 	headers/testPOLAR.h
+	headers/testAPI.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
+# Ensure LGC_API is built first
+add_dependencies(LGC_Tests LGC_API)
+
+add_custom_command(TARGET LGC_Tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy 
+    "$<TARGET_FILE:LGC_API>" 
+    "$<TARGET_FILE_DIR:LGC_Tests>/$<TARGET_FILE_NAME:LGC_API>"
+)
+
+target_link_libraries(LGC_Tests LGC_API LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
 
 add_test(
 	NAME LGC_Tests
@@ -89,6 +101,12 @@ add_test(
 # Copy test files for unit tests
 set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFiles)
 file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
+
+set(TEST_FILE_DIR_API ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
+file(GLOB ADDITIONAL_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR_API}/*)
+
+list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})
+
 
 foreach(test_file ${COPY_TESTFILES})
 	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")
