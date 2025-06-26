@@ -494,7 +494,10 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		if (!frameIt->get()->measurements.radiActive)
 			(*stream) << DEACTIVATION_CHAR;
 
-		(*stream) << "*RADI" << endl;
+		//RADI has not a structure of a round of measurement 
+		//initialization with the precision of the first value by default
+		auto romSig = frameIt->get()->measurements.fRADI.begin()->getObservedStDev().getMMetresValue();
+		(*stream) << "*RADI" << sep << romSig << sep  << "\n";
 		for (auto &meas : frameIt->get()->measurements.fRADI)
 			writeRADIMeas(&meas);
 	}
@@ -924,7 +927,10 @@ void TSimFileWriter::writeRADIMeas(TRADI *meas)
 	if (!meas->isActive())
 		(*stream) << DEACTIVATION_CHAR;
 
-	(*stream) << meas->station->getName() << sep << meas->getAngleCnstr().getGonsValue() << sep << "SIGMA" << sep << meas->getObservedStDev().getMMetresValue() << endl;
+	(*stream) << meas->station->getName() << sep << meas->getAngleCnstr().getGonsValue();
+	(*stream) << sep << "OBSE" << sep << meas->getObservedStDev().getMMetresValue();
+	(*stream) << sep << "ACST" << sep << meas->getConstAngle().getGonsValue();
+	(*stream) << "\n";
 }
 
 void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ *meas)
