@@ -42,12 +42,6 @@ public:
 	/// See TAScalarMeas
 	TPLR3D(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt);
 
-	/// Returns the last LS-matrices equation index of this measurement (PLR3D introduces 3 equations)
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 2; }
-
-	/// Returns the last observation index of this measurement (PLR3D introduces 3 observations, order is defined to be: theta, phi, s-distance).
-	inline MatrixIndex getLastObservationIndex() const { return fFirstObservationIndex + 2; }
-
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
 	/// Allfixed parameter: distance correction - Cs
@@ -60,6 +54,19 @@ public:
 	TAngle fAllFixedRy[2];
 	// distance sensibility
 	TReal fDistSensi;
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override
+	{
+		setAngle(TAngle(obsVect(0)), kANGL);
+		setAngle(TAngle(obsVect(1)), kZEND);
+		setDistance(TLength(obsVect(2)));
+	}	
+	virtual Eigen::VectorXd getObsVector() const override
+	{
+		Eigen::VectorXd result(3);
+		result << getAngle(kANGL).getRadiansValue(), getAngle(kZEND).getRadiansValue(), getDistance().getMetresValue();
+		return result;
+	}
+
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -80,11 +87,10 @@ public:
 	{
 	}
 
-	/// Returns the last LS-matrices equation index of this measurement, ANGL introduces 1 equation.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0;
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -105,11 +111,10 @@ public:
 	{
 	}
 
-	/// Returns the last LS-matrices equation index of this measurement, ZEND introduces 1 equation.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -130,15 +135,14 @@ public:
 	/// See TAScalarMeas , is initialized with a single value
 	TLINE(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt, TLength v);
 
-	/// Returns the last LS-matrices equation index of this measurement
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Allfixed parameter: distance correction - Cs
 	TLength fAllFixedCs;
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
 	// distance sensibility
-	TReal fDistSensi;
+	TReal fDistSensi;	
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -165,11 +169,10 @@ public:
 	TECTH(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TLength v);
 	//@}
 
-	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Allfixed parameter: V0
 	TAngle fAllFixedV0;
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -194,11 +197,10 @@ public:
 	TECDIR(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr, TAngle obsHorAngle, TAngle obsVerAngle, TLength v);
 	//@}
 
-	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Allfixed parameter: V0
-	TAngle fAllFixedV0[2];
+	TAngle fAllFixedV0[2];	
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -218,9 +220,8 @@ public:
 	TECSP(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr);
 	TECSP(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr, TLength v);
 	//@}
-
-	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -248,13 +249,12 @@ public:
 	}
 	//@}
 
-	/// Returns the last LS-matrices equation index of this measurement, DSPT introduces 1 equation.*/
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Allfixed parameter: distance correction
 	TLength fAllFixedCs;
 	// distance sensibility
-	TReal fDistSensi;
+	TReal fDistSensi;	
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -275,9 +275,8 @@ public:
 	TECHO(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
 	TECHO(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr, TLength v) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 	//@}
-
-	/// Returns the last LS-matrices equation index of this measurement, TECHO introduces 1 equation.*/
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -297,9 +296,8 @@ public:
 	TECVE(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
 	TECVE(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr, TLength v) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr, v) {}
 	//@}
-
-	/// Returns the last LS-matrices equation index of this measurement, TECVE introduces 1 equation.*/
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -326,7 +324,6 @@ public:
 
 	/*!@name Access methods*/
 	//@{
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
 
 	/// Returns the observed value.
 	inline TLength getDistanceCorrection() const { return fDistanceCorrection; }
@@ -343,6 +340,8 @@ public:
 	/// Sets standard deviation of the observed value
 	inline void setObservedStDev(TLength stDev) { fSigmaObsVal = stDev; }
 	//@}
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); };
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -372,8 +371,8 @@ public:
 
 		~TDHOR() {}
 
-		/// Returns the last LS-matrices equation index of this measurement, DIST, DHOR introduce 1 equation.
-		inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
+		virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); };
+		virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
@@ -387,18 +386,14 @@ public:
 	//@{
 	TDLEV(const LGCAdjustablePoint &pos, TInstrumentData::TLEVEL::TTarget target, TLength measValue);
 	//@}
-
-	/*!@name Access methods*/
-	//@{
-	/// Returns standard deviation of the observed value
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-	//@}
-
 	/// The optional DHOR measurment
 	std::shared_ptr<TDLEV::TDHOR> dhor;
 
 	/// Allfixed parameter: collimation angle
 	TAngle fAllFixedCollimation;
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); };
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
+
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -419,12 +414,8 @@ public:
 	TORIE(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt) : TAScalarMeas(pos, tgt) {}
 	//@}
 
-	/*!@name Access methods*/
-	//@{
-	/// Returns standard deviation of the observed value
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-	//@}
-
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override { TAScalarMeas::serialize(obj); }
@@ -449,8 +440,6 @@ public:
 
 	/*!@name Access methods*/
 	//@{
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Return the standard deviation of the observed value
 	inline TLength getObservedStDev() const { return fSigmaObsVal; }
 
@@ -476,6 +465,9 @@ public:
 	inline void setAngleCnstr(TAngle angl) { fAngleCnstr = angl; }
 	//@}
 
+	// radi is seen as a "constraint"
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngleCnstr(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngleCnstr().getRadiansValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const;
@@ -512,8 +504,6 @@ public:
 
 	/*!@name Access methods*/
 	//@{
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
 	/// Return if the pdor measurement is initialise or not
 	const bool isInitialised() const { return fIsInitialise; }
 
@@ -540,6 +530,8 @@ public:
 	/// Sets a residual of observed angle
 	void setAngleResidual(const TAngle &a) { fbearingResidual = a; }
 	//@}
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { fbearing = TAngle(obsVect(0)); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getBearing().getRadiansValue()); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -576,8 +568,6 @@ public:
 
 	/*!@name Access methods*/
 	//@{
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 2; }
-
 	/// Returns standard deviation of the observed value
 	inline TLength getXObservedStDev() const { return fXSigmaObsVal; }
 	inline TLength getYObservedStDev() const { return fYSigmaObsVal; }
@@ -600,6 +590,13 @@ public:
 	inline void setYResidual(TLength res) { fYResidual = res; }
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { TPositionVector obsVector(obsVect(0), obsVect(1), obsVect(2), TCoordSysFactory::ECoordSys::k3DCartesian); }
+	virtual Eigen::VectorXd getObsVector() const override 
+	{
+		Eigen::VectorXd result(3);
+		result << obsValue.getX().getMetresValue(), obsValue.getY().getMetresValue(), obsValue.getZ().getMetresValue();
+		return result;
+	}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -634,9 +631,8 @@ public:
 	/// Destructor
 	~TINCLY() override = default;
 
-	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
-	MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override { TAScalarMeas::serialize(obj); }
@@ -656,9 +652,8 @@ public:
 	~TECWS() override = default;
 	//@}
 
-	/// Returns the last LS-matrices equation index of this measurement, 1 equation introduced.
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex(); }
-
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const;
@@ -687,13 +682,18 @@ public:
 
 	/// Destructor
 	~TECWI() override = default;
-	//@}
-
-	/// Returns the last LS-matrices equation index of this measurement (ECWI introduces 2 equations)
-	inline MatrixIndex getLastEquationIndex() const { return getFirstEquationIndex() + 1; }
-
-	/// Returns the last observation index of this measurement (ECWI introduces 2 observations, order is defined to be: X, Z).
-	inline MatrixIndex getLastObservationIndex() const { return fFirstObservationIndex + 1; }
+	//@}virtual 
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override
+	{
+		setDistance(TLength(obsVect(0)), EECWIDistances::kX);
+		setDistance(TLength(obsVect(1)), EECWIDistances::kZ);
+	}	
+	virtual Eigen::VectorXd getObsVector() const override
+	{
+		Eigen::VectorXd result(2);
+		result << getDistance(EECWIDistances::kX).getMetresValue(), getDistance(EECWIDistances::kZ).getMetresValue();
+		return result;
+	}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable

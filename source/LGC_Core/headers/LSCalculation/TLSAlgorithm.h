@@ -55,8 +55,12 @@ protected:
 								int fMaxIterations,
 								TReal convCrit);
 
+	Behavior computeStatisticsAtCurrentState(TLGCData *data, TLSInputMatricesFiller *matrFiller, TLSInputMatrices *inputMtr, TALSComputer *computer);
+
 	/// Compute the covariance matrix, the residual vector and the reliabilities
-	bool computeVarCovarAndReliability(TLGCData* data, TLSInputMatrices* inputMtr, TALSComputer* computer);
+	bool computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer);
+
+	void tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr);
 
 private:
 

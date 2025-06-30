@@ -76,6 +76,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyCOVAR(project)));
 	finterpreters.emplace_back(UPK(new TKeyCHABA(project)));
 	finterpreters.emplace_back(UPK(new TKeyCONSI(project)));
+	finterpreters.emplace_back(UPK(new TKeyLM(project)));
 	finterpreters.emplace_back(UPK(new TKeyJSON(project)));
 
 	finterpreters_lgc1.emplace_back(UPK(new TKeyAPRI(project, nb_allowed_apri_lgc1, allowed_APRI_lgc1)));
@@ -619,6 +620,7 @@ bool TReader::readLgc1File(std::istream &lgcStream)
 // Check if the given file is in LGC2 format (i.e., it contains the *INSTR keyword)
 bool TReader::isLgc2File(std::istream &lgcStream)
 {
+	std::istream::pos_type originalPos = lgcStream.tellg(); // Save position
 	// be sure to omit the byte order mark if there is one
 	skipBOM(lgcStream);
 
@@ -633,8 +635,12 @@ bool TReader::isLgc2File(std::istream &lgcStream)
 
 		// If the line starts with a keyword
 		if (tokLine[0] == "*" && (tokLine[1] == INSTR || tokLine[1] == CHABA))
+		{
+			lgcStream.seekg(originalPos); // Reset position
 			return true;
+		}
 	}
+	lgcStream.seekg(originalPos); // Reset position
 	return false;
 }
 

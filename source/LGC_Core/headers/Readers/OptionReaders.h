@@ -311,6 +311,19 @@ public:
 	/// Tokenize and initialize options for the output processing
 	virtual void parse(const std::vector<std::string> &, bool activeLine, int);
 };
+class TKeyLM: public TAOptionKey
+{
+public:
+	/// Constructor
+	TKeyLM(TLGCData &project, int nb_allowed_keywords = nb_allowed_lm, const char **keywords = allowed_LM) : TAOptionKey(project, LM)
+	{
+		for (int i(0); i < nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	/// Tokenize and initialize options for the output processing
+	virtual void parse(const std::vector<std::string> &, bool activeLine, int);
+};
 
 class TKeyJSON : public TAOptionKey
 {
