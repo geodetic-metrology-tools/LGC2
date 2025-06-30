@@ -20,7 +20,7 @@ project(LGC)
 # /!\ IMPORTANT : Modify it in LGC_Core/LGCCore.cmake AS WELL !
 set (EXE_VERSION_MAJOR "2")
 set (EXE_VERSION_MINOR "9")
-set (EXE_VERSION_PATCH "beta")
+set (EXE_VERSION_PATCH "0")
 
 #############################################################
 #
@@ -61,7 +61,7 @@ ENDIF(MINGW)
 include_directories (
 	SYSTEM
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
-	${CMAKE_SOURCE_PATH}/LGC_Core/headers/LGCConstraintObjects
+	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCConstraintObjects
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LSCalculation
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Readers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
