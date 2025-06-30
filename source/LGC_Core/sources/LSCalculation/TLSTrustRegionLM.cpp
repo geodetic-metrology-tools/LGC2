@@ -136,7 +136,7 @@ bool TLSTrustRegionLM::solveKKTStep(const TLSInputMatrices &input, double lmDamp
 
 	Eigen::VectorXd sol;
 	// use Cholesky decomposition if nbCnstr=0, otherwise SparseLU as positive definiteness of NBig may be violated
-	if (!TSparseUtils::solveUnique(NBig, rhs, sol, (nc == 0), (nc == 0)))
+	if (!TSparseUtils::solveUnique(NBig, rhs, sol, (nc == 0)))
 	{
 		logCritical() << "No solution could be found when solving equation system: Nbig * dX = -VBig (extended matrices with conditions)";
 		return false;
