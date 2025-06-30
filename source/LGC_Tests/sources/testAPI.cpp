@@ -4,6 +4,7 @@
 #pragma warning(pop)
 
 #include <chrono>
+#include <SimpleTimer.h>
 #include <iomanip>
 #include <iostream>
 #include <random>
@@ -60,7 +61,7 @@ void object::test<1>()
 	double sigmaAfterReactivation = apiObject.getSigma0();
 	estP2 = apiObject.getPointEstimate("P2");
 	expectedP2.setZero();
-	ensure("After testObs2 reactivation, P2 needs to be estimated again at 0,0,0", estP2.isApprox(expectedP2));
+	ensure("After testObs2 reactivation, P2 needs to be estimated again at 0,0,0", (estP2 - expectedP2).norm() < 1e-8);
 
 	// check if sigmas were affected by activation and deactivation of measurements
 	ensure_equals("Sigma before deactivation and after reactivation should be equal.", sigmaBeforeDeactivation, sigmaAfterReactivation, 1e-6);
@@ -570,4 +571,23 @@ void object::test<8>()
 	ensure("point should be estimated correctly", P1Est.isApprox(P1EstExpected));
 	ensure("point should be estimated correctly", P2Est.isApprox(P2EstExpected));
 }
+template<>
+template<>
+void object::test<9>()
+{
+	set_test_name("Testing simple string example with sag");
+	Moni apiObject("test_files/vivienString.lgc");
+
+	SimpleTimer compTimer;
+	compTimer.start();
+	for (int j = 0; j < 10; j++)
+	{
+		bool success = apiObject.adjust();
+	ensure("StringTest need to be computable", success);
+		compTimer.step();
+	}
+	std::cout << "comp times stringtest" << std::endl;
+	compTimer.printSteps();
+}
+
 }; // namespace tut

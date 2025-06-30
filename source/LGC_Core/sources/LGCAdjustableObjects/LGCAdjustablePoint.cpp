@@ -341,7 +341,7 @@ Eigen::Matrix3d LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv,
 	else
 	{
 		// get the global covariance matrix
-		TSparseMatrix covar = *fData->getCovMatByConst();
+		const TSparseMatrix& covar = *fData->getCovMatByConst();
 
 		int nPar = fData->fUEOIndices.UIndex;
 		if ((covar.cols() != nPar) || (covar.rows() != nPar))
@@ -352,7 +352,7 @@ Eigen::Matrix3d LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv,
 		// get the global derivative of the transformed point
 		TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
 		TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
-		TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
+		const TSparseMatrix& jac = completeTrafo.getPointDerivative(fData, pv);
 
 		// compute the covariance matrix in the destination Frame
 		return (jac * covar) * jac.transpose();
