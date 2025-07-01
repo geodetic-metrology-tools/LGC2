@@ -227,7 +227,7 @@ bool TLSTrustRegionLM::checkStepAndUpdateTrustRegion(double &lambda, double &del
 	}
 	else if (rho > 0.75 && nearBoundary)
 	{
-		double increasedDelta = delta * mCfg.deltaDec;
+		double increasedDelta = delta * mCfg.deltaInc;
 		delta = (increasedDelta < mCfg.deltaMax) ? increasedDelta : mCfg.deltaMax;
 	}
 
