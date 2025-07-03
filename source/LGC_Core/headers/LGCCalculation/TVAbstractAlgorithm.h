@@ -30,7 +30,7 @@ public:
 
 
 	/// Pointer to the result matrices
-	TLSResultsMatrices* resultMatrices;
+	std::unique_ptr<TLSResultsMatrices> resultMatrices;
 
 };
 
