@@ -8,8 +8,7 @@
 
 TLSAlgorithm::TLSAlgorithm(TLGCData &data) : fNumberOfIterations(0), fS0APosterioriVariances(false), fPointTransformer(&data.getTree(), data.getConfig().referential)
 {
-	delete resultMatrices;
-	resultMatrices = new TLSResultsMatrices(data.fUEOIndices);
+	resultMatrices = std::make_shared<TLSResultsMatrices>(data.fUEOIndices);
 }
 
 Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
@@ -65,7 +64,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 		if (fillOK)
 		{
 			// compute solution
-			bool computationOK = computer->computeResults(inputMtr, resultMatrices);
+			bool computationOK = computer->computeResults(inputMtr, resultMatrices.get());
 
 			if (computationOK)
 			{
@@ -128,7 +127,7 @@ Behavior TLSAlgorithm::computeStatisticsAtCurrentState(TLGCData *data, TLSInputM
 	if (fillOK)
 	{
 		// compute solution
-		bool computationOK = computer->computeResults(inputMtr, resultMatrices);
+		bool computationOK = computer->computeResults(inputMtr, resultMatrices.get());
 		logDebug() << "Computed normal matrix for statistics.";
 
 		if (computationOK)
@@ -175,7 +174,7 @@ Behavior TLSAlgorithm::computeStatisticsAtCurrentState(TLGCData *data, TLSInputM
 
 bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer)
 {
-	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices))
+	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices.get()))
 	{
 		logWarning() << "Residual errors and their related variance-covariance matrix could not be estimated!";
 		return false;
@@ -214,7 +213,7 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 		TReal beta = data->getConfig().faut.beta;
 
 		// compute statistics (Z, W, T, G, NABLA and DELTY)
-		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());
+		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices.get(), data->getConfig().pdor.isActive());
 	}
 
 	if (data->getConfig().fRelErrors.points.size() > 0 || data->getConfig().fRelErrors.frames.size() > 0)
