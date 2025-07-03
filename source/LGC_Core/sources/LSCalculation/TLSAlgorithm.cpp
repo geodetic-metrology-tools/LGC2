@@ -7,6 +7,7 @@
 #include <TLSEvaluator.h>
 #include <TLSTrustRegionLM.h>
 
+#include <memory>
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
 

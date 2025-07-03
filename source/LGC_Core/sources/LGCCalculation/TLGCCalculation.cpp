@@ -55,7 +55,7 @@ Behavior TLGCCalculation::computeResults(std::shared_ptr<TSimulationOutputFileWr
 
 		if (successCalculation)
 		{
-			fResultsMtr = algorithm->resultMatrices;
+			fResultsMtr = algorithm->resultMatrices.get();
 
 			// Iteration through the points
 			for (auto it(fData->getPoints().begin()); it != fData->getPoints().end(); ++it)

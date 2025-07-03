@@ -1189,13 +1189,10 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(const std::string &id)
 bool Moni::MoniImpl::adjust()
 {
 	Behavior successCalculation;
-	TLSResultsMatrices *results(nullptr);
 	successCalculation = algorithm->run(*project.get(), 80);
 	if (successCalculation)
 	{
-		results = algorithm->resultMatrices;
 		estimationStatus = true;
-		// std::cout << "Adjustment method finished succesfully." << std::endl;
 	}
 	else
 	{
