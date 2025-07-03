@@ -42,6 +42,8 @@ class Moni
 public:
 	DECLSPEC Moni(const std::string &inputFilePath);
 	DECLSPEC ~Moni();
+	DECLSPEC void reset(); 
+
 	// DECLSPEC void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
 	//  write the results from the current estimation in a json file with timestamp
 
@@ -100,6 +102,7 @@ public:
 
 private:
 	class MoniImpl;
+	std::string fFilePath; // needed for the reset method
 	std::unique_ptr<MoniImpl> pimpl_;
 };
 

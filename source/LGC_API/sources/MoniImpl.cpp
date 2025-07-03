@@ -14,10 +14,16 @@ bool isFreeVar(const AdjustableObject &adjObj, int idx)
 
 
 // constructor
-Moni::Moni(const std::string &inputFilePath) : pimpl_(new MoniImpl(inputFilePath))
+Moni::Moni(const std::string &inputFilePath) : pimpl_(std::make_unique<MoniImpl>(inputFilePath)), fFilePath(inputFilePath)
 {
 }
 Moni::~Moni() = default;
+
+DECLSPEC void Moni::reset()
+{
+	// full internal reset, calling implementation constructor, assuming initialization fiole still exists
+	pimpl_ = std::make_unique<MoniImpl>(fFilePath);
+}
 
 // void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 
