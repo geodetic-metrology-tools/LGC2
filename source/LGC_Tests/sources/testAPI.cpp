@@ -590,4 +590,49 @@ void object::test<9>()
 	compTimer.printSteps();
 }
 
-}; // namespace tut
+template<>
+template<>
+void object::test<10>()
+{
+	set_test_name("Testing reset method after computation failure");
+	Moni apiObject("test_files/vivienString.lgc");
+
+	Eigen::VectorXd blunderMeasurement(2);
+	blunderMeasurement << 10, 10;
+	apiObject.updateMeas("LQXFE.1SF.Q_WPS", blunderMeasurement);
+	try
+	{
+		bool success = apiObject.adjust();
+		fail("Computation should have failed due to blunder");
+	}
+	catch (const std::runtime_error &ex)
+	{
+		// try to reset the computation
+		apiObject.reset();
+	}
+	bool success = apiObject.adjust();
+	double sigma0 = apiObject.getSigma0();
+	bool isNormalSigma = (sigma0 < 2) && (sigma0 > 0.5);
+	ensure("Computation should have recovered", success);
+	ensure("Computation should have normal sigma0", isNormalSigma);
+
+}
+template<>
+template<>
+void object::test<11>()
+{
+	set_test_name("Testing reset method repeatedly");
+	Moni apiObjectStress("test_files/vivienString.lgc");
+
+	// stress test with a lot of resets and big file
+	for (int j = 0; j < 100; j++)
+	{
+		ensure("Results should not yet be ready", !apiObjectStress.getStatus());
+		bool success = apiObjectStress.adjust();
+		ensure("Results should be ready", apiObjectStress.getStatus());
+		apiObjectStress.reset();
+	}
+}
+
+}
+; // namespace tut
