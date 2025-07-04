@@ -42,6 +42,7 @@ class Moni
 public:
 	DECLSPEC Moni(const std::string &inputFilePath);
 	DECLSPEC ~Moni();
+	// reset the Monitoring object to a freshly constructed object
 	DECLSPEC void reset(); 
 
 	// DECLSPEC void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
