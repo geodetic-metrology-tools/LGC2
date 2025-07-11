@@ -210,8 +210,8 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 
 		// re-initialize the statictic vectors
 		data->getStatistics().initialiseStatVector(inputMtr);
-		TReal alpha = data->getConfig().faut.alpha / 100;
-		TReal beta = data->getConfig().faut.beta / 100;
+		TReal alpha = data->getConfig().faut.alpha;
+		TReal beta = data->getConfig().faut.beta;
 
 		// compute statistics (Z, W, T, G, NABLA and DELTY)
 		data->getStatistics().calcReliabilityVector(alpha, beta, inputMtr, resultMatrices, data->getConfig().pdor.isActive());

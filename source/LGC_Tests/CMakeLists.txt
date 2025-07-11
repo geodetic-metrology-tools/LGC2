@@ -40,6 +40,7 @@ set(tests_SOURCES
 	sources/testJSON.cpp
 	sources/testSimulation.cpp
 	sources/testSlaveConstraints.cpp
+	sources/testStatistics.cpp
 	sources/testPointGroupConstraints.cpp
 	sources/testPointWithSigma.cpp
 	sources/testEREL.cpp
@@ -65,6 +66,7 @@ set(tests_INPUT
 	headers/testWPSR.h
 	headers/testSimulation.h
 	headers/testSlaveConstraints.h
+	headers/testStatistics.h
 	headers/testPointGroupConstraints.h
 	headers/testPointWithSigma.h
 	headers/testEREL.h
