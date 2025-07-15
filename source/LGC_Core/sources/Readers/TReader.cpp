@@ -261,9 +261,9 @@ bool TReader::read(std::istream &lgcStream)
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
 	if (titlrline.size() != 2)
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Input file is not in the correct LGC format. Issue: Missing *TITR at the start of the file.";
 	else if (titlrline[1] != "TITR")
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Input file is not in the correct LGC format. Issue: Missing *TITR at the start of the file.";
 
 	// read until the next keyword
 	safeGetline(lgcStream, line);
@@ -466,9 +466,9 @@ bool TReader::readLgc1File(std::istream &lgcStream)
 	// It must start with *TITR
 	// Write error message into an ouput file instead of throwing exception
 	if (titlrline.size() != 2)
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Input file is not in the correct LGC format. Issue: Missing *TITR at the start of the file.";
 	else if (titlrline[1] != "TITR")
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "An LGC input file must start with *TITR. The actual title must start on the next line.";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Input file is not in the correct LGC format. Issue: Missing *TITR at the start of the file.";
 
 	// read until the next keyword
 	safeGetline(lgcStream, line);
