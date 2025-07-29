@@ -353,17 +353,18 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 		if (fPoint.hasPointSigma())
 		{
 			const pointSigmaData &ptData = fPoint.getPointSigmaData();
-			if (ptData.fHasAngle)
-			{
-				for (int j = 0; j < ptData.fAngles.size(); j++)
-					(*stream) << sep << ptData.fAngleNames[j] << sep << ptData.fAngles[j] * RAD2GON;
-			}
 			if (isfinite(ptData.fSigmas[0]))
 				(*stream) << sep << "SX" << sep << ptData.fSigmas[0] * M2MM;
 			if (isfinite(ptData.fSigmas[1]))
 				(*stream) << sep << "SY" << sep << ptData.fSigmas[1] * M2MM;
 			if (isfinite(ptData.fSigmas[2]))
 				(*stream) << sep << "SZ" << sep << ptData.fSigmas[2] * M2MM;
+			if (ptData.fHasAngle)
+			{
+				for (int j = 0; j < ptData.fAngles.size(); j++)
+					(*stream) << sep << ptData.fAngleNames[j] << sep << ptData.fAngles[j].getGonsValue();
+			}
+
 			if (ptData.fHasApriCovMat)
 			{
 				(*stream) << sep << "APRICOV MAT(";
