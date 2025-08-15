@@ -589,10 +589,26 @@ void object::test<9>()
 	std::cout << "comp times stringtest" << std::endl;
 	compTimer.printSteps();
 }
-
 template<>
 template<>
 void object::test<10>()
+{
+	set_test_name("Testing transformation methods for user specified vectors");
+	Moni apiObject("test_files/vivienString.lgc");
+	std::string from("RSTR_STRING.B1M.LQXFE.1SF");
+	std::string to("RSTR_STRING.B1M.LQXFG.2SF");
+	Eigen::Vector3d testCoord(1, 2, 3);
+	Eigen::Vector3d testCoordInFinalFrame = apiObject.transformCoordinates(testCoord, from, to);
+	Eigen::Vector3d testCoordBackInOriginalFrame = apiObject.transformCoordinates(testCoordInFinalFrame, to, from);
+	ensure("forward/backward transformation should leave coordinates invariant.", (testCoord - testCoordBackInOriginalFrame).norm() < 1e-8);
+	Eigen::Vector3d testDir(1, 2, 3);
+	Eigen::Vector3d testDirInFinalFrame = apiObject.transformDirection(testDir, from, to);
+	Eigen::VectorXd testDirBackInOriginalFrame = apiObject.transformDirection(testDirInFinalFrame, to, from);
+	ensure("forward/backward transformation should leave directions invariant.", (testDir - testDirBackInOriginalFrame).norm() < 1e-8);
+}
+template<>
+template<>
+void object::test<11>()
 {
 	set_test_name("Testing reset method after computation failure");
 	Moni apiObject("test_files/vivienString.lgc");
@@ -619,7 +635,7 @@ void object::test<10>()
 }
 template<>
 template<>
-void object::test<11>()
+void object::test<12>()
 {
 	set_test_name("Testing reset method repeatedly");
 	Moni apiObjectStress("test_files/vivienString.lgc");
@@ -633,6 +649,7 @@ void object::test<11>()
 		apiObjectStress.reset();
 	}
 }
+
 
 }
 ; // namespace tut

@@ -98,6 +98,9 @@ public:
 	DECLSPEC Eigen::VectorXd getObsSigma(const std::string &obsname);
 	// get the sigma0 after adjustment
 	DECLSPEC double getSigma0();
+	// transform coordinates/directions
+	DECLSPEC Eigen::Vector3d transformCoordinates(const Eigen::Vector3d& coord, const std::string& from, const std::string& to);
+	DECLSPEC Eigen::Vector3d transformDirection(const Eigen::Vector3d& dir, const std::string& from, const std::string& to);
 	DECLSPEC waterRom getECWSData(const std::string &ecwsRomName);
 	DECLSPEC wireRom getECWIData(const std::string &ecwiRomName);
 

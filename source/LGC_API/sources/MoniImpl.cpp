@@ -176,7 +176,15 @@ double Moni::getSigma0()
 {
 	return pimpl_->getSigma0();
 }
-
+// transform coordinates/directions
+DECLSPEC Eigen::Vector3d Moni::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
+{
+	return pimpl_->transformCoordinates(coord, from, to);
+};
+DECLSPEC Eigen::Vector3d Moni::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
+{
+	return pimpl_->transformDirection(dir, from, to);
+};
 waterRom Moni::getECWSData(const std::string &ecwsRomName)
 {
 	return pimpl_->getECWSData(ecwsRomName);
@@ -1356,6 +1364,26 @@ Eigen::VectorXd Moni::MoniImpl::getObsSigma(const std::string &id)
 double Moni::MoniImpl::getSigma0()
 {
 	return project->getS0APosteriori();
+}
+Eigen::Vector3d Moni::MoniImpl::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
+{
+	if (paramRefs.FRAMES.count(from) == 0)
+	{
+		throw std::runtime_error("Source Frame with Id " + from + " found");
+	}
+	if (paramRefs.FRAMES.count(to) == 0)
+	{
+		throw std::runtime_error("Destination Frame with Id " + to + " found");
+	}
+
+	TPositionVector temp(TVector(coord), TCoordSysFactory::k3DCartesian);
+	const TLOR2LOR lorTrafo(project->locateNode(from), project->locateNode(to), "fromTo");
+	lorTrafo.transform(temp);
+	return temp.toRealVector();
+}
+Eigen::Vector3d Moni::MoniImpl::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
+{
+	return Moni::MoniImpl::transformCoordinates(dir, from, to) - Moni::MoniImpl::transformCoordinates(Eigen::Vector3d(0, 0, 0), from, to);
 }
 waterRom Moni::MoniImpl::getECWSData(const std::string &ecwsRomName)
 {

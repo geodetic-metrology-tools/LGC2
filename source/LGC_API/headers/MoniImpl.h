@@ -91,6 +91,9 @@ public:
 	Eigen::VectorXd getObsSigma(const std::string &obsName);
 	// get the sigma0 after adjustment
 	double getSigma0();
+	// transform coordinates/directions
+	Eigen::Vector3d transformCoordinates(const Eigen::Vector3d& coord, const std::string& from, const std::string& to);
+	Eigen::Vector3d transformDirection(const Eigen::Vector3d& dir, const std::string& from, const std::string& to);
 	// for water and wire network related data
 	waterRom getECWSData(const std::string &ecwsRomName);
 	wireRom getECWIData(const std::string &ecwiRomName);
