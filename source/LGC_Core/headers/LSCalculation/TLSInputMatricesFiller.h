@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef LS_INPUT_MATRICES_FILLER
 #define LS_INPUT_MATRICES_FILLER
 

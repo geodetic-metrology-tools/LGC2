@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TSimFileWriter.cpp : implementation class
 // Write an LGC "input" file with simulated values for observations
 //
-// Copyright 2003-2008 M.Jones, CERN, EST/SU. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////////
 #include "TCovarFileWriter.h"
 

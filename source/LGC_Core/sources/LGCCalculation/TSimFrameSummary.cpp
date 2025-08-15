@@ -1,9 +1,12 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TSimFrameSummary.cpp : implementation file
 // Class containing all information concerning a point of the TLGCData
 // that are necessary to write the summary of the simulations results file.
 //
-// Copyright 2015 Surveying section, CERN, MEF/SU. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////////
 #include  "TSimFrameSummary.h"
 

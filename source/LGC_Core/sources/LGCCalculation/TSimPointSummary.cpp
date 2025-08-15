@@ -1,9 +1,12 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TSimPointSummary.cpp : implementation file
 // Class containing all information concerning a point of the DataSet
 // that are necessary to write the summary of the simulations' results file.
 //
-// Copyright 2003-2008 M.Jones, CERN, TS/SU. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////////
 
 #include  "TSimPointSummary.h"

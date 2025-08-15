@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef _READERS_READER_H_
 #define _READERS_READER_H_
 

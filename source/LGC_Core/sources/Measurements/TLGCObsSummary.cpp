@@ -1,10 +1,13 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TLGCObsSummary.cpp : implementation file
 // Class containing summary data for a given observation type in a LS calculation.
 // Mean, standard error, confidence limits and histogram information.
 //
 //
-// Copyright 2003-2008 M.Jones, CERN, TS/SU. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////////
 
 

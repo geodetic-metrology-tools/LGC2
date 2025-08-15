@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef _LGC_TESTS_INCL_H
 #define _LGC_TESTS_INCL_H
 
@@ -737,8 +743,8 @@ PT2 0 0 0
 PT3 0 0 0 
 *INCLY I1
 PT1 0.001 AC 0.5 RF 0.3 ID SMALL_ANGLE    # Very small angle (near 0)
-PT2 89.999 AC 0.5 RF 0.3 ID LARGE_ANGLE   # Very large angle (near 90°)
-PT3 179.999 AC 0.5 RF 0.3 ID EXTREME_ANGLE # Extreme angle (near 180°)
+PT2 89.999 AC 0.5 RF 0.3 ID LARGE_ANGLE   # Very large angle (near 90�)
+PT3 179.999 AC 0.5 RF 0.3 ID EXTREME_ANGLE # Extreme angle (near 180�)
 *ENDFRAME 
 *END 
 )";
@@ -756,8 +762,8 @@ PT2 0 0 0
 PT3 0 0 0 
 *ROLLY I1
 PT1 0.001 AC 0.5 RF 0.3 ID SMALL_ANGLE    # Very small angle (near 0)
-PT2 89.999 AC 0.5 RF 0.3 ID LARGE_ANGLE   # Very large angle (near 90°)
-PT3 179.999 AC 0.5 RF 0.3 ID EXTREME_ANGLE # Extreme angle (near 180°)
+PT2 89.999 AC 0.5 RF 0.3 ID LARGE_ANGLE   # Very large angle (near 90�)
+PT3 179.999 AC 0.5 RF 0.3 ID EXTREME_ANGLE # Extreme angle (near 180�)
 *ENDFRAME 
 *END 
 )";

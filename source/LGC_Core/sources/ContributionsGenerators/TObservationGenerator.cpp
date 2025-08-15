@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <TObservationGenerator.h>
 
 #include "LGCAdjustablePoint.h"
@@ -258,7 +262,7 @@ TReal TObservationGenerator::getECDIRCalcMeas(const TTSTN &station, const TTSTN:
 	// line direction at the TSTN position
 	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
 
-	// Calcul par le produit scalaire (u^l)+(u.l)=|v||l|
+	// Calcul par le produit scalaire (u^l)^2+(u.l)^2=|v|^2|l|^2
 	TReal d, pScal;
 	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg)); // distance St-Tg
 	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg); // produit scalaire

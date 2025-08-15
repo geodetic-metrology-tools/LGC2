@@ -1,7 +1,8 @@
 /*
-© Copyright CERN 2000-2023. All rights reserved. This software is released under a CERN proprietary software license.
-Any permission to use it shall be granted in writing. Request shall be addressed to CERN through mail-KT@cern.ch
-*/
+ * SPDX-FileCopyrightText: 2025 CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #ifndef TLS_CONSI_H
 #define TLS_CONSI_H

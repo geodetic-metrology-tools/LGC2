@@ -1,0 +1,60 @@
+version = 1
+
+[[annotations]]
+# Other text/config/build files
+path = [
+    "doc/*",
+    ".clang-format",
+    ".editorconfig",
+    ".gitignore",
+    ".gitlab-ci.yml",
+    ".gitmodules",
+    "NOTICE.md",
+    "README.md",
+    "source/**/*.txt",
+    "source/**/*.def",
+    "source/**/*.in",
+    "source/**/*.py",
+    "source/**/*.cmake",
+	"source/**/*.dox",
+	"LGC.ico",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+# Documentation binaries (PDF, DOCX, XLSX, MPP, ASTA, ICO, JPG, PNG, VSD, etc.)
+path = [
+    "doc/**/*.pdf",
+    "doc/**/*.docx",
+    "doc/**/*.xlsx",
+    "doc/**/*.mpp",
+    "doc/**/*.asta",
+    "doc/**/*.vsd",
+    "doc/**/*.png",
+    "doc/**/*.jpg",
+    "doc/**/*.ico",
+	"doc/**/*.txt",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+# Test files and simulation outputs
+path = [
+    "source/LGC_Tests/testFiles/**/*.inp",
+    "source/LGC_Tests/testFiles/**/*.lgc",
+    "source/LGC_Tests/testFiles/**/*.lgc2",
+    "source/LGC_Tests/testFiles/**/*.sim",
+    "source/LGC_Tests/testFiles/**/*.xml",
+    "source/LGC_Tests/testFiles/**/*.pun",
+    "source/LGC_Tests/testFiles/**/*.output",
+    "source/LGC_Tests/testFiles/**/*.res",
+    "source/LGC_Tests/testFiles/**/*.out",
+    "source/LGC_Tests/testFiles/**/*.m",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "GPL-3.0-or-later"

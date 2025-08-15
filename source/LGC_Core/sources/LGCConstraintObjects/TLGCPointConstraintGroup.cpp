@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "TLGCPointConstraintGroup.h"
 
 TLGCPointConstraintGroup::TLGCPointConstraintGroup(const TLGCData &projData, const std::array<bool, 7> &usedConstraints) : data(projData)

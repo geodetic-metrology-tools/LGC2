@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include  "TCCS2CGRFTransformation.h"
 #include <Global.h>
 #include "GeodeticConstants.h"

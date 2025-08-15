@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <tut/tut.hpp>
 #include <tut/tut_macros.hpp>
 
@@ -662,7 +666,7 @@ void object::test<6>()
 	auto &firstDLEVMeasurement2(*(std::next(levelRound.measDLEV.begin(), 1)));
 	ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(), "P3");
 	ensure_equals("Measured vertical distance should match", firstDLEVMeasurement2.getDistance(), 6);
-	ensure_equals("Target for this observation shôuld be the default one", firstDLEVMeasurement2.target.ID, "ST1");
+	ensure_equals("Target for this observation should be the default one", firstDLEVMeasurement2.target.ID, "ST1");
 	ensure_equals("Target's ppm value should be default", firstDLEVMeasurement2.target.ppmD, 1e-8, 2.0 * MM2M);
 
 	dlev.parse(tokenizefileString("*DLEV LI1"), true, -1);

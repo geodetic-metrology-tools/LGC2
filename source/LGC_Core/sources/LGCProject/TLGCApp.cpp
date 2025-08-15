@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "TLGCApp.h"
 
 #include <chrono>
@@ -25,7 +29,10 @@
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
-const std::string TLGCApp::fCopyright = "Copyright 2024, CERN BE-GM. All rights reserved.";
+const std::string TLGCApp::copyright = "CERN";
+const std::string TLGCApp::year = "2025";
+const std::string TLGCApp::license= "GPL-3.0-or-later";
+
 std::string TLGCApp::startProcessingTimestampISO = "";
 std::string TLGCApp::startProcessingTimestampOUT = "";
 double TLGCApp::processingElapsedSeconds = 0;
@@ -357,7 +364,9 @@ void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outpu
 	if (!Logger::getLogger().hasErrors())
 	{
 		JSONObjectSerializer obj;
-		obj.addProperty("fCopyright", fCopyright);
+		obj.addProperty("copyright", copyright);
+		obj.addProperty("year", year);
+		obj.addProperty("license", license);
 		obj.addProperty("LGCVersion", getLGCVersion());
 		obj.addProperty("startProcessingTimestamp", startProcessingTimestampISO);
 		obj.addProperty("processingElapsedSeconds", processingElapsedSeconds);
@@ -405,8 +414,10 @@ const std::string TLGCApp::getProgId()
 
 // return the software copyright string
 const std::string TLGCApp::getCopyright()
-{
-	return fCopyright;
+{	
+	std::stringstream cop;
+	cop << "Copyright (C) " << year << " " << copyright << ", licensed under " << license;
+	return cop.str();
 }
 
 // Convert a timestamp to a string, given a format^M

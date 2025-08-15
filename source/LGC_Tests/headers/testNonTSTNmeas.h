@@ -1,7 +1,8 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
+ * SPDX-FileCopyrightText: 2025 CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #ifndef _LGC_TESTS_NONTSTN_H
 #define _LGC_TESTS_NONTSTN_H
@@ -818,11 +819,11 @@ char const *const radi_id = "*TITR                                              
 							"KE.3b   0.2   0.2   0   0   0   0   0   0                                                                                       \n"
 							"KE.3t   0.2   0.2   0   0   0   0   0   0                                                                                       \n"
 							"*VXY                                                                                                                            \n"
-							"SURFACE.PBASE.2.      478.9000000        1000.0000000      452.3330000   $2.000    185534   coordonnées au 30-JAN-2018 16:05:15 \n"
-							"SURFACE.PBASE.3.      528.9000000        1000.0000000      452.3320000   $3.000    185535   coordonnées au 30-JAN-2018 16:05:15 \n"
-							"SURFACE.PBASE.4.      578.9000000        1000.0000000      452.3300000   $4.000    185536   coordonnées au 30-JAN-2018 16:05:15 \n"
-							"SURFACE.PBASE.5.      628.9000000        1000.0000000      452.3350000   $5.000    185537   coordonnées au 30-JAN-2018 16:05:15 \n"
-							"SURFACE.PBASE.7.      728.9000000        1000.0000000      452.3310000   $7.000    185539   coordonnées au 30-JAN-2018 16:05:15 \n"
+							"SURFACE.PBASE.2.      478.9000000        1000.0000000      452.3330000   $2.000    185534   coordonnees au 30-JAN-2018 16:05:15 \n"
+							"SURFACE.PBASE.3.      528.9000000        1000.0000000      452.3320000   $3.000    185535   coordonnees au 30-JAN-2018 16:05:15 \n"
+							"SURFACE.PBASE.4.      578.9000000        1000.0000000      452.3300000   $4.000    185536   coordonnees au 30-JAN-2018 16:05:15 \n"
+							"SURFACE.PBASE.5.      628.9000000        1000.0000000      452.3350000   $5.000    185537   coordonnees au 30-JAN-2018 16:05:15 \n"
+							"SURFACE.PBASE.7.      728.9000000        1000.0000000      452.3310000   $7.000    185539   coordonnees au 30-JAN-2018 16:05:15 \n"
 							"*DSPT   SURFACE.PBASE.2.   ME5000.357015    IH  0.000000    TRGT KE.3    %station n265127                                       \n"
 							"SURFACE.PBASE.3.                              49.992280 TH  0.000000   $1093916 -25-JAN-0018                                    \n"
 							"SURFACE.PBASE.4.                             100.005580 TH  0.000000   $1093917 -25-JAN-0018                                    \n"
