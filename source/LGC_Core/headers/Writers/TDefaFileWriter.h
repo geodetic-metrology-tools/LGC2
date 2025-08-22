@@ -43,7 +43,7 @@ public:
 			/// write errors
 			void	writeFile(const std::string error);
 			/// write the input file for DEFORM
-			void	writeFile(const TLGCData &project, TLSResultsMatrices& rm);
+			void	writeFile(const TLGCData &project, const TLSResultsMatrices& rm);
 
 private:
 
@@ -61,7 +61,7 @@ private:
     void writeZAnalysis(const TLGCData&);
     void writeCALA(const TLGCData&);
 	void write3DPoint(std::string name, TReal X, TReal Y, TReal Z);
-    void writeUpperTriangularCovarianceMatrix(const TLGCData& project, TLSResultsMatrices& rm);
+    void writeUpperTriangularCovarianceMatrix(const TLGCData& project, const TLSResultsMatrices& rm);
 	
 
 private:

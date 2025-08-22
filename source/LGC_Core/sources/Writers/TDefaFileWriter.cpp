@@ -35,7 +35,7 @@ void TDefaFileWriter::writeFile(const std::string)
 
 }
 
-void TDefaFileWriter::writeFile(const TLGCData &project, TLSResultsMatrices& rm)
+void TDefaFileWriter::writeFile(const TLGCData &project, const TLSResultsMatrices& rm)
 {
 	writeTitle(project);
 	writePoints(project);
@@ -289,7 +289,7 @@ void TDefaFileWriter::write3DPoint(std::string name, TReal X, TReal Y, TReal Z)
 	*fStream << "   1" << endl;
 }
 
-void TDefaFileWriter::writeUpperTriangularCovarianceMatrix(const TLGCData& project, TLSResultsMatrices& rm)
+void TDefaFileWriter::writeUpperTriangularCovarianceMatrix(const TLGCData& project, const TLSResultsMatrices& rm)
 {
 	std::list<LGCAdjustablePoint>::const_iterator begin;
 	std::list<LGCAdjustablePoint>::const_iterator end = project.getPoints().end();

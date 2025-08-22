@@ -43,7 +43,7 @@ class TLGCCalculation{
 	const TLGCData& getData(){ return *fData.get();}
 
 	/// Returns the results matrices.
-	TLSResultsMatrices& getResultMtr() const { return *fResultsMtr; }
+	const TLSResultsMatrices& getResultMtr() const { return *fResultsMtr; }
 
 	private:
     
@@ -63,7 +63,7 @@ class TLGCCalculation{
 	\brief Pointer to the result matrices
 	\note  needed to be able to write a deform file
 	*/
-	TLSResultsMatrices* fResultsMtr;
+	std::shared_ptr<const TLSResultsMatrices> fResultsMtr;
 };
 
 #endif
