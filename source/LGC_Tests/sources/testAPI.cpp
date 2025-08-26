@@ -637,6 +637,21 @@ template<>
 template<>
 void object::test<12>()
 {
+	set_test_name("Testing disabling wire sensor");
+	Moni apiObject("test_files/vivienString.lgc");
+	bool success = apiObject.adjust();
+	std::string wireId1 = "LQXFE.1SF.Q_WPS";
+	ensure("Residual of active wire sensor should not be 0.", !(apiObject.getEstimateResidual(wireId1).norm() < 1e-12));
+	ensure_equals("observation should be active", apiObject.getActivationStatus(wireId1), true);
+	apiObject.setActivationStatus(wireId1, false);
+	ensure_equals("observation should be inactive", apiObject.getActivationStatus(wireId1), false);
+	success = apiObject.adjust();
+	ensure("Residual of deactivated wire sensor should be 0.", apiObject.getEstimateResidual(wireId1).norm() < 1e-12);
+}
+template<>
+template<>
+void object::test<13>()
+{
 	set_test_name("Testing reset method repeatedly");
 	Moni apiObjectStress("test_files/vivienString.lgc");
 
@@ -649,7 +664,4 @@ void object::test<12>()
 		apiObjectStress.reset();
 	}
 }
-
-
-}
-; // namespace tut
+}; // namespace tut

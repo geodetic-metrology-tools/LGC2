@@ -49,6 +49,11 @@ void Moni::setActivationStatus(const std::string &id, bool status)
 	pimpl_->setActivationStatus(id, status);
 }
 
+DECLSPEC bool Moni::getActivationStatus(const std::string &id)
+{
+	return pimpl_->getActivationStatus(id);
+}
+
 void Moni::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
 {
 	pimpl_->setObsSigma(id, sigma);
@@ -1039,6 +1044,11 @@ void Moni::MoniImpl::setActivationStatus(const std::string &id, bool status)
 	estimationStatus = false;
 	getStatusObject(id).setActive(status);
 }
+bool Moni::MoniImpl::getActivationStatus(const std::string &id)
+{
+	return getStatusObject(id).isActive();
+}
+
 Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(const std::string &id)
 {
 	// manipulate the corresponding measurement by accesing it via the reference map.
