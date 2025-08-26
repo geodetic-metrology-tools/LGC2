@@ -40,8 +40,9 @@ public:
 	MoniImpl(const std::string &path) : inputFilePath(path) { MoniImpl::initialize(); }
 	~MoniImpl() = default;
 	void updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector);
-	// set activtaionstatus
+	// set & get activationstatus
 	void setActivationStatus(const std::string &, bool);
+	bool getActivationStatus(const std::string &);
 	// set observation standard deviation (optional, otherwise the ones from the inputfile are used)
 	void setObsSigma(const std::string &id, const Eigen::VectorXd &sigma);
 	// methods for manipulating fixed point and frame parameters
