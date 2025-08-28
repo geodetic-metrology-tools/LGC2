@@ -231,15 +231,16 @@ void Moni::MoniImpl::initialize()
 #if USE_SERIALIZER
 void Moni::MoniImpl::writeResultFile()
 {
-	jsonSerializerObject ser;
-	SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+	JSONObjectSerializer obj;
+	//jsonSerializerObject ser;
+	//SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
 	obj.addProperty("LGC_DATA", project.get());
 	auto now = std::chrono::system_clock::now();
 	auto in_time_t = std::chrono::system_clock::to_time_t(now);
 	std::stringstream filename;
 	filename << "resultDump_" << std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".json";
 	std::ofstream fout(filename.str());
-	fout << ser.getStringRepresentation();
+	fout << obj.getStringRepresentation();
 }
 #endif
 

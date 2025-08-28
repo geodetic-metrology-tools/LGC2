@@ -32,7 +32,7 @@ set(DOXYGEN_CONF_PATH ".")
 set(ENABLE_CONSOLE ON)
 set(CPACK_BUILD ON)
 # Fras: avoid pulling json
-set(USE_SERIALIZER 0)
+set(USE_SERIALIZER 1)
 add_compile_definitions(USE_SERIALIZER=${USE_SERIALIZER})
 
 set(LIBRARIES_PATH "${CMAKE_SOURCE_DIR}/../lib")
