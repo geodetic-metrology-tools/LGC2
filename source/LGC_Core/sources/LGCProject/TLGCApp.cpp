@@ -301,7 +301,11 @@ void TLGCApp::writeFautFile(TLGCData const *const dat, const std::string &output
 	}
 }
 
+<<<<<<< HEAD
 void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
+=======
+void TLGCApp::writeDefaFile(TLGCData const *const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
+>>>>>>> 2a216033 (ASin Inclinometer integration)
 {
 	stream->resetStreamName(outputFileLocation + ".def");
 	TDefaFileWriter defaFileWriter(stream.get(), dat);

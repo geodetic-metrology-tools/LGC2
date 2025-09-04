@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+Â© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -24,6 +24,7 @@ struct TECSPROM;
 struct TORIEROM;
 struct TCAM;
 struct TINCLYROM;
+struct TROLLYROM;
 struct TECWSROM;
 struct TECWIROM;
 
@@ -130,6 +131,9 @@ public:
 	///  Returns the contribution for a roll measurement (TINCLY) made by INCL instrument
 	INCLYContrib getINCLYContrib(const TINCLYROM &inclST, const TINCLY &incly);
 
+	///  Returns the contribution for a roll measurement (TROLLY) made by INCL instrument
+	INCLYContrib getROLLYContrib(const TROLLYROM &rollyST, const TROLLY &rolly);
+
 	///  Returns the contribution the measured distance to a water surface (ECWS) made by the HLS instrument
 	ECWSContrib getECWSContrib(const TECWSROM &ecwsROM, const TECWS &ecws);
 
@@ -166,6 +170,14 @@ private:
 		const Eigen::Vector3d &vec,
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
 
+	// INCL helpers for derivative-based contributions
+	decltype(INCLYContrib::fStTransformContrib) addROLLContribution(const TLOR2LOR &lorTrafo,
+		const TFreeVector &vector,
+		const Eigen::Vector3d &locVert);
+	decltype(INCLYContrib::fStTransformContrib) addINCLContribution(const TLOR2LOR &lorTrafo,
+		const TFreeVector &vector,
+		const Eigen::Vector3d &locVert);
+
 	/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 	void addTransformationsContributions3D(const TLOR2LOR &lorTrafo,
 		const TPositionVector &pointPos,
@@ -181,10 +193,7 @@ private:
 
 	/// Adds Point contributions for the PLR3D measurement, returns object representing AMat*dtrafo(point)/dpoint
 	void addPointContributionsPLR3D(const TLOR2LOR &lorTrafo, const Eigen::Matrix3d &Amat, Point3DContrib &pointContrib, bool station);
-
-	/// Adds contribution of a the rotation of LOR transformations for 1D measurements (ANGL,ZEND,DIST,DHOR) into a 'transfContrib' vector, a,b,c are the coeficcients (see documentation in Mathematical Obsevation Models)
-	decltype(INCLYContrib::fStTransformContrib) addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator);
-
+	
 	// helper for error generation
 	std::string getNameAndLine(const LGCAdjustablePoint &point) const;
 	void generateContributionError(const std::string &message) const;

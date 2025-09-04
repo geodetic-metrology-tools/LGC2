@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+Â© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -267,6 +267,51 @@ private:
 	static int romCounter_;
 
 	TLGCObsSummary inclySummary_;
+};
+
+/*!
+	\ingroup Measurements
+	\brief This class represents a round of ROLLY (TROLLY) measurements made from a single position of the instrument.
+*/
+struct TROLLYROM : public TStatusObject {
+
+	// All ROLLY measurements
+	std::list<TROLLY> measROLLY;
+
+	// The instrument that is used on this station
+	TInstrumentData::TINCL     instrument;
+
+	// Line of the measurement definition
+	int line;
+	int romId = TROLLYROM::romCounter_++;
+
+	TDataTreeIterator positionInTree;
+
+	// the station attribute is a copy of the parameter to override defaults
+	TROLLYROM(const TInstrumentData::TINCL& instrument, TDataTreeIterator itTree) :
+		instrument(instrument),
+		line(NO_VALi),
+		positionInTree(itTree)
+	{
+	}
+
+	// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getROLLYObsSummary() const;
+	const TLGCObsSummary& getROLLYObsSummary(std::string text) noexcept;
+
+	// Initialise observation summaries
+	void initialiseObsSummaries();
+
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const override;
+#endif
+
+private:
+
+	static int romCounter_;
+
+	TLGCObsSummary rollySummary_;
 };
 
 /*!

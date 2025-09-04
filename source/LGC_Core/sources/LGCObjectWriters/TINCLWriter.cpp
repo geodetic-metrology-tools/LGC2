@@ -135,6 +135,149 @@ void TINCLWriter::writeINCLYResults(const TINCLYROM &inclyrom)
 	(*stream) << endl;
 }
 
+/*
+ * ROLLY Results Data Writer
+ * 
+ * Generates comprehensive output reports for ROLLY inclinometer measurements after
+ * least squares adjustment. This function formats and outputs measurement results,
+ * residuals, quality indicators, and correction parameters in a structured tabular format.
+ * 
+ * The output includes:
+ * - Observed vs. estimated angles with residuals
+ * - Quality metrics (sigma values, residual/sigma ratios)
+ * - Correction parameters (AC, RF) and their uncertainties
+ * - Instrument parameters (OBSE, PPM) for measurement quality assessment
+ * 
+ * @param rollyrom: ROLLY Round of Measurements object containing all measurement data,
+ *                   residuals, and quality parameters for a complete measurement session
+ * 
+ * @note This function follows the same output format as INCLY measurements for consistency.
+ *       All angular values are converted from internal radians to appropriate output units
+ *       (gon for angles, cc for uncertainties, microRadians for PPM).
+ */
+void TINCLWriter::writeROLLYResults(const TROLLYROM &rollyrom)
+{
+	// Get output stream and configure formatting parameters
+	TAStreamFormatter *stream = getStream();
+	
+	// Configure column widths for consistent tabular output
+	int nameWidth = getNameWidth();           // Width for target names and IDs
+	int obsWidth = getObsWidth();             // Width for observed/estimated values
+	int obsResWidth = getObsResWidth();       // Width for residual and uncertainty values
+	int obsIdWidth = getObsIdWidth();         // Width for observation identifiers
+	
+	// Configure precision for different value types
+	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);  // Precision for residuals (reduced by 4 for readability)
+	int anglePrecision = getAnglePrecision();                               // Precision for main angle values
+	
+	// Get indentation for consistent formatting
+	std::string TABs = stream->getCurrSpaceExtended(2);
+
+	// Write section header
+	(*stream) << endl;
+	(*stream) << TABs << "ROLLY" << endl;
+
+	// Write observation summary and column headers
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
+	writeINCLResultsHeader(); // Use same header format as INCLY for consistency
+
+	// Process each ROLLY measurement in the round
+	for (auto const &ItROLLY : rollyrom.measROLLY)
+	{
+		(*stream) << TABs;  // Apply consistent indentation
+		
+		// Column 1: TARGET POSITION - Name of the measured target point
+		(*stream).writeStringLeft(nameWidth, ItROLLY.targetPos->getName());
+
+		// Column 2: OBSERVED ANGLE - Raw measured angle converted from radians to gon
+		(*stream).writeDouble(obsWidth, anglePrecision, ItROLLY.getAngle().getGonsValue());
+
+		// Column 3: SIGMA ANGLE - Combined uncertainty (OBSE + PPM) in centesimal seconds [cc]
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.target.sigmaCombinedAngle.getSignedCCValue());
+
+		// Column 4: ESTIMATED ANGLE - Adjusted angle (observed + residual) in gon
+		(*stream).writeDouble(obsWidth, anglePrecision, (ItROLLY.getAngle() + ItROLLY.getAngleResidual()).getGonsValue());
+
+		// Column 5: RESIDUAL - Difference between observed and estimated angles in cc
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.getAngleResidual().getSignedCCValue());
+
+		// Column 6: RESIDUAL/SIGMA - Quality indicator (residual normalized by uncertainty), unitless
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.getAngleResidual().getRadiansValue() / ItROLLY.target.sigmaCombinedAngle.getRadiansValue());
+
+		// Column 7: SCALE ID - Identifier for the measurement scale/frame
+		(*stream).writeString(nameWidth, ItROLLY.target.ID);
+
+		// Column 8: OBSE - Observation standard error in cc (instrument precision)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.target.sigmaAngl.getSignedCCValue());
+
+		// Column 9: PPM - Parts per million uncertainty in microRadians (scale factor uncertainty)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.target.sigmaPpm.getMicroRadiansValue());
+
+		// Column 10: AC - Angle correction value in gon (systematic correction applied)
+		(*stream).writeDouble(obsWidth, anglePrecision, ItROLLY.target.angleCorrectionValue.getGonsValue());
+
+		// Column 11: ACSE - Standard error of angle correction in cc (uncertainty in correction)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.target.sigmaCorrectionValue.getSignedCCValue());
+
+		// Column 12: RF - Reference angle correction in gon (reference system correction)
+		(*stream).writeDouble(obsWidth, anglePrecision, ItROLLY.target.refAngleCorrectionValue.getGonsValue());
+
+		// Column 13: RFSE - Standard error of reference correction in cc (uncertainty in reference correction)
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.target.refSigmaCorrectionValue.getSignedCCValue());
+	
+		// Column 14: OBSERVATION ID - Unique identifier for this measurement
+		(*stream).writeString(obsIdWidth, ItROLLY.obsID);
+
+		// End of measurement row
+		(*stream) << endl;
+	}
+	
+	// Add final spacing for readability
+	(*stream) << endl;
+}
+
+/*
+ * ROLLY Simulation Results Writer
+ * 
+ * Generates simulation output reports for ROLLY inclinometer measurements. This function
+ * is used during simulation runs to output predicted measurement values, quality metrics,
+ * and statistical summaries without performing actual least squares adjustment.
+ * 
+ * The simulation output provides:
+ * - Predicted measurement values based on current parameter estimates
+ * - Quality indicators and uncertainty projections
+ * - Statistical summaries for simulation validation and analysis
+ * - Comparison data for simulation vs. actual measurement scenarios
+ * 
+ * @param rollyrom: ROLLY Round of Measurements object containing simulation data,
+ *                   predicted values, and quality parameters for simulation analysis
+ * 
+ * @note This function is distinct from writeROLLYResults() as it outputs simulation
+ *       predictions rather than actual measurement results. It uses the same formatting
+ *       structure for consistency but focuses on simulated measurement scenarios.
+ */
+void TINCLWriter::writeROLLYSIMUResults(const TROLLYROM &rollyrom)
+{
+	// Get output stream and configure formatting parameters
+	TAStreamFormatter *stream = getStream();
+	
+	// Get separator character for consistent formatting (typically space or tab)
+	std::string separator = getSeparator();
+	
+	// Configure indentation for simulation output formatting
+	std::string TABs = stream->getCurrSpaceExtended(1);
+
+	// Write observation title with measurement count for simulation context
+	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
+	
+	// Write simulation section header
+	(*stream) << TABs << "ROLLY" << endl;
+
+	// Generate comprehensive simulation results summary with enhanced indentation
+	// This includes predicted values, quality metrics, and statistical summaries
+	writeAngleResultsSummary(rollyrom.getROLLYObsSummary(), stream->getCurrSpaceExtended(2));
+}
+
 //------------------ Simu data--------------------------------------------------------------------------
 void TINCLWriter::writeINCLYSIMUResults(const TINCLYROM &inclyrom)
 {
@@ -150,6 +293,13 @@ void TINCLWriter::writeINCLYSIMUResults(const TINCLYROM &inclyrom)
 
 //------------------ Reliability header----------------------------------------------------------------------
 void TINCLWriter::writeINCLYReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("FRAME", "STATION", "", "OBSERVATION", "GON", "CC");
+	return;
+}
+
+//------------------ ROLLY Reliability header----------------------------------------------------------------------
+void TINCLWriter::writeROLLYReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("FRAME", "STATION", "", "OBSERVATION", "GON", "CC");
 	return;
@@ -188,6 +338,80 @@ void TINCLWriter::writeINCLYReliabilityData(const TINCLYROM &inclyrom, const TLG
 
 		writeReliabilityMM(index, stat);
 	}
+	return;
+}
+
+/*
+ * ROLLY Reliability Data Writer
+ * 
+ * Generates reliability analysis reports for ROLLY inclinometer measurements after
+ * least squares adjustment. This function outputs comprehensive quality assessment
+ * data including measurement statistics, residuals, uncertainties, and reliability
+ * metrics for each ROLLY measurement in a station.
+ * 
+ * The reliability output provides:
+ * - Frame and station identification for measurement context
+ * - Observed angles with their uncertainties and residuals
+ * - Statistical reliability metrics (MM - M-estimator statistics)
+ * - Quality indicators for measurement validation and outlier detection
+ * - Data for reliability analysis and measurement quality assessment
+ * 
+ * @param rollyrom: ROLLY Round of Measurements object containing measurement data,
+ *                   frame information, and tree position for context
+ * @param stat: LGC Statistics object containing computed reliability metrics,
+ *              M-estimator values, and quality indicators for each observation
+ * @param measROLLY: List of ROLLY measurements to process for reliability analysis
+ * 
+ * @note This function is part of the reliability analysis system that helps identify
+ *       potential outliers, assess measurement quality, and validate least squares
+ *       adjustment results. It outputs data in a format suitable for statistical
+ *       analysis and quality control procedures.
+ */
+void TINCLWriter::writeROLLYReliabilityData(const TROLLYROM &rollyrom, const TLGCStatistic &stat, const std::list<TROLLY> &measROLLY)
+{
+	// Get output stream and configure formatting parameters
+	TAStreamFormatter *stream = getStream();
+	
+	// Configure column widths for consistent tabular output
+	int nameWidth = getNameWidth();           // Width for frame names, station points, and identifiers
+	int obsWidth = getObsWidth();             // Width for observed angle values
+	int obsResWidth = getObsResWidth();       // Width for uncertainty and residual values
+	
+	// Configure precision for different value types
+	int anglePrecision = getAnglePrecision();                               // Precision for main angle values
+	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);  // Precision for residuals (reduced by 4 for readability)
+
+	// Process each ROLLY measurement in the station for reliability analysis
+	for (auto const &ItROLLY : measROLLY)
+	{
+		// Get observation index to retrieve corresponding statistical values from the statistic vector
+		int index = ItROLLY.getFirstObservationIndex();
+
+		// Column 1: FRAME NAME - Name of the frame containing the measurement
+		(*stream).writeStringLeft(nameWidth, rollyrom.positionInTree.node->data->frame.getName());
+
+		// Column 2: STATION POINT - Name of the measurement station/target point
+		(*stream).writeStringLeft(nameWidth, ItROLLY.targetPos->getName());
+		
+		// Column 3: POINT 3 - Reserved for future use (currently empty)
+		(*stream).writeStringLeft(nameWidth, "");
+
+		// Column 4: OBSERVED ANGLE - Raw measured angle converted from radians to gon
+		(*stream).writeDouble(obsWidth, anglePrecision, ItROLLY.getAngle().getGonsValue());
+		
+		// Column 5: STANDARD DEVIATION - Combined uncertainty (OBSE + PPM) in centesimal seconds [cc]
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.target.sigmaCombinedAngle.getSignedCCValue());
+		
+		// Column 6: RESIDUAL - Difference between observed and estimated angles in cc
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY.getAngleResidual().getSignedCCValue());
+
+		// Generate M-estimator reliability metrics for this observation
+		// This includes statistical quality indicators, outlier detection metrics,
+		// and reliability scores for measurement validation
+		writeReliabilityMM(index, stat);
+	}
+	
+	// Reliability analysis complete for this station
 	return;
 }
 
@@ -241,6 +465,37 @@ void TINCLWriter::writeINCLYResultsSynthesis(std::list<const TLGCObsSummary *> &
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getResMin()); // residu min
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getMean()); // residu moy
 		(*stream).writeDouble(obsResWidth, angleResPrecision, ItINCLY->getStdev()); // ecart type
+		(*stream) << endl;
+	}
+}
+
+/*
+ * Writes synthesis results for ROLLY (roll Y-axis) measurements
+ * 
+ * Formats and outputs a summary table containing statistics for ROLLY measurements
+ * including maximum/minimum residuals, mean, and standard deviation.
+ * Values are written in centesimal seconds (CC) units.
+ *
+ * @param rollysum List of observation summaries containing ROLLY measurement statistics
+ */
+void TINCLWriter::writeROLLYResultsSynthesis(std::list<const TLGCObsSummary *> &rollysum)
+{
+	// Get output stream and configure formatting parameters
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsResWidth = getObsResWidth(); 
+	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);
+	std::string TABs = stream->getCurrSpaceExtended(1);
+
+	// Write statistics for each ROLLY observation summary
+	for (auto const &ItROLLY : rollysum)
+	{
+		(*stream) << TABs;
+		(*stream).writeStringLeft(nameWidth, ItROLLY->getObsText()); // Write reference point name
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY->getResMax()); // Maximum residual in CC
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY->getResMin()); // Minimum residual in CC  
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY->getMean());   // Mean residual in CC
+		(*stream).writeDouble(obsResWidth, angleResPrecision, ItROLLY->getStdev()); // Standard deviation in CC
 		(*stream) << endl;
 	}
 }

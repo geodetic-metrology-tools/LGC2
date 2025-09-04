@@ -153,6 +153,9 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	for (auto &itINCLY : tmeas.fINCLY)
 		inclWriter.writeINCLYResults(itINCLY);
 
+	for (auto &itROLLY : tmeas.fROLLY)
+		inclWriter.writeROLLYResults(itROLLY);
+
 	for (auto &itECWS : tmeas.fECWS)
 		hlsrWriter.writeECWSResults(itECWS);
 
@@ -325,12 +328,18 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 		(*stream) << endl;
 		otherMeasWriter.writeHisto(TLGCObsSummary::merge(allObsxyzZSummaries_), "OBSXYZ: Z");
 	}
-
-	// INCLY
+	// INCLY - Write histogram for inclinometer Y-axis measurements if enough data points exist
 	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kINCLY) >= 5)
 	{
 		(*stream) << endl;
 		inclWriter.writeHisto(TLGCObsSummary::merge(allINCLYSummaries_), "INCLY");
+	}
+
+	// ROLLY - Write histogram for roll Y-axis measurements using same inclinometer writer
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kROLLY) >= 5)
+	{
+		(*stream) << endl;
+		inclWriter.writeHisto(TLGCObsSummary::merge(allROLLYSummaries_), "ROLLY");
 	}
 
 	////ECWS
@@ -376,6 +385,7 @@ void TFRAMEWriter::initialiseAllObsSummaries()
 	allECVESummaries_.clear();
 	allECSPSummaries_.clear();
 	allINCLYSummaries_.clear();
+	allROLLYSummaries_.clear();
 	allECWSSummaries_.clear();
 	allEcwiXSummaries_.clear();
 	allEcwiZSummaries_.clear();
@@ -391,6 +401,12 @@ void TFRAMEWriter::initialiseAllObsSummaries()
 			for (auto &itINCLY : tmeas.fINCLY)
 			{
 				allINCLYSummaries_.push_back(&itINCLY.getINCLYObsSummary(itINCLY.positionInTree.node->data->frame.getName()));
+			}
+
+		if (tmeas.fROLLY.size() > 0)
+			for (auto &itROLLY : tmeas.fROLLY)
+			{
+				allROLLYSummaries_.push_back(&itROLLY.getROLLYObsSummary(itROLLY.positionInTree.node->data->frame.getName()));
 			}
 
 		// TOCHECK
@@ -781,16 +797,38 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 		tstnWriter.writeDistanceResultsSummary(TLGCObsSummary::merge(allObsxyzZSummaries_), TABs);
 	}
 
-	// INCLY
+	// INCLY - Write results for inclinometer Y-axis measurements if data exists
 	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kINCLY) > 0)
 	{
+		// Add newlines and tabs for formatting
 		(*stream) << endl;
 		(*stream) << TABs;
-		(*stream).writeStringLeft(nameWidth, "INCLY"); // instrument
+		// Write INCLY header with instrument name
+		(*stream).writeStringLeft(nameWidth, "INCLY"); // instrument name
 		(*stream) << endl;
+		
+		// Write synthesis header and results for INCLY measurements
 		inclWriter.writeINCLSynthesisHeader();
 		inclWriter.writeINCLYResultsSynthesis(allINCLYSummaries_);
+		// Write summary of angle results with proper formatting
 		inclWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allINCLYSummaries_), TABs);
+	}
+
+	// ROLLY - Write results for roll Y-axis measurements if data exists
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kROLLY) > 0)
+	{
+		// Add newlines and tabs for formatting  
+		(*stream) << endl;
+		(*stream) << TABs;
+		// Write ROLLY header with instrument name
+		(*stream).writeStringLeft(nameWidth, "ROLLY"); // instrument name
+		(*stream) << endl;
+		
+		// Write synthesis header and results for ROLLY measurements
+		inclWriter.writeINCLSynthesisHeader();
+		inclWriter.writeROLLYResultsSynthesis(allROLLYSummaries_);
+		// Write summary of angle results with proper formatting
+		inclWriter.writeAngleResultsSummary(TLGCObsSummary::merge(allROLLYSummaries_), TABs);
 	}
 
 	////ECWS
@@ -893,6 +931,9 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	for (auto &itINCLY : tmeas.fINCLY)
 		inclWriter.writeINCLYSIMUResults(itINCLY);
 
+	for (auto &itROLLY : tmeas.fROLLY)
+		inclWriter.writeROLLYSIMUResults(itROLLY);
+
 	for (auto &itECWS : tmeas.fECWS)
 		hlsrWriter.writeECWSSIMUResults(itECWS);
 
@@ -929,6 +970,7 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 
 	writeSCALEReliability(frameIt);
 	writeINCLReliability(frameIt);
+	writeROLLYReliability(frameIt);
 	writeHLSRReliability(frameIt);
 	writeWPSRReliability(frameIt);
 
@@ -1600,26 +1642,76 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 	}
 }
 
+/*
+ * INCLY Reliability Report Writer
+ * 
+ * Writes reliability statistics and quality metrics for INCLY inclinometer measurements.
+ * Generates comprehensive reports including measurement statistics, residuals analysis,
+ * and quality indicators for the new arcsin-based mathematical model.
+ * 
+ * @param frameIt: Iterator pointing to the frame containing INCLY measurements
+ */
 void TFRAMEWriter::writeINCLReliability(TDataTreeIterator frameIt)
 {
+	// Get output stream and configure INCL writer with histogram settings
 	TAStreamFormatter *stream = getStream();
 	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
 
+	// Access frame measurements
 	auto &tmeas = (*frameIt)->measurements;
 
-	// INCLY
+	// Process INCLY measurements and write reliability data
 	bool isincly = false;
 	for (auto &itINCLY : tmeas.fINCLY)
 	{
 		if (itINCLY.measINCLY.size() > 0)
 		{
+			// Write header only once per frame
 			if (isincly == false)
 			{
 				(*stream) << endl << "INCLY observations" << endl;
 				inclWriter.writeINCLYReliabilityHeader();
 				isincly = true;
 			}
+			// Write reliability data for each round of measurements
 			inclWriter.writeINCLYReliabilityData(itINCLY, fProjectData->getStatistics(), itINCLY.measINCLY);
+		}
+	}
+}
+
+/*
+ * ROLLY Reliability Report Writer
+ * 
+ * Writes reliability statistics and quality metrics for ROLLY inclinometer measurements.
+ * Generates comprehensive reports including measurement statistics, residuals analysis,
+ * and quality indicators for the legacy atan2-based mathematical model.
+ * 
+ * @param frameIt: Iterator pointing to the frame containing ROLLY measurements
+ */
+void TFRAMEWriter::writeROLLYReliability(TDataTreeIterator frameIt)
+{
+	// Get output stream and configure INCL writer with histogram settings
+	TAStreamFormatter *stream = getStream();
+	TINCLWriter inclWriter(*stream, fProjectData->getConfig().histo.isActive());
+
+	// Access frame measurements
+	auto &tmeas = (*frameIt)->measurements;
+
+	// Process ROLLY measurements and write reliability data
+	bool isrolly = false;
+	for (auto &itROLLY : tmeas.fROLLY)
+	{
+		if (itROLLY.measROLLY.size() > 0)
+		{
+			// Write header only once per frame
+			if (isrolly == false)
+			{
+				(*stream) << endl << "ROLLY observations" << endl;
+				inclWriter.writeROLLYReliabilityHeader();
+				isrolly = true;
+			}
+			// Write reliability data for each round of measurements
+			inclWriter.writeROLLYReliabilityData(itROLLY, fProjectData->getStatistics(), itROLLY.measROLLY);
 		}
 	}
 }

@@ -169,12 +169,25 @@ void TObservationWriter::writeHisto(const TLGCObsSummary &summary, std::string d
 	{
 		TAStreamFormatter &stream = getStreamRef();
 
+		// DEBUG: Add debug output for ROLLY histograms
+		if (description == "ROLLY") {
+			std::cout << "DEBUG ROLLY HISTO: NumObs=" << summary.getNumberOfObs() 
+					  << " Mean=" << summary.getMean()
+					  << " Stdev=" << summary.getStdev()
+					  << " ResMin=" << summary.getResMin()
+					  << " ResMax=" << summary.getResMax()
+					  << " Scale=" << summary.getHistoScale()
+					  << " LoLimit=" << summary.getHistoLoLimit()
+					  << " HiLimit=" << summary.getHistoHiLimit()
+					  << " OutsideHisto=" << summary.getNumBeyondHistoLimits() << std::endl;
+		}
+
 		// write out the histogram title and scale factor
 		{
 			int k = summary.getHistoScale();
 			std::string ech = "";
 
-			if (description == "ANGL" || description == "ZEND" || description == "ORIE" || description == "PLR3D: ZEND" || description == "INCLY" || description == "PLR3D: ANGL") /* Angle*/
+			if (description == "ANGL" || description == "ZEND" || description == "ORIE" || description == "PLR3D: ZEND" || description == "INCLY" || description == "ROLLY" || description == "PLR3D: ANGL") /* Angle*/
 			{
 				switch (k)
 				{
@@ -516,7 +529,7 @@ std::string TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObser
 		"DISTANCES ZENITHALES (ZEND)", "DISTANCES MESUREES (DIST)", "ECART A UN PLAN VERTICAL (ECTH)", "ECART A UNE DIRECTION (ECDIR)", "DISTANCES HORIZONTALES (DHOR)",
 		"DISTANCES SPATIALES (DSPT)", "DISTANCES VERTICALES (DLEV)", "DISTANCES HORIZONTALES (DLEVDHOR)", "DISTANCES VERTICALES (DVER)",
 		"ECARTS DANS LE PLAN HORIZONTAL (ECHO)", "ECARTS A UNE DROITE (ECSP)", "ECARTS A UNE DROITE VERTICALE (ECVE)", "ORIENTATIONS (ORIE)", "POINT D'ORIENTATION (PDOR)",
-		"CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)", "INCLINAISONS/VERTICALE (INCLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
+		"CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)", "INCLINAISONS/VERTICALE-ASIN (INCLY)", "INCLINAISONS/VERTICALE-ATAN (ROLLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
 
 	static_assert((sizeof(descriptions) / sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");
 
@@ -532,7 +545,7 @@ std::string TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObser
 		"OBSERVED SPATIAL DISTANCES (DIST)", "OFFSETS TO A THEODOLITE PLAN (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)", "HORIZONTAL DISTANCES (DHOR)",
 		"SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)", "OFFSETS IN AN HORIZONTAL PLAN (ECHO)",
 		"OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)", "POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)",
-		"3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY (INCLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)"
+		"3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY-ASIN (INCLY)", "ROTATIONS/GRAVITY-ATAN (ROLLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)"
 		//"NoObs"
 	};
 
