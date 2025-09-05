@@ -727,27 +727,27 @@ void object::test<22>()
 	LGCAdjustablePoint point = dataset.getPoints().getObject("Test2");
 	// point is a cala point in subframe, so it has covariance 0 there. We test if its covariance in root is correct and equal to the obsxyz covar.
 	TFreeVector sigmaInRoot = point.transformSigmaInRoot(point, projTest.get());
-	ensure_equals("X Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getX(), 0.004);
-	ensure_equals("Y Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getY(), 0.005);
-	ensure_equals("Z Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getZ(), 0.006);
+	ensure_equals("X Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getX(), 0.004, 1e-7);
+	ensure_equals("Y Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getY(), 0.005, 1e-7);
+	ensure_equals("Z Precision needs to be equal as defined via OBSXYZ", sigmaInRoot.getZ(), 0.006, 1e-7);
 
 	// test transformation 200 gon rot around to subframe that flips x and y precisions signs -> precisions should remain the same
 	TFreeVector sigmaInSubframeFlippedSign = point.transformSigma(point, projTest.get(), "RotZ200");
-	ensure_equals("X Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getX(), 0.004);
-	ensure_equals("Y Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getY(), 0.005);
-	ensure_equals("Z Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getZ(), 0.006);
+	ensure_equals("X Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getX(), 0.004, 1e-7);
+	ensure_equals("Y Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getY(), 0.005, 1e-7);
+	ensure_equals("Z Precision needs to be equal as defined via OBSXYZ", sigmaInSubframeFlippedSign.getZ(), 0.006, 1e-7);
 
 	// test transformation to subframe that switches x and y precisions
 	TFreeVector sigmaInSubframeSwitched = point.transformSigma(point, projTest.get(), "RotZ100");
-	ensure_equals("X Precision transformation to subframe problem", sigmaInSubframeSwitched.getX(), 0.005);
-	ensure_equals("Y Precision transformation to subframe problem", sigmaInSubframeSwitched.getY(), 0.004);
-	ensure_equals("Z Precision transformation to subframe problem", sigmaInSubframeSwitched.getZ(), 0.006);
+	ensure_equals("X Precision transformation to subframe problem", sigmaInSubframeSwitched.getX(), 0.005, 1e-7);
+	ensure_equals("Y Precision transformation to subframe problem", sigmaInSubframeSwitched.getY(), 0.004, 1e-7);
+	ensure_equals("Z Precision transformation to subframe problem", sigmaInSubframeSwitched.getZ(), 0.006, 1e-7);
 
 	// test transformation to subframe where point is defined (no transformation should happen)
 	TFreeVector sigmaInSubframe = point.transformSigma(point, projTest.get(), "Testframe3");
-	ensure_equals("X Precision trivial transformation problem", sigmaInSubframe.getX(), point.getXEstPrecision());
-	ensure_equals("Y Precision trivial transformation problem", sigmaInSubframe.getY(), point.getYEstPrecision());
-	ensure_equals("Z Precision trivial transformation problem", sigmaInSubframe.getZ(), point.getZEstPrecision());
+	ensure_equals("X Precision trivial transformation problem", sigmaInSubframe.getX(), point.getXEstPrecision(), 1e-7);
+	ensure_equals("Y Precision trivial transformation problem", sigmaInSubframe.getY(), point.getYEstPrecision(), 1e-7);
+	ensure_equals("Z Precision trivial transformation problem", sigmaInSubframe.getZ(), point.getZEstPrecision(), 1e-7);
 
 	// call transformation function for non existing frame
 	std::string frameName = "NonExistingFrameName";
