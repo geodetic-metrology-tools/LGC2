@@ -270,6 +270,7 @@ void TResultsFileWriter::writeDataSummary()
 	int fNumPDOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kPDOR);
 	int fNumRADI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kRADI);
 	int fNumINCLY = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kINCLY);
+	int fNumROLLY = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kROLLY);
 	int fNumECWS = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWS);
 	int fNumECWI = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kECWI);
 
@@ -334,6 +335,9 @@ void TResultsFileWriter::writeDataSummary()
 	if (fNumINCLY != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kINCLY), fNumINCLY);
 
+	if (fNumROLLY != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kROLLY), fNumROLLY);
+
 	if (fNumECWS != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kECWS), fNumECWS);
 
@@ -372,7 +376,7 @@ void TResultsFileWriter::writeCalcDataSummary()
 	if (fProjectData->getConfig().pdor.isActive())
 	{
 		stream << "	(PDOR INCLUS - ATTENTION, PREMIER CALA DEFINI DANS LE ROOT UTILISE";
-		// FRK: Rajouter nom du point DPOR + CALA pour éviter toute confusion? (voir SUS-906)
+		// FRK: Rajouter nom du point DPOR + CALA pour ï¿½viter toute confusion? (voir SUS-906)
 	}
 	stream << endl;
 

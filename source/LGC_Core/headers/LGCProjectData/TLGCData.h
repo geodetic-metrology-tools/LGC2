@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rights reserved. This software is released under a CERN proprietary software license.
+ï¿½ Copyright CERN 2000-2024. All rights reserved. This software is released under a CERN proprietary software license.
 Any permission to use it shall be granted in writing. Request shall be addressed to CERN through mail-KT@cern.ch
 */
 
@@ -76,6 +76,7 @@ struct TMeasurementsGlobal
 		kRADI,
 		kOBSXYZ,
 		kINCLY,
+		kROLLY,
 		kECWS,
 		kECWI
 	};
@@ -101,6 +102,7 @@ struct TMeasurementsGlobal
 	int fNumRADI;
 	int fNumOBSXYZ;
 	int fNumINCLY;
+	int fNumROLLY;
 	int fNumECWS;
 	int fNumECWI;
 

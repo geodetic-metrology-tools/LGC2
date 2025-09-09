@@ -258,7 +258,7 @@ TReal TObservationGenerator::getECDIRCalcMeas(const TTSTN &station, const TTSTN:
 	// line direction at the TSTN position
 	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
 
-	// Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	// Calcul par le produit scalaire (u^l)ï¿½+(u.l)ï¿½=|v|ï¿½|l|ï¿½
 	TReal d, pScal;
 	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg)); // distance St-Tg
 	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg); // produit scalaire
@@ -386,7 +386,7 @@ TReal TObservationGenerator::getECSPCalcMeas(const TECSPROM &ecspROM, const TECS
 
 	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
 
-	// Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	// Calcul par le produit scalaire (u^l)ï¿½+(u.l)ï¿½=|v|ï¿½|l|ï¿½
 	TReal dis, pScal, D;
 	dis = dist3D(stationPoint.getX(), stationPoint.getY(), stationPoint.getZ(), linePoint1.getX(), linePoint1.getY(), linePoint1.getZ()); // distance P1 - stn
 	D = dist3D(linePoint1.getX(), linePoint1.getY(), linePoint1.getZ(), linePoint2.getX(), linePoint2.getY(), linePoint2.getZ()); // distance P1-P2
@@ -526,9 +526,43 @@ TReal TObservationGenerator::getDVERCalcMeas(const TDVER &dver)
 	}
 }
 
+/*
+ * INCLY Calculated Measurement Getter
+ * 
+ * Retrieves the calculated measurement value for INCLY inclinometer observations.
+ * Delegates to the contributions generator to compute the arcsin-based mathematical model
+ * and returns only the calculated measurement value.
+ * 
+ * @param inclyROM: INCLY round of measurements container
+ * @param incly: Individual INCLY measurement object
+ * @return: Calculated measurement value using new arcsin(X/|V|) model
+ */
 TReal TObservationGenerator::getINCLYCalcMeas(const TINCLYROM &inclyROM, const TINCLY &incly)
 {
+	// Get INCLY contributions using new arcsin mathematical model
 	INCLYContrib contributions = fCGenerator.getINCLYContrib(inclyROM, incly);
+	
+	// Return only the calculated measurement value (angle in radians)
+	return contributions.fCalcMeas;
+}
+
+/*
+ * ROLLY Calculated Measurement Getter
+ * 
+ * Retrieves the calculated measurement value for ROLLY inclinometer observations.
+ * Delegates to the contributions generator to compute the atan2-based mathematical model
+ * and returns only the calculated measurement value.
+ * 
+ * @param rollyROM: ROLLY round of measurements container
+ * @param rolly: Individual ROLLY measurement object
+ * @return: Calculated measurement value using legacy atan2(X,Z) model
+ */
+TReal TObservationGenerator::getROLLYCalcMeas(const TROLLYROM &rollyROM, const TROLLY &rolly)
+{
+	// Get ROLLY contributions using legacy atan2 mathematical model
+	INCLYContrib contributions = fCGenerator.getROLLYContrib(rollyROM, rolly);
+	
+	// Return only the calculated measurement value (angle in radians)
 	return contributions.fCalcMeas;
 }
 

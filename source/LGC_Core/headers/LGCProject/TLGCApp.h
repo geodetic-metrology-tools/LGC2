@@ -69,7 +69,7 @@ class TLGCApp {
         static void writeFautFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
 
         /// Write files for Deform
-        static void writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream);
+        static void writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream);
 
         /// Write files for covariances
         static void writeCovarFile(TLGCData const * const dat, const std::string &outputFileLocation, std::shared_ptr<TAStreamFormatter> &stream);
@@ -91,7 +91,7 @@ class TLGCApp {
 
 #if USE_SERIALIZER
 		/// Write serialization files
-		static void writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx);
+		static void writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx);
 #endif // USE_SERIALIZER
 
 

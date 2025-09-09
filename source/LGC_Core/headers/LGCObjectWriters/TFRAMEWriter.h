@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+ï¿½ Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -72,6 +72,8 @@ private:
 		void writeSCALEReliability(TDataTreeIterator frameIt);
 		/// Write INCL reliability
 		void writeINCLReliability(TDataTreeIterator frameIt);
+		/// Write ROLLY reliability
+		void writeROLLYReliability(TDataTreeIterator frameIt);
 		/// Write HLSR reliability
 		void writeHLSRReliability(TDataTreeIterator frameIt);
 		/// Write WPSR reliability
@@ -136,6 +138,7 @@ private:
 			allECVESummaries_,
 			allECSPSummaries_,
 			allINCLYSummaries_,
+			allROLLYSummaries_,
 			allECWSSummaries_, 
 			allEcwiXSummaries_, 
 			allEcwiZSummaries_,

@@ -353,17 +353,17 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 		if (fPoint.hasPointSigma())
 		{
 			const pointSigmaData &ptData = fPoint.getPointSigmaData();
-			if (ptData.fHasAngle)
-			{
-				for (int j = 0; j < ptData.fAngles.size(); j++)
-					(*stream) << sep << ptData.fAngleNames[j] << sep << ptData.fAngles[j] * RAD2GON;
-			}
 			if (isfinite(ptData.fSigmas[0]))
 				(*stream) << sep << "SX" << sep << ptData.fSigmas[0] * M2MM;
 			if (isfinite(ptData.fSigmas[1]))
 				(*stream) << sep << "SY" << sep << ptData.fSigmas[1] * M2MM;
 			if (isfinite(ptData.fSigmas[2]))
 				(*stream) << sep << "SZ" << sep << ptData.fSigmas[2] * M2MM;
+			if (ptData.fHasAngle)
+			{
+				for (int j = 0; j < ptData.fAngles.size(); j++)
+					(*stream) << sep << ptData.fAngleNames[j] << sep << ptData.fAngles[j].getGonsValue();
+			}
 			if (ptData.fHasApriCovMat)
 			{
 				(*stream) << sep << "APRICOV MAT(";
@@ -460,6 +460,11 @@ void TSimFileWriter::writePoint(TDataTreeIterator frameIt)
 
 void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 {
+	// Return early if we've reached the end of the project data tree
+	// This prevents attempting to write measurements for an invalid frame iterator
+	if (frameIt == fProjectData->getTree().end())
+		return;
+
 	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
@@ -530,6 +535,14 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 	{
 		for (auto &meas : frameIt->get()->measurements.fINCLY)
 			writeINCLYMeas(&meas);
+	}
+
+	// Write ROLLY inclinometer measurements if any exist
+	// Iterates through each ROLLY measurement and writes it to the simulation file
+	if (!frameIt->get()->measurements.fROLLY.empty())
+	{
+		for (auto &meas : frameIt->get()->measurements.fROLLY)
+			writeROLLYMeas(&meas);
 	}
 }
 
@@ -1458,6 +1471,111 @@ void TSimFileWriter::writeINCLYMeas(TINCLYROM *meas)
 		if (itINCLY.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
 			(*stream) << "RFSE" << sep << itINCLY.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
 
+		(*stream) << endl;
+	}
+}
+
+/*
+ * ROLLY Measurement Simulation File Writer
+ * 
+ * Generates simulation input files for ROLLY inclinometer measurements by writing
+ * measurement data in the standard LGC input format. This function creates output
+ * files that can be used to reproduce the current measurement configuration for
+ * simulation runs, testing, or documentation purposes.
+ * 
+ * The function outputs ROLLY measurements in the following format:
+ * 
+ * HEADER LINE:
+ * - "*ROLLY" keyword followed by default instrument ID
+ * - Deactivation character if the measurement round is inactive
+ * 
+ * MEASUREMENT LINES:
+ * - Target point name and observed angle (required)
+ * - Optional parameters only when they differ from default instrument values
+ * - Automatic unit conversion to appropriate output units
+ * - Deactivation character for individual inactive measurements
+ * 
+ * @param meas: Pointer to ROLLY Round of Measurements object containing all
+ *               measurements, instrument settings, and quality parameters
+ * 
+ * @note This function implements intelligent parameter output by only writing
+ *       parameters that differ from the default instrument values. This creates
+ *       clean, readable simulation files while preserving all necessary
+ *       measurement information. The output format is compatible with the
+ *       ROLLY keyword parser for round-trip processing.
+ * 
+ * @note All angular values are converted to gon (gradians) for output, while
+ *       uncertainty values use appropriate units (cc for OBSE/ACSE/RFSE,
+ *       microRadians for PPM) to match industry standards and user expectations.
+ */
+void TSimFileWriter::writeROLLYMeas(TROLLYROM *meas)
+{
+	// Get output stream and configure separator for consistent formatting
+	TAStreamFormatter *stream = getStream();
+	std::string sep = stream->getSeparator();
+
+	// Retrieve the default INCL instrument from the instruments collection
+	// This instrument serves as the reference for determining which parameters
+	// need to be explicitly written (only when they differ from defaults)
+	auto inclDefInst = *data->getInstruments().fINCL.at(meas->measROLLY.front().target.ID);
+
+	// Write deactivation character if the entire measurement round is inactive
+	// This allows simulation files to reproduce the exact measurement state
+	if (!meas->isActive())
+		(*stream) << DEACTIVATION_CHAR;
+
+	// Write the header line defining the ROLLY measurement round
+	// Format: "*ROLLY <default_instrument_id>"
+	(*stream) << "*ROLLY" << sep << inclDefInst.ID << endl;
+
+	// Process each individual ROLLY measurement in the round
+	for (auto &itROLLY : meas->measROLLY)
+	{
+		// Write deactivation character if this specific measurement is inactive
+		// This preserves the individual measurement state in simulation files
+		if (!itROLLY.isActive())
+			(*stream) << DEACTIVATION_CHAR;
+
+		// Write required measurement data: target point name and observed angle
+		// The angle is converted from internal units to gon for user-friendly output
+		(*stream) << itROLLY.targetPos->getName() << sep << itROLLY.getAngle().getGonsValue() << sep;
+
+		// Write INSTR keyword only if the instrument differs from the default
+		// This prevents redundant parameter output and creates cleaner files
+		if (itROLLY.target.ID != inclDefInst.ID)
+			(*stream) << "INSTR" << sep << itROLLY.target.ID << sep;
+
+		// Write OBSE (Observation Standard Error) only if it differs from default
+		// Convert to centesimal seconds (cc) for consistency with input format
+		if (itROLLY.target.sigmaAngl != inclDefInst.sigmaAngl)
+			(*stream) << "OBSE" << sep << itROLLY.target.sigmaAngl.getSignedCCValue() << sep;
+
+		// Write PPM (Parts Per Million) only if it differs from default
+		// Convert to microRadians for precision and industry standard units
+		if (itROLLY.target.sigmaPpm != inclDefInst.sigmaPpm)
+			(*stream) << "PPM" << sep << itROLLY.target.sigmaPpm.getMicroRadiansValue() << sep;
+
+		// Write AC (Angle Correction) only if it differs from default
+		// Convert to gon for consistency with angular measurement units
+		if (itROLLY.target.angleCorrectionValue != inclDefInst.angleCorrectionValue)
+			(*stream) << "AC" << sep << itROLLY.target.angleCorrectionValue.getGonsValue() << sep;
+
+		// Write ACSE (Angle Correction Standard Error) only if it differs from default
+		// Convert to centesimal seconds (cc) for uncertainty representation
+		if (itROLLY.target.sigmaCorrectionValue != inclDefInst.sigmaCorrectionValue)
+			(*stream) << "ACSE" << sep << itROLLY.target.sigmaCorrectionValue.getSignedCCValue() << sep;
+
+		// Write RF (Reference Angle Correction) only if it differs from default
+		// Convert to gon for consistency with angular correction units
+		if (itROLLY.target.refAngleCorrectionValue != inclDefInst.refAngleCorrectionValue)
+			(*stream) << "RF" << sep << itROLLY.target.refAngleCorrectionValue.getGonsValue() << sep;
+
+		// Write RFSE (Reference Correction Standard Error) only if it differs from default
+		// Convert to centesimal seconds (cc) for uncertainty representation
+		if (itROLLY.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
+			(*stream) << "RFSE" << sep << itROLLY.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
+
+		// End the measurement line
 		(*stream) << endl;
 	}
 }

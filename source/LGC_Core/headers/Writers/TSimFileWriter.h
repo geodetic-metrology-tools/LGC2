@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+ï¿½ Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -73,6 +73,7 @@ protected:
 	void writeTSTNMeas(std::shared_ptr<TTSTN> meas);
 	void writeOBSXYZMeas(TOBSXYZ *meas);
 	void writeINCLYMeas(TINCLYROM *meas);
+	void writeROLLYMeas(TROLLYROM *meas);
 	void writeECWSMeas(TECWSROM *meas);
 	void writeECWIMeas(TECWIROM *meas);
 

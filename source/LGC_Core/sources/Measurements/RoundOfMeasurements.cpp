@@ -7,6 +7,7 @@ int TECSPROM::romCounter_ = 0;
 int TECVEROM::romCounter_ = 0;
 int TORIEROM::romCounter_ = 0;
 int TINCLYROM::romCounter_ = 0;
+int TROLLYROM::romCounter_ = 0;
 int TECWSROM::romCounter_ = 0;
 int TECWIROM::romCounter_ = 0;
 
@@ -72,6 +73,57 @@ void TINCLYROM::initialiseObsSummaries() {
 			inclySummary_.addNewResidual(ItINCLY.getAngleResidual().getSignedCCValue());
 		}
 		inclySummary_.initialise();
+	}
+}
+
+/*
+ * ROLLY ROM Observation Summaries Initializer
+ * 
+ * Initializes and populates the observation summary statistics for ROLLY inclinometer
+ * measurements by processing computed residuals from the least squares adjustment.
+ * This function is a critical post-adjustment step that prepares statistical summaries
+ * for quality assessment, reliability analysis, and output reporting.
+ * 
+ * The function performs the following operations:
+ * - Clears any existing summary data to ensure fresh statistics
+ * - Processes each ROLLY measurement's computed residual
+ * - Converts residuals to centesimal seconds [cc] for consistent unit representation
+ * - Populates the observation summary with residual data
+ * - Initializes statistical calculations for quality metrics
+ * 
+ * @note This function is called after least squares adjustment completion and residual
+ *       extraction to prepare comprehensive statistical summaries. The observation
+ *       summaries provide essential data for:
+ *       - Quality assessment and outlier detection
+ *       - Reliability analysis and measurement validation
+ *       - Statistical reporting and histogram generation
+ *       - Performance evaluation of the adjustment process
+ * 
+ * @note Residuals are converted to centesimal seconds (cc) for consistency with
+ *       traditional surveying units and to match the precision requirements of
+ *       quality assessment procedures. This unit conversion ensures compatibility
+ *       with industry standards and reporting formats.
+ */
+void TROLLYROM::initialiseObsSummaries() {
+	// Clear any existing summary data to ensure fresh statistics
+	// This prevents mixing of residuals from different adjustment runs
+	rollySummary_.clear();
+
+	// Process ROLLY measurements and populate observation summaries with residuals
+	// Only proceed if there are actual measurements to process
+	if (measROLLY.size() != 0) {
+		// Iterate through each ROLLY measurement to collect residual data
+		for (auto const& ItROLLY : measROLLY) {
+			// Extract the computed residual for this measurement and convert to centesimal seconds
+			// The residual represents the difference between observed and estimated values
+			// Converting to cc units ensures consistency with surveying standards and precision
+			rollySummary_.addNewResidual(ItROLLY.getAngleResidual().getSignedCCValue());
+		}
+		
+		// Initialize statistical calculations for the collected residual data
+		// This includes computing mean, standard deviation, quality indicators,
+		// and preparing data structures for histogram generation and reliability analysis
+		rollySummary_.initialise();
 	}
 }
 
@@ -141,6 +193,13 @@ const TLGCObsSummary& TINCLYROM::getINCLYObsSummary() const { return inclySummar
 const TLGCObsSummary& TINCLYROM::getINCLYObsSummary(std::string text) noexcept {
 	inclySummary_.setObsText(text);
 	return inclySummary_; 
+}
+
+const TLGCObsSummary& TROLLYROM::getROLLYObsSummary() const { return rollySummary_; }
+
+const TLGCObsSummary& TROLLYROM::getROLLYObsSummary(std::string text) noexcept {
+	rollySummary_.setObsText(text);
+	return rollySummary_; 
 }
 
 const TLGCObsSummary& TECWSROM::getECWSObsSummary() const { return ecwsSummary_; }
@@ -214,6 +273,15 @@ void TINCLYROM::serialize(ObjectSerializer &obj) const
 	obj.addProperty("instrument", instrument);
 	obj.addProperty("line", line);
 	obj.addProperty("measINCLY", measINCLY);
+	obj.addProperty("romId", romId);
+}
+
+void TROLLYROM::serialize(ObjectSerializer &obj) const
+{
+	obj.addProperty("rollySummary_", rollySummary_);
+	obj.addProperty("instrument", instrument);
+	obj.addProperty("line", line);
+	obj.addProperty("measROLLY", measROLLY);
 	obj.addProperty("romId", romId);
 }
 

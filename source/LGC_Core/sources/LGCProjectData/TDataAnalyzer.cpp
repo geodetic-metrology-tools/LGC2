@@ -1250,6 +1250,16 @@ void TDataAnalyzer::assignEOIndices()
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
 
+		// ROLLY
+		for (auto &rollyrom : measurements.fROLLY)
+			for (auto &rolly : rollyrom.measROLLY)
+			{
+				// set indices of LS matrices, ROLLY introduces 1 equation and 1 observation
+				rolly.setFirstEquationIndex(fData.fUEOIndices.EIndex++);
+				rolly.setFirstObservationIndex(fData.fUEOIndices.OIndex++);
+				fData.addToMeasurementNum(TMeasurementsGlobal::kROLLY);
+			}
+
 		// ECWS
 		for (auto &ecwsrom : measurements.fECWS)
 			for (auto &ecws : ecwsrom.measECWS)

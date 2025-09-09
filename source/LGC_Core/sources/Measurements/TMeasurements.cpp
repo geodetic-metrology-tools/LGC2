@@ -31,6 +31,7 @@ void TMeasurements::initialiseObsSummaries() {
 	ecveGlobalSummary_.clear();
 	ecspGlobalSummary_.clear();
 	inclyGlobalSummary_.clear();
+	rollyGlobalSummary_.clear();
 	ecwsGlobalSummary_.clear();
 	ecwiGlobalSummary_.xObsSum.clear();
 	ecwiGlobalSummary_.zObsSum.clear();
@@ -93,6 +94,7 @@ void TMeasurements::initialiseObsSummaries() {
         allECVESummaries,
         allECSPSummaries, 
         allINCLYSummaries,
+        allROLLYSummaries,
         allECWSSummaries, 
         allEcwiXSummaries, 
         allEcwiZSummaries;
@@ -176,6 +178,13 @@ void TMeasurements::initialiseObsSummaries() {
 		allINCLYSummaries.push_back(&inclyrom.getINCLYObsSummary());
 	}
 
+	// ROLLY
+	for (auto &rollyrom : fROLLY) {
+		rollyrom.initialiseObsSummaries();
+
+		allROLLYSummaries.push_back(&rollyrom.getROLLYObsSummary());
+	}
+
     // ECWS
     for (auto& ecwsrom : fECWS) {
         ecwsrom.initialiseObsSummaries();
@@ -224,6 +233,7 @@ void TMeasurements::initialiseObsSummaries() {
     ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
     ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
 	inclyGlobalSummary_ = TLGCObsSummary::merge(allINCLYSummaries);
+	rollyGlobalSummary_ = TLGCObsSummary::merge(allROLLYSummaries);
 	ecwsGlobalSummary_ = TLGCObsSummary::merge(allECWSSummaries);
 
 }
@@ -287,6 +297,8 @@ const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ec
 
 const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }
 
+const TLGCObsSummary& TMeasurements::getROLLYGlobalObsSummary() const { return rollyGlobalSummary_; }
+
 const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }
 
 const TECWIObsSummary& TMeasurements::getECWIGlobalObsSummary() const {	return ecwiGlobalSummary_; }
@@ -325,6 +337,8 @@ void TMeasurements::serialize(ObjectSerializer &obj) const
 
 	if (inclyGlobalSummary_.getNumberOfObs())
 		obj.addProperty("inclyGlobalSummary_", inclyGlobalSummary_);
+	if (rollyGlobalSummary_.getNumberOfObs())
+		obj.addProperty("rollyGlobalSummary_", rollyGlobalSummary_);
 	if (orieGlobalSummary_.getNumberOfObs())
 		obj.addProperty("orieGlobalSummary_", orieGlobalSummary_);
 	if (radiSummary_.getNumberOfObs())
@@ -366,6 +380,8 @@ void TMeasurements::serialize(ObjectSerializer &obj) const
 		obj.addProperty("fEDM", fEDM);
 	if (!fINCLY.empty())
 		obj.addProperty("fINCLY", fINCLY);
+	if (!fROLLY.empty())
+		obj.addProperty("fROLLY", fROLLY);
 	if (!fLEVEL.empty())
 		obj.addProperty("fLEVEL", fLEVEL);
 	if (!fOBSXYZ.empty())

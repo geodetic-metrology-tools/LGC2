@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+ï¿½ Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -475,6 +475,25 @@ class TKeyINCLY : public TAMeasurementKey
 public:
 	/// Constructor, the list of allowed keywords is filled
 	TKeyINCLY(TLGCData &project, int nb_allowed_keywords = nb_allowed_incly, const char **keywords = allowed_INCLY) : TAMeasurementKey(project, INCLY)
+	{
+		for (int i = 0; i < nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	/*!
+		\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
+
+		/throws Exception if the keyword is not used correctly.
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int line);
+};
+
+/// Keyword to process ROLLY -- Inclinometer measurement following ROLLY model
+class TKeyROLLY : public TAMeasurementKey
+{
+public:
+	/// Constructor, the list of allowed keywords is filled
+	TKeyROLLY(TLGCData &project, int nb_allowed_keywords = nb_allowed_rolly, const char **keywords = allowed_ROLLY) : TAMeasurementKey(project, ROLLY)
 	{
 		for (int i = 0; i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);

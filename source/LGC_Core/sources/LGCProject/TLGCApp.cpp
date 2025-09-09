@@ -301,7 +301,7 @@ void TLGCApp::writeFautFile(TLGCData const *const dat, const std::string &output
 	}
 }
 
-void TLGCApp::writeDefaFile(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
+void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
 {
 	stream->resetStreamName(outputFileLocation + ".def");
 	TDefaFileWriter defaFileWriter(stream.get(), dat);
@@ -352,7 +352,7 @@ void TLGCApp::writeChabaFile(TLGCData const *const dat, const std::string &outpu
 }
 
 #if USE_SERIALIZER
-void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, TLSResultsMatrices &fResMtrx)
+void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx)
 {
 	if (!Logger::getLogger().hasErrors())
 	{

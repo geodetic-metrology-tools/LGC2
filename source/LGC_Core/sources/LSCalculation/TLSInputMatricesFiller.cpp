@@ -111,6 +111,10 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 			for (auto &itINCLY : itTree.node->data->measurements.fINCLY)
 				addINCLYContributions(itINCLY, matrices);
 
+			// In every node iterate through the ROLLY measurements
+			for (auto &itROLLY : itTree.node->data->measurements.fROLLY)
+				addROLLYContributions(itROLLY, matrices);
+
 			// In every node iterate through the ECWS measurements
 			for (auto &itECWS : itTree.node->data->measurements.fECWS)
 				addECWSContributions(itECWS, matrices);
@@ -1315,7 +1319,7 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 		}
 
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itINCLY.getAngle() - contributions.fCalcMeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itINCLY.getAngle() - contributions.fCalcMeas).getRadiansValue());
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)
@@ -1328,6 +1332,92 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 
 		if (!isProcessOK)
 			throw std::runtime_error("Error when filling input design matrices of Incly measurement occurred.");
+	}
+}
+
+/*
+ * ROLLY Contributions Matrix Filler
+ * 
+ * Integrates ROLLY inclinometer measurements into the least squares adjustment
+ * system by populating the input design matrices with measurement contributions,
+ * transformation parameters, and weight information. This function is a critical
+ * component of the least squares calculation engine that processes ROLLY data.
+ * 
+ * The function performs the following operations for each ROLLY measurement:
+ * - Retrieves observation contributions and transformation parameters
+ * - Updates combined uncertainty (sigma) based on observation variance
+ * - Adds station transformation contributions to the design matrices
+ * - Sets misclosure vector elements for residual calculations
+ * - Populates weight matrix and its inverse for statistical weighting
+ * - Validates matrix operations and error conditions
+ * 
+ * @param rollyROM: ROLLY Round of Measurements object containing all ROLLY
+ *                   measurements, their parameters, and frame information
+ * @param matrices: Pointer to the least squares input matrices that will be
+ *                  populated with ROLLY measurement contributions
+ * 
+ * @throws std::runtime_error: When variance is zero/too small for weight matrix
+ *                             or when matrix operations fail during processing
+ * 
+ * @note ROLLY measurements use the same contribution structure (INCLYContrib) as
+ *       INCLY measurements for consistency in the least squares system. The function
+ *       processes each measurement individually, ensuring proper matrix indexing
+ *       and error handling for robust least squares adjustment.
+ */
+void TLSInputMatricesFiller::addROLLYContributions(TROLLYROM &rollyROM, TLSInputMatrices *matrices)
+{
+	// Initialize processing status and matrix indices
+	bool isProcessOK = true;           // Track overall processing success
+	MatrixIndex eqIdx = -1;            // Equation index for design matrix rows
+	MatrixIndex obsIdx = -1;           // Observation index for weight matrix elements
+	
+	// ROLLY uses the same contribution structure as INCLY for consistency
+	INCLYContrib contributions;
+
+	// Process each ROLLY measurement in the round
+	for (auto &itROLLY : rollyROM.measROLLY)
+	{
+		// Get matrix indices for this measurement
+		eqIdx = itROLLY.getFirstEquationIndex();      // Index in design matrix (A matrix)
+		obsIdx = itROLLY.getFirstObservationIndex();  // Index in weight matrix (W matrix)
+
+		// Retrieve observation contributions including transformation parameters,
+		// calculated measurements, and observation variance from the contribution generator
+		contributions = fCGenerator.getROLLYContrib(rollyROM, itROLLY);
+
+		// Update the combined uncertainty (sigma) based on observation variance
+		// This combines instrument precision (OBSE) and scale uncertainty (PPM)
+		itROLLY.target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
+
+		// Process station transformation contributions for adjustable parameters
+		// Only non-fixed transformations contribute to the adjustment
+		for (auto &itStTransform : contributions.fStTransformContrib)
+		{
+			if (!itStTransform.first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itStTransform.first, itStTransform.second, eqIdx, matrices);
+		}
+
+		// Set misclosure vector element for residual calculation
+		// Misclosure = Observed - Calculated (negative sign for conventional notation)
+		// Convert to radians for consistency with internal calculations
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itROLLY.getAngle() - contributions.fCalcMeas).getRadiansValue());
+
+		// Add weight matrix elements for statistical weighting
+		// Weight matrix W = 1/variance, Weight inverse W^(-1) = variance
+		if (contributions.fObsVariance < nullLimit)
+			throw std::runtime_error("Error when filling Rolly contribution, variance is zero or too small, can not set weight matrix element.");
+		else
+		{
+			// Add weight matrix element: W[i,i] = 1/σ²
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
+			
+			// Add weight inverse matrix element: W^(-1)[i,i] = σ²
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(obsIdx, obsIdx, contributions.fObsVariance);
+		}
+
+		// Validate overall processing success and throw error if any operation failed
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of Rolly measurement occurred.");
 	}
 }
 
