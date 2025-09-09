@@ -1,4 +1,4 @@
 # Always normalize to LF in source files
-*.cpp text eol=lf
-*.h   text eol=lf
+*.cpp text eol=crlf
+*.h   text eol=crlf
 
