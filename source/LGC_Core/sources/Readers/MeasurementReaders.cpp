@@ -1404,7 +1404,7 @@ void TKeyECWS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		if (opts.has("WSID"))
 			ecwsRom.romName = opts.getParam("WSID");
 		else
-			ecwsRom.romName = "ECWS_line" + std::to_string(line);
+			ecwsRom.romName = "ECWS_l" + std::to_string(line);
 
 		// Check if the name is unique
 		for (auto &itRomName : proj.getCurrentNode().measurements.fECWS)
@@ -1490,7 +1490,7 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		if (opts.has("WIID"))
 			ecwiRom.romName = opts.getParam("WIID");
 		else
-			ecwiRom.romName = "ECWI_line" + std::to_string(line);
+			ecwiRom.romName = "ECWI_l" + std::to_string(line);
 
 		// Check if the name is unique
 		for (auto &itRomName : proj.getCurrentNode().measurements.fECWI)
