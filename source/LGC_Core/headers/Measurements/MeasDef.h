@@ -678,7 +678,11 @@ class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENo
 public:
 	/*!@name Constructors */
 	//@{
-	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr) {};
+	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr)
+	{
+		fMeasIdx.eqDim = 2;
+		fMeasIdx.obsDim = 2;
+	};
 
 	/// Destructor
 	~TECWI() override = default;

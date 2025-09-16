@@ -95,6 +95,13 @@ void object::test<2>()
 	ensure_equals("The first observation ID is correct", frameIt.node->data->measurements.fECWI.begin()->measECWI.begin()->obsID, "First");
 	ensure_equals("The first observation ID is correct", frameIt.node->data->measurements.fECWI.begin()->measECWI.back().obsID, "Second");
 
+	// Check observation and equation dimension
+	TECWI firstWireObs = *frameIt.node->data->measurements.fECWI.begin()->measECWI.begin();
+	int obsDim = firstWireObs.getObsDim();
+	int eqDim = firstWireObs.getEqDim();
+	ensure_equals("Wire observation should have 2 observation values.", obsDim, 2);
+	ensure_equals("Wire observation should have 2 equations.", eqDim, 2);
+
 	ensure_equals("Wire ref distance not matching", romIt->fWireDx->getEstimatedValue().getMetresValue(), -0.1, 1e-7);
 	ensure_equals("Wire Bearing not matching", romIt->fWireBearing->getEstimatedValue().getGonsValue(), 0, 1e-7);
 	ensure_equals("Wire Height not matching", romIt->fWireDz->getEstimatedValue().getMetresValue(), 0.2, 1e-7);
