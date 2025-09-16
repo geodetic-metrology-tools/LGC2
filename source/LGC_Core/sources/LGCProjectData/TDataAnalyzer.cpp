@@ -454,8 +454,9 @@ bool TDataAnalyzer::checkParameters()
 					fPointTransfo.transformCCS22DH(stationPoint);
 
 					// The Adjustable Point automated creation should be a POIN if IHFIX, otherwise should be a VXY
+					std::string refPtName = "DLEV_line" + std::to_string(itLEVEL->line) + "_REFPT";
 					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(
-						stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
+						stationPoint, false, false, !itLEVEL->ihfix, refPtName, fData.getConfig().referential, fTree.begin());
 
 					// Add the line number of the DLEV for this point.
 					fRefPt.line = itLEVEL->line;
@@ -585,8 +586,9 @@ bool TDataAnalyzer::checkParameters()
 					}
 				}
 				referencelength /= numberOfMeasurements;
+				std::string refLengthName = itECWS.romName + "_WSHEIGHT";
 
-				TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, itECWS.romName.data());
+				TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, refLengthName);
 
 				itECWS.fMeasuredWSHeight = &fData.getLength().addObject(adjLength);
 			}
@@ -654,9 +656,11 @@ bool TDataAnalyzer::checkParameters()
 					referencePoint[1] /= numberOfMeasurements;
 					referencePoint[2] /= numberOfMeasurements;
 
+
+					std::string refPtName = "ECVE_line" + std::to_string(itECVE->line) + "_REFPT";
 					itECVE->fPtLine = &fData.getPoints().addObject(
 						LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), false,
-							false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
+							false, true, refPtName, fData.getConfig().referential, fTree.begin()));
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";
@@ -1005,9 +1009,10 @@ void TDataAnalyzer::assignEOIndices()
 			// - LGCv1: add when ZEND is used (there will be only one ROM per each TSTN)
 			// - LGCv2: add always
 			if (!fData.isLGCv1() || !tstn->roms.front()->measZEND.empty())
-				tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix,
-					"TSTN" + node->frame.getName() + tstn->instrument.ID + std::to_string(numOfTSTN) + std::to_string(tstn->stnId)));
-
+			{
+				std::string instrHeightName = "TSTN_" + node->frame.getName() + tstn->instrument.ID + std::to_string(numOfTSTN) + std::to_string(tstn->stnId) + "_INSTRHEIGHT";
+				tstn->instrumentHeightAdjustable = &fData.getLength().addObject(TAdjustableLength(tstn->instrument.instrHeight, tstn->ihfix, instrHeightName));
+			}
 			for (auto &rom : tstn->roms)
 			{
 				// PLR3D

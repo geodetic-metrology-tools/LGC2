@@ -148,7 +148,7 @@ void object::test<4>()
 	TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 	ensure_equals("PT z coordinate should match", PT.getZ().getMetresValue(), 50.0, 1e-7);
 
-	TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line17").getEstimatedValue();
+	TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line17_REFPT").getEstimatedValue();
 	ensure_equals("PT x coordinate should match", PTRP.getX().getMetresValue(), 40, 1e-7);
 	ensure_equals("PT y coordinate should match", PTRP.getY().getMetresValue(), 34.0, 1e-7);
 	ensure_equals("PT z coordinate should match", PTRP.getZ().getMetresValue(), 94.0, 1e-7);
@@ -181,7 +181,7 @@ void object::test<5>()
 	TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 	ensure_equals("PT z coordinate should match", PT.getZ().getMetresValue(), 50.0, 1e-7);
 
-	TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line21").getEstimatedValue();
+	TPositionVector PTRP = dataset.getPoints().getObject("DLEV_line21_REFPT").getEstimatedValue();
 	ensure_equals("PT x coordinate should match", PTRP.getX().getMetresValue(), 40, 1e-7);
 	ensure_equals("PT y coordinate should match", PTRP.getY().getMetresValue(), 34.0, 1e-7);
 	ensure_equals("PT z coordinate should match", PTRP.getZ().getMetresValue(), 114.0, 1e-7);
