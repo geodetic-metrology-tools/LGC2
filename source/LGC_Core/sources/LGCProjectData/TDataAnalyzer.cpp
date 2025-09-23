@@ -587,7 +587,7 @@ bool TDataAnalyzer::checkParameters()
 					}
 				}
 				referencelength /= numberOfMeasurements;
-				std::string refLengthName = itECWS.romName + "_WH";
+				std::string refLengthName = itECWS.romName;
 
 				TAdjustableLength adjLength(TLength(referencelength, TLength::EUnits::kMetres), false, refLengthName);
 

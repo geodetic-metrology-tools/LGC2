@@ -1404,7 +1404,7 @@ void TKeyECWS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		if (opts.has("WSID"))
 			ecwsRom.romName = opts.getParam("WSID");
 		else
-			ecwsRom.romName = "ECWS_l" + std::to_string(line);
+			ecwsRom.romName = "ECWS_l" + std::to_string(line) + "_WH";
 
 		// Check if the name is unique
 		for (auto &itRomName : proj.getCurrentNode().measurements.fECWS)
