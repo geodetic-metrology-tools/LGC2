@@ -1062,7 +1062,7 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 		(*stream).writeStringLeft(nameWidth, "PARAMETER");
 		(*stream).writeString(obsWidth, "UNIT");
 		(*stream).writeString(obsWidth, "INITIAL");
-		(*stream).writeString(obsWidth, "CALCULE");
+		(*stream).writeString(obsWidth, "CALC");
 		(*stream).writeString(obsWidth, "SUNIT");
 		(*stream).writeString(obsWidth, "SIGMA");
 		(*stream).writeString(obsWidth, "FIXED");
