@@ -35,48 +35,48 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 			writeHelmertTransformationDetails(itTree.node->data->frame, itTree.node->data->ID);
 
 			// write the input data
-			(*stream) << sep << "DONNÉES D'ENTRÉE" << endl << endl;
-			(*stream) << sep << "ACTIF" << endl;
+			(*stream) << sep << "INPUT DATA" << endl << endl;
+			(*stream) << sep << "ACTIVE" << endl;
 
 			const std::vector<TOBSXYZ> obsActif = keepOBSXYZ(fProjectData->getTree().begin());
 			if (!obsActif.empty())
 				writeInputPoints(obsActif); // first node is root
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Unable to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 
 			const std::vector<TOBSXYZ> obsPassif = keepOBSXYZ(itTree);
-			(*stream) << endl << sep << "PASSIF" << endl;
+			(*stream) << endl << sep << "PASSIVE" << endl;
 			if (!obsPassif.empty())
 				writeInputPoints(obsPassif);
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Unable to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			// write results
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairActif = createPair(fProjectData->getTree().begin());
-			(*stream) << sep << "NOUVELLES COORDONNÉES DES POINTS REFERENCE (ACTIF)" << endl << endl;
+			(*stream) << sep << "NEW COORDINATES OF REFERENCE POINTS (ACTIVE)" << endl << endl;
 			if (!pairActif.empty())
 				writeTransformedPoints(pairActif, true, fProjectData->getTree().begin());
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Unable to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairPassif = createPair(itTree);
-			(*stream) << sep << "COORDONNÉES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTÈME" << endl << endl;
+			(*stream) << sep << "COORDINATES OF REFERENCE POINTS (PASSIVE) IN THE NEW SYSTEM" << endl << endl;
 			if (!pairPassif.empty())
 				writeTransformedPoints(pairPassif, true, itTree);
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Unable to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<LGCAdjustablePoint> secondaryPts = createSecPoint(itTree);
 			if (!secondaryPts.empty())
 			{
-				(*stream) << sep << "COORDONNÉES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTÈME" << endl << endl;
+				(*stream) << sep << "COORDINATES OF MODIFIED POINTS (PASSIVE) IN THE NEW SYSTEM" << endl << endl;
 				writeTransformedSecondaryPoints(secondaryPts);
 			}
 		}
@@ -119,9 +119,9 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << endl;
 	(*stream) << sep << "FRAME\t" << helmert.getName() << "  ID(" << nameID << ")" << endl;
 	(*stream) << endl;
-	(*stream) << sep << "**************** INFORMATION CONCERNANT LES PARAMETRES CALCULÉS ********************" << endl;
+	(*stream) << sep << "****************        ESTIMATED PARAMETERS INFORMATION        ********************" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
-	(*stream) << sep << "*                         TERMES DE LA MATRICE DE ROTATION:                        *" << endl;
+	(*stream) << sep << "*                         ELEMENTS OF THE ROTATION MATRIX:                         *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 	(*stream) << sep << "* " << sep << "R11 = ";
 	writeDouble(17, rotMatrixPrecision, rot(0, 0));
@@ -146,7 +146,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << sep << "*" << endl;
 
 	(*stream) << sep << "*                                                                                  *" << endl;
-	(*stream) << sep << "*        ANGLES DE ROTATION (Gons):                                                *" << endl;
+	(*stream) << sep << "*        ROTATION ANGLES (Gons):                                                   *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 
 	(*stream) << sep << "*" << sep << sep << sep << "OMEGA(x) = ";
@@ -165,7 +165,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
 	(*stream) << sep << "*                                                                                  *" << endl;
-	(*stream) << sep << "*        VECTEUR DE TRANSLATION (M):                                               *" << endl;
+	(*stream) << sep << "*        TRANSLATION VECTOR (M):                                                   *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 
 	(*stream) << sep << "*" << sep << sep << sep << "TX = ";
@@ -184,10 +184,10 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << sep << sep << sep << sep << "   " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
 	(*stream) << sep << "*                                                                                  *" << endl;
-	(*stream) << sep << "*        FACTEUR D'ÉCHELLE (SANS UNITÉ):                                           *" << endl;
+	(*stream) << sep << "*        SCALE FACTOR (UNITLESS):                                                  *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 
-	(*stream) << sep << "*" << sep << sep << sep << "ECH = ";
+	(*stream) << sep << "*" << sep << sep << sep << "SCL = ";
 	writeDouble(17, scalePrecision, helmert.getEstScale());
 	(*stream) << sep << sep << sep << sep << "  " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
@@ -204,7 +204,7 @@ void TChabaFileWriter::writeInputPoints(const std::vector<TOBSXYZ> &data)
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
 
 	// Write Column Headings
-	writeStringLeftSep(getNameWidth(), "NOM");
+	writeStringLeftSep(getNameWidth(), "NAME");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
@@ -239,7 +239,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	std::string sep = stream->getSeparator();
 
 	// write column headings
-	writeStringLeftSep(getNameWidth(), "NOM");
+	writeStringLeftSep(getNameWidth(), "NAME");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
@@ -303,7 +303,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 	(*stream) << endl;
 	if (writeDeltas)
 	{
-		(*stream) << sep << sep << sep << "*** EMQ DD (MM) = " << sep;
+		(*stream) << sep << sep << sep << "*** RMS DD (MM) = " << sep;
 		writeDouble(7, 4, fEMQ);
 		(*stream) << sep << "***" << endl;
 	}
@@ -399,7 +399,7 @@ void TChabaFileWriter::writeTitle()
 			  << endl;
 
 	(*stream) << "***********************************************************************************************************" << endl;
-	(*stream) << "                                         ----- FICHIER OUTPUT  -----" << endl;
+	(*stream) << "                                         ----- OUTPUT FILE  -----" << endl;
 	(*stream) << "***********************************************************************************************************" << endl;
 	(*stream) << endl;
 

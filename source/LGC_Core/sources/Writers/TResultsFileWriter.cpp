@@ -350,7 +350,7 @@ void TResultsFileWriter::writeAdjustableObjGeneralInfo(const std::string adjObjN
 {
 	TAStreamFormatter &stream = getStreamRef();
 	stream << "\t" << adjObjName << " : " << numAdj << endl;
-	stream << "\t INTRODUCED UNKNOWNS " << adjObjName << ": " << numUnkn << endl << endl;
+	stream << "\t UNKNOWNS INTRODUCED BY " << adjObjName << ": " << numUnkn << endl << endl;
 }
 
 // write the summary for the number of points of the given description
