@@ -152,14 +152,19 @@ void LGCAdjustableSag::setEstValue(int idx, TReal value)
 	{
 	case 0:
 		fBearing.setEstValue(value);
+		break;
 	case 1:
 		fVertSag.setEstValue(value);
+		break;
 	case 2:
 		fVertCurv.setEstValue(value);
+		break;
 	case 3:
 		fRadSag.setEstValue(value);
+		break;
 	case 4:
 		fRadCurv.setEstValue(value);
+		break;
 	}
 }
 
