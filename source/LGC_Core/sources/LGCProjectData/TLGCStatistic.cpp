@@ -98,7 +98,8 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 
 	// compute z
 	TDenseMatrix Z(nbObs,nbEq);
-	Z = *(rm->getResCovarMtrxByConst()) * (im->getWeightMtrx());
+	TVector ZReliability = *rm->getZReliabilityVectByConst();
+	TVector resCovarDiag = *rm->getResCovarDiagByConst();
 
 	//loop for each unknowns
 	int i = 0;
@@ -109,16 +110,14 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 		(*fAreDetermined)(i) = (*fGToCompute)(i) = (*fDeltaComputed)(i) = false;
 
 		varAPriori = weightInvMatrix.coeff(i, i);
-		varRes = rm->getResCovarMtrxElmt(i, i);
+		varRes = resCovarDiag(i);
 		res = rm->getResidualsVctrElmt(i);
 
 		if (varAPriori != LITERAL(0.0) && varRes != LITERAL(0.0)) {
 			
 			(*fAreDetermined)(i) = true;
 			
-			// compute z		
-			(*fZ)(i) = Z.coeff(i, i);
-			//TReal qwe = Z.coeff(i, i);
+			(*fZ)(i) = ZReliability(i);
 			// check on z consistency
 			if ((fZ->coeff(i) < LITERAL(1.0000001))&&(fZ->coeff(i)>LITERAL(1.0))) 
 			{
@@ -211,7 +210,6 @@ void TLGCStatistic::calcDegreesOfFreedom(int nbObs)
 		if (fAreDetermined->coeff(i))
 		{
 			// Sum of the elements of the fZ vector (fZ->coeff(i)) for each observation i (see above the line '(*fZ)(i) = Z.coeff(i, i);').
-			// The fZ vector consists of the diagonal elements of the matrix Z = Qvv * P (see above the line 'Z = *(rm->getResCovarMtrxByConst()) * *(im->getWeightMtrx());'). 
 			fDegreesOfFreedom += fZ->coeff(i);
 		}
 		i++;
