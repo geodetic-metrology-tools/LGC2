@@ -1,0 +1,78 @@
+##########################################
+#
+# Plateform
+#
+
+##########################################
+# Operating system
+if(UNIX)
+	if(EXISTS "/home/$ENV{USER}/susoft/ext")
+		set(EXT_LIB_PATH				"/home/$ENV{USER}/susoft/ext")
+	else()
+		set(EXT_LIB_PATH				"/susoft/ext")
+	endif(EXISTS "/home/$ENV{USER}/susoft/ext")
+	set(QT_ROOT_PATH					"/usr/share/qt5")
+else()
+	set(EXT_LIB_PATH					"C:/susoft/ext")
+endif()
+
+
+##########################################
+# Compiled version
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	MESSAGE("-- 64 bits platform detected --")
+	set(PLATFORM 64)
+else(CMAKE_SIZEOF_VOID_P EQUAL 4)
+	MESSAGE("-- 32 bits platform detected --")
+	set(PLATFORM 32)
+endif()
+
+##########################################
+#
+# Librairies
+#
+set(EIGEN_INCLUDE_PATH					"${EXT_LIB_PATH}/eigen")
+set(TCLAP_INCLUDE_PATH					"${EXT_LIB_PATH}/tclap/include")
+set(TUT_INCLUDE_PATH					"${EXT_LIB_PATH}/tut-framework/include")
+
+##########################################
+#
+# WINDOWS
+#
+if(WIN32)
+
+	##########################################
+	# Qt
+	# Search for the first fitting available Qt 
+	file(GLOB QT_VERSION_DIRS RELATIVE C:/Qt C:/Qt/5.15*)
+	if(QT_VERSION_DIRS)
+		list(GET QT_VERSION_DIRS -1 QT_DIR) # get the last dir
+		if(PLATFORM EQUAL 64)
+			set(QT_ROOT_PATH				"C:/Qt/${QT_DIR}/msvc2019_64")
+		else()
+			set(QT_ROOT_PATH				"C:/Qt/${QT_DIR}/msvc2019")
+		endif(PLATFORM EQUAL 64)
+	endif(QT_VERSION_DIRS)
+
+	##########################################
+	# OpenSSL
+	# Search the Qt directory for the OpenSSL directory similar to Qt above
+	file(GLOB OPENSSL_VERSION_DIR RELATIVE ${QT_ROOT_PATH}/../../Tools ${QT_ROOT_PATH}/../../Tools/OpenSSL*)
+	if (OPENSSL_VERSION_DIR)
+		list(GET OPENSSL_VERSION_DIR -1 OPENSSL_DIR)
+		if(PLATFORM EQUAL 64)
+			set(OPENSSL_ROOT_DIR				"${QT_ROOT_PATH}/../../Tools/${OPENSSL_DIR}/Win_x64")
+		else()
+			set(OPENSSL_ROOT_DIR				"${QT_ROOT_PATH}/../../Tools/${OPENSSL_DIR}/Win_x32")
+		endif(PLATFORM EQUAL 64)
+	endif(OPENSSL_VERSION_DIR)
+
+	##########################################
+	# Other susoft related
+	if(PLATFORM EQUAL 64)
+		set(REFRAME2016_LIBRARY_DIR			"${EXT_LIB_PATH}/Reframe2016/x64")
+	else()
+		set(REFRAME2016_LIBRARY_DIR			"${EXT_LIB_PATH}/Reframe2016/x86")
+	endif()
+	
+endif()

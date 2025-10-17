@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2025 CERN
+ * SPDX-FileCopyrightText: CERN
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
@@ -98,7 +98,6 @@ class TLGCApp {
 
 	private:
 		static const std::string		copyright;
-		static const std::string		year;
 		static const std::string		license;
 
 		// Neither copyable nor assignable

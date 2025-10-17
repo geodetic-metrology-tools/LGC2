@@ -1,48 +1,40 @@
 version = 1
 
+
+# --- Documentation and metadata ---
 [[annotations]]
-# Other text/config/build files
 path = [
-    "doc/*",
+    "doc/**",
     ".clang-format",
     ".editorconfig",
     ".gitignore",
     ".gitlab-ci.yml",
     ".gitmodules",
-    "NOTICE.md",
-    "README.md",
-    "source/**/*.txt",
+    "*.md",
+	"DCO.txt",
+	"LGC.ico",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "CERN"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# --- Source, scripts, and build/config files ---
+[[annotations]]
+path = [
+    "source/**/CMakeLists.txt", 
     "source/**/*.def",
     "source/**/*.in",
     "source/**/*.py",
     "source/**/*.cmake",
-	"source/**/*.dox",
-	"LGC.ico",
+    "source/**/*.dox",
+	"lib/cmake_common/*",
 ]
 precedence = "override"
-SPDX-FileCopyrightText = "NONE"
+SPDX-FileCopyrightText = "CERN"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
+# --- Test files and simulation outputs (no copyright) ---
 [[annotations]]
-# Documentation binaries (PDF, DOCX, XLSX, MPP, ASTA, ICO, JPG, PNG, VSD, etc.)
-path = [
-    "doc/**/*.pdf",
-    "doc/**/*.docx",
-    "doc/**/*.xlsx",
-    "doc/**/*.mpp",
-    "doc/**/*.asta",
-    "doc/**/*.vsd",
-    "doc/**/*.png",
-    "doc/**/*.jpg",
-    "doc/**/*.ico",
-	"doc/**/*.txt",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "NONE"
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-# Test files and simulation outputs
 path = [
     "source/LGC_Tests/testFiles/**/*.inp",
     "source/LGC_Tests/testFiles/**/*.lgc",
@@ -58,3 +50,4 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "GPL-3.0-or-later"
+

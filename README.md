@@ -1,243 +1,405 @@
 [![pipeline status](https://gitlab.cern.ch/apc/susofts/processing/LGC2/badges/master/pipeline.svg)](https://gitlab.cern.ch/apc/susofts/processing/LGC2/commits/master)
 
-LGC2
-=========
+# LGC2
 
-LGC2 is a command line CERN survey software that uses the least squares method to determine the real position of measured points.
+**LGC2** is a command-line software originally developed at **CERN** for precise survey and alignment computations.  
+It applies the **least-squares adjustment method** to determine the spatial positions of measured points and associated statistics from geodetic or metrological observations.
 
-#### Table of Content ####
+[[_TOC_]]
 
-- [Purpose](#purpose)
-- [Download](#download)
-- [Documentation](#documentation)
-  - [User guide](#user-guide)
-  - [Doxygen](#doxygen)
-  - [Other](#other)
-- [Build instructions](#build-instructions)
-  - [Requirements](#requirements)
-  - [External Dependencies](#external-dependencies)
-  - [Generate project](#generate-project)
-  - [Build](#build)
-  - [Tests](#tests)
-- [Contribute](#contribute)
-  - [Jira](#jira)
-  - [Pull requests](#pull-requests)
-  - [Automatic tests](#automatic-tests)
-- [License Compliance (REUSE)](#license-compliance-reuse)
-- [Licensing](#licensing)
-  - [Third-Party Dependencies](#third-party-dependencies)
+---
 
-Purpose
--------
+## Purpose
 
-A major update of the LGC (C++ version 1), provides extended functionalities required for the HIE-Isolde project and more. The new features are documented in the EDMS document number: 1465539.
-
-Main shifts:
-- Complex (adjustable) objects introduced (planes, lines, transformations).
-- Mathematical observations models described in terms of these complex objects and therefore have been reformulated, new measurement types introduced.
-- Introduced camera instrument and camera measurements.
-- Hierarchy of local frames has been added.
-- New input file format.
+LGC2 is a **major evolution** of the original *LGC* (C++ version 1), extending its capabilities to meet the needs of the **HIE-ISOLDE** project and future large-scale CERN installations.  
+The new architecture and observation model are documented in [EDMS 1465539](https://edms.cern.ch/document/1465539).
 
 
-Download
---------
+Key improvements:
 
-You can download the last version of LGC2 in the [Releases](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/releases)
+- Introduction of **complex (adjustable) objects** such as planes, lines, and coordinate transformations.  
+- Reformulated **mathematical observation models**, enabling new measurement types.  
+- Support for **new observation types and instruments**, such as wire positioning sensors and inclinometers.  
+- Implementation of a **hierarchical local-frame system** for flexible geometry definitions.  
+- A **newer input file format** for improved readability and extensibility.
 
-Documentation
--------------
+---
 
-### User guide ###
+## Download
+The latest compiled versions of **LGC2** are currently available through CERN’s internal repositories.
 
-You can find all the user documentation here:
-- [CERN internal user guide](https://confluence.cern.ch/display/SUS/LGC2+User+Guide)
-- [Public User guide](https://lgc2.docs.cern.ch/)
+- **CERN users:** Access the official releases on [CERN GitLab Releases](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/releases).  
+- **External collaborators:** Temporary public builds are available for download [here](https://cernbox.cern.ch/s/CXj9Am33jGah5a8).
 
-The long-term goal is to maintain and update the **public user guide** as the single source of truth.  
-As of September 2025, the migration is ongoing and most documentation is expected to be transferred to the public user guide project.
+Both **Windows** and **Linux** versions are provided at this link.
 
-### Doxygen ###
+> A permanent public distribution platform (e.g. GitHub Releases) will be defined once the open-source publication process is finalized.	
 
-The Doxygen documentation is meant for developers only. Follow the [Build instructions](#build-instructions) to set up your projects. Then you can build the `doc` target to create the Doxygen documentation. You will need [Doxygen](https://www.stack.nl/~dimitri/doxygen/download.html#srcbin) and [GraphViz](http://www.graphviz.org/download/#executable-packages) installed and configured.
+---
 
-Once built, you can open the file `build/html/index.html` as an entry point to the documentation.
+## Documentation
 
-> ⚠️ Doxygen code documentation is partial and is not thoroughly implemented everywhere. To be decided if it should be generalized or abandoned. 
+### User Guides
+
+Comprehensive user documentation is available in two forms:
+
+- **[CERN Internal User Guide](https://confluence.cern.ch/display/SUS/LGC2+User+Guide)** — maintained within CERN’s Confluence environment.  
+- **[Public User Guide](https://lgc2.docs.cern.ch/)** — hosted externally for the open-source community.
+
+The long-term goal is to maintain the **public user guide** as the single, authoritative source of documentation.  
+As of September 2025, the migration is in progress, and most content is being consolidated into the public **MkDocs-based** documentation site, which will also be hosted in the same GitHub organization.
+
+### Doxygen Developer Documentation
+
+The **Doxygen documentation** is intended for developers and contributors.  
+Follow the [Build Instructions](#build-instructions) to set up your environment, then build the `doc` target to generate the documentation.
+
+You will need:
+- [**Doxygen**](https://www.stack.nl/~dimitri/doxygen/download.html#srcbin)
+- [**GraphViz**](http://www.graphviz.org/download/#executable-packages)
+
+Once built, open the following file as the main entry point for the developer documentation:
+```bash
+build/html/index.html
+```
+> The Doxygen coverage is currently partial. There are no immediate plans to maintain or complete it.
+> This could be an interesting area for external contributions aiming to improve the understanding of the LGC2 codebase.
+
+### Additional Documentation
+
+Additional materials can be found in the [`doc/`](./doc) directory.
+
+> The mathematical model documentation (PDF format, last updated in 2020) is no longer actively maintained.  
+> It remains largely accurate but is scheduled for integration into the new public user guide.
+
+---
+
+## Build instructions
+These instructions describe how to build and package **LGC2** from source on Windows and Linux.  
+They cover both internal CERN environments (with access to private submodules) and external open-source setups.
+
+> In the future, only build instructions for the public repository should be provided.
+
+### Overview
+
+LGC2 can be built on both **Windows** and **Linux** platforms.  
+It is primarily developed with **CMake** and supports multiple build environments, including **Visual Studio**, **Eclipse**, and standard **Unix Makefiles**.
+
+CERN internal developers can refer to the detailed Confluence guide for the full setup and environment configuration:  
+**[Getting Started with C++ for Survey Applications (CERN internal)](https://confluence.cern.ch/pages/viewpage.action?pageId=22153013)**
+
+External contributors can follow the summarized instructions below.
+
+### Prerequisites
+
+The following tools and dependencies are required:
+
+| Component | Version / Example | Purpose |
+|------------|------------------|----------|
+| **C++ Compiler** | C++14-compliant (MSVC v142, GCC ≥ 7.0, Clang ≥ 5.0) | Core compilation |
+| **CMake** | [≥ 3.10 (recommended 3.20+)](https://cmake.org/download/) | Project configuration |
+| **NSIS** | [3.05](https://nsis.sourceforge.io/Main_Page) | Windows installer generation |
+| **Eigen** | [3.4.0](https://eigen.tuxfamily.org/) | Matrix and numerical computations |
+| **TUT** | [2016-12-19](https://mrzechonek.github.io/tut-framework/) | Unit testing framework |
+| **Git** | [Latest stable](https://gitforwindows.org/) | Source control and submodules |
+| **Doxygen** | [≥ 1.8.18](https://www.doxygen.nl/download.html) | Developer documentation generation (optional) |
+| **GraphViz** | [≥ 2.38](https://graphviz.org/download/) | Visualization in Doxygen (optional) |
+
+#### Windows Environment (External Setup)
+
+If you are developing on **Windows**, follow these summarized steps adapted from the CERN internal setup:
+
+1. **Install Visual Studio 2019 or later**  
+   - Launch Visual Studio Installer → *Modify Installation* → *Individual Components* tab.  
+   - Ensure the following components are selected:  
+     - *C++ 2019 Redistributable Update*  
+     - *MSVC v142 - VS 2019 C++ x64/x86 build tools*  
+     - *C++ core features*  
+     - *Windows 10 SDK (10.0.16299.0)* or later  
+
+2. **Install Git for Windows**   
+   - Ensure the installer adds Git to your system PATH.
+
+3. **Install CMake**  
+   - Download from [https://cmake.org/download/](https://cmake.org/download/).  
+   - During installation, select *Add CMake to PATH for all users*.  
+
+4. **Install NSIS (optional, for packaging)**  
+   - Download version 3.05 from [https://nsis.sourceforge.io/Download](https://nsis.sourceforge.io/Download).
+
+5. **Install Eigen and TUT**  
+   - Clone Eigen:  
+     ```bash
+     git clone https://gitlab.com/libeigen/eigen.git
+     cd eigen && git checkout 3.4.0
+     ```  
+   - Clone TUT:  
+     ```bash
+     git clone https://github.com/mrzechonek/tut-framework.git
+     cd tut-framework && git checkout 2016-12-19
+     ```  
+   - Place both in a directory accessible to your project (e.g. `C:\dev\ext\`).
+
+6. **Install Doxygen and GraphViz (optional)**  
+   - [Doxygen](https://www.doxygen.nl/download.html)  
+   - [GraphViz](https://graphviz.org/download/) (add `bin/` directory to PATH)
+
+> This setup represents the standard CERN configuration but can be adapted as needed.
 
 
-### Other ###
+#### Linux Environment
 
-You can find further documentation in the folder [doc](./doc).
+For Linux systems, LGC2 can be built with standard development tools:
 
-> ⚠️ The mathematical model PDF is no longer actively maintained (last update: 2020). While still largely accurate, it is pending review and intended to be integrated directly into the new user manual in MkDocs format.
+```bash
+sudo apt install build-essential cmake git doxygen graphviz
+```
+
+If packaging or testing requires it:
+
+```bash
+sudo apt install nsis
+```
+
+All other dependencies (e.g., Eigen, TUT, tree.hh) are automatically fetched by CMake via `FetchContent`.
+
+> On CentOS 7 (CC7), install `devtoolset-7` or later to enable C++14:  
+> `sudo yum install devtoolset-7 && scl enable devtoolset-7 bash`
 
 
-Build instructions
-------------------
+### Submodules and External Dependencies
 
-Before starting, you can have a look at the documentation about [Getting started with C++](https://confluence.cern.ch/pages/viewpage.action?pageId=22153013) for the CERN survey applications.
+LGC2 depends on two key submodules providing shared functionality and core routines:
 
-### Requirements ###
+| Submodule | Purpose | Repository (Internal) | Repository (Public) |
+|------------|----------|----------------------|---------------------|
+| **SurveyLib** | Core geodetic and adjustment algorithms shared across SU software | `https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib` | `https://github.com/geodetic-metrology-tools/SurveyLib` |
+| **SUSoftCMakeCommon** | Common CMake configuration, packaging setup, and compiler options | `https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon` | Included directly under `cmake_common/` |
 
-LGC2 can be built on Windows or Linux. To do so, you need at least:
-- a C++14 compiler
-- CMake 3.6+
-- NSIS
-- Eigen
-- TUT
-
-For Windows, you can follow the steps in the aforementioned [Getting started with C++](https://confluence.cern.ch/pages/viewpage.action?pageId=22153013) documentation.
-
-For Linux, you have an example of the needed steps in the dockerfiles of the [sus_ci_cppworker](https://gitlab.cern.ch/apc/common/docker-image-susoft-cpp) project (the Docker image used to automatically run the tests on GitLab-CI).
-Note that the `devtoolset` trick is only necessary on the CC7 (Cern CentOS 7) as it doesn't provide a C++14 compiler by default.
-
-### External Dependencies ###
-
-LGC2 uses the following third-party libraries fetched automatically during the CMake configuration phase via [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html):
+LGC2 also uses the following third-party libraries fetched automatically via CMake’s [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html):
 
 - **[tree.hh](https://github.com/kpeeters/tree.hh)** – A lightweight C++ header-only tree container used for hierarchical data.  
   _Licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html)._
 
-These dependencies are cloned automatically during the build configuration step. You do **not** need to install them manually.
+These dependencies are cloned automatically during configuration. 
 
-> `tree.hh` is licensed under GPL-3.0, a strong copyleft license. If you distribute binaries that include `tree.hh`, your project must comply with the GPL-3.0—this typically means making the full corresponding source code and license available to users.
+You do **not** need to install them manually.
+
+> `tree.hh` is licensed under GPL-3.0, a strong copyleft license. Distributing binaries that include it requires providing full source code and license text.
 
 
-### Generate project ###
+### Clone and Configure the Repository
 
-We use CMake to generate projects, thus it is possible to generate projects for MSVC, Eclipse, or simple Unix makefiles. See the [CMake Generators documentation](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html) page.
+#### Clone the repository
 
-To generate the project, you need first to create a subdirectory named `build/`, and then run CMake inside:
+- **CERN internal clone:**
+  ```bash
+  git clone https://gitlab.cern.ch/apc/susofts/processing/LGC2.git
+  ```
 
+- **Public GitHub clone:**
+  ```bash
+  git clone https://github.com/geodetic-metrology-tools/LGC2.git
+  ```
+
+Then:
 ```bash
-# first we download all the submodules
-$ git submodule update --init
-# then we generate the project
-$ mkdir build && cd build/
-$ cmake -G "Visual Studio 16 2019" -A x64 ../source # Use another generator here if you wish
+cd LGC2
 ```
-In order to use a custom ext_libs.txt file defining the dependencies, please use:
 
+#### Submodule Setup
+
+##### SurveyLib
+
+- **Internal (CERN) users**
+  ```bash
+  git submodule update --init --recursive
+  ```
+
+- **External (public GitHub) users**
+  Only the public **SurveyLib** submodule is available.  
+  The internal **SUSoftCMakeCommon** is replaced by the local `cmake_common/` directory.
+  ```bash
+  git submodule init lib/SurveyLib
+  git config submodule.lib/SurveyLib.url https://github.com/geodetic-metrology-tools/SurveyLib.git
+  git submodule update --remote lib/SurveyLib
+  ```
+
+> Do **not** run `--recursive` before fixing the URL; the default CERN paths will fail for external users.
+
+##### SUSoftCMakeCommon Fallback (External Builds)
+
+External contributors use the `cmake_common/` folder included in this repository as a self-contained replacement for `SUSoftCMakeCommon`.
+
+If you cloned the CERN version, remove the submodule and use this fallback:
 ```bash
-$ cmake -G "Visual Studio 16 2019" -A x64 -DEXT_LIBS_TXT_PATH="C:/susoft/SUSoftCMakeCommon/ext_libs.txt" ../source # Use another file defining the dependencies
+git rm --cached SUSoftCMakeCommon
 ```
 
-### Build ###
+Then in your main `CMakeLists.txt` in `source`, replace:
 
-Once generated, you can open your project in the `build/` subfolder. If you use MSVC, you can open the file `build/LGC2.sln`.
+```cmake
+include(${LIBRARIES_PATH}/SUSoftCMakeCommon/CMakeLists.txt)
+```
+by
+```cmake
+include(${LIBRARIES_PATH}/cmake_common/CMakeLists.txt)
+```
 
-you can see that CMake has generated several targets, among others:
-- `ALL_BUILD` builds all except the doxygen documentation
-- `PACKAGE` builds the Windows installer
-- `ZERO_CHECK` reruns CMake and automatically updates your project
-- `RUN_TESTS` runs all tests provided they were build before
-- `doc` builds the Doxygen documentation
-- `LGC` builds the command line executable (default project in MSVC)
-- `LGC_Core` builds the static library that handles all LGC computations
-- `LGC_Tests` builds the tests
+This provides:
+- Default compiler and build flags
+- Doxygen setup options
+- Installer and packaging configuration (`create_default_installer`)
+- Helper functions for DLL copy and installer generation
 
-### Tests ###
+> Note: This fallback behavior has not yet been fully validated on all platforms.
+> If you encounter issues and manage to resolve them, please consider contributing your fixes or suggestions.
 
-To build the tests, build the target `LGC_Tests` and run it. We Use TUT to generate unit tests. Note that the tests are automatically performed on Gitlab-CI for each contribution. You can see the results in the [CI page](https://gitlab.cern.ch/apc/susofts/processing/LGC2/pipelines).
+##### External Dependency Configuration
 
-###  ###
+External developers can adjust `cmake_common/ext_libs.txt` to define paths for locally installed dependencies:
+```cmake
+set(EXT_LIB_PATH "C:/dev/ext")
+set(EIGEN_INCLUDE_PATH "${EXT_LIB_PATH}/eigen")
+set(TUT_INCLUDE_PATH "${EXT_LIB_PATH}/tut-framework")
+```
 
-Contribute
-----------
+These paths can also be overridden at configuration time:
+```bash
+cmake -DEXT_LIBS_TXT_PATH="C:/path/to/custom/ext_libs.txt" ../source
+```
 
-LGC2 is a private CERN repository, thus it doesn't accept contributions from outside CERN.
+### Build the Project
 
-To report an issue (bug, or feature request), follow the [Jira](#jira) subsection. For development, please read on.
+#### Generate with CMake
+```bash
+mkdir build && cd build
+cmake -G "Visual Studio 16 2019" -A x64 ../source
+```
 
-### Jira ###
+You may specify a custom dependency file if needed:
+```bash
+cmake -G "Visual Studio 16 2019" -A x64 -DEXT_LIBS_TXT_PATH="C:/dev/ext_libs.txt" ../source
+```
 
-Any request, bug or development should have a Jira issue. You can create an issue on the [dedicated Jira board](https://its.cern.ch/jira/browse/SUS). This is mandatory for both the users and the developers.
+#### Build
+```bash
+cmake --build . --target ALL_BUILD
+```
 
-### Pull requests ###
+#### Optional: Create Installer (Windows only)
+```bash
+cmake --build . --target PACKAGE
+```
 
-The most up-to-date stable branch is `master`. The beta branch is `appwidevs`. As stable branches, you **must not** commit directly in them. You need to create a specific branch for your on-going development and commit there. As we use CMake, if you add a file, don't forget to add it in one of the `CMakeFile.txt`!
+#### Run Tests
+```bash
+cmake --build . --target LGC_Tests
+```
+> The tests are automatically executed on GitLab CI for each contribution.  
+> Setting up GitHub Actions for CI testing would be a valuable contribution.
 
-Once you have finished your work, you should create a Pull Request (PR, or Merge Request) from your branch to `appwidevs`. The description of your PR should include a link to the corresponding task in Jira.
+#### Quick Build Example (Linux / Public)
+```bash
+git clone https://github.com/geodetic-metrology-tools/LGC2.git
+cd LGC2
+git submodule init lib/SurveyLib
+git config submodule.lib/SurveyLib.url https://github.com/geodetic-metrology-tools/SurveyLib.git
+git submodule update --remote lib/SurveyLib
+cmake -B build -S source
+cmake --build build
+```
 
-Once your PR has been reviewed by another developer and accepted, it can be merged into `appwidevs`. Note that, for the sake of a nice Git history, your branch needs to be up to date with `appwidevs`. If it is not the case, you will have to rebase, either automatically from GitLab if there are no conflicts, or manually otherwise.
+### Project Targets
 
-### Automatic tests ###
+CMake generates the following main targets:
 
-Automatic tests are performed each time you push a commit. These tests include compilation of `ALL_BUILD` target, and running the `LGC_Tests` target, all on Linux 64 bits, Windows 32 and 64 bits. If the tests don't pass, your PR will not be merged.
+| Target | Description |
+|---------|-------------|
+| `ALL_BUILD` | Builds all components except documentation |
+| `PACKAGE` | Creates Windows installer (requires NSIS) |
+| `ZERO_CHECK` | Re-runs CMake to update build files |
+| `RUN_TESTS` | Executes all unit tests |
+| `doc` | Builds the Doxygen developer documentation |
+| `LGC` | Main command-line executable |
+| `LGC_Core` | Static computation library |
+| `LGC_Tests` | Unit test suite |
 
-For each release, when `master` is updated, GitLab-CI will automatically build the installers.
+### Packaging and Distribution
+
+To create an installation package, build the `PACKAGE` target.  
+The resulting installer is generated in the `build/` directory.
+
+It is recommended to test the installer in a clean or virtual environment before distribution.
+
+---
+
+## Contributing
+
+All contributions are **warmly welcomed** — whether from CERN personnel, collaborators from other institutes, or independent developers interested in large-scale or geodetic metrology software.
+
+### How to Report Issues
+
+- **CERN contributors:**  
+  Report or track issues on the [CERN Jira board](https://its.cern.ch/jira/browse/SUS).  
+  All internal developments and bug reports must have a corresponding Jira issue.
+
+- **External contributors:**  
+  Open a [GitHub Issue](https://github.com/geodetic-metrology-tools/LGC2/issues) to:  
+  - Report bugs  
+  - Suggest improvements or new features  
+  - Discuss documentation or CI/CD integration  
+
+> Maintainers will ensure smooth coordination between the internal and public issue-tracking systems.
+> Future plans include publishing a consolidated project roadmap, milestone tracker, and CI/CD activity dashboard.
+
+### How to Contribute Code
+
+This repository follows the standard **fork → pull request → review → merge** workflow.
+See the [`CONTRIBUTING.md`](./CONTRIBUTING.md) for details about how to contribute for **CERN personnel** and **externals**.
+
+---
+
+## Licensing
+
+LGC2 is licensed under the [GNU General Public License v3.0 or later (GPL-3.0-or-later)](LICENSE).
+
+Documentation, metadata, and non-code assets (e.g., configuration or documentation files) are licensed under the [Creative Commons Attribution 4.0 International (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/).
+
+This distinction and file classification are defined in [`REUSE.toml`](./REUSE.toml).
+
+### Third-Party Dependencies
+
+| Library | License | Source |
+|----------|----------|--------|
+| Eigen | MPL-2.0 | [https://gitlab.com/libeigen/eigen](https://gitlab.com/libeigen/eigen) |
+| TUT | BSD 2-Clause | [https://github.com/mrzechonek/tut-framework](https://github.com/mrzechonek/tut-framework) |
+| tree.hh | GPL-3.0-or-later | [https://github.com/kpeeters/tree.hh](https://github.com/kpeeters/tree.hh) |
+| SurveyLib | GPL-3.0-or-later | [https://github.com/geodetic-metrology-tools/SurveyLib](https://github.com/geodetic-metrology-tools/SurveyLib) |
+
+All license texts are available in the [`LICENSES/`](./LICENSES/) directory.  
+A summary of dependencies and license terms is included in [`NOTICE.md`](./NOTICE.md).
 
 ### License Compliance (REUSE)
 
-This project follows the [REUSE Specification](https://reuse.software/) to ensure clear and consistent copyright and license information.  
+This project follows the [REUSE Specification](https://reuse.software/) to ensure proper copyright and license attribution.
 
-- Every source file (`.cpp`, `.h`, `.hpp`, etc.) includes a machine-readable SPDX header:  
-  ```cpp
-  // SPDX-FileCopyrightText: 2025 CERN
-  // SPDX-License-Identifier: GPL-3.0-or-later
-  ```
-- Non-source files (e.g. `.txt`, `.dox`, `.docx`, `.pdf`, `.png`, test files) are either annotated with SPDX headers where possible, or explicitly listed in [`REUSE.toml`](./REUSE.toml).  
-
-#### Installing REUSE
-
-To check or annotate files, you need the **REUSE tool**. It can be installed in multiple ways:
-
-- **Using pip (Python):**
-  ```bash
-  pip install reuse
-  ```
-- **On Debian/Ubuntu:**
-  ```bash
-  sudo apt install reuse
-  ```
-- **On Fedora:**
-  ```bash
-  sudo dnf install reuse
-  ```
-- **With Homebrew (macOS/Linux):**
-  ```bash
-  brew install fsfe/reuse/reuse
-  ```
-
-For more options, see the [official installation guide](https://reuse.readthedocs.io/en/stable/readme.html#installation).
-
-#### Checking compliance
-
-From the root of the project, run:
+To verify compliance, install the **REUSE tool** and run:
 
 ```bash
 reuse lint
 ```
 
-If all files are properly annotated and all license texts are present in the [`LICENSES/`](./LICENSES/) directory, the tool will confirm:
-
+If successful, you’ll see:
 ```
 Congratulations! Your project is REUSE compliant.
 ```
 
-#### Adding new files
-
 When adding new files:
-- Prefer to add SPDX headers directly inside text-based files.  
-- If headers are not possible (e.g. for images, binaries, PDFs, test data), update `REUSE.toml` to include them.  
-- Always make sure external dependencies are listed in [NOTICE.md](./NOTICE.md) and their license texts are present in `LICENSES/`.
+- Add SPDX headers directly to text-based files where possible.  
+- If headers are not possible (e.g., binaries, PDFs), list them in [`REUSE.toml`](./REUSE.toml).  
+- Add any new third-party licenses to the [`LICENSES/`](./LICENSES/) folder.
 
+---
 
-## Licensing
-
-LGC2 is licensed under the [GNU General Public License v3.0 or later](LICENSE).
-
-This project complies with the [REUSE specification](https://reuse.software/), which standardizes license documentation and attribution.
-
-### Third-Party Dependencies
-
-| Library      | License                                | Source                                             |
-|--------------|----------------------------------------|----------------------------------------------------|
-| Eigen        | MPL-2.0                                | https://gitlab.com/libeigen/eigen                  |
-| TUT          | BSD 2-Clause "Simplified" License      | https://github.com/martinmoene/tut                 |
-| tree.hh      | GNU General Public License v3.0 or later | https://github.com/kpeeters/tree.hh                |
-| SurveyLib    | GNU General Public License v3.0 or later | https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib |
-
-All third-party license texts are stored in the [`LICENSES/`](LICENSES/) directory.
-
+Thank you for contributing to this project and helping us make **geodetic metrology software** open, reliable, and accessible to the wider community!
