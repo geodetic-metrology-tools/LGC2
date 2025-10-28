@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef MEASUREMENTS_H_
 #define MEASUREMENTS_H_
 
@@ -68,6 +63,9 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	/// All INCLY measurements in the order in which they appeared in the input file
 	std::list<TINCLYROM> fINCLY;
 
+	/// All ROLLY measurements in the order in which they appeared in the input file
+	std::list<TROLLYROM> fROLLY;
+
     /// All ECWS measurements in the order in which they appeared in the input file
     std::list<TECWSROM> fECWS;
 
@@ -132,6 +130,8 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
     const TLGCObsSummary& getECSPGlobalObsSummary() const;
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	const TLGCObsSummary& getINCLYGlobalObsSummary() const;
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary& getROLLYGlobalObsSummary() const;
     /// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
     const TLGCObsSummary& getECWSGlobalObsSummary() const;
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
@@ -176,6 +176,7 @@ private:
     TLGCObsSummary ecveGlobalSummary_;
     TLGCObsSummary ecspGlobalSummary_;
 	TLGCObsSummary inclyGlobalSummary_;
+	TLGCObsSummary rollyGlobalSummary_;
     TLGCObsSummary ecwsGlobalSummary_;
 };
 

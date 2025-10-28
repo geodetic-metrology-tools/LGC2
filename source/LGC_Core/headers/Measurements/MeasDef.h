@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef _MEAS_DEF_H_
 #define _MEAS_DEF_H_
 
@@ -617,7 +612,7 @@ private:
 //--------------------------  INCL measurement--------------------------------------------
 /*!
 	\ingroup Measurements
-	\brief Angle measurement with respect to local vertical (INCLY) made by an inclinometer instrument (TInstrumentData::TINCL).
+	\brief Angle measurement with respect to local vertical (INCLY) made by an inclinometer instrument (TInstrumentData::TINCL) following the INCLY ( Wyler )model
 */
 class TINCLY : public TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>
 {
@@ -630,6 +625,31 @@ public:
 
 	/// Destructor
 	~TINCLY() override = default;
+
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngle(TAngle(obsVect(0))); }
+	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }
+#if USE_SERIALIZER
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const override { TAScalarMeas::serialize(obj); }
+#endif
+};
+
+//--------------------------  ROLLY measurement--------------------------------------------
+/*!
+	\ingroup Measurements
+	\brief Angle measurement with respect to local vertical (ROLLY) made by an inclinometer instrument (TInstrumentData::TINCL), following the ROLLY ( no spiral spring ) model
+*/
+class TROLLY : public TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>
+{
+public:
+	/*!@name Constructors */
+	//@{
+
+	TROLLY(const LGCAdjustablePoint &pos, TInstrumentData::TINCL tgt) : TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>(pos, tgt) {}
+	//@}
+
+	/// Destructor
+	~TROLLY() override = default;
 
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngle(TAngle(obsVect(0))); }
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngle().getRadiansValue()); }

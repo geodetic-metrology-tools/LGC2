@@ -739,7 +739,7 @@ ECTHContrib TContributionsGenerator::getECDIRContrib(std::shared_ptr<TTSTN> stat
 	// line direction at the TSTN position
 	TFreeVector l(sin(theta + Vo) * sin(phi), cos(theta + Vo) * sin(phi), cos(phi), TCoordSysFactory::ECoordSys::k3DCartesian);
 
-	// Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	// Calcul par le produit scalaire (u^l)^2+(u.l)^2=|v|^2|l|^2
 	TReal d, pScal;
 	d = sqrt(pow2(xSt - xTg) + pow2(ySt - yTg) + pow2(zSt - zTg)); // distance St-Tg
 	pScal = l[0] * (xSt - xTg) + l[1] * (ySt - yTg) + l[2] * (zSt - zTg); // produit scalaire
@@ -1082,7 +1082,7 @@ ECSPContrib TContributionsGenerator::getECSPContrib(const TECSPROM &ecspROM, con
 
 	/////////////////////Prepare coefficients (a,b,c) and calculate observation value (calcMeas)////////////////////////////////////////////
 
-	// Calcul par le produit scalaire (u^l)²+(u.l)²=|v|²|l|²
+	// Calcul par le produit scalaire (u^l)^2+(u.l)^2=|v|^2|l|^2
 	TReal dis, pScal, D;
 	dis = dist3D(stationPoint.getX(), stationPoint.getY(), stationPoint.getZ(), linePoint1.getX(), linePoint1.getY(), linePoint1.getZ()); // distance P1 - stn
 	D = dist3D(linePoint1.getX(), linePoint1.getY(), linePoint1.getZ(), linePoint2.getX(), linePoint2.getY(), linePoint2.getZ()); // distance P1-P2
@@ -1392,20 +1392,49 @@ OBSXYZContrib TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ &OBSXYZ)
 	return {coordContribObsPoint, transfContributions, misclosure};
 }
 
-// INCLY contribution
-INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, const TINCLY &incly)
+/*
+ * Private Template Helper Function to Eliminate Code Duplication
+ * 
+ * This helper function contains all the common logic between getINCLYContrib and getROLLYContrib,
+ * eliminating code duplication completely. It takes the measurement objects directly and 
+ * extracts the required information internally, keeping the interface clean and simple.
+ * 
+ * @param inclST: Station/ROM object (TINCLYROM or TROLLYROM)
+ * @param incl: Individual measurement object (TINCLY or TROLLY)
+ *               The mathematical model is automatically deduced from the template type:
+ *               - TINCLY uses arcsin model
+ *               - TROLLY uses atan2 model
+ * 
+ * @return INCLContrib structure with calculated measurement and transformation contributions
+ */
+template<typename TROM, typename TMeas>
+INCLContrib TContributionsGenerator::getINCLContribHelper(const TROM& inclST, const TMeas& incl)
 {
+	// Deduce the mathematical model from the template type
+	bool useArcsinModel = std::is_same_v<TMeas, TINCLY>;
+	
+	// Extract all needed parameters for better readability
+	const TPositionVector& targetPos = incl.targetPos->getEstimatedValue();
+	const TDataTreeIterator& targetFramePos = incl.targetPos->getFrameTreePosition();
+	const TDataTreeIterator& stationFramePos = inclST.positionInTree;
+	const TAngle& angleCorrectionValue = incl.target.angleCorrectionValue;
+	const TAngle& refAngleCorrectionValue = incl.target.refAngleCorrectionValue;
+	const TAngle& sigmaAngl = incl.target.sigmaAngl;
+	const TAngle& sigmaPpm = incl.target.sigmaPpm;
+	const TAngle& sigmaCorrectionValue = incl.target.sigmaCorrectionValue;
+	const TAngle& refSigmaCorrectionValue = incl.target.refSigmaCorrectionValue;
+
 	fPointTransfo.setMLA(false);
 
-	// Transform the point of meeasure to the Root frame
-	TPositionVector stationPos = incly.targetPos->getEstimatedValue(); // get the position of the station
-	const TLOR2LOR &ptLor2RootTrafo = fPointTransfo.getLORTransformation(incly.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); // Transformation from "STATION FRAME" to "ROOT"
+	// Transform the point of measure to the Root frame
+	TPositionVector stationPos = targetPos; // get the position of the station
+	const TLOR2LOR &ptLor2RootTrafo = fPointTransfo.getLORTransformation(targetFramePos, fPointTransfo.getTree()->begin()); // Transformation from "STATION FRAME" to "ROOT"
 	ptLor2RootTrafo.transform(stationPos);
 
 	// Creating the Local Vertical vector (no change if OLOC)
 	TFreeVector stationV(0, 0, 1, TCoordSysFactory::k3DCartesian);
 
-	// Express te local vertical if MLA is used
+	// Express the local vertical if MLA is used
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		fPointTransfo.set2MLATransformation(stationPos);
@@ -1416,21 +1445,86 @@ INCLYContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, c
 	TFreeVector stationVRoot(stationV);
 
 	// Transform the local vertical in the station LOR
-	const TLOR2LOR &vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), inclST.positionInTree); // Trafo from from CCS LOR to station's LOR
+	const TLOR2LOR &vert2stTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), stationFramePos); // Trafo from from CCS LOR to station's LOR
 	vert2stTrafo.transform(stationV);
 
-	// Compute the calcMeas, watchout for the sign of the correction, with - it is the definition of the ref angle
+	// Normalize the local vertical vector
+	stationV.normalize();
+
+	// Compute the calcMeas using the appropriate mathematical model
 	TReal XSt = stationV.getX().getMetresValue();
 	TReal ZSt = stationV.getZ().getMetresValue();
-	TAngle calcMeas = TAngle::aTan2(XSt, ZSt) + incly.target.angleCorrectionValue + incly.target.refAngleCorrectionValue;
+	
+	// Check for degenerate case: both XSt and ZSt are near zero (Y-axis aligned with local vertical)
+	if (isZero(XSt) && isZero(ZSt)) {
+		std::string errorMsg = "Cannot compute the contribution for this observation";
+		// Add observation identification if available
+		if (incl.targetPos) {
+			errorMsg += " (target: " + incl.targetPos->getName() + ")";
+		}
+		errorMsg += " because the Y axis of this frame is close to the local vertical at this position";
+		throw std::logic_error(errorMsg);
+	}
+	
+	TAngle calcMeas;
+	
+	if (useArcsinModel) {
+		// INCLY model: arcsin(X/|V|)
+		calcMeas = TAngle(std::asin(XSt)) + angleCorrectionValue + refAngleCorrectionValue;
+	} else {
+		// ROLLY model: atan2(X, Z)
+		calcMeas = TAngle::aTan2(XSt, ZSt) + angleCorrectionValue + refAngleCorrectionValue;
+	}
 
 	// Compute the variance of the observation
-	TReal obsVariance = pow2q(incly.target.sigmaAngl.getRadiansValue() + incly.target.sigmaPpm.getRadiansValue())
-		+ pow2q(incly.target.sigmaCorrectionValue.getRadiansValue()) + pow2q(incly.target.refSigmaCorrectionValue.getRadiansValue());
+	TReal obsVariance = pow2q(sigmaAngl.getRadiansValue() + sigmaPpm.getRadiansValue())
+		+ pow2q(sigmaCorrectionValue.getRadiansValue()) + pow2q(refSigmaCorrectionValue.getRadiansValue());
 
-	// CalcMeas, transformationContributions, variance
-	return {calcMeas, addINCLContributions(vert2stTrafo, stationVRoot, XSt, ZSt), obsVariance};
+	// Call the appropriate model-specific contribution function (as in original code)
+	Eigen::Vector3d locVert = stationV.toRealVector();
+	if (useArcsinModel) {
+		return {calcMeas, addINCLYContribution(vert2stTrafo, stationVRoot, locVert), obsVariance};
+	} else {
+		return {calcMeas, addROLLYContribution(vert2stTrafo, stationVRoot, locVert), obsVariance};
+	}
 }
+
+
+/*
+ * CRITICAL FUNCTION: INCLY Mathematical Model Implementation
+ * 
+ * This function implements the NEW arcsin-based mathematical model for inclinometer measurements.
+ * Core Formula: calcMeas = arcsin(XStNormalized) + angleCorrection + refAngleCorrection
+ * Where:
+ * - XStNormalized = XSt / |V| = XSt / sqrt(X^2 + Y^2 + Z^2)
+ */
+INCLContrib TContributionsGenerator::getINCLYContrib(const TINCLYROM &inclST, const TINCLY &incly)
+{
+	// Use the unified helper function (arcsin model automatically deduced from TINCLY type)
+	return getINCLContribHelper(inclST, incly);
+}
+
+/*
+ * CRITICAL FUNCTION: ROLLY Mathematical Model Implementation
+ * 
+ * This function implements the LEGACY atan2-based mathematical model for inclinometer measurements.
+ * It maintains backward compatibility with existing systems while providing a proven,
+ * well-tested approach for traditional inclinometer applications.
+ * 
+ * Core Formula: calcMeas = atan2(XSt, ZSt) + angleCorrection + refAngleCorrection
+ * 
+ * Where:
+ * - XSt: X component of the local vertical vector in station frame
+ * - ZSt: Z component of the local vertical vector in station frame
+ * - atan2(X,Z) provides the angle from the Z-axis to the (X,Z) point
+ */
+INCLContrib TContributionsGenerator::getROLLYContrib(const TROLLYROM &rollyST, const TROLLY &rolly)
+{
+	// Use the unified helper function (atan2 model automatically deduced from TROLLY type)
+	return getINCLContribHelper(rollyST, rolly);
+}
+
+
 
 ////ECWS contribution
 ECWSContrib TContributionsGenerator::getECWSContrib(const TECWSROM &ecwsROM, const TECWS &ecws)
@@ -2031,45 +2125,6 @@ void TContributionsGenerator::addPointContributionsPLR3D(const TLOR2LOR &lorTraf
 	}
 }
 
-decltype(INCLYContrib::fStTransformContrib) TContributionsGenerator::addINCLContributions(const TLOR2LOR &lorTrafo, const TFreeVector &vector, TReal numerator, TReal denominator)
-{
-	const std::vector<TLOR2LOR::TransformAndParams> &trafoChain = lorTrafo.getTransformationChain();
-
-	std::string transformationName;
-	TFreeVector scalePD(TCoordSysFactory::k3DCartesian);
-	TFreeVector omegaPD(TCoordSysFactory::k3DCartesian);
-	TFreeVector phiPD(TCoordSysFactory::k3DCartesian);
-	TFreeVector kappaPD(TCoordSysFactory::k3DCartesian);
-
-	TReal omegaContrib, phiContrib, kappaContrib, scaleContrib;
-
-	decltype(INCLYContrib::fStTransformContrib) transfContrib;
-
-	// Iterate through the transformations, calculate contributions and store them in the vector of pairs 'transfContrib'
-	for (const auto &it : trafoChain)
-	{
-		transformationName = it.adjTrafo->getName();
-		omegaPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 0);
-		phiPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 1);
-		kappaPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 2);
-		scalePD = lorTrafo.partialDerivativesScale(transformationName, vector);
-
-		if ((pow2q(numerator) + pow2q(denominator)) < nullLimit)
-			throw std::logic_error("TContributionGenerator::getINCLYContrib: Division by zero because observation points are identical or have identical coordinates.");
-
-		omegaContrib = (omegaPD.getX().getMetresValue() * denominator - numerator * omegaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-		phiContrib = (phiPD.getX().getMetresValue() * denominator - numerator * phiPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-		kappaContrib = (kappaPD.getX().getMetresValue() * denominator - numerator * kappaPD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-		scaleContrib = (scalePD.getX().getMetresValue() * denominator - numerator * scalePD.getZ().getMetresValue()) / (pow2q(numerator) + pow2q(denominator));
-
-		TransformationContrib trContrib = {
-			TFreeVector(omegaContrib, phiContrib, kappaContrib, TCoordSysFactory::k3DCartesian), TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian), scaleContrib};
-		transfContrib.emplace_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it.adjTrafo, trContrib));
-	}
-
-	return transfContrib;
-}
-
 std::string TContributionsGenerator::getNameAndLine(const LGCAdjustablePoint &point) const
 {
 	return std::string(point.getName() + " defined in line " + std::to_string(point.line));
@@ -2181,3 +2236,139 @@ pointSigmaContrib TContributionsGenerator::getPointSigmaContrib(LGCAdjustablePoi
 	Eigen::Vector3d rotOffset = ptSigma.calcRotOffset(pt, data);
 	return pointSigmaContrib({rotOffset});
 }
+
+/*
+ * INCL Helper Functions
+ * 
+ * These functions compute transformation contributions for INCLY and ROLLY measurements
+ * during least squares adjustment. They calculate how frame transformations affect
+ * the measurement residuals and contribute to the normal equations.
+ */
+
+/*
+ * ROLLY Transformation Contribution Calculator (Legacy atan2 Model)
+ * 
+ * Computes the contribution of frame transformations to ROLLY measurement residuals
+ * using the legacy atan2(X,Z) mathematical model. This function calculates partial
+ * derivatives with respect to transformation parameters (omega, phi, kappa, scale)
+ * and their contributions to the measurement equation.
+ * 
+ * Mathematical Model: ROLLY = atan2(X, Z) where X and Z are local coordinates
+ * 
+ * @param lorTrafo: Local Object Reference transformation containing the
+ *                   transformation chain and parameters
+ * @param vector: Free vector representing the local vertical in root coordinates
+ * @param locVert: Local vertical vector [x, y, z] in the observation frame
+ * 
+ * @return Transformation contribution structure containing:
+ *         - Rotation contributions (omega, phi, kappa) for each transformation
+ *         - Scale contribution for each transformation
+ *         - Mapping to specific adjustable transformations
+ */
+decltype(INCLContrib::fStTransformContrib)
+TContributionsGenerator::addROLLYContribution(const TLOR2LOR &lorTrafo,
+	const TFreeVector &vector,
+	const Eigen::Vector3d &locVert)
+{
+	// Calculate ROLLY-specific trigoDiff vector (atan2 derivatives)
+	double x = locVert(0), z = locVert(2);
+	double square = pow2q(x) + pow2q(z);
+	if (isZero(square))
+		throw std::logic_error("Cannot compute the contribution for this observation because both X and Z components are near zero (degenerate case for atan2 model)");
+	Eigen::Vector3d trigoDiff; // [dF/dx, dF/dy, dF/dz]
+	trigoDiff << z / square, 0.0, -x / square;
+
+	// Use the unified function
+	return addINCLContribHelper(lorTrafo, vector, trigoDiff);
+}
+
+/*
+ * INCLY Transformation Contribution Calculator (New arcsin Model)
+ * 
+ * Computes the contribution of frame transformations to INCLY measurement residuals
+ * using the new arcsin(X/|V|) normalized mathematical model. This function calculates
+ * partial derivatives with respect to transformation parameters (omega, phi, kappa, scale)
+ * and their contributions to the measurement equation.
+ * 
+ * Mathematical Model: INCLY = arcsin(X/|V|) where |V| = sqrt(X^2 + Y^2 + Z^2)
+ * 
+ * @param lorTrafo: Local Object Reference transformation containing the
+ *                   transformation chain and parameters
+ * @param vector: Free vector representing the local vertical in root coordinates
+ * @param locVert: Local vertical vector [x, y, z] in the observation frame
+ * 
+ * @return Transformation contribution structure containing:
+ *         - Rotation contributions (omega, phi, kappa) for each transformation
+ *         - Scale contribution for each transformation
+ *         - Mapping to specific adjustable transformations
+ */
+decltype(INCLContrib::fStTransformContrib)
+TContributionsGenerator::addINCLYContribution(const TLOR2LOR &lorTrafo,
+	const TFreeVector &vector,
+	const Eigen::Vector3d &locVert)
+{
+	// Calculate INCLY-specific trigoDiff vector (arcsin derivatives)
+	double x = locVert(0), y = locVert(1), z = locVert(2);
+	double r2 = locVert.squaredNorm();
+	if (isZero(r2))
+		throw std::logic_error("Cannot compute the contribution for this observation because the local vertical vector has zero length at this position");
+	double r2_x2 = r2 - x * x;
+	if (isZero(r2_x2))
+		throw std::logic_error("Cannot compute the contribution for this observation because the X component equals the vector magnitude (degenerate case for arcsin model)");
+	double sqrtR2_x2 = std::sqrt(r2_x2);
+	Eigen::Vector3d trigoDiff;
+	trigoDiff << (sqrtR2_x2 / r2), (-(x * y) / (r2 * sqrtR2_x2)), (-(x * z) / (r2 * sqrtR2_x2));
+
+	// Use the unified function
+	return addINCLContribHelper(lorTrafo, vector, trigoDiff);
+}
+
+/*
+ * Unified INCL Contribution Helper
+ * 
+ * This function unifies the common logic between addINCLYContribution and addROLLYContribution
+ * to reduce code duplication. The only difference between the two models is the trigoDiff vector.
+ * 
+ * @param lorTrafo: Local Object Reference transformation containing the transformation chain
+ * @param vector: Free vector representing the local vertical in root coordinates
+ * @param trigoDiff: Jacobian of Model function wrt local vertical vector.
+ * 
+ * @return Transformation contribution structure containing rotation and scale contributions
+ */
+decltype(INCLContrib::fStTransformContrib)
+TContributionsGenerator::addINCLContribHelper(const TLOR2LOR &lorTrafo,
+	const TFreeVector &vector,
+	const Eigen::Vector3d &trigoDiff)
+{
+	const std::vector<TLOR2LOR::TransformAndParams> &trafoChain = lorTrafo.getTransformationChain();
+	std::string transformationName;
+	TFreeVector scalePD(TCoordSysFactory::k3DCartesian);
+	TFreeVector omegaPD(TCoordSysFactory::k3DCartesian);
+	TFreeVector phiPD(TCoordSysFactory::k3DCartesian);
+	TFreeVector kappaPD(TCoordSysFactory::k3DCartesian);
+
+	TReal omegaContrib, phiContrib, kappaContrib, scaleContrib;
+	decltype(INCLContrib::fStTransformContrib) transfContrib;
+
+	for (const auto &it : trafoChain)
+	{
+		transformationName = it.adjTrafo->getName();
+		omegaPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 0);
+		phiPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 1);
+		kappaPD = lorTrafo.partialDerivativesAngle(transformationName, vector, 2);
+		scalePD = lorTrafo.partialDerivativesScale(transformationName, vector);
+
+		omegaContrib = trigoDiff.dot(omegaPD.toRealVector());
+		phiContrib = trigoDiff.dot(phiPD.toRealVector());
+		kappaContrib = trigoDiff.dot(kappaPD.toRealVector());
+		scaleContrib = trigoDiff.dot(scalePD.toRealVector());
+
+		TransformationContrib trContrib = {TFreeVector(omegaContrib, phiContrib, kappaContrib, TCoordSysFactory::k3DCartesian), TFreeVector(0, 0, 0, TCoordSysFactory::k3DCartesian), scaleContrib};
+		transfContrib.emplace_back(std::pair<TAdjustableHelmertTransformation, TransformationContrib>(*it.adjTrafo, trContrib));
+	}
+	return transfContrib;
+}
+
+
+
+

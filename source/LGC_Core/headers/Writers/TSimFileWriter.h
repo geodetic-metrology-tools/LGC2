@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef SU_SIM_OBS_WRITER
 #define SU_SIM_OBS_WRITER
 #if _MSC_VER >= 1000
@@ -73,9 +68,16 @@ protected:
 	void writeTSTNMeas(std::shared_ptr<TTSTN> meas);
 	void writeOBSXYZMeas(TOBSXYZ *meas);
 	void writeINCLYMeas(TINCLYROM *meas);
+	void writeROLLYMeas(TROLLYROM *meas);
 	void writeECWSMeas(TECWSROM *meas);
 	void writeECWIMeas(TECWIROM *meas);
 
+private:
+	/// Common template helper for both INCLY and ROLLY measurement simulation output
+	template<typename MeasurementList, typename ROMType>
+	void writeINCLMeasHelper(const MeasurementList& measurements, const ROMType* rom, const std::string& keyword);
+
+public:
 	/// Project data
 	const TLGCData *data;
 };

@@ -111,6 +111,10 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 			for (auto &itINCLY : itTree.node->data->measurements.fINCLY)
 				addINCLYContributions(itINCLY, matrices);
 
+			// In every node iterate through the ROLLY measurements
+			for (auto &itROLLY : itTree.node->data->measurements.fROLLY)
+				addROLLYContributions(itROLLY, matrices);
+
 			// In every node iterate through the ECWS measurements
 			for (auto &itECWS : itTree.node->data->measurements.fECWS)
 				addECWSContributions(itECWS, matrices);
@@ -1290,22 +1294,41 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 	}
 }
 
-void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInputMatrices *matrices)
+/*
+ * Common INCL Contributions Helper
+ * 
+ * Unified template function that handles both INCLY and ROLLY contributions to the
+ * least squares input matrices. Eliminates code duplication by accepting the ROM
+ * object, measurement list, and contribution getter function as template parameters.
+ * 
+ * @param rom: Round of Measurements object (TINCLYROM or TROLLYROM)
+ * @param measurements: List of measurements (measINCLY or measROLLY)
+ * @param getContrib: Function to get contributions (getINCLYContrib or getROLLYContrib)
+ * @param matrices: Pointer to the least squares input matrices
+ * @param measurementType: String identifier for error messages ("Incly" or "Rolly")
+ */
+template<typename TROM, typename TMeasList, typename TGetContrib>
+void TLSInputMatricesFiller::addINCLContributionsHelper(
+	TROM &rom,
+	TMeasList &measurements,
+	TGetContrib getContrib,
+	TLSInputMatrices *matrices,
+	const std::string &measurementType)
 {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
 	MatrixIndex obsIdx = -1;
-	INCLYContrib contributions;
+	INCLContrib contributions;
 
-	for (auto &itINCLY : inclyROM.measINCLY)
+	for (auto &meas : measurements)
 	{
-		eqIdx = itINCLY.getFirstEquationIndex();
-		obsIdx = itINCLY.getFirstObservationIndex();
+		eqIdx = meas.getFirstEquationIndex();
+		obsIdx = meas.getFirstObservationIndex();
 
-		contributions = fCGenerator.getINCLYContrib(inclyROM, itINCLY); // Get the observation contribution
+		contributions = (fCGenerator.*getContrib)(rom, meas); // Get the observation contribution
 
 		// Update the sigma
-		itINCLY.target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
+		meas.target.sigmaCombinedAngle = TAngle(sqrt(contributions.fObsVariance));
 
 		// Adding contributions for STATION transformation parameters
 		for (auto &itStTransform : contributions.fStTransformContrib)
@@ -1315,11 +1338,11 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 		}
 
 		// Set Misclosure vector
-		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (itINCLY.getAngle() - contributions.fCalcMeas));
+		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas.getAngle() - contributions.fCalcMeas));
 
 		// Add weight unknown matrix element
 		if (contributions.fObsVariance < nullLimit)
-			throw std::runtime_error("Error when filling Incly contribution, variance is zero or too small, can not set weight matrix element.");
+			throw std::runtime_error("Error when filling " + measurementType + " contribution, variance is zero or too small, can not set weight matrix element.");
 		else
 		{
 			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / contributions.fObsVariance);
@@ -1327,8 +1350,47 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 		}
 
 		if (!isProcessOK)
-			throw std::runtime_error("Error when filling input design matrices of Incly measurement occurred.");
+			throw std::runtime_error("Error when filling input design matrices of " + measurementType + " measurement occurred.");
 	}
+}
+
+void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInputMatrices *matrices)
+{
+	addINCLContributionsHelper(inclyROM, inclyROM.measINCLY, &TContributionsGenerator::getINCLYContrib, matrices, "Incly");
+}
+
+/*
+ * ROLLY Contributions Matrix Filler
+ * 
+ * Integrates ROLLY inclinometer measurements into the least squares adjustment
+ * system by populating the input design matrices with measurement contributions,
+ * transformation parameters, and weight information. This function is a critical
+ * component of the least squares calculation engine that processes ROLLY data.
+ * 
+ * The function performs the following operations for each ROLLY measurement:
+ * - Retrieves observation contributions and transformation parameters
+ * - Updates combined uncertainty (sigma) based on observation variance
+ * - Adds station transformation contributions to the design matrices
+ * - Sets misclosure vector elements for residual calculations
+ * - Populates weight matrix and its inverse for statistical weighting
+ * - Validates matrix operations and error conditions
+ * 
+ * @param rollyROM: ROLLY Round of Measurements object containing all ROLLY
+ *                   measurements, their parameters, and frame information
+ * @param matrices: Pointer to the least squares input matrices that will be
+ *                  populated with ROLLY measurement contributions
+ * 
+ * @throws std::runtime_error: When variance is zero/too small for weight matrix
+ *                             or when matrix operations fail during processing
+ * 
+ * @note ROLLY measurements use the same contribution structure (INCLContrib) as
+ *       INCLY measurements for consistency in the least squares system. The function
+ *       processes each measurement individually, ensuring proper matrix indexing
+ *       and error handling for robust least squares adjustment.
+ */
+void TLSInputMatricesFiller::addROLLYContributions(TROLLYROM &rollyROM, TLSInputMatrices *matrices)
+{
+	addINCLContributionsHelper(rollyROM, rollyROM.measROLLY, &TContributionsGenerator::getROLLYContrib, matrices, "Rolly");
 }
 
 void TLSInputMatricesFiller::addECWSContributions(TECWSROM &ecwsROM, TLSInputMatrices *matrices)

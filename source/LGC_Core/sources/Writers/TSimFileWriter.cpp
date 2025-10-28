@@ -532,6 +532,14 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		for (auto &meas : frameIt->get()->measurements.fINCLY)
 			writeINCLYMeas(&meas);
 	}
+
+	// Write ROLLY inclinometer measurements if any exist
+	// Iterates through each ROLLY measurement and writes it to the simulation file
+	if (!frameIt->get()->measurements.fROLLY.empty())
+	{
+		for (auto &meas : frameIt->get()->measurements.fROLLY)
+			writeROLLYMeas(&meas);
+	}
 }
 
 void TSimFileWriter::writeCAMMeas(TCAM *meas)
@@ -1420,45 +1428,99 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
 void TSimFileWriter::writeINCLYMeas(TINCLYROM *meas)
 {
+	writeINCLMeasHelper(meas->measINCLY, meas, std::string("*INCLY"));
+}
+
+void TSimFileWriter::writeROLLYMeas(TROLLYROM *meas)
+{
+	writeINCLMeasHelper(meas->measROLLY, meas, std::string("*ROLLY"));
+}
+
+/*
+ * Common INCL Measurement Simulation Helper
+ * 
+ * Unified template function that handles both INCLY and ROLLY measurement simulation output.
+ * Eliminates code duplication by accepting the measurement list, ROM, and header keyword.
+ * 
+ * Generates simulation input files in standard LGC format with:
+ * - Header line with measurement type keyword and default instrument ID
+ * - Individual measurement lines with target points and observed angles
+ * - Optional parameters only when they differ from default instrument values
+ * - Proper deactivation character handling for inactive measurements
+ * 
+ * @param measurements: List of measurements (INCLY or ROLLY) to write
+ * @param rom: Round of measurements object containing measurement data and state
+ * @param keyword: Header keyword string ("*INCLY" or "*ROLLY") for measurement type identification
+ */
+template<typename MeasurementList, typename ROMType>
+void TSimFileWriter::writeINCLMeasHelper(const MeasurementList& measurements, const ROMType* rom, const std::string& keyword)
+{
+	// Get output stream and configure separator for consistent formatting
 	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
-	auto inclDefInst = *data->getInstruments().fINCL.at(meas->measINCLY.front().target.ID);
+	// Retrieve the default INCL instrument from the instruments collection
+	// This instrument serves as the reference for determining which parameters
+	// need to be explicitly written (only when they differ from defaults)
+	auto inclDefInst = *data->getInstruments().fINCL.at(measurements.front().target.ID);
 
-	if (!meas->isActive())
+	// Write deactivation character if the entire measurement round is inactive
+	// This allows simulation files to reproduce the exact measurement state
+	if (!rom->isActive())
 		(*stream) << DEACTIVATION_CHAR;
 
-	(*stream) << "*INCLY" << sep << inclDefInst.ID << endl;
+	// Write the header line defining the measurement round
+	// Format: "<keyword> <default_instrument_id>"
+	(*stream) << keyword << sep << inclDefInst.ID << "\n";
 
-	// write the list of measurements for the line
-	for (auto &itINCLY : meas->measINCLY)
+	// Process each individual measurement in the round
+	for (auto &measurement : measurements)
 	{
-		if (!itINCLY.isActive())
+		// Write deactivation character if this specific measurement is inactive
+		// This preserves the individual measurement state in simulation files
+		if (!measurement.isActive())
 			(*stream) << DEACTIVATION_CHAR;
 
-		(*stream) << itINCLY.targetPos->getName() << sep << itINCLY.getAngle().getGonsValue() << sep;
+		// Write required measurement data: target point name and observed angle
+		// The angle is converted from internal units to gon for user-friendly output
+		(*stream) << measurement.targetPos->getName() << sep << measurement.getAngle().getGonsValue() << sep;
 
-		if (itINCLY.target.ID != inclDefInst.ID)
-			(*stream) << "INSTR" << sep << itINCLY.target.ID << sep;
+		// Write INSTR keyword only if the instrument differs from the default
+		// This prevents redundant parameter output and creates cleaner files
+		if (measurement.target.ID != inclDefInst.ID)
+			(*stream) << "INSTR" << sep << measurement.target.ID << sep;
 
-		if (itINCLY.target.sigmaAngl != inclDefInst.sigmaAngl)
-			(*stream) << "OBSE" << sep << itINCLY.target.sigmaAngl.getSignedCCValue() << sep;
+		// Write OBSE (Observation Standard Error) only if it differs from default
+		// Convert to centesimal seconds (cc) for consistency with input format
+		if (measurement.target.sigmaAngl != inclDefInst.sigmaAngl)
+			(*stream) << "OBSE" << sep << measurement.target.sigmaAngl.getSignedCCValue() << sep;
 
-		if (itINCLY.target.sigmaPpm != inclDefInst.sigmaPpm)
-			(*stream) << "PPM" << sep << itINCLY.target.sigmaPpm.getMicroRadiansValue() << sep;
+		// Write PPM (Parts Per Million) only if it differs from default
+		// Convert to microRadians for precision and industry standard units
+		if (measurement.target.sigmaPpm != inclDefInst.sigmaPpm)
+			(*stream) << "PPM" << sep << measurement.target.sigmaPpm.getMicroRadiansValue() << sep;
 
-		if (itINCLY.target.angleCorrectionValue != inclDefInst.angleCorrectionValue)
-			(*stream) << "AC" << sep << itINCLY.target.angleCorrectionValue.getGonsValue() << sep;
+		// Write AC (Angle Correction) only if it differs from default
+		// Convert to gon for consistency with angular measurement units
+		if (measurement.target.angleCorrectionValue != inclDefInst.angleCorrectionValue)
+			(*stream) << "AC" << sep << measurement.target.angleCorrectionValue.getGonsValue() << sep;
 
-		if (itINCLY.target.sigmaCorrectionValue != inclDefInst.sigmaCorrectionValue)
-			(*stream) << "ACSE" << sep << itINCLY.target.sigmaCorrectionValue.getSignedCCValue() << sep;
+		// Write ACSE (Angle Correction Standard Error) only if it differs from default
+		// Convert to centesimal seconds (cc) for uncertainty representation
+		if (measurement.target.sigmaCorrectionValue != inclDefInst.sigmaCorrectionValue)
+			(*stream) << "ACSE" << sep << measurement.target.sigmaCorrectionValue.getSignedCCValue() << sep;
 
-		if (itINCLY.target.refAngleCorrectionValue != inclDefInst.refAngleCorrectionValue)
-			(*stream) << "RF" << sep << itINCLY.target.refAngleCorrectionValue.getGonsValue() << sep;
+		// Write RF (Reference Angle Correction) only if it differs from default
+		// Convert to gon for consistency with angular correction units
+		if (measurement.target.refAngleCorrectionValue != inclDefInst.refAngleCorrectionValue)
+			(*stream) << "RF" << sep << measurement.target.refAngleCorrectionValue.getGonsValue() << sep;
 
-		if (itINCLY.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
-			(*stream) << "RFSE" << sep << itINCLY.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
+		// Write RFSE (Reference Correction Standard Error) only if it differs from default
+		// Convert to centesimal seconds (cc) for uncertainty representation
+		if (measurement.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
+			(*stream) << "RFSE" << sep << measurement.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
 
-		(*stream) << endl;
+		// End the measurement line
+		(*stream) << "\n";
 	}
 }

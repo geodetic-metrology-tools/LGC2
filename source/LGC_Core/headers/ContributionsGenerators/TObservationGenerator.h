@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef TSIMOBSERVATION_GENERATOR_H
 #define TSIMOBSERVATION_GENERATOR_H
 
@@ -104,6 +99,9 @@ public:
 
 	/// Returns the INCLY measurement calculated meas in RADIANS [rad]
 	TReal getINCLYCalcMeas(const TINCLYROM &inclyROM, const TINCLY &incly);
+
+	/// Returns the ROLLY measurement calculated meas in RADIANS [rad]
+	TReal getROLLYCalcMeas(const TROLLYROM &rollyROM, const TROLLY &rolly);
 
 	/// Returns the TECWS measurement calculated meas in meters [m]
 	TReal getECWSCalcMeas(const TECWSROM &ecwsROM, const TECWS &ecws);

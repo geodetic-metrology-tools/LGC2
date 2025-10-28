@@ -183,6 +183,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyRADI(project)));
 	finterpreters.emplace_back(UPK(new TKeyOBSXYZ(project)));
 	finterpreters.emplace_back(UPK(new TKeyINCLY(project)));
+	finterpreters.emplace_back(UPK(new TKeyROLLY(project)));
 	finterpreters.emplace_back(UPK(new TKeyECWS(project)));
 	finterpreters.emplace_back(UPK(new TKeyECWI(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyDMES_lgc1(project)));
@@ -430,8 +431,8 @@ bool TReader::read(std::istream &lgcStream)
 			}
 		}
 
+		// Collect IDs and check for duplicates in a single pass
 		listObsId = updateListObsID(itTree);
-		// Check for duplicates
 		if (hasDuplicateObsId(itTree, listObsId, outputMessages))
 			break;
 
@@ -644,55 +645,68 @@ bool TReader::isLgc2File(std::istream &lgcStream)
 	return false;
 }
 
-/// Create a vector of all observation ID
-std::vector<std::string> TReader::updateListObsID(TDataTreeIterator itTree)
+/// Helper function to iterate through all measurements and apply a callback
+/// This ensures a single point of maintenance when measurement types change
+template<typename Callback>
+static void iterateAllMeasurements(TDataTreeIterator itTree, Callback callback)
 {
-	std::vector<std::string> listObsId;
-
-	// Iterate the observations
+	// Iterate through all measurement types
 	for (auto const &i : itTree->get()->measurements.fTSTN)
 	{
 		for (auto const &j : i.get()->roms)
 		{
-			std::for_each(j.get()->measANGL.begin(), j.get()->measANGL.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
-			std::for_each(j.get()->measZEND.begin(), j.get()->measZEND.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
-			std::for_each(j.get()->measDIST.begin(), j.get()->measDIST.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
-			std::for_each(j.get()->measDHOR.begin(), j.get()->measDHOR.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
-			std::for_each(j.get()->measECTH.begin(), j.get()->measECTH.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
-			std::for_each(j.get()->measECDIR.begin(), j.get()->measECDIR.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
-			std::for_each(j.get()->measPLR3D.begin(), j.get()->measPLR3D.end(), [&listObsId](auto const &k) { listObsId.push_back(k.obsID); });
+			std::for_each(j.get()->measANGL.begin(), j.get()->measANGL.end(), callback);
+			std::for_each(j.get()->measZEND.begin(), j.get()->measZEND.end(), callback);
+			std::for_each(j.get()->measDIST.begin(), j.get()->measDIST.end(), callback);
+			std::for_each(j.get()->measDHOR.begin(), j.get()->measDHOR.end(), callback);
+			std::for_each(j.get()->measECTH.begin(), j.get()->measECTH.end(), callback);
+			std::for_each(j.get()->measECDIR.begin(), j.get()->measECDIR.end(), callback);
+			std::for_each(j.get()->measPLR3D.begin(), j.get()->measPLR3D.end(), callback);
 		}
 	}
 	for (auto const &i : itTree->get()->measurements.fEDM)
-		std::for_each(i.measDSPT.begin(), i.measDSPT.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measDSPT.begin(), i.measDSPT.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fLEVEL)
-		std::for_each(i.measDLEV.begin(), i.measDLEV.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measDLEV.begin(), i.measDLEV.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fCAM)
 	{
-		std::for_each(i.measUVD.begin(), i.measUVD.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
-		std::for_each(i.measUVEC.begin(), i.measUVEC.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measUVD.begin(), i.measUVD.end(), callback);
+		std::for_each(i.measUVEC.begin(), i.measUVEC.end(), callback);
 	}
 	for (auto const &i : itTree->get()->measurements.fDVER)
-		listObsId.push_back(i.obsID);
+		callback(i);
 	for (auto const &i : itTree->get()->measurements.fORIE)
-		std::for_each(i.measORIE.begin(), i.measORIE.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measORIE.begin(), i.measORIE.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fECHO)
-		std::for_each(i.measECHO.begin(), i.measECHO.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measECHO.begin(), i.measECHO.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fECVE)
-		std::for_each(i.measECVE.begin(), i.measECVE.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measECVE.begin(), i.measECVE.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fECSP)
-		std::for_each(i.measECSP.begin(), i.measECSP.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
-	listObsId.push_back(itTree->get()->measurements.fPDOR.obsID);
+		std::for_each(i.measECSP.begin(), i.measECSP.end(), callback);
+	callback(itTree->get()->measurements.fPDOR);
 	for (auto const &i : itTree->get()->measurements.fRADI)
-		listObsId.push_back(i.obsID);
+		callback(i);
 	for (auto const &i : itTree->get()->measurements.fOBSXYZ)
-		listObsId.push_back(i.obsID);
+		callback(i);
 	for (auto const &i : itTree->get()->measurements.fINCLY)
-		std::for_each(i.measINCLY.begin(), i.measINCLY.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measINCLY.begin(), i.measINCLY.end(), callback);
+	for (auto const &i : itTree->get()->measurements.fROLLY)
+		std::for_each(i.measROLLY.begin(), i.measROLLY.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fECWS)
-		std::for_each(i.measECWS.begin(), i.measECWS.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measECWS.begin(), i.measECWS.end(), callback);
 	for (auto const &i : itTree->get()->measurements.fECWI)
-		std::for_each(i.measECWI.begin(), i.measECWI.end(), [&listObsId](auto const &j) { listObsId.push_back(j.obsID); });
+		std::for_each(i.measECWI.begin(), i.measECWI.end(), callback);
+}
+
+/// Create a vector of all observation ID
+std::vector<std::string> TReader::updateListObsID(TDataTreeIterator itTree)
+{
+	std::vector<std::string> listObsId;
+	
+	// Use the shared iteration helper
+	iterateAllMeasurements(itTree, [&listObsId](auto const &meas) {
+		listObsId.push_back(meas.obsID);
+	});
 
 	return listObsId;
 }
@@ -700,14 +714,28 @@ std::vector<std::string> TReader::updateListObsID(TDataTreeIterator itTree)
 /// Check that there is no duplicated observation ID
 bool TReader::hasDuplicateObsId(TDataTreeIterator itTree, std::vector<std::string> &listObsId, TFileLogger &outputMessages)
 {
-	std::sort(listObsId.begin(), listObsId.end());
-	for (int i = 1; i < listObsId.size(); i++)
-	{
-		if (listObsId[i - 1] == listObsId[i] && listObsId[i] != "")
-		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Observation ID " + listObsId[i] + " is duplicated\".";
-			return true;
+	// Use unordered_map for O(1) insertion instead of O(log N)
+	std::unordered_map<std::string, int> idToLine;
+	std::string duplicateId;
+	int duplicateLine = -1;
+	
+	// Use the shared iteration helper to check for duplicates
+	iterateAllMeasurements(itTree, [&idToLine, &duplicateId, &duplicateLine](auto const &meas) {
+		if (!meas.obsID.empty() && duplicateId.empty()) {  // Only record first duplicate
+			auto result = idToLine.insert({meas.obsID, meas.line});
+			if (!result.second) {  // Insertion failed - duplicate found!
+				duplicateId = meas.obsID;
+				duplicateLine = meas.line;
+			}
 		}
+	});
+	
+	// If duplicate was found, report it
+	if (!duplicateId.empty())
+	{
+		const std::string lineStr = "Line " + std::to_string(duplicateLine) + ": ";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated.";
+		return true;
 	}
 
 	return false;
