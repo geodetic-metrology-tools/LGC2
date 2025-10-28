@@ -1,14 +1,13 @@
-/*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef SU_FRAME_WRITER
 #define SU_FRAME_WRITER
 
 //LGC
 #include <TLGCData.h>
 #include <TALGCObjectWriter.h>
+
+// Forward declarations for measurement types
+struct TINCLYROM;
+struct TROLLYROM;
 
 /*!
 	\ingroup LGCObjectWriters
@@ -70,8 +69,21 @@ private:
 		void writeLEVELReliability(TDataTreeIterator frameIt);
 		/// Write SCALE reliability
 		void writeSCALEReliability(TDataTreeIterator frameIt);
-		/// Write INCL reliability
-		void writeINCLReliability(TDataTreeIterator frameIt);
+		/// Write INCLY reliability
+		void writeINCLYReliability(TDataTreeIterator frameIt);
+		/// Write ROLLY reliability
+		void writeROLLYReliability(TDataTreeIterator frameIt);
+
+	private:
+		/// Common template helper for both INCLY and ROLLY reliability reports
+		template<typename MeasurementContainer, typename HeaderFunc, typename DataFunc>
+		void writeINCLReliabilityHelper(
+			const MeasurementContainer& measurements,
+			const char* sectionTitle,
+			HeaderFunc writeHeaderFunc,
+			DataFunc writeDataFunc);
+
+	public:
 		/// Write HLSR reliability
 		void writeHLSRReliability(TDataTreeIterator frameIt);
 		/// Write WPSR reliability
@@ -136,6 +148,7 @@ private:
 			allECVESummaries_,
 			allECSPSummaries_,
 			allINCLYSummaries_,
+			allROLLYSummaries_,
 			allECWSSummaries_, 
 			allEcwiXSummaries_, 
 			allEcwiZSummaries_,

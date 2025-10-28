@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+Â© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -103,6 +103,7 @@ private:
 	void	getUVECSimValues(TCAM& camera);
 
 	void    getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly);
+	void    getROLLYSimValues(const TROLLYROM& rollyROM, std::list<TROLLY>& rolly);
 
 	void    getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws);
 	void    getOBSXYZSimValues(std::list<TOBSXYZ>& obsxyz);

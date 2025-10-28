@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef SU_TLS_RESULTS_MATRICES_EXTRACTOR
 #define SU_TLS_RESULTS_MATRICES_EXTRACTOR
 
@@ -23,6 +18,7 @@ struct TECVEROM;
 struct TECSPROM;
 struct TORIEROM;
 struct TINCLYROM;
+struct TROLLYROM;
 struct TECWSROM;
 struct TECWIROM;
 
@@ -151,6 +147,9 @@ private:
 
 	/// Sets the INCLY measurement residual.
 	void extractINCLYROMObs(const TLSResultsMatrices &rm, TINCLYROM &inclyMeas);
+
+	/// Sets the ROLLY measurement residual.
+	void extractROLLYROMObs(const TLSResultsMatrices &rm, TROLLYROM &rollyMeas);
 
 	/// Sets the ECWS measurement residual.
 	void extractECWSROMObs(const TLSResultsMatrices &rm, TECWSROM &ecwsMeas);

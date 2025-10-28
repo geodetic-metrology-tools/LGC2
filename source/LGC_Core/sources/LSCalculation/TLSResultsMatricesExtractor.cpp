@@ -144,6 +144,10 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices &rm)
 			for (auto &itINCLY : itTree.node->data->measurements.fINCLY)
 				extractINCLYROMObs(rm, itINCLY);
 
+			// In every node iterate through the ROLLYROM's measurements
+			for (auto &itROLLY : itTree.node->data->measurements.fROLLY)
+				extractROLLYROMObs(rm, itROLLY);
+
 			// In every node iterate through the ECWSROM's measurements
 			for (auto &itECWS : itTree.node->data->measurements.fECWS)
 				extractECWSROMObs(rm, itECWS);
@@ -504,6 +508,69 @@ void TLSResultsMatricesExtractor::extractINCLYROMObs(const TLSResultsMatrices &r
 		{
 			logCritical() << "INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itINCLY.line << ")";
 			throw std::runtime_error("INCLY observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+		}
+	}
+}
+
+/*
+ * ROLLY ROM Observation Residual Extractor
+ * 
+ * Extracts computed residuals for ROLLY inclinometer measurements from the least
+ * squares results matrices and updates the measurement objects with their
+ * calculated residual values. This function is a critical post-processing step
+ * that bridges the mathematical least squares results with the measurement data
+ * structure for further analysis and output generation.
+ * 
+ * The function performs the following operations for each ROLLY measurement:
+ * - Retrieves the observation index from the measurement object
+ * - Validates that the index is within the bounds of the residuals vector
+ * - Extracts the computed residual value from the results matrices
+ * - Updates the measurement object with the calculated residual
+ * - Provides detailed error logging for debugging and validation
+ * 
+ * @param rm: Least Squares Results Matrices object containing computed residuals,
+ *             parameter estimates, and other adjustment results from the calculation
+ * @param rollyMeas: ROLLY Round of Measurements object that will be updated with
+ *                   extracted residual values for each measurement
+ * 
+ * @throws std::runtime_error: When observation index exceeds matrix dimensions,
+ *                             indicating a mismatch between measurement indexing
+ *                             and results matrix structure
+ * 
+ * @note This function is called after least squares adjustment completion to
+ *       populate measurement objects with computed residuals. It ensures that
+ *       the mathematical results are properly integrated back into the measurement
+ *       data structure for subsequent analysis, reliability assessment, and output
+ *       generation. The function includes comprehensive error checking to detect
+ *       indexing mismatches that could indicate serious calculation problems.
+ */
+void TLSResultsMatricesExtractor::extractROLLYROMObs(const TLSResultsMatrices &rm, TROLLYROM &rollyMeas)
+{
+	// Process each ROLLY measurement in the round to extract computed residuals
+	for (auto &itROLLY : rollyMeas.measROLLY)
+	{
+		// Get the observation index that corresponds to this measurement's position
+		// in the least squares results matrices (residuals vector, weight matrix, etc.)
+		MatrixIndex obsUidx = itROLLY.getFirstObservationIndex();
+		
+		// Validate that the observation index is within the bounds of the residuals vector
+		// This prevents array out-of-bounds access and indicates proper matrix indexing
+		if (obsUidx < rm.getResidualsVectByConst()->size())
+		{
+			// Extract the computed residual value from the results matrices at the specified index
+			// and update the measurement object with the calculated residual
+			// The residual represents the difference between observed and estimated values
+			itROLLY.setAngleResidual(TAngle(rm.getResidualsVctrElmt(obsUidx)));
+		}
+		else
+		{
+			// Log critical error with detailed information for debugging
+			// Include the input line number to help identify the problematic measurement
+			logCritical() << "ROLLY observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << itROLLY.line << ")";
+			
+			// Throw runtime error to prevent invalid data propagation
+			// This indicates a serious indexing mismatch that needs immediate attention
+			throw std::runtime_error("ROLLY observation, problem during extraction residuals: observation index exceeds matrix dimensions");
 		}
 	}
 }

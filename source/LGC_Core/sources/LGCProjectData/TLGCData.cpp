@@ -212,6 +212,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type)
 	case TMeasurementsGlobal::kINCLY:
 		fMeasInfo.fNumINCLY++;
 		break;
+	case TMeasurementsGlobal::kROLLY:
+		fMeasInfo.fNumROLLY++;
+		break;
 	case TMeasurementsGlobal::kECWS:
 		fMeasInfo.fNumECWS++;
 		break;
@@ -265,6 +268,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumOBSXYZ;
 	case TMeasurementsGlobal::kINCLY:
 		return fMeasInfo.fNumINCLY;
+	case TMeasurementsGlobal::kROLLY:
+		return fMeasInfo.fNumROLLY;
 	case TMeasurementsGlobal::kECWS:
 		return fMeasInfo.fNumECWS;
 	case TMeasurementsGlobal::kECWI:
@@ -306,6 +311,7 @@ void TLGCData::setDefaultValues()
 	fMeasInfo.fNumRADI = 0;
 	fMeasInfo.fNumOBSXYZ = 0;
 	fMeasInfo.fNumINCLY = 0;
+	fMeasInfo.fNumROLLY = 0;
 	fMeasInfo.fNumECWS = 0;
 	fMeasInfo.fNumECWI = 0;
 }
@@ -881,6 +887,7 @@ void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fNumRADI", fNumRADI);
 	obj.addProperty("fNumOBSXYZ", fNumOBSXYZ);
 	obj.addProperty("fNumINCLY", fNumINCLY);
+	obj.addProperty("fNumROLLY", fNumROLLY);
 	obj.addProperty("fNumECWS", fNumECWS);
 	obj.addProperty("fNumECWI", fNumECWI);
 }

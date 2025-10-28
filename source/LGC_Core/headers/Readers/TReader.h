@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef _READERS_READER_H_
 #define _READERS_READER_H_
 

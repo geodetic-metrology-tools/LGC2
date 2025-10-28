@@ -261,6 +261,10 @@ void TLSSimulation::simulateValues()
 		for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
 			getINCLYSimValues(itINCLY, itINCLY.measINCLY);
 
+		//In every node iterate through the ROLLY's measurements
+		for (auto& itROLLY : itTree.node->data->measurements.fROLLY)
+			getROLLYSimValues(itROLLY, itROLLY.measROLLY);
+
 		//In every node iterate through the ECWS's measurements
 		for (auto& itECWS : itTree.node->data->measurements.fECWS)
 			getECWSSimValues(itECWS, itECWS.measECWS);
@@ -467,6 +471,14 @@ void TLSSimulation::getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCL
 		TReal calcVal = fSimObs.getINCLYCalcMeas(inclyROM, itINCLY);
 		TReal sigma = itINCLY.target.sigmaAngl + itINCLY.target.sigmaPpm;
 		itINCLY.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
+	}
+}
+
+void TLSSimulation::getROLLYSimValues(const TROLLYROM& rollyROM, std::list<TROLLY>& rolly) {
+	for (auto& itROLLY : rolly) {
+		TReal calcVal = fSimObs.getROLLYCalcMeas(rollyROM, itROLLY);
+		TReal sigma = itROLLY.target.sigmaAngl + itROLLY.target.sigmaPpm;
+		itROLLY.setAngle(TAngle(getSimulatedValue(calcVal, sigma), TAngle::EUnits::kRadians));
 	}
 }
 

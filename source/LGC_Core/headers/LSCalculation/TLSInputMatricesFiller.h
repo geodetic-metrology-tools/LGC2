@@ -1,8 +1,3 @@
-/*
-© Copyright CERN 2000-2024. All rights reserved. This software is released under a CERN proprietary software license.
-Any permission to use it shall be granted in writing. Request shall be addressed to CERN through mail-KT@cern.ch
-*/
-
 #ifndef LS_INPUT_MATRICES_FILLER
 #define LS_INPUT_MATRICES_FILLER
 
@@ -146,6 +141,14 @@ private:
 
 	/// Add the design matrices contributions for the INCLY measurement.
 	void addINCLYContributions(TINCLYROM &inclyROM, TLSInputMatrices *matrices);
+
+	/// Add the design matrices contributions for the ROLLY measurement.
+	void addROLLYContributions(TROLLYROM &rollyROM, TLSInputMatrices *matrices);
+
+	/// Private helper function to unify INCLY and ROLLY contribution processing
+	template<typename TROM, typename TMeasList, typename TGetContrib>
+	void addINCLContributionsHelper(TROM &rom, TMeasList &measurements, TGetContrib getContrib, 
+		TLSInputMatrices *matrices, const std::string &measurementType);
 
 	/// Add the design matrices contributions for the ECWS measurement.
 	void addECWSContributions(TECWSROM &ecwsROM, TLSInputMatrices *matrices);

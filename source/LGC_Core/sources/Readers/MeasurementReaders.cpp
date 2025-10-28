@@ -1378,6 +1378,134 @@ void TKeyINCLY::parse(const std::vector<std::string> &tokens, bool activeLine, i
 	}
 }
 
+/*
+ * ROLLY Keyword Parser
+ * 
+ * Parses ROLLY inclinometer measurement data from input files and constructs
+ * measurement objects with appropriate parameters, instrument settings, and
+ * quality indicators. This function handles both header lines (defining new
+ * measurement rounds) and data lines (defining individual measurements).
+ * 
+ * The parser supports two types of input lines:
+ * 
+ * HEADER LINE (starts with "*"):
+ * - Defines a new ROLLY Round of Measurements (ROM)
+ * - Specifies the INCL instrument ID for the measurement round
+ * - Creates the measurement round container
+ * - Validates that ROLLY measurements are only in sub-frames
+ * 
+ * DATA LINE (measurement data):
+ * - Defines individual ROLLY measurements within a round
+ * - Specifies target point, observed angle, and optional parameters
+ * - Applies instrument settings and correction parameters
+ * - Handles duplicate detection and measurement validation
+ * 
+ * @param tokens: Vector of string tokens parsed from the input line
+ * @param activeLine: Boolean indicating if this line should be processed
+ * @param line: Line number for error reporting and debugging
+ * 
+ * @throws std::runtime_error: When input format is invalid, measurements are
+ *                             attempted in root frames, instruments are not found,
+ *                             or duplicate measurements are detected
+ * 
+ * @note ROLLY measurements use INCL instruments but maintain separate measurement
+ *       structures. The parser enforces sub-frame restrictions and provides
+ *       comprehensive parameter validation for robust measurement processing.
+ */
+void TKeyROLLY::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
+{
+	// Determine if this is a header line (starts with "*") or a data line
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+	
+	if (firstline)
+	{
+		// HEADER LINE: Create new ROLLY Round of Measurements (ROM)
+		
+		// Validate minimum required parameters: must have instrument ID
+		if (tokens.size() < 3)
+			throw std::runtime_error("ROLLY measurement must have at least 1 entry, the INCL instrument ID");
+
+		// ROLLY measurements are only allowed in sub-frames, not in root frames
+		// This restriction ensures proper frame hierarchy and transformation context
+		if (proj.getCurrentNode().ID.size() == 1)
+		{
+			throw std::runtime_error("ROLLY keyword is only allowed in sub-frames");
+		}
+
+		// Create new ROLLY measurement round with specified instrument and current position
+		// The instrument is retrieved from the instruments collection using the provided ID
+		TROLLYROM rollyRom(finstruments.getDevice(finstruments.fINCL, tokens.at(2)), proj.getCurrentPosition());
+		rollyRom.line = line;                    // Store line number for error reporting
+		rollyRom.setActive(activeLine);          // Set active status for the round
+
+		// Add the new measurement round to the current frame's measurements
+		proj.getCurrentNode().measurements.fROLLY.emplace_back(rollyRom);
+
+		// Store the instrument ID as default for subsequent measurements in this round
+		// Note: INCL instruments are used for ROLLY measurements but not stored in TROLLYROM
+		// because instrument settings are specific to each individual observation
+		defaultTargetApplied = finstruments.getDevice(finstruments.fINCL, tokens.at(2)).ID;
+	}
+	else
+	{
+		// DATA LINE: Process individual ROLLY measurement within existing round
+		
+		// Check if this measurement has all required parameters (point ID and angle)
+		// In simulation mode, angle values may not be required
+		bool hasAllParams = (tokens.size() > 1) && isNumber(tokens.at(1));
+		if (!hasAllParams && !proj.getConfig().sim.isActive())
+			throw std::runtime_error("ROLLY measurement must have at least 2 entries: stationed point ID and observed angle");
+
+		// Parse optional parameters and keywords from the input line
+		// Options include INSTR, OBSE, PPM, AC, ACSE, RF, RFSE, ID
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+
+		// Retrieve the target point object from the points collection
+		// This point represents the measurement target (stationed point)
+		const auto &stationPoint(fpoints.getObject(tokens.at(0)));
+
+		// Get the INCL instrument with current settings and apply any overrides
+		// The INSTR keyword can override the default instrument, otherwise use default
+		// Throws exception if the specified instrument is not found
+		TInstrumentData::TINCL instrument = finstruments.getDevice(
+			finstruments.fINCL, opts.getParamS("INSTR", defaultTargetApplied));
+
+		// Apply instrument parameter overrides from the input line
+		// All parameters support unit conversion for user convenience
+		instrument.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", instrument.sigmaAngl));           // Observation standard error (cc → rad)
+		instrument.sigmaPpm = TAngle(opts.getParamRurad2rad("PPM", instrument.sigmaPpm));            // Parts per million uncertainty (μrad → rad)
+		instrument.angleCorrectionValue = TAngle(opts.getParamRgon2rad("AC", instrument.angleCorrectionValue));           // Angle correction (gon → rad)
+		instrument.sigmaCorrectionValue = TAngle(opts.getParamRcc2rad("ACSE", instrument.sigmaCorrectionValue));           // Correction uncertainty (cc → rad)
+		instrument.refAngleCorrectionValue = TAngle(opts.getParamRgon2rad("RF", instrument.refAngleCorrectionValue));       // Reference correction (gon → rad)
+		instrument.refSigmaCorrectionValue = TAngle(opts.getParamRcc2rad("RFSE", instrument.refSigmaCorrectionValue));      // Reference uncertainty (cc → rad)
+
+		// Create ROLLY measurement object with target point and instrument settings
+		TROLLY rolly(stationPoint, instrument);
+
+		// Get reference to the current measurement round for adding this measurement
+		TROLLYROM &rollyROMLatest = proj.getCurrentNode().measurements.fROLLY.back();
+
+		// Check for duplicate measurements if NODUP configuration is active
+		// This prevents multiple measurements to the same target point in a single round
+		if (proj.getConfig().nodup.isActive())
+			for (auto &point : rollyROMLatest.measROLLY)
+				if (stationPoint.getName() == point.targetPos->getName())
+					throw std::runtime_error("A ROLLY measurement is duplicated");
+
+		// Set the observed angle value if provided (converted from gon to internal units)
+		if (hasAllParams)
+			rolly.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::EUnits::kGons));
+
+		// Set measurement metadata and active status
+		rolly.line = line;                                                                           // Store line number for error reporting
+		rolly.setActive(proj.getCurrentNode().measurements.fROLLY.back().isActive() && activeLine);   // Active only if ROM is active
+		rolly.obsID = std::string(opts.getParamS("ID", rolly.obsID));                               // Set observation ID (optional)
+
+		// Add the completed measurement to the current measurement round
+		proj.getCurrentNode().measurements.fROLLY.back().measROLLY.emplace_back(rolly);
+	}
+}
+
 void TKeyECWS::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
