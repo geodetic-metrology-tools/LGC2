@@ -174,7 +174,7 @@ LGC2 depends on two key submodules providing shared functionality and core routi
 | Submodule | Purpose | Repository (Internal) | Repository (Public) |
 |------------|----------|----------------------|---------------------|
 | **SurveyLib** | Core geodetic and adjustment algorithms shared across SU software | `https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib` | `https://github.com/geodetic-metrology-tools/SurveyLib` |
-| **SUSoftCMakeCommon** | Common CMake configuration, packaging setup, and compiler options | `https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon` | Included directly under `cmake_common/` |
+| **SUSoftCMakeCommon** | Common CMake configuration, packaging setup, and compiler options | `https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon` | `https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon` |
 
 LGC2 also uses the following third-party libraries fetched automatically via CMake’s [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html):
 
@@ -209,7 +209,6 @@ cd LGC2
 
 #### Submodule Setup
 
-##### SurveyLib
 
 - **Internal (CERN) users**
   ```bash
@@ -217,47 +216,33 @@ cd LGC2
   ```
 
 - **External (public GitHub) users**
-  Only the public **SurveyLib** submodule is available.  
-  The internal **SUSoftCMakeCommon** is replaced by the local `cmake_common/` directory.
+  **SurveyLib** and **SUSoftCMakeCommon** submodule are publicly available.  
+  
   ```bash
-  git submodule init lib/SurveyLib
-  git config submodule.lib/SurveyLib.url https://github.com/geodetic-metrology-tools/SurveyLib.git
-  git submodule update --remote lib/SurveyLib
+	# Initialize submodules without fetching content yet
+	git submodule init
+	
+	# Fix URLs for public repositories
+	git config submodule.lib/SurveyLib.url https://github.com/geodetic-metrology-tools/SurveyLib.git
+	git config submodule.lib/SUSoftCMakeCommon.url https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon.git
+	
+	# Fetch content from the corrected public URLs
+	git submodule update --remote lib/SurveyLib
+	git submodule update --remote lib/SUSoftCMakeCommon
   ```
 
 > Do **not** run `--recursive` before fixing the URL; the default CERN paths will fail for external users.
 
-##### SUSoftCMakeCommon Fallback (External Builds)
+##### External Dependency Configuration
 
-External contributors use the `cmake_common/` folder included in this repository as a self-contained replacement for `SUSoftCMakeCommon`.
+**SUSoftCMakeCommon** provides:
 
-If you cloned the CERN version, remove the submodule and use this fallback:
-```bash
-git rm --cached SUSoftCMakeCommon
-```
-
-Then in your main `CMakeLists.txt` in `source`, replace:
-
-```cmake
-include(${LIBRARIES_PATH}/SUSoftCMakeCommon/CMakeLists.txt)
-```
-by
-```cmake
-include(${LIBRARIES_PATH}/cmake_common/CMakeLists.txt)
-```
-
-This provides:
 - Default compiler and build flags
 - Doxygen setup options
 - Installer and packaging configuration (`create_default_installer`)
 - Helper functions for DLL copy and installer generation
 
-> Note: This fallback behavior has not yet been fully validated on all platforms.
-> If you encounter issues and manage to resolve them, please consider contributing your fixes or suggestions.
-
-##### External Dependency Configuration
-
-External developers can adjust `cmake_common/ext_libs.txt` to define paths for locally installed dependencies:
+External developers can adjust `"lib/SUSoftCMakeCommon/ext_libs.txt"` to define paths for locally installed dependencies:
 ```cmake
 set(EXT_LIB_PATH "C:/dev/ext")
 set(EIGEN_INCLUDE_PATH "${EXT_LIB_PATH}/eigen")
@@ -376,6 +361,7 @@ This distinction and file classification are defined in [`REUSE.toml`](./REUSE.t
 | TUT | BSD 2-Clause | [https://github.com/mrzechonek/tut-framework](https://github.com/mrzechonek/tut-framework) |
 | tree.hh | GPL-3.0-or-later | [https://github.com/kpeeters/tree.hh](https://github.com/kpeeters/tree.hh) |
 | SurveyLib | GPL-3.0-or-later | [https://github.com/geodetic-metrology-tools/SurveyLib](https://github.com/geodetic-metrology-tools/SurveyLib) |
+| SUSoftCMakeCommon | GPL-3.0-or-later | [https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon](https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon) |
 
 All license texts are available in the [`LICENSES/`](./LICENSES/) directory.  
 A summary of dependencies and license terms is included in [`NOTICE.md`](./NOTICE.md).

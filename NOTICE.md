@@ -35,6 +35,10 @@ All source and data files include SPDX headers or are declared in [`REUSE.toml`]
 - Source: https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib
 - Note: SurveyLib itself bundles additional third-party components under their own licenses.
   See SurveyLib’s NOTICE.md for details.
+  
+### SUSoftCMakeCommon
+- License: GNU General Public License v3.0 or later
+- Source: https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon
 
 ---
 
