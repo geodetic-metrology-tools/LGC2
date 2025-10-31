@@ -43,13 +43,10 @@ class TReader {
 		/// The reference to the project passed in the constructor is stored
 		TLGCData& project;
 		
-		/// Not asignable, contains reference
-		TReader& operator=(const TReader&);
-		
-		/// Vector of all observation ID
-		std::vector<std::string> updateListObsID(TDataTreeIterator itTree);
-
-	/// Check that there is no duplicated observation ID across all frames
-	bool hasDuplicateObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int>& globalObsIdMap, TFileLogger& outputMessages);
+	/// Not asignable, contains reference
+	TReader& operator=(const TReader&);
+	
+	/// Register observation IDs from current frame and check for duplicates across all frames
+	bool checkAndRegisterObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int>& globalObsIdMap, TFileLogger& outputMessages);
 };
 #endif
