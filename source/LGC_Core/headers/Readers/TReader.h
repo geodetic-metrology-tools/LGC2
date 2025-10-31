@@ -49,7 +49,7 @@ class TReader {
 		/// Vector of all observation ID
 		std::vector<std::string> updateListObsID(TDataTreeIterator itTree);
 
-		/// Check that there is no duplicated observation ID across all frames
-		bool hasDuplicateObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int>& globalObsIdMap, TFileLogger& outputMessages);
+	/// Check that there is no duplicated observation ID across all frames
+	bool hasDuplicateObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int>& globalObsIdMap, TFileLogger& outputMessages);
 };
 #endif

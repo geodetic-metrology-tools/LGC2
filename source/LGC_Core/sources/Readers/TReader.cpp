@@ -439,7 +439,7 @@ bool TReader::read(std::istream &lgcStream)
 
 		// Collect IDs and check for duplicates across all frames
 		listObsId = updateListObsID(itTree);
-		if (hasDuplicateObsId(itTree, globalObsIdMap, outputMessages))
+		if (checkAndRegisterObsId(itTree, globalObsIdMap, outputMessages))
 			break;
 
 		// Update obsIdwidth
@@ -717,8 +717,8 @@ std::vector<std::string> TReader::updateListObsID(TDataTreeIterator itTree)
 	return listObsId;
 }
 
-/// Check that there is no duplicated observation ID across all frames
-bool TReader::hasDuplicateObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int> &globalObsIdMap, TFileLogger &outputMessages)
+/// Register observation IDs from current frame and check for duplicates across all frames
+bool TReader::checkAndRegisterObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int> &globalObsIdMap, TFileLogger &outputMessages)
 {
 	std::string duplicateId;
 	int duplicateLine = -1;
