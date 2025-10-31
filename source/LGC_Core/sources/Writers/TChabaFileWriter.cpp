@@ -47,7 +47,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 				writeInputPoints(obsActif); // first node is root
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 
 			const std::vector<TOBSXYZ> obsPassif = keepOBSXYZ(itTree);
 			(*stream) << endl << sep << "PASSIF" << endl;
@@ -55,7 +55,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 				writeInputPoints(obsPassif);
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			// write results
@@ -65,7 +65,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 				writeTransformedPoints(pairActif, true, fProjectData->getTree().begin());
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairPassif = createPair(itTree);
@@ -74,7 +74,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 				writeTransformedPoints(pairPassif, true, itTree);
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<LGCAdjustablePoint> secondaryPts = createSecPoint(itTree);

@@ -39,28 +39,28 @@ void TFileLogger::writeNumberOfLogs()
     } 
 }
 
-TFileLogger::~TFileLogger () 
+TFileLogger::~TFileLogger()
 {
-    if (outputFile.is_open()) {
-        outputFile << std::endl ;
+	if (outputFile.is_open())
+	{
+		outputFile << std::endl;
 
-        // Report number of errors and warnings
-        outputFile << numWarnings << " warnings" << std::endl;
-        outputFile << numErrors << " errors" << std::endl << std::endl;
+		// Report number of errors and warnings
+		outputFile << numWarnings << " warnings" << "\n";
+		outputFile << numErrors << " errors" << "\n" << "\n";
 
-
-		//link to the user guide
+		// link to the user guide
 		outputFile << "User guide: "
-				   << "https://confluence.cern.ch/display/SUS/LGC2+User+Guide" << std::endl
-				   << std::endl;
-		outputFile << "For problematic cases consider checking the initial residuals (*ALLFIXED option or fixing variables)" << std::endl
-				   << "or use the *CONSI option to check the geometric consistency of the configuration." << std::endl;
+				   << "https://lgc2.docs.cern.ch/" << "\n"
+				   << "\n";
+		outputFile << "For problematic cases consider checking the initial residuals (*ALLFIXED option or fixing variables)" << "\n"
+				   << "or use the *CONSI option to check the geometric consistency of the configuration." << "\n";
 		outputFile << "Please report issues via Jira: "
-				   << "https://cern.ch/lgc2-bug" << std::endl;
+				   << "https://cern.ch/lgc2-bug" << "\n";
+		outputFile << "Or via GitHub issues." << "\n";
 
-
-        outputFile.close();
-    } 
+		outputFile.close();
+	}
 }
 
 TFileLogger &operator<<(TFileLogger &logger, const TFileLogger::e_logType l_type){
