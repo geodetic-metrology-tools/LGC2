@@ -4,8 +4,28 @@ Thank you for your interest in improving **LGC2**!
 
 Contributions of all kinds are welcome — code, documentation, testing, or design discussions.  
 Please read the following guidelines before opening a Pull Request or submitting code.
+This guide applies to contributions made through the GitHub repository, which is now the primary platform for development and collaboration on LGC2.
 
 [[_TOC_]]
+
+---
+## GitHub vs GitLab Notice
+
+Historically, the **LGC2** project has been developed within **CERN’s GitLab environment** (`gitlab.cern.ch`).  
+The **2.10.0 release** was fully built and maintained using this internal infrastructure.  
+
+The project is now entering a **transition phase** toward a more open and collaborative model.  
+Development will progressively move to **GitHub**, with future updates and development work published under the `appwidevs` branch (check this branch for status update)  
+This migration aims to make the project’s source code, issue tracking, and documentation more accessible to the broader scientific and open-source communities.  
+It also creates new opportunities for **community contributors** to participate in development, testing, and documentation improvements.
+
+For the time being, the **continuous integration and deployment (CI/CD)** processes continue to run on CERN’s GitLab infrastructure.
+In a later phase, the CI/CD system will also be **migrated to GitHub**, providing a unified, open workflow for building, testing, and packaging the software.  
+This migration will represent a **valuable entry point for contributors**.
+
+> During this transition, both GitLab and GitHub repositories will remain synchronized,  
+> and development activity will increasingly focus on GitHub.  
+> For contribution procedures, please continue reading below.
 
 ---
 
@@ -36,13 +56,20 @@ Commits without a valid `Signed-off-by` line will not be accepted for merging.
 
 ### Future Relicensing Notice
 
-LGC2 is currently distributed under the **GNU General Public License v3.0 or later (GPL-3.0-or-later)**.  
-The “or later” clause allows the project owner (CERN) to relicense future versions under a more permissive license if deemed appropriate (for example, Apache-2.0 or another open license).
-By signing off your contributions, you acknowledge and permit such future relicensing under the terms of the GPL “or later” provision.
+LGC2 is currently distributed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+CERN, as the project steward, may — if all dependencies and legal conditions permit — **relicense or dual-license future versions of the project under another OSI-approved open-source license** (for example, **LGPL-3.0**, **Apache-2.0**, or **MIT**) to facilitate wider scientific, academic, and industrial reuse.  
+
+By signing your commits in accordance with the [Developer Certificate of Origin (DCO)](./DCO.txt), you explicitly acknowledge and authorize CERN to include your contributions in such future relicensed or dual-licensed versions, **provided that any new license remains OSI-approved and preserves open access to the source code.**
+
+Any future relicensing will remain within the framework of recognized open-source principles and will never introduce proprietary or restrictive terms.
 
 ---
 
 ## Branching and Workflow
+
+Members of the LGC team (maintainers) can push branches directly to the main repository, while community contributors are encouraged to work through forks and pull requests.
+All changes go through review before being merged.
 
 LGC2 uses a lightweight branching model compatible with both GitHub and CERN GitLab.
 
@@ -59,16 +86,10 @@ Before merging:
 - Your branch must be up to date with `appwidevs`.  
 - If needed, **rebase** to resolve conflicts.  
 
-### Internal contributors (CERN personnel)
-Developers with write access can create branches directly in this repository.  
-Changes must be proposed via **Pull Requests (PRs)** and merged only after review and CI validation by a **Maintainer**.
-
-### External contributors
-This repository follows the standard **fork → pull request → review → merge** workflow.
 
 ### Contribution Steps
 
-1. **Fork** the repository (external contributors).  
+1. **Fork** the repository (community contributors).  
 2. **Create a branch** from `appwidevs`:  
    ```bash
    git checkout appwidevs
@@ -76,11 +97,11 @@ This repository follows the standard **fork → pull request → review → merg
    ```
 3. **Implement changes** and add tests.  
 4. **Commit** with DCO sign-off (`git commit -s`).  
-5. **Push** your branch and **open a Pull Request** (PR) to `appwidevs`.  
-6. A CERN maintainer will review and merge after CI passes.
+5. Submit a **Pull Request (PR)** to `appwidevs`.  
+6. Your PR will be reviewed and validated before merging.
 
-> Internal contributors can create branches directly in the main repo but must still go through PR review.
-> All PRs are reviewed by CERN maintainers. Once approved, changes are merged into the main repository and validated by the internal CI/CD system.
+> Project members can create branches directly in the main repo but must still go through PR review.
+> All PRs are reviewed by LGC maintainers. Once approved, changes are merged into the main repository and validated by the internal CI/CD system.
 
 ### Commit Best Practices
 
@@ -114,7 +135,8 @@ All PRs undergo automated checks and human review.
    - Correctness and unit test coverage  
    - Compliance with project conventions  
 
-> Only CERN maintainers can merge PRs into protected branches after all checks pass.
+> Only **LGC Maintainers** can merge Pull Requests into protected branches once all checks have passed.  
+> See the [Testing and CI/CD](#testing-and-cicd) section for details about the current pipeline configuration.
 
 ---
 
@@ -198,26 +220,17 @@ Tests are implemented using **TUT** and executed automatically during CI.
 
 The internal CI/CD system ensures safe use of protected CERN resources.  
 
-A public CI workflow (for example, using GitHub Actions) is not yet implemented, but could be a valuable contribution for external collaborators interested in automating build and test validation outside the CERN environment.
-
-
-#### Current situation
+#### Current Situation
 - **Primary development:** GitHub  
 - **CI/CD execution:** CERN GitLab mirror  
-- Pipelines run on **protected CERN runners**, only triggerable by **CERN maintainers** or **vetted personnel** after merging to protected branches (`appwidevs`, `master`, etc.).  
-- External pull requests **do not trigger internal CI/CD** directly — validation occurs after merge.
+- Pipelines run on **protected CERN runners** and can only be triggered by **LGC Maintainers with CERN credentials** after merges to protected branches (`appwidevs`, `master`, etc.).  
+  This ensures secure use of CERN resources and verified provenance of all executed code.  
+- Pull requests from forks **do not yet trigger internal CI/CD** — validation occurs after merging.
 
-This ensures:
-- Secure use of CERN computing resources  
-- Protection of internal credentials and deployment tokens  
-- Verified provenance of all executed code  
-
-#### Future plan
-The project aims to **gradually migrate CI/CD to GitHub Actions** so that:
-- Basic build and test checks run directly on GitHub for *all* contributors  
-- Sensitive deployment steps remain protected on CERN GitLab until safely externalized  
-
-This migration is **open to contribution** — if you’re familiar with GitHub Actions, you’re invited to help define or port parts of the existing GitLab pipeline.
+#### Future Plan
+The project aims to **gradually migrate CI/CD to GitHub Actions**, enabling build and test validation directly on GitHub for all contributors.  
+Sensitive deployment steps will remain on CERN GitLab until safely externalized.  
+Community participation in this migration — particularly from contributors familiar with GitHub Actions — is warmly welcomed.
 
 ### Test Requirements
 
@@ -238,8 +251,7 @@ LGC2 contributors are expected to uphold **CERN’s core values** of:
 
 ## Contacts and Maintainers
 
-
-You may reach the maintainers via GitHub discussions or CERN internal email lists.
+You may reach the maintainers via GitHub discussions or email lists.
 
 ---
 

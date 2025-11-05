@@ -26,14 +26,34 @@ Key improvements:
 ---
 
 ## Download
-The latest compiled versions of **LGC2** are currently available through CERN’s internal repositories.
+The latest compiled versions of **LGC2** are currently available through:
 
 - **CERN users:** Access the official releases on [CERN GitLab Releases](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/releases).  
-- **External collaborators:** Temporary public builds are available for download [here](https://cernbox.cern.ch/s/CXj9Am33jGah5a8).
+- **Community:** builds are available for download [here](https://cernbox.cern.ch/s/CXj9Am33jGah5a8).
 
 Both **Windows** and **Linux** versions are provided at this link.
 
 > A permanent public distribution platform (e.g. GitHub Releases) will be defined once the open-source publication process is finalized.	
+
+---
+
+## GitHub vs GitLab Notice
+
+Historically, the **LGC2** project has been developed within **CERN’s GitLab environment** (`gitlab.cern.ch`).  
+The **2.10.0 release** was fully built and maintained using this internal infrastructure.  
+
+The project is now entering a **transition phase** toward a more open and collaborative model.  
+Development will progressively move to **GitHub**, with future updates and development work published under the `appwidevs` branch (check this branch for status update)  
+This migration aims to make the project’s source code, issue tracking, and documentation more accessible to the broader scientific and open-source communities.  
+It also creates new opportunities for **community contributors** to participate in development, testing, and documentation improvements.
+
+For the time being, the **continuous integration and deployment (CI/CD)** processes continue to run on CERN’s GitLab infrastructure.
+In a later phase, the CI/CD system will also be **migrated to GitHub**, providing a unified, open workflow for building, testing, and packaging the software.  
+This migration will represent a **valuable entry point for contributors**.
+
+> During this transition, both GitLab and GitHub repositories will remain synchronized,  
+> and development activity will increasingly focus on GitHub.  
+> For those wishing to contribute already through GitHub, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) guide.
 
 ---
 
@@ -44,7 +64,7 @@ Both **Windows** and **Linux** versions are provided at this link.
 Comprehensive user documentation is available in two forms:
 
 - **[CERN Internal User Guide](https://confluence.cern.ch/display/SUS/LGC2+User+Guide)** — maintained within CERN’s Confluence environment.  
-- **[Public User Guide](https://lgc2.docs.cern.ch/)** — hosted externally for the open-source community.
+- **[Public User Guide](https://lgc2.docs.cern.ch/)**.
 
 The long-term goal is to maintain the **public user guide** as the single, authoritative source of documentation.  
 As of September 2025, the migration is in progress, and most content is being consolidated into the public **MkDocs-based** documentation site, which will also be hosted in the same GitHub organization.
@@ -63,7 +83,7 @@ Once built, open the following file as the main entry point for the developer do
 build/html/index.html
 ```
 > The Doxygen coverage is currently partial. There are no immediate plans to maintain or complete it.
-> This could be an interesting area for external contributions aiming to improve the understanding of the LGC2 codebase.
+> This could be an interesting area for contributions aiming to improve the understanding of the LGC2 codebase.
 
 ### Additional Documentation
 
@@ -76,7 +96,7 @@ Additional materials can be found in the [`doc/`](./doc) directory.
 
 ## Build instructions
 These instructions describe how to build and package **LGC2** from source on Windows and Linux.  
-They cover both internal CERN environments (with access to private submodules) and external open-source setups.
+They cover both GitLab (with access to private submodules) and GitHub setups.
 
 > In the future, only build instructions for the public repository should be provided.
 
@@ -85,10 +105,10 @@ They cover both internal CERN environments (with access to private submodules) a
 LGC2 can be built on both **Windows** and **Linux** platforms.  
 It is primarily developed with **CMake** and supports multiple build environments, including **Visual Studio**, **Eclipse**, and standard **Unix Makefiles**.
 
-CERN internal developers can refer to the detailed Confluence guide for the full setup and environment configuration:  
+CERN developers can refer to the detailed Confluence guide for the full setup and environment configuration:  
 **[Getting Started with C++ for Survey Applications (CERN internal)](https://confluence.cern.ch/pages/viewpage.action?pageId=22153013)**
 
-External contributors can follow the summarized instructions below.
+Community contributors can follow the summarized instructions below.
 
 ### Prerequisites
 
@@ -107,7 +127,7 @@ The following tools and dependencies are required:
 
 #### Windows Environment (External Setup)
 
-If you are developing on **Windows**, follow these summarized steps adapted from the CERN internal setup:
+If you are developing on **Windows**, follow these summarized steps adapted from the typical setup:
 
 1. **Install Visual Studio 2019 or later**  
    - Launch Visual Studio Installer → *Modify Installation* → *Individual Components* tab.  
@@ -176,14 +196,12 @@ LGC2 depends on two key submodules providing shared functionality and core routi
 | **SurveyLib** | Core geodetic and adjustment algorithms shared across SU software | `https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib` | `https://github.com/geodetic-metrology-tools/SurveyLib` |
 | **SUSoftCMakeCommon** | Common CMake configuration, packaging setup, and compiler options | `https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon` | `https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon` |
 
-LGC2 also uses the following third-party libraries fetched automatically via CMake’s [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html):
+LGC2 also uses the following third-party library fetched automatically via CMake’s [`FetchContent`](https://cmake.org/cmake/help/latest/module/FetchContent.html):
 
 - **[tree.hh](https://github.com/kpeeters/tree.hh)** – A lightweight C++ header-only tree container used for hierarchical data.  
   _Licensed under the [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html)._
 
-These dependencies are cloned automatically during configuration. 
-
-You do **not** need to install them manually.
+You do **not** need to install it manually.
 
 > `tree.hh` is licensed under GPL-3.0, a strong copyleft license. Distributing binaries that include it requires providing full source code and license text.
 
@@ -192,12 +210,12 @@ You do **not** need to install them manually.
 
 #### Clone the repository
 
-- **CERN internal clone:**
+- **from gitlab.cern.ch (if accessible):**
   ```bash
   git clone https://gitlab.cern.ch/apc/susofts/processing/LGC2.git
   ```
 
-- **Public GitHub clone:**
+- **from github:**
   ```bash
   git clone https://github.com/geodetic-metrology-tools/LGC2.git
   ```
@@ -210,12 +228,12 @@ cd LGC2
 #### Submodule Setup
 
 
-- **Internal (CERN) users**
+- **from gitlab.cern.ch (if accessible)**
   ```bash
   git submodule update --init --recursive
   ```
 
-- **External (public GitHub) users**
+- **from github:**
   **SurveyLib** and **SUSoftCMakeCommon** submodule are publicly available.  
   
   ```bash
@@ -231,7 +249,7 @@ cd LGC2
 	git submodule update --remote lib/SUSoftCMakeCommon
   ```
 
-> Do **not** run `--recursive` before fixing the URL; the default CERN paths will fail for external users.
+> Do **not** run `--recursive` before fixing the URL; the default CERN paths will fail for GitHub users.
 
 ##### External Dependency Configuration
 
@@ -242,7 +260,7 @@ cd LGC2
 - Installer and packaging configuration (`create_default_installer`)
 - Helper functions for DLL copy and installer generation
 
-External developers can adjust `"lib/SUSoftCMakeCommon/ext_libs.txt"` to define paths for locally installed dependencies:
+Community contributors can adjust `"lib/SUSoftCMakeCommon/ext_libs.txt"` to define paths for locally installed dependencies:
 ```cmake
 set(EXT_LIB_PATH "C:/dev/ext")
 set(EIGEN_INCLUDE_PATH "${EXT_LIB_PATH}/eigen")
@@ -321,27 +339,27 @@ It is recommended to test the installer in a clean or virtual environment before
 
 ## Contributing
 
-All contributions are **warmly welcomed** — whether from CERN personnel, collaborators from other institutes, or independent developers interested in large-scale or geodetic metrology software.
+All contributions are **warmly welcomed** — whether from CERN personnel, collaborators from other institutes, or community contributors interested in large-scale or geodetic metrology software.
 
 ### How to Report Issues
 
-- **CERN contributors:**  
+- **CERN contributors/Users:**  
   Report or track issues on the [CERN Jira board](https://its.cern.ch/jira/browse/SUS).  
-  All internal developments and bug reports must have a corresponding Jira issue.
+  All developments and bug reports must have a corresponding Jira issue.
 
-- **External contributors:**  
+- **Open contributors:**  
   Open a [GitHub Issue](https://github.com/geodetic-metrology-tools/LGC2/issues) to:  
   - Report bugs  
   - Suggest improvements or new features  
   - Discuss documentation or CI/CD integration  
 
-> Maintainers will ensure smooth coordination between the internal and public issue-tracking systems.
+> Maintainers will ensure smooth coordination between JIRA and GitHub issue-tracking systems. Some automatation from JIRA to Github could be implemented.
 > Future plans include publishing a consolidated project roadmap, milestone tracker, and CI/CD activity dashboard.
 
 ### How to Contribute Code
 
 This repository follows the standard **fork → pull request → review → merge** workflow.
-See the [`CONTRIBUTING.md`](./CONTRIBUTING.md) for details about how to contribute for **CERN personnel** and **externals**.
+See the [`CONTRIBUTING.md`](./CONTRIBUTING.md) for details about how to contribute.
 
 ---
 
