@@ -158,7 +158,7 @@ If you are developing on **Windows**, follow these summarized steps adapted from
      git clone https://github.com/mrzechonek/tut-framework.git
      cd tut-framework && git checkout 2016-12-19
      ```  
-   - Place both in a directory accessible to your project (e.g. `C:\dev\ext\`).
+   - Place both in a directory accessible to your project (e.g. `C:\susoft\ext\`).
 
 6. **Install Doxygen and GraphViz (optional)**  
    - [Doxygen](https://www.doxygen.nl/download.html)  
@@ -347,13 +347,13 @@ All contributions are **warmly welcomed** — whether from CERN personnel, colla
   Report or track issues on the [CERN Jira board](https://its.cern.ch/jira/browse/SUS).  
   All developments and bug reports must have a corresponding Jira issue.
 
-- **Open contributors:**  
+- **Community contributors:**  
   Open a [GitHub Issue](https://github.com/geodetic-metrology-tools/LGC2/issues) to:  
   - Report bugs  
   - Suggest improvements or new features  
   - Discuss documentation or CI/CD integration  
 
-> Maintainers will ensure smooth coordination between JIRA and GitHub issue-tracking systems. Some automatation from JIRA to Github could be implemented.
+> Maintainers will ensure smooth coordination between JIRA and GitHub issue-tracking systems. Some automation from JIRA to Github could be implemented.
 > Future plans include publishing a consolidated project roadmap, milestone tracker, and CI/CD activity dashboard.
 
 ### How to Contribute Code

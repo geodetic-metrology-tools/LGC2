@@ -100,7 +100,7 @@ Before merging:
 5. Submit a **Pull Request (PR)** to `appwidevs`.  
 6. Your PR will be reviewed and validated before merging.
 
-> Project members can create branches directly in the main repo but must still go through PR review.
+> Maintainers can create branches directly in the main repo but must still go through PR review.
 > All PRs are reviewed by LGC maintainers. Once approved, changes are merged into the main repository and validated by the internal CI/CD system.
 
 ### Commit Best Practices
