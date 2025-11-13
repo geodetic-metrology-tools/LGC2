@@ -55,6 +55,8 @@ This migration will represent a **valuable entry point for contributors**.
 > and development activity will increasingly focus on GitHub.  
 > For those wishing to contribute already through GitHub, please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) guide.
 
+**At this stage, the GitHub repository remains private and will be made public after the contribution workflow and Developer Certificate of Origin (DCO) receive formal approval from CERN’s Open Source Program Office (OSPO).**
+
 ---
 
 ## Documentation
@@ -339,7 +341,10 @@ It is recommended to test the installer in a clean or virtual environment before
 
 ## Contributing
 
+**At this stage, the GitHub repository remains private and will be made public after the contribution workflow and Developer Certificate of Origin (DCO) receive formal approval from CERN’s Open Source Program Office (OSPO).**
+
 All contributions are **warmly welcomed** — whether from CERN personnel, collaborators from other institutes, or community contributors interested in large-scale or geodetic metrology software.
+However, contribution workflows are not yet enabled while the approval process is ongoing.
 
 ### How to Report Issues
 
@@ -358,8 +363,8 @@ All contributions are **warmly welcomed** — whether from CERN personnel, colla
 
 ### How to Contribute Code
 
-This repository follows the standard **fork → pull request → review → merge** workflow.
-See the [`CONTRIBUTING.md`](./CONTRIBUTING.md) for details about how to contribute.
+Code contributions are **temporarily disabled** until the OSPO approval process is completed.  
+The repository will accept Pull Requests once the contribution model and DCO are officially validated.
 
 ---
 
