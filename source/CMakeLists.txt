@@ -46,7 +46,6 @@ configure_file (
 # Make surveylib sublibraries available
 SET(SURVEYLIB_ROOT ${LIBRARIES_PATH}/SurveyLib)
 
-
 IF(MSVC)
 	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
 	ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)

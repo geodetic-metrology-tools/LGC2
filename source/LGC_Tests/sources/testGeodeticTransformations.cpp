@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <TCCS2CGRFTransformation.h>
 #include <TCGRF2LGTransformation.h>
 #include <TILG2ILATransformation.h>

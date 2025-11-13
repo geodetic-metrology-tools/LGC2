@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef SU_TA_LGC_OBJECTWRITER
 #define SU_TA_LGC_OBJECTWRITER
 

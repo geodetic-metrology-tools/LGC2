@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef TCONTRIBUTION_GENERATOR_H
 #define TCONTRIBUTION_GENERATOR_H
 

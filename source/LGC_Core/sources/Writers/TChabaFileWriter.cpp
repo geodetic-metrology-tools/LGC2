@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "TChabaFileWriter.h"
 
 #include <TAStreamFormatter.h>
@@ -35,7 +39,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 			writeHelmertTransformationDetails(itTree.node->data->frame, itTree.node->data->ID);
 
 			// write the input data
-			(*stream) << sep << "DONNÉES D'ENTRÉE" << endl << endl;
+			(*stream) << sep << "DONNeES D'ENTReE" << endl << endl;
 			(*stream) << sep << "ACTIF" << endl;
 
 			const std::vector<TOBSXYZ> obsActif = keepOBSXYZ(fProjectData->getTree().begin());
@@ -43,7 +47,7 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 				writeInputPoints(obsActif); // first node is root
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 
 			const std::vector<TOBSXYZ> obsPassif = keepOBSXYZ(itTree);
 			(*stream) << endl << sep << "PASSIF" << endl;
@@ -51,32 +55,32 @@ void TChabaFileWriter::writeFile(TAStreamFormatter *stream)
 				writeInputPoints(obsPassif);
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			// write results
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairActif = createPair(fProjectData->getTree().begin());
-			(*stream) << sep << "NOUVELLES COORDONNÉES DES POINTS REFERENCE (ACTIF)" << endl << endl;
+			(*stream) << sep << "NOUVELLES COORDONNeES DES POINTS REFERENCE (ACTIF)" << endl << endl;
 			if (!pairActif.empty())
 				writeTransformedPoints(pairActif, true, fProjectData->getTree().begin());
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<std::pair<LGCAdjustablePoint, TOBSXYZ>> pairPassif = createPair(itTree);
-			(*stream) << sep << "COORDONNÉES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTÈME" << endl << endl;
+			(*stream) << sep << "COORDONNeES DES POINTS REFERENCE (PASSIF) DANS LE NOUVEAU SYSTeME" << endl << endl;
 			if (!pairPassif.empty())
 				writeTransformedPoints(pairPassif, true, itTree);
 			else
 				(*stream)
-					<< "Don't be able to display data. See https://confluence.cern.ch/pages/viewpage.action?pageId=55117116 for a correct input file and output data" << endl;
+					<< "Don't be able to display data. See https://lgc2.docs.cern.ch/latest/ResultFiles/CHABA/ for a correct input file and output data" << endl;
 			(*stream) << endl << endl;
 
 			const std::vector<LGCAdjustablePoint> secondaryPts = createSecPoint(itTree);
 			if (!secondaryPts.empty())
 			{
-				(*stream) << sep << "COORDONNÉES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTÈME" << endl << endl;
+				(*stream) << sep << "COORDONNeES POINTS MODIFIES (PASSIFS) DANS LE NOUVEAU SYSTeME" << endl << endl;
 				writeTransformedSecondaryPoints(secondaryPts);
 			}
 		}
@@ -119,7 +123,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << endl;
 	(*stream) << sep << "FRAME\t" << helmert.getName() << "  ID(" << nameID << ")" << endl;
 	(*stream) << endl;
-	(*stream) << sep << "**************** INFORMATION CONCERNANT LES PARAMETRES CALCULÉS ********************" << endl;
+	(*stream) << sep << "**************** INFORMATION CONCERNANT LES PARAMETRES CALCULeS ********************" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 	(*stream) << sep << "*                         TERMES DE LA MATRICE DE ROTATION:                        *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
@@ -184,7 +188,7 @@ void TChabaFileWriter::writeHelmertTransformationDetails(const TAdjustableHelmer
 	(*stream) << sep << sep << sep << sep << "   " << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << sep << "*" << endl;
 
 	(*stream) << sep << "*                                                                                  *" << endl;
-	(*stream) << sep << "*        FACTEUR D'ÉCHELLE (SANS UNITÉ):                                           *" << endl;
+	(*stream) << sep << "*        FACTEUR D'eCHELLE (SANS UNITe):                                           *" << endl;
 	(*stream) << sep << "*                                                                                  *" << endl;
 
 	(*stream) << sep << "*" << sep << sep << sep << "ECH = ";
@@ -394,8 +398,7 @@ void TChabaFileWriter::writeTitle()
 
 	(*stream) << "     "
 			  << "LGC - Best-Fit " << TLGCApp::getProgId() << endl;
-	(*stream) << "     "
-			  << "Copyright 2003 - 2016, CERN ACE / SU.All rights reserved." << endl
+	(*stream) << "     " << (TLGCApp::getCopyright()) << endl
 			  << endl;
 
 	(*stream) << "***********************************************************************************************************" << endl;

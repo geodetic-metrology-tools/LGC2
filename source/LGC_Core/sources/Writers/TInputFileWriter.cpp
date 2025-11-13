@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TInputFileWriter.cpp : implementation class
 // Write an LGC "input" file from the current virtual LGC data
 //
-// Copyright 2003-2008 M.Jones, CERN, EST/SU. All rights reserved.
 ////////////////////////////////////////////////////////////////////////////////////
 
 #include "TInputFileWriter.h"

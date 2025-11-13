@@ -1,7 +1,8 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 #ifndef _LGC_TESTS_WPSR_H
 #define _LGC_TESTS_WPSR_H
@@ -1022,7 +1023,7 @@ char const *const ECWI_OLOC_18 = "*TITR\n"
 
 /*testing on IP8 */
 char const *const ECWI_LEP_1 = "*TITR\n"
-							   "Fichier d'input créé le 27-JUL-2022 15:53:46\n"
+							   "Fichier d'input cree le 27-JUL-2022 15:53:46\n"
 							   "Mesures du 20-JUL-2022 07:59:59\n"
 							   "LOW BETA 3D IP8\n"
 							   "*LEP\n"

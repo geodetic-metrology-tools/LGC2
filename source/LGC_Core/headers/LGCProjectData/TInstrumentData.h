@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef _INSTRUMENTDATA_H_
 #define _INSTRUMENTDATA_H_
 

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef SU_TLS_RESULTS_MATRICES_EXTRACTOR
 #define SU_TLS_RESULTS_MATRICES_EXTRACTOR
 

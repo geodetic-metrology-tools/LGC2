@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "TLOR2LOR.h"
 
 #include "TAdjustableHelmertTransformation.h"

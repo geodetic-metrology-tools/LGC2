@@ -1,0 +1,53 @@
+version = 1
+
+
+# --- Documentation and metadata ---
+[[annotations]]
+path = [
+    "doc/**",
+    ".clang-format",
+    ".editorconfig",
+    ".gitignore",
+    ".gitlab-ci.yml",
+    ".gitmodules",
+    "*.md",
+	"DCO.txt",
+	"LGC.ico",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "CERN"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# --- Source, scripts, and build/config files ---
+[[annotations]]
+path = [
+    "source/**/CMakeLists.txt", 
+    "source/**/*.def",
+    "source/**/*.in",
+    "source/**/*.py",
+    "source/**/*.cmake",
+    "source/**/*.dox",
+	"lib/cmake_common/*",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "CERN"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# --- Test files and simulation outputs (no copyright) ---
+[[annotations]]
+path = [
+    "source/LGC_Tests/testFiles/**/*.inp",
+    "source/LGC_Tests/testFiles/**/*.lgc",
+    "source/LGC_Tests/testFiles/**/*.lgc2",
+    "source/LGC_Tests/testFiles/**/*.sim",
+    "source/LGC_Tests/testFiles/**/*.xml",
+    "source/LGC_Tests/testFiles/**/*.pun",
+    "source/LGC_Tests/testFiles/**/*.output",
+    "source/LGC_Tests/testFiles/**/*.res",
+    "source/LGC_Tests/testFiles/**/*.out",
+    "source/LGC_Tests/testFiles/**/*.m",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+

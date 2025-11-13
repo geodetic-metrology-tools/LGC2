@@ -1,3 +1,4 @@
+include(${CMAKE_SOURCE_DIR}/LGC_Core/tree.cmake)
 include_directories(${CMAKE_SOURCE_DIR}
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/ContributionsGenerators
 					${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCAdjustableObjects
@@ -15,7 +16,6 @@ include_directories(${CMAKE_SOURCE_DIR}
 
 SET(CORE_INCLUDE_PATH 	${PROJECT_SOURCE_DIR}/LGC_Core/headers)
 SET(CORE_SOURCES_PATH 	${PROJECT_SOURCE_DIR}/LGC_Core/sources)
-					
 					
 # Create a variable containing all .h files:
 set(Core_HEADERS 	
@@ -50,7 +50,6 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCProject/Global.h
 	${CORE_INCLUDE_PATH}/LGCProject/Defaults.h
 	${CORE_INCLUDE_PATH}/LGCProject/DoxygenModulesDefinitions.h
-	${CORE_INCLUDE_PATH}/LGCProjectData/tree.h
 	${CORE_INCLUDE_PATH}/LGCProjectData/TTreeEntry.h
 	${CORE_INCLUDE_PATH}/LGCProjectData/TLGCStatistic.h
 	${CORE_INCLUDE_PATH}/LGCProjectData/TLGCData.h
@@ -241,4 +240,5 @@ source_group("Writers\\Sources" FILES ${WRITERS_CPP})
 # Create a static library from sources:
 add_library(LGC_Core STATIC ${Core_HEADERS} ${Core_SOURCES})
 # Link static libraries to the current one
-target_link_libraries(LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools)
+target_link_libraries(LGC_Core PUBLIC LSAlgorithms ProjectFramework SpatialObjects Tools treehh)
+

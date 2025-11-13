@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <map>
 
@@ -61,7 +64,7 @@ TTreeEntry &TLGCData::addChild(TAdjustableHelmertTransformation *transfo)
 	int depth = tree.depth(pos);
 	int nOfSiblings = tree.number_of_siblings(pos);
 	n.ID = std::vector<int>(depth + 1);
-	peka::tree_node_<TDataSPtr> *posNode = pos.node;
+	tree_node_<TDataSPtr> *posNode = pos.node;
 	TDataTreeIterator parent = TDataTree::parent(pos);
 
 	n.branch = std::vector<std::string>(depth + 1);

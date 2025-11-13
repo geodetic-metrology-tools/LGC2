@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // Class responsible for reading the least squares calculation measurements and constraints
 //	and filling the least squares matrices,

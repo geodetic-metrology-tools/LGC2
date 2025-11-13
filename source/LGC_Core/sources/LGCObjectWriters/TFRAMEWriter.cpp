@@ -1,4 +1,8 @@
-﻿#include "TFRAMEWriter.h"
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "TFRAMEWriter.h"
 
 #include <TPointTransformer.h>
 

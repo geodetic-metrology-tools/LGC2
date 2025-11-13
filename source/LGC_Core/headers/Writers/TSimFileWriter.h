@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef SU_SIM_OBS_WRITER
 #define SU_SIM_OBS_WRITER
 #if _MSC_VER >= 1000

@@ -1,8 +1,8 @@
-
 /*
-© Copyright CERN 2000-2019. All rigths reserved. This software is released under a CERN proprietary software licence.
-Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
-*/
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 /*!
    \file
@@ -39,7 +39,7 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 	\brief Responsible for the execution of the application.
 
 	The TLGCApp class, contains the execution method and manages the main processes: reading, calculation and writing. It also 
-	mediates the communication with the user and keeps global information about the program, such as the version or copyright. 
+	mediates the communication with the user and keeps global information about the program, such as the version. 
 
 	Apart from this class, header files, including Doxygen description of all the projects or global application definitions
 	shared among other classes are kept.

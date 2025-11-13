@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TFautFileWriter.cpp :Implementation file
 // Write an LGC fault detection file, from the use of the keyword *FAUT

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef _READERS_MEASUREMENTREADERS_H_
 #define _READERS_MEASUREMENTREADERS_H_
 

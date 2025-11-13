@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "RoundOfMeasurements.h"
 #include <LGCAdjustablePoint.h>
-#include "tree.h"
+#include "tree.hh"
 
 int TECHOROM::romCounter_ = 0;
 int TECSPROM::romCounter_ = 0;

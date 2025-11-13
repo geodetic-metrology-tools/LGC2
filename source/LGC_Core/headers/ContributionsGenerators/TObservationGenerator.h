@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: CERN
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 #ifndef TSIMOBSERVATION_GENERATOR_H
 #define TSIMOBSERVATION_GENERATOR_H
 

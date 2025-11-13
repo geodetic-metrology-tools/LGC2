@@ -1,9 +1,12 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 ////////////////////////////////////////////////////////////////////
 // TResultsFileWriter.cpp :Implementation file
 // Write an LGC output file
 // Creates a file from the calculation results and sends the appropriate messages
 //
-// Copyright 2003-2008 M.Jones, CERN, EST/SU. All rights reserved.
 /////////////////////////////////////////////////////////////////////
 
 #include <ctime>

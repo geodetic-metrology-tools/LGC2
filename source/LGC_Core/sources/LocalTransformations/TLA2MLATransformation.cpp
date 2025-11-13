@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "TLA2MLATransformation.h"
 #include <Eigen/Dense>
 #include "GeodeticConstants.h"
