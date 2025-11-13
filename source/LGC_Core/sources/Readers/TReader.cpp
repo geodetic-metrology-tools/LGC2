@@ -4,6 +4,7 @@
 
 #include "TReader.h"
 
+#include <unordered_map>
 #include <StringManager.h>
 
 #include "AdjObjectsReader.h"
@@ -410,7 +411,7 @@ bool TReader::read(std::istream &lgcStream)
 
 	std::vector<std::string> frameNames; // Declare a vector of strings for the names of the frames
 	std::vector<int> frameLines; // Declare a vector of integers for the lines of the *FRAME keywords
-	std::vector<std::string> listObsId; // Declare a vector of strings for the observation ID
+	std::unordered_map<std::string, int> globalObsIdMap; // Map to track observation IDs across all frames
 
 	// Iterate the frames
 	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
@@ -435,16 +436,18 @@ bool TReader::read(std::istream &lgcStream)
 			}
 		}
 
-		// Collect IDs and check for duplicates in a single pass
-		listObsId = updateListObsID(itTree);
-		if (hasDuplicateObsId(itTree, listObsId, outputMessages))
+		// Register observation IDs and check for duplicates across all frames
+		if (checkAndRegisterObsId(itTree, globalObsIdMap, outputMessages))
 			break;
-
-		// Update obsIdwidth
-		std::sort(listObsId.begin(), listObsId.end(), [](const std::string &s1, const std::string &s2) { return s1.size() < s2.size(); });
-		if (listObsId.back().size() > project.getConfig().obsIDwidth)
-			project.getConfig().obsIDwidth = listObsId.back().size();
 	}
+
+	// Calculate obsIDwidth from all registered observation IDs
+	for (const auto& obsIdPair : globalObsIdMap)
+	{
+		if (obsIdPair.first.size() > project.getConfig().obsIDwidth)
+			project.getConfig().obsIDwidth = obsIdPair.first.size();
+	}
+
 	project.setLGCv1(false);
 
 	return !outputMessages.hasErrors();
@@ -702,43 +705,30 @@ static void iterateAllMeasurements(TDataTreeIterator itTree, Callback callback)
 		std::for_each(i.measECWI.begin(), i.measECWI.end(), callback);
 }
 
-/// Create a vector of all observation ID
-std::vector<std::string> TReader::updateListObsID(TDataTreeIterator itTree)
+/// Register observation IDs from current frame and check for duplicates across all frames
+bool TReader::checkAndRegisterObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int> &globalObsIdMap, TFileLogger &outputMessages)
 {
-	std::vector<std::string> listObsId;
-	
-	// Use the shared iteration helper
-	iterateAllMeasurements(itTree, [&listObsId](auto const &meas) {
-		listObsId.push_back(meas.obsID);
-	});
-
-	return listObsId;
-}
-
-/// Check that there is no duplicated observation ID
-bool TReader::hasDuplicateObsId(TDataTreeIterator itTree, std::vector<std::string> &listObsId, TFileLogger &outputMessages)
-{
-	// Use unordered_map for O(1) insertion instead of O(log N)
-	std::unordered_map<std::string, int> idToLine;
 	std::string duplicateId;
 	int duplicateLine = -1;
+	int firstOccurrenceLine = -1;
 	
-	// Use the shared iteration helper to check for duplicates
-	iterateAllMeasurements(itTree, [&idToLine, &duplicateId, &duplicateLine](auto const &meas) {
+	// Use the shared iteration helper to check for duplicates across all frames
+	iterateAllMeasurements(itTree, [&globalObsIdMap, &duplicateId, &duplicateLine, &firstOccurrenceLine](auto const &meas) {
 		if (!meas.obsID.empty() && duplicateId.empty()) {  // Only record first duplicate
-			auto result = idToLine.insert({meas.obsID, meas.line});
-			if (!result.second) {  // Insertion failed - duplicate found!
+			auto result = globalObsIdMap.insert({meas.obsID, meas.line});
+			if (!result.second) {  // Insertion failed - duplicate found across frames!
 				duplicateId = meas.obsID;
 				duplicateLine = meas.line;
+				firstOccurrenceLine = result.first->second;
 			}
 		}
 	});
 	
-	// If duplicate was found, report it
+	// If duplicate was found, report it with both line numbers
 	if (!duplicateId.empty())
 	{
 		const std::string lineStr = "Line " + std::to_string(duplicateLine) + ": ";
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated.";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated (first occurrence at line " + std::to_string(firstOccurrenceLine) + ").";
 		return true;
 	}
 
