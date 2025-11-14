@@ -114,8 +114,10 @@ void TINCLWriter::writeINCLResultsHelper(const MeasurementList& measurements, co
 	(*stream) << TABs << sectionTitle << "\n";
 
 	// data summury
-	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
-	writeINCLResultsHeader(); // write the title line for the observations
+
+	// Write observation summary and column headers
+	this->writeObsTitle(TABs + this->getObsDescription(obsType), (int)measurements.size());
+	writeINCLResultsHeader(); // Write the title line for the observations
 
 	// Process each measurement in the list
 	for (auto const &measurement : measurements)
@@ -204,7 +206,7 @@ void TINCLWriter::writeROLLYSIMUResults(const TROLLYROM &rollyrom)
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
 	// Write observation title with measurement count for simulation context
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
 	
 	// Write simulation section header
 	(*stream) << TABs << "ROLLY" << "\n";
@@ -222,7 +224,7 @@ void TINCLWriter::writeINCLYSIMUResults(const TINCLYROM &inclyrom)
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
 	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
-	(*stream) << TABs << "INCLY" << endl;
+	(*stream) << TABs << "INCLY" << "\n";
 
 	writeAngleResultsSummary(inclyrom.getINCLYObsSummary(), stream->getCurrSpaceExtended(2));
 }
