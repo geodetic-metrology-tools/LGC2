@@ -339,7 +339,7 @@ void TResultsFileWriter::writeDataSummary()
 		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kINCLY), fNumINCLY);
 
 	if (fNumROLLY != 0)
-		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kROLLY), fNumROLLY);
+		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kROLLY), fNumROLLY);
 
 	if (fNumECWS != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescription(TALGCObjectWriter::kECWS), fNumECWS);
