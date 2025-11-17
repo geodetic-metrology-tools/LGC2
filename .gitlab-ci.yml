@@ -14,7 +14,29 @@ pre-commit:
         - apt-get update && apt-get install -y git clang-format
         - pip install pre-commit
     script:
-        - pre-commit run --all-files
+        # Only check files that changed in this branch
+        - |
+          if [ -n "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" ]; then
+            # For merge requests, check files changed compared to target branch
+            echo "Checking files changed in merge request..."
+            git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+            FILES=$(git diff --name-only --diff-filter=d origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD)
+          else
+            # For regular branch pushes, check files changed in last commit
+            echo "Checking files changed in last commit..."
+            FILES=$(git diff --name-only --diff-filter=d HEAD~1)
+          fi
+
+          if [ -z "$FILES" ]; then
+            echo "No files to check"
+            exit 0
+          fi
+
+          echo "Files to check:"
+          echo "$FILES"
+
+          # Run pre-commit on changed files
+          pre-commit run --files $FILES
     only:
         - merge_requests
         - branches

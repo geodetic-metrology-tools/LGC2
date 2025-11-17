@@ -231,7 +231,8 @@ Pre-commit hooks and commit verification are automatically run in the GitLab CI 
 - **Trigger**: On all merge requests and branch pushes (except `master` and `appwidevs`)
 - **Stage**: `.pre` (runs before build stages)
 - **Image**: `python:3.11-slim` with `clang-format` installed
-- **Command**: `pre-commit run --all-files`
+- **Scope**: Only checks files modified in the branch/MR (not entire codebase)
+- **Purpose**: Ensures new/modified code meets quality standards
 
 ### Sign-off Check Job
 - **Trigger**: On all merge requests and branch pushes (except `master` and `appwidevs`)
@@ -331,6 +332,28 @@ git push --force-with-lease
 - Run hooks only on changed files (default behavior when committing)
 - Update pre-commit: `pre-commit autoupdate`
 - Consider disabling expensive hooks locally (but they'll still run in CI)
+
+### CI Job Fails: "files were modified by this hook"
+
+**Problem:** Pre-commit hooks are modifying files in CI, causing the job to fail.
+
+**Cause:** Files in your branch don't meet the formatting/quality standards, so hooks auto-fix them.
+
+**Solution:**
+1. Run pre-commit locally before pushing:
+   ```bash
+   pre-commit run --files path/to/modified/files.cpp
+   ```
+
+2. Review and commit the auto-fixed changes:
+   ```bash
+   git add .
+   git commit -s -m "Apply pre-commit auto-fixes"
+   ```
+
+3. Push again - the CI should now pass
+
+**Note:** The CI only checks files you modified, not the entire codebase, so you only need to fix files you're actually changing.
 
 ### False Positives
 
