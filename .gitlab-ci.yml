@@ -3,6 +3,57 @@ include:
     file: 'ci/scripts/gitlab-ci-susoft.yml'
 
 ##################
+# PRE-COMMIT     #
+##################
+
+# Run pre-commit hooks to enforce code quality
+pre-commit:
+    stage: .pre
+    image: python:3.11-slim
+    before_script:
+        - apt-get update && apt-get install -y git clang-format
+        - pip install pre-commit
+    script:
+        - pre-commit run --all-files
+    only:
+        - merge_requests
+        - branches
+    except:
+        - master
+        - appwidevs
+
+# Check for Signed-off-by in all commits
+check-signoff:
+    stage: .pre
+    image: alpine/git:latest
+    script:
+        - |
+          echo "Checking all commits for Signed-off-by line..."
+          # Get the base branch (master or appwidevs)
+          BASE_BRANCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master}"
+          # Check each commit in this branch
+          UNSIGNED_COMMITS=$(git log origin/${BASE_BRANCH}..HEAD --grep "^Signed-off-by:" --invert-grep --pretty=format:"%h %s")
+          if [ -n "$UNSIGNED_COMMITS" ]; then
+            echo ""
+            echo "❌ ERROR: The following commits are missing 'Signed-off-by' line:"
+            echo ""
+            echo "$UNSIGNED_COMMITS"
+            echo ""
+            echo "To fix this, amend each commit with: git commit --amend -s --no-edit"
+            echo "Or rebase and sign all commits: git rebase -i origin/${BASE_BRANCH} -x 'git commit --amend -s --no-edit'"
+            echo ""
+            exit 1
+          else
+            echo "✓ All commits are properly signed-off"
+          fi
+    only:
+        - merge_requests
+        - branches
+    except:
+        - master
+        - appwidevs
+
+##################
 # LINUX BUILDS   #
 ##################
 

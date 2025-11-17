@@ -1,0 +1,98 @@
+# Pre-commit hooks for LGC2
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+default_language_version:
+  python: python3
+
+repos:
+  # General pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent large files from being committed
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # Check for files that would conflict in case-insensitive filesystems
+      - id: check-case-conflict
+      # Check for merge conflicts
+      - id: check-merge-conflict
+      # Check YAML syntax
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags used in GitLab CI
+      # Check JSON syntax
+      - id: check-json
+      # Check for files that don't end in a newline
+      - id: end-of-file-fixer
+        exclude: '\.txt$'  # Exclude test output files
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        exclude: '\.txt$'  # Exclude test output files
+      # Ensure files use LF line endings
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      # Check for debugging statements
+      - id: debug-statements
+        exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
+
+  # C++ formatting with clang-format
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v18.1.8
+    hooks:
+      - id: clang-format
+        types_or: [c++, c]
+        args: ['-i']  # Edit files in-place
+
+  # CMake formatting (optional - uncomment if you want to enforce CMake formatting)
+  # - repo: https://github.com/cheshirekow/cmake-format-precommit
+  #   rev: v0.6.13
+  #   hooks:
+  #     - id: cmake-format
+  #       additional_dependencies: [pyyaml]
+  #     - id: cmake-lint
+  #       additional_dependencies: [pyyaml]
+
+  # Check for common C++ issues and project requirements
+  - repo: local
+    hooks:
+      # Check for Signed-off-by in commit message (DCO requirement)
+      - id: check-signoff
+        name: Check for Signed-off-by line
+        entry: bash
+        language: system
+        stages: [commit-msg]
+        always_run: true
+        args:
+          - -c
+          - |
+            if ! grep -q "^Signed-off-by:" "$1"; then
+              echo ""
+              echo "ERROR: Commit message must include a Signed-off-by line!"
+              echo ""
+              echo "Add it automatically with: git commit -s"
+              echo ""
+              echo "Or add this line manually:"
+              echo "  Signed-off-by: Your Name <your.email@example.com>"
+              echo ""
+              exit 1
+            fi
+          - --
+
+      # Check for TODO/FIXME comments (informational only - won't fail)
+      - id: check-todos
+        name: Check for TODO/FIXME comments
+        entry: bash -c 'git diff --cached --name-only --diff-filter=ACM | grep -E "\.(cpp|h|hpp|c)$" | xargs -r grep -nH "TODO\|FIXME" || true'
+        language: system
+        pass_filenames: false
+        verbose: true
+
+      # Prevent commits to master/appwidevs branches
+      - id: prevent-direct-master-commit
+        name: Prevent direct commits to master/appwidevs
+        entry: bash -c 'BRANCH=$(git rev-parse --abbrev-ref HEAD); if [[ "$BRANCH" == "master" || "$BRANCH" == "appwidevs" ]]; then echo "❌ Direct commits to $BRANCH are not allowed. Please create a feature branch."; exit 1; fi'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+# Configuration
+fail_fast: false  # Run all hooks even if one fails

@@ -1,3 +1,6 @@
 /build
 /build32
 source/Version.h
+
+# Pre-commit cache
+.pre-commit-cache/
