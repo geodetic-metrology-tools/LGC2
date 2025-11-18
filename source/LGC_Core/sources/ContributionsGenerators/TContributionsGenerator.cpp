@@ -98,7 +98,7 @@ DistMeasContrib TContributionsGenerator::getSpatialDistanceContrib(std::shared_p
 	TReal distCorrContrib = -1.0;
 
 	// Variance calculation
-	TReal varM = pow2q(dist.target.sigmaDist + dist.getDistance() / 1000 * dist.target.ppmDist);
+	TReal varM = pow2q(dist.target.sigmaDist + calcMeas / 1000 * dist.target.ppmDist);
 	TReal varInstHeight = pow2q(station->instrument.sigmaInstrHeight);
 	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
@@ -159,7 +159,7 @@ DistMeasContribFrame TContributionsGenerator::getSpatialDistanceContribInFrame(s
 	TReal calcMeas = D - cst;
 
 	// Variance calculation
-	TReal varM = pow2q(dist.target.sigmaDist + dist.getDistance() / 1000 * dist.target.ppmDist);
+	TReal varM = pow2q(dist.target.sigmaDist + calcMeas / 1000 * dist.target.ppmDist);
 	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
 	TReal varTgCent = pow2q(dist.target.sigmaTargetCentering);
@@ -327,7 +327,6 @@ AnglMeasContrib TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN
 
 	TAngle calcMeas = TAngle::aCos((zTg - zSt - hInst + hTg) / distance3D);
 
-	// We are taking the currently calculated value not the measured one (zend.getAngle().rad()), do not know what is better to take
 	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
 	if (fabs(sinPhi) < nullLimit)
@@ -395,7 +394,6 @@ AnglMeasContribFrame TContributionsGenerator::getZenDistContribInFrame(std::shar
 
 	// Prepare coefficients (a,b,c) for the points and the transformations contributions
 	TAngle calcMeas = TAngle::aCos((zTg - zSt + hTg) / distance3D);
-	// We are taking the currently calculated value not the measured one (zend.getAngle().rad()), do not know what is better to take
 	TReal sinPhi = sinq(calcMeas.getRadiansValue());
 
 	if (fabs(sinPhi) < nullLimit)
@@ -546,7 +544,7 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 	double dist2 = pow2q(normMeasuredPosXY);
 	double dX = relPos[0], dY = relPos[1], dZ = relPos[2];
 	double distance3D = relPos.length();
-	TReal sinPhi = plr3D.getAngle(kZEND).sine();
+	TReal sinPhi = dist2 / distance3D;
 	if (fabs(sinPhi) < nullLimit)
 	{
 		generateContributionError("TContributionGenerator::getPolar3DContrib: Division by zero because ZEND angle is zero. Points: " + getNameAndLine(*station->instrumentPos)
@@ -562,7 +560,7 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 		+ (((pow2q(dX) + pow2q(dY)) * pow2q(dZ)) / (powq(distance3D, 6) * pow2q(sinPhi))) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering))
 		+ pow2q(-c) * (pow2q(station->instrument.sigmaInstrHeight) + pow2q(plr3D.target.sigmaTargetHt));
 	// DIST
-	TReal varM = pow2q(plr3D.target.sigmaDist + plr3D.getDistance() / 1000 * plr3D.target.ppmDist);
+	TReal varM = pow2q(plr3D.target.sigmaDist + calcMeas(0) * plr3D.target.ppmDist);
 	TReal varInstHeight = pow2q(station->instrument.sigmaInstrHeight);
 	TReal varTgHeight = pow2q(plr3D.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
@@ -640,7 +638,7 @@ HorDistContrib TContributionsGenerator::getHorDistContrib(std::shared_ptr<TTSTN>
 	TReal distCorrCont = -1.0;
 
 	// Variance
-	TReal varM = pow2q(dhor.target.sigmaDist + dhor.getDistance() / 1000 * dhor.target.ppmDist);
+	TReal varM = pow2q(dhor.target.sigmaDist + calcMeas / 1000 * dhor.target.ppmDist);
 	TReal variance = varM + (pow2q(station->instrument.sigmaInstrCentering) + pow2q(dhor.target.sigmaTargetCentering));
 
 	HorDistContrib contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, distCorrCont, variance};
@@ -699,7 +697,7 @@ ECTHContrib TContributionsGenerator::getECTHContrib(std::shared_ptr<TTSTN> stati
 	addTransformationsContributions(tgLor2RootTrafo, station->instrumentPos->getEstimatedValue(), a, b, c, targetTransfContributions);
 
 	// Variance calculation
-	TReal varM = pow2q(ecth.target.sigmaD + ecth.getDistance() / 1000 * ecth.target.ppmD);
+	TReal varM = pow2q(ecth.target.sigmaD + calcMeas / 1000 * ecth.target.ppmD);
 	TReal variance = varM + (pow2q(cos(theta + Vo)) + pow2q(sin(theta + Vo))) * pow2q(ecth.target.sigmaInstrCentering);
 
 	ECTHContrib contrib = {calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance};
@@ -777,7 +775,7 @@ ECTHContrib TContributionsGenerator::getECDIRContrib(std::shared_ptr<TTSTN> stat
 	addTransformationsContributions(tgLor2RootTrafo, station->instrumentPos->getEstimatedValue(), a, b, c, targetTransfContributions);
 
 	// Variance calculation
-	TReal varM = pow2q(ecdir.target.sigmaD + ecdir.getDistance() / 1000 * ecdir.target.ppmD);
+	TReal varM = pow2q(ecdir.target.sigmaD + calcMeas / 1000 * ecdir.target.ppmD);
 	TReal variance = varM + (pow2q(cos(theta + Vo) * sin(phi)) + pow2q(sin(theta + Vo) * sin(phi))) * pow2q(ecdir.target.sigmaInstrCentering);
 
 	ECTHContrib contrib = {calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance};
@@ -852,7 +850,7 @@ DistMeasContrib TContributionsGenerator::getDSPTContrib(const TEDM &edmST, const
 	addTransformationsContributions(tgLor2RootTrafo, dspt.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
 	// Variance calculation
-	TReal varM = pow2q(dspt.target.sigmaDSpt + dspt.getDistance() / 1000 * dspt.target.ppmDSpt);
+	TReal varM = pow2q(dspt.target.sigmaDSpt + calcMeas / 1000 * dspt.target.ppmDSpt);
 	TReal varInstHeight = pow2q(edmST.instrument.sigmaInstrHeight);
 	TReal varTgHeight = pow2q(dspt.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(edmST.instrument.sigmaInstrCentering);
@@ -919,7 +917,7 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const LGCAdjustab
 	addTransformationsContributions(refPTLor2RootTrafo, referencePoint->getEstimatedValue(), -a, -b, -c, referencePTTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(dhor.target.sigmaDHor.getMetresValue() + dhor.getDistance().getKMetresValue() * dhor.target.ppmDHor);
+	TReal variance = pow2q(dhor.target.sigmaDHor.getMetresValue() + calcMeas / 1000 * dhor.target.ppmDHor);
 
 	HorDistContribLEVEL contrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, variance};
 
@@ -1010,7 +1008,7 @@ ECHOContrib TContributionsGenerator::getECHOContrib(const TECHOROM &echoROM, con
 	TReal thetaContrib = sinq(theta) * (stationPoint.getX() - referencePoint.getX()).getMetresValue() + cosq(theta) * (stationPoint.getY() - referencePoint.getY()).getMetresValue();
 
 	TReal refPtDistContrib = 1.0;
-	TReal obsVariance = pow2q(echo.target.sigmaD + echo.getDistance() / 1000 * echo.target.ppmD) + pow2q(echo.target.sigmaInstrCentering);
+	TReal obsVariance = pow2q(echo.target.sigmaD + calcMeas / 1000 * echo.target.ppmD) + pow2q(echo.target.sigmaInstrCentering);
 
 	ECHOContrib echoContrib = {calcMeas, stationContrib, thetaContrib, refPtDistContrib, stationTransfContributions, obsVariance};
 	return echoContrib;
@@ -1057,7 +1055,7 @@ ScaleMeasContrib TContributionsGenerator::getECVEContrib(const TECVEROM &ecveROM
 
 	// TReal linePointContrib = -1.0;
 
-	TReal obsVariance = pow2q(ecve.target.sigmaD + ecve.getDistance() / 1000 * ecve.target.ppmD) + pow2q(ecve.target.sigmaInstrCentering);
+	TReal obsVariance = pow2q(ecve.target.sigmaD + calcMeas / 1000 * ecve.target.ppmD) + pow2q(ecve.target.sigmaInstrCentering);
 
 	ScaleMeasContrib ecspContrib = {calcMeas, stationContrib, pointLineContrib, stationTransfContributions, pointLineTransfContributions, obsVariance};
 	return ecspContrib;
@@ -1134,12 +1132,12 @@ ECSPContrib TContributionsGenerator::getECSPContrib(const TECSPROM &ecspROM, con
 	TFreeVector pointLineContrib2 = getPointContributions(linePTLor2RootTrafo2, d, e, f);
 	addTransformationsContributions(linePTLor2RootTrafo2, ecsp.targetPos->getEstimatedValue(), d, e, f, pointLineTransfContributions2);
 
+	TReal calcMeas = div / D - ecsp.target.distCorrectionValue;
 	// Variance calculation
-	TReal varM = pow2q(ecsp.target.sigmaD + ecsp.getDistance() / 1000 * ecsp.target.ppmD);
+	TReal varM = pow2q(ecsp.target.sigmaD + calcMeas / 1000 * ecsp.target.ppmD);
 	TReal obsVariance = varM + (pow2q((linePoint2.getX() - linePoint1.getX()) / D) + pow2q((linePoint2.getY() - linePoint1.getY()) / D)) * pow2q(ecsp.target.sigmaInstrCentering);
 
-	TReal calcmeas = div / D - ecsp.target.distCorrectionValue;
-	ECSPContrib ecspContrib = {calcmeas, stationContrib, pointLineContrib1, pointLineContrib2, stationTransfContributions, pointLineTransfContributions1,
+	ECSPContrib ecspContrib = {calcMeas, stationContrib, pointLineContrib1, pointLineContrib2, stationTransfContributions, pointLineTransfContributions1,
 		pointLineTransfContributions2, obsVariance};
 	return ecspContrib;
 }
