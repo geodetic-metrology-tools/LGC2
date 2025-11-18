@@ -560,7 +560,7 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 		+ (((pow2q(dX) + pow2q(dY)) * pow2q(dZ)) / (powq(distance3D, 6) * pow2q(sinPhi))) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering))
 		+ pow2q(-c) * (pow2q(station->instrument.sigmaInstrHeight) + pow2q(plr3D.target.sigmaTargetHt));
 	// DIST
-	TReal varM = pow2q(plr3D.target.sigmaDist + calcMeas(0) * plr3D.target.ppmDist);
+	TReal varM = pow2q(plr3D.target.sigmaDist + calcMeas(2) / 1000 * plr3D.target.ppmDist);
 	TReal varInstHeight = pow2q(station->instrument.sigmaInstrHeight);
 	TReal varTgHeight = pow2q(plr3D.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
@@ -1479,8 +1479,9 @@ INCLContrib TContributionsGenerator::getINCLContribHelper(const TROM& inclST, co
 	}
 
 	// Compute the variance of the observation
-	TReal obsVariance = pow2q(sigmaAngl.getRadiansValue() + sigmaPpm.getRadiansValue())
-		+ pow2q(sigmaCorrectionValue.getRadiansValue()) + pow2q(refSigmaCorrectionValue.getRadiansValue());
+	TReal ppmVarianceContribution = sigmaPpm.getRadiansValue() * calcMeas;
+	TReal obsVariance = pow2q(sigmaAngl.getRadiansValue() + ppmVarianceContribution) + pow2q(sigmaCorrectionValue.getRadiansValue())
+		+ pow2q(refSigmaCorrectionValue.getRadiansValue());
 
 	// Call the appropriate model-specific contribution function (as in original code)
 	Eigen::Vector3d locVert = stationV.toRealVector();
