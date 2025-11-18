@@ -44,16 +44,16 @@ pre-commit:
         - master
         - appwidevs
 
-# Check for Signed-off-by in all commits
+# Check for Signed-off-by in all commits (only on merge requests)
 check-signoff:
     stage: .pre
     image: alpine/git:latest
     script:
         - |
           echo "Checking all commits for Signed-off-by line..."
-          # Get the base branch (master or appwidevs)
-          BASE_BRANCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master}"
-          # Check each commit in this branch
+          # Get the target branch for the merge request
+          BASE_BRANCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
+          # Check each commit in this merge request
           UNSIGNED_COMMITS=$(git log origin/${BASE_BRANCH}..HEAD --grep "^Signed-off-by:" --invert-grep --pretty=format:"%h %s")
           if [ -n "$UNSIGNED_COMMITS" ]; then
             echo ""
@@ -61,6 +61,7 @@ check-signoff:
             echo ""
             echo "$UNSIGNED_COMMITS"
             echo ""
+            echo "All commits must be signed-off before merging."
             echo "To fix this, amend each commit with: git commit --amend -s --no-edit"
             echo "Or rebase and sign all commits: git rebase -i origin/${BASE_BRANCH} -x 'git commit --amend -s --no-edit'"
             echo ""
@@ -70,10 +71,6 @@ check-signoff:
           fi
     only:
         - merge_requests
-        - branches
-    except:
-        - master
-        - appwidevs
 
 ##################
 # LINUX BUILDS   #

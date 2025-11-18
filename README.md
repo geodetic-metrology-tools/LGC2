@@ -371,7 +371,8 @@ This codebase uses **pre-commit hooks** to ensure code quality and consistency. 
 ```
 
 **Key Requirements:**
-- All commits **must** include a `Signed-off-by` line (use `git commit -s`)
+- All commits in merge requests **must** include a `Signed-off-by` line (use `git commit -s`)
+- Sign-off is recommended but not enforced on development branches
 - Code is automatically formatted with clang-format
 - Various quality checks run before each commit
 

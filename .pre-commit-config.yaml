@@ -55,9 +55,9 @@ repos:
   # Check for common C++ issues and project requirements
   - repo: local
     hooks:
-      # Check for Signed-off-by in commit message (DCO requirement)
+      # Check for Signed-off-by in commit message (recommended, required for MR)
       - id: check-signoff
-        name: Check for Signed-off-by line
+        name: Check for Signed-off-by line (recommended)
         entry: bash
         language: system
         stages: [commit-msg]
@@ -67,12 +67,15 @@ repos:
           - |
             if ! grep -q "^Signed-off-by:" "$1"; then
               echo ""
-              echo "ERROR: Commit message must include a Signed-off-by line!"
+              echo "Warning: Commit message does not include a Signed-off-by line."
               echo ""
-              echo "Add it automatically with: git commit -s"
+              echo "This is not required for development commits, but ALL commits"
+              echo "must be signed-off before creating a merge request."
               echo ""
-              echo "Or add this line manually:"
-              echo "  Signed-off-by: Your Name <your.email@example.com>"
+              echo "To sign this commit: git commit -s"
+              echo "To sign later: git commit --amend -s --no-edit"
+              echo ""
+              echo "To skip this check: git commit --no-verify"
               echo ""
               exit 1
             fi

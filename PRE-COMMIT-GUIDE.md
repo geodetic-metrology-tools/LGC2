@@ -114,11 +114,17 @@ git commit --no-verify
 
 **Warning:** Only use `--no-verify` when absolutely necessary, as it bypasses all quality checks.
 
-## Signing Your Commits (REQUIRED)
+## Signing Your Commits
 
 ### Developer Certificate of Origin (DCO)
 
-Every commit in the LGC2 project **MUST** include a `Signed-off-by` line at the end of the commit message. This certifies that you have the right to submit the code under the project's license.
+All commits that will be merged to main branches (master/appwidevs) **MUST** include a `Signed-off-by` line at the end of the commit message. This certifies that you have the right to submit the code under the project's license.
+
+### When is Sign-off Required?
+
+- **Development branches**: Sign-off is **recommended** but not enforced. You can make intermediate commits without sign-off.
+- **Merge requests**: Sign-off is **required** for all commits. Before creating a merge request, ensure all commits are signed.
+- **Best practice**: Use `git commit -s` for all commits to avoid having to sign them later.
 
 ### How to Sign Your Commits
 
@@ -152,18 +158,18 @@ For CERN users, use your CERN email address.
 
 ### What If I Forget to Sign?
 
-If you commit without the `-s` flag, the pre-commit hook will **reject** your commit with an error message:
+If you commit without the `-s` flag, the pre-commit hook will **warn** you:
 
 ```
-❌ ERROR: Commit message must include a Signed-off-by line!
+Warning: Commit message does not include a Signed-off-by line.
 
-Add it automatically with: git commit -s
-
-Or add this line manually:
-Signed-off-by: Your Name <your.email@example.com>
+This is not required for development commits, but ALL commits
+must be signed-off before creating a merge request.
 ```
 
-To fix this:
+You can:
+- Skip the warning for development commits: `git commit --no-verify`
+- Sign the commit immediately:
 1. Amend your last commit with the sign-off:
    ```bash
    git commit --amend -s --no-edit
@@ -196,9 +202,11 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
 
 ### Commit Message Verification
 
-- **check-signoff**: **REQUIRED** - Verifies that every commit message includes a `Signed-off-by` line
+- **check-signoff**: Verifies that commit messages include a `Signed-off-by` line
   - This is a Developer Certificate of Origin (DCO) requirement
-  - Commits without proper sign-off will be rejected
+  - Local hook: Warns but allows you to skip with `--no-verify`
+  - CI enforcement: Only checks on merge requests, not on development pushes
+  - All commits must be signed before creating a merge request
   - Use `git commit -s` to add automatically
 
 ### Code Formatting
@@ -235,10 +243,11 @@ Pre-commit hooks and commit verification are automatically run in the GitLab CI 
 - **Purpose**: Ensures new/modified code meets quality standards
 
 ### Sign-off Check Job
-- **Trigger**: On all merge requests and branch pushes (except `master` and `appwidevs`)
+- **Trigger**: Only on merge requests (not on regular branch pushes)
 - **Stage**: `.pre` (runs before build stages)
 - **Image**: `alpine/git:latest`
-- **Purpose**: Verifies all commits in the MR/branch have `Signed-off-by` lines
+- **Purpose**: Verifies all commits in the merge request have `Signed-off-by` lines
+- **Note**: This only runs when you create a merge request, allowing unsigned commits on development branches
 
 If either stage fails in CI, your merge request cannot be merged until the issues are resolved.
 
