@@ -905,7 +905,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	// Measures
-	(*stream) << "\n" << "\n" << TABs << "*** MESURES ***" << "\n" << "\n";
+	(*stream) << "\n" << "\n" << TABs << "*** MEASUREMENTS ***" << "\n" << "\n";
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
