@@ -113,18 +113,6 @@ void TPointTransformer::transformCGRF2CCS(TFreeVector &fv)
 	fccs2cgrf.transformInverse(fv);
 }
 
-// returns index of a transformation with given name in the 'fLORTrafo' vector, if vector does not include this transformation, function \returns -1
-int TPointTransformer::getTransformationIndex(const std::string &transfName) const
-{
-	int index = 0;
-	for (auto itLOR2LOR(fLORTrafo.begin()); itLOR2LOR != fLORTrafo.end(); ++itLOR2LOR)
-	{
-		if (itLOR2LOR->getName() == transfName)
-			return index;
-		index++;
-	}
-	return -1;
-}
 
 // Set a new origin of LA system, initialize the transformation
 void TPointTransformer::set2MLATransformation(TPositionVector originInCCS)
@@ -149,17 +137,32 @@ const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator origin
 	std::string originalFrameName = originalTreePos->get()->frame.getName();
 	std::string destinationFrameName = destinationTreePos->get()->frame.getName();
 
-	int trIndex = getTransformationIndex(originalFrameName + destinationFrameName);
-
-	// If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
-	if (trIndex == -1)
+	std::string trafoName = originalFrameName + destinationFrameName;
+	std::list<TLOR2LOR>::iterator trafoIt;
+	auto it = fLORTrafoNameMap.find(trafoName);
+	if (it != fLORTrafoNameMap.end())
 	{
-		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName));
-		trIndex = (int)fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
+		trafoIt = it->second;
 	}
-	std::list<TLOR2LOR>::iterator it = fLORTrafo.begin();
-	std::advance(it, trIndex);
-	return *it;
+	else
+	{
+		trafoIt = fLORTrafo.end();
+	}
+	if (trafoIt != fLORTrafo.end())
+	{
+		return *trafoIt;
+	}
+	else
+	{
+		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, trafoName));
+		// Update the iterator to the newly inserted element
+		trafoIt = std::prev(fLORTrafo.end());
+
+		// Add the iterator to the map
+		fLORTrafoNameMap[trafoName] = trafoIt;
+		return *trafoIt;
+	}
+
 }
 
 void TPointTransformer::transformCCS22DH(TPositionVector &pv)

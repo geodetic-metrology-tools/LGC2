@@ -113,8 +113,6 @@ public:
 	TPointTransformer &operator=(const TPointTransformer &other) = delete;
 
 private:
-	///  Returns the the index of a transformation named 'transfName' in the 'fLORTrafo' vector.  Returns the -1 if transformation was not set up.
-	int getTransformationIndex(const std::string &transfName) const;
 
 	/// Returns an identity transformation
 	TLOR2LOR getIdentityTransformation();
@@ -130,6 +128,9 @@ private:
 
 	/// Vector containing all transformations between LORs of the tree, which were used
 	std::list<TLOR2LOR> fLORTrafo;
+	
+	// map names -> lor trafo, used to efficiently searching for objects
+	std::unordered_map<std::string, typename std::list<TLOR2LOR>::iterator> fLORTrafoNameMap;
 
 	/// Transformation between reference frames
 	TCCS2CGRFTransformation fccs2cgrf;
