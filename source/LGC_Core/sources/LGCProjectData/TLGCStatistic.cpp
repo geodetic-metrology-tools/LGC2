@@ -97,7 +97,6 @@ void TLGCStatistic::calcReliabilityVector(TReal alpha, TReal beta, const TLSInpu
 	double res = 0;
 
 	// compute z
-	TDenseMatrix Z(nbObs,nbEq);
 	TVector ZReliability = *rm->getZReliabilityVectByConst();
 	TVector resCovarDiag = *rm->getResCovarDiagByConst();
 
