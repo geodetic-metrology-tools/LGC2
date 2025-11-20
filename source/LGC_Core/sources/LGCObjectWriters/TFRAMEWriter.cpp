@@ -2049,6 +2049,18 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		converter.writeCoordinateParam(pt->getSpatialStatus(), coordResWidth, coordPrecision, TLength::EUnits::kMillimetres, separator,
 			TLength(estimatedValue.getX() - provisionalValue.getX()), TLength(estimatedValue.getY() - provisionalValue.getY()),
 			TLength(estimatedValue.getZ() - provisionalValue.getZ()), ""); /*offset*/
+
+		*stream << " full covar in ROOT (";
+		// write full covariance matrix
+		// std::cout << covarianceMatrix << std::endl;
+		for (int row = 0; row < 3; row++)
+		{
+			for (int col = 0; col < 3; col++)
+			{
+				stream->writeDouble(2 * coordWidth, 2 * coordResWidth, covarianceMatrix(row, col));
+			}
+		}
+		*stream << " )";
 	}
 
 	(*stream) << "\n"; // end line
