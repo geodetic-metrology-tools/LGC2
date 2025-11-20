@@ -31,12 +31,12 @@ bool TDataAnalyzer::dataConsistent()
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 
-	// Clean the data:
-	if (!cleanDeactivated())
-	{
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Problem with data consistency because of deactivated lines.";
-		return false;
-	}
+//  	// Clean the data:
+//  	if (!cleanDeactivated())
+//  	{
+//  		outputMessages << TFileLogger::e_logType::LOG_ERROR << "Problem with data consistency because of deactivated lines.";
+//  		return false;
+//  	}
 
 	// Update the static variables set by some options:
 	LGCAdjustablePoint::setAllFixedParam(fData.getConfig().allfixed.isActive());
@@ -633,7 +633,7 @@ bool TDataAnalyzer::checkParameters()
 			TAdjustableAngle adjSlope(TAngle(slopeLineVectorAngle), false, name + "_SLOPE");
 			itECWI.fWireSlope = &fData.getAngles().addObject(adjSlope);
 		}
-		cleanDeactivated();
+		// cleanDeactivated();
 
 		// If Reference point was not provided to a ECVE measurement, adjustable line which is measured needs to be initialized
 		for (auto itECVE(it.node->data.get()->measurements.fECVE.begin()); itECVE != it.node->data.get()->measurements.fECVE.end(); ++itECVE)
