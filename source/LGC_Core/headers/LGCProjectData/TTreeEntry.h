@@ -50,6 +50,8 @@ struct TTreeEntry
 
 	/// Whole collection of measurements per node.
 	TMeasurements    measurements; 
+	// keeping track of points defined in this frame
+	std::list<AdjPointIter> pointsInFrame;
 
 	explicit TTreeEntry() : 
  			measurements(TMeasurements()), 

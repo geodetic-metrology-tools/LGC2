@@ -44,6 +44,10 @@ TFRAMEWriter::TFRAMEWriter(TAStreamFormatter &stream, const TLGCData *data) : TA
 			pointVYZ.emplace_back(it);
 		if (it->getSpatialStatus() == TSpatialStatus::kVz)
 			pointVZ.emplace_back(it);
+
+		// add point iterator also to pointlist of the frame
+		TDataTreeIterator frameIt = it->getFrameTreePosition();
+		frameIt.node->data.get()->pointsInFrame.emplace_back(it);
 	}
 }
 
@@ -1268,23 +1272,41 @@ void TFRAMEWriter::writePointType(const std::list<AdjPointIter> &lop, TDataTreeI
 		if (!localNode)
 			writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
 
-		for (auto it(lop.begin()); it != lop.end(); ++it)
+		// if we are in root node we write all points, in particular also the points in the subframes (they will have a *)
+		// if we are in a local frame, only the points in this frame will bve treated
+
+		const std::list<AdjPointIter> *ptList;
+		if (frameIt.node->data.get()->isROOTNode())
 		{
-			if (localNode)
+			ptList = &lop;
+		}
+		else
+		{
+			ptList = &frameIt.node->data.get()->pointsInFrame;
+		}
+
+		for (auto it(ptList->begin()); it != ptList->end(); ++it)
+		{
+			AdjPointIter pItTemp = *it;
+			// check type because the list contains all points in frame
+			if (pItTemp->getSpatialStatus() == type)
 			{
-				AdjPointIter pIt = *it;
-				if (pIt->getFrameTreePosition() == frameIt)
-				{ // If the point was defined in this FRAME
-					if (!headerWritten)
-					{
-						writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
-						headerWritten = true;
+				if (localNode)
+				{
+					AdjPointIter pIt = *it;
+					if (pIt->getFrameTreePosition() == frameIt)
+					{ // If the point was defined in this FRAME
+						if (!headerWritten)
+						{
+							writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
+							headerWritten = true;
+						}
+						writeResultsPtsData(*it, localNode);
 					}
-					writeResultsPtsData(*it, localNode);
 				}
+				else
+					writeResultsPtsData(*it, localNode);
 			}
-			else
-				writeResultsPtsData(*it, localNode);
 		}
 	}
 }
