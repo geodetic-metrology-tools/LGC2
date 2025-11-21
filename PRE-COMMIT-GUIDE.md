@@ -225,7 +225,7 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
 - **end-of-file-fixer**: Ensures files end with a newline
 - **trailing-whitespace**: Removes trailing whitespace
 - **mixed-line-ending**: Ensures consistent line endings (LF)
-- **check-utf8-encoding**: Ensures all text files use UTF-8 encoding
+- **check-utf8-encoding**: Ensures all text files use UTF-8 encoding (uses Python, works in CI)
 
 ### Project-Specific Hooks
 
@@ -364,6 +364,30 @@ git push --force-with-lease
 3. Push again - the CI should now pass
 
 **Note:** The CI only checks files you modified, not the entire codebase, so you only need to fix files you're actually changing.
+
+### File is Not Valid UTF-8
+
+**Problem:** Pre-commit hook reports "ERROR: filename is not valid UTF-8"
+
+**Cause:** The file contains non-UTF-8 characters or uses a different encoding (e.g., ISO-8859-1, Windows-1252).
+
+**Solution:**
+
+1. **Using a text editor:**
+   - Open the file in VS Code, Notepad++, or your preferred editor
+   - Save with UTF-8 encoding (usually in File > Save with Encoding)
+
+2. **Using command line (Linux/Git Bash):**
+   ```bash
+   # Convert from ISO-8859-1 to UTF-8
+   iconv -f ISO-8859-1 -t UTF-8 input.cpp > output.cpp
+   mv output.cpp input.cpp
+   ```
+
+3. **Check file encoding:**
+   ```bash
+   file -b --mime-encoding filename.cpp
+   ```
 
 ### False Positives
 

@@ -55,6 +55,25 @@ repos:
   # Check for common C++ issues and project requirements
   - repo: local
     hooks:
+      # Check that text files are UTF-8 encoded
+      - id: check-utf8-encoding
+        name: Check UTF-8 encoding
+        entry: python3
+        language: system
+        files: '\.(cpp|h|hpp|c|md|cmake|sh|yml|yaml|json)$'
+        exclude: 'test_files/.*\.txt$'  # Exclude test output files
+        args:
+          - -c
+          - |
+            import sys
+            for filepath in sys.argv[1:]:
+                try:
+                    with open(filepath, 'rb') as f:
+                        f.read().decode('utf-8')
+                except UnicodeDecodeError:
+                    print(f"ERROR: {filepath} is not valid UTF-8")
+                    sys.exit(1)
+
       # Check for Signed-off-by in commit message (recommended, required for MR)
       - id: check-signoff
         name: Check for Signed-off-by line (recommended)
@@ -79,24 +98,6 @@ repos:
               echo ""
               exit 1
             fi
-          - --
-
-      # Check that text files are UTF-8 encoded
-      - id: check-utf8-encoding
-        name: Check UTF-8 encoding
-        entry: bash
-        language: system
-        files: '\.(cpp|h|hpp|c|txt|md|cmake|sh|yml|yaml|json)$'
-        exclude: '\.txt$'  # Exclude test output files
-        args:
-          - -c
-          - |
-            for file in "$@"; do
-              if ! file -b --mime-encoding "$file" | grep -qE "utf-8|us-ascii"; then
-                echo "File $file is not UTF-8 encoded"
-                exit 1
-              fi
-            done
           - --
 
       # Check for TODO/FIXME comments (informational only - won't fail)
