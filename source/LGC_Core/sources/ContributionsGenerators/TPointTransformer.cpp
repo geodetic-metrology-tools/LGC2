@@ -32,9 +32,9 @@ TPointTransformer::TPointTransformer(const TDataTree *tree, const TRefSystemFact
 //////////////////////////////
 void TPointTransformer::updateTransformations()
 {
-	for (std::list<TLOR2LOR>::iterator it = fLORTrafo.begin(); it != fLORTrafo.end(); ++it)
+	for (auto & lorPair: fLORTrafoMap)
 	{
-		it->updateTree();
+		lorPair.second.updateTree();
 	}
 	fLastStationPtName = "";
 	fMLAused = false;
@@ -113,18 +113,6 @@ void TPointTransformer::transformCGRF2CCS(TFreeVector &fv)
 	fccs2cgrf.transformInverse(fv);
 }
 
-// returns index of a transformation with given name in the 'fLORTrafo' vector, if vector does not include this transformation, function \returns -1
-int TPointTransformer::getTransformationIndex(const std::string &transfName) const
-{
-	int index = 0;
-	for (auto itLOR2LOR(fLORTrafo.begin()); itLOR2LOR != fLORTrafo.end(); ++itLOR2LOR)
-	{
-		if (itLOR2LOR->getName() == transfName)
-			return index;
-		index++;
-	}
-	return -1;
-}
 
 // Set a new origin of LA system, initialize the transformation
 void TPointTransformer::set2MLATransformation(TPositionVector originInCCS)
@@ -149,17 +137,19 @@ const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator origin
 	std::string originalFrameName = originalTreePos->get()->frame.getName();
 	std::string destinationFrameName = destinationTreePos->get()->frame.getName();
 
-	int trIndex = getTransformationIndex(originalFrameName + destinationFrameName);
+	std::string trafoName = originalFrameName + destinationFrameName;
+	
+	auto it = fLORTrafoMap.find(trafoName);
 
-	// If transformation is not defined yet (i.e. trIndex == -1), it needs to be added into the vector of transformations
-	if (trIndex == -1)
+	if (it != fLORTrafoMap.end())
 	{
-		fLORTrafo.emplace_back(TLOR2LOR(originalTreePos, destinationTreePos, originalFrameName + destinationFrameName));
-		trIndex = (int)fLORTrafo.size() - 1; // Index of the last transformation in the vector, i.e. the one we added on the line above
+		return it->second;
 	}
-	std::list<TLOR2LOR>::iterator it = fLORTrafo.begin();
-	std::advance(it, trIndex);
-	return *it;
+	else
+	{
+		it = fLORTrafoMap.emplace(trafoName,TLOR2LOR(originalTreePos, destinationTreePos, trafoName)).first;
+		return it->second;
+	}
 }
 
 void TPointTransformer::transformCCS22DH(TPositionVector &pv)

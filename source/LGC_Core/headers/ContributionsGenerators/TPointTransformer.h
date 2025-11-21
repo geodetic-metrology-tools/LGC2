@@ -113,8 +113,6 @@ public:
 	TPointTransformer &operator=(const TPointTransformer &other) = delete;
 
 private:
-	///  Returns the the index of a transformation named 'transfName' in the 'fLORTrafo' vector.  Returns the -1 if transformation was not set up.
-	int getTransformationIndex(const std::string &transfName) const;
 
 	/// Returns an identity transformation
 	TLOR2LOR getIdentityTransformation();
@@ -128,8 +126,8 @@ private:
 	/// Geoid model used, determined by the fRefFrame
 	TRefSystemFactory::EGeoid fGeoidModel;
 
-	/// Vector containing all transformations between LORs of the tree, which were used
-	std::list<TLOR2LOR> fLORTrafo;
+	/// map [startFrame+destFrame]->TLOR2LOR
+	std::unordered_map<std::string, TLOR2LOR> fLORTrafoMap;
 
 	/// Transformation between reference frames
 	TCCS2CGRFTransformation fccs2cgrf;
