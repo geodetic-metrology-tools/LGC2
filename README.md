@@ -374,6 +374,7 @@ This codebase uses **pre-commit hooks** to ensure code quality and consistency. 
 - All commits in merge requests **must** include a `Signed-off-by` line (use `git commit -s`)
 - Sign-off is recommended but not enforced on development branches
 - Code is automatically formatted with clang-format
+- All text files must use UTF-8 encoding
 - Various quality checks run before each commit
 
 📖 **For detailed setup instructions, troubleshooting, and best practices, see [PRE-COMMIT-GUIDE.md](./PRE-COMMIT-GUIDE.md)**

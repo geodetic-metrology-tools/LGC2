@@ -225,6 +225,7 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
 - **end-of-file-fixer**: Ensures files end with a newline
 - **trailing-whitespace**: Removes trailing whitespace
 - **mixed-line-ending**: Ensures consistent line endings (LF)
+- **check-utf8-encoding**: Ensures all text files use UTF-8 encoding
 
 ### Project-Specific Hooks
 
