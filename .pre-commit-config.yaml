@@ -92,7 +92,7 @@ repos:
       # Prevent commits to master/appwidevs branches
       - id: prevent-direct-master-commit
         name: Prevent direct commits to master/appwidevs
-        entry: bash -c 'BRANCH=$(git rev-parse --abbrev-ref HEAD); if [[ "$BRANCH" == "master" || "$BRANCH" == "appwidevs" ]]; then echo "❌ Direct commits to $BRANCH are not allowed. Please create a feature branch."; exit 1; fi'
+        entry: bash -c 'BRANCH=$(git rev-parse --abbrev-ref HEAD); if [[ "$BRANCH" == "master" || "$BRANCH" == "appwidevs" ]]; then echo "Direct commits to $BRANCH are not allowed. Please create a feature branch."; exit 1; fi'
         language: system
         pass_filenames: false
         always_run: true
