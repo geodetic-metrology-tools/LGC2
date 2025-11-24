@@ -10,6 +10,7 @@
 #include <Behavior.h>
 #include <TLGCData.h>
 #include <TReader.h>
+#include <TLSEvaluator.h>
 
 #include "TLGCCalculation.h"
 #include "testMixingObservation.h"
@@ -458,6 +459,63 @@ void object::test<10>()
 	TDataTreeIterator frameIt = ++tree.begin();
 	double estimatedYTranslation = frameIt.node->data.get()->frame.getEstTranslation(1);
 	ensure_equals("Y translation should be 0", estimatedYTranslation, 0, 1e-9);
+}
+
+template<>
+template<>
+void object::test<11>()
+{
+	set_test_name("Testing target height");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_TargetHeight.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::TSTN_TargetHeight);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	const TLGCData &dataset = calcul.getData();
+	TAdjustablePoint estPoint = dataset.getPoints().getObject("point");
+	ensure_equals("If target height follows vertical, the y coordinate of the point should be estimated approximately at 1",
+		fabsq(estPoint.getEstimatedValue().getY().getMetresValue()), 1, 1e-2);
+}
+
+template<>
+template<>
+void object::test<12>()
+{
+	set_test_name("Testing target height derivatives");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_TargetHeightDerivatives.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(MixObs::TSTN_TargetHeightDerivatives);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TLSEvaluator evaluator(projTest);
+	TVector estPar = evaluator.getEstParams();
+	// apply a random perturbation
+	estPar += TVector::Random(estPar.size());
+
+	evaluator.setParameters(estPar);
+	evaluator.evaluate();
+	TDenseMatrix finiteDiffJacobian = evaluator.getFiniteDifferenceA();
+	TDenseMatrix calcJacobian = evaluator.getAMatrix();
+	TDenseMatrix diff = finiteDiffJacobian - calcJacobian;
+	double diffNorm = diff.norm();
+
+	ensure("Finite difference Jacobian and calculated Jacobian should be approximately equal.", diffNorm < 1e-5);
 }
 
 }; // namespace tut

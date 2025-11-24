@@ -416,33 +416,35 @@ struct OBSXYZContrib
 
 	TFreeVector fMisclosureVector; //!< Misclosure vector of the First, Second and Third equation respectively.
 };
-
+struct ModelAndJacobian
+{
+	std::function<double(const Eigen::Vector3d &)> func;
+	// std::function<Eigen::Matrix<double, 1, 3>(const Eigen::Vector3d&)> jac;
+	std::function<Eigen::RowVector3d(const Eigen::Vector3d &)> jac;
+};
+struct PolarContribInFrame
+{
+	TReal fModelPrediction; // the model function evaluated at the relative position. e.g. distance, horizontal angle etc. Supplementary contributions have to be added in specific cases to get the calculated measurement, like adding a bearin angle, distance correction etc.
+	TVector fRelativePosition; // target - station in station frame, reused in the variance calculation of the specific models
+	TFreeVector fStationContrib;
+	TFreeVector fTargetContrib;
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTarget2RootContrib;
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRoot2StationContrib;
+};
 struct DistMeasContribFrame
 {
 	TReal fCalcMeas;
-	TFreeVector fStCoordContrib;
-	TFreeVector fTgCoordContrib;
-
-	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
-	TransformationContribVector fTgTransformContrib;
-
+	PolarContribInFrame fPolarContrib;
 	TReal fHIContrib; //!< Instrument (station) height contribution
 	TReal fDistCorrection; //!< Distance correction
-
 	TReal fObsVariance; //!< Variance of the observation
 };
 struct AnglMeasContribFrame
 {
 	TAngle fCalcMeas;
-	TFreeVector fStCoordContrib;
-	TFreeVector fTgCoordContrib;
-
-	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
-	TransformationContribVector fTgTransformContrib;
-
-	TReal fHIContrib; //!< Instrument (station) height contribution
+	PolarContribInFrame fPolarContrib;
 	TReal fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
-
+	TReal fHIContrib; //!< Instrument (station) height contribution
 	TReal fObsVariance; //!< Variance of the observation
 };
 

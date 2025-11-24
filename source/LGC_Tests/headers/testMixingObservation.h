@@ -1292,5 +1292,64 @@ p2 0
 % fixing the frame but allowing y movements by the low precision. Used to exploits the wrong sensitivity with respect to TY of the TSTN measurements
 zeroInFrame 0 0 0 1 2000 1
 *END)";
+
+
+char const *const TSTN_TargetHeight= R"(*TITR
+Test if target height is taken along local vertical if station is defined in a rotated frame
+*OLOC
+*INSTR
+*POLAR stationName   highTarget   0   0   0   0   
+highTarget   3   3   0.02   6   0   0   0   0   1   0   
+*POIN
+point 0 11 0  SX 0 SZ 0 % point moving along y axis
+*FRAME   station1Frame   0.00000   0.00000   0.00000   100   0.00000   0.00000   1.00000   
+*CALA
+station1 0 0 0
+*TSTN   station1   stationName   IHFIX   
+*V0   
+*DIST
+point   1.4142 
+% if target height is along frame z axis  = y root, the point will be estimated at p_est=(0,0.4142,0) (or (0,-2.4142,0)) because ||p_est+(0,1,0)||=1.4142
+% if target height is along root vertical, it will be estimated at p_est=(0,1,0) (or  (0,-1,0)) because ||p_est+(0,0,1)||=1.4142
+*ENDFRAME
+*END)";
+
+char const *const TSTN_TargetHeightDerivatives= R"(*TITR
+Test if target height is taken along local vertical if station is defined in a rotated frame
+*OLOC
+*INSTR
+*POLAR stationName   highTarget   0   0   0   0   
+highTarget   3   3   0.02   6   0   0   0   0   1   0   
+*CALA
+ex 1 0 0
+ey 0 1 0
+ez 0 0 1
+% frame is forced to be equal to root via obsxyz
+*FRAME pointFrame 0.3 0.2 0.1 10 20 30 1  TX TY TZ RX RY RZ
+*POIN
+point 0 1 0  SX 0 SZ 0 % point moving along y axis
+*OBSXYZ
+ex 1 0 0 1 1 1
+ey 0 1 0 1 1 1
+ez 0 0 1 1 1 1
+% frame is forced to be root + 100 gon rx rotation , enforced via obsxyz
+%*FRAME   station1Frame   0.10000   0.20000   0.30000   40   50 60   1.00000   TX TY TZ RX RY RZ
+*FRAME   station1Frame   0.1 0.3 0.3 110 20 30 1  TX TY TZ RX RY RZ
+*CALA
+station1 0 0 0
+*OBSXYZ
+ex 1 0 0 1 1 1
+ey 0 0 1 1 1 1
+ez 0 -1 0 1 1 1
+*TSTN   station1   stationName   IHFIX   
+*V0   
+*DIST
+point   1.4142 
+% if target height is along frame z axis  = y root, the point will be estimated at p_est=(0,0.4142,0) (or (0,-2.4142,0)) because ||p_est+(0,1,0)||=1.4142
+% if target height is along root vertical, it will be estimated at p_est=(0,1,0) (or  (0,-1,0)) because ||p_est+(0,0,1)||=1.4142
+*ENDFRAME
+*ENDFRAME
+*END)";
+
 } // namespace MixObs
 #endif

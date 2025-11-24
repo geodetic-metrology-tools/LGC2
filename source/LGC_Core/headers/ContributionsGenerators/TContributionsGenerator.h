@@ -52,11 +52,14 @@ public:
 			In all cases the STATION and TARGET points can be defined anywhere in the TREE of local frames.
 	*/
 	//@{
+	template<typename TPolarMeas>
+	PolarContribInFrame getPolarContribInFrame(std::shared_ptr<TTSTN> station, const TPolarMeas &dist, const ModelAndJacobian &model);
 
 	/// Returns contribution for the Spatial Distance measurement (TDIST)
 	DistMeasContrib getSpatialDistanceContrib(std::shared_ptr<TTSTN> station, const TLINE &dist);
 
 	/// Returns contribution for the Spatial Distance measurement (TDIST) for a TSTN in a  frame
+	//DistMeasContribFrame getSpatialDistanceContribInFrame(std::shared_ptr<TTSTN> station, const TLINE &dist);
 	DistMeasContribFrame getSpatialDistanceContribInFrame(std::shared_ptr<TTSTN> station, const TLINE &dist);
 
 	/// Returns contribution for the Horizontal Angle measurement (TANGL)

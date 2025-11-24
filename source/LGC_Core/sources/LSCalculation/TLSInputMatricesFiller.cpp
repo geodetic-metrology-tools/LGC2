@@ -256,22 +256,28 @@ void TLSInputMatricesFiller::addSpaDistContributionsFrame(std::list<TLINE> &dist
 
 		// Add station's contributions into a first design matrix
 		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fPolarContrib.fStationContrib, eqIdx, matrices);
 
 		// Add target contributions into a first design matrix
 		if (!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fPolarContrib.fTargetContrib, eqIdx, matrices);
 
 		// Adding Distance correction contribution
 		if (!meas->target.distCorrectionAdjustable->isFixed())
 			isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdx, meas->target.distCorrectionAdjustable->getFirstUidx(), contributions.fDistCorrection);
 
 		// Adding contributions for TARGET transformations parameters
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform)
+		for (auto itTgTransform(contributions.fPolarContrib.fTarget2RootContrib.begin()); itTgTransform != contributions.fPolarContrib.fTarget2RootContrib.end(); ++itTgTransform)
 		{
 			if (!itTgTransform->first.isFixed())
 				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
 		}
+		for (auto itTransform(contributions.fPolarContrib.fRoot2StationContrib.begin()); itTransform != contributions.fPolarContrib.fRoot2StationContrib.end(); ++itTransform)
+		{
+			if (!itTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTransform->first, itTransform->second, eqIdx, matrices);
+		}
+
 
 		// Set Misclosure vector
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getDistance() - contributions.fCalcMeas));
@@ -369,18 +375,25 @@ void TLSInputMatricesFiller::addHorAngContributionsFrame(std::shared_ptr<TTSTN::
 
 		// Add station contributions
 		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fPolarContrib.fStationContrib, eqIdx, matrices);
 
 		// Add target contributions
 		if (!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fPolarContrib.fTargetContrib, eqIdx, matrices);
 
 		// Add contributions of transformations parameters
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform)
+		for (auto itTgTransform(contributions.fPolarContrib.fTarget2RootContrib.begin()); itTgTransform != contributions.fPolarContrib.fTarget2RootContrib.end(); ++itTgTransform)
 		{
 			if (!itTgTransform->first.isFixed())
 				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
 		}
+		// Add contributions of transformations parameters
+		for (auto itTransform(contributions.fPolarContrib.fRoot2StationContrib.begin()); itTransform != contributions.fPolarContrib.fRoot2StationContrib.end(); ++itTransform)
+		{
+			if (!itTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTransform->first, itTransform->second, eqIdx, matrices);
+		}
+
 
 		// Add Misclosure vector's contribution
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());
@@ -478,18 +491,25 @@ void TLSInputMatricesFiller::addZenDistContributionsFrame(std::list<TZEND> &zend
 
 		// Add station contributions
 		if (!station->instrumentPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fStCoordContrib, eqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*station->instrumentPos, contributions.fPolarContrib.fStationContrib, eqIdx, matrices);
 
 		// Add target contributions
 		if (!meas->targetPos->isFixed())
-			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fTgCoordContrib, eqIdx, matrices);
+			isProcessOK = isProcessOK && addPointContribution(*meas->targetPos, contributions.fPolarContrib.fTargetContrib, eqIdx, matrices);
 
 		// Adding contributions for TARGET transformations parameters
-		for (auto itTgTransform(contributions.fTgTransformContrib.begin()); itTgTransform != contributions.fTgTransformContrib.end(); ++itTgTransform)
+		for (auto itTgTransform(contributions.fPolarContrib.fTarget2RootContrib.begin()); itTgTransform != contributions.fPolarContrib.fTarget2RootContrib.end(); ++itTgTransform)
 		{
 			if (!itTgTransform->first.isFixed())
 				isProcessOK = isProcessOK && addTransformationContribution(itTgTransform->first, itTgTransform->second, eqIdx, matrices);
 		}
+		// Adding contributions for root to station transformations parameters
+		for (auto itTransform(contributions.fPolarContrib.fRoot2StationContrib.begin()); itTransform != contributions.fPolarContrib.fRoot2StationContrib.end(); ++itTransform)
+		{
+			if (!itTransform->first.isFixed())
+				isProcessOK = isProcessOK && addTransformationContribution(itTransform->first, itTransform->second, eqIdx, matrices);
+		}
+
 
 		// Add Misclosure vector values
 		isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(eqIdx, -1.0 * (meas->getAngle() - contributions.fCalcMeas).getRadiansValue());

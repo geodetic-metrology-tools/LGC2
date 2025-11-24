@@ -171,6 +171,9 @@ Eigen::MatrixXd TLSEvaluator::getFiniteDifferenceA(double finiteDiffEpsilon)
 		jacobianCol = (testEval - baseEval) / finiteDiffEpsilon;
 		finiteDiffJacobian.col(j) = jacobianCol;
 	}
+	// set to previous state
+	setParameters(basePar);
+	evaluate();
 	return finiteDiffJacobian;	
 }
 
