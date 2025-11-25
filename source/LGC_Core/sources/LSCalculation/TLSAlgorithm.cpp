@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <Logger.hpp>
+#include <filesystem>
 #include <TLSAlgorithm.h>
 #include <TLSEvaluator.h>
 #include <TLSTrustRegionLM.h>
@@ -178,6 +179,15 @@ Behavior TLSAlgorithm::computeStatisticsAtCurrentState(TLGCData *data, TLSInputM
 
 bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer)
 {
+	bool writeNormalMatrix = false;
+	if (writeNormalMatrix)
+	{
+		// optional: save the normal matrix
+		std::filesystem::path path(data->getFileLogger().getOutputFileLocation());
+		std::string fileName = "fullNormalMatrix_" + path.stem().string() + ".mtx";
+		TSparseUtils::saveToMatrixMarket(fileName, *resultMatrices.get()->getNormalMatrixByConst());
+	}
+
 	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices.get()))
 	{
 		logWarning() << "Residual errors and their related variance-covariance matrix could not be estimated!";
