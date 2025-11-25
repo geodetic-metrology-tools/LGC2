@@ -63,7 +63,7 @@ private:
 		/// Writes rotation parameter related stuff
 		void writeRotationParameter(const TAdjustableHelmertTransformation& frameDef, int rot);
 		///Writes header for point summary
-		void writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const std::string &refSys, bool isLocal);
+		void writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, bool isLocal);
 
 		/// Write TSTSN reliability
 		void writeTSTNReliability(TDataTreeIterator frameIt);
@@ -98,7 +98,7 @@ private:
 		///Writes specific point
 		void writeResultsPtsData(AdjPointIter pt, bool isLocal);
 		///Writes points of the same type
-		void writePointType(const std::list<AdjPointIter>& lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type, bool localNode);
+		void writePointType(const std::list<AdjPointIter>& lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type);
 				
 		///write measurements summary in the rootOnly
 		void writeMeasurementsSummaryRootOnly();
@@ -124,6 +124,7 @@ private:
 		std::list<AdjPointIter> pointVXZ;
 		std::list<AdjPointIter> pointVYZ;
 		std::list<AdjPointIter> pointVZ;
+		std::unordered_map<std::string, std::list<AdjPointIter>> fFrameToPoints;
 
 		/// Initialise all observation summaries
 		void initialiseAllObsSummaries();

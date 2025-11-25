@@ -44,6 +44,11 @@ TFRAMEWriter::TFRAMEWriter(TAStreamFormatter &stream, const TLGCData *data) : TA
 			pointVYZ.emplace_back(it);
 		if (it->getSpatialStatus() == TSpatialStatus::kVz)
 			pointVZ.emplace_back(it);
+
+		// Build internal map: frame name -> list of point iters
+		TDataTreeIterator frameIt = it->getFrameTreePosition();
+		std::string frameName = frameIt.node->data.get()->frame.getName();
+		fFrameToPoints[frameName].emplace_back(it);
 	}
 }
 
@@ -1204,9 +1209,9 @@ void TFRAMEWriter::writePoints(TDataTreeIterator frameIt)
 	else
 		localNode = true;
 
-	writePointType(pointCALA, frameIt, TSpatialStatus::kCala, localNode);
+	writePointType(pointCALA, frameIt, TSpatialStatus::kCala);
 
-	writePointType(pointVXYZ, frameIt, TSpatialStatus::kVxyz, localNode);
+	writePointType(pointVXYZ, frameIt, TSpatialStatus::kVxyz);
 
 	// Ellipsoid and Ellips data only in the root frame
 	if (errorEllipseActive && !pointVXYZ.empty() && !localNode)
@@ -1228,16 +1233,16 @@ void TFRAMEWriter::writePoints(TDataTreeIterator frameIt)
 		}
 	};
 
-	writePointType(pointVXY, frameIt, TSpatialStatus::kVxy, localNode);
+	writePointType(pointVXY, frameIt, TSpatialStatus::kVxy);
 	writeEllipse(pointVXY);
 
-	writePointType(pointVXZ, frameIt, TSpatialStatus::kVxz, localNode);
+	writePointType(pointVXZ, frameIt, TSpatialStatus::kVxz);
 	writeEllipse(pointVXZ);
 
-	writePointType(pointVYZ, frameIt, TSpatialStatus::kVyz, localNode);
+	writePointType(pointVYZ, frameIt, TSpatialStatus::kVyz);
 	writeEllipse(pointVYZ);
 
-	writePointType(pointVZ, frameIt, TSpatialStatus::kVz, localNode);
+	writePointType(pointVZ, frameIt, TSpatialStatus::kVz);
 
 	*getStream() << "\n";
 }
@@ -1246,45 +1251,37 @@ void TFRAMEWriter::writePoints(TDataTreeIterator frameIt)
 // MEMBER PRIVATE FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void TFRAMEWriter::writePointType(const std::list<AdjPointIter> &lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type, bool localNode)
+void TFRAMEWriter::writePointType(const std::list<AdjPointIter> &lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type)
 {
 	if (!lop.empty())
 	{
 		// Tells if a header was already written (for local node).
-		// In collections of points, we have points defined among whole project.
-		// We want to write header only if we find out, that at least one point is defined in the particular sub-frame.
+		// Header is only written if at least one point is in the frame
 		bool headerWritten = false;
+		bool isLocalNode = !frameIt.node->data.get()->isROOTNode();
 
-		std::string fReferentialName;
-		if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-			fReferentialName = "SPHE";
-		else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-			fReferentialName = "RS2K";
-		else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-			fReferentialName = "LEP";
-		else
-			fReferentialName = "OLOC";
-
-		if (!localNode)
-			writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
-
-		for (auto it(lop.begin()); it != lop.end(); ++it)
+		const std::list<AdjPointIter> *ptList;
+		if (!isLocalNode)
 		{
-			if (localNode)
+			ptList = &lop;
+		}
+		else
+		{
+			ptList = &fFrameToPoints[frameIt.node->data.get()->frame.getName()];
+		}
+
+		for (const auto &pIt : *ptList)
+		{
+			// don't write if point type is not fitting.
+			if (pIt->getSpatialStatus() != type)
+				continue;
+
+			if (!headerWritten)
 			{
-				AdjPointIter pIt = *it;
-				if (pIt->getFrameTreePosition() == frameIt)
-				{ // If the point was defined in this FRAME
-					if (!headerWritten)
-					{
-						writeResultsPtsHeader(type, (int)lop.size(), fReferentialName, localNode);
-						headerWritten = true;
-					}
-					writeResultsPtsData(*it, localNode);
-				}
+				writeResultsPtsHeader(type, int(lop.size()), isLocalNode);
+				headerWritten = true;
 			}
-			else
-				writeResultsPtsData(*it, localNode);
+			writeResultsPtsData(pIt, isLocalNode);
 		}
 	}
 }
@@ -1781,7 +1778,7 @@ void TFRAMEWriter::writeWPSRReliability(TDataTreeIterator frameIt)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HEADER
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, const std::string &refSys, bool localFRAME)
+void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, bool localFRAME)
 {
 	TAStreamFormatter *stream = getStream();
 	TPointConverter converter(stream, fProjectData->getConfig().referential);
@@ -1821,8 +1818,24 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream) << "\n";
 
 	(*stream) << title << separator;
+
+	std::string referentialName;
+	bool systemWithH = true;
+	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
+		referentialName = "SPHE";
+	else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+		referentialName = "RS2K";
+	else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+		referentialName = "LEP";
+	else
+	{
+		referentialName = "OLOC";
+		systemWithH = false;
+	}
+
+
 	if (!localFRAME)
-		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << refSys << " )";
+		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << referentialName << " )";
 
 	(*stream) << "\n";
 
@@ -1833,10 +1846,6 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream).writeString(coordWidth, "X "); // X
 	(*stream).writeString(coordWidth, "Y "); // Y
 	(*stream).writeString(coordWidth, "Z "); // Z
-
-	bool systemWithH = (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS
-		|| fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine
-		|| fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine);
 
 	if (!localFRAME && systemWithH)
 	{
