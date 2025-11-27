@@ -35,8 +35,7 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 	const TLOR2LOR &target2RootTrafo = fPointTransfo.getLORTransformation(dist.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 	TPositionVector targetPosRoot = dist.targetPos->getEstimatedValue(); // x2
 	target2RootTrafo.transform(targetPosRoot);
-	// local vertical at target position
-	// Express the local vertical if MLA is used
+	// local vertical in root coordinates at target position
 	TFreeVector targetVertical(0, 0, 1, TCoordSysFactory::k3DCartesian);
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
@@ -71,7 +70,34 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> Root2StationContributions;
 	addTransformationsContributions(root2stationTrafo, targetInRootWithHeight, dFdT, Root2StationContributions);
 
-	return PolarContribInFrame({F, relativePosition, TFreeVector(dFdS), TFreeVector(targetContrib), target2RootContributions, Root2StationContributions});
+	// variance computation (contributions from fixed parameters: target height, target/station centering)
+	Eigen::MatrixXd dRelPosdUncertainParameters(3, 5);
+
+	// Transform vectors to station coordinates
+	TFreeVector targetVerticalInStationCoord = targetVertical;
+	root2stationTrafo.transform(targetVerticalInStationCoord);
+	TFreeVector targetX(1, 0, 0, TCoordSysFactory::k3DCartesian);
+	root2stationTrafo.transform(targetX);
+	TFreeVector targetY(0, 1, 0, TCoordSysFactory::k3DCartesian);
+	root2stationTrafo.transform(targetY);
+
+	// Set Jacobian columns (rel pos wrt [T_u x/y, T_H_u, S_u x/y])
+	dRelPosdUncertainParameters << targetX.toRealVector(), targetY.toRealVector(), targetVerticalInStationCoord.toRealVector(), -Eigen::Vector3d::UnitX(),
+		-Eigen::Vector3d::UnitY();
+
+	// Chain rule for stochastic model Jacobian
+	Eigen::MatrixXd stochasticModelJac = dFdT * dRelPosdUncertainParameters;
+
+	// Fixed parameter uncertainties (sigmas) and variances
+	Eigen::Vector<double, 5> fixedParameterUncertainties;
+	fixedParameterUncertainties << dist.target.sigmaTargetCentering, dist.target.sigmaTargetCentering, dist.target.sigmaTargetHt, station->instrument.sigmaInstrCentering,
+		station->instrument.sigmaInstrCentering;
+	Eigen::VectorXd fixedParameterVariances = fixedParameterUncertainties.array().square();
+
+	// Variance contribution: Covar Propagation rule
+	double fixedParameterVarianceContrib = (stochasticModelJac * fixedParameterVariances.asDiagonal() * stochasticModelJac.transpose())(0, 0);
+
+	return PolarContribInFrame({F, relativePosition, TFreeVector(dFdS), TFreeVector(targetContrib), target2RootContributions, Root2StationContributions, fixedParameterVarianceContrib});
 }
 
 // Spatial distance contributions
@@ -178,16 +204,11 @@ DistMeasContribFrame TContributionsGenerator::getSpatialDistanceContribInFrame(s
 		cst = dist.target.distCorrectionValue;
 	double calcMeas = spatialDistContribInFrame.fModelPrediction - cst;
 
-	TVector relativePosition = spatialDistContribInFrame.fRelativePosition;
-	TReal D = spatialDistContribInFrame.fModelPrediction;
 
 	// Variance calculation
-	TReal varM = pow2q(dist.target.sigmaDist + calcMeas / 1000 * dist.target.ppmDist);
-	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
-	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
-	TReal varTgCent = pow2q(dist.target.sigmaTargetCentering);
-	TReal variance = varM + pow2q((relativePosition(2)) / D) * varTgHeight + ((pow2q(relativePosition(1)) + pow2q(relativePosition(0))) / pow2q(D)) * (varInstCent + varTgCent);
-
+	TReal varM = pow2q(dist.target.sigmaDist + dist.getDistance() / 1000 * dist.target.ppmDist);
+	double varianceFixedParameterContrib = spatialDistContribInFrame.fFixedParametersVarianceContribution;
+	TReal variance = varM + varianceFixedParameterContrib;
 	// Fill the contribution structure
 	DistMeasContribFrame contrib = {calcMeas, spatialDistContribInFrame, 0.0, -1.0, variance};
 	return contrib;
@@ -276,10 +297,9 @@ AnglMeasContribFrame TContributionsGenerator::getHorAnglContribInFrame(std::shar
 
 	// Calculated measurement value
 	TAngle calcMeas = TAngle(horAnglContribInFrame.fModelPrediction) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
-	double dist2 = pow2q(horAnglContribInFrame.fRelativePosition.topRows(2).norm());
 	// Variance calculation
-	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
-
+	double varianceFixedParameterContrib = horAnglContribInFrame.fFixedParametersVarianceContribution;
+	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + varianceFixedParameterContrib;
 	AnglMeasContribFrame contrib = {calcMeas, horAnglContribInFrame, -1.0, 0.0, variance};
 	return contrib;
 }
@@ -396,15 +416,9 @@ AnglMeasContribFrame TContributionsGenerator::getZenDistContribInFrame(std::shar
 
 	TAngle calcMeas(vertAnglContribInFrame.fModelPrediction);
 
-	Eigen::Vector3d relPos = vertAnglContribInFrame.fRelativePosition;
-	double distance3D = relPos.norm();
-	double sinPhi = relPos.topRows(2).norm() / relPos.norm();
-	// station coefficient of model
-	double c = -vertAnglModel.jac(relPos)[2];
-		// Calculate and return the contributions
-	TReal variance = pow2q(zend.target.sigmaZenD.getRadiansValue())
-		+ (((pow2q(relPos(0)) + pow2q(relPos(1))) * pow2q(relPos(2))) / (powq(distance3D, 6) * pow2q(sinPhi))) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering))
-		+ pow2q(-c) * pow2q(zend.target.sigmaTargetHt);
+	// Variance calculation
+	double varianceFixedParameterContrib = vertAnglContribInFrame.fFixedParametersVarianceContribution;
+	TReal variance = pow2q(zend.target.sigmaZenD.getRadiansValue()) + varianceFixedParameterContrib;
 
 	AnglMeasContribFrame contrib = {calcMeas, vertAnglContribInFrame, 0.0, 0.0, variance};
 	return contrib;

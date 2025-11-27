@@ -430,6 +430,7 @@ struct PolarContribInFrame
 	TFreeVector fTargetContrib;
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTarget2RootContrib;
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRoot2StationContrib;
+	double fFixedParametersVarianceContribution;
 };
 struct DistMeasContribFrame
 {
