@@ -518,4 +518,64 @@ void object::test<12>()
 	ensure("Finite difference Jacobian and calculated Jacobian should be approximately equal.", diffNorm < 1e-5);
 }
 
+
+template<>
+template<>
+void object::test<13>()
+{
+	set_test_name("Testing polar observation in frame with nonzero target height");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/TSTN_TargetHeight.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+	TAngle rx(30, TAngle::kGons);
+	TAngle ry(60, TAngle::kGons);
+	TAngle rz(90, TAngle::kGons);
+	TRotationMatrix station2Root(TRotationMatrix::ERotationType::kRxyz, rx, ry, rz );
+	Eigen::Matrix3d root2StationRot = station2Root.inverse().getMat();
+
+	std::stringstream infiler(MixObs::TSTN_polarTargetHeightModel);
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	// replicate test geometry
+	double targetHeight = 1;
+	Eigen::Vector3d targetPosRoot;
+	targetPosRoot << 1, 1, 1;
+	Eigen::Vector3d verticalInRoot;
+	verticalInRoot << 0, 0, 1;
+	Eigen::Vector3d targetWithHeightInRoot = targetPosRoot + verticalInRoot * targetHeight;
+
+	// this is the target+height position as seen from the station
+	Eigen::Vector3d targetWithHeightInStation = root2StationRot * targetWithHeightInRoot;
+	double x = targetWithHeightInStation(0);
+	double y = targetWithHeightInStation(1);
+	double z = targetWithHeightInStation(2);
+	// calculate the expected values "by hand" in the station frame: angl zend dist
+	TAngle angl(atan2(x, y));
+	TAngle zend(acos(z / targetWithHeightInStation.norm()));
+	TLength dist(targetWithHeightInStation.norm());
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+	auto frameIt = tree.begin();
+	frameIt++;
+	auto ttstn = *frameIt.node->data->measurements.fTSTN.begin();
+	auto horAngleMeas = ttstn->roms.front()->measANGL.front();
+	auto zendAngleMeas = ttstn->roms.front()->measZEND.front();
+	auto distMeas = ttstn->roms.front()->measDIST.front();
+
+	// compute the corrected observations
+	TAngle calcHorAngle = horAngleMeas.getAngle() + horAngleMeas.getAngleResidual();
+	TAngle calcZendAngle = zendAngleMeas.getAngle() + zendAngleMeas.getAngleResidual();
+	TLength calcDist = distMeas.getDistance() + distMeas.getDistanceResidual();
+
+	ensure("Calculated horizontal angle not as expected", fabsq(calcHorAngle.getGonsValue() - angl.getGonsValue()) < 1e-8);
+	ensure("Calculated vertical angle not as expected", fabsq(calcZendAngle.getGonsValue() - zend.getGonsValue()) < 1e-8);
+	ensure("Calculated distance not as expected", fabsq(calcDist.getMetresValue() - dist.getMetresValue()) < 1e-8);
+
+}
+
 }; // namespace tut

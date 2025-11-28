@@ -28,12 +28,12 @@ TContributionsGenerator::TContributionsGenerator(TPointTransformer &fPointTransf
 */
 
 template<typename TPolarMeas>
-PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_ptr<TTSTN> station, const TPolarMeas &dist, const ModelAndJacobian &model)
+PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_ptr<TTSTN> station, const TPolarMeas &polarMeas, const ModelAndJacobian &model)
 {
 	fPointTransfo.setMLA(false); // TSTN in Frame measurements never in MLA
 	// new version taking target height along local vertical at target position
-	const TLOR2LOR &target2RootTrafo = fPointTransfo.getLORTransformation(dist.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
-	TPositionVector targetPosRoot = dist.targetPos->getEstimatedValue(); // x2
+	const TLOR2LOR &target2RootTrafo = fPointTransfo.getLORTransformation(polarMeas.targetPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	TPositionVector targetPosRoot = polarMeas.targetPos->getEstimatedValue(); // x2
 	target2RootTrafo.transform(targetPosRoot);
 	// local vertical in root coordinates at target position
 	TFreeVector targetVertical(0, 0, 1, TCoordSysFactory::k3DCartesian);
@@ -44,7 +44,7 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 		fPointTransfo.transformCGRF2CCS(targetVertical);
 	}
 	// target position with added targetHeight along vertical
-	TFreeVector targetHeightVector = targetVertical * dist.target.targetHt;
+	TFreeVector targetHeightVector = targetVertical * polarMeas.target.targetHt;
 	TPositionVector targetInRootWithHeight = targetPosRoot + targetHeightVector; // x3
 	const TLOR2LOR &root2stationTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), station->instrumentPos->getFrameTreePosition());
 	TPositionVector targetInStationFrameWithHeight = targetInRootWithHeight; // x4
@@ -66,7 +66,7 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 	Eigen::Matrix<double, 1, 3> TargetToRoot_coefficients = dFdT * dTargetWithHeightStation_dTargetWithHeightRoot;
 
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> target2RootContributions;
-	addTransformationsContributions(target2RootTrafo, dist.targetPos->getEstimatedValue(), TargetToRoot_coefficients, target2RootContributions);
+	addTransformationsContributions(target2RootTrafo, polarMeas.targetPos->getEstimatedValue(), TargetToRoot_coefficients, target2RootContributions);
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> Root2StationContributions;
 	addTransformationsContributions(root2stationTrafo, targetInRootWithHeight, dFdT, Root2StationContributions);
 
@@ -90,7 +90,7 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 
 	// Fixed parameter uncertainties (sigmas) and variances
 	Eigen::Vector<double, 5> fixedParameterUncertainties;
-	fixedParameterUncertainties << dist.target.sigmaTargetCentering, dist.target.sigmaTargetCentering, dist.target.sigmaTargetHt, station->instrument.sigmaInstrCentering,
+	fixedParameterUncertainties << polarMeas.target.sigmaTargetCentering, polarMeas.target.sigmaTargetCentering, polarMeas.target.sigmaTargetHt, station->instrument.sigmaInstrCentering,
 		station->instrument.sigmaInstrCentering;
 	Eigen::VectorXd fixedParameterVariances = fixedParameterUncertainties.array().square();
 

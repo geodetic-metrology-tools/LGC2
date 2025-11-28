@@ -418,13 +418,13 @@ struct OBSXYZContrib
 };
 struct ModelAndJacobian
 {
+	// the raw model function evaluated at the relative position. e.g. distance, horizontal angle
 	std::function<double(const Eigen::Vector3d &)> func;
-	// std::function<Eigen::Matrix<double, 1, 3>(const Eigen::Vector3d&)> jac;
 	std::function<Eigen::RowVector3d(const Eigen::Vector3d &)> jac;
 };
 struct PolarContribInFrame
 {
-	TReal fModelPrediction; // the model function evaluated at the relative position. e.g. distance, horizontal angle etc. Supplementary contributions have to be added in specific cases to get the calculated measurement, like adding a bearin angle, distance correction etc.
+	TReal fModelPrediction; // evalualtion of the model function resulting from relatve position.
 	TVector fRelativePosition; // target - station in station frame, reused in the variance calculation of the specific models
 	TFreeVector fStationContrib;
 	TFreeVector fTargetContrib;

@@ -1351,5 +1351,28 @@ point   1.4142
 *ENDFRAME
 *END)";
 
+
+char const *const TSTN_polarTargetHeightModel= R"(*TITR
+polar model in frame. target height should follow root vertical
+*OLOC
+*INSTR
+*POLAR myStation   highTarget   0   0   0   0   
+highTarget   30   30   0.02   6   0   0   0   0   1   0   
+*CALA
+target       1.00000       1.00000       1.00000      
+*FRAME   stationFrame   0.00000   0.00000   0.00000   30.00000   60.00000   90.00000   1.00000   
+*CALA
+station       0.00000       0.00000       0.00000      
+*TSTN   station   myStation   IHFIX   
+*V0   
+*ANGL
+target   101.97311   
+*ZEND
+target   70.48009   
+*DIST
+target   1.93053   
+*ENDFRAME
+*END)";
+
 } // namespace MixObs
 #endif

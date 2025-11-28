@@ -1202,6 +1202,12 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (angl.target.sigmaAngl != romDefTarget.sigmaAngl)
 					(*stream) << "OBSE" << sep << angl.target.sigmaAngl.getSignedCCValue() << sep;
 
+				if (angl.target.targetHt != romDefTarget.targetHt)
+					(*stream) << "TH" << sep << angl.target.targetHt.getMetresValue() << sep;
+
+				if (angl.target.sigmaTargetHt != romDefTarget.sigmaTargetHt)
+					(*stream) << "THSE" << sep << angl.target.sigmaTargetHt.getMMetresValue() << sep;
+
 				if (angl.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << angl.target.sigmaTargetCentering.getMMetresValue() << sep;
 

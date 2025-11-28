@@ -420,6 +420,8 @@ void TKeyANGL::parse(const std::vector<std::string> &tokens, bool activeLine, in
 
 		tgt.sigmaAngl = TAngle(opts.getParamRcc2rad("OBSE", tgt.sigmaAngl));
 		tgt.sigmaTargetCentering = TLength(opts.getParamRmm2m("TCSE", tgt.sigmaTargetCentering));
+		tgt.targetHt = TLength(opts.getParamR("TH", tgt.targetHt));
+		tgt.sigmaTargetHt = TLength(opts.getParamRmm2m("THSE", tgt.sigmaTargetHt));
 
 		// set measurement value
 		TANGL angl(obspt, tgt);
