@@ -233,25 +233,34 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 		station->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); // Transformation from "STATION FRAME" to "ROOT"
 	stLor2RootTrafo.transform(stationPos);
 
+	// local vertical in root coordinates at target position
+	TFreeVector targetVertical(0, 0, 1, TCoordSysFactory::k3DCartesian);
+	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+	{
+		// temporarily set MLA origin to target, only way to get local vertical
+		fPointTransfo.set2MLATransformation(targetPos);
+		fPointTransfo.transformMLA2CGRF(targetVertical);
+		fPointTransfo.transformCGRF2CCS(targetVertical);
+	}
+
+	TPositionVector targetWithHeight = targetPos + targetVertical * angl.target.targetHt;
 	// If not OLOC used and station can not rotate freely => contributions calculated in MLA of the station, otherwise in ROOT of the tree.
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame && station->rot3D != true)
-	{
-		fPointTransfo.transformPointsToMLASystem(station->instrumentPos->getName(), stationPos, targetPos);
+	{	// set the correct origin of the station MLA
+		fPointTransfo.set2MLATransformation(stationPos);
+		fPointTransfo.transformPointsToMLASystem(station->instrumentPos->getName(), stationPos, targetWithHeight);
 		fPointTransfo.setMLA(true);
 	}
 	else
 		fPointTransfo.setMLA(false);
 
-	TReal xSt = stationPos.getX().getMetresValue();
-	TReal ySt = stationPos.getY().getMetresValue();
+	TVector relPos = TFreeVector(targetWithHeight - stationPos).toRealVector();
 
-	TReal xTg = targetPos.getX().getMetresValue();
-	TReal yTg = targetPos.getY().getMetresValue();
+	// Calculated measurement value, instrument height has no influence
+	TAngle calcMeas = TAngle::aTan2(relPos(0), relPos(1)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
 
-	// Calculated measurement value
-	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
-
-	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
+	//TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
+	TReal dist2 = pow2q(relPos.topRows(2).norm());
 	if (dist2 < nullLimit)
 	{
 		generateContributionError(
@@ -259,23 +268,22 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 			+ getNameAndLine(*station->instrumentPos) + " and " + getNameAndLine(*angl.targetPos));
 	}
 
-	TReal a, b, c; // station's contributions coefficients (negative values of these give the target coefficients)
-	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; // xSt coefficient
-	b = (xTg - xSt) / dist2; // ySt coefficient
-	c = 0.0; // zSt coefficient
+	Eigen::Matrix<double, 1, 3> dFdT;
+	dFdT << relPos(1) / dist2, -relPos(0) / dist2, 0;
+	Eigen::Matrix<double, 1, 3> dFdS = -dFdT;
 
 	TReal v0Contrib = -1.0; // contribution for the V0 parameter
 	TReal hiContrib = 0.0; // no contribution for the instrument height
 
 	// Station can be defined anywhere, get point contributions and transformations contributions
-	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, a, b, c);
+	TFreeVector coordContribStation = getPointContributions(stLor2RootTrafo, dFdS(0), dFdS(1), dFdS(2));
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> stationTransfContributions;
-	addTransformationsContributions(stLor2RootTrafo, station->instrumentPos->getEstimatedValue(), a, b, c, stationTransfContributions);
+	addTransformationsContributions(stLor2RootTrafo, station->instrumentPos->getEstimatedValue(), dFdS, stationTransfContributions);
 
 	// Target can be defined anywhere, get point contributions and transformations contributions
-	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, -a, -b, -c);
+	TFreeVector coordContribTarget = getPointContributions(tgLor2RootTrafo, dFdT(0), dFdT(1), dFdT(2));
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
-	addTransformationsContributions(tgLor2RootTrafo, angl.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
+	addTransformationsContributions(tgLor2RootTrafo, angl.targetPos->getEstimatedValue(), dFdT, targetTransfContributions);
 
 	// Variance calculation
 	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
