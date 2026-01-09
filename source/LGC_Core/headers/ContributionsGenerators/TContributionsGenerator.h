@@ -171,13 +171,9 @@ private:
 		const Eigen::Vector3d &vec,
 		std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> &transfContrib);
 
-	// INCL helpers for derivative-based contributions
-	decltype(INCLContrib::fStTransformContrib) addROLLYContribution(const TLOR2LOR &lorTrafo,
-		const TFreeVector &vector,
-		const Eigen::Vector3d &locVert);
-	decltype(INCLContrib::fStTransformContrib) addINCLYContribution(const TLOR2LOR &lorTrafo,
-		const TFreeVector &vector,
-		const Eigen::Vector3d &locVert);
+	// INCL model-specific helpers: compute calcMeas, variance, gradient and transformation contributions
+	INCLContrib addROLLYContribution(const TLOR2LOR &lorTrafo, const TFreeVector &stationVRoot, const Eigen::Vector3d &locVert, const TInstrumentData::TINCL &target);
+	INCLContrib addINCLYContribution(const TLOR2LOR &lorTrafo, const TFreeVector &stationVRoot, const Eigen::Vector3d &locVert, const TInstrumentData::TINCL &target);
 
 	/// Adds contribution of a LOR transformations for PLR3D measurements into a 'transfContrib' vector
 	void addTransformationsContributions3D(const TLOR2LOR &lorTrafo,
@@ -202,12 +198,10 @@ private:
 	// Private helper function to eliminate code duplication between INCLY and ROLLY
 	// Mathematical model is automatically deduced from template type (TINCLY -> arcsin, TROLLY -> atan2)
 	template<typename TROM, typename TMeas>
-	INCLContrib getINCLContribHelper(const TROM& inclST, const TMeas& incl);
-	
+	INCLContrib getINCLContribHelper(const TROM &inclST, const TMeas &incl);
+
 	// Private helper function to unify transformation contributions for INCLY and ROLLY
-	decltype(INCLContrib::fStTransformContrib) addINCLContribHelper(const TLOR2LOR &lorTrafo,
-		const TFreeVector &vector,
-		const Eigen::Vector3d &trigoDiff);
+	decltype(INCLContrib::fStTransformContrib) addINCLContribHelper(const TLOR2LOR &lorTrafo, const TFreeVector &vector, const Eigen::Vector3d &trigoDiff);
 
 	//@}
 };
