@@ -4,6 +4,7 @@
 
 #include <LGCAdjustablePoint.h>
 #include <TContributionsGenerator.h>
+#include <algorithm>
 
 #include "TDist.h"
 #include "TTreeEntry.h"
@@ -55,8 +56,14 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 	// distance
 	Eigen::Vector3d relativePosition = (targetInStationFrameWithHeight - stationPos).toRealVector();
 
-	double F = model.func(relativePosition);
-	Eigen::Matrix<double, 1, 3> dFdT = model.jac(relativePosition);
+	modelEval polarEval = model.func(relativePosition);
+	if (!polarEval.success)
+	{
+		generateContributionError("TContributionGenerator::getPolarContribInFrame: " + polarEval.message + " Points "+ getNameAndLine(*station->instrumentPos) + " and "
+			+ getNameAndLine(*polarMeas.targetPos));
+	}
+	double F = polarEval.modelF;
+	Eigen::Matrix<double, 1, 3> dFdT = polarEval.modelJacobian;
 	Eigen::Matrix<double, 1, 3> dFdS = -dFdT;
 	Eigen::Matrix3d dTargetRoot_dTarget = target2RootTrafo.getPartialDerivativeWrtPosition();
 	Eigen::Matrix3d dTargetWithHeightStation_dTargetWithHeightRoot = root2stationTrafo.getPartialDerivativeWrtPosition();
@@ -191,13 +198,12 @@ DistMeasContrib TContributionsGenerator::getSpatialDistanceContrib(std::shared_p
 DistMeasContribFrame TContributionsGenerator::getSpatialDistanceContribInFrame(std::shared_ptr<TTSTN> station, const TLINE &dist)
 {
 	ModelAndJacobian distanceModel;
-	distanceModel.func = [](const Eigen::Vector3d &relPos) { return relPos.norm(); };
-	distanceModel.jac = [](const Eigen::Vector3d &relPos) -> Eigen::RowVector3d {
-		if (relPos.norm() == 0.0)
+	distanceModel.func = [](const Eigen::Vector3d &relPos) -> modelEval {
+		if (isZero(relPos.norm()))
 		{
-			return Eigen::RowVector3d::Zero(); // TODO: throw error
+			return {0.0, Eigen::RowVector3d::Zero(), false, "Relative position is zero, cannot evaluate Jacobian of distance function."};
 		}
-		return relPos.transpose() / relPos.norm();
+		return {relPos.norm(), relPos.transpose() / relPos.norm(), true, ""};
 	};
 
 	PolarContribInFrame spatialDistContribInFrame = getPolarContribInFrame(station, dist, distanceModel);
@@ -295,16 +301,25 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 AnglMeasContribFrame TContributionsGenerator::getHorAnglContribInFrame(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TANGL &angl)
 {
 	ModelAndJacobian horAnglModel;
-	horAnglModel.func = [](const Eigen::Vector3d &relPos) { return atan2(relPos(0),relPos(1)); };
-	horAnglModel.jac = [](const Eigen::Vector3d &relPos) -> Eigen::RowVector3d {
-		double dist2 = pow2q(relPos.topRows(2).norm());
-		if (dist2 == 0.0)
+	horAnglModel.func = [](const Eigen::Vector3d &relPos) -> modelEval {
+		const double x = relPos(0);
+		const double y = relPos(1);
+
+		// horizontal distance squared
+		const double dist2 = x * x + y * y;
+
+		// model value: note your convention is atan2(x, y)
+		const double angle = std::atan2(x, y);
+
+		if (isZero(dist2))
 		{
-			return Eigen::RowVector3d::Zero(); // TODO: throw error
+			return {angle, Eigen::RowVector3d::Zero(), false, "Horizontal angle Jacobian undefined: (identical x/y coordinates)."};
 		}
-		Eigen::RowVector3d result;
-		result << relPos(1) / dist2, -relPos(0) / dist2, 0;
-		return result;
+
+		Eigen::RowVector3d jac;
+		jac << y / dist2, -x / dist2, 0.0;
+
+		return {angle, jac, true, ""};
 	};
 
 	PolarContribInFrame horAnglContribInFrame = getPolarContribInFrame(station, angl, horAnglModel);
@@ -405,27 +420,38 @@ AnglMeasContrib TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN
 AnglMeasContribFrame TContributionsGenerator::getZenDistContribInFrame(std::shared_ptr<TTSTN> station, const TZEND &zend)
 {
 	ModelAndJacobian vertAnglModel;
-	vertAnglModel.func = [](const Eigen::Vector3d &relPos) { return acos(relPos(2) / relPos.norm()); };
-	vertAnglModel.jac = [](const Eigen::Vector3d &relPos) -> Eigen::RowVector3d {
-		double x = relPos(0);
-		double y = relPos(1);
-		double z = relPos(2);
-		double r2 = relPos.squaredNorm();
-		if (r2 == 0.0)
+	vertAnglModel.func = [](const Eigen::Vector3d &relPos) -> modelEval {
+		const double x = relPos(0);
+		const double y = relPos(1);
+		const double z = relPos(2);
+
+		const double r2 = relPos.squaredNorm();
+		if (isZero(r2))
 		{
-			return Eigen::RowVector3d::Zero(); // TODO: throw error
+			return {0.0, Eigen::RowVector3d::Zero(), false, "Vertical angle undefined: relative position is zero."};
 		}
-		double rho2 = x * x + y * y;
-		double rho = std::sqrt(rho2);
-		if (rho < 1e-12)
+
+		const double r = std::sqrt(r2);
+
+		// Clamp for numerical safety
+		double c = std::clamp(z / r, -1.0, 1.0);
+
+		const double angle = std::acos(c);
+
+		const double rho = std::sqrt(x * x + y * y);
+		if (isZero(rho))
 		{
-			return Eigen::RowVector3d::Zero(); // TODO: throw error
+			return {angle, Eigen::RowVector3d::Zero(), false, "Vertical angle Jacobian undefined: horizontal projection is near zero."};
 		}
-		double denom = rho * r2;
-		Eigen::RowVector3d result;
-		result << (x * z) / denom, (y * z) / denom, -rho / r2;
-		return result;
+
+		const double denom = rho * r2;
+
+		Eigen::RowVector3d jac;
+		jac << (x * z) / denom, (y * z) / denom, -rho / r2;
+
+		return {angle, jac, true, ""};
 	};
+
 	PolarContribInFrame vertAnglContribInFrame = getPolarContribInFrame(station, zend, vertAnglModel);
 
 	TAngle calcMeas(vertAnglContribInFrame.fModelPrediction);

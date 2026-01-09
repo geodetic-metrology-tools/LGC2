@@ -416,11 +416,17 @@ struct OBSXYZContrib
 
 	TFreeVector fMisclosureVector; //!< Misclosure vector of the First, Second and Third equation respectively.
 };
+struct modelEval
+{
+	double modelF;
+	Eigen::RowVector3d modelJacobian;
+	bool success;
+	std::string message;
+};
 struct ModelAndJacobian
 {
 	// the raw model function evaluated at the relative position. e.g. distance, horizontal angle
-	std::function<double(const Eigen::Vector3d &)> func;
-	std::function<Eigen::RowVector3d(const Eigen::Vector3d &)> jac;
+	std::function<modelEval(const Eigen::Vector3d &)> func;
 };
 struct PolarContribInFrame
 {
