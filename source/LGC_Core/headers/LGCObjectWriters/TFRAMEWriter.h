@@ -7,9 +7,9 @@
 #ifndef SU_FRAME_WRITER
 #define SU_FRAME_WRITER
 
-//LGC
-#include <TLGCData.h>
+// LGC
 #include <TALGCObjectWriter.h>
+#include <TLGCData.h>
 
 // Forward declarations for measurement types
 struct TINCLYROM;
@@ -18,17 +18,16 @@ struct TROLLYROM;
 /*!
 	\ingroup LGCObjectWriters
 	\brief Write the FRAME and its definition to an LGC output file, eventually also whole content of the frame (points and observations).
-	
+
 @{*/
-class  TFRAMEWriter : public TALGCObjectWriter 
+class TFRAMEWriter : public TALGCObjectWriter
 {
 public:
 	/// Constructor
-	TFRAMEWriter(TAStreamFormatter& stream, const TLGCData* data);
+	TFRAMEWriter(TAStreamFormatter &stream, const TLGCData *data);
 
-	///Destructor
+	/// Destructor
 	virtual ~TFRAMEWriter();
-
 
 	///	Writes all information about frame, its definition, calculated parameters, points defined in this frame and results of all observation belonging to this frame.
 	void writeFRAMEAll(TDataTreeIterator frameIt);
@@ -40,128 +39,95 @@ public:
 	void writeFRAMEAllReliability(TDataTreeIterator frameIt);
 
 	/// Writes the frame header.
-	void writeFRAMEHeader(const std::string& name, const std::vector<int>& ID=std::vector<int>());
+	void writeFRAMEHeader(const std::string &name, const std::vector<int> &ID = std::vector<int>());
 
 	/// Writes the frame definition, taking a adjustableHelmertTRansformation for reusability.
-	void writeFRAMEDefinition(const TAdjustableHelmertTransformation& frame);
+	void writeFRAMEDefinition(const TAdjustableHelmertTransformation &frame);
 
-	/*! 
-		\brief Writes all points defined in this frame. 
+	/*!
+		\brief Writes all points defined in this frame.
 		If it is a ROOT frame, write all points defined within whole project transformed in the ROOT.
 	*/
 	void writePoints(TDataTreeIterator frameIt);
 
-    ///Transformation needed if necessary to transform to MLA system
-    static void transfXYH2XYZ(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf);
-    ///Transformation needed if necessary to transform to MLA system
-    static void transfXYZ2XYH(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf);
+	/// Transformation needed if necessary to transform to MLA system
+	static void transfXYH2XYZ(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf);
+	/// Transformation needed if necessary to transform to MLA system
+	static void transfXYZ2XYH(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf);
 
 private:
+	/// Writes translation parameter related stuff
+	void writeTranslationParameter(const TAdjustableHelmertTransformation &frameDef, int transl);
+	/// Writes rotation parameter related stuff
+	void writeRotationParameter(const TAdjustableHelmertTransformation &frameDef, int rot);
+	/// Writes header for point summary
+	void writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, bool isLocal);
 
-		/// Writes translation parameter related stuff
-		void writeTranslationParameter(const TAdjustableHelmertTransformation& frameDef, int transl);
-		/// Writes rotation parameter related stuff
-		void writeRotationParameter(const TAdjustableHelmertTransformation& frameDef, int rot);
-		///Writes header for point summary
-		void writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus status, const int ptNumber, bool isLocal);
+	/// Write TSTSN reliability
+	void writeTSTNReliability(TDataTreeIterator frameIt);
+	/// Write CAM reliability
+	void writeCAMReliability(TDataTreeIterator frameIt);
+	/// Write EDM reliability
+	void writeEDMReliability(TDataTreeIterator frameIt);
+	/// Write LEVEL reliability
+	void writeLEVELReliability(TDataTreeIterator frameIt);
+	/// Write SCALE reliability
+	void writeSCALEReliability(TDataTreeIterator frameIt);
+	/// Write INCLY reliability
+	void writeINCLYReliability(TDataTreeIterator frameIt);
+	/// Write ROLLY reliability
+	void writeROLLYReliability(TDataTreeIterator frameIt);
 
-		/// Write TSTSN reliability
-		void writeTSTNReliability(TDataTreeIterator frameIt);
-		/// Write CAM reliability
-		void writeCAMReliability(TDataTreeIterator frameIt);
-		/// Write EDM reliability
-		void writeEDMReliability(TDataTreeIterator frameIt);
-		/// Write LEVEL reliability
-		void writeLEVELReliability(TDataTreeIterator frameIt);
-		/// Write SCALE reliability
-		void writeSCALEReliability(TDataTreeIterator frameIt);
-		/// Write INCLY reliability
-		void writeINCLYReliability(TDataTreeIterator frameIt);
-		/// Write ROLLY reliability
-		void writeROLLYReliability(TDataTreeIterator frameIt);
+private:
+	/// Common template helper for both INCLY and ROLLY reliability reports
+	template<typename MeasurementContainer, typename HeaderFunc, typename DataFunc>
+	void writeINCLReliabilityHelper(const MeasurementContainer &measurements, const char *sectionTitle, HeaderFunc writeHeaderFunc, DataFunc writeDataFunc);
 
-	private:
-		/// Common template helper for both INCLY and ROLLY reliability reports
-		template<typename MeasurementContainer, typename HeaderFunc, typename DataFunc>
-		void writeINCLReliabilityHelper(
-			const MeasurementContainer& measurements,
-			const char* sectionTitle,
-			HeaderFunc writeHeaderFunc,
-			DataFunc writeDataFunc);
+public:
+	/// Write HLSR reliability
+	void writeHLSRReliability(TDataTreeIterator frameIt);
+	/// Write WPSR reliability
+	void writeWPSRReliability(TDataTreeIterator frameIt);
 
-	public:
-		/// Write HLSR reliability
-		void writeHLSRReliability(TDataTreeIterator frameIt);
-		/// Write WPSR reliability
-		void writeWPSRReliability(TDataTreeIterator frameIt);
+	/// Writes specific point
+	void writeResultsPtsData(AdjPointIter pt, bool isLocal);
+	/// Writes points of the same type
+	void writePointType(const std::list<AdjPointIter> &lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type);
 
-		///Writes specific point
-		void writeResultsPtsData(AdjPointIter pt, bool isLocal);
-		///Writes points of the same type
-		void writePointType(const std::list<AdjPointIter>& lop, TDataTreeIterator frameIt, TSpatialStatus::ESpatialStatus type);
-				
-		///write measurements summary in the rootOnly
-		void writeMeasurementsSummaryRootOnly();
-		///write Histogramme summary in the rootOnly
-		void writeHistogrammeRootOnly();
+	/// write measurements summary in the rootOnly
+	void writeMeasurementsSummaryRootOnly();
+	/// write Histogramme summary in the rootOnly
+	void writeHistogrammeRootOnly();
 
-		///WriteEllipsHeader
-		void writeEllipsHeader();
-		///WriteEllipsoidHeader
-		void writeEllipsoidHeader();
-		///WriteEllipsData
-		void writeEllipsData(AdjPointIter& pt);
-		///WriteEllipsoidData
-		void writeEllipsoidData(AdjPointIter& pt);
+	/// WriteEllipsHeader
+	void writeEllipsHeader();
+	/// WriteEllipsoidHeader
+	void writeEllipsoidHeader();
+	/// WriteEllipsData
+	void writeEllipsData(AdjPointIter &pt);
+	/// WriteEllipsoidData
+	void writeEllipsoidData(AdjPointIter &pt);
 
-		/// Project data
-		const TLGCData* fProjectData; 
+	/// Project data
+	const TLGCData *fProjectData;
 
-		//Lists of iterators to the point collection, separated into lists according to they type. Need to be written out to output according to the type.
-		std::list<AdjPointIter> pointCALA;
-		std::list<AdjPointIter> pointVXYZ;
-		std::list<AdjPointIter> pointVXY;
-		std::list<AdjPointIter> pointVXZ;
-		std::list<AdjPointIter> pointVYZ;
-		std::list<AdjPointIter> pointVZ;
-		std::unordered_map<std::string, std::list<AdjPointIter>> fFrameToPoints;
+	// Lists of iterators to the point collection, separated into lists according to they type. Need to be written out to output according to the type.
+	std::list<AdjPointIter> pointCALA;
+	std::list<AdjPointIter> pointVXYZ;
+	std::list<AdjPointIter> pointVXY;
+	std::list<AdjPointIter> pointVXZ;
+	std::list<AdjPointIter> pointVYZ;
+	std::list<AdjPointIter> pointVZ;
+	std::unordered_map<std::string, std::list<AdjPointIter>> fFrameToPoints;
 
-		/// Initialise all observation summaries
-		void initialiseAllObsSummaries();
+	/// Initialise all observation summaries
+	void initialiseAllObsSummaries();
 
-		//all summaries
-		std::list<const TLGCObsSummary*>
-			allRADISummaries_,
-			allPlrANGLSummaries_,
-			allPlrZENDSummaries_,
-			allPlrDISTSummaries_,
-			allANGLSummaries_,
-			allZENDSummaries_,
-			allDISTSummaries_,
-			allDHORSummaries_,
-			allECTHSummaries_,
-			allECDIRSummaries_,
-			allDVERSummaries_,
-			allUvdXSummaries_,
-			allUvdYSummaries_,
-			allUvdDSummaries_,
-			allUvecXSummaries_,
-			allUvecYSummaries_,
-			allDSPTSummaries_,
-			allDLEVSummaries_,
-			allDlevDHORSummaries_,
-			allORIESummaries_,
-			allECHOSummaries_,
-			allECVESummaries_,
-			allECSPSummaries_,
-			allINCLYSummaries_,
-			allROLLYSummaries_,
-			allECWSSummaries_, 
-			allEcwiXSummaries_, 
-			allEcwiZSummaries_,
-			allObsxyzXSummaries_,
-			allObsxyzYSummaries_,
-			allObsxyzZSummaries_;
+	// all summaries
+	std::list<const TLGCObsSummary *> allRADISummaries_, allPlrANGLSummaries_, allPlrZENDSummaries_, allPlrDISTSummaries_, allANGLSummaries_, allZENDSummaries_, allDISTSummaries_,
+		allDHORSummaries_, allECTHSummaries_, allECDIRSummaries_, allDVERSummaries_, allUvdXSummaries_, allUvdYSummaries_, allUvdDSummaries_, allUvecXSummaries_,
+		allUvecYSummaries_, allDSPTSummaries_, allDLEVSummaries_, allDlevDHORSummaries_, allORIESummaries_, allECHOSummaries_, allECVESummaries_, allECSPSummaries_,
+		allINCLYSummaries_, allROLLYSummaries_, allECWSSummaries_, allEcwiXSummaries_, allEcwiZSummaries_, allObsxyzXSummaries_, allObsxyzYSummaries_, allObsxyzZSummaries_;
 };
 
-#endif //SU_FRAME_WRITER
+#endif // SU_FRAME_WRITER

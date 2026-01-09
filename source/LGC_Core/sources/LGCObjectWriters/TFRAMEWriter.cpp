@@ -815,7 +815,7 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 		// Write INCLY header with instrument name
 		(*stream).writeStringLeft(nameWidth, "INCLY"); // instrument name
 		(*stream) << "\n";
-		
+
 		// Write synthesis header and results for INCLY measurements
 		inclWriter.writeINCLSynthesisHeader();
 		inclWriter.writeINCLYResultsSynthesis(allINCLYSummaries_);
@@ -826,13 +826,13 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 	// ROLLY - Write results for roll Y-axis measurements if data exists
 	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kROLLY) > 0)
 	{
-		// Add newlines and tabs for formatting  
+		// Add newlines and tabs for formatting
 		(*stream) << "\n";
 		(*stream) << TABs;
 		// Write ROLLY header with instrument name
 		(*stream).writeStringLeft(nameWidth, "ROLLY"); // instrument name
 		(*stream) << "\n";
-		
+
 		// Write synthesis header and results for ROLLY measurements
 		inclWriter.writeINCLSynthesisHeader();
 		inclWriter.writeROLLYResultsSynthesis(allROLLYSummaries_);
@@ -1645,53 +1645,47 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 
 /*
  * INCLY Reliability Report Writer
- * 
+ *
  * Writes reliability statistics and quality metrics for INCLY inclinometer measurements.
  * Generates comprehensive reports including measurement statistics, residuals analysis,
  * and quality indicators for the new arcsin-based mathematical model.
- * 
+ *
  * @param frameIt: Iterator pointing to the frame containing INCLY measurements
  */
 void TFRAMEWriter::writeINCLYReliability(TDataTreeIterator frameIt)
 {
 	auto &tmeas = (*frameIt)->measurements;
-	writeINCLReliabilityHelper(tmeas.fINCLY, "INCLY observations", 
-		&TINCLWriter::writeINCLReliabilityHeader, &TINCLWriter::writeINCLYReliabilityData);
+	writeINCLReliabilityHelper(tmeas.fINCLY, "INCLY observations", &TINCLWriter::writeINCLReliabilityHeader, &TINCLWriter::writeINCLYReliabilityData);
 }
 
 /*
  * ROLLY Reliability Report Writer
- * 
+ *
  * Writes reliability statistics and quality metrics for ROLLY inclinometer measurements.
  * Generates comprehensive reports including measurement statistics, residuals analysis,
  * and quality indicators for the legacy atan2-based mathematical model.
- * 
+ *
  * @param frameIt: Iterator pointing to the frame containing ROLLY measurements
  */
 void TFRAMEWriter::writeROLLYReliability(TDataTreeIterator frameIt)
 {
 	auto &tmeas = (*frameIt)->measurements;
-	writeINCLReliabilityHelper(tmeas.fROLLY, "ROLLY observations",
-		&TINCLWriter::writeINCLReliabilityHeader, &TINCLWriter::writeROLLYReliabilityData);
+	writeINCLReliabilityHelper(tmeas.fROLLY, "ROLLY observations", &TINCLWriter::writeINCLReliabilityHeader, &TINCLWriter::writeROLLYReliabilityData);
 }
 
 /*
  * Common INCL Reliability Report Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY reliability reports.
  * Eliminates code duplication by accepting the measurement-specific functions as parameters.
- * 
+ *
  * @param measurements: Measurements container (INCLY or ROLLY)
  * @param sectionTitle: Title to write in output stream ("INCLY observations" or "ROLLY observations")
  * @param writeHeaderFunc: Function to write the header (writeINCLReliabilityHeader - common for both INCLY and ROLLY)
  * @param writeDataFunc: Function to write the reliability data (writeINCLYReliabilityData or writeROLLYReliabilityData)
  */
 template<typename MeasurementContainer, typename HeaderFunc, typename DataFunc>
-void TFRAMEWriter::writeINCLReliabilityHelper(
-	const MeasurementContainer& measurements,
-	const char* sectionTitle,
-	HeaderFunc writeHeaderFunc,
-	DataFunc writeDataFunc)
+void TFRAMEWriter::writeINCLReliabilityHelper(const MeasurementContainer &measurements, const char *sectionTitle, HeaderFunc writeHeaderFunc, DataFunc writeDataFunc)
 {
 	// Get output stream and configure INCL writer with histogram settings
 	TAStreamFormatter *stream = getStream();
@@ -1704,10 +1698,13 @@ void TFRAMEWriter::writeINCLReliabilityHelper(
 	for (const auto &rom : measurements)
 	{
 		// Get measurement list based on container type
-		const auto& measList = [&rom]() -> decltype(auto) {
-			if constexpr (std::is_same_v<MeasurementContainer, std::list<TINCLYROM>>) {
+		const auto &measList = [&rom]() -> decltype(auto) {
+			if constexpr (std::is_same_v<MeasurementContainer, std::list<TINCLYROM>>)
+			{
 				return rom.measINCLY;
-			} else {
+			}
+			else
+			{
 				return rom.measROLLY;
 			}
 		}();
@@ -1832,7 +1829,6 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 		referentialName = "OLOC";
 		systemWithH = false;
 	}
-
 
 	if (!localFRAME)
 		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << referentialName << " )";

@@ -113,7 +113,6 @@ public:
 	TPointTransformer &operator=(const TPointTransformer &other) = delete;
 
 private:
-
 	/// Returns an identity transformation
 	TLOR2LOR getIdentityTransformation();
 

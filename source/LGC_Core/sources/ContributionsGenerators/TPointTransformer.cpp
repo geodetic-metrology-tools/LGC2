@@ -32,7 +32,7 @@ TPointTransformer::TPointTransformer(const TDataTree *tree, const TRefSystemFact
 //////////////////////////////
 void TPointTransformer::updateTransformations()
 {
-	for (auto & lorPair: fLORTrafoMap)
+	for (auto &lorPair : fLORTrafoMap)
 	{
 		lorPair.second.updateTree();
 	}
@@ -113,7 +113,6 @@ void TPointTransformer::transformCGRF2CCS(TFreeVector &fv)
 	fccs2cgrf.transformInverse(fv);
 }
 
-
 // Set a new origin of LA system, initialize the transformation
 void TPointTransformer::set2MLATransformation(TPositionVector originInCCS)
 {
@@ -138,7 +137,7 @@ const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator origin
 	std::string destinationFrameName = destinationTreePos->get()->frame.getName();
 
 	std::string trafoName = originalFrameName + destinationFrameName;
-	
+
 	auto it = fLORTrafoMap.find(trafoName);
 
 	if (it != fLORTrafoMap.end())
@@ -147,7 +146,7 @@ const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator origin
 	}
 	else
 	{
-		it = fLORTrafoMap.emplace(trafoName,TLOR2LOR(originalTreePos, destinationTreePos, trafoName)).first;
+		it = fLORTrafoMap.emplace(trafoName, TLOR2LOR(originalTreePos, destinationTreePos, trafoName)).first;
 		return it->second;
 	}
 }
