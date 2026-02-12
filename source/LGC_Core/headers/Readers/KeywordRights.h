@@ -117,36 +117,38 @@ namespace {
 	const int nb_allowed_tstn = 1;
 	const int nb_allowed_v0 = 7;
 	const int nb_allowed_plr3d = 26;
-	const int nb_allowed_angl = 25;
-	const int nb_allowed_zend = 25;
-	const int nb_allowed_dist = 25;
-	const int nb_allowed_ecth = 25;
-	const int nb_allowed_ecdir = 25;
-	const int nb_allowed_dhor = 25;
+	const int nb_allowed_angl = 26;
+	const int nb_allowed_zend = 26;
+	const int nb_allowed_dist = 26;
+	const int nb_allowed_ecth = 26;
+	const int nb_allowed_ecdir = 26;
+	const int nb_allowed_dhor = 26;
 	const int nb_allowed_cam = 2;
-	const int nb_allowed_uvec = 19;
-	const int nb_allowed_uvd = 19;
-	const int nb_allowed_dspt = 18;
-	const int nb_allowed_dlev = 17;
-	const int nb_allowed_dver = 17;
-	const int nb_allowed_echo = 17;
-	const int nb_allowed_ecve = 17;
-	const int nb_allowed_ecsp = 17;
-	const int nb_allowed_orie = 17;
-	const int nb_allowed_radi = 17;
-	const int nb_allowed_OBSXYZ = 18;
-	const int nb_allowed_incly = 19;
-	const int nb_allowed_rolly = 19;
-	const int nb_allowed_ecws = 17;
-	const int nb_allowed_ecwi = 17;
+	const int nb_allowed_uvec = 20;
+	const int nb_allowed_uvd = 20;
+	const int nb_allowed_dspt = 19;
+	const int nb_allowed_dlev = 18;
+	const int nb_allowed_dver = 18;
+	const int nb_allowed_echo = 18;
+	const int nb_allowed_ecve = 18;
+	const int nb_allowed_ecsp = 18;
+	const int nb_allowed_orie = 18;
+	const int nb_allowed_radi = 18;
+	const int nb_allowed_OBSXYZ = 19;
+	const int nb_allowed_incly = 20;
+	const int nb_allowed_rolly = 20;
+	const int nb_allowed_ecws = 18;
+	const int nb_allowed_ecwi = 18;
 	//points
-	const int nb_allowed_cala = 23;
-	const int nb_allowed_poin = 23;
-	const int nb_allowed_pdor = 23;
-	const int nb_allowed_vxy = 23;
-	const int nb_allowed_vxz = 23;
-	const int nb_allowed_vyz = 23;
-	const int nb_allowed_vz = 23;
+	const int nb_allowed_cala = 24;
+	const int nb_allowed_poin = 24;
+	const int nb_allowed_pdor = 24;
+	const int nb_allowed_vxy = 24;
+	const int nb_allowed_vxz = 24;
+	const int nb_allowed_vyz = 24;
+	const int nb_allowed_vz = 24;
+	// sag connections // same number of rights as the point types
+	const int nb_allowed_sagConnections = 24;
 	//instruments
 	const int nb_allowed_polar = 31;
 	const int nb_allowed_camd = 31;
@@ -187,7 +189,7 @@ namespace {
 	const int nb_allowed_instr = 20; // instruments + points + frame + round of measurements without intruments
 	const int nb_allowed_frame = 10;
 	const int nb_allowed_sagelement = 20; // new adjustable object, only after INSTR
-	const int nb_allowed_ef = 24;
+	const int nb_allowed_ef = 25;
 	const int nb_allowed_end = 0;
 	const int nb_allowed_titr = 4;
 
@@ -267,7 +269,7 @@ namespace {
 	const char* allowed_RADI[nb_allowed_radi] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY, SAGCONNECT,ECWS,ECWI };
 	const char* allowed_OBSXYZ[nb_allowed_OBSXYZ] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, POIN,INCLY,ROLLY, SAGCONNECT,ECWS,ECWI };
 	const char* allowed_INCLY[nb_allowed_incly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, INCLY, POIN, OBSXYZ,ROLLY, SAGCONNECT,ECWS,ECWI };
-	const char* allowed_ROLLY, SAGCONNECT[nb_allowed_rolly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, ROLLY, SAGCONNECT, POIN, OBSXYZ,INCLY,ECWS,ECWI };
+	const char* allowed_ROLLY[nb_allowed_rolly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, INCLY, POIN, OBSXYZ,ROLLY, SAGCONNECT,ECWS,ECWI };
 	const char* allowed_ECWS[nb_allowed_ecws] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY, SAGCONNECT, ECWS,ECWI };
 	const char* allowed_ECWI[nb_allowed_ecwi] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END, INCLY, ROLLY, SAGCONNECT, ECWS, ECWI};
 

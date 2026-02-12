@@ -1348,9 +1348,9 @@ void TLSInputMatricesFiller::addINCLContributionsHelper(
 
 	for (auto &meas : measurements)
 	{
-		updateMask(&itINCLY, matrices);
-		eqIdx = itINCLY.getFirstEquationIndex();
-		obsIdx = itINCLY.getFirstObservationIndex();
+		updateMask(&meas, matrices);
+		eqIdx = meas.getFirstEquationIndex();
+		obsIdx = meas.getFirstObservationIndex();
 
 		contributions = (fCGenerator.*getContrib)(rom, meas); // Get the observation contribution
 
