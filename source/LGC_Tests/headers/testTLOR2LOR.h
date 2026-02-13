@@ -139,6 +139,7 @@ namespace LOR2LORInputFiles {
 		"*OLOC\n"
 		"*PREC 7\n"
 
+		"*INSTR\n"
 		"*CALA\n"
 			"STN  0 0 0\n"
 			"STN2 100 100 0\n"

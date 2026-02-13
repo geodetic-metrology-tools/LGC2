@@ -64,10 +64,9 @@ class TKeyTSTN : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyTSTN(TLGCData &project, int nb_allowed_keywords = nb_allowed_tstn, const char **keywords = allowed_TSTN) : TAMeasurementKey(project, TSTN)
+	TKeyTSTN(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(TSTN)) : TAMeasurementKey(project, TSTN)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -82,10 +81,9 @@ class TKeyCAM : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyCAM(TLGCData &project, int nb_allowed_keywords = nb_allowed_cam, const char **keywords = allowed_CAM) : TAMeasurementKey(project, CAM)
+	TKeyCAM(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(CAM)) : TAMeasurementKey(project, CAM)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -103,10 +101,9 @@ class TKeyUVEC : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyUVEC(TLGCData &project, int nb_allowed_keywords = nb_allowed_uvec, const char **keywords = allowed_UVEC) : TAMeasurementKey(project, UVEC)
+	TKeyUVEC(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(UVEC)) : TAMeasurementKey(project, UVEC)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -121,10 +118,9 @@ class TKeyUVD : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyUVD(TLGCData &project, int nb_allowed_keywords = nb_allowed_uvd, const char **keywords = allowed_UVD) : TAMeasurementKey(project, UVD)
+	TKeyUVD(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(UVD)) : TAMeasurementKey(project, UVD)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -143,10 +139,9 @@ class TKeyV0 : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyV0(TLGCData &project, int nb_allowed_keywords = nb_allowed_v0, const char **keywords = allowed_V0) : TAMeasurementKey(project, V0)
+	TKeyV0(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(V0)) : TAMeasurementKey(project, V0)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// tokenize V0 data
@@ -157,10 +152,9 @@ class TKeyPLR3D : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyPLR3D(TLGCData &project, int nb_allowed_keywords = nb_allowed_plr3d, const char **keywords = allowed_PLR3D) : TAMeasurementKey(project, PLR3D)
+	TKeyPLR3D(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(PLR3D)) : TAMeasurementKey(project, PLR3D)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -175,10 +169,9 @@ class TKeyANGL : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyANGL(TLGCData &project, int nb_allowed_keywords = nb_allowed_angl, const char **keywords = allowed_ANGL) : TAMeasurementKey(project, ANGL)
+	TKeyANGL(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ANGL)) : TAMeasurementKey(project, ANGL)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -194,10 +187,9 @@ class TKeyZEND : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyZEND(TLGCData &project, int nb_allowed_keywords = nb_allowed_zend, const char **keywords = allowed_ZEND) : TAMeasurementKey(project, ZEND)
+	TKeyZEND(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ZEND)) : TAMeasurementKey(project, ZEND)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -213,10 +205,9 @@ class TKeyDIST : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyDIST(TLGCData &project, int nb_allowed_keywords = nb_allowed_dist, const char **keywords = allowed_DIST) : TAMeasurementKey(project, DIST)
+	TKeyDIST(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(DIST)) : TAMeasurementKey(project, DIST)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -232,10 +223,9 @@ class TKeyECTH : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECTH(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecth, const char **keywords = allowed_ECTH) : TAMeasurementKey(project, ECTH)
+	TKeyECTH(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECTH)) : TAMeasurementKey(project, ECTH)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -254,10 +244,9 @@ class TKeyECDIR : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECDIR(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecdir, const char **keywords = allowed_ECDIR) : TAMeasurementKey(project, ECDIR)
+	TKeyECDIR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECDIR)) : TAMeasurementKey(project, ECDIR)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -278,10 +267,9 @@ class TKeyECSP : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECSP(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecsp, const char **keywords = allowed_ECSP) : TAMeasurementKey(project, ECSP)
+	TKeyECSP(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECSP)) : TAMeasurementKey(project, ECSP)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -297,10 +285,9 @@ class TKeyDHOR : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyDHOR(TLGCData &project, int nb_allowed_keywords = nb_allowed_dhor, const char **keywords = allowed_DHOR) : TAMeasurementKey(project, DHOR)
+	TKeyDHOR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(DHOR)) : TAMeasurementKey(project, DHOR)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -318,10 +305,9 @@ class TKeyDSPT : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyDSPT(TLGCData &project, int nb_allowed_keywords = nb_allowed_dspt, const char **keywords = allowed_DSPT) : TAMeasurementKey(project, DSPT)
+	TKeyDSPT(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(DSPT)) : TAMeasurementKey(project, DSPT)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -337,10 +323,9 @@ class TKeyDVER : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyDVER(TLGCData &project, int nb_allowed_keywords = nb_allowed_dver, const char **keywords = allowed_DVER) : TAMeasurementKey(project, DVER)
+	TKeyDVER(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(DVER)) : TAMeasurementKey(project, DVER)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -358,10 +343,9 @@ class TKeyDLEV : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyDLEV(TLGCData &project, int nb_allowed_keywords = nb_allowed_dlev, const char **keywords = allowed_DLEV) : TAMeasurementKey(project, DLEV)
+	TKeyDLEV(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(DLEV)) : TAMeasurementKey(project, DLEV)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -377,10 +361,9 @@ class TKeyECHO : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECHO(TLGCData &project, int nb_allowed_keywords = nb_allowed_echo, const char **keywords = allowed_ECHO) : TAMeasurementKey(project, ECHO)
+	TKeyECHO(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECHO)) : TAMeasurementKey(project, ECHO)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -396,10 +379,9 @@ class TKeyECVE : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECVE(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecve, const char **keywords = allowed_ECVE) : TAMeasurementKey(project, ECVE)
+	TKeyECVE(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECVE)) : TAMeasurementKey(project, ECVE)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -415,10 +397,9 @@ class TKeyORIE : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyORIE(TLGCData &project, int nb_allowed_keywords = nb_allowed_orie, const char **keywords = allowed_ORIE) : TAMeasurementKey(project, ORIE)
+	TKeyORIE(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ORIE)) : TAMeasurementKey(project, ORIE)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -434,10 +415,9 @@ class TKeyRADI : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyRADI(TLGCData &project, int nb_allowed_keywords = nb_allowed_radi, const char **keywords = allowed_RADI) : TAMeasurementKey(project, RADI)
+	TKeyRADI(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(RADI)) : TAMeasurementKey(project, RADI)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -456,10 +436,9 @@ class TKeyOBSXYZ : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyOBSXYZ(TLGCData &project, int nb_allowed_keywords = nb_allowed_OBSXYZ, const char **keywords = allowed_OBSXYZ) : TAMeasurementKey(project, OBSXYZ)
+	TKeyOBSXYZ(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(OBSXYZ)) : TAMeasurementKey(project, OBSXYZ)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -475,10 +454,9 @@ class TKeyINCLY : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyINCLY(TLGCData &project, int nb_allowed_keywords = nb_allowed_incly, const char **keywords = allowed_INCLY) : TAMeasurementKey(project, INCLY)
+	TKeyINCLY(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(INCLY)) : TAMeasurementKey(project, INCLY)
 	{
-		for (int i = 0; i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -494,10 +472,9 @@ class TKeyROLLY : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyROLLY(TLGCData &project, int nb_allowed_keywords = nb_allowed_rolly, const char **keywords = allowed_ROLLY) : TAMeasurementKey(project, ROLLY)
+	TKeyROLLY(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ROLLY)) : TAMeasurementKey(project, ROLLY)
 	{
-		for (int i = 0; i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -513,10 +490,9 @@ class TKeyECWS : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECWS(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecws, const char **keywords = allowed_ECWS) : TAMeasurementKey(project, ECWS)
+	TKeyECWS(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECWS)) : TAMeasurementKey(project, ECWS)
 	{
-		for (int i = 0; i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!
@@ -532,10 +508,9 @@ class TKeyECWI : public TAMeasurementKey
 {
 public:
 	/// Constructor, the list of allowed keywords is filled
-	TKeyECWI(TLGCData &project, int nb_allowed_keywords = nb_allowed_ecwi, const char **keywords = allowed_ECWI) : TAMeasurementKey(project, ECWI)
+	TKeyECWI(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ECWI)) : TAMeasurementKey(project, ECWI)
 	{
-		for (int i = 0; i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/*!

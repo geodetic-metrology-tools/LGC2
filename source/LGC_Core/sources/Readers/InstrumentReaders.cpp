@@ -9,10 +9,9 @@ TAInstrumentKey::TAInstrumentKey(TLGCData &project, const std::string &key) :
 {
 }
 
-TKeyINSTR::TKeyINSTR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(INSTR, project)
+TKeyINSTR::TKeyINSTR(TLGCData &project, const std::set<std::string> &allowed_kw) : TAKeyWord(INSTR, project)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyINSTR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -25,10 +24,9 @@ void TKeyINSTR::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 //////////////////////
 // POLAR instrument //
 //////////////////////
-TKeyPOLAR::TKeyPOLAR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, POLAR)
+TKeyPOLAR::TKeyPOLAR(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, POLAR)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyPOLAR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -84,10 +82,9 @@ const std::vector<std::string> &TKeyPOLAR::parentKeys() const
 //////////////////////
 // CAMD instrument //
 //////////////////////
-TKeyCAMD::TKeyCAMD(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, CAMD)
+TKeyCAMD::TKeyCAMD(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, CAMD)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyCAMD::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -134,10 +131,9 @@ const std::vector<std::string> &TKeyCAMD::parentKeys() const
 ////////////////////
 // EDM instrument //
 ////////////////////
-TKeyEDM::TKeyEDM(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, EDM)
+TKeyEDM::TKeyEDM(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, EDM)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyEDM::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -183,10 +179,9 @@ const std::vector<std::string> &TKeyEDM::parentKeys() const
 //////////////////////
 // LEVEL instrument //
 //////////////////////
-TKeyLEVEL::TKeyLEVEL(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, LEVEL)
+TKeyLEVEL::TKeyLEVEL(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, LEVEL)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyLEVEL::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -240,10 +235,9 @@ const std::vector<std::string> &TKeyLEVEL::parentKeys() const
 //////////////////////
 // SCALE instrument //
 //////////////////////
-TKeySCALE::TKeySCALE(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, SCALE)
+TKeySCALE::TKeySCALE(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, SCALE)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeySCALE::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -271,10 +265,9 @@ const std::vector<std::string> &TKeySCALE::parentKeys() const
 //////////////////////
 // INCL  instrument //
 //////////////////////
-TKeyINCL::TKeyINCL(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, INCL)
+TKeyINCL::TKeyINCL(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, INCL)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyINCL::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -302,10 +295,9 @@ const std::vector<std::string> &TKeyINCL::parentKeys() const
 //////////////////////
 // HLSR instrument //
 //////////////////////
-TKeyHLSR::TKeyHLSR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, HLSR)
+TKeyHLSR::TKeyHLSR(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, HLSR)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyHLSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -331,10 +323,9 @@ const std::vector<std::string> &TKeyHLSR::parentKeys() const
 //////////////////////
 // WPSR instrument //
 //////////////////////
-TKeyWPSR::TKeyWPSR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, WPSR)
+TKeyWPSR::TKeyWPSR(TLGCData &project, const std::set<std::string> &allowed_kw) : TAInstrumentKey(project, WPSR)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyWPSR::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)

@@ -9,10 +9,9 @@
 ///////////////////////////////////////////////////////
 // TKeyTITR
 ///////////////////////////////////////////////////////
-TKeyTITR::TKeyTITR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(TITR, project)
+TKeyTITR::TKeyTITR(TLGCData &project, const std::set<std::string> &allowed_kw) : TAKeyWord(TITR, project)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyTITR::parse(const std::vector<std::string> &tokens, bool activeLine, int)

@@ -14,7 +14,7 @@ namespace TestDVER {
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"
 	"*OLOC\n"
-
+	"*INSTR\n"
 	"*CALA\n"
 		"stn	0   0	0\n" 
 		"pt5	305	10	50\n"
@@ -40,7 +40,7 @@ namespace TestDVER {
 	"*TITR\n"
 	"Testing ID for DVER observation.\n"
 	"*OLOC\n"
-
+	"*INSTR\n"
 	"*CALA\n"
 		"stn	0   0	0\n" 
 		"pt5	305	10	50\n"
@@ -66,7 +66,7 @@ namespace TestDVER {
 	"*TITR\n"
 	"Testing Input Matrices Filler.\n"
 	"*OLOC\n"
-
+	"*INSTR\n"
 	"*CALA\n"
 		"pt1	100	10	50\n"
 
@@ -100,7 +100,7 @@ namespace TestDVER {
 	"Testing Input Matrices Filler.\n"
 	"*RS2K\n"
 	"*PREC 7\n"
-
+	"*INSTR\n"
 	"*CALA\n"
 		"stn	-1026.53292000015	10475.4085800003	419.8338381\n" //0	0	0
 		"pt0	-1007.20955606953	10429.3085047217	429.8340334\n" //50	0	10

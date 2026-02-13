@@ -69,6 +69,9 @@ bool TDataAnalyzer::dataConsistent()
 
 	checkPDOR(outputMessages, consistent);
 
+	// checking measurement placement (root vs sub-frame context)
+	consistent = consistent && checkMeasurementPlacement();
+
 	// checking parameter related data, assigning parameter indices
 	consistent = consistent && checkParameters();
 
@@ -385,6 +388,61 @@ bool TDataAnalyzer::cleanDeactivated()
 	return true;
 }
 
+bool TDataAnalyzer::checkMeasurementPlacement()
+{
+	auto &outputMessages(fData.getFileLogger());
+	const TDataTree &fTree = fData.getTree();
+	bool consistent = true;
+
+	auto reject = [&](const auto &list, const std::string &name, const std::string &context) {
+		if (!list.empty())
+		{
+			std::string lines;
+			for (const auto &m : list)
+			{
+				if (!lines.empty())
+					lines += ", ";
+				lines += std::to_string(m.line);
+			}
+			outputMessages << TFileLogger::e_logType::LOG_ERROR
+						   << "Line " + lines + ": " + name + " measurement is not allowed in " + context + ".";
+			consistent = false;
+		}
+	};
+
+	for (auto it(fTree.begin()); it != fTree.end(); ++it)
+	{
+		auto &meas = it.node->data.get()->measurements;
+
+		if (!it.node->data.get()->isROOTNode())
+		{
+			for (auto &tstn : meas.fTSTN)
+				for (auto &rom : tstn->roms)
+					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
+					{
+						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST measurements are allowed in a subframe.";
+						consistent = false;
+					}
+
+			reject(meas.fLEVEL, "DLEV", "a sub-frame");
+			reject(meas.fDVER, "DVER", "a sub-frame");
+			reject(meas.fECHO, "ECHO", "a sub-frame");
+			reject(meas.fECSP, "ECSP", "a sub-frame");
+			reject(meas.fECVE, "ECVE", "a sub-frame");
+			reject(meas.fORIE, "ORIE", "a sub-frame");
+			reject(meas.fECWS, "ECWS", "a sub-frame");
+			reject(meas.fECWI, "ECWI", "a sub-frame");
+		}
+		else
+		{
+			reject(meas.fINCLY, "INCLY", "the root frame");
+			reject(meas.fROLLY, "ROLLY", "the root frame");
+		}
+	}
+
+	return consistent;
+}
+
 bool TDataAnalyzer::checkParameters()
 {
 	int lastUidx = 0; // Unknown indices
@@ -408,22 +466,6 @@ bool TDataAnalyzer::checkParameters()
 		{
 			frame.setFirstUidx(lastUidx);
 			lastUidx = frame.getLastUidx() + 1;
-		}
-
-		// only ANGL, ZEND and DIST are allowed in a subframe for a total station
-		if (!it.node->data.get()->isROOTNode())
-		{
-			for (auto &tstn : it.node->data.get()->measurements.fTSTN)
-			{
-				for (auto &rom : tstn->roms)
-				{
-					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
-					{
-						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
-						return false;
-					}
-				}
-			}
 		}
 
 		// If Reference point was not provided to a DLEV measurement, adjustable plane which is measured needs to be initialized

@@ -49,6 +49,9 @@ private:
 	//! Manage the deactivated points, measurements etc. from the data
 	bool cleanDeactivated();
 
+	//! Check that measurements appear in the correct frame context (root vs sub-frame)
+	bool checkMeasurementPlacement();
+
 	bool checkParameters();
 	bool checkConfigOptions();
 

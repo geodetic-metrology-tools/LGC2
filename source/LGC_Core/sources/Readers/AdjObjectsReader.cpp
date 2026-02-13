@@ -7,10 +7,9 @@
 ///////////////////////////////////////////////////////
 // TKeyFRAME
 ///////////////////////////////////////////////////////
-TKeyFRAME::TKeyFRAME(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(FRAME, project)
+TKeyFRAME::TKeyFRAME(TLGCData &project, const std::set<std::string> &allowed_kw) : TAKeyWord(FRAME, project)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
@@ -101,10 +100,9 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 ///////////////////////////////////////////////////////
 // TKeyENDFRAME
 ///////////////////////////////////////////////////////
-TKeyENDFRAME::TKeyENDFRAME(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(ENDFRAME, project)
+TKeyENDFRAME::TKeyENDFRAME(TLGCData &project, const std::set<std::string> &allowed_kw) : TAKeyWord(ENDFRAME, project)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 void TKeyENDFRAME::parse(const std::vector<std::string> &tokens, bool, int)
@@ -309,10 +307,9 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 ///////////////////////////////////////////////////////
 // Specific points definitions
 ///////////////////////////////////////////////////////
-TKeyCALA::TKeyCALA(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAPointKey(project, CALA)
+TKeyCALA::TKeyCALA(TLGCData &project, const std::set<std::string> &allowed_kw) : TAPointKey(project, CALA)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 LGCAdjustablePoint &TKeyCALA::insertPoint(const std::string &pointName, TReal x, TReal y, TReal z)
@@ -333,10 +330,9 @@ LGCAdjustablePoint &TKeyCALA::insertPoint(const std::string &pointName, TReal x,
 			TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), true, true, true, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
-TKeyPOIN::TKeyPOIN(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAPointKey(project, POIN)
+TKeyPOIN::TKeyPOIN(TLGCData &project, const std::set<std::string> &allowed_kw) : TAPointKey(project, POIN)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 LGCAdjustablePoint &TKeyPOIN::insertPoint(const std::string &pointName, TReal x, TReal y, TReal z)
@@ -355,10 +351,9 @@ LGCAdjustablePoint &TKeyPOIN::insertPoint(const std::string &pointName, TReal x,
 			TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), false, false, false, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
-TKeyVXY::TKeyVXY(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAPointKey(project, VXY)
+TKeyVXY::TKeyVXY(TLGCData &project, const std::set<std::string> &allowed_kw) : TAPointKey(project, VXY)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 LGCAdjustablePoint &TKeyVXY::insertPoint(const std::string &pointName, TReal x, TReal y, TReal z)
@@ -377,10 +372,9 @@ LGCAdjustablePoint &TKeyVXY::insertPoint(const std::string &pointName, TReal x, 
 			TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), false, false, true, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
-TKeyVXZ::TKeyVXZ(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAPointKey(project, VXZ)
+TKeyVXZ::TKeyVXZ(TLGCData &project, const std::set<std::string> &allowed_kw) : TAPointKey(project, VXZ)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 LGCAdjustablePoint &TKeyVXZ::insertPoint(const std::string &pointName, TReal x, TReal y, TReal z)
@@ -399,10 +393,9 @@ LGCAdjustablePoint &TKeyVXZ::insertPoint(const std::string &pointName, TReal x, 
 			TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), false, true, false, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
-TKeyVYZ::TKeyVYZ(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAPointKey(project, VYZ)
+TKeyVYZ::TKeyVYZ(TLGCData &project, const std::set<std::string> &allowed_kw) : TAPointKey(project, VYZ)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 LGCAdjustablePoint &TKeyVYZ::insertPoint(const std::string &pointName, TReal x, TReal y, TReal z)
@@ -421,10 +414,9 @@ LGCAdjustablePoint &TKeyVYZ::insertPoint(const std::string &pointName, TReal x, 
 			TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), true, false, false, pointName, fconfig.referential, proj.getCurrentPosition()));
 }
 
-TKeyVZ::TKeyVZ(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAPointKey(project, VZ)
+TKeyVZ::TKeyVZ(TLGCData &project, const std::set<std::string> &allowed_kw) : TAPointKey(project, VZ)
 {
-	for (int i(0); i < nb_allowed_keywords; i++)
-		allowed_keywords.emplace_back(keywords[i]);
+	allowed_keywords = allowed_kw;
 }
 
 LGCAdjustablePoint &TKeyVZ::insertPoint(const std::string &pointName, TReal x, TReal y, TReal z)

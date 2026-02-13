@@ -9,6 +9,7 @@
 
 // STL
 #include <algorithm>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -84,11 +85,9 @@ public:
 	std::string getKey() const { return key; }
 
 	/// This function returns true if the measurment key is allowed to appear after the current one, in the input file.
-	inline bool isKeyWordAllowed(std::string keyword) const
+	inline bool isKeyWordAllowed(const std::string &keyword) const
 	{
-		if (allowed_keywords.size())
-			return (std::find_if(allowed_keywords.cbegin(), allowed_keywords.cend(), [&](const std::string &kw) { return kw == keyword; }) != allowed_keywords.cend());
-		return false;
+		return allowed_keywords.count(keyword) > 0;
 	}
 
 private:
@@ -101,8 +100,8 @@ protected:
 	/// Reference to the current project, used in all subclasses
 	TLGCData &proj;
 
-	/// Contains the keywords which are unauthorized after the current one.
-	std::vector<std::string> allowed_keywords;
+	/// Contains the keywords which are allowed after the current one.
+	std::set<std::string> allowed_keywords;
 };
 
 /*!

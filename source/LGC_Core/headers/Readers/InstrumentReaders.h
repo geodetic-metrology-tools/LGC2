@@ -74,7 +74,7 @@ class TKeyINSTR : public TAKeyWord
 {
 public:
 	// Constructor
-	TKeyINSTR(TLGCData &project, int nb_allowed_keywords = nb_allowed_instr, const char **keywords = allowed_INSTR);
+	TKeyINSTR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(INSTR));
 
 	/*! virtual function.
 	\brief  To parse the instrument data: store the instrument data in the right units
@@ -91,7 +91,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyPOLAR(TLGCData &project, int nb_allowed_keywords = nb_allowed_polar, const char **keywords = allowed_POLAR);
+	TKeyPOLAR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(POLAR));
 
 	/*!
 		See \ref TKeyINSTR::parse
@@ -110,7 +110,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyCAMD(TLGCData &project, int nb_allowed_keywords = nb_allowed_camd, const char **keywords = allowed_CAMD);
+	TKeyCAMD(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(CAMD));
 
 	/*!
 		See \ref TKeyINSTR::parse
@@ -129,7 +129,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyEDM(TLGCData &project, int nb_allowed_keywords = nb_allowed_edm, const char **keywords = allowed_EDM);
+	TKeyEDM(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(EDM));
 
 	/*!
 		See \ref TKeyINSTR::parse
@@ -148,7 +148,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyLEVEL(TLGCData &project, int nb_allowed_keywords = nb_allowed_level, const char **keywords = allowed_LEVEL);
+	TKeyLEVEL(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(LEVEL));
 
 	/*!
 		See \ref TKeyINSTR::parse
@@ -167,7 +167,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeySCALE(TLGCData &project, int nb_allowed_keywords = nb_allowed_scale, const char **keywords = allowed_SCALE);
+	TKeySCALE(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(SCALE));
 
 	/*!
 		See \ref TKeyINSTR::parse
@@ -186,7 +186,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyINCL(TLGCData &project, int nb_allowed_keywords = nb_allowed_incl, const char **keywords = allowed_INCL);
+	TKeyINCL(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(INCL));
 
 	// overloading
 	TKeyINCL(const TKeyINCL &) = delete;
@@ -209,7 +209,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyHLSR(TLGCData &project, int nb_allowed_keywords = nb_allowed_hlsr, const char **keywords = allowed_HLSR);
+	TKeyHLSR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(HLSR));
 
 	/*!
 		See \ref TKeyINSTR::parse
@@ -228,7 +228,7 @@ public:
 	/*!
 		See \ref TAInstrumentKey::TAInstrumentKey
 	*/
-	TKeyWPSR(TLGCData &project, int nb_allowed_keywords = nb_allowed_wpsr, const char **keywords = allowed_WPSR);
+	TKeyWPSR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(WPSR));
 
 	/*!
 		See \ref TKeyINSTR::parse

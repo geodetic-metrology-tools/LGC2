@@ -38,7 +38,7 @@ class TKeyTITR : public TAKeyWord
 {
 public:
 	/// Constructor
-	TKeyTITR(TLGCData &project, int nb_allowed_keywords = nb_allowed_titr, const char **keywords = allowed_TITR);
+	TKeyTITR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(TITR));
 
 	/*!
 		Titr does not parse anything, just a marker to move up the tree again and report.
@@ -51,10 +51,9 @@ class TKeyOLOC : public TAOptionKey
 {
 public:
 	// Constructor
-	TKeyOLOC(TLGCData &project, int nb_allowed_keywords = nb_allowed_oloc, const char **keywords = allowed_OLOC) : TAOptionKey(project, OLOC)
+	TKeyOLOC(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(OLOC)) : TAOptionKey(project, OLOC)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the referential
@@ -65,10 +64,9 @@ class TKeyRS2K : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyRS2K(TLGCData &project, int nb_allowed_keywords = nb_allowed_rs2k, const char **keywords = allowed_RS2K) : TAOptionKey(project, RS2K)
+	TKeyRS2K(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(RS2K)) : TAOptionKey(project, RS2K)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the referential
@@ -79,10 +77,9 @@ class TKeyLEP : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyLEP(TLGCData &project, int nb_allowed_keywords = nb_allowed_lep, const char **keywords = allowed_LEP) : TAOptionKey(project, LEP)
+	TKeyLEP(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(LEP)) : TAOptionKey(project, LEP)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the referential
@@ -93,10 +90,9 @@ class TKeySPHE : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeySPHE(TLGCData &project, int nb_allowed_keywords = nb_allowed_sphe, const char **keywords = allowed_SPHE) : TAOptionKey(project, SPHE)
+	TKeySPHE(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(SPHE)) : TAOptionKey(project, SPHE)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the referential
@@ -111,10 +107,9 @@ class TKeyALLFIXED : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyALLFIXED(TLGCData &project, int nb_allowed_keywords = nb_allowed_allfixed, const char **keywords = allowed_ALLFIXED) : TAOptionKey(project, ALLFIXED)
+	TKeyALLFIXED(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ALLFIXED)) : TAOptionKey(project, ALLFIXED)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -125,10 +120,9 @@ class TKeyLIBR : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyLIBR(TLGCData &project, int nb_allowed_keywords = nb_allowed_libr, const char **keywords = allowed_LIBR) : TAOptionKey(project, "LIBR")
+	TKeyLIBR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(LIBR)) : TAOptionKey(project, "LIBR")
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -139,10 +133,9 @@ class TKeyCOVAR : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyCOVAR(TLGCData &project, int nb_allowed_keywords = nb_allowed_covar, const char **keywords = allowed_COVAR) : TAOptionKey(project, COVAR)
+	TKeyCOVAR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(COVAR)) : TAOptionKey(project, COVAR)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -153,10 +146,9 @@ class TKeyCHABA : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyCHABA(TLGCData &project, int nb_allowed_keywords = nb_allowed_chaba, const char **keywords = allowed_CHABA) : TAOptionKey(project, CHABA)
+	TKeyCHABA(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(CHABA)) : TAOptionKey(project, CHABA)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -167,10 +159,9 @@ class TKeyNODUP : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyNODUP(TLGCData &project, int nb_allowed_keywords = nb_allowed_nodup, const char **keywords = allowed_NODUP) : TAOptionKey(project, "NODUP")
+	TKeyNODUP(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(NODUP)) : TAOptionKey(project, "NODUP")
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -181,10 +172,9 @@ class TKeyPDOR : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyPDOR(TLGCData &project, int nb_allowed_keywords = nb_allowed_pdor, const char **keywords = allowed_PDOR) : TAOptionKey(project, PDOR)
+	TKeyPDOR(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(PDOR)) : TAOptionKey(project, PDOR)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -195,10 +185,9 @@ class TKeySIMU : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeySIMU(TLGCData &project, int nb_allowed_keywords = nb_allowed_simu, const char **keywords = allowed_SIMU) : TAOptionKey(project, SIMU)
+	TKeySIMU(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(SIMU)) : TAOptionKey(project, SIMU)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the calculation
@@ -213,10 +202,9 @@ class TKeyAPRI : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyAPRI(TLGCData &project, int nb_allowed_keywords = nb_allowed_apri, const char **keywords = allowed_APRI) : TAOptionKey(project, APRI)
+	TKeyAPRI(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(APRI)) : TAOptionKey(project, APRI)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -227,10 +215,9 @@ class TKeyEREL : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyEREL(TLGCData &project, int nb_allowed_keywords = nb_allowed_erel, const char **keywords = allowed_EREL) : TAOptionKey(project, EREL)
+	TKeyEREL(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(EREL)) : TAOptionKey(project, EREL)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -244,10 +231,9 @@ class TKeyERELFRAME : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyERELFRAME(TLGCData &project, int nb_allowed_keywords = nb_allowed_erel, const char **keywords = allowed_ERELFRAME) : TAOptionKey(project, ERELFRAME)
+	TKeyERELFRAME(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(ERELFRAME)) : TAOptionKey(project, ERELFRAME)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -276,10 +262,9 @@ class TKeyFMTP : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyFMTP(TLGCData &project, int nb_allowed_keywords = nb_allowed_fmtp, const char **keywords = allowed_FMTP) : TAOptionKey(project, FMTP)
+	TKeyFMTP(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(FMTP)) : TAOptionKey(project, FMTP)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	// Tokenize and initialize options for the output processing
@@ -290,10 +275,9 @@ class TKeyHIST : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyHIST(TLGCData &project, int nb_allowed_keywords = nb_allowed_hist, const char **keywords = allowed_HIST) : TAOptionKey(project, HIST)
+	TKeyHIST(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(HIST)) : TAOptionKey(project, HIST)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -303,10 +287,9 @@ class TKeyCONSI : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyCONSI(TLGCData &project, int nb_allowed_keywords = nb_allowed_cons_check, const char **keywords = allowed_CONSI) : TAOptionKey(project, CONSI)
+	TKeyCONSI(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(CONSI)) : TAOptionKey(project, CONSI)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -316,10 +299,9 @@ class TKeyLM: public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyLM(TLGCData &project, int nb_allowed_keywords = nb_allowed_lm, const char **keywords = allowed_LM) : TAOptionKey(project, LM)
+	TKeyLM(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(LM)) : TAOptionKey(project, LM)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -330,10 +312,9 @@ class TKeyJSON : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyJSON(TLGCData &project, int nb_allowed_keywords = nb_allowed_json, const char **keywords = allowed_JSON) : TAOptionKey(project, JSON)
+	TKeyJSON(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(JSON)) : TAOptionKey(project, JSON)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -344,10 +325,9 @@ class TKeyPREC : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyPREC(TLGCData &project, int nb_allowed_keywords = nb_allowed_prec, const char **keywords = allowed_PREC) : TAOptionKey(project, PREC)
+	TKeyPREC(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(PREC)) : TAOptionKey(project, PREC)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -358,10 +338,9 @@ class TKeyMICR : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyMICR(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAOptionKey(project, MICR)
+	TKeyMICR(TLGCData &project, const std::set<std::string> &allowed_kw) : TAOptionKey(project, MICR)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -372,10 +351,9 @@ class TKeyCLIC : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyCLIC(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAOptionKey(project, CLIC)
+	TKeyCLIC(TLGCData &project, const std::set<std::string> &allowed_kw) : TAOptionKey(project, CLIC)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -386,10 +364,9 @@ class TKeyDIXI : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyDIXI(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAOptionKey(project, DIXI)
+	TKeyDIXI(TLGCData &project, const std::set<std::string> &allowed_kw) : TAOptionKey(project, DIXI)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -400,10 +377,9 @@ class TKeyTOL : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyTOL(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAOptionKey(project, TOL)
+	TKeyTOL(TLGCData &project, const std::set<std::string> &allowed_kw) : TAOptionKey(project, TOL)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -414,10 +390,9 @@ class TKeyNOSPC : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyNOSPC(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAOptionKey(project, NOSPC)
+	TKeyNOSPC(TLGCData &project, const std::set<std::string> &allowed_kw) : TAOptionKey(project, NOSPC)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -428,10 +403,9 @@ class TKeyPRES : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyPRES(TLGCData &project, int nb_allowed_keywords = nb_allowed_pres, const char **keywords = allowed_PRES) : TAOptionKey(project, PRES)
+	TKeyPRES(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(PRES)) : TAOptionKey(project, PRES)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -446,10 +420,9 @@ class TKeyDEFA : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyDEFA(TLGCData &project, int nb_allowed_keywords = nb_allowed_defa, const char **keywords = allowed_DEFA) : TAOptionKey(project, DEFA)
+	TKeyDEFA(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(DEFA)) : TAOptionKey(project, DEFA)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -460,10 +433,9 @@ class TKeyFAUT : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyFAUT(TLGCData &project, int nb_allowed_keywords = nb_allowed_faut, const char **keywords = allowed_FAUT) : TAOptionKey(project, FAUT)
+	TKeyFAUT(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(FAUT)) : TAOptionKey(project, FAUT)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -479,10 +451,9 @@ class TKeyPUNC : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyPUNC(TLGCData &project, int nb_allowed_keywords = nb_allowed_punc, const char **keywords = allowed_PUNC) : TAOptionKey(project, PUNC)
+	TKeyPUNC(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(PUNC)) : TAOptionKey(project, PUNC)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing
@@ -503,10 +474,9 @@ class TKeySOBS : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeySOBS(TLGCData &project, int nb_allowed_keywords = nb_allowed_sobs, const char **keywords = allowed_SOBS) : TAOptionKey(project, SOBS)
+	TKeySOBS(TLGCData &project, const std::set<std::string> &allowed_kw = KeywordRights::lgc2Rights(SOBS)) : TAOptionKey(project, SOBS)
 	{
-		for (int i(0); i < nb_allowed_keywords; i++)
-			allowed_keywords.emplace_back(keywords[i]);
+		allowed_keywords = allowed_kw;
 	}
 
 	/// Tokenize and initialize options for the output processing

@@ -14,6 +14,7 @@
 #include <TLOR2LOR.h>
 #include <TReader.h>
 
+#include "TDataAnalyzer.h"
 #include "TLGCCalculation.h"
 #include "testINCL.h"
 
@@ -263,11 +264,12 @@ void runRootErrorTest(const RootErrorTestParams &params, std::shared_ptr<TLGCDat
 	std::stringstream infiler(params.testData);
 
 	bool succesReading = r.read(infiler);
-	// Root frame measurements should be rejected - reading should FAIL
-	ensure_equals("Reading should fail for root frame measurements", succesReading, false);
+	ensure_equals("Reading should succeed (placement checked later)", succesReading, true);
 
-	// Since reading failed, we should not proceed with calculation
-	// The test validates that the parser correctly rejects invalid input
+	// Measurement placement is validated during data consistency check
+	TDataAnalyzer analyzer(*projTest);
+	bool consistent = analyzer.dataConsistent();
+	ensure_equals("Data consistency should fail for root frame measurement", consistent, false);
 }
 
 /*

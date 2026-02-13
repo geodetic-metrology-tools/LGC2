@@ -8,368 +8,318 @@
 #define KEYWORD_AUTHORIZATIONS_H
 #pragma once
 
-
-//STL
-#include <vector>
+// STL
+#include <map>
+#include <set>
 #include <string>
-#include <array>
 
-namespace {
+// ---------------------------------------------------------------------------
+// Keyword string constants
+// ---------------------------------------------------------------------------
+// structural
+inline const std::string END = "END";
+inline const std::string ENDFRAME = "ENDFRAME";
+inline const std::string FRAME = "FRAME";
+inline const std::string INSTR = "INSTR";
+inline const std::string TITR = "TITR";
+// referentials
+inline const std::string LEP = "LEP";
+inline const std::string OLOC = "OLOC";
+inline const std::string RS2K = "RS2K";
+inline const std::string SPHE = "SPHE";
+// options
+inline const std::string ALLFIXED = "ALLFIXED";
+inline const std::string APRI = "APRI";
+inline const std::string CHABA = "CHABA";
+inline const std::string CLIC = "CLIC";
+inline const std::string CONSI = "CONSI";
+inline const std::string COVAR = "COVAR";
+inline const std::string DEFA = "DEFA";
+inline const std::string DIXI = "DIXI";
+inline const std::string EREL = "EREL";
+inline const std::string ERELFRAME = "ERELFRAME";
+inline const std::string FAUT = "FAUT";
+inline const std::string FMTP = "FMTP";
+inline const std::string HIST = "HIST";
+inline const std::string JSON = "JSON";
+inline const std::string LIBR = "LIBR";
+inline const std::string LM = "LM";
+inline const std::string MICR = "MICR";
+inline const std::string NODUP = "NODUP";
+inline const std::string NOSPC = "NOSPC";
+inline const std::string PREC = "PREC";
+inline const std::string PRES = "PRES";
+inline const std::string PUNC = "PUNC";
+inline const std::string SIMU = "SIMU";
+inline const std::string SOBS = "SOBS";
+inline const std::string TOL = "TOL";
+// instruments
+inline const std::string CAMD = "CAMD";
+inline const std::string EDM = "EDM";
+inline const std::string HLSR = "HLSR";
+inline const std::string INCL = "INCL";
+inline const std::string LEVEL = "LEVEL";
+inline const std::string POLAR = "POLAR";
+inline const std::string SCALE = "SCALE";
+inline const std::string WPSR = "WPSR";
+// points
+inline const std::string CALA = "CALA";
+inline const std::string PDOR = "PDOR";
+inline const std::string POIN = "POIN";
+inline const std::string VXY = "VXY";
+inline const std::string VXZ = "VXZ";
+inline const std::string VYZ = "VYZ";
+inline const std::string VZ = "VZ";
+// polar measurements (TSTN-based)
+inline const std::string ANGL = "ANGL";
+inline const std::string DHOR = "DHOR";
+inline const std::string DIST = "DIST";
+inline const std::string DMES = "DMES";
+inline const std::string DTHE = "DTHE";
+inline const std::string ECDIR = "ECDIR";
+inline const std::string ECTH = "ECTH";
+inline const std::string PLR3D = "PLR3D";
+inline const std::string PLR3D_ANGL = "PLR3D:ANGL";
+inline const std::string PLR3D_DIST = "PLR3D:DIST";
+inline const std::string PLR3D_ZEND = "PLR3D:ZEND";
+inline const std::string TSTN = "TSTN";
+inline const std::string V0 = "V0";
+inline const std::string ZEND = "ZEND";
+inline const std::string ZENH = "ZENH";
+inline const std::string ZENI = "ZENI";
+// camera measurements
+inline const std::string CAM = "CAM";
+inline const std::string UVD = "UVD";
+inline const std::string UVD_DIST = "UVD:DIST";
+inline const std::string UVD_X = "UVD:X";
+inline const std::string UVD_Y = "UVD:Y";
+inline const std::string UVEC = "UVEC";
+inline const std::string UVEC_X = "UVEC:X";
+inline const std::string UVEC_Y = "UVEC:Y";
+// standalone measurements
+inline const std::string DLEV = "DLEV";
+inline const std::string DSPT = "DSPT";
+inline const std::string DVER = "DVER";
+inline const std::string ECHO = "ECHO";
+inline const std::string ECSP = "ECSP";
+inline const std::string ECVE = "ECVE";
+inline const std::string ECWI = "ECWI";
+inline const std::string ECWS = "ECWS";
+inline const std::string INCLY = "INCLY";
+inline const std::string OBSXYZ = "OBSXYZ";
+inline const std::string ORIE = "ORIE";
+inline const std::string RADI = "RADI";
+inline const std::string ROLLY = "ROLLY";
 
-	//measurements
-#define TSTN "TSTN"
-#define V0 "V0"
-#define PLR3D "PLR3D"
-#define PLR3D_ANGL "PLR3D:ANGL"
-#define PLR3D_ZEND "PLR3D:ZEND"
-#define PLR3D_DIST "PLR3D:DIST"
-#define ANGL "ANGL"
-#define ZEND "ZEND"
-#define ZENI "ZENI" //lgc1
-#define ZENH "ZENH" //lgc1
-#define DIST "DIST"
-#define DTHE "DTHE" //lgc1
-#define DMES "DMES" //lgc1
-#define ECTH "ECTH"
-#define DHOR "DHOR"
-#define CAM "CAM"
-#define UVEC "UVEC"
-#define UVEC_X "UVEC:X"
-#define UVEC_Y "UVEC:Y"
-#define UVD "UVD"
-#define UVD_X "UVD:X"
-#define UVD_Y "UVD:Y"
-#define UVD_DIST "UVD:DIST"
-#define DSPT "DSPT"
-#define DLEV "DLEV"
-#define DVER "DVER"
-#define ECHO "ECHO"
-#define ECSP "ECSP"
-#define ECDIR "ECDIR"
-#define ECVE "ECVE"
-#define ORIE "ORIE"
-#define RADI "RADI"
-#define OBSXYZ "OBSXYZ"
-#define INCLY   "INCLY"
-#define ROLLY   "ROLLY"
-#define ECWS "ECWS"
-#define ECWI "ECWI"
-	//points
-#define CALA "CALA"
-#define POIN "POIN"
-#define PDOR "PDOR"
-#define VXY "VXY"
-#define VXZ "VXZ"
-#define VYZ "VYZ"
-#define VZ "VZ"
-	//instruments
-#define POLAR "POLAR"
-#define CAMD "CAMD"
-#define EDM "EDM"
-#define LEVEL "LEVEL"
-#define SCALE "SCALE"
-#define INCL "INCL"
-#define HLSR "HLSR"
-#define WPSR "WPSR"
-	//referential
-#define OLOC "OLOC"
-#define RS2K "RS2K"
-#define LEP "LEP"
-#define SPHE "SPHE"
-	//header - options
-#define FAUT "FAUT"
-#define APRI "APRI" 
-#define DEFA "DEFA"
-#define PUNC "PUNC"
-#define PREC "PREC"
-#define MICR "MICR" //lgc1
-#define CLIC "CLIC" //lgc1
-#define DIXI "DIXI" //lgc1
-#define TOL "TOL" //lgc1
-#define NOSPC "NOSPC" //lgc1
-#define PRES "PRES"
-#define SIMU "SIMU"
-#define LIBR "LIBR"
-#define ALLFIXED "ALLFIXED"
-#define INSTR "INSTR"
-#define FRAME "FRAME"
-#define ENDFRAME "ENDFRAME"
-#define END "END"
-#define TITR "TITR"
-#define FMTP "FMTP"
-#define NODUP "NODUP"
-#define SOBS "SOBS"
-#define HIST "HIST"
-#define EREL "EREL"
-#define ERELFRAME "ERELFRAME"
-#define COVAR "COVAR"
-#define CHABA "CHABA"
-#define CONSI "CONSI"
-#define JSON "JSON"
-#define LM "LM"
+namespace KeywordRights
+{
 
-
-	//measurements
-
-	//
-	const int nb_allowed_tstn = 1;
-	const int nb_allowed_v0 = 7;
-	const int nb_allowed_plr3d = 25;
-	const int nb_allowed_angl = 25;
-	const int nb_allowed_zend = 25;
-	const int nb_allowed_dist = 25;
-	const int nb_allowed_ecth = 25;
-	const int nb_allowed_ecdir = 25;
-	const int nb_allowed_dhor = 25;
-	const int nb_allowed_cam = 2;
-	const int nb_allowed_uvec = 19;
-	const int nb_allowed_uvd = 19;
-	const int nb_allowed_dspt = 18;
-	const int nb_allowed_dlev = 17;
-	const int nb_allowed_dver = 17;
-	const int nb_allowed_echo = 17;
-	const int nb_allowed_ecve = 17;
-	const int nb_allowed_ecsp = 17;
-	const int nb_allowed_orie = 17;
-	const int nb_allowed_radi = 17;
-	const int nb_allowed_OBSXYZ = 18;
-	const int nb_allowed_incly = 19;
-	const int nb_allowed_rolly = 19;
-	const int nb_allowed_ecws = 17;
-	const int nb_allowed_ecwi = 17;
-	//points
-	const int nb_allowed_cala = 23;
-	const int nb_allowed_poin = 23;
-	const int nb_allowed_pdor = 23;
-	const int nb_allowed_vxy = 23;
-	const int nb_allowed_vxz = 23;
-	const int nb_allowed_vyz = 23;
-	const int nb_allowed_vz = 23;
-	//instruments
-	const int nb_allowed_polar = 29;
-	const int nb_allowed_camd = 29;
-	const int nb_allowed_edm = 29;
-	const int nb_allowed_level = 29;
-	const int nb_allowed_scale = 29;
-	const int nb_allowed_incl = 29;
-	const int nb_allowed_hlsr = 29;
-	const int nb_allowed_wpsr = 29;
-	//referentials
-	const int nb_allowed_oloc = 28;
-	const int nb_allowed_rs2k = 28;
-	const int nb_allowed_lep = 28;
-	const int nb_allowed_sphe = 28;
-	//options
-	const int nb_allowed_faut = 32;
-	const int nb_allowed_defa = 32;
-	const int nb_allowed_apri = 32;
-	const int nb_allowed_punc = 32;
-	const int nb_allowed_prec = 32;
-	const int nb_allowed_pres = 32;
-	const int nb_allowed_fmtp = 32;
-	const int nb_allowed_nodup = 32;
-	const int nb_allowed_sobs = 32;
-	const int nb_allowed_hist = 32;
-	const int nb_allowed_cons_check = 32;
-	const int nb_allowed_erel = 32;
-	const int nb_allowed_erelFrame = 32;
-	const int nb_allowed_simu = 32;
-	const int nb_allowed_libr = 32;
-	const int nb_allowed_allfixed = 29;
-	const int nb_allowed_covar = 32;
-	const int nb_allowed_chaba = 32;
-	const int nb_allowed_json = 32;
-	const int nb_allowed_lm = 32;
-
-	//header
-	const int nb_allowed_instr = 19; // instruments + points + frame + round of measurements without intruments
-	const int nb_allowed_frame = 10;
-	const int nb_allowed_ef = 24;
-	const int nb_allowed_end = 0;
-	const int nb_allowed_titr = 4;
-
-	//lgc1
-	const int nb_allowed_angl_lgc1 = 15;
-	const int nb_allowed_zeni_lgc1 = 15;
-	const int nb_allowed_zenh_lgc1 = 15;
-	const int nb_allowed_dmes_lgc1 = 15;
-	const int nb_allowed_dthe_lgc1 = 15;
-	const int nb_allowed_ecsp_lgc1 = 15;
-	const int nb_allowed_ecth_lgc1 = 15;
-	const int nb_allowed_dhor_lgc1 = 15;
-	const int nb_allowed_dlev_lgc1 = 15;
-	const int nb_allowed_dver_lgc1 = 15;
-	const int nb_allowed_echo_lgc1 = 15;
-	const int nb_allowed_ecve_lgc1 = 15;
-	const int nb_allowed_orie_lgc1 = 15;
-	const int nb_allowed_radi_lgc1 = 15;
-
-	const int nb_allowed_faut_lgc1 = 29;
-	const int nb_allowed_defa_lgc1 = 29;
-	const int nb_allowed_apri_lgc1 = 29;
-	const int nb_allowed_punc_lgc1 = 29;
-	const int nb_allowed_prec_lgc1 = 25;
-	const int nb_allowed_micr_lgc1 = 25;
-	const int nb_allowed_clic_lgc1 = 25;
-	const int nb_allowed_dixi_lgc1 = 25;
-	const int nb_allowed_tol_lgc1 = 25;
-	const int nb_allowed_nospc_lgc1 = 29;
-	const int nb_allowed_pres_lgc1 = 29;
-	const int nb_allowed_fmtp_lgc1 = 29;
-	const int nb_allowed_nodup_lgc1 = 29;
-	const int nb_allowed_sobs_lgc1 = 29;
-	const int nb_allowed_hist_lgc1 = 29;
-	const int nb_allowed_erel_lgc1 = 29;
-	const int nb_allowed_simu_lgc1 = 28;
-	const int nb_allowed_libr_lgc1 = 28;
-	const int nb_allowed_allfixed_lgc1 = 27;
-
-	const int nb_allowed_oloc_lgc1 = 25;
-	const int nb_allowed_rs2k_lgc1 = 25;
-	const int nb_allowed_lep_lgc1 = 25;
-	const int nb_allowed_sphe_lgc1 = 25;
-
-	const int nb_allowed_cala_lgc1 = 19;
-	const int nb_allowed_poin_lgc1 = 19;
-	const int nb_allowed_pdor_lgc1 = 20;
-	const int nb_allowed_vxy_lgc1 = 19;
-	const int nb_allowed_vxz_lgc1 = 19;
-	const int nb_allowed_vyz_lgc1 = 19;
-	const int nb_allowed_vz_lgc1 = 19;
-
-
-
-	//TSTN measurments
-	const char* allowed_TSTN[nb_allowed_tstn] = { V0 };
-	const char* allowed_V0[nb_allowed_v0] = { PLR3D, ANGL, ZEND, DIST, DHOR, ECTH, ECDIR };
-	const char* allowed_PLR3D[nb_allowed_plr3d] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ANGL[nb_allowed_angl] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ZEND[nb_allowed_zend] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_DIST[nb_allowed_dist] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ECTH[nb_allowed_ecth] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ECDIR[nb_allowed_ecdir] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_DHOR[nb_allowed_dhor] = { TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	//CAM measurments
-	const char* allowed_CAM[nb_allowed_cam] = { UVEC, UVD };
-	const char* allowed_UVEC[nb_allowed_uvec] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_UVD[nb_allowed_uvd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ,INCLY,ROLLY,ECWS,ECWI };
-	// Others measurments
-	const char* allowed_DSPT[nb_allowed_dspt] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_DLEV[nb_allowed_dlev] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_DVER[nb_allowed_dver] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ECHO[nb_allowed_echo] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ECVE[nb_allowed_ecve] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ECSP[nb_allowed_ecsp] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_ORIE[nb_allowed_orie] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_RADI[nb_allowed_radi] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_OBSXYZ[nb_allowed_OBSXYZ] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, POIN,INCLY,ROLLY,ECWS,ECWI };
-	const char* allowed_INCLY[nb_allowed_incly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, INCLY, POIN, OBSXYZ,ROLLY,ECWS,ECWI };
-	const char* allowed_ROLLY[nb_allowed_rolly] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, FRAME, ENDFRAME, CALA, ROLLY, POIN, OBSXYZ,INCLY,ECWS,ECWI };
-	const char* allowed_ECWS[nb_allowed_ecws] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END,INCLY,ROLLY, ECWS,ECWI };
-	const char* allowed_ECWI[nb_allowed_ecwi] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END, INCLY, ROLLY, ECWS, ECWI};
-
-	//CALA & POIN & others point DEF
-	const char* allowed_CALA[nb_allowed_cala] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_POIN[nb_allowed_poin] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_VXY[nb_allowed_vxy] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_VXZ[nb_allowed_vxz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VYZ, VZ, FRAME, ENDFRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_VYZ[nb_allowed_vyz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VZ, FRAME, ENDFRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_VZ[nb_allowed_vz] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, FRAME, ENDFRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_PDOR[nb_allowed_pdor] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END, INCLY, ROLLY, ECWS,ECWI };
-	//Instruments
-	const char* allowed_POLAR[nb_allowed_polar] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_CAMD[nb_allowed_camd] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_EDM[nb_allowed_edm] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_LEVEL[nb_allowed_level] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_SCALE[nb_allowed_scale] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_INCL[nb_allowed_incl] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_HLSR[nb_allowed_hlsr] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR,WPSR, ECWS,ECWI };
-	const char* allowed_WPSR[nb_allowed_wpsr] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI};
-
-	// Reference systems
-	const char* allowed_OLOC[nb_allowed_oloc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_RS2K[nb_allowed_rs2k] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_LEP[nb_allowed_lep]   = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_SPHE[nb_allowed_sphe] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	// Options
-	const char* allowed_DEFA[nb_allowed_defa] = { APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_APRI[nb_allowed_apri] = { DEFA, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_PREC[nb_allowed_prec] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_PRES[nb_allowed_pres] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_FAUT[nb_allowed_faut] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_PUNC[nb_allowed_punc] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_FMTP[nb_allowed_fmtp] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_NODUP[nb_allowed_nodup] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, SOBS, HIST, EREL, ERELFRAME, COVAR, CHABA , CONSI, JSON, LM};
-	const char* allowed_SOBS[nb_allowed_sobs] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_HIST[nb_allowed_hist] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, EREL, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char* allowed_CONSI[nb_allowed_cons_check] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, SOBS, EREL, ERELFRAME, COVAR , CHABA, JSON, LM};
-	const char* allowed_EREL[nb_allowed_erel] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, ERELFRAME, COVAR , CHABA , CONSI, JSON, LM};
-	const char *allowed_ERELFRAME[nb_allowed_erelFrame] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, SOBS, HIST, EREL, COVAR, CHABA, CONSI, JSON, LM};
-	const char* allowed_SIMU[nb_allowed_simu] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, LIBR, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR, LIBR, CHABA , CONSI, JSON, LM};
-	const char* allowed_LIBR[nb_allowed_libr] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR, SIMU, CHABA , CONSI, JSON, LM};
-	const char* allowed_ALLFIXED[nb_allowed_allfixed] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, NODUP, SOBS, HIST, EREL, ERELFRAME, SIMU, CHABA , CONSI, JSON, LM};
-	const char* allowed_COVAR[nb_allowed_covar] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, ERELFRAME, LIBR, SIMU, CHABA , CONSI, JSON, LM};
-	const char* allowed_CHABA[nb_allowed_chaba] = { FMTP, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, SIMU, NODUP, SOBS, HIST, EREL, ERELFRAME, LIBR, SIMU, COVAR , CONSI, JSON, LM};
-	const char* allowed_JSON[nb_allowed_json] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, SOBS, EREL, ERELFRAME, COVAR , CHABA, CONSI, LM};
-	const char* allowed_LM[nb_allowed_lm] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, SOBS, EREL, ERELFRAME, COVAR , CHABA, CONSI, JSON};
-	// Others
-	const char* allowed_INSTR[nb_allowed_instr] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI };
-	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN, INCLY, ROLLY };
-	const char* allowed_ENDFRAME[nb_allowed_ef] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, ECWS,ECWI };
-	const char* allowed_END[1] = {};
-	const char* allowed_TITR[nb_allowed_titr] = { OLOC, RS2K, LEP, SPHE };
-
-
-
-
-	//lgc1
-	const char* allowed_ANGL_lgc1[nb_allowed_angl_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ZENI_lgc1[nb_allowed_zeni_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ZENH_lgc1[nb_allowed_zenh_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_DMES_lgc1[nb_allowed_dmes_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_DTHE_lgc1[nb_allowed_dthe_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ECTH_lgc1[nb_allowed_ecth_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_DHOR_lgc1[nb_allowed_dhor_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ECSP_lgc1[nb_allowed_ecsp_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_DLEV_lgc1[nb_allowed_dlev_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_DVER_lgc1[nb_allowed_dver_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ECHO_lgc1[nb_allowed_echo_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ECVE_lgc1[nb_allowed_ecve_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_ORIE_lgc1[nb_allowed_orie_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-	const char* allowed_RADI_lgc1[nb_allowed_radi_lgc1] = { ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END };
-
-	const char* allowed_CALA_lgc1[nb_allowed_cala_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, POIN, VXY, VXZ, VYZ, VZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-	const char* allowed_POIN_lgc1[nb_allowed_poin_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, VXY, VXZ, VYZ, VZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-	const char* allowed_VXY_lgc1[nb_allowed_vxy_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXZ, VYZ, VZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-	const char* allowed_VXZ_lgc1[nb_allowed_vxz_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VYZ, VZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-	const char* allowed_VYZ_lgc1[nb_allowed_vyz_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-	const char* allowed_VZ_lgc1[nb_allowed_vz_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-	const char* allowed_PDOR_lgc1[nb_allowed_pdor_lgc1] = { DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, END, DMES, ANGL, ZENI, ZENH, ECTH, DHOR };
-
-	const char* allowed_DEFA_lgc1[nb_allowed_defa_lgc1] = { NOSPC, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_APRI_lgc1[nb_allowed_apri_lgc1] = { NOSPC, DEFA, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_PREC_lgc1[nb_allowed_prec_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL };
-	const char* allowed_MICR_lgc1[nb_allowed_micr_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL };
-	const char* allowed_CLIC_lgc1[nb_allowed_clic_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL };
-	const char* allowed_DIXI_lgc1[nb_allowed_dixi_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL };
-	const char* allowed_TOL_lgc1[nb_allowed_tol_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL };
-	const char* allowed_NOSPC_lgc1[nb_allowed_nospc_lgc1] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_PRES_lgc1[nb_allowed_pres_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_FAUT_lgc1[nb_allowed_faut_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_PUNC_lgc1[nb_allowed_punc_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_FMTP_lgc1[nb_allowed_fmtp_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_NODUP_lgc1[nb_allowed_nodup_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_SOBS_lgc1[nb_allowed_sobs_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_HIST_lgc1[nb_allowed_hist_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_EREL_lgc1[nb_allowed_erel_lgc1] = { NOSPC, DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, MICR, CLIC, DIXI, TOL };
-	const char* allowed_SIMU_lgc1[nb_allowed_simu_lgc1] = { NOSPC, DEFA, APRI, LIBR, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_LIBR_lgc1[nb_allowed_libr_lgc1] = { NOSPC, DEFA, APRI, SIMU, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_ALLFIXED_lgc1[nb_allowed_allfixed_lgc1] = { NOSPC, DEFA, APRI, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-
-	const char* allowed_OLOC_lgc1[nb_allowed_oloc_lgc1] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_RS2K_lgc1[nb_allowed_rs2k_lgc1] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_LEP_lgc1[nb_allowed_lep_lgc1] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
-	const char* allowed_SPHE_lgc1[nb_allowed_sphe_lgc1] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST, EREL, MICR, CLIC, DIXI, TOL };
+// ---------------------------------------------------------------------------
+// Helper functions
+// ---------------------------------------------------------------------------
+inline std::set<std::string> unite(std::initializer_list<std::set<std::string>> sets)
+{
+	std::set<std::string> result;
+	for (auto &s : sets)
+		result.insert(s.begin(), s.end());
+	return result;
 }
+
+inline std::set<std::string> minus(const std::set<std::string> &a, const std::set<std::string> &b)
+{
+	std::set<std::string> result;
+	for (auto &e : a)
+		if (b.count(e) == 0)
+			result.insert(e);
+	return result;
+}
+
+// ---------------------------------------------------------------------------
+// Named sets
+// ---------------------------------------------------------------------------
+// referentials
+const std::set<std::string> referentials = {LEP, OLOC, RS2K, SPHE};
+// options
+const std::set<std::string> options = {ALLFIXED, APRI, CHABA, CONSI, COVAR, DEFA, EREL, ERELFRAME, FAUT, FMTP, HIST, JSON, LIBR, LM, NODUP, PREC, PRES, PUNC, SIMU, SOBS};
+// instruments
+const std::set<std::string> instruments = {CAMD, EDM, HLSR, INCL, LEVEL, POLAR, SCALE, WPSR};
+// points
+const std::set<std::string> points = {CALA, POIN, VXY, VXZ, VYZ, VZ};
+// polar measurements (TSTN-based)
+const std::set<std::string> polarMeas = {ANGL, DHOR, DIST, ECDIR, ECTH, PLR3D, ZEND};
+// camera measurements
+const std::set<std::string> camMeas = {UVD, UVEC};
+// standalone measurements (context restrictions enforced in TDataAnalyzer)
+const std::set<std::string> standaloneMeas = {DLEV, DSPT, DVER, ECHO, ECSP, ECVE, ECWI, ECWS, INCLY, OBSXYZ, ORIE, RADI, ROLLY};
+// structural keywords in measurement context
+const std::set<std::string> measCommon = {CAM, END, ENDFRAME, FRAME, TSTN};
+
+// ---------------------------------------------------------------------------
+// LGC2 rights: built from 16 composition rules
+// ---------------------------------------------------------------------------
+inline std::map<std::string, std::set<std::string>> buildLGC2Rights()
+{
+	std::map<std::string, std::set<std::string>> r;
+
+	// TITR -> referentials
+	r[TITR] = referentials;
+
+	// Referentials -> options + {INSTR}
+	auto refSucc = unite({options, {INSTR}});
+	for (auto &kw : referentials)
+		r[kw] = refSucc;
+
+	// Options -> (options - {self}) + {INSTR}
+	auto optBase = unite({options, {INSTR}});
+	for (auto &kw : options)
+	{
+		auto s = optBase;
+		s.erase(kw);
+		r[kw] = s;
+	}
+
+	// INSTR -> instruments + points + standaloneMeas + {FRAME, PDOR}
+	r[INSTR] = unite({instruments, points, standaloneMeas, {FRAME, PDOR}});
+
+	// Instruments -> instruments + points + standaloneMeas + {TSTN, CAM, FRAME, PDOR}
+	auto instrSucc = unite({instruments, points, standaloneMeas, {TSTN, CAM, FRAME, PDOR}});
+	for (auto &kw : instruments)
+		r[kw] = instrSucc;
+
+	// Points -> (points - {self}) + standaloneMeas + measCommon
+	auto ptBase = unite({points, standaloneMeas, measCommon});
+	for (auto &kw : points)
+	{
+		auto s = ptBase;
+		s.erase(kw);
+		r[kw] = s;
+	}
+
+	// PDOR -> points + standaloneMeas + measCommon
+	r[PDOR] = unite({points, standaloneMeas, measCommon});
+
+	// FRAME -> points + standaloneMeas + {CAM, TSTN, FRAME, ENDFRAME}
+	r[FRAME] = unite({points, standaloneMeas, {CAM, TSTN, FRAME, ENDFRAME}});
+
+	// ENDFRAME -> points + standaloneMeas + measCommon
+	r[ENDFRAME] = unite({points, standaloneMeas, measCommon});
+
+	// TSTN -> {V0}
+	r[TSTN] = {V0};
+
+	// V0 -> polarMeas
+	r[V0] = polarMeas;
+
+	// Polar measurements -> polarMeas + standaloneMeas + measCommon
+	auto polarSucc = unite({polarMeas, standaloneMeas, measCommon});
+	for (auto &kw : polarMeas)
+		r[kw] = polarSucc;
+
+	// CAM -> camMeas
+	r[CAM] = camMeas;
+
+	// Cam measurements -> camMeas + standaloneMeas + measCommon
+	auto camSucc = unite({camMeas, standaloneMeas, measCommon});
+	for (auto &kw : camMeas)
+		r[kw] = camSucc;
+
+	// Standalone measurements -> standaloneMeas + measCommon
+	auto standaloneSucc = unite({standaloneMeas, measCommon});
+	for (auto &kw : standaloneMeas)
+		r[kw] = standaloneSucc;
+
+	// END -> {}
+	r[END] = {};
+
+	return r;
+}
+
+// ---------------------------------------------------------------------------
+// LGC1 rights
+// ---------------------------------------------------------------------------
+inline std::map<std::string, std::set<std::string>> buildLGC1Rights()
+{
+	std::map<std::string, std::set<std::string>> r;
+
+	// Measurements
+	const std::set<std::string> lgc1Meas = {ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END};
+	for (auto &kw : {ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, ECSP, DLEV, DVER, ECHO, ECVE, ORIE, RADI})
+		r[kw] = lgc1Meas;
+
+	// Points (LGC1 measurements reachable from points)
+	const std::set<std::string> lgc1PtMeas = {DTHE, DLEV, DVER, ECHO, ECVE, ORIE, RADI, DMES, ANGL, ZENI, ZENH, ECTH, DHOR, END};
+	const std::set<std::string> lgc1PtTypes = {CALA, POIN, VXY, VXZ, VYZ, VZ};
+	for (auto &kw : lgc1PtTypes)
+	{
+		auto s = unite({lgc1PtMeas, lgc1PtTypes});
+		s.erase(kw);
+		r[kw] = s;
+	}
+	r[PDOR] = unite({lgc1PtMeas, lgc1PtTypes});
+
+	// Options (LGC1)
+	const std::set<std::string> lgc1OptCommon = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, FMTP, NODUP, SOBS, HIST, EREL};
+	const std::set<std::string> lgc1OptExtra = {MICR, CLIC, DIXI, TOL};
+	const std::set<std::string> lgc1PtAndRef = {CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, PDOR};
+
+	// Large option group: NOSPC + common + extra + pt&ref
+	auto lgc1OptLargeBase = unite({{NOSPC}, lgc1OptCommon, lgc1OptExtra, lgc1PtAndRef});
+	for (auto &kw : {DEFA, APRI, PRES, FAUT, PUNC, FMTP, NODUP, SOBS, HIST, EREL, NOSPC})
+	{
+		auto s = lgc1OptLargeBase;
+		s.erase(kw);
+		r[kw] = s;
+	}
+
+	// Smaller option group (PREC, MICR, CLIC, DIXI, TOL): no extra (MICR/CLIC/DIXI/TOL), no PREC
+	auto lgc1OptSmallBase = unite({{NOSPC}, lgc1OptCommon, lgc1PtAndRef});
+	lgc1OptSmallBase.erase(PREC);
+	for (auto &kw : {PREC, MICR, CLIC, DIXI, TOL})
+		r[kw] = lgc1OptSmallBase;
+
+	// SIMU, LIBR, ALLFIXED (no self, no counterpart where applicable)
+	auto lgc1SimuBase = unite({{NOSPC}, lgc1OptCommon, lgc1OptExtra, lgc1PtAndRef});
+	lgc1SimuBase.erase(SIMU);
+	lgc1SimuBase.erase(ALLFIXED);
+	r[SIMU] = lgc1SimuBase;
+
+	auto lgc1LibrBase = unite({{NOSPC}, lgc1OptCommon, lgc1OptExtra, lgc1PtAndRef});
+	lgc1LibrBase.erase(LIBR);
+	lgc1LibrBase.erase(ALLFIXED);
+	r[LIBR] = lgc1LibrBase;
+
+	auto lgc1AllfixedBase = unite({{NOSPC}, lgc1OptCommon, lgc1OptExtra, lgc1PtAndRef});
+	lgc1AllfixedBase.erase(ALLFIXED);
+	lgc1AllfixedBase.erase(SIMU);
+	lgc1AllfixedBase.erase(LIBR);
+	r[ALLFIXED] = lgc1AllfixedBase;
+
+	// Referentials (LGC1): no INSTR, no FRAME, no ERELFRAME, no COVAR/CHABA/CONSI/JSON/LM, no referentials
+	auto lgc1RefSucc = unite({lgc1OptCommon, lgc1OptExtra, minus(lgc1PtAndRef, referentials)});
+	for (auto &kw : referentials)
+		r[kw] = lgc1RefSucc;
+
+	return r;
+}
+
+// ---------------------------------------------------------------------------
+// Accessors with static caching
+// ---------------------------------------------------------------------------
+inline const std::map<std::string, std::set<std::string>> &lgc2RightSets()
+{
+	static const auto rights = buildLGC2Rights();
+	return rights;
+}
+
+inline const std::map<std::string, std::set<std::string>> &lgc1RightSets()
+{
+	static const auto rights = buildLGC1Rights();
+	return rights;
+}
+
+inline const std::set<std::string> &lgc2Rights(const std::string &kw) { return lgc2RightSets().at(kw); }
+inline const std::set<std::string> &lgc1Rights(const std::string &kw) { return lgc1RightSets().at(kw); }
+
+} // namespace KeywordRights
 
 #endif

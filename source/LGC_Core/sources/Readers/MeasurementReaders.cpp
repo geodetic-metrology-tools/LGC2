@@ -1320,11 +1320,6 @@ void TKeyINCLY::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		if (tokens.size() < 3)
 			throw std::runtime_error("INCLY measurement must have at least 1 entry, the INCL instrument ID");
 
-		if (proj.getCurrentNode().ID.size() == 1)
-		{
-			throw std::runtime_error("INCLY keyword is only allowed in the root frame");
-		}
-
 		TINCLYROM inclyRom(finstruments.getDevice(finstruments.fINCL, tokens.at(2)), proj.getCurrentPosition());
 		inclyRom.line = line;
 		inclyRom.setActive(activeLine);
@@ -1429,15 +1424,7 @@ void TKeyROLLY::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		if (tokens.size() < 3)
 			throw std::runtime_error("ROLLY measurement must have at least 1 entry, the INCL instrument ID");
 
-		// ROLLY measurements are only allowed in sub-frames, not in root frames
-		// This restriction ensures proper frame hierarchy and transformation context
-		if (proj.getCurrentNode().ID.size() == 1)
-		{
-			throw std::runtime_error("ROLLY keyword is only allowed in sub-frames");
-		}
-
 		// Create new ROLLY measurement round with specified instrument and current position
-		// The instrument is retrieved from the instruments collection using the provided ID
 		TROLLYROM rollyRom(finstruments.getDevice(finstruments.fINCL, tokens.at(2)), proj.getCurrentPosition());
 		rollyRom.line = line;                    // Store line number for error reporting
 		rollyRom.setActive(activeLine);          // Set active status for the round
