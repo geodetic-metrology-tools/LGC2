@@ -25,12 +25,12 @@ public:
 	std::set<int> getConnectedNullspaceGroup(int);
 	// try to compute a list of point group constraints that can make the problem computable.
 	bool computeNecessaryLIBRConstraints(std::list<TLGCPointConstraintGroup> &proposedPointGroupConstraints);
+
+private:
 	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
 	Eigen::MatrixXd intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B);
 	// U representing a subspace of V. returns the orthogonal complement of U in V
 	Eigen::MatrixXd orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V);
-
-private:
 	TLGCData &projData;
 	// true if check is passed (no problem detected), false otherwise
 	bool resultStatus = false;
@@ -55,33 +55,35 @@ private:
 	TDenseMatrix nullspace;
 	// objects contributing to Nullspace
 	std::set<int> nullspaceObjects;
+	// maps column index (unknown index) to object id
+	std::vector<int> colToObject;
 
 	// convert set of object-indices to variable indices
-	std::vector<int> indicesFromSet(std::set<int> objectSet);
+	std::vector<int> indicesFromSet(const std::set<int> &objectSet);
 	// get set of object indices from variable indices
-	std::set<int> objectsFromIndices(std::vector<int> x);
+	std::set<int> objectsFromIndices(const std::vector<int> &x);
 	void initialize();
-	void addObject(TVAdjustableObject &object, std::string objectType);
+	void addObject(TVAdjustableObject &object, const std::string &objectType);
 	// get  points in group
-	std::set<int> getPoints(std::set<int> group);
+	std::set<int> getPoints(const std::set<int> &group);
 	// compute full Nullspace representation
 	TDenseMatrix computeNullspace();
 	// compute Nullspace representation with only certain objects contributing
-	std::vector<TDenseMatrix> computeKernelWrtObjectSet(std::set<int> allowedObjects);
+	std::vector<TDenseMatrix> computeKernelWrtObjectSet(const std::set<int> &allowedObjects);
 	// get set of objects that contribute to matrix
-	std::set<int> contributingObjects(TDenseMatrix);
+	std::set<int> contributingObjects(const TDenseMatrix &M);
 	// compute all connected object groups that contribute to the Nullspace
 	std::set<std::set<int>> identifyConnectedNullspaceGroups();
 	// find neighbors of objects in the nullspace
 	std::set<int> getNullspaceNeighbors(int object);
 	// get set of object indices from the complement of a group that are connected to this group
-	std::pair<std::set<int>, int> externalConnections(std::set<int> group);
+	std::pair<std::set<int>, int> externalConnections(const std::set<int> &group);
 	// write a warning message
 	void generateGroupWarning(const std::set<int> &component, const std::vector<TDenseMatrix> &kernGroupBaseVectors, const int groupNumber);
 	// computing the jacobian of the virtual master helmert trafo acting on the point in root coordinates, will be a 3x7 matrix
-	TDenseMatrix getMasterDirections(std::string pointName);
+	TDenseMatrix getMasterDirections(const std::string &pointName);
 	// given a point and certain columns of the Nullspace, compute the resulting movement in Root considering all the contributions from the point in subframe and the helmert parameters from the chain to root
-	TDenseMatrix getAmbiguousDirectionsInRoot(std::string pointName, TDenseMatrix nullspaceBlock);
+	TDenseMatrix getAmbiguousDirectionsInRoot(const std::string &pointName, const TDenseMatrix &nullspaceBlock);
 	// return column indices from sparsity pattern of a row of a sparse  matrix
 	std::vector<int> getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber);
 	std::vector<std::string> involvedHelmertComponents(TVector linComb);

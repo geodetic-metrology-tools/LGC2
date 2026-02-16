@@ -3,6 +3,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <Eigen/LU>
+#include <Eigen/QR>
+#include <Eigen/SVD>
+#include <Eigen/SparseCholesky>
+
+#include <random>
+
+#include <functional>
+#include <map>
+#include <unordered_map>
 
 #include <Logger.hpp>
 #include <TDirectTransformation.h>
@@ -129,7 +138,7 @@ void TLSConsCheck::generateGroupWarning(const std::set<int> &group, const std::v
 	}
 }
 
-TDenseMatrix TLSConsCheck::getMasterDirections(std::string pointName)
+TDenseMatrix TLSConsCheck::getMasterDirections(const std::string &pointName)
 {
 	// compute the jacobian of the virtual helmert transformation acting on the point transformed to root
 	// create the "Master" Helmert transformation object acting on the Root frame
@@ -145,7 +154,7 @@ TDenseMatrix TLSConsCheck::getMasterDirections(std::string pointName)
 	return masterJac;
 }
 
-TDenseMatrix TLSConsCheck::getAmbiguousDirectionsInRoot(std::string pointName, TDenseMatrix nullspaceBlock)
+TDenseMatrix TLSConsCheck::getAmbiguousDirectionsInRoot(const std::string &pointName, const TDenseMatrix &nullspaceBlock)
 {
 	// compute the direction of movement of a point transformed to root defined by the ambiguous direction associated to the nullspace vector.
 
@@ -244,7 +253,11 @@ std::vector<std::vector<std::string>> TLSConsCheck::interpreteGroupDirectionsAsH
 		// can it be expressed by the span of the helmertMovements?
 		Eigen::VectorXd linComb = helmertMovementsInRoot.fullPivHouseholderQr().solve(pointNullspaceVector);
 		std::string helmertString;
-		bool isInSpan = ((helmertMovementsInRoot * linComb - pointNullspaceVector).norm() < pivotThreshold);
+		// use relative threshold for scale-independence
+		double residualNorm = (helmertMovementsInRoot * linComb - pointNullspaceVector).norm();
+		double dirNorm = pointNullspaceVector.norm();
+		double relativeResidual = (dirNorm > pivotThreshold) ? (residualNorm / dirNorm) : residualNorm;
+		bool isInSpan = (relativeResidual < pivotThreshold);
 		bool isTrivial = pointNullspaceVector.isZero();
 		if (isTrivial)
 		{
@@ -295,21 +308,53 @@ std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> TLSConsCheck
 		points2Positions[pointName] = positionInRoot.toRealVector();
 	}
 
-	// loop over ALL points to find the affected points
+	// check remaining points: only compute expensive root directions for points
+	// whose own unknowns or frame chain unknowns have nonzero nullspace entries
 	for (auto &point : projData.getPoints())
 	{
 		std::string pointName = point.getName();
-		Eigen::Vector3d rootDirection;
-		rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
+		if (affectedPoints.count(pointName))
+			continue; // already processed from group
+
+		// quick check: does this point have unknowns that overlap with nonzero nullspace entries?
+		bool mayBeAffected = false;
+		if (point.getNumUnkn() > 0)
+			for (int i = 0; i < point.getNumUnkn(); i++)
+				if (std::abs(nullspaceVector(point.getFirstUidx() + i)) > 1e-12)
+				{
+					mayBeAffected = true;
+					break;
+				}
+
+		// also check frame chain parameters
+		if (!mayBeAffected)
+		{
+			TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+			for (const auto &[trafo, partDeriv] : sub2Root.getPartialDerivativesWrtHelmertParameters(point.getEstimatedValue()))
+				if (trafo.getNumUnkn() > 0)
+				{
+					for (int i = 0; i < trafo.getNumUnkn(); i++)
+						if (std::abs(nullspaceVector(trafo.getFirstUidx() + i)) > 1e-12)
+						{
+							mayBeAffected = true;
+							break;
+						}
+					if (mayBeAffected)
+						break;
+				}
+		}
+
+		if (!mayBeAffected)
+			continue;
+
+		Eigen::Vector3d rootDirection = getAmbiguousDirectionsInRoot(pointName, nullspaceVector);
 		if (rootDirection.norm() > 1e-12)
 		{
 			affectedPoints.insert(pointName);
 			points2Movements[pointName] = rootDirection;
-			// also compute root positions
-			LGCAdjustablePoint point = projData.getPoints().getObject(pointName);
-			// transform point to root coordinates
-			TLOR2LOR sub2Root(point.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
-			TPositionVector positionInRoot = point.getEstimatedValue();
+			LGCAdjustablePoint pt = projData.getPoints().getObject(pointName);
+			TLOR2LOR sub2Root(pt.getFrameTreePosition(), projData.getTree().begin(), "sub2Root");
+			TPositionVector positionInRoot = pt.getEstimatedValue();
 			sub2Root.transform(positionInRoot);
 			points2Positions[pointName] = positionInRoot.toRealVector();
 		}
@@ -453,9 +498,23 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 		return false;
 	}
 
-	// 1. interprete all nullspace dirs as helmert directions, first intersect with helmert dirs and then solve
-	Eigen::MatrixXd nullspaceAndHelmert = intersect(nullspaceDirections, helmertMovements);
-	Eigen::MatrixXd nullspaceAsHelmert = helmertMovements.fullPivHouseholderQr().solve(nullspaceAndHelmert);
+	// 1. project nullspace directions onto Helmert span via least-squares
+	Eigen::MatrixXd nullspaceAsHelmert = helmertMovements.fullPivHouseholderQr().solve(nullspaceDirections);
+
+	// verify that each direction is actually representable as a Helmert movement
+	// use relative threshold: residual/direction_norm < threshold
+	Eigen::MatrixXd residual = helmertMovements * nullspaceAsHelmert - nullspaceDirections;
+	for (int j = 0; j < dimNullspace; j++)
+	{
+		double resNorm = residual.col(j).norm();
+		double dirNorm = nullspaceDirections.col(j).norm();
+		double relativeResidual = (dirNorm > pivotThreshold) ? (resNorm / dirNorm) : resNorm;
+		if (relativeResidual > pivotThreshold)
+		{
+			logWarning() << "not all ambiguous directions can be represented as helmert movements.";
+			return false;
+		}
+	}
 	// 2. check dimension
 	int dimHelmert = nullspaceAsHelmert.fullPivHouseholderQr().rank();
 	if (dimHelmert < dimNullspace)
@@ -463,18 +522,34 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 		logWarning() << "not all ambiguous directions can be represented as helmert movements.";
 		return false;
 	}
-	// 3. find pure translations and pure rot+scale
-	Eigen::MatrixXd transBase(7, 3);
-	transBase.setZero();
-	transBase.topRows(3) = Eigen::MatrixXd::Identity(3, 3);
-	Eigen::MatrixXd pureTrans = intersect(nullspaceAsHelmert, transBase);
-	Eigen::MatrixXd rotAndScaleBase(7, 4);
-	rotAndScaleBase.setZero();
-	rotAndScaleBase.bottomRows(4) = Eigen::MatrixXd::Identity(4, 4);
-	Eigen::MatrixXd pureRotAndScale = intersect(nullspaceAsHelmert, rotAndScaleBase);
-	int dimPureTrans = pureTrans.fullPivHouseholderQr().rank();
-	int dimPureRotAndScale = pureRotAndScale.fullPivHouseholderQr().rank();
-	// 4. check if pure decomposition already covers all
+	// 3. separate into pure translations and pure rotations/scale
+	// Pure translations: directions with zero rotation/scale components (rows 3-6)
+	// Clean up numerical noise before LU decomposition (use absolute threshold)
+	Eigen::MatrixXd cleanedNullspaceAsHelmert = nullspaceAsHelmert;
+	cleanedNullspaceAsHelmert = (cleanedNullspaceAsHelmert.array().abs() < pivotThreshold).select(0.0, cleanedNullspaceAsHelmert);
+
+	Eigen::FullPivLU<Eigen::MatrixXd> luRotScale(cleanedNullspaceAsHelmert.bottomRows(4));
+	luRotScale.setThreshold(pivotThreshold);
+	Eigen::MatrixXd pureTransCoeffs = luRotScale.kernel();
+	Eigen::MatrixXd pureTrans;
+	if (pureTransCoeffs.cols() > 0)
+		pureTrans = cleanedNullspaceAsHelmert * pureTransCoeffs;
+	else
+		pureTrans = Eigen::MatrixXd::Zero(7, 0);
+	int dimPureTrans = (pureTrans.cols() > 0) ? pureTrans.fullPivHouseholderQr().rank() : 0;
+
+	// Pure rotations/scale: directions with zero translation components (rows 0-2)
+	Eigen::FullPivLU<Eigen::MatrixXd> luTrans(cleanedNullspaceAsHelmert.topRows(3));
+	luTrans.setThreshold(pivotThreshold);
+	Eigen::MatrixXd pureRotScaleCoeffs = luTrans.kernel();
+	Eigen::MatrixXd pureRotAndScale;
+	if (pureRotScaleCoeffs.cols() > 0)
+		pureRotAndScale = cleanedNullspaceAsHelmert * pureRotScaleCoeffs;
+	else
+		pureRotAndScale = Eigen::MatrixXd::Zero(7, 0);
+	int dimPureRotAndScale = (pureRotAndScale.cols() > 0) ? pureRotAndScale.fullPivHouseholderQr().rank() : 0;
+
+	// 4. determine what to block for the rotation/scale part
 	Eigen::MatrixXd rest;
 	if (dimPureTrans + dimPureRotAndScale == dimNullspace)
 	{
@@ -482,14 +557,24 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 	}
 	else
 	{
-		rest = orthogonalComplement(pureTrans, nullspaceAsHelmert);
-		// make sure that here no translation is blocked anymore
+		// complement of pureTrans in cleanedNullspaceAsHelmert, with translation rows zeroed
+		if (pureTransCoeffs.cols() > 0 && dimPureTrans > 0)
+		{
+			Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrPT(pureTransCoeffs);
+			qrPT.setThreshold(pivotThreshold);
+			Eigen::MatrixXd Q = qrPT.householderQ() * Eigen::MatrixXd::Identity(dimNullspace, dimNullspace);
+			rest = cleanedNullspaceAsHelmert * Q.rightCols(dimNullspace - dimPureTrans);
+		}
+		else
+		{
+			rest = cleanedNullspaceAsHelmert;
+		}
+		// zero translation rows so the greedy only picks rotation/scale parameters
 		rest.topRows(3).setZero();
 	}
-	// 5. block pure translations and rest
-	// decide which translations to block
+
+	// 5. block pure translations and rest separately
 	std::array<bool, 7> translationConstraints = whatToBlock(pureTrans);
-	// initialize the rest
 	std::array<bool, 7> remainingConstraints = whatToBlock(rest);
 
 	// combine both
@@ -522,14 +607,30 @@ std::set<int> TLSConsCheck::getNullspaceNeighbors(int object)
 
 std::set<std::set<int>> TLSConsCheck::identifyConnectedNullspaceGroups()
 {
-	std::set<std::set<int>> connectedNullspaceGroups;
-	for (auto obj : nullspaceObjects)
-	{
-		// only search for nontrivial objects
-		std::set<int> group = getConnectedNullspaceGroup(obj);
-		connectedNullspaceGroups.insert(group);
-	}
-	return connectedNullspaceGroups;
+	std::unordered_map<int, int> parent;
+	for (int obj : nullspaceObjects)
+		parent[obj] = obj;
+
+	// find with path compression
+	std::function<int(int)> find = [&](int x) {
+		return parent[x] == x ? x : parent[x] = find(parent[x]);
+	};
+
+	// union by nullspace neighbors
+	for (int obj : nullspaceObjects)
+		for (int neighbor : nullspaceNeighbors[obj])
+			if (nullspaceObjects.count(neighbor))
+				parent[find(obj)] = find(neighbor);
+
+	// collect groups
+	std::map<int, std::set<int>> groupMap;
+	for (int obj : nullspaceObjects)
+		groupMap[find(obj)].insert(obj);
+
+	std::set<std::set<int>> result;
+	for (auto &[_, group] : groupMap)
+		result.insert(std::move(group));
+	return result;
 }
 
 std::set<int> TLSConsCheck::getConnectedNullspaceGroup(int i)
@@ -655,15 +756,24 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(const Eigen::MatrixXd &mat)
 	Eigen::MatrixXd aux = remainingDirections;
 	for (int j = 0; j < rank; j++)
 	{
+		if (aux.cols() == 0)
+			break;
 		// find biggest row
 		int biggestRowIdx;
 		aux.rowwise().norm().maxCoeff(&biggestRowIdx);
 		result[biggestRowIdx] = true;
-		// compute intersecion of aux with vectors that are zero at the index
-		Eigen::MatrixXd projImage(7, 7);
-		projImage.setIdentity();
-		projImage.row(biggestRowIdx).setZero();
-		aux = intersect(aux, projImage);
+		// find linear combinations of aux columns that have zero in the selected row
+		Eigen::FullPivLU<Eigen::MatrixXd> lu(aux.row(biggestRowIdx));
+		lu.setThreshold(pivotThreshold);
+		Eigen::MatrixXd nullCoeffs = lu.kernel();
+		if (nullCoeffs.cols() == 0)
+		{
+			aux = Eigen::MatrixXd::Zero(7, 0);
+		}
+		else
+		{
+			aux = aux * nullCoeffs;
+		}
 		// make sure already selected indices remain strictly zero
 		for (int k = 0; k < 7; k++)
 		{
@@ -678,57 +788,72 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(const Eigen::MatrixXd &mat)
 
 Eigen::MatrixXd TLSConsCheck::intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
 {
-	// imA n imB = P_1 ker(C) with C=[A,-B]
+	// compute im(A) ∩ im(B) via principal angles (SVD of QA^T * QB)
 	int nRows = A.rows();
 	if (nRows != B.rows())
 	{
 		throw std::runtime_error("To compute the intersection of the images of matrix A and matrix B they must have the same row-dimension.");
 	}
-	Eigen::MatrixXd C = Eigen::MatrixXd::Zero(nRows, A.cols() + B.cols());
-	C.leftCols(A.cols()) = A;
-	C.rightCols(B.cols()) = -B;
 
-	Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(C);
-	lu_decomp.setThreshold(pivotThreshold);
-	Eigen::MatrixXd kernel = lu_decomp.kernel();
-	Eigen::MatrixXd intersection = A * kernel.topRows(A.cols());
-	Eigen::MatrixXd nontrivialIntersection = removeNearZeroNormColumns(intersection, 1e-9);
-	return nontrivialIntersection;
+	// orthonormal bases via column-pivoted QR
+	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrA(A), qrB(B);
+	qrA.setThreshold(pivotThreshold);
+	qrB.setThreshold(pivotThreshold);
+	int rankA = qrA.rank();
+	int rankB = qrB.rank();
+	if (rankA == 0 || rankB == 0)
+		return Eigen::MatrixXd::Zero(nRows, 0);
+
+	Eigen::MatrixXd QA = qrA.householderQ() * Eigen::MatrixXd::Identity(nRows, rankA);
+	Eigen::MatrixXd QB = qrB.householderQ() * Eigen::MatrixXd::Identity(nRows, rankB);
+
+	// SVD of QA^T * QB: singular values are cosines of principal angles
+	Eigen::JacobiSVD<Eigen::MatrixXd> svd(QA.transpose() * QB, Eigen::ComputeThinU);
+
+	// singular values near 1.0 indicate shared directions
+	int dimIntersection = 0;
+	for (int i = 0; i < svd.singularValues().size(); i++)
+		if (svd.singularValues()(i) > 1.0 - pivotThreshold)
+			dimIntersection++;
+
+	if (dimIntersection == 0)
+		return Eigen::MatrixXd::Zero(nRows, 0);
+
+	return QA * svd.matrixU().leftCols(dimIntersection);
 }
 
 Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V)
 {
-	// compute orthogonal complement of U in V.
-	// check dimensions
+	// compute orthogonal complement of U in V via SVD
 	if (U.rows() != V.rows())
-	{
 		throw std::runtime_error("Inconsistent dimensions.");
-	}
-	int colsU = U.cols();
-	int dimU = U.fullPivHouseholderQr().rank();
-	int colsV = V.cols();
-	int dimV = V.fullPivHouseholderQr().rank();
 
-	if ((U.cols() == 1 && U.norm() <= 1e-9) || U.cols() == 0)
-	{
-		// complement of empty space is the whole space
+	if (U.cols() == 0 || (U.cols() == 1 && U.norm() <= pivotThreshold))
 		return V;
-	}
 
-	// combine both matrices
-	Eigen::MatrixXd combinedMat(U.rows(), colsV + colsU);
-	combinedMat << U, V;
-	// check dimension to see if U really is a subspace of V
-	if (combinedMat.fullPivHouseholderQr().rank() > dimV)
-	{
-		throw std::runtime_error("U is not a subspace of V.");
-	}
+	// orthonormal basis for V
+	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrV(V);
+	qrV.setThreshold(pivotThreshold);
+	int dimV = qrV.rank();
+	if (dimV == 0)
+		return Eigen::MatrixXd::Zero(V.rows(), 0);
 
-	// the first dimU columns of Q span U, the next dimV-dimU columns span its orthogonal complement in V
-	Eigen::HouseholderQR<Eigen::MatrixXd> qr(combinedMat);
-	Eigen::MatrixXd Q = qr.householderQ();
+	Eigen::MatrixXd QV = qrV.householderQ() * Eigen::MatrixXd::Identity(V.rows(), dimV);
 
-	return Q.middleCols(dimU, dimV - dimU);
+	// project U into V-coordinates, SVD reveals which directions U occupies
+	Eigen::JacobiSVD<Eigen::MatrixXd> svd(QV.transpose() * U, Eigen::ComputeFullU);
+
+	int dimU = 0;
+	for (int i = 0; i < svd.singularValues().size(); i++)
+		if (svd.singularValues()(i) > pivotThreshold)
+			dimU++;
+
+	int dimComplement = dimV - dimU;
+	if (dimComplement <= 0)
+		return Eigen::MatrixXd::Zero(V.rows(), 0);
+
+	// last dimComplement columns of full U are orthogonal to U within V
+	return QV * svd.matrixU().rightCols(dimComplement);
 }
 
 void TLSConsCheck::initialize()
@@ -759,6 +884,12 @@ void TLSConsCheck::initialize()
 		TAdjustableHelmertTransformation trafo(it.node->data.get()->frame);
 		addObject(trafo, "Transformation");
 	}
+
+	// build column→object lookup
+	colToObject.resize(firstDgnMatrix.cols(), -1);
+	for (int obj = 0; obj < static_cast<int>(objectIndices.size()); obj++)
+		for (int col : objectIndices[obj])
+			colToObject[col] = obj;
 
 	// compute neighbors
 	// initialize neighbors
@@ -797,7 +928,7 @@ void TLSConsCheck::initialize()
 		}
 	}
 }
-void TLSConsCheck::addObject(TVAdjustableObject &object, std::string objectType)
+void TLSConsCheck::addObject(TVAdjustableObject &object, const std::string &objectType)
 {
 	// add name, type and indices
 	objectNames.push_back(object.getName());
@@ -810,7 +941,7 @@ void TLSConsCheck::addObject(TVAdjustableObject &object, std::string objectType)
 	objectIndices.push_back(aux);
 }
 
-std::set<int> TLSConsCheck::getPoints(std::set<int> group)
+std::set<int> TLSConsCheck::getPoints(const std::set<int> &group)
 {
 	std::set<int> points;
 	for (int j : group)
@@ -825,64 +956,103 @@ std::set<int> TLSConsCheck::getPoints(std::set<int> group)
 
 TDenseMatrix TLSConsCheck::computeNullspace()
 {
-	// including this flag to make fullPivLu available for debugging
-	bool useFullPivLu = true;
-	Eigen::MatrixXd potentialNullspace;
-	if (useFullPivLu)
+	// Shifted inverse iteration for sparse nullspace computation.
+	// Exploits the assumption that the nullspace dimension is small (typically 1-7).
+	//
+	// The eigenvalues of A^T A are the squared singular values of A.
+	// Nullspace vectors have eigenvalue 0, all others have eigenvalue >= lambda_min > 0.
+	// Applying (A^T A + eps I)^{-1} amplifies nullspace components by 1/eps
+	// and non-nullspace components by at most 1/lambda_min.
+	// After a few iterations the nullspace dominates completely.
+
+	int nCols = firstDgnMatrix.cols();
+
+	// form A^T A + eps I (sparse, symmetric positive definite)
+	double epsilon = 1e-10;
+	Eigen::SparseMatrix<double> AtA = firstDgnMatrix.transpose() * firstDgnMatrix;
+	for (int i = 0; i < nCols; i++)
+		AtA.coeffRef(i, i) += epsilon;
+
+	// sparse Cholesky factorization (computed once)
+	Eigen::SimplicialLDLT<Eigen::SparseMatrix<double>> solver;
+	solver.compute(AtA);
+	if (solver.info() != Eigen::Success)
 	{
-		// use fullpivlu decomposition which has a direct kernel method but needs a dense matrix
+		logWarning() << "Sparse Cholesky factorization failed in nullspace computation, falling back to dense method.";
+		// fallback: dense FullPivLU
 		TDenseMatrix firstDense = firstDgnMatrix;
-		// compute kernel representation of this matrix
-		// with pullpivlu
 		Eigen::FullPivLU<TDenseMatrix> lu(firstDense);
 		lu.setThreshold(pivotThreshold);
-		potentialNullspace = lu.kernel();
+		return lu.kernel();
 	}
-	else
+
+	// start with a random block of vectors, dimension n x blockSize
+	// blockSize = expected max nullspace dimension + oversampling
+	const int initialBlockSize = 15;
+	int blockSize = initialBlockSize;
+	std::mt19937 rng(42); // fixed seed for reproducibility
+	std::normal_distribution<double> dist(0.0, 1.0);
+	Eigen::MatrixXd V(nCols, blockSize);
+	for (int i = 0; i < nCols; i++)
+		for (int j = 0; j < blockSize; j++)
+			V(i, j) = dist(rng);
+
+	// inverse iteration: 5 steps are more than sufficient
+	// (convergence ratio per step ~ lambda_min / epsilon >> 1)
+	for (int iter = 0; iter < 5; iter++)
 	{
-		// compute the nullspace of A using qr decomposition of A^T. If the nullspace is nonzero, it corresponds to the rightmost columns of Q
-		// QR method is faster then fullPivLU for big matrices
-		Eigen::SparseMatrix<double> A = firstDgnMatrix;
-		int nVar = A.cols();
+		// solve (A^T A + eps I) V_new = V using the precomputed Cholesky factor
+		V = solver.solve(V);
 
-		// do a QR decomposition
-		Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> qr;
-		// qr pivot threshold value tested on database of test problems, 1e-4 giving more robust results compared to Eigens automatic dynamic thershold
-		qr.setPivotThreshold(1e-4);
-		qr.compute(A.transpose());
-		if (qr.info() != Eigen::Success)
-		{
-			logWarning() << "QR decomposition for nullspace computation failed";
-		}
-
-		TDenseMatrix Q = qr.matrixQ();
-		potentialNullspace = Q;
+		// re-orthogonalize via thin QR to keep numerical stability
+		Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qr(V);
+		qr.setThreshold(pivotThreshold);
+		int rank = qr.rank();
+		Eigen::MatrixXd Q = qr.householderQ() * Eigen::MatrixXd::Identity(nCols, rank);
+		V = Q;
+		blockSize = rank;
 	}
 
-	// no need to explicitely compute the rank as we test the nullspace vectors anyway. We assume the nullspace has not more then maxDim dimensions
-	std::vector<int> confirmedNullspaceVectors;
-	// check if the proposed vectors are really in the nullspace
-	int potentialDim = potentialNullspace.cols();
-	// start with the rightmost columns as they are the nullspace candidates
-	for (int j = potentialDim - 1; j >= 0; j--)
+	// verify each candidate: keep only vectors truly in the nullspace
+	std::vector<int> confirmedColumns;
+	for (int j = 0; j < V.cols(); j++)
 	{
-		double testZero = (firstDgnMatrix * potentialNullspace.col(j)).norm();
-		if (testZero < pivotThreshold)
-		{
-			confirmedNullspaceVectors.push_back(j);
-		}
-		else if (testZero > 1)
-		{
-			// as the vector is far from being in the nullspace we do not test any further candidates
-			break;
-		}
+		double residual = (firstDgnMatrix * V.col(j)).norm();
+		if (residual < pivotThreshold)
+			confirmedColumns.push_back(j);
 	}
-	TDenseMatrix confirmedNullspace(firstDgnMatrix.rows(), confirmedNullspaceVectors.size());
-	confirmedNullspace = potentialNullspace(Eigen::indexing::all, confirmedNullspaceVectors);
+
+	int nullspaceDim = static_cast<int>(confirmedColumns.size());
+	if (nullspaceDim == initialBlockSize)
+		logWarning() << "Detected nullspace dimension (" << nullspaceDim
+					 << ") equals the initial block size. The true nullspace may be larger.";
+
+	TDenseMatrix confirmedNullspace(nCols, nullspaceDim);
+	for (int i = 0; i < nullspaceDim; i++)
+		confirmedNullspace.col(i) = V.col(confirmedColumns[i]);
+
+	// Sparsify: transform to reduced row echelon form so that each basis vector
+	// has a 1 in exactly one pivot row and 0 in all other pivot rows.
+	int k = confirmedNullspace.cols();
+	if (k > 0)
+	{
+		// find k linearly independent rows via column-pivoted QR on the transpose
+		Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrBasis(confirmedNullspace.transpose());
+		qrBasis.setThreshold(pivotThreshold);
+		Eigen::VectorXi pivots = qrBasis.colsPermutation().indices().head(k);
+		// extract the k x k submatrix at pivot rows
+		Eigen::MatrixXd Vpivot(k, k);
+		for (int i = 0; i < k; i++)
+			Vpivot.row(i) = confirmedNullspace.row(pivots(i));
+		// transform: V_new = V * V_pivot^{-1} gives identity at pivot rows
+		confirmedNullspace = confirmedNullspace * Vpivot.fullPivLu().solve(Eigen::MatrixXd::Identity(k, k));
+		// clean near-zero entries
+		confirmedNullspace = (confirmedNullspace.array().abs() < pivotThreshold).select(0.0, confirmedNullspace);
+	}
 
 	return confirmedNullspace;
 }
-std::vector<TDenseMatrix> TLSConsCheck::computeKernelWrtObjectSet(std::set<int> allowedObjects)
+std::vector<TDenseMatrix> TLSConsCheck::computeKernelWrtObjectSet(const std::set<int> &allowedObjects)
 {
 	// based on the already computed nullspace, compute a base of the projection onto the subspace defined by the indices of a set of allowed objects.
 	// If the set of allowed objects corresponds to a connected nullspace group, there is at least one vector in the nullspace that has nonzero entries only at indices
@@ -908,7 +1078,7 @@ std::vector<TDenseMatrix> TLSConsCheck::computeKernelWrtObjectSet(std::set<int> 
 
 	return kernGroupBaseVectors;
 }
-std::vector<int> TLSConsCheck::indicesFromSet(std::set<int> objectSet)
+std::vector<int> TLSConsCheck::indicesFromSet(const std::set<int> &objectSet)
 {
 	// construct indices vector from object set
 	std::vector<int> indicesVector;
@@ -922,16 +1092,15 @@ std::vector<int> TLSConsCheck::indicesFromSet(std::set<int> objectSet)
 	return indicesVector;
 }
 
-std::set<int> TLSConsCheck::objectsFromIndices(std::vector<int> x)
+std::set<int> TLSConsCheck::objectsFromIndices(const std::vector<int> &x)
 {
-	// create eigen vector with 1 at the corresponding places
-	Eigen::VectorXd aux(firstDgnMatrix.cols());
-	aux.setZero();
-	aux(x) = Eigen::VectorXd::Ones(x.size());
-	return contributingObjects(aux);
+	std::set<int> result;
+	for (int col : x)
+		result.insert(colToObject[col]);
+	return result;
 }
 
-std::set<int> TLSConsCheck::contributingObjects(TDenseMatrix M)
+std::set<int> TLSConsCheck::contributingObjects(const TDenseMatrix &M)
 {
 	// get objects such that M has at least one column that is nonzero on that object-row
 	std::set<int> contributing;
@@ -947,51 +1116,32 @@ std::set<int> TLSConsCheck::contributingObjects(TDenseMatrix M)
 	return contributing;
 }
 
-std::pair<std::set<int>, int> TLSConsCheck::externalConnections(std::set<int> group)
+std::pair<std::set<int>, int> TLSConsCheck::externalConnections(const std::set<int> &group)
 {
 	// for a given group of objects compute the objects in the complement that are connected to this group
 	std::set<int> externalConnectedObjects;
 	int nConnections = 0;
 
-	std::set<int> complementOfGroup;
-	for (int i = 0; i < objectNames.size(); i++)
-	{
-		if (group.count(i) == 0)
-		{
-			// i is not in group
-			complementOfGroup.insert(i);
-		}
-	}
-	std::vector<int> internalIndices = indicesFromSet(group);
-	std::vector<int> externalIndices = indicesFromSet(complementOfGroup);
-
 	for (int row = 0; row < firstDgnMatrix.rows(); row++)
 	{
-		std::vector<int> colIndices;
-		// use sparsity pattern to compute connections
-		colIndices = getIndicesOfRow(firstDgnMatrix, row);
+		std::vector<int> colIndices = getIndicesOfRow(firstDgnMatrix, row);
 		std::set<int> contributing = objectsFromIndices(colIndices);
-		// we go through the row, indicesmarker has to have size .cols()
-		TDenseMatrix indicesMarker(firstDgnMatrix.cols(), 1);
-		indicesMarker.setZero();
-		for (auto j : colIndices)
-		{
-			indicesMarker(j) = 1;
-		}
-		bool dependsOnGroup = !(indicesMarker(internalIndices, 0).isZero());
-		bool dependsOnComplement = !(indicesMarker(externalIndices, 0).isZero());
 
-		if (dependsOnGroup && dependsOnComplement)
+		bool hasInternal = false, hasExternal = false;
+		for (int obj : contributing)
 		{
-			// the measurement involves internal and external objects
+			if (group.count(obj))
+				hasInternal = true;
+			else
+				hasExternal = true;
+		}
+
+		if (hasInternal && hasExternal)
+		{
 			nConnections++;
-			for (auto object : contributing)
-			{
-				if (group.count(object) == 0)
-				{
-					externalConnectedObjects.insert(object);
-				}
-			}
+			for (int obj : contributing)
+				if (!group.count(obj))
+					externalConnectedObjects.insert(obj);
 		}
 	}
 
