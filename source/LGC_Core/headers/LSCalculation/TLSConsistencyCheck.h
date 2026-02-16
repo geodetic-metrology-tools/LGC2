@@ -18,17 +18,13 @@ class TLSConsCheck
 public:
 	// constructor
 	TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr);
-	bool getResultStatus();
+	bool getResultStatus() const { return resultStatus; }
 	// write the error message with the logger methods
 	void generateErrorMessage();
-	// get set of object indices of the Nullspace connected to certain object in the Nullspace
-	std::set<int> getConnectedNullspaceGroup(int);
+	// get the connected nullspace groups
+	const std::set<std::set<int>> &getConnectedNullspaceGroups() const { return connectedNullspaceGroups; }
 	// try to compute a list of point group constraints that can make the problem computable.
 	bool computeNecessaryLIBRConstraints(std::list<TLGCPointConstraintGroup> &proposedPointGroupConstraints);
-	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
-	Eigen::MatrixXd intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B);
-	// U representing a subspace of V. returns the orthogonal complement of U in V
-	Eigen::MatrixXd orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V);
 
 private:
 	TLGCData &projData;
@@ -45,62 +41,58 @@ private:
 	std::vector<std::string> objectTypes;
 	// vector of vector of associated variable indices
 	std::vector<std::vector<int>> objectIndices;
-	// vector of sets of object neighbors (connected via measurement or constraint)
-	std::vector<std::set<int>> neighbors;
-	// vector of sets of neighbors restricted to objects that contribute to Nullspace of first design matrix
-	std::vector<std::set<int>> nullspaceNeighbors;
 	// the different connected problematic groups
 	std::set<std::set<int>> connectedNullspaceGroups;
 	// matrix representation of Kernel of first design matrix & constraints
 	TDenseMatrix nullspace;
-	// objects contributing to Nullspace
-	std::set<int> nullspaceObjects;
+	// maps column index (unknown index) to object id, -1 for columns without object
+	std::vector<int> colToObject;
 
-	// convert set of object-indices to variable indices
-	std::vector<int> indicesFromSet(std::set<int> objectSet);
-	// get set of object indices from variable indices
-	std::set<int> objectsFromIndices(std::vector<int> x);
+	// objects that contribute to row of firstDgnMatrix
+	std::set<int> objectsOnRow(int row) const;
 	void initialize();
-	void addObject(TVAdjustableObject &object, std::string objectType);
+	void addObject(TVAdjustableObject &object, const std::string &objectType);
 	// get  points in group
-	std::set<int> getPoints(std::set<int> group);
+	std::set<int> getPoints(const std::set<int> &group);
 	// compute full Nullspace representation
 	TDenseMatrix computeNullspace();
-	// compute Nullspace representation with only certain objects contributing
-	std::vector<TDenseMatrix> computeKernelWrtObjectSet(std::set<int> allowedObjects);
-	// get set of objects that contribute to matrix
-	std::set<int> contributingObjects(TDenseMatrix);
+	// compute Nullspace representation with only certain objects contributing (each column is a basis vector)
+	TDenseMatrix computeKernelWrtObjectSet(const std::set<int> &allowedObjects);
 	// compute all connected object groups that contribute to the Nullspace
 	std::set<std::set<int>> identifyConnectedNullspaceGroups();
-	// find neighbors of objects in the nullspace
-	std::set<int> getNullspaceNeighbors(int object);
 	// get set of object indices from the complement of a group that are connected to this group
-	std::pair<std::set<int>, int> externalConnections(std::set<int> group);
+	std::pair<std::set<int>, int> externalConnections(const std::set<int> &group);
+	// movements in Root that the kernel directions of a group cause on a set of points
+	struct RootMovementAnalysis
+	{
+		// dimension of the movements in Root; the remaining kernel directions do not move any point
+		int dimRoot = 0;
+		// dimension of the part of the movements that are Helmert movements of the points
+		int dimHelmert = 0;
+		// dimension of the part of the movements that are pure translations
+		int dimTranslation = 0;
+		// orthonormal basis of the movements in Root, 3 rows per point
+		TDenseMatrix rootBasis;
+		// linearised LIBR constraints TX, TY, TZ, RX, RY, RZ, SCL (barycentre, momentum, scale) applied to rootBasis, 7 rows
+		TDenseMatrix librResponse;
+		// Helmert coefficients TX, TY, TZ, RX, RY, RZ, SCL of rootBasis (rotations and scale about the barycentre), 7 rows
+		TDenseMatrix helmertCoefficients;
+		// Helmert components of the movement of each kernel column, "stationary" or "notInterpretable"
+		std::vector<std::string> labels;
+	};
 	// write a warning message
-	void generateGroupWarning(const std::set<int> &component, const std::vector<TDenseMatrix> &kernGroupBaseVectors, const int groupNumber);
-	// computing the jacobian of the virtual master helmert trafo acting on the point in root coordinates, will be a 3x7 matrix
-	TDenseMatrix getMasterDirections(std::string pointName);
+	void generateGroupWarning(const std::set<int> &component, const TDenseMatrix &kernel, const int groupNumber);
+	// Helmert movements of the points in Root (3 rows per point, columns TX, TY, TZ, RX, RY, RZ, SCL), rotations and scale about the barycentre
+	TDenseMatrix getCentredHelmertMovements(const std::set<std::string> &points);
 	// given a point and certain columns of the Nullspace, compute the resulting movement in Root considering all the contributions from the point in subframe and the helmert parameters from the chain to root
-	TDenseMatrix getAmbiguousDirectionsInRoot(std::string pointName, TDenseMatrix nullspaceBlock);
-	// return column indices from sparsity pattern of a row of a sparse  matrix
-	std::vector<int> getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber);
-	std::vector<std::string> involvedHelmertComponents(TVector linComb);
-	// for a group check for each direction if it can be interpreted as movements from a helmert transformation in ROOT
-	std::vector<std::vector<std::string>> interpreteGroupDirectionsAsHelmertMovements(const std::set<int> &pointsInGroup, const std::vector<TDenseMatrix> &kernGroupBaseVectors);
-	//  return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root + their position in root.
-	std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> getAffectedPointsAndRootMovements(const std::set<int> &group, const Eigen::VectorXd &nullspaceVector);
-	void plotTransformationMessage(std::vector<std::vector<std::string>>);
-	// having n 3d points with a vector of their concatenated positions and a vector of concatenated directions (or matrix if there are several directions)
-	//  try to find a point such that the directions can be interpreted as rotation around that point
-	//  returns true if a rotation axis/center was found otherwise false
-	bool findRotationAxis(const Eigen::VectorXd &pos, const Eigen::MatrixXd &directions);
-	// method for interpreting nullspace directions of a group as translations/rotations
-	// the method first tries to isolate pure translations and then tries to interprete the remaining orthogonasl complement of the nullspace as rotations.
-	// it will also try to find the corresponding rotation axis
-	bool findDirectionsToBlock(std::array<bool, 7> &chosenConstraints, const Eigen::MatrixXd &helmertMovements, const Eigen::VectorXd &pointPositions, const Eigen::MatrixXd &nullspaceDirections);
-	// input: matrix with columns representing ambiguous directions in terms of helmert directions. output: constraint signature blocking all of these directions
-	std::array<bool, 7> whatToBlock(const Eigen::MatrixXd &mat);
-	static Eigen::MatrixXd removeNearZeroNormColumns(const Eigen::MatrixXd &matrix, double threshold);
+	TDenseMatrix getAmbiguousDirectionsInRoot(const std::string &pointName, const TDenseMatrix &nullspaceBlock);
+	// points of the group and all points whose Root coordinates move with the kernel
+	std::set<std::string> getAffectedPoints(const std::set<int> &group, const TDenseMatrix &kernel);
+	// decompose the movements in Root of the kernel directions into Helmert movements and the rest
+	RootMovementAnalysis analyseRootMovements(const std::set<std::string> &points, const TDenseMatrix &kernel);
+	// choose the LIBR components whose rows of librResponse block the movements, with dimTranslation barycentre constraints and the largest
+	// Helmert coefficients; false if they cannot be blocked
+	bool chooseLIBRComponents(const TDenseMatrix &librResponse, const TDenseMatrix &helmertCoefficients, int dimTranslation, std::array<bool, 7> &chosenConstraints);
 };
 
 #endif
