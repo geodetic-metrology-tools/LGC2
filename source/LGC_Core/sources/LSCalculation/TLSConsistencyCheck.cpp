@@ -515,6 +515,7 @@ bool TLSConsCheck::findDirectionsToBlock(std::array<bool, 7> &chosenConstraints,
 			return false;
 		}
 	}
+
 	// 2. check dimension
 	int dimHelmert = nullspaceAsHelmert.fullPivHouseholderQr().rank();
 	if (dimHelmert < dimNullspace)
@@ -1018,7 +1019,9 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 	for (int j = 0; j < V.cols(); j++)
 	{
 		double residual = (firstDgnMatrix * V.col(j)).norm();
-		if (residual < pivotThreshold)
+		double vecNorm = V.col(j).norm();
+		double relativeResidual = (vecNorm > pivotThreshold) ? (residual / vecNorm) : residual;
+		if (relativeResidual < pivotThreshold)
 			confirmedColumns.push_back(j);
 	}
 
