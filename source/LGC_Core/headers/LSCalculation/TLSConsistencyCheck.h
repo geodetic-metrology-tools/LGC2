@@ -21,16 +21,10 @@ public:
 	bool getResultStatus();
 	// write the error message with the logger methods
 	void generateErrorMessage();
-	// get set of object indices of the Nullspace connected to certain object in the Nullspace
-	std::set<int> getConnectedNullspaceGroup(int);
 	// try to compute a list of point group constraints that can make the problem computable.
 	bool computeNecessaryLIBRConstraints(std::list<TLGCPointConstraintGroup> &proposedPointGroupConstraints);
 
 private:
-	// compute a representation of the intersection of the spans of columns of matrix A and matrix B
-	Eigen::MatrixXd intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B);
-	// U representing a subspace of V. returns the orthogonal complement of U in V
-	Eigen::MatrixXd orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V);
 	TLGCData &projData;
 	// true if check is passed (no problem detected), false otherwise
 	bool resultStatus = false;

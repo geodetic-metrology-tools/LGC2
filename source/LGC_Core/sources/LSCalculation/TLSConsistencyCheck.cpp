@@ -4,7 +4,6 @@
 
 #include <Eigen/LU>
 #include <Eigen/QR>
-#include <Eigen/SVD>
 #include <Eigen/SparseCholesky>
 
 #include <random>
@@ -634,31 +633,6 @@ std::set<std::set<int>> TLSConsCheck::identifyConnectedNullspaceGroups()
 	return result;
 }
 
-std::set<int> TLSConsCheck::getConnectedNullspaceGroup(int i)
-{
-	// get the connected group of object i
-	std::set<int> group({i});
-	std::set<int> newGroup;
-	std::set<int> added({i});
-	while (added.size() > 0)
-	{
-		newGroup = group;
-		for (auto object : added)
-		{
-			// add the neighbors of objects that were added in the previous round that are in the kernel
-			for (auto toBeInserted : getNullspaceNeighbors(object))
-			{
-				newGroup.insert(toBeInserted);
-			}
-		}
-		// check which points have been added
-		added.clear();
-		set_difference(newGroup.begin(), newGroup.end(), group.begin(), group.end(), inserter(added, added.begin()));
-		group = newGroup;
-	}
-	return group;
-}
-
 bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<TLGCPointConstraintGroup> &proposedPointGroupConstraints)
 {
 	// go over each group  and transform each ambiguous direction int point movements in root.
@@ -787,76 +761,6 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(const Eigen::MatrixXd &mat)
 	return result;
 }
 
-Eigen::MatrixXd TLSConsCheck::intersect(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
-{
-	// compute im(A) ∩ im(B) via principal angles (SVD of QA^T * QB)
-	int nRows = A.rows();
-	if (nRows != B.rows())
-	{
-		throw std::runtime_error("To compute the intersection of the images of matrix A and matrix B they must have the same row-dimension.");
-	}
-
-	// orthonormal bases via column-pivoted QR
-	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrA(A), qrB(B);
-	qrA.setThreshold(pivotThreshold);
-	qrB.setThreshold(pivotThreshold);
-	int rankA = qrA.rank();
-	int rankB = qrB.rank();
-	if (rankA == 0 || rankB == 0)
-		return Eigen::MatrixXd::Zero(nRows, 0);
-
-	Eigen::MatrixXd QA = qrA.householderQ() * Eigen::MatrixXd::Identity(nRows, rankA);
-	Eigen::MatrixXd QB = qrB.householderQ() * Eigen::MatrixXd::Identity(nRows, rankB);
-
-	// SVD of QA^T * QB: singular values are cosines of principal angles
-	Eigen::JacobiSVD<Eigen::MatrixXd> svd(QA.transpose() * QB, Eigen::ComputeThinU);
-
-	// singular values near 1.0 indicate shared directions
-	int dimIntersection = 0;
-	for (int i = 0; i < svd.singularValues().size(); i++)
-		if (svd.singularValues()(i) > 1.0 - pivotThreshold)
-			dimIntersection++;
-
-	if (dimIntersection == 0)
-		return Eigen::MatrixXd::Zero(nRows, 0);
-
-	return QA * svd.matrixU().leftCols(dimIntersection);
-}
-
-Eigen::MatrixXd TLSConsCheck::orthogonalComplement(const Eigen::MatrixXd &U, const Eigen::MatrixXd &V)
-{
-	// compute orthogonal complement of U in V via SVD
-	if (U.rows() != V.rows())
-		throw std::runtime_error("Inconsistent dimensions.");
-
-	if (U.cols() == 0 || (U.cols() == 1 && U.norm() <= pivotThreshold))
-		return V;
-
-	// orthonormal basis for V
-	Eigen::ColPivHouseholderQR<Eigen::MatrixXd> qrV(V);
-	qrV.setThreshold(pivotThreshold);
-	int dimV = qrV.rank();
-	if (dimV == 0)
-		return Eigen::MatrixXd::Zero(V.rows(), 0);
-
-	Eigen::MatrixXd QV = qrV.householderQ() * Eigen::MatrixXd::Identity(V.rows(), dimV);
-
-	// project U into V-coordinates, SVD reveals which directions U occupies
-	Eigen::JacobiSVD<Eigen::MatrixXd> svd(QV.transpose() * U, Eigen::ComputeFullU);
-
-	int dimU = 0;
-	for (int i = 0; i < svd.singularValues().size(); i++)
-		if (svd.singularValues()(i) > pivotThreshold)
-			dimU++;
-
-	int dimComplement = dimV - dimU;
-	if (dimComplement <= 0)
-		return Eigen::MatrixXd::Zero(V.rows(), 0);
-
-	// last dimComplement columns of full U are orthogonal to U within V
-	return QV * svd.matrixU().rightCols(dimComplement);
-}
-
 void TLSConsCheck::initialize()
 {
 	// parameters
@@ -888,7 +792,8 @@ void TLSConsCheck::initialize()
 
 	// build column→object lookup
 	colToObject.resize(firstDgnMatrix.cols(), -1);
-	for (int obj = 0; obj < static_cast<int>(objectIndices.size()); obj++)
+	int nObjects = objectIndices.size();
+	for (int obj = 0; obj < nObjects; obj++)
 		for (int col : objectIndices[obj])
 			colToObject[col] = obj;
 
@@ -1025,7 +930,7 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 			confirmedColumns.push_back(j);
 	}
 
-	int nullspaceDim = static_cast<int>(confirmedColumns.size());
+	int nullspaceDim = confirmedColumns.size();
 	if (nullspaceDim == initialBlockSize)
 		logWarning() << "Detected nullspace dimension (" << nullspaceDim
 					 << ") equals the initial block size. The true nullspace may be larger.";
