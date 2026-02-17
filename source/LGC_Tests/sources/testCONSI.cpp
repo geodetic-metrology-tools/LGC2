@@ -123,8 +123,8 @@ void object::test<4>()
 	// Test if all three objects are recognized as connected group.
 	// This can only be seen using the sparsity pattern because the derivative of all measurements with respect to the z coordinate of P2 is 0 (evaluated at the provisional values)
 	std::set<int> realGroup({0, 1, 2});
-	std::set<int> firstConnectedGroup = consCheck.getConnectedNullspaceGroup(0);
-	bool allGood = (realGroup == firstConnectedGroup);
+	const auto &groups = consCheck.getConnectedNullspaceGroups();
+	bool allGood = groups.count(realGroup) > 0;
 	ensure_equals("Connections between objects not computed correct. ", true, allGood);
 }
 

@@ -21,6 +21,8 @@ public:
 	bool getResultStatus();
 	// write the error message with the logger methods
 	void generateErrorMessage();
+	// get the connected nullspace groups
+	const std::set<std::set<int>> &getConnectedNullspaceGroups() const { return connectedNullspaceGroups; }
 	// try to compute a list of point group constraints that can make the problem computable.
 	bool computeNecessaryLIBRConstraints(std::list<TLGCPointConstraintGroup> &proposedPointGroupConstraints);
 
