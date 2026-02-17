@@ -51,7 +51,7 @@ void TLSConsCheck::generateErrorMessage()
 	}
 
 	int nGroup = 0;
-	for (auto group : connectedNullspaceGroups)
+	for (const auto &group : connectedNullspaceGroups)
 	{
 		// compute nullspace associated to this group
 		std::vector<TDenseMatrix> kernGroupBaseVectors = computeKernelWrtObjectSet(group);
@@ -365,7 +365,7 @@ std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> TLSConsCheck
 	names2Movements.setZero();
 	names2Positions.setZero();
 	int j = 0;
-	for (auto pointName : affectedPoints)
+	for (const auto &pointName : affectedPoints)
 	{
 		names2Movements.segment(3 * j, 3) = points2Movements[pointName];
 		names2Positions.segment(3 * j, 3) = points2Positions[pointName];
@@ -386,7 +386,7 @@ void TLSConsCheck::plotTransformationMessage(std::vector<std::vector<std::string
 	for (int j = 0; j < input.size(); j++)
 	{
 		std::string helmertString;
-		for (auto comp : input.at(j))
+		for (const auto &comp : input.at(j))
 		{
 			helmertString.append(comp);
 			helmertString.append(" ");
@@ -637,11 +637,11 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<TLGCPointConstraint
 {
 	// go over each group  and transform each ambiguous direction int point movements in root.
 	std::vector<std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd>> groupsOfAffectedPoints;
-	for (auto group : connectedNullspaceGroups)
+	for (const auto &group : connectedNullspaceGroups)
 	{
 		// compute nullspace associated to this group
 		std::vector<TDenseMatrix> kernGroupBaseVectors = computeKernelWrtObjectSet(group);
-		for (auto nullspaceVector : kernGroupBaseVectors)
+		for (const auto &nullspaceVector : kernGroupBaseVectors)
 		{
 			groupsOfAffectedPoints.push_back(getAffectedPointsAndRootMovements(group, nullspaceVector));
 		}
@@ -653,23 +653,22 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<TLGCPointConstraint
 	std::map<std::set<std::string>, Eigen::MatrixXd> groups2HelmertMovements;
 	std::map<std::set<std::string>, Eigen::VectorXd> groups2Positions;
 
-	for (auto affectedPointGroup : groupsOfAffectedPoints)
+	for (const auto &affectedPointGroup : groupsOfAffectedPoints)
 	{
-		int nRows = 3 * std::get<0>(affectedPointGroup).size();
-		std::set<std::string> pointNames = std::get<0>(affectedPointGroup);
-		Eigen::VectorXd rootDirections = std::get<1>(affectedPointGroup);
-		Eigen::VectorXd rootPositions = std::get<2>(affectedPointGroup);
-		Eigen::MatrixXd newDir = groups2AmbiguousDirections[pointNames];
-		// prepare the concatentaion of a new column with the corresponding root direction
+		const std::set<std::string> &pointNames = std::get<0>(affectedPointGroup);
+		const Eigen::VectorXd &rootDirections = std::get<1>(affectedPointGroup);
+		const Eigen::VectorXd &rootPositions = std::get<2>(affectedPointGroup);
+		int nRows = 3 * pointNames.size();
+		Eigen::MatrixXd &newDir = groups2AmbiguousDirections[pointNames];
+		// prepare the concatenation of a new column with the corresponding root direction
 		newDir.conservativeResize(nRows, newDir.cols() + 1);
 		newDir.col(newDir.cols() - 1) = rootDirections;
-		groups2AmbiguousDirections[pointNames] = newDir;
 		groups2Positions[pointNames] = rootPositions;
 
-		// now for this group compute the hypothetical action af a helmert transformation (in root coordinates)
+		// now for this group compute the hypothetical action of a helmert transformation (in root coordinates)
 		Eigen::MatrixXd helmertMovements = Eigen::MatrixXd::Zero(nRows, 7);
 		int i = 0;
-		for (auto point : pointNames)
+		for (const auto &point : pointNames)
 		{
 			helmertMovements.middleRows(3 * i, 3) = getMasterDirections(point);
 			i++;
@@ -679,20 +678,10 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<TLGCPointConstraint
 
 	// go over each group and find blocking constraints
 	int numberConstraintsAdded = 0;
-	for (auto group : groups2HelmertMovements)
+	for (const auto &[pointNames, helmertMovements] : groups2HelmertMovements)
 	{
-		// 1. do initial checks:
-		// how much ambiguous dimensions (>7??)
-		// ambiguous directions subspace of helmert?
-		// how many points affected? should be at least 2, better 3 otherwise no clean separation into Helmert directions possible
-		// 2. try to decompose into pure translations and pure rest, if not possible decompose into pure translations and orthogonal complement
-		// 3. find blocking constraints for the found ambiiguous directions
-		// 4. count how much constraints were found and compare to dimension of nullspace, success only if both are equal
-
-		std::set<std::string> pointNames = group.first;
-		Eigen::MatrixXd helmertMovements = groups2HelmertMovements[pointNames];
-		Eigen::VectorXd pointPositions = groups2Positions[pointNames];
-		Eigen::MatrixXd nullspaceDirections = groups2AmbiguousDirections[pointNames];
+		const Eigen::VectorXd &pointPositions = groups2Positions[pointNames];
+		const Eigen::MatrixXd &nullspaceDirections = groups2AmbiguousDirections[pointNames];
 
 		std::array<bool, 7> chosenConstraints{};
 		bool constraintsFound = findDirectionsToBlock(chosenConstraints, helmertMovements, pointPositions, nullspaceDirections);
@@ -703,7 +692,7 @@ bool TLSConsCheck::computeNecessaryLIBRConstraints(std::list<TLGCPointConstraint
 		}
 
 		// use the found constraints and define a point constraint group
-		TLGCPointConstraintGroup newConstraintGroup(projData, chosenConstraints, group.first);
+		TLGCPointConstraintGroup newConstraintGroup(projData, chosenConstraints, pointNames);
 
 		proposedPointGroupConstraints.push_back(newConstraintGroup);
 		numberConstraintsAdded += newConstraintGroup.getConstraintDimension();
