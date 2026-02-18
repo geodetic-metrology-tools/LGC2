@@ -17,7 +17,7 @@
 #include <TLSAlgorithm.h>
 #include <TSimulationOutputFileWriter.h>
 #include <TPointTransformer.h>
-#include <TObservationGenerator.h>
+#include <TContributionsGenerator.h>
 #include <TLGCStatistic.h>
 
 
@@ -46,7 +46,7 @@ private:
 	/*!@name Data*/
 	//@{
 	/// Contribution generator used for calculation of the 'measured values' 
-	TObservationGenerator fSimObs; 
+	TContributionsGenerator	fCGenerator; 
 
 	/// Allow usual transformations between reference frame
 	TPointTransformer fPointTransformer; 
@@ -78,38 +78,38 @@ private:
 	/// Simulate all measurements
 	void	simulateValues();
 
-	void	getPLR3DSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TPLR3D>& plr3D);
-	void	getANGLSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl);
-	void	getZENDSimValues(const TTSTN& station, std::list<TZEND>& zend);
-	void	getDISTSimValues(const TTSTN& station, std::list<TLINE>& dist);
-	void	getDHORSimValues(const TTSTN& station, std::list<TLINE>& dhor);
-	void	getECTHSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECTH>& ecth);
-	void	getECDIRSimValues(const TTSTN& station, const TTSTN::TROM& rom, std::list<TECDIR>& ecdir);
+	void updatePLR3DSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void updateANGLSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void updateZENDSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void	updateDISTSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void	updateDHORSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void	updateECTHSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void	updateECDIRSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
 	//for a TSTN defined in a subframe
-	void	getANGLSimValuesInFrame(const TTSTN& station, const TTSTN::TROM& rom, std::list<TANGL>& angl);
-	void	getZENDSimValuesInFrame(const TTSTN& station, std::list<TZEND>& zend);
-	void	getDISTSimValuesInFrame(const TTSTN& station, std::list<TLINE>& dist);
+	void	updateANGLSimValuesInFrame(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void	updateZENDSimValuesInFrame(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
+	void	updateDISTSimValuesInFrame(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station);
 
-	void	getDLEVSimValues(const TLEVEL& levelST, std::list<TDLEV>& dlev);
-	void	getDVERSimValues(std::list<TDVER>& dver);
-	void	getDSPTSimValues(const TEDM& edmST, std::list<TDSPT>& dspt);
-	void    getECHOSimValues(const TECHOROM& echoROM, std::list<TECHO>& echo);
-	void    getECVESimValues(const TECVEROM& ecveROM, std::list<TECVE>& ecve);
-	void	getECSPSimValues(const TECSPROM& ecspROM, std::list<TECSP>& ecsp);
-	void    getORIESimValues(const TORIEROM& orieROM, std::list<TORIE>& orie);
+	void	updateDLEVSimValues(const TLEVEL& levelST, std::list<TDLEV>& dlev);
+	void	updateDVERSimValues(std::list<TDVER>& dver);
+	void	updateDSPTSimValues(const TEDM& edmST, std::list<TDSPT>& dspt);
+	void    updateECHOSimValues(const TECHOROM& echoROM, std::list<TECHO>& echo);
+	void    updateECVESimValues(const TECVEROM& ecveROM, std::list<TECVE>& ecve);
+	void	updateECSPSimValues(const TECSPROM& ecspROM, std::list<TECSP>& ecsp);
+	void    updateORIESimValues(const TORIEROM& orieROM, std::list<TORIE>& orie);
 	/*DHOR made in DLEV measurement, different from the DHOR obs.*/
-	void	getHorDistSimValues(const LGCAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);
+	void	updateHorDistSimValues(const LGCAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel);
 
-	void	getUVDSimValues(TCAM& camera);
-	void	getUVECSimValues(TCAM& camera);
+	void	updateUVDSimValues(TCAM& camera);
+	void	updateUVECSimValues(TCAM& camera);
 
-	void    getINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly);
-	void    getROLLYSimValues(const TROLLYROM& rollyROM, std::list<TROLLY>& rolly);
+	void    updateINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly);
+	void    updateROLLYSimValues(const TROLLYROM& rollyROM, std::list<TROLLY>& rolly);
 
-	void    getECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws);
-	void    getOBSXYZSimValues(std::list<TOBSXYZ>& obsxyz);
+	void    updateECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws);
+	void    updateOBSXYZSimValues(std::list<TOBSXYZ>& obsxyz);
 
-	void    getECWISimValues(const TECWIROM& ecwiROM, std::list<TECWI>& ecws);
+	void    updateECWISimValues(const TECWIROM& ecwiROM, std::list<TECWI>& ecws);
 
 	/// Return a biased value (correct measurement + small error)
 	TReal   getSimulatedValue(const TReal val, const TReal sigma);

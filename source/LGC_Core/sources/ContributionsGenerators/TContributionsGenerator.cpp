@@ -1375,6 +1375,9 @@ OBSXYZContrib TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ &OBSXYZ)
 	const TLOR2LOR &obsPoint2ObsTrafo = fPointTransfo.getLORTransformation(OBSXYZ.station->getFrameTreePosition(), OBSXYZ.positionInTree); // Transform to frame from which the point is observed
 	obsPoint2ObsTrafo.transform(obsPoint);
 
+	Eigen::Vector3d  obsVariance;
+	obsVariance << pow2q(OBSXYZ.getXObservedStDev()), pow2q(OBSXYZ.getYObservedStDev()), pow2q(OBSXYZ.getZObservedStDev());
+
 	// point transformed to observation frame minus observation (misclosure)
 	TFreeVector misclosure = obsPoint - obs;
 
@@ -1391,7 +1394,7 @@ OBSXYZContrib TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ &OBSXYZ)
 	fPointTransfo.setMLA(false);
 	addTransformationsContributions3D(obsPoint2ObsTrafo, OBSXYZ.station->getEstimatedValue(), unitX, unitY, unitZ, transfContributions);
 
-	return {coordContribObsPoint, transfContributions, misclosure};
+	return {obsPoint, obsVariance, coordContribObsPoint, transfContributions, misclosure};
 }
 
 /*

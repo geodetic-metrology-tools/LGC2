@@ -22,7 +22,6 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TContributionsGenerator.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/ContributionStructures.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TPointTransformer.h
-	${CORE_INCLUDE_PATH}/ContributionsGenerators/TObservationGenerator.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TAllfixedParamGenerator.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.h
 	${CORE_INCLUDE_PATH}/LGCAdjustableObjects/LGCAdjustableLine.h
@@ -111,7 +110,6 @@ set(Core_HEADERS
 set(Core_SOURCES
 	${CORE_SOURCES_PATH}/ContributionsGenerators/TContributionsGenerator.cpp
 	${CORE_SOURCES_PATH}/ContributionsGenerators/TPointTransformer.cpp
-	${CORE_SOURCES_PATH}/ContributionsGenerators/TObservationGenerator.cpp
 	${CORE_SOURCES_PATH}/ContributionsGenerators/TAllfixedParamGenerator.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustablePoint.cpp
 	${CORE_SOURCES_PATH}/LGCAdjustableObjects/LGCAdjustableLine.cpp
