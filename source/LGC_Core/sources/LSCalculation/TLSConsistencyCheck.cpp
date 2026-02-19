@@ -2,15 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <functional>
+#include <map>
+#include <random>
+#include <unordered_map>
+
 #include <Eigen/LU>
 #include <Eigen/QR>
 #include <Eigen/SparseCholesky>
-
-#include <random>
-
-#include <functional>
-#include <map>
-#include <unordered_map>
 
 #include <Logger.hpp>
 #include <TDirectTransformation.h>
@@ -612,9 +611,7 @@ std::set<std::set<int>> TLSConsCheck::identifyConnectedNullspaceGroups()
 		parent[obj] = obj;
 
 	// find with path compression
-	std::function<int(int)> find = [&](int x) {
-		return parent[x] == x ? x : parent[x] = find(parent[x]);
-	};
+	std::function<int(int)> find = [&](int x) { return parent[x] == x ? x : parent[x] = find(parent[x]); };
 
 	// union by nullspace neighbors
 	for (int obj : nullspaceObjects)
@@ -921,8 +918,7 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 
 	int nullspaceDim = confirmedColumns.size();
 	if (nullspaceDim == initialBlockSize)
-		logWarning() << "Detected nullspace dimension (" << nullspaceDim
-					 << ") equals the initial block size. The true nullspace may be larger.";
+		logWarning() << "Detected nullspace dimension (" << nullspaceDim << ") equals the initial block size. The true nullspace may be larger.";
 
 	TDenseMatrix confirmedNullspace(nCols, nullspaceDim);
 	for (int i = 0; i < nullspaceDim; i++)
