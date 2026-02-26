@@ -35,14 +35,6 @@ repos:
       - id: debug-statements
         exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
 
-  # C++ formatting with clang-format
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v18.1.8
-    hooks:
-      - id: clang-format
-        types_or: [c++, c]
-        args: ['-i']  # Edit files in-place
-
   # CMake formatting (optional - uncomment if you want to enforce CMake formatting)
   # - repo: https://github.com/cheshirekow/cmake-format-precommit
   #   rev: v0.6.13
@@ -55,6 +47,14 @@ repos:
   # Check for common C++ issues and project requirements
   - repo: local
     hooks:
+      # Format C++ code with clang-format using local .clang-format configuration
+      - id: clang-format
+        name: clang-format
+        entry: clang-format
+        language: system
+        types_or: [c++, c]
+        args: ['-i', '--style=file']  # Edit in-place, use .clang-format file
+
       # Check that text files are UTF-8 encoded
       - id: check-utf8-encoding
         name: Check UTF-8 encoding
