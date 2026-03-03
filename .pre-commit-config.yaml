@@ -75,7 +75,7 @@ repos:
             if not files_to_check:
                 sys.exit(0)
 
-            # Patterns from REUSE.toml that are covered (don't need SPDX headers in files)
+            # Patterns from REUSE.toml that are covered (don't need SPDX headers)
             covered_patterns = [
                 # Documentation and metadata
                 r'^doc/',
