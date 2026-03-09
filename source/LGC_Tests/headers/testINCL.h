@@ -427,10 +427,6 @@ PT4 0.0200
 *END 
 )";
 
-
-
-
-
 //=== EXACT COPIES OF ALL INCLY TESTS FOR ROLLY (Legacy Model) ===//
 
 /*----------ROLLY LEGACY TESTS - Exact copies of INCLY tests----------*/
@@ -887,5 +883,94 @@ NEAR_PT 1.0 ID NEAR_MEASUREMENT
 *ENDFRAME 
 *END 
 )";
+/*Testing inclinometer reference angle: comparing subframe approach vs RF keyword*/
+char const *const INCLY_REF_ANGLE_TEST = R"(*TITR
+Inclinometer reference angle behavior test
+*OLOC
+*INSTR
+*INCL INSTR_ID 10   0    0  0 0  0
+*FRAME randomFrame 1 2 3 4 5 6 1
+*CALA
+ex 1 0 0
+ey 0 1 0
+ez 0 0 1
+*ENDFRAME
+*FRAME freeFrame1 1 2 3 10 20 30 1 TX TY TZ RX RY RZ
+*CALA
+origin1 0 0 0
+*OBSXYZ
+ex 1 0 0 1 1 1
+ey 0 1 0 1 1 1
+ez 0 0 1 1 1 1
+*FRAME referenceAngle 0 0 0 0 15 0 1
+*INCLY INSTR_ID
+origin1 5
+*ENDFRAME
+*ENDFRAME
+
+*FRAME freeFrame2 1 2 3 10 20 30 1 TX TY TZ RX RY RZ
+*CALA
+origin2 0 0 0
+*OBSXYZ
+ex 1 0 0 1 1 1
+ey 0 1 0 1 1 1
+ez 0 0 1 1 1 1
+*INCLY INSTR_ID
+origin2 5 RF 15
+*ENDFRAME
+
+*FRAME freeFrame3 1 2 3 10 20 30 1 TX TY TZ RX RY RZ
+*CALA
+origin3 0 0 0
+*OBSXYZ
+ex 1 0 0 1 1 1
+ey 0 1 0 1 1 1
+ez 0 0 1 1 1 1
+*ROLLY INSTR_ID
+origin3 13 RF 17
+origin3 13
+*ENDFRAME
+
+*FRAME freeFrame4 1 2 3 0 20 0 1 RY
+*CALA
+origin4 0 0 0
+*OBSXYZ
+ex 1 0 0 1 1 1
+ey 0 1 0 1 1 1
+ez 0 0 1 1 1 1
+*INCLY INSTR_ID
+origin4 13 RF 17
+origin4 13
+*ENDFRAME
+*END
+)";
+
+/*Testing INCLY derivative for non-unit scale: with correct derivatives (properly
+  accounting for normalization), the estimated precision of RY should equal the
+  instrument sigma (10), not be affected by the scale factor (1.5)*/
+char const *const INCLY_SCALE_DERIVATIVE_TEST = R"(*TITR
+Inclinometer Scale test
+*OLOC
+*APRI
+*INSTR
+*INCL INSTR_ID 10   0    0  0 0  0
+
+*FRAME freeFrame1 0 0 0 0 0 0 1.5 RY
+*CALA
+origin1 0 0 0
+*INCLY INSTR_ID
+origin1 20
+*ENDFRAME
+
+*FRAME freeFrame2 0 0 0 0 0 0 1.5 RY
+*CALA
+origin2 0 0 0
+*ROLLY INSTR_ID
+origin2 20
+*ENDFRAME
+
+*END
+)";
+
 } // namespace TestINCL
 #endif
