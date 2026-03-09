@@ -390,6 +390,8 @@ struct PtOrientationContrib
 */
 struct OBSXYZContrib
 {
+	TFreeVector fCalcMeas;
+	Eigen::Vector3d fObsVariance;
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform the observed point into the observation frame.
