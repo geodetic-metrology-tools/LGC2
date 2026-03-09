@@ -1375,7 +1375,7 @@ OBSXYZContrib TContributionsGenerator::getOBSXYZContrib(const TOBSXYZ &OBSXYZ)
 	const TLOR2LOR &obsPoint2ObsTrafo = fPointTransfo.getLORTransformation(OBSXYZ.station->getFrameTreePosition(), OBSXYZ.positionInTree); // Transform to frame from which the point is observed
 	obsPoint2ObsTrafo.transform(obsPoint);
 
-	Eigen::Vector3d  obsVariance;
+	Eigen::Vector3d obsVariance;
 	obsVariance << pow2q(OBSXYZ.getXObservedStDev()), pow2q(OBSXYZ.getYObservedStDev()), pow2q(OBSXYZ.getZObservedStDev());
 
 	// point transformed to observation frame minus observation (misclosure)

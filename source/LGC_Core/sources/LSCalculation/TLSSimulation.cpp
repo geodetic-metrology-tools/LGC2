@@ -3,35 +3,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "TLSSimulation.h"
+
 #include "TLGCData.h"
+#include "TLSInputMatrices.h"
 #include "TLSInputMatricesFiller.h"
 #include "TLSResultsMatricesExtractor.h"
-#include "TLSInputMatrices.h"
-
 #include "TXYH2CCS.h"
 
-TLSSimulation::TLSSimulation(TLGCData& data, int maxIter, std::shared_ptr<TSimulationOutputFileWriter> fResFileWriter) : TLSAlgorithm(data),
-fData(data), fMaxIterations(maxIter),
-fPointTransformer(&data.getTree(), data.getConfig().referential),
-fCGenerator(fPointTransformer),
-fileWriter(fResFileWriter)
+TLSSimulation::TLSSimulation(TLGCData &data, int maxIter, std::shared_ptr<TSimulationOutputFileWriter> fResFileWriter) :
+	TLSAlgorithm(data), fData(data), fMaxIterations(maxIter), fPointTransformer(&data.getTree(), data.getConfig().referential), fCGenerator(fPointTransformer), fileWriter(fResFileWriter)
 {
-
 	/*Initialize the point summaries list*/
-	for (auto& point : fData.getPoints()){
+	for (auto &point : fData.getPoints())
+	{
 		if (!point.isFixed())
 			fPointSummaries.push_back(TSimPointSummary(point));
 	}
 
 	/*Initialize the frames summaries list*/
-	for (auto frameIt(fData.getTree().begin()); frameIt != fData.getTree().end(); ++frameIt){
+	for (auto frameIt(fData.getTree().begin()); frameIt != fData.getTree().end(); ++frameIt)
+	{
 		if (!frameIt->get()->frame.isFixed())
 			fFrameSummaries.push_back(TSimFrameSummary(frameIt->get()->frame));
 	}
-
 }
 
-Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
+Behavior TLSSimulation::run(TLGCData &data, int maxIterations)
 {
 	TLSAlgorithm lsCalc(data);
 	Behavior calcOK;
@@ -46,8 +43,8 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 
 	// Run through the first simulation
 
-	try {
-
+	try
+	{
 		simulateValues();
 		calcOK = lsCalc.run(data, maxIterations);
 
@@ -63,7 +60,7 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 				it->transformEstimatedCoordinates(&fData);
 			}
 
-			fileWriter->writeFileBegin(); //Write the beginning of the file (data summary, title etc.)
+			fileWriter->writeFileBegin(); // Write the beginning of the file (data summary, title etc.)
 			fileWriter->writeSimSummary(fData, numOfSimMade); // Write results of the first iteration
 		}
 		else
@@ -72,19 +69,21 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 			// return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 		}
 	}
-	catch (std::exception& excp) {
+	catch (std::exception &excp)
+	{
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
 		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 	}
 
-	try{
-		// repeat simulation calculations until all are completed 
-		while (calcOK &&  numOfSimMade < totalNumOfSimul)
+	try
+	{
+		// repeat simulation calculations until all are completed
+		while (calcOK && numOfSimMade < totalNumOfSimul)
 		{
 			// increment the simulation counter
 			numOfSimMade++;
 
-			// reinitialize to project to the original form, points, frames, etc. 
+			// reinitialize to project to the original form, points, frames, etc.
 			fData.reInitForSIMU();
 
 			// compute the ls results for the current simulation
@@ -109,7 +108,7 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 
 		if (calcOK)
 		{
-			//Write out the 2 tables in the end
+			// Write out the 2 tables in the end
 			fileWriter->writeSimPointsSummary(fData.getConfig().title, fPointSummaries, numOfSimMade);
 			fileWriter->writeSimFramesSummary(fFrameSummaries, numOfSimMade);
 
@@ -123,38 +122,40 @@ Behavior TLSSimulation::run(TLGCData& data, int maxIterations)
 				fileWriter->writeRelErrorFrameHeader();
 				fileWriter->writeRelErrorFrameResults(fData);
 			}
-
 		}
-
 	}
-	catch (std::exception const& excp) {
+	catch (std::exception const &excp)
+	{
 		fData.getFileLogger() << TFileLogger::e_logType::LOG_ERROR << excp.what();
 		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"Calculation failed in simulation mode.");
 	}
 	return calcOK;
-
 }
 
-
-void TLSSimulation::updateResValues(){
+void TLSSimulation::updateResValues()
+{
 	/*Update POINT residual summary*/
 	TFreeVector res(TCoordSysFactory::k3DCartesian);
-	for (auto& pointSummary : fPointSummaries){
+	for (auto &pointSummary : fPointSummaries)
+	{
 		TDataTreeIterator root = fData.getTree().begin();
 		TRefSystemFactory::ERefFrame globalRef = fData.getConfig().referential;
-		const LGCAdjustablePoint* point = pointSummary.getAdjustablePoint();
+		const LGCAdjustablePoint *point = pointSummary.getAdjustablePoint();
 
 		TPositionVector provisionalValue = point->getProvisionalValue();
 		TPositionVector estimatedValue = point->getEstimatedValue();
 
-		//If point is defined in a sub-frame
-		if (root != point->getFrameTreePosition()){
+		// If point is defined in a sub-frame
+		if (root != point->getFrameTreePosition())
+		{
 			TLOR2LOR transfo = TLOR2LOR(point->getFrameTreePosition(), root, "transfo");
 			transfo.transform(provisionalValue);
 			transfo.transform(estimatedValue);
 		}
-		else{
-			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame){
+		else
+		{
+			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+			{
 				if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 					TXYH2CCS::XYHs2CCS(provisionalValue);
 				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
@@ -169,42 +170,48 @@ void TLSSimulation::updateResValues(){
 	}
 
 	/*Update FRAME residual summary*/
-	for (auto& frameSum : fFrameSummaries){
+	for (auto &frameSum : fFrameSummaries)
+	{
 		TransformParameters estimatedParam = frameSum.getAdjustableTransformation()->getEstParam();
 		TransformParameters provisionalParam = frameSum.getAdjustableTransformation()->getProvParam();
 		TransformParameters result = estimatedParam - provisionalParam;
 		frameSum.addNewResValue(result);
 	}
 
-    // Reinitialise the observation summaries
-    for(auto &node : fData.getTree())
-        node->measurements.initialiseObsSummaries();
+	// Reinitialise the observation summaries
+	for (auto &node : fData.getTree())
+		node->measurements.initialiseObsSummaries();
 }
 
 void TLSSimulation::simulateValues()
-{//generate simulated values
+{ // generate simulated values
 
-	//Tteration through the tree nodes
-	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++){
-
+	// Tteration through the tree nodes
+	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++)
+	{
 		if (itTree.node->data->isROOTNode())
 		{
-			for (auto itTSTN : itTree.node->data->measurements.fTSTN) {
-				//In every TSTN iterate through ROMS
-				for (auto itROM : itTSTN->roms) {
+			for (auto itTSTN : itTree.node->data->measurements.fTSTN)
+			{
+				// In every TSTN iterate through ROMS
+				for (auto itROM : itTSTN->roms)
+				{
 					updatePLR3DSimValues(itROM, itTSTN); // Simulate PLR3D value
-					updateANGLSimValues(itROM, itTSTN); //Fill contribution to an ANGL measurement
-					updateZENDSimValues(itROM, itTSTN); //Fill contribution to a ZEND measurement
-					updateDISTSimValues(itROM, itTSTN); //Fill contribution to a DIST measurement
-					updateDHORSimValues(itROM, itTSTN); //Fill contribution to a DHOR measurement
-					updateECTHSimValues(itROM, itTSTN); //Fill contribution to a ECTH measurement
+					updateANGLSimValues(itROM, itTSTN); // Fill contribution to an ANGL measurement
+					updateZENDSimValues(itROM, itTSTN); // Fill contribution to a ZEND measurement
+					updateDISTSimValues(itROM, itTSTN); // Fill contribution to a DIST measurement
+					updateDHORSimValues(itROM, itTSTN); // Fill contribution to a DHOR measurement
+					updateECTHSimValues(itROM, itTSTN); // Fill contribution to a ECTH measurement
 					updateECDIRSimValues(itROM, itTSTN); // Fill contribution to a ECSP measurement
 				}
 			}
 		}
-		else {
-			for (auto itTSTN : itTree.node->data->measurements.fTSTN) {
-				for (auto itROM : itTSTN->roms) {
+		else
+		{
+			for (auto itTSTN : itTree.node->data->measurements.fTSTN)
+			{
+				for (auto itROM : itTSTN->roms)
+				{
 					updateANGLSimValuesInFrame(itROM, itTSTN);
 					updateZENDSimValuesInFrame(itROM, itTSTN);
 					updateDISTSimValuesInFrame(itROM, itTSTN);
@@ -212,28 +219,30 @@ void TLSSimulation::simulateValues()
 			}
 		}
 
-		//In every node iterate through camera's (CAM) measurements
-		for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM){
+		// In every node iterate through camera's (CAM) measurements
+		for (auto itCAM(itTree.node->data->measurements.fCAM.begin()); itCAM != itTree.node->data->measurements.fCAM.end(); ++itCAM)
+		{
 			if (!itCAM->measUVD.empty())
 				updateUVDSimValues(*itCAM);
 			if (!itCAM->measUVEC.empty())
 				updateUVECSimValues(*itCAM);
 		}
 
-		//In every node iterate through the EDM's measurements
-		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM){
-			//Iterate through DPST measurements
+		// In every node iterate through the EDM's measurements
+		for (auto itEDM = itTree.node->data->measurements.fEDM.begin(); itEDM != itTree.node->data->measurements.fEDM.end(); ++itEDM)
+		{
+			// Iterate through DPST measurements
 			if (!itEDM->measDSPT.empty())
 				updateDSPTSimValues(*itEDM, itEDM->measDSPT);
 		}
 
-		//In every node iterate through the LEVEL's measurements
+		// In every node iterate through the LEVEL's measurements
 		for (auto itLEVEL(itTree.node->data->measurements.fLEVEL.begin()); itLEVEL != itTree.node->data->measurements.fLEVEL.end(); ++itLEVEL)
 		{
 			updateDLEVSimValues(*itLEVEL, itLEVEL->measDLEV);
 			if (itLEVEL->hasDHOR)
 			{
-				for (auto& itDHOR : itLEVEL->measDLEV)
+				for (auto &itDHOR : itLEVEL->measDLEV)
 				{
 					if (itDHOR.dhor)
 						updateHorDistSimValues(itLEVEL->fMeasuredPlane->getReferencePoint(), *itDHOR.dhor.get());
@@ -241,97 +250,111 @@ void TLSSimulation::simulateValues()
 			}
 		}
 
-
-		//In every node iterate through the ECHO's measurements
-		for (auto& itECHO : itTree.node->data->measurements.fECHO)
+		// In every node iterate through the ECHO's measurements
+		for (auto &itECHO : itTree.node->data->measurements.fECHO)
 			updateECHOSimValues(itECHO, itECHO.measECHO);
 
-		//In every node iterate through the ECVE's measurements
-		for (auto& itECVE : itTree.node->data->measurements.fECVE)
+		// In every node iterate through the ECVE's measurements
+		for (auto &itECVE : itTree.node->data->measurements.fECVE)
 			updateECVESimValues(itECVE, itECVE.measECVE);
 
-		//In every node iterate through the ECSP's measurements
-		for (auto& itECSP : itTree.node->data->measurements.fECSP)
+		// In every node iterate through the ECSP's measurements
+		for (auto &itECSP : itTree.node->data->measurements.fECSP)
 			updateECSPSimValues(itECSP, itECSP.measECSP);
 
-		//In every node iterate through the ORIE's measurements
-		for (auto& itORIE : itTree.node->data->measurements.fORIE)
+		// In every node iterate through the ORIE's measurements
+		for (auto &itORIE : itTree.node->data->measurements.fORIE)
 			updateORIESimValues(itORIE, itORIE.measORIE);
 
-		//No instrument for DVER measurements
+		// No instrument for DVER measurements
 		updateDVERSimValues(itTree.node->data->measurements.fDVER);
 
-		//In every node iterate through the INCLY's measurements
-		for (auto& itINCLY : itTree.node->data->measurements.fINCLY)
+		// In every node iterate through the INCLY's measurements
+		for (auto &itINCLY : itTree.node->data->measurements.fINCLY)
 			updateINCLYSimValues(itINCLY, itINCLY.measINCLY);
 
-		//In every node iterate through the ROLLY's measurements
-		for (auto& itROLLY : itTree.node->data->measurements.fROLLY)
+		// In every node iterate through the ROLLY's measurements
+		for (auto &itROLLY : itTree.node->data->measurements.fROLLY)
 			updateROLLYSimValues(itROLLY, itROLLY.measROLLY);
 
-		//In every node iterate through the ECWS's measurements
-		for (auto& itECWS : itTree.node->data->measurements.fECWS)
+		// In every node iterate through the ECWS's measurements
+		for (auto &itECWS : itTree.node->data->measurements.fECWS)
 			updateECWSSimValues(itECWS, itECWS.measECWS);
 
 		// In every node iterate through the ECWI's measurements
 		for (auto &itECWI : itTree.node->data->measurements.fECWI)
 			updateECWISimValues(itECWI, itECWI.measECWI);
-		
-		//In every node go through the OBSXYZ measurements
+
+		// In every node go through the OBSXYZ measurements
 		updateOBSXYZSimValues(itTree.node->data->measurements.fOBSXYZ);
 	}
 }
 
-void	TLSSimulation::updateDVERSimValues(std::list<TDVER>& dver){
-	for (auto& itDVER : dver){
+void TLSSimulation::updateDVERSimValues(std::list<TDVER> &dver)
+{
+	for (auto &itDVER : dver)
+	{
 		const auto contrib = fCGenerator.getDVERContrib(itDVER);
 		itDVER.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
 
-void	TLSSimulation::updateDLEVSimValues(const TLEVEL& levelST, std::list<TDLEV>& dlev){
-	for (auto& itDLEV : dlev){
+void TLSSimulation::updateDLEVSimValues(const TLEVEL &levelST, std::list<TDLEV> &dlev)
+{
+	for (auto &itDLEV : dlev)
+	{
 		const auto contrib = fCGenerator.getDLEVContrib(levelST, itDLEV);
 		itDLEV.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
 
 /*DHOR made in DLEV measurement, different from the DHOR obs.*/
-void	TLSSimulation::updateHorDistSimValues(const LGCAdjustablePoint* referencePoint, TDLEV::TDHOR& dhorlevel){
+void TLSSimulation::updateHorDistSimValues(const LGCAdjustablePoint *referencePoint, TDLEV::TDHOR &dhorlevel)
+{
 	const auto contrib = fCGenerator.getHorDistContrib(referencePoint, dhorlevel);
 	dhorlevel.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 }
 
-void	TLSSimulation::updateDSPTSimValues(const TEDM& edmST, std::list<TDSPT>& dspt){
-	for (auto& itDSPT : dspt){
+void TLSSimulation::updateDSPTSimValues(const TEDM &edmST, std::list<TDSPT> &dspt)
+{
+	for (auto &itDSPT : dspt)
+	{
 		const auto contrib = fCGenerator.getDSPTContrib(edmST, itDSPT);
 		itDSPT.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
 
-void TLSSimulation::updateECHOSimValues(const TECHOROM& echoROM, std::list<TECHO>& echo){
-	for (auto& itECHO : echo){
+void TLSSimulation::updateECHOSimValues(const TECHOROM &echoROM, std::list<TECHO> &echo)
+{
+	for (auto &itECHO : echo)
+	{
 		const auto contrib = fCGenerator.getECHOContrib(echoROM, itECHO);
 		itECHO.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
 
-void TLSSimulation::updateECVESimValues(const TECVEROM& ecveROM, std::list<TECVE>& ecve){
-	for (auto& itECVE : ecve){
+void TLSSimulation::updateECVESimValues(const TECVEROM &ecveROM, std::list<TECVE> &ecve)
+{
+	for (auto &itECVE : ecve)
+	{
 		const auto contrib = fCGenerator.getECVEContrib(ecveROM, itECVE);
 		itECVE.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
 
-void TLSSimulation::updateECSPSimValues(const TECSPROM& ecspROM, std::list<TECSP>& ecsp){
-	for (auto& itECSP : ecsp){
+void TLSSimulation::updateECSPSimValues(const TECSPROM &ecspROM, std::list<TECSP> &ecsp)
+{
+	for (auto &itECSP : ecsp)
+	{
 		const auto contrib = fCGenerator.getECSPContrib(ecspROM, itECSP);
 		itECSP.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
 
-void	TLSSimulation::updateORIESimValues(const TORIEROM& orieROM, std::list<TORIE>& orie){
-	for (auto& itORIE : orie){
+void TLSSimulation::updateORIESimValues(const TORIEROM &orieROM, std::list<TORIE> &orie)
+{
+	for (auto &itORIE : orie)
+	{
 		const auto contrib = fCGenerator.getOrieContrib(orieROM, itORIE);
 		itORIE.setAngle(TAngle(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance)), TAngle::EUnits::kRadians));
 	}
@@ -362,8 +385,10 @@ void TLSSimulation::updateUVDSimValues(TCAM &camera)
 	}
 }
 
-void	TLSSimulation::updateUVECSimValues(TCAM& camera){
-	for (auto itUVEC(camera.measUVEC.begin()); itUVEC != camera.measUVEC.end(); ++itUVEC){
+void TLSSimulation::updateUVECSimValues(TCAM &camera)
+{
+	for (auto itUVEC(camera.measUVEC.begin()); itUVEC != camera.measUVEC.end(); ++itUVEC)
+	{
 		const auto contrib = fCGenerator.getUVECContrib(camera, *itUVEC);
 
 		const auto calcX = contrib.fCalcMeas[0];
@@ -381,8 +406,10 @@ void	TLSSimulation::updateUVECSimValues(TCAM& camera){
 	}
 }
 
-void	TLSSimulation::updatePLR3DSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station){
-	for (auto meas(rom->measPLR3D.begin()); meas != rom->measPLR3D.end(); ++meas){
+void TLSSimulation::updatePLR3DSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station)
+{
+	for (auto meas(rom->measPLR3D.begin()); meas != rom->measPLR3D.end(); ++meas)
+	{
 		const auto contrib = fCGenerator.getPolar3DContrib(station, rom, *meas);
 
 		const auto calcAngl = contrib.fCalcMeas(0);
@@ -398,7 +425,8 @@ void	TLSSimulation::updatePLR3DSimValues(std::shared_ptr<TTSTN::TROM> rom, std::
 	}
 }
 
-void TLSSimulation::updateANGLSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station){
+void TLSSimulation::updateANGLSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station)
+{
 	for (auto meas(rom->measANGL.begin()); meas != rom->measANGL.end(); ++meas)
 	{
 		const auto contrib = fCGenerator.getHorAnglContrib(station, rom, *meas);
@@ -406,16 +434,17 @@ void TLSSimulation::updateANGLSimValues(std::shared_ptr<TTSTN::TROM> rom, std::s
 	}
 }
 
-void	TLSSimulation::updateZENDSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station){
+void TLSSimulation::updateZENDSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station)
+{
 	for (auto meas(rom->measZEND.begin()); meas != rom->measZEND.end(); ++meas)
 	{
 		const auto contrib = fCGenerator.getZenDistContrib(station, *meas);
 		meas->setAngle(TAngle(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance)), TAngle::EUnits::kRadians));
 	}
-
 }
 
-void	TLSSimulation::updateDISTSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station){
+void TLSSimulation::updateDISTSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station)
+{
 	for (auto meas(rom->measDIST.begin()); meas != rom->measDIST.end(); ++meas)
 	{
 		const auto contrib = fCGenerator.getSpatialDistanceContrib(station, *meas);
@@ -432,15 +461,14 @@ void TLSSimulation::updateECTHSimValues(std::shared_ptr<TTSTN::TROM> rom, std::s
 	}
 }
 
-void	TLSSimulation::updateECDIRSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station){
-
+void TLSSimulation::updateECDIRSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station)
+{
 	for (auto meas(rom->measECDIR.begin()); meas != rom->measECDIR.end(); ++meas)
 	{
 		const auto contrib = fCGenerator.getECDIRContrib(station, rom, *meas);
 		meas->setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
 }
-
 
 void TLSSimulation::updateDHORSimValues(std::shared_ptr<TTSTN::TROM> rom, std::shared_ptr<TTSTN> station)
 {
@@ -479,22 +507,28 @@ void TLSSimulation::updateDISTSimValuesInFrame(std::shared_ptr<TTSTN::TROM> rom,
 	}
 }
 
-void TLSSimulation::updateINCLYSimValues(const TINCLYROM& inclyROM, std::list<TINCLY>& incly) {
-	for (auto& itINCLY : incly) {
+void TLSSimulation::updateINCLYSimValues(const TINCLYROM &inclyROM, std::list<TINCLY> &incly)
+{
+	for (auto &itINCLY : incly)
+	{
 		const auto contrib = fCGenerator.getINCLYContrib(inclyROM, itINCLY);
 		itINCLY.setAngle(TAngle(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance)), TAngle::EUnits::kRadians));
 	}
 }
 
-void TLSSimulation::updateROLLYSimValues(const TROLLYROM& rollyROM, std::list<TROLLY>& rolly) {
-	for (auto& itROLLY : rolly) {
+void TLSSimulation::updateROLLYSimValues(const TROLLYROM &rollyROM, std::list<TROLLY> &rolly)
+{
+	for (auto &itROLLY : rolly)
+	{
 		const auto contrib = fCGenerator.getROLLYContrib(rollyROM, itROLLY);
 		itROLLY.setAngle(TAngle(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance)), TAngle::EUnits::kRadians));
 	}
 }
 
-void TLSSimulation::updateECWSSimValues(const TECWSROM& ecwsROM, std::list<TECWS>& ecws) {
-	for (auto& itECWS : ecws) {
+void TLSSimulation::updateECWSSimValues(const TECWSROM &ecwsROM, std::list<TECWS> &ecws)
+{
+	for (auto &itECWS : ecws)
+	{
 		const auto contrib = fCGenerator.getECWSContrib(ecwsROM, itECWS);
 		itECWS.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 	}
