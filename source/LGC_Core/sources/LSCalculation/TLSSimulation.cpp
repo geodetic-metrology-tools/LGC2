@@ -4,6 +4,8 @@
 
 #include "TLSSimulation.h"
 
+#include <algorithm>
+
 #include "TLGCData.h"
 #include "TLSInputMatrices.h"
 #include "TLSInputMatricesFiller.h"
@@ -396,12 +398,20 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 		const auto sigmaX = sqrt(contrib.fObsVariance[0]);
 		const auto sigmaY = sqrt(contrib.fObsVariance[1]);
 
-		TFreeVector measVect;
-		measVect.setX(TLength(getSimulatedValue(calcX, sigmaX)));
-		measVect.setY(TLength(getSimulatedValue(calcY, sigmaY)));
-		/* Probably needs to norm!!! -- the simulation random error could make it no to be unit, ENSURE about that!!! */
-		measVect.normalize();
-		/*Set the simulated measured values*/
+		TReal simX = getSimulatedValue(calcX, sigmaX);
+		TReal simY = getSimulatedValue(calcY, sigmaY);
+
+		// Reconstruct z so that (x, y, z) approximates a unit vector; z is not used in the adjustment
+		TReal xyNormSq = simX * simX + simY * simY;
+		if (xyNormSq > 1.0)
+			logWarning() << "UVEC simulation: noise made x^2+y^2 > 1 (=" << xyNormSq
+			             << ") for target " << itUVEC->targetPos->getName() << "; z component is clamped to 0.";
+		// Sign of z follows the sign of dz (target behind or in front of camera)
+		TReal dz = itUVEC->targetPos->getEstimatedValue().getZ().getMetresValue()
+		         - camera.instrumentPos->getEstimatedValue().getZ().getMetresValue();
+		TReal simZ = std::copysign(sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0)), dz);
+
+		TFreeVector measVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
 		itUVEC->setVectorMeasurement(measVect);
 	}
 }
