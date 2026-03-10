@@ -195,9 +195,9 @@ private:
 	struct CamTargetGeometry
 	{
 		const TLOR2LOR *tg2stTrafo;
-		Eigen::Vector3d rhat;
-		TReal d;
-		TReal invD;
+		Eigen::Vector3d rhat;  ///< dr / ||dr||
+		TReal d;               ///< ||dr||
+		TReal invD;            ///< 1 / ||dr||
 		Eigen::Matrix3d JacDir; ///< (1/d)(I - rhat*rhat^T) = d(rhat)/d(dr)
 	};
 
