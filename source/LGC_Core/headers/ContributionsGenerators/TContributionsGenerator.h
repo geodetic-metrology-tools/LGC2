@@ -192,6 +192,19 @@ private:
 	/// Adds Point contributions for the PLR3D measurement, returns object representing AMat*dtrafo(point)/dpoint
 	void addPointContributionsPLR3D(const TLOR2LOR &lorTrafo, const Eigen::Matrix3d &Amat, Point3DContrib &pointContrib, bool station);
 
+	/// Shared geometry for UVEC/UVD: direction, distance, Jacobian of the unit direction vector
+	struct CamTargetGeometry
+	{
+		const TLOR2LOR *tg2stTrafo;
+		Eigen::Vector3d rhat;  ///< dr / ||dr||
+		TReal d;               ///< ||dr||
+		TReal invD;            ///< 1 / ||dr||
+		Eigen::Matrix3d JacDir; ///< (1/d)(I - rhat*rhat^T) = d(rhat)/d(dr)
+	};
+
+	/// Computes the common geometric quantities for UVEC and UVD
+	CamTargetGeometry computeCamTargetGeometry(const TCAM &camera, const LGCAdjustablePoint &targetPoint);
+
 	// helper for error generation
 	std::string getNameAndLine(const LGCAdjustablePoint &point) const;
 	void generateContributionError(const std::string &message) const;

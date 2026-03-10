@@ -590,7 +590,7 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 	TAStreamFormatter *stream = getStream();
 	std::string sep = stream->getSeparator();
 
-	auto edmDefInst = data->getInstruments().fCAMD.at(meas->instrument.ID);
+	auto camDefInst = data->getInstruments().fCAMD.at(meas->instrument.ID);
 	auto camDefTarget = meas->instrument.targets.at(meas->instrument.defTarget);
 
 	if (!meas->isActive())
@@ -598,10 +598,10 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 
 	(*stream) << "*CAM" << sep << meas->instrumentPos->getName() << sep << meas->instrument.ID << sep;
 
-	if (camDefTarget->ID != edmDefInst->defTarget)
+	if (camDefTarget->ID != camDefInst->defTarget)
 		(*stream) << "TRGT" << sep << camDefTarget->ID << sep;
 
-	if (meas->instrument.sigmaInstrCentering != edmDefInst->sigmaInstrCentering)
+	if (meas->instrument.sigmaInstrCentering != camDefInst->sigmaInstrCentering)
 		(*stream) << "ICSE" << sep << meas->instrument.sigmaInstrCentering.getMMetresValue() << sep;
 
 	(*stream) << endl;

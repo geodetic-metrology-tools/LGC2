@@ -122,7 +122,7 @@ void TKeyCAM::parse(const std::vector<std::string> &tokens, bool activeLine, int
 	TOptionHelper opts(tokens.cbegin() + 3, tokens.cend());
 
 	instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
-	instrument.sigmaInstrCentering = TLength(opts.getParamR("ICSE", instrument.sigmaInstrCentering), TLength::EUnits::kMillimetres); // value given in mili-meters [mm], returned value in meters [m]
+	instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
 
 	// emplace this Camera
 	proj.getCurrentNode().measurements.fCAM.emplace_back(cam);
@@ -186,17 +186,16 @@ void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		{
 			TFreeVector vectorMeasurement(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::k3DCartesian);
 
-			if (isZero(vectorMeasurement.getZ().getMetresValue()))
-				throw std::runtime_error("Input of UVEC measurement is not correct: "
-										 "Z coordinate of the unit vector can not be ZERO or close to it.");
-
 			TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
 			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength)) // If vectorLength is not 1 with a given tolerance
 				throw std::runtime_error("UVEC measurement input values are not correct: "
-										 "Given vector is not a unit vector.");
+										 "Given vector is not a unit vector. "
+										 "Note: only the x and y components are used in the adjustment; "
+										 "the z component is ignored but all three should approximately form a unit vector.");
 
 			uvec.setVectorMeasurement(vectorMeasurement);
+			uvec.signUz = (vectorMeasurement.getZ().getMetresValue() >= 0.0) ? 1.0 : -1.0;
 		}
 
 		// Store this UVEC measurement
@@ -258,17 +257,16 @@ void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int
 		{
 			TFreeVector vectorMeasurement(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::k3DCartesian);
 
-			if (isZero(vectorMeasurement.getZ().getMetresValue()))
-				throw std::runtime_error("UVD measurement input values are not correct: "
-										 "Z coordinate of the unit vector can not be ZERO or close to it.");
-
 			TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
-			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength)) // If vectorLength is not 1 with a given tolerance
+			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength))
 				throw std::runtime_error("UVD measurement input values are not correct: "
-										 "Given vector is not a unit vector.");
+										 "Given vector is not a unit vector. "
+										 "Note: only the x and y components are used in the adjustment; "
+										 "the z component is ignored but all three should approximately form a unit vector.");
 
 			uvd.setVectorMeasurement(vectorMeasurement);
+			uvd.signUz = (vectorMeasurement.getZ().getMetresValue() >= 0.0) ? 1.0 : -1.0;
 			uvd.setDistance(TLength(std::stor(tokens.at(4))));
 		}
 
