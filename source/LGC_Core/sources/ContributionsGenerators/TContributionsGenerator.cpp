@@ -1754,34 +1754,17 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 //////////////////////////////////////////////////////////////////////
 UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TUVEC &uvec)
 {
-	fPointTransfo.setMLA(false); // TCAM measurements are never in MLA
+	const auto [tg2stTrafo, rhat, d, invD, JacDir] = computeCamTargetGeometry(camera, *uvec.targetPos);
 
-	const TLOR2LOR &tg2stTrafo = fPointTransfo.getLORTransformation(
-		uvec.targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition()); // Trafo from target's LOR to station's LOR
-	TPositionVector targetPos = uvec.targetPos->getEstimatedValue();
-	tg2stTrafo.transform(targetPos);
-
-	TVector dr = (targetPos - camera.instrumentPos->getEstimatedValue()).toRealVector();
-	TReal d = dr.norm();
-
-	if (d < nullLimit)
-	{
-		generateContributionError("TContributionGenerator::getUVECContrib: Station and target coincide (distance is zero). Points: " + getNameAndLine(*camera.instrumentPos)
-			+ " and " + getNameAndLine(*uvec.targetPos));
-	}
-
-	TReal invD = 1.0 / d;
-	TVector rhat = dr * invD;
-
-	// Parametric Jacobian: J = (1/d)(I_{2x3} - r_xy * r^T)
-	TDenseMatrix J = ((Eigen::Matrix3d::Identity() - rhat * rhat.transpose()) * invD).topRows<2>();
+	// UVEC Jacobian: top 2 rows of JacDir
+	TDenseMatrix J = JacDir.topRows<2>();
 
 	// Station contributions (negative Jacobian rows)
 	TFreeVector stFirstEqContrib(TFreeVector(-J.row(0)));
 	TFreeVector stSecondEqContrib(TFreeVector(-J.row(1)));
 
 	// Target contributions: J * dT_st/dT_0
-	TDenseMatrix tgJac = J * tg2stTrafo.getPartialDerivativeWrtPosition();
+	TDenseMatrix tgJac = J * tg2stTrafo->getPartialDerivativeWrtPosition();
 	TFreeVector tgFirstEqContrib(TFreeVector(tgJac.row(0)));
 	TFreeVector tgSecondEqContrib(TFreeVector(tgJac.row(1)));
 
@@ -1789,7 +1772,7 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib2D>> targetTransfContributions;
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> auxContribs;
 	TFreeVector zeroVector(0.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian);
-	addTransformationsContributions3D(tg2stTrafo, uvec.targetPos->getEstimatedValue(), TFreeVector(J.row(0)), TFreeVector(J.row(1)), zeroVector, auxContribs);
+	addTransformationsContributions3D(*tg2stTrafo, uvec.targetPos->getEstimatedValue(), TFreeVector(J.row(0)), TFreeVector(J.row(1)), zeroVector, auxContribs);
 	for (auto pair : auxContribs)
 	{
 		TransformationContrib2D trafoContrib = {pair.second.firstEquationTransContrib, pair.second.secondEquationTransContrib};
@@ -1798,8 +1781,8 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 
 	// Stochastic model: full 2x2 a-priori covariance
 	// C = C_noise + C_center, where C_noise = diag(sigma_ux^2, sigma_uy^2), C_center = sigma_c^2 * J * J^T
-	TReal sigmaC = uvec.target.sigmaTargetCentering + camera.instrument.sigmaInstrCentering;
-	Eigen::Matrix2d Cobs = pow2q(sigmaC) * (J * J.transpose());
+	TReal sigmaC2 = pow2q(uvec.target.sigmaTargetCentering) + pow2q(camera.instrument.sigmaInstrCentering);
+	Eigen::Matrix2d Cobs = sigmaC2 * (J * J.transpose());
 	Cobs(0, 0) += pow2q(uvec.target.sigmaX);
 	Cobs(1, 1) += pow2q(uvec.target.sigmaY);
 	// Cobs is the full 2x2 covariance; only the diagonal is used (off-diagonal ignored by diagonal weight matrix)
@@ -1809,55 +1792,40 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 }
 UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD &uvd)
 {
-	fPointTransfo.setMLA(false); // TCAM measurements never in MLA
-	TPositionVector targetPos = uvd.targetPos->getEstimatedValue();
-	const TLOR2LOR &tg2stTrafo = fPointTransfo.getLORTransformation(uvd.targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition()); // Transformation to LOR of the Camera
-	tg2stTrafo.transform(targetPos);
+	const auto [tg2stTrafo, rhat, d, invD, JacDir] = computeCamTargetGeometry(camera, *uvd.targetPos);
 
-	// the observations
-	TReal sDist = uvd.getDistance(); // measured distance
-	TReal i = uvd.getVectorValue().getX().getMetresValue(); // X component
-	TReal j = uvd.getVectorValue().getY().getMetresValue(); // Y component
-	TReal k = uvd.getVectorValue().getZ().getMetresValue(); // Z component not an observation
-	TPositionVector stationPos = camera.instrumentPos->getEstimatedValue();
-	TFreeVector relPos = targetPos - stationPos;
-	double dx(relPos.getX().getMetresValue()), dy(relPos.getY().getMetresValue()), dz(relPos.getZ().getMetresValue()), dzSquare = dz * dz;
+	// UVD Jacobian: rows 1-2 = JacDir (direction), row 3 = rhat^T (distance)
+	Eigen::Matrix3d J;
+	J << JacDir.topRows<2>(),
+		rhat.transpose();
 
-	if (fabs(dz) < nullLimit)
-	{
-		generateContributionError(
-			"TContributionGenerator::getUVDContrib: Division by zero because camera and target are identical or have identical z coordinates. Points: "
-			+ getNameAndLine(*camera.instrumentPos) + " and " + getNameAndLine(*uvd.targetPos));
-	}
+	// Station contribution: -J
+	Point3DContrib coordContribStation = {-J};
 
-	// case k=0 is already catched in the reader
-	Eigen::Vector3d calcMeas(k * dx / dz, k * dy / dz, dz / k);
+	// Target contribution: J * dT_st/dT_0
+	Point3DContrib coordContribTarget = {J * tg2stTrafo->getPartialDerivativeWrtPosition()};
 
-	// Jacobian of CalcMeas
-	Eigen::Matrix3d JacCalcMeas;
-	JacCalcMeas << k / dz, 0, -k * dx / dzSquare, 0, k / dz, -k * dy / dzSquare, 0, 0, 1 / k;
+	// Transformation contributions
+	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions;
+	addTransformationsContributions3D(*tg2stTrafo, uvd.targetPos->getEstimatedValue(),
+		TFreeVector(J.row(0)), TFreeVector(J.row(1)), TFreeVector(J.row(2)), targetTransfContributions);
 
-	// CAM station's contribution is calculated in a LOR system of the station and, therefore, the station's contribution is this
-	Point3DContrib coordContribStation = {-JacCalcMeas};
-
-	Point3DContrib coordContribTarget = {JacCalcMeas * tg2stTrafo.getPartialDerivativeWrtPosition()};
-
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions; // Vector with target's transformations contributions
-
-	// Parameters: transformation from target's LOR into station's LOR, target position, vector of contributions to be filled
-	addTransformationsContributions3D(tg2stTrafo, uvd.targetPos->getEstimatedValue(), TFreeVector(JacCalcMeas.row(0)), TFreeVector(JacCalcMeas.row(1)),
-		TFreeVector(JacCalcMeas.row(2)), targetTransfContributions);
-	// fill the contribution structure
-	Eigen::Vector3d obsVariance(pow2q(uvd.target.sigmaX) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering),
-		pow2q(uvd.target.sigmaY) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering),
-		pow2q(uvd.target.sigmaDist) + pow2q(uvd.target.sigmaTargetCentering) + pow2(camera.instrument.sigmaInstrCentering));
+	// Stochastic model: full 3x3 a-priori covariance (see camObservations.tex)
+	// C = C_noise + C_center, where C_noise = diag(sigma_ux^2, sigma_uy^2, sigma_dist^2),
+	// C_center = sigma_c^2 * J * J^T (block-diagonal: direction 2x2 decoupled from distance)
+	TReal sigmaC2 = pow2q(uvd.target.sigmaTargetCentering) + pow2q(camera.instrument.sigmaInstrCentering);
+	Eigen::Matrix3d Cobs = sigmaC2 * (J * J.transpose());
+	Cobs(0, 0) += pow2q(uvd.target.sigmaX);
+	Cobs(1, 1) += pow2q(uvd.target.sigmaY);
+	Cobs(2, 2) += pow2q(uvd.target.sigmaDist);
+	// Cobs is the full 3x3 covariance; only the diagonal is used (off-diagonal ignored by diagonal weight matrix)
 
 	UVDContrib contrib;
 	contrib.fStCoordContrib = coordContribStation;
 	contrib.fTgCoordContrib = coordContribTarget;
 	contrib.fTgTransformContrib = targetTransfContributions;
-	contrib.fCalcMeas = calcMeas;
-	contrib.fObsVariance = obsVariance;
+	contrib.fCalcMeas = Eigen::Vector3d(rhat(0), rhat(1), d);
+	contrib.fObsVariance = Cobs.diagonal();
 
 	return contrib;
 }
@@ -1865,6 +1833,33 @@ UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD
 ///////////////////////////////////////////////////////////////////////////
 // PRIVATE / SUPPORTING METHODS
 ///////////////////////////////////////////////////////////////////////////
+
+TContributionsGenerator::CamTargetGeometry TContributionsGenerator::computeCamTargetGeometry(const TCAM &camera, const LGCAdjustablePoint &targetPoint)
+{
+	fPointTransfo.setMLA(false); // TCAM measurements are never in MLA
+
+	const TLOR2LOR &tg2stTrafo = fPointTransfo.getLORTransformation(
+		targetPoint.getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
+	TPositionVector targetPos = targetPoint.getEstimatedValue();
+	tg2stTrafo.transform(targetPos);
+
+	Eigen::Vector3d dr = (targetPos - camera.instrumentPos->getEstimatedValue()).toRealVector();
+	TReal d = dr.norm();
+
+	if (d < nullLimit)
+	{
+		generateContributionError(
+			"TContributionGenerator: Station and target coincide (distance is zero). Points: "
+			+ getNameAndLine(*camera.instrumentPos) + " and " + getNameAndLine(targetPoint));
+	}
+
+	TReal invD = 1.0 / d;
+	Eigen::Vector3d rhat = dr * invD;
+	Eigen::Matrix3d JacDir = (Eigen::Matrix3d::Identity() - rhat * rhat.transpose()) * invD;
+
+	return {&tg2stTrafo, rhat, d, invD, JacDir};
+}
+
 TFreeVector TContributionsGenerator::getPointContributions(const TLOR2LOR &lorTrafo, TReal a, TReal b, TReal c)
 {
 	TFreeVector derX0 = lorTrafo.partDerivWRespToX0();

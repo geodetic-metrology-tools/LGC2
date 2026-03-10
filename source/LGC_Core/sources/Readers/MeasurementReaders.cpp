@@ -256,15 +256,13 @@ void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int
 		{
 			TFreeVector vectorMeasurement(std::stor(tokens.at(1)), std::stor(tokens.at(2)), std::stor(tokens.at(3)), TCoordSysFactory::k3DCartesian);
 
-			if (isZero(vectorMeasurement.getZ().getMetresValue()))
-				throw std::runtime_error("UVD measurement input values are not correct: "
-										 "Z coordinate of the unit vector can not be ZERO or close to it.");
-
 			TReal vectorLength = vectorMeasurement.length().getMetresValue();
 
-			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength)) // If vectorLength is not 1 with a given tolerance
+			if (!((1 - lengthTolerance) < vectorLength && (1 + lengthTolerance) > vectorLength))
 				throw std::runtime_error("UVD measurement input values are not correct: "
-										 "Given vector is not a unit vector.");
+										 "Given vector is not a unit vector. "
+										 "Note: only the x and y components are used in the adjustment; "
+										 "the z component is ignored but all three must form a unit vector.");
 
 			uvd.setVectorMeasurement(vectorMeasurement);
 			uvd.setDistance(TLength(std::stor(tokens.at(4))));
