@@ -80,20 +80,10 @@ void TASagConstraintPairKey::parse(const std::vector<std::string> &tokens, bool 
 	}
 	else if (nTokens == 1)
 	{
-		// defining a sag-association, if only one point name is given, it will be a constraint between this point and its provisional coordinates
-		std::string assocPointName = tokens[0];
-		std::string sagElementName = fSagElementName;
-		if (proj.getSags().doesObjectExist(sagElementName))
-		{
-			LGCAdjustableSag &sagObject = proj.getSags().getObject(sagElementName);
-			TLGCSagConstraintPair newPair(assocPointName, sagObject);
-			proj.getSagPointPairs().push_back(newPair);
-			//fSagElementName = sagElementName;
-		}
-		else
-		{
-			throw std::runtime_error("Sag adjustable element " + sagElementName + " needs to be defined before it can be used.");
-		}
+		throw std::runtime_error("*SAGCONNECT with a single point name is no longer supported. "
+								 "Use *DEFORM or the DEFORM tag on a point definition to create "
+								 "sag constraint pairs, or provide both reference and associated "
+								 "point names (2 names per line).");
 	}
 	else
 	{
