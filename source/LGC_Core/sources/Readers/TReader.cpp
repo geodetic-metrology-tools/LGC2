@@ -136,7 +136,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyHLSR(project)));
 	finterpreters.emplace_back(UPK(new TKeyWPSR(project)));
 
-	finterpreters.emplace_back(UPK(new TKeySAG(project)));
+	finterpreters.emplace_back(UPK(new TKeySAGELEMENT(project)));
 	finterpreters.emplace_back(UPK(new TASagConstraintPairKey(project)));
 
 	finterpreters.emplace_back(UPK(new TADeformKey(project)));

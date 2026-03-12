@@ -122,20 +122,20 @@ void TKeyENDFRAME::parse(const std::vector<std::string> &tokens, bool, int)
 }
 
 // TODO: remove the bearing prov value and compute it in the datananalyzer
-TKeySAG::TKeySAG(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(SAGELEMENT, project), fSagAccess(proj.getSags())
+TKeySAGELEMENT::TKeySAGELEMENT(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(SAGELEMENT, project), fSagAccess(proj.getSags())
 {
 	for (int i(0); i < nb_allowed_keywords; i++)
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeySAG::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
+void TKeySAGELEMENT::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
 {
 	using namespace LGC;
 	auto numTokens = tokens.size();
 
 	// The asterisk and the keyword itself are already two tokens
 	if (numTokens <= 7)
-		throw std::runtime_error("Key *SAG takes at least 6 arguments: Name, Name of associated Frame, vertical and radial sag and curvature plus optionally the tags for free transformation parameters, VS, VC, RS, RC");
+		throw std::runtime_error("Key *SAGELEMENT takes at least 6 arguments: Name, Name of associated Frame, vertical and radial sag and curvature plus optionally the tags for free transformation parameters, VS, VC, RS, RC");
 
 
 	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());

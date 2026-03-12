@@ -49,19 +49,19 @@ class TKeyENDFRAME : public TAKeyWord {
 		virtual void parse(const std::vector<std::string>& tokens, bool, int);
 };
 
-class TKeySAG : public TAKeyWord {
+class TKeySAGELEMENT : public TAKeyWord {
 	public:
 		/*!
-		* SAG parser
+		* SAGELEMENT parser
 		*/
-		TKeySAG(TLGCData &project, int nb_allowed_keywords = nb_allowed_sagelement, const char **keywords = allowed_SAG);
+		TKeySAGELEMENT(TLGCData &project, int nb_allowed_keywords = nb_allowed_sagelement, const char **keywords = allowed_SAGELEMENT);
 
-	
+
 		///	Parse line with the frame definition.
         virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
 
 	private:
-		TKeySAG &operator=(const TKeySAG &);
+		TKeySAGELEMENT &operator=(const TKeySAGELEMENT &);
 		// access to sag element storage
 		LGCAdjustableSagCollection &fSagAccess;
 };
