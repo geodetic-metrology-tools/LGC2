@@ -101,6 +101,7 @@ namespace {
 #define SOBS "SOBS"
 #define SAGELEMENT "SAGELEMENT"
 #define SAGCONNECT "SAGCONNECT"
+#define DEFORM "DEFORM"
 #define HIST "HIST"
 #define EREL "EREL"
 #define ERELFRAME "ERELFRAME"
@@ -186,9 +187,10 @@ namespace {
 	const int nb_allowed_lm = 32;
 
 	//header
-	const int nb_allowed_instr = 20; // instruments + points + frame + round of measurements without intruments
-	const int nb_allowed_frame = 10;
-	const int nb_allowed_sagelement = 20; // new adjustable object, only after INSTR
+	const int nb_allowed_instr = 21; // instruments + points + frame + round of measurements without intruments
+	const int nb_allowed_frame = 11;
+	const int nb_allowed_sagelement = 21; // new adjustable object, only after INSTR
+	const int nb_allowed_deform = 21;
 	const int nb_allowed_ef = 25;
 	const int nb_allowed_end = 0;
 	const int nb_allowed_titr = 4;
@@ -319,9 +321,10 @@ namespace {
 	const char* allowed_JSON[nb_allowed_json] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, SOBS, EREL, ERELFRAME, COVAR , CHABA, CONSI, LM};
 	const char* allowed_LM[nb_allowed_lm] = { DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR, FMTP, NODUP, HIST, SOBS, EREL, ERELFRAME, COVAR , CHABA, CONSI, JSON};
 	// Others
-	const char *allowed_INSTR[nb_allowed_instr] = {POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT };
-	const char *allowed_SAG[nb_allowed_sagelement] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT };
-	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN, INCLY, ROLLY};
+	const char *allowed_INSTR[nb_allowed_instr] = {POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT, DEFORM };
+	const char *allowed_SAG[nb_allowed_sagelement] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT, DEFORM };
+	const char *allowed_DEFORM[nb_allowed_deform] = { POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT, DEFORM };
+	const char* allowed_FRAME[nb_allowed_frame] = { CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN, INCLY, ROLLY, DEFORM};
 	const char* allowed_ENDFRAME[nb_allowed_ef] = { TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, ECWS,ECWI, SAGCONNECT};
 	const char* allowed_END[1] = {};
 	const char* allowed_TITR[nb_allowed_titr] = { OLOC, RS2K, LEP, SPHE };

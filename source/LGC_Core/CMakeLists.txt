@@ -98,6 +98,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Readers/KeywordRights.h
 	${CORE_INCLUDE_PATH}/Readers/MeasurementReader_lgc1.h
 	${CORE_INCLUDE_PATH}/Readers/SagConstraintReader.h
+	${CORE_INCLUDE_PATH}/Readers/DeformReader.h
 	${CORE_INCLUDE_PATH}/Writers/TAFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TResultsFileWriter.h
 	${CORE_INCLUDE_PATH}/Writers/TPunchFileWriter.h
@@ -177,6 +178,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/Readers/OptionReaders.cpp
 	${CORE_SOURCES_PATH}/Readers/MeasurementReader_lgc1.cpp
 	${CORE_SOURCES_PATH}/Readers/SagConstraintReader.cpp
+	${CORE_SOURCES_PATH}/Readers/DeformReader.cpp
 	${CORE_SOURCES_PATH}/Writers/TAFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TResultsFileWriter.cpp
 	${CORE_SOURCES_PATH}/Writers/TPunchFileWriter.cpp

@@ -298,6 +298,10 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		pt.activatePointSigma();
 	}
 
+	// check if DEFORM tag is present
+	if (opts.has("DEFORM"))
+		pt.setDeformSagElement(opts.getParam("DEFORM"));
+
 	// check if one of the weights was set to zero
 	// if no angle was used we block the corresponding freedoms
 	// if rotations are used, a constraint has to be introduced (see TDataAnalyzer)

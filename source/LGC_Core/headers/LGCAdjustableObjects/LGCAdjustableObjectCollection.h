@@ -146,6 +146,21 @@ public:
 		}
 	}
 
+	/// Rename an existing object. Returns true on success, false if oldName not found or newName already exists.
+	bool renameObject(const std::string &oldName, const std::string &newName)
+	{
+		auto it = objectMap.find(oldName);
+		if (it == objectMap.end())
+			return false;
+		if (objectMap.find(newName) != objectMap.end())
+			return false;
+		auto listIt = it->second;
+		listIt->setName(newName);
+		objectMap[newName] = listIt;
+		objectMap.erase(it);
+		return true;
+	}
+
 	/// Returns The reference to the last adjustable object
 	T &back() { return objects.back(); }
 
