@@ -43,7 +43,7 @@ namespace tut
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/SAG.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
 
-		TKeySAG r1(*projTest);
+		TKeySAGELEMENT r1(*projTest);
 		r1.parse(tokenizefileString("*SAGELEMENT sag0 frame0 2 3 4 5 VS VC RS RC"), true, 0);
 		r1.parse(tokenizefileString("*SAGELEMENT sag1 frame1 3 4 5 6 VS RC"), true, 0);
 
