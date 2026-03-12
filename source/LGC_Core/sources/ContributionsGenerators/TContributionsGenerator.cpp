@@ -2291,21 +2291,7 @@ SagPairContrib TContributionsGenerator::getSagPairContrib(const TLGCSagConstrain
 	// evaluate the constraint
 	// get reference and associated points in root coordinates
 	LGCAdjustablePoint assocPt = data.getPoints().getObject(sagPair.assocPoint);
-	LGCAdjustablePoint refPt = LGCAdjustablePoint::createUninitialized(sagPair.refPoint);
-	if (sagPair.isAssociatedToProvisionalCoordinates)
-	{
-		if (assocPt.getNumUnkn() != 3)
-			throw std::logic_error(
-				"To identify a point with its sagged provisional coordinates, the point must have 3 degrees of freedom (must be defined as *POIN). Point \""
-				+ assocPt.getName() + "\"");
-		// create temporary "CALA" point with coordinates equal to the provisional coordinates
-		LGCAdjustablePoint dummyPoint(assocPt.getProvisionalValue(), true, true, true, sagPair.refPoint, assocPt.getReferenceFrame(), assocPt.getFrameTreePosition());
-		refPt = dummyPoint;
-	}
-	else
-	{
-		refPt = data.getPoints().getObject(sagPair.refPoint);
-	}
+	LGCAdjustablePoint refPt = data.getPoints().getObject(sagPair.refPoint);
 	TLOR2LOR ref2Root(refPt.getFrameTreePosition(), data.getTree().begin(), "ref2Root");
 	TLOR2LOR assoc2Root(assocPt.getFrameTreePosition(), data.getTree().begin(), "assoc2Root");
 	// transform to root coordinates, keep also subframe coordinates

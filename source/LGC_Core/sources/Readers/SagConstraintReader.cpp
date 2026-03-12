@@ -87,6 +87,6 @@ void TASagConstraintPairKey::parse(const std::vector<std::string> &tokens, bool 
 	}
 	else
 	{
-		throw std::runtime_error("Sag association parser expects either a sag adjustable object name (with or without definition) in the keyword line, a pair of pointnames or a single pointname in subsequent lines");
+		throw std::runtime_error("Sag association parser expects either a sag adjustable object name (with or without definition) in the keyword line, or a pair of point names (reference and associated) in subsequent lines");
 	}
 }

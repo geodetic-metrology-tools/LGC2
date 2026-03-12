@@ -399,13 +399,8 @@ bool TDataAnalyzer::checkSagConnections()
 		// check if points are defined
 		if (!fData.getPoints().doesObjectExist(sagConnection.refPoint))
 		{
-			// if the point is associated to provisional coordinates, the reference point is represented by the provisional value and not by an independent LGC adjustable point
-			// Therefore the check for the reference point only applies when the point is not associated to its provisional coordinates.
-			if (!sagConnection.isAssociatedToProvisionalCoordinates)
-			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection reference point " + sagConnection.refPoint + " is not defined.";
-				result = false;
-			}
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection reference point " + sagConnection.refPoint + " is not defined.";
+			result = false;
 		}
 		if (!fData.getPoints().doesObjectExist(sagConnection.assocPoint))
 		{

@@ -2129,24 +2129,12 @@ bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatr
 			for (int j = 0; j < 3; j++)
 				fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx + j, contrib.constraintMisclosure(j));
 			// fill the jacobian of the constraint
-			LGCAdjustablePoint refPt = LGCAdjustablePoint::createUninitialized(sagPair.refPoint);
 			const LGCAdjustablePoint &assocPt = projData->getPoints().getObject(sagPair.assocPoint);
-	
-			if (sagPair.isAssociatedToProvisionalCoordinates)
-			{
-				// create temporary "CALA" point with coordinates equal to the provisional coordinates
-				LGCAdjustablePoint dummyPoint(assocPt.getProvisionalValue(), true, true, true, sagPair.refPoint, assocPt.getReferenceFrame(), assocPt.getFrameTreePosition());
-				refPt = dummyPoint;
-			}
-			else
-			{
-				refPt = projData->getPoints().getObject(sagPair.refPoint);
-			}
+			LGCAdjustablePoint refPt = projData->getPoints().getObject(sagPair.refPoint);
 
 			const LGCAdjustableSag &sagAdjustable = sagPair.fSag;
 			// derivative with respect to reference point subframe coordinates: 3 parts
 			Eigen::Matrix3d dConstraintWrtRefSub = contrib.dRefRootdRefSub.contrib + contrib.dVertOffsetdRefSub.contrib + contrib.dRadOffsetdRefSub.contrib;
-			//std::cout << "fixed to provval: " << sagPair.isAssociatedToProvisionalCoordinates << " dCdSubFrameCoord=" << dConstraintWrtRefSub << std::endl;
 			for (int rowIdx = 0; rowIdx < 3; rowIdx++)
 			{
 				// wrt to reference and associated point
